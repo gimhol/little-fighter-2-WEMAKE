@@ -352,6 +352,9 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
     this._curr_key_list = "";
   }
   cmds = new Set<string>();
+  keydowns = new Set<LF2UIKeyEvent>();
+  keyups = new Set<LF2UIKeyEvent>();
+
   on_key_down(e: IKeyEvent) {
     this.debug('on_key_down', e)
     const key_code = e.key;
@@ -377,14 +380,10 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
     }
     if (!match) this._curr_key_list = "";
     if (e.times === 0) {
-      const { ui } = this;
-      if (ui) {
-        for (const key_name of KEY_NAME_LIST) {
-          for (const [player_id, player_info] of this.players) {
-            if (player_info.keys[key_name] === key_code) {
-              const e = new LF2UIKeyEvent(player_id, key_name, key_code)
-              ui.on_key_down(e);
-            }
+      for (const key_name of KEY_NAME_LIST) {
+        for (const [player_id, player_info] of this.players) {
+          if (player_info.keys[key_name] === key_code) {
+            this.keydowns.add(new LF2UIKeyEvent(player_id, key_name, key_code));
           }
         }
       }
@@ -393,18 +392,15 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
 
   on_key_up(e: IKeyEvent) {
     const key_code = e.key?.toLowerCase() ?? "";
-    const { ui } = this;
-    if (ui) {
-      for (const key_name of KEY_NAME_LIST) {
-        for (const [player_id, player_info] of this.players) {
-          if (player_info.keys[key_name] === key_code) {
-            const e = new LF2UIKeyEvent(player_id, key_name)
-            ui.on_key_up(e);
-          }
+    for (const key_name of KEY_NAME_LIST) {
+      for (const [player_id, player_info] of this.players) {
+        if (player_info.keys[key_name] === key_code) {
+          this.keyups.add(new LF2UIKeyEvent(player_id, key_name, key_code))
         }
       }
     }
   }
+  
   private on_loading_file(url: string, progress: number, full_size: number) {
     const txt = `${url}(${get_short_file_size_txt(full_size)})`;
     this.on_loading_content(txt, progress);

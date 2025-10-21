@@ -240,6 +240,16 @@ export class World extends WorldDataset {
       this.lf2.ui?.enabled && this.lf2.ui?.update(real_dt);
       _update_count++;
 
+      if (this.lf2.keydowns) {
+        for (const e of this.lf2.keydowns)
+          this.lf2.ui?.on_key_down(e)
+        this.lf2.keydowns.clear();
+      }
+      if (this.lf2.keyups) {
+        for (const e of this.lf2.keyups)
+          this.lf2.ui?.on_key_up(e)
+        this.lf2.keyups.clear();
+      }
       for (const key of this.lf2.cmds) {
         switch (key) {
           case 'f1': this.set_paused(!this.paused); break;
