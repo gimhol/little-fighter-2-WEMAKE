@@ -9,8 +9,9 @@
     "GIT_IGNORED": true
   },
   "oss": {
+    "SSH_ENABLED": false,
     "GIT_IGNORED": true,
-    "OSS_ENABLE": true,
+    "OSS_ENABLED": true,
     "LOCAL_PATH": "./build",
     "REMOTE_DIR": ""
   }
