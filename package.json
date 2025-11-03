@@ -2,6 +2,7 @@
   "name": "little-fighter-j",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "scripts": {
     "init": "npm i --registry https://registry.npmmirror.com",
     "start": "node scripts/start.js",

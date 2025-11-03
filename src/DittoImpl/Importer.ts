@@ -23,6 +23,12 @@ function get_possible_url_list(list: string[]): string[] {
     for (const root of roots)
       ret.push(root + item);
   }
+
+  ret.forEach((item, index) => {
+    if (item.startsWith("/")) {
+      ret[index] = "." + item;
+    }
+  });
   return ret;
 }
 
