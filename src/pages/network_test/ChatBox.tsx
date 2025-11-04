@@ -7,7 +7,7 @@ import { Flex, IFlexProps } from "../../Component/Flex";
 import { Input, InputRef } from "../../Component/Input";
 import { useShortcut } from "../../Component/useShortcut";
 import { useStateRef } from "../../hooks/useStateRef";
-import { IRespChat, IRoomInfo, MsgEnum } from "../../Net";
+import { IRespChat, MsgEnum } from "../../Net";
 import { Connection } from "./Connection";
 import styles from "./styles.module.scss";
 import { useFloating } from "./useFloating";
