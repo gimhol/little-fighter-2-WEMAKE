@@ -10,7 +10,6 @@ import { Input } from "../../Component/Input";
 import Show from "../../Component/Show";
 import { Space } from "../../Component/Space";
 import { Strong, Text } from "../../Component/Text";
-import { useStateRef } from "../../hooks/useStateRef";
 import { IRoomInfo, MsgEnum } from "../../Net";
 import { ChatBox } from "./ChatBox";
 import { Connection } from "./Connection";
@@ -18,6 +17,7 @@ import { useRoom } from "./useRoom";
 import { TriState } from "./TriState";
 import { RoomsBox } from "./RoomsBox";
 import styles from "./styles.module.scss"
+import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 
 
 indexedDB.databases().then((r) => console.log(r))
