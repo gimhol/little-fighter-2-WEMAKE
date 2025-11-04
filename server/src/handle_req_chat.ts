@@ -9,10 +9,10 @@ export function handle_req_chat(client: Client, req: IReqChat): void {
   if (!ensure_player_info(client, req)) return;
   const { target, text, type, pid } = req;
   if (!target) {
-    client.resp(type, pid, { code: ErrCode.ChatTargetEmpty, error: 'target can\'t be empty' }); return
+    client.resp(type, pid, { code: ErrCode.ChatTargetEmpty, error: `target can't be empty` }); return
   }
   if (!text) {
-    client.resp(type, pid, { code: ErrCode.ChatMsgEmpty, error: 'text can\'t be empty' });
+    client.resp(type, pid, { code: ErrCode.ChatMsgEmpty, error: `text can't be empty` });
     return
   }
   const { ctx, room } = client;
