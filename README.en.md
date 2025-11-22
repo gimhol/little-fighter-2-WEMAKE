@@ -1,5 +1,7 @@
 # Little Fighter 2: WEMAKE
 
+![title](docs/image/readme.title.png)
+
 For Chinese, see [README.md](README.md)  
 
 try it at [https://lf.gim.ink/](https://lf.gim.ink/)
@@ -8,6 +10,8 @@ gameplays, arts, and sounds are all from "Litter Fighter 2" basically, created b
 
 "LF2:Wemake" created by Gim in 2024."
 
+The original author, Marti Wong, has now launched "[Little Fighter 2 Remastered](https://lf2.net/)". Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.
+
 ## How to run
 
 this project should be able to run on a Node.js version that isn't too old. I have run this project with the following Node.js versions:
@@ -15,9 +19,13 @@ this project should be able to run on a Node.js version that isn't too old. I ha
 - v22.16.0
 - v24.10.0
 
-### 1.Installation `npm i`
+### Installation
 
-### 2.Build data `npm run build_data`
+`npm i`
+
+### Build data
+
+`npm run build_data`
 
 This step will generate lf2:wemake data based on the original lf2 data.
 
@@ -25,4 +33,6 @@ This step will generate lf2:wemake data based on the original lf2 data.
   - [ffmpeg](https://ffmpeg.org/download.html): Used for audio file format conversion
   - [magick](https://imagemagick.org/script/download.php): Used for image file format conversion
 
-### 3.Run `npm run start`
+### 3.Run 
+
+`npm run start`

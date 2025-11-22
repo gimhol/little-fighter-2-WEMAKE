@@ -1,21 +1,29 @@
 # Little Fighter 2: WEMAKE
 
+![title](docs/image/readme.title.png)
+
 For English, see [README.en.md](README.en.md)  
 
 直接开试 [https://lf.gim.ink/](https://lf.gim.ink/)
 
 玩法、美术、音效音乐来自"Litter Fighter 2", 原作：Marti Wong，Starsky Wong.
 
-## 如何运行本项目?
+原作者Marti Wong现已推出《[Little Fighter 2 Remastered](https://lf2.net/)》，请在[Steam](https://store.steampowered.com/app/3249650)购买，以支持原作者。
+
+## 如何运行
 
 不太旧的node.js应该都可以运行本项目，我曾用以下node.js运行:
 
 - v22.16.0
 - v24.10.0
 
-### 1.依赖安装 `npm i`
+### 依赖安装
 
-### 2.构建数据 `npm run build_data`
+`npm i`
+
+### 构建数据
+
+`npm run build_data`
 
 本步骤将会根据lf2原数据生成lf2:wemake的数据
 
@@ -23,4 +31,6 @@ For English, see [README.en.md](README.en.md)
   - [ffmpeg](https://ffmpeg.org/download.html): 用于音频文件转格式
   - [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
 
-### 3.运行 `npm run start`
+### 3.运行 
+
+`npm run start`
