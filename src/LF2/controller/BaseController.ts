@@ -1,7 +1,7 @@
 import type { IFrameInfo, IHitKeyCollection, LGK, TNextFrame } from "../defines";
 import { GK, StateEnum } from "../defines";
-import { is_bot_ctrl, is_local_ctrl } from "../entity";
 import type { Entity } from "../entity/Entity";
+import { is_bot_ctrl, is_local_ctrl } from "../entity/type_check";
 import { Times } from "../ui/utils/Times";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
 import DoubleClick from "./DoubleClick";
