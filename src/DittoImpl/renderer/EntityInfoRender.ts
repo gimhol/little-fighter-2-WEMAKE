@@ -145,9 +145,9 @@ export class EntityInfoRender implements IEntityCallbacks {
     this.toughness_value_bar.set(entity.toughness, entity.toughness_max);
     this.bars_node.add(this.toughness_value_bar.mesh);
 
-    for (const [k, { node, pos }] of this.key_nodes) {
-      node.name = `key ${k}`;
-      node.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
+    for (const [k, { node: sprite, pos }] of this.key_nodes) {
+      sprite.name = `key ${k}`;
+      sprite.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
       lf2.images
         .load_text(Labels[k], {
           fill_style: 'white',
@@ -163,13 +163,14 @@ export class EntityInfoRender implements IEntityCallbacks {
           },
         })
         .then((p) => {
-          node.material.map?.dispose();
-          node.material.dispose();
-          node.material = new T.SpriteMaterial({ map: p.pic?.texture })
-          node.material.needsUpdate = true;
-          node.scale.set(p.w, p.h, 0);
+          sprite.material.map?.dispose();
+          sprite.material.dispose();
+          sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
+          sprite.material.needsUpdate = true;
+          sprite.scale.x = p.w / p.scale;
+          sprite.scale.y = p.h / p.scale;
         });
-      this.ctrl_node.add(node)
+      this.ctrl_node.add(sprite)
     }
 
   }
@@ -270,9 +271,8 @@ export class EntityInfoRender implements IEntityCallbacks {
       sprite.material.needsUpdate = true;
       sprite.visible = true;
       sprite.name = "reserve sprite";
-      sprite.scale.x = p.w;
-      sprite.scale.y = p.h;
-      sprite.scale.set(p.w, p.h, 1)
+      sprite.scale.x = p.w / p.scale;
+      sprite.scale.y = p.h / p.scale;
     });
   }
   private update_name_sprite(e: Entity) {
@@ -315,8 +315,8 @@ export class EntityInfoRender implements IEntityCallbacks {
       sprite.material.dispose();
       sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
       sprite.material.needsUpdate = true;
-      sprite.scale.x = p.w;
-      sprite.scale.y = p.h;
+      sprite.scale.x = p.w / p.scale;
+      sprite.scale.y = p.h / p.scale;
       sprite.name = "name sprite";
     });
   }

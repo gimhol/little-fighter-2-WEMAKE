@@ -139,7 +139,7 @@ export class ImageMgr {
     const ret = new TextInfo().merge({
       key,
       url,
-      scale: scale,
+      scale,
       src_url: url,
       w: cvs.width,
       h: cvs.height,
