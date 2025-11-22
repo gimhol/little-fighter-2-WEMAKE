@@ -31,6 +31,6 @@ For English, see [README.en.md](README.en.md)
   - [ffmpeg](https://ffmpeg.org/download.html): 用于音频文件转格式
   - [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
 
-### 3.运行 
+### 运行
 
 `npm run start`

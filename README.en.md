@@ -33,6 +33,6 @@ This step will generate lf2:wemake data based on the original lf2 data.
   - [ffmpeg](https://ffmpeg.org/download.html): Used for audio file format conversion
   - [magick](https://imagemagick.org/script/download.php): Used for image file format conversion
 
-### 3.Run 
+### Run
 
 `npm run start`
