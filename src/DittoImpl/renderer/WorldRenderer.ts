@@ -1,9 +1,9 @@
 import { Camera, OrthographicCamera } from "../_t";
-import { BuiltIn_OID } from "../../LF2/defines";
-import type { IWorldRenderer } from "../../LF2/ditto/render/IWorldRenderer";
-import { is_character, type Entity } from "../../LF2/entity";
-import type { LF2 } from "../../LF2/LF2";
-import type { World } from "../../LF2/World";
+import { BuiltIn_OID } from "@/LF2/defines";
+import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
+import { is_character, type Entity } from "@/LF2/entity";
+import type { LF2 } from "@/LF2/LF2";
+import type { World } from "@/LF2/World";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
 import { EntityInfoRender } from "./EntityInfoRender";

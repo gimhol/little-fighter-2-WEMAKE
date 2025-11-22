@@ -1,4 +1,4 @@
-import { Callbacks } from "../../LF2/base";
+import { Callbacks } from "@/LF2/base";
 import {
   IConnError, IJob, IMsgReqMap, IMsgRespMap, IPlayerInfo, IReq, IResp,
   IRespPlayerInfo, IRoomInfo, ISendOpts, MsgEnum, req_timeout_error,

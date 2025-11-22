@@ -5,7 +5,7 @@ import Combine from "../../Component/Combine";
 import { InputNumber, InputRef } from "../../Component/Input";
 import Titled from "../../Component/Titled";
 import { __Render } from "../../DittoImpl";
-import FPS from "../../LF2/base/FPS";
+import FPS from "@/LF2/base/FPS";
 import { QuadTree } from "./QuadTree";
 const CANVAS_PADDING = 100;
 const WIDTH = 1000;

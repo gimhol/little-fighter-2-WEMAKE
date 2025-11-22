@@ -1,8 +1,8 @@
-import { get_team_shadow_color } from "../../LF2/base/get_team_shadow_color";
-import { get_team_text_color } from "../../LF2/base/get_team_text_color";
-import { GameKey, IVector3, Labels } from "../../LF2/defines";
-import { is_bot_ctrl, is_character, is_local_ctrl, type Entity, type IEntityCallbacks } from "../../LF2/entity";
-import { floor, round } from "../../LF2/utils";
+import { get_team_shadow_color } from "@/LF2/base/get_team_shadow_color";
+import { get_team_text_color } from "@/LF2/base/get_team_text_color";
+import { GameKey, IVector3, Labels } from "@/LF2/defines";
+import { is_bot_ctrl, is_character, is_local_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
 import { WorldRenderer } from "./WorldRenderer";

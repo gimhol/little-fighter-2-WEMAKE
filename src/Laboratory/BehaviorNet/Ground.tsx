@@ -1,4 +1,4 @@
-import { Ditto } from "../../LF2/ditto";
+import { Ditto } from "@/LF2/ditto";
 import { Creature } from "./Creature";
 
 export class Ground {

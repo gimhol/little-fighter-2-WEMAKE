@@ -8,7 +8,7 @@ import { InputNumber, InputNumberProps } from "../../Component/Input";
 import Select, { ISelectProps } from "../../Component/Select";
 import { TextArea } from "../../Component/TextArea";
 import Titled, { ITitledProps } from "../../Component/Titled";
-import { IZipObject } from "../../LF2/ditto";
+import { IZipObject } from "@/LF2/ditto";
 import { shared_ctx } from "../Context";
 
 type Field<O> = (keyof O) | (string | number)[];

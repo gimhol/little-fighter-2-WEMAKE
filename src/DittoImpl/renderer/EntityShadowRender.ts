@@ -1,7 +1,7 @@
 
-import { Background } from "../../LF2/bg/Background";
-import type { Entity } from "../../LF2/entity/Entity";
-import { clamp } from "../../LF2/utils";
+import { Background } from "@/LF2/bg/Background";
+import type { Entity } from "@/LF2/entity/Entity";
+import { clamp } from "@/LF2/utils";
 import * as T from "../_t";
 import { WorldRenderer } from "./WorldRenderer";
 

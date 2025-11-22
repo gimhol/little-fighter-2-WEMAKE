@@ -1,6 +1,6 @@
 import Frame, { IFrameProps } from "../../Component/Frame";
 import { Space } from "../../Component/Space";
-import { IEntityData } from "../../LF2/defines/IEntityData";
+import { IEntityData } from "@/LF2/defines/IEntityData";
 import { ENTITY_TYPE_SELECT_PROPS } from "../EntityEditorView";
 import { useEditor } from "../FrameEditorView/useEditor";
 export interface IEntityDataEditorViewProps extends IFrameProps {

@@ -1,6 +1,6 @@
 import { clamp } from "three/src/math/MathUtils";
 import { Behavior } from "../../behavior";
-import { Ditto } from "../../LF2/ditto";
+import { Ditto } from "@/LF2/ditto";
 import { Ground } from "./Ground";
 
 export class Creature {

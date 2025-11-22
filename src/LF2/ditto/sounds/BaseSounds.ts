@@ -1,6 +1,6 @@
 import Callbacks from "../../base/Callbacks";
 import { NoEmitCallbacks } from "../../base/NoEmitCallbacks";
-import type { LF2 } from "../../LF2";
+import type { LF2 } from "@/LF2";
 import ISounds from "./ISounds";
 import { ISoundsCallback } from "./ISoundsCallback";
 

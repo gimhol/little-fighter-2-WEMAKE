@@ -1,8 +1,8 @@
 
 import { IFrameProps } from "../../Component/Frame";
 import { Space } from "../../Component/Space";
-import { Defines, IEntityInfo } from "../../LF2/defines";
-import { IEntityData } from "../../LF2/defines/IEntityData";
+import { Defines, IEntityInfo } from "@/LF2/defines";
+import { IEntityData } from "@/LF2/defines/IEntityData";
 import { useEditor } from "../FrameEditorView/useEditor";
 import { WorkspaceColumnView } from "../WorkspaceColumnView";
 

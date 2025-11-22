@@ -1,9 +1,9 @@
-import type { IEntityData, IPicture, ITexturePieceInfo } from "../../LF2/defines";
-import { Builtin_FrameId, StateEnum } from "../../LF2/defines";
-import type { Entity } from "../../LF2/entity/Entity";
-import create_pictures from "../../LF2/loader/create_pictures";
+import type { IEntityData, IPicture, ITexturePieceInfo } from "@/LF2/defines";
+import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
+import type { Entity } from "@/LF2/entity/Entity";
+import create_pictures from "@/LF2/loader/create_pictures";
 import { white_texture } from "./white_texture";
-import { clamp, floor, PI } from "../../LF2/utils";
+import { clamp, floor, PI } from "@/LF2/utils";
 import * as T from "../_t";
 import type { WorldRenderer } from "./WorldRenderer";
 export const EMPTY_PIECE: ITexturePieceInfo = {

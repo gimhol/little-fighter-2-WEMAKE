@@ -8,9 +8,6 @@ import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
 import type IPicture from "../defines/IPicture";
 import { IPictureInfo } from "../defines/IPictureInfo";
 import type IStyle from "../defines/IStyle";
-import { MagnificationTextureFilter } from "../defines/MagnificationTextureFilter";
-import { MinificationTextureFilter } from "../defines/MinificationTextureFilter";
-import { TextureWrapping } from "../defines/TextureWrapping";
 import { Ditto } from "../ditto";
 import { get_alpha_from_color } from "../ui/utils/get_alpha_from_color";
 import { is_positive_int, max, round } from "../utils";
@@ -20,6 +17,7 @@ import { ImageOperation_Crop } from "./ImageOperation_Crop";
 import { TextImageInfo } from "./TextImageInfo";
 import { validate_ui_img_operation_crop } from "./validate_ui_img_operation_crop";
 import { error_texture } from "../../DittoImpl/renderer/error_texture";
+import { create_picture } from "../../DittoImpl/renderer/create_picture";
 
 export type TPicture = IPicture<T.Texture>;
 export class ImageMgr {
@@ -212,7 +210,7 @@ export class ImageMgr {
 
   create_pic_by_img_info(img_info: IImageInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
     const picture = err_pic_info(img_info.key);
-    const ret = _create_pic(img_info, picture, onLoad, void 0, onError);
+    const ret = create_picture(img_info, picture, onLoad, void 0, onError);
     return ret;
   }
 
@@ -236,7 +234,7 @@ export class ImageMgr {
     const img_info = this.find_by_pic_info(e_pic_info);
     const picture = err_pic_info();
     if (!img_info) return picture;
-    return _create_pic(img_info, picture, onLoad, void 0, onError);
+    return create_picture(img_info, picture, onLoad, void 0, onError);
   }
   p_create_pic_by_e_pic_info(e_pic_info: ILegacyPictureInfo): Promise<TPicture> {
     return new Promise((a, b) => this.create_pic_by_e_pic_info(e_pic_info, a, b))
@@ -326,35 +324,7 @@ function draw_underline(style: IStyle, ctx: CanvasRenderingContext2D, lines: ITe
 
 }
 
-function _create_pic(
-  img_info: IImageInfo,
-  pic_info: TPicture = err_pic_info(img_info.key),
-  onLoad?: (data: TPicture) => void,
-  onProgress?: (event: ProgressEvent) => void,
-  onError?: (err: unknown) => void
-): TPicture {
-  const {
-    url, w, h,
-    min_filter = MinificationTextureFilter.Nearest,
-    mag_filter = MagnificationTextureFilter.Nearest,
-    wrap_s = TextureWrapping.MirroredRepeat,
-    wrap_t = TextureWrapping.MirroredRepeat,
-    scale
-  } = img_info;
-  const texture = texture_loader.load(url, onLoad ? () => onLoad(pic_info) : void 0, onProgress, onError);
-  texture.colorSpace = T.SRGBColorSpace;
-  texture.minFilter = min_filter;
-  texture.magFilter = mag_filter;
-  texture.wrapS = wrap_s;
-  texture.wrapT = wrap_t;
-  texture.userData = img_info;
-  pic_info.w = w / scale;
-  pic_info.h = h / scale;
-  pic_info.texture = texture;
-  return pic_info;
-}
-
-function err_pic_info(id: string = ""): TPicture {
+export function err_pic_info(id: string = ""): TPicture {
   return {
     id,
     w: 0,

@@ -1,5 +1,5 @@
-import type Layer from "../../LF2/bg/Layer";
-import type { TPicture } from "../../LF2/loader/ImageMgr";
+import type Layer from "@/LF2/bg/Layer";
+import type { TPicture } from "@/LF2/loader/ImageMgr";
 import * as T from "../_t";
 
 const pic_map = new Map<string, TPicture>()

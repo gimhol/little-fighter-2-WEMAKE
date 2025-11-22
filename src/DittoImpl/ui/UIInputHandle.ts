@@ -1,9 +1,9 @@
 import * as T from "../_t";
-import type { IPointingEvent } from "../../LF2/ditto/pointings";
-import { IUIInputHandle } from "../../LF2/ditto/ui/IEventHandle";
-import type { LF2 } from "../../LF2/LF2";
-import { LF2PointerEvent } from "../../LF2/ui/LF2PointerEvent";
-import { UINode } from "../../LF2/ui/UINode";
+import type { IPointingEvent } from "@/LF2/ditto/pointings";
+import { IUIInputHandle } from "@/LF2/ditto/ui/IEventHandle";
+import type { LF2 } from "@/LF2/LF2";
+import { LF2PointerEvent } from "@/LF2/ui/LF2PointerEvent";
+import { UINode } from "@/LF2/ui/UINode";
 import { UINodeRenderer } from "../renderer/UINodeRenderer";
 import { WorldRenderer } from "../renderer/WorldRenderer";
 interface IIntersection {

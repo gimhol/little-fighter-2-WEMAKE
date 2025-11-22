@@ -1,6 +1,6 @@
 import Combine from "../../Component/Combine";
 import { InputNumber, InputNumberProps } from "../../Component/Input";
-import { IRect } from "../../LF2/defines/IRect";
+import { IRect } from "@/LF2/defines/IRect";
 import { make_field_props } from "./make_field_props";
 
 export interface IRectEditProps {

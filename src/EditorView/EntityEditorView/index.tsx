@@ -1,8 +1,8 @@
 import { IBaseSelectProps } from "../../Component/Select";
-import { HitFlag, hit_flag_desc_map, ItrEffect, ItrEffectDescriptions, ItrKind, ItrKindDescriptions as ItrKindDescriptions, StateEnum } from "../../LF2/defines";
-import { BdyKind, BdyKindDescriptions } from "../../LF2/defines/BdyKind";
-import { EntityEnum } from "../../LF2/defines/EntityEnum";
-import { SpeedMode } from "../../LF2/defines/SpeedMode";
+import { HitFlag, hit_flag_desc_map, ItrEffect, ItrEffectDescriptions, ItrKind, ItrKindDescriptions as ItrKindDescriptions, StateEnum } from "@/LF2/defines";
+import { BdyKind, BdyKindDescriptions } from "@/LF2/defines/BdyKind";
+import { EntityEnum } from "@/LF2/defines/EntityEnum";
+import { SpeedMode } from "@/LF2/defines/SpeedMode";
 import './style.scss';
 function make_num_enum_select_props<T extends number = number>(enum_obj: any, value_title_map?: any): IBaseSelectProps<string, T> {
   return ({

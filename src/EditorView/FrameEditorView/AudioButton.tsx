@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Button, IButtonProps } from "../../Component/Buttons/Button";
-import { IZip } from "../../LF2/ditto/zip/IZip";
+import { IZip } from "@/LF2/ditto/zip/IZip";
 export interface IAudioButtonProps extends IButtonProps {
   zip?: IZip;
   path?: string;

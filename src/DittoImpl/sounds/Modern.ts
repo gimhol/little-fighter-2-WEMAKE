@@ -1,11 +1,11 @@
 import axios from "axios";
-import AsyncValuesKeeper from "../../LF2/base/AsyncValuesKeeper";
-import { Defines } from "../../LF2/defines/defines";
-import BaseSounds from "../../LF2/ditto/sounds/BaseSounds";
-import { clamp } from "../../LF2/utils/math/clamp";
-import float_equal from "../../LF2/utils/math/float_equal";
-import { Randoming } from "../../LF2/helper/Randoming";
-import { LF2 } from "../../LF2/LF2";
+import AsyncValuesKeeper from "@/LF2/base/AsyncValuesKeeper";
+import { Defines } from "@/LF2/defines/defines";
+import BaseSounds from "@/LF2/ditto/sounds/BaseSounds";
+import { clamp } from "@/LF2/utils/math/clamp";
+import float_equal from "@/LF2/utils/math/float_equal";
+import { Randoming } from "@/LF2/helper/Randoming";
+import { LF2 } from "@/LF2/LF2";
 
 export class __Modern extends BaseSounds {
   readonly ctx = new AudioContext();

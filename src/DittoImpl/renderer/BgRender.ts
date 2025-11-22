@@ -1,6 +1,6 @@
-import type { Background } from "../../LF2/bg/Background";
-import { Defines } from "../../LF2/defines";
-import type { World } from "../../LF2/World";
+import type { Background } from "@/LF2/bg/Background";
+import { Defines } from "@/LF2/defines";
+import type { World } from "@/LF2/World";
 import * as T from "../_t";
 import { BgLayerRender } from "./BgLayerRender";
 import { WorldRenderer } from "./WorldRenderer";

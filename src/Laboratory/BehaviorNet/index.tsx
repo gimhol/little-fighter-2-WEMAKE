@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { __Render } from "../../DittoImpl";
-import FPS from "../../LF2/base/FPS";
+import FPS from "@/LF2/base/FPS";
 import { Behavior } from "../../behavior";
 import { Cat } from "./Cat";
 import { Creature } from "./Creature";

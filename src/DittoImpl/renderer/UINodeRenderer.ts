@@ -1,14 +1,14 @@
 import * as T from "../_t";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
-import type { IUINodeRenderer } from "../../LF2/ditto/render/IUINodeRenderer";
-import { IImageInfo } from "../../LF2/loader/IImageInfo";
+import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
+import { IImageInfo } from "@/LF2/loader/IImageInfo";
 import { white_texture } from "./white_texture";
 import { empty_texture } from "./empty_texture";
-import { TextInput } from "../../LF2/ui/component/TextInput";
-import { IUIImgInfo } from "../../LF2/ui/IUIImgInfo.dat";
-import type { UINode } from "../../LF2/ui/UINode";
-import { get_alpha_from_color } from "../../LF2/ui/utils/get_alpha_from_color";
-import { is_num, is_str } from "../../LF2/utils";
+import { TextInput } from "@/LF2/ui/component/TextInput";
+import { IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
+import type { UINode } from "@/LF2/ui/UINode";
+import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
+import { is_num, is_str } from "@/LF2/utils";
 import styles from "./ui_node_style.module.scss";
 import type { WorldRenderer } from "./WorldRenderer";
 export interface ISpriteInfo {
