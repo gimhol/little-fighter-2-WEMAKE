@@ -1,5 +1,5 @@
 import { Ditto } from "@/LF2/ditto";
-import BaseSounds from "@/LF2/ditto/sounds/BaseSounds";
+import { BaseSounds } from "@/LF2/ditto/sounds/BaseSounds";
 import { clamp } from "@/LF2/utils/math/clamp";
 import float_equal from "@/LF2/utils/math/float_equal";
 

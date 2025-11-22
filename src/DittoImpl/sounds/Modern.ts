@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncValuesKeeper from "@/LF2/base/AsyncValuesKeeper";
 import { Defines } from "@/LF2/defines/defines";
-import BaseSounds from "@/LF2/ditto/sounds/BaseSounds";
+import { BaseSounds } from "@/LF2/ditto/sounds/BaseSounds";
 import { clamp } from "@/LF2/utils/math/clamp";
 import float_equal from "@/LF2/utils/math/float_equal";
 import { Randoming } from "@/LF2/helper/Randoming";

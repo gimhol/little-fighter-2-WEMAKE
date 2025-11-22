@@ -1,5 +1,5 @@
-import { NoEmitCallbacks } from "../../base/NoEmitCallbacks";
-import { IFullScreenCallback } from "./IFullScreenCallback";
+import type { NoEmitCallbacks } from "../../base/NoEmitCallbacks";
+import type { IFullScreenCallback } from "./IFullScreenCallback";
 
 export interface IFullScreen<T extends any = any> {
   get callbacks(): NoEmitCallbacks<IFullScreenCallback<T>>;

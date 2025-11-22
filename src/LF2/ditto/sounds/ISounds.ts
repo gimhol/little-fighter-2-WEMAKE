@@ -6,56 +6,56 @@ export interface ISounds {
   get callbacks(): NoEmitCallbacks<ISoundsCallback>;
 
   /**
-   * 音量
+   * 获取背景音乐的音量
    *
    * @returns {number} [0,1]
    */
   bgm_volume(): number;
 
   /**
-   * 设置
+   * 设置背景音乐的音量
    *
    * @param {number} v [0,1]
    */
   set_bgm_volume(v: number): void;
 
   /**
-   * 音量
+   * 获取音效的音量
    *
    * @returns {number} [0,1]
    */
   sound_volume(): number;
 
   /**
-   * 设置
+   * 设置音效的音量
    *
    * @param {number} v [0,1]
    */
   set_sound_volume(v: number): void;
 
   /**
-   * 是否禁音
+   * 背景音乐是否禁音
    *
    * @returns {boolean}
    */
   bgm_muted(): boolean;
 
   /**
-   * 设置是否禁音
+   * 设置背景音乐是否禁音
    *
    * @param {boolean} v
    */
   set_bgm_muted(v: boolean): void;
 
   /**
-   * 是否禁音
+   * 音效是否禁音
    *
    * @returns {boolean}
    */
   sound_muted(): boolean;
 
   /**
-   * 设置是否禁音
+   * 设置音效是否禁音
    *
    * @param {boolean} v
    */
@@ -173,4 +173,3 @@ export interface ISounds {
   ): void;
   play_preset(t: string, x?: number, y?: number, z?: number): void;
 }
-export default ISounds;

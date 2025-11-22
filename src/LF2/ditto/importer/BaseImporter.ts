@@ -1,4 +1,4 @@
-import { BlobUrl, HitUrl, IImporter } from "./IImporter";
+import type { BlobUrl, HitUrl, IImporter } from "./IImporter";
 
 export class BaseImporter implements IImporter {
   async import_as_array_buffer(paths: string[]): Promise<[ArrayBuffer, string]> {

@@ -1,10 +1,10 @@
 import Callbacks from "../../base/Callbacks";
-import { NoEmitCallbacks } from "../../base/NoEmitCallbacks";
-import type { LF2 } from "@/LF2";
-import ISounds from "./ISounds";
-import { ISoundsCallback } from "./ISoundsCallback";
+import type { NoEmitCallbacks } from "../../base/NoEmitCallbacks";
+import type { LF2 } from "../../LF2";
+import type { ISounds } from "./ISounds";
+import type { ISoundsCallback } from "./ISoundsCallback";
 
-export default class BaseSounds implements ISounds {
+export class BaseSounds implements ISounds {
   readonly lf2: LF2;
   constructor(lf2: LF2) {
     this.lf2 = lf2;

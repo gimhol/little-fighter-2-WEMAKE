@@ -1,4 +1,9 @@
+/** BlobUrl */
 export type BlobUrl = string;
+/** 
+ * 命中URL 
+ * 能加载成功的数据的URL称为命中URL
+ */
 export type HitUrl = string;
 export interface IImporter {
   /**
@@ -14,5 +19,5 @@ export interface IImporter {
   import_as_json<T = any>(urls: string[]): Promise<[T, HitUrl]>;
   import_as_blob(urls: string[]): Promise<[Blob, HitUrl]>;
   import_as_blob_url(urls: string[]): Promise<[BlobUrl, HitUrl]>;
-  import_as_array_buffer(paths: string[]): Promise<[ArrayBuffer, string]>;
+  import_as_array_buffer(urls: string[]): Promise<[ArrayBuffer, HitUrl]>;
 }

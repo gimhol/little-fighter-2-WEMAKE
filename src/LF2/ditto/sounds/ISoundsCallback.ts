@@ -1,4 +1,4 @@
-import ISounds from "./ISounds";
+import { ISounds } from "./ISounds";
 
 export interface ISoundsCallback {
   on_muted_changed?(muted: boolean, mgr: ISounds): void;
@@ -9,5 +9,5 @@ export interface ISoundsCallback {
   on_bgm_volume_changed?(volume: number, prev: number, mgr: ISounds): void;
   on_sound_volume_changed?(volume: number, prev: number, mgr: ISounds): void;
   on_bgm_ended?(bgm: string | null, mgr: ISounds): void;
-  
+
 }

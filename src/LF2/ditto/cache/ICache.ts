@@ -1,4 +1,4 @@
-import { ICacheData } from "./ICacheData";
+import type { ICacheData } from "./ICacheData";
 
 export interface ICache {
   get(name: string): Promise<ICacheData | undefined>;
