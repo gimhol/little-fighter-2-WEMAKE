@@ -1,22 +1,17 @@
-import * as T from "../_t";
-import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
-import { IImageInfo } from "@/LF2/loader/IImageInfo";
-import { white_texture } from "./white_texture";
-import { empty_texture } from "./empty_texture";
+import { ImageInfo } from "@/LF2/loader/ImageInfo";
 import { TextInput } from "@/LF2/ui/component/TextInput";
 import { IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
 import { is_num, is_str } from "@/LF2/utils";
+import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
+import * as T from "../_t";
+import { empty_texture } from "./empty_texture";
 import styles from "./ui_node_style.module.scss";
+import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
-export interface ISpriteInfo {
-  w: number;
-  h: number;
-  texture?: any;
-  color?: string;
-}
+
 export class UINodeRenderer implements IUINodeRenderer {
   sprite: T.Mesh<T.PlaneGeometry, T.MeshBasicMaterial>;
   ui: UINode;
@@ -25,7 +20,6 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
   protected _geo: T.PlaneGeometry = new T.PlaneGeometry();
-  protected _info: ISpriteInfo = { w: 0, h: 0 };
   protected _rgba: [number, number, number, number] = [255, 255, 255, 1];
   protected _texture: T.Texture = empty_texture();
 
@@ -154,38 +148,23 @@ export class UINodeRenderer implements IUINodeRenderer {
       !this.ui.size.dirty &&
       !this.ui.color.dirty
     ) return;
-    const img =
+    const img: ImageInfo | undefined =
       this.ui.imgs.value[this.ui.img_idx.value] ||
       this.ui.txts.value[this.ui.txt_idx.value];
 
-    this._ui_img = this.ui.data.img[this.ui.img_idx.value]
-    this.create_sprite_info(img).then(p => {
-      this.set_info(p)
-      this.apply()
-    });
-  }
-
-  set_info(info: ISpriteInfo): this {
-    this._info = info;
-    const a = get_alpha_from_color(info.color) || 1
-    const { r, g, b } = new T.Color(info.color);
-    this._rgba = [Math.ceil(r * 255), Math.ceil(g * 255), Math.ceil(b * 255), a];
-    this._texture = info.texture || empty_texture();
-    return this;
-  }
-
-  async create_sprite_info(img: IImageInfo | undefined): Promise<ISpriteInfo> {
+    this._ui_img = this.ui.data.img[this.ui.img_idx.value];
     const [w, h] = this.ui.size.value;
-    const color = this.ui.color.value
-    const texture = img ? await this.create_texture(img) : color ? white_texture() : empty_texture();
-    const p: ISpriteInfo = { w, h, texture, color: color };
-    return p;
+    const color = this.ui.color.value;
+
+    if (img && !img.pic?.texture) debugger;
+
+    const texture: T.Texture = img ? img.pic?.texture : color ? white_texture() : empty_texture();
+    const a = get_alpha_from_color(color) || 1
+    const { r, g, b } = new T.Color(color);
+    this._rgba = [Math.ceil(r * 255), Math.ceil(g * 255), Math.ceil(b * 255), a];
+    this._texture = texture;
   }
 
-  protected async create_texture(img: IImageInfo): Promise<T.Texture> {
-    const { texture } = await this.lf2.images.create_pic_by_img_info(img);
-    return texture;
-  }
 
   get x(): number { return this.sprite.position.x }
   set x(v: number) { this.sprite.position.x = v; }

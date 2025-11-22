@@ -30,7 +30,7 @@ export class ImageMgr {
     this.lf2 = lf2;
   }
 
-  async create_img_info(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo> {
+  private async create_img_info(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo> {
     const disposable = src.startsWith('?');
     if (disposable) src = src.substring(1)
 
@@ -90,7 +90,7 @@ export class ImageMgr {
     return ret;
   }
 
-  async create_txt_info(key: string, text: string, style: IStyle = {}): Promise<TextInfo> {
+  private async create_txt_info(key: string, text: string, style: IStyle = {}): Promise<TextInfo> {
     const cvs = document.createElement("canvas");
     const ctx = cvs.getContext("2d");
     if (!ctx) throw new Error("can not get context from canvas");

@@ -1,5 +1,5 @@
-import type { IImageInfo } from "../loader/IImageInfo";
-import { ITextInfo } from "../loader/ITextInfo";
+import { ImageInfo } from "../loader/ImageInfo";
+import { TextInfo } from "../loader/TextInfo";
 import { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo } from "./IUIInfo.dat";
 import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
@@ -12,8 +12,8 @@ export interface ICookedUIInfo extends IUIInfo {
   center: [number, number, number];
   parent?: ICookedUIInfo;
   items?: ICookedUIInfo[];
-  img_infos: IImageInfo[];
-  txt_infos: ITextInfo[];
+  img_infos: ImageInfo[];
+  txt_infos: TextInfo[];
   size: [number, number];
   enabled: boolean;
   img: IUIImgInfo[];

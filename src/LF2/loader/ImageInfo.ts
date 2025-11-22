@@ -16,6 +16,8 @@ export class ImageInfo implements IImageInfo {
   wrap_s?: TextureWrapping;
   wrap_t?: TextureWrapping;
   pic?: IPicture;
+  flip_x?: boolean;
+  flip_y?: boolean;
   constructor(o?: Partial<IImageInfo>) {
     if (o) Object.assign(this, o)
   }
