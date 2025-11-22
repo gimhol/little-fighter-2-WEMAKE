@@ -1,5 +1,5 @@
 import { get_team_text_color } from "../../base/get_team_text_color";
-import IStyle from "../../defines/IStyle";
+import { IStyle } from "../../defines/IStyle";
 import { TeamEnum } from "../../defines/TeamEnum";
 import { Stage } from "../../stage";
 import { floor, max } from "../../utils";

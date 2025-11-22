@@ -1,4 +1,4 @@
-import IStyle from "../../defines/IStyle";
+import { IStyle } from "../../defines/IStyle";
 import { UITextLoader } from "../UITextLoader";
 import PlayerScore from "./PlayerScore";
 import { UIComponent } from "./UIComponent";

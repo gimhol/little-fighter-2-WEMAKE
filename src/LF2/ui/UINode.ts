@@ -4,12 +4,12 @@ import { Expression } from "../base/Expression";
 import { NoEmitCallbacks } from "../base/NoEmitCallbacks";
 import StateDelegate from "../base/StateDelegate";
 import { IValGetter } from "../defines/IExpression";
-import IStyle from "../defines/IStyle";
+import { IStyle } from "../defines/IStyle";
 import { Ditto } from "../ditto";
 import { IUINodeRenderer } from "../ditto/render/IUINodeRenderer";
 import { IDebugging, make_debugging } from "../entity/make_debugging";
 import { type IImageInfo } from "../loader/IImageInfo";
-import { ITextImageInfo } from "../loader/ITextImageInfo";
+import { ITextInfo } from "../loader/ITextInfo";
 import { floor } from "../utils";
 import { filter, find } from "../utils/container_help";
 import { is_bool, is_num, is_str } from "../utils/type_check";
@@ -68,7 +68,7 @@ export class UINode implements IDebugging {
 
   readonly pos: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.pos);
   readonly scale: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.scale);
-  readonly txts: StateDelegate<ITextImageInfo[]> = new StateDelegate(() => this.data.txt_infos);
+  readonly txts: StateDelegate<ITextInfo[]> = new StateDelegate(() => this.data.txt_infos);
   readonly imgs: StateDelegate<IImageInfo[]> = new StateDelegate(() => this.data.img_infos);
   readonly size: StateDelegate<[number, number]> = new StateDelegate(() => this.data.size);
   readonly center: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.center);

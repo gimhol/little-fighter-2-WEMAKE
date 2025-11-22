@@ -41,18 +41,30 @@ export class EntityShadowRender {
     this.mesh.removeFromParent();
   }
 
+  protected _shadow_w: number = 0;
+  protected _shadow_h: number = 0;
+  protected _shadow_img: string = '';
+
   render() {
-    const { bg } = this.world
-    if (bg != this.bg) {
-      this.bg = this.entity.world.bg;
-      const pic = this.lf2.images.create_pic_by_img_key(bg.data.base.shadow);
-      const [sw, sh] = bg.data.base.shadowsize || [30, 30];
+    const { bg } = this.world;
+
+    const [sw, sh] = bg.data.base.shadowsize || [30, 30];
+    if (sw !== this._shadow_w || sh !== this._shadow_h) {
+      this._shadow_h = sh;
+      this._shadow_w = sw;
       this.mesh.geometry = new T.PlaneGeometry(sw, sh);
-      this.material.map = pic.texture;
-      this.material.opacity = 1;
-      this.material.needsUpdate = true;
     }
 
+    const { shadow } = bg.data.base;
+    if (shadow !== this._shadow_img) {
+      this._shadow_img = shadow;
+      this.lf2.images.p_create_pic_by_img_key(shadow).then(pic => {
+        this.material.map = pic.texture;
+        this.material.map.needsUpdate = true
+        this.material.opacity = 1;
+        this.material.needsUpdate = true;
+      })
+    }
 
     const {
       frame,

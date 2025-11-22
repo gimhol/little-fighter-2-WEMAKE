@@ -7,14 +7,14 @@ import AsyncValuesKeeper from "../base/AsyncValuesKeeper";
 import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
 import type IPicture from "../defines/IPicture";
 import { IPictureInfo } from "../defines/IPictureInfo";
-import type IStyle from "../defines/IStyle";
+import type { IStyle } from "../defines/IStyle";
 import { Ditto } from "../ditto";
 import { get_alpha_from_color } from "../ui/utils/get_alpha_from_color";
 import { is_positive_int, max, round } from "../utils";
 import { IImageInfo } from "./IImageInfo";
 import { ImageInfo } from "./ImageInfo";
 import { ImageOperation_Crop } from "./ImageOperation_Crop";
-import { TextImageInfo } from "./TextImageInfo";
+import { TextInfo } from "./TextInfo";
 import { validate_ui_img_operation_crop } from "./validate_ui_img_operation_crop";
 import { error_texture } from "../../DittoImpl/renderer/error_texture";
 import { create_picture } from "../../DittoImpl/renderer/create_picture";
@@ -87,11 +87,7 @@ export class ImageMgr {
     return ret;
   }
 
-  async create_img_info_by_text(
-    key: string,
-    text: string,
-    style: IStyle = {},
-  ): Promise<TextImageInfo> {
+  async create_txt_info(key: string, text: string, style: IStyle = {}): Promise<TextInfo> {
     const cvs = document.createElement("canvas");
     const ctx = cvs.getContext("2d");
     if (!ctx) throw new Error("can not get context from canvas");
@@ -137,7 +133,7 @@ export class ImageMgr {
       throw err
     });
     const url = URL.createObjectURL(blob);
-    const ret = new TextImageInfo().merge({
+    const ret = new TextInfo().merge({
       key,
       url,
       scale: scale,
@@ -170,10 +166,10 @@ export class ImageMgr {
     return this.infos.get(this._gen_key(f));
   }
 
-  load_text(text: string, style: IStyle = {}): Promise<TextImageInfo> {
+  load_text(text: string, style: IStyle = {}): Promise<TextInfo> {
     const key = Ditto.MD5(text, JSON.stringify(style));
-    const fn = () => this.create_img_info_by_text(key, text, style);
-    return this.infos.fetch(key, fn) as Promise<TextImageInfo>;
+    const fn = () => this.create_txt_info(key, text, style);
+    return this.infos.fetch(key, fn) as Promise<TextInfo>;
   }
 
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo> {
@@ -185,7 +181,7 @@ export class ImageMgr {
     return this.infos.fetch(key, fn);
   }
 
-  remove_img(key: string) {
+  remove(key: string) {
     const img = this.infos.del(key);
     if (!img) return;
     if (img.url.startsWith("blob:")) URL.revokeObjectURL(img.url);
@@ -215,7 +211,10 @@ export class ImageMgr {
   }
 
   p_create_pic_by_img_info(img_info: IImageInfo): Promise<TPicture> {
-    return new Promise((a, b) => this.create_pic_by_img_info(img_info, a, b))
+    return new Promise((a, b) => {
+      const picture = err_pic_info(img_info.key);
+      create_picture(img_info, picture, a, void 0, b);
+    })
   }
 
   create_pic_by_img_key(img_key: string, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
@@ -274,6 +273,7 @@ export class ImageMgr {
     }
   }
 }
+
 interface ITextLineInfo {
   x: number;
   y: number;

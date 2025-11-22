@@ -1,4 +1,4 @@
-import IStyle from "../defines/IStyle";
+import { IStyle } from "../defines/IStyle";
 
 
 export interface IUITxtInfo {

@@ -10,7 +10,7 @@ type CanvasTextAlign = "left" | "right" | "center" | "end" | "start";
 type CanvasTextBaseline = string;
 type CanvasTextRendering = string;
 
-export default interface IStyle {
+export interface IStyle {
   padding_t?: number;
   padding_b?: number;
   padding_l?: number;

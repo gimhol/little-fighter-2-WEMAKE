@@ -12,7 +12,12 @@ export function create_picture(
   onProgress?: (event: ProgressEvent) => void,
   onError?: (err: unknown) => void): TPicture {
   const {
-    url, w, h, min_filter = MinificationTextureFilter.Nearest, mag_filter = MagnificationTextureFilter.Nearest, wrap_s = TextureWrapping.MirroredRepeat, wrap_t = TextureWrapping.MirroredRepeat, scale
+    url, w, h,
+    min_filter = MinificationTextureFilter.Nearest,
+    mag_filter = MagnificationTextureFilter.Nearest,
+    wrap_s = TextureWrapping.MirroredRepeat,
+    wrap_t = TextureWrapping.MirroredRepeat, 
+    scale
   } = img_info;
   const texture = texture_loader.load(url, onLoad ? () => onLoad(pic_info) : void 0, onProgress, onError);
   texture.colorSpace = T.SRGBColorSpace;

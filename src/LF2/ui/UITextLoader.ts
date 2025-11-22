@@ -1,5 +1,5 @@
-import IStyle from "../defines/IStyle";
-import type { TextImageInfo } from "../loader/TextImageInfo";
+import { IStyle } from "../defines/IStyle";
+import type { TextInfo } from "../loader/TextInfo";
 import type { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 import { UINode } from "./UINode";
 import { Times } from "./utils/Times";
@@ -17,7 +17,7 @@ export class UITextLoader {
     const job = node.lf2.images.load_text(value, info.style);
     return job;
   }
-  private _out_of_date(textures?: TextImageInfo[]) {
+  private _out_of_date(textures?: TextInfo[]) {
     return Object.assign(new Error('out_of_date'), {
       __is_out_of_date_error: true,
       textures
@@ -31,11 +31,11 @@ export class UITextLoader {
     this._jid.max = this._jid.min = this._jid.value = 0;
     return this;
   }
-  set_text(txts: string[], idx: number | undefined = 0): Promise<TextImageInfo[]> {
+  set_text(txts: string[], idx: number | undefined = 0): Promise<TextInfo[]> {
     const _txts = txts.map(i18n => ({ i18n, style: this._style() }))
     return this.load(_txts, idx)
   }
-  load(txts: ICookedUITxtInfo[], idx: number | undefined = 0): Promise<TextImageInfo[]> {
+  load(txts: ICookedUITxtInfo[], idx: number | undefined = 0): Promise<TextInfo[]> {
     this._jid.add();
     const jid = this._jid.value;
     const node = this.node()
