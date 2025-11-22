@@ -1,5 +1,4 @@
 import "current-device";
-import * as THREE from "three";
 import * as dom from "./DittoImpl";
 import { UINodeRenderer } from "./DittoImpl/renderer/UINodeRenderer";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
@@ -18,8 +17,8 @@ Ditto.setup({
   Zip: dom.__Zip,
   MD5: dom.__MD5,
   Importer: new dom.__Importer(),
-  Vector3: THREE.Vector3,
-  Vector2: THREE.Vector2,
+  Vector3: dom.Vector3,
+  Vector2: dom.Vector2,
   WorldRender: WorldRenderer,
   UINodeRenderer: UINodeRenderer,
   warn: Warn.print,

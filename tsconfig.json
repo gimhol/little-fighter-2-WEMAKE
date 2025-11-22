@@ -31,9 +31,14 @@
     //     "name": "typescript-plugin-css-modules"
     //   }
     // ]
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
   },
   "include": [
     "src",
     "tool/src/common/lf2_type/defines.ts"
-  ]
+  ],
 }

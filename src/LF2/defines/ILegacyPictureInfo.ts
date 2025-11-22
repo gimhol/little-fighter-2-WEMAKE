@@ -9,10 +9,6 @@ import type { IPictureInfo } from "./IPictureInfo";
  * @interface ILegacyPictureInfo
  */
 export interface ILegacyPictureInfo extends IPictureInfo {
-  id: string;
-
-  path: string;
-
   /**
    * 行数
    *
@@ -40,6 +36,4 @@ export interface ILegacyPictureInfo extends IPictureInfo {
    * @type {number}
    */
   cell_h: number;
-
-  variants?: string[];
 }

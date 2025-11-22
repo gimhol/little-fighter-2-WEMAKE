@@ -1,9 +1,9 @@
-import * as T from "three";
-import * as THREE from "three";
+import * as T from "../_t";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import type { IUINodeRenderer } from "../../LF2/ditto/render/IUINodeRenderer";
 import { IImageInfo } from "../../LF2/loader/IImageInfo";
-import { empty_texture, white_texture } from "../../LF2/loader/ImageMgr";
+import { white_texture } from "./white_texture";
+import { empty_texture } from "./empty_texture";
 import { TextInput } from "../../LF2/ui/component/TextInput";
 import { IUIImgInfo } from "../../LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "../../LF2/ui/UINode";
@@ -18,16 +18,16 @@ export interface ISpriteInfo {
   color?: string;
 }
 export class UINodeRenderer implements IUINodeRenderer {
-  sprite: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  sprite: T.Mesh<T.PlaneGeometry, T.MeshBasicMaterial>;
   ui: UINode;
 
   protected _css_obj: CSS2DObject | undefined;
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
-  protected _geo: THREE.PlaneGeometry = new THREE.PlaneGeometry();
+  protected _geo: T.PlaneGeometry = new T.PlaneGeometry();
   protected _info: ISpriteInfo = { w: 0, h: 0 };
   protected _rgba: [number, number, number, number] = [255, 255, 255, 1];
-  protected _texture: THREE.Texture = empty_texture();
+  protected _texture: T.Texture = empty_texture();
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -136,7 +136,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     }
     const { r, g, b } = sp.material.userData;
     if (r !== _r || g !== _g || b !== _b) {
-      sp.material.color = new THREE.Color(_r / 255, _g / 255, _b / 255);
+      sp.material.color = new T.Color(_r / 255, _g / 255, _b / 255);
       sp.material.userData.r = _r;
       sp.material.userData.g = _g;
       sp.material.userData.b = _b;
@@ -170,7 +170,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   set_info(info: ISpriteInfo): this {
     this._info = info;
     const a = get_alpha_from_color(info.color) || 1
-    const { r, g, b } = new THREE.Color(info.color);
+    const { r, g, b } = new T.Color(info.color);
     this._rgba = [Math.ceil(r * 255), Math.ceil(g * 255), Math.ceil(b * 255), a];
     this._texture = info.texture || empty_texture();
     return this;
@@ -184,7 +184,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     return p;
   }
 
-  protected async create_texture(img: IImageInfo): Promise<THREE.Texture> {
+  protected async create_texture(img: IImageInfo): Promise<T.Texture> {
     const flip_x = this.ui.flip_x.value;
     const flip_y = this.ui.flip_y.value;
     const { texture } = await this.lf2.images.p_create_pic_by_img_info(img);
@@ -209,7 +209,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected w: number = 0;
   protected h: number = 0;
 
-  protected next_geometry(): THREE.PlaneGeometry {
+  protected next_geometry(): T.PlaneGeometry {
     const { w, h, _c_x, _c_y, _c_z } = this;
     const { w: _w, h: _h, c_x, c_y, c_z } = this._geo.userData;
 
@@ -220,7 +220,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     const tran_x = Math.round(w * (0.5 - _c_x));
     const tran_y = Math.round(h * (_c_y - 0.5));
     const tran_z = Math.round(_c_z);
-    const ret = new THREE.PlaneGeometry(w, h).translate(tran_x, tran_y, tran_z);
+    const ret = new T.PlaneGeometry(w, h).translate(tran_x, tran_y, tran_z);
     ret.userData.w = w;
     ret.userData.h = h;
     ret.userData.c_x = _c_x;

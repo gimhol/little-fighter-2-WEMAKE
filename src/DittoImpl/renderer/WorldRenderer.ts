@@ -1,4 +1,4 @@
-import { Camera, OrthographicCamera } from "three";
+import { Camera, OrthographicCamera } from "../_t";
 import { BuiltIn_OID } from "../../LF2/defines";
 import type { IWorldRenderer } from "../../LF2/ditto/render/IWorldRenderer";
 import { is_character, type Entity } from "../../LF2/entity";

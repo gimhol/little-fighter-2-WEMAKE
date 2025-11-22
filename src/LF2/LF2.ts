@@ -432,7 +432,6 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     this.world.dispose();
     this.datas.dispose();
     this.sounds.dispose();
-    this.images.dispose();
     this.keyboard.dispose();
     this.pointings.dispose();
 

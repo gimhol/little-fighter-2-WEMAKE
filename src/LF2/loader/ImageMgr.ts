@@ -1,5 +1,5 @@
 import { ISize } from "splittings/dist/es/splittings";
-import * as THREE from "three";
+import * as T from "three";
 import { create_img_ele } from "../../Utils/create_img_ele";
 import { get_blob } from "../../Utils/get_blob";
 import type { LF2 } from "../LF2";
@@ -19,9 +19,9 @@ import { ImageInfo } from "./ImageInfo";
 import { ImageOperation_Crop } from "./ImageOperation_Crop";
 import { TextImageInfo } from "./TextImageInfo";
 import { validate_ui_img_operation_crop } from "./validate_ui_img_operation_crop";
+import { error_texture } from "../../DittoImpl/renderer/error_texture";
 
-export type TPicture = IPicture<THREE.Texture>;
-export const texture_loader = new THREE.TextureLoader();
+export type TPicture = IPicture<T.Texture>;
 export class ImageMgr {
   protected infos = new AsyncValuesKeeper<ImageInfo>();
   protected disposables = new Map<string, ImageInfo>();
@@ -247,12 +247,8 @@ export class ImageMgr {
     return this.p_create_pic_by_img_key(img_info.key);
   }
 
-  dispose() {
-    // TODO
-  }
 
   edit_image(src: HTMLCanvasElement | HTMLImageElement, op: ImageOperation): HTMLCanvasElement {
-    // debugger
     switch (op.type) {
       case 'crop': {
         const scale = Number(src.getAttribute("scale")) || 1
@@ -346,7 +342,7 @@ function _create_pic(
     scale
   } = img_info;
   const texture = texture_loader.load(url, onLoad ? () => onLoad(pic_info) : void 0, onProgress, onError);
-  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.colorSpace = T.SRGBColorSpace;
   texture.minFilter = min_filter;
   texture.magFilter = mag_filter;
   texture.wrapS = wrap_s;
@@ -366,15 +362,7 @@ function err_pic_info(id: string = ""): TPicture {
     texture: error_texture(),
   };
 }
-export function empty_texture() {
-  return texture_loader.load("");
-}
-export function white_texture() {
-  return texture_loader.load(require("./white.png"));
-}
-function error_texture() {
-  return texture_loader.load(require("./error.png"));
-}
+export const texture_loader = new T.TextureLoader();
 export interface ImageOperation_Resize extends ISize {
   type: 'resize';
 }
