@@ -5,7 +5,7 @@ import { ICookedUIInfo } from "./ICookedUIInfo";
 import { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo, TComponentInfo, TUIImgInfo, TUITxtInfo } from "./IUIInfo.dat";
 import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
-import { judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
+import { parse_ui_value, unsafe_is_object } from "./read_info_value";
 import { ui_load_img } from "./ui_load_img";
 import { ui_load_txt } from "./ui_load_txt";
 import { UINode } from "./UINode";

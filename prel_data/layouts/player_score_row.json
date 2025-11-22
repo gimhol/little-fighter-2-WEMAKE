@@ -19,7 +19,7 @@
   "items": [
     {
       "pos": "35,21",
-      "component": "PlayerFighterThumb()"
+      "component": "FighterThumb()"
     },
     {
       "pos": "127,21",

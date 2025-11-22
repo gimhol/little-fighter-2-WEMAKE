@@ -1,13 +1,16 @@
-import type { ILineSegmentsInfo, IObjectNode } from "../../LF2/3d";
 import { IFrameInfo } from "../../LF2/defines";
 import { IQube } from "../../LF2/defines/IQube";
 import { IQubePair } from "../../LF2/defines/IQubePair";
 import type { Entity } from "../../LF2/entity/Entity";
 import { foreach } from "../../LF2/utils/container_help/foreach";
-import { traversal } from "../../LF2/utils/container_help/traversal";
-import { __LineSegments } from "../3d";
-import * as THREE from "../3d/_t";
+import * as T from "../_t";
 import type { WorldRenderer } from "./WorldRenderer";
+const line_geometry = new T.LineGeometry();
+const line_vertices = new Float32Array([
+  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1,
+]);
+line_geometry.setPositions(line_vertices);
+
 const EMPTY_ARR = [] as const;
 const DOT = {
   indicator_info: {
@@ -41,7 +44,7 @@ export const INDICATINGS: Record<Indicating, number> = {
   cpoint: 64,
   bpoint: 128,
 }
-export const INDICATORS_INFO: Record<Indicating, ILineSegmentsInfo> = {
+export const INDICATORS_INFO = {
   bdy: {
     color: 0x00ff00, // #00FF00
     linewidth: 3,
@@ -75,15 +78,15 @@ export const INDICATORS_INFO: Record<Indicating, ILineSegmentsInfo> = {
     linewidth: 10,
   },
 };
-const geometry = new THREE.BufferGeometry();
+const geometry = new T.BufferGeometry();
 const vertices = new Float32Array([
   0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1,
 ]);
-geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+geometry.setAttribute("position", new T.BufferAttribute(vertices, 3));
 export class FrameIndicators {
   readonly renderer_type: string = "FrameIndicators";
   protected _entity: Entity;
-  protected _indicators_map: Record<Indicating, IObjectNode[]> = {
+  protected _indicators_map: Record<Indicating, T.Object3D[]> = {
     frame: [],
     bdy: [],
     itr: [],
@@ -128,17 +131,17 @@ export class FrameIndicators {
   }
 
   protected _new_indicator(k: keyof typeof this._indicators_map, idx: number) {
-    const ret = (this._indicators_map[k][idx] = new __LineSegments(
-      this._entity.lf2,
-      INDICATORS_INFO[k],
+    const ret = (this._indicators_map[k][idx] = new T.Line2(
+      line_geometry,
+      new T.LineMaterial(INDICATORS_INFO[k]),
     ));
-    this.scene.add(ret);
+    this.scene.inner.add(ret);
     return ret;
   }
 
   protected _del_indicator(k: keyof typeof this._indicators_map, idx: number) {
     const [indicator] = this._indicators_map[k].splice(idx, 1);
-    indicator && this.scene.del(indicator);
+    indicator?.removeFromParent();
   }
   show_indicators(name: keyof typeof this._indicators_map) {
     let data: readonly Indicatable[];
@@ -176,16 +179,16 @@ export class FrameIndicators {
         this._indicators_map[name][i] ?? this._new_indicator(name, i);
       const y = this._y + info.y;
       const x = this._x + info.x;
-      indicator.user_data = info;
-      indicator.set_position(x, y, this._z);
-      indicator.set_scale(info.w, info.h, 1);
+      indicator.userData.info = info;
+      indicator.position.set(x, y, this._z);
+      indicator.scale.set(info.w, info.h, 1);
     }
   }
 
   hide_indicators(k: keyof typeof this._indicators_map) {
     const indicators = this._indicators_map[k]
     if (!indicators.length) return
-    this.scene.del(...indicators);
+    this.scene.inner.remove(...indicators);
     indicators.length = 0;
   }
 
@@ -193,19 +196,19 @@ export class FrameIndicators {
 
   on_unmount() {
     foreach(this._indicators_map, (list) => {
-      list.forEach((item) => this.scene.del(item));
+      list.forEach((item) => this.scene.inner.remove(item));
       list.length = 0;
     });
   }
   update_indicators() {
     foreach(this._indicators_map, (indicators) => {
       foreach(indicators, indicator => {
-        const info = indicator.user_data as IQube
+        const info = indicator.userData.info as IQube
         const y = this._y + info.y;
         const x = this._x + info.x;
-        indicator.user_data = info;
-        indicator.set_position(x, y, this._z);
-        indicator.set_scale(info.w, info.h, 1);
+        indicator.userData.info = info;
+        indicator.position.set(x, y, this._z);
+        indicator.scale.set(info.w, info.h, 1);
       })
     })
   }

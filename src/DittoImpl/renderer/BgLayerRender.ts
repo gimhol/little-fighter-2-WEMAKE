@@ -1,13 +1,11 @@
-import type { IMeshNode } from "../../LF2/3d";
 import type Layer from "../../LF2/bg/Layer";
 import type { TPicture } from "../../LF2/loader/ImageMgr";
-import { __Mesh } from "../3d/__Mesh";
-import * as THREE from "../3d/_t";
+import * as T from "../_t";
 
 const pic_map = new Map<string, TPicture>()
 
 export class BgLayerRender {
-  readonly mesh: IMeshNode;
+  readonly mesh: T.Mesh;
   readonly layer: Layer;
   readonly pic: TPicture | undefined;
   get_pic = (file: string) => {
@@ -24,20 +22,20 @@ export class BgLayerRender {
     const { pic } = this;
     const w = pic?.w ?? info.width;
     const h = pic?.h ?? info.height;
-    const params: THREE.MeshBasicMaterialParameters = {
+    const params: T.MeshBasicMaterialParameters = {
       transparent: true
     };
     if (pic?.texture) params.map = pic.texture;
     else params.color = info.color;
-    this.mesh = new __Mesh(bg.world.lf2, {
-      geometry: new THREE.PlaneGeometry(w, h).translate(w / 2, -h / 2, 0),
-      material: new THREE.MeshBasicMaterial(params),
-    });
+    this.mesh = new T.Mesh(
+      new T.PlaneGeometry(w, h).translate(w / 2, -h / 2, 0),
+      new T.MeshBasicMaterial(params),
+    );
     this.mesh.name = "bg layer";
-    this.mesh.set_position(x, y, z);
+    this.mesh.position.set(x, y, z);
   }
 
-  update() {
+  render() {
     const { visible, info: { x, absolute, width }, bg } = this.layer;
     this.mesh.visible = visible;
     const cam_x = bg.world.renderer.cam_x;
@@ -47,7 +45,7 @@ export class BgLayerRender {
         x + (bg.width - width) * cam_x / (bg.width - bg.world.screen_w) :
         x + (bg.width - width) * cam_x
 
-    this.mesh.set_x(_x);
+    this.mesh.position.x = _x;
   }
 
   release(): void {

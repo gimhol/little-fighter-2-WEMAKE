@@ -28,7 +28,7 @@ import { LoadingContentText } from "./LoadingContentText";
 import { OpacityAnimation } from "./OpacityAnimation";
 import { OpacityHover } from "./OpacityHover";
 import { PlayerCtrlType } from "./PlayerCtrlType";
-import PlayerFighterThumb from "./PlayerFighterThumb";
+import FighterThumb from "./FighterThumb";
 import { PlayerKeyEdit } from "./PlayerKeyEdit";
 import { PlayerKeyText } from "./PlayerKeyText";
 import PlayerName from "./PlayerName";
@@ -65,7 +65,7 @@ const COMPONENTS = [
   StageTransitions,
   SlotSelLogic,
   FighterHead,
-  PlayerFighterThumb,
+  FighterThumb,
   FighterName,
   PlayerName,
   PlayerTeamName,

@@ -1,24 +1,21 @@
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
-import {
-  IObjectNode,
-  IOrthographicCameraNode,
-  is_orthographic_camera_node,
-} from "../../LF2/3d";
-import { LF2 } from "../../LF2/LF2";
-import { floor } from "../../LF2/utils";
-import * as THREE from "../3d/_t";
-import { __Object } from "./__Object";
+import { LF2 } from "../LF2/LF2";
+import { floor } from "../LF2/utils";
+import * as T from "./_t";
 import styles from "./styles.module.scss";
 
-export class __Scene extends __Object {
+export class Scene {
   readonly is_scene_node = true;
-  protected _cameras = new Set<IOrthographicCameraNode>();
-  protected _renderer?: THREE.WebGLRenderer;
+  protected _cameras = new Set<T.Camera>();
+  protected _renderer?: T.WebGLRenderer;
   protected _css_renderer?: CSS2DRenderer;
   protected _canvas_ob = new MutationObserver(() => this.on_win_resize());
-  override get inner(): THREE.Scene { return this._inner as THREE.Scene }
+  readonly inner: T.Scene;
+  readonly lf2: LF2;
+
   constructor(lf2: LF2) {
-    super(lf2, new THREE.Scene());
+    this.inner = new T.Scene();
+    this.lf2 = lf2;
     window.addEventListener('resize', this.on_win_resize)
   }
   on_win_resize = () => {
@@ -49,9 +46,10 @@ export class __Scene extends __Object {
     }
     this._renderer = void 0;
     if (canvas) {
+      const { width: w, height: h } = canvas.getBoundingClientRect()
       this._canvas_ob.observe(canvas, { attributes: true, attributeFilter: ['style'] })
-      this._renderer = new THREE.WebGLRenderer({ canvas, premultipliedAlpha: false });
-      this._renderer.setSize(this.w, this.h, false);
+      this._renderer = new T.WebGLRenderer({ canvas, premultipliedAlpha: false });
+      this._renderer.setSize(w, h, false);
       this._css_renderer = new CSS2DRenderer();
       this._css_renderer.domElement.className = styles.css_2d_renderer
       this.on_win_resize()
@@ -60,25 +58,26 @@ export class __Scene extends __Object {
       this._canvas_ob.disconnect()
     }
   }
-  override add(...nodes: IObjectNode[]): this {
-    super.add(...nodes);
-    for (const n of nodes)
-      if (is_orthographic_camera_node(n)) this._cameras.add(n);
-    return this;
+  w(w: any, h: any, arg2: boolean) {
+    throw new Error("Method not implemented.");
   }
-  override del(...nodes: IObjectNode[]): this {
-    super.del(...nodes);
-    for (const n of nodes)
-      if (is_orthographic_camera_node(n)) this._cameras.delete(n);
-    return this;
+  h(w: any, h: any, arg2: boolean) {
+    throw new Error("Method not implemented.");
   }
-  override set_size(w?: number | undefined, h?: number | undefined): this {
-    super.set_size(w, h);
-    this._renderer?.setSize(this.w, this.h, false);
-    return this;
+  add_camera(...cameras: T.Camera[]) {
+    for (const camera of cameras) {
+      if (this._cameras.has(camera)) continue;
+      this._cameras.add(camera);
+      this.inner.add(camera);
+    }
   }
-  override dispose(): void {
 
+  set_size(w: number, h: number): this {
+    this._renderer?.setSize(w, h, false);
+    return this;
+  }
+
+  dispose(): void {
     window.removeEventListener('resize', this.on_win_resize)
     if (this._css_renderer)
       document.body.removeChild(this._css_renderer?.domElement);
@@ -86,14 +85,14 @@ export class __Scene extends __Object {
     this._renderer?.clear();
     this._renderer?.dispose();
     this._renderer = void 0;
-    super.dispose();
+    this.inner.removeFromParent();
   }
   render(): void {
     const { inner } = this;
     if (!this._renderer || !inner) return;
     for (const camera of this._cameras) {
-      this._renderer.render(inner, (camera as any).inner);
-      this._css_renderer?.render(inner, (camera as any).inner)
+      this._renderer.render(inner, camera);
+      this._css_renderer?.render(inner, camera);
     }
   }
 }

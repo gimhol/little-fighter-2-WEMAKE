@@ -1,71 +1,54 @@
-import type { IObjectNode } from "../../LF2/3d";
 import type { Background } from "../../LF2/bg/Background";
-import { Defines, type IQuaternion } from "../../LF2/defines";
-import { Ditto } from "../../LF2/ditto";
+import { Defines } from "../../LF2/defines";
 import type { World } from "../../LF2/World";
+import * as T from "../_t";
 import { BgLayerRender } from "./BgLayerRender";
 import { WorldRenderer } from "./WorldRenderer";
 
-interface BgRenderPack {
-  readonly bg: Background | null;
-  readonly mesh: IObjectNode | null;
-  readonly layers: BgLayerRender[];
-}
-export class BgRender implements BgRenderPack {
+export class BgRender {
   readonly world: World;
-  private _bg: Background | null = null;
-  private _mesh: IObjectNode | null = null;
-  private _layers: BgLayerRender[] = [];
-  private quaternion: IQuaternion;
-  get bg(): Background | null { return this._bg }
-  set bg(v: Background | null) { this.set_bg(v) }
-  get mesh(): IObjectNode | null { return this._mesh }
-  get layers(): BgLayerRender[] { return this._layers }
+  protected bg: Background | null = null;
+  protected object = new T.Object3D();
+  protected layers: BgLayerRender[] = [];
+  protected quaternion = new T.Quaternion();
 
-  constructor(world: World) {
-    this.world = world;
-    this.quaternion = new Ditto.Quaternion()
+  readonly world_renderer: WorldRenderer
+
+  constructor(world_renderer: WorldRenderer) {
+    if (!world_renderer) debugger;
+    this.world = world_renderer.world;
+    this.world_renderer = world_renderer;
   }
 
-  private set_bg(bg: Background | null) {
-    const { world } = this;
-    const pack: BgRenderPack = {
-      bg: this._bg,
-      mesh: this._mesh,
-      layers: [...this._layers]
-    }
-    pack.mesh?.dispose()
+  set_bg(bg: Background | null) {
+    this.object?.removeFromParent();
+    this.bg = bg;
+    if (this.bg) {
+      this.object.position.z = -2 * Defines.CLASSIC_SCREEN_HEIGHT;
+      this.object.name = "Background:" + this.bg.data.base.name;
+      this.layers.length = 0;
 
-    this._bg = bg;
-    if (this._bg) {
-      this._mesh = new Ditto.ObjectNode(world.lf2);
-      this._mesh.z = -2 * Defines.CLASSIC_SCREEN_HEIGHT;
-      this._layers.length = 0;
-      this._mesh.name = "Background:" + this._bg.data.base.name;
-      for (const layer of this._bg.layers) {
+      for (const layer of this.bg.layers) {
         const layer_render = new BgLayerRender(layer)
-        this._layers.push(layer_render);
-        this._mesh.add(layer_render.mesh);
+        this.layers.push(layer_render);
+        this.object.add(layer_render.mesh);
       }
-      (world.renderer as WorldRenderer).scene.add(this._mesh);
+      this.world_renderer.scene.inner.add(this.object);
     }
-  }
-
-  private render_pack({ bg, mesh, layers }: BgRenderPack, with_update = false) {
-    if (with_update) bg?.update()
-    bg?.world.renderer.camera.world_quaternion(this.quaternion);
-    mesh?.rotation_from_quaternion(this.quaternion);
-    for (const render of layers)
-      render.update();
   }
 
   render() {
-    if (this._bg !== this.world.bg)
-      this.bg = this.world.bg
-    this.render_pack(this);
+    if (this.bg !== this.world.bg)
+      this.set_bg(this.world.bg)
+
+    const { object: mesh, layers } = this;
+    this.world_renderer.camera.getWorldQuaternion(this.quaternion);
+
+    mesh?.setRotationFromQuaternion(this.quaternion);
+    for (const layer of layers) layer.render();
   }
 
   release() {
-    this._mesh?.dispose();
+    this.object?.removeFromParent();
   }
 }

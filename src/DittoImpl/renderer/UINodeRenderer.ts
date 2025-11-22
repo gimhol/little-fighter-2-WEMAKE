@@ -1,29 +1,33 @@
+import * as T from "three";
 import * as THREE from "three";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
-import type { ISprite, ISpriteInfo } from "../../LF2/3d/ISprite";
-import { Ditto } from "../../LF2/ditto";
 import type { IUINodeRenderer } from "../../LF2/ditto/render/IUINodeRenderer";
-import { IDebugging, make_debugging } from "../../LF2/entity/make_debugging";
 import { IImageInfo } from "../../LF2/loader/IImageInfo";
 import { empty_texture, white_texture } from "../../LF2/loader/ImageMgr";
 import { TextInput } from "../../LF2/ui/component/TextInput";
 import { IUIImgInfo } from "../../LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "../../LF2/ui/UINode";
+import { get_alpha_from_color } from "../../LF2/ui/utils/get_alpha_from_color";
 import { is_num, is_str } from "../../LF2/utils";
-import { __Sprite } from "../3d";
 import styles from "./ui_node_style.module.scss";
 import type { WorldRenderer } from "./WorldRenderer";
-
-export class UINodeRenderer implements IUINodeRenderer, IDebugging {
-  debug!: (_0: string, ..._1: any[]) => void;
-  warn!: (_0: string, ..._1: any[]) => void;
-  log!: (_0: string, ..._1: any[]) => void;
-  sprite: ISprite;
-  node: UINode;
+export interface ISpriteInfo {
+  w: number;
+  h: number;
+  texture?: any;
+  color?: string;
+}
+export class UINodeRenderer implements IUINodeRenderer {
+  sprite: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  ui: UINode;
 
   protected _css_obj: CSS2DObject | undefined;
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
+  protected _geo: THREE.PlaneGeometry = new THREE.PlaneGeometry();
+  protected _info: ISpriteInfo = { w: 0, h: 0 };
+  protected _rgba: [number, number, number, number] = [255, 255, 255, 1];
+  protected _texture: THREE.Texture = empty_texture();
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -33,51 +37,54 @@ export class UINodeRenderer implements IUINodeRenderer, IDebugging {
     this._css_obj.position.set(0, 0, 0);
     this._css_obj.center.set(0, 1);
 
-    const txt = this.node.txts.value[this.node.txt_idx.value]
+    const txt = this.ui.txts.value[this.ui.txt_idx.value]
     if (txt?.style.font) this.dom.style.font = txt.style.font;
     if (txt?.style.fill_style) this.dom.style.color = txt.style.fill_style;
-    (this.sprite as __Sprite).inner.add(this._css_obj);
+    this.sprite.add(this._css_obj);
     return this._dom;
   }
   protected release_dom() {
     if (!this._css_obj) return;
-    (this.sprite as __Sprite).inner.remove(this._css_obj);
+    this.sprite.remove(this._css_obj);
     delete this._css_obj;
     delete this._dom;
   }
   protected hide_dom() {
     if (!this._css_obj) return;
     if (!this._css_obj.parent) return;
-    (this.sprite as __Sprite).inner.remove(this._css_obj);
+    this.sprite.remove(this._css_obj);
   }
   protected show_dom() {
     if (!this._css_obj) return;
     if (this._css_obj.parent) return;
-    (this.sprite as __Sprite).inner.add(this._css_obj);
+    this.sprite.add(this._css_obj);
   }
 
-  get world() { return this.node.lf2.world }
-  get lf2() { return this.node.lf2 }
-  get parent() { return this.node.renderer }
+  get world() { return this.ui.lf2.world }
+  get lf2() { return this.ui.lf2 }
+  get parent() { return this.ui.renderer }
   img_idx = -1
-  constructor(node: UINode) {
-    this.node = node;
-    this.sprite = new Ditto.SpriteNode(node.lf2).add_user_data("owner", node);
-    make_debugging(this)
+  constructor(ui: UINode) {
+    this.ui = ui;
+    this.sprite = new T.Mesh(
+      this.next_geometry(),
+      new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
+    )
+    this.sprite.userData.owner = ui;
   }
   del(child: UINodeRenderer) {
-    this.sprite.del(child.sprite)
+    this.sprite.remove(child.sprite)
   }
   add(child: UINodeRenderer) {
     this.sprite.add(child.sprite)
   }
   del_self() {
-    this.sprite.del_self();
+    this.sprite.removeFromParent();
   }
   on_resume(): void {
     const world_renderer = this.lf2.world.renderer as WorldRenderer;
-    if (this.node.root === this.node) world_renderer.scene.add(this.sprite);
-    const text_input = this.node.find_component(TextInput)
+    if (this.ui.root === this.ui) world_renderer.scene.inner.add(this.sprite);
+    const text_input = this.ui.find_component(TextInput)
     if (text_input) {
       const ele_input = document.createElement('input');
       const { maxLength, defaultValue, text } = text_input
@@ -86,73 +93,109 @@ export class UINodeRenderer implements IUINodeRenderer, IDebugging {
       if (is_str(defaultValue)) ele_input.defaultValue = defaultValue
       else ele_input.removeAttribute('defaultValue')
       ele_input.value = text
-
-
       ele_input.onchange = () => text_input.text = ele_input.value
       this.dom.appendChild(ele_input)
     }
   };
 
   on_pause(): void {
-    const text_input = this.node.find_component(TextInput)
+    const text_input = this.ui.find_component(TextInput)
     if (text_input) this.release_dom()
   };
   on_show(): void { };
   on_hide(): void { };
   on_start() {
-    const [x, y, z] = this.node.pos.value;
-    this.sprite
-      .set_center(...this.node.center.value)
-      .set_position(x, -y, z)
-      .set_visible(this.node.visible)
-      .set_name(`layout(name= ${this.node.name}, id=${this.node.id})`)
-      .apply();
-    this.node.parent?.renderer.add(this);
+    const [x, y, z] = this.ui.pos.value;
+    const [c_x, c_y, c_z] = this.ui.center.value
+    this._c_x = c_x;
+    this._c_y = c_y;
+    this._c_z = c_z;
+
+    this.sprite.position.set(x, -y, z)
+    this.sprite.visible = this.ui.visible;
+    this.sprite.name = `layout(name= ${this.ui.name}, id=${this.ui.id})`
+    this.apply();
+    this.ui.parent?.renderer.add(this);
   }
   on_stop() {
     this.parent?.del(this);
     this.release_dom();
   }
 
+  apply() {
+    const { sprite: sp } = this;
+    sp.geometry = this.next_geometry();
+    const {
+      _texture,
+      _rgba: [_r, _g, _b, _a],
+    } = this;
+    if (sp.material.map !== _texture) {
+      sp.material.map?.dispose();
+      sp.material.map = _texture;
+      sp.material.needsUpdate = true;
+    }
+    const { r, g, b } = sp.material.userData;
+    if (r !== _r || g !== _g || b !== _b) {
+      sp.material.color = new THREE.Color(_r / 255, _g / 255, _b / 255);
+      sp.material.userData.r = _r;
+      sp.material.userData.g = _g;
+      sp.material.userData.b = _b;
+      sp.material.needsUpdate = true;
+    }
+    return this;
+  }
+
   update_sprite() {
     if (
-      !this.node.img_idx.dirty &&
-      !this.node.imgs.dirty &&
-      !this.node.txt_idx.dirty &&
-      !this.node.txts.dirty &&
-      !this.node.size.dirty &&
-      !this.node.flip_x.dirty &&
-      !this.node.flip_y.dirty &&
-      !this.node.color.dirty
+      !this.ui.img_idx.dirty &&
+      !this.ui.imgs.dirty &&
+      !this.ui.txt_idx.dirty &&
+      !this.ui.txts.dirty &&
+      !this.ui.size.dirty &&
+      !this.ui.flip_x.dirty &&
+      !this.ui.flip_y.dirty &&
+      !this.ui.color.dirty
     ) return;
     const img =
-      this.node.imgs.value[this.node.img_idx.value] ||
-      this.node.txts.value[this.node.txt_idx.value];
+      this.ui.imgs.value[this.ui.img_idx.value] ||
+      this.ui.txts.value[this.ui.txt_idx.value];
 
-    this._ui_img = this.node.data.img[this.node.img_idx.value]
-    this.create_sprite_info(img).then(p => this.sprite.set_info(p).apply());
+    this._ui_img = this.ui.data.img[this.ui.img_idx.value]
+    this.create_sprite_info(img).then(p => {
+      this.set_info(p)
+      this.apply()
+    });
+  }
+
+  set_info(info: ISpriteInfo): this {
+    this._info = info;
+    const a = get_alpha_from_color(info.color) || 1
+    const { r, g, b } = new THREE.Color(info.color);
+    this._rgba = [Math.ceil(r * 255), Math.ceil(g * 255), Math.ceil(b * 255), a];
+    this._texture = info.texture || empty_texture();
+    return this;
   }
 
   async create_sprite_info(img: IImageInfo | undefined): Promise<ISpriteInfo> {
-    const [w, h] = this.node.size.value;
-    const color = this.node.color.value
+    const [w, h] = this.ui.size.value;
+    const color = this.ui.color.value
     const texture = img ? await this.create_texture(img) : color ? white_texture() : empty_texture();
     const p: ISpriteInfo = { w, h, texture, color: color };
     return p;
   }
 
   protected async create_texture(img: IImageInfo): Promise<THREE.Texture> {
-    const flip_x = this.node.flip_x.value;
-    const flip_y = this.node.flip_y.value;
+    const flip_x = this.ui.flip_x.value;
+    const flip_y = this.ui.flip_y.value;
     const { texture } = await this.lf2.images.p_create_pic_by_img_info(img);
     texture.offset.set(flip_x ? 1 : 0, flip_y ? 1 : 0);
     return texture;
   }
 
-  get x(): number { return this.sprite.x }
-  set x(v: number) { this.sprite.x = v; }
-  get y(): number { return this.sprite.y }
-  set y(v: number) { this.sprite.y = v; }
+  get x(): number { return this.sprite.position.x }
+  set x(v: number) { this.sprite.position.x = v; }
+  get y(): number { return this.sprite.position.y }
+  set y(v: number) { this.sprite.position.y = v; }
   get visible() {
     return this.sprite.visible
   }
@@ -160,12 +203,43 @@ export class UINodeRenderer implements IUINodeRenderer, IDebugging {
     this.sprite.visible = v
     v ? this.show_dom() : this.hide_dom()
   }
+  protected _c_x: number = 0;
+  protected _c_y: number = 0;
+  protected _c_z: number = 0;
+  protected w: number = 0;
+  protected h: number = 0;
+
+  protected next_geometry(): THREE.PlaneGeometry {
+    const { w, h, _c_x, _c_y, _c_z } = this;
+    const { w: _w, h: _h, c_x, c_y, c_z } = this._geo.userData;
+
+    if (w === _w && h === _h && c_x === _c_x && c_y === _c_y && c_z === _c_z)
+      return this._geo;
+    this._geo.dispose();
+
+    const tran_x = Math.round(w * (0.5 - _c_x));
+    const tran_y = Math.round(h * (_c_y - 0.5));
+    const tran_z = Math.round(_c_z);
+    const ret = new THREE.PlaneGeometry(w, h).translate(tran_x, tran_y, tran_z);
+    ret.userData.w = w;
+    ret.userData.h = h;
+    ret.userData.c_x = _c_x;
+    ret.userData.c_y = _c_y;
+    return (this._geo = ret);
+  }
+
   render(dt: number) {
-    if (this.node.center.dirty || this.node.size.dirty) {
-      this.node.center.dirty = this.node.size.dirty = false
-      const [w, h] = this.node.size.value;
-      const [x, y, z] = this.node.center.value
-      this.sprite.set_center(x, y, z).set_size(w, h).apply();
+    if (this.ui.center.dirty || this.ui.size.dirty) {
+      this.ui.center.dirty = this.ui.size.dirty = false
+      const [w, h] = this.ui.size.value;
+      const [x, y, z] = this.ui.center.value
+      this.w = w;
+      this.h = h;
+      this._c_x = x;
+      this._c_y = y;
+      this._c_z = z;
+      this.apply();
+
       if (this._dom) {
         this._dom.style.width = `${w}px`
         this._dom.style.height = `${h}px`
@@ -173,11 +247,11 @@ export class UINodeRenderer implements IUINodeRenderer, IDebugging {
       this._css_obj?.center.set(x, y)
     }
     this.update_sprite();
-    this.node.scale.dirty && this.sprite.set_scale(...this.node.scale.value);
+    this.ui.scale.dirty && this.sprite.scale.set(...this.ui.scale.value);
 
-    const sp = this.sprite as __Sprite;
+    const sp = this.sprite;
     if (sp && this._ui_img) {
-      const t = sp.inner.material.map;
+      const t = sp.material.map;
       if (t) {
         const { wrapS, wrapT, offsetAnimX, offsetAnimY, repeatX, repeatY } = this._ui_img
         if (offsetAnimX !== void 0) t.offset.y += (dt / 1000) * offsetAnimX;
@@ -189,18 +263,21 @@ export class UINodeRenderer implements IUINodeRenderer, IDebugging {
         t.needsUpdate = true
       }
     }
-    if (this.node.pos.dirty) {
-      const [x, y, z] = this.node.pos.value
-      this.sprite.set_position(x, -y, z);
+    if (this.ui.pos.dirty) {
+      const [x, y, z] = this.ui.pos.value
+      sp.position.set(x, -y, z);
     }
-    this.sprite.visible = this.node.visible
-    const opacity = this.node.global_opacity
-    this.sprite.opacity = opacity;
+    sp.visible = this.ui.visible
+    const opacity = this.ui.global_opacity
+
+    const { material: m } = sp;
+    m.opacity = this.ui.global_opacity * this._rgba[3];
+    m.needsUpdate = true;
     if (this._dom) this._dom.style.opacity = '' + opacity
 
+    this.apply()
 
-    this.sprite.apply()
-    for (const child of this.node.children)
+    for (const child of this.ui.children)
       if (child.visible !== child.renderer.visible || child.renderer.visible)
         child.renderer.render(dt)
   }

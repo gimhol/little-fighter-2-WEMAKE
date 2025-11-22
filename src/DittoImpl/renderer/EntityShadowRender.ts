@@ -1,15 +1,13 @@
 
-import type { IMeshNode } from "../../LF2/3d/IMesh";
 import { Background } from "../../LF2/bg/Background";
 import type { Entity } from "../../LF2/entity/Entity";
 import { clamp } from "../../LF2/utils";
-import { __Mesh } from "../3d/__Mesh";
-import * as T from "../3d/_t";
+import * as T from "../_t";
 import { WorldRenderer } from "./WorldRenderer";
 
 export class EntityShadowRender {
   readonly renderer_type: string = "Shadow";
-  readonly mesh: IMeshNode;
+  readonly mesh: T.Mesh;
   readonly entity: Entity;
   get world() { return this.entity.world }
   get lf2() { return this.entity.lf2 }
@@ -27,20 +25,20 @@ export class EntityShadowRender {
   constructor(entity: Entity) {
     const { lf2 } = entity;
     this.entity = entity
-    this.mesh = new __Mesh(lf2, {
-      geometry: new T.PlaneGeometry(0, 0),
-      material: this.material,
-    });
+    this.mesh = new T.Mesh(
+      new T.PlaneGeometry(0, 0),
+      this.material,
+    );
     this.mesh.name = EntityShadowRender.name;
-    this.mesh.render_order = 0;
+    this.mesh.renderOrder = 0;
   }
 
   on_mount() {
-    (this.entity.world.renderer as WorldRenderer).scene.add(this.mesh);
+    (this.entity.world.renderer as WorldRenderer).scene.inner.add(this.mesh);
   }
 
   on_unmount() {
-    this.mesh.dispose();
+    this.mesh.removeFromParent();
   }
 
   render() {
@@ -61,14 +59,14 @@ export class EntityShadowRender {
       position: { x, z, y },
       invisible
     } = this.entity;
-    this.mesh.set_position(
+    this.mesh.position.set(
       Math.floor(x),
       Math.floor(-z / 2),
       Math.floor(z - 550),
     );
     const scale = 0.5 + 0.5 * clamp(250 - y, 0, 250) / 250
     const opacity = 0.3 + 0.7 * clamp(250 - y, 0, 250) / 250
-    this.mesh.set_scale(scale, scale, 1)
+    this.mesh.scale.set(scale, scale, 1)
     this.material.opacity = opacity;
 
     this.mesh.visible = !invisible && !frame.no_shadow;

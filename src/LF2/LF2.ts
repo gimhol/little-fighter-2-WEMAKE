@@ -1,4 +1,4 @@
-import { IIntersection } from "./3d";
+import { UIInputHandle } from "../DittoImpl/ui/UIInputHandle";
 import {
   Callbacks, get_short_file_size_txt,
   new_id,
@@ -17,12 +17,10 @@ import {
   IKeyboard,
   IKeyboardCallback,
   IKeyEvent,
-  IPointingEvent,
   IPointings,
-  IPointingsCallback,
   ISounds,
   IZip,
-  IZipObject,
+  IZipObject
 } from "./ditto";
 import { BlobUrl, HitUrl } from "./ditto/importer";
 import { Entity } from "./entity";
@@ -39,7 +37,6 @@ import { UIComponent } from "./ui/component/UIComponent";
 import { cook_ui_info } from "./ui/cook_ui_info";
 import { ICookedUIInfo } from "./ui/ICookedUIInfo";
 import { IUIInfo } from "./ui/IUIInfo.dat";
-import { LF2PointerEvent } from "./ui/LF2PointerEvent";
 import { LF2UIKeyEvent } from "./ui/LF2UIKeyEvent";
 import { UINode } from "./ui/UINode";
 import {
@@ -58,7 +55,7 @@ const cheat_info_pair = (n: CheatType) =>
     },
   ] as const;
 
-export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
+export class LF2 implements IKeyboardCallback, IDebugging {
   debug!: (_0: string, ..._1: any[]) => void;
   warn!: (_0: string, ..._1: any[]) => void;
   log!: (_0: string, ..._1: any[]) => void;
@@ -76,8 +73,6 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
   private _loading: boolean = false;
   private _playable: boolean = false;
   private _pointer_on_uis = new Set<UINode>();
-  private _pointer_raycaster = new Ditto.Raycaster();
-  private _pointer_vec_2 = new Ditto.Vector2();
   private _mt = new MersenneTwister(Date.now())
   readonly bat_spreading_x = new Randoming(Defines.BAT_CHASE_SPREADING_VX, this)
   readonly bat_spreading_z = new Randoming(Defines.BAT_CHASE_SPREADING_VZ, this)
@@ -156,7 +151,6 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
   get_player_character(which: string) {
     return this.player_characters.get(which)
   }
-  on_click_character?: (c: Entity) => void;
 
   protected find_in_zip(paths: string[]): IZipObject | undefined {
     const len = paths.length;
@@ -218,13 +212,13 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
     this.keyboard = new Ditto.Keyboard(this);
     this.keyboard.callback.add(this);
     this.pointings = new Ditto.Pointings();
-    this.pointings.callback.add(this);
     Ditto.Cache.forget(LF2.DATA_TYPE, LF2.DATA_VERSION).catch(e => { })
     Ditto.Cache.forget(PlayerInfo.DATA_TYPE, PlayerInfo.DATA_VERSION).catch(e => { })
     this.world = new World(this);
     this.world.start_update();
     this.world.start_render();
     LF2.instances.push(this)
+    this.pointings.callback.add(new UIInputHandle(this));
   }
 
   random_entity_info(e: Entity) {
@@ -235,95 +229,6 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
     e.position.z = this.random_in(f, n);
     e.position.y = 550;
     return e;
-  }
-
-
-  protected get_pointer_intersections(e: IPointingEvent): IIntersection<UINode>[] {
-    if (!this.ui) return [];
-    this._pointer_vec_2.x = e.scene_x;
-    this._pointer_vec_2.y = e.scene_y;
-    this.world.renderer.camera.raycaster(this._pointer_raycaster, this._pointer_vec_2);
-    const intersections = this.ui.renderer.sprite.intersect_from_raycaster(this._pointer_raycaster, true);
-    const ret: IIntersection<UINode>[] = []
-    for (const intersection of intersections) {
-      const ui = intersection.object.get_user_data('owner');
-      if (!(ui instanceof UINode)) continue;
-      if (!ui.visible || ui.disabled) continue;
-      intersection.extra = ui;
-      ret.push(intersection);
-    }
-    return ret;
-  }
-
-
-  on_pointer_move(e: IPointingEvent) {
-    const intersections = this.get_pointer_intersections(e);
-    const leave_ui = this._pointer_on_uis;
-    const stay_ui = new Set<UINode>();
-    const enter_ui = new Set<UINode>();
-    for (const { extra: ui } of intersections) {
-      if (leave_ui.has(ui)) {
-        leave_ui.delete(ui)
-        stay_ui.add(ui)
-      } else {
-        enter_ui.add(ui);
-      }
-    }
-    for (const ui of leave_ui) {
-      ui.on_pointer_leave();
-    }
-    this._pointer_on_uis.clear();
-    for (const ui of enter_ui) {
-      ui.on_pointer_enter();
-      this._pointer_on_uis.add(ui)
-    }
-    for (const ui of stay_ui) {
-      this._pointer_on_uis.add(ui)
-    }
-  }
-  _pointer_down_uis = new Set<UINode>();
-
-  on_pointer_down(e: IPointingEvent) {
-    const intersections = this.get_pointer_intersections(e);
-    for (const i of intersections) {
-      this._pointer_down_uis.add(i.extra)
-      const e = new LF2PointerEvent(i.point);
-      i.extra.on_pointer_down(e);
-      if (e.stopped) break;
-    }
-  }
-
-  on_pointer_up(e: IPointingEvent) {
-    const intersections = this.get_pointer_intersections(e);
-    for (const i of intersections) {
-      if (i.extra.pointer_down) {
-        this._pointer_down_uis.delete(i.extra)
-        const e = new LF2PointerEvent(i.point);
-        i.extra.on_pointer_up(e);
-        if (e.stopped) break;
-      }
-    }
-    for (const i of intersections) {
-      if (i.extra.click_flag) {
-        const e = new LF2PointerEvent(i.point);
-        i.extra.on_click(e);
-        if (e.stopped) break;
-      }
-    }
-
-    for (const i of this._pointer_down_uis) {
-      const e = new LF2PointerEvent(new Ditto.Vector3(NaN, NaN, NaN));
-      i.on_pointer_cancel(e);
-    }
-    this._pointer_down_uis.clear()
-  }
-
-  on_pointer_cancel(e: IPointingEvent) {
-    for (const i of this._pointer_down_uis) {
-      const e = new LF2PointerEvent(new Ditto.Vector3(NaN, NaN, NaN));
-      i.on_pointer_cancel(e);
-    }
-    this._pointer_down_uis.clear()
   }
 
   private _curr_key_list: string = "";
@@ -400,7 +305,7 @@ export class LF2 implements IKeyboardCallback, IPointingsCallback, IDebugging {
       }
     }
   }
-  
+
   private on_loading_file(url: string, progress: number, full_size: number) {
     const txt = `${url}(${get_short_file_size_txt(full_size)})`;
     this.on_loading_content(txt, progress);

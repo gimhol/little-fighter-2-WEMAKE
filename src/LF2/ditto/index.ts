@@ -1,13 +1,4 @@
-import type { ILineSegmentsInfo, ILineSegmentsNode } from "../3d";
-import type { IBillboardInfo, IBillboardNode } from "../3d/IBillboard";
-import type { IMeshInfo, IMeshNode } from "../3d/IMesh";
-import type { IObjectNode } from "../3d/IObject";
-import type { IOrthographicCameraNode } from "../3d/IOrthographicCamera";
-import type { IPerspectiveCamera } from "../3d/IPerspectiveCamera";
-import type { ISprite, ISpriteInfo } from "../3d/ISprite";
-import type { IText } from "../3d/IText";
-import type { IQuaternion, IVector2, IVector3 } from "../defines";
-import type { IRaycaster } from "../defines/IRaycaster";
+import type { IVector2, IVector3 } from "../defines";
 import type { LF2 } from "../LF2";
 import type { UINode } from "../ui/UINode";
 import type { World } from "../World";
@@ -51,16 +42,8 @@ export interface IDittoPack {
   FullScreen: new (...args: any[]) => IFullScreen;
   Importer: IImporter;
   Cache: ICache;
-  ObjectNode: new (lf2: LF2) => IObjectNode;
-  TextNode: new (lf2: LF2) => IText;
-  OrthographicCamera: new (lf2: LF2) => IOrthographicCameraNode;
-  PerspectiveCamera: new (lf2: LF2) => IPerspectiveCamera;
-  SpriteNode: new (lf2: LF2, info?: ISpriteInfo) => ISprite;
-  BillboardNode: new (lf2: LF2, info?: IBillboardInfo) => IBillboardNode;
   Vector3: new (x?: number, y?: number, z?: number) => IVector3;
   Vector2: new (x?: number, y?: number) => IVector2;
-  Raycaster: new () => IRaycaster;
-  Quaternion: new (x?: number, y?: number, z?: number, w?: number) => IQuaternion;
   WorldRender: new (world: World) => IWorldRenderer,
   UINodeRenderer: new (uinode: UINode) => IUINodeRenderer,
   warn(...args: any[]): unknown;

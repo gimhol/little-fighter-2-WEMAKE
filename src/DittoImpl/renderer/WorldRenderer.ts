@@ -1,11 +1,10 @@
-import { ICamera } from "../../LF2/3d/ICamera";
+import { Camera, OrthographicCamera } from "three";
 import { BuiltIn_OID } from "../../LF2/defines";
-import { Ditto } from "../../LF2/ditto";
 import type { IWorldRenderer } from "../../LF2/ditto/render/IWorldRenderer";
 import { is_character, type Entity } from "../../LF2/entity";
 import type { LF2 } from "../../LF2/LF2";
 import type { World } from "../../LF2/World";
-import { __Scene } from "../3d";
+import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
 import { EntityInfoRender } from "./EntityInfoRender";
 import { EntityRender } from "./EntityRender";
@@ -17,8 +16,8 @@ export class WorldRenderer implements IWorldRenderer {
   lf2: LF2;
   world: World;
   bg_render: BgRender;
-  scene: __Scene;
-  camera: ICamera;
+  scene: Scene;
+  camera: Camera;
   entity_renderer_packs = new Map<Entity, [
     EntityRender,
     EntityShadowRender | null,
@@ -44,10 +43,10 @@ export class WorldRenderer implements IWorldRenderer {
     }
   }
   get cam_x(): number {
-    return this.camera.x
+    return this.camera.position.x
   }
   set cam_x(v: number) {
-    this.camera.x = v;
+    this.camera.position.x = v;
     for (const ui of this.lf2.ui_stacks) {
       const [a, b, c] = ui.pos.default_value;
       ui.pos.value = [a + v, b, c];
@@ -55,18 +54,28 @@ export class WorldRenderer implements IWorldRenderer {
     }
   }
   constructor(world: World) {
+    if (!world) debugger;
+    if (!world.lf2) debugger;
+
     this.world = world;
     this.lf2 = world.lf2;
     const w = world.screen_w;
     const h = world.screen_h;
-    this.bg_render = new BgRender(world);
-    this.scene = new __Scene(world.lf2).set_size(w * 4, h * 4);
-    this.camera = new Ditto.OrthographicCamera(world.lf2)
-      .setup(0, w, h, 0)
-      .set_position(void 0, void 0, 10)
-      .set_name("default_orthographic_camera")
-      .apply();
-    this.scene.add(this.camera);
+    this.bg_render = new BgRender(this);
+    this.scene = new Scene(world.lf2).set_size(w * 4, h * 4);
+    const camera = this.camera = new OrthographicCamera()
+
+    camera.left = 0;
+    camera.right = w;
+    camera.top = h;
+    camera.bottom = 0;
+    camera.near = 0.1;
+    camera.far = 2000;
+    camera.position.set(0, 0, 10)
+    camera.name = "default_orthographic_camera"
+    this.scene.add_camera(camera);
+
+    camera.updateProjectionMatrix();
   }
   add_entity(entity: Entity): void {
     const entity_renderer = new EntityRender(entity);

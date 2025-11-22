@@ -1,5 +1,4 @@
 import IStyle from "../defines/IStyle";
-import type { LF2 } from "../LF2";
 import type { TextImageInfo } from "../loader/TextImageInfo";
 import type { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 import { UINode } from "./UINode";
@@ -63,3 +62,4 @@ export class UITextLoader {
     });
   }
 }
+

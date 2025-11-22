@@ -1,9 +1,8 @@
-import { ICamera } from "../../3d/ICamera";
 import type { Entity } from "../../entity/Entity";
 
 export interface IWorldRenderer {
-  cam_x: number;
-  get camera(): ICamera;
+  get cam_x(): number;
+  set cam_x(v: number);
   indicator_flags: number;
   add_entity(entity: Entity): void;
   del_entity(entity: Entity): void;
