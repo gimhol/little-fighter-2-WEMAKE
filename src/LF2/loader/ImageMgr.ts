@@ -165,10 +165,6 @@ export class ImageMgr {
     return this.infos.get(key);
   }
 
-  find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): ImageInfo | undefined {
-    return this.infos.get(this._gen_key(f));
-  }
-
   load_text(text: string, style: IStyle = {}): Promise<TextInfo> {
     const key = Ditto.MD5(text, JSON.stringify(style));
     const fn = async () => {
@@ -207,15 +203,17 @@ export class ImageMgr {
     return this.load_img(key, f.path);
   }
 
-  create_pic_by_e_pic_info(e_pic_info: ILegacyPictureInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
-    const img_info = this.find_by_pic_info(e_pic_info);
-    const picture = err_pic_info();
-    if (!img_info) return picture;
-    return create_picture(img_info, picture, onLoad, void 0, onError);
+  find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): ImageInfo | undefined {
+    return this.infos.get(this._gen_key(f));
   }
-  p_create_pic_by_e_pic_info(e_pic_info: ILegacyPictureInfo): Promise<TPicture> {
-    return new Promise((a, b) => this.create_pic_by_e_pic_info(e_pic_info, a, b))
-  }
+
+  // create_pic_by_e_pic_info(e_pic_info: ILegacyPictureInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
+  //   const img_info = this.find_by_pic_info(e_pic_info);
+  //   const picture = err_pic_info();
+  //   if (!img_info) return picture;
+  //   return create_picture(img_info, picture, onLoad, void 0, onError);
+  // }
+
   edit_image(src: HTMLCanvasElement | HTMLImageElement, op: ImageOperation): HTMLCanvasElement {
     const src_w = src.width;
     const src_h = src.height;

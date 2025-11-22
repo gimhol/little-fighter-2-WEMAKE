@@ -1,11 +1,22 @@
-import type { IEntityData, IPicture, ITexturePieceInfo } from "@/LF2/defines";
+import type { IEntityData, ITexturePieceInfo } from "@/LF2/defines";
 import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
-import type { Entity } from "@/LF2/entity/Entity";
-import create_pictures from "@/LF2/loader/create_pictures";
-import { white_texture } from "./white_texture";
+import type { Entity, TData } from "@/LF2/entity/Entity";
+import { LF2 } from "@/LF2/LF2";
+import { ImageInfo } from "@/LF2/loader/ImageInfo";
 import { clamp, floor, PI } from "@/LF2/utils";
 import * as T from "../_t";
+import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
+function get_img_map(lf2: LF2, data: TData): Map<string, ImageInfo> {
+  const ret = new Map<string, ImageInfo>();
+  const { base: { files } } = data;
+  for (const key of Object.keys(files)) {
+    const img = lf2.images.find_by_pic_info(files[key]);
+    if (img) ret.set(key, img);
+  }
+  return ret;
+}
+
 export const EMPTY_PIECE: ITexturePieceInfo = {
   tex: "0",
   x: 0,
@@ -19,7 +30,7 @@ const EXTRA_SHAKING_TIME = 100;
 const r_vec3 = new T.Vector3(0, 0, -1);
 export class EntityRender {
   readonly renderer_type: string = "Entity";
-  protected pictures!: Map<string, IPicture<T.Texture>>;
+  protected images!: Map<string, ImageInfo>;
   entity!: Entity;
   protected entity_mesh!: T.Mesh;
   protected blood_mesh!: T.Mesh;
@@ -46,8 +57,8 @@ export class EntityRender {
       else this.variants.set(k, [k]);
     }
     this._prev_data = entity.data;
-    this.pictures = create_pictures(lf2, entity.data);
-    const first_text = this.pictures.get("0")?.texture;
+    this.images = get_img_map(lf2, entity.data);
+    const first_text = this.images.get("0")?.pic?.texture;
     const inner = (this.entity_mesh = this.entity_mesh || new T.Mesh(
       new T.PlaneGeometry(1, 1).translate(0.5, -0.5, 0),
       (this.entity_material = new T.MeshBasicMaterial({
@@ -104,23 +115,21 @@ export class EntityRender {
   }
   on_unmount(): void {
     this.entity_mesh.removeFromParent();
-    this.blood_mesh.removeFromParent()
-    if (this.pictures)
-      for (const [, pic] of this.pictures) pic.texture.dispose();
+    this.blood_mesh.removeFromParent();
   }
   private _prev_tex?: ITexturePieceInfo
 
   apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
-    const { pictures, entity_material, entity_mesh } = this
+    const { images: pictures, entity_material, entity_mesh } = this
     if (info) {
       const { x, y, w, h, tex, pixel_w, pixel_h } = info;
       const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
-      const pic = pictures.get(real_tex);
-      if (pic) {
-        pic.texture.offset.set(x, y);
-        pic.texture.repeat.set(w, h);
-        if (pic.texture !== entity_material.map) {
-          entity_material.map = pic.texture;
+      const img = pictures.get(real_tex);
+      if (img?.pic) {
+        img.pic.texture.offset.set(x, y);
+        img.pic.texture.repeat.set(w, h);
+        if (img.pic.texture !== entity_material.map) {
+          entity_material.map = img.pic.texture;
         }
         const { material: m } = entity_mesh;
         if (!Array.isArray(m)) m.needsUpdate = true;
