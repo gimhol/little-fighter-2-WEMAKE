@@ -1,34 +1,27 @@
-import { ISize } from "splittings/dist/es/splittings";
-import * as T from "three";
-import { create_picture, p_create_picture } from "../../DittoImpl/renderer/create_picture";
-import { error_texture } from "../../DittoImpl/renderer/error_texture";
-import { create_img_ele } from "../../Utils/create_img_ele";
-import { get_blob } from "../../Utils/get_blob";
-import type { LF2 } from "../LF2";
-import AsyncValuesKeeper from "../base/AsyncValuesKeeper";
-import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
-import type IPicture from "../defines/IPicture";
-import { IPictureInfo } from "../defines/IPictureInfo";
-import type { IStyle } from "../defines/IStyle";
-import { Ditto } from "../ditto";
-import { get_alpha_from_color } from "../ui/utils/get_alpha_from_color";
-import { is_positive_int, max, round } from "../utils";
-import { IImageInfo } from "./IImageInfo";
-import { ImageInfo } from "./ImageInfo";
-import { ImageOperation_Crop } from "./ImageOperation_Crop";
-import { ImageOperation_Flip } from "./ImageOperation_Flip";
-import { TextInfo } from "./TextInfo";
-import { validate_ui_img_operation_crop } from "./validate_ui_img_operation_crop";
-
-export type TPicture = IPicture<T.Texture>;
-export class ImageMgr {
+import type { LF2 } from "../LF2/LF2";
+import AsyncValuesKeeper from "../LF2/base/AsyncValuesKeeper";
+import { ILegacyPictureInfo } from "../LF2/defines/ILegacyPictureInfo";
+import type IPicture from "../LF2/defines/IPicture";
+import { IPictureInfo } from "../LF2/defines/IPictureInfo";
+import type { IStyle } from "../LF2/defines/IStyle";
+import { IImageMgr, ImageOperation } from "../LF2/ditto/IImageMgr";
+import { ImageInfo } from "../LF2/loader/ImageInfo";
+import { TextInfo } from "../LF2/loader/TextInfo";
+import { validate_ui_img_operation_crop } from "../LF2/loader/validate_ui_img_operation_crop";
+import { get_alpha_from_color } from "../LF2/ui/utils/get_alpha_from_color";
+import { is_positive_int, max, round } from "../LF2/utils";
+import { create_img_ele } from "../Utils/create_img_ele";
+import { get_blob } from "../Utils/get_blob";
+import * as T from "./_t";
+import { md5 } from "./md5";
+import { p_create_picture } from "./renderer/create_picture";
+import { error_texture } from "./renderer/error_texture";
+export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<ImageInfo>();
   protected disposables = new Map<string, ImageInfo>();
   readonly lf2: LF2;
-  constructor(lf2: LF2) {
-    this.lf2 = lf2;
-  }
+  constructor(lf2: LF2) { this.lf2 = lf2; }
 
   private async create_img_info(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo> {
     const disposable = src.startsWith('?');
@@ -161,12 +154,12 @@ export class ImageMgr {
     }
   }
 
-  find_img_info(key: string): ImageInfo | undefined {
+  find(key: string): ImageInfo | undefined {
     return this.infos.get(key);
   }
 
   load_text(text: string, style: IStyle = {}): Promise<TextInfo> {
-    const key = Ditto.MD5(text, JSON.stringify(style));
+    const key = md5(text, JSON.stringify(style));
     const fn = async () => {
       const info = await this.create_txt_info(key, text, style)
       info.pic = await p_create_picture(info, err_pic_info(info.key));
@@ -185,7 +178,7 @@ export class ImageMgr {
     return this.infos.fetch(key, fn);
   }
 
-  remove(key: string) {
+  del(key: string) {
     const img = this.infos.del(key);
     if (!img) return;
     if (img.url.startsWith("blob:")) URL.revokeObjectURL(img.url);
@@ -198,7 +191,7 @@ export class ImageMgr {
     return f.path;
   }
 
-  async load_by_e_pic_info(f: ILegacyPictureInfo | IPictureInfo): Promise<ImageInfo> {
+  async load_by_pic_info(f: ILegacyPictureInfo | IPictureInfo): Promise<ImageInfo> {
     const key = this._gen_key(f);
     return this.load_img(key, f.path);
   }
@@ -207,14 +200,7 @@ export class ImageMgr {
     return this.infos.get(this._gen_key(f));
   }
 
-  // create_pic_by_e_pic_info(e_pic_info: ILegacyPictureInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
-  //   const img_info = this.find_by_pic_info(e_pic_info);
-  //   const picture = err_pic_info();
-  //   if (!img_info) return picture;
-  //   return create_picture(img_info, picture, onLoad, void 0, onError);
-  // }
-
-  edit_image(src: HTMLCanvasElement | HTMLImageElement, op: ImageOperation): HTMLCanvasElement {
+  private edit_image(src: HTMLCanvasElement | HTMLImageElement, op: ImageOperation): HTMLCanvasElement {
     const src_w = src.width;
     const src_h = src.height;
     const src_url = src.getAttribute('src-url') || ''
@@ -308,7 +294,7 @@ function draw_underline(style: IStyle, ctx: CanvasRenderingContext2D, lines: ITe
 
 }
 
-export function err_pic_info(id: string = ""): TPicture {
+export function err_pic_info(id: string = ""): IPicture {
   return {
     id,
     w: 0,
@@ -317,10 +303,7 @@ export function err_pic_info(id: string = ""): TPicture {
   };
 }
 export const texture_loader = new T.TextureLoader();
-export interface ImageOperation_Resize extends ISize {
-  type: 'resize';
-}
-export type ImageOperation = ImageOperation_Crop | ImageOperation_Resize | ImageOperation_Flip;
+
 
 function apply_text_style(style: IStyle, ctx: CanvasRenderingContext2D) {
   ctx.font = style.font ?? "normal 9px system-ui";

@@ -58,7 +58,7 @@ export class EntityShadowRender {
     const { shadow } = bg.data.base;
     if (shadow !== this._shadow_img) {
       this._shadow_img = shadow;
-      const { pic } = this.lf2.images.find_img_info(shadow) || {}
+      const { pic } = this.lf2.images.find(shadow) || {}
       if (pic) {
         this.material.map = pic.texture as T.Texture;
         this.material.map.needsUpdate = true

@@ -1,5 +1,5 @@
 
-export interface ImageOperation_Crop {
+export interface IImageOp_Crop {
   type: 'crop';
   x?: number;
   y?: number;

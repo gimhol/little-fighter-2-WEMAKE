@@ -1,49 +1,22 @@
-import { UIInputHandle } from "../DittoImpl/ui/UIInputHandle";
-import {
-  Callbacks, get_short_file_size_txt,
-  new_id,
-  new_team,
-  PIO
-} from "./base";
+import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
 import { KEY_NAME_LIST, LocalController } from "./controller";
 import {
-  BackgroundGroup,
-  Builtin_FrameId, CheatType, Defines,
-  IBgData,
-  IStageInfo, TFace
+  BackgroundGroup, Builtin_FrameId, CheatType, Defines, IBgData, IStageInfo, TFace
 } from "./defines";
 import {
-  Ditto,
-  IKeyboard,
-  IKeyboardCallback,
-  IKeyEvent,
-  IPointings,
-  ISounds,
-  IZip,
-  IZipObject
+  BlobUrl, Ditto, HitUrl, IImageMgr, IKeyboard, IKeyboardCallback, IKeyEvent,
+  IPointings, ISounds, IZip, IZipObject
 } from "./ditto";
-import { BlobUrl, HitUrl } from "./ditto/importer";
 import { Entity } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
-import { BallsHelper, CharactersHelper, EntitiesHelper, WeaponsHelper } from "./helper";
-import { Randoming } from "./helper/Randoming";
+import { BallsHelper, CharactersHelper, EntitiesHelper, WeaponsHelper, Randoming } from "./helper";
 import { ILf2Callback } from "./ILf2Callback";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
-import { ImageMgr } from "./loader/ImageMgr";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
-import { UIComponent } from "./ui/component/UIComponent";
-import { cook_ui_info } from "./ui/cook_ui_info";
-import { ICookedUIInfo } from "./ui/ICookedUIInfo";
-import { IUIInfo } from "./ui/IUIInfo.dat";
-import { LF2UIKeyEvent } from "./ui/LF2UIKeyEvent";
-import { UINode } from "./ui/UINode";
-import {
-  fisrt,
-  is_str
-} from "./utils";
-import { MersenneTwister } from "./utils/math/MersenneTwister";
+import { cook_ui_info, ICookedUIInfo, IUIInfo, LF2UIKeyEvent, UIComponent, UINode } from "./ui";
+import { fisrt, is_str, MersenneTwister } from "./utils";
 import { World } from "./World";
 
 const cheat_info_pair = (n: CheatType) =>
@@ -134,7 +107,7 @@ export class LF2 implements IKeyboardCallback, IDebugging {
   readonly balls = new BallsHelper(this);
   readonly datas: DatMgr;
   readonly sounds: ISounds;
-  readonly images: ImageMgr;
+  readonly images: IImageMgr;
   readonly keyboard: IKeyboard;
   readonly pointings: IPointings;
 
@@ -208,7 +181,7 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     this.debug(`constructor`)
     this.datas = new DatMgr(this);
     this.sounds = new Ditto.Sounds(this);
-    this.images = new ImageMgr(this);
+    this.images = new Ditto.ImageMgr(this);
     this.keyboard = new Ditto.Keyboard(this);
     this.keyboard.callback.add(this);
     this.pointings = new Ditto.Pointings();
@@ -218,7 +191,7 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     this.world.start_update();
     this.world.start_render();
     LF2.instances.push(this)
-    this.pointings.callback.add(new UIInputHandle(this));
+    this.pointings.callback.add(new Ditto.UIInputHandle(this));
   }
 
   random_entity_info(e: Entity) {

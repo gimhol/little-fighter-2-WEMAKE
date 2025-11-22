@@ -5,3 +5,4 @@ export * from "./random";
 export * from "./base";
 export * from "./probability"
 export * from "./project_to_line"
+export * from "./MersenneTwister"

@@ -11,7 +11,7 @@ export class BgLayerRender {
     this.layer = layer;
     const { bg, info } = layer;
     const { x, y, z, file } = info;
-    if (file) this.img_info = this.layer.bg.world.lf2.images.find_img_info(file)
+    if (file) this.img_info = this.layer.bg.world.lf2.images.find(file)
     const { pic } = this.img_info || {};
     const w = pic?.w ?? info.width;
     const h = pic?.h ?? info.height;

@@ -1,11 +1,11 @@
 import { is_non_nagative_int, is_positive_int } from "../utils";
-import { ImageOperation_Crop } from "./ImageOperation_Crop";
+import { IImageOp_Crop } from "./IImageOp_Crop";
 
-export function validate_ui_img_operation_crop(any: any, errors: string[] = []): any is ImageOperation_Crop {
+export function validate_ui_img_operation_crop(any: any, errors: string[] = []): any is IImageOp_Crop {
   const fn = 'validate_ui_img_operation_crop';
   if (typeof any !== 'object') { errors.push(`${fn}] must be an object, but got ${any}`); return false; }
   let ret = true;
-  const v = any as ImageOperation_Crop;
+  const v = any as IImageOp_Crop;
   if (v.type !== 'crop') { ret = false; errors.push(`[${fn}]type must be "crop" or, but got ${v.type}`); }
   if ('x' in v && !is_non_nagative_int(v.x)) { ret = false; errors.push(`[${fn}]x must be a non-negative integer or undefiend, but got ${v.x}`); }
   if ('y' in v && !is_non_nagative_int(v.y)) { ret = false; errors.push(`[${fn}]y must be a non-negative integer or undefiend, but got ${v.y}`); }

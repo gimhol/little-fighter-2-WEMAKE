@@ -28,7 +28,7 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   if (data.on_exhaustion) data.on_exhaustion = preprocess_next_frame(data.on_exhaustion);
   const { frames, base: { files } } = data;
 
-  traversal(files, (_, v) => jobs.push(images.load_by_e_pic_info(v)));
+  traversal(files, (_, v) => jobs.push(images.load_by_pic_info(v)));
   if (jobs.length) await Promise.all(jobs);
 
   traversal(frames, (k, v, o) => o[k] = preprocess_frame(lf2, data, v, jobs));

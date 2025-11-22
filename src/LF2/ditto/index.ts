@@ -1,5 +1,6 @@
 import type { IVector2, IVector3 } from "../defines";
 import type { LF2 } from "../LF2";
+import { IImageMgr } from "./IImageMgr";
 import type { UINode } from "../ui/UINode";
 import type { World } from "../World";
 import type { ICache } from "./cache";
@@ -13,6 +14,7 @@ import { type IUINodeRenderer } from "./render/IUINodeRenderer";
 import { type IWorldRenderer } from "./render/IWorldRenderer";
 import { type ISounds, BaseSounds } from "./sounds";
 import type { IZip } from "./zip/IZip";
+import { IUIInputHandle } from "./ui/IEventHandle";
 export * from "./cache";
 export * from "./fullscreen";
 export * from "./IRender";
@@ -21,7 +23,8 @@ export * from "./keyboard";
 export * from "./pointings";
 export * from "./sounds";
 export * from "./zip";
-
+export * from "./IImageMgr"
+export * from "./importer"
 export interface IDittoPack {
   Timeout: ITimeout;
   Interval: ITimeout;
@@ -45,6 +48,8 @@ export interface IDittoPack {
   Vector2: new (x?: number, y?: number) => IVector2;
   WorldRender: new (world: World) => IWorldRenderer,
   UINodeRenderer: new (uinode: UINode) => IUINodeRenderer,
+  ImageMgr: new (lf2: LF2) => IImageMgr,
+  UIInputHandle: new (lf2: LF2) => IUIInputHandle;
   warn(...args: any[]): unknown;
   Log(...args: any[]): unknown;
   debug(...args: any[]): unknown;

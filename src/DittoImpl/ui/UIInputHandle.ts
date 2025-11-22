@@ -92,7 +92,6 @@ export class UIInputHandle implements IUIInputHandle {
   on_click(e: IPointingEvent): void {
     // throw new Error("Method not implemented.");
   }
-
   protected intersections(x: number, y: number, ui: UINode): IIntersection[] {
     this.pointer_vec_2.x = x;
     this.pointer_vec_2.y = y;
