@@ -152,8 +152,6 @@ export class UINodeRenderer implements IUINodeRenderer {
       !this.ui.txt_idx.dirty &&
       !this.ui.txts.dirty &&
       !this.ui.size.dirty &&
-      !this.ui.flip_x.dirty &&
-      !this.ui.flip_y.dirty &&
       !this.ui.color.dirty
     ) return;
     const img =
@@ -185,10 +183,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
 
   protected async create_texture(img: IImageInfo): Promise<T.Texture> {
-    const flip_x = this.ui.flip_x.value;
-    const flip_y = this.ui.flip_y.value;
-    const { texture } = await this.lf2.images.p_create_pic_by_img_info(img);
-    texture.offset.set(flip_x ? 1 : 0, flip_y ? 1 : 0);
+    const { texture } = await this.lf2.images.create_pic_by_img_info(img);
     return texture;
   }
 

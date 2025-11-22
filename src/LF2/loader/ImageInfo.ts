@@ -1,3 +1,4 @@
+import { IPicture } from "../defines";
 import { MagnificationTextureFilter } from "../defines/MagnificationTextureFilter";
 import { MinificationTextureFilter } from "../defines/MinificationTextureFilter";
 import { TextureWrapping } from "../defines/TextureWrapping";
@@ -14,6 +15,7 @@ export class ImageInfo implements IImageInfo {
   mag_filter?: MagnificationTextureFilter;
   wrap_s?: TextureWrapping;
   wrap_t?: TextureWrapping;
+  pic?: IPicture;
   constructor(o?: Partial<IImageInfo>) {
     if (o) Object.assign(this, o)
   }

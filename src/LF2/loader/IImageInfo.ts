@@ -16,7 +16,7 @@ export interface IImageInfo {
    * @memberof IImageInfo
    */
   scale: number;
-  
+
   /**
    * 原始图片宽度（像素） 
    *
@@ -37,4 +37,7 @@ export interface IImageInfo {
   mag_filter?: MagnificationTextureFilter;
   wrap_s?: TextureWrapping;
   wrap_t?: TextureWrapping;
+
+  flip_x?: boolean;
+  flip_y?: boolean;
 }

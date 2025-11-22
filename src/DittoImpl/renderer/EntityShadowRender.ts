@@ -58,12 +58,13 @@ export class EntityShadowRender {
     const { shadow } = bg.data.base;
     if (shadow !== this._shadow_img) {
       this._shadow_img = shadow;
-      this.lf2.images.p_create_pic_by_img_key(shadow).then(pic => {
-        this.material.map = pic.texture;
+      const { pic } = this.lf2.images.find_img_info(shadow) || {}
+      if (pic) {
+        this.material.map = pic.texture as T.Texture;
         this.material.map.needsUpdate = true
         this.material.opacity = 1;
         this.material.needsUpdate = true;
-      })
+      }
     }
 
     const {

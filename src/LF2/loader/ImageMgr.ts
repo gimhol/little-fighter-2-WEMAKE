@@ -1,5 +1,7 @@
 import { ISize } from "splittings/dist/es/splittings";
 import * as T from "three";
+import { create_picture, p_create_picture } from "../../DittoImpl/renderer/create_picture";
+import { error_texture } from "../../DittoImpl/renderer/error_texture";
 import { create_img_ele } from "../../Utils/create_img_ele";
 import { get_blob } from "../../Utils/get_blob";
 import type { LF2 } from "../LF2";
@@ -14,13 +16,13 @@ import { is_positive_int, max, round } from "../utils";
 import { IImageInfo } from "./IImageInfo";
 import { ImageInfo } from "./ImageInfo";
 import { ImageOperation_Crop } from "./ImageOperation_Crop";
+import { ImageOperation_Flip } from "./ImageOperation_Flip";
 import { TextInfo } from "./TextInfo";
 import { validate_ui_img_operation_crop } from "./validate_ui_img_operation_crop";
-import { error_texture } from "../../DittoImpl/renderer/error_texture";
-import { create_picture } from "../../DittoImpl/renderer/create_picture";
 
 export type TPicture = IPicture<T.Texture>;
 export class ImageMgr {
+  protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<ImageInfo>();
   protected disposables = new Map<string, ImageInfo>();
   readonly lf2: LF2;
@@ -48,16 +50,17 @@ export class ImageMgr {
     img.setAttribute('scale', '' + scale)
 
     const vaild_operations = operations?.filter(v => {
-      let vaild = true;
       switch (v.type) {
         case "crop":
           return validate_ui_img_operation_crop(v)
         case "resize":
-          if (!is_positive_int(v.w)) { vaild = false }
-          if (!is_positive_int(v.h)) { vaild = false }
-          return vaild
+          if (!is_positive_int(v.w)) return false
+          if (!is_positive_int(v.h)) return false
+          return true;
+        case "flip":
+          return v.x || v.y;
       }
-      return vaild;
+      return false;
     });
 
     if (!vaild_operations?.length) {
@@ -158,7 +161,7 @@ export class ImageMgr {
     }
   }
 
-  find(key: string): ImageInfo | undefined {
+  find_img_info(key: string): ImageInfo | undefined {
     return this.infos.get(key);
   }
 
@@ -168,7 +171,11 @@ export class ImageMgr {
 
   load_text(text: string, style: IStyle = {}): Promise<TextInfo> {
     const key = Ditto.MD5(text, JSON.stringify(style));
-    const fn = () => this.create_txt_info(key, text, style);
+    const fn = async () => {
+      const info = await this.create_txt_info(key, text, style)
+      info.pic = await p_create_picture(info, err_pic_info(info.key));
+      return info;
+    };
     return this.infos.fetch(key, fn) as Promise<TextInfo>;
   }
 
@@ -176,6 +183,7 @@ export class ImageMgr {
     const fn = async () => {
       this.lf2.on_loading_content(`${key}`, 0);
       const info = await this.create_img_info(key, src, operations);
+      info.pic = await p_create_picture(info, err_pic_info(info.key));
       return info;
     };
     return this.infos.fetch(key, fn);
@@ -199,32 +207,30 @@ export class ImageMgr {
     return this.load_img(key, f.path);
   }
 
-  async create_pic(key: string, src: string, operations?: ImageOperation[]): Promise<TPicture> {
-    const img_info = await this.load_img(key, src, operations);
-    return this.p_create_pic_by_img_key(img_info.key);
-  }
-
-  create_pic_by_img_info(img_info: IImageInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
+  private _create_pic_by_img_info(img_info: IImageInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
     const picture = err_pic_info(img_info.key);
     const ret = create_picture(img_info, picture, onLoad, void 0, onError);
     return ret;
   }
 
-  p_create_pic_by_img_info(img_info: IImageInfo): Promise<TPicture> {
-    return new Promise((a, b) => {
+  create_pic_by_img_info(img_info: IImageInfo): Promise<TPicture> {
+    return new Promise((resolve, reject) => {
       const picture = err_pic_info(img_info.key);
-      create_picture(img_info, picture, a, void 0, b);
+      create_picture(img_info, picture, (v) => {
+        resolve(v);
+        this.pictures.set(img_info.key, v);
+      }, void 0, reject);
     })
   }
 
   create_pic_by_img_key(img_key: string, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
-    const img_info = this.find(img_key);
+    const img_info = this.find_img_info(img_key);
     if (!img_info) return err_pic_info();
-    return this.create_pic_by_img_info(img_info, onLoad, onError);
+    return this._create_pic_by_img_info(img_info, onLoad, onError);
   }
 
   async p_create_pic_by_img_key(img_key: string): Promise<TPicture> {
-    if (this.find(img_key)) return new Promise((a, b) => this.create_pic_by_img_key(img_key, a, b))
+    if (this.find_img_info(img_key)) return new Promise((a, b) => this.create_pic_by_img_key(img_key, a, b))
     await this.lf2.images.load_img(img_key, img_key)
     return new Promise((a, b) => this.create_pic_by_img_key(img_key, a, b))
   }
@@ -246,28 +252,43 @@ export class ImageMgr {
 
 
   edit_image(src: HTMLCanvasElement | HTMLImageElement, op: ImageOperation): HTMLCanvasElement {
+    const src_w = src.width;
+    const src_h = src.height;
+    const src_url = src.getAttribute('src-url') || ''
     switch (op.type) {
       case 'crop': {
         const scale = Number(src.getAttribute("scale")) || 1
         const ret = document.createElement("canvas")
         ret.setAttribute('scale', '' + scale)
-        ret.setAttribute('src-url', src.getAttribute('src-url') || '')
+        ret.setAttribute('src-url', src_url)
         const sx = op.x ? op.x * scale : 0;
         const sy = op.y ? op.y * scale : 0;
-        const sw = op.w ? op.w * scale : src.width;
-        const sh = op.h ? op.h * scale : src.height;
+        const sw = op.w ? op.w * scale : src_w;
+        const sh = op.h ? op.h * scale : src_h;
         ret.width = op.dw ? op.dw * scale : sw;
         ret.height = op.dh ? op.dh * scale : sh
-        const dst_ctx = ret.getContext('2d');
-        dst_ctx?.drawImage(src, sx, sy, sw, sh, 0, 0, ret.width, ret.height)
+        const ctx = ret.getContext('2d');
+        ctx?.drawImage(src, sx, sy, sw, sh, 0, 0, ret.width, ret.height)
         return ret;
       }
       case 'resize': {
         const ret = document.createElement("canvas")
-        ret.width = op.w > 0 ? op.w : src.width
-        ret.height = op.h > 0 ? op.h : src.height
+        ret.setAttribute('src-url', src_url)
+        const dst_w = ret.width = op.w > 0 ? op.w : src_w
+        const dst_h = ret.height = op.h > 0 ? op.h : src_h
         const dst_ctx = ret.getContext('2d');
-        dst_ctx?.drawImage(src, 0, 0, ret.width, ret.height, 0, 0, src.width, src.height)
+        dst_ctx?.drawImage(src, 0, 0, dst_w, dst_h, 0, 0, src_w, src_h)
+        return ret;
+      }
+      case 'flip': {
+        const ret = document.createElement("canvas")
+        ret.setAttribute('src-url', src_url)
+        const w = ret.width = src_w;
+        const h = ret.height = src_h;
+        const ctx = ret.getContext('2d');
+        if (op.x) { ctx?.scale(-1, 1); ctx?.translate(-w, 0) }
+        if (op.y) { ctx?.scale(1, -1); ctx?.translate(0, -h) }
+        ctx?.drawImage(src, 0, 0, w, h, 0, 0, w, h)
         return ret;
       }
     }
@@ -336,7 +357,7 @@ export const texture_loader = new T.TextureLoader();
 export interface ImageOperation_Resize extends ISize {
   type: 'resize';
 }
-export type ImageOperation = ImageOperation_Crop | ImageOperation_Resize;
+export type ImageOperation = ImageOperation_Crop | ImageOperation_Resize | ImageOperation_Flip;
 
 function apply_text_style(style: IStyle, ctx: CanvasRenderingContext2D) {
   ctx.font = style.font ?? "normal 9px system-ui";

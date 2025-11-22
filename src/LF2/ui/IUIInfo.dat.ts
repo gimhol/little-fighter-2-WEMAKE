@@ -30,9 +30,6 @@ export interface IUIInfo {
   size?: number[] | string;
   visible?: boolean | string;
   disabled?: boolean | string;
-  
-  flip_x?: boolean;
-  flip_y?: boolean;
   color?: string;
   img?: TUIImgInfo | TUIImgInfo[];
   txt?: TUITxtInfo | TUITxtInfo[];

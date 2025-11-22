@@ -17,4 +17,6 @@ export interface IUIImgInfo {
   offsetAnimY?: number;
   repeatX?: number;
   repeatY?: number;
+  flip_x?: 0 | 1;
+  flip_y?: 0 | 1;
 }

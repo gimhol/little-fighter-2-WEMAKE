@@ -74,8 +74,6 @@ export class UINode implements IDebugging {
   readonly center: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.center);
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
   readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
-  readonly flip_x: StateDelegate<boolean> = new StateDelegate(() => this.data.flip_x === true);
-  readonly flip_y: StateDelegate<boolean> = new StateDelegate(() => this.data.flip_y === true);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
   readonly enabled: StateDelegate<boolean> = new StateDelegate(() => this.data.enabled === true);
 

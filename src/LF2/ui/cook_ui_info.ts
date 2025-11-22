@@ -22,7 +22,7 @@ export function flat_ui_img_info(imgs: TUIImgInfo[], output?: IUIImgInfo[]): IUI
     let idx = 0;
     for (let row = 0; row < rows && (count <= 0 || idx < count); ++row) {
       for (let col = 0; col < cols && (count <= 0 || idx < count); ++col) {
-        const i = { ...img, x: x + col * w, y: y + row * h }
+        const i: IUIImgInfo = { ...img, x: x + col * w, y: y + row * h }
         ret.push(i);
         output?.push(i)
         ++idx;

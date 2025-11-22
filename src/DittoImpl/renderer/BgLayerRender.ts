@@ -1,25 +1,18 @@
 import type Layer from "@/LF2/bg/Layer";
-import type { TPicture } from "@/LF2/loader/ImageMgr";
+import { ImageInfo } from "@/LF2/loader/ImageInfo";
 import * as T from "../_t";
-
-const pic_map = new Map<string, TPicture>()
 
 export class BgLayerRender {
   readonly mesh: T.Mesh;
   readonly layer: Layer;
-  readonly pic: TPicture | undefined;
-  get_pic = (file: string) => {
-    let ret = pic_map.get(file);
-    if (!ret) pic_map.set(file, ret = this.layer.bg.world.lf2.images.create_pic_by_img_key(file));
-    return ret;
-  }
+  readonly img_info: ImageInfo | undefined;
+
   constructor(layer: Layer) {
     this.layer = layer;
     const { bg, info } = layer;
     const { x, y, z, file } = info;
-    if (file)
-      this.pic = this.get_pic(file);
-    const { pic } = this;
+    if (file) this.img_info = this.layer.bg.world.lf2.images.find_img_info(file)
+    const { pic } = this.img_info || {};
     const w = pic?.w ?? info.width;
     const h = pic?.h ?? info.height;
     const params: T.MeshBasicMaterialParameters = {

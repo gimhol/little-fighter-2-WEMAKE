@@ -16,7 +16,7 @@ export function create_picture(
     min_filter = MinificationTextureFilter.Nearest,
     mag_filter = MagnificationTextureFilter.Nearest,
     wrap_s = TextureWrapping.MirroredRepeat,
-    wrap_t = TextureWrapping.MirroredRepeat, 
+    wrap_t = TextureWrapping.MirroredRepeat,
     scale
   } = img_info;
   const texture = texture_loader.load(url, onLoad ? () => onLoad(pic_info) : void 0, onProgress, onError);
@@ -26,8 +26,18 @@ export function create_picture(
   texture.wrapS = wrap_s;
   texture.wrapT = wrap_t;
   texture.userData = img_info;
+
   pic_info.w = w / scale;
   pic_info.h = h / scale;
   pic_info.texture = texture;
   return pic_info;
+}
+export function p_create_picture(
+  img_info: IImageInfo,
+  pic_info: TPicture = err_pic_info(img_info.key),
+  onProgress?: (event: ProgressEvent) => void
+): Promise<TPicture> {
+  return new Promise((resolve, reject) => {
+    create_picture(img_info, pic_info, resolve, onProgress, reject)
+  })
 }
