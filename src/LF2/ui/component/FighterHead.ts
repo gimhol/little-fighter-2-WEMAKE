@@ -76,26 +76,26 @@ export default class FighterHead extends UIComponent {
     switch (this.gpl?.state!) {
       case GamePrepareState.Player:
         this.hints_node!.visible = !this.player.joined;
-        this.node.img_idx.value = this.player.joined ? -1 : 0;
+        this.node.img_idx.value = this.player.joined ? 0 : -1;
         this.countdown_node!.visible = false;
         break;
       case GamePrepareState.CountingDown:
         this.hints_node!.visible = false;
-        this.node.img_idx.value = this.player.joined ? -1 : 0;
+        this.node.img_idx.value = this.player.joined ? 0 : -1;
         this.countdown_node!.visible = !this.player.joined;
         break;
       case GamePrepareState.ComNumberSel:
-        this.node.img_idx.value = this.player.joined ? -1 : 0;
+        this.node.img_idx.value = this.player.joined ? 0 : -1;
         this.hints_node!.visible = false;
         this.countdown_node!.visible = false;
         break;
       case GamePrepareState.Computer:
         this.hints_node!.visible = !this.player.joined && this.player.is_com;
-        this.node.img_idx.value = this.player.joined ? -1 : 0;
+        this.node.img_idx.value = this.player.joined ? 0 : -1;
         this.countdown_node!.visible = false;
         break;
       case GamePrepareState.GameSetting:
-        this.node.img_idx.value = this.player.joined ? -1 : 0;
+        this.node.img_idx.value = this.player.joined ? 0 : -1;
         this.hints_node!.visible = false;
         this.countdown_node!.visible = false;
         break;
