@@ -162,11 +162,10 @@ export class EntityInfoRender implements IEntityCallbacks {
             font: "bold 12px Arial",
           },
         })
-        .then((i) => lf2.images.p_create_pic_by_img_key(i.key))
         .then((p) => {
           node.material.map?.dispose();
           node.material.dispose();
-          node.material = new T.SpriteMaterial({ map: p.texture })
+          node.material = new T.SpriteMaterial({ map: p.pic?.texture })
           node.material.needsUpdate = true;
           node.scale.set(p.w, p.h, 0);
         });
@@ -262,11 +261,13 @@ export class EntityInfoRender implements IEntityCallbacks {
         line_width: 2
       },
       smoothing: false,
-    }).then((i) => {
-      return lf2.images.p_create_pic_by_img_key(i.key)
     }).then((p) => {
       if (sprite.userData.text !== text)
         return;
+      sprite.material.map?.dispose();
+      sprite.material.dispose();
+      sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
+      sprite.material.needsUpdate = true;
       sprite.visible = true;
       sprite.name = "reserve sprite";
       sprite.scale.x = p.w;
@@ -307,14 +308,12 @@ export class EntityInfoRender implements IEntityCallbacks {
       },
       disposable: true,
       smoothing: false,
-    }).then((i) => {
-      return lf2.images.p_create_pic_by_img_key(i.key)
     }).then((p) => {
       if (sprite.userData.text !== text) return;
       sprite.visible = true;
       sprite.material.map?.dispose();
       sprite.material.dispose();
-      sprite.material = new T.SpriteMaterial({ map: p.texture })
+      sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
       sprite.material.needsUpdate = true;
       sprite.scale.x = p.w;
       sprite.scale.y = p.h;

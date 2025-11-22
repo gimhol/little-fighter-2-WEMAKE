@@ -207,34 +207,6 @@ export class ImageMgr {
     return this.load_img(key, f.path);
   }
 
-  private _create_pic_by_img_info(img_info: IImageInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
-    const picture = err_pic_info(img_info.key);
-    const ret = create_picture(img_info, picture, onLoad, void 0, onError);
-    return ret;
-  }
-
-  create_pic_by_img_info(img_info: IImageInfo): Promise<TPicture> {
-    return new Promise((resolve, reject) => {
-      const picture = err_pic_info(img_info.key);
-      create_picture(img_info, picture, (v) => {
-        resolve(v);
-        this.pictures.set(img_info.key, v);
-      }, void 0, reject);
-    })
-  }
-
-  create_pic_by_img_key(img_key: string, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
-    const img_info = this.find_img_info(img_key);
-    if (!img_info) return err_pic_info();
-    return this._create_pic_by_img_info(img_info, onLoad, onError);
-  }
-
-  async p_create_pic_by_img_key(img_key: string): Promise<TPicture> {
-    if (this.find_img_info(img_key)) return new Promise((a, b) => this.create_pic_by_img_key(img_key, a, b))
-    await this.lf2.images.load_img(img_key, img_key)
-    return new Promise((a, b) => this.create_pic_by_img_key(img_key, a, b))
-  }
-
   create_pic_by_e_pic_info(e_pic_info: ILegacyPictureInfo, onLoad?: (d: TPicture) => void, onError?: (err: unknown) => void): TPicture {
     const img_info = this.find_by_pic_info(e_pic_info);
     const picture = err_pic_info();
@@ -244,13 +216,6 @@ export class ImageMgr {
   p_create_pic_by_e_pic_info(e_pic_info: ILegacyPictureInfo): Promise<TPicture> {
     return new Promise((a, b) => this.create_pic_by_e_pic_info(e_pic_info, a, b))
   }
-
-  async create_pic_by_text(text: string, style: IStyle = {}) {
-    const img_info = await this.load_text(text, style);
-    return this.p_create_pic_by_img_key(img_info.key);
-  }
-
-
   edit_image(src: HTMLCanvasElement | HTMLImageElement, op: ImageOperation): HTMLCanvasElement {
     const src_w = src.width;
     const src_h = src.height;
