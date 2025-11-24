@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button, IButtonProps } from "./Button";
-import { TShortcut } from "../useShortcut";
+import { TShortcut } from "@fimagine/dom-hooks";
 
 export interface IStatusButtonProps<V = any, I = any>
   extends Omit<IButtonProps, "children" | "value" | "onChange" | "defaultValue"> {

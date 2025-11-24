@@ -14,7 +14,6 @@ import { InputNumber } from "./Component/Input";
 import Select from "./Component/Select";
 import Show from "./Component/Show";
 import Titled from "./Component/Titled";
-import { useShortcut } from "./Component/useShortcut";
 import { DanmuOverlay } from "./DanmuOverlay";
 import { __Pointings } from "./DittoImpl";
 import { Indicating, INDICATINGS } from "./DittoImpl/renderer/FrameIndicators";
@@ -57,6 +56,7 @@ import {
   useLocalString,
 } from "./useLocalStorage";
 import qs from "qs";
+import { useShortcut } from "@fimagine/dom-hooks";
 
 function App() {
   const [fullscreen] = useState(() => new Ditto.FullScreen());

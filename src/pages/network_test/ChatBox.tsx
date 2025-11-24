@@ -1,12 +1,11 @@
 
-import { useFloating, useForwardedRef, useStateRef } from "@fimagine/dom-hooks";
+import { useFloating, useForwardedRef, useShortcut, useStateRef } from "@fimagine/dom-hooks";
 import List, { ListRef } from "rc-virtual-list";
 import { CSSProperties, ForwardedRef, forwardRef, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
 import Combine from "../../Component/Combine";
 import { Flex, IFlexProps } from "../../Component/Flex";
 import { Input, InputRef } from "../../Component/Input";
-import { useShortcut } from "../../Component/useShortcut";
 import { IRespChat, MsgEnum } from "../../Net";
 import { Connection } from "./Connection";
 import styles from "./styles.module.scss";

@@ -3,10 +3,9 @@ import device from "current-device";
 import React, { Ref, useEffect, useMemo, useState } from "react";
 import { IStyleProps } from "../StyleBase/IStyleProps";
 import { useStyleBase } from "../StyleBase/useStyleBase";
-import { TShortcut, useShortcut } from "../useShortcut";
 import styles from "./style.module.scss";
 import { Text } from "../Text";
-import { useForwardedRef } from "@fimagine/dom-hooks";
+import { TShortcut, useForwardedRef, useShortcut } from "@fimagine/dom-hooks";
 const is_desktop = device.desktop();
 
 export interface IButtonProps
@@ -18,8 +17,7 @@ export interface IButtonProps
   _ref?: React.Ref<HTMLButtonElement>;
   styles?: { inner?: React.CSSProperties };
 }
-export function _Button(props: IButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) {
-  const a: Ref<HTMLButtonElement> = ref;
+export function _Button(props: IButtonProps, f_ref: React.ForwardedRef<HTMLButtonElement>) {
   const {
     shortcut,
     shortcutTarget = window,
@@ -35,7 +33,8 @@ export function _Button(props: IButtonProps, ref: React.ForwardedRef<HTMLButtonE
     ..._p
   } = props;
 
-  const [ref_btn, on_ref] = _ref ? useForwardedRef(ref, _ref) : useForwardedRef(ref);
+
+  const [ref_btn, on_ref] = useForwardedRef(...(_ref ? [_ref, f_ref] : [f_ref]));
   useShortcut(shortcut, props.disabled, ref_btn, shortcutTarget);
 
   const [has_keyboard, set_has_keyboard] = useState(is_desktop);
