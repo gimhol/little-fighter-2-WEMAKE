@@ -1,0 +1,315 @@
+{
+  name: "页面：设置",
+  id: "settings_page",
+  color: "rgb(16, 32, 108)",
+  key_press_actions: [["escape", "set_layout(entry)"]],
+  templates: {
+    suffixies: {
+      items: [
+        {
+          id: "key_set_U",
+          center: "1,0.5",
+          pos: "0, 134",
+          txt: {
+            i18n: "ctrl_settings.key_up",
+            style: {
+              fill_style: "#AAC3FF",
+              font: "bold 16px Arial",
+            },
+          },
+        },
+        {
+          id: "key_set_D",
+          center: "1,0.5",
+          pos: "0, 156",
+          txt: {
+            i18n: "ctrl_settings.key_down",
+            style: {
+              fill_style: "#AAC3FF",
+              font: "bold 16px Arial",
+            },
+          },
+        },
+        {
+          id: "key_set_L",
+          center: "1,0.5",
+          pos: "0, 178",
+          txt: {
+            i18n: "ctrl_settings.key_left",
+            style: {
+              fill_style: "#AAC3FF",
+              font: "bold 16px Arial",
+            },
+          },
+        },
+        {
+          id: "key_set_R",
+          center: "1,0.5",
+          pos: "0, 200",
+          txt: {
+            i18n: "ctrl_settings.key_right",
+            style: {
+              fill_style: "#AAC3FF",
+              font: "bold 16px Arial",
+            },
+          },
+        },
+        {
+          id: "key_set_a",
+          center: "1,0.5",
+          pos: "0, 222",
+          txt: {
+            i18n: "ctrl_settings.key_attack",
+            style: {
+              fill_style: "#AAC3FF",
+              font: "bold 16px Arial",
+            },
+          },
+        },
+        {
+          id: "key_set_j",
+          center: "1,0.5",
+          pos: "0, 244",
+          txt: {
+            i18n: "ctrl_settings.key_jump",
+            style: {
+              fill_style: "#AAC3FF",
+              font: "bold 16px Arial",
+            },
+          },
+        },
+        {
+          id: "key_set_d",
+          center: "1,0.5",
+          pos: "0, 266",
+          txt: {
+            i18n: "ctrl_settings.key_defend",
+            style: {
+              fill_style: "#AAC3FF",
+              font: "bold 16px Arial",
+            },
+          },
+        },
+      ],
+    },
+    player_set: {
+      items: [
+        {
+          id: "btn_player_name",
+          component: "PlayerNameInput()",
+          size: "106, 19",
+        },
+        {
+          id: "btn_ctrl_type",
+          component: "PlayerCtrlType()",
+          img: [
+            {
+              w: 106,
+              h: 91,
+              path: "sprite/CS6.png",
+            },
+            {
+              w: 106,
+              h: 91,
+              path: "sprite/CS2.png",
+            },
+            {
+              w: 106,
+              h: 91,
+              path: "sprite/CS3.png",
+            },
+            {
+              w: 106,
+              h: 91,
+              path: "sprite/CS4.png",
+            },
+            {
+              w: 106,
+              h: 91,
+              path: "sprite/CS5.png",
+            },
+          ],
+          pos: "0, 26",
+        },
+        {
+          id: "btn_key_set_U",
+          component: "PlayerKeyEdit(,U)",
+          center: "0.5,0.5",
+          pos: "53, 134",
+          size: "106, 19",
+        },
+        {
+          id: "btn_key_set_D",
+          component: "PlayerKeyEdit(,D)",
+          center: "0.5,0.5",
+          pos: "53, 156",
+          size: "106, 19",
+        },
+        {
+          id: "btn_key_set_L",
+          component: "PlayerKeyEdit(,L)",
+          center: "0.5,0.5",
+          pos: "53, 178",
+          size: "106, 19",
+        },
+        {
+          id: "btn_key_set_R",
+          component: "PlayerKeyEdit(,R)",
+          center: "0.5,0.5",
+          pos: "53, 200",
+          size: "106, 19",
+        },
+        {
+          id: "btn_key_set_a",
+          component: "PlayerKeyEdit(,a)",
+          center: "0.5,0.5",
+          pos: "53, 222",
+          size: "106, 19",
+        },
+        {
+          id: "btn_key_set_j",
+          component: "PlayerKeyEdit(,j)",
+          center: "0.5,0.5",
+          pos: "53, 244",
+          size: "106, 19",
+        },
+        {
+          id: "btn_key_set_d",
+          component: "PlayerKeyEdit(,d)",
+          center: "0.5,0.5",
+          pos: "53, 266",
+          size: "106, 19",
+        },
+      ],
+    },
+  },
+  items: [
+    "builtin_data/launch/bg.json5",
+    "layouts/bg_l_face.ui.json",
+    "layouts/bg_r_face.ui.json",
+    {
+      id: "main_menu",
+      img: {
+        path: "!sprite/MENU_CLIP2.png",
+        x: 0,
+        y: 0,
+        w: 626,
+        h: 344,
+      },
+      center: "0.5, 0.5",
+      pos: "397, 220",
+      items: [
+        {
+          txt: {
+            i18n: "entry_page.ctrl_settings",
+            style: {
+              fill_style: "#5A73D6",
+              font: "20px Arial",
+            },
+          },
+          pos: "0, -185",
+          center: "0.5, 0.5",
+        },
+        {
+          id: "suffixies",
+          pos: "-170,-144",
+          template: "suffixies",
+        },
+        {
+          id: "player_1",
+          pos: "-165,-145",
+          values: {
+            player_id: "1",
+          },
+          template: "player_set",
+        },
+        {
+          id: "player_2",
+          pos: "-52,-145",
+          values: {
+            player_id: "2",
+          },
+          template: "player_set",
+        },
+        {
+          id: "player_3",
+          pos: "61,-145",
+          values: {
+            player_id: "3",
+          },
+          template: "player_set",
+        },
+        {
+          id: "player_4",
+          pos: "174,-145",
+          values: {
+            player_id: "4",
+          },
+          template: "player_set",
+        },
+      ],
+    },
+    {
+      id: "btn_confirm",
+      img: {
+        path: "!sprite/MENU_CLIP.png",
+        x: 489,
+        y: 426,
+        w: 151,
+        h: 26,
+      },
+      pos: "368, 359",
+      component: ["OpacityHover(0,1)"],
+      actions: {
+        click: ["sound(ok)", "pop_layout(entry)"],
+      },
+    },
+    {
+      id: "btn_cancel",
+      img: {
+        path: "!sprite/MENU_CLIP.png",
+        x: 643,
+        y: 426,
+        w: 151,
+        h: 26,
+      },
+      pos: "525, 359",
+      component: ["OpacityHover(0,1)"],
+      actions: {
+        click: ["sound(cancel)", "pop_layout(entry)"],
+      },
+    },
+    {
+      id: "btn_move_table_normal",
+      txt: {
+        i18n: "goto_special_moves_table",
+        style: {
+          fill_style: "#5A73D6",
+          underline_color: "#5A73D6",
+          underline_width: 1,
+          font: "12px Arial",
+        },
+      },
+      center: "0, 1",
+      pos: "5, 445",
+    },
+    {
+      id: "btn_move_table_hover",
+      txt: {
+        i18n: "goto_special_moves_table",
+        style: {
+          fill_style: "white",
+          underline_color: "white",
+          underline_width: 1,
+          font: "12px Arial",
+        },
+      },
+      center: "0, 1",
+      pos: "5, 445",
+      component: ["OpacityHover(0,1)"],
+      actions: {
+        click: ["sound(ok)", "link_to(https://lf2.net/control.html)"],
+      },
+    },
+  ],
+}

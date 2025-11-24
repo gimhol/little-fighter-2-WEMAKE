@@ -56,6 +56,7 @@ import {
   useLocalNumber,
   useLocalString,
 } from "./useLocalStorage";
+import qs from "qs";
 
 function App() {
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -236,6 +237,10 @@ function App() {
                 set_game_overlay(enabled)
                 break;
             }
+          },
+          on_prel_loaded: () => {
+            const { test_layout_id } = qs.parse(window.location.search.substring(1))
+            if (typeof test_layout_id === 'string') lf2.set_ui(test_layout_id)
           },
         }),
         lf2.sounds.callbacks.add({
