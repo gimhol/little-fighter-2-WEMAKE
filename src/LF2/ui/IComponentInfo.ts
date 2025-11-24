@@ -3,5 +3,5 @@ export interface IComponentInfo {
   args?: any[];
   name: string;
   enabled?: boolean;
-  properties?: any;
+  properties?: { [x in string]?: any };
 }

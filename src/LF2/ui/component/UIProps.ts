@@ -3,8 +3,8 @@ import read_nums from "../utils/read_nums";
 
 export interface IUIPropsCallback { }
 export class UIProps {
-  readonly raw: any;
-  constructor(raw: any) { this.raw = raw; }
+  readonly raw: { [x in string]?: any };
+  constructor(raw: { [x in string]?: any }) { this.raw = raw; }
   num(name: string): number | null {
     if (!(name in this.raw)) return null;
     const v = this.raw[name];
