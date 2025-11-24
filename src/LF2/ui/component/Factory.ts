@@ -39,7 +39,7 @@ import PlayerTeamName from "./PlayerTeamName";
 import { PlayingTimeText } from "./PlayingTimeText";
 import { PositionAnimation } from "./PositionAnimation";
 import { PrefixAndDifficultyText } from "./PrefixAndDifficultyText";
-import { RandomImgOnLayoutResume } from "./RandomImgOnLayoutResume";
+import { RandomImg } from "./RandomImg";
 import { Reachable } from "./Reachable";
 import { ReachableGroup } from "./ReachableGroup";
 import { ScaleAnimation } from "./ScaleAnimation";
@@ -57,6 +57,7 @@ import { TextInput } from "./TextInput";
 import { UIComponent } from "./UIComponent";
 import { VerticalLayout } from "./VerticalLayout";
 import { VsModeLogic } from "./VsModeLogic";
+import { RandomTxt } from "./RandomTxt";
 const COMPONENTS = [
   LaunchPage,
   LoadingContentText,
@@ -87,7 +88,8 @@ const COMPONENTS = [
   StageModeLogic,
   DemoModeLogic,
   PlayingTimeText,
-  RandomImgOnLayoutResume,
+  RandomImg,
+  RandomTxt,
   Jalousie,
   SineOpacity,
   FadeInOpacity,

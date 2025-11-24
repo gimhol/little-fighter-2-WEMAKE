@@ -2,7 +2,7 @@
   "id": "bg_l_face",
   "name": "UI: 背景左边脸",
   "component": [
-    "RandomImgOnLayoutResume(entry_page)"
+    "RandomImg(bg_fighter_face)"
   ],
   "img": [
     {

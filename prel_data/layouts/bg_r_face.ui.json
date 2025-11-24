@@ -5,7 +5,7 @@
   "size": "0, 450",
   "pos": "794, 0",
   "component": [
-    "RandomImgOnLayoutResume(entry_page)"
+    "RandomImg(bg_fighter_face)"
   ],
   "img": [
     {
