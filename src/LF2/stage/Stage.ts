@@ -212,7 +212,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.drink_l = phase.drink_l ?? -1200
     this.player_r = phase.player_r ?? phase.bound ?? this.bg.right
     this.cam_r = phase.camera_r ?? phase.bound ?? this.bg.right
-    this.enemy_r = phase.enemy_r ?? (phase.bound + 1200) ?? this.bg.right
+    this.enemy_r = phase.enemy_r ?? ((phase.bound ?? this.bg.right) + 1200)
     this.drink_r = phase.drink_r ?? (this.bg.right + 1200)
   }
 
