@@ -41,36 +41,77 @@ export class StateDelegate<T> {
   set(index: number, v: Value<Unsafe<T>>): void {
     index = floor(index);
     if (index < 0) return;
-    this._values[index] = this.value_to_state(v);
-    if (index === this._values.length - 1) this._dirty = true;
+    const old = this._values[index];
+    const now = this.value_to_state(v);
+    this._values[index] = now;
+    if (index < this._values.length - 1) return;
+    const old_value = old ? this.get_value(old) : void 0;
+    const now_value = now ? this.get_value(now) : void 0;
+    const changed = !old || !now || old_value !== now_value
+    if (changed) this._dirty = true;
   }
 
   delete(index: number) {
     index = floor(index);
     if (index < 0 || index >= this._values.length) return;
-    this._values.splice(index, 1);
-    if (index === this._values.length) this._dirty = true;
+
+    const [old] = this._values.splice(index, 1);
+    if (index !== this._values.length) return;
+    const now = this._values[this._values.length - 1];
+    if (old === now) return;
+    const old_value = old ? this.get_value(old) : void 0;
+    const now_value = now ? this.get_value(now) : void 0;
+    const changed = !old || !now || old_value !== now_value
+    if (changed) this._dirty = true;
+
   }
 
   insert(index: number, v: Value<Unsafe<T>>): void {
     index = floor(index);
+    const old = this._values[this._values.length - 1];
     this._values.splice(index, 0, this.value_to_state(v));
-    if (index >= this._values.length - 1) this._dirty = true;
+    const now = this._values[this._values.length - 1];
+    if (index < this._values.length - 1) return
+    if (old === now) return;
+    const old_value = old ? this.get_value(old) : void 0;
+    const now_value = now ? this.get_value(now) : void 0;
+    const changed = !old || !now || old_value !== now_value
+    if (changed) this._dirty = true;
+
   }
 
   pop() {
     if (!this._values.length) return;
+    const old = this._values[this._values.length - 1];
     this._values.pop();
-    this._dirty = true;
+    const now = this._values[this._values.length - 1];
+    const old_value = old ? this.get_value(old) : void 0;
+    const now_value = now ? this.get_value(now) : void 0;
+    const changed = !old || !now || old_value !== now_value
+    if (changed) this._dirty = true;
   }
 
   push(...v: Value<Unsafe<T>>[]) {
+    if (!v.length) return;
+    const old = this._values[this._values.length - 1];
     this._values.push(...v.map(v => this.value_to_state(v)));
-    this._dirty = true;
+    const now = this._values[this._values.length - 1];
+    const old_value = old ? this.get_value(old) : void 0;
+    const now_value = now ? this.get_value(now) : void 0;
+    const changed = !old || !now || old_value !== now_value
+    if (changed) this._dirty = true;
   }
 
   unshift(...v: Value<Unsafe<T>>[]) {
+    if (!v.length) return;
+    const old = this._values[this._values.length - 1];
     this._values.unshift(...v.map(v => this.value_to_state(v)));
+    if (this._values.length > v.length) return;
+    const now = this._values[this._values.length - 1];
+    const old_value = old ? this.get_value(old) : void 0;
+    const now_value = now ? this.get_value(now) : void 0;
+    const changed = !old || !now || old_value !== now_value
+    if (changed) this._dirty = true;
   }
 }
 export default StateDelegate

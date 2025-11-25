@@ -8,8 +8,6 @@ import { IStyle } from "../defines/IStyle";
 import { Ditto } from "../ditto";
 import { IUINodeRenderer } from "../ditto/render/IUINodeRenderer";
 import { IDebugging, make_debugging } from "../entity/make_debugging";
-import { type IImageInfo } from "../loader/IImageInfo";
-import { ITextInfo } from "../loader/ITextInfo";
 import { ImageInfo } from "../loader/ImageInfo";
 import { TextInfo } from "../loader/TextInfo";
 import { floor } from "../utils";
@@ -358,18 +356,14 @@ export class UINode implements IDebugging {
   }
 
   next_img(r: boolean = false) {
-    this.img_idx.value = () => {
-      const idx = this.img_idx.value;
-      const len = this.data.img.length;
-      return (r ? (idx + len - 1) : (idx + 1)) % len
-    };
+    const idx = this.img_idx.value;
+    const len = this.data.img.length;
+    this.img_idx.value = (r ? (idx + len - 1) : (idx + 1)) % len
   }
   next_txt(r: boolean = false) {
-    this.txt_idx.value = () => {
-      const idx = this.txt_idx.value;
-      const len = this.data.txt.length;
-      return (r ? (idx + len - 1) : (idx + 1)) % len
-    }
+    const idx = this.txt_idx.value;
+    const len = this.data.txt.length;
+    this.txt_idx.value = (r ? (idx + len - 1) : (idx + 1)) % len
   }
   readonly cook = UINode.create.bind(UINode)
 
