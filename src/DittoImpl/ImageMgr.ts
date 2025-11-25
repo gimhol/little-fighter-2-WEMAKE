@@ -29,6 +29,9 @@ export class RImageInfo extends ImageInfo<T.Texture> {
       this.pic.texture = this.pic.texture.clone();
     return this;
   }
+  override clone(): RImageInfo {
+    return new RImageInfo(this)
+  }
 }
 export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
