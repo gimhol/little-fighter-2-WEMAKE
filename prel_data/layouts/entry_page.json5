@@ -50,7 +50,7 @@
           actions: {
             click: [
               "sound(ok)",
-              "set_layout(loading)",
+              "set_ui(loading)",
               "load_data(data.zip.json)",
             ],
           },
@@ -78,7 +78,7 @@
           },
           component: ["Reachable(main)"],
           actions: {
-            click: ["sound(ok)", "push_layout(ctrl_settings)"],
+            click: ["sound(ok)", "push_ui(ctrl_settings)"],
           },
         },
       ],

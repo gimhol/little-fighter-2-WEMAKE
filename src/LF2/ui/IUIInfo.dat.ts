@@ -2,10 +2,13 @@ import type { IComponentInfo } from "./IComponentInfo";
 import type { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUITxtInfo } from "./IUITxtInfo.dat";
+import { UIActionEnum } from "./UIActionEnum";
 export type TComponentInfo = IComponentInfo | string
-export type TAction = IUIAction | string
+export type TUIAction = IUIAction | UIActionEnum
 export type TUITxtInfo = IUITxtInfo | string
 export type TUIImgInfo = IUIImgInfo | string
+export type TUIActionPlace = 'click' | 'resume' | 'pause' | 'start' | 'stop';
+
 export interface IUIInfo {
   /**
    * 节点ID
@@ -36,14 +39,8 @@ export interface IUIInfo {
   which?: number | string;
 
   component?: TComponentInfo | TComponentInfo[];
-  actions?: {
-    click: TAction | TAction[];
-    resume?: TAction | TAction[];
-    pause?: TAction | TAction[];
-    start?: TAction | TAction[];
-    stop?: TAction | TAction[];
-  };
-  key_press_actions?: [string, TAction][];
+  actions?: { [x in TUIActionPlace]?: TUIAction | TUIAction[] };
+  key_press_actions?: [string, TUIAction][];
   items?: (IUIInfo | string)[];
   auto_focus?: boolean;
   enabled?: boolean;

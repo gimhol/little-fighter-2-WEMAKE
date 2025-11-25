@@ -9,13 +9,14 @@ import {
 } from "./ditto";
 import { Entity } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
-import { BallsHelper, CharactersHelper, EntitiesHelper, WeaponsHelper, Randoming } from "./helper";
+import { BallsHelper, CharactersHelper, EntitiesHelper, Randoming, WeaponsHelper } from "./helper";
 import { ILf2Callback } from "./ILf2Callback";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
 import { cook_ui_info, ICookedUIInfo, IUIInfo, LF2UIKeyEvent, UIComponent, UINode } from "./ui";
+import { UIStack } from "./ui/UIStack";
 import { fisrt, is_str, MersenneTwister } from "./utils";
 import { World } from "./World";
 
@@ -42,7 +43,7 @@ export class LF2 implements IKeyboardCallback, IDebugging {
   static get ditto() { return Ditto }
   private _disposed: boolean = false;
   readonly callbacks = new Callbacks<ILf2Callback>();
-  private _ui_stacks: UINode[] = [];
+  private _ui_stacks: UIStack[] = [];
   private _loading: boolean = false;
   private _playable: boolean = false;
   private _pointer_on_uis = new Set<UINode>();
@@ -63,12 +64,11 @@ export class LF2 implements IKeyboardCallback, IDebugging {
   get need_load() {
     return !this._playable && !this._loading;
   }
-
-  get ui_stacks(): UINode[] {
-    return this._ui_stacks;
+  get ui_stacks(): UIStack[] {
+    return this._ui_stacks
   }
   get ui(): UINode | undefined {
-    return this._ui_stacks[this._ui_stacks.length - 1];
+    return this._ui_stacks[this._ui_stacks.length - 1]?.ui;
   }
   readonly world: World;
 
@@ -192,6 +192,14 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     this.world.start_render();
     LF2.instances.push(this)
     this.pointings.callback.add(new Ditto.UIInputHandle(this));
+
+    const default_ui_stack = new UIStack(this);
+    default_ui_stack.callback.add({
+      on_set: (curr, prev) => this.callbacks.emit("on_ui_changed")(curr, prev),
+      on_push: (curr, prev) => this.callbacks.emit("on_ui_changed")(curr, prev),
+      on_pop: (curr, poppeds) => this.callbacks.emit("on_ui_changed")(curr, poppeds[0]),
+    })
+    this.ui_stacks.push(default_ui_stack)
   }
 
   random_entity_info(e: Entity) {
@@ -408,16 +416,12 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     this.keyboard.dispose();
     this.pointings.dispose();
 
-    for (const l of this._ui_stacks) {
-      l?.on_pause();
-      l?.on_stop();
-    }
+    this._ui_stacks.forEach(u => u.dispose())
     this._ui_stacks.length = 0;
 
     const i = LF2.instances.indexOf(this);
     if (i >= 0) LF2.instances.splice(i, 1);
   }
-
   add_player_character(player_id: string, character_id: string) {
     const player_info = this.players.get(player_id);
     if (!player_info) { debugger; return; }
@@ -607,67 +611,22 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     return word;
   };
 
-  set_ui(ui_info?: ICookedUIInfo): void;
-  set_ui(id?: string): void;
   set_ui(arg: string | ICookedUIInfo | undefined): void {
-    if (is_str(arg) && this.ui?.id === arg) return;
-    if (!is_str(arg) && this.ui?.id === arg?.id) return;
-
-    const prev = this._ui_stacks.pop();
-    prev?.on_pause();
-    prev?.on_stop();
-    const info = is_str(arg)
-      ? this._uiinfos?.find((v) => v.id === arg)
-      : arg;
-    const curr = info && UINode.create(this, info);
-    curr && this._ui_stacks.push(curr);
-    curr?.on_start();
-    curr?.on_resume();
-    this.callbacks.emit("on_layout_changed")(curr, prev);
+    this._ui_stacks[0].set(arg)
   }
 
   pop_ui(inclusive?: boolean, until?: (ui: UINode, index: number, stack: UINode[]) => boolean): void {
-    const poppeds: UINode[] = []
-    const len = this._ui_stacks.length
-    for (let i = len - 1; i >= 0; --i) {
-      const ui = this._ui_stacks[i]
-      if (until) {
-        if (until(ui, i, this._ui_stacks)) {
-          if (inclusive) {
-            poppeds.unshift(ui)
-          }
-          break;
-        }
-        poppeds.unshift(ui)
-      } else {
-        poppeds.unshift(ui);
-        break;
-      }
-    }
-    for (let i = 0; i < poppeds.length; i++) {
-      const popped = poppeds[i];
-      if (i === 0) popped?.on_pause();
-      popped?.on_stop();
-    }
-    this._ui_stacks.splice(len - poppeds.length, poppeds.length)
-    this.ui?.on_resume();
-    this.callbacks.emit("on_layout_changed")(this.ui, poppeds[0]);
+    this._ui_stacks[0].pop(inclusive, until)
   }
 
-  push_ui(layout_info?: ICookedUIInfo): void;
-  push_ui(id?: string): void;
-  push_ui(arg: string | ICookedUIInfo | undefined): void {
-    const prev = this.ui;
-    prev?.on_pause();
+  pop_ui_safe() {
+    const stack = this._ui_stacks[0];
+    if (!stack || stack.uis.length < 2) return;
+    stack.pop()
+  }
 
-    const info = is_str(arg)
-      ? this._uiinfos?.find((v) => v.id === arg)
-      : arg;
-    const curr = info && UINode.create(this, info);
-    curr && this._ui_stacks.push(curr);
-    curr?.on_start();
-    curr?.on_resume();
-    this.callbacks.emit("on_layout_changed")(curr, prev);
+  push_ui(arg: string | ICookedUIInfo | undefined): void {
+    this._ui_stacks[0].push(arg)
   }
 
   on_loading_content(content: string, progress: number) {

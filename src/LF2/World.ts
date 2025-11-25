@@ -254,7 +254,7 @@ export class World extends WorldDataset {
         switch (key) {
           case 'f1': this.set_paused(!this.paused); break;
           case 'f2': this.paused ? this.update_once() : this.set_paused(true); break;
-          case 'f4': this.lf2.ui_stacks.length >= 2 && this.lf2.pop_ui(); break;
+          case 'f4': this.lf2.pop_ui_safe(); break;
           case 'f5': this.playrate = this.playrate === 1 ? 100 : 1; break;
           case 'f6': this.infinity_mp = !this.infinity_mp; break;
           case 'f7':

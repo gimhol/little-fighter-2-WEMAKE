@@ -6,7 +6,7 @@ import type { ICookedUIInfo } from "./ui/ICookedUIInfo";
 import type { UINode } from "./ui/UINode";
 
 export interface ILf2Callback {
-  on_layout_changed?(
+  on_ui_changed?(
     layout: UINode | undefined,
     prev_layout: UINode | undefined,
   ): void;

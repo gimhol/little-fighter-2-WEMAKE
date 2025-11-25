@@ -14,7 +14,7 @@ export class PlayerCtrlType extends UIComponent {
   override on_click(e: IUIPointerEvent) {
     this.node.focused = true;
     e.stop_immediate_propagation();
-    this.node.to_next_img();
+    this.node.next_img();
     const ctrl: CtrlDevice = (this.node.img_idx.value % 5) as CtrlDevice
     this.player_info.set_ctrl(ctrl, true).save()
   }

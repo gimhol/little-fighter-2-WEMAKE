@@ -82,13 +82,12 @@ export class __Keyboard implements IKeyboard {
         if (pressed) continue;
 
         if (type === 'xbox') {
-
           switch (known_key_name) {
             case 'Start':
               this.lf2.world.paused = !this.lf2.world.paused;
               break;
             case 'Back':
-              this.lf2.ui_stacks.length >= 2 && this.lf2.pop_ui()
+              this.lf2.pop_ui_safe()
               break;
           }
         }

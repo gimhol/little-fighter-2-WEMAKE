@@ -48,7 +48,7 @@
           },
           component: ["Reachable(main)"],
           actions: {
-            click: ["push_layout(vs_mode_prepare_page)", "sound(ok)"],
+            click: ["push_ui(vs_mode_prepare_page)", "sound(ok)"],
           },
         },
         {
@@ -61,7 +61,7 @@
           },
           component: ["Reachable(main)"],
           actions: {
-            click: ["push_layout(stage_mode_prepare_page)", "sound(ok)"],
+            click: ["push_ui(stage_mode_prepare_page)", "sound(ok)"],
           },
         },
         {
@@ -113,7 +113,7 @@
           },
           component: ["Reachable(main)"],
           actions: {
-            click: ["push_layout(demo_mode_page)", "sound(ok)"],
+            click: ["push_ui(demo_mode_page)", "sound(ok)"],
           },
         },
         {
@@ -126,7 +126,7 @@
           },
           component: ["Reachable(main)"],
           actions: {
-            click: ["push_layout(danmu_game_page)", "sound(ok)"],
+            click: ["push_ui(danmu_game_page)", "sound(ok)"],
           },
         },
         {

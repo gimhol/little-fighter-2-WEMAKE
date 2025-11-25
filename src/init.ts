@@ -4,6 +4,12 @@ import { UINodeRenderer } from "./DittoImpl/renderer/UINodeRenderer";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import { Ditto } from "./LF2/ditto";
 import { Debug, Log, Warn } from "./Log";
+import actor from "./LF2/ui/action/Actor";
+import { UIActionEnum } from "./LF2/ui/UIActionEnum";
+actor
+  .add(UIActionEnum.Alert, (_, msg) => window.alert(msg))
+  .add(UIActionEnum.LinkTo, (_, url) => window.open(url))
+  .add(UIActionEnum.Exit, () => window.confirm("确定退出?") && window.close())
 
 Ditto.setup({
   Timeout: dom.__Timeout,

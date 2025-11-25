@@ -1,4 +1,6 @@
+import type { UIActionEnum } from "./UIActionEnum";
+
 export interface IUIAction {
-  name: string;
+  name: UIActionEnum;
   args?: any[];
 }

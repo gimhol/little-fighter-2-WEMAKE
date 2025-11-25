@@ -1,4 +1,6 @@
+import { useShortcut } from "@fimagine/dom-hooks";
 import classNames from "classnames";
+import qs from "qs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
@@ -55,8 +57,6 @@ import {
   useLocalNumber,
   useLocalString,
 } from "./useLocalStorage";
-import qs from "qs";
-import { useShortcut } from "@fimagine/dom-hooks";
 
 function App() {
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -152,8 +152,8 @@ function App() {
     else fullscreen.enter(document.body.parentElement!);
   }, [fullscreen]);
 
-  const [layout_id, _set_layout] = useState<string | undefined>(void 0);
-  const [layouts, set_layouts] = useState<Readonly<IUIInfo>[]>([
+  const [ui_id, _set_ui] = useState<string | undefined>(void 0);
+  const [uis, set_uis] = useState<Readonly<IUIInfo>[]>([
     { id: "", name: "无页面" },
   ]);
 
@@ -212,12 +212,12 @@ function App() {
               name: l.name,
             }));
             layout_data_list.unshift({ id: "", name: "无页面" });
-            set_layouts(layout_data_list);
+            set_uis(layout_data_list);
 
             if (layout_data_list.length > 1)
-              _set_layout((v) => v || layout_data_list[1].id);
+              _set_ui((v) => v || layout_data_list[1].id);
           },
-          on_layout_changed: (v) => _set_layout(v?.id ?? ""),
+          on_ui_changed: (v) => _set_ui(v?.id ?? ""),
           on_loading_start: () => set_loading(true),
           on_loading_end: () => {
             set_loaded(true);
@@ -386,13 +386,13 @@ function App() {
 
     const ele = ele_game_canvas;
     if (!ele) return;
-    if (layout_id) {
+    if (ui_id) {
       ele.style.transition = "opacity 1000ms";
       ele.style.opacity = "1";
     } else {
       ele.style.opacity = "0";
     }
-  }, [layout_id, ele_game_canvas]);
+  }, [ui_id, ele_game_canvas]);
 
   useEffect(() => {
     if (!lf2) return;
@@ -461,7 +461,7 @@ function App() {
       <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !game_overlay })} />
       <DanmuOverlay lf2={lf2} />
       <GamePad player_id={touch_pad_on} lf2={lf2} />
-      <Loading loading={!layout_id} big className={styles.loading_img} />
+      <Loading loading={!ui_id} big className={styles.loading_img} />
       <div className={styles.debug_pannel}>
         <Show show={lf2?.is_cheat_enabled(CheatType.GIM_INK)}>
           <ToggleImgButton
@@ -486,7 +486,7 @@ function App() {
           src={[img_btn_0_3, img_btn_1_0]}
         />
         <Show
-          show={bg_id !== Defines.VOID_BG.id && layout_id !== "ctrl_settings"}
+          show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}
         >
           <ToggleImgButton
             checked={paused}
@@ -496,10 +496,10 @@ function App() {
         </Show>
         <Show
           show={
-            layouts.length > 1 &&
+            uis.length > 1 &&
             !loading &&
-            layout_id !== "launch" &&
-            layout_id !== "ctrl_settings"
+            ui_id !== "launch" &&
+            ui_id !== "ctrl_settings"
           }
         >
           <ToggleImgButton
@@ -510,9 +510,9 @@ function App() {
             src={[img_btn_1_1, img_btn_1_1]}
           />
         </Show>
-        <Show show={layout_id && Number(lf2?.ui_stacks.length) > 1}>
+        <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
           <ToggleImgButton
-            onClick={() => lf2 && lf2.ui_stacks.length >= 2 && lf2.pop_ui()}
+            onClick={() => lf2?.pop_ui_safe()}
             src={[img_btn_2_3]}
           />
         </Show>
@@ -606,9 +606,9 @@ function App() {
       <div className={styles.settings_row}>
         <Select
           placeholder="页面"
-          value={layout_id}
+          value={ui_id}
           onChange={v => lf2?.set_ui(v!)}
-          items={layouts}
+          items={uis}
           parse={(o) => [o.id!, o.name]}
         />
         <Titled float_label="显示模式">

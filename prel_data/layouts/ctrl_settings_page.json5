@@ -2,7 +2,7 @@
   name: "页面：按键设置",
   id: "ctrl_settings",
   color: "rgb(16, 32, 108)",
-  key_press_actions: [["escape", "set_layout(entry)"]],
+  key_press_actions: [["escape", "set_ui(entry)"]],
   templates: {
     suffixies: {
       items: [
@@ -261,7 +261,7 @@
       pos: "368, 359",
       component: ["OpacityHover(0,1)"],
       actions: {
-        click: ["sound(ok)", "pop_layout(entry)"],
+        click: ["sound(ok)", "pop_ui(entry)"],
       },
     },
     {
@@ -276,7 +276,7 @@
       pos: "525, 359",
       component: ["OpacityHover(0,1)"],
       actions: {
-        click: ["sound(cancel)", "pop_layout(entry)"],
+        click: ["sound(cancel)", "pop_ui(entry)"],
       },
     },
     {

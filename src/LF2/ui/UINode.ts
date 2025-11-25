@@ -357,11 +357,20 @@ export class UINode implements IDebugging {
     this.renderer.on_hide?.();
   }
 
-  to_next_img() {
-    const idx = this.img_idx.value
-    this.img_idx.value = () => (idx + 1) % this.data.img.length;
+  next_img(r: boolean = false) {
+    this.img_idx.value = () => {
+      const idx = this.img_idx.value;
+      const len = this.data.img.length;
+      return (r ? (idx + len - 1) : (idx + 1)) % len
+    };
   }
-
+  next_txt(r: boolean = false) {
+    this.txt_idx.value = () => {
+      const idx = this.txt_idx.value;
+      const len = this.data.txt.length;
+      return (r ? (idx + len - 1) : (idx + 1)) % len
+    }
+  }
   readonly cook = UINode.create.bind(UINode)
 
   static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {

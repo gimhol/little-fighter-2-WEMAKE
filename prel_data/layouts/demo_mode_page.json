@@ -8,7 +8,7 @@
   "key_press_actions": [
     [
       "escape",
-      "set_layout(entry)"
+      "set_ui(entry)"
     ]
   ],
   "items": [
