@@ -2,17 +2,19 @@ import type { IEntityData, ITexturePieceInfo } from "@/LF2/defines";
 import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
 import type { Entity, TData } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
-import { ImageInfo } from "@/LF2/loader/ImageInfo";
 import { clamp, floor, PI } from "@/LF2/utils";
 import * as T from "../_t";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
-function get_img_map(lf2: LF2, data: TData): Map<string, ImageInfo> {
-  const ret = new Map<string, ImageInfo>();
+import type { ImageMgr, RImageInfo } from "../ImageMgr";
+function get_img_map(lf2: LF2, data: TData): Map<string, RImageInfo> {
+  const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
+  const images = lf2.images as ImageMgr
   for (const key of Object.keys(files)) {
-    const img = lf2.images.find_by_pic_info(files[key]);
-    if (img) ret.set(key, img);
+    const img = images.find_by_pic_info(files[key]);
+    if (!img) continue;
+    ret.set(key, img.clone());
   }
   return ret;
 }
@@ -30,7 +32,7 @@ const EXTRA_SHAKING_TIME = 100;
 const r_vec3 = new T.Vector3(0, 0, -1);
 export class EntityRender {
   readonly renderer_type: string = "Entity";
-  protected images!: Map<string, ImageInfo>;
+  protected images!: Map<string, RImageInfo>;
   entity!: Entity;
   protected entity_mesh!: T.Mesh;
   protected blood_mesh!: T.Mesh;
@@ -120,11 +122,11 @@ export class EntityRender {
   private _prev_tex?: ITexturePieceInfo
 
   apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
-    const { images: pictures, entity_material, entity_mesh } = this
+    const { images, entity_material, entity_mesh } = this
     if (info) {
       const { x, y, w, h, tex, pixel_w, pixel_h } = info;
       const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
-      const img = pictures.get(real_tex);
+      const img = images.get(real_tex);
       if (img?.pic) {
         img.pic.texture.offset.set(x, y);
         img.pic.texture.repeat.set(w, h);

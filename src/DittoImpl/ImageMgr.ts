@@ -1,3 +1,4 @@
+import { IImageInfo } from "@/LF2/loader/IImageInfo";
 import type { LF2 } from "../LF2/LF2";
 import AsyncValuesKeeper from "../LF2/base/AsyncValuesKeeper";
 import { ILegacyPictureInfo } from "../LF2/defines/ILegacyPictureInfo";
@@ -16,14 +17,27 @@ import * as T from "./_t";
 import { md5 } from "./md5";
 import { p_create_picture } from "./renderer/create_picture";
 import { error_texture } from "./renderer/error_texture";
+export class RImageInfo extends ImageInfo<T.Texture> {
+  constructor(o: Partial<IImageInfo>) {
+    super(o);
+    if (this.pic?.texture)
+      this.pic.texture = this.pic.texture.clone();
+  }
+  override merge(o: Partial<IImageInfo>): this {
+    super.merge(o)
+    if (this.pic?.texture)
+      this.pic.texture = this.pic.texture.clone();
+    return this;
+  }
+}
 export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
-  protected infos = new AsyncValuesKeeper<ImageInfo>();
-  protected disposables = new Map<string, ImageInfo>();
+  protected infos = new AsyncValuesKeeper<RImageInfo>();
+  protected disposables = new Map<string, RImageInfo>();
   readonly lf2: LF2;
   constructor(lf2: LF2) { this.lf2 = lf2; }
 
-  private async create_img_info(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo> {
+  private async create_img_info(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
     const disposable = src.startsWith('?');
     if (disposable) src = src.substring(1)
 
@@ -57,7 +71,7 @@ export class ImageMgr implements IImageMgr {
     });
 
     if (!vaild_operations?.length) {
-      const ret = new ImageInfo({
+      const ret = new RImageInfo({
         key,
         url: blob_url,
         src_url,
@@ -78,7 +92,7 @@ export class ImageMgr implements IImageMgr {
       throw err
     });
     const url = URL.createObjectURL(blob);
-    const ret = new ImageInfo({ key, url, src_url, scale, w: cvs!.width, h: cvs!.height });
+    const ret = new RImageInfo({ key, url, src_url, scale, w: cvs!.width, h: cvs!.height });
     if (disposable) this.add_disposable(ret);
     return ret;
   }
@@ -143,7 +157,7 @@ export class ImageMgr implements IImageMgr {
     return ret;
   }
 
-  private add_disposable(ret: ImageInfo) {
+  private add_disposable(ret: RImageInfo) {
     this.disposables.set(ret.key, ret);
     if (this.disposables.size > 1000) {
       const { value } = this.disposables.keys().next();
@@ -154,7 +168,7 @@ export class ImageMgr implements IImageMgr {
     }
   }
 
-  find(key: string): ImageInfo | undefined {
+  find(key: string): RImageInfo | undefined {
     return this.infos.get(key);
   }
 
@@ -168,7 +182,7 @@ export class ImageMgr implements IImageMgr {
     return this.infos.fetch(key, fn) as Promise<TextInfo>;
   }
 
-  load_img(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo> {
+  load_img(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
     const fn = async () => {
       this.lf2.on_loading_content(`${key}`, 0);
       const info = await this.create_img_info(key, src, operations);
@@ -191,12 +205,12 @@ export class ImageMgr implements IImageMgr {
     return f.path;
   }
 
-  async load_by_pic_info(f: ILegacyPictureInfo | IPictureInfo): Promise<ImageInfo> {
+  async load_by_pic_info(f: ILegacyPictureInfo | IPictureInfo): Promise<RImageInfo> {
     const key = this._gen_key(f);
     return this.load_img(key, f.path);
   }
 
-  find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): ImageInfo | undefined {
+  find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): RImageInfo | undefined {
     return this.infos.get(this._gen_key(f));
   }
 
