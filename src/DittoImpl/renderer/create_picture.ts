@@ -26,8 +26,6 @@ export function create_picture(
   texture.magFilter = mag_filter;
   texture.wrapS = wrap_s;
   texture.wrapT = wrap_t;
-  texture.userData = img_info;
-
   pic_info.w = w / scale;
   pic_info.h = h / scale;
   pic_info.texture = texture;
