@@ -1,0 +1,97 @@
+{
+  id: "player_score_row",
+  name: "UI: 玩家分数栏",
+  img: {
+    path: "!sprite/SCORE_BOARD2.png",
+    w: 490,
+    h: 45,
+  },
+  size: "490,45",
+  _component: "player_score(1)",
+  values: {
+    win_alive_txt: "Win (Alive)",
+    win_dead_txt: "Win (Dead)",
+    lose_txt: "Lose (Dead)",
+    win_alive_color: "#aaf5aa",
+    win_dead_color: "#f0f0aa",
+    lose_color: "#ffaaaa",
+  },
+  items: [
+    {
+      pos: "35,21",
+      component: "FighterThumb()",
+    },
+    {
+      pos: "127,21",
+      center: "0.5, 0.5",
+      component: "PlayerScoreCell(kill)",
+      txt: {
+        i18n: "",
+        style: {
+          fill_style: "#ffaaaa",
+          font: "12px Arial",
+        },
+      },
+    },
+    {
+      pos: "191,21",
+      center: "0.5, 0.5",
+      component: "PlayerScoreCell(attack)",
+      txt: {
+        i18n: "",
+        style: {
+          fill_style: "#ffaaaa",
+          font: "12px Arial",
+        },
+      },
+    },
+    {
+      pos: "255,21",
+      center: "0.5, 0.5",
+      component: "PlayerScoreCell(hp_lost)",
+      txt: {
+        i18n: "",
+        style: {
+          fill_style: "#f0f0aa",
+          font: "12px Arial",
+        },
+      },
+    },
+    {
+      pos: "319,21",
+      center: "0.5, 0.5",
+      component: "PlayerScoreCell(mp_usage)",
+      txt: {
+        i18n: "",
+        style: {
+          fill_style: "#f0f0aa",
+          font: "12px Arial",
+        },
+      },
+    },
+    {
+      pos: "383,21",
+      center: "0.5, 0.5",
+      component: "PlayerScoreCell(picking)",
+      txt: {
+        i18n: "",
+        style: {
+          fill_style: "#aaf5aa",
+          font: "12px Arial",
+        },
+      },
+    },
+    {
+      pos: "447,21",
+      center: "0.5, 0.5",
+      component: "PlayerScoreCell(status)",
+      txt: {
+        i18n: "",
+        style: {
+          fill_style: "#aaf5aa",
+          font: "10px Arial",
+        },
+      },
+    },
+  ],
+}

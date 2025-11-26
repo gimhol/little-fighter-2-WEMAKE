@@ -6,8 +6,8 @@
   items: [
     "builtin_data/launch/bg.json5",
     "layouts/jalousie_ns.json",
-    "layouts/bg_l_face.ui.json",
-    "layouts/bg_r_face.ui.json",
+    "layouts/bg_l_face.ui.json5",
+    "layouts/bg_r_face.ui.json5",
     {
       id: "main_title",
       img: {
@@ -42,7 +42,7 @@
           size: "200,22",
           center: "0.5, 0.5",
           auto_focus: true,
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "entry_page.game_start",
           },
@@ -59,7 +59,7 @@
           id: "btn_network_game",
           size: "200,22",
           center: "0.5, 0.5",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "entry_page.network_game",
           },
@@ -72,7 +72,7 @@
           id: "btn_ctrl_settings",
           size: "200,22",
           center: "0.5, 0.5",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "entry_page.ctrl_settings",
           },

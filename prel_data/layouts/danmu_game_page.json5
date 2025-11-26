@@ -12,7 +12,7 @@
     ]
   ],
   "items": [
-    "layouts/center_pause_label.json",
+    "layouts/center_pause_label.json5",
     {
       "pos": "397,0",
       "center": "0.5,0",
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "template": "layouts/score_board.json",
+      "template": "layouts/score_board.json5",
       "visible": false
     }
   ],

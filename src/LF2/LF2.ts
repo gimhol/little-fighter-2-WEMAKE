@@ -562,9 +562,9 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     const ret: ICookedUIInfo[] = []
     const paths: string[] = [
       "builtin_data/launch/bg.json5",
-      "builtin_data/launch/loading_anim.json",
-      "builtin_data/launch/main_text_button.json",
-      "builtin_data/launch/menu_text_button.json",
+      "builtin_data/launch/loading_anim.json5",
+      "builtin_data/launch/main_text_button.json5",
+      "builtin_data/launch/menu_text_button.json5",
       "builtin_data/launch/init.json5",
     ];
     for (const path of paths) {

@@ -1,0 +1,38 @@
+{
+  name: "UI: main_text_button",
+  id: "main_text_button",
+  size: "0,0",
+  center: "0, 0",
+  pos: "100, 100",
+  component: ["FitChildren()"],
+  values: {
+    text: "文本按钮",
+    style_normal: {
+      font: "bold 18px Arial",
+      fill_style: "#5A73D6",
+    },
+    style_hover: {
+      font: "bold 18px Arial",
+      fill_style: "white",
+      underline_color: "white",
+      underline_width: 2,
+    },
+  },
+  items: [
+    {
+      center: "0.5,0.5",
+      txt: {
+        i18n: "$val:text",
+        style: "$val:style_normal",
+      },
+    },
+    {
+      center: "0.5,0.5",
+      txt: {
+        i18n: "$val:text",
+        style: "$val:style_hover",
+      },
+      component: ["OpacityHover(0,1,255,1)"],
+    },
+  ],
+}

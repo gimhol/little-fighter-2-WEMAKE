@@ -1,0 +1,73 @@
+{
+  id: "bg_l_face",
+  name: "UI: 背景左边脸",
+  component: ["RandomImg(bg_fighter_face)"],
+  img: [
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK1.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK2.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK3.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK4.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK5.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK6.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK7.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK8.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK9.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK10.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK11.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK12.png",
+    },
+    {
+      w: 409,
+      h: 546,
+      path: "sprite/MENU_BACK13.png",
+    },
+  ],
+  size: "0, 450",
+}

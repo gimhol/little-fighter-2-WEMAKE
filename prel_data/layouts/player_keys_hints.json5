@@ -1,0 +1,119 @@
+{
+  id: "player_keys_hints",
+  name: "玩家按键提示",
+  img: {
+    path: "!sprite/MENU_CLIP5.png",
+    x: 0,
+    y: 389,
+    w: 530,
+    h: 200,
+  },
+  _pos: "0,0,2",
+  size: "530,200",
+  templates: {
+    key_U: {
+      pos: "0,000,0.1",
+      center: "0.5,0.5",
+      component: "PlayerKeyText(,U)",
+    },
+    key_D: {
+      pos: "0,020,0.1",
+      center: "0.5,0.5",
+      component: "PlayerKeyText(,D)",
+    },
+    key_L: {
+      pos: "0,040,0.1",
+      center: "0.5,0.5",
+      component: "PlayerKeyText(,L)",
+    },
+    key_R: {
+      pos: "0,060,0.1",
+      center: "0.5,0.5",
+      component: "PlayerKeyText(,R)",
+    },
+    key_a: {
+      pos: "0,080,0.1",
+      center: "0.5,0.5",
+      component: "PlayerKeyText(,a)",
+    },
+    key_j: {
+      pos: "0,100,0.1",
+      center: "0.5,0.5",
+      component: "PlayerKeyText(,j)",
+    },
+    key_d: {
+      pos: "0,120,0.1",
+      center: "0.5,0.5",
+      component: "PlayerKeyText(,d)",
+    },
+    key_set: {
+      items: ["key_U", "key_D", "key_L", "key_R", "key_a", "key_j", "key_d"],
+    },
+  },
+  items: [
+    {
+      pos: "143,60,0.1",
+      values: {
+        player_id: "1",
+      },
+      template: "key_set",
+    },
+    {
+      pos: "250,60,0.1",
+      values: {
+        player_id: "2",
+      },
+      template: "key_set",
+    },
+    {
+      pos: "357,60,0.1",
+      values: {
+        player_id: "3",
+      },
+      items: [
+        {
+          pos: "0,000,0.1",
+          center: "0.5,0.5",
+          component: "PlayerKeyText(3,U)",
+        },
+        {
+          pos: "0,020,0.1",
+          center: "0.5,0.5",
+          component: "PlayerKeyText(3,D)",
+        },
+        {
+          pos: "0,040,0.1",
+          center: "0.5,0.5",
+          component: "PlayerKeyText(3,L)",
+        },
+        {
+          pos: "0,060,0.1",
+          center: "0.5,0.5",
+          component: "PlayerKeyText(3,R)",
+        },
+        {
+          pos: "0,080,0.1",
+          center: "0.5,0.5",
+          component: "PlayerKeyText(3,a)",
+        },
+        {
+          pos: "0,100,0.1",
+          center: "0.5,0.5",
+          component: "PlayerKeyText(3,j)",
+        },
+        {
+          pos: "0,120,0.1",
+          center: "0.5,0.5",
+          component: "PlayerKeyText(3,d)",
+        },
+      ],
+    },
+    {
+      pos: "464,60,0.1",
+      values: {
+        player_id: "4",
+      },
+      template: "key_set",
+    },
+  ],
+}

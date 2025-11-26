@@ -17,7 +17,7 @@
       "visible": false,
       "template": "layouts/player_keys_hints.json"
     },
-    "layouts/center_pause_label.json",
+    "layouts/center_pause_label.json5",
     {
       "pos": "397,0",
       "center": "0.5,0",
@@ -36,16 +36,16 @@
       "id": "left_info_frame_1",
       "visible": false,
       "pos": "0,0",
-      "template": "layouts/left_info_frame.json"
+      "template": "layouts/left_info_frame.json5"
     },
     {
       "id": "left_info_frame_5",
       "visible": false,
       "pos": "0,45",
-      "template": "layouts/left_info_frame.json"
+      "template": "layouts/left_info_frame.json5"
     },
     {
-      "template": "layouts/score_board.json",
+      "template": "layouts/score_board.json5",
       "visible": false
     }
   ],

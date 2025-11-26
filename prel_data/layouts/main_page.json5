@@ -5,8 +5,8 @@
   component: ["ReachableGroup(main,ud)"],
   items: [
     "builtin_data/launch/bg.json5",
-    "layouts/bg_l_face.ui.json",
-    "layouts/bg_r_face.ui.json",
+    "layouts/bg_l_face.ui.json5",
+    "layouts/bg_r_face.ui.json5",
     {
       id: "main_title",
       img: {
@@ -42,7 +42,7 @@
           size: "200,22",
           center: "0.5, 0.5",
           auto_focus: true,
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.vs_mode",
           },
@@ -55,7 +55,7 @@
           id: "btn_stage_mode",
           center: "0.5, 0.5",
           size: "200,22",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.stage_mode",
           },
@@ -68,7 +68,7 @@
           id: "btn_1v1_championship_mode",
           size: "200,22",
           center: "0.5, 0.5",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.1v1_championship_mode",
           },
@@ -81,7 +81,7 @@
           id: "btn_2v2_championship_mode",
           size: "200,22",
           center: "0.5, 0.5",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.2v2_championship_mode",
           },
@@ -94,7 +94,7 @@
           id: "btn_battle_mode",
           size: "200,22",
           center: "0.5, 0.5",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.battle_mode",
           },
@@ -107,7 +107,7 @@
           id: "btn_demo_mode",
           center: "0.5, 0.5",
           size: "200,22",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.demo_mode",
           },
@@ -120,7 +120,7 @@
           id: "btn_danmu_mode",
           center: "0.5, 0.5",
           size: "200,22",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.danmu_game_mode",
           },
@@ -133,7 +133,7 @@
           id: "btn_quit",
           size: "200,22",
           center: "0.5, 0.5",
-          template: "builtin_data/launch/main_text_button.json",
+          template: "builtin_data/launch/main_text_button.json5",
           values: {
             text: "main_page.quit",
           },

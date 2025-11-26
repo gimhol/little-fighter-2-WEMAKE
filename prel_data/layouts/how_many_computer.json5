@@ -1,0 +1,144 @@
+{
+  id: "how_many_computer",
+  name: "UI: 电脑玩家数量选择框",
+  img: {
+    path: "!sprite/CMC.png",
+    w: 365,
+    h: 111,
+  },
+  size: "365,111",
+  pos: "204,175,1",
+  component: ["ReachableGroup(com_num,lr,how_many_computer)"],
+  items: [
+    {
+      txt: {
+        i18n: "cmc.how_many_coms",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "182,33",
+      center: "0.5,0.5",
+    },
+    {
+      txt: {
+        i18n: "0",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "30,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(0)",
+        "Reachable(com_num)",
+      ],
+    },
+    {
+      txt: {
+        i18n: "1",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "70,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(1)",
+        "Reachable(com_num)",
+      ],
+    },
+    {
+      txt: {
+        i18n: "2",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "110,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(2)",
+        "Reachable(com_num)",
+      ],
+    },
+    {
+      txt: {
+        i18n: "3",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "150,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(3)",
+        "Reachable(com_num)",
+      ],
+    },
+    {
+      txt: {
+        i18n: "4",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "190,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(4)",
+        "Reachable(com_num)",
+      ],
+    },
+    {
+      txt: {
+        i18n: "5",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "230,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(5)",
+        "Reachable(com_num)",
+      ],
+    },
+    {
+      txt: {
+        i18n: "6",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "270,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(6)",
+        "Reachable(com_num)",
+      ],
+    },
+    {
+      txt: {
+        i18n: "7",
+        style: {
+          font: "16px Arial",
+        },
+      },
+      pos: "310,60",
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "ComNumButton(7)",
+        "Reachable(com_num)",
+      ],
+    },
+  ],
+}

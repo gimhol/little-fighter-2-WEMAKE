@@ -1,0 +1,19 @@
+{
+  name: "UI：居中暂停文本",
+  id: "center_pause_label",
+  visible: "paused==1",
+  txt: {
+    i18n: "PAUSE",
+    style: {
+      fill_style: "white",
+      font: '24px "Arial Black", Arial',
+      back_style: {
+        font: '24px "Arial Black", Arial',
+        stroke_style: "#005A8E",
+        line_width: 4,
+      },
+    },
+  },
+  center: "0.5,0.5",
+  pos: "397, 225",
+}

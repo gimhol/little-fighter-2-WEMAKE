@@ -20,7 +20,7 @@
   component: ["SummaryLogic()", "StageModeLogic()"],
   key_press_actions: [["escape", "set_ui(entry)"]],
   items: [
-    "layouts/center_pause_label.json",
+    "layouts/center_pause_label.json5",
     {
       center: "0.5,0.5",
       pos: "397, 225",
@@ -84,7 +84,7 @@
     },
     {
       id: "score_board",
-      template: "layouts/score_board.json",
+      template: "layouts/score_board.json5",
       visible: false,
     },
   ],
