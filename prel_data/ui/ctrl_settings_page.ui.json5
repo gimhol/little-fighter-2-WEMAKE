@@ -1,6 +1,6 @@
 {
-  name: "页面：设置",
-  id: "settings_page",
+  name: "页面：按键设置",
+  id: "ctrl_settings",
   color: "rgb(16, 32, 108)",
   key_press_actions: [["escape", "set_ui(entry)"]],
   templates: {
@@ -185,8 +185,8 @@
   },
   items: [
     "builtin_data/launch/bg.json5",
-    "layouts/bg_l_face.ui.json5",
-    "layouts/bg_r_face.ui.json5",
+    "ui/bg_l_face.ui.json5",
+    "ui/bg_r_face.ui.json5",
     {
       id: "main_menu",
       img: {

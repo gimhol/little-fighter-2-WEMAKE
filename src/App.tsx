@@ -206,8 +206,8 @@ function App() {
           },
         }),
         lf2.callbacks.add({
-          on_ui_loaded: (layouts) => {
-            const layout_data_list = layouts.map((l) => ({
+          on_ui_loaded: (ui) => {
+            const layout_data_list = ui.map((l) => ({
               id: l.id,
               name: l.name,
             }));

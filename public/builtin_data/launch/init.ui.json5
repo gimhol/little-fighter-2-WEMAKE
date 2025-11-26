@@ -118,7 +118,7 @@
       ],
     },
     {
-      template: "builtin_data/launch/loading_anim.json5",
+      template: "builtin_data/launch/loading_anim.ui.json5",
       id: "loading",
       pos: "760, 430",
     },

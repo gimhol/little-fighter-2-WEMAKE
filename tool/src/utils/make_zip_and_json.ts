@@ -45,14 +45,14 @@ export async function make_zip_and_json(
   out_dir = out_dir.replace(/\\/g, "/");
   console.log("zipping", src_dir, "=>", join(out_dir, zip_name));
 
-  const layout_dir = src_dir + '/layouts'
-  const layout_index_file = src_dir + '/layouts/index.json5'
+  const layout_dir = src_dir + '/ui'
+  const layout_index_file = src_dir + '/ui/_index.json5'
   await fs.unlink(layout_index_file).catch(() => { });
   await fs.readdir(layout_dir).then((names) => {
     const paths: string[] = []
     for (const name of names) {
       if (!name.match(/\.json[5?]?$/)) continue;
-      paths.push('layouts/' + name)
+      paths.push('ui/' + name)
     }
     return write_obj_file(layout_index_file, paths)
   }).catch(e => { })

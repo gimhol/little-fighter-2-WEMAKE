@@ -116,42 +116,42 @@
     {
       _opacity: 0,
       component: "PlayerScore(1)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,
       component: "PlayerScore(2)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,
       component: "PlayerScore(3)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,
       component: "PlayerScore(4)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,
       component: "PlayerScore(5)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,
       component: "PlayerScore(6)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,
       component: "PlayerScore(7)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,
       component: "PlayerScore(8)",
-      template: "layouts/player_score_row.json5",
+      template: "ui/player_score_row.ui.json5",
     },
     {
       _opacity: 0,

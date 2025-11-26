@@ -562,10 +562,10 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     const ret: ICookedUIInfo[] = []
     const paths: string[] = [
       "builtin_data/launch/bg.json5",
-      "builtin_data/launch/loading_anim.json5",
-      "builtin_data/launch/main_text_button.json5",
-      "builtin_data/launch/menu_text_button.json5",
-      "builtin_data/launch/init.json5",
+      "builtin_data/launch/loading_anim.ui.json5",
+      "builtin_data/launch/main_text_button.ui.json5",
+      "builtin_data/launch/menu_text_button.ui.json5",
+      "builtin_data/launch/init.ui.json5",
     ];
     for (const path of paths) {
       const cooked_ui_info = await cook_ui_info(this, path);
@@ -580,7 +580,7 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     if (this._uiinfos.length) return this._uiinfos;
 
     this._uiinfos_loaded = false;
-    const files = zip.file(/^layouts\/.*?\.json5?$/)
+    const files = zip.file(/^ui\/.*?\.ui\.json5?$/)
     const ret: ICookedUIInfo[] = []
     if (!this._uiinfos.length) {
       ret.unshift(...await this.load_builtin_ui())

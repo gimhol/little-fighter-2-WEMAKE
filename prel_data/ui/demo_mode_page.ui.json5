@@ -7,9 +7,9 @@
     {
       pos: "0,0,5",
       visible: false,
-      template: "layouts/player_keys_hints.json",
+      template: "ui/player_keys_hints.json",
     },
-    "layouts/center_pause_label.json5",
+    "ui/center_pause_label.ui.json5",
     {
       visible: "paused!=1",
       txt: {
@@ -28,7 +28,7 @@
       pos: "397, 225",
     },
     {
-      template: "layouts/score_board.json5",
+      template: "ui/score_board.ui.json5",
       visible: false,
     },
   ],

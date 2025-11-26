@@ -23,14 +23,14 @@
     {
       "id": "frame",
       "pos": "397, 225",
-      "template": "layouts/char_menu.json5"
+      "template": "ui/char_menu.ui.json5"
     },
     {
-      "template": "layouts/how_many_computer.json5",
+      "template": "ui/how_many_computer.ui.json5",
       "visible": false
     },
     {
-      "template": "layouts/game_prepare_menu.json5",
+      "template": "ui/game_prepare_menu.ui.json5",
       "visible": false
     }
   ]
