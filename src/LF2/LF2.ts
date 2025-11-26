@@ -329,7 +329,7 @@ export class LF2 implements IKeyboardCallback, IDebugging {
     this.set_ui("loading");
 
     if (is_first)
-      await this.import_json("builtin_data/launch/strings.json").then(r => this.load_strings(r[0])).catch(e => { })
+      await this.import_json("builtin_data/launch/strings.json5").then(r => this.load_strings(r[0])).catch(e => { })
     try {
       const [zip, md5] = is_str(arg1) ? await this.load_zip_from_info_url(arg1) : [arg1, 'unknown'];
       await this.load_data(zip, md5);
