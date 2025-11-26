@@ -8,6 +8,12 @@ export type Value<T> = T | (() => T)
 export type Unsafe<T> = T | undefined | null;
 
 export class StateDelegate<T> {
+  static CompareArray<T extends {}>(a: Unsafe<T[]>, b: Unsafe<T[]>): boolean {
+    if (a === b) return false;
+    if (a?.length !== b?.length) return true;
+    if (a && b) return a.some((v, i) => v !== b[i]);
+    return true
+  }
   protected _dirty: boolean = true
   protected _default_value: TValueInfo<Unsafe<T>>
   protected _values: TValueInfo<Unsafe<T>>[] = [];
@@ -35,8 +41,15 @@ export class StateDelegate<T> {
     }
     return this.default_value;
   }
+  compare = (a: Unsafe<T>, b: Unsafe<T>): boolean => {
+    return a !== b;
+  }
   constructor(default_value: Value<T>) {
     this._default_value = this.value_to_state(default_value);
+  }
+  comparer(fn: (a: Unsafe<T>, b: Unsafe<T>) => boolean): this {
+    this.compare = fn;
+    return this;
   }
   set(index: number, v: Value<Unsafe<T>>): void {
     index = floor(index);
@@ -47,7 +60,7 @@ export class StateDelegate<T> {
     if (index < this._values.length - 1) return;
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
-    const changed = !old || !now || old_value !== now_value
+    const changed = !old || !now || this.compare(old_value, now_value)
     if (changed) this._dirty = true;
   }
 
@@ -61,7 +74,7 @@ export class StateDelegate<T> {
     if (old === now) return;
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
-    const changed = !old || !now || old_value !== now_value
+    const changed = !old || !now || this.compare(old_value, now_value)
     if (changed) this._dirty = true;
 
   }
@@ -75,7 +88,7 @@ export class StateDelegate<T> {
     if (old === now) return;
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
-    const changed = !old || !now || old_value !== now_value
+    const changed = !old || !now || this.compare(old_value, now_value)
     if (changed) this._dirty = true;
 
   }
@@ -87,7 +100,7 @@ export class StateDelegate<T> {
     const now = this._values[this._values.length - 1];
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
-    const changed = !old || !now || old_value !== now_value
+    const changed = !old || !now || this.compare(old_value, now_value)
     if (changed) this._dirty = true;
   }
 
@@ -98,7 +111,7 @@ export class StateDelegate<T> {
     const now = this._values[this._values.length - 1];
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
-    const changed = !old || !now || old_value !== now_value
+    const changed = !old || !now || this.compare(old_value, now_value)
     if (changed) this._dirty = true;
   }
 
@@ -110,7 +123,7 @@ export class StateDelegate<T> {
     const now = this._values[this._values.length - 1];
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
-    const changed = !old || !now || old_value !== now_value
+    const changed = !old || !now || this.compare(old_value, now_value)
     if (changed) this._dirty = true;
   }
 }

@@ -66,12 +66,12 @@ export class UINode implements IDebugging {
   protected _disabled: StateDelegate<boolean> = new StateDelegate(false);
   protected _opacity: StateDelegate<number> = new StateDelegate(1);
 
-  readonly pos: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.pos);
-  readonly scale: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.scale);
-  readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos);
-  readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos);
-  readonly size: StateDelegate<[number, number]> = new StateDelegate(() => this.data.size);
-  readonly center: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.center);
+  readonly pos: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.pos).comparer(StateDelegate.CompareArray);
+  readonly scale: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.scale).comparer(StateDelegate.CompareArray);
+  readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
+  readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
+  readonly size: StateDelegate<[number, number]> = new StateDelegate(() => this.data.size).comparer(StateDelegate.CompareArray);
+  readonly center: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.center).comparer(StateDelegate.CompareArray);
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
   readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');

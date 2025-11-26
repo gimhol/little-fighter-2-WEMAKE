@@ -94,6 +94,8 @@ export class UINodeRenderer implements IUINodeRenderer {
 
   on_pause(): void {
     const text_input = this.ui.find_component(TextInput)
+    const world_renderer = this.lf2.world.renderer as WorldRenderer;
+    if (this.ui.root === this.ui) world_renderer.scene.inner.remove(this.sprite);
     if (text_input) this.release_dom()
   };
   on_show(): void { };
