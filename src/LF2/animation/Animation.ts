@@ -112,13 +112,21 @@ export class Animation implements IAnimation, IDebugging {
       if (this.done && this._fill_mode)
         time = duration
     }
-    
+
 
 
     this.time = clamp(time, 0, duration);
     this.debug(`update`, `time = ${this.time}, dt = ${dt}`)
     this.calc();
     return this;
+  }
+
+  auto_trip(reverse: boolean, dt: number): this {
+    if (this.reverse === reverse)
+      return this.update(dt);
+    if (this.done) this.start(reverse)
+    else this.reverse = reverse;
+    return this.update(dt);
   }
 }
 
