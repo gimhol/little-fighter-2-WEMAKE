@@ -130,6 +130,12 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
     return this.node.name ?? this.node.id ?? 'no_name'
   }
 
+  on_pointer_down?(e: IUIPointerEvent): void;
+  on_pointer_move?(e: IUIPointerEvent): void;
+  on_pointer_up?(e: IUIPointerEvent): void;
+  on_pointer_cancel?(e: IUIPointerEvent): void;
+  on_pointer_leave?(): void;
+  on_pointer_enter?(): void;
   on_click?(e: IUIPointerEvent): void;
 
   on_start?(): void;
@@ -157,6 +163,6 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
   on_key_up?(e: IUIKeyEvent): void;
 
   on_add?(): void;
-  
+
   on_del?(): void;
 }

@@ -10,7 +10,7 @@ export const unsafe_is_object = judger(v => typeof v === 'object' && !Array.isAr
 /** @deprecated 如有条件，应当更精确的确认内部数据 */
 export const unsafe_is_array = judger(v => Array.isArray(v))
 export function judger(fn: (v: any) => boolean): Judger {
-  return Object.assign(fn, { _judger: true as true })
+  return Object.assign(function (v: any) { return fn(v) }, { _judger: true as true })
 }
 function is_judger(v: any): v is Judger {
   return typeof v === 'function' && v._judger === true;
@@ -25,16 +25,11 @@ export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, typ
   const value = ui_info.values?.[name];
   if (value === null || value === undefined)
     return ui_info.parent ? find_ui_value(ui_info.parent, type, name) : null
-  if (typeof type === 'string')
-    return typeof value === type ? value : null;
-  if (is_judger(type))
-    return type(value) ? value : null
-  if (instance_of(value, type))
-    return value;
+  if (typeof type === 'string') return typeof value === type ? value : null;
+  if (is_judger(type)) return type(value) ? value : null
+  if (instance_of(value, type)) return value;
   return null;
 }
-
-
 
 export function parse_ui_value(ui_info: ICookedUIInfo, type: 'boolean', value: Unsafe<boolean | string>): boolean | null;
 export function parse_ui_value(ui_info: ICookedUIInfo, type: 'number', value: Unsafe<number | string>): number | null;

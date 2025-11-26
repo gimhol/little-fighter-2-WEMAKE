@@ -1,21 +1,23 @@
+import { IMetaInfo } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { floor, is_str, Unsafe } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
-import { IUIImgInfo } from "./IUIImgInfo.dat";
-import type { IUIInfo, TComponentInfo, TUIImgInfo, TUITxtInfo } from "./IUIInfo.dat";
+import { IUIImgInfo, Meta_IUIImgInfo } from "./IUIImgInfo.dat";
+import type { IUIInfo, TComponentInfo, TUITxtInfo } from "./IUIInfo.dat";
 import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
-import { parse_ui_value, unsafe_is_object } from "./read_info_value";
+import { judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
 import { ui_load_img } from "./ui_load_img";
 import { ui_load_txt } from "./ui_load_txt";
 import { UINode } from "./UINode";
 import read_nums from "./utils/read_nums";
-import { validate_ui_img_info } from "./validate_ui_img_info";
-export function flat_ui_img_info(imgs: TUIImgInfo[], output?: IUIImgInfo[]): IUIImgInfo[] {
+import { validate_ui_img_info } from "./utils/validate_ui_img_info";
+
+
+export function flat_ui_img_info(imgs: IUIImgInfo[], output?: IUIImgInfo[]): IUIImgInfo[] {
   const ret: IUIImgInfo[] = [];
   for (let img of imgs) {
     const errors: string[] = [];
-    img = typeof img === 'string' ? { path: img } : img;
     validate_ui_img_info(img, errors);
     if (errors.length) throw new Error(errors.join('\n'));
     const { x = 0, y = 0, w = 0, h = 0, col: cols = 1, row: rows = 1, count = 0 } = img;
@@ -128,7 +130,27 @@ export async function cook_ui_info(
   ret.enabled = parse_ui_value(ret, 'boolean', raw_info.enabled) ?? true
 
   const { img } = raw_info;
-  if (img) ret.img_infos.push(...await ui_load_img(lf2, img, ret.img));
+  const imgs = Array.isArray(img) ? img : img ? [img] : []
+  const _img: IUIImgInfo[] = [];
+  for (const i of imgs) {
+    let rr: Unsafe<IUIImgInfo> = void 0;
+    if (typeof i === 'string') {
+      rr = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), i)
+    } else {
+      rr = i
+    }
+    if (!rr) continue;
+    for (const k in Meta_IUIImgInfo) {
+      const meta = (Meta_IUIImgInfo as any)[k] as IMetaInfo;
+      const val = (rr as any)[k];
+      if (!meta || !val || typeof val !== 'string' || !val.startsWith('$val:'))
+        continue;
+      (rr as any)[k] = parse_ui_value(ret, meta.type, val) ?? val
+    }
+    _img.push(rr)
+  }
+
+  if (_img.length) ret.img_infos.push(...await ui_load_img(lf2, _img, ret.img));
 
   cook_ui_txt_info(lf2, ret, raw_info.txt, ret.txt)
   await ui_load_txt(lf2, ret.txt, ret.txt_infos)

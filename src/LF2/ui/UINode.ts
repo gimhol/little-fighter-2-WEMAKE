@@ -277,23 +277,33 @@ export class UINode implements IDebugging {
   on_pointer_down(e: IUIPointerEvent) {
     this._pointer_down = 1;
     this._click_flag = 1;
+    for (const c of this.components)
+      c.on_pointer_down?.(e);
   }
 
   on_pointer_up(e: IUIPointerEvent) {
     this._pointer_down = 0
+    for (const c of this.components)
+      c.on_pointer_up?.(e);
   }
 
   on_pointer_cancel(e: IUIPointerEvent) {
     this._pointer_down = 0
+    for (const c of this.components)
+      c.on_pointer_cancel?.(e);
   }
 
   on_pointer_leave() {
     this._pointer_on_me = 0;
     this._click_flag = 0;
+    for (const c of this.components)
+      c.on_pointer_leave?.();
   }
 
   on_pointer_enter() {
     this._pointer_on_me = 1
+    for (const c of this.components)
+      c.on_pointer_enter?.();
   }
 
   on_start() {

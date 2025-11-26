@@ -1,0 +1,22 @@
+{
+  name: "UI: img_button",
+  id: "img_button",
+  size: "0,0",
+  center: "0, 0",
+  pos: "100, 100",
+  component: ["FitChildren()"],
+  values: {
+    img_normal: {
+      path: "!builtin_data/launch/bearface.png",
+      w: 100,
+      h: 100,
+    },
+  },
+  items: [
+    {
+      center: "0.5,0.5",
+      img: "$val:img_normal",
+      component: ["OpacityHover(1,0.7,255,1)","ScaleHover(1,1.1,255,1)"],
+    },
+  ],
+}

@@ -68,3 +68,4 @@ export * from "./SpeedMode";
 export * from "./StateEnum";
 export * from "./TAction";
 export * from "./WeaponType";
+export * from "./IMetaInfo";

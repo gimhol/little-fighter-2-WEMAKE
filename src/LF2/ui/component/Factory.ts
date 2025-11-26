@@ -58,6 +58,7 @@ import { UIComponent } from "./UIComponent";
 import { VerticalLayout } from "./VerticalLayout";
 import { VsModeLogic } from "./VsModeLogic";
 import { RandomTxt } from "./RandomTxt";
+import { ScaleHover } from "./ScaleHover";
 const COMPONENTS = [
   LaunchPage,
   LoadingContentText,
@@ -80,6 +81,7 @@ const COMPONENTS = [
   StageTitleText,
   BackgroundNameText,
   OpacityHover,
+  ScaleHover,
   VerticalLayout,
   HorizontalLayout,
   PlayerScore,

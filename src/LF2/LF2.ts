@@ -557,16 +557,9 @@ export class LF2 implements IKeyboardCallback, IDebugging {
   }
 
   protected async load_builtin_ui(): Promise<ICookedUIInfo[]> {
-
     this._dispose_check('load_builtin_ui')
+    const [paths] = await this.import_json<string[]>("builtin_data/launch/_index.json5")
     const ret: ICookedUIInfo[] = []
-    const paths: string[] = [
-      "builtin_data/launch/bg.json5",
-      "builtin_data/launch/loading_anim.ui.json5",
-      "builtin_data/launch/main_text_button.ui.json5",
-      "builtin_data/launch/menu_text_button.ui.json5",
-      "builtin_data/launch/init.ui.json5",
-    ];
     for (const path of paths) {
       const cooked_ui_info = await cook_ui_info(this, path);
       this._dispose_check('load_builtin_ui')
