@@ -1,0 +1,45 @@
+{
+  type: "object",
+  properties: {
+    id: {
+      type: "string",
+      description: "节点ID",
+    },
+    name: {
+      type: "string",
+      description: "节点名",
+    },
+    pos: {
+      type: ["string", "array"],
+      description: "TODO",
+    },
+    size: {
+      type: ["string", "array"],
+      oneOf: [
+        { type: "string" },
+        { type: "array", minItems: 2, maxItems: 2, items: { type: "number" } },
+      ],
+      description: '宽高, \n 例1(字符串): "10,10" \n 例2(长度为2的数字数组): [10,10]',
+    },
+    opacity: {
+      type: "number",
+      description: "透明度0~1",
+    },
+    center: {
+      type: ["string", "array"],
+      description: "TODO",
+    },
+    scale: {
+      type: ["string", "array"],
+      description: "TODO",
+    },
+    disabled: {
+      type: ["string", "boolean"],
+      description: "TODO",
+    },
+    color: {
+      type: "string",
+      description: "TODO",
+    },
+  },
+}

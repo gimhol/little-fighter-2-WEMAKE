@@ -25,7 +25,7 @@ export interface IUIInfo {
    * @memberof IUIInfo
    */
   name?: string;
-
+  
   pos?: number[] | string;
   opacity?: number;
   center?: number[] | string;

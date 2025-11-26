@@ -69,5 +69,6 @@
       path: "sprite/MENU_BACK13.png",
     },
   ],
-  size: "0, 450",
+  size: [0, 450],
+  _size: "0, 450",
 }

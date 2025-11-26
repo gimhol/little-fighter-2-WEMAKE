@@ -7,12 +7,12 @@
   "files.eol": "\n",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "json.schemas": [
+  "json5.schemas": [
     {
       "fileMatch": [
-        "**/*.ui.json",
+        "*.ui.json5",
       ],
-      "url": "./src/LF2/ui/schema.json"
+      "url": "/.vscode/ui.schema.json5"
     }
   ]
 }
