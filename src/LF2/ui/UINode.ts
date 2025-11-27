@@ -1,7 +1,6 @@
 import { LF2 } from "../LF2";
 import Callbacks from "../base/Callbacks";
 import { Expression } from "../base/Expression";
-import { NoEmitCallbacks } from "../base/NoEmitCallbacks";
 import StateDelegate from "../base/StateDelegate";
 import { IValGetter } from "../defines/IExpression";
 import { IStyle } from "../defines/IStyle";
@@ -14,6 +13,7 @@ import { floor } from "../utils";
 import { filter, find } from "../utils/container_help";
 import { is_bool, is_num, is_str } from "../utils/type_check";
 import { ICookedUIInfo } from "./ICookedUIInfo";
+import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
 import { IUIPointerEvent } from "./IUIPointerEvent";
@@ -21,7 +21,6 @@ import actor from "./action/Actor";
 import factory from "./component/Factory";
 import { UIComponent } from "./component/UIComponent";
 import { parse_ui_value } from "./read_info_value";
-
 export class UINode implements IDebugging {
 
   static readonly TAG: string = 'UINode';
@@ -84,8 +83,7 @@ export class UINode implements IDebugging {
     this.scale.value = [x ?? a, y ?? b, z ?? c];
     return this;
   }
-  get cross() {
-    const [x, y] = this.pos.value
+  get cross(): ICrossInfo {
     const [w, h] = this.size.value
     const [a, b] = this.center.value
     const left = -a * w
@@ -537,7 +535,6 @@ export class UINode implements IDebugging {
       this._update_times = 0;
     else
       this._update_times++;
-
     for (const i of this.children) if (i.enabled) i.update(dt);
     for (const c of this._components) if (c.enabled) c.update?.(dt);
   }

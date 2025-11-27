@@ -1,0 +1,52 @@
+{
+  id: "alignment_demo_3",
+  name: "COMPONENT DEMO: alignment 3",
+  color: "rgba(255,0,0,1)",
+  templates: {
+    qube: {
+      color: "rgba(0,0,255,1)",
+      size: "80,80",
+      center: "0.5,0.5",
+    },
+    txt: {
+      color: "rgba(255,255,255,1)",
+      center: "0.5,0.5",
+    },
+  },
+  items: [
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "x_mid=true\ntop=top",
+        },
+      ],
+      component: [
+        {
+          name: "Alignment",
+          properties: { x_mid: true, top: "top", offset_t: 10 },
+        },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "left=left\top=bottom\nfollow=bro:prev",
+        },
+      ],
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            left: "left",
+            top: "bottom",
+            followed: "bro:prev",
+          },
+        },
+      ],
+    },
+  ],
+}

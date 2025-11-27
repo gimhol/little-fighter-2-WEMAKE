@@ -173,7 +173,30 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
       case 'parent':
         return this.node.parent ?? null
       case 'self':
-        return this.node
+        return this.node;
+    }
+    const parent = this.node.parent
+    if (parent) {
+      if (which.startsWith('bro:')) {
+        const v = which.substring(4).trim();
+        const brothers = parent.children
+        switch (v) {
+          case 'prev': case '-1':
+            return brothers[brothers.indexOf(this.node) - 1] || null;
+          case 'next': case '+1':
+            return brothers[brothers.indexOf(this.node) + 1] || null;
+          default:
+            return brothers[v as any] || null
+        }
+      }
+      if (which.startsWith('id:')) {
+        const v = which.substring(3).trim();
+        return this.node.parent?.find_child(v) || null
+      }
+      if (which.startsWith('name:')) {
+        const v = which.substring(5).trim();
+        return this.node.parent?.find_child_by_name(v) || null
+      }
     }
     return null
   }

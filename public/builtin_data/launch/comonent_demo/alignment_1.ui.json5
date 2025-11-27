@@ -1,0 +1,213 @@
+{
+  id: "alignment_demo_1",
+  name: "COMPONENT DEMO: alignment 1",
+  color: "rgba(255,0,0,1)",
+  templates: {
+    qube: {
+      color: "rgba(0,0,255,1)",
+      size: "80,80",
+      center: "0.5,0.5",
+    },
+    txt: {
+      color: "rgba(255,255,255,1)",
+      center: "0.5,0.5",
+    },
+  },
+  items: [
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=right\ntop=top",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "right", top: "top" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "left=left\ntop=top",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "left", top: "top" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=right\nbottom=bottom",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "right", bottom: "bottom" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "left=left\nbottom=bottom",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "left", bottom: "bottom" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=right\ntop=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "right", top: "mid" } },
+      ],
+    },
+    {
+      template: "qube",
+      id: "left_mid",
+      items: [
+        {
+          template: "txt",
+          txt: "left=left\ntop=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "left", top: "mid" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=mid\nbottom=bottom",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "mid", bottom: "bottom" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "left=mid\nbottom=bottom",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "mid", bottom: "bottom" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=right\nbottom=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "right", bottom: "mid" } },
+      ],
+    },
+    {
+      template: "qube",
+      id: "left_mid",
+      items: [
+        {
+          template: "txt",
+          txt: "left=left\nbottom=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "left", bottom: "mid" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=mid\ntop=top",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "mid", top: "top" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "left=mid\ntop=top",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "mid", top: "top" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=mid\nbottom=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "mid", bottom: "mid" } },
+      ],
+    },
+    {
+      template: "qube",
+      id: "left_mid",
+      items: [
+        {
+          template: "txt",
+          txt: "left=mid\nbottom=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "mid", bottom: "mid" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "right=mid\ntop=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { right: "mid", top: "mid" } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "left=mid\ntop=mid",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { left: "mid", top: "mid" } },
+      ],
+    },
+  ],
+}

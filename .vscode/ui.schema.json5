@@ -47,18 +47,23 @@
         oneOf: [{ type: "string", description: "模板文件路径" }, { $ref: "#" }],
       },
     },
+    templates: {
+      type: "object",
+      additionalProperties: { $ref: "#" },
+    },
+    template: {
+      description: "模板名或UI文件",
+      type: "string",
+    },
     component: {
       description: "组件",
       oneOf: [
         { type: "string" },
-        { $ref: "IComponentInfo.scheme.json5" },
+        { $ref: "component.schema.json5" },
         {
           type: "array",
           items: {
-            oneOf: [
-              { type: "string" },
-              { $ref: "IComponentInfo.scheme.json5" },
-            ],
+            oneOf: [{ type: "string" }, { $ref: "component.schema.json5" }],
           },
         },
       ],

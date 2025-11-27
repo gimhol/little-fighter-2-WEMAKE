@@ -5,7 +5,7 @@
   size: "794, 794",
   component: ["LaunchPage(entry)"],
   items: [
-    "builtin_data/launch/bg.json5",
+    "builtin_data/launch/bg.ui.json5",
     {
       id: "tap_to_launch",
       txt: {

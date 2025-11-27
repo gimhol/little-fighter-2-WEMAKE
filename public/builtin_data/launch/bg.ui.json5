@@ -1,6 +1,6 @@
 {
   name: "页面：bg",
-  id: "bg",
+  id: "main_bg",
   size: "794, 794",
   img: {
     path: "!launch/bg.png",

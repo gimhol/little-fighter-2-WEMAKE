@@ -184,7 +184,7 @@
     },
   },
   items: [
-    "builtin_data/launch/bg.json5",
+    "builtin_data/launch/bg.ui.json5",
     "ui/bg_l_face.ui.json5",
     "ui/bg_r_face.ui.json5",
     {

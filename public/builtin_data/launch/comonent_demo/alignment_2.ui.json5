@@ -1,0 +1,81 @@
+{
+  id: "alignment_demo_2",
+  name: "COMPONENT DEMO: alignment 2",
+  color: "rgba(255,0,0,1)",
+  templates: {
+    qube: {
+      color: "rgba(0,0,255,1)",
+      size: "80,80",
+      center: "0.5,0.5",
+    },
+    txt: {
+      color: "rgba(255,255,255,1)",
+      center: "0.5,0.5",
+    },
+  },
+  items: [
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "x_mid=true\ntop=top",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { x_mid: true, top: "top", offset_t: 10 } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "x_mid=true\nbottom=bottom",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { x_mid: true, bottom: "bottom", offset_b: -10 } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "y_mid=true\nleft=left",
+        },
+      ],
+      component: [
+        {
+          name: "Alignment",
+          properties: { y_mid: true, left: "left", offset_l: 10 },
+        },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "y_mid=true\nright=right",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { y_mid: true, right: "right", offset_r: -10 } },
+      ],
+    },
+    {
+      template: "qube",
+      items: [
+        {
+          template: "txt",
+          txt: "x_mid=true\ny_mid=true",
+        },
+      ],
+      component: [
+        { name: "Alignment", properties: { x_mid: true, y_mid: true } },
+      ],
+    },
+  ],
+}
