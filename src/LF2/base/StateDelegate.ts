@@ -8,6 +8,8 @@ export type Value<T> = T | (() => T)
 export type Unsafe<T> = T | undefined | null;
 
 export class StateDelegate<T> {
+  private _allow_null: boolean = false;
+  private _allow_undefined: boolean = false;
   static CompareArray<T extends {}>(a: Unsafe<T[]>, b: Unsafe<T[]>): boolean {
     if (a === b) return false;
     if (a?.length !== b?.length) return true;
@@ -39,8 +41,9 @@ export class StateDelegate<T> {
     for (let i = len - 1; i >= 0; --i) {
       const item = this._values[i]!;
       const value = this.get_value(item);
-      if (value !== null && value !== void 0)
-        return value
+      if (value !== null && value !== void 0) return value
+      else if (value === null && this._allow_null) return value!;
+      else if (value === void 0 && this._allow_undefined) return value!;
     }
     return this.default_value;
   }
@@ -50,6 +53,24 @@ export class StateDelegate<T> {
   constructor(default_value: Value<T>) {
     this._default_value = this.value_to_state(default_value);
   }
+  /** 
+   * allow null
+   * new StateDelegte<T|null>(...) 
+   */
+  allow_null(v = true): this {
+    this._allow_null = v;
+    return this
+  }
+
+  /** 
+   * allow undefined
+   * new StateDelegte<T|undefined>(...) 
+   */
+  allow_undefined(v = true): this {
+    this._allow_undefined = v;
+    return this
+  }
+
   comparer(fn: (a: Unsafe<T>, b: Unsafe<T>) => boolean): this {
     this.compare = fn;
     return this;
