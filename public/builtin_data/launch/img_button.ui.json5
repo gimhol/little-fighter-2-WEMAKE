@@ -15,16 +15,20 @@
       w: 100,
       h: 100,
     },
+    img_press: {
+      path: "!builtin_data/launch/bearface.png",
+      w: 100,
+      h: 100,
+    },
   },
   items: [
-    "",
     {
       center: "0.5,0.5",
-      img: ["$val:img_normal", "$val:img_hover"],
+      img: ["$val:img_normal", "$val:img_hover", "$val:img_press"],
       component: [
         "OpacityHover(1,0.7,255,1)",
         "ScaleClickable(1,1.1,255,1)",
-        {},
+        { name: "ImgClickable", properties: { listening: "parent" } },
       ],
     },
   ],

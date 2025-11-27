@@ -15,12 +15,14 @@ import { FadeInOpacity } from "./FadeInOpacity";
 import { FadeOutOpacity } from "./FadeOutOpacity";
 import FighterHead from "./FighterHead";
 import FighterName from "./FighterName";
+import FighterThumb from "./FighterThumb";
 import { FitChildren } from "./FitChildren";
 import { Flex } from "./Flex";
 import { FlexItem } from "./FlexItem";
 import GamePrepareLogic from "./GamePrepareLogic";
 import { HorizontalLayout } from "./HorizontalLayout";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
+import { ImgClickable } from "./ImgClickable";
 import { ImgLoop } from "./ImgLoop";
 import { Jalousie } from "./Jalousie";
 import { LaunchPage } from "./LaunchPageLogic";
@@ -28,7 +30,6 @@ import { LoadingContentText } from "./LoadingContentText";
 import { OpacityAnimation } from "./OpacityAnimation";
 import { OpacityHover } from "./OpacityHover";
 import { PlayerCtrlType } from "./PlayerCtrlType";
-import FighterThumb from "./FighterThumb";
 import { PlayerKeyEdit } from "./PlayerKeyEdit";
 import { PlayerKeyText } from "./PlayerKeyText";
 import PlayerName from "./PlayerName";
@@ -40,9 +41,11 @@ import { PlayingTimeText } from "./PlayingTimeText";
 import { PositionAnimation } from "./PositionAnimation";
 import { PrefixAndDifficultyText } from "./PrefixAndDifficultyText";
 import { RandomImg } from "./RandomImg";
+import { RandomTxt } from "./RandomTxt";
 import { Reachable } from "./Reachable";
 import { ReachableGroup } from "./ReachableGroup";
 import { ScaleAnimation } from "./ScaleAnimation";
+import { ScaleClickable } from "./ScaleClickable";
 import { SineOpacity } from "./SineOpacity";
 import SlotSelLogic from "./SlotSelLogic";
 import { Sounds } from "./Sounds";
@@ -54,11 +57,10 @@ import StageTransitions from "./StageTransitions";
 import { SummaryLogic } from "./SummaryLogic";
 import { TeamSituationText } from "./TeamSituationText";
 import { TextInput } from "./TextInput";
+import { TxtClickable } from "./TxtClickable";
 import { UIComponent } from "./UIComponent";
 import { VerticalLayout } from "./VerticalLayout";
 import { VsModeLogic } from "./VsModeLogic";
-import { RandomTxt } from "./RandomTxt";
-import { ScaleClickable } from "./ScaleClickable";
 const COMPONENTS = [
   LaunchPage,
   LoadingContentText,
@@ -113,7 +115,9 @@ const COMPONENTS = [
   PrefixAndDifficultyText,
   TeamSituationText,
   TextInput,
-  PlayerNameInput
+  PlayerNameInput,
+  ImgClickable,
+  TxtClickable,
 ].map(v => [v.TAG, v] as const)
 
 class ComponentFactory {

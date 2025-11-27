@@ -49,7 +49,7 @@ export class UINode implements IDebugging {
   protected _click_flag: 0 | 1 = 0;
   protected _update_times: number = 0;
 
-  get callbacks(): NoEmitCallbacks<IUICallback> {
+  get callbacks() {
     return this._callbacks;
   }
   /**
@@ -280,18 +280,21 @@ export class UINode implements IDebugging {
     this._click_flag = 1;
     for (const c of this.components)
       c.on_pointer_down?.(e);
+    this.callbacks.emit('on_pointer_down')(e, this);
   }
 
   on_pointer_up(e: IUIPointerEvent) {
     this._pointer_down = 0
     for (const c of this.components)
       c.on_pointer_up?.(e);
+    this.callbacks.emit('on_pointer_up')(e, this);
   }
 
   on_pointer_cancel(e: IUIPointerEvent) {
     this._pointer_down = 0
     for (const c of this.components)
       c.on_pointer_cancel?.(e);
+    this.callbacks.emit('on_pointer_cancel')(e, this);
   }
 
   on_pointer_leave() {
@@ -299,12 +302,14 @@ export class UINode implements IDebugging {
     this._click_flag = 0;
     for (const c of this.components)
       c.on_pointer_leave?.();
+    this.callbacks.emit('on_pointer_leave')(this);
   }
 
   on_pointer_enter() {
     this._pointer_over = 1
     for (const c of this.components)
       c.on_pointer_enter?.();
+    this.callbacks.emit('on_pointer_enter')(this);
   }
 
   on_start() {

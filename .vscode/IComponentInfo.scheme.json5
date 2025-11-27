@@ -3,8 +3,8 @@
   properties: {
     id: { type: "string" },
     name: { type: "string" },
-    args: { type: "object" },
+    args: { type: "array" },
     enabled: { type: "string" },
-    properties: { type: "string" },
+    properties: { type: "object" },
   },
 }

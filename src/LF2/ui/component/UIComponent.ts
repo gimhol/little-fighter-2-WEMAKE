@@ -165,4 +165,16 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
   on_add?(): void;
 
   on_del?(): void;
+
+  find_node(which: string | null | undefined): UINode | null {
+    if (which === null || which === void 0)
+      return this.node
+    switch (which) {
+      case 'parent':
+        return this.node.parent ?? null
+      case 'self':
+        return this.node
+    }
+    return null
+  }
 }
