@@ -1,7 +1,6 @@
-import type { UINode } from "../UINode";
-import type { ICrossInfo } from "../ICrossInfo";
-import { UIComponent } from "./UIComponent";
 import { CrossInfo } from "../CrossInfo";
+import type { UINode } from "../UINode";
+import { UIComponent } from "./UIComponent";
 
 
 export class Alignment extends UIComponent {
