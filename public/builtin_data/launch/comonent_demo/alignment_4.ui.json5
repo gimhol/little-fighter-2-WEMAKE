@@ -1,6 +1,6 @@
 {
-  id: "alignment_demo_3",
-  name: "COMPONENT DEMO: alignment 3",
+  id: "alignment_demo_4",
+  name: "COMPONENT DEMO: alignment 4",
   color: "rgba(255,0,0,1)",
   templates: {
     qube: {
@@ -16,38 +16,40 @@
   items: [
     {
       template: "qube",
+      id: "left_qube",
       items: [
         {
           template: "txt",
-          txt: "x_mid=true\ntop=top",
+          txt: "top\nleft",
         },
       ],
       component: [
         {
           name: "Alignment",
-          properties: { x_mid: true, top: "top", offset_t: 10 },
+          properties: { top: "top", left: "left", offset_l: 10, offset_t: 10 },
         },
       ],
     },
     {
       template: "qube",
+      id: "right_qube",
       items: [
         {
           template: "txt",
-          txt: "left=left\top=bottom\nfollow=bro:prev",
+          txt: "top\nright",
         },
       ],
       component: [
         {
           name: "Alignment",
           properties: {
-            left: "left",
-            top: "bottom",
-            followed: "bro:prev",
+            top: "top",
+            right: "right",
+            offset_r: -10,
             offset_t: 10,
           },
         },
       ],
-    },
+    }
   ],
 }

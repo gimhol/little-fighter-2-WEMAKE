@@ -23,6 +23,7 @@ export class Alignment extends UIComponent {
 
   followed_rect = new CrossInfo()
   follower_rect = new CrossInfo()
+  followed_pos: [number, number, number] = [0, 0, 0];
 
   override on_start(): void {
     this.followed = this.find_node(this.props.str("followed") ?? "parent")
@@ -48,63 +49,78 @@ export class Alignment extends UIComponent {
   override update(dt: number): void {
     const { followed, follower } = this
     if (followed === follower || !followed || !follower) return;
-    const { followed_rect, follower_rect } = this;
+    const { followed_rect: c1, follower_rect: c2 } = this;
+    const g = followed.global_pos;
     if (
-      !followed_rect.compare(followed.cross) &&
-      !follower_rect.compare(followed.cross)
+      g[0] != this.followed_pos[0] &&
+      g[1] != this.followed_pos[1] &&
+      g[2] != this.followed_pos[2] &&
+      !c1.compare(followed.cross) &&
+      !c2.compare(follower.cross)
     ) return;
-    followed_rect.set(followed.cross);
-    follower_rect.set(follower.cross);
+    this.followed_pos[0] = g[0]
+    this.followed_pos[1] = g[1]
+    this.followed_pos[2] = g[2]
+    c1.set(followed.cross);
+    c2.set(follower.cross);
 
-    const follower_pos = follower.pos.value;
-    let _left: number | null = null;
-    let _right: number | null = null;
-    let _top: number | null = null;
-    let _bottom: number | null = null;
+    const follower_pos = follower.global_pos;
+    const follower_siz = follower.size.value;
+    let l: number | null = null;
+    let r: number | null = null;
+    let t: number | null = null;
+    let b: number | null = null;
 
     switch (this.left!) {
-      case "left": _left = followed_rect.left; break;
-      case "right": _left = followed_rect.right; break;
-      case "mid": _left = followed_rect.mid_x; break;
+      case "left": l = g[0] + c1.left; break;
+      case "right": l = g[0] + c1.right; break;
+      case "mid": l = g[0] + c1.mid_x; break;
     }
     switch (this.right!) {
-      case "left": _right = followed_rect.left; break;
-      case "right": _right = followed_rect.right; break;
-      case "mid": _right = followed_rect.mid_x; break;
+      case "left": r = g[0] + c1.left; break;
+      case "right": r = g[0] + c1.right; break;
+      case "mid": r = g[0] + c1.mid_x; break;
     }
     switch (this.top!) {
-      case "top": _top = followed_rect.top; break;
-      case "bottom": _top = followed_rect.bottom; break;
-      case "mid": _top = followed_rect.mid_y; break;
+      case "top": t = g[1] + c1.top; break;
+      case "bottom": t = g[1] + c1.bottom; break;
+      case "mid": t = g[1] + c1.mid_y; break;
     }
     switch (this.bottom!) {
-      case "top": _bottom = followed_rect.top; break;
-      case "bottom": _bottom = followed_rect.bottom; break;
-      case "mid": _bottom = followed_rect.mid_y; break;
+      case "top": b = g[1] + c1.top; break;
+      case "bottom": b = g[1] + c1.bottom; break;
+      case "mid": b = g[1] + c1.mid_y; break;
     }
     if (this.x_mid) {
-      _left = followed_rect.mid_x + follower_rect.left;
-      _right = null;
+      l = g[0] + c1.mid_x + c2.left;
+      r = null;
     }
     if (this.y_mid) {
-      _top = followed_rect.mid_y + follower_rect.top;
-      _bottom = null;
+      t = g[1] + c1.mid_y + c2.top;
+      b = null;
     }
 
-    if (_left !== null && _right !== null) {
+    if (l !== null && r !== null) {
+      const w = (r - l) - this.offset_l + this.offset_r
+      follower_siz[0] = w;
+      follower_pos[0] = l - c2.left + this.offset_l
       // resize width
-    } else if (_left !== null) {
-      follower_pos[0] = _left - follower_rect.left + this.offset_l
-    } else if (_right !== null) {
-      follower_pos[0] = _right - follower_rect.right + this.offset_r
+    } else if (l !== null) {
+      follower_pos[0] = l - c2.left + this.offset_l
+    } else if (r !== null) {
+      follower_pos[0] = r - c2.right + this.offset_r
     }
-    if (_top !== null && _bottom !== null) {
+    if (t !== null && b !== null) {
+      const h = (b - t) - this.offset_t + this.offset_b
+      follower_pos[1] = t - c2.top + this.offset_t
+      follower_siz[1] = h
       // resize height
-    } else if (_top !== null) {
-      follower_pos[1] = _top - follower_rect.top + this.offset_t
-    } else if (_bottom !== null) {
-      follower_pos[1] = _bottom - follower_rect.bottom + this.offset_b
+    } else if (t !== null) {
+      follower_pos[1] = t - c2.top + this.offset_t
+    } else if (b !== null) {
+      follower_pos[1] = b - c2.bottom + this.offset_b
     }
-    follower.pos.value = follower_pos;
+    follower.global_pos = follower_pos;
+    follower.size.value = follower_siz;
   }
 }
