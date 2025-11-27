@@ -16,7 +16,7 @@
     {
       center: "0.5,0.5",
       img: "$val:img_normal",
-      component: ["OpacityHover(1,0.7,255,1)","ScaleHover(1,1.1,255,1)"],
+      component: ["OpacityHover(1,0.7,255,1)","ScaleClickable(1,1.1,255,1)"],
     },
   ],
 }

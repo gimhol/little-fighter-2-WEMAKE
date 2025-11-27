@@ -44,7 +44,7 @@ export class UINode implements IDebugging {
   readonly data: Readonly<ICookedUIInfo>;
 
   protected _callbacks = new Callbacks<IUICallback>();
-  protected _pointer_on_me: 0 | 1 = 0;
+  protected _pointer_over: 0 | 1 = 0;
   protected _pointer_down: 0 | 1 = 0;
   protected _click_flag: 0 | 1 = 0;
   protected _update_times: number = 0;
@@ -232,8 +232,9 @@ export class UINode implements IDebugging {
   get style(): IStyle {
     return this.txts.value[0].style || {}
   }
-
-  get pointer_on_me() { return this._pointer_on_me }
+  /** 光标是否在本节点上 */
+  get pointer_over() { return this._pointer_over }
+  /** 光标是否在本节点中按下 */
   get pointer_down() { return this._pointer_down }
   get click_flag() { return this._click_flag }
   get update_times() { return this._update_times }
@@ -294,14 +295,14 @@ export class UINode implements IDebugging {
   }
 
   on_pointer_leave() {
-    this._pointer_on_me = 0;
+    this._pointer_over = 0;
     this._click_flag = 0;
     for (const c of this.components)
       c.on_pointer_leave?.();
   }
 
   on_pointer_enter() {
-    this._pointer_on_me = 1
+    this._pointer_over = 1
     for (const c of this.components)
       c.on_pointer_enter?.();
   }

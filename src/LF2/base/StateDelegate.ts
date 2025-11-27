@@ -26,8 +26,11 @@ export class StateDelegate<T> {
   set dirty(v: boolean) { this._dirty = v; }
   get dirty() { const r = this._dirty; this._dirty = false; return r; }
   set default_value(v: Value<T>) {
+    const old_value = this.value;
     this._default_value = this.value_to_state(v);
-    if (this._values.length === 0) this._dirty = true;
+    const now_value = this.value;
+
+    if (this.compare(old_value, now_value)) this._dirty = true;
   }
   get default_value(): T { return this.get_value(this._default_value)! }
   set value(v: Value<Unsafe<T>>) { this.set(max(0, this._values.length - 1), v) }

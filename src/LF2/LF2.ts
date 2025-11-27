@@ -598,8 +598,8 @@ export class LF2 implements IKeyboardCallback, IDebugging {
   }
 
   ui_val_getter = (item: UINode, word: string) => {
-    if (word === "mouse_on_me") return '' + item.pointer_on_me;
-    if (word === "pointer_on_me") return '' + item.pointer_on_me;
+    if (word === "mouse_on_me") return '' + item.pointer_over;
+    if (word === "pointer_on_me") return '' + item.pointer_over;
     if (word === "paused") return this.world.paused ? 1 : 0;
     return word;
   };

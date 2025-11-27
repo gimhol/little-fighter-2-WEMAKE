@@ -18,8 +18,8 @@ export class OpacityHover extends UIComponent {
   }
 
   override update(dt: number): void {
-    const n = this._p ? this.node.parent! : this.node;
-    const r = (n.pointer_on_me !== 1 && !n.focused) || !!n.pointer_down;
-    this.node.opacity = this.anim.auto_trip(r, dt).value;
+    const watching = this._p ? this.node.parent! : this.node;
+    const reverse = (!watching.pointer_over && !watching.focused) || !!watching.pointer_down;
+    this.node.opacity = this.anim.auto_trip(reverse, dt).value;
   }
 }
