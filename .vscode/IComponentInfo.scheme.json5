@@ -1,0 +1,10 @@
+{
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    name: { type: "string" },
+    args: { type: "object" },
+    enabled: { type: "string" },
+    properties: { type: "string" },
+  },
+}
