@@ -263,7 +263,11 @@ export class UINode implements IDebugging {
     } while (node);
     return [x, y, z];
   }
-
+  set global_pos(v: [number, number, number]) {
+    const [px = 0, py = 0, pz = 0] = this.parent?.global_pos ?? []
+    const [gx, gy, gz] = v;
+    this.pos.value = [gx - px, gy - py, gz - pz];
+  }
   hit(x: number, y: number): boolean {
     const [cx, cy] = this.center.value;
     const [px, py] = this.pos.value;
