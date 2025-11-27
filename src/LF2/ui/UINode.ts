@@ -250,21 +250,19 @@ export class UINode implements IDebugging {
     make_debugging(this)
   }
   get global_pos(): [number, number, number] {
-    let x = 0;
-    let y = 0;
-    let z = 0;
-    let node: UINode | undefined = this;
-    do {
-      const [a, b, c] = node.pos.value;
-      x += a;
-      y += b;
-      z += c;
-      node = node.parent;
-    } while (node);
+    const [x, y, z] = this.pos.value;
+    if (this.parent) {
+      const [gx, gy, gz] = this.parent.global_pos;
+      return [x + gx, y + gy, z + gz];
+    }
     return [x, y, z];
   }
   set global_pos(v: [number, number, number]) {
-    const [px = 0, py = 0, pz = 0] = this.parent?.global_pos ?? []
+    if (!this.parent) {
+      this.pos.value = v;
+      return;
+    }
+    const [px, py, pz] = this.parent.global_pos
     const [gx, gy, gz] = v;
     this.pos.value = [gx - px, gy - py, gz - pz];
   }
