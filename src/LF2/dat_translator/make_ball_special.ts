@@ -158,6 +158,9 @@ export function make_ball_special(data: IEntityData) {
       })
       break;
     }
+    case BuiltIn_OID.FreezeBall:
+      data.base.group = ensure(data.base.group, EntityGroup.Freezer);
+      break;
     case BuiltIn_OID.Template:
     case BuiltIn_OID.Julian:
     case BuiltIn_OID.Firzen:
@@ -198,7 +201,6 @@ export function make_ball_special(data: IEntityData) {
     case BuiltIn_OID.RudolfWeapon:
     case BuiltIn_OID.HenryWind:
     case BuiltIn_OID.HenryArrow2:
-    case BuiltIn_OID.FreezeBall:
     case BuiltIn_OID.FirenBall:
     case BuiltIn_OID.FreezeColumn:
     case BuiltIn_OID.Weapon7:

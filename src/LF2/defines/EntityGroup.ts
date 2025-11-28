@@ -41,5 +41,10 @@ export enum EntityGroup {
   /**
    * 可被反弹为冰ball的ball
    */
-  FreezableBall = "FreezableBall"
+  FreezableBall = "FreezableBall",
+
+  /**
+   * 可转化FreezableBall的对象
+   */
+  Freezer = "Freezer"
 }

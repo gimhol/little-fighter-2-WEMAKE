@@ -156,6 +156,7 @@ export function make_weapon_special(data: IEntityData) {
     case BuiltIn_OID.Weapon_IceSword:
       data.base.weight = Defines.WEAPON_WEIGHT_NOMRAL;
       delete data.base.group
+      data.base.group = ensure(data.base.group, EntityGroup.Freezer);
       data.base.brokens = broken_pieces_opoints(icesword1, icesword1, icesword1, icesword2, icesword2, icesword2, icesword2);
       break;
   }

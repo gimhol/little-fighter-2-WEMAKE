@@ -1,6 +1,7 @@
 import { ICollision, ICollisionHandler } from "../base";
 import { ALL_ENTITY_ENUM, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
+import { is_ball, is_character, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
 import { handle_ball_frozen } from "./handle_ball_frozen";
 import { handle_ball_hit_other } from "./handle_ball_hit_other";
@@ -93,17 +94,19 @@ export class CollisionKeeper {
     })
 
     if (
+      is_ball(attacker) &&
+      is_ball(victim) &&
       attacker.group?.some(v => v === EntityGroup.FreezableBall) &&
-      attacker.data.id === BuiltIn_OID.FreezeBall
+      victim.group?.some(v => v === EntityGroup.Freezer)
     ) {
       handle_ball_frozen(victim, attacker);
     } else if (
-      (
-        (attacker.data.id === BuiltIn_OID.Freeze) ||
-        (attacker.data.id === BuiltIn_OID.FreezeBall) ||
-        (attacker.data.id === BuiltIn_OID.Weapon_IceSword && attacker.holder)
-      ) && (
-        victim.group?.some(v => v === EntityGroup.FreezableBall)
+      is_ball(victim) &&
+      victim.group?.some(v => v === EntityGroup.FreezableBall) &&
+      attacker.group?.some(v => v === EntityGroup.Freezer) && (
+        is_character(attacker) ||
+        is_ball(victim) ||
+        (is_weapon(attacker) && attacker.holder)
       )
     ) {
       handle_ball_frozen(attacker, victim);

@@ -1,4 +1,4 @@
-import { BdyKind, BuiltIn_OID, Defines, EntityVal, HitFlag, IEntityData, ItrEffect, ItrKind } from "../../defines";
+import { BdyKind, BuiltIn_OID, Defines, EntityGroup, EntityVal, HitFlag, IEntityData, ItrEffect, ItrKind } from "../../defines";
 import { ActionType } from "../../defines/ActionType";
 import { C_Val } from "../../defines/CollisionVal";
 import { ensure } from "../../utils";
@@ -17,6 +17,7 @@ import { frames } from "./frames";
  * @return {IEntityData} 
  */
 export function make_fighter_data_freeze(data: IEntityData): IEntityData {
+  data.base.group = ensure(data.base.group, EntityGroup.Freezer);
   [
     data.frames["running_0"],
     data.frames["running_1"],
