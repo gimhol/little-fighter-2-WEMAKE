@@ -1,5 +1,5 @@
 {
-  id: "data/spark.json",
+  id: "data/spark.json5",
   type: 4,
   is_game_obj_data: true,
   is_base_data: true,

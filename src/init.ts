@@ -11,6 +11,7 @@ actor
   .add(UIActionEnum.LinkTo, (_, url) => window.open(url))
   .add(UIActionEnum.Exit, () => window.confirm("确定退出?") && window.close())
 
+const DEV = window.location.href.includes('DEV=1')
 Ditto.setup({
   Timeout: dom.__Timeout,
   Interval: dom.__Interval,
@@ -32,12 +33,5 @@ Ditto.setup({
   warn: Warn.print,
   Log: Log.print,
   debug: Debug.print,
-  get DEV(): boolean {
-    const { hostname, search, hash } = window.location;
-    return hostname.startsWith('localhost') ? (
-      !search.startsWith('?NO_DEV') && !hash.startsWith('#NO_DEV')
-    ) : (
-      search.startsWith('?DEV') || hash.startsWith('#DEV')
-    );
-  }
+  DEV
 });

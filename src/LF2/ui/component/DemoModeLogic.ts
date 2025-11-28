@@ -28,6 +28,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
     for (let i = 0; i < player_count; i++) {
       player_teams.push(new_team());
     }
+    this.world.paused = false;
     switch (player_count) {
       case 4: {
         if (this.lf2.random_take([0, 1])) {
