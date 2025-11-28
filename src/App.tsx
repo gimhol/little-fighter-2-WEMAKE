@@ -239,8 +239,8 @@ function App() {
             }
           },
           on_prel_loaded: () => {
-            const { test_layout_id } = qs.parse(window.location.search.substring(1))
-            if (typeof test_layout_id === 'string') lf2.set_ui(test_layout_id)
+            const { test_ui } = qs.parse(window.location.search.substring(1))
+            if (typeof test_ui === 'string') lf2.set_ui(test_ui)
           },
         }),
         lf2.sounds.callbacks.add({
