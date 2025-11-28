@@ -50,7 +50,7 @@ export class WorldRenderer implements IWorldRenderer {
     for (const stack of this.lf2.ui_stacks) {
       for (const ui of stack.uis) {
         const [a, b, c] = ui.pos.default_value;
-        ui.pos.default_value = [a + v, b, c];
+        ui.pos.value = [a + v, b, c];
         ui.renderer.x = v;
       }
     }
