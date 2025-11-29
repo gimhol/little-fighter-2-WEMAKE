@@ -4,7 +4,6 @@ import { Entity } from "../../entity";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UIComponent } from "./UIComponent";
 
-
 export class CameraCtrl extends UIComponent {
   static override readonly TAG = 'CameraCtrl';
   time: number = 0;

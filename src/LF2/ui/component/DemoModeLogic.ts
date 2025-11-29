@@ -1,11 +1,14 @@
+import { Entity } from "@/LF2/entity";
 import { new_team } from "../../base";
-import { Defines, EntityGroup } from "../../defines";
+import { Defines, EntityGroup, TeamEnum } from "../../defines";
 import { Factory } from "../../entity/Factory";
 import IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_character } from "../../entity/type_check";
 import { traversal } from "../../utils/container_help/traversal";
 import { floor } from "../../utils/math/base";
 import { UINode } from "../UINode";
+import { UITextLoader } from "../UITextLoader";
+import { CameraCtrl } from "./CameraCtrl";
 import { UIComponent } from "./UIComponent";
 
 export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
@@ -14,6 +17,8 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   time: number = 0;
   override on_start(): void {
     super.on_start?.();
+
+    this.node.search_child("curr_focus")!.visible = false
     this.score_board = this.node.find_child("score_board")!
 
     const bg_data = this.lf2.random_get(this.lf2.datas.backgrounds);
@@ -134,4 +139,31 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
     this.score_board.visible = true;
   }
   override on_show(): void { }
+
+  protected _cam_ctrl?: CameraCtrl;
+  protected _staring?: Entity | undefined;
+  protected _free?: boolean
+  get cam_ctrl(): CameraCtrl | undefined {
+    if (!this._cam_ctrl)
+      this._cam_ctrl = this.node.find_component(CameraCtrl)
+    return this._cam_ctrl
+  }
+  protected txt_loader = new UITextLoader(() => this.node.search_child("curr_focus"))
+
+  override update(dt: number): void {
+    const staring = this.cam_ctrl?.staring
+    // TODO
+    if (this._staring !== staring || this._free != !!this.cam_ctrl?.free) {
+      if (staring) {
+        const txt = `[${staring.team}] ${staring.data.base.name} (${staring.name})`
+        this.txt_loader.set_text([txt])
+        this.node.search_child("curr_focus_prefix")!.txt_idx.value = 0
+        this.node.search_child("curr_focus")!.visible = true
+      } else {
+        this.node.search_child("curr_focus_prefix")!.txt_idx.value = 1
+        this.node.search_child("curr_focus")!.visible = false
+      }
+      this._staring = staring
+    }
+  }
 }

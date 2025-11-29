@@ -47,6 +47,51 @@
       component:[{name:"Alignment",properties: {right:"right",bottom:"bottom"}}],
       center: "1,1",
     },
+    {
+      id: "curr_focus_prefix",
+      txt: [{
+        i18n: "curr_focus",
+        style: {
+          fill_style: "white",
+          font: '9px  Arial',
+          back_style: {
+            font: '9px Arial',
+            stroke_style: "#005A8E",
+            line_width: 1,
+          },
+        },
+      }, {
+        i18n: "cam_controlling",
+        style: {
+          fill_style: "white",
+          font: '9px  Arial',
+          back_style: {
+            font: '9px Arial',
+            stroke_style: "#005A8E",
+            line_width: 1,
+          },
+        },
+      }],
+      component:[{name:"Alignment",properties: {left:"left",bottom:"bottom"}}],
+      center: "0,1",
+    },
+    {
+      id: "curr_focus",
+      txt: [{
+        i18n: "",
+        style: {
+          fill_style: "white",
+          font: '9px  Arial',
+          back_style: {
+            font: '9px Arial',
+            stroke_style: "#005A8E",
+            line_width: 1,
+          },
+        },
+      }],
+      component:[{name:"Alignment",properties: {left:"right",bottom:"bottom",followed: {l:"id:curr_focus_prefix"}}}],
+      center: "0,1",
+    },
   ],
   actions: {
     stop: ["remove_all_entities()", "destory_stage()"],

@@ -5,14 +5,19 @@ import { UINode } from "./UINode";
 import { Times } from "./utils/Times";
 
 export class UITextLoader {
-  readonly node: () => UINode;
+  readonly node: () => UINode | null | undefined;
   protected _jid = new Times();
-  protected _style: () => IStyle = () => ({});
-  constructor(node: () => UINode) {
+  protected _style: (i: number) => IStyle = (i: number) => {
+    const node = this.node()
+    if (!node) return {};
+    return { ...node.txts.value[i].style }
+  };
+  constructor(node: () => UINode | null | undefined) {
     this.node = node;
   }
   private _load_txt(info: ICookedUITxtInfo) {
     const node = this.node()
+    if (!node) return Promise.reject(new Error('node not found'));
     const value = node.lf2.string(info.i18n);
     const job = node.lf2.images.load_text(value, info.style);
     return job;
@@ -31,14 +36,15 @@ export class UITextLoader {
     this._jid.max = this._jid.min = this._jid.value = 0;
     return this;
   }
-  set_text(txts: string[], idx: number | undefined = 0): Promise<TextInfo[]> {
-    const _txts = txts.map(i18n => ({ i18n, style: this._style() }))
+  set_text(txts: string[], idx: number = 0): Promise<TextInfo[]> {
+    const _txts = txts.map(i18n => ({ i18n, style: this._style(idx) }))
     return this.load(_txts, idx)
   }
   load(txts: ICookedUITxtInfo[], idx: number | undefined = 0): Promise<TextInfo[]> {
     this._jid.add();
     const jid = this._jid.value;
     const node = this.node()
+    if (!node) return Promise.reject(new Error('node not found'));
     return new Promise((resolve, reject) => {
       if (jid !== this._jid.value) {
         reject(this._out_of_date());
