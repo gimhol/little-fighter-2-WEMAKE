@@ -1,4 +1,4 @@
-import type { Unsafe } from "../utils/type_check";
+import type { Unsafe } from "../utils/type_check/Unsafe";
 import type { Entity } from "./Entity";
 
 export interface IEntityCallbacks<E extends Entity = Entity> {

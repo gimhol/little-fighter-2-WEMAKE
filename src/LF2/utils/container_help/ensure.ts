@@ -1,4 +1,4 @@
-import { Unsafe } from "../type_check";
+import { Unsafe } from "../type_check/Unsafe";
 
 /** 
  * 确保生成一个数组 

@@ -27,7 +27,7 @@ const ForkTsCheckerWebpackPlugin =
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const GitInfo = require('./version/version')
 const AutoRegisterUIComponentPlugin = require('../scripts/AutoRegisterUIComponentPlugin')
-console.log(AutoRegisterUIComponentPlugin)
+const AutoIndexExportPlugin = require('../scripts/AutoIndexExportPlugin')
 const createEnvironmentHash = require("./webpack/persistentCache/createEnvironmentHash");
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
@@ -574,6 +574,12 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
+      new AutoIndexExportPlugin({
+        dir: [
+          path.join(__dirname, '../src/LF2/defines'),
+          path.join(__dirname, '../src/LF2/utils')
+        ]
+      }),
       new AutoRegisterUIComponentPlugin(),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(

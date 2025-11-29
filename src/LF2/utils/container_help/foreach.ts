@@ -1,4 +1,4 @@
-import { Unsafe } from "../type_check";
+import { Unsafe } from "../type_check/Unsafe";
 import { traversal } from "./traversal";
 
 export function foreach<T>(any: Unsafe<T[]>, fn: (value: T, index: number, all: T[]) => void): void;

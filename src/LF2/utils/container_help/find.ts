@@ -1,4 +1,4 @@
-import { Unsafe } from "../type_check";
+import { Unsafe } from "../type_check/Unsafe";
 
 export function find<T>(set: Unsafe<ReadonlySet<T>>, p: (v: T) => unknown): Unsafe<T>;
 export function find<T>(array: Unsafe<T[]>, p: (v: T) => unknown): Unsafe<T>;
