@@ -1,4 +1,4 @@
-import { Camera, OrthographicCamera } from "../_t";
+import { ArrayCamera, Camera, OrthographicCamera, PerspectiveCamera } from "../_t";
 import { BuiltIn_OID } from "@/LF2/defines";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { is_character, type Entity } from "@/LF2/entity";
@@ -65,19 +65,32 @@ export class WorldRenderer implements IWorldRenderer {
     const h = world.screen_h;
     this.bg_render = new BgRender(this);
     this.scene = new Scene(world.lf2).set_size(w * 4, h * 4);
-    const camera = this.camera = new OrthographicCamera()
 
-    camera.left = 0;
-    camera.right = w;
-    camera.top = h;
-    camera.bottom = 0;
-    camera.near = 0.1;
-    camera.far = 2000;
-    camera.position.set(0, 0, 10)
-    camera.name = "default_orthographic_camera"
-    this.scene.add_camera(camera);
 
-    camera.updateProjectionMatrix();
+    {
+      const camera = this.camera = new OrthographicCamera()
+      camera.left = 0;
+      camera.right = w;
+      camera.top = h;
+      camera.bottom = 0;
+      camera.near = 0.1;
+      camera.far = 2000;
+      camera.position.set(0, 0, 10)
+      camera.name = "default_orthographic_camera"
+      this.scene.add_camera(camera);
+      camera.updateProjectionMatrix();
+    }
+    {
+      // const camera = this.camera = new PerspectiveCamera()
+      // camera.aspect = 1;
+      // camera.near = 0.1;
+      // camera.far = 2000;
+      // camera.position.set(0, 0, 10)
+      // camera.name = "default_orthographic_camera"
+      // this.scene.add_camera(camera);
+      // camera.updateProjectionMatrix();
+    }
+
   }
   add_entity(entity: Entity): void {
     const entity_renderer = new EntityRender(entity);
