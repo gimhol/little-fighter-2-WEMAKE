@@ -1,9 +1,10 @@
-import type { CtrlDevice, TKeys } from "../controller";
+import { CtrlDevice } from "./CtrlDevice";
+import { GK } from "./GameKey";
 
 export interface IPurePlayerInfo {
   id: string;
   name: string;
-  keys: TKeys;
+  keys: Record<GK, string>;
   team: string;
   character: string;
   version: number;

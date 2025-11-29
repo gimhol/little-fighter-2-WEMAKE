@@ -1,7 +1,7 @@
 import json5 from "json5";
 import { Callbacks } from "./base";
 import type { TKeys } from "./controller/BaseController";
-import { CtrlDevice } from "./controller/CtrlDevice";
+import { CtrlDevice } from "./defines/CtrlDevice";
 import { Defines, GameKey } from "./defines";
 import { IPurePlayerInfo } from "./defines/IPurePlayerInfo";
 import { Ditto } from "./ditto";

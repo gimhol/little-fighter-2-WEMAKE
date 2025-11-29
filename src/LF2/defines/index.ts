@@ -11,6 +11,7 @@ export * from "./BuiltIn_OID";
 export * from "./CheatType";
 export * from "./CollisionVal";
 export * from "./CPointKind";
+export * from "./CtrlDevice";
 export * from "./defines";
 export * from "./Difficulty";
 export * from "./EMPTY_FRAME_INFO";

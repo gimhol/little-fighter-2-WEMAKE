@@ -1,7 +1,7 @@
 import { IBotData, IEntityData, StateEnum } from "../../defines";
 import { IBotAction } from "../../defines/IBotAction";
 import { IBotDataSet } from "../../defines/IBotDataSet";
-import { find } from "../../utils";
+import { find } from "../../utils/container_help/find";
 import { traversal } from "../../utils/container_help/traversal";
 
 export class BotBuilder {

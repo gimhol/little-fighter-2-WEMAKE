@@ -6,7 +6,7 @@ import { PlayerInfo } from "../PlayerInfo";
 import { abs } from "../utils";
 import { BaseController } from "./BaseController";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
-import { CtrlDevice } from "./CtrlDevice";
+import { CtrlDevice } from "../defines/CtrlDevice";
 
 type TKeyCodeMap = { [x in GK]?: string };
 type TCodeKeyMap = { [x in string]?: GK };

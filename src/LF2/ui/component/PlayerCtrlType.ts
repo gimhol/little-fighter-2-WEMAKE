@@ -1,4 +1,4 @@
-import { CtrlDevice } from "../../controller/CtrlDevice";
+import { CtrlDevice } from "../../defines/CtrlDevice";
 import { IUIPointerEvent } from "../IUIPointerEvent";
 import { UIComponent } from "./UIComponent";
 

@@ -1,5 +1,5 @@
-import { CtrlDevice } from "./controller";
-import type { GameKey } from "./defines";
+
+import type { CtrlDevice, GameKey } from "./defines";
 
 export interface IPlayerInfoCallback {
   on_key_changed?(key_name: GameKey, value: string, prev: string): void;

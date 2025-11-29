@@ -31,6 +31,22 @@
       template: "ui/score_board.ui.json5",
       visible: false,
     },
+    {
+      txt: {
+        i18n: "DEMO",
+        style: {
+          fill_style: "white",
+          font: '24px "Arial Black", Arial',
+          back_style: {
+            font: '24px "Arial Black", Arial',
+            stroke_style: "#005A8E",
+            line_width: 4,
+          },
+        },
+      },
+      component:[{name:"Alignment",properties: {right:"right",bottom:"bottom"}}],
+      center: "1,1",
+    },
   ],
   actions: {
     stop: ["remove_all_entities()", "destory_stage()"],
