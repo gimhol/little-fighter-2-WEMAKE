@@ -17,7 +17,6 @@ function split_text(content, start_txt, end_txt) {
     content.substring(0, start_idx),
     content.substring(start_idx, end_idx),
     content.substring(end_idx),
-
   ]
 }
 

@@ -3,9 +3,9 @@ import { TeamEnum as TE } from "../../defines/TeamEnum";
 import { Entity } from "../../entity/Entity";
 import { Times } from "../utils/Times";
 import { CameraCtrl } from "./CameraCtrl";
-import { SummaryLogic } from "./SummaryLogic";
+import { SummaryLogic as UIComponent } from "./SummaryLogic";
 
-export class DanmuGameLogic extends SummaryLogic {
+export class DanmuGameLogic extends UIComponent {
   static override readonly TAG: string = 'DanmuGameLogic';
   static readonly BROADCAST_ON_START = 'DanmuGameLogic_ON_START';
   static readonly BROADCAST_ON_STOP = 'DanmuGameLogic_ON_STOP';

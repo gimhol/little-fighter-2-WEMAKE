@@ -2,10 +2,9 @@ import type { PlayerInfo } from "../../PlayerInfo";
 import FSM, { IState } from "../../base/FSM";
 import Invoker from "../../base/Invoker";
 import { CheatType, EntityGroup } from "../../defines";
-import { LGK } from "../../defines/GameKey";
 import { Defines } from "../../defines/defines";
 import { IUIKeyEvent } from "../IUIKeyEvent";
-import { GamePrepareState, GamePrepareLogic } from "./GamePrepareLogic";
+import { GamePrepareLogic, GamePrepareState } from "./GamePrepareLogic";
 import { UIComponent } from "./UIComponent";
 export enum SlotSelStatus {
   Empty = 'Empty',

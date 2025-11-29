@@ -32,7 +32,7 @@ class ComponentFactory {
       }
       const cls = this._component_map.get(info.name);
       if (!cls) {
-        Ditto.warn(`[${ComponentFactory.TAG}::create] Component not found! expression: ${raw}`);
+        Ditto.warn(`[${ComponentFactory.TAG}::create] Component not found! expression: ${info.name}`);
         continue;
       }
       const { name, args = [], enabled = true, id = '', properties = {} } = info;
