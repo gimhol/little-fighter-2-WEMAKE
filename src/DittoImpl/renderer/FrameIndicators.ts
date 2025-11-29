@@ -44,7 +44,7 @@ export const INDICATINGS: Record<Indicating, number> = {
   cpoint: 64,
   bpoint: 128,
 }
-export const INDICATORS_INFO = {
+export const INDICATORS_INFO: { [x in string]?: T.LineMaterialParameters } = {
   bdy: {
     color: 0x00ff00, // #00FF00
     linewidth: 3,

@@ -1,6 +1,6 @@
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { IUIPointerEvent } from "../IUIPointerEvent";
-import GamePrepareLogic from "./GamePrepareLogic";
+import { GamePrepareLogic } from "./GamePrepareLogic";
 import { UIComponent } from "./UIComponent";
 
 export default class ComNumButton extends UIComponent {

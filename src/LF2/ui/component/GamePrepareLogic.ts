@@ -9,10 +9,10 @@ import { Factory } from "../../entity/Factory";
 import { ceil, max } from "../../utils";
 import { map_no_void } from "../../utils/container_help/map_no_void";
 import { IUIKeyEvent } from "../IUIKeyEvent";
-import BackgroundNameText from "./BackgroundNameText";
+import { BackgroundNameText } from "./BackgroundNameText";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
-import SlotSelLogic, { SlotSelStatus } from "./SlotSelLogic";
-import StageNameText from "./StageNameText";
+import { SlotSelStatus, SlotSelLogic } from "./SlotSelLogic";
+import { StageNameText } from "./StageNameText";
 import { UIComponent } from "./UIComponent";
 
 export interface IGamePrepareLogicCallback extends IUICompnentCallbacks {
@@ -30,7 +30,7 @@ export interface IGamePrepareState extends IState<GamePrepareState> {
   on_player_key_down?(e: IUIKeyEvent): void
 }
 
-export default class GamePrepareLogic extends UIComponent<IGamePrepareLogicCallback> {
+export class GamePrepareLogic extends UIComponent<IGamePrepareLogicCallback> {
   static override readonly TAG = 'GamePrepareLogic'
   get game_mode(): string { return this.args[0] || ''; }
   protected _unmount_jobs = new Invoker();

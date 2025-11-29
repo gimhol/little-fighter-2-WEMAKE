@@ -5,7 +5,7 @@ import { CheatType, EntityGroup } from "../../defines";
 import { LGK } from "../../defines/GameKey";
 import { Defines } from "../../defines/defines";
 import { IUIKeyEvent } from "../IUIKeyEvent";
-import GamePrepareLogic, { GamePrepareState } from "./GamePrepareLogic";
+import { GamePrepareState, GamePrepareLogic } from "./GamePrepareLogic";
 import { UIComponent } from "./UIComponent";
 export enum SlotSelStatus {
   Empty = 'Empty',
@@ -25,7 +25,7 @@ interface IStateUnit extends IState<SlotSelStatus> {
  * @class CharacterSelLogic
  * @extends {UIComponent}
  */
-export default class SlotSelLogic extends UIComponent {
+export class SlotSelLogic extends UIComponent {
   static override readonly TAG = "SlotSelLogic";
 
   get player_id(): string { return this.args[0] || ""; }

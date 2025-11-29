@@ -1,7 +1,7 @@
 import { ILf2Callback } from "../../ILf2Callback";
 import { UIComponent } from "./UIComponent";
 
-export default class StageTransitions extends UIComponent implements ILf2Callback {
+export class StageTransitions extends UIComponent implements ILf2Callback {
   static override readonly TAG = 'StageTransitions'
   override on_resume(): void {
     super.on_resume();

@@ -13,10 +13,10 @@
     player_slot: {
       items: [
         {
-          id: "FighterHead",
+          id: "CharMenuHead",
           size: "120, 120",
           pos: "0, 0",
-          component: "FighterHead()",
+          component: "CharMenuHead()",
           items: [
             {
               id: "hints",

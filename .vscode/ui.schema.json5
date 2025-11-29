@@ -68,5 +68,6 @@
         },
       ],
     },
+    values: { type: "object" },
   },
 }

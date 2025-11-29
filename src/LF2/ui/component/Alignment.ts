@@ -1,4 +1,3 @@
-import { CrossInfo } from "../CrossInfo";
 import type { UINode } from "../UINode";
 import { UIComponent } from "./UIComponent";
 

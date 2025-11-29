@@ -1,18 +1,16 @@
 import { Sine } from "../../animation/Sine";
 import Invoker from "../../base/Invoker";
 import { ui_load_txt } from "../ui_load_txt";
-import type { UINode } from "../UINode";
-import GamePrepareLogic, { GamePrepareState } from "./GamePrepareLogic";
+import { GamePrepareLogic, GamePrepareState } from "./GamePrepareLogic";
 import { UIComponent } from "./UIComponent";
-
 /**
  * 显示玩家名称
  *
  * @export
- * @class PlayerFighterHead
+ * @class PlayerName
  * @extends {UIComponent}
  */
-export default class PlayerName extends UIComponent {
+export class PlayerName extends UIComponent {
   static override readonly TAG: string = 'PlayerName';
   get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
 

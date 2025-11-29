@@ -3,7 +3,7 @@ import { Defines } from "../../defines/defines";
 import { ui_load_txt } from "../ui_load_txt";
 import { UIComponent } from "./UIComponent";
 
-export default class StageNameText extends UIComponent {
+export class StageNameText extends UIComponent {
   static override readonly TAG = 'StageNameText'
 
   private _stage: IStageInfo = Defines.VOID_STAGE;

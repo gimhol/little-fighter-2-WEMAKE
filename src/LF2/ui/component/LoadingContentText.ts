@@ -1,5 +1,5 @@
 import { UITextLoader } from "../UITextLoader";
-import factory from "./Factory";
+import inst from "./Factory";
 import { FadeOutOpacity } from "./FadeOutOpacity";
 import { UIComponent } from "./UIComponent";
 
@@ -20,7 +20,7 @@ export class LoadingContentText extends UIComponent {
         this.fade_out_duration,
         this.fade_out_delay
       ).done()
-      this.fadeout = factory.create(this.node, expression)[0] as FadeOutOpacity
+      this.fadeout = inst.create(this.node, expression)[0] as FadeOutOpacity
       this.node.add_components(this.fadeout)
     }
     return this;

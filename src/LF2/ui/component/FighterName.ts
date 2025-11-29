@@ -11,7 +11,7 @@ import { UIComponent } from "./UIComponent";
  * @class FighterName
  * @extends {UIComponent}
  */
-export default class FighterName extends UIComponent {
+export class FighterName extends UIComponent {
   static override readonly TAG = 'FighterName'
   private _text_loader = new UITextLoader(() => this.node).set_style(() => ({
     fill_style: this.is_com ? "pink" : "white",

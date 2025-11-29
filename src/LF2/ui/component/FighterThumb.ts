@@ -2,8 +2,8 @@ import { Sine } from "../../animation/Sine";
 import Invoker from "../../base/Invoker";
 import { Defines } from "../../defines/defines";
 import { UIImgLoader } from "../UIImgLoader";
-import GamePrepareLogic from "./GamePrepareLogic";
-import PlayerScore from "./PlayerScore";
+import { GamePrepareLogic } from "./GamePrepareLogic";
+import { PlayerScore } from "./PlayerScore";
 import { UIComponent } from "./UIComponent";
 
 /**
@@ -13,7 +13,7 @@ import { UIComponent } from "./UIComponent";
  * @class PlayerCharacterThumb
  * @extends {UIComponent}
  */
-export default class FighterThumb extends UIComponent {
+export class FighterThumb extends UIComponent {
   static override readonly TAG = 'FighterThumb'
   private _player_id?: string;
   img_loader = new UIImgLoader(() => this.node).ignore_out_of_date();
@@ -58,6 +58,6 @@ export default class FighterThumb extends UIComponent {
   }
 
   protected handle_changed() {
-    this.img_loader.load([{ path: this.thumb_url, w: 40, h: 45 }], 0)
+    this.img_loader.load([{ path: this.thumb_url, w: 40, h: 45 }], 0).catch(_ => _)
   }
 }

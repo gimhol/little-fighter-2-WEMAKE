@@ -2,7 +2,7 @@ import Invoker from "../../base/Invoker";
 import { Entity } from "../../entity/Entity";
 import { UIComponent } from "./UIComponent";
 
-export default class PlayerScore extends UIComponent {
+export class PlayerScore extends UIComponent {
   static override readonly TAG: string = 'PlayerScore'
   private _hp_lost: number = 0;
   private _mp_usage: number = 0;

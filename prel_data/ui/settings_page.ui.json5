@@ -184,9 +184,33 @@
     },
   },
   items: [
-    "builtin_data/launch/bg.ui.json5",
-    "ui/bg_l_face.ui.json5",
-    "ui/bg_r_face.ui.json5",
+    "@/bg",
+    "ui/bg_l_face",
+    "ui/bg_r_face",
+    {
+      template:"@/img_button",
+      values: {
+        img_normal: {
+          path: "!builtin_data/launch/bearface.png",
+          w: 100,
+          h: 100,
+        },
+        img_hover: {
+          path: "!builtin_data/launch/yeonface.png",
+          w: 100,
+          h: 100,
+        },
+        img_press: {
+          path: "!builtin_data/launch/bearface.png",
+          w: 100,
+          h: 100,
+        },
+      },
+      component:[{
+        name: "Alignment",
+        properties: {right:"right",top:"top"}
+      }]
+    },
     {
       id: "main_menu",
       img: {

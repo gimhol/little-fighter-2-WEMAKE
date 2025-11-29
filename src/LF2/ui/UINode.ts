@@ -18,7 +18,7 @@ import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
 import { IUIPointerEvent } from "./IUIPointerEvent";
 import actor from "./action/Actor";
-import factory from "./component/Factory";
+import inst from "./component/Factory";
 import { UIComponent } from "./component/UIComponent";
 import { parse_ui_value } from "./read_info_value";
 export class UINode implements IDebugging {
@@ -391,7 +391,7 @@ export class UINode implements IDebugging {
 
     const { component } = ret.data;
     if (component)
-      for (const c of factory.create(ret, component))
+      for (const c of inst.create(ret, component))
         ret._components.add(c);
 
     if (info.items) {

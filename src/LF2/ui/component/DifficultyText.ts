@@ -4,7 +4,7 @@ import { IWorldDataset } from "../../IWorldDataset";
 import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
-export default class DifficultyText extends UIComponent implements IWorldCallbacks {
+export class DifficultyText extends UIComponent implements IWorldCallbacks {
   static override readonly TAG: string = "difficulty_text";
   private _text_loader = new UITextLoader(() => this.node).set_style({
     fill_style: "#9b9bff",

@@ -1,8 +1,8 @@
 import { IStyle } from "../../defines/IStyle";
 import { UITextLoader } from "../UITextLoader";
-import PlayerScore from "./PlayerScore";
+import { PlayerScore } from "./PlayerScore";
 import { UIComponent } from "./UIComponent";
-export default class PlayerScoreCell extends UIComponent {
+export class PlayerScoreCell extends UIComponent {
   static override readonly TAG = 'PlayerScoreCell'
   private _text_loader = new UITextLoader(() => this.node)
     .set_style(() => this.get_style())

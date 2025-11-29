@@ -4,7 +4,7 @@ import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 
-export default class BackgroundNameText extends UIComponent {
+export class BackgroundNameText extends UIComponent {
   static override readonly TAG = 'BackgroundNameText'
   private _background: IBgData = Defines.RANDOM_BG;
   private _text_loader = new UITextLoader(() => this.node).set_style({
