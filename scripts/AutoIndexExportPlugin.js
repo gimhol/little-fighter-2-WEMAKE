@@ -58,7 +58,7 @@ class AutoIndexExportPlugin {
       const n = f.toString();
       if (!n.endsWith('.ts')) return;
       if (n === 'index.ts') return;
-      this.run(dir).catch(e => console.warn(e));
+      this.write_index(dir).catch(e => console.warn(e));
     })
   }
   apply() {
