@@ -144,7 +144,7 @@ export class SummaryLogic extends UIComponent {
     }
 
     if (this._refresh_timer.add()) {
-      // NOTE: 计算逻辑似乎有BUG. 此处每N帧重新计算一些数据
+      // NOTE: 计算逻辑似乎有BUG. 故此处每N帧重新计算一些数据
       for (const [, t] of this.teams) {
         t.reserve = 0;
         t.lives = 0;
