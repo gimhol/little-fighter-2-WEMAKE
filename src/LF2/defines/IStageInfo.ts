@@ -10,8 +10,16 @@ export interface IStageInfo {
   id: string;
   name: string;
   phases: IStagePhaseInfo[];
-  next?: string;
+
+  /**
+   * 所属章
+   */
   chapter?: string;
+
+  /**
+   * 下一关卡ID
+   */
+  next?: string;
 
   /**
    * 关卡结束判定

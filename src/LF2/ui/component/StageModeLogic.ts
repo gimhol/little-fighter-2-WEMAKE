@@ -50,14 +50,15 @@ export class StageModeLogic extends UIComponent {
         this.state = 1;
       }
     }
+
   }
   protected world_callbacks: IWorldCallbacks = {
     on_fighter_add: (entity: Entity): void => {
       entity.callbacks.add(this.entity_callbacks)
     },
-    on_fighter_del: (entity: Entity): void => {
-      entity.callbacks.del(this.entity_callbacks)
-    },
+    // on_fighter_del: (entity: Entity): void => {
+    //   entity.callbacks.del(this.entity_callbacks)
+    // },
     on_stage_change: (stage, prev) => {
       prev.callbacks.del(this.stage_callbacks)
       stage.callbacks.add(this.stage_callbacks);
@@ -141,9 +142,11 @@ export class StageModeLogic extends UIComponent {
     switch (e.game_key) {
       case GameKey.a:
       case GameKey.j: {
-        if (this.state == 2 && this.world.stage.is_chapter_finish) {
+        if (this.world.stage.is_chapter_finish) { 
           e.stop_immediate_propagation();
           this.lf2.goto_next_stage();
+        } else if (this.state == 2) {
+          this.lf2.pop_ui_safe()
         }
         break;
       }

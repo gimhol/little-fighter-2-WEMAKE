@@ -163,6 +163,7 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
     else if (nid <= 19) { s.next = '20' }
     else if (nid <= 29) { s.next = '30' }
     else if (nid <= 39) { s.next = '40' }
+    else if (nid <= 49) { s.next = 'end' }
   }
   return stage_infos
 }
