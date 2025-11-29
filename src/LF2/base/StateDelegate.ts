@@ -1,11 +1,10 @@
-import { max, floor } from "../utils";
+import { max, floor, Unsafe } from "../utils";
 
 export type TValueInfo<T> =
   | { is_func: true; v: () => T }
   | { is_func: false; v: T };
 
 export type Value<T> = T | (() => T)
-export type Unsafe<T> = T | undefined | null;
 
 export class StateDelegate<T> {
   private _allow_null: boolean = false;

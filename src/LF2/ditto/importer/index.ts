@@ -1,3 +1,5 @@
+/*** AUTO EXPORT START ***/
+export * from "./BaseImporter";
 export * from "./IImporter";
 export * from "./ImportError";
-export * from "./BaseImporter";
+/*** AUTO EXPORT END ***/

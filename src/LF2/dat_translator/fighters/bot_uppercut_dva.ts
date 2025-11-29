@@ -6,7 +6,7 @@ import { DESIRE_RATIO } from "./constants";
 import { IEditBotActionFunc } from "./IEditBotAction";
 const MIN_X = -10 as const;
 const MAX_X = 120 as const;
-export const ID = 'dva' as const
+const ID = 'dva' as const
 
 /**
  * 矩形范围，检测成功将会按下D^A

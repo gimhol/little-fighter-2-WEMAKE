@@ -1,3 +1,5 @@
+/*** AUTO EXPORT START ***/
+export * from "./BaseSounds";
 export * from "./ISounds";
 export * from "./ISoundsCallback";
-export * from "./BaseSounds";
+/*** AUTO EXPORT END ***/

@@ -1,0 +1,27 @@
+/*** AUTO EXPORT START ***/
+export * from "./CollisionKeeper";
+export * from "./handle_armor";
+export * from "./handle_ball_frozen";
+export * from "./handle_ball_hit_other";
+export * from "./handle_ball_is_hit";
+export * from "./handle_body_goto";
+export * from "./handle_fall";
+export * from "./handle_healing";
+export * from "./handle_injury";
+export * from "./handle_itr_kind_catch";
+export * from "./handle_itr_kind_force_catch";
+export * from "./handle_itr_kind_freeze";
+export * from "./handle_itr_kind_magic_flute";
+export * from "./handle_itr_kind_whirlwind";
+export * from "./handle_itr_normal_bdy_defend";
+export * from "./handle_itr_normal_bdy_normal";
+export * from "./handle_john_shield_hit_other_ball";
+export * from "./handle_rest";
+export * from "./handle_stiffness";
+export * from "./handle_super_punch_me";
+export * from "./handle_weapon_hit_other";
+export * from "./handle_weapon_is_hit";
+export * from "./handle_weapon_is_picked";
+export * from "./handle_weapon_is_picked_secretly";
+export * from "./is_armor_work";
+/*** AUTO EXPORT END ***/

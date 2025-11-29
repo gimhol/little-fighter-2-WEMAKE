@@ -1,4 +1,4 @@
-// auto-gen
+/*** AUTO EXPORT START ***/
 export * from "./ActionType";
 export * from "./ArmorEnum";
 export * from "./BackgroundGroup";
@@ -99,3 +99,4 @@ export * from "./TeamEnum";
 export * from "./TextureWrapping";
 export * from "./WeaponType";
 export * from "./WorldVal";
+/*** AUTO EXPORT END ***/

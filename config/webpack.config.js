@@ -576,8 +576,7 @@ module.exports = function (webpackEnv) {
     plugins: [
       new AutoIndexExportPlugin({
         dir: [
-          path.join(__dirname, '../src/LF2/defines'),
-          path.join(__dirname, '../src/LF2/utils')
+          path.join(__dirname, '../src/LF2')
         ]
       }),
       new AutoRegisterUIComponentPlugin(),

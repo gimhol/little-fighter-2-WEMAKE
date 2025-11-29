@@ -1,4 +1,4 @@
-// auto-gen
+/*** AUTO EXPORT START ***/
 export * from "./ensure";
 export * from "./filter";
 export * from "./find";
@@ -11,3 +11,4 @@ export * from "./set_obj_field";
 export * from "./sort_key_value";
 export * from "./take_number";
 export * from "./traversal";
+/*** AUTO EXPORT END ***/

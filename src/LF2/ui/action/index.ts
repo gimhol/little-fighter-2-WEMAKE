@@ -1,3 +1,3 @@
 /*** AUTO EXPORT START ***/
-export * from "./to_num";
+export * from "./Actor";
 /*** AUTO EXPORT END ***/
