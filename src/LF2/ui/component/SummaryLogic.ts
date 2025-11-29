@@ -1,6 +1,7 @@
 import { Entity, IEntityCallbacks, is_character } from "../../entity";
 import { IWorldCallbacks } from "../../IWorldCallbacks";
 import { max } from "../../utils";
+import { Times } from "../utils";
 import { IFighterSumInfo, IPlayerSumInfo } from "./IFighterSumInfo";
 import { ITeamSumInfo } from "./ITeamSumInfo";
 import { make_fighter_sum } from "./make_fighter_sum";
@@ -124,7 +125,7 @@ export class SummaryLogic extends UIComponent {
     super.on_stop?.();
     this.world.callbacks.del(this._world_cb);
   }
-
+  private _refresh_timer = new Times(0, 300)
   private _temps: ITeamSumInfo[] = []
   override update(dt: number): void {
     super.update?.(dt);
@@ -140,6 +141,22 @@ export class SummaryLogic extends UIComponent {
     if (this._temps.length) {
       this._temps.forEach(i => this.losing_teams.delete(i))
       this._temps.length = 0;
+    }
+
+    if (this._refresh_timer.add()) {
+      // NOTE: 计算逻辑似乎有BUG. 此处每N帧重新计算一些数据
+      for (const [, t] of this.teams) {
+        t.reserve = 0;
+        t.lives = 0;
+        t.hp = 0;
+      }
+      for (const e of this.world.entities) {
+        if (!is_character(e)) continue;
+        const t = this.team_sum(e.team)
+        t.hp += e.hp
+        t.reserve += e.reserve
+        if (e.hp > 0) t.lives += 1;
+      }
     }
   }
 }
