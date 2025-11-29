@@ -33,14 +33,14 @@
     },
     {
       txt: {
-        i18n: "DEMO",
+        i18n: "demo_cam_ctrl",
         style: {
           fill_style: "white",
-          font: '24px "Arial Black", Arial',
+          font: '9px  Arial',
           back_style: {
-            font: '24px "Arial Black", Arial',
+            font: '9px Arial',
             stroke_style: "#005A8E",
-            line_width: 4,
+            line_width: 1,
           },
         },
       },

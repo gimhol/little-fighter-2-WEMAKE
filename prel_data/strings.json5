@@ -127,6 +127,7 @@
       "",
       "Gim 2025年9月",
     ],
+    demo_cam_ctrl: "Up/Down: Switch focused fighter. Left/Right: Control camera. Defense: Release camera.",
     "": "",
   },
   "zh-hans": {
@@ -226,7 +227,8 @@
       "                                  —— 来自《LF2 2.0a》",
     ],
     "": "",
-  },
+    demo_cam_ctrl: "上/下：切换关注角色，左/右：控制相机，防御：释放相机",
+},
   "zh-hant": {
     "entry_page.game_start": "開 始 游 戲",
     "entry_page.network_game": "連 線 遊 戲",
@@ -323,6 +325,7 @@
       "",
       "                                  —— 來自《LF2 2.0a》",
     ],
+    demo_cam_ctrl: "上/下鍵：切換關注角色，左/右鍵：控制相機，防禦鍵：釋放相機",
     "": "",
   },
   "zh-cn": "zh-hans",
