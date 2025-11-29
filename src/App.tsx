@@ -1,6 +1,5 @@
 import { useShortcut } from "@fimagine/dom-hooks";
 import classNames from "classnames";
-import qs from "qs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
@@ -57,6 +56,7 @@ import {
   useLocalNumber,
   useLocalString,
 } from "./useLocalStorage";
+import qs from "qs";
 
 function App() {
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -168,7 +168,14 @@ function App() {
     const lf2 = ref_lf2.current = new LF2();
     lf2.load("prel.zip.json").catch(LF2.IgnoreDisposed);
 
-    lf2.lang = navigator.language.toLowerCase()
+    let lang =
+      qs.parse(window.location.search.substring(1)).lang ||
+      qs.parse(window.location.hash.substring(1)).lang
+
+    if (typeof lang !== 'string')
+      lang = navigator.language.toLowerCase()
+    lf2.lang = lang
+
     set_lf2(lf2)
     lf2.sounds.set_muted(muted);
     lf2.sounds.set_volume(volume);
