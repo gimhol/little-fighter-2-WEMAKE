@@ -29,6 +29,10 @@ export class OpacityFlash extends UIComponent {
     }
   }
 
+  @((a, b) => void 0)
+  step: number[] = []
+
+
   protected _anim: Sequence = new Sequence();
   override on_start(): void {
     super.on_start?.();

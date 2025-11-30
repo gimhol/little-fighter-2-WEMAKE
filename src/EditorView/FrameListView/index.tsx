@@ -121,7 +121,7 @@ export function FrameListView(props: IFrameListViewProps) {
           data={frames}
           className={styles.frame_list_view}
           itemKey={i => i.id}>
-          {(frame, index, props) => {
+          {(frame) => {
             return (
               <div
                 tabIndex={-1}

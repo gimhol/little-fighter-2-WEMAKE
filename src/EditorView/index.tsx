@@ -8,7 +8,6 @@ import { Button } from "../Component/Buttons/Button";
 import { Checkbox } from "../Component/Checkbox";
 import Combine from "../Component/Combine";
 import Frame from "../Component/Frame";
-import { Plus } from '../Component/Icons/Plus';
 import Select from "../Component/Select";
 import Show from "../Component/Show";
 import { Space } from "../Component/Space";
@@ -350,7 +349,7 @@ export default function EditorView(props: IEditorViewProps) {
             });
             break;
           default: {
-            zip?.file(node.key)?.text().then(r => {
+            zip?.file(node.key)?.text().then(() => {
               const editing_node = ref_editing_node.current;
               const editing_data = ref_editing_data.current;
               if (zip && editing_node && editing_data) {
