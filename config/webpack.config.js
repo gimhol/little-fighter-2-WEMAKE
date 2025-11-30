@@ -574,12 +574,12 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
+      new AutoRegisterUIComponentPlugin(),
       new AutoIndexExportPlugin({
         dir: [
           path.join(__dirname, '../src/LF2')
         ]
       }),
-      new AutoRegisterUIComponentPlugin(),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(

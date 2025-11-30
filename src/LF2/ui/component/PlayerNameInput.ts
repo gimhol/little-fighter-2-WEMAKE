@@ -1,7 +1,7 @@
 import { PlayerInfo } from "../../PlayerInfo";
-import { TextInput as UIComponent } from "./TextInput";
+import { TextInput } from "./TextInput";
 
-export class PlayerNameInput extends UIComponent {
+export class PlayerNameInput extends TextInput {
   static override readonly TAG: string = 'PlayerNameInput';
   player: PlayerInfo | undefined;
 

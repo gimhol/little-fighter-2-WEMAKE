@@ -3,12 +3,12 @@ import { Animation } from "../../animation/Animation";
 import { Sine } from "../../animation/Sine";
 import { Ditto } from "../../ditto";
 import { IUIPointerEvent } from "../IUIPointerEvent";
-import { Flex as UIComponent } from "./Flex";
+import { Flex } from "./Flex";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 export interface IJalousieCallbacks extends IUICompnentCallbacks {
   on_anim_end?(v: Jalousie): void;
 }
-export class Jalousie extends UIComponent<IJalousieCallbacks> {
+export class Jalousie extends Flex<IJalousieCallbacks> {
   static override readonly TAG = 'Jalousie'
   protected _anim: Animation = new Sequence(
     new Easing(0, 0).set_duration(250),

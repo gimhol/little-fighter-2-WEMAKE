@@ -2,9 +2,9 @@ import { IKeyboardCallback } from "../../ditto";
 import { IPointingsCallback } from "../../ditto/pointings/IPointingsCallback";
 import { IUIPointerEvent } from "../IUIPointerEvent";
 import { ui_load_txt } from "../ui_load_txt";
-import { PlayerKeyText as UIComponent } from "./PlayerKeyText";
+import { PlayerKeyText } from "./PlayerKeyText";
 
-export class PlayerKeyEdit extends UIComponent {
+export class PlayerKeyEdit extends PlayerKeyText {
   static override readonly TAG: string = 'PlayerKeyEdit'
   override on_click(e: IUIPointerEvent) {
     this.node.focused = !this.node.focused;

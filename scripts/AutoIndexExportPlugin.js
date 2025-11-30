@@ -1,24 +1,17 @@
 const { watch } = require("fs")
 const { readdir, writeFile, stat, readFile } = require("fs/promises")
 const { join } = require("path")
-/**
- * @param {string} content
- * @param {string} start_txt
- * @param {string} end_txt
- * @returns {[string,string,string]}
- */
+
 function split_text(content, start_txt, end_txt) {
   let start_idx = content.indexOf(start_txt)
   let end_idx = content.indexOf(end_txt)
-  if (start_idx < 0) throw new Error(`[get_text] 'start' not found`)
-  if (end_idx < 0) throw new Error(`[get_text] 'start' not found`)
+  if (start_idx < 0) throw new Error(`[get_text] \`${start_txt}\` not found`)
+  if (end_idx < 0) throw new Error(`[get_text] \`${end_txt}\` not found`)
   start_idx += start_txt.length;
-
   return [
     content.substring(0, start_idx),
     content.substring(start_idx, end_idx),
     content.substring(end_idx),
-
   ]
 }
 class AutoIndexExportPlugin {
@@ -70,10 +63,7 @@ class AutoIndexExportPlugin {
       console.warn(dir)
       throw e;
     }
-
-
   }
-
 
   async listen_dir(dir) {
     this.debug(`listen_dir: ${dir}`)
@@ -85,12 +75,10 @@ class AutoIndexExportPlugin {
       if (s.isDirectory())
         await this.listen_dir(path)
     }
-
     await this.write_index(dir);
-
     watch(dir, 'buffer', (t, f) => {
       const name = f.toString();
-      if (!name.endsWith('.ts') || name === 'index.ts' || name.endsWith('.test.ts')) return;
+      if (!name.endsWith('.ts') || name === 'index.ts' || name.endsWith('.test.ts') || name.endsWith('_.ts')) return;
       this.write_index(dir).catch(e => console.warn(e));
     })
   }

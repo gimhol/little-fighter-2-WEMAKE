@@ -3,7 +3,7 @@ import { is_str } from "../../utils/type_check";
 import { IUIInfo } from "../IUIInfo.dat";
 import type { UINode } from "../UINode";
 import { parse_call_func_expression } from "../utils/parse_call_func_expression";
-import { ALL_COMPONENTS } from "./_COMPONENTS";
+import { ALL_COMPONENTS } from "./_";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
 class ComponentFactory {

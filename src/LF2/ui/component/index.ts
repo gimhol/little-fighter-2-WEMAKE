@@ -69,5 +69,5 @@ export * from "./UIComponentExpressionBuilder";
 export * from "./UIProps";
 export * from "./VerticalLayout";
 export * from "./VsModeLogic";
-export * from "./_COMPONENTS";
+export * from "./_";
 /*** AUTO EXPORT END ***/

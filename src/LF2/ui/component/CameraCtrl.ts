@@ -3,7 +3,13 @@ import { GameKey } from "../../defines";
 import { Entity } from "../../entity";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UIComponent } from "./UIComponent";
-
+/**
+ * 按键的相机控制
+ *
+ * @export
+ * @class CameraCtrl
+ * @extends {UIComponent}
+ */
 export class CameraCtrl extends UIComponent {
   static override readonly TAG = 'CameraCtrl';
   time: number = 0;
