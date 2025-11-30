@@ -1,4 +1,6 @@
+import type { IMetas } from "../../defines/IMetaInfo";
 import { is_num, is_str } from "../../utils";
+import { validate_object_with_metas } from "../utils";
 import read_nums from "../utils/read_nums";
 
 export interface IUIPropsCallback { }
@@ -30,5 +32,11 @@ export class UIProps {
   nums(name: string, len: number, fallbacks?: number[]): number[];
   nums(name: string, len: number, fallbacks?: number[]): number[] {
     return read_nums(this.raw[name], len, fallbacks);
+  }
+
+  validate<P>(name: string, metas: IMetas<P>): P {
+    const errors = validate_object_with_metas(this.raw, metas)
+    if (!errors.length) return this.raw as P;
+    throw new Error(`[${name}] props.error:` + errors.join('\n'))
   }
 }

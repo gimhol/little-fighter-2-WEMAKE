@@ -1,3 +1,4 @@
+import { IMetas } from "@/LF2/defines";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";

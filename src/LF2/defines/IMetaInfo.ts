@@ -1,13 +1,13 @@
 export interface IMetaInfo {
-  name: string;
+  name?: string;
   desc?: string;
-  type: 'string' | 'number' | 'boolean',
+  type: 'string' | 'number' | 'boolean' | 'array',
+  items?: IMetaInfo;
   string?: {
     not_empty?: boolean;
     not_blank?: boolean;
   }
   nullable?: boolean;
-  undefable?: boolean;
   number?: {
     int?: boolean;
     nagetive?: boolean;

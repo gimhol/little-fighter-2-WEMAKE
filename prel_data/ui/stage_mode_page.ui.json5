@@ -1,22 +1,6 @@
 {
   name: "页面：闯关模式",
   id: "stage_mode_page",
-  values: {
-    char_num_img: "sprite/MENU_CLIP3.png",
-    state_name_prefix: "488, 400, 176, 41",
-    char_num_1: "662, 009, 29, 40",
-    char_num_2: "692, 009, 29, 40",
-    char_num_3: "722, 009, 29, 40",
-    char_num_4: "752, 009, 29, 40",
-    char_num_5: "662, 066, 29, 40",
-    char_num_6: "692, 066, 29, 40",
-    char_num_7: "722, 066, 29, 40",
-    char_num_8: "752, 066, 29, 40",
-    char_num_9: "662, 124, 29, 40",
-    char_num_0: "692, 124, 29, 40",
-    char_minus: "722, 124, 29, 40",
-    stage_clear: "12, 552, 386, 40",
-  },
   component: ["SummaryLogic()", "StageModeLogic()"],
   key_press_actions: [["escape", "set_ui(entry)"]],
   items: [

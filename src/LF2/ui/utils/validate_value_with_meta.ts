@@ -2,7 +2,7 @@ import type { IMetaInfo } from "../../defines";
 
 export function validate_value_with_meta(value: any, m: Readonly<IMetaInfo>, errors: string[] = []): string[] {
   if (value === null && m.nullable) return errors;
-  if (value === void 0 && m.undefable) return errors;
+  if (value === void 0 && m.nullable) return errors;
   if (m.type === 'number') {
     if (typeof value !== 'number') { errors.push(`'${m.name}' must be a number, but got ${value}`); return errors; }
     if (m.number) {
@@ -19,6 +19,9 @@ export function validate_value_with_meta(value: any, m: Readonly<IMetaInfo>, err
       if (m.string.not_blank && !value.trim()) errors.push(`'${m.name}' must be a non-blank string, but got ${value}`);
       if (m.string.not_empty && !value) errors.push(`'${m.name}' must be a non-empty string, but got ${value}`);
     }
+  } else if (m.type === 'array') {
+    if (!Array.isArray(value)) { errors.push(`'${m.name}' must be a array, but got ${value}`); return errors; }
+    else if (m.items) for (const item_value of value) validate_value_with_meta(item_value, m.items, errors)
   }
   if (m.oneof?.some(v => v === value) === false) errors.push(`'${m.name}' should be one of the options: ${JSON.stringify(m.oneof)}, but got ${value}`);
   return errors;

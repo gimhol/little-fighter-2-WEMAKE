@@ -103,7 +103,8 @@ export async function cook_ui_info(
       const val = (rr as any)[k];
       if (!meta || !val || typeof val !== 'string' || !val.startsWith('$val:'))
         continue;
-      (rr as any)[k] = parse_ui_value(ret, meta.type, val) ?? val
+      // FIXME: `meta.type as any`
+      (rr as any)[k] = parse_ui_value(ret, meta.type as any, val) ?? val
     }
     _img.push(rr)
   }

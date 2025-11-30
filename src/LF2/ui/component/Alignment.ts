@@ -58,7 +58,6 @@ export class Alignment extends UIComponent {
     const [cx, cy] = follower.center.value;
     let [x, y, z] = follower.global_pos;
     let [w, h] = follower.size.value;
-
     if (this.align.r && followed.r && followed.r !== follower) {
       const [x] = followed.r.global_pos;
       const c = followed.r.cross;

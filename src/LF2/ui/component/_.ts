@@ -21,42 +21,43 @@ import * as _13 from "./ImgClickable";
 import * as _14 from "./ImgLoop";
 import * as _15 from "./LaunchPageLogic";
 import * as _16 from "./LoadingContentText";
-import * as _17 from "./OpacityAnimation";
-import * as _18 from "./OpacityHover";
-import * as _19 from "./PlayerCtrlType";
-import * as _1a from "./PlayerKeyText";
-import * as _1b from "./PlayerName";
-import * as _1c from "./Players";
-import * as _1d from "./PlayerScore";
-import * as _1e from "./PlayerScoreCell";
-import * as _1f from "./PlayerTeamName";
-import * as _20 from "./PlayingTimeText";
-import * as _21 from "./PositionAnimation";
-import * as _22 from "./PrefixAndDifficultyText";
-import * as _23 from "./RandomImg";
-import * as _24 from "./RandomTxt";
-import * as _25 from "./Reachable";
-import * as _26 from "./ReachableGroup";
-import * as _27 from "./ScaleAnimation";
-import * as _28 from "./ScaleClickable";
-import * as _29 from "./SineOpacity";
-import * as _2a from "./SlotSelLogic";
-import * as _2b from "./Sounds";
-import * as _2c from "./StageModeLogic";
-import * as _2d from "./StageNameText";
-import * as _2e from "./StageTitleShow";
-import * as _2f from "./StageTitleText";
-import * as _30 from "./StageTransitions";
-import * as _31 from "./SummaryLogic";
-import * as _32 from "./TeamSituationText";
-import * as _33 from "./TextInput";
-import * as _34 from "./TxtClickable";
-import * as _35 from "./VerticalLayout";
-import * as _36 from "./VsModeLogic";
-import * as _37 from "./Jalousie";
-import * as _38 from "./PlayerKeyEdit";
-import * as _39 from "./DanmuGameLogic";
-import * as _3a from "./PlayerNameInput";
+import * as _17 from "./Opacity";
+import * as _18 from "./OpacityAnimation";
+import * as _19 from "./OpacityHover";
+import * as _1a from "./PlayerCtrlType";
+import * as _1b from "./PlayerKeyText";
+import * as _1c from "./PlayerName";
+import * as _1d from "./Players";
+import * as _1e from "./PlayerScore";
+import * as _1f from "./PlayerScoreCell";
+import * as _20 from "./PlayerTeamName";
+import * as _21 from "./PlayingTimeText";
+import * as _22 from "./PositionAnimation";
+import * as _23 from "./PrefixAndDifficultyText";
+import * as _24 from "./RandomImg";
+import * as _25 from "./RandomTxt";
+import * as _26 from "./Reachable";
+import * as _27 from "./ReachableGroup";
+import * as _28 from "./ScaleAnimation";
+import * as _29 from "./ScaleClickable";
+import * as _2a from "./SineOpacity";
+import * as _2b from "./SlotSelLogic";
+import * as _2c from "./Sounds";
+import * as _2d from "./StageModeLogic";
+import * as _2e from "./StageNameText";
+import * as _2f from "./StageTitleShow";
+import * as _30 from "./StageTitleText";
+import * as _31 from "./StageTransitions";
+import * as _32 from "./SummaryLogic";
+import * as _33 from "./TeamSituationText";
+import * as _34 from "./TextInput";
+import * as _35 from "./TxtClickable";
+import * as _36 from "./VerticalLayout";
+import * as _37 from "./VsModeLogic";
+import * as _38 from "./Jalousie";
+import * as _39 from "./PlayerKeyEdit";
+import * as _3a from "./DanmuGameLogic";
+import * as _3b from "./PlayerNameInput";
 /*** COMPONENTS IMPORT END ***/
 
 export const ALL_COMPONENTS = [
@@ -65,13 +66,13 @@ export const ALL_COMPONENTS = [
   _6.DemoModeLogic, _7.DifficultyText, _8.EndingPageLogic, _9.FadeInOpacity, _a.FadeOutOpacity, 
   _b.FighterHead, _c.FighterName, _d.FighterThumb, _e.FitChildren, _f.Flex, _10.FlexItem, 
   _11.GamePrepareLogic, _12.HorizontalLayout, _13.ImgClickable, _14.ImgLoop, _15.LaunchPage, 
-  _16.LoadingContentText, _17.OpacityAnimation, _18.OpacityHover, _19.PlayerCtrlType, 
-  _1a.PlayerKeyText, _1b.PlayerName, _1c.Players, _1d.PlayerScore, _1e.PlayerScoreCell, 
-  _1f.PlayerTeamName, _20.PlayingTimeText, _21.PositionAnimation, _22.PrefixAndDifficultyText, 
-  _23.RandomImg, _24.RandomTxt, _25.Reachable, _26.ReachableGroup, _27.ScaleAnimation, 
-  _28.ScaleClickable, _29.SineOpacity, _2a.SlotSelLogic, _2b.Sounds, _2c.StageModeLogic, 
-  _2d.StageNameText, _2e.StageTitleShow, _2f.StageTitleText, _30.StageTransitions, 
-  _31.SummaryLogic, _32.TeamSituationText, _33.TextInput, _34.TxtClickable, _35.VerticalLayout, 
-  _36.VsModeLogic, _37.Jalousie, _38.PlayerKeyEdit, _39.DanmuGameLogic, _3a.PlayerNameInput,
+  _16.LoadingContentText, _17.OpacityFlash, _18.OpacityAnimation, _19.OpacityHover, _1a.PlayerCtrlType, 
+  _1b.PlayerKeyText, _1c.PlayerName, _1d.Players, _1e.PlayerScore, _1f.PlayerScoreCell, 
+  _20.PlayerTeamName, _21.PlayingTimeText, _22.PositionAnimation, _23.PrefixAndDifficultyText, 
+  _24.RandomImg, _25.RandomTxt, _26.Reachable, _27.ReachableGroup, _28.ScaleAnimation, 
+  _29.ScaleClickable, _2a.SineOpacity, _2b.SlotSelLogic, _2c.Sounds, _2d.StageModeLogic, 
+  _2e.StageNameText, _2f.StageTitleShow, _30.StageTitleText, _31.StageTransitions, 
+  _32.SummaryLogic, _33.TeamSituationText, _34.TextInput, _35.TxtClickable, _36.VerticalLayout, 
+  _37.VsModeLogic, _38.Jalousie, _39.PlayerKeyEdit, _3a.DanmuGameLogic, _3b.PlayerNameInput,
 /*** COMPONENTS MAP END ***/
 ].map(v => [v.TAG, v] as const);
