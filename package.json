@@ -11,7 +11,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-
     "build_tool": "cd ./tool && npm i && npm run build",
     "build_data": "npm run build_tool && node ./tool",
     "build_prel": "npm run build_tool && node ./tool --make-prel-zip",
@@ -28,7 +27,7 @@
   "dependencies": {
     "@fimagine/dom-hooks": "^1.0.4",
     "@fimagine/logger": "^1.2.1",
-    "@fimagine/writeboard": "^0.0.12",
+    "@fimagine/writeboard": "^0.2.0",
     "axios": "^1.10.0",
     "compressing": "^2.0.0",
     "current-device": "0.10.2",
