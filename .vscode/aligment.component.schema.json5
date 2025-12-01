@@ -1,0 +1,55 @@
+{
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    name: { type: "string", enum: [ "Alignment" ] },
+    args: { type: "array" },
+    enabled: { type: "string" },
+    properties: {
+      type: "object",
+      description: "属性",
+      properties: {
+        left: { description: "左对齐位置", enum: [ "left", "right", "mid" ] },
+        right: { description: "左对齐位置", enum: [ "left", "right" ] },
+        top: { description: "左对齐位置", enum: [ "top", "bottom", "mid" ] },
+        bottom: { description: "左对齐位置", enum: [ "top", "bottom" ] },
+        offset: {
+          type: "object",
+          description: "偏移",
+          properties: {
+            l: { type: "number", description: "左偏移", },
+            r: { type: "number", description: "右偏移", },
+            t: { type: "number", description: "上偏移", },
+            b: { type: "number", description: "下偏移", },
+          }
+        },
+        followed: {
+          description: "对齐对象",
+          oneOf: [
+            {
+              type: "object",
+              description: "对齐对象",
+              properties: {
+                l: { $ref: "followed" },
+                r: { $ref: "followed" },
+                t: { $ref: "followed" },
+                b: { $ref: "followed" },
+              }
+            }, {
+              $ref: "followed"
+            }
+          ],
+
+        }
+      }
+    },
+  },
+  definitions: {
+    followed: {
+      type: "string",
+      description: "对齐对象",
+      enum: [ "bro:-1", "bro:+1", "parent" ]
+    }
+  },
+  required: [ "name" ]
+}

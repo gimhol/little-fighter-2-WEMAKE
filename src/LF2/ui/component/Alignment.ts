@@ -33,20 +33,23 @@ export class Alignment extends UIComponent {
   readonly align: IAligns = {}
   readonly offset: Offsets = new Offsets
   override on_start(): void {
-    this.followed.l = this.find_node(this.props.raw.followed?.l ?? "parent")
-    this.followed.r = this.find_node(this.props.raw.followed?.r ?? "parent")
-    this.followed.t = this.find_node(this.props.raw.followed?.t ?? "parent")
-    this.followed.b = this.find_node(this.props.raw.followed?.b ?? "parent")
+    const { followed, offset } = this.props.raw;
+    this.followed.l = this.find_node((typeof followed === 'string' ? followed : followed?.l) ?? "parent")
+    this.followed.r = this.find_node((typeof followed === 'string' ? followed : followed?.r) ?? "parent")
+    this.followed.t = this.find_node((typeof followed === 'string' ? followed : followed?.t) ?? "parent")
+    this.followed.b = this.find_node((typeof followed === 'string' ? followed : followed?.b) ?? "parent")
     this.follower = this.find_node(this.props.str("follower"))
     this.align.l = this.props.str("left")
     this.align.r = this.props.str("right")
     this.align.t = this.props.str("top")
     this.align.b = this.props.str("bottom")
-    this.offset.l = Number(this.props.raw.offset?.l ?? this.props.raw.offset_l) || 0
-    this.offset.r = Number(this.props.raw.offset?.r ?? this.props.raw.offset_r) || 0
-    this.offset.t = Number(this.props.raw.offset?.t ?? this.props.raw.offset_t) || 0
-    this.offset.b = Number(this.props.raw.offset?.b ?? this.props.raw.offset_b) || 0
+
+    this.offset.l = Number(offset?.l) || 0
+    this.offset.r = Number(offset?.r) || 0
+    this.offset.t = Number(offset?.t) || 0
+    this.offset.b = Number(offset?.b) || 0
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override update(dt: number): void {
     const { followed, follower, offset } = this
     if (!follower) return;
@@ -56,6 +59,7 @@ export class Alignment extends UIComponent {
     let _b: number | null = null;
 
     const [cx, cy] = follower.center.value;
+    // eslint-disable-next-line prefer-const
     let [x, y, z] = follower.global_pos;
     let [w, h] = follower.size.value;
     if (this.align.r && followed.r && followed.r !== follower) {

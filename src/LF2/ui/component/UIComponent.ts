@@ -1,4 +1,3 @@
-import { IMetas } from "@/LF2/defines";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";
@@ -24,7 +23,9 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
   readonly info: Required<IComponentInfo>;
 
   __debugging?: boolean | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   debug(func: string, ...args: any[]): void { }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   log(func: string, ...args: any[]): void { }
   id: string = '';
   get lf2() {

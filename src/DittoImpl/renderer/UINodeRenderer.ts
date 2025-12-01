@@ -4,7 +4,7 @@ import { TextInput } from "@/LF2/ui/component/TextInput";
 import { IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
-import { is_num, is_str } from "@/LF2/utils";
+import { ceil, is_num, is_str } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
@@ -13,7 +13,7 @@ import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
 
 export class UINodeRenderer implements IUINodeRenderer {
-  sprite: T.Mesh<T.PlaneGeometry, T.MeshBasicMaterial>;
+  sprite: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   ui: UINode;
 
   protected _css_obj: CSS2DObject | undefined;
@@ -90,16 +90,16 @@ export class UINodeRenderer implements IUINodeRenderer {
       ele_input.onchange = () => text_input.text = ele_input.value
       this.dom.appendChild(ele_input)
     }
-  };
+  }
 
   on_pause(): void {
     const text_input = this.ui.find_component(TextInput)
     const world_renderer = this.lf2.world.renderer as WorldRenderer;
     if (this.ui.root === this.ui) world_renderer.scene.inner.remove(this.sprite);
     if (text_input) this.release_dom()
-  };
-  on_show(): void { };
-  on_hide(): void { };
+  }
+  on_show(): void { }
+  on_hide(): void { }
   on_start() {
     const [x, y, z] = this.ui.pos.value;
     const [c_x, c_y, c_z] = this.ui.center.value
@@ -123,7 +123,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     sp.geometry = this.next_geometry();
     const {
       _texture,
-      _rgba: [_r, _g, _b, _a],
+      _rgba: [_r, _g, _b],
     } = this;
     if (sp.material.map !== _texture) {
       sp.material.map?.dispose();
@@ -141,7 +141,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     return this;
   }
 
-  update_sprite() {
+  update_texture() {
     if (
       !this.ui.img_idx.dirty &&
       !this.ui.imgs.dirty &&
@@ -155,15 +155,16 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.ui.txts.value[this.ui.txt_idx.value];
 
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
-    const [w, h] = this.ui.size.value;
+
     const color = this.ui.color.value;
 
+    // eslint-disable-next-line no-debugger
     if (img && !img.pic?.texture) debugger;
 
     const texture: T.Texture = img ? img.pic?.texture : color ? white_texture() : empty_texture();
     const a = get_alpha_from_color(color) || 1
     const { r, g, b } = new T.Color(color);
-    this._rgba = [Math.ceil(r * 255), Math.ceil(g * 255), Math.ceil(b * 255), a];
+    this._rgba = [ceil(r * 255), ceil(g * 255), ceil(b * 255), a];
     this._texture = texture;
   }
 
@@ -177,7 +178,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
   set visible(v: boolean) {
     this.sprite.visible = v
-    v ? this.show_dom() : this.hide_dom()
+    if (v) this.show_dom(); else this.hide_dom()
   }
   protected _c_x: number = 0;
   protected _c_y: number = 0;
@@ -185,7 +186,8 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected w: number = 0;
   protected h: number = 0;
 
-  protected next_geometry(): T.PlaneGeometry {
+  protected next_geometry(): T.BufferGeometry {
+      new T.DodecahedronGeometry
     const { w, h, _c_x, _c_y, _c_z } = this;
     const { w: _w, h: _h, c_x, c_y, c_z } = this._geo.userData;
 
@@ -222,8 +224,9 @@ export class UINodeRenderer implements IUINodeRenderer {
       }
       this._css_obj?.center.set(x, y)
     }
-    this.update_sprite();
-    this.ui.scale.dirty && this.sprite.scale.set(...this.ui.scale.value);
+    this.update_texture();
+    if (this.ui.scale.dirty)
+      this.sprite.scale.set(...this.ui.scale.value);
 
     const sp = this.sprite;
     if (sp && this._ui_img) {

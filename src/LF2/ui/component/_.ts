@@ -58,6 +58,7 @@ import * as _38 from "./Jalousie";
 import * as _39 from "./PlayerKeyEdit";
 import * as _3a from "./DanmuGameLogic";
 import * as _3b from "./PlayerNameInput";
+import * as _3c from "./FighterStatBar";
 /*** COMPONENTS IMPORT END ***/
 
 export const ALL_COMPONENTS = [
@@ -73,6 +74,6 @@ export const ALL_COMPONENTS = [
   _29.ScaleClickable, _2a.SineOpacity, _2b.SlotSelLogic, _2c.Sounds, _2d.StageModeLogic, 
   _2e.StageNameText, _2f.StageTitleShow, _30.StageTitleText, _31.StageTransitions, 
   _32.SummaryLogic, _33.TeamSituationText, _34.TextInput, _35.TxtClickable, _36.VerticalLayout, 
-  _37.VsModeLogic, _38.Jalousie, _39.PlayerKeyEdit, _3a.DanmuGameLogic, _3b.PlayerNameInput,
+  _37.VsModeLogic, _38.Jalousie, _39.PlayerKeyEdit, _3a.DanmuGameLogic, _3b.PlayerNameInput, _3c.FighterStatBar
 /*** COMPONENTS MAP END ***/
 ].map(v => [v.TAG, v] as const);

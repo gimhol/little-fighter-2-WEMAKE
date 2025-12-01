@@ -1,4 +1,3 @@
-import { IStyle } from "../defines/IStyle";
 import type { ImageInfo } from "../loader/ImageInfo";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import { ui_load_img } from "./ui_load_img";

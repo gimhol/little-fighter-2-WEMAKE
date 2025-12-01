@@ -139,11 +139,8 @@ export class UINode implements IDebugging {
   get name(): string | undefined { return this.data.name }
   get root(): UINode { return this._root; }
 
-  get depth() {
-    let depth = 0;
-    let l: UINode | undefined = this;
-    for (; l?._parent; l = l.parent) ++depth;
-    return depth;
+  get depth(): number {
+    return this.parent ? this.parent.depth + 1 : 0;
   }
 
   get state() {
@@ -317,7 +314,7 @@ export class UINode implements IDebugging {
     for (const c of this._components) c.on_start?.();
     for (const i of this.children) i.on_start();
     const { start } = this.data.actions || {};
-    start && actor.act(this, start);
+    if (start) actor.act(this, start);
     this.renderer.on_start?.();
   }
 
@@ -325,7 +322,7 @@ export class UINode implements IDebugging {
     for (const c of this.components) c.on_stop?.();
     for (const l of this.children) l.on_stop();
     const { stop } = this.data.actions || {};
-    stop && actor.act(this, stop);
+    if (stop) actor.act(this, stop);
     this.renderer.on_stop?.();
   }
 
@@ -337,7 +334,7 @@ export class UINode implements IDebugging {
     for (const c of this._components) c.on_resume?.();
     for (const i of this.children) i.on_resume();
     const { resume } = this.data.actions || {};
-    resume && actor.act(this, resume);
+    if (resume) actor.act(this, resume);
     this.renderer.on_resume?.();
   }
 
@@ -349,7 +346,7 @@ export class UINode implements IDebugging {
     }
     if (this.root === this) this.renderer.del_self();
     const { pause } = this.data.actions || {};
-    pause && actor.act(this, pause);
+    if (pause) actor.act(this, pause);
     for (const c of this._components) c.on_pause?.();
     for (const item of this.children) item.on_pause();
     this.renderer.on_pause?.();
@@ -616,7 +613,7 @@ export class UINode implements IDebugging {
         (typeof id === 'string' && parent.id === id) ||
         (typeof id === 'function' && id(parent))
       ) {
-        handler && handler(parent, path);
+        if (handler) handler(parent, path);
         return parent;
       }
       parent = parent.parent;
@@ -655,7 +652,7 @@ export class UINode implements IDebugging {
       },
     ) as InstanceType<T> | undefined;
 
-    ret && handler?.(ret)
+    if (ret && handler) handler(ret)
     return ret
   }
 
@@ -682,7 +679,7 @@ export class UINode implements IDebugging {
         return condition(v as any);
       },
     ) as InstanceType<T>[];
-    ret.length && handler?.(ret);
+    if (ret.length && handler) handler(ret);
     return ret;
   }
 
@@ -727,7 +724,7 @@ export class UINode implements IDebugging {
     const ret = this.find_components(type, condition);
     for (const i of this._children)
       ret.push(...i.search_components(type, condition));
-    ret.length && handler?.(ret);
+    if (ret.length && handler) handler(ret);
     return ret;
   }
 

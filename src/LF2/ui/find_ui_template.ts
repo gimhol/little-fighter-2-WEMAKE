@@ -17,7 +17,7 @@ export async function find_ui_template(lf2: LF2, parent: Unsafe<ICookedUIInfo>, 
     if (!path.endsWith('.ui.json5')) path += '.ui.json5';
     raw_template = await lf2.import_json<IUIInfo>(path, true).then(r => r[0]);
   } catch (e) {
-    Ditto.warn(`[${find_ui_template.TAG}] ui template not found! template_name: ${template_name}`);
+    Ditto.warn(`[${find_ui_template.TAG}] ui template not found! template_name: ${template_name}, e:${e}`);
   }
   return raw_template || {};
 }

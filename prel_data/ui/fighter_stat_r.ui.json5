@@ -1,0 +1,146 @@
+{
+  name: "ui: fighter_stat_r",
+  id: "fighter_stat_r",
+  color: "gray",
+  component: [
+    {
+      name: "FighterStatBar",
+      properties: {
+        dark_hp_bar: "dark_hp",
+        hp_bar: "hp",
+        dark_mp_bar: "dark_mp",
+        mp_bar: "mp",
+        fall_value_bar: "fall_value",
+        defend_value_bar: "defend_value",
+        toughness_bar: "toughness",
+      }
+    }
+  ],
+  templates: {
+    bar: {
+      center: "1,0",
+      size: "200,8",
+      color: "#000000",
+    },
+    bar_2: {
+      center: "1,0",
+      size: "200,3",
+      color: "#000000",
+    },
+    bar_inner: {
+      center: "1,0",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            left: "left",
+            top: "top",
+            right: "right",
+            bottom: "bottom",
+            offset: { l: 1, r: -1, t: 1, b: -1 }
+          }
+        }
+      ],
+    }
+  },
+  items: [
+    {
+      id: "dark_hp",
+      template: "bar",
+      items: [ { color: "rgb(111,8,31)", template: "bar_inner" } ]
+    },
+    {
+      id: "hp",
+      template: "bar",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            right: "right",
+            top: "top",
+            followed: "bro:-1"
+          }
+        }
+      ],
+      items: [ { color: "#EE3F3A", template: "bar_inner" } ]
+    },
+    {
+      id: "dark_mp",
+      template: "bar",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            right: "right",
+            top: "bottom",
+            followed: "bro:-1",
+            offset: { t: -1 },
+          }
+        }
+      ],
+      items: [ { color: "rgb(31,8,111)", template: "bar_inner" } ]
+    },
+    {
+      id: "mp",
+      template: "bar",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            right: "right",
+            top: "top",
+            followed: "bro:-1"
+          }
+        }
+      ],
+      items: [ { color: "rgb(0,0,255)", template: "bar_inner" } ]
+    },
+    {
+      id: "fall_value",
+      template: "bar_2",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            right: "right",
+            top: "bottom",
+            followed: "bro:-1",
+            offset: { t: -1 },
+          }
+        }
+      ],
+      items: [ { color: "rgb(216, 115, 0)", template: "bar_inner" } ]
+    },
+    {
+      id: "defend_value",
+      template: "bar_2",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            right: "right",
+            top: "bottom",
+            followed: "bro:-1",
+            offset: { t: -1 },
+          },
+        }
+      ],
+      items: [ { color: "rgb(0, 122, 71)", template: "bar_inner" } ]
+    },
+    {
+      id: "toughness",
+      template: "bar_2",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            right: "right",
+            top: "top",
+            followed: "bro:-1",
+          }
+        }
+      ],
+      items: [ { color: "rgb(0, 204, 255)", template: "bar_inner" } ]
+    }
+  ],
+}

@@ -8,7 +8,6 @@ export async function read_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICoo
   const { template: template_name, ...remain_raw_info } = raw_info;
   if (!template_name) return raw_info;
   const raw_template: Unsafe<IUIInfo> = await find_ui_template(lf2, parent, template_name);
-  remain_raw_info.component;
 
   const component: TComponentInfo[] = [];
   if (Array.isArray(raw_template.component))
@@ -19,6 +18,7 @@ export async function read_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICoo
     component.push(...remain_raw_info.component);
   else if (remain_raw_info.component)
     component.push(remain_raw_info.component);
+  
   return {
     ...raw_template,
     ...remain_raw_info,

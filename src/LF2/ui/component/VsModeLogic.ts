@@ -1,11 +1,11 @@
 import { Defines, EntityGroup, GameKey, GONE_FRAME_INFO } from "../../defines";
-import type { Entity } from "../../entity";
 import type IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_character } from "../../entity/type_check";
 import { traversal } from "../../utils/container_help/traversal";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
 import { Times } from "../utils/Times";
+import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
 
 export class VsModeLogic extends UIComponent {
@@ -16,7 +16,7 @@ export class VsModeLogic extends UIComponent {
   protected weapon_drop_timer = new Times(0, 300);
   protected gameover_timer = new Times(0, 180);
   protected fighter_callbacks: IEntityCallbacks = {
-    on_dead: (e: Entity) => {
+    on_dead: () => {
       // 各队伍存活计数
       const player_teams: { [x in string]?: number } = {};
 
@@ -52,6 +52,14 @@ export class VsModeLogic extends UIComponent {
     for (const [, f] of this.world.slot_fighters)
       this.cancellers.push(f.callbacks.add(this.fighter_callbacks))
     this.reset();
+
+    const stat_bars = this.node.search_components(FighterStatBar)
+    // eslint-disable-next-line no-debugger
+    debugger;
+    for (const [, p] of this.lf2.player_characters) {
+      if (!p||!stat_bars.length) continue;
+      stat_bars.shift()?.set_entity(p)
+    }
   }
   override on_stop(): void {
     this.lf2.change_bg(Defines.VOID_BG)
@@ -63,7 +71,7 @@ export class VsModeLogic extends UIComponent {
     for (const func of this.cancellers) func()
     this.cancellers.length = 0;
   }
-  override update(dt: number): void {
+  override update(): void {
     if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.random_in(0, 10) < 5) {
       this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
     }

@@ -13,6 +13,32 @@
   ],
   "items": [
     {
+      id: "fighter_stat_1",
+      template: "ui/fighter_stat_l.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            left: "left", top: "top",
+            offset: { t: 24, l: 24 }
+          }
+        }
+      ]
+    },
+    {
+      id: "fighter_stat_2",
+      template: "ui/fighter_stat_r.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            right: "right", top: "top",
+            offset: { t: 24, r: -24 }
+          }
+        }
+      ]
+    },
+    {
       "pos": "0,0,5",
       "visible": false,
       "template": "ui/player_keys_hints.ui.json5"

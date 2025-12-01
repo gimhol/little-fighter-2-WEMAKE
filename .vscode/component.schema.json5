@@ -2,9 +2,10 @@
   type: "object",
   properties: {
     id: { type: "string" },
-    name: { type: "string" },
+    name: { type: "string", enum: [""] },
     args: { type: "array" },
     enabled: { type: "string" },
     properties: { type: "object" },
   },
+  required: ["name"]
 }

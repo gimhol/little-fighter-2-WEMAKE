@@ -5,6 +5,10 @@
       type: "string",
       description: "节点ID",
     },
+    visible: {
+      type: "boolean",
+      description: "节点ID",
+    },
     name: {
       type: "string",
       description: "节点名",
@@ -59,11 +63,16 @@
       description: "组件",
       oneOf: [
         { type: "string" },
+        { $ref: "aligment.component.schema.json5" },
         { $ref: "component.schema.json5" },
         {
           type: "array",
           items: {
-            oneOf: [{ type: "string" }, { $ref: "component.schema.json5" }],
+            oneOf: [
+              { type: "string" }, 
+              { $ref: "aligment.component.schema.json5" },
+              { $ref: "component.schema.json5" }
+            ],
           },
         },
       ],

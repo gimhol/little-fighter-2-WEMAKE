@@ -15,10 +15,9 @@ import { UINode } from "./UINode";
 import read_nums from "./utils/read_nums";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
-
 export function flat_ui_img_info(imgs: IUIImgInfo[], output?: IUIImgInfo[]): IUIImgInfo[] {
   const ret: IUIImgInfo[] = [];
-  for (let img of imgs) {
+  for (const img of imgs) {
     const errors: string[] = [];
     validate_ui_img_info(img, errors);
     if (errors.length) throw new Error(errors.join('\n'));
@@ -34,7 +33,8 @@ export function flat_ui_img_info(imgs: IUIImgInfo[], output?: IUIImgInfo[]): IUI
     }
   }
   return ret;
-};
+}
+
 function cook_ui_txt_info(lf2: LF2, ui_info: ICookedUIInfo, raw: TUITxtInfo | TUITxtInfo[] | undefined, out: ICookedUITxtInfo[] = []): ICookedUITxtInfo[] {
   if (!raw) return [];
 
@@ -65,7 +65,9 @@ export async function cook_ui_info(
     ? await find_ui_template(lf2, parent, data_or_path)
     : data_or_path;
 
-  if (ui_info.template) ui_info = await read_ui_template(lf2, ui_info, parent);
+  if (ui_info.template) 
+    ui_info = await read_ui_template(lf2, ui_info, parent);
+
   const id = ui_info.id || 'no_id_' + Date.now();
   const name = ui_info.name || 'no_name_' + Date.now();
   const ret: ICookedUIInfo = {
