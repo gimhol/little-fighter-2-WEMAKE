@@ -1,9 +1,9 @@
-import { ArrayCamera, Camera, OrthographicCamera, PerspectiveCamera } from "../_t";
 import { BuiltIn_OID } from "@/LF2/defines";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { is_character, type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
+import { Camera, OrthographicCamera } from "../_t";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
 import { EntityInfoRender } from "./EntityInfoRender";
@@ -102,6 +102,7 @@ export class WorldRenderer implements IWorldRenderer {
 
     // Criminal...?
     if (is_character(entity) || entity.data.id === BuiltIn_OID.Criminal) {
+
       info_renderer = new EntityInfoRender(entity, this);
       info_renderer.on_mount()
     }

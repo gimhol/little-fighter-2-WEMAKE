@@ -666,7 +666,8 @@ export class Entity implements IDebugging {
     this._defend_ratio = data.base.defend_ratio ?? Defines.DEFAULT_DEFEND_INJURY_RATIO;
 
     const { armor } = this._data.base
-    if (this.armor = armor) {
+    this.armor = armor
+    if (armor) {
       this.toughness = this.toughness_max = armor.toughness
     }
 

@@ -20,6 +20,8 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": ["warn"],
+      "@typescript-eslint/prefer-const": ["warn"],
+      "@typescript-eslint/no-debugger": ["warn"],
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
