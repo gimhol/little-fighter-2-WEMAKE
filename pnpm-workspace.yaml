@@ -1,4 +1,5 @@
 ignoredBuiltDependencies:
+  - '@parcel/watcher'
   - core-js
   - cpu-features
   - deasync
