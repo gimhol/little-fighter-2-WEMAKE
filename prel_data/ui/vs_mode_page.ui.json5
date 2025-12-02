@@ -4,39 +4,8 @@
   component: ["SummaryLogic()", "VsModeLogic()"],
   key_press_actions: [["escape", "set_ui(entry)"]],
   items: [
+    "ui/fighter_stat_1v1.ui.json5",
     "ui/fighter_stat_s_x8.ui.json5",
-    {
-      id: "_1v1_fighter_stat_1",
-      template: "ui/fighter_stat_l.ui.json5",
-      visible: false,
-      disabled: true,
-      component: [
-        {
-          name: "Alignment",
-          properties: {
-            left: "left",
-            top: "top",
-            offset: { t: 30, l: 24 },
-          },
-        },
-      ],
-    },
-    {
-      id: "_1v1_fighter_stat_2",
-      template: "ui/fighter_stat_r.ui.json5",
-      visible: false,
-      disabled: true,
-      component: [
-        {
-          name: "Alignment",
-          properties: {
-            right: "right",
-            top: "top",
-            offset: { t: 30, r: -24 },
-          },
-        },
-      ],
-    },
     {
       pos: "0,0,5",
       visible: false,

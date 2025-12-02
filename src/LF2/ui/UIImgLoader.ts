@@ -9,9 +9,9 @@ type OutOfDateError = Error & {
 }
 
 export class UIImgLoader {
-  readonly node: () => UINode;
+  readonly node: () => UINode | null | undefined;
   protected _jid = new Times();
-  constructor(node: () => UINode) {
+  constructor(node: () => UINode | null | undefined) {
     this.node = node;
   }
   private _out_of_date(textures?: ImageInfo[]): OutOfDateError {
@@ -32,11 +32,13 @@ export class UIImgLoader {
     this._jid.add();
     const jid = this._jid.value;
     const node = this.node();
+    if (!node) return Promise.reject(new Error(`[UIImgLoader::load] node got ${node}`));
     return new Promise((resolve, reject) => {
       if (jid !== this._jid.value) {
         reject(this._out_of_date());
         return;
       }
+      uiimgs = uiimgs.map((v, i) => ({ ...node.data.img[i], ...v }))
       ui_load_img(node.lf2, uiimgs).then(imgs => {
         if (jid !== this._jid.value) {
           throw this._out_of_date(imgs);

@@ -45,16 +45,16 @@
   },
   items: [
     {
-      id: "head",
-      size: "24,24",
+      id: "_",
+      size: "30,30",
       color: "black",
-      component: [
+      center: "0,0",
+      items: [
         {
-          name: "Alignment",
-          properties: {
-            left: "left",
-            top: "top",
-          },
+          id: "head",
+          size: "26,26",
+          pos: "2,2",
+          color: "white",
         },
       ],
     },
@@ -67,7 +67,7 @@
           properties: {
             left: "right",
             bottom: "bottom",
-            offset: { b: -10.5 },
+            offset: { b: -11, l: -1 },
             followed: "bro:-1",
           },
         },
@@ -161,11 +161,36 @@
           properties: {
             left: "left",
             top: "top",
-            followed: "bro:-1",
+            followed: "bro:-1"
           },
         },
       ],
       items: [{ color: "rgb(0, 204, 255)", template: "bar_inner" }],
+    },
+    {
+      id: "name",
+      txt: {
+        i18n: "Template(com)",
+        style: {
+          fill_style: "white",
+          font: "9px Arial",
+          back_style: {
+            font: "9px Arial",
+            stroke_style: "#005A8E",
+            line_width: 1,
+          },
+        },
+      },
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            left: "left",
+            bottom: "top",
+            followed: "id:dark_hp",
+          },
+        },
+      ],
     },
   ],
 }

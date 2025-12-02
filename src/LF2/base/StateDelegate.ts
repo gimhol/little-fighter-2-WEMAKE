@@ -149,5 +149,8 @@ export class StateDelegate<T> {
     const changed = !old || !now || this.compare(old_value, now_value)
     if (changed) this._dirty = true;
   }
+  write(v: T) {
+    this.value = v;
+  }
 }
 export default StateDelegate

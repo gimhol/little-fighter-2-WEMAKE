@@ -3,6 +3,8 @@ import { Entity, IEntityCallbacks } from "@/LF2/entity";
 import { UINode } from "../UINode";
 import { UIComponent } from "./UIComponent";
 import { SmoothNumber } from "./SmoothNumber";
+import { UIImgLoader } from "../UIImgLoader";
+import { UITextLoader } from "../UITextLoader";
 export class FighterStatBar extends UIComponent {
   static override readonly TAG: string = 'FighterStatBar'
   protected dark_hp_bar?: UINode
@@ -25,7 +27,8 @@ export class FighterStatBar extends UIComponent {
   protected hp = new SmoothNumber().on_change(() => this.update_hp())
   protected mp_max = new SmoothNumber().on_change(() => this.update_mp())
   protected mp = new SmoothNumber().on_change(() => this.update_mp())
-
+  protected name_txt_loader = new UITextLoader(() => this.node.search_child('name'))
+  protected head_img_loader = new UIImgLoader(() => this.node.search_child('head'))
   protected dark_hp_bar_w: number = 200;
   protected hp_bar_w: number = 200;
   protected dark_mp_bar_w: number = 200;
@@ -51,10 +54,15 @@ export class FighterStatBar extends UIComponent {
     on_fall_value_changed: (_, v) => { this.fall_value.value = v; },
     on_toughness_max_changed: (_, v) => { this.toughness_max.value = v; },
     on_toughness_changed: (_, v) => { this.toughness.value = v; },
+    on_data_changed: () => this.update_head()
   }
+  protected direction: string = '';
   set_entity(entity: Entity | undefined) {
     if (this.entity === entity) return;
-    this.entity?.callbacks.del(this.cbs)
+    if (this.entity) {
+      this.entity.callbacks.del(this.cbs)
+      this.entity.has_stat_bar = false;
+    }
     this.entity = entity
     if (entity) {
       this.hp_max.value = entity.hp_max
@@ -67,9 +75,11 @@ export class FighterStatBar extends UIComponent {
       this.fall_value_max.value = entity.fall_value_max
       this.fall_value.value = entity.fall_value
       this.toughness_max.value = entity.toughness_max || 1
-      this.toughness.value = entity.toughness
+      this.toughness.value = entity.toughness;
       entity.callbacks.add(this.cbs)
+      entity.has_stat_bar = true;
     }
+    this.update_head();
   }
   override on_start(): void {
     super.on_start?.();
@@ -88,6 +98,7 @@ export class FighterStatBar extends UIComponent {
     if (this.fall_value_bar) this.fall_value_bar_w = this.fall_value_bar.size.value[0]
     if (this.defend_value_bar) this.defend_value_bar_w = this.defend_value_bar.size.value[0]
     if (this.toughness_bar) this.toughness_bar_w = this.toughness_bar.size.value[0]
+    this.direction = this.props.str('direction') ?? ''
   }
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
     const node = this.defend_value_bar;
@@ -136,6 +147,35 @@ export class FighterStatBar extends UIComponent {
     const w = ww * val / max;
     const h = node.size.value[1];
     node.size.value = [w, h]
+  }
+  update_head(): void {
+    const { entity } = this;
+    if (entity) {
+      const { head } = entity.data.base;
+
+      let { name } = entity.data.base;
+      const player_name = this.lf2.players.get(entity.ctrl.player_id)?.name
+      if (player_name)
+        if (this.direction === 'r')
+          name = `(${player_name}) ${name} `.trim();
+        else
+          name = `${name} (${player_name})`.trim();
+
+      if (typeof head === 'string') {
+        this.head_img_loader.load([{ path: head, dw: 26, dh: 26 }], 0).catch(_ => _)
+      } else {
+        this.head_img_loader.node()?.img_idx.write(-1);
+      }
+      if (typeof name === 'string' && name) {
+        this.name_txt_loader.set_text([name], 0).catch(_ => _)
+      } else {
+        this.name_txt_loader.node()?.txt_idx.write(-1);
+      }
+    } else {
+      this.head_img_loader.node()?.img_idx.write(-1);
+      this.name_txt_loader.node()?.txt_idx.write(-1);
+    }
+
   }
   override update(): void {
     this.defend_value_max.update()

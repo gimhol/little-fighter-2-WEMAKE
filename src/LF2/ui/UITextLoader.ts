@@ -44,7 +44,7 @@ export class UITextLoader {
     this._jid.add();
     const jid = this._jid.value;
     const node = this.node()
-    if (!node) return Promise.reject(new Error('node not found'));
+    if (!node) return Promise.reject(new Error(`[UITextLoader::load] node got ${node}`));
     return new Promise((resolve, reject) => {
       if (jid !== this._jid.value) {
         reject(this._out_of_date());

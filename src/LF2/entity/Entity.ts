@@ -52,7 +52,7 @@ export class Entity implements IDebugging {
   update_id = new Times(0, Number.MAX_SAFE_INTEGER);
   variant: number = 0;
   transform_datas?: [IEntityData, IEntityData];
-
+  readonly src_data: Readonly<IEntityData>;
   protected _data: IEntityData;
   protected _reserve = 0;
   protected _is_attach: boolean = false;
@@ -68,6 +68,7 @@ export class Entity implements IDebugging {
   dismiss_time?: number;
   dismiss_data?: IEntityData;
   doppelgangers = new Set<Entity>();
+  has_stat_bar: boolean = false;
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get is_attach() { return this._is_attach }
@@ -649,6 +650,7 @@ export class Entity implements IDebugging {
 
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this._data = data;
+    this.src_data = data;
     this.world = world;
     this.states = states;
     this._hp_r_tick = new Times(0, world.hp_r_ticks);
@@ -2082,6 +2084,7 @@ export class Entity implements IDebugging {
   transform(data: IEntityData) {
     if (!is_local_ctrl(this.ctrl))
       this.ctrl = Factory.inst.get_ctrl(data.id, this.ctrl.player_id, this);
+    const prev = this._data;
     this._data = data;
     const { armor } = this._data.base
     if (this.armor = armor) {
@@ -2093,6 +2096,7 @@ export class Entity implements IDebugging {
         this.toughness_resting =
         this.toughness_resting_max = 0;
     }
+    this._callbacks.emit("on_data_changed")(this._data, prev, this)
   }
 }
 

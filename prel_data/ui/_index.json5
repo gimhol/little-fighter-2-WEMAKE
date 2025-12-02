@@ -8,6 +8,7 @@
   "ui/demo_mode_page.ui.json5",
   "ui/ending_page.ui.json5",
   "ui/entry_page.ui.json5",
+  "ui/fighter_stat_1v1.ui.json5",
   "ui/fighter_stat_l.ui.json5",
   "ui/fighter_stat_r.ui.json5",
   "ui/fighter_stat_s.ui.json5",

@@ -13,17 +13,21 @@ export async function ui_load_img(lf2: LF2, img: IUIImgInfo[], output?: IUIImgIn
       const { path, x, y, w = 0, h = 0, dw = w, dh = h, flip_x = 0, flip_y = 0 } = img;
       const p = Ditto.MD5([x, y, w, h, dw, dh, flip_x, flip_y].join())
       const img_key = `${path}?x=${p}`;
-      const crop: IImageOp_Crop = {
-        type: "crop", ...img
+
+      const ops: ImageOperation[] = []
+      if (dw > 0 || dh > 0) {
+        const op: IImageOp_Crop = {
+          type: "crop", ...img
+        }
+        ops.push(op)
       }
-      const ops: ImageOperation[] = [crop]
       if (flip_x || flip_y) {
-        const flip: IImageOp_Flip = {
+        const op: IImageOp_Flip = {
           type: "flip",
           x: flip_x,
           y: flip_y,
         }
-        ops.push(flip)
+        ops.push(op)
       }
       return lf2.images.load_img(img_key, path, ops);
     })

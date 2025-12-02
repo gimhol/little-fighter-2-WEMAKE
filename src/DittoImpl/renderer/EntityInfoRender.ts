@@ -321,11 +321,11 @@ export class EntityInfoRender implements IEntityCallbacks {
     });
   }
   render() {
-    const { invisible, position: { x, z, y }, frame: { centery }, hp, key_role: is_key_role } = this.entity;
+    const { invisible, position: { x, z, y }, frame: { centery }, hp, key_role: is_key_role, has_stat_bar } = this.entity;
     const is_fighter = is_character(this.entity)
 
     this.name_node.visible = is_fighter && is_key_role && !invisible
-    this.bars_node.visible = is_fighter && is_key_role && !invisible && hp > 0;
+    this.bars_node.visible = !has_stat_bar && is_fighter && is_key_role && !invisible && hp > 0;
 
     if (this.entity.healing) {
       const heading = (this.entity.update_id.value % 8) < 4;

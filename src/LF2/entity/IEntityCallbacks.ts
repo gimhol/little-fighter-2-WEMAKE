@@ -1,3 +1,4 @@
+import { IEntityData } from "../defines";
 import type { Unsafe } from "../utils/type_check/Unsafe";
 import type { Entity } from "./Entity";
 
@@ -170,5 +171,7 @@ export interface IEntityCallbacks<E extends Entity = Entity> {
   on_toughness_changed?(e: E, value: number, prev: number): void;
   on_toughness_max_changed?(e: E, value: number, prev: number): void;
   on_reserve_changed?(e: E, value: number, prev: number): void;
+
+  on_data_changed?(value: IEntityData, prev: IEntityData, e: E): void;
 }
 export default IEntityCallbacks
