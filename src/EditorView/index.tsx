@@ -202,7 +202,7 @@ export default function EditorView(props: IEditorViewProps) {
   useEffect(() => {
     const container = board_wrapper;
     if (!container || !open) return;
-    const board = ref_board.current = factory.newWhiteBoard({ element: container });
+    const board = ref_board.current = factory.newBoard({ element: container });
     board.setToolType(ToolEnum.Selector);
     (window as any).board = board;
     const ob = new ResizeObserver(() => {

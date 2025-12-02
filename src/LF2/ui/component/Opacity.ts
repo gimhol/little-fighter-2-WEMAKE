@@ -1,10 +1,9 @@
 import { Delay, Easing, Sequence } from "@/LF2/animation";
 import { Animation } from "@/LF2/animation/Animation";
-import { ISchemaProps } from "@/LF2/defines";
-import { Ditto } from "@/LF2/ditto";
+import { ISchema } from "@/LF2/defines";
 import ease_linearity from "@/LF2/utils/ease_method/ease_linearity";
-import { validate_object_with_metas } from "../utils";
 import { UIComponent } from "./UIComponent";
+import { make_schema } from "@/LF2/utils/schema";
 
 export interface IOpacityFlashProps {
   steps?: number[];
@@ -12,25 +11,27 @@ export interface IOpacityFlashProps {
 }
 export class OpacityFlash extends UIComponent {
   static override readonly TAG: string = "OpacityFlash";
-  static PROPS: ISchemaProps<IOpacityFlashProps> = {
-    steps: {
-      key: "steps",
-      type: "array",
-      items: { type: "number" },
-      nullable: true,
-      description: "透明度1, 动画时间，透明度2....",
-    },
-    times: {
-      key: "times",
-      type: "number",
-      nullable: true,
-      number: { int: true },
-      description: "循环次数，小于0时，无限循环"
+  static PROPS: ISchema<IOpacityFlashProps> = make_schema({
+    key: "IOpacityFlashProps",
+    type: 'object',
+    properties: {
+      steps: {
+        key: "steps",
+        type: "array",
+        items: { type: "number" },
+        nullable: true,
+        description: "透明度1, 动画时间，透明度2....",
+      },
+      times: {
+        key: "times",
+        type: "number",
+        nullable: true,
+        number: { int: true },
+        description: "循环次数，小于0时，无限循环"
+      }
     }
-  }
+  })
 
-  @((a, b) => void 0)
-  step: number[] = []
 
 
   protected _anim: Sequence = new Sequence();

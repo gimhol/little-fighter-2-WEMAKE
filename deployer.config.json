@@ -12,7 +12,7 @@
     "SSH_ENABLED": false,
     "GIT_IGNORED": true,
     "OSS_ENABLED": true,
-    "LOCAL_PATH": "./build",
+    "LOCAL_PATH": "./dist",
     "REMOTE_DIR": ""
   }
 }
