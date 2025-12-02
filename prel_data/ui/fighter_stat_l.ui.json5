@@ -13,8 +13,8 @@
         fall_value_bar: "fall_value",
         defend_value_bar: "defend_value",
         toughness_bar: "toughness",
-      }
-    }
+      },
+    },
   ],
   templates: {
     bar: {
@@ -37,17 +37,42 @@
             top: "top",
             right: "right",
             bottom: "bottom",
-            offset: { l: 1, r: -1, t: 1, b: -1 }
-          }
-        }
+            offset: { l: 1, r: -1, t: 1, b: -1 },
+          },
+        },
       ],
-    }
+    },
   },
   items: [
     {
+      id: "head",
+      size: "24,24",
+      color: "black",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            left: "left",
+            top: "top",
+          },
+        },
+      ],
+    },
+    {
       id: "dark_hp",
       template: "bar",
-      items: [ { color: "rgb(111,8,31)", template: "bar_inner" } ]
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            left: "right",
+            bottom: "bottom",
+            offset: { b: -10.5 },
+            followed: "bro:-1",
+          },
+        },
+      ],
+      items: [{ color: "rgb(111,8,31)", template: "bar_inner" }],
     },
     {
       id: "hp",
@@ -58,11 +83,11 @@
           properties: {
             left: "left",
             top: "top",
-            followed: "bro:-1"
-          }
-        }
+            followed: "bro:-1",
+          },
+        },
       ],
-      items: [ { color: "#EE3F3A", template: "bar_inner" } ]
+      items: [{ color: "#EE3F3A", template: "bar_inner" }],
     },
     {
       id: "dark_mp",
@@ -75,10 +100,10 @@
             top: "bottom",
             followed: "bro:-1",
             offset: { t: -1 },
-          }
-        }
+          },
+        },
       ],
-      items: [ { color: "rgb(31,8,111)", template: "bar_inner" } ]
+      items: [{ color: "rgb(31,8,111)", template: "bar_inner" }],
     },
     {
       id: "mp",
@@ -89,11 +114,11 @@
           properties: {
             left: "left",
             top: "top",
-            followed: "bro:-1"
-          }
-        }
+            followed: "bro:-1",
+          },
+        },
       ],
-      items: [ { color: "rgb(0,0,255)", template: "bar_inner" } ]
+      items: [{ color: "rgb(0,0,255)", template: "bar_inner" }],
     },
     {
       id: "fall_value",
@@ -106,10 +131,10 @@
             top: "bottom",
             followed: "bro:-1",
             offset: { t: -1 },
-          }
-        }
+          },
+        },
       ],
-      items: [ { color: "rgb(216, 115, 0)", template: "bar_inner" } ]
+      items: [{ color: "rgb(216, 115, 0)", template: "bar_inner" }],
     },
     {
       id: "defend_value",
@@ -123,9 +148,9 @@
             followed: "bro:-1",
             offset: { t: -1 },
           },
-        }
+        },
       ],
-      items: [ { color: "rgb(0, 122, 71)", template: "bar_inner" } ]
+      items: [{ color: "rgb(0, 122, 71)", template: "bar_inner" }],
     },
     {
       id: "toughness",
@@ -137,10 +162,10 @@
             left: "left",
             top: "top",
             followed: "bro:-1",
-          }
-        }
+          },
+        },
       ],
-      items: [ { color: "rgb(0, 204, 255)", template: "bar_inner" } ]
-    }
+      items: [{ color: "rgb(0, 204, 255)", template: "bar_inner" }],
+    },
   ],
 }
