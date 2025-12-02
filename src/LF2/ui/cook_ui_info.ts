@@ -1,10 +1,10 @@
-import { IMetaInfo } from "../defines";
+import { ISchema } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { floor, is_str, Unsafe } from "../utils";
 import { find_ui_template } from "./find_ui_template";
 import { ICookedUIInfo } from "./ICookedUIInfo";
-import { IUIImgInfo, Meta_IUIImgInfo } from "./IUIImgInfo.dat";
+import { IUIImgInfo, Schema_IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo, TUITxtInfo } from "./IUIInfo.dat";
 import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 import { judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
@@ -65,7 +65,7 @@ export async function cook_ui_info(
     ? await find_ui_template(lf2, parent, data_or_path)
     : data_or_path;
 
-  if (ui_info.template) 
+  if (ui_info.template)
     ui_info = await read_ui_template(lf2, ui_info, parent);
 
   const id = ui_info.id || 'no_id_' + Date.now();
@@ -99,9 +99,12 @@ export async function cook_ui_info(
     } else {
       rr = i
     }
-    if (!rr) continue;
-    for (const k in Meta_IUIImgInfo) {
-      const meta = (Meta_IUIImgInfo as any)[k] as IMetaInfo;
+    if (!rr) {
+      // debugger;
+      continue;
+    }
+    for (const k in Schema_IUIImgInfo.properties) {
+      const meta = (Schema_IUIImgInfo.properties as any)[k] as ISchema;
       const val = (rr as any)[k];
       if (!meta || !val || typeof val !== 'string' || !val.startsWith('$val:'))
         continue;
@@ -110,7 +113,7 @@ export async function cook_ui_info(
     }
     _img.push(rr)
   }
-
+  if (_img.some(v => typeof v !== 'object')) debugger;
   if (_img.length) ret.img_infos.push(...await ui_load_img(lf2, _img, ret.img));
 
   cook_ui_txt_info(lf2, ret, ui_info.txt, ret.txt)

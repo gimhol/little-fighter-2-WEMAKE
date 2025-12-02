@@ -10,6 +10,8 @@
   "ui/entry_page.ui.json5",
   "ui/fighter_stat_l.ui.json5",
   "ui/fighter_stat_r.ui.json5",
+  "ui/fighter_stat_s.ui.json5",
+  "ui/fighter_stat_s_x8.ui.json5",
   "ui/game_prepare_menu.ui.json5",
   "ui/gogogo.ui.json5",
   "ui/how_many_computer.ui.json5",

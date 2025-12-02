@@ -54,11 +54,35 @@ export class VsModeLogic extends UIComponent {
     this.reset();
 
     const stat_bars = this.node.search_components(FighterStatBar)
-    // eslint-disable-next-line no-debugger
-    debugger;
-    for (const [, p] of this.lf2.player_characters) {
-      if (!p||!stat_bars.length) continue;
-      stat_bars.shift()?.set_entity(p)
+
+    let player_count = 0;
+    let teams = new Set();
+    for (const [, f] of this.lf2.slot_fighters) {
+      if (f) {
+        teams.add(f.team);
+        ++player_count
+      }
+    }
+    for (let i = 0; i < stat_bars.length; i++) {
+      const stat_bar = stat_bars[i];
+      let enabled = false;
+      if (player_count == 2) { // 1 on 1.
+        enabled = !!stat_bar.node.id?.startsWith(`_1v1_fighter_stat_`);
+      } else {
+        enabled = player_count >= Number(stat_bar.node.id?.match(/p(\d)_stat/)?.[1]);
+      }
+      stat_bar.node.visible = enabled;
+      stat_bar.node.disabled = !enabled;
+      if (enabled) continue;
+      stat_bars.splice(i, 1);
+      --i;
+    }
+
+    for (const [, fighter] of this.lf2.slot_fighters) {
+      if (!fighter) continue;
+      const stat_bar = stat_bars.shift()
+      if (!stat_bar) break;
+      stat_bar.set_entity(fighter)
     }
   }
   override on_stop(): void {

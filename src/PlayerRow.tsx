@@ -57,11 +57,11 @@ export function PlayerRow(props: Props) {
   const [dummy, set_dummy] = useState<DummyEnum | undefined | "">("")
 
   useEffect(() => {
-    const ctrl = lf2.player_characters.get(info.id)?.ctrl;
+    const ctrl = lf2.slot_fighters.get(info.id)?.ctrl;
     if (is_bot_ctrl(ctrl)) {
       ctrl.dummy = dummy ? dummy : void 0;
     }
-  }, [dummy, info.id, lf2.player_characters])
+  }, [dummy, info.id, lf2.slot_fighters])
 
   useEffect(() => {
     set_show_hidden(lf2.is_cheat_enabled("" + CheatType.LF2_NET));
@@ -202,7 +202,7 @@ export function PlayerRow(props: Props) {
         <Combine>
           <Button
             onClick={() => {
-              const character = lf2.player_characters.get(info.id);
+              const character = lf2.slot_fighters.get(info.id);
               if (!character) return;
               const ctrl = character.ctrl;
               if (is_bot_ctrl(ctrl)) {

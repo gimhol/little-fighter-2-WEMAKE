@@ -109,7 +109,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   }
   override on_stop(): void {
     super.on_stop?.();
-    for (const [, v] of this.lf2.player_characters) {
+    for (const [, v] of this.lf2.slot_fighters) {
       v.callbacks.del(this);
     }
   }

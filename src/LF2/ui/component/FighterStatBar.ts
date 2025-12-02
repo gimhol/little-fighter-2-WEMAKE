@@ -2,37 +2,10 @@
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
 import { UINode } from "../UINode";
 import { UIComponent } from "./UIComponent";
-import { abs, float_equal } from "@/LF2/utils";
-class SmoothNumber {
-  private _v: number = 0;
-  private _t: number = 0;
-  private _c?: () => void
-  factor = 0.3;
-  min_diff = 1;
-  done: boolean = false;
-  get value(): number { return this._v }
-  set value(v: number) { this._t = v; this.done = false }
-
-  on_change(v: () => void) {
-    this._c = v;
-    return this;
-  }
-  update() {
-    if (this.done || float_equal(this._t, this._v)) {
-      this.done = true
-      return;
-    }
-    this._v = this._v + this.factor * (this._t - this._v)
-    if (abs(this._v - this._t) < this.min_diff) {
-      this.done = true;
-      this._v = this._t
-    }
-    this._c?.();
-  }
-}
+import { SmoothNumber } from "./SmoothNumber";
 export class FighterStatBar extends UIComponent {
-  static override readonly TAG: string = 'FighterStatBar';
-  protected dark_hp_bar?: UINode;
+  static override readonly TAG: string = 'FighterStatBar'
+  protected dark_hp_bar?: UINode
   protected hp_bar?: UINode;
   protected dark_mp_bar?: UINode;
   protected mp_bar?: UINode;

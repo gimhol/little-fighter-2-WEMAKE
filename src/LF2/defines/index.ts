@@ -62,7 +62,7 @@ export * from "./IHoldKeyCollection";
 export * from "./IItrInfo";
 export * from "./IItrPrefab";
 export * from "./ILegacyPictureInfo";
-export * from "./IMetaInfo";
+export * from "./ISchema";
 export * from "./INextFrame";
 export * from "./IOpointInfo";
 export * from "./IPairByFace";

@@ -1,7 +1,8 @@
 {
-  name: "ui: fighter_stat_r",
-  id: "fighter_stat_r",
+  name: "ui: fighter_stat_s",
+  id: "fighter_stat_s",
   // color: "gray",
+  size: "180,30",
   component: [
     {
       name: "FighterStatBar",
@@ -13,22 +14,22 @@
         fall_value_bar: "fall_value",
         defend_value_bar: "defend_value",
         toughness_bar: "toughness",
-      }
-    }
+      },
+    },
   ],
   templates: {
     bar: {
-      center: "1,0",
-      size: "300,8",
+      center: "0,0",
+      size: "156,8",
       color: "#000000",
     },
     bar_2: {
-      center: "1,0",
-      size: "300,3",
+      center: "0,0",
+      size: "156,3",
       color: "#000000",
     },
     bar_inner: {
-      center: "1,0",
+      center: "0,0",
       component: [
         {
           name: "Alignment",
@@ -37,17 +38,33 @@
             top: "top",
             right: "right",
             bottom: "bottom",
-            offset: { l: 1, r: -1, t: 1, b: -1 }
-          }
-        }
+            offset: { l: 1, r: -1, t: 1, b: -1 },
+          },
+        },
       ],
-    }
+    },
   },
   items: [
     {
+      id: "head",
+      size: "24,24",
+      color: "black",
+    },
+    {
       id: "dark_hp",
       template: "bar",
-      items: [ { color: "rgb(111,8,31)", template: "bar_inner" } ]
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            left: "right",
+            bottom: "bottom",
+            offset: { b: -10.5 },
+            followed: "bro:-1",
+          },
+        },
+      ],
+      items: [{ color: "rgb(111,8,31)", template: "bar_inner" }],
     },
     {
       id: "hp",
@@ -56,13 +73,13 @@
         {
           name: "Alignment",
           properties: {
-            right: "right",
+            left: "left",
             top: "top",
-            followed: "bro:-1"
-          }
-        }
+            followed: "bro:-1",
+          },
+        },
       ],
-      items: [ { color: "#EE3F3A", template: "bar_inner" } ]
+      items: [{ color: "#EE3F3A", template: "bar_inner" }],
     },
     {
       id: "dark_mp",
@@ -71,14 +88,14 @@
         {
           name: "Alignment",
           properties: {
-            right: "right",
+            left: "left",
             top: "bottom",
             followed: "bro:-1",
             offset: { t: -1 },
-          }
-        }
+          },
+        },
       ],
-      items: [ { color: "rgb(31,8,111)", template: "bar_inner" } ]
+      items: [{ color: "rgb(31,8,111)", template: "bar_inner" }],
     },
     {
       id: "mp",
@@ -87,13 +104,13 @@
         {
           name: "Alignment",
           properties: {
-            right: "right",
+            left: "left",
             top: "top",
-            followed: "bro:-1"
-          }
-        }
+            followed: "bro:-1",
+          },
+        },
       ],
-      items: [ { color: "rgb(0,0,255)", template: "bar_inner" } ]
+      items: [{ color: "rgb(0,0,255)", template: "bar_inner" }],
     },
     {
       id: "fall_value",
@@ -102,14 +119,14 @@
         {
           name: "Alignment",
           properties: {
-            right: "right",
+            left: "left",
             top: "bottom",
             followed: "bro:-1",
             offset: { t: -1 },
-          }
-        }
+          },
+        },
       ],
-      items: [ { color: "rgb(216, 115, 0)", template: "bar_inner" } ]
+      items: [{ color: "rgb(216, 115, 0)", template: "bar_inner" }],
     },
     {
       id: "defend_value",
@@ -118,14 +135,14 @@
         {
           name: "Alignment",
           properties: {
-            right: "right",
+            left: "left",
             top: "bottom",
             followed: "bro:-1",
             offset: { t: -1 },
           },
-        }
+        },
       ],
-      items: [ { color: "rgb(0, 122, 71)", template: "bar_inner" } ]
+      items: [{ color: "rgb(0, 122, 71)", template: "bar_inner" }],
     },
     {
       id: "toughness",
@@ -134,13 +151,13 @@
         {
           name: "Alignment",
           properties: {
-            right: "right",
+            left: "left",
             top: "top",
             followed: "bro:-1",
-          }
-        }
+          },
+        },
       ],
-      items: [ { color: "rgb(0, 204, 255)", template: "bar_inner" } ]
-    }
+      items: [{ color: "rgb(0, 204, 255)", template: "bar_inner" }],
+    },
   ],
 }

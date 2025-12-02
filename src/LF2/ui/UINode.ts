@@ -21,6 +21,7 @@ import actor from "./action/Actor";
 import inst from "./component/Factory";
 import { UIComponent } from "./component/UIComponent";
 import { parse_ui_value } from "./read_info_value";
+import { Times } from "./utils";
 export class UINode implements IDebugging {
 
   static readonly TAG: string = 'UINode';
@@ -46,7 +47,7 @@ export class UINode implements IDebugging {
   protected _pointer_over: 0 | 1 = 0;
   protected _pointer_down: 0 | 1 = 0;
   protected _click_flag: 0 | 1 = 0;
-  protected _update_times: number = 0;
+  protected _update_times = new Times(0, Number.MAX_SAFE_INTEGER);
 
   get callbacks() {
     return this._callbacks;
@@ -232,7 +233,7 @@ export class UINode implements IDebugging {
   /** 光标是否在本节点中按下 */
   get pointer_down() { return this._pointer_down }
   get click_flag() { return this._click_flag }
-  get update_times() { return this._update_times }
+  get update_times() { return this._update_times.value }
   renderer: IUINodeRenderer;
 
   constructor(lf2: LF2, data: ICookedUIInfo, parent?: UINode) {
@@ -530,10 +531,7 @@ export class UINode implements IDebugging {
   }
 
   update(dt: number) {
-    if (this._update_times === Number.MAX_SAFE_INTEGER)
-      this._update_times = 0;
-    else
-      this._update_times++;
+    this._update_times.add();
     for (const i of this.children) if (i.enabled) i.update(dt);
     for (const c of this._components) if (c.enabled) c.update?.(dt);
   }

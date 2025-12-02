@@ -44,6 +44,6 @@ export function parse_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, ty
   if (typeof value !== 'string')
     return value;
   if (ui_info && value.startsWith("$val:"))
-    return (find_ui_value(ui_info, type, value.substring(5).trim()) ?? value) as T;
+    return find_ui_value(ui_info, type, value.substring(5).trim()) as T;
   return value as T;
 }

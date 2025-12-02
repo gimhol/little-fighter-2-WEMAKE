@@ -1,0 +1,126 @@
+{
+  name: "ui: fighter_stat_s_x8",
+  id: "fighter_stat_s_x8",
+  // color: "gray",
+  items: [
+    {
+      id: "p1_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            top: "top",
+            left: "left",
+            offset: { l: 10, t: 20 },
+          },
+        },
+      ],
+    },
+    {
+      id: "p2_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            followed: "bro:-1",
+            top: "top",
+            left: "right",
+            offset: { l: 10 },
+          },
+        },
+      ],
+    },
+    {
+      id: "p3_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            followed: "bro:-1",
+            top: "top",
+            left: "right",
+            offset: { l: 10 },
+          },
+        },
+      ],
+    },
+    {
+      id: "p4_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            followed: "bro:-1",
+            top: "top",
+            left: "right",
+            offset: { l: 10 },
+          },
+        },
+      ],
+    },
+    {
+      id: "p5_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            top: "bottom",
+            left: "left",
+            followed: "id:p1_stat",
+            offset: { t: 10 },
+          },
+        },
+      ],
+    },
+    {
+      id: "p6_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            top: "bottom",
+            left: "left",
+            followed: "id:p2_stat",
+            offset: { t: 10 },
+          },
+        },
+      ],
+    },
+    {
+      id: "p7_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            top: "bottom",
+            left: "left",
+            followed: "id:p3_stat",
+            offset: { t: 10 },
+          },
+        },
+      ],
+    },
+    {
+      id: "p8_stat",
+      template: "ui/fighter_stat_s.ui.json5",
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            top: "bottom",
+            left: "left",
+            followed: "id:p4_stat",
+            offset: { t: 10 },
+          },
+        },
+      ],
+    },
+  ],
+}

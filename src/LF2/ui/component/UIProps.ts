@@ -1,6 +1,6 @@
-import type { IMetas } from "../../defines/IMetaInfo";
+import { validate_schema } from "@/LF2/utils/schema/validate_schema";
+import type { ISchema } from "../../defines/ISchema";
 import { is_num, is_str } from "../../utils";
-import { validate_object_with_metas } from "../utils";
 import read_nums from "../utils/read_nums";
 
 export interface IUIPropsCallback { }
@@ -34,8 +34,9 @@ export class UIProps {
     return read_nums(this.raw[name], len, fallbacks);
   }
 
-  validate<P>(name: string, metas: IMetas<P>): P {
-    const errors = validate_object_with_metas(this.raw, metas)
+  validate<P>(name: string, schema: ISchema<P>): P {
+    const errors: string[] = [];
+    validate_schema(this.raw, schema, errors)
     if (!errors.length) return this.raw as P;
     throw new Error(`[${name}] props.error:` + errors.join('\n'))
   }

@@ -1,7 +1,7 @@
 {
   name: "ui: fighter_stat_l",
   id: "fighter_stat_l",
-  color: "gray",
+  // color: "gray",
   component: [
     {
       name: "FighterStatBar",
@@ -19,12 +19,12 @@
   templates: {
     bar: {
       center: "0,0",
-      size: "200,8",
+      size: "300,8",
       color: "#000000",
     },
     bar_2: {
       center: "0,0",
-      size: "200,3",
+      size: "300,3",
       color: "#000000",
     },
     bar_inner: {

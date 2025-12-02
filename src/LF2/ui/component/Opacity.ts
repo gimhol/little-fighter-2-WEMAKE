@@ -1,6 +1,6 @@
 import { Delay, Easing, Sequence } from "@/LF2/animation";
 import { Animation } from "@/LF2/animation/Animation";
-import { IMetas } from "@/LF2/defines";
+import { ISchemaProps } from "@/LF2/defines";
 import { Ditto } from "@/LF2/ditto";
 import ease_linearity from "@/LF2/utils/ease_method/ease_linearity";
 import { validate_object_with_metas } from "../utils";
@@ -12,20 +12,20 @@ export interface IOpacityFlashProps {
 }
 export class OpacityFlash extends UIComponent {
   static override readonly TAG: string = "OpacityFlash";
-  static PROPS: IMetas<IOpacityFlashProps> = {
+  static PROPS: ISchemaProps<IOpacityFlashProps> = {
     steps: {
-      name: "steps",
+      key: "steps",
       type: "array",
       items: { type: "number" },
       nullable: true,
-      desc: "透明度1, 动画时间，透明度2....",
+      description: "透明度1, 动画时间，透明度2....",
     },
     times: {
-      name: "times",
+      key: "times",
       type: "number",
       nullable: true,
       number: { int: true },
-      desc: "循环次数，小于0时，无限循环"
+      description: "循环次数，小于0时，无限循环"
     }
   }
 

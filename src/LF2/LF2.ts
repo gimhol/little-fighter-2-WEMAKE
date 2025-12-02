@@ -3,14 +3,14 @@ import { KEY_NAME_LIST, LocalController } from "./controller";
 import * as D from "./defines";
 import * as I from "./ditto";
 import { Entity } from "./entity";
-import * as UI from "./ui";
-import * as Helper from "./helper";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
+import * as Helper from "./helper";
 import { ILf2Callback } from "./ILf2Callback";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
+import * as UI from "./ui";
 import { fisrt, is_str, MersenneTwister } from "./utils";
 import { World } from "./World";
 
@@ -87,7 +87,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     ["8", new PlayerInfo("8")],
   ]);
 
-  get player_characters() {
+  get slot_fighters() {
     return this.world.slot_fighters;
   }
   ensure_player(player_id: string): PlayerInfo {
@@ -116,7 +116,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   readonly bgms: string[] = []
 
   get_player_character(which: string) {
-    return this.player_characters.get(which)
+    return this.slot_fighters.get(which)
   }
 
   protected find_in_zip(paths: string[]): I.IZipObject | undefined {
@@ -434,7 +434,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     let vz = 0;
     let old_facing: D.TFace = 1;
     let old_frame_id: string = D.Builtin_FrameId.Auto;
-    const old = this.player_characters.get(player_id);
+    const old = this.slot_fighters.get(player_id);
     if (old) {
       x = old.position.x;
       y = old.position.y;
@@ -471,7 +471,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return character;
   }
   del_player_character(player_id: string) {
-    const old = this.player_characters.get(player_id);
+    const old = this.slot_fighters.get(player_id);
     if (old) this.world.del_entity(old);
   }
   change_bg(bg_info: D.IBgData): void;

@@ -1,8 +1,10 @@
-export interface IMetaInfo {
-  name?: string;
-  desc?: string;
-  type: 'string' | 'number' | 'boolean' | 'array',
-  items?: IMetaInfo;
+export interface ISchema<T = any> {
+  path?: string;
+  key?: string;
+  description?: string;
+  type: 'array' | 'boolean' | 'null' | 'number' | 'integer' | 'object' | 'string',
+  properties?: Record<keyof T, ISchema>
+  items?: ISchema;
   string?: {
     not_empty?: boolean;
     not_blank?: boolean;
@@ -17,4 +19,4 @@ export interface IMetaInfo {
   dont_validate?: boolean;
   oneof?: (string | number | boolean)[];
 }
-export type IMetas<T> = Readonly<Record<keyof T, Readonly<IMetaInfo>>>
+

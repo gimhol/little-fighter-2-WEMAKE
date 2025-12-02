@@ -1,84 +1,76 @@
 {
-  "name": "页面：对战模式",
-  "id": "vs_mode_page",
-  "component": [
-    "SummaryLogic()",
-    "VsModeLogic()"
-  ],
-  "key_press_actions": [
-    [
-      "escape",
-      "set_ui(entry)"
-    ]
-  ],
-  "items": [
+  name: "页面：对战模式",
+  id: "vs_mode_page",
+  component: ["SummaryLogic()", "VsModeLogic()"],
+  key_press_actions: [["escape", "set_ui(entry)"]],
+  items: [
+    "ui/fighter_stat_s_x8.ui.json5",
     {
-      id: "fighter_stat_1",
+      id: "_1v1_fighter_stat_1",
       template: "ui/fighter_stat_l.ui.json5",
+      visible: false,
+      disabled: true,
       component: [
         {
           name: "Alignment",
           properties: {
-            left: "left", top: "top",
-            offset: { t: 24, l: 24 }
-          }
-        }
-      ]
+            left: "left",
+            top: "top",
+            offset: { t: 24, l: 24 },
+          },
+        },
+      ],
     },
     {
-      id: "fighter_stat_2",
+      id: "_1v1_fighter_stat_2",
       template: "ui/fighter_stat_r.ui.json5",
+      visible: false,
+      disabled: true,
       component: [
         {
           name: "Alignment",
           properties: {
-            right: "right", top: "top",
-            offset: { t: 24, r: -24 }
-          }
-        }
-      ]
+            right: "right",
+            top: "top",
+            offset: { t: 24, r: -24 },
+          },
+        },
+      ],
     },
     {
-      "pos": "0,0,5",
-      "visible": false,
-      "template": "ui/player_keys_hints.ui.json5"
+      pos: "0,0,5",
+      visible: false,
+      template: "ui/player_keys_hints.ui.json5",
     },
     "ui/center_pause_label.ui.json5",
     {
-      "pos": "397,0",
-      "center": "0.5,0",
-      "component": [
-        "StageTitleText()"
-      ]
+      pos: "397,0",
+      center: "0.5,0",
+      component: ["StageTitleText()"],
     },
     {
-      "pos": "794,450",
-      "center": "1,1",
-      "component": [
-        "PrefixAndDifficultyText(VS mode)"
-      ]
+      pos: "794,450",
+      center: "1,1",
+      component: ["PrefixAndDifficultyText(VS mode)"],
     },
     {
-      "id": "left_info_frame_1",
-      "visible": false,
-      "pos": "0,0",
-      "template": "ui/left_info_frame.ui.json5"
+      id: "left_info_frame_1",
+      visible: false,
+      pos: "0,0",
+      template: "ui/left_info_frame.ui.json5",
     },
     {
-      "id": "left_info_frame_5",
-      "visible": false,
-      "pos": "0,45",
-      "template": "ui/left_info_frame.ui.json5"
+      id: "left_info_frame_5",
+      visible: false,
+      pos: "0,45",
+      template: "ui/left_info_frame.ui.json5",
     },
     {
-      "template": "ui/score_board.ui.json5",
-      "visible": false
-    }
+      template: "ui/score_board.ui.json5",
+      visible: false,
+    },
   ],
-  "actions": {
-    "stop": [
-      "remove_all_entities()",
-      "destory_stage()"
-    ]
-  }
+  actions: {
+    stop: ["remove_all_entities()", "destory_stage()"],
+  },
 }

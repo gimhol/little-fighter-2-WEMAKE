@@ -1,5 +1,4 @@
-import type { IMetas } from "../defines/IMetaInfo";
-
+import { make_schema } from "../utils/schema";
 export interface IUIImgInfo {
   path: string;
   x?: number;
@@ -22,25 +21,29 @@ export interface IUIImgInfo {
   flip_x?: 0 | 1;
   flip_y?: 0 | 1;
 }
-export const Meta_IUIImgInfo: IMetas<IUIImgInfo> = {
-  path: { name: 'path', type: 'string', string: { not_blank: true } },
-  x: { name: 'x', type: 'number', number: { int: true, nagetive: false }, nullable: true },
-  y: { name: 'y', type: 'number', number: { int: true, nagetive: false }, nullable: true },
-  w: { name: 'w', type: 'number', number: { int: true, positive: true }, nullable: true },
-  h: { name: 'h', type: 'number', number: { int: true, positive: true }, nullable: true },
-  dw: { name: 'dw', type: 'number', number: { int: true, positive: true }, nullable: true },
-  dh: { name: 'dh', type: 'number', number: { int: true, positive: true }, nullable: true },
-  col: { name: 'col', type: 'number', number: { int: true, positive: true }, nullable: true },
-  row: { name: 'row', type: 'number', number: { int: true, positive: true }, nullable: true },
-  count: { name: 'count', type: 'number', number: { int: true, positive: true }, nullable: true },
-  wrapS: { name: 'wrapS', type: 'number', nullable: true },
-  wrapT: { name: 'wrapT', type: 'number', nullable: true },
-  offsetX: { name: 'offsetX', type: 'number', nullable: true },
-  offsetY: { name: 'offsetY', type: 'number', nullable: true },
-  offsetAnimX: { name: 'offsetAnimX', type: 'number', nullable: true },
-  offsetAnimY: { name: 'offsetAnimY', type: 'number', nullable: true },
-  repeatX: { name: 'repeatX', type: 'number', nullable: true },
-  repeatY: { name: 'repeatY', type: 'number', nullable: true },
-  flip_x: { name: 'flip_x', type: 'number', oneof: [0, 1], nullable: true },
-  flip_y: { name: 'flip_y', type: 'number', oneof: [0, 1], nullable: true },
-}
+export const Schema_IUIImgInfo = make_schema<IUIImgInfo>({
+  key: "IUIImgInfo",
+  type: "object",
+  properties: {
+    path: { type: 'string', string: { not_blank: true } },
+    x: { type: 'number', number: { int: true, nagetive: false }, nullable: true },
+    y: { type: 'number', number: { int: true, nagetive: false }, nullable: true },
+    w: { type: 'number', number: { int: true, positive: true }, nullable: true },
+    h: { type: 'number', number: { int: true, positive: true }, nullable: true },
+    dw: { type: 'number', number: { int: true, positive: true }, nullable: true },
+    dh: { type: 'number', number: { int: true, positive: true }, nullable: true },
+    col: { type: 'number', number: { int: true, positive: true }, nullable: true },
+    row: { type: 'number', number: { int: true, positive: true }, nullable: true },
+    count: { type: 'number', number: { int: true, positive: true }, nullable: true },
+    wrapS: { type: 'number', nullable: true },
+    wrapT: { type: 'number', nullable: true },
+    offsetX: { type: 'number', nullable: true },
+    offsetY: { type: 'number', nullable: true },
+    offsetAnimX: { type: 'number', nullable: true },
+    offsetAnimY: { type: 'number', nullable: true },
+    repeatX: { type: 'number', nullable: true },
+    repeatY: { type: 'number', nullable: true },
+    flip_x: { type: 'number', oneof: [0, 1], nullable: true },
+    flip_y: { type: 'number', oneof: [0, 1], nullable: true },
+  },
+})
