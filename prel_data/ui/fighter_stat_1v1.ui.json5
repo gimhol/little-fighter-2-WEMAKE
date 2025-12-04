@@ -8,7 +8,8 @@
       properties: {
         left: "left",
         top: "top",
-        right: "right"
+        right: "right",
+        once: true,
       },
     },
   ],
@@ -25,6 +26,7 @@
             left: "left",
             top: "top",
             offset: { t: 30, l: 24 },
+            once: true,
           },
         },
       ],
@@ -41,6 +43,7 @@
             right: "right",
             top: "top",
             offset: { t: 30, r: -24 },
+            once: true,
           },
         },
       ],

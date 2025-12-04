@@ -48,6 +48,8 @@ export class UINode implements IDebugging {
   protected _pointer_down: 0 | 1 = 0;
   protected _click_flag: 0 | 1 = 0;
   protected _update_times = new Times(0, Number.MAX_SAFE_INTEGER);
+  protected _components_updating: boolean = false;
+  protected _del_components: UIComponent[] = [];
 
   get callbacks() {
     return this._callbacks;
@@ -436,6 +438,10 @@ export class UINode implements IDebugging {
     }
   }
   del_components(...components: UIComponent[]) {
+    if (this._components_updating) {
+      this._del_components.push(...components)
+      return;
+    }
     for (const component of components) {
       if (!this._components.has(component))
         continue;
@@ -533,7 +539,14 @@ export class UINode implements IDebugging {
   update(dt: number) {
     this._update_times.add();
     for (const i of this.children) if (i.enabled) i.update(dt);
+
+    this._components_updating = true;
     for (const c of this._components) if (c.enabled) c.update?.(dt);
+    this._components_updating = false;
+    if (this._del_components.length) {
+      this.del_components(...this._del_components);
+      this._del_components.length = 0;
+    }
   }
 
   on_key_down(e: IUIKeyEvent) {

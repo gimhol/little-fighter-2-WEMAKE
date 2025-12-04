@@ -32,6 +32,7 @@ export class Alignment extends UIComponent {
   readonly followed: IFolloweds = {};
   readonly align: IAligns = {}
   readonly offset: Offsets = new Offsets
+  protected once: boolean = false;
   override on_start(): void {
     const { followed, offset } = this.props.raw;
     this.followed.l = this.find_node((typeof followed === 'string' ? followed : followed?.l) ?? "parent")
@@ -43,6 +44,7 @@ export class Alignment extends UIComponent {
     this.align.r = this.props.str("right")
     this.align.t = this.props.str("top")
     this.align.b = this.props.str("bottom")
+    this.once = !!this.props.bool("once");
 
     this.offset.l = Number(offset?.l) || 0
     this.offset.r = Number(offset?.r) || 0
@@ -122,5 +124,6 @@ export class Alignment extends UIComponent {
     }
     follower.global_pos = [x, y, z];
     follower.size.value = [w, h];
+    if (this.once) this.node.del_components(this);
   }
 }
