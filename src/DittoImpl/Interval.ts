@@ -1,4 +1,4 @@
-import type { ITimeout } from "../LF2/ditto";
+import type { ITimeout } from "../LF2/ditto/ITimeout";
 
 export const __Interval: ITimeout = {
   add(handler: () => void, timeout?: number, ...args: any[]) {
