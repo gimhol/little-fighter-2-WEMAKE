@@ -1,7 +1,7 @@
-import { IPicture } from "../defines";
-import { MagnificationTextureFilter } from "../defines/MagnificationTextureFilter";
-import { MinificationTextureFilter } from "../defines/MinificationTextureFilter";
-import { TextureWrapping } from "../defines/TextureWrapping";
+import { IPicture } from "../../defines/IPicture";
+import { MagnificationTextureFilter } from "../../defines/MagnificationTextureFilter";
+import { MinificationTextureFilter } from "../../defines/MinificationTextureFilter";
+import { TextureWrapping } from "../../defines/TextureWrapping";
 import { IImageInfo } from "./IImageInfo";
 
 export class ImageInfo<T = any> implements IImageInfo {

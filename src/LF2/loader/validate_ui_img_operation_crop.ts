@@ -1,5 +1,5 @@
 import { is_non_nagative_int, is_positive_int } from "../utils";
-import { IImageOp_Crop } from "./IImageOp_Crop";
+import { IImageOp_Crop } from "../ditto/image/IImageOp_Crop";
 
 export function validate_ui_img_operation_crop(any: any, errors: string[] = []): any is IImageOp_Crop {
   const fn = 'validate_ui_img_operation_crop';

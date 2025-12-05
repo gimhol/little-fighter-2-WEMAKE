@@ -1,5 +1,5 @@
-import { ImageInfo } from "../loader/ImageInfo";
-import { TextInfo } from "../loader/TextInfo";
+import { ImageInfo } from "../ditto/image/ImageInfo";
+import { TextInfo } from "../ditto/image/TextInfo";
 import { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo } from "./IUIInfo.dat";
 import { ICookedUITxtInfo } from "./IUITxtInfo.dat";

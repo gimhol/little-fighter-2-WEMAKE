@@ -1,7 +1,7 @@
 import type { IBgData } from "../defines";
 import type { LF2 } from "../LF2";
 import { is_non_blank_str } from "../utils/type_check/is_str";
-import type { ImageInfo } from "./ImageInfo";
+import type { ImageInfo } from "../ditto/image/ImageInfo";
 
 export function preprocess_bg_data(lf2: LF2, data: IBgData, jobs: Promise<ImageInfo>[]): IBgData {
   const { layers, base: { shadow } } = data;

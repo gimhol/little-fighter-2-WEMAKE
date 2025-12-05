@@ -1,7 +1,7 @@
-import type { IPicture } from "../defines/IPicture";
-import type { MagnificationTextureFilter } from "../defines/MagnificationTextureFilter";
-import type { MinificationTextureFilter } from "../defines/MinificationTextureFilter";
-import type { TextureWrapping } from "../defines/TextureWrapping";
+import type { IPicture } from "../../defines/IPicture";
+import type { MagnificationTextureFilter } from "../../defines/MagnificationTextureFilter";
+import type { MinificationTextureFilter } from "../../defines/MinificationTextureFilter";
+import type { TextureWrapping } from "../../defines/TextureWrapping";
 
 export interface IImageInfo {
   key: string;

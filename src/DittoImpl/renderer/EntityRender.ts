@@ -6,7 +6,8 @@ import { clamp, floor, PI } from "@/LF2/utils";
 import * as T from "../_t";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
-import type { ImageMgr, RImageInfo } from "../ImageMgr";
+import type { ImageMgr } from "../ImageMgr";
+import type { RImageInfo } from "../RImageInfo";
 function get_img_map(lf2: LF2, data: TData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;

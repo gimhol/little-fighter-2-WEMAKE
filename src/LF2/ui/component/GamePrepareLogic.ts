@@ -3,7 +3,7 @@ import FSM, { IState } from "../../base/FSM";
 import Invoker from "../../base/Invoker";
 import LocalController from "../../controller/LocalController";
 import { EntityGroup, FacingFlag } from "../../defines";
-import { Defines, TFace } from "../../defines/defines";
+import { Defines } from "../../defines/defines";
 import { Entity } from "../../entity/Entity";
 import { Factory } from "../../entity/Factory";
 import { ceil, max } from "../../utils";
@@ -11,7 +11,7 @@ import { map_no_void } from "../../utils/container_help/map_no_void";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { BackgroundNameText } from "./BackgroundNameText";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
-import { SlotSelStatus, SlotSelLogic } from "./SlotSelLogic";
+import { SlotSelLogic, SlotSelStatus } from "./SlotSelLogic";
 import { StageNameText } from "./StageNameText";
 import { UIComponent } from "./UIComponent";
 

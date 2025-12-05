@@ -1,7 +1,8 @@
 /*** AUTO EXPORT START ***/
 export * from "./cache";
 export * from "./fullscreen";
-export * from "./IImageMgr";
+export * from "./image";
+export * from "./image/IImageMgr";
 export * from "./importer";
 export * from "./Instance";
 export * from "./IRender";

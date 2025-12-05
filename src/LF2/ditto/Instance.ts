@@ -4,7 +4,7 @@ import type { UINode } from "../ui";
 import type { World } from "../World";
 import type { ICache } from "./cache";
 import type { IFullScreen } from "./fullscreen";
-import type { IImageMgr } from "./IImageMgr";
+import type { IImageMgr } from "./image/IImageMgr";
 import type { IImporter } from "./importer";
 import { BaseImporter } from "./importer";
 import type { IRender } from "./IRender";

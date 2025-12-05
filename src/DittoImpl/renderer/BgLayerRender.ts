@@ -1,5 +1,5 @@
 import type Layer from "@/LF2/bg/Layer";
-import { ImageInfo } from "@/LF2/loader/ImageInfo";
+import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import * as T from "../_t";
 
 export class BgLayerRender {

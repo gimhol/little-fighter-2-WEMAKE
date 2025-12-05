@@ -2,7 +2,7 @@ import * as T from "three";
 import { MagnificationTextureFilter } from "@/LF2/defines/MagnificationTextureFilter";
 import { MinificationTextureFilter } from "@/LF2/defines/MinificationTextureFilter";
 import { TextureWrapping } from "@/LF2/defines/TextureWrapping";
-import { IImageInfo } from "@/LF2/loader/IImageInfo";
+import { IImageInfo } from "@/LF2/ditto/image/IImageInfo";
 import { err_pic_info, texture_loader } from "@/DittoImpl/ImageMgr";
 import { IPicture } from "@/LF2/defines";
 

@@ -1,5 +1,5 @@
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
-import { ImageInfo } from "@/LF2/loader/ImageInfo";
+import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import { TextInput } from "@/LF2/ui/component/TextInput";
 import { IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";

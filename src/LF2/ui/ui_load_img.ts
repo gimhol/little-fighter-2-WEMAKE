@@ -1,8 +1,8 @@
 import { Ditto } from "../ditto";
-import { ImageOperation } from "../ditto/IImageMgr";
+import { ImageOperation } from "../ditto/image/IImageMgr";
 import { LF2 } from "../LF2";
-import { IImageOp_Crop } from "../loader/IImageOp_Crop";
-import { IImageOp_Flip } from "../loader/IImageOp_Flip";
+import { IImageOp_Crop } from "../ditto/image/IImageOp_Crop";
+import { IImageOp_Flip } from "../ditto/image/IImageOp_Flip";
 import { flat_ui_img_info } from "./cook_ui_info";
 import { IUIImgInfo } from "./IUIImgInfo.dat";
 

@@ -1,13 +1,10 @@
-import { IImageInfo } from "@/LF2/loader/IImageInfo";
-import type { LF2 } from "../LF2/LF2";
 import AsyncValuesKeeper from "../LF2/base/AsyncValuesKeeper";
 import { ILegacyPictureInfo } from "../LF2/defines/ILegacyPictureInfo";
 import type IPicture from "../LF2/defines/IPicture";
 import { IPictureInfo } from "../LF2/defines/IPictureInfo";
 import type { IStyle } from "../LF2/defines/IStyle";
-import { IImageMgr, ImageOperation } from "../LF2/ditto/IImageMgr";
-import { ImageInfo } from "../LF2/loader/ImageInfo";
-import { TextInfo } from "../LF2/loader/TextInfo";
+import { IImageMgr, ImageOperation } from "../LF2/ditto/image/IImageMgr";
+import type { LF2 } from "../LF2/LF2";
 import { validate_ui_img_operation_crop } from "../LF2/loader/validate_ui_img_operation_crop";
 import { get_alpha_from_color } from "../LF2/ui/utils/get_alpha_from_color";
 import { is_positive_int, max, round } from "../LF2/utils";
@@ -17,22 +14,8 @@ import * as T from "./_t";
 import { md5 } from "./md5";
 import { p_create_picture } from "./renderer/create_picture";
 import { error_texture } from "./renderer/error_texture";
-export class RImageInfo extends ImageInfo<T.Texture> {
-  constructor(o: Partial<IImageInfo>) {
-    super(o);
-    if (this.pic?.texture)
-      this.pic.texture = this.pic.texture.clone();
-  }
-  override merge(o: Partial<IImageInfo>): this {
-    super.merge(o)
-    if (this.pic?.texture)
-      this.pic.texture = this.pic.texture.clone();
-    return this;
-  }
-  override clone(): RImageInfo {
-    return new RImageInfo(this)
-  }
-}
+import { RImageInfo } from "./RImageInfo";
+import { RTextInfo } from "./RTextInfo";
 export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
@@ -100,7 +83,7 @@ export class ImageMgr implements IImageMgr {
     return ret;
   }
 
-  private async create_txt_info(key: string, text: string, style: IStyle = {}): Promise<TextInfo> {
+  private async create_txt_info(key: string, text: string, style: IStyle = {}): Promise<RTextInfo> {
     const cvs = document.createElement("canvas");
     const ctx = cvs.getContext("2d");
     if (!ctx) throw new Error("can not get context from canvas");
@@ -146,7 +129,7 @@ export class ImageMgr implements IImageMgr {
       throw err
     });
     const url = URL.createObjectURL(blob);
-    const ret = new TextInfo().merge({
+    const ret = new RTextInfo().merge({
       key,
       url,
       scale,
@@ -175,14 +158,14 @@ export class ImageMgr implements IImageMgr {
     return this.infos.get(key);
   }
 
-  load_text(text: string, style: IStyle = {}): Promise<TextInfo> {
+  load_text(text: string, style: IStyle = {}): Promise<RTextInfo> {
     const key = md5(text, JSON.stringify(style));
     const fn = async () => {
       const info = await this.create_txt_info(key, text, style)
       info.pic = await p_create_picture(info, err_pic_info(info.key));
       return info;
     };
-    return this.infos.fetch(key, fn) as Promise<TextInfo>;
+    return this.infos.fetch(key, fn) as Promise<RTextInfo>;
   }
 
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {

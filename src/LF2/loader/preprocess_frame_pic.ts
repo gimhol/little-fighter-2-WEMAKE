@@ -2,7 +2,7 @@ import { IEntityData, IFrameInfo, IFramePictureInfo, ITexturePieceInfo } from ".
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { find } from "../utils";
-import { ImageInfo } from "./ImageInfo";
+import { ImageInfo } from "../ditto/image/ImageInfo";
 
 const cache_key = (a: IFramePictureInfo, b: ImageInfo): string => {
   return [a.tex, a.x, a.y, a.w, a.h, b.w, b.h, b.scale].join();

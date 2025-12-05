@@ -1,5 +1,5 @@
 import { LF2 } from "../LF2";
-import { ITextInfo } from "../loader/ITextInfo";
+import { ITextInfo } from "../ditto/image/ITextInfo";
 import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 export async function ui_load_txt(lf2: LF2, txt: ICookedUITxtInfo | ICookedUITxtInfo[], out: ITextInfo[] = []) {
   const txts = Array.isArray(txt) ? txt : [txt];
