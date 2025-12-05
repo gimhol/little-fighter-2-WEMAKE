@@ -6,11 +6,9 @@ import type { World } from "@/LF2/World";
 import { Camera, OrthographicCamera } from "../_t";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
-import { EntityInfoRender } from "./EntityInfoRender";
-import { EntityRender } from "./EntityRender";
-import EntityShadowRender from "./EntityShadowRender";
+import { EntityStatRender } from "./EntityStatRender";
+import { EntityRenderPack } from "./EntityRenderPack";
 import { FrameIndicators } from "./FrameIndicators";
-
 
 export class WorldRenderer implements IWorldRenderer {
   lf2: LF2;
@@ -18,12 +16,7 @@ export class WorldRenderer implements IWorldRenderer {
   bg_render: BgRender;
   scene: Scene;
   camera: Camera;
-  entity_renderer_packs = new Map<Entity, [
-    EntityRender,
-    EntityShadowRender | null,
-    EntityInfoRender | null,
-    FrameIndicators | null
-  ]>();
+  entity_renderer_packs = new Map<Entity, EntityRenderPack>();
 
   private _indicator_flags: number = 0;
   get indicator_flags() {
@@ -32,13 +25,13 @@ export class WorldRenderer implements IWorldRenderer {
   set indicator_flags(v: number) {
     if (this._indicator_flags === v) return;
     this._indicator_flags = v;
-    for (const [, packs] of this.entity_renderer_packs) {
+    for (const [, pack] of this.entity_renderer_packs) {
       if (v) {
-        if (!packs[3]) packs[3] = new FrameIndicators(packs[0].entity)
-        packs[3].flags = v;
+        if (!pack.indi) pack.indi = new FrameIndicators(pack.entity)
+        pack.indi.flags = v;
       } else {
-        if (packs[3]) packs[3].on_unmount();
-        packs[3] = null;
+        if (pack.indi) pack.indi.on_unmount();
+        pack.indi = void 0;
       }
     }
   }
@@ -93,41 +86,25 @@ export class WorldRenderer implements IWorldRenderer {
 
   }
   add_entity(entity: Entity): void {
-    const entity_renderer = new EntityRender(entity);
-    entity_renderer.on_mount();
 
-    let info_renderer: EntityInfoRender | null = null
-    let shadow_renderer: EntityShadowRender | null = null
-    let frame_indicators: FrameIndicators | null = null
-
+    const pack = new EntityRenderPack(entity);
+  
     // Criminal...?
     if (is_character(entity) || entity.data.id === BuiltIn_OID.Criminal) {
-
-      info_renderer = new EntityInfoRender(entity, this);
-      info_renderer.on_mount()
+      pack.stat = new EntityStatRender(entity, this);
     }
-
     if (this.indicator_flags) {
-      frame_indicators = new FrameIndicators(entity);
-      frame_indicators.flags = this.indicator_flags
-      frame_indicators.on_mount()
+      pack.indi = new FrameIndicators(entity);
+      pack.indi.flags = this.indicator_flags
     }
-
-    shadow_renderer = new EntityShadowRender(entity);
-    shadow_renderer.on_mount()
-    this.entity_renderer_packs.set(entity, [
-      entity_renderer, shadow_renderer, info_renderer, frame_indicators
-    ]);
+    pack.mount();
+    this.entity_renderer_packs.set(entity, pack)
   }
 
   del_entity(e: Entity): void {
     const pack = this.entity_renderer_packs.get(e);
     if (!pack) return;
-    const [r1, r2, r3, r4] = pack
-    r1.on_unmount();
-    r2?.on_unmount();
-    r3?.on_unmount();
-    r4?.on_unmount();
+    pack.unmount();
     this.entity_renderer_packs.delete(e);
   }
 
@@ -136,11 +113,8 @@ export class WorldRenderer implements IWorldRenderer {
     if (indicator_flags != this.indicator_flags)
       this.indicator_flags = indicator_flags;
     this.bg_render.render();
-    for (const [, [r1, r2, r3, r4]] of this.entity_renderer_packs) {
-      r1.render(dt);
-      r2?.render();
-      r3?.render();
-      r4?.render();
+    for (const [, pack] of this.entity_renderer_packs) {
+      pack.render(dt)
     }
     this.lf2.ui?.renderer.render(dt)
     this.scene.render();

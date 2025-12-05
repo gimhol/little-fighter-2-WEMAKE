@@ -37,7 +37,7 @@ export function get_color_material(color: T.ColorRepresentation) {
     );
   return ret;
 }
-export class EntityInfoRender implements IEntityCallbacks {
+export class EntityStatRender implements IEntityCallbacks {
   readonly renderer_type: string = "Info";
   protected reserve_node: T.Sprite;
   protected name_node: T.Sprite;
@@ -77,7 +77,7 @@ export class EntityInfoRender implements IEntityCallbacks {
     ])
 
     this.name_node = new T.Sprite();
-    this.name_node.name = EntityInfoRender.name;
+    this.name_node.name = EntityStatRender.name;
     this.name_node.renderOrder = 0;
     this.reserve_node = new T.Sprite();
 

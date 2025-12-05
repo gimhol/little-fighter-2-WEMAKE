@@ -1,6 +1,6 @@
 import type { LF2 } from "@/LF2/LF2";
 import * as T from "../_t";
-import { get_bar_geo, get_color_material } from "./EntityInfoRender";
+import { get_bar_geo, get_color_material } from "./EntityStatRender";
 
 export class Bar {
   readonly mesh: T.Mesh;
