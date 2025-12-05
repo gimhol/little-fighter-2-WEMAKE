@@ -56,12 +56,9 @@ export class VsModeLogic extends UIComponent {
     const stat_bars = this.node.search_components(FighterStatBar)
 
     let player_count = 0;
-    let teams = new Set();
     for (const [, f] of this.lf2.slot_fighters) {
-      if (f) {
-        teams.add(f.team);
-        ++player_count
-      }
+      if (f) ++player_count
+      
     }
     for (let i = 0; i < stat_bars.length; i++) {
       const stat_bar = stat_bars[i];

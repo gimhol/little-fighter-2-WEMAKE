@@ -538,7 +538,6 @@ export class UINode implements IDebugging {
 
   update(dt: number) {
     this._update_times.add();
-    for (const i of this.children) if (i.enabled) i.update(dt);
 
     this._components_updating = true;
     for (const c of this._components) if (c.enabled) c.update?.(dt);
@@ -547,6 +546,8 @@ export class UINode implements IDebugging {
       this.del_components(...this._del_components);
       this._del_components.length = 0;
     }
+
+    for (const i of this.children) if (i.enabled) i.update(dt);
   }
 
   on_key_down(e: IUIKeyEvent) {
