@@ -9,6 +9,7 @@ import { traversal } from "../../utils/container_help/traversal";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
 import { Times } from "../utils/Times";
+import { FighterStatBar } from "./FighterStatBar";
 import { Jalousie } from "./Jalousie";
 import { OpacityAnimation } from "./OpacityAnimation";
 import { Sounds } from "./Sounds";
@@ -110,6 +111,33 @@ export class StageModeLogic extends UIComponent {
     for (const [, f] of this.world.slot_fighters) {
       this.world_callbacks.on_fighter_add?.(f)
     }
+
+    const stat_bars = this.node.search_components(FighterStatBar)
+    let player_count = 0;
+    let teams = new Set();
+    for (const [, f] of this.lf2.slot_fighters) {
+      if (f) {
+        teams.add(f.team);
+        ++player_count
+      }
+    }
+    
+    for (let i = 0; i < stat_bars.length; i++) {
+      const stat_bar = stat_bars[i];
+      const enabled = player_count >= Number(stat_bar.node.id?.match(/p(\d)_stat/)?.[1]);
+      stat_bar.node.visible = enabled;
+      stat_bar.node.disabled = !enabled;
+      if (enabled) continue;
+      stat_bars.splice(i, 1);
+      --i;
+    }
+
+    for (const [, fighter] of this.lf2.slot_fighters) {
+      if (!fighter) continue;
+      const stat_bar = stat_bars.shift()
+      if (!stat_bar) break;
+      stat_bar.set_entity(fighter)
+    }
   }
   override on_stop(): void {
     this.lf2.change_bg(Defines.VOID_BG)
@@ -142,7 +170,7 @@ export class StageModeLogic extends UIComponent {
     switch (e.game_key) {
       case GameKey.a:
       case GameKey.j: {
-        if (this.world.stage.is_chapter_finish) { 
+        if (this.world.stage.is_chapter_finish) {
           e.stop_immediate_propagation();
           this.lf2.goto_next_stage();
         } else if (this.state == 2) {
