@@ -166,6 +166,25 @@ function App() {
 
   useEffect(() => {
     const lf2 = ref_lf2.current = new LF2();
+
+    (window as any).LF2 = LF2;
+
+    function print_ui_tree(node = LF2.ui) {
+      console.group('id: ' + node?.id + ', name: ' + node?.name);
+      console.log("node:      ", node);
+      if (node?.components.size)
+        console.log("components:", Array.from(node?.components));
+      if (node?.children.length)
+        for (const child of node?.children)
+          print_ui_tree(child)
+      console.groupEnd();
+    };
+
+    Object.defineProperty(window, 'ui_tree', {
+      get() { print_ui_tree() },
+      configurable: true
+    })
+
     lf2.load("prel.zip.json").catch(LF2.IgnoreDisposed);
 
     let lang =

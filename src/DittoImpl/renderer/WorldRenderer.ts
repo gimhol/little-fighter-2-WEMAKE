@@ -81,7 +81,7 @@ export class WorldRenderer implements IWorldRenderer {
       // camera.position.set(0, 0, 10)
       // camera.name = "default_orthographic_camera"
       // this.scene.add_camera(camera);
-      // camera.updateProjectionMatrix();
+      // camera.updateProjectionMatrix(); 
     }
 
   }

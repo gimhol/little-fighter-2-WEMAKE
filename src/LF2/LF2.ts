@@ -500,13 +500,13 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   goto_next_stage() {
     const next = this.world.stage.data.next;
-    if (!next) { 
-      this.pop_ui(); 
-      return; 
+    if (!next) {
+      this.pop_ui();
+      return;
     }
     if (next === 'end') {
       this.set_ui("ending_page")
-      return; 
+      return;
     }
     const next_stage = this.stages?.find((v) => v.id === next);
     if (!next_stage) {
@@ -661,4 +661,3 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return this._mt.int();
   }
 }
-(window as any).LF2 = LF2;
