@@ -8,7 +8,10 @@ export default class CharacterState_Lying extends CharacterState_Base {
     super(state)
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
+    e.ctrl.reset_key_list();
     e.drop_holding();
+    e.toughness = e.toughness_max;
+    e.toughness_resting = 0;
     if (e.hp <= 0) this.on_dead(e)
   }
   override leave(e: Entity, next_frame: IFrameInfo): void {
