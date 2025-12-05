@@ -7,6 +7,7 @@ export class CharacterState_Caught extends CharacterState_Base {
     super(state)
   }
   override enter(e: Entity): void {
+    e.ctrl.reset_key_list();
     e.fall_value = e.fall_value_max;
     e.velocities.length = 1;
     e.velocity_0.set(0, 0, 0);

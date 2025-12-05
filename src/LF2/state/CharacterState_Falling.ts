@@ -11,6 +11,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
     super(state)
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
+    e.ctrl.reset_key_list();
     if (!this._bouncing_frames_map.has(e.data.id) && e.data.indexes?.bouncing) {
       this._bouncing_frames_map.set(
         e.data.id,

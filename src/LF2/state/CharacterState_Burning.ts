@@ -9,6 +9,10 @@ export default class CharacterState_Burning extends CharacterState_Base {
   constructor() {
     super(StateEnum.Burning)
   }
+  override enter(e: Entity, prev_frame: IFrameInfo): void {
+    super.update(e);
+    e.ctrl.reset_key_list();
+  }
   override update(e: Entity): void {
     super.update(e);
     const vx = e.velocity.x

@@ -7,6 +7,9 @@ export default class CharacterState_Frozen extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Frozen) {
     super(state)
   }
+  override enter(e: Entity, prev_frame: IFrameInfo): void {
+    e.ctrl.reset_key_list();
+  }
   override leave(e: Entity, next_frame: IFrameInfo): void {
     e.play_sound(["data/066.wav.mp3"]);
     if (e.data.indexes?.ice !== next_frame.id) {
