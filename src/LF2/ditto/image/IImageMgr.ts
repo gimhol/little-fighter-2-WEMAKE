@@ -1,3 +1,4 @@
+import { IPictureInfo } from "@/LF2/defines/IPictureInfo";
 import type { ILegacyPictureInfo } from "../../defines/ILegacyPictureInfo";
 import type { IStyle } from "../../defines/IStyle";
 import type { IImageOp_Crop } from "./IImageOp_Crop";
@@ -12,6 +13,6 @@ export interface IImageMgr {
   del(key: string): void;
   load_text(text: string, style?: IStyle): Promise<TextInfo>;
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo>;
-  load_by_pic_info(f: ILegacyPictureInfo): Promise<ImageInfo>;
-  find_by_pic_info(f: ILegacyPictureInfo): ImageInfo | undefined;
+  load_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): Promise<ImageInfo>;
+  find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): ImageInfo | undefined;
 }
