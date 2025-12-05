@@ -10,6 +10,7 @@
       template: "ui/player_keys_hints.ui.json5",
     },
     "ui/center_pause_label.ui.json5",
+    "ui/fighter_stat_s_x8.ui.json5",
     {
       visible: "paused!=1",
       txt: {

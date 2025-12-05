@@ -10,6 +10,7 @@ import { UINode } from "../UINode";
 import { UITextLoader } from "../UITextLoader";
 import { CameraCtrl } from "./CameraCtrl";
 import { UIComponent } from "./UIComponent";
+import { FighterStatBar } from "./FighterStatBar";
 
 export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   static override readonly TAG = 'DemoModeLogic'
@@ -105,6 +106,24 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       character.position.x = this.lf2.random_in(left, right);
       character.blinking = this.world.begin_blink_time;
       character.attach();
+    }
+
+    const stat_bars = this.node.search_components(FighterStatBar)
+    for (let i = 0; i < stat_bars.length; i++) {
+      const stat_bar = stat_bars[i];
+      const enabled = player_count >= Number(stat_bar.node.id?.match(/p(\d)_stat/)?.[1]);
+      stat_bar.node.visible = enabled;
+      stat_bar.node.disabled = !enabled;
+      if (enabled) continue;
+      stat_bars.splice(i, 1);
+      --i;
+    }
+
+    for (const [, fighter] of this.lf2.slot_fighters) {
+      if (!fighter) continue;
+      const stat_bar = stat_bars.shift()
+      if (!stat_bar) break;
+      stat_bar.set_entity(fighter)
     }
   }
   override on_stop(): void {
