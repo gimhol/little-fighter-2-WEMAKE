@@ -612,9 +612,10 @@ export class Entity {
   set chasing(e: Entity | null) { this._chasing = e || null; }
 
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
-    this.init(world, data, states)
+    this.reset(world, data, states)
   }
-  init(world: World, data: IEntityData, states: States = ENTITY_STATES) {
+
+  reset(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.world = world;
     this.id = new_id();
     this.wait = 0;
@@ -719,6 +720,7 @@ export class Entity {
 
 
   }
+
   set_holder(v: Entity | null): this {
     if (this._holder === v) return this;
     const old = this._holder;
@@ -1823,6 +1825,7 @@ export class Entity {
     this.ctrl.dispose();
     this.callbacks.emit("on_disposed")(this);
     this.callbacks.clear()
+    this.reset(this.world, this.data, this.states);
   }
 
   /**
@@ -2100,7 +2103,7 @@ const common_creator: ICreator<Entity, typeof Entity> = (...args) => {
   const type = args[1].type;
   let ret = Factory.inst.acquire(type)
   if (!ret) ret = new Entity(...args)
-  else ret.init(...args)
+  else ret.reset(...args)
   return ret
 }
 Factory.inst.set_entity_creator(EntityEnum.Ball, common_creator);
