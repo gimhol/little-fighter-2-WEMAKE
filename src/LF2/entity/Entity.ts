@@ -521,7 +521,7 @@ export class Entity {
     this.callbacks.emit("on_team_changed")(this, v, o);
   }
 
-  get emitter() {
+  get emitter(): Entity | null {
     return this._emitter;
   }
 

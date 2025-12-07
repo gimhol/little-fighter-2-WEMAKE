@@ -401,6 +401,8 @@ export class World extends WorldDataset {
   update_once() {
     if (this._time === Number.MAX_SAFE_INTEGER) this._time = 0;
     else ++this._time;
+    const { size } = this.entities
+    if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
     for (const e of this.entities) {
       e.self_update();
 
