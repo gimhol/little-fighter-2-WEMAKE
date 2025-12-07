@@ -29,7 +29,7 @@ import { abs, clamp, find, floor, intersection, max, min, round } from "../utils
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_num, is_positive, is_str } from "../utils/type_check";
 import { DrinkInfo } from "./DrinkInfo";
-import { Factory } from "./Factory";
+import { Factory, ICreator } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
@@ -41,7 +41,7 @@ export interface IDeadJoin {
 }
 export class Entity {
   static readonly TAG: string = 'Entity';
-  readonly world: World;
+  world!: World;
   readonly position = new Ditto.Vector3(0, 0, 0);
   readonly doppelgangers = new Set<Entity>();
 
@@ -66,43 +66,43 @@ export class Entity {
   readonly victims = new Map<string, ICollision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
 
-  id: string;
-  wait: number;
+  id!: string;
+  wait!: number;
   readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
-  variant: number;
-  transform_datas: [IEntityData, IEntityData] | null;
-  protected _data: IEntityData;
-  protected _reserve: number;
-  protected _is_attach: boolean;
-  protected _is_incorporeity: boolean;
-  protected _landing_frame: IFrameInfo | null;
-  protected _hp_r_tick: Times;
-  protected _mp_r_tick: Times;
-  public drink: DrinkInfo | null;
-  public fuse_bys: Entity[] | null;
-  public dismiss_time: number | null;
-  public dismiss_data: IEntityData | null;
-  public has_stat_bar: boolean;
-  protected _resting: number;
-  protected _resting_max: number;
-  protected _toughness: number;
-  protected _toughness_max: number;
-  protected _toughness_resting: number;
-  protected _toughness_resting_max: number;
-  protected _fall_value: number;
-  protected _fall_value_max: number;
-  protected _defend_value: number;
-  protected _defend_value_max: number;
-  protected _healing: number;
-  protected _defend_ratio: number;
-  public throwinjury: number | null;
-  public facing: TFace;
-  public frame: IFrameInfo;
-  public next_frame: INextFrame | null;
-  protected _prev_frame: IFrameInfo;
-  protected _catching: Entity | null;
-  protected _catcher: Entity | null;
-  protected states: States;
+  variant!: number;
+  transform_datas!: [IEntityData, IEntityData] | null;
+  protected _data!: IEntityData;
+  protected _reserve!: number;
+  protected _is_attach!: boolean;
+  protected _is_incorporeity!: boolean;
+  protected _landing_frame!: IFrameInfo | null;
+  protected _hp_r_tick!: Times;
+  protected _mp_r_tick!: Times;
+  public drink!: DrinkInfo | null;
+  public fuse_bys!: Entity[] | null;
+  public dismiss_time!: number | null;
+  public dismiss_data!: IEntityData | null;
+  public has_stat_bar!: boolean;
+  protected _resting!: number;
+  protected _resting_max!: number;
+  protected _toughness!: number;
+  protected _toughness_max!: number;
+  protected _toughness_resting!: number;
+  protected _toughness_resting_max!: number;
+  protected _fall_value!: number;
+  protected _fall_value_max!: number;
+  protected _defend_value!: number;
+  protected _defend_value_max!: number;
+  protected _healing!: number;
+  protected _defend_ratio!: number;
+  public throwinjury!: number | null;
+  public facing!: TFace;
+  public frame!: IFrameInfo;
+  public next_frame!: INextFrame | null;
+  protected _prev_frame!: IFrameInfo;
+  protected _catching!: Entity | null;
+  protected _catcher!: Entity | null;
+  protected states!: States;
 
   /**
    * 实体名称
@@ -110,7 +110,7 @@ export class Entity {
    * @protected
    * @type {string}
    */
-  protected _name: string;
+  protected _name!: string;
 
   /**
    * 所属队伍
@@ -118,29 +118,29 @@ export class Entity {
    * @protected
    * @type {string}
    */
-  protected _team: string;
-  protected _mp: number;
-  protected _mp_max: number;
-  protected _hp: number;
-  protected _hp_r: number;
-  protected _hp_max: number;
-  protected _holder: Entity | null;
-  protected _holding: Entity | null;
-  protected _emitter: Entity | null;
-  protected _emitter_opoint: IOpointInfo | null;
+  protected _team!: string;
+  protected _mp!: number;
+  protected _mp_max!: number;
+  protected _hp!: number;
+  protected _hp_r!: number;
+  protected _hp_max!: number;
+  protected _holder!: Entity | null;
+  protected _holding!: Entity | null;
+  protected _emitter!: Entity | null;
+  protected _emitter_opoint!: IOpointInfo | null;
 
   /** 当前角色 */
-  public a_rest: number;
-  public motionless: number;
-  public shaking: number;
+  public a_rest!: number;
+  public motionless!: number;
+  public shaking!: number;
 
   /**
    * 抓人剩余值
    *
    * 当抓住一个被击晕的人时，此值充满。
    */
-  protected _catch_time: number;
-  protected _catch_time_max: number;
+  protected _catch_time!: number;
+  protected _catch_time_max!: number;
 
   /**
    * 隐身计数，每帧-1
@@ -148,7 +148,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _invisible_duration: number;
+  protected _invisible_duration!: number;
 
   /**
    * 无敌时间计数，每帧-1
@@ -156,7 +156,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _invulnerable_duration: number;
+  protected _invulnerable_duration!: number;
 
   /**
    * 闪烁计数，每帧-1
@@ -164,7 +164,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _blinking_duration: number;
+  protected _blinking_duration!: number;
 
   /**
    * 闪烁完毕后下一动作
@@ -172,7 +172,7 @@ export class Entity {
    * @protected
    * @type {string | TNextFrame}
    */
-  protected _after_blink: string | TNextFrame | null;
+  protected _after_blink!: string | TNextFrame | null;
 
   /**
    * 拾取物件总数
@@ -180,7 +180,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _picking_sum: number;
+  protected _picking_sum!: number;
 
   /**
    * 伤害总数
@@ -188,7 +188,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _damage_sum: number;
+  protected _damage_sum!: number;
 
   /**
    * 击杀总数
@@ -196,15 +196,15 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _kill_sum: number;
-  protected _state: State_Base | null;
-  protected _key_role: boolean | null;
-  protected _dead_gone: boolean | null;
-  protected _dead_join: IDeadJoin | null;
-  protected _ctrl: BaseController;
-  armor: Readonly<IArmorInfo> | null;
-  protected _opoints: [IOpointInfo, number][];
-  private prev_cpoint_a: ICpointInfo | null;
+  protected _kill_sum!: number;
+  protected _state!: State_Base | null;
+  protected _key_role!: boolean | null;
+  protected _dead_gone!: boolean | null;
+  protected _dead_join!: IDeadJoin | null;
+  protected _ctrl!: BaseController;
+  armor!: Readonly<IArmorInfo> | null;
+  protected _opoints!: [IOpointInfo, number][];
+  private prev_cpoint_a!: ICpointInfo | null;
 
 
   /**
@@ -213,7 +213,7 @@ export class Entity {
    * @type {ICollision}
    * @memberof Entity
    */
-  lastest_collision: ICollision | null;
+  lastest_collision!: ICollision | null;
 
   /**
    * 最近一次被攻击信息
@@ -221,7 +221,7 @@ export class Entity {
    * @type {ICollision}
    * @memberof Entity
    */
-  lastest_collided: ICollision | null;
+  lastest_collided!: ICollision | null;
 
   /**
    * 当前tick碰撞信息
@@ -243,7 +243,7 @@ export class Entity {
    */
   readonly collided_list: ICollision[] = [];
 
-  protected _chasing: Entity | null;
+  protected _chasing!: Entity | null;
 
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
@@ -612,6 +612,10 @@ export class Entity {
   set chasing(e: Entity | null) { this._chasing = e || null; }
 
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
+    this.init(world, data, states)
+  }
+  init(world: World, data: IEntityData, states: States = ENTITY_STATES) {
+    this.world = world;
     this.id = new_id();
     this.wait = 0;
     this.update_id.reset()
@@ -670,7 +674,6 @@ export class Entity {
     this.shaking = 0;
 
     this._data = data;
-    this.world = world;
     this.states = states;
     this._hp_r_tick = new Times(0, world.hp_r_ticks);
     this._mp_r_tick = new Times(0, world.mp_r_ticks)
@@ -682,7 +685,7 @@ export class Entity {
     const { armor } = this._data.base
     this.armor = armor || null
     if (armor) this.toughness = this.toughness_max = armor.toughness
-    
+
     this._catch_time_max = data.base.catch_time ?? Defines.DEFAULT_CATCH_TIME;
     this.fall_value_max = this._data.base.fall_value ?? Defines.DEFAULT_FALL_VALUE_MAX;
     this.defend_value_max = this._data.base.defend_value ?? Defines.DEFAULT_DEFEND_VALUE_MAX;
@@ -712,8 +715,10 @@ export class Entity {
     this.collided_list.length = 0;
     this.lastest_collision = null;
     this.lastest_collided = null;
-  }
 
+
+
+  }
   set_holder(v: Entity | null): this {
     if (this._holder === v) return this;
     const old = this._holder;
@@ -2091,19 +2096,14 @@ export class Entity {
   }
 }
 
-Factory.inst.set_entity_creator(
-  EntityEnum.Ball,
-  (...args) => new Entity(...args),
-);
-Factory.inst.set_entity_creator(
-  EntityEnum.Weapon,
-  (...args) => new Entity(...args),
-);
-Factory.inst.set_entity_creator(
-  EntityEnum.Entity,
-  (...args) => new Entity(...args),
-);
-Factory.inst.set_entity_creator(
-  EntityEnum.Fighter,
-  (...args) => new Entity(...args),
-);
+const common_creator: ICreator<Entity, typeof Entity> = (...args) => {
+  const type = args[1].type;
+  let ret = Factory.inst.acquire(type)
+  if (!ret) ret = new Entity(...args)
+  else ret.init(...args)
+  return ret
+}
+Factory.inst.set_entity_creator(EntityEnum.Ball, common_creator);
+Factory.inst.set_entity_creator(EntityEnum.Weapon, common_creator);
+Factory.inst.set_entity_creator(EntityEnum.Entity, common_creator);
+Factory.inst.set_entity_creator(EntityEnum.Fighter, common_creator);

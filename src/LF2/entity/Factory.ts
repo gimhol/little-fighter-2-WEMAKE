@@ -22,6 +22,22 @@ let _factory_inst: Factory | undefined = void 0;
 let _entity_creators: Partial<EntityCreators> = {};
 let _ctrl_creators: ControllerCreators = {};
 export class Factory {
+  protected graves_maps = new Map<string | number, Entity[]>();
+  release(...es: Entity[]): this {
+    // if (!es.length)
+    //   return this;
+    // for (const e of es) {
+    //   let graves = this.graves_maps.get(e.data.type);
+    //   if (!graves) this.graves_maps.set(e.data.type, graves = []);
+    //   graves.push(e);
+    // }
+    return this;
+  }
+  acquire(type: string | number): Entity | null {
+    // const graves = this.graves_maps.get(type);
+    // if (graves?.length) return graves.pop()!
+    return null
+  }
   set_entity_creator<K extends keyof EntityCreators>(
     k: K,
     creator: EntityCreators[K],
@@ -35,7 +51,7 @@ export class Factory {
   get_entity_creator<K extends keyof EntityCreators>(
     type: K,
   ): EntityCreators[K] | undefined {
-    
+
     return _entity_creators[type];
   }
   get_ctrl(id: string, ...args: Parameters<ControllerCreator>): BaseController | undefined {

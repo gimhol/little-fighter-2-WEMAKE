@@ -187,6 +187,7 @@ export class World extends WorldDataset {
     }
     this.renderer.del_entity(entity);
     entity.dispose();
+    Factory.inst.release(entity)
     return true;
   }
 
