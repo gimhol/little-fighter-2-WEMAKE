@@ -32,10 +32,10 @@ export class CharacterState_Drink extends CharacterState_Base {
       holding.hp = holding.hp_r = 1;
       holding.velocities.length = 1;
       holding.velocity_0.set(3 * e.facing, 4, 0);
-      holding.holder = void 0;
+      holding.holder = null;
       holding.follow_holder();
 
-      e.holding = void 0;
+      e.holding = null;
       e.enter_frame(Defines.NEXT_FRAME_AUTO);
     }
   }

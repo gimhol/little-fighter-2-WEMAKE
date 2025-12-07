@@ -72,13 +72,13 @@ export const collision_action_handlers: IActionHandler = {
     fighter_1.hp = min(hp, fighter_1.hp_max)
     fighter_1.hp_r = min(hp_r, fighter_1.hp_max)
     fighter_1.fuse_bys = ensure(fighter_1.fuse_bys, fighter_2)
-    fighter_1.dismiss_time = time;
+    fighter_1.dismiss_time = time ?? null;
     fighter_1.mp = fighter_1.mp_max
     fighter_2.invisible =
       fighter_2.motionless =
       fighter_2.invulnerable = 1000000;
     if (act) {
-      fighter_1.next_frame = fighter_1.get_next_frame(act)?.frame;
+      fighter_1.next_frame = fighter_1.get_next_frame(act)?.frame ?? null;
     }
   }
 };

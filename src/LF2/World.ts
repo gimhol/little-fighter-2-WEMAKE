@@ -388,14 +388,14 @@ export class World extends WorldDataset {
   }
   del_enemy_chaser(entity: Entity) {
     this._enemy_chasers.delete(entity);
-    entity.chasing = void 0;
+    entity.chasing = null;
   }
   add_ally_chaser(entity: Entity) {
     this._ally_chasers.add(entity);
   }
   del_ally_chaser(entity: Entity) {
     this._ally_chasers.delete(entity);
-    entity.chasing = void 0;
+    entity.chasing = null;
   }
 
   update_once() {
@@ -405,7 +405,7 @@ export class World extends WorldDataset {
       e.self_update();
 
       if (e.chasing && !e.chasing.ctrl) {
-        e.chasing = void 0;
+        e.chasing = null;
       }
 
       for (const chaser of this._enemy_chasers) {

@@ -6,7 +6,7 @@ import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId,
   BuiltIn_OID,
-  Defines, EntityEnum, EntityGroup, FacingFlag, FrameBehavior, IBaseData, IBounding,
+  Defines, EntityEnum, EntityGroup, FacingFlag, FrameBehavior, IBaseData, IBdyInfo, IBounding,
   ICpointInfo, IEntityData, IFrameInfo,
   IItrInfo,
   INextFrame,
@@ -14,7 +14,7 @@ import {
   IOpointInfo, IPos,
   ItrKind,
   IVector3,
-  OpointKind, OpointMultiEnum, OpointSpreading, SpeedMode, StateEnum, TFace,
+  OpointKind, OpointMultiEnum, OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace,
   TNextFrame
 } from "../defines";
 import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
@@ -33,238 +33,17 @@ import { Factory } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { IDebugging, make_debugging } from "./make_debugging";
 import { is_character, is_local_ctrl, is_weapon_data } from "./type_check";
 export type TData = IBaseData | IEntityData;
 export interface IDeadJoin {
   hp?: number;
   team?: string;
 }
-export class Entity implements IDebugging {
-
+export class Entity {
   static readonly TAG: string = 'Entity';
-  debug!: (_0: string, ..._1: any[]) => void;
-  warn!: (_0: string, ..._1: any[]) => void;
-  log!: (_0: string, ..._1: any[]) => void;
-
-  id: string = new_id();
-  wait: number = 0;
-  update_id = new Times(0, Number.MAX_SAFE_INTEGER);
-  variant: number = 0;
-  transform_datas?: [IEntityData, IEntityData];
-  readonly src_data: Readonly<IEntityData>;
-  protected _data: IEntityData;
-  protected _reserve = 0;
-  protected _is_attach: boolean = false;
-  protected _is_incorporeity: boolean = false;
-  protected _landing_frame?: IFrameInfo;
-  protected _hp_r_tick: Times;
-  protected _mp_r_tick: Times;
-
   readonly world: World;
   readonly position = new Ditto.Vector3(0, 0, 0);
-  drink: DrinkInfo | undefined;
-  fuse_bys?: Entity[];
-  dismiss_time?: number;
-  dismiss_data?: IEntityData;
-  doppelgangers = new Set<Entity>();
-  has_stat_bar: boolean = false;
-  get data(): IEntityData { return this._data };
-  get group() { return this._data.base.group };
-  get is_attach() { return this._is_attach }
-  get is_incorporeity() { return this._is_incorporeity }
-  get reserve(): number {
-    return this._reserve;
-  }
-  set reserve(v: number) {
-    const o = this._reserve;
-    if (o === v) return;
-    this._reserve = v;
-    this._callbacks.emit("on_reserve_changed")(this, v, o);
-  }
-
-  get type() {
-    return this._data.type;
-  }
-  get itr() {
-    return this.frame.itr;
-  }
-  get bdy() {
-    return this.frame.bdy;
-  }
-  protected _toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
-  get toughness_resting_max(): number {
-    return this._toughness_resting_max;
-  }
-  set toughness_resting_max(v: number) {
-    const o = this._toughness_resting_max;
-    if (o === v) return;
-    this._toughness_resting_max = v;
-  }
-
-  protected _resting_max = Defines.DEFAULT_RESTING_MAX;
-  get resting_max(): number {
-    return this._resting_max;
-  }
-  set resting_max(v: number) {
-    const o = this._resting_max;
-    if (o === v) return;
-    this._resting_max = v;
-    this._callbacks.emit("on_resting_max_changed")(this, v, o);
-  }
-
-  protected _resting = 0;
-  get resting() {
-    return this._resting;
-  }
-  set resting(v: number) {
-    const o = this._resting;
-    if (o === v) return;
-    this._resting = v;
-    this._callbacks.emit("on_resting_changed")(this, v, o);
-  }
-
-  private _fall_value = Defines.DEFAULT_FALL_VALUE_MAX;
-  get fall_value(): number { return this._fall_value; }
-  set fall_value(v: number) {
-    const o = this._fall_value;
-    if (o === v) return;
-    this._fall_value = v;
-    if (v < o) {
-      this.resting = this.resting_max;
-      this.toughness_resting = this.toughness_resting_max;
-    }
-    this._callbacks.emit("on_fall_value_changed")(this, v, o);
-  }
-
-  private _toughness = 0;
-  get toughness(): number {
-    return this._toughness;
-  }
-  set toughness(v: number) {
-    const o = this._toughness;
-    if (o === v) return;
-    this._toughness = v;
-    if (v < o) this.toughness_resting = this.toughness_resting_max;
-    this._callbacks.emit("on_toughness_changed")(this, v, o);
-  }
-
-  private _toughness_max = 0;
-  get toughness_max(): number {
-    return this._toughness_max;
-  }
-  set toughness_max(v: number) {
-    const o = this._toughness_max;
-    if (o === v) return;
-    this._toughness_max = v;
-    this._callbacks.emit("on_toughness_max_changed")(this, v, o);
-  }
-
-  protected _toughness_resting = 0;
-  get toughness_resting() {
-    return this._toughness_resting;
-  }
-  set toughness_resting(v: number) {
-    const o = this._toughness_resting;
-    if (o === v) return;
-    this._toughness_resting = v;
-  }
-
-
-  private _fall_value_max = Defines.DEFAULT_FALL_VALUE_MAX;
-  get fall_value_max(): number {
-    return this._fall_value_max;
-  }
-  set fall_value_max(v: number) {
-    const o = this._fall_value_max;
-    if (o === v) return;
-    this._fall_value_max = v;
-    this._callbacks.emit("on_fall_value_max_changed")(this, v, o);
-  }
-
-  private _defend_value = Defines.DEFAULT_DEFEND_VALUE_MAX;
-  get defend_value(): number {
-    return this._defend_value;
-  }
-  set defend_value(v: number) {
-    const o = this._defend_value;
-    if (o === v) return;
-    this._defend_value = v;
-    if (v < o) {
-      this.resting = this.resting_max;
-      this.toughness_resting = this.toughness_resting_max;
-    }
-    this._callbacks.emit("on_defend_value_changed")(this, v, o);
-  }
-
-  private _defend_value_max = Defines.DEFAULT_DEFEND_VALUE_MAX;
-  get defend_value_max(): number {
-    return this._defend_value_max;
-  }
-  set defend_value_max(v: number) {
-    const o = this._defend_value_max;
-    if (o === v) return;
-    this._defend_value_max = v;
-    this._callbacks.emit("on_defend_value_max_changed")(this, v, o);
-  }
-
-
-  private _healing: number = 0;
-  get healing(): number {
-    return this._healing;
-  }
-  set healing(v: number) {
-    if (this._hp_r === this._hp)
-      v = 0
-    const o = this._healing;
-    if (o === v) return;
-    this._healing = v;
-    this._callbacks.emit("on_healing_changed")(this, v, o);
-  }
-
-
-  private _defend_ratio: number = Defines.DEFAULT_DEFEND_INJURY_RATIO;
-  get defend_ratio(): number {
-    return this._defend_ratio;
-  }
-  set defend_ratio(v: number) {
-    const o = this._defend_ratio;
-    if (o === v) return;
-    this._defend_ratio = v;
-  }
-
-  throwinjury?: number;
-
-  get catching() {
-    return this._catching;
-  }
-  get catcher() {
-    return this._catcher;
-  }
-  get lf2(): LF2 {
-    return this.world.lf2;
-  }
-
-  // private ___facing: TFace = 1;
-  // get facing(): TFace { return this.___facing; }
-  // set facing(v: TFace) { this.___facing = v; }
-  facing: TFace = 1;
-
-  frame: IFrameInfo = EMPTY_FRAME_INFO;
-
-  // next_frame: INextFrame | undefined = void 0;
-  private ___next_frame: INextFrame | undefined = void 0;
-  get next_frame(): INextFrame | undefined {
-    return this.___next_frame;
-  }
-  set next_frame(v: INextFrame | undefined) {
-    this.___next_frame = v;
-  }
-
-  protected _prev_frame: IFrameInfo = EMPTY_FRAME_INFO;
-  protected _catching?: Entity;
-  protected _catcher?: Entity;
-  readonly states: States;
+  readonly doppelgangers = new Set<Entity>();
 
   /**
    * 最终速度向量
@@ -283,6 +62,309 @@ export class Entity implements IDebugging {
    * @type {IVector3[]}
    */
   readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
+  readonly v_rests = new Map<string, ICollision>();
+  readonly victims = new Map<string, ICollision>();
+  readonly callbacks = new Callbacks<IEntityCallbacks>()
+
+  id: string;
+  wait: number;
+  readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
+  variant: number;
+  transform_datas: [IEntityData, IEntityData] | null;
+  protected _data: IEntityData;
+  protected _reserve: number;
+  protected _is_attach: boolean;
+  protected _is_incorporeity: boolean;
+  protected _landing_frame: IFrameInfo | null;
+  protected _hp_r_tick: Times;
+  protected _mp_r_tick: Times;
+  public drink: DrinkInfo | undefined;
+  public fuse_bys: Entity[] | null;
+  public dismiss_time: number | null;
+  public dismiss_data: IEntityData | null;
+  public has_stat_bar: boolean;
+  protected _toughness_resting_max: number;
+  protected _resting_max: number;
+  protected _resting: number;
+  protected _fall_value: number;
+  protected _toughness: number;
+  protected _toughness_max: number;
+  protected _toughness_resting: number;
+  protected _fall_value_max: number;
+  protected _defend_value: number;
+  protected _defend_value_max: number;
+  protected _healing: number;
+  protected _defend_ratio: number;
+  public throwinjury: number | null;
+  public facing: TFace;
+  public frame: IFrameInfo;
+  public next_frame: INextFrame | null;
+  protected _prev_frame: IFrameInfo;
+  protected _catching: Entity | null;
+  protected _catcher: Entity | null;
+  readonly states: States;
+
+  /**
+   * 实体名称
+   *
+   * @protected
+   * @type {string}
+   */
+  protected _name: string;
+
+  /**
+   * 所属队伍
+   *
+   * @protected
+   * @type {string}
+   */
+  protected _team: string;
+  protected _mp: number;
+  protected _mp_max: number;
+  protected _hp: number;
+  protected _hp_r: number;
+  protected _hp_max: number;
+  protected _holder: Entity | null;
+  protected _holding: Entity | null;
+  protected _emitter: Entity | null;
+  protected _emitter_opoint: IOpointInfo | null;
+
+  /** 当前角色 */
+  public a_rest: number;
+  public motionless: number;
+  public shaking: number;
+
+  /**
+   * 抓人剩余值
+   *
+   * 当抓住一个被击晕的人时，此值充满。
+   */
+  protected _catch_time: number;
+  protected _catch_time_max: number;
+
+  /**
+   * 隐身计数，每帧-1
+   *
+   * @protected
+   * @type {number}
+   */
+  protected _invisible_duration: number;
+
+  /**
+   * 无敌时间计数，每帧-1
+   *
+   * @protected
+   * @type {number}
+   */
+  protected _invulnerable_duration: number;
+
+  /**
+   * 闪烁计数，每帧-1
+   *
+   * @protected
+   * @type {number}
+   */
+  protected _blinking_duration: number;
+
+  /**
+   * 闪烁完毕后下一动作
+   *
+   * @protected
+   * @type {string | TNextFrame}
+   */
+  protected _after_blink: string | TNextFrame | null;
+
+  /**
+   * 拾取物件总数
+   *
+   * @protected
+   * @type {number}
+   */
+  protected _picking_sum: number;
+
+  /**
+   * 伤害总数
+   *
+   * @protected
+   * @type {number}
+   */
+  protected _damage_sum: number;
+
+  /**
+   * 击杀总数
+   *
+   * @protected
+   * @type {number}
+   */
+  protected _kill_sum: number;
+  protected _state: State_Base | null;
+  protected _key_role: boolean | null;
+  protected _dead_gone: boolean | null;
+  protected _dead_join: IDeadJoin | null;
+  protected _ctrl: BaseController;
+  armor: Readonly<IArmorInfo> | null;
+  protected _opoints: [IOpointInfo, number][];
+  private prev_cpoint_a: ICpointInfo | null;
+
+
+  /**
+   * 最近一次攻击信息
+   *
+   * @type {ICollision}
+   * @memberof Entity
+   */
+  lastest_collision: ICollision | null;
+
+  /**
+   * 最近一次被攻击信息
+   *
+   * @type {ICollision}
+   * @memberof Entity
+   */
+  lastest_collided: ICollision | null;
+
+  /**
+   * 当前tick碰撞信息
+   *
+   * - 会在update后置空
+   *
+   * @type {ICollision[]}
+   * @memberof Entity
+   */
+  readonly collision_list: ICollision[] = [];
+
+  /**
+   * 当前tick被碰撞信息
+   *
+   * - 会在update后置空
+   *
+   * @type {ICollision[]}
+   * @memberof Entity
+   */
+  readonly collided_list: ICollision[] = [];
+
+  protected _chasing: Entity | null;
+
+  get data(): IEntityData { return this._data };
+  get group() { return this._data.base.group };
+  get is_attach() { return this._is_attach }
+  get is_incorporeity() { return this._is_incorporeity }
+  get reserve(): number { return this._reserve; }
+  set reserve(v: number) {
+    const o = this._reserve;
+    if (o === v) return;
+    this._reserve = v;
+    this.callbacks.emit("on_reserve_changed")(this, v, o);
+  }
+
+  get type(): TEntityEnum { return this._data.type; }
+  get itr(): IItrInfo[] | undefined { return this.frame.itr; }
+  get bdy(): IBdyInfo[] | undefined { return this.frame.bdy; }
+  get toughness_resting_max(): number { return this._toughness_resting_max; }
+  set toughness_resting_max(v: number) {
+    const o = this._toughness_resting_max;
+    if (o === v) return;
+    this._toughness_resting_max = v;
+  }
+  get resting_max(): number { return this._resting_max; }
+  set resting_max(v: number) {
+    const o = this._resting_max;
+    if (o === v) return;
+    this._resting_max = v;
+    this.callbacks.emit("on_resting_max_changed")(this, v, o);
+  }
+  get resting() { return this._resting; }
+  set resting(v: number) {
+    const o = this._resting;
+    if (o === v) return;
+    this._resting = v;
+    this.callbacks.emit("on_resting_changed")(this, v, o);
+  }
+  get fall_value(): number { return this._fall_value; }
+  set fall_value(v: number) {
+    const o = this._fall_value;
+    if (o === v) return;
+    this._fall_value = v;
+    if (v < o) {
+      this.resting = this.resting_max;
+      this.toughness_resting = this.toughness_resting_max;
+    }
+    this.callbacks.emit("on_fall_value_changed")(this, v, o);
+  }
+
+  get toughness(): number { return this._toughness; }
+  set toughness(v: number) {
+    const o = this._toughness;
+    if (o === v) return;
+    this._toughness = v;
+    if (v < o) this.toughness_resting = this.toughness_resting_max;
+    this.callbacks.emit("on_toughness_changed")(this, v, o);
+  }
+
+  get toughness_max(): number { return this._toughness_max; }
+  set toughness_max(v: number) {
+    const o = this._toughness_max;
+    if (o === v) return;
+    this._toughness_max = v;
+    this.callbacks.emit("on_toughness_max_changed")(this, v, o);
+  }
+  get toughness_resting() { return this._toughness_resting; }
+  set toughness_resting(v: number) {
+    const o = this._toughness_resting;
+    if (o === v) return;
+    this._toughness_resting = v;
+  }
+  get fall_value_max(): number { return this._fall_value_max; }
+  set fall_value_max(v: number) {
+    const o = this._fall_value_max;
+    if (o === v) return;
+    this._fall_value_max = v;
+    this.callbacks.emit("on_fall_value_max_changed")(this, v, o);
+  }
+  get defend_value(): number { return this._defend_value; }
+  set defend_value(v: number) {
+    const o = this._defend_value;
+    if (o === v) return;
+    this._defend_value = v;
+    if (v < o) {
+      this.resting = this.resting_max;
+      this.toughness_resting = this.toughness_resting_max;
+    }
+    this.callbacks.emit("on_defend_value_changed")(this, v, o);
+  }
+  get defend_value_max(): number { return this._defend_value_max; }
+  set defend_value_max(v: number) {
+    const o = this._defend_value_max;
+    if (o === v) return;
+    this._defend_value_max = v;
+    this.callbacks.emit("on_defend_value_max_changed")(this, v, o);
+  }
+  get healing(): number { return this._healing; }
+  set healing(v: number) {
+    if (this._hp_r === this._hp) v = 0
+    const o = this._healing;
+    if (o === v) return;
+    this._healing = v;
+    this.callbacks.emit("on_healing_changed")(this, v, o);
+  }
+
+  get defend_ratio(): number { return this._defend_ratio; }
+  set defend_ratio(v: number) {
+    const o = this._defend_ratio;
+    if (o === v) return;
+    this._defend_ratio = v;
+  }
+
+
+  get catching() {
+    return this._catching;
+  }
+  get catcher() {
+    return this._catcher;
+  }
+  get lf2(): LF2 {
+    return this.world.lf2;
+  }
   get velocity_0(): IVector3 {
     if (this.velocities.length) return this.velocities[0]!;
     return this.velocities[0] = new Ditto.Vector3(0, 0, 0);
@@ -291,108 +373,6 @@ export class Entity implements IDebugging {
     if (this.velocities.length > 1) return this.velocities[1]!;
     return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
   }
-
-  protected _callbacks = new Callbacks<IEntityCallbacks>();
-
-  /**
-   * 实体名称
-   *
-   * @protected
-   * @type {string}
-   */
-  protected _name: string = "";
-
-  /**
-   * 所属队伍
-   *
-   * @protected
-   * @type {string}
-   */
-  protected _team: string = new_team();
-
-  protected _mp: number = Defines.DEFAULT_MP;
-  protected _mp_max: number = Defines.DEFAULT_MP;
-
-
-  protected _hp: number = Defines.DEFAULT_HP;
-  protected _hp_r: number = Defines.DEFAULT_HP;
-  protected _hp_max: number = Defines.DEFAULT_HP;
-
-  protected _holder?: Entity;
-  protected _holding?: Entity;
-  protected _emitter?: Entity;
-  protected _emitter_opoint?: IOpointInfo;
-  /** 当前角色 */
-  public a_rest: number = 0;
-  public v_rests = new Map<string, ICollision>();
-  public victims = new Map<string, ICollision>()
-
-  public motionless: number = 0;
-  public shaking: number = 0;
-
-  /**
-   * 抓人剩余值
-   *
-   * 当抓住一个被击晕的人时，此值充满。
-   */
-  protected _catch_time = Defines.DEFAULT_CATCH_TIME;
-  protected _catch_time_max = Defines.DEFAULT_CATCH_TIME;
-
-  /**
-   * 隐身计数，每帧-1
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _invisible_duration: number = 0;
-
-  /**
-   * 无敌时间计数，每帧-1
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _invulnerable_duration: number = 0;
-
-  /**
-   * 闪烁计数，每帧-1
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _blinking_duration: number = 0;
-
-  /**
-   * 闪烁完毕后下一动作
-   *
-   * @protected
-   * @type {string | TNextFrame}
-   */
-  protected _after_blink: string | TNextFrame | null = null;
-
-  /**
-   * 拾取物件总数
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _picking_sum: number = 0;
-
-  /**
-   * 伤害总数
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _damage_sum: number = 0;
-
-  /**
-   * 击杀总数
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _kill_sum: number = 0;
 
   /**
    * 拾取物件总数
@@ -424,19 +404,19 @@ export class Entity implements IDebugging {
     return this._kill_sum;
   }
 
-  get holder(): Entity | undefined {
+  get holder(): Entity | null {
     return this._holder;
   }
 
-  set holder(v: Entity | undefined) {
+  set holder(v: Entity | null) {
     this.set_holder(v);
   }
 
-  get holding(): Entity | undefined {
+  get holding(): Entity | null {
     return this._holding;
   }
 
-  set holding(v: Entity | undefined) {
+  set holding(v: Entity | null) {
     this.set_holding(v);
   }
 
@@ -447,7 +427,7 @@ export class Entity implements IDebugging {
   set name(v: string) {
     if (v === this._name) return;
     const o = this._name;
-    this._callbacks.emit("on_name_changed")(this, (this._name = v), o);
+    this.callbacks.emit("on_name_changed")(this, (this._name = v), o);
   }
 
   get mp(): number {
@@ -457,7 +437,7 @@ export class Entity implements IDebugging {
     const o = this._mp;
     v = max(0, v)
     if (o === v) return;
-    this._callbacks.emit("on_mp_changed")(this, (this._mp = v), o);
+    this.callbacks.emit("on_mp_changed")(this, (this._mp = v), o);
     if (o > 0 && v <= 0) {
       const nf = this.frame.on_exhaustion ?? this._data.on_exhaustion;
       if (nf) this.enter_frame(nf);
@@ -471,7 +451,7 @@ export class Entity implements IDebugging {
     const o = this._hp_r;
     v = max(0, v)
     if (o === v) return;
-    this._callbacks.emit("on_hp_r_changed")(this, (this._hp_r = v), o);
+    this.callbacks.emit("on_hp_r_changed")(this, (this._hp_r = v), o);
   }
 
   get hp(): number {
@@ -481,10 +461,10 @@ export class Entity implements IDebugging {
     const o = this._hp;
     v = max(0, v)
     if (o === v) return;
-    this._callbacks.emit("on_hp_changed")(this, (this._hp = v), o);
+    this.callbacks.emit("on_hp_changed")(this, (this._hp = v), o);
     if (o > 0 && v <= 0) {
 
-      this._callbacks.emit("on_dead")(this);
+      this.callbacks.emit("on_dead")(this);
       this.state?.on_dead?.(this);
       if (this._data.base.brokens?.length) {
         this.apply_opoints(this._data.base.brokens);
@@ -498,22 +478,13 @@ export class Entity implements IDebugging {
       this.hp_r = v
     }
   }
-
-  play_sound(sounds: string[] | undefined, pos: IPos = this.position) {
-    if (!sounds?.length) return;
-    const sound = this.lf2.random_get(sounds);
-    if (!sound) return;
-    const { x, y, z } = pos;
-    this.lf2.sounds.play(sound, x, y, z);
-  }
-
   get mp_max(): number {
     return this._mp_max;
   }
   set mp_max(v: number) {
     const o = this._mp_max;
     v = max(0, v)
-    this._callbacks.emit("on_mp_max_changed")(this, (this._mp_max = v), o);
+    this.callbacks.emit("on_mp_max_changed")(this, (this._mp_max = v), o);
   }
 
   get hp_max(): number {
@@ -522,7 +493,7 @@ export class Entity implements IDebugging {
   set hp_max(v: number) {
     const o = this._hp_max;
     v = max(0, v)
-    this._callbacks.emit("on_hp_max_changed")(this, (this._hp_max = v), o);
+    this.callbacks.emit("on_hp_max_changed")(this, (this._hp_max = v), o);
   }
 
   /**
@@ -545,23 +516,21 @@ export class Entity implements IDebugging {
     const o = this._team;
     this._team = v;
     this.variant = Number(this._team) || 0
-    this._callbacks.emit("on_team_changed")(this, v, o);
+    this.callbacks.emit("on_team_changed")(this, v, o);
   }
 
   get emitter() {
     return this._emitter;
   }
 
-  protected _state: State_Base | undefined;
-
-  set state(v: State_Base | undefined) {
+  set state(v: State_Base | null | undefined) {
     if (this._state === v) return;
     this._state?.leave?.(this, this.frame);
-    this._state = v;
+    this._state = v || null;
     this._state?.enter?.(this, this.get_prev_frame());
   }
 
-  get state() {
+  get state(): State_Base | null {
     return this._state;
   }
 
@@ -603,11 +572,7 @@ export class Entity implements IDebugging {
   set invulnerable(v: number) {
     this._invulnerable_duration = max(0, v);
   }
-  get callbacks(): NoEmitCallbacks<IEntityCallbacks> {
-    return this._callbacks;
-  }
 
-  protected _ctrl: BaseController;
   get ctrl(): BaseController {
     return this._ctrl;
   }
@@ -617,9 +582,6 @@ export class Entity implements IDebugging {
     this._ctrl?.dispose();
     this._ctrl = v;
   }
-  private _key_role: boolean | null = null;
-  private _dead_gone: boolean | null = null;
-  private _dead_join: IDeadJoin | null = null;
   get key_role(): boolean {
     if (this._key_role !== null) return this._key_role;
     const is_player = !!this.ctrl?.player_id;
@@ -629,7 +591,7 @@ export class Entity implements IDebugging {
   set key_role(v: boolean | null) {
     if (this._key_role === v) return;
     this._key_role = v;
-    this._callbacks.emit("on_name_changed")(this, this._name, this._name);
+    this.callbacks.emit("on_name_changed")(this, this._name, this._name);
   }
   get dead_gone(): boolean {
     if (this._dead_gone !== null) return this._dead_gone;
@@ -646,11 +608,69 @@ export class Entity implements IDebugging {
     this._dead_join = v
   }
 
-  armor?: Readonly<IArmorInfo>
+  get chasing(): Entity | null { return this._chasing; }
+  set chasing(e: Entity | null) { this._chasing = e || null; }
 
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
+    this.id = new_id();
+    this.wait = 0;
+    this.update_id.reset()
+    this.variant = 0;
+    this.transform_datas = null;
+    this._reserve = 0
+    this._is_attach = false;
+    this._is_incorporeity = false;
+    this.position.set(0, 0, 0)
+    this.drink = void 0;
+    this.fuse_bys = null;
+    this.dismiss_time = null;
+    this.dismiss_data = null;
+    this.doppelgangers.clear()
+    this.has_stat_bar = false;
+    this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
+    this._resting_max = Defines.DEFAULT_RESTING_MAX;
+    this._resting = 0;
+    this._fall_value = Defines.DEFAULT_FALL_VALUE_MAX;
+    this._toughness = 0;
+    this._toughness_max = 0;
+    this._toughness_resting = 0;
+    this._fall_value_max = Defines.DEFAULT_FALL_VALUE_MAX;
+    this._defend_value = Defines.DEFAULT_DEFEND_VALUE_MAX;
+    this._defend_value_max = Defines.DEFAULT_DEFEND_VALUE_MAX;
+    this._healing = 0;
+    this._defend_ratio = Defines.DEFAULT_DEFEND_INJURY_RATIO;
+    this.throwinjury = null;
+    this.facing = 1;
+    this.frame = EMPTY_FRAME_INFO;
+    this.next_frame = null;
+    this._prev_frame = EMPTY_FRAME_INFO;
+    this._catching = null
+    this._catcher = null
+    this.velocity.set(0, 0, 0)
+    this.velocities.length = 0;
+    this.velocities[0] = new Ditto.Vector3(0, 0, 0)
+    this.callbacks.clear();
+    this._name = ""
+    this._team = new_team();
+    this._mp = Defines.DEFAULT_MP;
+    this._mp_max = Defines.DEFAULT_MP;
+    this._hp = Defines.DEFAULT_HP;
+    this._hp_r = Defines.DEFAULT_HP;
+    this._hp_max = Defines.DEFAULT_HP;
+    this._landing_frame = null;
+    this._holder = null;
+    this._holding = null;
+    this._emitter = null;
+    this._emitter_opoint = null;
+    this.next_frame = null;
+
+    this.a_rest = 0;
+    this.v_rests.clear()
+    this.victims.clear()
+    this.motionless = 0;
+    this.shaking = 0;
+
     this._data = data;
-    this.src_data = data;
     this.world = world;
     this.states = states;
     this._hp_r_tick = new Times(0, world.hp_r_ticks);
@@ -668,11 +688,8 @@ export class Entity implements IDebugging {
     this._defend_ratio = data.base.defend_ratio ?? Defines.DEFAULT_DEFEND_INJURY_RATIO;
 
     const { armor } = this._data.base
-    this.armor = armor
-    if (armor) {
-      this.toughness = this.toughness_max = armor.toughness
-    }
-
+    this.armor = armor || null
+    if (armor) this.toughness = this.toughness_max = armor.toughness
     this._catch_time_max = data.base.catch_time ?? Defines.DEFAULT_CATCH_TIME;
     this.fall_value_max =
       this._data.base.fall_value ?? Defines.DEFAULT_FALL_VALUE_MAX;
@@ -685,27 +702,46 @@ export class Entity implements IDebugging {
     this.defend_value = this.defend_value_max;
     this._hp = this._hp_r = this._hp_max;
     this._mp = this._mp_max;
-    this._catch_time = this._catch_time_max;
-    make_debugging(this)
+    this._catch_time_max = Defines.DEFAULT_CATCH_TIME
+    this._catch_time = Defines.DEFAULT_CATCH_TIME
+    this._invisible_duration = 0;
+    this._invulnerable_duration = 0;
+    this._blinking_duration = 0;
+    this._after_blink = null;
+    this._state = null;
+    this._key_role = null;
+    this._dead_gone = null;
+    this._dead_join = null;
+    this._picking_sum = 0;
+    this._damage_sum = 0;
+    this._kill_sum = 0;
     this.drink = data.base.drink ? new DrinkInfo(data.base.drink) : void 0
+    this._opoints = [];
+    this.prev_cpoint_a = null;
+    this._chasing = null;
+    this.collision_list.length = 0;
+    this.collided_list.length = 0;
+    this.lastest_collision = null;
+    this.lastest_collided = null;
   }
-  set_holder(v: Entity | undefined): this {
+
+  set_holder(v: Entity | null): this {
     if (this._holder === v) return this;
     const old = this._holder;
     this._holder = v;
-    this._callbacks.emit("on_holder_changed")(this, v, old);
+    this.callbacks.emit("on_holder_changed")(this, v, old);
     return this;
   }
 
-  set_holding(v: Entity | undefined): this {
+  set_holding(v: Entity | null): this {
     if (this._holding === v) return this;
     const old = this._holding;
     this._holding = v;
-    this._callbacks.emit("on_holding_changed")(this, v, old);
+    this.callbacks.emit("on_holding_changed")(this, v, old);
 
     if (v) {
       this._picking_sum += 1;
-      this._callbacks.emit("on_picking_sum_changed")(
+      this.callbacks.emit("on_picking_sum_changed")(
         this,
         this._picking_sum,
         this._picking_sum - 1,
@@ -728,7 +764,7 @@ export class Entity implements IDebugging {
   add_damage_sum(v: number): this {
     const old = this._damage_sum;
     this._damage_sum += v;
-    this._callbacks.emit("on_damage_sum_changed")(this, this._damage_sum, old);
+    this.callbacks.emit("on_damage_sum_changed")(this, this._damage_sum, old);
     this.emitter?.add_damage_sum(v);
     return this;
   }
@@ -747,7 +783,7 @@ export class Entity implements IDebugging {
   add_kill_sum(v: number): this {
     const old = this._kill_sum;
     this._kill_sum += v;
-    this._callbacks.emit("on_kill_sum_changed")(this, this._kill_sum, old);
+    this.callbacks.emit("on_kill_sum_changed")(this, this._kill_sum, old);
     this.emitter?.add_kill_sum(v);
     return this;
   }
@@ -863,6 +899,7 @@ export class Entity implements IDebugging {
     }
     return this;
   }
+
   get_opoint_speed_z(emitter: Entity, opoint: IOpointInfo): number {
     if (opoint.speedz !== void 0) return opoint.speedz;
     if (!is_character(emitter)) return 0;
@@ -893,7 +930,6 @@ export class Entity implements IDebugging {
     const next_state = this.states.get(state_code) || this.states.fallback(this._data.type, state_code);
     this.state = next_state;
   }
-  _opoints: [IOpointInfo, number][] = [];
 
   set_frame(v: IFrameInfo) {
     if (v.id === GONE_FRAME_INFO.id) {
@@ -926,8 +962,8 @@ export class Entity implements IDebugging {
     if (v.invisible) this.invisibility(v.invisible);
     if (v.opoint) this.apply_opoints(v.opoint);
     if (!v.cpoint) {
-      delete this._catching;
-      delete this._catcher;
+      this._catching = null;
+      this._catcher = null;
     }
   }
 
@@ -1231,9 +1267,9 @@ export class Entity implements IDebugging {
     this.next_frame =
       this.get_next_frame({ id: frame_id })?.frame ??
       this.find_auto_frame()
-    this.dismiss_time = void 0;
-    this.dismiss_data = void 0;
-    this.fuse_bys = void 0
+    this.dismiss_time = null;
+    this.dismiss_data = null;
+    this.fuse_bys = null
   }
   self_update(): void {
     if (this.fuse_bys?.length) {
@@ -1243,7 +1279,7 @@ export class Entity implements IDebugging {
       }
       if (this.dismiss_time) this.dismiss_time--;
       const dismiss = (
-        this.dismiss_time !== void 0 &&
+        this.dismiss_time !== null &&
         this.dismiss_time <= 0 ||
         this.ctrl.sametime_keys_test('dja') ||
         this.ctrl.sequence_keys_test('ja')
@@ -1312,7 +1348,7 @@ export class Entity implements IDebugging {
       this._blinking_duration--;
       if (this._blinking_duration <= 0) {
         if (this._after_blink === Builtin_FrameId.Gone) {
-          this.next_frame = void 0;
+          this.next_frame = null;
           this.frame = GONE_FRAME_INFO;
         } else if (this._after_blink === Builtin_FrameId.Respawn) {
           this.hp = this.hp_r = this.hp_max;
@@ -1368,13 +1404,13 @@ export class Entity implements IDebugging {
           dvy = strength * (dvy || 0) / weight;
           const vx = (dvx - abs(vz / 2)) * this.facing;
           this.velocity_0.set(vx, dvy, vz);
-          this.holder.holding = void 0;
-          this.holder = void 0;
+          this.holder.holding = null;
+          this.holder = null;
         }
       }
       if (this.hp <= 0 && this.holder) {
-        this.holder.holding = void 0;
-        this.holder = void 0;
+        this.holder.holding = null;
+        this.holder = null;
       }
     }
 
@@ -1437,8 +1473,8 @@ export class Entity implements IDebugging {
     if (!this.holding) return;
     this.holding.follow_holder();
     this.holding.enter_frame({ id: this.lf2.random_get(this.holding.data.indexes?.in_the_skys) });
-    this.holding.holder = void 0;
-    this.holding = void 0;
+    this.holding.holder = null;
+    this.holding = null;
   }
 
   update(): void {
@@ -1523,10 +1559,10 @@ export class Entity implements IDebugging {
       this.state?.on_landing?.(this);
       this.play_sound(this._data.base.drop_sounds);
 
-      if (this.throwinjury !== void 0) {
+      if (this.throwinjury) {
         this.hp -= this.throwinjury;
         this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
-        this.throwinjury = void 0;
+        this.throwinjury = null;
       }
       this._landing_frame = this.frame
     }
@@ -1574,15 +1610,14 @@ export class Entity implements IDebugging {
     return { id: Builtin_FrameId.Auto };
   }
 
-  private prev_cpoint_a?: ICpointInfo;
   update_caught(): INextFrame | undefined {
     const cer = this._catcher;
     if (!cer) return;
     /** "对齐颗粒度" */
     this.follow_catcher();
     if (!cer._catch_time) {
-      delete this._catcher;
-      this.prev_cpoint_a = void 0;
+      this._catcher = null;
+      this.prev_cpoint_a = null;
       return this.get_caught_end_frame();
     }
 
@@ -1590,8 +1625,8 @@ export class Entity implements IDebugging {
     const { cpoint: cpoint_a } = frame_a;
     const { cpoint: cpoint_b } = this.frame;
     if (!cpoint_a || !cpoint_b) {
-      delete this._catcher;
-      this.prev_cpoint_a = void 0;
+      this._catcher = null;
+      this.prev_cpoint_a = null;
       this.velocity_0.y = 3;
       return this.get_caught_cancel_frame();
     }
@@ -1624,8 +1659,8 @@ export class Entity implements IDebugging {
 
       if (ty !== void 0) this.position.y = cer.position.y + frame_a.centery - ty - h / 2;
       if (tz !== void 0) this.position.z = cer.position.z + tz;
-      delete this._catcher;
-      this.prev_cpoint_a = void 0;
+      this._catcher = null;
+      this.prev_cpoint_a = null;
     }
     if (cpoint_a.vaction) return this.get_next_frame(cpoint_a.vaction)?.which;
   }
@@ -1634,14 +1669,14 @@ export class Entity implements IDebugging {
     if (!this._catching) return;
 
     if (!this._catch_time) {
-      delete this._catching;
+      this._catching = null;
       return this.get_catching_end_frame();
     }
 
     const { cpoint: cpoint_a } = this.frame;
     const { cpoint: cpoint_b } = this._catching.frame;
     if (!cpoint_a || !cpoint_b) {
-      delete this._catching;
+      this._catching = null;
       return this.get_catching_cancel_frame();
     }
 
@@ -1661,7 +1696,7 @@ export class Entity implements IDebugging {
       }
     }
     if (throwvx || throwvy || throwvz) {
-      delete this._catching;
+      this._catching = null;
       return void 0;
     }
 
@@ -1738,67 +1773,29 @@ export class Entity implements IDebugging {
         this.doppelgangers.delete(d)
       }
     }
-
-
   }
 
-  /**
-   * 最近一次攻击信息
-   *
-   * @type {ICollision}
-   * @memberof Entity
-   */
-  lastest_collision?: ICollision;
-
-  /**
-   * 最近一次被攻击信息
-   *
-   * @type {ICollision}
-   * @memberof Entity
-   */
-  lastest_collided?: ICollision;
-
-  /**
-   * 当前tick碰撞信息
-   *
-   * - 会在update后置空
-   *
-   * @type {ICollision[]}
-   * @memberof Entity
-   */
-  readonly collision_list: ICollision[] = [];
-
-  /**
-   * 当前tick被碰撞信息
-   *
-   * - 会在update后置空
-   *
-   * @type {ICollision[]}
-   * @memberof Entity
-   */
-  readonly collided_list: ICollision[] = [];
   start_catch(target: Entity, itr: IItrInfo) {
-    this.debug(`start_catch`)
     if (itr.catchingact === void 0) {
-      this.warn(`start_catch`, `cannot catch, catchingact got ${itr.catchingact}`);
+      Ditto.warn(`[Entity::start_caught] cannot catch, catchingact got ${itr.catchingact}`);
       return;
     }
     this._catch_time = this._catch_time_max;
     this._catching = target;
-    this.next_frame = this.get_next_frame(itr.catchingact)?.which;
+    this.next_frame = this.get_next_frame(itr.catchingact)?.which || null;
   }
 
   start_caught(attacker: Entity, itr: IItrInfo) {
-    this.debug(`start_caught`)
+    Ditto.debug(`start_caught`)
     if (itr.caughtact === void 0) {
-      this.warn(`start_caught`, `cannot be caught, caughtact got ${itr.caughtact}`)
+      Ditto.warn(`[Entity::start_caught] cannot be caught, caughtact got ${itr.caughtact}`)
       return;
     }
     this._catcher = attacker;
     this.resting = 0;
     this.fall_value = this.fall_value_max;
     this.defend_value = this.defend_value_max;
-    this.next_frame = this.get_next_frame(itr.caughtact)?.which;
+    this.next_frame = this.get_next_frame(itr.caughtact)?.which || null;
   }
 
   spark_point(r0: IBounding, r1: IBounding) {
@@ -1830,8 +1827,8 @@ export class Entity implements IDebugging {
     this._is_attach = false;
     this.world.del_entity(this);
     this.ctrl.dispose();
-    this._callbacks.emit("on_disposed")(this);
-    this._callbacks.clear()
+    this.callbacks.emit("on_disposed")(this);
+    this.callbacks.clear()
   }
 
   /**
@@ -1870,7 +1867,7 @@ export class Entity implements IDebugging {
       centerx: centerx_a,
       centery: centery_a,
     } = holder.frame;
-    if (!wp_a) this.debug(`follow_holder`, `failed! holder.frame.wpoint got ${wp_a}`)
+    if (!wp_a) Ditto.debug(`[Entity::follow_holder] failed! holder.frame.wpoint got ${wp_a}`)
     if (!wp_a) return;
 
     if (wp_a.weaponact !== this.frame.id) {
@@ -1881,7 +1878,7 @@ export class Entity implements IDebugging {
       centerx: centerx_b,
       centery: centery_b,
     } = this.frame;
-    if (!wp_b) this.debug(`follow_holder`, `failed! this.frame.wpoint got ${wp_b}`)
+    if (!wp_b) Ditto.debug(`[Entity::follow_holder] failed! this.frame.wpoint got ${wp_b}`)
     if (!wp_b) return;
 
     const { x, y, z } = holder.position;
@@ -1893,18 +1890,13 @@ export class Entity implements IDebugging {
     );
   }
 
-  protected _chasing?: Entity;
-  get chasing(): Entity | undefined { return this._chasing; }
-  set chasing(e: Entity | undefined) { this._chasing = e; }
-
-
   enter_frame(which: TNextFrame): void {
     if (this.frame.id === Builtin_FrameId.Gone)
       return;
 
     const result = this.get_next_frame(which);
     if (!result) {
-      this.next_frame = void 0;
+      this.next_frame = null;
       return;
     }
     const { frame, which: flags } = result;
@@ -1932,7 +1924,7 @@ export class Entity implements IDebugging {
       this.set_frame(this.find_auto_frame());
     }
 
-    this.next_frame = void 0;
+    this.next_frame = null;
     if (flags.id === Builtin_FrameId.Auto) {
       this.a_rest = 0;
       for (const [_, v] of this.victims)
@@ -2087,16 +2079,26 @@ export class Entity implements IDebugging {
     const prev = this._data;
     this._data = data;
     const { armor } = this._data.base
-    if (this.armor = armor) {
+
+    if (armor) {
+      this.armor = armor
       this.toughness = this.toughness_max = armor.toughness
     } else {
-      this.armor = void 0;
+      this.armor = null;
       this.toughness =
         this.toughness_max =
         this.toughness_resting =
         this.toughness_resting_max = 0;
     }
-    this._callbacks.emit("on_data_changed")(this._data, prev, this)
+    this.callbacks.emit("on_data_changed")(this._data, prev, this)
+  }
+
+  play_sound(sounds: string[] | undefined, pos: IPos = this.position) {
+    if (!sounds?.length) return;
+    const sound = this.lf2.random_get(sounds);
+    if (!sound) return;
+    const { x, y, z } = pos;
+    this.lf2.sounds.play(sound, x, y, z);
   }
 }
 
