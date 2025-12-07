@@ -78,18 +78,18 @@ export class Entity {
   protected _landing_frame: IFrameInfo | null;
   protected _hp_r_tick: Times;
   protected _mp_r_tick: Times;
-  public drink: DrinkInfo | undefined;
+  public drink: DrinkInfo | null;
   public fuse_bys: Entity[] | null;
   public dismiss_time: number | null;
   public dismiss_data: IEntityData | null;
   public has_stat_bar: boolean;
-  protected _toughness_resting_max: number;
-  protected _resting_max: number;
   protected _resting: number;
-  protected _fall_value: number;
+  protected _resting_max: number;
   protected _toughness: number;
   protected _toughness_max: number;
   protected _toughness_resting: number;
+  protected _toughness_resting_max: number;
+  protected _fall_value: number;
   protected _fall_value_max: number;
   protected _defend_value: number;
   protected _defend_value_max: number;
@@ -102,7 +102,7 @@ export class Entity {
   protected _prev_frame: IFrameInfo;
   protected _catching: Entity | null;
   protected _catcher: Entity | null;
-  readonly states: States;
+  protected states: States;
 
   /**
    * 实体名称
@@ -621,7 +621,6 @@ export class Entity {
     this._is_attach = false;
     this._is_incorporeity = false;
     this.position.set(0, 0, 0)
-    this.drink = void 0;
     this.fuse_bys = null;
     this.dismiss_time = null;
     this.dismiss_data = null;
@@ -677,27 +676,17 @@ export class Entity {
     this._mp_r_tick = new Times(0, world.mp_r_ticks)
     this._hp_max = data.base.hp ?? Defines.DEFAULT_HP;
     this._ctrl = new InvalidController("", this);
-
-    if (is_weapon_data(data) && data.id === "122") {
-      this._mp_max = data.base.mp ?? Defines.DEFAULT_MILK_MP;
-    } else if (is_weapon_data(data) && data.id === "123") {
-      this._mp_max = data.base.mp ?? Defines.DEFAULT_BEER_MP;
-    } else {
-      this._mp_max = data.base.mp ?? Defines.DEFAULT_MP;
-    }
+    this._mp_max = data.base.mp ?? Defines.DEFAULT_MP;
     this._defend_ratio = data.base.defend_ratio ?? Defines.DEFAULT_DEFEND_INJURY_RATIO;
 
     const { armor } = this._data.base
     this.armor = armor || null
     if (armor) this.toughness = this.toughness_max = armor.toughness
+    
     this._catch_time_max = data.base.catch_time ?? Defines.DEFAULT_CATCH_TIME;
-    this.fall_value_max =
-      this._data.base.fall_value ?? Defines.DEFAULT_FALL_VALUE_MAX;
-    this.defend_value_max =
-      this._data.base.defend_value ?? Defines.DEFAULT_DEFEND_VALUE_MAX;
-    this.resting_max =
-      this._data.base.resting ?? Defines.DEFAULT_RESTING_MAX;
-
+    this.fall_value_max = this._data.base.fall_value ?? Defines.DEFAULT_FALL_VALUE_MAX;
+    this.defend_value_max = this._data.base.defend_value ?? Defines.DEFAULT_DEFEND_VALUE_MAX;
+    this.resting_max = this._data.base.resting ?? Defines.DEFAULT_RESTING_MAX;
     this.fall_value = this.fall_value_max;
     this.defend_value = this.defend_value_max;
     this._hp = this._hp_r = this._hp_max;
@@ -715,7 +704,7 @@ export class Entity {
     this._picking_sum = 0;
     this._damage_sum = 0;
     this._kill_sum = 0;
-    this.drink = data.base.drink ? new DrinkInfo(data.base.drink) : void 0
+    this.drink = data.base.drink ? new DrinkInfo(data.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
     this._chasing = null;

@@ -44,9 +44,8 @@ export class World extends WorldDataset {
   private _time = 0;
 
   get time() { return this._time }
-  entities = new Set<Entity>();
-  incorporeities = new Set<Entity>();
-
+  readonly entities = new Set<Entity>();
+  readonly incorporeities = new Set<Entity>();
   readonly slot_fighters = new Map<string, Entity>();
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();

@@ -26,8 +26,6 @@ export namespace Defines {
 
   export const DEFAULT_HP = 500;
   export const DEFAULT_MP = 500;
-  export const DEFAULT_MILK_MP = 249;
-  export const DEFAULT_BEER_MP = 154;
   export const DEFAULT_FALL_VALUE_MAX = 140;
   export const DEFAULT_DEFEND_VALUE_MAX = 120;
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
