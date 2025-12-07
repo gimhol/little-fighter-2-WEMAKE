@@ -6,8 +6,8 @@ import type { World } from "@/LF2/World";
 import { Camera, OrthographicCamera } from "../_t";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
-import { EntityStatRender } from "./EntityStatRender";
 import { EntityRenderPack } from "./EntityRenderPack";
+import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
 
 export class WorldRenderer implements IWorldRenderer {
@@ -16,7 +16,7 @@ export class WorldRenderer implements IWorldRenderer {
   bg_render: BgRender;
   scene: Scene;
   camera: Camera;
-  entity_renderer_packs = new Map<Entity, EntityRenderPack>();
+  entity_renderers = new Set<EntityRenderPack>();
 
   private _indicator_flags: number = 0;
   get indicator_flags() {
@@ -25,13 +25,13 @@ export class WorldRenderer implements IWorldRenderer {
   set indicator_flags(v: number) {
     if (this._indicator_flags === v) return;
     this._indicator_flags = v;
-    for (const [, pack] of this.entity_renderer_packs) {
+    for (const renderer of this.entity_renderers) {
       if (v) {
-        if (!pack.indi) pack.indi = new FrameIndicators(pack.entity)
-        pack.indi.flags = v;
+        if (!renderer.indi) renderer.indi = new FrameIndicators(renderer.entity)
+        renderer.indi.flags = v;
       } else {
-        if (pack.indi) pack.indi.on_unmount();
-        pack.indi = void 0;
+        if (renderer.indi) renderer.indi.on_unmount();
+        renderer.indi = null;
       }
     }
   }
@@ -58,8 +58,6 @@ export class WorldRenderer implements IWorldRenderer {
     const h = world.screen_h;
     this.bg_render = new BgRender(this);
     this.scene = new Scene(world.lf2).set_size(w * 4, h * 4);
-
-
     {
       const camera = this.camera = new OrthographicCamera()
       camera.left = 0;
@@ -86,26 +84,35 @@ export class WorldRenderer implements IWorldRenderer {
 
   }
   add_entity(entity: Entity): void {
+    const pack: EntityRenderPack = entity.renderer ? entity.renderer : (
+      entity.renderer = new EntityRenderPack(entity)
+    );
 
-    const pack = new EntityRenderPack(entity);
-  
     // Criminal...?
     if (is_character(entity) || entity.data.id === BuiltIn_OID.Criminal) {
       pack.stat = new EntityStatRender(entity, this);
+    } else if (pack.stat) {
+      pack.stat.on_unmount();
+      pack.stat = null
     }
+
     if (this.indicator_flags) {
       pack.indi = new FrameIndicators(entity);
       pack.indi.flags = this.indicator_flags
+    } else if (pack.indi) {
+      pack.indi.on_unmount();
+      pack.indi = null
     }
     pack.mount();
-    this.entity_renderer_packs.set(entity, pack)
+    this.entity_renderers.add(pack)
   }
 
   del_entity(e: Entity): void {
-    const pack = this.entity_renderer_packs.get(e);
+    const pack: EntityRenderPack = e.renderer;
     if (!pack) return;
+    this.entity_renderers.delete(e.renderer);
     pack.unmount();
-    this.entity_renderer_packs.delete(e);
+    this.entity_renderers.delete(pack);
   }
 
   render(dt: number): void {
@@ -113,9 +120,9 @@ export class WorldRenderer implements IWorldRenderer {
     if (indicator_flags != this.indicator_flags)
       this.indicator_flags = indicator_flags;
     this.bg_render.render();
-    for (const [, pack] of this.entity_renderer_packs) {
-      pack.render(dt)
-    }
+    for (const renderer of this.entity_renderers)
+      renderer.render(dt)
+
     this.lf2.ui?.renderer.render(dt)
     this.scene.render();
   }

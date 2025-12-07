@@ -5,13 +5,16 @@ import EntityShadowRender from "./EntityShadowRender";
 import { FrameIndicators } from "./FrameIndicators";
 
 export class EntityRenderPack {
-  entity: Entity;
-  main: EntityRender;
-  shad: EntityShadowRender;
-  stat?: EntityStatRender;
-  indi?: FrameIndicators;
+  entity!: Entity;
+  main!: EntityRender;
+  shad!: EntityShadowRender;
+  stat!: EntityStatRender | null;
+  indi!: FrameIndicators | null;
 
   constructor(e: Entity) {
+    this.reset(e);
+  }
+  reset(e: Entity) {
     this.entity = e;
     this.main = new EntityRender(e);
     this.shad = new EntityShadowRender(e);

@@ -244,6 +244,8 @@ export class Entity {
   readonly collided_list: ICollision[] = [];
 
   protected _chasing!: Entity | null;
+  renderer: any;
+
 
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
