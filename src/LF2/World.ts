@@ -424,18 +424,16 @@ export class World extends WorldDataset {
       }
     }
     for (const e of this.entities) {
-      if (update_chasing) {
+      if (update_chasing && is_character(e) && e.hp <= 0) {
         for (const chaser of this._enemy_chasers) {
-          if (!is_character(e) || chaser.is_ally(e) || e.hp <= 0)
-            continue;
+          if (chaser.is_ally(e)) continue;
           const prev = chaser.chasing;
           if (!prev || chaser.is_ally(prev) || prev.hp <= 0 || manhattan(prev, chaser) > manhattan(e, chaser)) {
             chaser.chasing = e;
           }
         }
         for (const chaser of this._ally_chasers) {
-          if (!is_character(e) || !chaser.is_ally(e) || e.hp <= 0)
-            continue;
+          if (!chaser.is_ally(e)) continue;
           const prev = chaser.chasing;
           if (!prev || !chaser.is_ally(prev) || prev.hp <= 0 || manhattan(prev, chaser) > manhattan(e, chaser)) {
             chaser.chasing = e;
