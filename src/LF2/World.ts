@@ -22,6 +22,7 @@ import {
 } from "./entity";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
+import { manhattan } from "./manhattan";
 import { Stage } from "./stage/Stage";
 import { abs, find, floor, is_num, min, round } from "./utils";
 import { WorldDataset } from "./WorldDataset";
@@ -376,12 +377,6 @@ export class World extends WorldDataset {
     }
   }
 
-  manhattan(e1: Entity, e2: Entity) {
-    const p1 = e1.position;
-    const p2 = e2.position;
-    return abs(p1.x - p2.x) + abs(p1.z - p2.z);
-  }
-
   private gone_entities: Entity[] = [];
   private _enemy_chasers = new Set<Entity>();
   private _ally_chasers = new Set<Entity>();
@@ -405,36 +400,48 @@ export class World extends WorldDataset {
     else ++this._time;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
-    for (const e of this.entities) {
-      e.self_update();
 
-      if (e.chasing && !e.chasing.ctrl) {
-        e.chasing = null;
-      }
-
+    this.gone_entities.length = 0;
+    this.v_collisions.length = 0;
+    this.a_collisions.clear();
+    this._used_itrs.clear()
+    this._temp_entitis_set.clear();
+    const update_collisions = this.time % 2 === 0
+    const update_chasing = this.time % 8 === 0;
+    if (update_chasing) {
       for (const chaser of this._enemy_chasers) {
+        const e = chaser.chasing;
+        if (!e) continue;
         if (!is_character(e) || chaser.is_ally(e) || e.hp <= 0)
-          continue;
-        const prev = chaser.chasing;
-        if (!prev || prev?.team === chaser.team) {
-          chaser.chasing = e;
-        } else if (!prev || this.manhattan(prev, chaser) > this.manhattan(e, chaser)) {
-          chaser.chasing = e;
-        }
+          chaser.chasing = null;
       }
       for (const chaser of this._ally_chasers) {
+        const e = chaser.chasing;
+        if (!e) continue;
         if (!is_character(e) || !chaser.is_ally(e) || e.hp <= 0)
-          continue;
-        const prev = chaser.chasing;
-        if (!prev || prev?.team !== chaser.team) {
-          chaser.chasing = e;
-        } else if (this.manhattan(prev, chaser) > this.manhattan(e, chaser)) {
-          chaser.chasing = e;
-        }
+          chaser.chasing = null;
       }
     }
-    this.gone_entities.length = 0;
     for (const e of this.entities) {
+      if (update_chasing) {
+        for (const chaser of this._enemy_chasers) {
+          if (!is_character(e) || chaser.is_ally(e) || e.hp <= 0)
+            continue;
+          const prev = chaser.chasing;
+          if (!prev || chaser.is_ally(prev) || prev.hp <= 0 || manhattan(prev, chaser) > manhattan(e, chaser)) {
+            chaser.chasing = e;
+          }
+        }
+        for (const chaser of this._ally_chasers) {
+          if (!is_character(e) || !chaser.is_ally(e) || e.hp <= 0)
+            continue;
+          const prev = chaser.chasing;
+          if (!prev || !chaser.is_ally(prev) || prev.hp <= 0 || manhattan(prev, chaser) > manhattan(e, chaser)) {
+            chaser.chasing = e;
+          }
+        }
+      }
+      e.self_update();
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
@@ -442,6 +449,32 @@ export class World extends WorldDataset {
       ) {
         this.gone_entities.push(e);
       }
+      if (update_collisions) {
+        const a_ctrl = e.ctrl
+        for (const b of this._temp_entitis_set) {
+          const b_ctrl = b.ctrl;
+          if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(e)
+          if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
+          const collision1 = this.collision_detection(e, b);
+          const collision2 = this.collision_detection(b, e);
+          if (collision1?.handlers && collision2?.handlers) {
+            const index1 = ALL_ENTITY_ENUM.indexOf(collision1.attacker.type)
+            const index2 = ALL_ENTITY_ENUM.indexOf(collision2.attacker.type)
+            if (index1 < index2) this.add_collisions(collision1)
+            else if (index1 > index2) this.add_collisions(collision2)
+            else this.add_collisions(collision1, collision2)
+          }
+          else if (collision1?.handlers) this.add_collisions(collision1)
+          else if (collision2?.handlers) this.add_collisions(collision2)
+        }
+      }
+      this._temp_entitis_set.add(e);
+    }
+    if (update_collisions) {
+      for (const c of this.v_collisions)
+        collisions_keeper.handle(c)
+      for (const [, c] of this.a_collisions)
+        collisions_keeper.handle(c)
     }
     for (const e of this.incorporeities) {
       e.self_update();
@@ -454,10 +487,6 @@ export class World extends WorldDataset {
       }
     }
     this.del_entities(this.gone_entities);
-
-    if (this.time % 2 === 0)
-      this.collision_detections();
-
     this.stage.update();
   }
 
@@ -466,7 +495,6 @@ export class World extends WorldDataset {
   }
 
   update_camera() {
-
     const old_cam_x = floor(this.renderer.cam_x);
     if (this.bg.id === Defines.VOID_BG.id) {
       this.renderer.cam_x = 0
@@ -551,39 +579,6 @@ export class World extends WorldDataset {
       }
     }
   }
-  collision_detections() {
-    this.v_collisions.length = 0;
-    this.a_collisions.clear();
-
-    this._used_itrs.clear()
-    this._temp_entitis_set.clear();
-
-    for (const a of this.entities) {
-      const a_ctrl = a.ctrl
-      for (const b of this._temp_entitis_set) {
-        const b_ctrl = b.ctrl;
-        if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
-        if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
-
-        const collision1 = this.collision_detection(a, b);
-        const collision2 = this.collision_detection(b, a);
-        if (collision1?.handlers && collision2?.handlers) {
-          const index1 = ALL_ENTITY_ENUM.indexOf(collision1.attacker.type)
-          const index2 = ALL_ENTITY_ENUM.indexOf(collision2.attacker.type)
-          if (index1 < index2) this.add_collisions(collision1)
-          else if (index1 > index2) this.add_collisions(collision2)
-          else this.add_collisions(collision1, collision2)
-        }
-        else if (collision1?.handlers) this.add_collisions(collision1)
-        else if (collision2?.handlers) this.add_collisions(collision2)
-      }
-      this._temp_entitis_set.add(a);
-    }
-    for (const c of this.v_collisions)
-      collisions_keeper.handle(c)
-    for (const [, c] of this.a_collisions)
-      collisions_keeper.handle(c)
-  }
 
   collision_detection(a: Entity, b: Entity): ICollision | undefined {
     const af = a.frame;
@@ -595,9 +590,7 @@ export class World extends WorldDataset {
       for (let j = 0; j < l1; ++j) {
         const itr = af.itr[i]!
         const bdy = bf.bdy[j]!
-
         const collision = this.collision_test(a, af, itr, b, bf, bdy);
-
         if (!collision) continue;
         collision.handlers = collisions_keeper.handler(collision)
         return collision
@@ -797,3 +790,4 @@ export class World extends WorldDataset {
     this.callbacks.clear()
   }
 }
+

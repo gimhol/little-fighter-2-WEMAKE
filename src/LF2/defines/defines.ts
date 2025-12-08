@@ -500,6 +500,10 @@ export namespace Defines {
   export const AI_STAY_CHASING_RANGE = 200;
   export const AI_FOLLOWING_RANGE_X = 100;
   export const AI_FOLLOWING_RANGE_Z = 100;
+
+  export const AI_MAX_CHASINGS_ENEMIES = 1;
+  export const AI_MAX_AVOIDING_ENEMIES = 1;
+  export const AI_MAX_DEFENDS_ENEMIES = 3;
 }
 
 export default Defines;

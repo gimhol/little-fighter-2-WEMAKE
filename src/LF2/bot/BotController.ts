@@ -155,10 +155,9 @@ export class BotController extends BaseController implements Required<IBotDataSe
     return this.avoidings.get()
   }
 
-  chasings = new NearestTargets(5);
-  avoidings = new NearestTargets(5);
-  defends = new NearestTargets(5);
-
+  chasings = new NearestTargets(Defines.AI_MAX_CHASINGS_ENEMIES);
+  avoidings = new NearestTargets(Defines.AI_MAX_AVOIDING_ENEMIES);
+  defends = new NearestTargets(Defines.AI_MAX_DEFENDS_ENEMIES);
   private _dummy?: DummyEnum;
   get dummy(): DummyEnum | undefined {
     return this._dummy;

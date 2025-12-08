@@ -1,13 +1,15 @@
+import { Defines } from "../defines";
 import { Entity } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { IBotTarget } from "./IBotTarget";
 
 export class NearestTargets {
   targets: IBotTarget[] = [];
-  max: number = 5;
+  max: number;
   entities = new Set<Entity>();
 
   constructor(max: number) { this.max = max; }
+
   get(): IBotTarget | undefined { return this.targets[0]; }
 
   look(self: Entity, other: Entity, defendable: number = 0) {
