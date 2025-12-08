@@ -1,7 +1,7 @@
 import { Builtin_FrameId, Defines, BuiltIn_OID as OID } from "../../defines";
 import { TeamEnum as TE } from "../../defines/TeamEnum";
 import { Entity } from "../../entity/Entity";
-import { Times } from "../utils/Times";
+import { Times } from "../../utils/Times";
 import { CameraCtrl } from "./CameraCtrl";
 import { SummaryLogic } from "./SummaryLogic";
 

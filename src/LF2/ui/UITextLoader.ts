@@ -2,7 +2,7 @@ import { IStyle } from "../defines/IStyle";
 import type { TextInfo } from "../ditto/image/TextInfo";
 import type { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 import { UINode } from "./UINode";
-import { Times } from "./utils/Times";
+import { Times } from "../utils/Times";
 
 export class UITextLoader {
   readonly node: () => UINode | null | undefined;

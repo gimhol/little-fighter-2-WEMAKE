@@ -1,4 +1,4 @@
-import { min, floor, max } from "../../utils";
+import { min, floor, max } from "./math/base";
 
 export class Times {
   value: number = 0;

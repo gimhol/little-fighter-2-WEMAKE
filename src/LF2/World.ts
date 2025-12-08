@@ -24,6 +24,7 @@ import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { manhattan } from "./manhattan";
 import { Stage } from "./stage/Stage";
+import { Times } from "./ui";
 import { abs, find, floor, is_num, min, round } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
@@ -42,9 +43,9 @@ export class World extends WorldDataset {
   private _UPS = new FPS(0.9);
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
-  private _time = 0;
+  private _time = new Times();
 
-  get time() { return this._time }
+  get time() { return this._time.value }
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
@@ -396,8 +397,8 @@ export class World extends WorldDataset {
   }
 
   update_once() {
-    if (this._time === Number.MAX_SAFE_INTEGER) this._time = 0;
-    else ++this._time;
+    this._time.add();
+    const { time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
 
@@ -406,8 +407,8 @@ export class World extends WorldDataset {
     this.a_collisions.clear();
     this._used_itrs.clear()
     this._temp_entitis_set.clear();
-    const update_collisions = this.time % 2 === 0
-    const update_chasing = this.time % 8 === 0;
+    const update_collisions = time % 2 === 0
+    const update_chasing = time % 8 === 0;
     if (update_chasing) {
       for (const chaser of this._enemy_chasers) {
         const e = chaser.chasing;

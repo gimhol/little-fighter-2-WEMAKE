@@ -5,7 +5,7 @@ import { LF2 } from "./LF2/LF2";
 import { DanmuGameLogic } from "./LF2/ui/component/DanmuGameLogic";
 import { IFighterSumInfo } from "./LF2/ui/component/IFighterSumInfo";
 import { UIComponent } from "./LF2/ui/component/UIComponent";
-import { Times } from "./LF2/ui/utils/Times";
+import { Times } from "./LF2/utils/Times";
 import { floor } from "./LF2/utils";
 const n = (nn: number) => nn.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
 

@@ -1,5 +1,5 @@
 import { IDrinkInfo } from "../defines";
-import { Times } from "../ui/utils/Times";
+import { Times } from "../utils/Times";
 
 /**
  * 饮料数据类

@@ -4,7 +4,7 @@ import { is_character } from "../../entity/type_check";
 import { traversal } from "../../utils/container_help/traversal";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
-import { Times } from "../utils/Times";
+import { Times } from "../../utils/Times";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
 

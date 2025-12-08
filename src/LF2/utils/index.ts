@@ -9,4 +9,5 @@ export * from "./math";
 export * from "./string_parser";
 export * from "./type_cast";
 export * from "./type_check";
+export * from "./Times";
 /*** AUTO EXPORT END ***/

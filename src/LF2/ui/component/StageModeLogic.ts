@@ -8,7 +8,7 @@ import type IStageCallbacks from "../../stage/IStageCallbacks";
 import { traversal } from "../../utils/container_help/traversal";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
-import { Times } from "../utils/Times";
+import { Times } from "../../utils/Times";
 import { FighterStatBar } from "./FighterStatBar";
 import { Jalousie } from "./Jalousie";
 import { OpacityAnimation } from "./OpacityAnimation";
