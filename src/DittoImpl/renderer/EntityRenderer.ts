@@ -1,10 +1,11 @@
 import type { Entity } from "@/LF2";
-import { EntityStatRender } from "./EntityStatRender";
 import { EntityRender } from "./EntityRender";
 import EntityShadowRender from "./EntityShadowRender";
+import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
 
-export class EntityRenderPack {
+export class EntityRenderer {
+  update_id = -1;
   entity!: Entity;
   main!: EntityRender;
   shad!: EntityShadowRender;
@@ -20,6 +21,9 @@ export class EntityRenderPack {
     this.shad = new EntityShadowRender(e);
   }
   render(dt: number) {
+    const update_id = this.entity.update_id.value
+    if (this.update_id === update_id) return;
+    this.update_id = update_id;
     this.main.render(dt);
     this.shad?.render();
     this.stat?.render();

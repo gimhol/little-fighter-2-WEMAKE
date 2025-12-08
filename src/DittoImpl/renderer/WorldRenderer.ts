@@ -6,7 +6,7 @@ import type { World } from "@/LF2/World";
 import { Camera, OrthographicCamera } from "../_t";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
-import { EntityRenderPack } from "./EntityRenderPack";
+import { EntityRenderer as EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
 
@@ -16,7 +16,7 @@ export class WorldRenderer implements IWorldRenderer {
   bg_render: BgRender;
   scene: Scene;
   camera: Camera;
-  entity_renderers = new Set<EntityRenderPack>();
+  entity_renderers = new Set<EntityRenderer>();
 
   private _indicator_flags: number = 0;
   get indicator_flags() {
@@ -84,8 +84,8 @@ export class WorldRenderer implements IWorldRenderer {
 
   }
   add_entity(entity: Entity): void {
-    const pack: EntityRenderPack = entity.renderer ? entity.renderer : (
-      entity.renderer = new EntityRenderPack(entity)
+    const pack: EntityRenderer = entity.renderer ? entity.renderer : (
+      entity.renderer = new EntityRenderer(entity)
     );
 
     // Criminal...?
@@ -108,11 +108,10 @@ export class WorldRenderer implements IWorldRenderer {
   }
 
   del_entity(e: Entity): void {
-    const pack: EntityRenderPack = e.renderer;
-    if (!pack) return;
-    this.entity_renderers.delete(e.renderer);
-    pack.unmount();
-    this.entity_renderers.delete(pack);
+    const renderer: EntityRenderer = e.renderer;
+    if (!renderer) return;
+    renderer.unmount();
+    this.entity_renderers.delete(renderer);
   }
 
   render(dt: number): void {

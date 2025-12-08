@@ -6,7 +6,6 @@ import * as T from "../_t";
 import { WorldRenderer } from "./WorldRenderer";
 
 export class EntityShadowRender {
-  readonly renderer_type: string = "Shadow";
   readonly mesh: T.Mesh;
   readonly entity: Entity;
   get world() { return this.entity.world }
@@ -46,15 +45,14 @@ export class EntityShadowRender {
   protected _shadow_img: string = '';
 
   render() {
+    const { entity } = this;
     const { bg } = this.world;
-
     const [sw, sh] = bg.data.base.shadowsize || [30, 30];
     if (sw !== this._shadow_w || sh !== this._shadow_h) {
       this._shadow_h = sh;
       this._shadow_w = sw;
       this.mesh.geometry = new T.PlaneGeometry(sw, sh);
     }
-
     const { shadow } = bg.data.base;
     if (shadow !== this._shadow_img) {
       this._shadow_img = shadow;
@@ -71,7 +69,7 @@ export class EntityShadowRender {
       frame,
       position: { x, z, y },
       invisible
-    } = this.entity;
+    } = entity;
     this.mesh.position.set(
       Math.floor(x),
       Math.floor(-z / 2),
@@ -81,7 +79,6 @@ export class EntityShadowRender {
     const opacity = 0.3 + 0.7 * clamp(250 - y, 0, 250) / 250
     this.mesh.scale.set(scale, scale, 1)
     this.material.opacity = opacity;
-
     this.mesh.visible = !invisible && !frame.no_shadow;
   }
 }

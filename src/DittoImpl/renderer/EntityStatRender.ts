@@ -38,7 +38,6 @@ export function get_color_material(color: T.ColorRepresentation) {
   return ret;
 }
 export class EntityStatRender implements IEntityCallbacks {
-  readonly renderer_type: string = "Info";
   protected reserve_node: T.Sprite;
   protected name_node: T.Sprite;
   protected bars_node = new T.Object3D();

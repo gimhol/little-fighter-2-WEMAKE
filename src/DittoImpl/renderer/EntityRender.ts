@@ -4,10 +4,10 @@ import type { Entity, TData } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
 import { clamp, floor, PI } from "@/LF2/utils";
 import * as T from "../_t";
-import { white_texture } from "./white_texture";
-import type { WorldRenderer } from "./WorldRenderer";
 import type { ImageMgr } from "../ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
+import { white_texture } from "./white_texture";
+import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: TData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
@@ -40,10 +40,10 @@ export class EntityRender {
   protected entity_material!: T.MeshBasicMaterial;
   protected variants = new Map<string, string[]>();
   protected piece: ITexturePieceInfo = EMPTY_PIECE;
-  protected _shaking: number = 0;
-  protected _shaking_time: number = 0;
-  protected _extra_shaking_time: number = 0;
-  protected _prev_data?: IEntityData;
+  protected shaking: number = 0;
+  protected shaking_time: number = 0;
+  protected extra_shaking_time: number = 0;
+  protected prev_data?: IEntityData;
   protected world_renderer: WorldRenderer;
 
   constructor(entity: Entity) {
@@ -59,7 +59,7 @@ export class EntityRender {
         this.variants.set(k, [k, ...data.base.files[k].variants]);
       else this.variants.set(k, [k]);
     }
-    this._prev_data = entity.data;
+    this.prev_data = entity.data;
     this.images = get_img_map(lf2, entity.data);
     const first_text = this.images.get("0")?.pic?.texture;
     const inner = (this.entity_mesh = this.entity_mesh || new T.Mesh(
@@ -148,7 +148,7 @@ export class EntityRender {
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     const { frame, facing } = entity;
     let { position: { x, y, z } } = entity;
-    if (entity.data !== this._prev_data) {
+    if (entity.data !== this.prev_data) {
       this.set_entity(entity);
     }
     const tex = frame.pic?.[facing]
@@ -190,19 +190,19 @@ export class EntityRender {
     this.blood_mesh.visible = is_b_v && entity_mesh.visible;
 
     const { shaking } = entity
-    if (shaking != this._shaking) {
-      if (!shaking) this._extra_shaking_time = EXTRA_SHAKING_TIME;
-      this._shaking = shaking;
+    if (shaking != this.shaking) {
+      if (!shaking) this.extra_shaking_time = EXTRA_SHAKING_TIME;
+      this.shaking = shaking;
     }
 
-    if (this._shaking || this._extra_shaking_time > 0) {
-      this._shaking_time += dt
-      const f = (floor(this._shaking_time / 32) % 2) || -1
+    if (this.shaking || this.extra_shaking_time > 0) {
+      this.shaking_time += dt
+      const f = (floor(this.shaking_time / 32) % 2) || -1
       entity_mesh.position.x += facing * f;
       this.blood_mesh.position.x += facing * f;
-      if (!shaking) this._extra_shaking_time -= dt
+      if (!shaking) this.extra_shaking_time -= dt
     } else {
-      this._shaking_time = 0;
+      this.shaking_time = 0;
     }
   }
 }
