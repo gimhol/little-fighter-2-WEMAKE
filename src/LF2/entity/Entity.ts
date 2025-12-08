@@ -1,6 +1,6 @@
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { Callbacks, ICollision, new_id, new_team, type NoEmitCallbacks } from "../base";
+import { Callbacks, ICollision, new_id, new_team } from "../base";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
@@ -12,6 +12,7 @@ import {
   INextFrame,
   INextFrameResult,
   IOpointInfo, IPos,
+  is_independent,
   ItrKind,
   IVector3,
   OpointKind, OpointMultiEnum, OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace,
@@ -31,9 +32,10 @@ import { is_num, is_positive, is_str } from "../utils/type_check";
 import { DrinkInfo } from "./DrinkInfo";
 import { Factory, ICreator } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
+import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_character, is_local_ctrl, is_weapon_data } from "./type_check";
+import { is_character, is_local_ctrl } from "./type_check";
 export type TData = IBaseData | IEntityData;
 export interface IDeadJoin {
   hp?: number;
@@ -53,7 +55,7 @@ export class Entity {
    * @readonly
    * @type {IVector3}
    */
-  readonly velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
 
   /**
    * 速度向量数组
@@ -65,6 +67,7 @@ export class Entity {
   readonly v_rests = new Map<string, ICollision>();
   readonly victims = new Map<string, ICollision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
+  protected readonly _emitters: string[] = [];
 
   id!: string;
   wait!: number;
@@ -126,7 +129,6 @@ export class Entity {
   protected _hp_max!: number;
   protected _holder!: Entity | null;
   protected _holding!: Entity | null;
-  protected _emitter!: Entity | null;
   protected _emitter_opoint!: IOpointInfo | null;
 
   /** 当前角色 */
@@ -174,29 +176,6 @@ export class Entity {
    */
   protected _after_blink!: string | TNextFrame | null;
 
-  /**
-   * 拾取物件总数
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _picking_sum!: number;
-
-  /**
-   * 伤害总数
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _damage_sum!: number;
-
-  /**
-   * 击杀总数
-   *
-   * @protected
-   * @type {number}
-   */
-  protected _kill_sum!: number;
   protected _state!: State_Base | null;
   protected _key_role!: boolean | null;
   protected _dead_gone!: boolean | null;
@@ -246,6 +225,12 @@ export class Entity {
   protected _chasing!: Entity | null;
   renderer: any;
 
+  get velocity(): IVector3 { return this._velocity }
+  set velocity(v: IVector3) {
+    this._velocity.copy(v);
+    this.velocities[0].copy(v);
+    this.velocities.length = 1;
+  }
 
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
@@ -380,30 +365,33 @@ export class Entity {
    * 拾取物件总数
    *
    * @protected
+   * @deprecated
    * @type {number}
    */
   get picking_sum() {
-    return this._picking_sum;
+    return summary_mgr.get(this.id).picking_sum
   }
 
   /**
    * 伤害总数
    *
    * @protected
+   * @deprecated
    * @type {number}
    */
   get damage_sum() {
-    return this._damage_sum;
+    return summary_mgr.get(this.id).damage_sum
   }
 
   /**
    * 击杀总数
    *
    * @readonly
+   * @deprecated
    * @type {number}
    */
   get kill_sum() {
-    return this._kill_sum;
+    return summary_mgr.get(this.id).kill_sum
   }
 
   get holder(): Entity | null {
@@ -439,7 +427,10 @@ export class Entity {
     const o = this._mp;
     v = max(0, v)
     if (o === v) return;
-    this.callbacks.emit("on_mp_changed")(this, (this._mp = v), o);
+    this._mp = v
+    if (v < o) summary_mgr.get(this.id).mp_usage += o - v;
+    if (v < o && !is_independent(this.team)) summary_mgr.get(this.team).mp_usage += o - v;
+    this.callbacks.emit("on_mp_changed")(this, v, o);
     if (o > 0 && v <= 0) {
       const nf = this.frame.on_exhaustion ?? this._data.on_exhaustion;
       if (nf) this.enter_frame(nf);
@@ -463,9 +454,12 @@ export class Entity {
     const o = this._hp;
     v = max(0, v)
     if (o === v) return;
-    this.callbacks.emit("on_hp_changed")(this, (this._hp = v), o);
-    if (o > 0 && v <= 0) {
+    this._hp = v;
+    if (v < o) summary_mgr.get(this.id).hp_lost += o - v;
+    if (v < o && !is_independent(this.team)) summary_mgr.get(this.team).hp_lost += o - v;
 
+    this.callbacks.emit("on_hp_changed")(this, v, o);
+    if (o > 0 && v <= 0) {
       this.callbacks.emit("on_dead")(this);
       this.state?.on_dead?.(this);
       if (this._data.base.brokens?.length) {
@@ -521,9 +515,9 @@ export class Entity {
     this.callbacks.emit("on_team_changed")(this, v, o);
   }
 
-  get emitter(): Entity | null {
-    return this._emitter;
-  }
+  get src_emitter(): Entity | undefined { return this.get_emitter(0) }
+  get pre_emitter(): Entity | undefined { return this.get_emitter(this.emitters.length - 1) }
+  get emitters(): string[] { return this._emitters; }
 
   set state(v: State_Base | null | undefined) {
     if (this._state === v) return;
@@ -652,7 +646,7 @@ export class Entity {
     this._prev_frame = EMPTY_FRAME_INFO;
     this._catching = null
     this._catcher = null
-    this.velocity.set(0, 0, 0)
+    this._velocity.set(0, 0, 0)
     this.velocities.length = 0;
     this.velocities[0] = new Ditto.Vector3(0, 0, 0)
     this.callbacks.clear();
@@ -666,7 +660,7 @@ export class Entity {
     this._landing_frame = null;
     this._holder = null;
     this._holding = null;
-    this._emitter = null;
+    this._emitters.length = 0;
     this._emitter_opoint = null;
     this.next_frame = null;
 
@@ -707,9 +701,7 @@ export class Entity {
     this._key_role = null;
     this._dead_gone = null;
     this._dead_join = null;
-    this._picking_sum = 0;
-    this._damage_sum = 0;
-    this._kill_sum = 0;
+
     this.drink = data.base.drink ? new DrinkInfo(data.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
@@ -737,14 +729,11 @@ export class Entity {
     this._holding = v;
     this.callbacks.emit("on_holding_changed")(this, v, old);
 
-    if (v) {
-      this._picking_sum += 1;
-      this.callbacks.emit("on_picking_sum_changed")(
-        this,
-        this._picking_sum,
-        this._picking_sum - 1,
-      );
-    }
+    if (!v) return this;
+    const s = summary_mgr.get(this.id)
+    s.picking_sum += 1
+    if (!is_independent(this.team))
+      summary_mgr.get(this.team).picking_sum += 1;
     return this;
   }
 
@@ -755,15 +744,16 @@ export class Entity {
    * 
    * 会触发话回调 on_damage_sum_changed
    *
+   * @deprecated
    * @param {number} v 伤害值计算
    * @return {this}
    * @memberof Entity
    */
   add_damage_sum(v: number): this {
-    const old = this._damage_sum;
-    this._damage_sum += v;
-    this.callbacks.emit("on_damage_sum_changed")(this, this._damage_sum, old);
-    this.emitter?.add_damage_sum(v);
+    const s = summary_mgr.get(this.id)
+    s.damage_sum += v;
+    if (!is_independent(this.team))
+      summary_mgr.get(this.team).damage_sum += v;
     return this;
   }
 
@@ -774,15 +764,16 @@ export class Entity {
    * 
    * 会触发话回调 on_kill_sum_changed
    *
+   * @deprecated
    * @param {number} v 击杀数量 
    * @return {this}
    * @memberof Entity
    */
   add_kill_sum(v: number): this {
-    const old = this._kill_sum;
-    this._kill_sum += v;
-    this.callbacks.emit("on_kill_sum_changed")(this, this._kill_sum, old);
-    this.emitter?.add_kill_sum(v);
+    const s = summary_mgr.get(this.id)
+    s.kill_sum += v
+    if (!is_independent(this.team))
+      summary_mgr.get(this.team).kill_sum += v;
     return this;
   }
 
@@ -797,29 +788,22 @@ export class Entity {
     ); // FIXME: fix this 'as'.
   }
 
-  find_emitter(fn: (e: Entity) => boolean): Entity | undefined {
-    if (!this.emitter) return void 0;
-    if (fn(this.emitter)) return this.emitter;
-    return this.emitter.find_emitter(fn);
-  }
-
   on_spawn(
     emitter: Entity,
     opoint: IOpointInfo,
     offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
     facing: TFace = emitter.facing,
   ) {
-    this._emitter = emitter;
     this._emitter_opoint = opoint;
-
     const emitter_frame = emitter.frame;
-    if (
-      emitter.frame.state === StateEnum.Ball_Rebounding ||
-      emitter.frame.state === StateEnum.Ball_Flying
-    ) {
-      this.team = (emitter.lastest_collided?.attacker ?? emitter).team;
+    if (emitter.frame.state === StateEnum.Ball_Rebounding) {
+      const attacker = emitter.lastest_collided?.attacker ?? emitter;
+      this._emitters[0] = attacker.id;
+      this._emitters.length = 1
+      this.team = attacker.team;
       this.facing = emitter.facing;
     } else {
+      this._emitters.push(emitter.id);
       this.team = emitter.team;
       this.facing = emitter.facing;
     }
@@ -1511,7 +1495,7 @@ export class Entity {
         }
       }
     }
-    this.velocity.set(vx, vy, vz);
+    this._velocity.set(vx, vy, vz);
     if (!this.shaking && !this.motionless) {
       this.position.x = Number((this.position.x + vx).toFixed(4));
       this.position.y = Number((this.position.y + vy).toFixed(4));
@@ -2070,6 +2054,12 @@ export class Entity {
     }
     this.velocities.length = 1;
     this.velocity_0.set(vx, vy, vz);
+    this.velocity.set(vx, vy, vz);
+  }
+  set_velocity(x: number, y: number, z: number) {
+    this.velocities[0].set(x, y, z);
+    this.velocities.length = 1;
+    this._velocity.set(x, y, z);
   }
 
   transform(data: IEntityData) {
@@ -2098,6 +2088,12 @@ export class Entity {
     if (!sound) return;
     const { x, y, z } = pos;
     this.lf2.sounds.play(sound, x, y, z);
+  }
+
+  get_emitter(idx: number): Entity | undefined {
+    const emittier_id = this.emitters[idx];
+    if (!emittier_id) return;
+    return this.world.entity_map.get(emittier_id);
   }
 }
 

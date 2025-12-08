@@ -41,10 +41,7 @@ export default class BallState_Base extends State_Base {
       case StateEnum.Ball_Disappear:
         e.shaking = 0;
         e.motionless = 0;
-        e.velocities.length = 1;
-        e.velocity_0.x = 0;
-        e.velocity_0.z = 0;
-        e.velocity_0.y = 0;
+        e.set_velocity(0, 0, 0)
         break;
     }
   }

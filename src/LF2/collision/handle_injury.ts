@@ -12,15 +12,11 @@ export function handle_injury(c: ICollision, scale: number = 1) {
   victim.hp -= injury;
   victim.hp_r -= round(injury * (1 - victim.world.hp_recoverability));
 
-  const temps = new Set([attacker])
-  while (attacker.emitter) {
-    if (temps.has(attacker.emitter)) { debugger; break; }
-    attacker = attacker.emitter
-    temps.add(attacker);
-  }
-  attacker.add_damage_sum(injury);
+  const _attacker = attacker.src_emitter || attacker;
+  _attacker.add_damage_sum(injury);
 
   // 分身击杀则不计算
-  if (!victim.emitter && victim.hp <= 0 && prev_hp > 0)
-    attacker.add_kill_sum(1);
+  if (!victim.emitters.length && victim.hp <= 0 && prev_hp > 0) {
+    _attacker.add_kill_sum(1);
+  }
 }

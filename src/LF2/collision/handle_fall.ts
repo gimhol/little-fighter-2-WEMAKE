@@ -18,10 +18,11 @@ export function handle_fall(collision: ICollision) {
   victim.fall_value = 0;
   victim.defend_value = 0;
   victim.resting = 0;
-  victim.velocities.length = 1;
-  victim.velocity_0.y = (itr.dvy ?? attacker.world.ivy_d) * attacker.world.ivy_f;
-  victim.velocity_0.z = 0;
-  victim.velocity_0.x = (itr.dvx || 0) * attacker_facing;
+  victim.set_velocity(
+    (itr.dvx || 0) * attacker_facing,
+    (itr.dvy ?? attacker.world.ivy_d) * attacker.world.ivy_f,
+    0,
+  )
 
   const is_critical = !!(itr.fall && itr.fall > Defines.DEFAULT_FALL_VALUE_CRITICAL)
 

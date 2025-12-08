@@ -52,10 +52,7 @@ export function handle_armor(collision: ICollision): boolean {
   } = itr
   attacker.motionless = floor(motionless_ratio * motionless);
   victim.shaking = floor(shaking_ratio * shaking);
-  victim.velocities.length = 1;
-  victim.velocity_0.x = 0;
-  victim.velocity_0.y = 0;
-  victim.velocity_0.z = 0;
+  victim.set_velocity(0, 0, 0)
   handle_rest(collision)
   handle_injury(collision, injury_ratio)
   return true;

@@ -1,3 +1,5 @@
+import { ISummaryCallbacks } from "@/LF2/entity/Summary";
+import { summary_mgr } from "@/LF2/entity/SummaryMgr";
 import { Entity, IEntityCallbacks, is_character } from "../../entity";
 import { IWorldCallbacks } from "../../IWorldCallbacks";
 import { max } from "../../utils";
@@ -36,28 +38,7 @@ export class SummaryLogic extends UIComponent {
     on_fighter_add: e => this.on_fighter_add(e),
   };
   private _fighter_cb: IEntityCallbacks = {
-    on_damage_sum_changed: (e, value, prev) => {
-      // 母体还在，避免重算
-      if (e.emitter?.is_attach === true) return;
-      this.team_sum(e.team).damages += value - prev;
-      this.fighter_sum(e).damages += value - prev;
-      this.player_sum(e).damages += value - prev;
-    },
-    on_kill_sum_changed: (e, value, prev) => {
-      // 母体还在，避免重算
-      if (e.emitter?.is_attach === true) return;
-      this.team_sum(e.team).kills += value - prev;
-      this.fighter_sum(e).kills += value - prev;
-      this.player_sum(e).kills += value - prev;
-    },
-    on_picking_sum_changed: (e, value, prev) => {
-      this.team_sum(e.team).pickings += value - prev;
-      this.fighter_sum(e).pickings += value - prev;
-      this.player_sum(e).pickings += value - prev;
-    },
     on_dead: (e) => {
-      // 分身死亡不计算
-      if (e.emitter) return;
       const team_sum = this.team_sum(e.team);
       team_sum.deads++;
       team_sum.lives--;
@@ -96,21 +77,47 @@ export class SummaryLogic extends UIComponent {
       this.team_sum(e.team).reserve += value - prev;
     },
   };
+  private _summary_cb_map = new Map<string, ISummaryCallbacks>();
   on_fighter_add(e: Entity) {
     const team_sum = this.team_sum(e.team)
     team_sum.hp += e.hp;
     team_sum.reserve += e.reserve;
     team_sum.lives++
-    if (!e.emitter) { // 忽略分身计数
+    e.callbacks.add(this._fighter_cb);
+
+    if (!e.emitters.length) { // 忽略分身计数
       team_sum.spawns++;
       this.losing_teams.delete(team_sum);
       this.fighter_sum(e).spawns++;
       this.player_sum(e).spawns++;
+      const cbs: ISummaryCallbacks = {
+        on_damage_sum_changed: (value, prev) => {
+          this.team_sum(e.team).damages += value - prev;
+          this.fighter_sum(e).damages += value - prev;
+          this.player_sum(e).damages += value - prev;
+        },
+        on_kill_sum_changed: (value, prev) => {
+          this.team_sum(e.team).kills += value - prev;
+          this.fighter_sum(e).kills += value - prev;
+          this.player_sum(e).kills += value - prev;
+        },
+        on_picking_sum_changed: (value, prev) => {
+          this.team_sum(e.team).pickings += value - prev;
+          this.fighter_sum(e).pickings += value - prev;
+          this.player_sum(e).pickings += value - prev;
+        }
+      }
+      this._summary_cb_map.set(e.id, cbs)
+      summary_mgr.get(e.id).callbacks.add(cbs)
     }
-    e.callbacks.add(this._fighter_cb);
   }
   on_fighter_del(e: Entity) {
     e.callbacks.del(this._fighter_cb);
+    const cbs = this._summary_cb_map.get(e.id);
+    if (cbs) {
+      summary_mgr.get(e.id).callbacks.del(cbs)
+      this._summary_cb_map.delete(e.id)
+    }
   }
   override on_start(): void {
     super.on_start?.();

@@ -44,6 +44,7 @@ export class World extends WorldDataset {
   private _time = 0;
 
   get time() { return this._time }
+  readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
   readonly slot_fighters = new Map<string, Entity>();
@@ -147,6 +148,7 @@ export class World extends WorldDataset {
         }
       }
       this.entities.add(entity);
+      this.entity_map.set(entity.id, entity)
       this.renderer.add_entity(entity);
     }
   }
@@ -178,7 +180,7 @@ export class World extends WorldDataset {
   del_entity(entity: Entity) {
     if (!(this.entities.delete(entity) || this.incorporeities.delete(entity)))
       return false;
-
+    this.entity_map.delete(entity.id)
     if (is_character(entity))
       this.callbacks.emit("on_fighter_del")(entity);
     if (entity.ctrl?.player_id) {
