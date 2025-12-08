@@ -443,6 +443,8 @@ export class World extends WorldDataset {
         }
       }
       e.self_update();
+    }
+    for (const e of this.entities) {
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
