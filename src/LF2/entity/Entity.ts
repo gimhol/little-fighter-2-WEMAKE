@@ -1004,6 +1004,13 @@ export class Entity {
         }
         const e = this.spawn_entity(opoint, v, facing);
         if (e) switch (this.frame.behavior) {
+          case FrameBehavior.JulianBallStart:
+            e.merge_velocities();
+            const { x } = e.velocity;
+            const zz = this.lf2.random_in(-10, 10) / 10;
+            const yy = this.lf2.random_in(-10, 10) / 10;
+            e.set_velocity(x, yy, zz)
+            break;
           case FrameBehavior.FirzenDisasterStart:
           case FrameBehavior.FirzenVolcanoStart:
           case FrameBehavior.BatStart:
@@ -2043,10 +2050,11 @@ export class Entity {
   }
 
   merge_velocities() {
-    if (this.velocities.length <= 1) return;
-    let vx = 0;
-    let vy = 0;
-    let vz = 0;
+    if (this.velocities.length <= 1) {
+      this.velocity.copy(this.velocities[0]);
+      return;
+    }
+    let vx = 0, vy = 0, vz = 0;
     for (const v of this.velocities) {
       vx += v.x;
       vy += v.y;

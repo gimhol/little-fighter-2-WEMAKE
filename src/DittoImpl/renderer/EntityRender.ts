@@ -94,15 +94,15 @@ export class EntityRender {
     if (first_txt) first_txt.onUpdate = () => mesh.material.needsUpdate = true;
     mesh.visible = false;
     mesh.name = "Entity:" + data.id;
-    if (typeof data.base.depth_test === "boolean") 
+    if (typeof data.base.depth_test === "boolean")
       mesh.material.depthTest = data.base.depth_test;
-    if (typeof data.base.depth_write === "boolean") 
+    if (typeof data.base.depth_write === "boolean")
       mesh.material.depthWrite = data.base.depth_write;
-    if (typeof data.base.render_order === "number") 
+    if (typeof data.base.render_order === "number")
       mesh.renderOrder = data.base.render_order;
 
-    this.blood_mesh = new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
-    this.blood_mesh.clone()
+    this.blood_mesh = this.blood_mesh || new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
+    this.blood_mesh.visible = false;
   }
 
   on_mount() {
@@ -142,9 +142,9 @@ export class EntityRender {
     const { entity, entity_mesh } = this;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     const { frame, facing } = entity;
-    let x = floor(entity.position.x)
-    let y = floor(entity.position.y)
-    let z = floor(entity.position.z)
+    let x = (entity.position.x)
+    let y = (entity.position.y)
+    let z = (entity.position.z)
     if (
       this._x !== x ||
       this._y !== y ||

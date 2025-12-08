@@ -64,7 +64,6 @@ export enum FrameBehavior {
    *    - 仅限于id: 225
    *
    * - WEMAKE中：
-   *    - 此值不会有任何作用（但依旧保留）
    *    - 生成将通过opoint被实现
    */
   BatStart = 8,
@@ -77,7 +76,6 @@ export enum FrameBehavior {
    * 殃殒天降的开始(视敌人数目而增加，基本数值是四个)
    *
    * - WEMAKE中：
-   *    - 此值不会有任何作用（但依旧保留）
    *    - 生成将通过opoint被实现
    */
   FirzenDisasterStart = 9,
@@ -103,7 +101,6 @@ export enum FrameBehavior {
    * 极地火山的开始
    *
    * - WEMAKE中：
-   *    - 此值不会有任何作用（但依旧保留）
    *    - 生成将通过opoint被实现
    */
   FirzenVolcanoStart = 11,
@@ -128,7 +125,6 @@ export enum FrameBehavior {
    *    ball类的frame的hit_FA=13时，将会生成一个JulianBall。
    *
    * - WEMAKE中：
-   *    - 此值不会有任何作用（但依旧保留）
    *    - 生成将通过opoint被实现
    */
   JulianBallStart = 13,
