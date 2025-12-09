@@ -15,7 +15,8 @@ export class SmoothNumber {
     return this;
   }
   update() {
-    if (this.done || float_equal(this._t, this._v)) {
+    if (this.done) return;
+    if (float_equal(this._t, this._v)) {
       this.done = true;
       return;
     }

@@ -40,7 +40,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _ui_stacks: UI.UIStack[] = [];
   private _loading: boolean = false;
   private _playable: boolean = false;
-  private _pointer_on_uis = new Set<UI.UINode>();
   private _mt = new MersenneTwister(Date.now())
   readonly bat_spreading_x = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VX, this)
   readonly bat_spreading_z = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VZ, this)

@@ -142,6 +142,7 @@ export class EntityRender {
     const { entity, entity_mesh } = this;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     const { frame, facing } = entity;
+    const { bpoint } = frame;
     let x = (entity.position.x)
     let y = (entity.position.y)
     let z = (entity.position.z)
@@ -176,17 +177,20 @@ export class EntityRender {
       const ez = Math.round(z)
       entity_mesh.position.set(ex, ey, ez);
 
-      const is_b_v = !!bpoint && entity.hp < entity.hp_max * 0.33;
       if (bpoint) {
         let { x: bx, y: by, z: bz = 0, r = 0 } = bpoint
         bx = entity.facing === 1 ? bx : entity_mesh.scale.x - bx;
         this.blood_mesh.position.set(ex + bx - entity.facing / 2, ey - by - 0.5, ez + bz);
         this.blood_mesh.setRotationFromAxisAngle(r_vec3, r * PI / 180)
-        this.blood_mesh.visible = is_b_v && entity_mesh.visible;
       } else {
         this.blood_mesh.position.set(ex, ey, ez)
       }
     }
+
+    const is_b_v = !!bpoint && entity_mesh.visible && entity.hp < entity.hp_max * 0.33;
+    this.blood_mesh.visible = is_b_v;
+
+
     const is_visible = !entity.invisible;
     const is_blinking = !!entity.blinking;
     entity_mesh.visible = is_visible;

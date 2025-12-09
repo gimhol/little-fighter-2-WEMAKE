@@ -1260,46 +1260,128 @@ export class Entity {
     this.dismiss_data = null;
     this.fuse_bys = null
   }
-  self_update(): void {
-    if (this.fuse_bys?.length) {
-      const { x, y, z } = this.position
-      for (const fighter of this.fuse_bys) {
-        fighter.position.set(x, y, z)
-      }
-      if (this.dismiss_time) this.dismiss_time--;
-      const dismiss = (
-        this.dismiss_time !== null &&
-        this.dismiss_time <= 0 ||
-        this.ctrl.sametime_keys_test('dja') ||
-        this.ctrl.sequence_keys_test('ja')
-      ) && y == 0;
-      if (dismiss) this.dismiss_fusion("112")
-    }
 
+  find_align_frame(
+    frame_id: string,
+    src: string[] | undefined | null,
+    dst: string[] | undefined | null
+  ): INextFrame {
+    if (dst?.length && src?.length) {
+      const src_idx = src.indexOf(frame_id)
+      const dst_idx = (src_idx + 1) % dst.length;
+      return { id: dst[dst_idx] };
+    } else if (dst?.length) {
+      return { id: dst[0] };
+    } else {
+      return this.find_auto_frame()
+    }
+  }
+  update_resting() {
+    if (this.resting <= 0) {
+      if (this.toughness_resting > 0) {
+        this.toughness_resting--;
+      } else if (this.toughness < this.toughness_max) {
+        this.toughness += 1;
+      }
+    }
+    if (this.resting > 0) {
+      this.resting--;
+    } else {
+      if (this.fall_value < this.fall_value_max) {
+        this.fall_value += 1;
+      }
+      if (this.defend_value < this.defend_value_max) {
+        this.defend_value += 1;
+      }
+    }
+  }
+
+  /**
+   * 持有物脱手
+   *
+   * @return {undefined}
+   * @memberof Entity
+   */
+  drop_holding(): void {
+    if (!this.holding) return;
+    this.holding.follow_holder();
+    this.holding.enter_frame({ id: this.lf2.random_get(this.holding.data.indexes?.in_the_skys) });
+    this.holding.holder = null;
+    this.holding = null;
+  }
+
+  /**
+   * 回血
+   *
+   * @memberof Entity
+   */
+  hp_recovering(): void {
+    if (this._hp <= 0 || this._hp >= this._hp_r)
+      return;
+    const { base } = this._data
+    this._hp_r_tick.max = this.healing > 0 ?
+      (base.hp_healing_ticks ?? this.world.hp_healing_ticks) :
+      (base.hp_r_ticks ?? this.world.hp_r_ticks);
+
+    if (!this._hp_r_tick.add())
+      return;
+    const value = this.healing > 0 ?
+      (base.hp_healing_value ?? this.world.hp_healing_value) :
+      (base.hp_r_value ?? this.world.hp_r_value);
+    this.hp = min(this._hp_r, this._hp + value);
+    if (this._hp === this._hp_r) this.healing = 0;
+    else if (this._healing) this.healing = max(0, this._healing - value)
+  }
+
+  /**
+   * 回蓝
+   *
+   * @memberof Entity
+   */
+  mp_recovering(): void {
+    if (this._hp <= 0 || this._mp >= this._mp_max || this._blinking_duration || this._invisible_duration)
+      return;
+    const { base } = this._data
+    this._mp_r_tick.max = base.mp_r_ticks ?? this.world.mp_r_ticks;
+    if (!this._mp_r_tick.add())
+      return;
+    const r_ratio = base.mp_r_ratio ?? this.world.mp_r_ratio;
+    const value = 1 + floor((500 - min(r_ratio * this._hp, 500)) / 100)
+    this.mp = min(this._mp_max, this._mp + value);
+  }
+
+  /**
+   * 检查是否应该解除合体
+   *
+   * @return {boolean} 解除合体时返回true，否则返回false
+   * @memberof Entity
+   */
+  check_fusion_dismissing(): boolean {
+    if (!this.fuse_bys?.length) return false;
+
+    const { x, y, z } = this.position
+    for (const fighter of this.fuse_bys) {
+      fighter.position.set(x, y, z)
+    }
+    if (this.dismiss_time) this.dismiss_time--;
+
+    const should_dismiss = (
+      this.dismiss_time !== null &&
+      this.dismiss_time <= 0 ||
+      this.ctrl.sametime_keys_test('dja') ||
+      this.ctrl.sequence_keys_test('ja')
+    ) && y == 0;
+    if (should_dismiss)
+      this.dismiss_fusion("112")
+    return should_dismiss;
+  }
+
+  update(): void {
+    this.update_id.add()
     if (this.next_frame) this.enter_frame(this.next_frame);
-
-    if (this._hp > 0 && this._hp < this._hp_r) {
-      this._hp_r_tick.max = this.healing > 0 ?
-        (this._data.base.hp_healing_ticks || this.world.hp_healing_ticks) :
-        (this._data.base.hp_r_ticks || this.world.hp_r_ticks);
-      if (this._hp_r_tick.add()) {
-        const value = this.healing > 0 ?
-          (this._data.base.hp_healing_value || this.world.hp_healing_value) :
-          (this._data.base.hp_r_value || this.world.hp_r_value);
-        this.hp = min(this._hp_r, this._hp + value);
-        if (this._hp === this._hp_r) this.healing = 0;
-        else if (this._healing) this.healing = max(0, this._healing - value)
-      }
-    }
-
-    if (this._hp > 0 && this._mp < this._mp_max && !this._blinking_duration && !this._invisible_duration) {
-      this._mp_r_tick.max = this._data.base.mp_r_ticks || this.world.mp_r_ticks;
-      const r_ratio = this._data.base.mp_r_ratio || this.world.mp_r_ratio;
-      if (this._mp_r_tick.add()) {
-        const value = 1 + floor((500 - min(r_ratio * this._hp, 500)) / 100)
-        this.mp = min(this._mp_max, this._mp + value);
-      }
-    }
+    if (this.check_fusion_dismissing()) return;
+    this.hp_recovering()
+    this.mp_recovering();
 
     if (this.frame.hp) this.hp -= this.frame.hp;
     const { cpoint } = this.frame;
@@ -1311,6 +1393,7 @@ export class Entity {
     } else {
       this._catch_time = this._catch_time_max;
     }
+
     if (this.shaking <= 0) {
       for (const [k, v] of this.v_rests) {
         if (v.attacker.shaking) continue;
@@ -1413,60 +1496,8 @@ export class Entity {
       }
     }
 
-
     this.state?.pre_update?.(this);
-  }
 
-  find_align_frame(
-    frame_id: string,
-    src: string[] | undefined | null,
-    dst: string[] | undefined | null
-  ): INextFrame {
-    if (dst?.length && src?.length) {
-      const src_idx = src.indexOf(frame_id)
-      const dst_idx = (src_idx + 1) % dst.length;
-      return { id: dst[dst_idx] };
-    } else if (dst?.length) {
-      return { id: dst[0] };
-    } else {
-      return this.find_auto_frame()
-    }
-  }
-  update_resting() {
-    if (this.resting <= 0) {
-      if (this.toughness_resting > 0) {
-        this.toughness_resting--;
-      } else if (this.toughness < this.toughness_max) {
-        this.toughness += 1;
-      }
-    }
-    if (this.resting > 0) {
-      this.resting--;
-    } else {
-      if (this.fall_value < this.fall_value_max) {
-        this.fall_value += 1;
-      }
-      if (this.defend_value < this.defend_value_max) {
-        this.defend_value += 1;
-      }
-    }
-  }
-
-  /**
-   * 持有物脱手
-   *
-   * @return {undefined}
-   * @memberof Entity
-   */
-  drop_holding(): void {
-    if (!this.holding) return;
-    this.holding.follow_holder();
-    this.holding.enter_frame({ id: this.lf2.random_get(this.holding.data.indexes?.in_the_skys) });
-    this.holding.holder = null;
-    this.holding = null;
-  }
-
-  update(): void {
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
       --this.wait;
@@ -1515,24 +1546,20 @@ export class Entity {
       ++this.wait;
       --this.shaking;
     }
-    const next_frame_1 = this.update_catching();
-    const next_frame_2 = this.update_caught();
-    this.next_frame = next_frame_2 || next_frame_1 || this.next_frame;
-
-    if (this.ctrl) {
-      const { next_frame, key_list } = this.ctrl.update();
-      if (
-        key_list === "dja" &&
-        this.transform_datas &&
-        this.transform_datas[1] === this._data &&
-        this.position.y === 0
-      ) {
-        this.transfrom_to_another();
-        this.ctrl.reset_key_list();
-      } else if (next_frame) {
-        const result = this.get_next_frame(next_frame)?.which;
-        if (result) this.next_frame = result;
-      }
+    if (this.update_catching()) return;
+    if (this.update_caught()) return;
+    const { next_frame, key_list } = this.ctrl.update();
+    if (
+      key_list === "dja" &&
+      this.transform_datas &&
+      this.transform_datas[1] === this._data &&
+      this.position.y === 0
+    ) {
+      this.transfrom_to_another();
+      this.ctrl.reset_key_list();
+    } else if (next_frame) {
+      const result = this.get_next_frame(next_frame)?.which;
+      if (result) this.next_frame = result;
     }
 
     // 落地
@@ -1555,12 +1582,10 @@ export class Entity {
       }
       this._landing_frame = this.frame
     }
-
     this.world.restrict(this);
     this.holding?.follow_holder();
     this.collision_list.length = 0;
     this.collided_list.length = 0;
-    this.update_id.add()
   }
 
   /**
@@ -1599,15 +1624,16 @@ export class Entity {
     return { id: Builtin_FrameId.Auto };
   }
 
-  update_caught(): INextFrame | undefined {
+  update_caught(): boolean {
     const cer = this._catcher;
-    if (!cer) return;
+    if (!cer) return false;
     /** "对齐颗粒度" */
     this.follow_catcher();
     if (!cer._catch_time) {
       this._catcher = null;
       this.prev_cpoint_a = null;
-      return this.get_caught_end_frame();
+      this.next_frame = this.get_caught_end_frame();
+      return true;
     }
 
     const frame_a = cer.frame;
@@ -1617,7 +1643,8 @@ export class Entity {
       this._catcher = null;
       this.prev_cpoint_a = null;
       this.velocity_0.y = 3;
-      return this.get_caught_cancel_frame();
+      this.next_frame = this.get_caught_cancel_frame();
+      return true;
     }
     if (this.prev_cpoint_a !== cpoint_a) {
       const { injury } = cpoint_a;
@@ -1651,22 +1678,29 @@ export class Entity {
       this._catcher = null;
       this.prev_cpoint_a = null;
     }
-    if (cpoint_a.vaction) return this.get_next_frame(cpoint_a.vaction)?.which;
+    if (cpoint_a.vaction) {
+      const nf = this.get_next_frame(cpoint_a.vaction)?.which
+      if (nf) this.next_frame = nf;
+      return !!nf
+    };
+    return false
   }
 
-  update_catching(): INextFrame | undefined {
-    if (!this._catching) return;
+  update_catching(): boolean {
+    if (!this._catching) return false;
 
     if (!this._catch_time) {
       this._catching = null;
-      return this.get_catching_end_frame();
+      this.next_frame = this.get_catching_end_frame();
+      return true;
     }
 
     const { cpoint: cpoint_a } = this.frame;
     const { cpoint: cpoint_b } = this._catching.frame;
     if (!cpoint_a || !cpoint_b) {
       this._catching = null;
-      return this.get_catching_cancel_frame();
+      this.next_frame = this.get_catching_cancel_frame();
+      return true;
     }
 
     const { throwvx, throwvy, throwvz, throwinjury } = cpoint_a;
@@ -1678,19 +1712,22 @@ export class Entity {
         // TODO：变成抓住的人
         if (is_character(this) && is_character(this._catching)) {
           this.transfrom_to_another(this._catching._data);
-          return this.find_auto_frame();
+          this.next_frame = this.find_auto_frame();
+          return true;
         }
       } else {
-        return GONE_FRAME_INFO;
+        this.next_frame = GONE_FRAME_INFO;
+        return true;
       }
     }
     if (throwvx || throwvy || throwvz) {
       this._catching = null;
-      return void 0;
+      return false;
     }
 
     /** "对齐颗粒度" */
     this.follow_catcher();
+    return false;
   }
 
   follow_catcher() {
@@ -1771,7 +1808,9 @@ export class Entity {
     }
     this._catch_time = this._catch_time_max;
     this._catching = target;
-    this.next_frame = this.get_next_frame(itr.catchingact)?.which || null;
+    const next_frame = this.get_next_frame(itr.catchingact)?.which || null;
+    if (next_frame) this.enter_frame(next_frame)
+    this.next_frame = null
   }
 
   start_caught(attacker: Entity, itr: IItrInfo) {
@@ -1784,7 +1823,9 @@ export class Entity {
     this.resting = 0;
     this.fall_value = this.fall_value_max;
     this.defend_value = this.defend_value_max;
-    this.next_frame = this.get_next_frame(itr.caughtact)?.which || null;
+    const next_frame = this.get_next_frame(itr.caughtact)?.which || null;
+    if (next_frame) this.enter_frame(next_frame)
+    this.next_frame = null
   }
 
   spark_point(r0: IBounding, r1: IBounding) {

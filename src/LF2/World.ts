@@ -236,48 +236,52 @@ export class World extends WorldDataset {
     let _update_count = 0;
     let _fix_radio = 1;
 
+
     const on_update = () => {
       const time = Date.now();
       const real_dt = time - _prev_time;
       if (real_dt < this._ideally_dt * _fix_radio) return;
-
-      this.lf2.ui?.enabled && this.lf2.ui?.update(real_dt);
       _update_count++;
-
-      if (this.lf2.keydowns) {
-        for (const e of this.lf2.keydowns)
-          this.lf2.ui?.on_key_down(e)
-        this.lf2.keydowns.clear();
-      }
-      if (this.lf2.keyups) {
-        for (const e of this.lf2.keyups)
-          this.lf2.ui?.on_key_up(e)
-        this.lf2.keyups.clear();
-      }
-      for (const key of this.lf2.cmds) {
-        switch (key) {
-          case 'f1': this.set_paused(!this.paused); break;
-          case 'f2': this.paused ? this.update_once() : this.set_paused(true); break;
-          case 'f4': this.lf2.pop_ui_safe(); break;
-          case 'f5': this.playrate = this.playrate === 1 ? 100 : 1; break;
-          case 'f6': this.infinity_mp = !this.infinity_mp; break;
-          case 'f7':
-            for (const e of this.entities) {
-              e.hp = e.hp_max;
-              e.mp = e.mp_max;
-            }
-            break;
-          case 'f8':
-            this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
-            break;
-          case 'f9':
-            for (const e of this.entities) {
-              if (is_weapon(e)) e.hp = 0;
-            }
-            break;
+      const ui = this.lf2.ui
+      if (ui?.enabled) {
+        ui?.update(real_dt);
+        if (this.lf2.keydowns) {
+          for (const e of this.lf2.keydowns)
+            this.lf2.ui?.on_key_down(e)
+          this.lf2.keydowns.clear();
+        }
+        if (this.lf2.keyups) {
+          for (const e of this.lf2.keyups)
+            this.lf2.ui?.on_key_up(e)
+          this.lf2.keyups.clear();
         }
       }
-      this.lf2.cmds.clear()
+      if (this.lf2.cmds.size) {
+        for (const key of this.lf2.cmds) {
+          switch (key) {
+            case 'f1': this.set_paused(!this.paused); break;
+            case 'f2': this.paused ? this.update_once() : this.set_paused(true); break;
+            case 'f4': this.lf2.pop_ui_safe(); break;
+            case 'f5': this.playrate = this.playrate === 1 ? 100 : 1; break;
+            case 'f6': this.infinity_mp = !this.infinity_mp; break;
+            case 'f7':
+              for (const e of this.entities) {
+                e.hp = e.hp_max;
+                e.mp = e.mp_max;
+              }
+              break;
+            case 'f8':
+              this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+              break;
+            case 'f9':
+              for (const e of this.entities) {
+                if (is_weapon(e)) e.hp = 0;
+              }
+              break;
+          }
+        }
+        this.lf2.cmds.clear()
+      }
       if (!this._paused) this.update_once();
       this.update_camera();
       this.bg.update();
@@ -440,9 +444,6 @@ export class World extends WorldDataset {
           }
         }
       }
-      e.self_update();
-    }
-    for (const e of this.entities) {
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
@@ -478,7 +479,6 @@ export class World extends WorldDataset {
         collisions_keeper.handle(c)
     }
     for (const e of this.incorporeities) {
-      e.self_update();
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
