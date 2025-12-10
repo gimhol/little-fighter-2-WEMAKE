@@ -205,6 +205,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     ret.userData.h = h;
     ret.userData.c_x = _c_x;
     ret.userData.c_y = _c_y;
+    ret.userData.c_z = _c_z;
     return (this._geo = ret);
   }
 

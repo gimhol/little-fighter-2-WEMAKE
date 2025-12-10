@@ -103,50 +103,56 @@ export class FighterStatBar extends UIComponent {
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
     const node = this.defend_value_bar;
     if (!node || max === 0) return;
-    const ww = this.defend_value_bar_w
-    const w = ww * val / max;
-    const h = node.size.value[1];
-    node.size.value = [w, h]
+    // const ww = this.defend_value_bar_w
+    // const w = ww * val / max;
+    // const h = node.size.value[1];
+    // node.size.value = [w, h]
+    node.scale.value = [val / max, 1, 1]
   }
   update_fall_value(val = this.fall_value.value, max = this.fall_value_max.value) {
     const node = this.fall_value_bar;
     if (!node || max === 0) return;
-    const ww = this.fall_value_bar_w
-    const w = ww * val / max;
-    const h = node.size.value[1];
-    node.size.value = [w, h]
+    // const ww = this.fall_value_bar_w
+    // const w = ww * val / max;
+    // const h = node.size.value[1];
+    // node.size.value = [w, h]
+    node.scale.value = [val / max, 1, 1]
   }
   update_toughness(val = this.toughness.value, max = this.toughness_max.value) {
     const node = this.toughness_bar;
     if (!node || max === 0) return;
-    const ww = this.toughness_bar_w
-    const w = ww * val / max;
-    const h = node.size.value[1];
-    node.size.value = [w, h]
+    // const ww = this.toughness_bar_w
+    // const w = ww * val / max;
+    // const h = node.size.value[1];
+    // node.size.value = [w, h]
+    node.scale.value = [val / max, 1, 1]
   }
   update_hp(val = this.hp.value, max = this.hp_max.value) {
     const node = this.hp_bar;
     if (!node || max === 0) return;
-    const ww = this.hp_bar_w
-    const w = ww * val / max;
-    const h = node.size.value[1];
-    node.size.value = [w, h]
+    // const ww = this.hp_bar_w
+    // const w = ww * val / max;
+    // const h = node.size.value[1];
+    // node.size.value = [w, h]
+    node.scale.value = [val / max, 1, 1]
   }
   update_hp_r(val = this.hp_r.value, max = this.hp_max.value) {
     const node = this.dark_hp_bar;
     if (!node || max === 0) return;
-    const ww = this.dark_hp_bar_w
-    const w = ww * val / max;
-    const h = node.size.value[1];
-    node.size.value = [w, h]
+    // const ww = this.dark_hp_bar_w
+    // const w = ww * val / max;
+    // const h = node.size.value[1];
+    // node.size.value = [w, h]
+    node.scale.value = [val / max, 1, 1]
   }
   update_mp(val = this.mp.value, max = this.mp_max.value) {
     const node = this.mp_bar;
     if (!node || max === 0) return;
-    const ww = this.mp_bar_w
-    const w = ww * val / max;
-    const h = node.size.value[1];
-    node.size.value = [w, h]
+    // const ww = this.mp_bar_w
+    // const w = ww * val / max;
+    // const h = node.size.value[1];
+    // node.size.value = [w, h]
+    node.scale.value = [val / max, 1, 1]
   }
   update_head(): void {
     const { entity } = this;

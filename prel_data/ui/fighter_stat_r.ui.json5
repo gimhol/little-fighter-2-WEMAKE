@@ -38,7 +38,8 @@
             top: "top",
             right: "right",
             bottom: "bottom",
-            offset: { l: 1, r: -1, t: 1, b: -1 }
+            offset: { l: 1, r: -1, t: 1, b: -1 },
+            once: true,
           },
         },
       ],

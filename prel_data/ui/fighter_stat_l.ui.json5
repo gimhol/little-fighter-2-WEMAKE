@@ -37,7 +37,8 @@
             top: "top",
             right: "right",
             bottom: "bottom",
-            offset: { l: 1, r: -1, t: 1, b: -1 }
+            offset: { l: 1, r: -1, t: 1, b: -1 },
+            once: true,
           },
         },
       ],
@@ -73,7 +74,7 @@
           },
         },
       ],
-      items: [ { color: "rgb(111,8,31)", template: "bar_inner" } ],
+      items: [{ color: "rgb(111,8,31)", template: "bar_inner" }],
     },
     {
       id: "hp",
@@ -89,7 +90,7 @@
           },
         },
       ],
-      items: [ { color: "#EE3F3A", template: "bar_inner" } ],
+      items: [{ color: "#EE3F3A", template: "bar_inner" }],
     },
     {
       id: "dark_mp",
@@ -106,7 +107,7 @@
           },
         },
       ],
-      items: [ { color: "rgb(31,8,111)", template: "bar_inner" } ],
+      items: [{ color: "rgb(31,8,111)", template: "bar_inner" }],
     },
     {
       id: "mp",
@@ -122,7 +123,7 @@
           },
         },
       ],
-      items: [ { color: "rgb(0,0,255)", template: "bar_inner" } ],
+      items: [{ color: "rgb(0,0,255)", template: "bar_inner" }],
     },
     {
       id: "fall_value",
@@ -139,7 +140,7 @@
           },
         },
       ],
-      items: [ { color: "rgb(216, 115, 0)", template: "bar_inner" } ],
+      items: [{ color: "rgb(216, 115, 0)", template: "bar_inner" }],
     },
     {
       id: "defend_value",
@@ -156,7 +157,7 @@
           },
         },
       ],
-      items: [ { color: "rgb(0, 122, 71)", template: "bar_inner" } ],
+      items: [{ color: "rgb(0, 122, 71)", template: "bar_inner" }],
     },
     {
       id: "toughness",
@@ -172,7 +173,7 @@
           },
         },
       ],
-      items: [ { color: "rgb(0, 204, 255)", template: "bar_inner" } ],
+      items: [{ color: "rgb(0, 204, 255)", template: "bar_inner" }],
     },
     {
       id: "name",
