@@ -1,10 +1,10 @@
-import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
+import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
 import { IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
-import { ceil, is_num, is_str } from "@/LF2/utils";
+import { ceil, is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
@@ -22,6 +22,15 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _geo: T.PlaneGeometry = new T.PlaneGeometry();
   protected _rgba: [number, number, number, number] = [255, 255, 255, 1];
   protected _texture: T.Texture = empty_texture();
+  protected img_idx_version: number | null = null;
+  protected imgs_version: number | null = null;
+  protected txt_idx_version: number | null = null;
+  protected txts_version: number | null = null;
+  protected size_version: number | null = null;
+  protected color_version: number | null = null;
+  protected center_version: number | null = null;
+  protected scale_version: number | null = null;
+  protected pos_version: number | null = null;
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -141,26 +150,20 @@ export class UINodeRenderer implements IUINodeRenderer {
     return this;
   }
 
+
   update_texture() {
     if (
-      !this.ui.img_idx.dirty &&
-      !this.ui.imgs.dirty &&
-      !this.ui.txt_idx.dirty &&
-      !this.ui.txts.dirty &&
-      !this.ui.size.dirty &&
-      !this.ui.color.dirty
+      this.img_idx_version === this.ui.img_idx.version &&
+      this.imgs_version === this.ui.imgs.version &&
+      this.txt_idx_version === this.ui.txt_idx.version &&
+      this.txts_version === this.ui.txts.version &&
+      this.color_version === this.ui.color.version
     ) return;
     const img: ImageInfo | undefined =
       this.ui.imgs.value[this.ui.img_idx.value] ||
       this.ui.txts.value[this.ui.txt_idx.value];
-
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
-
     const color = this.ui.color.value;
-
-    // eslint-disable-next-line no-debugger
-    if (img && !img.pic?.texture) debugger;
-
     const texture: T.Texture = img ? img.pic?.texture : color ? white_texture() : empty_texture();
     const a = get_alpha_from_color(color) || 1
     const { r, g, b } = new T.Color(color);
@@ -187,7 +190,6 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected h: number = 0;
 
   protected next_geometry(): T.BufferGeometry {
-      new T.DodecahedronGeometry
     const { w, h, _c_x, _c_y, _c_z } = this;
     const { w: _w, h: _h, c_x, c_y, c_z } = this._geo.userData;
 
@@ -195,9 +197,9 @@ export class UINodeRenderer implements IUINodeRenderer {
       return this._geo;
     this._geo.dispose();
 
-    const tran_x = Math.round(w * (0.5 - _c_x));
-    const tran_y = Math.round(h * (_c_y - 0.5));
-    const tran_z = Math.round(_c_z);
+    const tran_x = round(w * (0.5 - _c_x));
+    const tran_y = round(h * (_c_y - 0.5));
+    const tran_z = round(_c_z);
     const ret = new T.PlaneGeometry(w, h).translate(tran_x, tran_y, tran_z);
     ret.userData.w = w;
     ret.userData.h = h;
@@ -206,9 +208,12 @@ export class UINodeRenderer implements IUINodeRenderer {
     return (this._geo = ret);
   }
 
+
   render(dt: number) {
-    if (this.ui.center.dirty || this.ui.size.dirty) {
-      this.ui.center.dirty = this.ui.size.dirty = false
+    if (
+      this.center_version !== this.ui.center.version ||
+      this.size_version !== this.ui.size.version
+    ) {
       const [w, h] = this.ui.size.value;
       const [x, y, z] = this.ui.center.value
       this.w = w;
@@ -216,16 +221,15 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._c_x = x;
       this._c_y = y;
       this._c_z = z;
-      this.apply();
-
       if (this._dom) {
         this._dom.style.width = `${w}px`
         this._dom.style.height = `${h}px`
       }
       this._css_obj?.center.set(x, y)
     }
+    
     this.update_texture();
-    if (this.ui.scale.dirty)
+    if (this.ui.scale.version !== this.scale_version)
       this.sprite.scale.set(...this.ui.scale.value);
 
     const sp = this.sprite;
@@ -242,7 +246,7 @@ export class UINodeRenderer implements IUINodeRenderer {
         t.needsUpdate = true
       }
     }
-    if (this.ui.pos.dirty) {
+    if (this.ui.pos.version !== this.pos_version) {
       const [x, y, z] = this.ui.pos.value
       sp.position.set(x, -y, z);
     }
@@ -259,5 +263,15 @@ export class UINodeRenderer implements IUINodeRenderer {
     for (const child of this.ui.children)
       if (child.visible !== child.renderer.visible || child.renderer.visible)
         child.renderer.render(dt)
+
+    this.center_version = this.ui.center.version
+    this.scale_version = this.ui.scale.version;
+    this.pos_version = this.ui.pos.version;
+    this.img_idx_version = this.ui.img_idx.version
+    this.imgs_version = this.ui.imgs.version
+    this.txt_idx_version = this.ui.txt_idx.version
+    this.txts_version = this.ui.txts.version
+    this.size_version = this.ui.size.version
+    this.color_version = this.ui.color.version
   }
 }

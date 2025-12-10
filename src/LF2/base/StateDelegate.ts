@@ -1,4 +1,4 @@
-import { max, floor, Unsafe } from "../utils";
+import { max, floor, Unsafe, Times } from "../utils";
 
 export type TValueInfo<T> =
   | { is_func: true; v: () => T }
@@ -15,7 +15,7 @@ export class StateDelegate<T> {
     if (a && b) return a.some((v, i) => v !== b[i]);
     return true
   }
-  protected _dirty: boolean = true
+  protected _version = new Times(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
   protected _default_value: TValueInfo<Unsafe<T>>
   protected _values: TValueInfo<Unsafe<T>>[] = [];
   protected get_value(v: TValueInfo<Unsafe<T>>) {
@@ -24,14 +24,13 @@ export class StateDelegate<T> {
   protected value_to_state(v: Value<Unsafe<T>>): TValueInfo<Unsafe<T>> {
     return (typeof v === 'function') ? { is_func: true, v: v as () => T } : { is_func: false, v: v };
   }
-  set dirty(v: boolean) { this._dirty = v; }
-  get dirty() { const r = this._dirty; this._dirty = false; return r; }
+  get version() { return this._version.value }
   set default_value(v: Value<T>) {
     const old_value = this.value;
     this._default_value = this.value_to_state(v);
     const now_value = this.value;
 
-    if (this.compare(old_value, now_value)) this._dirty = true;
+    if (this.compare(old_value, now_value)) this._version.add();
   }
   get default_value(): T { return this.get_value(this._default_value)! }
   set value(v: Value<Unsafe<T>>) { this.set(max(0, this._values.length - 1), v) }
@@ -84,7 +83,7 @@ export class StateDelegate<T> {
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
     const changed = !old || !now || this.compare(old_value, now_value)
-    if (changed) this._dirty = true;
+    if (changed) this._version.add();
   }
 
   delete(index: number) {
@@ -98,7 +97,7 @@ export class StateDelegate<T> {
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
     const changed = !old || !now || this.compare(old_value, now_value)
-    if (changed) this._dirty = true;
+    if (changed) this._version.add();
 
   }
 
@@ -112,7 +111,7 @@ export class StateDelegate<T> {
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
     const changed = !old || !now || this.compare(old_value, now_value)
-    if (changed) this._dirty = true;
+    if (changed) this._version.add();
 
   }
 
@@ -124,7 +123,7 @@ export class StateDelegate<T> {
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
     const changed = !old || !now || this.compare(old_value, now_value)
-    if (changed) this._dirty = true;
+    if (changed) this._version.add();
   }
 
   push(...v: Value<Unsafe<T>>[]) {
@@ -135,7 +134,7 @@ export class StateDelegate<T> {
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
     const changed = !old || !now || this.compare(old_value, now_value)
-    if (changed) this._dirty = true;
+    if (changed) this._version.add();
   }
 
   unshift(...v: Value<Unsafe<T>>[]) {
@@ -147,7 +146,7 @@ export class StateDelegate<T> {
     const old_value = old ? this.get_value(old) : void 0;
     const now_value = now ? this.get_value(now) : void 0;
     const changed = !old || !now || this.compare(old_value, now_value)
-    if (changed) this._dirty = true;
+    if (changed) this._version.add();
   }
   write(v: T) {
     this.value = v;
