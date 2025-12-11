@@ -4,6 +4,8 @@
 
 For English, see [README.en.md](README.en.md)  
 
+觉得这个项目还不错？Star⭐支持一下吧！
+
 直接开试 [https://lf.gim.ink/](https://lf.gim.ink/)
 
 玩法、美术、音效音乐来自"Litter Fighter 2", 原作：Marti Wong，Starsky Wong.
@@ -32,5 +34,6 @@ For English, see [README.en.md](README.en.md)
   - [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
 
 ### 运行
+
 
 `npm run start`
