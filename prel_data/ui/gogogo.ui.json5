@@ -5,7 +5,7 @@
     {
       txt: [
         {
-          i18n: "Go! →",
+          i18n: "Go! ➡",
           style: {
             fill_style: "white",
             font: '46px "Arial Black", Arial',
@@ -20,7 +20,12 @@
       component: [
         {
           name: "Alignment",
-          properties: { right: "right", top: "top", offset: { t: 33 } },
+          properties: {
+            right: "right",
+            top: "top",
+            offset: { t: 33 },
+            once: true,
+          },
         },
         {
           name: "Sounds",
@@ -30,9 +35,7 @@
           name: "OpacityFlash",
           properties: {
             times: 3,
-            steps: [
-              0, 350, 1, 100, 1, 350, 0,
-            ],
+            steps: [0, 350, 1, 100, 1, 350, 0],
           },
         },
       ],

@@ -4,6 +4,7 @@ import { ISchema } from "@/LF2/defines";
 import ease_linearity from "@/LF2/utils/ease_method/ease_linearity";
 import { UIComponent } from "./UIComponent";
 import { make_schema } from "@/LF2/utils/schema";
+import { IUIPointerEvent } from "../IUIPointerEvent";
 
 export interface IOpacityFlashProps {
   steps?: number[];
@@ -31,8 +32,6 @@ export class OpacityFlash extends UIComponent {
       }
     }
   })
-
-
 
   protected _anim: Sequence = new Sequence();
   override on_start(): void {
@@ -64,5 +63,9 @@ export class OpacityFlash extends UIComponent {
 
   override update(dt: number): void {
     this.node.opacity = this._anim.update(dt).value;
+  }
+
+  replay(): void {
+    this._anim.start(false)
   }
 }

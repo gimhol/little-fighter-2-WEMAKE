@@ -1,5 +1,6 @@
 import { Loop } from "../../animation/Loop";
 import { Defines } from "../../defines";
+import { IUIPointerEvent } from "../IUIPointerEvent";
 import { UIComponent } from "./UIComponent";
 
 export class Sounds extends UIComponent {
@@ -24,6 +25,14 @@ export class Sounds extends UIComponent {
     this.enabled = false;
     return this;
   }
+
+  replay(): void {
+    this.time = 0;
+    this.idx = 0;
+    this.enabled = true;
+    this.loop.reset();
+  }
+  
   override on_start(): void {
     const l = this.args.length;
     let t = 0;

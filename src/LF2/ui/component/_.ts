@@ -21,7 +21,7 @@ import * as _13 from "./ImgClickable";
 import * as _14 from "./ImgLoop";
 import * as _15 from "./LaunchPageLogic";
 import * as _16 from "./LoadingContentText";
-import * as _17 from "./Opacity";
+import * as _17 from "./OpacityFlash";
 import * as _18 from "./OpacityAnimation";
 import * as _19 from "./OpacityHover";
 import * as _1a from "./PlayerCtrlType";

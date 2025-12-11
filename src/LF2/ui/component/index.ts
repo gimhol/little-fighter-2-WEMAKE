@@ -32,7 +32,7 @@ export * from "./make_fighter_sum";
 export * from "./make_player_sum";
 export * from "./make_sum_info";
 export * from "./make_team_sum_info";
-export * from "./Opacity";
+export * from "./OpacityFlash";
 export * from "./OpacityAnimation";
 export * from "./OpacityHover";
 export * from "./PlayerCtrlType";
