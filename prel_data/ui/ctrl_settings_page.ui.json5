@@ -311,5 +311,35 @@
         click: ["sound(ok)", "link_to(https://lf2.net/control.html)"],
       },
     },
+    {
+      txt: {
+        i18n: "goto_github_url",
+        style: {
+          fill_style: "#5A73D6",
+          underline_color: "#5A73D6",
+          underline_width: 1,
+          font: "12px Arial",
+        },
+      },
+      center: "1, 1",
+      pos: "789, 445",
+    },
+    {
+      txt: {
+        i18n: "goto_github_url",
+        style: {
+          fill_style: "white",
+          underline_color: "white",
+          underline_width: 1,
+          font: "12px Arial",
+        },
+      },
+      center: "1, 1",
+      pos: "789, 445",
+      component: ["OpacityHover(0,1)"],
+      actions: {
+        click: ["sound(ok)", "link_to(https://github.com/gimhol/little-fighter-2-WEMAKE)"],
+      },
+    },
   ],
 }
