@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import fs from "fs/promises";
 import JSON5 from "json5";
-import path from "path";
+import path, { join } from "path";
 import { ILegacyPictureInfo } from "../../src/LF2/defines/ILegacyPictureInfo";
 import { data_2_txt } from "./data_2_txt";
 import { CacheInfos } from "./utils/cache_infos";
@@ -15,12 +15,13 @@ import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
 const {
   RAW_LF2_PATH,
-  DATA_DIR_PATH,
+  TEMP_DIR,
   OUT_DIR,
   DATA_ZIP_NAME,
   PREL_DIR_PATH,
   PREL_ZIP_NAME,
   TXT_LF2_PATH,
+  DATA_DIR_PATH = join(TEMP_DIR, "lf2_data")
 } = JSON5.parse(readFileSync("./converter.config.json").toString());
 
 enum EntryEnum {
@@ -61,13 +62,13 @@ async function main() {
   check_is_str_ok(
     RAW_LF2_PATH,
     OUT_DIR,
-    DATA_DIR_PATH,
+    TEMP_DIR,
     DATA_ZIP_NAME,
     PREL_DIR_PATH,
     PREL_ZIP_NAME,
   );
   const cache_infos = await CacheInfos.create(
-    path.join(OUT_DIR, "cache_infos.json"),
+    path.join(TEMP_DIR, "cache_infos.json5"),
   );
   const ress = await classify(RAW_LF2_PATH);
   for (const src_path of ress.directories) {
