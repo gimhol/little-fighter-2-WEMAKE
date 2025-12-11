@@ -6,6 +6,8 @@ For Chinese, see [README.md](README.md)
 
 try it at [https://lf.gim.ink/](https://lf.gim.ink/)
 
+Think this project is pretty good? Consider starring it!
+
 gameplays, arts, and sounds are all from "Litter Fighter 2" basically, created by Marti Wong and Starsky Wong in 1999.
 
 "LF2:Wemake" created by Gim in 2024."
@@ -36,3 +38,4 @@ This step will generate lf2:wemake data based on the original lf2 data.
 ### Run
 
 `npm run start`
+
