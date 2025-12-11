@@ -20,7 +20,7 @@ const {
   DATA_ZIP_NAME,
   PREL_DIR_PATH,
   PREL_ZIP_NAME,
-  TXT_LF2_PATH,
+  TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt"),
   DATA_DIR_PATH = join(TEMP_DIR, "lf2_data")
 } = JSON5.parse(readFileSync("./converter.config.json").toString());
 

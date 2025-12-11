@@ -1,6 +1,5 @@
 {
   "RAW_LF2_PATH": "./game_data",
-  "TXT_LF2_PATH": "./game_data_txt",
   "OUT_DIR": "./public",
   "TEMP_DIR": "./temp",
   "DATA_ZIP_NAME": "data.zip",

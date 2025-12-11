@@ -15,6 +15,7 @@ export enum ActionType {
   V_REBOUND_VX = 'v_rebound_vx',
   V_TURN_FACE = 'v_turn_face',
   V_TURN_TEAM = "v_turn_team",
-
+  
+  /** 合体 */
   FUSION = 'fusion'
 }
