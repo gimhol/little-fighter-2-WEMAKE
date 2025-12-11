@@ -1,44 +1,40 @@
 {
   id: "go",
   name: "gogogo",
-  items: [
+  txt: [
     {
-      txt: [
-        {
-          i18n: "Go! ➡",
-          style: {
-            fill_style: "white",
-            font: '46px "Arial Black", Arial',
-            back_style: {
-              font: '46px "Arial Black", Arial',
-              stroke_style: "#005A8E",
-              line_width: 5,
-            },
-          },
+      i18n: "Go! ➡",
+      style: {
+        fill_style: "white",
+        font: '46px "Arial Black", Arial',
+        back_style: {
+          font: '46px "Arial Black", Arial',
+          stroke_style: "#005A8E",
+          line_width: 5,
         },
-      ],
-      component: [
-        {
-          name: "Alignment",
-          properties: {
-            right: "right",
-            top: "top",
-            offset: { t: 33 },
-            once: true,
-          },
-        },
-        {
-          name: "Sounds",
-          args: ["350", "ok", "800", "ok", "800", "ok"],
-        },
-        {
-          name: "OpacityFlash",
-          properties: {
-            times: 3,
-            steps: [0, 350, 1, 100, 1, 350, 0],
-          },
-        },
-      ],
+      },
+    },
+  ],
+  component: [
+    {
+      name: "Alignment",
+      properties: {
+        right: "right",
+        top: "top",
+        offset: { t: 33 },
+        once: true,
+      },
+    },
+    {
+      name: "Sounds",
+      args: ["350", "ok", "800", "ok", "800", "ok"],
+    },
+    {
+      name: "OpacityFlash",
+      properties: {
+        times: 3,
+        steps: [0, 350, 1, 100, 1, 350, 0],
+      },
     },
   ],
 }
