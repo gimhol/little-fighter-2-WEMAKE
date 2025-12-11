@@ -1,28 +1,23 @@
 import type Layer from "@/LF2/bg/Layer";
-import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import * as T from "../_t";
+import { get_geometry } from "./GeometryKeeper";
+import { get_bg_layer_material, MaterialKeeper } from "./MaterialKeeper";
+
 
 export class BgLayerRender {
   readonly mesh: T.Mesh;
   readonly layer: Layer;
-  readonly img_info: ImageInfo | undefined;
 
   constructor(layer: Layer) {
     this.layer = layer;
-    const { bg, info } = layer;
+    const { info } = layer;
     const { x, y, z, file } = info;
-    if (file) this.img_info = this.layer.bg.world.lf2.images.find(file)
-    const { pic } = this.img_info || {};
+    const pic = file ? this.layer.bg.world.lf2.images.find(file)?.pic : null
     const w = pic?.w ?? info.width;
     const h = pic?.h ?? info.height;
-    const params: T.MeshBasicMaterialParameters = {
-      transparent: true
-    };
-    if (pic?.texture) params.map = pic.texture;
-    else params.color = info.color;
     this.mesh = new T.Mesh(
-      new T.PlaneGeometry(w, h).translate(w / 2, -h / 2, 0),
-      new T.MeshBasicMaterial(params),
+      get_geometry(w, h, w / 2, -h / 2),
+      get_bg_layer_material(info, layer.bg.world.lf2)
     );
     this.mesh.name = "bg layer";
     this.mesh.position.set(x, y, z);

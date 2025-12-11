@@ -6,7 +6,8 @@ import { clamp, floor, PI } from "@/LF2/utils";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
-import { white_texture } from "./white_texture";
+import { get_geometry } from "./GeometryKeeper";
+import { get_color_material } from "./MaterialKeeper";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: TData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
@@ -19,22 +20,9 @@ function get_img_map(lf2: LF2, data: TData): Map<string, RImageInfo> {
   }
   return ret;
 }
-const BODY_GEOMETRY = new T.PlaneGeometry(1, 1).translate(0.5, -0.5, 0);
-const BLOOD_GEOMETRY = new T.PlaneGeometry(1, 3).translate(0, -1.25, 0);
-const BLOOD_MESH_MATERIAL = new T.MeshBasicMaterial({
-  map: white_texture(),
-  color: new T.Color(1, 0, 0),
-  transparent: true,
-})
-const EMPTY_PIECE: ITexturePieceInfo = {
-  tex: "0",
-  x: 0,
-  y: 0,
-  w: 0,
-  h: 0,
-  pixel_h: 0,
-  pixel_w: 0,
-};
+const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
+const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
+const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
 const EXTRA_SHAKING_TIME = 100;
 const r_vec3 = new T.Vector3(0, 0, -1);
 export class EntityRender {

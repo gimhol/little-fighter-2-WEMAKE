@@ -11,32 +11,6 @@ const BAR_W = 40;
 const BAR_H = 3;
 const BAR_BG_W = BAR_W + 2;
 const BAR_BG_H = 1 + (BAR_H + 1) * 2 + 4;
-const geo_map = new Map<string, T.PlaneGeometry>();
-
-export function get_bar_geo(w: number, h: number, ax: number, ay: number) {
-  const key = `w_h_a_${w}_${h}`;
-  let ret = geo_map.get(key);
-  if (!ret)
-    geo_map.set(
-      key,
-      (ret = new T.PlaneGeometry(w, h).translate(ax * w, ay * h, 0)),
-    );
-  return ret;
-}
-
-const material_map = new Map<T.ColorRepresentation, T.MeshBasicMaterial>();
-export function get_color_material(color: T.ColorRepresentation) {
-  const key = typeof color === "string" || typeof color === "number"
-    ? `c_${color}` : color ? color : "c_void";
-
-  let ret = material_map.get(key);
-  if (!ret)
-    material_map.set(
-      key,
-      (ret = new T.MeshBasicMaterial({ visible: true, color })),
-    );
-  return ret;
-}
 export class EntityStatRender implements IEntityCallbacks {
   protected reserve_node: T.Sprite;
   protected name_node: T.Sprite;

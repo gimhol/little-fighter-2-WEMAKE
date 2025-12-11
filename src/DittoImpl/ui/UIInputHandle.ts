@@ -96,7 +96,7 @@ export class UIInputHandle implements IUIInputHandle {
     this.pointer_vec_2.x = x;
     this.pointer_vec_2.y = y;
     this.pointer_raycaster.setFromCamera(this.pointer_vec_2, this.world_renderer.camera);
-    const ui_sprite = (ui.renderer as UINodeRenderer).sprite
+    const ui_sprite = (ui.renderer as UINodeRenderer).mesh
 
     const ret: IIntersection[] = [];
     const temp = this.pointer_raycaster.intersectObject(ui_sprite);

@@ -3,18 +3,16 @@ import { Background } from "@/LF2/bg/Background";
 import type { Entity } from "@/LF2/entity/Entity";
 import { clamp } from "@/LF2/utils";
 import * as T from "../_t";
+import { get_geometry } from "./GeometryKeeper";
 import { WorldRenderer } from "./WorldRenderer";
+import { get_img_material } from "./MaterialKeeper";
 
 export class EntityShadowRender {
-  readonly mesh: T.Mesh;
+  readonly mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   readonly entity: Entity;
   get world() { return this.entity.world }
   get lf2() { return this.entity.lf2 }
   bg: Readonly<Background> | undefined = void 0
-  protected material = new T.MeshBasicMaterial({
-    transparent: true,
-    opacity: 0,
-  });
   get visible() {
     return this.mesh.visible;
   }
@@ -22,11 +20,10 @@ export class EntityShadowRender {
     this.mesh.visible = v;
   }
   constructor(entity: Entity) {
-    const { lf2 } = entity;
     this.entity = entity
     this.mesh = new T.Mesh(
-      new T.PlaneGeometry(0, 0),
-      this.material,
+      get_geometry(0, 0),
+      get_img_material(),
     );
     this.mesh.name = EntityShadowRender.name;
     this.mesh.renderOrder = 0;
@@ -46,23 +43,18 @@ export class EntityShadowRender {
 
   render() {
     const { entity } = this;
-    const { bg } = this.world;
+    const { bg, lf2 } = this.world;
     const [sw, sh] = bg.data.base.shadowsize || [30, 30];
     if (sw !== this._shadow_w || sh !== this._shadow_h) {
       this._shadow_h = sh;
       this._shadow_w = sw;
-      this.mesh.geometry = new T.PlaneGeometry(sw, sh);
+      this.mesh.geometry = get_geometry(sw, sh);
     }
     const { shadow } = bg.data.base;
     if (shadow !== this._shadow_img) {
       this._shadow_img = shadow;
-      const { pic } = this.lf2.images.find(shadow) || {}
-      if (pic) {
-        this.material.map = pic.texture as T.Texture;
-        this.material.map.needsUpdate = true
-        this.material.opacity = 1;
-        this.material.needsUpdate = true;
-      }
+      this.mesh.material = get_img_material(shadow, lf2).clone()
+      this.mesh.material.needsUpdate = true;
     }
 
     const {
@@ -78,7 +70,7 @@ export class EntityShadowRender {
     const scale = 0.5 + 0.5 * clamp(250 - y, 0, 250) / 250
     const opacity = 0.3 + 0.7 * clamp(250 - y, 0, 250) / 250
     this.mesh.scale.set(scale, scale, 1)
-    this.material.opacity = opacity;
+    this.mesh.material.opacity = opacity;
     this.mesh.visible = !invisible && !frame.no_shadow;
   }
 }

@@ -8,18 +8,19 @@ import { ceil, is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
+import { get_geometry } from "./GeometryKeeper";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
 
 export class UINodeRenderer implements IUINodeRenderer {
-  sprite: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+  mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   ui: UINode;
 
   protected _css_obj: CSS2DObject | undefined;
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
-  protected _geo: T.PlaneGeometry = new T.PlaneGeometry();
+  protected _geo = get_geometry(0, 0, 0, 0, 0);
   protected _rgba: [number, number, number, number] = [255, 255, 255, 1];
   protected _texture: T.Texture = empty_texture();
   protected img_idx_version: number | null = null;
@@ -43,24 +44,24 @@ export class UINodeRenderer implements IUINodeRenderer {
     const txt = this.ui.txts.value[this.ui.txt_idx.value]
     if (txt?.style.font) this.dom.style.font = txt.style.font;
     if (txt?.style.fill_style) this.dom.style.color = txt.style.fill_style;
-    this.sprite.add(this._css_obj);
+    this.mesh.add(this._css_obj);
     return this._dom;
   }
   protected release_dom() {
     if (!this._css_obj) return;
-    this.sprite.remove(this._css_obj);
+    this.mesh.remove(this._css_obj);
     delete this._css_obj;
     delete this._dom;
   }
   protected hide_dom() {
     if (!this._css_obj) return;
     if (!this._css_obj.parent) return;
-    this.sprite.remove(this._css_obj);
+    this.mesh.remove(this._css_obj);
   }
   protected show_dom() {
     if (!this._css_obj) return;
     if (this._css_obj.parent) return;
-    this.sprite.add(this._css_obj);
+    this.mesh.add(this._css_obj);
   }
 
   get world() { return this.ui.lf2.world }
@@ -69,24 +70,24 @@ export class UINodeRenderer implements IUINodeRenderer {
   img_idx = -1
   constructor(ui: UINode) {
     this.ui = ui;
-    this.sprite = new T.Mesh(
+    this.mesh = new T.Mesh(
       this.next_geometry(),
       new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
     )
-    this.sprite.userData.owner = ui;
+    this.mesh.userData.owner = ui;
   }
   del(child: UINodeRenderer) {
-    this.sprite.remove(child.sprite)
+    this.mesh.remove(child.mesh)
   }
   add(child: UINodeRenderer) {
-    this.sprite.add(child.sprite)
+    this.mesh.add(child.mesh)
   }
   del_self() {
-    this.sprite.removeFromParent();
+    this.mesh.removeFromParent();
   }
   on_resume(): void {
     const world_renderer = this.lf2.world.renderer as WorldRenderer;
-    if (this.ui.root === this.ui) world_renderer.scene.inner.add(this.sprite);
+    if (this.ui.root === this.ui) world_renderer.scene.inner.add(this.mesh);
     const text_input = this.ui.find_component(TextInput)
     if (text_input) {
       const ele_input = document.createElement('input');
@@ -104,7 +105,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   on_pause(): void {
     const text_input = this.ui.find_component(TextInput)
     const world_renderer = this.lf2.world.renderer as WorldRenderer;
-    if (this.ui.root === this.ui) world_renderer.scene.inner.remove(this.sprite);
+    if (this.ui.root === this.ui) world_renderer.scene.inner.remove(this.mesh);
     if (text_input) this.release_dom()
   }
   on_show(): void { }
@@ -116,9 +117,9 @@ export class UINodeRenderer implements IUINodeRenderer {
     this._c_y = c_y;
     this._c_z = c_z;
 
-    this.sprite.position.set(x, -y, z)
-    this.sprite.visible = this.ui.visible;
-    this.sprite.name = `layout(name= ${this.ui.name}, id=${this.ui.id})`
+    this.mesh.position.set(x, -y, z)
+    this.mesh.visible = this.ui.visible;
+    this.mesh.name = `layout(name= ${this.ui.name}, id=${this.ui.id})`
     this.apply();
     this.ui.parent?.renderer.add(this);
   }
@@ -128,7 +129,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
 
   apply() {
-    const { sprite: sp } = this;
+    const { mesh: sp } = this;
     sp.geometry = this.next_geometry();
     const {
       _texture,
@@ -172,15 +173,15 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
 
 
-  get x(): number { return this.sprite.position.x }
-  set x(v: number) { this.sprite.position.x = v; }
-  get y(): number { return this.sprite.position.y }
-  set y(v: number) { this.sprite.position.y = v; }
+  get x(): number { return this.mesh.position.x }
+  set x(v: number) { this.mesh.position.x = v; }
+  get y(): number { return this.mesh.position.y }
+  set y(v: number) { this.mesh.position.y = v; }
   get visible() {
-    return this.sprite.visible
+    return this.mesh.visible
   }
   set visible(v: boolean) {
-    this.sprite.visible = v
+    this.mesh.visible = v
     if (v) this.show_dom(); else this.hide_dom()
   }
   protected _c_x: number = 0;
@@ -200,7 +201,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     const tran_x = round(w * (0.5 - _c_x));
     const tran_y = round(h * (_c_y - 0.5));
     const tran_z = round(_c_z);
-    const ret = new T.PlaneGeometry(w, h).translate(tran_x, tran_y, tran_z);
+    const ret = get_geometry(w, h, tran_x, tran_y, tran_z);
     ret.userData.w = w;
     ret.userData.h = h;
     ret.userData.c_x = _c_x;
@@ -228,12 +229,12 @@ export class UINodeRenderer implements IUINodeRenderer {
       }
       this._css_obj?.center.set(x, y)
     }
-    
+
     this.update_texture();
     if (this.ui.scale.version !== this.scale_version)
-      this.sprite.scale.set(...this.ui.scale.value);
+      this.mesh.scale.set(...this.ui.scale.value);
 
-    const sp = this.sprite;
+    const sp = this.mesh;
     if (sp && this._ui_img) {
       const t = sp.material.map;
       if (t) {

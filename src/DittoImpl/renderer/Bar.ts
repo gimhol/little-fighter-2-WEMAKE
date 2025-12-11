@@ -1,6 +1,7 @@
 import type { LF2 } from "@/LF2/LF2";
 import * as T from "../_t";
-import { get_bar_geo, get_color_material } from "./EntityStatRender";
+import { get_geometry } from "./GeometryKeeper";
+import { get_color_material } from "./MaterialKeeper";
 
 export class Bar {
   readonly mesh: T.Mesh;
@@ -19,7 +20,6 @@ export class Bar {
     const m = get_color_material(color);
     this.mesh.material = m;
     m.needsUpdate = true;
-
   }
   constructor(
     lf2: LF2,
@@ -30,7 +30,7 @@ export class Bar {
     ay: number
   ) {
     this.mesh = new T.Mesh(
-      get_bar_geo(w, h, ax, ay),
+      get_geometry(w, h, ax * w, ay * h),
       get_color_material(color),
     );
   }
