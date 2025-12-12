@@ -30,6 +30,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
   lang: string = '';
+  dev: boolean = false;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
   static get instance() { return LF2.instances[0] }
@@ -169,7 +170,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return I.Ditto.Importer.import_as_array_buffer(paths);
   }
 
-  constructor() {
+  constructor(dev = false) {
+    this.dev = dev;
     make_debugging(this)
     this.debug(`constructor`)
     this.datas = new DatMgr(this);

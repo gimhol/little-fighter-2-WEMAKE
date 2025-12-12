@@ -165,7 +165,14 @@ function App() {
   }, [lf2, ele_game_overlay])
 
   useEffect(() => {
-    const lf2 = ref_lf2.current = new LF2();
+    const sobj = qs.parse(window.location.search.substring(1))
+    const hobj = qs.parse(window.location.hash.substring(1))
+    let lang = sobj.lang || hobj.lang;
+    let dev = sobj.dev || hobj.dev
+    if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
+
+    const lf2 = ref_lf2.current = new LF2(dev == '1');
+    lf2.lang = lang;
 
     (window as any).LF2 = LF2;
 
@@ -186,15 +193,6 @@ function App() {
     })
 
     lf2.load("prel.zip.json").catch(LF2.IgnoreDisposed);
-
-    let lang =
-      qs.parse(window.location.search.substring(1)).lang ||
-      qs.parse(window.location.hash.substring(1)).lang
-
-    if (typeof lang !== 'string')
-      lang = navigator.language.toLowerCase()
-    lf2.lang = lang
-
     set_lf2(lf2)
     lf2.sounds.set_muted(muted);
     lf2.sounds.set_volume(volume);

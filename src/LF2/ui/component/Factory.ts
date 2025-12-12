@@ -35,8 +35,8 @@ class ComponentFactory {
         Ditto.warn(`[${ComponentFactory.TAG}::create] Component not found! expression: ${info.name}`);
         continue;
       }
-      const { name, args = [], enabled = true, id = '', properties = {} } = info;
-      const component = new cls(layout, name, { name, args, enabled, id, properties })
+      const { name, args = [], enabled = true, id = '', properties = {}, weight = 0 } = info;
+      const component = new cls(layout, name, { name, args, enabled, id, properties, weight })
       component.init(...args)
       component.set_enabled(enabled);
       component.id = id || `${name}_${idx}`

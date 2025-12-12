@@ -37,7 +37,7 @@ export interface IUIInfo {
   img?: TUIImgInfo | TUIImgInfo[];
   txt?: TUITxtInfo | TUITxtInfo[];
   which?: number | string;
-
+  dev_component?: TComponentInfo | TComponentInfo[];
   component?: TComponentInfo | TComponentInfo[];
   actions?: { [x in TUIActionPlace]?: TUIAction | TUIAction[] };
   key_press_actions?: [string, TUIAction][];
