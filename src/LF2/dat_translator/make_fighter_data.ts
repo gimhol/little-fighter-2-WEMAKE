@@ -142,7 +142,7 @@ export function make_character_data(
         set_hit_turn_back(frame);
         editing.hit('a', {
           // weapon throw
-          id: "45", facing: FacingFlag.Ctrl,
+          id: "45", facing: FacingFlag.Ctrl, desc: "weapon throw",
           expression: new CondMaker<EntityVal>()
             .add(EntityVal.Holding_W_Type, "==", WeaponType.Baseball)
             .or(c => c
@@ -150,7 +150,7 @@ export function make_character_data(
               .and(EntityVal.PressFB, "!=", 0),
             ).done(),
         }, { // weapon swing
-          id: ["20", "25"], facing: FacingFlag.Ctrl,
+          id: ["20", "25"], facing: FacingFlag.Ctrl, desc: "weapon swing",
           expression: new CondMaker<EntityVal>()
             .one_of(EntityVal.Holding_W_Type, WeaponType.Knife, WeaponType.Stick)
             .done(),
@@ -160,12 +160,12 @@ export function make_character_data(
             .one_of(EntityVal.Holding_W_Type, WeaponType.Drink)
             .done(),
         }, { // super_punch
-          id: "70", facing: FacingFlag.Ctrl,
+          id: "70", facing: FacingFlag.Ctrl, desc: "super_punch",
           expression: new CondMaker<EntityVal>()
             .add(EntityVal.RequireSuperPunch, "==", 1)
             .done(),
         }, { // punch
-          id: ["60", "65"], facing: FacingFlag.Ctrl
+          id: ["60", "65"], facing: FacingFlag.Ctrl, desc: "punch",
         })
           .hit('j', { id: "210" }) // jump
           .hit('d', { id: "110" }) // defend
@@ -759,6 +759,7 @@ function add_key_down_jump_atk(frame: IFrameInfo) {
   frame.key_down.a = add_next_frame({
     id: "52", // 角色跳跃丢出武器
     facing: FacingFlag.Ctrl,
+    desc: "空中丢出武器",
     expression: new CondMaker<EntityVal>()
       .one_of(
         EntityVal.Holding_W_Type,
@@ -773,6 +774,7 @@ function add_key_down_jump_atk(frame: IFrameInfo) {
   }, {
     id: "30", // 角色跳跃用武器攻击
     facing: FacingFlag.Ctrl,
+    desc: "空中武器攻击",
     expression: new CondMaker<EntityVal>()
       .one_of(
         EntityVal.Holding_W_Type,
@@ -782,6 +784,7 @@ function add_key_down_jump_atk(frame: IFrameInfo) {
       .done(),
   }, {
     id: "80", // 角色跳跃攻击
+    desc: "跳跃攻击",
     facing: FacingFlag.Ctrl,
   });
 }

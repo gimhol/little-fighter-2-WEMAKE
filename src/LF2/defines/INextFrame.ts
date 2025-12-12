@@ -8,6 +8,8 @@ export interface INextFrameResult {
 export interface INextFrame {
   id?: string | string[];
 
+  desc?: string;
+
   /**
    * 下一帧的持续时间策略
    *
