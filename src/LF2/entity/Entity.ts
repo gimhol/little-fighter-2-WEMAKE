@@ -281,6 +281,7 @@ export class Entity {
 
   get toughness(): number { return this._toughness; }
   set toughness(v: number) {
+    if (v < 0) v = 0;
     const o = this._toughness;
     if (o === v) return;
     this._toughness = v;
@@ -290,6 +291,7 @@ export class Entity {
 
   get toughness_max(): number { return this._toughness_max; }
   set toughness_max(v: number) {
+    if (v < 0) v = 0;
     const o = this._toughness_max;
     if (o === v) return;
     this._toughness_max = v;

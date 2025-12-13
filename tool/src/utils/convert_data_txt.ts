@@ -12,12 +12,14 @@ async function parse_indexes(
 export async function convert_data_txt(
   src_dir: string,
   out_dir: string,
-  suffix: 'json5' | 'json'
+  suffix: 'json5' | 'json',
+  handler?: (indexes: IDataLists) => Promise<IDataLists> | IDataLists
 ): Promise<IDataLists | undefined> {
   const src_path = `${src_dir}/data/data.txt`;
   const dst_path = `${out_dir}/data/data.${suffix}`;
   console.log("convert", src_path, "=>", dst_path);
-  const indexes = await parse_indexes(src_path, suffix);
+  const indexes = await parse_indexes(src_path, suffix).then(r => (r && handler) ? handler(r) : r);
+
   await write_obj_file(dst_path, indexes);
   return indexes;
 }

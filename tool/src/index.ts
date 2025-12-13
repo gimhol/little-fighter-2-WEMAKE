@@ -9,10 +9,13 @@ import { check_is_str_ok } from "./utils/check_is_str_ok";
 import { classify } from "./utils/classify";
 import { convert_dat_file } from "./utils/convert_dat_file";
 import { convert_data_txt } from "./utils/convert_data_txt";
+import { merge_data_indexes } from "./utils/merge_data_indexes";
 import { convert_pic, convert_pic_2 } from "./utils/convert_pic";
 import { convert_sound } from "./utils/convert_sound";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
+import { IDataLists } from "../../src/LF2/defines/IDataLists";
+import { copy_dir } from "./utils/copy_dir";
 const {
   RAW_LF2_PATH,
   TEMP_DIR,
@@ -21,8 +24,9 @@ const {
   PREL_DIR_PATH,
   PREL_ZIP_NAME,
   TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt"),
-  DATA_DIR_PATH = join(TEMP_DIR, "lf2_data")
-} = JSON5.parse(readFileSync("./converter.config.json").toString());
+  DATA_DIR_PATH = join(TEMP_DIR, "lf2_data"),
+  EXTRA_LF2_PATH,
+} = JSON5.parse(readFileSync("./converter.config.json5").toString());
 
 enum EntryEnum {
   MAIN = 1,
@@ -77,7 +81,16 @@ async function main() {
   }
 
   const pic_list_map = new Map<string, ILegacyPictureInfo[]>();
-  const indexes = await convert_data_txt(RAW_LF2_PATH, DATA_DIR_PATH, 'json5');
+
+  const indexes = await convert_data_txt(RAW_LF2_PATH, DATA_DIR_PATH, 'json5', async (r) => {
+    if (!EXTRA_LF2_PATH) return r
+    const extra: Partial<IDataLists> = JSON5.parse(readFileSync(join(EXTRA_LF2_PATH, 'data/data.index.json5')).toString())
+    return merge_data_indexes(r, extra)
+  });
+  if (EXTRA_LF2_PATH) await copy_dir(EXTRA_LF2_PATH, DATA_DIR_PATH)
+
+  if (!indexes) throw Error('dat index file not found!')
+
   if (indexes) {
     for (const src_path of ress.file.dat) {
       const dst_path = convert_dat_file.get_dst_path(

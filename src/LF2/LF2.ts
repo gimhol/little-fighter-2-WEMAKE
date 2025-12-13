@@ -501,10 +501,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   goto_next_stage() {
     const next = this.world.stage.data.next;
-    if (!next) {
-      this.pop_ui();
-      return;
-    }
+    if (!next) return;
     if (next === 'end') {
       this.set_ui("ending_page")
       return;

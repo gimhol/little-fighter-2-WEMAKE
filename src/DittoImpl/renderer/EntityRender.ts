@@ -23,7 +23,7 @@ function get_img_map(lf2: LF2, data: TData): Map<string, RImageInfo> {
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
-const EXTRA_SHAKING_TIME = 100;
+const EXTRA_SHAKING_TIME = 60;
 const r_vec3 = new T.Vector3(0, 0, -1);
 export class EntityRender {
   readonly world_renderer: WorldRenderer;
@@ -209,7 +209,7 @@ export class EntityRender {
 
     if (this.shaking || this.extra_shaking_time > 0) {
       this.shaking_time += dt
-      const f = (floor(this.shaking_time / 16) % 2) || -1
+      const f = (floor(this.shaking_time / 4) % 2) || -1
       entity_mesh.position.x = this.main_mesh_x + facing * f;
       this.blood_mesh.position.x = this.blood_mesh_x + facing * f;
       if (!shaking) this.extra_shaking_time -= dt

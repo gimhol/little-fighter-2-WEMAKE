@@ -41,13 +41,22 @@
             direction: "column",
             align: "stretch",
             open: true,
-            end: true,
+            end: true
+          },
+        },
+        {
+          name: "Alignment",
+          properties: {
+            left: "left",
+            right: "right",
+            top: "top",
+            bottom: "bottom",
           },
         },
       ],
       items: [
         {
-          count: 10,
+          count: 30,
           template: "shutter_item",
         },
       ],
@@ -61,7 +70,7 @@
   templates: {
     shutter_item: {
       color: "rgb(16, 32, 108)",
-      size: "40,40",
+      size: "20,20",
       pos: "0,0,2",
     },
   },

@@ -37,23 +37,29 @@ export class FighterStatBar extends UIComponent {
   protected defend_value_bar_w: number = 200;
   protected toughness_bar_w: number = 200;
   protected cbs: IEntityCallbacks = {
-    on_hp_max_changed: (_, v) => { this.hp_max.value = v; },
-    on_hp_r_changed: (e, v) => {
-      this.hp_r.value = v;
-      if (e.hp <= 0) this.hp_r.value = 0;
-    },
     on_hp_changed: (_, v) => {
-      this.hp.value = v;
-      if (v <= 0) this.hp_r.value = 0;
+      this.hp.target = v;
+      if (v > 0) {
+        this.dark_mp_bar?.set_scale(1, 1, 1)
+        return;
+      }
+      this.hp_r.target = 0;
+      this.mp.target = 0;
+      this.defend_value.target = 0;
+      this.fall_value.target = 0;
+      this.toughness.target = 0;
+      this.dark_mp_bar?.set_scale(0, 1, 1)
     },
-    on_mp_max_changed: (_, v) => { this.mp_max.value = v; },
-    on_mp_changed: (_, v) => { this.mp.value = v; },
-    on_defend_value_max_changed: (_, v) => { this.defend_value_max.value = v; },
-    on_defend_value_changed: (_, v) => { this.defend_value.value = v; },
-    on_fall_value_max_changed: (_, v) => { this.fall_value_max.value = v; },
-    on_fall_value_changed: (_, v) => { this.fall_value.value = v; },
-    on_toughness_max_changed: (_, v) => { this.toughness_max.value = v; },
-    on_toughness_changed: (_, v) => { this.toughness.value = v; },
+    on_hp_max_changed: (_, v) => { this.hp_max.target = v; },
+    on_hp_r_changed: (_, v) => { this.hp_r.target = this.hp.target > 0 ? v : 0; },
+    on_mp_max_changed: (_, v) => { this.mp_max.target = v; },
+    on_mp_changed: (_, v) => { this.mp.target = this.hp.target > 0 ? v : 0; },
+    on_defend_value_max_changed: (_, v) => { this.defend_value_max.target = v; },
+    on_defend_value_changed: (_, v) => { this.defend_value.target = this.hp.target > 0 ? v : 0; },
+    on_fall_value_max_changed: (_, v) => { this.fall_value_max.target = v; },
+    on_fall_value_changed: (_, v) => { this.fall_value.target = this.hp.target > 0 ? v : 0; },
+    on_toughness_max_changed: (_, v) => { this.toughness_max.target = v; },
+    on_toughness_changed: (_, v) => { this.toughness.target = this.hp.target > 0 ? v : 0; },
     on_data_changed: () => this.update_head()
   }
   protected direction: string = '';
@@ -65,17 +71,17 @@ export class FighterStatBar extends UIComponent {
     }
     this.entity = entity
     if (entity) {
-      this.hp_max.value = entity.hp_max
-      this.hp_r.value = entity.hp_r
-      this.hp.value = entity.hp
-      this.mp_max.value = entity.mp_max
-      this.mp.value = entity.mp
-      this.defend_value_max.value = entity.defend_value_max
-      this.defend_value.value = entity.defend_value
-      this.fall_value_max.value = entity.fall_value_max
-      this.fall_value.value = entity.fall_value
-      this.toughness_max.value = entity.toughness_max || 1
-      this.toughness.value = entity.toughness;
+      this.hp_max.target = entity.hp_max
+      this.hp_r.target = entity.hp_r
+      this.hp.target = entity.hp
+      this.mp_max.target = entity.mp_max
+      this.mp.target = entity.mp
+      this.defend_value_max.target = entity.defend_value_max
+      this.defend_value.target = entity.defend_value
+      this.fall_value_max.target = entity.fall_value_max
+      this.fall_value.target = entity.fall_value
+      this.toughness_max.target = entity.toughness_max || 1
+      this.toughness.target = entity.toughness;
       entity.callbacks.add(this.cbs)
       entity.has_stat_bar = true;
     }
@@ -100,58 +106,35 @@ export class FighterStatBar extends UIComponent {
     if (this.toughness_bar) this.toughness_bar_w = this.toughness_bar.size.value[0]
     this.direction = this.props.str('direction') ?? ''
   }
+
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
     const node = this.defend_value_bar;
     if (!node || max === 0) return;
-    // const ww = this.defend_value_bar_w
-    // const w = ww * val / max;
-    // const h = node.size.value[1];
-    // node.size.value = [w, h]
     node.scale.value = [val / max, 1, 1]
   }
   update_fall_value(val = this.fall_value.value, max = this.fall_value_max.value) {
     const node = this.fall_value_bar;
     if (!node || max === 0) return;
-    // const ww = this.fall_value_bar_w
-    // const w = ww * val / max;
-    // const h = node.size.value[1];
-    // node.size.value = [w, h]
     node.scale.value = [val / max, 1, 1]
   }
   update_toughness(val = this.toughness.value, max = this.toughness_max.value) {
     const node = this.toughness_bar;
     if (!node || max === 0) return;
-    // const ww = this.toughness_bar_w
-    // const w = ww * val / max;
-    // const h = node.size.value[1];
-    // node.size.value = [w, h]
     node.scale.value = [val / max, 1, 1]
   }
   update_hp(val = this.hp.value, max = this.hp_max.value) {
     const node = this.hp_bar;
     if (!node || max === 0) return;
-    // const ww = this.hp_bar_w
-    // const w = ww * val / max;
-    // const h = node.size.value[1];
-    // node.size.value = [w, h]
     node.scale.value = [val / max, 1, 1]
   }
   update_hp_r(val = this.hp_r.value, max = this.hp_max.value) {
     const node = this.dark_hp_bar;
     if (!node || max === 0) return;
-    // const ww = this.dark_hp_bar_w
-    // const w = ww * val / max;
-    // const h = node.size.value[1];
-    // node.size.value = [w, h]
     node.scale.value = [val / max, 1, 1]
   }
   update_mp(val = this.mp.value, max = this.mp_max.value) {
     const node = this.mp_bar;
     if (!node || max === 0) return;
-    // const ww = this.mp_bar_w
-    // const w = ww * val / max;
-    // const h = node.size.value[1];
-    // node.size.value = [w, h]
     node.scale.value = [val / max, 1, 1]
   }
   update_head(): void {

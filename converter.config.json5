@@ -1,0 +1,9 @@
+{
+  RAW_LF2_PATH: "./game_data",
+  OUT_DIR: "./public",
+  TEMP_DIR: "./temp",
+  DATA_ZIP_NAME: "data.zip",
+  PREL_DIR_PATH: "./prel_data",
+  PREL_ZIP_NAME: "prel.zip",
+  EXTRA_LF2_PATH: "./v2_data",
+}

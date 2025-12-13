@@ -17,7 +17,8 @@ export function cook_wpoint(unsure_wpoint: IWpointInfo, frame: IFrameInfo) {
   if (attacking) unsure_wpoint.attacking = "" + attacking;
 
   unsure_wpoint.z = 0;
-  const cover = take_not_zero_num(unsure_wpoint, "cover", n => n);
-  if (cover == 1) unsure_wpoint.z = -2;
-  if (cover == 0) unsure_wpoint.z = 2;
+  if (unsure_wpoint.kind == 1) {
+    const cover = take_not_zero_num(unsure_wpoint, "cover", n => n);
+    unsure_wpoint.z = cover == 1 ? -2 : 2;
+  }
 }

@@ -8,7 +8,10 @@ export class SmoothNumber {
   min_diff = 1;
   done: boolean = false;
   get value(): number { return this._v; }
-  set value(v: number) { this._t = v; this.done = false; }
+  set value(v: number) { this._v = this._t = v; this.done = true; }
+
+  get target(): number { return this._t }
+  set target(v: number) { this._t = v; this.done = false; }
 
   on_change(v: () => void) {
     this._c = v;
