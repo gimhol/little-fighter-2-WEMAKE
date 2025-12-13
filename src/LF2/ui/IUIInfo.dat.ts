@@ -43,7 +43,7 @@ export interface IUIInfo {
   key_press_actions?: [string, TUIAction][];
   items?: (IUIInfo | string)[];
   auto_focus?: boolean;
-  enabled?: boolean;
+  
   /**
    * 模板名
    *

@@ -244,8 +244,8 @@ export class World extends WorldDataset {
       if (real_dt < this._ideally_dt * _fix_radio) return;
       _update_count++;
       const ui = this.lf2.ui
-      if (ui?.enabled) {
-        ui?.update(real_dt);
+      if (ui && !ui.disabled) {
+        ui.update(real_dt);
         if (this.lf2.keydowns) {
           for (const e of this.lf2.keydowns)
             this.lf2.ui?.on_key_down(e)
@@ -429,18 +429,18 @@ export class World extends WorldDataset {
       }
     }
     for (const e of this.entities) {
-      if (update_chasing && is_character(e) && e.hp <= 0) {
+      if (update_chasing && is_character(e) && e.hp > 0) {
         for (const chaser of this._enemy_chasers) {
           if (chaser.is_ally(e)) continue;
           const prev = chaser.chasing;
-          if (!prev || chaser.is_ally(prev) || prev.hp <= 0 || manhattan(prev, chaser) > manhattan(e, chaser)) {
+          if (!prev || manhattan(prev, chaser) > manhattan(e, chaser)) {
             chaser.chasing = e;
           }
         }
         for (const chaser of this._ally_chasers) {
           if (!chaser.is_ally(e)) continue;
           const prev = chaser.chasing;
-          if (!prev || !chaser.is_ally(prev) || prev.hp <= 0 || manhattan(prev, chaser) > manhattan(e, chaser)) {
+          if (!prev || manhattan(prev, chaser) > manhattan(e, chaser)) {
             chaser.chasing = e;
           }
         }

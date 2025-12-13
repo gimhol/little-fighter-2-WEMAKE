@@ -2,15 +2,15 @@ import { Delay, Easing, Sequence } from "@/LF2/animation";
 import { Animation } from "@/LF2/animation/Animation";
 import { ISchema } from "@/LF2/defines";
 import ease_linearity from "@/LF2/utils/ease_method/ease_linearity";
-import { UIComponent } from "./UIComponent";
 import { make_schema } from "@/LF2/utils/schema";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import { UIComponent } from "./UIComponent";
+import { IPlayable } from "./IPlayable";
 
 export interface IOpacityFlashProps {
   steps?: number[];
   times?: number;
 }
-export class OpacityFlash extends UIComponent {
+export class OpacityFlash extends UIComponent implements IPlayable {
   static override readonly TAG: string = "OpacityFlash";
   static PROPS: ISchema<IOpacityFlashProps> = make_schema({
     key: "IOpacityFlashProps",
@@ -33,6 +33,7 @@ export class OpacityFlash extends UIComponent {
     }
   })
 
+  readonly __is_playable__ = true;
   protected _anim: Sequence = new Sequence();
   override on_start(): void {
     super.on_start?.();
@@ -42,7 +43,7 @@ export class OpacityFlash extends UIComponent {
         0, 350, 1, 100, 1, 350, 0, 350, 1, 100,
         1, 350, 0, 350, 1, 100, 1, 350, 0
       ]
-    } = this.props.validate(OpacityFlash.TAG, OpacityFlash.PROPS);
+    } = this.props.validate(OpacityFlash);
 
     const anims: Animation[] = [];
     for (let i = 1; i < steps.length; i += 2) {
@@ -65,7 +66,15 @@ export class OpacityFlash extends UIComponent {
     this.node.opacity = this._anim.update(dt).value;
   }
 
+  start(): void {
+    this._anim.start(false);
+    this.enabled = true;
+  }
+  stop(): void {
+    this.enabled = false;
+  }
   replay(): void {
     this._anim.start(false)
+    this.enabled = true;
   }
 }

@@ -59,21 +59,23 @@ import * as _39 from "./PlayerKeyEdit";
 import * as _3a from "./DanmuGameLogic";
 import * as _3b from "./PlayerNameInput";
 import * as _3c from "./FighterStatBar";
+import * as _3d from "./ComponentsPlayer";
 /*** COMPONENTS IMPORT END ***/
 
 export const ALL_COMPONENTS = [
   /*** COMPONENTS MAP START ***/
-  _1.Alignment, _2.BackgroundNameText, _3.CameraCtrl, _4.CharMenuHead, _5.ComNumButton, 
-  _6.DemoModeLogic, _7.DifficultyText, _8.EndingPageLogic, _9.FadeInOpacity, _a.FadeOutOpacity, 
-  _b.FighterHead, _c.FighterName, _d.FighterThumb, _e.FitChildren, _f.Flex, _10.FlexItem, 
-  _11.GamePrepareLogic, _12.HorizontalLayout, _13.ImgClickable, _14.ImgLoop, _15.LaunchPage, 
-  _16.LoadingContentText, _17.OpacityFlash, _18.OpacityAnimation, _19.OpacityHover, _1a.PlayerCtrlType, 
-  _1b.PlayerKeyText, _1c.PlayerName, _1d.Players, _1e.PlayerScore, _1f.PlayerScoreCell, 
-  _20.PlayerTeamName, _21.PlayingTimeText, _22.PositionAnimation, _23.PrefixAndDifficultyText, 
-  _24.RandomImg, _25.RandomTxt, _26.Reachable, _27.ReachableGroup, _28.ScaleAnimation, 
-  _29.ScaleClickable, _2a.SineOpacity, _2b.SlotSelLogic, _2c.Sounds, _2d.StageModeLogic, 
-  _2e.StageNameText, _2f.StageTitleShow, _30.StageTitleText, _31.StageTransitions, 
-  _32.SummaryLogic, _33.TeamSituationText, _34.TextInput, _35.TxtClickable, _36.VerticalLayout, 
-  _37.VsModeLogic, _38.Jalousie, _39.PlayerKeyEdit, _3a.DanmuGameLogic, _3b.PlayerNameInput, _3c.FighterStatBar
-/*** COMPONENTS MAP END ***/
+  _1.Alignment, _2.BackgroundNameText, _3.CameraCtrl, _4.CharMenuHead, _5.ComNumButton,
+  _6.DemoModeLogic, _7.DifficultyText, _8.EndingPageLogic, _9.FadeInOpacity, _a.FadeOutOpacity,
+  _b.FighterHead, _c.FighterName, _d.FighterThumb, _e.FitChildren, _f.Flex, _10.FlexItem,
+  _11.GamePrepareLogic, _12.HorizontalLayout, _13.ImgClickable, _14.ImgLoop, _15.LaunchPage,
+  _16.LoadingContentText, _17.OpacityFlash, _18.OpacityAnimation, _19.OpacityHover, _1a.PlayerCtrlType,
+  _1b.PlayerKeyText, _1c.PlayerName, _1d.Players, _1e.PlayerScore, _1f.PlayerScoreCell,
+  _20.PlayerTeamName, _21.PlayingTimeText, _22.PositionAnimation, _23.PrefixAndDifficultyText,
+  _24.RandomImg, _25.RandomTxt, _26.Reachable, _27.ReachableGroup, _28.ScaleAnimation,
+  _29.ScaleClickable, _2a.SineOpacity, _2b.SlotSelLogic, _2c.Sounds, _2d.StageModeLogic,
+  _2e.StageNameText, _2f.StageTitleShow, _30.StageTitleText, _31.StageTransitions,
+  _32.SummaryLogic, _33.TeamSituationText, _34.TextInput, _35.TxtClickable, _36.VerticalLayout,
+  _37.VsModeLogic, _38.Jalousie, _39.PlayerKeyEdit, _3a.DanmuGameLogic, _3b.PlayerNameInput, _3c.FighterStatBar,
+  _3d.ComponentsPlayer
+  /*** COMPONENTS MAP END ***/
 ].map(v => [v.TAG, v] as const);

@@ -34,10 +34,12 @@ export class UIProps {
     return read_nums(this.raw[name], len, fallbacks);
   }
 
-  validate<P>(name: string, schema: ISchema<P>): P {
+  validate<P>(Cls: { TAG: string, PROPS: ISchema<P> }): P {
+    const { TAG, PROPS } = Cls
     const errors: string[] = [];
-    validate_schema(this.raw, schema, errors)
+    validate_schema(this.raw, PROPS, errors)
     if (!errors.length) return this.raw as P;
-    throw new Error(`[${name}] props.error:` + errors.join('\n'))
+    throw new Error(`[${TAG}] props.error:` + errors.join('\n'))
   }
+
 }

@@ -1,5 +1,6 @@
 import { ImageInfo } from "../ditto/image/ImageInfo";
 import { TextInfo } from "../ditto/image/TextInfo";
+import { IComponentInfo } from "./IComponentInfo";
 import { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo } from "./IUIInfo.dat";
 import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
@@ -15,8 +16,8 @@ export interface ICookedUIInfo extends IUIInfo {
   img_infos: ImageInfo[];
   txt_infos: TextInfo[];
   size: [number, number];
-  enabled: boolean;
   img: IUIImgInfo[];
   txt: ICookedUITxtInfo[];
   values: { [x in string]?: any };
+  component: IComponentInfo[];
 }

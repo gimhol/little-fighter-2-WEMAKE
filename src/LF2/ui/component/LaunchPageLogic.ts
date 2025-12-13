@@ -39,9 +39,8 @@ export class LaunchPage extends UIComponent {
     this.fsm = new FSM<Status>().add({
       key: Status.TapHints,
       enter: () => {
-        this.node.search_component(ImgLoop, 'loading', (c) => {
-          c.anim.set_times(this._prel_loaded ? 1 : 0).set_count(0)
-        })
+        const c = this.node.search_component(ImgLoop, 'loading')
+        if (c) c.anim.set_times(this._prel_loaded ? 1 : 0).set_count(0)
         this.tap_to_launch.find_component(SineOpacity)!.enabled = true;
         this.sound_warning.find_component(SineOpacity)!.enabled = true;
         this.tap_to_launch.find_component(FadeOutOpacity)!.enabled = false;
@@ -57,50 +56,40 @@ export class LaunchPage extends UIComponent {
       key: Status.Introduction,
       enter: () => {
         Ditto.Timeout.add(() => this.lf2.sounds.play("builtin_data/launch/093.wav.mp3"), 1000);
-        this.yeonface.find_component(ScaleAnimation, 'scale_in', c => {
-          c.start(false);
-        })
-        this.yeonface.find_component(PositionAnimation, 'move_in', c => {
-          c.start(false);
-        })
-        this.yeonface.find_component(OpacityAnimation, void 0, c => {
-          c.start(false);
-        })
-        this.bearface.find_component(ScaleAnimation, 'scale_in', c => {
-          c.start(false);
-        })
-        this.bearface.find_component(PositionAnimation, 'move_in', c => {
-          c.start(false);
-        })
-        this.bearface.find_component(OpacityAnimation, void 0, c => {
-          c.start(false);
-        })
-        this.long_text.find_component(PositionAnimation, 'move_in', c => {
-          c.start(false);
-        })
-        this.long_text.find_component(OpacityAnimation, 'opacity', c => {
-          c.start(false)
-        });
+        this.yeonface.find_component(ScaleAnimation, 'scale_in')?.start(false)
+        this.yeonface.find_component(PositionAnimation, 'move_in')?.start(false)
+        this.yeonface.find_component(OpacityAnimation)?.start(false)
+        this.bearface.find_component(ScaleAnimation, 'scale_in')?.start(false)
+        this.bearface.find_component(PositionAnimation, 'move_in')?.start(false)
+        this.bearface.find_component(OpacityAnimation)?.start(false)
+        this.long_text.find_component(PositionAnimation, 'move_in')?.start(false)
+        this.long_text.find_component(OpacityAnimation, 'opacity')?.start(false)
       },
       leave: () => {
-        this.yeonface.find_component(OpacityAnimation, void 0, c => {
-          c.start(true)
-          c.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
-        })
-        this.bearface.find_component(OpacityAnimation, void 0, c => {
-          c.start(true)
-          c.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
-        })
-        this.yeonface.find_component(ScaleAnimation, 'scale_out', c => {
-          c.start(false);
-        })
-        this.bearface.find_component(ScaleAnimation, 'scale_out', c => {
-          c.start(false);
-        })
-        this.long_text.find_component(OpacityAnimation, void 0, c => {
-          c.start(true)
-          c.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
-        })
+        {
+          const c = this.yeonface.find_component(OpacityAnimation)
+          c?.start(true)
+          c?.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
+        }
+        {
+          const c = this.bearface.find_component(OpacityAnimation)
+          c?.start(true)
+          c?.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
+        }
+        {
+          const c = this.yeonface.find_component(ScaleAnimation, 'scale_out')
+          c?.start(false);
+        }
+        {
+          const c = this.bearface.find_component(ScaleAnimation, 'scale_out')
+          c?.start(false);
+        }
+        {
+          const c = this.long_text.find_component(OpacityAnimation, void 0)
+          c?.start(true)
+          c?.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
+
+        }
       },
       update: (dt) => {
         if (this._prel_loaded && this.long_text.find_component(OpacityAnimation)!.done)
@@ -124,7 +113,8 @@ export class LaunchPage extends UIComponent {
   }
   protected on_prel_loaded() {
     this._prel_loaded = true;
-    this.node.search_component(ImgLoop, 'loading', (c) => { c.anim.set_times(4).set_count(0) })
+    const c = this.node.search_component(ImgLoop, 'loading')
+    if (c) c.anim.set_times(4).set_count(0)
   }
   readonly lf2_cb: ILf2Callback = {
     on_prel_loaded: () => {

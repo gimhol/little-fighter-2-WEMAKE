@@ -30,7 +30,7 @@ export class EntityRender {
 
   protected images!: Map<string, RImageInfo>;
   entity!: Entity;
-  protected entity_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+  protected main_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   protected variants = new Map<string, string[]>();
   protected shaking: number = 0;
@@ -44,6 +44,12 @@ export class EntityRender {
   protected _x?: number;
   protected _y?: number;
   protected _z?: number;
+  protected main_mesh_x = 0;
+  protected main_mesh_y = 0;
+  protected main_mesh_z = 0;
+  protected blood_mesh_x = 0;
+  protected blood_mesh_y = 0;
+  protected blood_mesh_z = 0;
 
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
@@ -58,6 +64,12 @@ export class EntityRender {
     this._x = void 0;
     this._y = void 0;
     this._z = void 0;
+    this.main_mesh_x = 0;
+    this.main_mesh_y = 0;
+    this.main_mesh_z = 0;
+    this.blood_mesh_x = 0;
+    this.blood_mesh_y = 0;
+    this.blood_mesh_z = 0;
     this.shaking = 0;
     this.shaking_time = 0;
     this.extra_shaking_time = 0;
@@ -71,7 +83,7 @@ export class EntityRender {
     this._data = entity.data;
     this.images = get_img_map(lf2, entity.data);
     const first_txt = this.images.get("0")?.pic?.texture;
-    const mesh = this.entity_mesh = this.entity_mesh || new T.Mesh(
+    const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY,
       new T.MeshBasicMaterial({
         map: first_txt,
@@ -96,18 +108,18 @@ export class EntityRender {
   on_mount() {
     this.reset(this.entity);
     this.world_renderer.scene.inner.add(
-      this.entity_mesh,
+      this.main_mesh,
       this.blood_mesh
     );
   }
 
   on_unmount(): void {
-    this.entity_mesh.removeFromParent();
+    this.main_mesh.removeFromParent();
     this.blood_mesh.removeFromParent();
   }
 
   apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
-    const { images, entity_mesh } = this
+    const { images, main_mesh: entity_mesh } = this
     if (info) {
       const { x, y, w, h, tex, pixel_w, pixel_h } = info;
       const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
@@ -127,7 +139,7 @@ export class EntityRender {
     }
   }
   render(dt: number) {
-    const { entity, entity_mesh } = this;
+    const { entity, main_mesh: entity_mesh } = this;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     const { frame, facing } = entity;
     const { bpoint } = frame;
@@ -160,18 +172,20 @@ export class EntityRender {
         cam_x += offset_x
         x = clamp(x, cam_x, cam_r)
       }
-      const ex = Math.round(x - offset_x)
-      const ey = Math.round(y - z / 2 + centery)
-      const ez = Math.round(z)
-      entity_mesh.position.set(ex, ey, ez);
+      this.main_mesh_x = Math.round(x - offset_x)
+      this.main_mesh_y = Math.round(y - z / 2 + centery)
+      this.main_mesh_z = Math.round(z)
+      entity_mesh.position.set(this.main_mesh_x, this.main_mesh_y, this.main_mesh_z);
 
       if (bpoint) {
         let { x: bx, y: by, z: bz = 0, r = 0 } = bpoint
         bx = entity.facing === 1 ? bx : entity_mesh.scale.x - bx;
-        this.blood_mesh.position.set(ex + bx - entity.facing / 2, ey - by - 0.5, ez + bz);
+        this.blood_mesh.position.set(
+          this.blood_mesh_x = this.main_mesh_x + bx - entity.facing / 2,
+          this.blood_mesh_y = this.main_mesh_y - by - 0.5,
+          this.blood_mesh_z = this.main_mesh_z + bz
+        );
         this.blood_mesh.setRotationFromAxisAngle(r_vec3, r * PI / 180)
-      } else {
-        this.blood_mesh.position.set(ex, ey, ez)
       }
     }
 
@@ -196,8 +210,8 @@ export class EntityRender {
     if (this.shaking || this.extra_shaking_time > 0) {
       this.shaking_time += dt
       const f = (floor(this.shaking_time / 32) % 2) || -1
-      entity_mesh.position.x += facing * f;
-      this.blood_mesh.position.x += facing * f;
+      entity_mesh.position.x = this.main_mesh_x + facing * f;
+      this.blood_mesh.position.x = this.blood_mesh_x + facing * f;
       if (!shaking) this.extra_shaking_time -= dt
     } else {
       this.shaking_time = 0;

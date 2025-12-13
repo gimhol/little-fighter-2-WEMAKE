@@ -1,6 +1,6 @@
 {
-  id: "go",
-  name: "gogogo",
+  id: "gogogo_loop",
+  name: "gogogo_loop",
   visible: false,
   opacity: 0,
   txt: [
@@ -19,7 +19,7 @@
   ],
   component: [
     {
-      id: "play_gogogo",
+      id: "play_gogogo_loop",
       name: "ComponentsPlayer",
       enabled: false,
       properties: {
@@ -39,7 +39,7 @@
       name: "OpacityFlash",
       enabled: false,
       properties: {
-        times: 3,
+        times: -1,
         steps: [0, 350, 1, 100, 1, 350, 0],
       },
     },

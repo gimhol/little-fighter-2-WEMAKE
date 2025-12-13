@@ -1,8 +1,6 @@
 import { Ditto } from "../../ditto";
-import { is_str } from "../../utils/type_check";
-import { IUIInfo } from "../IUIInfo.dat";
+import { IComponentInfo } from "../IComponentInfo";
 import type { UINode } from "../UINode";
-import { parse_call_func_expression } from "../utils/parse_call_func_expression";
 import { ALL_COMPONENTS } from "./_";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
@@ -17,19 +15,12 @@ class ComponentFactory {
     this._component_map.set(key, Cls);
   }
 
-  create(layout: UINode, components: IUIInfo["component"]): UIComponent[] {
-    if (!components) return [];
-    if (!Array.isArray(components)) components = [components]
+  create(layout: UINode, components: IComponentInfo[]): UIComponent[] {
     if (!components.length) return [];
 
     const ret: UIComponent[] = [];
     for (let idx = 0; idx < components.length; idx++) {
-      const raw = components[idx];
-      const info = is_str(raw) ? parse_call_func_expression(raw) : raw
-      if (!info) {
-        Ditto.warn(`[${ComponentFactory.TAG}::create] expression not correct! expression: ${raw}`);
-        continue;
-      }
+      const info = components[idx];
       const cls = this._component_map.get(info.name);
       if (!cls) {
         Ditto.warn(`[${ComponentFactory.TAG}::create] Component not found! expression: ${info.name}`);

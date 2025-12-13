@@ -12,7 +12,7 @@
           properties: {
             top: "top",
             left: "left",
-            offset: { l: 10, t: 20 },
+            offset: { l: 10, t: 30 },
             once: true,
           },
         },

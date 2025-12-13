@@ -3,6 +3,7 @@ import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { floor, is_str, Unsafe } from "../utils";
 import { find_ui_template } from "./find_ui_template";
+import { IComponentInfo } from "./IComponentInfo";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { IUIImgInfo, Schema_IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo, TUITxtInfo } from "./IUIInfo.dat";
@@ -12,6 +13,7 @@ import { read_ui_template } from "./read_ui_template";
 import { ui_load_img } from "./ui_load_img";
 import { ui_load_txt } from "./ui_load_txt";
 import { UINode } from "./UINode";
+import { parse_call_func_expression } from "./utils";
 import read_nums from "./utils/read_nums";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
@@ -70,6 +72,16 @@ export async function cook_ui_info(
 
   const id = ui_info.id || 'no_id_' + Date.now();
   const name = ui_info.name || 'no_name_' + Date.now();
+  const cs = (Array.isArray(ui_info.component) ? ui_info.component : ui_info.component ? [ui_info.component] : []).map(t => {
+    if (typeof t !== 'string') return t;
+    const pr = parse_call_func_expression(t);
+    if (!pr) return { name: t }
+    const ret: IComponentInfo = { ...pr }
+    return ret;
+  });
+
+  cs.sort((a, b) => (b.weight || 0) - (a.weight || 0));
+
   const ret: ICookedUIInfo = {
     ...ui_info,
     values: ui_info.values ? ui_info.values : {},
@@ -84,8 +96,11 @@ export async function cook_ui_info(
     txt_infos: [],
     items: void 0,
     img: [],
-    txt: []
+    txt: [],
+    component: cs
   };
+
+
 
   ret.enabled = parse_ui_value(ret, 'boolean', ui_info.enabled) ?? true
 

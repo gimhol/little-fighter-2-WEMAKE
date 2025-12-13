@@ -1,11 +1,11 @@
 import { Loop } from "../../animation/Loop";
 import { Defines } from "../../defines";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import { IPlayable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
 
-export class Sounds extends UIComponent {
-
+export class Sounds extends UIComponent implements IPlayable {
   static override readonly TAG: string = 'Sounds';
+  readonly __is_playable__ = true;
   protected seq: [number, string, boolean][] = [];
   protected idx = 0;
   protected time: number = 0;
@@ -32,7 +32,7 @@ export class Sounds extends UIComponent {
     this.enabled = true;
     this.loop.reset();
   }
-  
+
   override on_start(): void {
     const l = this.args.length;
     let t = 0;

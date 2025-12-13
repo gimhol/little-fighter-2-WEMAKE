@@ -1,6 +1,10 @@
-import { IComponentInfo } from "../IComponentInfo";
-
-export function parse_call_func_expression(text: string): Required<IComponentInfo> | null {
+interface IResult {
+  id: string;
+  name: string;
+  args: string[];
+  enabled: boolean;
+}
+export function parse_call_func_expression(text: string): IResult | null {
   const result = text.match(/(<.*>)?(!?)(.*)\((.*)\)/);
   if (!result) return null;
   const [, id = '', first, name, args] = result.map(v => v?.trim());
@@ -10,8 +14,7 @@ export function parse_call_func_expression(text: string): Required<IComponentInf
       id: id.substring(1, id.length - 1),
       name,
       args: [],
-      enabled: first !== '!',
-      properties: {}
+      enabled: first !== '!'
     }
   }
   return {
@@ -19,6 +22,5 @@ export function parse_call_func_expression(text: string): Required<IComponentInf
     name,
     args: args.split(",").map(v => v.trim()),
     enabled: first !== '!',
-    properties: {}
   }
 }

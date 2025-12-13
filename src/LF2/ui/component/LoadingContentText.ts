@@ -1,4 +1,5 @@
 import { UITextLoader } from "../UITextLoader";
+import { parse_call_func_expression } from "../utils";
 import inst from "./Factory";
 import { FadeOutOpacity } from "./FadeOutOpacity";
 import { UIComponent } from "./UIComponent";
@@ -19,9 +20,13 @@ export class LoadingContentText extends UIComponent {
       const expression = FadeOutOpacity.expression(
         this.fade_out_duration,
         this.fade_out_delay
-      ).done()
-      this.fadeout = inst.create(this.node, expression)[0] as FadeOutOpacity
-      this.node.add_components(this.fadeout)
+      ).done();
+      // TODO: fix it.
+      const pr = parse_call_func_expression(expression);
+      if (pr) {
+        this.fadeout = inst.create(this.node, [{ ...pr }])[0] as FadeOutOpacity
+        this.node.add_components(this.fadeout)
+      }
     }
     return this;
   }

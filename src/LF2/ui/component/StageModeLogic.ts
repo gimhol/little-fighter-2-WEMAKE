@@ -6,20 +6,19 @@ import { IWorldCallbacks } from "../../IWorldCallbacks";
 import type { Stage } from "../../stage";
 import type IStageCallbacks from "../../stage/IStageCallbacks";
 import { traversal } from "../../utils/container_help/traversal";
+import { Times } from "../../utils/Times";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
-import { Times } from "../../utils/Times";
+import { ComponentsPlayer } from "./ComponentsPlayer";
 import { FighterStatBar } from "./FighterStatBar";
 import { Jalousie } from "./Jalousie";
-import { OpacityAnimation } from "./OpacityAnimation";
-import { Sounds } from "./Sounds";
 import { UIComponent } from "./UIComponent";
 
 export class StageModeLogic extends UIComponent {
   static override readonly TAG = 'StageModeLogic'
   jalousie?: Jalousie;
-  go_sounds!: Sounds;
-  go_flashing!: OpacityAnimation;
+  gogogo?: ComponentsPlayer;
+  gogogo_loop?: ComponentsPlayer;
   score_board!: UINode;
   protected state: 0 | 1 | 2 = 0;
   protected weapon_drop_timer = new Times(0, 300);
@@ -57,14 +56,15 @@ export class StageModeLogic extends UIComponent {
     on_fighter_add: (entity: Entity): void => {
       entity.callbacks.add(this.entity_callbacks)
     },
-    // on_fighter_del: (entity: Entity): void => {
-    //   entity.callbacks.del(this.entity_callbacks)
-    // },
     on_stage_change: (stage, prev) => {
       prev.callbacks.del(this.stage_callbacks)
       stage.callbacks.add(this.stage_callbacks);
-      this.go_sounds.stop();
-      this.go_flashing.stop();
+      this.gogogo?.stop();
+      this.gogogo?.node.set_visible(false)
+      this.gogogo?.node.set_opacity(0)
+      this.gogogo_loop?.stop();
+      this.gogogo_loop?.node.set_visible(false)
+      this.gogogo_loop?.node.set_opacity(0)
       if (this.jalousie) this.jalousie.open = true;
     }
   }
@@ -77,17 +77,19 @@ export class StageModeLogic extends UIComponent {
       this.debug('on_phase_changed', stage, curr, prev)
       if (stage.is_chapter_finish) return;
       this.score_board.visible = false;
-      if (prev) {
-        if (!curr) {
-          this.go_flashing.loop.set(0, Number.MAX_SAFE_INTEGER);
-        } else {
-          this.go_flashing.loop.set(0, 1);
-        }
-        this.go_sounds.start()
-        this.go_flashing.start();
-      } else {
-        this.go_sounds.stop()
-        this.go_flashing.stop();
+      if (!prev) {
+        this.gogogo?.stop();
+        this.gogogo?.node.set_visible(false)
+        this.gogogo?.node.set_opacity(0)
+        this.gogogo_loop?.stop();
+        this.gogogo_loop?.node.set_visible(false)
+        this.gogogo_loop?.node.set_opacity(0)
+      } else if (curr) {
+        this.gogogo?.start();
+        this.gogogo?.node.set_visible(true)
+      } else if(!stage.is_chapter_finish){
+        this.gogogo_loop?.start();
+        this.gogogo_loop?.node.set_visible(true)
       }
     },
     on_chapter_finish: (stage: Stage) => {
@@ -106,8 +108,8 @@ export class StageModeLogic extends UIComponent {
     this.world.playrate = 1;
     this.score_board = this.node.find_child("score_board")!
     this.jalousie = this.node.search_component(Jalousie)
-    this.go_sounds = this.node.search_component(Sounds, "go_sounds")!
-    this.go_flashing = this.node.search_component(OpacityAnimation, "go_flashing")!
+    this.gogogo = this.node.search_component(ComponentsPlayer, "play_gogogo")
+    this.gogogo_loop = this.node.search_component(ComponentsPlayer, "play_gogogo_loop")
     for (const [, f] of this.world.slot_fighters) {
       this.world_callbacks.on_fighter_add?.(f)
     }
@@ -121,7 +123,7 @@ export class StageModeLogic extends UIComponent {
         ++player_count
       }
     }
-    
+
     for (let i = 0; i < stat_bars.length; i++) {
       const stat_bar = stat_bars[i];
       const enabled = player_count >= Number(stat_bar.node.id?.match(/p(\d)_stat/)?.[1]);

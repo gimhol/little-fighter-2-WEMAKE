@@ -6,6 +6,8 @@
   items: [
     "ui/center_pause_label.ui.json5",
     "ui/fighter_stat_s_x8.ui.json5",
+    "ui/gogogo.ui.json5",
+    "ui/gogogo_loop.ui.json5",
     {
       center: "0.5,0.5",
       pos: "397, 225",
@@ -30,23 +32,6 @@
       pos: "794,450",
       center: "1,1",
       component: ["PrefixAndDifficultyText(Stage mode)"],
-    },
-    {
-      id: "go",
-      img: {
-        path: "!sprite/MENU_CLIP3.png",
-        x: 328,
-        y: 401,
-        w: 132,
-        h: 41,
-      },
-      opacity: 0,
-      center: "1, 0",
-      pos: "770, 100",
-      component: [
-        "<go_flashing>!OpacityAnimation(1, 0, 0, 0, 1, 325, 0, 325, 1, 325, 0, 325, 1, 325, 0, 325)",
-        "<go_sounds>!Sounds(750, ok, 750, ok, 750, ok)",
-      ],
     },
     {
       component: [

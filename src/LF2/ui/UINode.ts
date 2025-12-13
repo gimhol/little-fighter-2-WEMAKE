@@ -5,10 +5,10 @@ import StateDelegate from "../base/StateDelegate";
 import { IValGetter } from "../defines/IExpression";
 import { IStyle } from "../defines/IStyle";
 import { Ditto } from "../ditto";
-import { IUINodeRenderer } from "../ditto/render/IUINodeRenderer";
-import { IDebugging, make_debugging } from "../entity/make_debugging";
 import { ImageInfo } from "../ditto/image/ImageInfo";
 import { TextInfo } from "../ditto/image/TextInfo";
+import { IUINodeRenderer } from "../ditto/render/IUINodeRenderer";
+import { IDebugging, make_debugging } from "../entity/make_debugging";
 import { floor } from "../utils";
 import { filter, find } from "../utils/container_help";
 import { is_bool, is_num, is_str } from "../utils/type_check";
@@ -64,9 +64,9 @@ export class UINode implements IDebugging {
   protected _focused_node?: UINode;
   protected _components = new Set<UIComponent>();
   protected _state: any = {};
-  protected _visible: StateDelegate<boolean> = new StateDelegate(true);
-  protected _disabled: StateDelegate<boolean> = new StateDelegate(false);
-  protected _opacity: StateDelegate<number> = new StateDelegate(1);
+  protected readonly _visible: StateDelegate<boolean> = new StateDelegate(true);
+  protected readonly _disabled: StateDelegate<boolean> = new StateDelegate(() => this.data.disabled === true);
+  protected readonly _opacity: StateDelegate<number> = new StateDelegate(1);
 
   readonly pos: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.pos).comparer(StateDelegate.CompareArray);
   readonly scale: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.scale).comparer(StateDelegate.CompareArray);
@@ -77,7 +77,6 @@ export class UINode implements IDebugging {
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
   readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
-  readonly enabled: StateDelegate<boolean> = new StateDelegate(() => this.data.enabled === true);
 
   protected _parent?: UINode;
   protected _children: UINode[] = [];
@@ -451,7 +450,7 @@ export class UINode implements IDebugging {
     }
   }
   private _cook_data(get_val: IValGetter<UINode>) {
-    const { visible, opacity, disabled } = this.data;
+    const { visible, opacity, disabled = false } = this.data;
     if (is_bool(disabled)) {
       this._disabled.default_value = disabled;
     } else if (is_str(disabled)) {
@@ -547,7 +546,7 @@ export class UINode implements IDebugging {
       this._del_components.length = 0;
     }
 
-    for (const i of this.children) if (i.enabled) i.update(dt);
+    for (const i of this.children) if (!i.disabled) i.update(dt);
   }
 
   on_key_down(e: IUIKeyEvent) {
@@ -640,20 +639,24 @@ export class UINode implements IDebugging {
     return void 0;
   }
 
+  traversal_components(fn: (c: UIComponent, depth: number) => any, depth = 0): boolean {
+    for (const c of this.components) if (fn(c, depth)) return true;
+    for (const c of this.children) if (c.traversal_components(fn, ++depth)) return true;
+    return false;
+  }
+
   /**
    * 查找当前layout符合条件的的component
    *
    * @template T
    * @param {T} type
    * @param {(TCond<T> | string)} [condition=() => 1]
-   * @param {(c: InstanceType<T>) => void} [handler]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   find_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1,
-    handler?: (c: InstanceType<T>) => void
+    condition: TCond<T> | string = () => 1
   ): InstanceType<T> | undefined {
     const ret = find(
       this.components,
@@ -663,8 +666,6 @@ export class UINode implements IDebugging {
         return condition(v as any);
       },
     ) as InstanceType<T> | undefined;
-
-    if (ret && handler) handler(ret)
     return ret
   }
 
@@ -674,14 +675,12 @@ export class UINode implements IDebugging {
    * @template T
    * @param {T} type
    * @param {(TCond<T> | string)} [condition=() => 1]
-   * @param {(c: InstanceType<T>[]) => void} [handler]
    * @return {InstanceType<T>[]}
    * @memberof UINode
    */
   find_components<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1,
-    handler?: (c: InstanceType<T>[]) => void
+    condition: TCond<T> | string = () => 1
   ): InstanceType<T>[] {
     const ret = filter(
       this.components,
@@ -691,7 +690,6 @@ export class UINode implements IDebugging {
         return condition(v as any);
       },
     ) as InstanceType<T>[];
-    if (ret.length && handler) handler(ret);
     return ret;
   }
 
@@ -701,19 +699,17 @@ export class UINode implements IDebugging {
    * @template T 
    * @param {T} type
    * @param {(TCond<T> | string)} [condition=() => 1]
-   * @param {(c: InstanceType<T>) => void} [handler]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   search_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1,
-    handler?: (c: InstanceType<T>) => void
+    condition: TCond<T> | string = () => 1
   ): InstanceType<T> | undefined {
-    const ret = this.find_component(type, condition, handler);
+    const ret = this.find_component(type, condition);
     if (ret) return ret;
     for (const i of this._children) {
-      const ret = i.search_component(type, condition, handler);
+      const ret = i.search_component(type, condition);
       if (ret) return ret;
     }
   }
@@ -724,19 +720,15 @@ export class UINode implements IDebugging {
    * @template T
    * @param {T} type
    * @param {(TCond<T> | string)} [condition=() => 1]
-   * @param {(c: InstanceType<T>[]) => void} [handler]
    * @return {InstanceType<T>[]}
    * @memberof UINode
    */
   search_components<T extends TCls<UIComponent>>(
-    type: T,
-    condition: TCond<T> | string = () => 1,
-    handler?: (c: InstanceType<T>[]) => void
+    type: T, condition: TCond<T> | string = () => 1
   ): InstanceType<T>[] {
     const ret = this.find_components(type, condition);
     for (const i of this._children)
       ret.push(...i.search_components(type, condition));
-    if (ret.length && handler) handler(ret);
     return ret;
   }
 
@@ -746,18 +738,16 @@ export class UINode implements IDebugging {
    * @template T
    * @param {T} type
    * @param {TCond<T>} [condition=() => 1]
-   * @param {(c: InstanceType<T>) => void} [handler]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   lookup_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> = () => 1,
-    handler?: (c: InstanceType<T>) => void
+    condition: TCond<T> = () => 1
   ): InstanceType<T> | undefined {
-    const ret = this.find_component(type, condition, handler);
+    const ret = this.find_component(type, condition);
     if (ret) return ret;
-    return this.parent?.lookup_component(type, condition, handler);
+    return this.parent?.lookup_component(type, condition);
   }
 
   on_foucs(): void {
