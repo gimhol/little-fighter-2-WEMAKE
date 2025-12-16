@@ -23,10 +23,11 @@ const {
   DATA_ZIP_NAME,
   PREL_DIR_PATH,
   PREL_ZIP_NAME,
-  TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt"),
-  DATA_DIR_PATH = join(TEMP_DIR, "lf2_data"),
   EXTRA_LF2_PATH,
 } = JSON5.parse(readFileSync("./converter.config.json5").toString());
+
+const TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt")
+const DATA_DIR_PATH = join(TEMP_DIR, "lf2_data")
 
 enum EntryEnum {
   MAIN = 1,
@@ -82,22 +83,27 @@ async function main() {
 
   const pic_list_map = new Map<string, ILegacyPictureInfo[]>();
 
-  const indexes = await convert_data_txt(RAW_LF2_PATH, DATA_DIR_PATH, 'json5', async (r) => {
-    if (!EXTRA_LF2_PATH) return r
-    const extra: Partial<IDataLists> = JSON5.parse(readFileSync(join(EXTRA_LF2_PATH, 'data/data.index.json5')).toString())
-    return merge_data_indexes(r, extra)
-  });
+  const indexes = await convert_data_txt(RAW_LF2_PATH, DATA_DIR_PATH);
   if (EXTRA_LF2_PATH) await copy_dir(EXTRA_LF2_PATH, DATA_DIR_PATH)
-
   if (!indexes) throw Error('dat index file not found!')
-
   if (indexes) {
     for (const src_path of ress.file.dat) {
+      let type: 'bg' | 'obj' | 'index' | 'stage' = 'obj'
+      const a = src_path.replace(RAW_LF2_PATH, '')
+      if (a.startsWith('/bg/') || a.startsWith('bg/'))
+        type = 'bg'
+      else if (src_path.endsWith('/stage.dat'))
+        type = 'stage'
+      else if (src_path.endsWith('/data.idx.dat'))
+        type = 'index'
+      else
+        type = 'obj'
+
       const dst_path = convert_dat_file.get_dst_path(
         DATA_DIR_PATH,
         RAW_LF2_PATH,
         src_path,
-        'json5'
+        type,
       );
       const cache_info = await cache_infos.get_info(
         src_path,

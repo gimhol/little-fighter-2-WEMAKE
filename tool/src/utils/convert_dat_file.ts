@@ -40,7 +40,10 @@ convert_dat_file.get_dst_path = function (
   out_dir: string,
   src_dir: string,
   src_path: string,
-  suffix: 'json5' | 'json'
+  type: 'bg' | 'obj' | 'index' | 'stage',
+  suffix: string = 'json5',
 ): string {
-  return src_path.replace(src_dir, out_dir).replace(/\.dat$/, `.${suffix}`);
+
+  const s_type = type ? `.${type}` : ''
+  return src_path.replace(src_dir, out_dir).replace(/\.dat$/, `${s_type}.${suffix}`);
 };

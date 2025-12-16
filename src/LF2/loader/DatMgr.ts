@@ -99,37 +99,48 @@ class Inner {
     this.data_map.set(_index_id, data);
   }
 
-  async load() {
+  async load(index_files: string[]) {
     for (const k of Object.keys(Defines.BuiltIn_Imgs)) {
       const src = (Defines.BuiltIn_Imgs as any)[k];
       if (!is_non_blank_str(src)) continue;
       this.lf2.on_loading_content(`${src}`, 0);
       await this.lf2.images.load_img(src, src);
     }
-
     for (const k of Object.keys(Defines.BuiltIn_Dats)) {
       const src = (Defines.BuiltIn_Dats as any)[k];
       if (!is_non_blank_str(src)) continue;
       this.lf2.on_loading_content(`${src}`, 0);
       await this._add_data(src, await this.lf2.import_json(src).then(r => r[0]));
     }
-
-    const { objects = [], backgrounds = [] } =
-      await this.lf2.import_json<Partial<IDataLists>>("data/data.json5").then(r => r[0])
-        .catch(() => ({} as Partial<IDataLists>));
-    if (this.cancelled) throw new Error("cancelled");
-
-    if (this.cancelled) throw new Error("cancelled");
-    for (const { id, file } of objects) {
-      if (this.cancelled) throw new Error("cancelled");
-
-      this.lf2.on_loading_content(`${file}`, 0);
-      await this._add_data(id, await this.lf2.import_json(file).then(r => r[0]));
+    const data: IDataLists = { objects: [], backgrounds: [], stages: [] }
+    for (const file of index_files) {
+      const { objects = [], backgrounds = [], stages = [] } = await this.lf2.import_json<Partial<IDataLists>>(file, true)
+        .then(r => r[0]).catch(e => { Ditto.warn(`FAIL TO LOAD DAT INDEX ${file}, ` + e); return {} as Partial<IDataLists> });
+      data.objects.push(...objects)
+      data.backgrounds.push(...backgrounds)
+      data.stages.push(...stages)
     }
-    for (const { id, file } of backgrounds) {
+
+    if (this.cancelled) throw new Error("cancelled");
+    for (const { id, file } of data.objects) {
       if (this.cancelled) throw new Error("cancelled");
-      this.lf2.on_loading_content(`${file}`, 0);
-      await this._add_data(id, await this.lf2.import_json(file).then(r => r[0]));
+      try {
+        this.lf2.on_loading_content(`${file}`, 0);
+        const obj_data = await this.lf2.import_json(file, true).then(r => r[0])
+        await this._add_data(id, obj_data);
+      } catch (e) {
+        throw new Error(`fail to load obj: ${file}, reason: ${e}`)
+      }
+    }
+    for (const { id, file } of data.backgrounds) {
+      if (this.cancelled) throw new Error("cancelled");
+      try {
+        this.lf2.on_loading_content(`${file}`, 0);
+        const bg_data = await this.lf2.import_json(file, true).then(r => r[0])
+        await this._add_data(id, bg_data);
+      } catch (e) {
+        throw new Error(`fail to load bg: ${file}, reason: ${e}`)
+      }
     }
     for (const [, v] of this.data_map) {
       if (this.cancelled) throw new Error("cancelled");
@@ -138,26 +149,24 @@ class Inner {
       this.data_list_map.all.push(v as any);
     }
 
-    const stage_file = "data/stage.json5";
-    this.lf2.on_loading_content(`${stage_file}`, 0);
-
-    const stages = await this.lf2.import_json<IStageInfo[]>("data/stage.json5").then(r => r[0]).catch(e => [])
-
+    const stages: IStageInfo[] = []
+    for (const stage_file of data.stages) {
+      this.lf2.on_loading_content(`${stage_file.file}`, 0);
+      const stage_datas = await this.lf2.import_json<IStageInfo[]>(stage_file.file, true)
+        .then(r => r[0])
+        .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
+      this.lf2.on_loading_content(`${stage_file.file}`, 100);
+      stages.push(...stage_datas)
+    }
     if (!this.stages.find(v => v.id === Defines.VOID_STAGE.id))
       this.stages.unshift(Defines.VOID_STAGE)
-
     for (const stage of stages) {
       const idx = this.stages.findIndex(v => v.id === stage.id);
       check_stage_info(stage)
       if (idx < 0) this.stages.push(stage);
       this.stages[idx] = stage;
     }
-
-
-
-    this.lf2.on_loading_content(`${stage_file}`, 100);
   }
-  process_entity_data(data: IEntityData): void { }
 }
 
 export default class DatMgr {
@@ -183,9 +192,8 @@ export default class DatMgr {
     this.lf2 = lf2;
   }
 
-  load(): Promise<void> {
-    this.clear();
-    return this._inner.load();
+  load(index_files: string[]): Promise<void> {
+    return this._inner.load(index_files);
   }
 
   dispose(): void {
@@ -235,8 +243,6 @@ export default class DatMgr {
       );
     }
     return ret
-
-
   }
 
   find_weapon(id: string): IEntityData | undefined;

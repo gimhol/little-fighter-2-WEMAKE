@@ -3,7 +3,7 @@
     {
       id: "rudolf_v2",
       type: "0",
-      file: "data/rudolf_v2.json5",
+      file: "data/rudolf_v2.obj.json5",
     },
   ],
 }

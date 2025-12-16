@@ -370,7 +370,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.md5s.unshift(md5);
     this.callbacks.emit("on_zips_changed")(this.zips);
 
-    await this.datas.load();
+    const index_files = zip.file(/\.index\.json5$/g).map(v => v.name)
+    await this.datas.load(index_files);
+
     this._dispose_check('load_data')
     for (const d of this.datas.characters) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;

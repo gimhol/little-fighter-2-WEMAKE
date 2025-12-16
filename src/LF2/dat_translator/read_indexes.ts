@@ -23,7 +23,7 @@ export function read_indexes(
             item[name] = value;
             break;
           case "file":
-            item[name] = value.replace(/\\/g, "/").replace(/.dat$/, `.${suffix}`);
+            item[name] = value.replace(/\\/g, "/").replace(/.dat$/, `.obj.${suffix}`);
             break;
         }
       }
@@ -48,12 +48,12 @@ export function read_indexes(
             item[name] = "bg_" + value;
             break;
           case "file":
-            item[name] = value.replace(/\\/g, "/").replace(/.dat$/, `.${suffix}`);
+            item[name] = value.replace(/\\/g, "/").replace(/.dat$/, `.bg.${suffix}`);
             break;
         }
       }
       return item;
     });
   if (!objects || !backgrounds) return void 0;
-  return { objects, backgrounds };
+  return { objects, backgrounds, stages: [] };
 }

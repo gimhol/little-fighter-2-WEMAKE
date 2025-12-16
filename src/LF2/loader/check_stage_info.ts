@@ -6,13 +6,8 @@ export function check_stage_info(info: IStageInfo, errors?: string[]): boolean {
   check_field(info, 'stage', 'bg', 'string', my_errors)
   check_field(info, 'stage', 'id', 'string', my_errors)
   check_field(info, 'stage', 'name', 'string', my_errors)
-
   check_field(info, 'stage', 'phases', arr_of(), my_errors)
-
-
   // phases
-
-
   check_field(info, 'stage', 'next', ['string', 'undefined'], my_errors);
   check_field(info, 'stage', 'chapter', ['string', 'undefined'], my_errors);
 
