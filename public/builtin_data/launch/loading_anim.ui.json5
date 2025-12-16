@@ -12,5 +12,5 @@
     count: 44,
   },
   size: "33,21",
-  component: "<loading>ImgLoop()",
+  component: ["<loading>ImgLoop()"],
 }

@@ -96,12 +96,12 @@
       items: [
         {
           id: "btn_player_name",
-          component: "PlayerNameInput()",
+          component: ["PlayerNameInput()"],
           size: "106, 19",
         },
         {
           id: "btn_ctrl_type",
-          component: "PlayerCtrlType()",
+          component: ["PlayerCtrlType()"],
           img: [
             {
               w: 106,
@@ -133,49 +133,49 @@
         },
         {
           id: "btn_key_set_U",
-          component: "PlayerKeyEdit(,U)",
+          component: ["PlayerKeyEdit(,U)"],
           center: "0.5,0.5",
           pos: "53, 134",
           size: "106, 19",
         },
         {
           id: "btn_key_set_D",
-          component: "PlayerKeyEdit(,D)",
+          component: ["PlayerKeyEdit(,D)"],
           center: "0.5,0.5",
           pos: "53, 156",
           size: "106, 19",
         },
         {
           id: "btn_key_set_L",
-          component: "PlayerKeyEdit(,L)",
+          component: ["PlayerKeyEdit(,L)"],
           center: "0.5,0.5",
           pos: "53, 178",
           size: "106, 19",
         },
         {
           id: "btn_key_set_R",
-          component: "PlayerKeyEdit(,R)",
+          component: ["PlayerKeyEdit(,R)"],
           center: "0.5,0.5",
           pos: "53, 200",
           size: "106, 19",
         },
         {
           id: "btn_key_set_a",
-          component: "PlayerKeyEdit(,a)",
+          component: ["PlayerKeyEdit(,a)"],
           center: "0.5,0.5",
           pos: "53, 222",
           size: "106, 19",
         },
         {
           id: "btn_key_set_j",
-          component: "PlayerKeyEdit(,j)",
+          component: ["PlayerKeyEdit(,j)"],
           center: "0.5,0.5",
           pos: "53, 244",
           size: "106, 19",
         },
         {
           id: "btn_key_set_d",
-          component: "PlayerKeyEdit(,d)",
+          component: ["PlayerKeyEdit(,d)"],
           center: "0.5,0.5",
           pos: "53, 266",
           size: "106, 19",

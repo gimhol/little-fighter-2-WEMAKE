@@ -13,13 +13,6 @@ import { HitFlagEditor } from "./HitFlagEditor";
 import { make_field_props } from "./make_field_props";
 import { QubeEdit } from "./QubeEdit";
 
-export interface IBdyEditorViewProps {
-  label?: string;
-  value?: IBdyInfo;
-  defaultValue?: IBdyInfo
-  onChange?(value?: IBdyInfo): void;
-  onRemove?(): void;
-}
 const titled_styles: ITitledProps['styles'] = {
   label: {
     width: 60
@@ -34,6 +27,13 @@ const default_value: IBdyInfo = {
   y: 0,
   w: 0,
   h: 0
+}
+export interface IBdyEditorViewProps {
+  label?: string;
+  value?: IBdyInfo;
+  defaultValue?: IBdyInfo
+  onChange?(value?: IBdyInfo): void;
+  onRemove?(): void;
 }
 export function BdyEditor(props: IBdyEditorViewProps) {
   const { label = 'bdy info', value, defaultValue = default_value, onRemove, onChange } = props;

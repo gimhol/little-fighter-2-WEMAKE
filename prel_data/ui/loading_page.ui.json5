@@ -37,7 +37,7 @@
     },
     {
       id: "txt_loading_content",
-      component: "LoadingContentText(main_page)",
+      component: ["LoadingContentText(main_page)"],
       pos: "10,420",
       center: "0,0",
       txt: {
@@ -50,7 +50,7 @@
     },
     {
       id: "stage_transition",
-      component: "StageTransitions()",
+      component: ["StageTransitions()"],
     },
   ],
 }

@@ -124,7 +124,7 @@
     },
     {
       id: "txt_loading_content",
-      component: "LoadingContentText(,1000,1000)",
+      component: ["LoadingContentText(,1000,1000)"],
       pos: "0,0",
       center: "0,0",
       txt: {
