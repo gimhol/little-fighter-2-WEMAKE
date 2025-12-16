@@ -23,7 +23,9 @@
     "dat_2_txt": "npm run build_tool && node ./tool --dat-2-txt",
     "json2": "ts-json-schema-generator --path src/LF2/defines/IBgData.ts > .vscode/schema/bg.schema.json5",
     "json3": "ts-json-schema-generator --path src/LF2/defines/IDataLists.ts > .vscode/schema/idx.schema.json5",
-    "json": "ts-json-schema-generator --path src/LF2/defines/IEntityData.ts --type IEntityData > .vscode/schema/obj.schema.json5",
+    "json4": "ts-json-schema-generator --path src/LF2/defines/IEntityData.ts --type IEntityData > .vscode/schema/obj.schema.json5",
+    "json5": "ts-json-schema-generator --path src/LF2/ui/IUIInfo.dat.ts --type IUIInfo > .vscode/schema/ui.schema.json5",
+    "json6": "ts-json-schema-generator --path src/LF2/defines/IItrInfo.ts --type IItrInfo > .vscode/schema/itr.schema.json5",
 
     "tool-dev": "npm run build_tool && node ./tool --tool-dev"
   },

@@ -1,6 +1,7 @@
 import { validate_schema } from "@/LF2/utils/schema";
 import { is_positive_int } from "../../utils";
-import { IUIImgInfo, Schema_IUIImgInfo } from "../IUIImgInfo.dat";
+import { IUIImgInfo } from "../IUIImgInfo.dat";
+import { Schema_IUIImgInfo } from "../Schema_IUIImgInfo";
 
 export function validate_ui_img_info(any: any, errors: string[] = [], warnings: string[] = []): any is IUIImgInfo {
   const fn = 'validate_ui_img_info';

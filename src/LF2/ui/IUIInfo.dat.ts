@@ -2,7 +2,7 @@ import type { IComponentInfo } from "./IComponentInfo";
 import type { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUITxtInfo } from "./IUITxtInfo.dat";
-import { UIActionEnum } from "./UIActionEnum";
+import type { UIActionEnum } from "./UIActionEnum";
 export type TComponentInfo = IComponentInfo | string
 export type TUIAction = IUIAction | UIActionEnum
 export type TUITxtInfo = IUITxtInfo | string
@@ -25,7 +25,7 @@ export interface IUIInfo {
    * @memberof IUIInfo
    */
   name?: string;
-  
+
   pos?: number[] | string;
   opacity?: number;
   center?: number[] | string;
@@ -43,7 +43,7 @@ export interface IUIInfo {
   key_press_actions?: [string, TUIAction][];
   items?: (IUIInfo | string)[];
   auto_focus?: boolean;
-  
+
   /**
    * 模板名
    *

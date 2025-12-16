@@ -12,7 +12,7 @@
       "fileMatch": [
         "*.ui.json5",
       ],
-      "url": "/.vscode/ui.schema.json5"
+      "url": "/.vscode/schema/ui.schema.json5"
     },
     {
       "fileMatch": [
