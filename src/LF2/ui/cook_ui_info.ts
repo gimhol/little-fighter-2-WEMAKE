@@ -85,7 +85,6 @@ export async function cook_ui_info(
   const ret: ICookedUIInfo = {
     ...ui_info,
     values: ui_info.values ? ui_info.values : {},
-    enabled: false,
     id, name,
     pos: read_nums(ui_info.pos, 3, [0, 0, 0]),
     scale: read_nums(ui_info.scale, 3, [1, 1, 1]),
@@ -99,10 +98,6 @@ export async function cook_ui_info(
     txt: [],
     component: cs
   };
-
-
-
-  ret.enabled = parse_ui_value(ret, 'boolean', ui_info.enabled) ?? true
 
   const { img } = ui_info;
   const imgs = Array.isArray(img) ? img : img ? [img] : []
