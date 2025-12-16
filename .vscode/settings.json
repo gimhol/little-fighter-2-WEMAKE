@@ -13,6 +13,24 @@
         "*.ui.json5",
       ],
       "url": "/.vscode/ui.schema.json5"
+    },
+    {
+      "fileMatch": [
+        "*.index.json5"
+      ],
+      "url": "/.vscode/schema/idx.schema.json5"
+    },
+    {
+      "fileMatch": [
+        "*.bg.json5"
+      ],
+      "url": "/.vscode/schema/bg.schema.json5"
+    },
+    {
+      "fileMatch": [
+        "*.obj.json5"
+      ],
+      "url": "/.vscode/schema/obj.schema.json5"
     }
   ]
 }

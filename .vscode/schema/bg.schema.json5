@@ -1,0 +1,148 @@
+{
+  "$ref": "#/definitions/IBgData",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "BackgroundGroup": {
+      "const": "regular",
+      "type": "string"
+    },
+    "IBgData": {
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/IBgInfo"
+        },
+        "id": {
+          "type": "string"
+        },
+        "layers": {
+          "description": "test",
+          "items": {
+            "$ref": "#/definitions/IBgLayerInfo"
+          },
+          "type": "array"
+        },
+        "type": {
+          "const": "background",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base",
+        "id",
+        "layers",
+        "type"
+      ],
+      "type": "object"
+    },
+    "IBgInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "far": {
+          "type": "number"
+        },
+        "group": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/BackgroundGroup"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "left": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "near": {
+          "type": "number"
+        },
+        "right": {
+          "type": "number"
+        },
+        "shadow": {
+          "type": "string"
+        },
+        "shadowsize": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "shadow",
+        "shadowsize",
+        "group",
+        "left",
+        "right",
+        "far",
+        "near"
+      ],
+      "type": "object"
+    },
+    "IBgLayerInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "absolute": {
+          "type": "number"
+        },
+        "c1": {
+          "type": "number"
+        },
+        "c2": {
+          "type": "number"
+        },
+        "cc": {
+          "type": "number"
+        },
+        "color": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "file": {
+          "type": "string"
+        },
+        "height": {
+          "type": "number"
+        },
+        "loop": {
+          "description": "x轴循环布置间隔距离",
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "x",
+        "y",
+        "z"
+      ],
+      "type": "object"
+    }
+  }
+}
+
