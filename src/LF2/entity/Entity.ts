@@ -46,7 +46,12 @@ export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
   readonly position = new Ditto.Vector3(0, 0, 0);
-  readonly doppelgangers = new Set<Entity>();
+  /**
+   * 影分身
+   *
+   * @memberof Entity
+   */
+  readonly copies = new Set<Entity>();
 
   /**
    * 最终速度向量
@@ -636,7 +641,7 @@ export class Entity {
     this.fuse_bys = null;
     this.dismiss_time = null;
     this.dismiss_data = null;
-    this.doppelgangers.clear()
+    this.copies.clear()
     this.has_stat_bar = false;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
     this._resting_max = Defines.DEFAULT_RESTING_MAX;
@@ -1073,7 +1078,7 @@ export class Entity {
     const entity = create(this.world, data);
     entity.ctrl = Factory.inst.get_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
     entity.on_spawn(this, opoint, offset_velocity, facing).attach(opoint.is_entity);
-    if (entity.data.id === this.data.id) this.doppelgangers.add(entity)
+    if (entity.data.id === this.data.id) this.copies.add(entity)
     entity.key_role = false;
     entity.dead_gone = true;
 
@@ -1284,7 +1289,7 @@ export class Entity {
       return this.find_auto_frame()
     }
   }
-  update_resting() {
+  stat_recovering() {
     if (this.resting <= 0) {
       if (this.toughness_resting > 0) {
         this.toughness_resting--;
@@ -1392,16 +1397,6 @@ export class Entity {
     this.mp_recovering();
 
     if (this.frame.hp) this.hp -= this.frame.hp;
-    const { cpoint } = this.frame;
-    if (cpoint) {
-      if (cpoint?.decrease) {
-        this._catch_time += cpoint.decrease;
-        if (this._catch_time < 0) this._catch_time = 0;
-      }
-    } else {
-      this._catch_time = this._catch_time_max;
-    }
-
     if (this.shaking <= 0) {
       for (const [k, v] of this.v_rests) {
         if (v.attacker.shaking) continue;
@@ -1595,7 +1590,7 @@ export class Entity {
    * @returns 下帧信息
    */
   get_caught_end_frame(): INextFrame {
-    if (this.position.y < 1) this.position.y = 1;
+    if (this.position.y < this.ground_y) this.position.y = this.ground_y + 1;
     return (this.state?.get_caught_end_frame?.(this) || { id: Builtin_FrameId.Auto });
   }
 
@@ -1608,7 +1603,7 @@ export class Entity {
    * @returns 下帧信息
    */
   get_caught_cancel_frame(): INextFrame {
-    if (this.position.y < 1) this.position.y = 1;
+    if (this.position.y < this.ground_y) this.position.y = this.ground_y + 1;
     return { id: Builtin_FrameId.Auto };
   }
 
@@ -1676,17 +1671,20 @@ export class Entity {
 
   update_catching(): boolean {
     if (!this._catching) return false;
-
     if (!this._catch_time) {
       this._catching = null;
       this.next_frame = this.get_catching_end_frame();
       return true;
     }
-
     const { cpoint: cpoint_a } = this.frame;
+    if (cpoint_a?.decrease) {
+      this._catch_time += cpoint_a.decrease;
+      if (this._catch_time < 0) this._catch_time = 0;
+    }
     const { cpoint: cpoint_b } = this._catching.frame;
     if (!cpoint_a || !cpoint_b) {
       this._catching = null;
+      this._catch_time = this._catch_time_max;
       this.next_frame = this.get_catching_cancel_frame();
       return true;
     }
@@ -1777,14 +1775,14 @@ export class Entity {
       const nf = this.get_next_frame({ id: "245" })?.frame ?? this.find_auto_frame()
       this.next_frame = nf;
     }
-    if (this.doppelgangers.size) {
+    if (this.copies.size) {
       const gones = []
-      for (const d of this.doppelgangers) {
+      for (const d of this.copies) {
         if (!d.is_attach) gones.push(d)
         else d.transform(next_data)
       }
       for (const d of gones) {
-        this.doppelgangers.delete(d)
+        this.copies.delete(d)
       }
     }
   }

@@ -12,7 +12,7 @@ export default class CharacterState_Base extends State_Base {
       case StateEnum.Burning:
         break;
       default:
-        e.update_resting();
+        e.stat_recovering();
     }
   }
   override update(e: Entity): void {
