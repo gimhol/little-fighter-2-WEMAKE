@@ -33,6 +33,7 @@ export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
   readonly position = new Ditto.Vector3(0, 0, 0);
+  readonly prev_position = new Ditto.Vector3(0, 0, 0);
   /**
    * 影分身
    *
@@ -592,6 +593,7 @@ export class Entity {
     this._is_attach = false;
     this._is_incorporeity = false;
     this.position.set(0, 0, 0)
+    this.prev_position.set(0, 0, 0)
     this.fuse_bys = null;
     this.dismiss_time = null;
     this.dismiss_data = null;
@@ -1407,6 +1409,7 @@ export class Entity {
     }
     this._velocity.set(vx, vy, vz);
     if (!this.shaking && !this.motionless) {
+      this.prev_position.set(this.position.x, this.position.y, this.position.z)
       this.position.x = Number((this.position.x + vx).toFixed(4));
       this.position.y = Number((this.position.y + vy).toFixed(4));
       this.position.z = Number((this.position.z + vz).toFixed(4));
