@@ -1,3 +1,4 @@
+import { summary_mgr } from "@/LF2/entity/SummaryMgr";
 import { IStyle } from "../../defines/IStyle";
 import { UITextLoader } from "../UITextLoader";
 import { PlayerScore } from "./PlayerScore";
@@ -38,15 +39,15 @@ export class PlayerScoreCell extends UIComponent {
     if (!s || !c) return "-";
     switch (this.kind) {
       case "kill":
-        return "" + c.kill_sum;
+        return "" + summary_mgr.get(c.id).kill_sum;
       case "attack":
-        return "" + c.damage_sum;
+        return "" + summary_mgr.get(c.id).damage_sum;
       case "hp_lost":
         return "" + s.hp_lost;
       case "mp_usage":
         return "" + s.mp_usage;
       case "picking":
-        return "" + c.picking_sum;
+        return "" + summary_mgr.get(c.id).picking_sum
       case "status": {
         if (c.hp > 0) return this.node.get_value("win_alive_txt");
         else if (s.lose) return this.node.get_value("lose_txt");

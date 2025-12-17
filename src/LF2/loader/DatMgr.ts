@@ -2,14 +2,12 @@ import { LF2 } from "../LF2";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
 import { InvalidController } from "../controller/InvalidController";
-import { IBgData, IDataLists, IStageInfo } from "../defines";
+import { IBaseData, IBgData, IDataLists, IEntityData, IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IDataMap } from "../defines/IDataMap";
-import { IEntityData } from "../defines/IEntityData";
 import { Defines } from "../defines/defines";
 import { Ditto } from "../ditto";
 import { Factory } from "../entity";
-import { TData } from "../entity/Entity";
 import {
   is_ball_data,
   is_bg_data,
@@ -29,7 +27,7 @@ export interface IDataListMap {
   [EntityEnum.Fighter]: IEntityData[];
   [EntityEnum.Weapon]: IEntityData[];
   [EntityEnum.Ball]: IEntityData[];
-  all: TData[];
+  all: IBaseData[];
 }
 
 const create_data_list_map = (): IDataListMap => ({
@@ -59,7 +57,7 @@ class Inner {
     this.id = id;
   }
 
-  private async _cook_data(data: TData): Promise<TData> {
+  private async _cook_data(data: IBaseData): Promise<IBaseData> {
     const jobs: Promise<any>[] = [];
     if (is_bg_data(data)) data = preprocess_bg_data(this.lf2, data, jobs)
     if (is_ball_data(data))
@@ -73,7 +71,7 @@ class Inner {
     return data;
   }
 
-  private async _add_data(index_id: string | number, raw_data: TData) {
+  private async _add_data(index_id: string | number, raw_data: IBaseData) {
     const data = (await this._cook_data(raw_data)) as IEntityData; // fixme
     const _index_id = "" + index_id;
     const _data_id = "" + data.id;

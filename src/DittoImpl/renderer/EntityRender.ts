@@ -1,6 +1,6 @@
 import type { IEntityData, IFrameInfo, ITexturePieceInfo, TFace } from "@/LF2/defines";
 import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
-import type { Entity, TData } from "@/LF2/entity/Entity";
+import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
 import { clamp, floor, PI } from "@/LF2/utils";
 import * as T from "../_t";
@@ -9,7 +9,7 @@ import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
 import { get_color_material } from "./MaterialKeeper";
 import type { WorldRenderer } from "./WorldRenderer";
-function get_img_map(lf2: LF2, data: TData): Map<string, RImageInfo> {
+function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
   const images = lf2.images as ImageMgr

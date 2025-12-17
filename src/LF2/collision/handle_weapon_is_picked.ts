@@ -1,5 +1,6 @@
 import { ICollision } from "../base";
-import { WeaponType } from "../defines";
+import { is_independent, WeaponType } from "../defines";
+import { summary_mgr } from "../entity/SummaryMgr";
 
 export function handle_weapon_is_picked(collision: ICollision): void {
   const { victim, attacker } = collision;
@@ -12,4 +13,8 @@ export function handle_weapon_is_picked(collision: ICollision): void {
   } else {
     attacker.next_frame = { id: attacker.data.indexes?.picking_light };
   }
+
+  summary_mgr.get(attacker.id).picking_sum += 1
+  if (!is_independent(attacker.team))
+    summary_mgr.get(attacker.team).picking_sum += 1;
 }

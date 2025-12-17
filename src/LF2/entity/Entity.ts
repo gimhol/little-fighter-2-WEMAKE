@@ -5,19 +5,11 @@ import { Callbacks, ICollision, new_id, new_team } from "../base";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
-  Builtin_FrameId,
-  BuiltIn_OID,
-  Defines, EntityEnum, EntityGroup, FacingFlag, FrameBehavior, IBaseData, IBdyInfo, IBounding,
-  ICpointInfo, IEntityData, IFrameInfo,
-  IItrInfo,
-  INextFrame,
-  INextFrameResult,
-  IOpointInfo, IPos,
-  is_independent,
-  ItrKind,
-  IVector3,
-  OpointKind, OpointMultiEnum, OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace,
-  TNextFrame
+  Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
+  FrameBehavior, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
+  is_independent, ItrKind, IVector3, OpointKind, OpointMultiEnum,
+  OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
 import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
@@ -37,11 +29,6 @@ import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
 import { is_character, is_local_ctrl } from "./type_check";
-export type TData = IBaseData | IEntityData;
-export interface IDeadJoin {
-  hp?: number;
-  team?: string;
-}
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
@@ -373,39 +360,6 @@ export class Entity {
   get velocity_1(): IVector3 {
     if (this.velocities.length > 1) return this.velocities[1]!;
     return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
-  }
-
-  /**
-   * 拾取物件总数
-   *
-   * @protected
-   * @deprecated
-   * @type {number}
-   */
-  get picking_sum() {
-    return summary_mgr.get(this.id).picking_sum
-  }
-
-  /**
-   * 伤害总数
-   *
-   * @protected
-   * @deprecated
-   * @type {number}
-   */
-  get damage_sum() {
-    return summary_mgr.get(this.id).damage_sum
-  }
-
-  /**
-   * 击杀总数
-   *
-   * @readonly
-   * @deprecated
-   * @type {number}
-   */
-  get kill_sum() {
-    return summary_mgr.get(this.id).kill_sum
   }
 
   get holder(): Entity | null {
@@ -741,52 +695,6 @@ export class Entity {
     const old = this._holding;
     this._holding = v;
     this.callbacks.emit("on_holding_changed")(this, v, old);
-
-    if (!v) return this;
-    const s = summary_mgr.get(this.id)
-    s.picking_sum += 1
-    if (!is_independent(this.team))
-      summary_mgr.get(this.team).picking_sum += 1;
-    return this;
-  }
-
-  /**
-   * 增加伤害值数量
-   * 
-   * emitter的伤害值数量也同样增加
-   * 
-   * 会触发话回调 on_damage_sum_changed
-   *
-   * @deprecated
-   * @param {number} v 伤害值计算
-   * @return {this}
-   * @memberof Entity
-   */
-  add_damage_sum(v: number): this {
-    const s = summary_mgr.get(this.id)
-    s.damage_sum += v;
-    if (!is_independent(this.team))
-      summary_mgr.get(this.team).damage_sum += v;
-    return this;
-  }
-
-  /**
-   * 增加击杀数量
-   * 
-   * emitter的击杀数量也同样增加
-   * 
-   * 会触发话回调 on_kill_sum_changed
-   *
-   * @deprecated
-   * @param {number} v 击杀数量 
-   * @return {this}
-   * @memberof Entity
-   */
-  add_kill_sum(v: number): this {
-    const s = summary_mgr.get(this.id)
-    s.kill_sum += v
-    if (!is_independent(this.team))
-      summary_mgr.get(this.team).kill_sum += v;
     return this;
   }
 
