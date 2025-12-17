@@ -1892,6 +1892,9 @@ export class Entity {
       if (wp_a.weaponact !== this.frame.id) {
         this.enter_frame({ id: wp_a.weaponact });
       }
+      const strength = this._data.base.strength || 1
+      const weight = this._data.base.weight || 1
+      let { dvx, dvy, dvz } = wp_a;
       if (wp_b) {
         const { x, y, z } = holder.position;
         this.facing = holder.facing;
@@ -1901,9 +1904,6 @@ export class Entity {
           round(z + wp_a.z - wp_b.z),
         );
       }
-      const strength = this._data.base.strength || 1
-      const weight = this._data.base.weight || 1
-      let { dvx, dvy, dvz } = wp_a;
       if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
         const nf = this.find_align_frame(
           this.frame.id,
@@ -1918,6 +1918,7 @@ export class Entity {
         this.velocity_0.set(vx, dvy, vz);
         holder.holding = null;
         this.holder = null;
+        return;
       }
     }
   }
