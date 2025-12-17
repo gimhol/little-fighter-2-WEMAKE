@@ -28,7 +28,7 @@ import type IEntityCallbacks from "./IEntityCallbacks";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_character, is_local_ctrl } from "./type_check";
+import { is_ball, is_character, is_local_ctrl } from "./type_check";
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
@@ -95,7 +95,7 @@ export class Entity {
   public throwinjury!: number | null;
   public facing!: TFace;
   public frame!: IFrameInfo;
-  public next_frame!: INextFrame | null;
+  public next_frame!: Readonly<INextFrame> | null;
   protected _prev_frame!: IFrameInfo;
   protected _catching!: Entity | null;
   protected _catcher!: Entity | null;
@@ -1447,14 +1447,18 @@ export class Entity {
         this.ground.add(this);
       }
       const old_ground_y = this.old_ground_y ?? ground_y;
+      const on_ground = this.prev_position.y <= old_ground_y;
+      const hit_ground = (this.velocity.y < 0 || !on_ground) && this.position.y <= ground_y
       // 落地
-      if (this.velocity.y < 0 && this.position.y <= ground_y) {
+      if (hit_ground) {
+        // if (is_ball(this)) debugger;
         if (this.frame.on_landing) {
           const result = this.get_next_frame(this.frame.on_landing);
           if (result) this.enter_frame(result.which);
         }
-        this.position.y = ground_y;
+        this.position.y = this.prev_position.y = ground_y;
         this.velocity_0.y = 0;
+        this.velocity.y = 0;
         this.state?.on_landing?.(this);
         this.play_sound(this._data.base.drop_sounds);
 
@@ -1464,9 +1468,9 @@ export class Entity {
           this.throwinjury = null;
         }
         this._landing_frame = this.frame
-      }
-      else if (this.velocity.y == 0 && !float_equal(old_ground_y, ground_y)) {
+      } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
         this.position.y = ground_y;
+        this.prev_position.y = ground_y;
       }
       this.old_ground_y = ground_y;
     }
@@ -1481,9 +1485,7 @@ export class Entity {
    * @returns
    */
   get_sudden_death_frame(): TNextFrame {
-    return (
-      this.state?.get_sudden_death_frame?.(this) || { id: Builtin_FrameId.Auto }
-    );
+    return this.state?.get_sudden_death_frame?.(this) || Defines.NEXT_FRAME_AUTO
   }
 
   /**
@@ -1496,7 +1498,7 @@ export class Entity {
    */
   get_caught_end_frame(): INextFrame {
     if (this.position.y < this.ground_y) this.position.y = this.ground_y + 1;
-    return (this.state?.get_caught_end_frame?.(this) || { id: Builtin_FrameId.Auto });
+    return this.state?.get_caught_end_frame?.(this) || Defines.NEXT_FRAME_AUTO
   }
 
   /**
@@ -1509,7 +1511,7 @@ export class Entity {
    */
   get_caught_cancel_frame(): INextFrame {
     if (this.position.y < this.ground_y) this.position.y = this.ground_y + 1;
-    return { id: Builtin_FrameId.Auto };
+    return Defines.NEXT_FRAME_AUTO;
   }
 
   update_caught(): boolean {
