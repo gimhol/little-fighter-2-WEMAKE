@@ -1451,7 +1451,6 @@ export class Entity {
       const hit_ground = (this.velocity.y < 0 || !on_ground) && this.position.y <= ground_y
       // 落地
       if (hit_ground) {
-        // if (is_ball(this)) debugger;
         if (this.frame.on_landing) {
           const result = this.get_next_frame(this.frame.on_landing);
           if (result) this.enter_frame(result.which);
