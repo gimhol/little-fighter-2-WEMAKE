@@ -1289,24 +1289,18 @@ export class Entity {
       return this.find_auto_frame()
     }
   }
-  stat_recovering() {
-    if (this.resting <= 0) {
-      if (this.toughness_resting > 0) {
-        this.toughness_resting--;
-      } else if (this.toughness < this.toughness_max) {
-        this.toughness += 1;
-      }
-    }
-    if (this.resting > 0) {
-      this.resting--;
-    } else {
-      if (this.fall_value < this.fall_value_max) {
-        this.fall_value += 1;
-      }
-      if (this.defend_value < this.defend_value_max) {
-        this.defend_value += 1;
-      }
-    }
+
+  /**
+   * 状态恢复
+   *
+   * @memberof Entity
+   */
+  stat_recovering(): void {
+    if (this.resting > 0) { this.resting--; return; }
+    if (this.toughness_resting > 0) this.toughness_resting--;
+    else if (this.toughness < this.toughness_max) this.toughness += 1;
+    if (this.fall_value < this.fall_value_max) this.fall_value += 1;
+    if (this.defend_value < this.defend_value_max) this.defend_value += 1;
   }
 
   /**
