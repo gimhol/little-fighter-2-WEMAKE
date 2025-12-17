@@ -69,7 +69,7 @@ export enum StateEnum {
   BurnRun = 19,
 
   /**
-   * 此状态下，在空中时(position.y > 0)，wait结束不会进入到next中.
+   * 此状态下，在空中时(position.y > ground_y)，wait结束不会进入到next中.
    *
    * 但会在落地(position.y == 0)时进入next
    * 

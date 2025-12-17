@@ -9,7 +9,7 @@ export class CharacterState_Rowing extends CharacterState_Base {
     super(state)
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
-    if (e.position.y <= 0) return;
+    if (e.position.y <= e.ground_y) return;
     const { rowing_distance: dx = 0, rowing_height: h = 0 } = e.data.base;
 
     e.merge_velocities();

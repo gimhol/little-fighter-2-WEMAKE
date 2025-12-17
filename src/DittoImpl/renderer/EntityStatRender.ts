@@ -294,11 +294,15 @@ export class EntityStatRender implements IEntityCallbacks {
     });
   }
   render() {
-    const { invisible, position: { x, z, y }, frame: { centery }, hp, key_role: is_key_role, has_stat_bar } = this.entity;
+    const {
+      invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
+      has_stat_bar, ground
+    } = this.entity;
+    const gy = ground.get_y(x, y, z)
     const is_fighter = is_character(this.entity)
 
-    this.name_node.visible = is_fighter && is_key_role && !invisible
-    this.bars_node.visible = !has_stat_bar && is_fighter && is_key_role && !invisible && hp > 0;
+    this.name_node.visible = is_fighter && key_role && !invisible
+    this.bars_node.visible = !has_stat_bar && is_fighter && key_role && !invisible && hp > 0;
 
     if (this.entity.healing) {
       const heading = (this.entity.update_id.value % 8) < 4;
@@ -319,7 +323,7 @@ export class EntityStatRender implements IEntityCallbacks {
 
     this.set_bars_position(bar_x, bar_y, bar_z);
 
-    const name_y = floor(-z / 2 - this.name_node.scale.y);
+    const name_y = floor(gy - z / 2 - this.name_node.scale.y);
     this.set_name_position(_x, name_y, z);
 
     for (const [k, { node }] of this.key_nodes) {

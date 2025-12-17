@@ -46,7 +46,7 @@ export default class CharacterState_Lying extends CharacterState_Base {
   override find_frame_by_id(e: Entity, id: string | undefined): IFrameInfo | undefined {
     if (
       e.hp <= 0 &&
-      e.position.y <= 0 &&
+      e.position.y <= e.ground_y &&
       e.frame.state === StateEnum.Lying &&
       !e.dead_join
     ) {

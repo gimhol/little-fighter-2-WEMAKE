@@ -1,3 +1,4 @@
+import { Ground } from "../Ground";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks, ICollision, new_id, new_team } from "../base";
@@ -25,8 +26,8 @@ import { Ditto } from "../ditto";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
+import { abs, clamp, find, float_equal, floor, intersection, max, min, round } from "../utils";
 import { Times } from "../utils/Times";
-import { abs, clamp, find, floor, intersection, max, min, round } from "../utils";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_num, is_positive, is_str } from "../utils/type_check";
 import { DrinkInfo } from "./DrinkInfo";
@@ -224,6 +225,12 @@ export class Entity {
 
   protected _chasing!: Entity | null;
   renderer: any;
+  ground: Ground = Ground.Default;
+  old_ground_y: number | null = null
+  get ground_y(): number {
+    const { x, y, z } = this.position;
+    return this.ground.get_y(x, y, z)
+  }
 
   get velocity(): IVector3 { return this._velocity }
   set velocity(v: IVector3) {
@@ -615,9 +622,11 @@ export class Entity {
 
   reset(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.world = world;
+    this.ground = Ground.Default;
     this.id = new_id();
     this.wait = 0;
     this.update_id.reset()
+    this.old_ground_y = null;
     this.variant = 0;
     this.transform_datas = null;
     this._reserve = 0
@@ -712,9 +721,6 @@ export class Entity {
     this.collided_list.length = 0;
     this.lastest_collision = null;
     this.lastest_collided = null;
-
-
-
   }
 
   set_holder(v: Entity | null): this {
@@ -1102,7 +1108,7 @@ export class Entity {
    * - ```v -= 世界摩擦力（使v向0的方向变化，直至归0）```
    *
    * 以下情况不响应:
-   * - 实体处于地面以上(不含地面，即：position.y > 0）
+   * - 实体处于地面以上(不含地面，即：position.y > ground_y）
    * - 角色处于shaking中（即实体被某物击中, see IItrInfo.shaking）
    * - 角色处于motionless中，（即实体击中某物时, see IItrInfo.motionless）
    *
@@ -1114,7 +1120,7 @@ export class Entity {
    * @param {number} [factor=1] 当前衰减系数
    */
   handle_ground_velocity_decay(factor: number = 1) {
-    if (this.position.y > 0 || this.shaking || this.motionless) return;
+    if (this.position.y > this.ground_y || this.shaking || this.motionless) return;
     let { x, z } = this.velocity_0;
     const is_landing_frame = this._landing_frame === this.frame;
 
@@ -1174,7 +1180,7 @@ export class Entity {
    *
    * 以下情况不响应重力:
    *
-   * - 实体处于地面或地面以下（position.y <= 0）
+   * - 实体处于地面或地面以下（position.y <= ground_y）
    *
    * - 角色处于shaking中（即实体被某物击中, see IItrInfo.shaking）
    *
@@ -1187,7 +1193,7 @@ export class Entity {
    */
   private handle_gravity() {
     const { gravity_enabled = true } = this.frame;
-    if (this.position.y <= 0 || this.shaking || this.motionless || !gravity_enabled) return;
+    if (this.position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
     this.velocity_0.y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
   }
 
@@ -1454,40 +1460,7 @@ export class Entity {
         }
       }
     }
-
     this.follow_holder();
-    if (this.holder) {
-      const { wpoint } = this.holder.frame;
-      if (wpoint) {
-        const strength = this._data.base.strength || 1
-        const weight = this._data.base.weight || 1
-        let { dvx, dvy, dvz } = wpoint;
-        if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
-          const nf = this.find_align_frame(
-            this.frame.id,
-            this.data.indexes?.on_hands,
-            this.data.indexes?.throwings
-          )
-          this.enter_frame(nf);
-
-          const vz = this.holder.ctrl
-            ? this.holder.ctrl.UD * (dvz || 0)
-            : 0;
-
-          dvx = strength * (dvx || 0) / weight;
-          dvy = strength * (dvy || 0) / weight;
-          const vx = (dvx - abs(vz / 2)) * this.facing;
-          this.velocity_0.set(vx, dvy, vz);
-          this.holder.holding = null;
-          this.holder = null;
-        }
-      }
-      if (this.hp <= 0 && this.holder) {
-        this.holder.holding = null;
-        this.holder = null;
-      }
-    }
-
     for (const pair of this._opoints) {
       const [opoint, time] = pair
       if (time === opoint.interval) {
@@ -1555,7 +1528,7 @@ export class Entity {
       key_list === "dja" &&
       this.transform_datas &&
       this.transform_datas[1] === this._data &&
-      this.position.y === 0
+      this.position.y === this.ground_y
     ) {
       this.transfrom_to_another();
       this.ctrl.reset_key_list();
@@ -1564,25 +1537,38 @@ export class Entity {
       if (result) this.next_frame = result;
     }
 
-    // 落地
-    if (this.velocity.y < 0 && this.position.y <= 0 && !this.shaking && !this.motionless) {
-
-      if (this.frame.on_landing) {
-        const result = this.get_next_frame(this.frame.on_landing);
-        if (result) this.enter_frame(result.which);
+    if (!this.shaking && !this.motionless) {
+      const { x, y, z } = this.position;
+      const ground = this.world.get_ground(this.position)
+      const ground_y = ground.get_y(x, y, z)
+      if (ground !== this.ground) {
+        this.ground.del(this);
+        this.ground = ground
+        this.ground.add(this);
       }
+      const old_ground_y = this.old_ground_y ?? ground_y;
+      // 落地
+      if (this.velocity.y < 0 && this.position.y <= ground_y) {
+        if (this.frame.on_landing) {
+          const result = this.get_next_frame(this.frame.on_landing);
+          if (result) this.enter_frame(result.which);
+        }
+        this.position.y = ground_y;
+        this.velocity_0.y = 0;
+        this.state?.on_landing?.(this);
+        this.play_sound(this._data.base.drop_sounds);
 
-      this.position.y = 0;
-      this.velocity_0.y = 0;
-      this.state?.on_landing?.(this);
-      this.play_sound(this._data.base.drop_sounds);
-
-      if (this.throwinjury) {
-        this.hp -= this.throwinjury;
-        this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
-        this.throwinjury = null;
+        if (this.throwinjury) {
+          this.hp -= this.throwinjury;
+          this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
+          this.throwinjury = null;
+        }
+        this._landing_frame = this.frame
       }
-      this._landing_frame = this.frame
+      else if (this.velocity.y == 0 && !float_equal(old_ground_y, ground_y)) {
+        this.position.y = ground_y;
+      }
+      this.old_ground_y = ground_y;
     }
     this.world.restrict(this);
     this.holding?.follow_holder();
@@ -1895,32 +1881,45 @@ export class Entity {
   follow_holder() {
     const holder = this.holder;
     if (!holder) return;
-    const {
-      wpoint: wp_a,
-      centerx: centerx_a,
-      centery: centery_a,
-    } = holder.frame;
-    if (!wp_a) Ditto.debug(`[Entity::follow_holder] failed! holder.frame.wpoint got ${wp_a}`)
-    if (!wp_a) return;
-
-    if (wp_a.weaponact !== this.frame.id) {
-      this.enter_frame({ id: wp_a.weaponact });
+    if (this.hp <= 0 && this.holder) {
+      holder.holding = null;
+      this.holder = null;
+      return;
     }
-    const {
-      wpoint: wp_b,
-      centerx: centerx_b,
-      centery: centery_b,
-    } = this.frame;
-    if (!wp_b) Ditto.debug(`[Entity::follow_holder] failed! this.frame.wpoint got ${wp_b}`)
-    if (!wp_b) return;
-
-    const { x, y, z } = holder.position;
-    this.facing = holder.facing;
-    this.position.set(
-      round(x + this.facing * (wp_a.x - centerx_a + centerx_b - wp_b.x)),
-      round(y + centery_a - wp_a.y - centery_b + wp_b.y),
-      round(z + wp_a.z - wp_b.z),
-    );
+    const { wpoint: wp_a, centerx: cx_a, centery: cy_a, } = holder.frame;
+    const { wpoint: wp_b, centerx: cx_b, centery: cy_b, } = this.frame;
+    if (wp_a) {
+      if (wp_a.weaponact !== this.frame.id) {
+        this.enter_frame({ id: wp_a.weaponact });
+      }
+      if (wp_b) {
+        const { x, y, z } = holder.position;
+        this.facing = holder.facing;
+        this.position.set(
+          round(x + this.facing * (wp_a.x - cx_a + cx_b - wp_b.x)),
+          round(y + cy_a - wp_a.y - cy_b + wp_b.y),
+          round(z + wp_a.z - wp_b.z),
+        );
+      }
+      const strength = this._data.base.strength || 1
+      const weight = this._data.base.weight || 1
+      let { dvx, dvy, dvz } = wp_a;
+      if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
+        const nf = this.find_align_frame(
+          this.frame.id,
+          this.data.indexes?.on_hands,
+          this.data.indexes?.throwings
+        )
+        this.enter_frame(nf);
+        const vz = holder.ctrl ? holder.ctrl.UD * (dvz || 0) : 0;
+        dvx = strength * (dvx || 0) / weight;
+        dvy = strength * (dvy || 0) / weight;
+        const vx = (dvx - abs(vz / 2)) * this.facing;
+        this.velocity_0.set(vx, dvy, vz);
+        holder.holding = null;
+        this.holder = null;
+      }
+    }
   }
 
   enter_frame(which: TNextFrame): void {

@@ -54,12 +54,12 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
         (victim.fall_value <= Defines.DEFAULT_FALL_VALUE_DIZZY &&
           (StateEnum.Caught === victim.frame.state ||
             victim.velocity_0.y > 0 ||
-            victim.position.y > 0));
+            victim.position.y > victim.ground_y));
       if (is_fall) {
         handle_fall(collision);
       } else {
         if (itr.dvx) victim.velocity_0.x = itr.dvx * attacker.facing;
-        if (victim.position.y > 0 && victim.velocity_0.y > 2)
+        if (victim.position.y > victim.ground_y && victim.velocity_0.y > 2)
           victim.velocity_0.y = 2;
         victim.velocity_0.z = 0;
 

@@ -8,6 +8,7 @@ import {
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
   IFrameInfo, IItrInfo, ItrKind,
+  IVector3,
   StateEnum,
   WeaponType
 } from "./defines";
@@ -20,6 +21,7 @@ import {
   is_local_ctrl,
   is_weapon
 } from "./entity";
+import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { manhattan } from "./manhattan";
@@ -791,5 +793,9 @@ export class World extends WorldDataset {
     this.renderer.dispose();
     this.callbacks.clear()
   }
-}
 
+  get_ground(position: IVector3) {
+    return this.ground;
+  }
+  ground = new Ground()
+}

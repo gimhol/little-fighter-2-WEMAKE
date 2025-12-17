@@ -26,7 +26,7 @@ export class CharacterState_Walking extends CharacterState_Base {
     }
     if (e.hp <= 0) {
       e.enter_frame(e.get_sudden_death_frame());
-    } else if (e.position.y > 0) {
+    } else if (e.position.y > e.ground_y) {
       e.enter_frame({ id: e.data.indexes?.in_the_skys?.[0] });
     }
   }

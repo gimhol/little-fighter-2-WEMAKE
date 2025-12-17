@@ -13,7 +13,7 @@ export function handle_itr_kind_freeze(collision: ICollision) {
     (victim.fall_value <= Defines.DEFAULT_FALL_VALUE_DIZZY &&
       (StateEnum.Caught === victim.frame.state ||
         victim.velocity_0.y > 0 ||
-        victim.position.y > 0));
+        victim.position.y > victim.ground_y));
 
   if (is_fall && itr.dvy)
     victim.velocity_0.y =
