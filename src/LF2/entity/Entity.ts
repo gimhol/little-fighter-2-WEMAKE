@@ -28,7 +28,7 @@ import type IEntityCallbacks from "./IEntityCallbacks";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_ball, is_character, is_local_ctrl } from "./type_check";
+import { is_character, is_local_ctrl } from "./type_check";
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;

@@ -20,17 +20,17 @@ export default class WeaponState_InTheSky extends WeaponState_Base {
     const { base, indexes } = e.data;
     const dvy = floor(-vy * (base.bounce || 0));
     const min_bounce_vy = 2;
-    if (dvy < min_bounce_vy) {
-      e.enter_frame({ id: indexes?.just_on_ground });
-    } else {
-      e.velocity_0.y = dvy;
-    }
     if (this._unhurt_weapons.has(e)) {
       this._unhurt_weapons.delete(e);
       if (base.drop_hurt) {
         e.hp -= base.drop_hurt;
         e.hp_r -= base.drop_hurt;
       }
+    }
+    if (dvy < min_bounce_vy) {
+      e.enter_frame({ id: indexes?.just_on_ground });
+    } else {
+      e.velocity_0.y = dvy;
     }
   }
   override update(e: Entity): void {
