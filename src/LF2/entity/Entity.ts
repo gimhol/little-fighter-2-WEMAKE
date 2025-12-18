@@ -1300,7 +1300,7 @@ export class Entity {
     this.hp_recovering()
     this.mp_recovering();
 
-    // if (this.frame.hp) this.hp -= this.frame.hp;
+    if (this.frame.hp) this.hp -= this.frame.hp;
     if (this.shaking <= 0) {
       for (const [k, v] of this.v_rests) {
         if (v.attacker.shaking) continue;
