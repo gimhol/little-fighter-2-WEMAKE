@@ -930,8 +930,8 @@ export class Entity {
           case FrameBehavior.JulianBallStart:
             e.merge_velocities();
             const { x } = e.velocity;
-            const zz = this.lf2.random_in(-10, 10) / 10;
-            const yy = this.lf2.random_in(-10, 10) / 10;
+            const zz = this.lf2.random_in(-5, 5) / 5;
+            const yy = this.lf2.random_in(-5, 5) / 10;
             e.set_velocity(x, yy, zz)
             break;
           case FrameBehavior.FirzenDisasterStart:
@@ -1300,7 +1300,7 @@ export class Entity {
     this.hp_recovering()
     this.mp_recovering();
 
-    if (this.frame.hp) this.hp -= this.frame.hp;
+    // if (this.frame.hp) this.hp -= this.frame.hp;
     if (this.shaking <= 0) {
       for (const [k, v] of this.v_rests) {
         if (v.attacker.shaking) continue;
@@ -1468,6 +1468,9 @@ export class Entity {
         }
         this._landing_frame = this.frame
       } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
+        this.position.y = ground_y;
+        this.prev_position.y = ground_y;
+      } else if (this.position.y < ground_y) {
         this.position.y = ground_y;
         this.prev_position.y = ground_y;
       }

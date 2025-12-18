@@ -164,6 +164,8 @@ export interface IFrameInfo {
    * 是否响应重力
    */
   gravity_enabled?: boolean;
+
+  chasing_y?: number;
 }
 
 
@@ -189,6 +191,7 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   ctrl_x: ++order,
   ctrl_y: ++order,
   ctrl_z: ++order,
+  chasing_y: ++order,
   itr: ++order,
   bdy: ++order,
   opoint: ++order,

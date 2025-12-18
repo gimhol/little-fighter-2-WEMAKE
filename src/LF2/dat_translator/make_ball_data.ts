@@ -120,6 +120,7 @@ export function make_ball_data(
         frame.acc_y = Defines.JOHN_CHASE_ACC_Y
         frame.vym = SpeedMode.AccTo;
         frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1
+        frame.chasing_y = 0.5
         break;
       case FrameBehavior.DennisChase: {
         frame.dvx = Defines.DENNIS_CHASE_MAX_VX;

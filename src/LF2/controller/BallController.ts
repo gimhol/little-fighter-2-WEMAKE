@@ -8,13 +8,14 @@ export class BallController extends BaseController {
   override update(): ControllerUpdateResult {
     if (this.entity.chasing) {
       this.target_position = this.entity.chasing.position.clone();
-      this.target_position.y += this.entity.chasing.frame.centery / 2
+      const cy = this.entity.frame.chasing_y ?? 0.5;
+      this.target_position.y += this.entity.chasing.frame.centery * cy
     }
     const { facing, hp, frame } = this.entity
-    
+
     if (this.target_position) {
       if (hp > 0) {
-      const p1 = this.entity.position;
+        const p1 = this.entity.position;
         const p2 = this.target_position;
         const vx = this.entity.velocity.x;
         this.entity.merge_velocities();

@@ -17,6 +17,7 @@ import { edit_bdy_info } from "./edit_bdy_info";
 export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
   const bdy_list = frame.bdy ? frame.bdy : (frame.bdy = []);
   const new_bdy: IBdyInfo[] = [];
+  frame.on_landing = { id: "10" }
   for (const bdy of bdy_list) {
 
     const cond = new CondMaker<C_Val>()
@@ -41,9 +42,9 @@ export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
         ItrEffect.Ice2,
         ItrEffect.MFire1
       )
-    if (e.id === BuiltIn_OID.FreezeBall) 
+    if (e.id === BuiltIn_OID.FreezeBall)
       cond.and(C_Val.AttackerIsFreezableBall, '!=', 1)
-    
+
     edit_bdy_info(bdy, {
       /* 受攻击判定 */
       test: cond.done(),

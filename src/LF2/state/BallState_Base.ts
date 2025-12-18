@@ -29,9 +29,7 @@ export default class BallState_Base extends State_Base {
           if (ctrl) ctrl.target_position = ctrl.target_position ?? ctrl.entity.position.clone()
           break;
       }
-
     }
-
   }
   override enter(e: Entity, _prev_frame: IFrameInfo): void {
     switch (e.frame.state) {
@@ -47,6 +45,5 @@ export default class BallState_Base extends State_Base {
   }
   override update(e: Entity): void {
     super.update(e)
-    e.handle_ground_velocity_decay();
   }
 }

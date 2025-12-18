@@ -7,8 +7,8 @@ export class Ground {
   del(obj: Entity) { this.objs.delete(obj) }
   get_y(x: number, y: number, z: number) {
     return 0;
-    // if (x < 100) return 0;
-    // if (x < 300) return Number(((x - 100) / 4).toFixed(4));
-    // return 50;
+    // if (x < 300) return 0;
+    // if (x < 600) return Number(((x - 300) / 4).toFixed(4));
+    // return (600 - 300) / 4;
   }
 }
