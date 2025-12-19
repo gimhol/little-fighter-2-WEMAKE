@@ -13,13 +13,15 @@ export async function convert_dat_file(
   dst_path: string,
   indexes: IDataLists,
 ): Promise<IRet> {
+  dst_path = dst_path.replace(/\\/g, '/');
+  out_dir = out_dir.replace(/\\/g, '/');
+
   const index_file_value = dst_path.replace(out_dir + "/", "");
   const index_info =
-    indexes.objects.find((v) => index_file_value === v.file) ||
-    indexes.backgrounds.find((v) => index_file_value === v.file);
+    indexes.objects.find((v) => index_file_value === v.file.replace(/\\/g, '/')) ||
+    indexes.backgrounds.find((v) => index_file_value === v.file.replace(/\\/g, '/'));
 
   const txt = await read_lf2_dat_file(src_path);
-  console.log("convert", src_path, "=>", dst_path);
   const ret = dat_to_json(txt, index_info!);
   if (!ret) {
     console.log("convert failed", src_path, "=>", dst_path);
@@ -35,7 +37,7 @@ export async function convert_dat_file(
     if (typeof dirty.base?.bot_id === 'string' && dirty.base.bot) {
       const { bot } = dirty.base;
       delete dirty.base.bot;
-      const bot_dst_path = dst_path.replace(/\.obj\.json5$/, '.bot.json5');
+      const bot_dst_path = dst_path.replace(/(.*)\/(.*?)\.obj\.json5$/, '$1/bots/$2.bot.json5')
       indexes.bots.push({ id: dirty.base.bot_id, type: 'bot', file: bot_dst_path });
       await write_obj_file(bot_dst_path, bot);
     }
@@ -52,5 +54,5 @@ convert_dat_file.get_dst_path = function (
 ): string {
 
   const s_type = type ? `.${type}` : ''
-  return src_path.replace(src_dir, out_dir).replace(/\.dat$/, `${s_type}.${suffix}`);
+  return src_path.replace(src_dir, out_dir).replace(/\\/g, '/').replace(/\.dat$/, `${s_type}.${suffix}`);
 };
