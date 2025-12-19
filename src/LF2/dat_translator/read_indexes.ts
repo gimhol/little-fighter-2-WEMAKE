@@ -55,5 +55,5 @@ export function read_indexes(
       return item;
     });
   if (!objects || !backgrounds) return void 0;
-  return { objects, backgrounds, stages: [] };
+  return { objects, backgrounds, stages: [], bots: [] };
 }

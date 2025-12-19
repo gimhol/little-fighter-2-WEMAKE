@@ -8,7 +8,7 @@ import { CacheInfos } from "./utils/cache_infos";
 import { check_is_str_ok } from "./utils/check_is_str_ok";
 import { classify } from "./utils/classify";
 import { convert_dat_file } from "./utils/convert_dat_file";
-import { convert_data_txt } from "./utils/convert_data_txt";
+import { convert_data_txt, write_index_file } from "./utils/convert_data_txt";
 import { merge_data_indexes } from "./utils/merge_data_indexes";
 import { convert_pic, convert_pic_2 } from "./utils/convert_pic";
 import { convert_sound } from "./utils/convert_sound";
@@ -201,6 +201,7 @@ async function main() {
     await cache_info.update();
   }
   await cache_infos.save();
+  await write_index_file(indexes, DATA_DIR_PATH)
   await make_zip_and_json(DATA_DIR_PATH, OUT_DIR, DATA_ZIP_NAME, (inf) => {
     inf.type = 'data'
     return inf;

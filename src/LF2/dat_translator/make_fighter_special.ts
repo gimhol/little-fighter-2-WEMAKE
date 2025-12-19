@@ -56,7 +56,6 @@ export function make_fighter_special(data: IEntityData): IEntityData {
     case BuiltIn_OID.Jan: return make_fighter_data_jan(data);
     case BuiltIn_OID.Sorcerer: return make_fighter_data_sorcerer(data);
     case BuiltIn_OID.John: return make_fighter_data_john(data);
-
     case BuiltIn_OID.Template: break;
     case BuiltIn_OID.Bandit: data.base.group = ensure(data.base.group, EntityGroup._3000); break;
 

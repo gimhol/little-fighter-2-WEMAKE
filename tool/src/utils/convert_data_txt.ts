@@ -28,3 +28,8 @@ export async function convert_data_txt(
   await write_obj_file(dst_path, indexes);
   return indexes;
 }
+export async function write_index_file(indexes: IDataLists, out_dir: string) {
+  const suffix = 'json5'
+  const dst_path = `${out_dir}/data/data.index.${suffix}`;
+  await write_obj_file(dst_path, indexes);
+}

@@ -2,7 +2,7 @@ import { LF2 } from "../LF2";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
 import { InvalidController } from "../controller/InvalidController";
-import { IBaseData, IBgData, IDataLists, IEntityData, IStageInfo } from "../defines";
+import { IBaseData, IBgData, IBotData, IDataLists, IEntityData, IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IDataMap } from "../defines/IDataMap";
 import { Defines } from "../defines/defines";
@@ -48,6 +48,8 @@ class Inner {
   data_list_map = create_data_list_map();
   data_map = new Map<string, IEntityData>();
   stages: IStageInfo[] = [Defines.VOID_STAGE];
+  bot_map = new Map<string, IBotData>();
+
   get lf2() {
     return this.mgr.lf2;
   }
@@ -67,23 +69,17 @@ class Inner {
     else if (is_character_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
 
-    if (is_entity_data(data)) data = await preprocess_entity_data(this.lf2, data, jobs);
+    if (is_entity_data(data)) {
+      data = await preprocess_entity_data(this.lf2, data, jobs);
+      if (data.base.bot_id) data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id);
+    }
     return data;
   }
 
-  private async _add_data(index_id: string | number, raw_data: IBaseData) {
-    const data = (await this._cook_data(raw_data)) as IEntityData; // fixme
+  private _add_obj(index_id: string | number, data: IEntityData) {
     const _index_id = "" + index_id;
     const _data_id = "" + data.id;
     if (_data_id === "spark") debugger;
-    if (_data_id !== _index_id) {
-      Ditto.warn(
-        DatMgr.TAG + "::_add_data",
-        `index_id not equal to data_id,`,
-        `index_id: ${_index_id}, data_id: ${_data_id},`,
-        `will use index_id as data key.`,
-      );
-    }
     if (this.data_map.has(_index_id)) {
       Ditto.warn(
         DatMgr.TAG + "::_add_data",
@@ -108,24 +104,47 @@ class Inner {
       const src = (Defines.BuiltIn_Dats as any)[k];
       if (!is_non_blank_str(src)) continue;
       this.lf2.on_loading_content(`${src}`, 0);
-      await this._add_data(src, await this.lf2.import_json(src).then(r => r[0]));
+      const raw = await this.lf2.import_json<IBaseData>(src).then(r => r[0])
+      const cooked = await this._cook_data(raw) as IEntityData;
+      this._add_obj(src, cooked);
     }
-    const data: IDataLists = { objects: [], backgrounds: [], stages: [] }
+    const data: IDataLists = { objects: [], backgrounds: [], stages: [], bots: [] }
     for (const file of index_files) {
-      const { objects = [], backgrounds = [], stages = [] } = await this.lf2.import_json<Partial<IDataLists>>(file, true)
+      const { objects = [], backgrounds = [], stages = [], bots = [] } = await this.lf2.import_json<Partial<IDataLists>>(file, true)
         .then(r => r[0]).catch(e => { Ditto.warn(`FAIL TO LOAD DAT INDEX ${file}, ` + e); return {} as Partial<IDataLists> });
       data.objects.push(...objects)
       data.backgrounds.push(...backgrounds)
       data.stages.push(...stages)
+      data.bots.push(...bots)
     }
 
     if (this.cancelled) throw new Error("cancelled");
+    for (const { id, file } of data.bots) {
+      this.lf2.on_loading_content(`${file}`, 0);
+      const bot_data = await this.lf2.import_json<IBotData>(file, true)
+        .then(r => {
+          return r[0]
+        }).catch(e => {
+          Ditto.warn(`FAILED TO LOAD BOT DATA: ${file}`);
+          return undefined
+        });
+      if (bot_data) {
+        this.bot_map.set(id, bot_data);
+        if (id != file) this.bot_map.set(file, bot_data);
+        if (id != bot_data.id) this.bot_map.set(bot_data.id, bot_data);
+      }
+    }
+
     for (const { id, file } of data.objects) {
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.on_loading_content(`${file}`, 0);
-        const obj_data = await this.lf2.import_json(file, true).then(r => r[0])
-        await this._add_data(id, obj_data);
+        const raw = await this.lf2.import_json<IEntityData>(file, true).then(r => r[0])
+        const cooked = await this._cook_data(raw) as IEntityData;
+
+        this._add_obj(id, cooked);
+        if (id != file) this._add_obj(file, cooked);
+        if (id != cooked.id) this._add_obj(cooked.id, cooked);
       } catch (e) {
         throw new Error(`fail to load obj: ${file}, reason: ${e}`)
       }
@@ -134,8 +153,10 @@ class Inner {
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.on_loading_content(`${file}`, 0);
-        const bg_data = await this.lf2.import_json(file, true).then(r => r[0])
-        await this._add_data(id, bg_data);
+        const raw = await this.lf2.import_json(file, true).then(r => r[0])
+        const cooked = await this._cook_data(raw) as IBgData;
+        this.data_list_map.all.push(cooked);
+        this.data_list_map.background.push(cooked);
       } catch (e) {
         throw new Error(`fail to load bg: ${file}, reason: ${e}`)
       }
@@ -156,6 +177,7 @@ class Inner {
       this.lf2.on_loading_content(`${stage_file.file}`, 100);
       stages.push(...stage_datas)
     }
+
     if (!this.stages.find(v => v.id === Defines.VOID_STAGE.id))
       this.stages.unshift(Defines.VOID_STAGE)
     for (const stage of stages) {

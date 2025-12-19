@@ -241,6 +241,14 @@ export interface IEntityInfo {
   strength?: number
 
   /**
+   * BOT数据ID
+   *
+   * @type {string}
+   * @memberof IEntityInfo
+   */
+  bot_id?: string;
+
+  /**
    * BOT数据
    *
    * @type {IBotData}

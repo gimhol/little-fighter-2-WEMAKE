@@ -8,6 +8,7 @@ export class BotBuilder {
   static builders: BotBuilder[] = []
   static make(data: IEntityData) {
     const ret = new BotBuilder(data)
+    data.base.bot_id = 'bot_' + (data.base.name ?? data.id);
     this.builders.push(ret);
     return ret;
   }
@@ -18,7 +19,9 @@ export class BotBuilder {
   readonly entity: IEntityData;
   get bot(): IBotData {
     let ret = this.entity.base.bot
-    if (!ret) ret = this.entity.base.bot = { id: this.entity.id, actions: {} }
+    if (!ret) ret = this.entity.base.bot = {
+      id: this.entity.base.bot_id ?? ('bot_' + this.entity.id), actions: {}
+    }
     return ret;
   }
   get frames(): Exclude<IBotData['frames'], undefined> {

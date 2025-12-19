@@ -45,6 +45,12 @@
             "$ref": "#/definitions/IDatIndex"
           },
           "type": "array"
+        },
+        "bots": {
+          "items": {
+            "$ref": "#/definitions/IDatIndex"
+          },
+          "type": "array"
         }
       },
       "required": [

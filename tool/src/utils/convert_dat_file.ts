@@ -21,17 +21,24 @@ export async function convert_dat_file(
   const txt = await read_lf2_dat_file(src_path);
   console.log("convert", src_path, "=>", dst_path);
   const ret = dat_to_json(txt, index_info!);
-  {
+  if (!ret) {
+    console.log("convert failed", src_path, "=>", dst_path);
+    await fs.copyFile(src_path, dst_path);
+    return void 0;
+  }
+  if (dst_path.endsWith('.obj.json5')) {
     let dirty = ret as Partial<IEntityData>;
     // NOTE: 很奇怪hunter 的frame3有个opoint
     if (dirty?.frames?.[3]?.opoint && index_info?.type === "0") {
       delete dirty.frames[3].opoint;
     }
-  }
-  if (!ret) {
-    console.log("convert failed", src_path, "=>", dst_path);
-    await fs.copyFile(src_path, dst_path);
-    return void 0;
+    if (typeof dirty.base?.bot_id === 'string' && dirty.base.bot) {
+      const { bot } = dirty.base;
+      delete dirty.base.bot;
+      const bot_dst_path = dst_path.replace(/\.obj\.json5$/, '.bot.json5');
+      indexes.bots.push({ id: dirty.base.bot_id, type: 'bot', file: bot_dst_path });
+      await write_obj_file(bot_dst_path, bot);
+    }
   }
   await write_obj_file(dst_path, ret);
   return ret;
