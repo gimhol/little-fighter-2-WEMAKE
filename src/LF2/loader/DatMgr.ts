@@ -4,7 +4,6 @@ import { BallController } from "../controller/BallController";
 import { InvalidController } from "../controller/InvalidController";
 import { IBaseData, IBgData, IBotData, IDataLists, IEntityData, IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
-import { IDataMap } from "../defines/IDataMap";
 import { Defines } from "../defines/defines";
 import { Ditto } from "../ditto";
 import { Factory } from "../entity";
@@ -26,8 +25,7 @@ export interface IDataListMap {
   [EntityEnum.Entity]: IEntityData[];
   [EntityEnum.Fighter]: IEntityData[];
   [EntityEnum.Weapon]: IEntityData[];
-  [EntityEnum.Ball]: IEntityData[];
-  all: IBaseData[];
+  [EntityEnum.Ball]: IEntityData[]
 }
 
 const create_data_list_map = (): IDataListMap => ({
@@ -35,8 +33,7 @@ const create_data_list_map = (): IDataListMap => ({
   [EntityEnum.Entity]: [],
   [EntityEnum.Fighter]: [],
   [EntityEnum.Weapon]: [],
-  [EntityEnum.Ball]: [],
-  all: [],
+  [EntityEnum.Ball]: []
 });
 
 class Inner {
@@ -78,11 +75,9 @@ class Inner {
 
   private _add_obj(index_id: string | number, data: IEntityData) {
     const _index_id = "" + index_id;
-    const _data_id = "" + data.id;
-    if (_data_id === "spark") debugger;
     if (this.data_map.has(_index_id)) {
       Ditto.warn(
-        DatMgr.TAG + "::_add_data",
+        DatMgr.TAG + "::_add_obj",
         "id duplicated, old data will be overwritten!",
         "old data:",
         this.data_map.get(_index_id),
@@ -91,6 +86,13 @@ class Inner {
       );
     }
     this.data_map.set(_index_id, data);
+    const list = this.data_list_map[data.type]
+    if (!list.some(v => v === data)) list.push(data);
+  }
+
+  private _add_bg(data: IBgData) {
+    const list = this.data_list_map[data.type]
+    if (!list.some(v => v === data)) list.push(data);
   }
 
   async load(index_files: string[]) {
@@ -155,19 +157,11 @@ class Inner {
         this.lf2.on_loading_content(`${file}`, 0);
         const raw = await this.lf2.import_json(file, true).then(r => r[0])
         const cooked = await this._cook_data(raw) as IBgData;
-        this.data_list_map.all.push(cooked);
-        this.data_list_map.background.push(cooked);
+        this._add_bg(cooked)
       } catch (e) {
         throw new Error(`fail to load bg: ${file}, reason: ${e}`)
       }
     }
-    for (const [, v] of this.data_map) {
-      if (this.cancelled) throw new Error("cancelled");
-      const t = v.type as keyof IDataMap;
-      this.data_list_map[t]?.push(v as any);
-      this.data_list_map.all.push(v as any);
-    }
-
     const stages: IStageInfo[] = []
     for (const stage_file of data.stages) {
       this.lf2.on_loading_content(`${stage_file.file}`, 0);
@@ -238,9 +232,6 @@ export default class DatMgr {
   }
   get entity() {
     return this._inner.data_list_map[EntityEnum.Entity];
-  }
-  get all() {
-    return this._inner.data_list_map.all;
   }
   get stages(): IStageInfo[] {
     return this._inner.stages;
