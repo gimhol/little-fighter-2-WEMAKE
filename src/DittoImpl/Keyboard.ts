@@ -65,7 +65,7 @@ export class __Keyboard implements IKeyboard {
     const gamepads = this.gamepads = navigator.getGamepads()
     for (const gamepad of gamepads) {
       if (!gamepad) continue;
-      const type = (gamepad.id.toLowerCase().indexOf('xbox') >= 0) ? 'xbox' : '';
+      const type = gamepad.mapping === "standard" ? 'standard' : '';
       const { buttons, index } = gamepad;
       for (let i = 0; i < buttons.length; i++) {
         const btn = buttons[i];
@@ -78,10 +78,9 @@ export class __Keyboard implements IKeyboard {
         this.gamepad_buttons.set(key_code, pressed);
         if (pressed) this.key_down(key_code);
         else this.key_up(key_code);
-
         if (pressed) continue;
 
-        if (type === 'xbox') {
+        if (type === 'standard') {
           switch (known_key_name) {
             case 'Start':
               this.lf2.world.paused = !this.lf2.world.paused;
@@ -112,7 +111,7 @@ export class __Keyboard implements IKeyboard {
 }
 
 const gamepad_key_map: { [x in string]?: { [x in number]?: string } } = {
-  xbox: {
+  standard: {
     0: 'A',
     1: 'B',
     2: 'X',
@@ -129,6 +128,5 @@ const gamepad_key_map: { [x in string]?: { [x in number]?: string } } = {
     13: 'Down',
     14: 'Left',
     15: 'Right',
-    16: 'XBOX',
   }
 }

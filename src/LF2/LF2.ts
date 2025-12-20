@@ -238,7 +238,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
-    const key_code = e.key;
+    const key_code = e.key.toLowerCase();
     const ctrl_down = this.keyboard.is_key_down('control')
     if (ctrl_down) {
 

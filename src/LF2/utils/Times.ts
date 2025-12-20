@@ -27,6 +27,10 @@ export class Times {
       this.value = this.min;
       return true
     }
+    if (this.value == this.max) {
+      this.value = this.min;
+      return true
+    }
     if (this.value < this.max) {
       this.value++;
       return this.value === this.max

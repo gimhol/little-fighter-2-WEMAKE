@@ -67,8 +67,10 @@ class Inner {
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
 
     if (is_entity_data(data)) {
+      if (data.base.bot_id) {
+        data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id)
+      };
       data = await preprocess_entity_data(this.lf2, data, jobs);
-      if (data.base.bot_id) data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id);
     }
     return data;
   }
