@@ -23,7 +23,7 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
-const EXTRA_SHAKING_TIME = 60;
+const EXTRA_SHAKING_TIME = 30;
 const r_vec3 = new T.Vector3(0, 0, -1);
 export class EntityRender {
   readonly world_renderer: WorldRenderer;
