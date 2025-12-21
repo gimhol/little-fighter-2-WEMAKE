@@ -66,7 +66,7 @@ export class UINodeRenderer implements IUINodeRenderer {
 
   get world() { return this.ui.lf2.world }
   get lf2() { return this.ui.lf2 }
-  get parent() { return this.ui.renderer }
+  get parent() { return this.ui.parent?.renderer || null }
   img_idx = -1
   constructor(ui: UINode) {
     this.ui = ui;
@@ -124,7 +124,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.ui.parent?.renderer.add(this);
   }
   on_stop() {
-    this.parent?.del(this);
+    this.del_self()
     this.release_dom();
   }
 

@@ -64,13 +64,13 @@ export class UIStack {
       if (until) {
         if (until(ui, i, this.uis)) {
           if (inclusive) {
-            poppeds.unshift(ui)
+            poppeds.push(ui)
           }
           break;
         }
-        poppeds.unshift(ui)
+        poppeds.push(ui)
       } else {
-        poppeds.unshift(ui);
+        poppeds.push(ui);
         break;
       }
     }
