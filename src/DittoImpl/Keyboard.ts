@@ -8,9 +8,16 @@ import { LF2 } from "../LF2/LF2";
 class __KeyEvent implements IKeyEvent {
   readonly times: number;
   readonly key: string;
-  readonly native: KeyboardEvent | undefined;;
-  constructor(key: string, times: number = 0, e: KeyboardEvent | undefined = void 0) {
+  readonly native: KeyboardEvent | undefined;
+  readonly pressed: boolean;
+  constructor(
+    key: string,
+    pressed: boolean,
+    times: number = 0,
+    e: KeyboardEvent | undefined = void 0
+  ) {
     this.key = key;
+    this.pressed = pressed;
     this.times = times;
     this.native = e;
 
@@ -45,11 +52,11 @@ export class __Keyboard implements IKeyboard {
   protected key_down = (key_code: string, e?: KeyboardEvent) => {
     const times = this._times_map.get(key_code) ?? -1;
     this._times_map.set(key_code, times + 1);
-    this._callback.emit("on_key_down")(new __KeyEvent(key_code, times + 1, e));
+    this._callback.emit("on_key_down")(new __KeyEvent(key_code, true, times + 1, e));
   };
   protected key_up = (key_code: string, e?: KeyboardEvent) => {
     this._times_map.delete(key_code);
-    this._callback.emit("on_key_up")(new __KeyEvent(key_code, 0, e));
+    this._callback.emit("on_key_up")(new __KeyEvent(key_code, false, 0, e));
   };
   protected gamepads: (Gamepad | null)[] = [];
   protected gamepad_timer?: ReturnType<typeof setInterval>;

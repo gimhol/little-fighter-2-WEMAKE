@@ -1,18 +1,16 @@
+import { CtrlDevice } from "../defines/CtrlDevice";
 import { GameKey as GK } from "../defines/GameKey";
-import { IKeyboardCallback } from "../ditto/keyboard/IKeyboardCallback";
-import { IKeyEvent } from "../ditto/keyboard/IKeyEvent";
 import { Entity } from "../entity/Entity";
 import { PlayerInfo } from "../PlayerInfo";
+import { LF2KeyEvent } from "../ui/LF2KeyEvent";
 import { abs } from "../utils";
 import { BaseController } from "./BaseController";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
-import { CtrlDevice } from "../defines/CtrlDevice";
 
 type TKeyCodeMap = { [x in GK]?: string };
 type TCodeKeyMap = { [x in string]?: GK };
 export class LocalController
-  extends BaseController
-  implements IKeyboardCallback {
+  extends BaseController {
   readonly __is_local_ctrl__ = true;
   readonly player: PlayerInfo;
 
@@ -20,16 +18,16 @@ export class LocalController
   private _code_key_map: TCodeKeyMap = {};
   private _ax_using: number = 0;
   private _ay_using: number = 0;
-  on_key_up(e: IKeyEvent) {
-    const code = e.key?.toLowerCase();
+  on_key_up(e: LF2KeyEvent) {
+    const code = e.key.toLowerCase();
     if (!code) return;
     const key = this._code_key_map[code];
     if (!key) return;
     this.end(key);
   }
 
-  on_key_down(e: IKeyEvent) {
-    const code = e.key?.toLowerCase();
+  on_key_down(e: LF2KeyEvent) {
+    const code = e.key.toLowerCase();
     if (!code) return;
     const key = this._code_key_map[code];
     if (!key) return;
@@ -40,7 +38,6 @@ export class LocalController
     super(player_id, entity);
     this.player = this.lf2.ensure_player(player_id)
     if (kc) this.set_key_code_map(kc);
-    this.disposer = entity.world.lf2.keyboard.callback.add(this);
   }
 
   set_key_code_map(key_code_map: TKeyCodeMap) {

@@ -16,7 +16,7 @@ export * from "./IUIPointerEvent";
 export * from "./IUITxtInfo.dat";
 export * from "./LF2PointerEvent";
 export * from "./LF2UIEvent";
-export * from "./LF2UIKeyEvent";
+export * from "./LF2KeyEvent";
 export * from "./read_info_value";
 export * from "./read_ui_template";
 export * from "./UIActionEnum";

@@ -248,17 +248,20 @@ export class World extends WorldDataset {
       const ui = this.lf2.ui
       if (ui && !ui.disabled) {
         ui.update(real_dt);
-        if (this.lf2.keydowns) {
-          for (const e of this.lf2.keydowns)
-            this.lf2.ui?.on_key_down(e)
-          this.lf2.keydowns.clear();
-        }
-        if (this.lf2.keyups) {
-          for (const e of this.lf2.keyups)
-            this.lf2.ui?.on_key_up(e)
-          this.lf2.keyups.clear();
-        }
+        for (const e of this.lf2.events)
+          if (e.pressed) ui.on_key_down(e)
+          else ui.on_key_up(e)
       }
+      for (const e of this.lf2.events) {
+        const fighter = this.slot_fighters.get(e.player)
+        if (!fighter) continue;
+        const { ctrl } = fighter
+        if (!is_local_ctrl(ctrl)) continue;
+        if (e.pressed) ctrl.on_key_down(e)
+        else ctrl.on_key_up(e)
+      }
+
+      this.lf2.events.clear();
       if (this.lf2.cmds.size) {
         for (const key of this.lf2.cmds) {
           switch (key) {
