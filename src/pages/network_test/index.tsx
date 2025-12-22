@@ -1,34 +1,28 @@
 
+import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import List from "rc-virtual-list";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
-import Combine from "../../Component/Combine";
 import { Divider } from "../../Component/Divider";
 import { Flex } from "../../Component/Flex";
 import Frame from "../../Component/Frame";
-import { Input } from "../../Component/Input";
 import Show from "../../Component/Show";
 import { Space } from "../../Component/Space";
 import { Strong, Text } from "../../Component/Text";
-import { IRoomInfo, MsgEnum } from "../../Net";
+import { MsgEnum } from "../../Net";
 import { ChatBox } from "./ChatBox";
 import { Connection } from "./Connection";
-import { useRoom } from "./useRoom";
-import { TriState } from "./TriState";
+import { ConnectionBox } from "./ConnectionBox";
 import { RoomsBox } from "./RoomsBox";
-import styles from "./styles.module.scss"
-import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
-
-
-indexedDB.databases().then((r) => console.log(r))
+import styles from "./styles.module.scss";
+import { TriState } from "./TriState";
+import { useRoom } from "./useRoom";
 
 function Player() {
-  const [conn_state, set_connected] = useState<TriState>(TriState.False);
+  const [conn_state, set_conn_state] = useState<TriState>(TriState.False);
   const [conn, set_conn, ref_conn] = useStateRef<Connection | null>(null)
   const { room } = useRoom(conn)
   const [countdown, set_countdown] = useState(5);
-  const [address, set_address] = useStateRef('ws://localhost:8080')
-  const [nickname, set_nickname] = useStateRef('')
 
   const { players, me, owner, all_ready, is_owner } = useMemo(() => {
     const players = room?.players ?? []
@@ -41,7 +35,6 @@ function Player() {
     )
     return { players, me, owner, all_ready, is_owner: me === owner } as const
   }, [room])
-
 
   useEffect(() => {
     let sec = 5
@@ -59,68 +52,8 @@ function Player() {
     return () => clearInterval(tid)
   }, [all_ready, is_owner])
 
-  function connect() {
-    if (ref_conn.current) return;
-    const conn = new Connection(nickname);
-    set_conn(conn);
-  }
-
-  useEffect(() => {
-    if (!conn) return;
-    conn.open(`${address}`)
-    set_connected(TriState.Pending);
-    conn.callbacks.once('on_close', (e) => {
-      set_connected(TriState.False)
-      set_conn(null)
-    })
-    conn.callbacks.once('on_register', () => set_connected(TriState.True))
-    conn.callbacks.add({
-      on_message: (resp) => {
-        switch (resp.type) {
-          case MsgEnum.RoomStart:
-            alert('!')
-            break;
-        }
-      }
-    })
-    return () => conn?.close()
-  }, [conn])
-
-
   return <>
-    <Space>
-      <Flex direction='column' gap={5}>
-        {
-          conn_state ? null :
-            <Combine style={{ alignSelf: 'flex-start' }} direction='column'>
-              <Input
-                style={{ minWidth: 300, maxWidth: 300 }}
-                value={address}
-                onChange={set_address}
-                disabled={!!conn_state}
-                prefix={<Text size='s'>地址:</Text>}
-              />
-              <Combine>
-                <Input
-                  value={nickname}
-                  onChange={set_nickname}
-                  disabled={!!conn_state}
-                  data-flex={1}
-                  prefix={<Text size='s'>昵称:</Text>}
-                />
-                <Button
-                  disabled={conn_state === TriState.Pending || !address.trim()}
-                  onClick={connect}>
-                  {{
-                    [TriState.False]: 'connect',
-                    [TriState.Pending]: 'connecting...',
-                    [TriState.True]: 'disconnect',
-                  }[conn_state]}
-                </Button>
-              </Combine>
-            </Combine>
-        }
-      </Flex>
+    <Space style={{ position: 'fixed', right: 0, bottom: 0 }}>
       <Show show={conn_state === TriState.True}>
         <Show show={room}>
           <Frame style={{ padding: 0 }}>
@@ -181,7 +114,14 @@ function Player() {
         </Show>
       </Show>
     </Space>
-
+    <ConnectionBox
+      on_conn_change={set_conn}
+      on_state_change={set_conn_state}
+      className={styles.rooms_box}
+      style={{
+        opacity: conn_state ? 0 : 1,
+        pointerEvents: conn_state ? 'none' : void 0,
+      }} />
     <ChatBox
       conn={conn}
       className={styles.chat_box}
@@ -201,9 +141,5 @@ function Player() {
 }
 
 export default function NetworkTest() {
-  return (
-    <Space vertical>
-      <Player />
-    </Space>
-  )
+  return <Player />
 }

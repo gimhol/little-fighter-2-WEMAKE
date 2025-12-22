@@ -90,46 +90,52 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
       set_room_joining(false)
     })
   }
-  const ref_responser = useRef<HTMLDivElement | null>(null)
   const [ref_floating_view, on_ref] = useForwardedRef(f_ref)
   useFloating({
-    responser: ref_responser.current,
+    responser: ref_floating_view.current?.firstElementChild as HTMLElement,
     target: ref_floating_view.current
   })
+
   return (
     <Frame {..._p} className={cls_name} ref={on_ref}>
-      <Flex ref={ref_responser} direction='column' align='stretch' gap={5} >
-        <Flex gap={10} align='stretch' justify='space-between' >
-          <Flex align='center' style={{ flex: 1, paddingLeft: 5 }} gap={5}>
-            <Strong>房间列表</Strong>
-            <Text>{conn?.url}</Text>
-          </Flex>
-          <Flex>
-            <Show show={!room && conn_state && !room_joining && !room_creating}>
-              <Button
-                variants={['no_border', 'no_round', 'no_shadow']}
-                onClick={() => create_room()}>
-                新建房间
-              </Button>
-            </Show>
+      <Flex gap={10} align='stretch' justify='space-between'>
+        <Flex align='center' style={{ flex: 1, paddingLeft: 5, overflow: 'hidden' }} gap={5}>
+          <Strong style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>房间列表</Strong>
+          <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>{conn?.url}</Text>
+        </Flex>
+        <Flex>
+          <Show show={!room && conn_state && !room_joining && !room_creating}>
             <Button
               variants={['no_border', 'no_round', 'no_shadow']}
-              onClick={() => update_rooms()} >
-              刷新
+              onClick={() => create_room()}>
+              创建房间
             </Button>
-            <Button
-              variants={['no_border', 'no_round', 'no_shadow']}
-              onClick={() => conn?.close()} >
-              关闭
-            </Button>
-          </Flex>
+          </Show>
+          <Button
+            variants={['no_border', 'no_round', 'no_shadow']}
+            onClick={() => update_rooms()} >
+            刷新
+          </Button>
+          <Button
+            variants={['no_border', 'no_round', 'no_shadow']}
+            onClick={() => conn?.close()} >
+            断开连接
+          </Button>
         </Flex>
       </Flex>
-      <List data={rooms} itemKey={r => r.id!}>
-        {(r) => <>
-          <Divider />
+      {rooms?.length === 0 ?
+        <Flex direction='column' align='center' justify='center' style={{ height: 65, opacity: 0.5 }}>
+          <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>暂无房间，点击刷新或创建房间</Text>
+        </Flex> : <Divider />
+      }
+      <List
+        data={rooms}
+        itemKey={r => r.id!}
+        itemHeight={65}
+        style={{ flex: 1, overflow: 'auto' }}>
+        {(r, i) => <>
           <Flex direction='column' align='stretch' gap={5}>
-            <Flex gap={10} direction='column' align='stretch' justify='space-between' style={{ margin: 5 }}>
+            <Flex gap={10} direction='column' align='stretch' justify='space-between' style={{ padding: 5, boxSizing: 'border-box', height: 64 }}>
               <Flex gap={10}>
                 <Strong> 房名: {r.title} </Strong>
                 <Text> 人数: {r.players?.length}/{r.max_players} </Text>
@@ -138,12 +144,19 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
                 <Text style={{ flex: 1 }}> 房主: {r.owner?.name} </Text>
                 <Button
                   variants={['no_border', 'no_round', 'no_shadow']}
+                  disabled={!!room}
                   onClick={() => join_room(r.id!)}>
                   加入
                 </Button>
               </Flex>
             </Flex>
           </Flex>
+          <Divider />
+          <Show show={i == rooms.length - 1}>
+            <Flex direction='column' align='center' justify='center' style={{ opacity: 0.5, padding: 10 }}>
+              <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>到底了</Text>
+            </Flex>
+          </Show>
         </>}
       </List>
     </Frame>

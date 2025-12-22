@@ -5,12 +5,18 @@ $msg_item_color_room  : rgba(255, 123, 0, 1);
 .rooms_box {
   position           : fixed;
   padding            : 0px;
-  left               : 0;
-  top                : 0;
+  right              : 0;
+  bottom             : 0;
   width              : 375px;
   opacity            : 0;
   transition-property: opacity;
   transition-duration: 150ms;
+  z-index            : 10;
+  min-height         : 29px;
+  resize             : both;
+  overflow           : hidden;
+  display            : flex;
+  flex-direction     : column;
 }
 
 .chat_box {
@@ -23,6 +29,7 @@ $msg_item_color_room  : rgba(255, 123, 0, 1);
   opacity            : 0;
   transition-property: opacity;
   transition-duration: 150ms;
+  z-index            : 10;
 
   &>* {
     pointer-events: all;

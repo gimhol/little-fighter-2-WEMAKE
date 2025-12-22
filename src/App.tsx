@@ -1,5 +1,6 @@
 import { useShortcut } from "@fimagine/dom-hooks";
 import classNames from "classnames";
+import qs from "qs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
@@ -56,7 +57,8 @@ import {
   useLocalNumber,
   useLocalString,
 } from "./useLocalStorage";
-import qs from "qs";
+import NetworkTest from "./pages/network_test";
+import { useLocation } from "react-router";
 
 function App() {
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -164,13 +166,17 @@ function App() {
 
   }, [lf2, ele_game_overlay])
 
+  const l = useLocation()
+  const { sobj, hobj } = useMemo(() => {
+    const sobj = qs.parse(l.search.substring(1))
+    const hobj = qs.parse(l.hash.substring(1))
+    return { sobj, hobj }
+  }, [l])
+
   useEffect(() => {
-    const sobj = qs.parse(window.location.search.substring(1))
-    const hobj = qs.parse(window.location.hash.substring(1))
     let lang = sobj.lang || hobj.lang;
     let dev = sobj.dev || hobj.dev
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
-
     const lf2 = ref_lf2.current = new LF2(dev == '1');
     lf2.lang = lang;
 
@@ -281,7 +287,7 @@ function App() {
     return () => {
       invoker.invoke()
     };
-  }, [LF2]);
+  }, [LF2, sobj, hobj]);
 
   const on_click_load_local_zip = () => {
     if (!lf2) return;
@@ -890,12 +896,12 @@ function App() {
       {game_cell_view}
       {pannel_cell_view}
       {dat_viewer_open ? <DatViewer open={dat_viewer_open} onClose={() => set_dat_viewer_open(false)} /> : void 0}
-
       <EditorView
         open={editor_open}
         onClose={() => set_editor_open(false)}
         style={{ background: 'black', position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, zIndex: 1 }}
         lf2={lf2} />
+      {(sobj.network === '1' || hobj.network === '1') && <NetworkTest />}
     </>
   );
 }
