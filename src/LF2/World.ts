@@ -1,3 +1,4 @@
+import { V } from "react-router/dist/development/index-react-server-client-Da3kmxNd";
 import { Callbacks, FPS, ICollision } from "./base";
 import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
@@ -46,9 +47,9 @@ export class World extends WorldDataset {
 
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
-  private _time = new Times();
+  private _game_time = new Times();
 
-  get time() { return this._time.value }
+  get game_time() { return this._game_time.value }
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
@@ -238,59 +239,12 @@ export class World extends WorldDataset {
     let _prev_time = Date.now();
     let _update_count = 0;
     let _fix_radio = 1;
-
-
     const on_update = () => {
       const time = Date.now();
       const real_dt = time - _prev_time;
       if (real_dt < this._ideally_dt * _fix_radio) return;
       _update_count++;
-      const ui = this.lf2.ui
-      if (ui && !ui.disabled) {
-        ui.update(real_dt);
-        for (const e of this.lf2.events)
-          if (e.pressed) ui.on_key_down(e)
-          else ui.on_key_up(e)
-      }
-      for (const e of this.lf2.events) {
-        const fighter = this.slot_fighters.get(e.player)
-        if (!fighter) continue;
-        const { ctrl } = fighter
-        if (!is_local_ctrl(ctrl)) continue;
-        if (e.pressed) ctrl.on_key_down(e)
-        else ctrl.on_key_up(e)
-      }
-
-      this.lf2.events.clear();
-      if (this.lf2.cmds.size) {
-        for (const key of this.lf2.cmds) {
-          switch (key) {
-            case 'f1': this.set_paused(!this.paused); break;
-            case 'f2': this.paused ? this.update_once() : this.set_paused(true); break;
-            case 'f4': this.lf2.pop_ui_safe(); break;
-            case 'f5': this.playrate = this.playrate === 1 ? 100 : 1; break;
-            case 'f6': this.infinity_mp = !this.infinity_mp; break;
-            case 'f7':
-              for (const e of this.entities) {
-                e.hp = e.hp_max;
-                e.mp = e.mp_max;
-              }
-              break;
-            case 'f8':
-              this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
-              break;
-            case 'f9':
-              for (const e of this.entities) {
-                if (is_weapon(e)) e.hp = 0;
-              }
-              break;
-          }
-        }
-        this.lf2.cmds.clear()
-      }
-      if (!this._paused) this.update_once();
-      this.update_camera();
-      this.bg.update();
+      this.update_once();
 
       if (0 === _update_count % this.sync_render) {
         this.render_once(real_dt);
@@ -298,9 +252,7 @@ export class World extends WorldDataset {
       }
       this._UPS.update(real_dt);
       _fix_radio = this._UPS.value / 60;
-      if (this._need_UPS) {
-        this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
-      }
+      if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
       _prev_time = time;
     };
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
@@ -406,9 +358,69 @@ export class World extends WorldDataset {
     entity.chasing = null;
   }
 
+  protected update_ui() {
+    const ui = this.lf2.ui
+    if (!ui || ui.disabled) return;
+    ui.update(16);
+
+    for (const e of this.lf2.events)
+      if (e.pressed) ui.on_key_down(e)
+      else ui.on_key_up(e)
+  }
+
+  protected handle_keys() {
+    if (!this.lf2.events.size) return;
+    for (const e of this.lf2.events) {
+      const fighter = this.slot_fighters.get(e.player)
+      if (!fighter) continue;
+      const { ctrl } = fighter
+      if (!is_local_ctrl(ctrl)) continue;
+      if (e.pressed) ctrl.on_key_down(e)
+      else ctrl.on_key_up(e)
+    }
+  }
+
+  protected handle_cmds() {
+    if (!this.lf2.cmds.size) return;
+    for (const key of this.lf2.cmds) {
+      switch (key) {
+        case 'f1': this.paused = !this.paused; break;
+        case 'f2': this.set_paused(2); break;
+        case 'f4': this.lf2.pop_ui_safe(); break;
+        case 'f5': this.playrate = this.playrate === 1 ? 100 : 1; break;
+        case 'f6': this.infinity_mp = !this.infinity_mp; break;
+        case 'f7':
+          for (const e of this.entities) {
+            e.hp = e.hp_max;
+            e.mp = e.mp_max;
+          }
+          break;
+        case 'f8':
+          this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+          break;
+        case 'f9':
+          for (const e of this.entities) {
+            if (is_weapon(e)) e.hp = 0;
+          }
+          break;
+      }
+    }
+  }
+
   update_once() {
-    this._time.add();
-    const { time } = this;
+    this.update_ui();
+    this.handle_keys();
+    this.handle_cmds();
+    this.update_camera();
+    this.bg.update();
+
+    this.lf2.events.clear();
+    this.lf2.cmds.clear()
+
+    if (this._paused == 1) return;
+    if (this._paused == 2) this._paused = 1
+    this._game_time.add();
+    const { game_time: time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
 
@@ -777,15 +789,16 @@ export class World extends WorldDataset {
     this.start_update();
   }
 
-  private _paused = false;
-  get paused() { return this._paused; }
-  set paused(v: boolean) { this.set_paused(v); }
+  private _paused: 0 | 1 | 2 = 0;
+  get paused() { return this._paused == 1; }
+  set paused(v: boolean) { this.set_paused(v ? 1 : 0); }
   indicator_flags: number = 0;
 
-  set_paused(v: boolean) {
+  protected set_paused(v: 0 | 1 | 2) {
     if (this._paused === v) return;
+    const changed = (!v) !== (!this._paused)
     this._paused = v;
-    this.callbacks.emit("on_pause_change")(v);
+    if (changed) this.callbacks.emit("on_pause_change")(!!v);
   }
 
   dispose() {

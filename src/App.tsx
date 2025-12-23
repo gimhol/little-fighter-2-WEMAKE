@@ -134,8 +134,8 @@ function App() {
   const [indicator_flags, set_indicator_flags] = useState<number>(0);
 
   const update_once = () => {
-    lf2?.world.set_paused(true);
-    lf2?.world.update_once();
+    if (!lf2) return;
+    lf2.world.paused = true;
   };
 
   useEffect(() => {
@@ -520,7 +520,7 @@ function App() {
         >
           <ToggleImgButton
             checked={paused}
-            onClick={() => lf2?.world.set_paused(!paused)}
+            onClick={() => { if (lf2) lf2.world.paused = !paused }}
             src={[img_btn_2_1, img_btn_2_2]}
           />
         </Show>
@@ -534,8 +534,9 @@ function App() {
         >
           <ToggleImgButton
             onClick={() => {
-              lf2?.world.set_paused(true);
-              lf2?.push_ui("ctrl_settings");
+              if (!lf2) return;
+              lf2.world.paused = true;
+              lf2.push_ui("ctrl_settings");
             }}
             src={[img_btn_1_1, img_btn_1_1]}
           />
@@ -720,7 +721,7 @@ function App() {
         <Combine>
           <ToggleButton
             value={paused}
-            onClick={() => lf2?.world.set_paused(!paused)}
+            onClick={() => { if (lf2) lf2.world.paused = !paused }}
           >
             <>游戏暂停</>
             <>游戏暂停✓</>
