@@ -21,6 +21,7 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
     responser: ref.current,
     pivot_x: 0,
     pivot_y: 1,
+    followPercent: true,
     is_excluded: e => {
       return e.tagName === 'INPUT' || e.classList.contains(`rc-virtual-list-scrollbar-thumb`)
     }

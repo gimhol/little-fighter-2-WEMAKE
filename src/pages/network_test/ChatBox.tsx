@@ -44,7 +44,13 @@ function _ChatBox(props: IChatBoxProps, fref: ForwardedRef<HTMLDivElement>) {
   const [msgs, set_msgs, ref_msgs] = useStateRef<IRespChat[]>([]);
   const [is_bottom, set_is_bottom] = useStateRef(true)
   const ref_list = useRef<ListRef>(null)
-
+  useEffect(() => {
+    set_chat_target(r => {
+      if (r === ChatTarget.Private) return r
+      else if (room) return ChatTarget.Room;
+      else return ChatTarget.Global;
+    })
+  }, [room])
   useEffect(() => {
     if (!room && chat_target === ChatTarget.Room)
       set_chat_target(ChatTarget.Global)
@@ -124,6 +130,7 @@ function _ChatBox(props: IChatBoxProps, fref: ForwardedRef<HTMLDivElement>) {
     responser: ref_floating_view.current,
     pivot_x: 0,
     pivot_y: 1,
+    followPercent: true,
     is_excluded: e => {
       return e.tagName === 'INPUT' || e.classList.contains(`rc-virtual-list-scrollbar-thumb`)
     }

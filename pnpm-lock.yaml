@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@fimagine/dom-hooks':
-        specifier: ^1.0.4
-        version: 1.0.4
+        specifier: ^1.0.5
+        version: 1.0.5
       '@fimagine/logger':
         specifier: ^1.2.1
         version: 1.3.0
@@ -534,8 +534,8 @@ packages:
   '@fimagine/annotation@1.0.1':
     resolution: {integrity: sha512-31otOv8iwg0sblB1HALfh8sbCBCyC1ljKWu4xIeDuRxHgJJXPrHIWrPxiyCiDm8dGwIxS28HShhxtwvh2OFqZA==}
 
-  '@fimagine/dom-hooks@1.0.4':
-    resolution: {integrity: sha512-qwMpEERsCAx8hgC7pO2NOwI18U9mKbse/Yo+YsMYi7EE9O2AwQ+flVVIDu/Q37/3inuBFWCPu6Aov8kk0Tv3lQ==}
+  '@fimagine/dom-hooks@1.0.5':
+    resolution: {integrity: sha512-9vhMLogyvKuUk6XlA4MbHyx5KdslFeIXh2IXTjS5fyOhZpZg77kjJvtYFxunm2nxsAgwRf1CvLhEnThTiYhkPQ==}
 
   '@fimagine/frontend_deployer@1.1.1':
     resolution: {integrity: sha512-+xKbYgJ7Ozpvkxr87V2trLxeOQkAXGudxU7rT/1BVU6O4eV+a7rOi+KCNWcIvbjFFQ9Fr5lW/lITfTpQonLwLw==}
@@ -3469,7 +3469,7 @@ snapshots:
 
   '@fimagine/annotation@1.0.1': {}
 
-  '@fimagine/dom-hooks@1.0.4': {}
+  '@fimagine/dom-hooks@1.0.5': {}
 
   '@fimagine/frontend_deployer@1.1.1(co@4.6.0)':
     dependencies:

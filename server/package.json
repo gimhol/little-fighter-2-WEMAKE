@@ -20,6 +20,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@fimagine/dom-hooks": "^1.0.5",
     "ws": "^8.18.3"
   }
 }

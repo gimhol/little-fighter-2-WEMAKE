@@ -9,7 +9,7 @@ import {
   IReqJoinRoom, IReqKick, IReqPlayerReady, IReqRoomStart, IResp, IRespCloseRoom,
   IRespExitRoom,
   IRespGameTick,
-  IRespJoinRoom, IRespKick, IRespPlayerReady, IRoomInfo, MsgEnum, TInfo
+  IRespJoinRoom, IRespKick, IRespPlayerReady, IRoomInfo, MsgEnum, SystemPlayerInfo, TInfo
 } from "./Net";
 import { random_str } from './random_str';
 
@@ -132,6 +132,9 @@ export class Room {
 
     if (!players.size)
       this.ctx.room_mgr.del(room)
+
+    for (const pl of players)
+      pl.resp(MsgEnum.Chat, '', { target: 'room', sender: SystemPlayerInfo, text: `玩家[${player_info.name}]退出了房间` }).catch(() => void 0)
   }
 
   join(client: Client, req: IReqJoinRoom = { type: MsgEnum.JoinRoom, is_req: true, pid: '' }) {
@@ -157,8 +160,8 @@ export class Room {
     }
     this.broadcast(req.type, resp, client)
     client.resp(req.type, req.pid, resp).catch(() => void 0)
-
-
+    for (const pl of players)
+      pl.resp(MsgEnum.Chat, '', { target: 'room', sender: SystemPlayerInfo, text: `玩家[${player_info.name}]加入了房间` }).catch(() => void 0)
     return true;
   }
 
@@ -177,6 +180,7 @@ export class Room {
     }
     this.broadcast(req.type, resp, client)
     client.resp(req.type, req.pid, resp).catch(() => void 0)
+    for (const pl of players) pl.resp(MsgEnum.Chat, '', { target: 'room', sender: SystemPlayerInfo, text: '房间已关闭' }).catch(() => void 0)
     for (const pl of players) delete pl.room
     players.clear()
     this.ctx.room_mgr.del(this)

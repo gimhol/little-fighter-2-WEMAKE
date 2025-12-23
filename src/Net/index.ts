@@ -25,3 +25,5 @@ export * from "./MsgEnum";
 export * from "./req_timeout_error";
 export * from "./req_unknown_error";
 export * from "./resp_error";
+export * from "./SystemPlayerInfo";
+

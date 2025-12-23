@@ -1,7 +1,7 @@
 import { useFloating, useForwardedRef, useStateRef } from "@fimagine/dom-hooks";
 import classNames from "classnames";
 import List from "rc-virtual-list";
-import { ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react";
+import { ForwardedRef, forwardRef, useCallback, useEffect } from "react";
 import { Button } from "../../Component/Buttons/Button";
 import { Divider } from "../../Component/Divider";
 import { Flex } from "../../Component/Flex";
@@ -38,9 +38,8 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
   }, [conn])
 
   useEffect(() => {
-    if (!conn || conn_state !== TriState.True) {
+    if (!conn || conn_state !== TriState.True || room)
       return;
-    }
     update_rooms();
     const c = conn.callbacks.add({
       on_message: (resp) => {
@@ -56,7 +55,7 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
       }
     });
     return () => c()
-  }, [conn, conn_state === TriState.True])
+  }, [conn, conn_state === TriState.True, room])
 
   function create_room() {
     if (
@@ -93,7 +92,8 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
   const [ref_floating_view, on_ref] = useForwardedRef(f_ref)
   useFloating({
     responser: ref_floating_view.current?.firstElementChild as HTMLElement,
-    target: ref_floating_view.current
+    target: ref_floating_view.current,
+    followPercent: true,
   })
 
   return (
