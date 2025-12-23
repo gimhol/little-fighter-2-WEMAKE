@@ -2,14 +2,13 @@ import { Button } from "@/Component/Buttons/Button";
 import Combine, { ICombineProps } from "@/Component/Combine";
 import { Input } from "@/Component/Input";
 import { Text } from "@/Component/Text";
+import { MsgEnum } from "@/Net/MsgEnum";
+import { useFloating } from "@fimagine/dom-hooks/dist/useFloating";
 import { useForwardedRef } from "@fimagine/dom-hooks/dist/useForwardedRef";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { Connection } from "./Connection";
 import { TriState } from "./TriState";
-import { useFloating } from "@fimagine/dom-hooks/dist/useFloating";
-import { MsgEnum } from "@/Net/MsgEnum";
-import { on } from "events";
 export interface IConnectionBoxProps extends ICombineProps {
   on_conn_change?(conn: Connection | null): void;
   on_state_change?(conn_state: TriState): void;
@@ -50,15 +49,6 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
       set_conn(null)
     })
     conn.callbacks.once('on_register', () => set_connected(TriState.True))
-    conn.callbacks.add({
-      on_message: (resp) => {
-        switch (resp.type) {
-          case MsgEnum.RoomStart:
-            alert('!')
-            break;
-        }
-      }
-    })
     return () => conn?.close()
   }, [conn])
   return (

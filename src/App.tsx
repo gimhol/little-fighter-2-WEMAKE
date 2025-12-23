@@ -3,6 +3,7 @@ import classNames from "classnames";
 import qs from "qs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useLocation } from "react-router";
 import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
 import "splittings-dom/dist/es/splittings-dom.css";
 import { Workspaces } from "splittings/dist/es/splittings";
@@ -52,13 +53,12 @@ import img_btn_3_2 from "./assets/btn_3_2.png";
 import "./init";
 import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
+import { Networking } from "./pages/network_test/Networking";
 import {
   useLocalBoolean,
   useLocalNumber,
   useLocalString,
 } from "./useLocalStorage";
-import NetworkTest from "./pages/network_test";
-import { useLocation } from "react-router";
 
 function App() {
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -901,7 +901,7 @@ function App() {
         onClose={() => set_editor_open(false)}
         style={{ background: 'black', position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, zIndex: 1 }}
         lf2={lf2} />
-      {(sobj.network === '1' || hobj.network === '1') && <NetworkTest />}
+      {(sobj.network === '1' || hobj.network === '1') && <Networking lf2={lf2} />}
     </>
   );
 }

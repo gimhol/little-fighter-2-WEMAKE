@@ -203,11 +203,14 @@ export class Room {
       if (!excludes.some(v => v === c))
         c.resp(type, '', resp).catch(e => { })
   }
-
+  _tick_seq = 0;
   tick(client: Client, req: IReqGameTick) {
+    if (req.seq !== this._tick_seq) 
+      return;
     this.tick_req_map.set(client, req)
     if (this.tick_req_map.size !== this.players.size)
       return;
+    this._tick_seq++
     const resp: TInfo<IRespGameTick> = { list: [] }
     for (const [client, req] of this.tick_req_map)
       resp.list?.push({ player: client.player_info, req })

@@ -96,12 +96,8 @@ function _ChatBox(props: IChatBoxProps, fref: ForwardedRef<HTMLDivElement>) {
     set_chat_target(next);
     ref_input.current?.input?.focus();
   }
-  useShortcut('alt+y', !1, switch_chat_target, window)
-
-  useShortcut('alt+t', !1, () => {
-    ref_input.current?.input?.focus();
-  }, window)
-
+  useShortcut('alt+y', conn != null, switch_chat_target, window)
+  useShortcut('alt+t', conn != null, () => ref_input.current?.input?.focus(), window)
   useEffect(() => {
     if (!is_bottom) return;
     const list = ref_list.current;

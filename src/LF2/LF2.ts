@@ -313,23 +313,23 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return [ret, md5];
   }
 
-  async load(arg1: I.IZip | string): Promise<void> {
+  async load(...arg1: (I.IZip | string)[]): Promise<void> {
     const is_first = this.zips.length === 0;
     this._dispose_check('load')
     this._loading = true;
     this.callbacks.emit("on_loading_start")();
     this.set_ui("loading");
-
     if (is_first) {
       const [obj] = await this.import_json("builtin_data/launch/strings.json5")
       this.load_strings(obj)
     }
-
     this._dispose_check('load')
     try {
-      const [zip, md5] = is_str(arg1) ? await this.load_zip_from_info_url(arg1) : [arg1, 'unknown'];
-      await this.load_data(zip, md5);
-      await this.load_ui(zip);
+      for (const a of arg1) {
+        const [zip, md5] = is_str(a) ? await this.load_zip_from_info_url(a) : [a, 'unknown'];
+        await this.load_data(zip, md5);
+        await this.load_ui(zip);
+      }
       if (is_first) {
         this.set_ui(this.uiinfos[0]!)
         this.callbacks.emit("on_prel_loaded")();
