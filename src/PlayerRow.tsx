@@ -77,13 +77,7 @@ export function PlayerRow(props: Props) {
     set_player_name(info.name);
     return info.callbacks.add({
       on_key_changed: (name, key) => {
-        set_keys((v) => {
-          const ks = { ...v, [name]: key };
-          const character = lf2.get_player_character(info.id);
-          if (character && is_local_ctrl(character.ctrl))
-            character.ctrl.set_key_code_map(ks);
-          return ks;
-        });
+        set_keys((v) => ({ ...v, [name]: key }));
       },
       on_name_changed: (name) => {
         set_player_name(name);
@@ -208,8 +202,7 @@ export function PlayerRow(props: Props) {
               if (is_bot_ctrl(ctrl)) {
                 character.ctrl = new LocalController(
                   info.id,
-                  character,
-                  info.keys,
+                  character
                 );
               } else {
                 character.ctrl = Factory.inst.get_ctrl(character.data.id, info.id, character);

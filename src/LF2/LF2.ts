@@ -462,11 +462,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!old) {
       this.random_entity_info(character);
     }
-    character.ctrl = new LocalController(
-      player_id,
-      character,
-      player_info?.keys,
-    );
+    character.ctrl = new LocalController(player_id, character);
     character.attach();
     return character;
   }

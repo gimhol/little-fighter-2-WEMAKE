@@ -13,42 +13,19 @@ export class LocalController
   extends BaseController {
   readonly __is_local_ctrl__ = true;
   readonly player: PlayerInfo;
-
-  private _key_code_map: TKeyCodeMap = {};
-  private _code_key_map: TCodeKeyMap = {};
   private _ax_using: number = 0;
   private _ay_using: number = 0;
   on_key_up(e: LF2KeyEvent) {
-    const code = e.key.toLowerCase();
-    if (!code) return;
-    const key = this._code_key_map[code];
-    if (!key) return;
-    this.end(key);
+    this.end(e.game_key);
   }
 
   on_key_down(e: LF2KeyEvent) {
-    const code = e.key.toLowerCase();
-    if (!code) return;
-    const key = this._code_key_map[code];
-    if (!key) return;
-    this.start(key);
+    this.start(e.game_key);
   }
 
-  constructor(player_id: string, entity: Entity, kc?: TKeyCodeMap) {
+  constructor(player_id: string, entity: Entity) {
     super(player_id, entity);
     this.player = this.lf2.ensure_player(player_id)
-    if (kc) this.set_key_code_map(kc);
-  }
-
-  set_key_code_map(key_code_map: TKeyCodeMap) {
-    this._key_code_map = {};
-    this._code_key_map = {};
-    for (const key of Object.keys(key_code_map) as GK[]) {
-      const code = key_code_map[key]?.toLowerCase();
-      if (!code) continue;
-      this._key_code_map[key] = code;
-      this._code_key_map[code] = key;
-    }
   }
 
   override update(): ControllerUpdateResult {

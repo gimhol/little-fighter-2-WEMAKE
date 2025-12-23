@@ -315,11 +315,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicCallback> {
           character
         );
       } else {
-        character.ctrl = new LocalController(
-          player.id,
-          character,
-          player.keys,
-        );
+        character.ctrl = new LocalController(player.id, character);
       }
       character.position.z = this.lf2.random_in(far, near);
       character.position.x = this.lf2.random_in(left, right);
