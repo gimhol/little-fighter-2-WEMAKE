@@ -25,14 +25,25 @@ export function Networking(props: INetworkingProps) {
   const { room } = useRoom(conn)
 
   useCallbacks(conn?.callbacks, {
-    on_message: (resp) => {
+    on_message: (resp, conn) => {
+
+      if (!lf2) return;
+      const me = conn.player;
+      if (!me) return;
+
       switch (resp.type) {
         case MsgEnum.RoomStart:
-          lf2?.load("data.zip.json")
-          lf2?.set_ui("loading")
+          lf2.load("data.zip.json")
+          lf2.set_ui("loading")
           break;
         case MsgEnum.Tick:
-          alert(JSON.stringify(resp, null, 2))
+          const { list } = resp
+          if (!list?.length) break;
+          for (const r of list) {
+            const { player, req } = r;
+            if (!req || !player || player.id === me.id) continue;
+            if (req.seq == 0) lf2.world.stop_update()
+          }
           break;
       }
     }
