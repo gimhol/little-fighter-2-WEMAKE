@@ -1,30 +1,37 @@
 
-export default function list_fn(obj: any, set?: Set<string>) {
-  set = set || new Set<string>()
-  if (!obj) return set;
+const ignore_keys = new Set<symbol | string>([
+  'constructor',
+  '__defineGetter__',
+  '__defineSetter__',
+  'hasOwnProperty',
+  '__lookupGetter__',
+  '__lookupSetter__',
+  'isPrototypeOf',
+  'propertyIsEnumerable',
+  'toString',
+  'valueOf',
+  'toLocaleString',
+  '__proto__',
+])
+
+export default function list_fn(
+  obj: any,
+  set: Set<symbol | string> = new Set(),
+  protos: Set<unknown> = new Set()
+) {
+  if (!obj || typeof obj !== 'object' || protos.has(obj))
+    return set;
+  protos.add(obj)
   const keys = Object.getOwnPropertyNames(obj)
-  for (const key of keys) {
-    switch (key) {
-      case 'constructor':
-      case '__defineGetter__':
-      case '__defineSetter__':
-      case 'hasOwnProperty':
-      case '__lookupGetter__':
-      case '__lookupSetter__':
-      case 'isPrototypeOf':
-      case 'propertyIsEnumerable':
-      case 'toString':
-      case 'valueOf':
-      case 'toLocaleString':
-      case '__proto__ ':
-        continue;
-    }
+  const symbols = Object.getOwnPropertySymbols(obj)
+  const all_keys = [...keys, ...symbols];
+  for (const key of all_keys) {
+    if (ignore_keys.has(key)) continue;
     const desc = Object.getOwnPropertyDescriptor(obj, key);
-    if (!desc || 'get' in desc || 'set' in desc || typeof obj[key] !== 'function') continue;
+    if (!desc || !('value' in desc) || typeof desc.value !== 'function') continue;
     set.add(key);
   }
-
   const proto = Object.getPrototypeOf(obj);
-  list_fn(proto, set);
+  list_fn(proto, set, protos);
   return set;
 }
