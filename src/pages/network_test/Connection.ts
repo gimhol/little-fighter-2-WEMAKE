@@ -47,7 +47,7 @@ export class Connection {
     })
   }
   protected _on_message = (event: MessageEvent<any>) => {
-    console.log(`[${Connection.TAG}::_on_message]`, event.data);
+    // console.log(`[${Connection.TAG}::_on_message]`, event.data);
     try {
       const what = JSON.parse(event.data) as TResp | TReq;
       if ('is_resp' in what) {

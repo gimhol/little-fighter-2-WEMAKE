@@ -5,5 +5,6 @@ export interface IUIKeyEvent extends IUIEvent {
   player: string;
   key: string;
   game_key: LGK;
+  pressed: boolean;
 }
 

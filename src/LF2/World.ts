@@ -44,7 +44,7 @@ export class World extends WorldDataset {
   private _need_UPS: boolean = true;
   private _FPS = new FPS(0.9);
   private _UPS = new FPS(0.9);
-
+  private _prev_time: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   private _game_time = new Times();
@@ -236,12 +236,12 @@ export class World extends WorldDataset {
 
   start_update() {
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
-    let _prev_time = Date.now();
+    this._prev_time = Date.now();
     let _update_count = 0;
     let _fix_radio = 1;
     const on_update = () => {
       const time = Date.now();
-      const real_dt = time - _prev_time;
+      const real_dt = time - this._prev_time;
       if (real_dt < this._ideally_dt * _fix_radio) return;
       _update_count++;
       this.update_once();
@@ -253,7 +253,7 @@ export class World extends WorldDataset {
       this._UPS.update(real_dt);
       _fix_radio = this._UPS.value / 60;
       if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
-      _prev_time = time;
+      this._prev_time = time;
     };
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
   }
@@ -369,7 +369,7 @@ export class World extends WorldDataset {
   }
 
   protected handle_keys() {
-    if (!this.lf2.events.size) return;
+    if (!this.lf2.events.length) return;
     for (const e of this.lf2.events) {
       const fighter = this.slot_fighters.get(e.player)
       if (!fighter) continue;
@@ -381,7 +381,7 @@ export class World extends WorldDataset {
   }
 
   protected handle_cmds() {
-    if (!this.lf2.cmds.size) return;
+    if (!this.lf2.cmds.length) return;
     for (const key of this.lf2.cmds) {
       switch (key) {
         case 'f1': this.paused = !this.paused; break;
@@ -414,8 +414,8 @@ export class World extends WorldDataset {
     this.update_camera();
     this.bg.update();
 
-    this.lf2.events.clear();
-    this.lf2.cmds.clear()
+    this.lf2.events.length = 0;
+    this.lf2.cmds.length = 0;
 
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1

@@ -26,6 +26,7 @@ export class Room {
   title: string = `ROOM_${this.id}`;
   players = new Set<Client>();
   tick_req_map = new Map<Client, IReqGameTick>()
+  private _tick_seq = 0;
   get code() { return this._code; }
   get room_info(): Required<IRoomInfo> {
     return {
@@ -196,6 +197,7 @@ export class Room {
 
     this.broadcast(req.type, {}, client)
     client.resp(req.type, req.pid, {}).catch(() => void 0)
+    this._tick_seq = 0
   }
 
   broadcast<T extends MsgEnum, Resp extends IResp = IMsgRespMap[T]>(type: T, resp: TInfo<Resp>, ...excludes: Client[]) {
@@ -203,18 +205,24 @@ export class Room {
       if (!excludes.some(v => v === c))
         c.resp(type, '', resp).catch(e => { })
   }
-  _tick_seq = 0;
+
   tick(client: Client, req: IReqGameTick) {
-    if (req.seq !== this._tick_seq) 
+    if (req.seq !== this._tick_seq)
       return;
+    req.player_id = client.player_info?.id;
+    if (this._tick_seq === 0)
+      req.player_name = client.player_info?.name;
+    req.events?.forEach(v => { v.player = req.player_id })
+
+
     this.tick_req_map.set(client, req)
     if (this.tick_req_map.size !== this.players.size)
       return;
-    this._tick_seq++
-    const resp: TInfo<IRespGameTick> = { list: [] }
-    for (const [client, req] of this.tick_req_map)
-      resp.list?.push({ player: client.player_info, req })
+    const resp: TInfo<IRespGameTick> = { seq: this._tick_seq, reqs: [] }
+    for (const [, req] of this.tick_req_map)
+      resp.reqs?.push(req)
     this.broadcast(MsgEnum.Tick, resp)
     this.tick_req_map.clear()
+    this._tick_seq++
   }
 }

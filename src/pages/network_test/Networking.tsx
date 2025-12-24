@@ -1,6 +1,6 @@
 
-import { LF2 } from "@/LF2";
-import { MsgEnum } from "@/Net";
+import { Labels, LF2, LF2KeyEvent, LGK } from "@/LF2";
+import { IReqGameTick, MsgEnum, TInfo } from "@/Net";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useEffect, useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";
@@ -37,13 +37,34 @@ export function Networking(props: INetworkingProps) {
           lf2.set_ui("loading")
           break;
         case MsgEnum.Tick:
-          const { list } = resp
-          if (!list?.length) break;
-          for (const r of list) {
-            const { player, req } = r;
-            if (!req || !player || player.id === me.id) continue;
-            if (req.seq == 0) lf2.world.stop_update()
+          const { reqs, seq } = resp
+          if (typeof seq !== 'number') break
+          if (seq == 0) lf2.world.stop_update()
+          const cur_req: TInfo<IReqGameTick> = {
+            seq: seq + 1,
+            cmds: [...lf2.cmds],
+            events: lf2.events.map(r => ({ game_key: r.game_key, pressed: r.pressed }))
           }
+          if (reqs?.length) {
+            for (const { cmds, events } of reqs) {
+              lf2.cmds.length = 0;
+              lf2.events.length = 0;
+              if (cmds?.length)
+                lf2.cmds.push(...cmds)
+              if (events?.length) {
+                for (const { player, pressed = false, game_key = '' } of events) {
+                  if (!player) continue;
+                  const gk = game_key as LGK
+                  const label = Labels[gk]
+                  if (!label) continue;
+                  const le = new LF2KeyEvent(player, pressed, gk, label)
+                  lf2.events.push(le)
+                }
+              }
+            }
+          }
+          lf2.world.update_once()
+          conn.send(MsgEnum.Tick, cur_req);
           break;
       }
     }

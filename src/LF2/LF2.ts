@@ -232,8 +232,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.callbacks.emit("on_cheat_changed")(cheat_name, enabled);
     this._curr_key_list = "";
   }
-  cmds = new Set<string>();
-  events = new Set<UI.LF2KeyEvent>();
+  cmds: string[] = [];
+  events: UI.LF2KeyEvent[] = [];
 
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
@@ -245,7 +245,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       switch (e.key) {
         case 'f1': case 'f2': case 'f3': case 'f4': case 'f5':
         case 'f6': case 'f7': case 'f8': case 'f9': case 'f10':
-          e.interrupt(); this.cmds.add(e.key); break;
+          e.interrupt(); this.cmds.push(e.key); break;
       }
     }
 
@@ -261,7 +261,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       for (const key_name of KEY_NAME_LIST) {
         for (const [player_id, player_info] of this.players) {
           if (player_info.keys[key_name] === key_code) {
-            this.events.add(new UI.LF2KeyEvent(player_id, true, key_name, key_code));
+            this.events.push(new UI.LF2KeyEvent(player_id, true, key_name, key_code));
           }
         }
       }
@@ -273,7 +273,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     for (const key_name of KEY_NAME_LIST) {
       for (const [player_id, player_info] of this.players) {
         if (player_info.keys[key_name] === key_code) {
-          this.events.add(new UI.LF2KeyEvent(player_id, false, key_name, key_code))
+          this.events.push(new UI.LF2KeyEvent(player_id, false, key_name, key_code))
         }
       }
     }

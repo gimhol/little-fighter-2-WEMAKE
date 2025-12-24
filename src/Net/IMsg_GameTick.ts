@@ -1,18 +1,18 @@
 import type { IReq, IResp } from './_Base';
-import type { IPlayerInfo } from './IPlayerInfo';
 import type { MsgEnum } from './MsgEnum';
-
+export interface IKeyEvent {
+  player?: string;
+  game_key?: string;
+  pressed?: boolean;
+}
 export interface IReqGameTick extends IReq<MsgEnum.Tick> {
+  player_id?: string;
+  player_name?: string;
   seq?: number;
-  cmd?: string;
-  x?: number;
-  y?: number;
-  z?: number;
-  f?: string;
+  cmds?: string[];
+  events?: IKeyEvent[]
 }
 export interface IRespGameTick extends IResp<MsgEnum.Tick> {
-  list?: {
-    player?: IPlayerInfo;
-    req?: IReqGameTick;
-  }[]
+  seq?: number;
+  reqs?: IReqGameTick[];
 }
