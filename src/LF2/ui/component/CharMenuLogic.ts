@@ -44,7 +44,6 @@ export class CharMenuLogic extends UIComponent {
   static override readonly TAG = "CharMenuLogic";
   readonly players = new Map<PlayerInfo, SlotState>()
   protected _count_down: number = 5000;
-  protected _state = CharMenuState.PlayerSel;
   get max_player(): number { return this.props.num('max_player') ?? 8 }
   get max_coms(): number { return this.max_player - this.players.size }
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
@@ -89,27 +88,7 @@ export class CharMenuLogic extends UIComponent {
     this.lf2.callbacks.del(this._lf2_callbacks)
   }
   override on_key_down(e: IUIKeyEvent): void {
-    switch (this._state) {
-      case CharMenuState.PlayerSel: {
-        const player = this.lf2.players.get(e.player);
-        if (!player) break;
-        switch (e.game_key) {
-          case GameKey.L: this.press_lr(player, -1); break;
-          case GameKey.R: this.press_lr(player, +1); break;
-          case GameKey.a: this.press_a(player); break;
-          case GameKey.j: this.press_j(player); break;
-          case GameKey.U: this.press_u(player); break;
-          case GameKey.D: break;
-          case GameKey.d: break;
-        }
-        break;
-      }
-      case CharMenuState.CountingDown: {
-        this._count_down = max(0, this._count_down - 500);
-        break;
-      }
-      case CharMenuState.ComNumSel:
-    }
+    this.fsm.state?.on_key_down?.(e)
   }
   protected update_slots() {
     const { _slots: slots } = this;
@@ -161,10 +140,7 @@ export class CharMenuLogic extends UIComponent {
     } else return;
     this.lf2.sounds.play_preset("join");
     const all_player_ready = Array.from(this.players.values()).every(v => v.step === SLOT_STEP_READY)
-    if (all_player_ready) {
-      this._count_down = 5000;
-      this._state = CharMenuState.CountingDown
-    }
+    if (all_player_ready) this.fsm.use(CharMenuState.CountingDown)
     this.update_slots()
   }
   protected press_j(player: PlayerInfo) {
@@ -231,6 +207,11 @@ export class CharMenuLogic extends UIComponent {
   }
   readonly fsm = new FSM<CharMenuState, IGamePrepareState>().add({
     key: CharMenuState.PlayerSel,
+    enter: () => {
+      const coms = Array.from(this.players.keys()).filter(v => v.is_com)
+      for (const com of coms) this.players.delete(com);
+      this.update_slots();
+    },
     on_key_down: e => {
       const player = this.lf2.players.get(e.player);
       if (!player) return;
@@ -261,13 +242,15 @@ export class CharMenuLogic extends UIComponent {
       this._count_down = max(0, this._count_down - dt);
       const num = ceil(this._count_down / 1000)
       this._slots.forEach(v => v.head?.count_down(num))
-      if (this._count_down > 0) return;
-      if (this.max_player <= this.players.size)
-        return CharMenuState.GameSetting;
-      else
-        return CharMenuState.ComNumSel
+      if (num > 0) return;
+      return this.max_player <= this.players.size ?
+        CharMenuState.GameSetting :
+        CharMenuState.ComNumSel
     },
-  })
+    leave: () => {
+      this._slots.forEach(v => v.head?.count_down(0))
+    }
+  }).use(CharMenuState.PlayerSel)
 }
 export interface IGamePrepareState extends IState<CharMenuState> {
   on_key_down?(e: IUIKeyEvent): void
