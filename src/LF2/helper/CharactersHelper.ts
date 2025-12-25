@@ -30,7 +30,7 @@ export class CharactersHelper {
     const ret: Entity[] = [];
     while (--num >= 0) {
       const d = this.lf2.random_get(
-        this.lf2.datas.characters.filter(v => {
+        this.lf2.datas.fighters.filter(v => {
           return filter ? filter(v) : true
         })
       );

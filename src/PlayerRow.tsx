@@ -117,7 +117,7 @@ export function PlayerRow(props: Props) {
     }
     : () => {
       const real_character_id =
-        character_id || random_get(lf2.datas.characters)?.id;
+        character_id || random_get(lf2.datas.fighters)?.id;
       if (!real_character_id) {
         debugger;
         return;

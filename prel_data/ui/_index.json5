@@ -3,6 +3,7 @@
   "ui/bg_r_face.ui.json5",
   "ui/center_pause_label.ui.json5",
   "ui/char_menu.ui.json5",
+  "ui/char_menu_2.ui.json5",
   "ui/ctrl_settings_page.ui.json5",
   "ui/danmu_game_page.ui.json5",
   "ui/demo_mode_page.ui.json5",

@@ -1,0 +1,206 @@
+{
+  id: "char_menu",
+  name: "UI: 八人框2",
+  component: [
+    {
+      name: "CharMenuLogic",
+      properties: {
+        max_player: 8,
+      },
+    },
+  ],
+  templates: {
+    player_slot: {
+      items: [
+        {
+          id: "CharMenuHead",
+          size: "120, 120",
+          pos: "0, 0",
+          component: ["CharMenuHead()"],
+          items: [
+            {
+              id: "hints",
+              pos: "60, 60",
+              center: "0.5,0.5",
+              visible: true,
+              img: {
+                path: "!sprite/CMA@4x.png",
+                w: 120,
+                h: 66,
+              },
+            },
+            {
+              id: "countdown_text",
+              pos: "60, 60",
+              center: "0.5,0.5",
+              visible: false,
+              txt: [
+                {
+                  i18n: "1",
+                  style: {
+                    fill_style: "white",
+                    font: '90px "Arial Black", Arial',
+                  },
+                },
+                {
+                  i18n: "2",
+                  style: {
+                    fill_style: "white",
+                    font: '90px "Arial Black", Arial',
+                  },
+                },
+                {
+                  i18n: "3",
+                  style: {
+                    fill_style: "white",
+                    font: '90px "Arial Black", Arial',
+                  },
+                },
+                {
+                  i18n: "4",
+                  style: {
+                    fill_style: "white",
+                    font: '90px "Arial Black", Arial',
+                  },
+                },
+                {
+                  i18n: "5",
+                  style: {
+                    fill_style: "white",
+                    font: '90px "Arial Black", Arial',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "player_name",
+          size: "120, 19",
+          pos: "60, 133",
+          center: "0.5, 0.5",
+          component: ["PlayerName()"],
+        },
+        {
+          id: "FighterName",
+          size: "120, 19",
+          pos: "60, 155",
+          center: "0.5, 0.5",
+          component: ["FighterName()"],
+        },
+        {
+          id: "player_team",
+          size: "120, 19",
+          pos: "60, 177",
+          center: "0.5, 0.5",
+          component: ["PlayerTeamName()"],
+        },
+      ],
+    },
+    prefix_1: {
+      pos: "-230, 133",
+      center: "1, 0.5",
+      txt: {
+        i18n: "char_menu.player_colon",
+        style: {
+          font: "12px Arial",
+        },
+      },
+    },
+    prefix_2: {
+      pos: "-230, 155",
+      center: "1, 0.5",
+      txt: {
+        i18n: "char_menu.fighter_colon",
+        style: {
+          font: "12px Arial",
+        },
+      },
+    },
+    prefix_3: {
+      pos: "-230, 177",
+      center: "1, 0.5",
+      txt: {
+        i18n: "char_menu.team_colon",
+        style: {
+          font: "12px Arial",
+        },
+      },
+    },
+  },
+  items: [
+    {
+      size: "599, 406",
+      pos: "397, 225",
+      center: "0.5, 0.5",
+      img: {
+        path: "!sprite/CHARMENU.png",
+        w: 599,
+        h: 406,
+      },
+      items: [
+        {
+          id: "players_row_1",
+          pos: "0,-192",
+          items: [
+            "prefix_1",
+            "prefix_2",
+            "prefix_3",
+            {
+              id: "player_layout_0",
+              pos: "-227,0",
+              template: "player_slot",
+            },
+            {
+              id: "player_layout_1",
+              pos: "-98,0",
+              template: "player_slot",
+            },
+            {
+              id: "player_layout_2",
+              pos: "31,0",
+              template: "player_slot",
+            },
+            {
+              id: "player_layout_3",
+              pos: "160,0",
+              template: "player_slot",
+            },
+          ],
+        },
+        {
+          id: "players_row_2",
+          pos: "0,5",
+          items: [
+            "prefix_1",
+            "prefix_2",
+            "prefix_3",
+            {
+              id: "player_layout_4",
+              pos: "-227,0",
+              template: "player_slot",
+            },
+            {
+              id: "player_layout_5",
+              pos: "-98,0",
+              template: "player_slot",
+            },
+            {
+              id: "player_layout_6",
+              pos: "31,0",
+              template: "player_slot",
+            },
+            {
+              id: "player_layout_7",
+              pos: "160,0",
+              values: {
+                player_id: "8",
+              },
+              template: "player_slot",
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}

@@ -371,7 +371,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     await this.datas.load(index_files);
 
     this._dispose_check('load_data')
-    for (const d of this.datas.characters) {
+    for (const d of this.datas.fighters) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
       (this.characters as any)[`add_${name}`] = (num = 1, team = void 0) =>
         this.characters.add(d, num, team);
@@ -424,7 +424,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const player_info = this.players.get(player_id);
     if (!player_info) { debugger; return; }
 
-    const data = this.datas.characters.find((v) => v.id === character_id);
+    const data = this.datas.fighters.find((v) => v.id === character_id);
     if (!data) { debugger; return; }
     let x = 0;
     let y = 0;

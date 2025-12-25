@@ -1,6 +1,4 @@
 import { Sine } from "../../animation/Sine";
-import Invoker from "../../base/Invoker";
-import { PlayerInfo } from "../../PlayerInfo";
 import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
@@ -13,56 +11,29 @@ import { UIComponent } from "./UIComponent";
  */
 export class FighterName extends UIComponent {
   static override readonly TAG = 'FighterName'
-  private _text_loader = new UITextLoader(() => this.node).set_style(() => ({
-    fill_style: this.is_com ? "pink" : "white",
+  private _decided?: boolean;
+  private _com?: boolean;
+  private readonly txt_loader = new UITextLoader(() => this.node).set_style(() => ({
+    fill_style: this._com ? "pink" : "white",
     font: "14px Arial",
-  })).ignore_out_of_date();
-  get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
-  get player(): PlayerInfo { return this.lf2.players.get(this.player_id)! }
-  get decided() {
-    return !!this.player.character_decided;
+  })).ignore_out_of_date()
+
+  join(text: string, com: boolean, decided: boolean) {
+    this._decided = decided;
+    this._com = com;
+    this.txt_loader.set_text([text])
+    this.node.visible = true
   }
-  get text(): string {
-    const character_id = this.player.character;
-    const character = character_id
-      ? this.lf2.datas.find_character(character_id)
-      : void 0;
-    return character?.base.name ?? this.lf2.string("Random");
-  }
-  get joined(): boolean {
-    return true === this.player.joined;
-  }
-  get is_com(): boolean {
-    return true === this.player.is_com;
+  quit() {
+    this._com = void 0;
+    this._decided = void 0;
+    const text = this.lf2.string(" ")
+    this.txt_loader.set_text([text])
+    this.node.visible = false
   }
   protected _opacity: Sine = new Sine(0.65, 1, 6);
-  protected _unmount_jobs = new Invoker();
-
-  override on_resume(): void {
-    super.on_resume();
-    this._unmount_jobs.add(
-      this.player.callbacks.add({
-        on_is_com_changed: () => this.handle_changed(),
-        on_joined_changed: () => this.handle_changed(),
-        on_character_changed: () => this.handle_changed(),
-        on_random_character_changed: () => this.handle_changed(),
-      }),
-    );
-    this.handle_changed();
-  }
-
-  override on_pause(): void {
-    super.on_pause();
-    this._unmount_jobs.invoke_and_clear();
-  }
-
-  protected handle_changed() {
-    this._text_loader.set_text([this.text])
-    this.node.set_visible(this.joined)
-  }
-
   override update(dt: number): void {
     this._opacity.update(dt);
-    this.node.opacity = this.decided ? 1 : this._opacity.value;
+    this.node.opacity = this._decided ? 1 : this._opacity.value;
   }
 }

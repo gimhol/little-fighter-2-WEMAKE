@@ -191,7 +191,7 @@ export default class DatMgr {
   find_group(group: string) {
     const f = (v: IEntityData) => v.base.group?.some(g => g === group)
     return {
-      characters: this.characters.filter(f),
+      characters: this.fighters.filter(f),
       weapons: this.weapons.filter(f),
       entity: this.entity.filter(f),
       balls: this.balls.filter(f),
@@ -220,7 +220,7 @@ export default class DatMgr {
     this._inner = new Inner(this, ++this._inner_id);
   }
 
-  get characters() {
+  get fighters() {
     return this._inner.data_list_map[EntityEnum.Fighter];
   }
   get weapons() {
@@ -276,8 +276,8 @@ export default class DatMgr {
     arg_0: string | IFindPredicate<IEntityData>,
   ): IEntityData | undefined {
     return is_str(arg_0)
-      ? this.characters.find((v) => v.id === arg_0)
-      : this.characters.find(arg_0);
+      ? this.fighters.find((v) => v.id === arg_0)
+      : this.fighters.find(arg_0);
   }
 
   find_background(id: string): IBgData | undefined;
@@ -291,12 +291,12 @@ export default class DatMgr {
   }
 
   get_characters_of_group(group: string): IEntityData[] {
-    return this.characters.filter(
+    return this.fighters.filter(
       (v) => v.base.group && v.base.group.indexOf(group) >= 0,
     );
   }
-  get_characters_not_in_group(group: string): IEntityData[] {
-    return this.characters.filter(
+  get_fighters_not_in_group(group: string): IEntityData[] {
+    return this.fighters.filter(
       (v) => !v.base.group || v.base.group.indexOf(group) < 0,
     );
   }

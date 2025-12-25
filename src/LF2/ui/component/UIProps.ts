@@ -20,6 +20,29 @@ export class UIProps {
     if (one_of.some(a => a === ret)) return ret;
     return null;
   }
+  private _any_str_arr(v: any, out: string[] = []): void {
+    if (v === void 0 || v === null) return
+    if (Array.isArray(v)) for (const i of v) {
+      this._any_str_arr(i, out)
+    }
+    switch (typeof v) {
+      case "string":
+        out.push(...v.split(','));
+        break;
+      case "number":
+      case "bigint":
+      case "boolean":
+      case "symbol":
+        out.push(v.toString())
+        break;
+    }
+  }
+  strs(name: string): string[] | null {
+    if (!(name in this.raw)) return null;
+    const out: string[] = [];
+    this._any_str_arr(this.raw[name], out)
+    return out;
+  }
   bool(name: string): boolean | null {
     if (!(name in this.raw)) return null;
     const v = this.raw[name];

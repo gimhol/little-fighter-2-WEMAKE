@@ -13,13 +13,13 @@ export interface CharacterSelectProps
 export default function CharacterSelect(props: CharacterSelectProps) {
   const { lf2, disabled, show_all = false, placeholder, ..._p } = props;
   const [characters, set_characters] = useState<IEntityData[]>(
-    lf2.datas.characters,
+    lf2.datas.fighters,
   );
 
   useEffect(() => {
-    set_characters(lf2.datas.characters);
+    set_characters(lf2.datas.fighters);
     return lf2.callbacks.add({
-      on_loading_end: () => set_characters(lf2.datas.characters),
+      on_loading_end: () => set_characters(lf2.datas.fighters),
     });
   }, [lf2]);
 

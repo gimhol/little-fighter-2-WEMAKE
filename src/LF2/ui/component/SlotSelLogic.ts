@@ -204,8 +204,8 @@ export class SlotSelLogic extends UIComponent {
 
   get characters() {
     return this.lf2.is_cheat_enabled(CheatType.LF2_NET)
-      ? this.lf2.datas.characters
-      : this.lf2.datas.get_characters_not_in_group(EntityGroup.Hidden);
+      ? this.lf2.datas.fighters
+      : this.lf2.datas.get_fighters_not_in_group(EntityGroup.Hidden);
   }
 
   override on_key_down(e: IUIKeyEvent): void {
