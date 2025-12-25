@@ -10,6 +10,7 @@ import { PlayerName as CharMenuPlayerName } from "./PlayerName";
 import { PlayerTeamName as CharMenuPlayerTeamName } from "./PlayerTeamName";
 import { UIComponent } from "./UIComponent";
 import FSM, { IState } from "@/LF2/base/FSM";
+import { Randoming } from "@/LF2/helper";
 const SLOT_STEP_FIGHTER = 0;
 const SLOT_STEP_TEAM = 1;
 const SLOT_STEP_READY = 2;
@@ -44,6 +45,7 @@ export class CharMenuLogic extends UIComponent {
   static override readonly TAG = "CharMenuLogic";
   readonly players = new Map<PlayerInfo, SlotState>()
   protected _count_down: number = 5000;
+  protected _randoming?: Randoming<IEntityData>;
   get max_player(): number { return this.props.num('max_player') ?? 8 }
   get max_coms(): number { return this.max_player - this.players.size }
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
@@ -61,6 +63,7 @@ export class CharMenuLogic extends UIComponent {
   protected _slots: ISlotPack[] = []
   override on_start(): void {
     super.on_start?.();
+    this._randoming = new Randoming(this.lf2.datas.find_group(EntityGroup.Regular).characters, this.lf2)
     this.lf2.callbacks.add(this._lf2_callbacks)
 
     const heads = this.node.search_components(CharMenuHead)
@@ -99,8 +102,9 @@ export class CharMenuLogic extends UIComponent {
       if (ps) {
         const [player, state] = ps
         const { is_com } = player;
+        const random_confirm = this.fsm.state?.key === CharMenuState.GameSetting
         if (head) {
-          if (state.random) head.set_head(Defines.BuiltIn_Imgs.RFACE)
+          if (state.random && !random_confirm) head.set_head(Defines.BuiltIn_Imgs.RFACE)
           else if (state.fighter) head.set_head(state.fighter.base.head ?? Defines.BuiltIn_Imgs.RFACE)
         }
         if (player_name) {
@@ -108,7 +112,7 @@ export class CharMenuLogic extends UIComponent {
         }
         if (fighter_name) {
           const decided = state.step > SLOT_STEP_FIGHTER
-          if (state.random) fighter_name.join(this.lf2.string('Random'), is_com, decided)
+          if (state.random && !random_confirm) fighter_name.join(this.lf2.string('Random'), is_com, decided)
           else if (state.fighter) fighter_name.join(state.fighter.base.name ?? "noname", is_com, decided)
         }
         if (team_name) {
@@ -134,7 +138,9 @@ export class CharMenuLogic extends UIComponent {
     if (!state && this.max_player <= this.players.size)
       return;
     if (!state) {
-      this.players.set(player, new SlotState());
+      const slot_state = new SlotState()
+      slot_state.fighter = this._randoming?.take() ?? null;
+      this.players.set(player, slot_state);
     } else if (state.step < SLOT_STEP_READY) {
       state.step = min(state.step + 1, SLOT_STEP_READY)
     } else return;
@@ -151,6 +157,7 @@ export class CharMenuLogic extends UIComponent {
     this.lf2.sounds.play_preset("cancel");
     this.update_slots()
   }
+
   protected press_lr(player: PlayerInfo, dir: 1 | -1) {
     const state = this.players.get(player)
     if (!state) return;
@@ -168,7 +175,7 @@ export class CharMenuLogic extends UIComponent {
           state.fighter = fighters[next_idx];
         } else {
           state.random = true;
-          state.fighter = null;
+          state.fighter = this._randoming?.take() ?? null;
         }
       }
     } else if (state.step === SLOT_STEP_TEAM) {
@@ -183,8 +190,9 @@ export class CharMenuLogic extends UIComponent {
     const state = this.players.get(player)
     if (state?.step !== SLOT_STEP_FIGHTER) return
     state.random = true;
-    state.fighter = null;
-    this.update_slots()
+    state.fighter = this._randoming?.take() ?? null;
+    this.update_slots();
+
   }
 
   /**
@@ -243,12 +251,20 @@ export class CharMenuLogic extends UIComponent {
       const num = ceil(this._count_down / 1000)
       this._slots.forEach(v => v.head?.count_down(num))
       if (num > 0) return;
-      return this.max_player <= this.players.size ?
-        CharMenuState.GameSetting :
-        CharMenuState.ComNumSel
+      return CharMenuState.GameSetting
+      // return this.max_player <= this.players.size ?
+      //   CharMenuState.GameSetting :
+      //   CharMenuState.ComNumSel
     },
     leave: () => {
       this._slots.forEach(v => v.head?.count_down(0))
+    }
+  }, {
+    key: CharMenuState.ComNumSel
+  }, {
+    key: CharMenuState.GameSetting,
+    enter: () => {
+      this.update_slots()
     }
   }).use(CharMenuState.PlayerSel)
 }
