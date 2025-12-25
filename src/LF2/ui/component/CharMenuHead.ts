@@ -1,6 +1,4 @@
 import { Sine } from "../../animation/Sine";
-import Invoker from "../../base/Invoker";
-import { Defines } from "../../defines/defines";
 import { UIImgLoader } from "../UIImgLoader";
 import { GamePrepareLogic } from "./GamePrepareLogic";
 import { UIComponent } from "./UIComponent";
@@ -35,17 +33,16 @@ export class CharMenuHead extends UIComponent {
   get gpl(): GamePrepareLogic | undefined {
     return this.node.root.find_component(GamePrepareLogic);
   }
-  protected _unmount_jobs = new Invoker();
-  constructor(...args: ConstructorParameters<typeof UIComponent>) {
-    super(...args);
-  }
-
   override update(dt: number): void {
     this._opacity.update(dt);
     if (this.hints_node) {
       if (this._head) this.hints_node.opacity = 0;
       else this.hints_node.opacity = this._opacity.value;
     }
-
+  }
+  count_down(num: number): void {
+    const { countdown_node } = this;
+    if (!countdown_node) return;
+    countdown_node.txt_idx.value = num - 1
   }
 }

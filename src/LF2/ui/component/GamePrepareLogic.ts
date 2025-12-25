@@ -39,8 +39,6 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicCallback> {
   }
 
   private _count_down: number = 5000;
-
-
   override on_resume(): void {
     super.on_resume();
     const background_row = this.node.search_child("background_row")!;

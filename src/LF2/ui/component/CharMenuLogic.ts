@@ -1,5 +1,5 @@
 import { ILf2Callback } from "@/LF2/ILf2Callback";
-import { between, max, min } from "@/LF2/utils";
+import { between, ceil, max, min } from "@/LF2/utils";
 import type { PlayerInfo } from "../../PlayerInfo";
 import { CheatType, EntityGroup, GameKey, IEntityData, TeamEnum } from "../../defines";
 import { Defines } from "../../defines/defines";
@@ -9,6 +9,7 @@ import { FighterName as CharMenuFighterName } from "./FighterName";
 import { PlayerName as CharMenuPlayerName } from "./PlayerName";
 import { PlayerTeamName as CharMenuPlayerTeamName } from "./PlayerTeamName";
 import { UIComponent } from "./UIComponent";
+import FSM, { IState } from "@/LF2/base/FSM";
 const SLOT_STEP_FIGHTER = 0;
 const SLOT_STEP_TEAM = 1;
 const SLOT_STEP_READY = 2;
@@ -20,11 +21,17 @@ class SlotState {
 }
 
 enum CharMenuState {
-  Player = "Player",
+  PlayerSel = "Player",
   CountingDown = "CountingDown",
-  ComNumberSel = "ComNumberSel",
+  ComNumSel = "ComNumberSel",
   Computer = "Computer",
   GameSetting = "GameSetting",
+}
+interface ISlotPack {
+  head?: CharMenuHead,
+  player_name?: CharMenuPlayerName,
+  fighter_name?: CharMenuFighterName,
+  team_name?: CharMenuPlayerTeamName,
 }
 /**
  * 角色选择逻辑
@@ -36,8 +43,8 @@ enum CharMenuState {
 export class CharMenuLogic extends UIComponent {
   static override readonly TAG = "CharMenuLogic";
   readonly players = new Map<PlayerInfo, SlotState>()
-
-  protected state = CharMenuState.Player;
+  protected _count_down: number = 5000;
+  protected _state = CharMenuState.PlayerSel;
   get max_player(): number { return this.props.num('max_player') ?? 8 }
   get max_coms(): number { return this.max_player - this.players.size }
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
@@ -52,18 +59,15 @@ export class CharMenuLogic extends UIComponent {
         this.handle_fighters_hidden();
     }
   }
-  get slots() {
+  protected _slots: ISlotPack[] = []
+  override on_start(): void {
+    super.on_start?.();
+    this.lf2.callbacks.add(this._lf2_callbacks)
+
     const heads = this.node.search_components(CharMenuHead)
     const p_nam = this.node.search_components(CharMenuPlayerName)
     const f_nam = this.node.search_components(CharMenuFighterName)
     const t_nam = this.node.search_components(CharMenuPlayerTeamName)
-    interface ISlotPack {
-      head?: CharMenuHead,
-      player_name?: CharMenuPlayerName,
-      fighter_name?: CharMenuFighterName,
-      team_name?: CharMenuPlayerTeamName,
-    }
-    const ret: ISlotPack[] = []
     const len = max(
       heads.length,
       p_nam.length,
@@ -77,26 +81,21 @@ export class CharMenuLogic extends UIComponent {
         fighter_name: f_nam.at(i),
         team_name: t_nam.at(i),
       }
-      ret.push(e)
+      this._slots.push(e)
     }
-    return ret;
-  }
-  override on_start(): void {
-    super.on_start?.();
-    this.lf2.callbacks.add(this._lf2_callbacks)
   }
   override on_stop(): void {
     super.on_stop?.();
     this.lf2.callbacks.del(this._lf2_callbacks)
   }
   override on_key_down(e: IUIKeyEvent): void {
-    switch (this.state) {
-      case CharMenuState.Player: {
+    switch (this._state) {
+      case CharMenuState.PlayerSel: {
         const player = this.lf2.players.get(e.player);
         if (!player) break;
         switch (e.game_key) {
           case GameKey.L: this.press_lr(player, -1); break;
-          case GameKey.R: this.press_lr(player, 1); break;
+          case GameKey.R: this.press_lr(player, +1); break;
           case GameKey.a: this.press_a(player); break;
           case GameKey.j: this.press_j(player); break;
           case GameKey.U: this.press_u(player); break;
@@ -105,11 +104,15 @@ export class CharMenuLogic extends UIComponent {
         }
         break;
       }
-      case CharMenuState.ComNumberSel:
+      case CharMenuState.CountingDown: {
+        this._count_down = max(0, this._count_down - 500);
+        break;
+      }
+      case CharMenuState.ComNumSel:
     }
   }
   protected update_slots() {
-    const { slots } = this;
+    const { _slots: slots } = this;
     const players = Array.from(this.players.entries())
     for (let i = 0; i < slots.length; i++) {
       const { head, player_name, fighter_name, team_name } = slots[i];
@@ -157,7 +160,11 @@ export class CharMenuLogic extends UIComponent {
       state.step = min(state.step + 1, SLOT_STEP_READY)
     } else return;
     this.lf2.sounds.play_preset("join");
-    Array.from(this.players.values()).every(v => v.step === SLOT_STEP_READY)
+    const all_player_ready = Array.from(this.players.values()).every(v => v.step === SLOT_STEP_READY)
+    if (all_player_ready) {
+      this._count_down = 5000;
+      this._state = CharMenuState.CountingDown
+    }
     this.update_slots()
   }
   protected press_j(player: PlayerInfo) {
@@ -217,5 +224,51 @@ export class CharMenuLogic extends UIComponent {
       s.random = true;
       s.fighter = null;
     }
+    this.update_slots()
   }
+  override update(dt: number): void {
+    this.fsm.update(dt)
+  }
+  readonly fsm = new FSM<CharMenuState, IGamePrepareState>().add({
+    key: CharMenuState.PlayerSel,
+    on_key_down: e => {
+      const player = this.lf2.players.get(e.player);
+      if (!player) return;
+      switch (e.game_key) {
+        case GameKey.L: this.press_lr(player, -1); break;
+        case GameKey.R: this.press_lr(player, +1); break;
+        case GameKey.a: this.press_a(player); break;
+        case GameKey.j: this.press_j(player); break;
+        case GameKey.U: this.press_u(player); break;
+        case GameKey.D: break;
+        case GameKey.d: break;
+      }
+    }
+  }, {
+    key: CharMenuState.CountingDown,
+    on_key_down: e => {
+      this._count_down = max(0, this._count_down - 500)
+      if (this.max_player <= this.players.size) return;
+      const player = this.lf2.players.get(e.player);
+      if (!player || e.game_key !== GameKey.a) return;
+      this.press_a(player);
+      this.fsm.use(CharMenuState.PlayerSel)
+    },
+    enter: () => {
+      this._count_down = 5000;
+    },
+    update: dt => {
+      this._count_down = max(0, this._count_down - dt);
+      const num = ceil(this._count_down / 1000)
+      this._slots.forEach(v => v.head?.count_down(num))
+      if (this._count_down > 0) return;
+      if (this.max_player <= this.players.size)
+        return CharMenuState.GameSetting;
+      else
+        return CharMenuState.ComNumSel
+    },
+  })
+}
+export interface IGamePrepareState extends IState<CharMenuState> {
+  on_key_down?(e: IUIKeyEvent): void
 }
