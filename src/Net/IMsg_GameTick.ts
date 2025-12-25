@@ -1,6 +1,7 @@
 import type { IReq, IResp } from './_Base';
 import type { MsgEnum } from './MsgEnum';
 export interface IKeyEvent {
+  player_id?: string;
   player?: string;
   game_key?: string;
   pressed?: boolean;

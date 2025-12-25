@@ -43,7 +43,12 @@ export function Networking(props: INetworkingProps) {
           const cur_req: TInfo<IReqGameTick> = {
             seq: seq + 1,
             cmds: [...lf2.cmds],
-            events: lf2.events.map(r => ({ game_key: r.game_key, pressed: r.pressed }))
+            events: lf2.events.map(r => ({
+              player_id: me.id,
+              player: r.player,
+              game_key: r.game_key,
+              pressed: r.pressed
+            }))
           }
           if (reqs?.length) {
             for (const { cmds, events } of reqs) {
@@ -52,12 +57,14 @@ export function Networking(props: INetworkingProps) {
               if (cmds?.length)
                 lf2.cmds.push(...cmds)
               if (events?.length) {
-                for (const { player, pressed = false, game_key = '' } of events) {
+                for (const { player_id, player, pressed = false, game_key = '' } of events) {
+                  if (!player_id) continue;
                   if (!player) continue;
                   const gk = game_key as LGK
                   const label = Labels[gk]
                   if (!label) continue;
-                  const le = new LF2KeyEvent(player, pressed, gk, label)
+                  const pid = player_id === me.id ? player : player_id + '#' + player
+                  const le = new LF2KeyEvent(pid, pressed, gk, label)
                   lf2.events.push(le)
                 }
               }
