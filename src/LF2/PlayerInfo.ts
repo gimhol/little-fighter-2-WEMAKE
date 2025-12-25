@@ -44,15 +44,16 @@ export class PlayerInfo implements IDebugging {
 
   get ctrl(): CtrlDevice { return this._info.ctrl; }
   set ctrl(v: CtrlDevice) { this._info.ctrl = v; this.debug('setter:ctrl', v) }
-
-  constructor(
-    id: string,
-    name: string = id,
-    keys: TKeys = Defines.get_default_keys(id),
-  ) {
+  readonly local: boolean = true
+  constructor(id: string, name: string = id, local: boolean = true) {
+    this.local = local
     this._info = {
-      id, name, keys, team: "",
-      version: 0, character: "",
+      id,
+      name,
+      keys: Defines.get_default_keys(id),
+      team: "",
+      version: 0,
+      character: "",
       ctrl: CtrlDevice.Keyboard
     };
     this.load();
@@ -61,8 +62,8 @@ export class PlayerInfo implements IDebugging {
   debug(func: string, ...args: any[]): void { }
   warn(func: string, ...args: any[]): void { }
   log(func: string, ...args: any[]): void { }
-
   save(): void {
+    if (!this.local) return;
     Ditto.Cache.del(this.storage_key).then(() => {
       Ditto.Cache.put({
         name: this.storage_key,
@@ -74,6 +75,7 @@ export class PlayerInfo implements IDebugging {
   }
 
   load() {
+    if (!this.local) return;
     Ditto.Cache.get(this.storage_key).then((r) => {
       if (!r) return
       const { data } = r

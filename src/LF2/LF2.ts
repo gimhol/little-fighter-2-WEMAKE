@@ -259,10 +259,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!match) this._curr_key_list = "";
     if (e.times === 0) {
       for (const key_name of KEY_NAME_LIST) {
-        for (const [player_id, player_info] of this.players) {
-          if (player_info.keys[key_name] === key_code) {
-            this.events.push(new UI.LF2KeyEvent(player_id, true, key_name, key_code));
-          }
+        for (const [pid, player] of this.players) {
+          if (!player.local) continue;
+          if (player.keys[key_name] !== key_code) continue
+          this.events.push(new UI.LF2KeyEvent(pid, true, key_name, key_code));
         }
       }
     }
@@ -271,10 +271,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   on_key_up(e: I.IKeyEvent) {
     const key_code = e.key?.toLowerCase() ?? "";
     for (const key_name of KEY_NAME_LIST) {
-      for (const [player_id, player_info] of this.players) {
-        if (player_info.keys[key_name] === key_code) {
-          this.events.push(new UI.LF2KeyEvent(player_id, false, key_name, key_code))
-        }
+      for (const [pid, player] of this.players) {
+        if (!player.local) continue;
+        if (player.keys[key_name] !== key_code) continue
+        this.events.push(new UI.LF2KeyEvent(pid, false, key_name, key_code))
       }
     }
   }

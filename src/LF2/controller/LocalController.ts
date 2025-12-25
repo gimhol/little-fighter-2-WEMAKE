@@ -3,7 +3,7 @@ import { GameKey as GK } from "../defines/GameKey";
 import { Entity } from "../entity/Entity";
 import { PlayerInfo } from "../PlayerInfo";
 import { LF2KeyEvent } from "../ui/LF2KeyEvent";
-import { abs } from "../utils";
+import { abs, between } from "../utils";
 import { BaseController } from "./BaseController";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
 
@@ -18,7 +18,6 @@ export class LocalController
   on_key_up(e: LF2KeyEvent) {
     this.end(e.game_key);
   }
-
   on_key_down(e: LF2KeyEvent) {
     this.start(e.game_key);
   }
@@ -29,7 +28,7 @@ export class LocalController
   }
 
   override update(): ControllerUpdateResult {
-    if (this.player && this.player.ctrl !== CtrlDevice.Keyboard) {
+    if (this.player && between(this.player.ctrl, CtrlDevice.MAX_GAME_PAD, CtrlDevice.MAX_GAME_PAD)) {
       const [ax = 0, ay = 0] = this.lf2.keyboard.axes(this.player.ctrl - 1)
 
       if (ax > 0.22) {
