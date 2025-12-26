@@ -34,6 +34,7 @@ interface ISlotPack {
   fighter_name?: CharMenuFighterName,
   team_name?: CharMenuPlayerTeamName,
 }
+
 /**
  * 角色选择逻辑
  *
@@ -187,6 +188,7 @@ export class CharMenuLogic extends UIComponent {
     }
     this.update_slots()
   }
+  
   protected press_u(player: PlayerInfo) {
     const state = this.players.get(player)
     if (state?.step !== SLOT_STEP_FIGHTER) return
@@ -252,16 +254,21 @@ export class CharMenuLogic extends UIComponent {
       const num = ceil(this._count_down / 1000)
       this._slots.forEach(v => v.head?.count_down(num))
       if (num > 0) return;
-      return CharMenuState.GameSetting
-      // return this.max_player <= this.players.size ?
-      //   CharMenuState.GameSetting :
-      //   CharMenuState.ComNumSel
+      return this.max_player <= this.players.size ?
+        CharMenuState.GameSetting :
+        CharMenuState.ComNumSel;
     },
     leave: () => {
       this._slots.forEach(v => v.head?.count_down(0))
     }
   }, {
-    key: CharMenuState.ComNumSel
+    key: CharMenuState.ComNumSel,
+    enter: () => {
+      this.node.root.search_child("how_many_computer")?.set_visible(true);
+    },
+    leave: () => {
+      this.node.root.search_child("how_many_computer")?.set_visible(true);
+    }
   }, {
     key: CharMenuState.GameSetting,
     enter: () => {
@@ -270,5 +277,5 @@ export class CharMenuLogic extends UIComponent {
   }).use(CharMenuState.PlayerSel)
 }
 export interface IGamePrepareState extends IState<CharMenuState> {
-  on_key_down?(e: IUIKeyEvent): void
+  on_key_down?(e: IUIKeyEvent): void;
 }

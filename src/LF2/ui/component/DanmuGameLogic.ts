@@ -16,10 +16,6 @@ export class DanmuGameLogic extends SummaryLogic {
   private _cam_ctrl?: CameraCtrl
 
   time: number = 0;
-  override init(...args: any[]): this {
-    super.init(...args);
-    return this;
-  }
   update_teams() {
     const fighters = this.lf2.characters.list();
     this._teams.clear()

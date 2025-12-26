@@ -1,0 +1,29 @@
+{
+  id: "integer_picker_test",
+  name: "integer_picker_test",
+  color: "red",
+  items: [
+    {
+      id: "integer_picker",
+      name: "integer_picker",
+      pos: "100,100",
+      center: "0,0",
+      auto_focus: true,
+      txt: [
+        {
+          i18n: "0",
+          style: {
+            fill_style: "white",
+            font: '90px "Arial Black", Arial',
+          },
+        },
+      ],
+      component: [
+        {
+          name: "IntegerPicker",
+          properties: { min: 0, max: 8, val: 8 },
+        },
+      ],
+    },
+  ],
+}

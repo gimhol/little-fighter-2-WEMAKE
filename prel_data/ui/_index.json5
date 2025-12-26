@@ -18,6 +18,7 @@
   "ui/gogogo.ui.json5",
   "ui/gogogo_loop.ui.json5",
   "ui/how_many_computer.ui.json5",
+  "ui/integer_picker_test.ui.json5",
   "ui/jalousie_ew.ui.json5",
   "ui/jalousie_ns.ui.json5",
   "ui/loading_page.ui.json5",

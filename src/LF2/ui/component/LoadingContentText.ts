@@ -14,8 +14,7 @@ export class LoadingContentText extends UIComponent {
   get fade_out_delay() { return this.num(2) ?? 0 }
   protected fadeout?: FadeOutOpacity;
 
-  override init(...args: any[]): this {
-    super.init(...args);
+  override init(): this {
     if (this.fade_out_duration) {
       const expression = FadeOutOpacity.expression(
         this.fade_out_duration,

@@ -1,3 +1,4 @@
+import { ISchema } from "@/LF2/defines";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";
@@ -8,6 +9,7 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import type { UINode } from "../UINode";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIProps } from "./UIProps";
+import { make_schema } from "@/LF2/utils/schema";
 
 /**
  * 组件
@@ -21,6 +23,7 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
   readonly f_name: string;
   readonly callbacks = new Callbacks<Callbacks>()
   readonly info: Required<IComponentInfo>;
+  readonly props: UIProps
 
   __debugging?: boolean | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,26 +31,16 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   log(func: string, ...args: any[]): void { }
   id: string = '';
-  get lf2() {
-    return this.node.lf2;
-  }
-  get world() {
-    return this.node.lf2.world;
-  }
+  get lf2() { return this.node.lf2; }
+  get world() { return this.node.lf2.world; }
   private _mounted: boolean = false;
   private _args: readonly any[] = [];
   private _enabled: boolean = true;
 
-  readonly props: UIProps
   get enabled() { return this._enabled; }
   set enabled(v: boolean) { this.set_enabled(v); }
-  set_enabled(v: boolean): this {
-    this._enabled = v;
-    return this;
-  }
-  get mounted() {
-    return this._mounted;
-  }
+  set_enabled(v: boolean): this { this._enabled = v; return this; }
+  get mounted() { return this._mounted; }
 
   get args(): readonly string[] {
     return this._args;
@@ -63,24 +56,15 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
    * @param {string} f_name 组件在工厂中的名字
    * @param {IComponentInfo} info
    */
-  constructor(layout: UINode, f_name: string, info: Required<IComponentInfo>) {
+  constructor(layout: UINode, f_name: string, info: Required<IComponentInfo>, args: any[]) {
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
     this.props = new UIProps(info.properties)
-    make_debugging(this)
-  }
-
-  /**
-   * 初始化
-   *
-   * @param {...any[]} args 参数
-   * @returns {this} 对象本身
-   */
-  init(...args: any[]): this {
     this._args = args;
-    return this;
+    make_debugging(this);
   }
+  init?(): void;
   num(idx: number): number | null {
     if (idx >= this._args.length) return null;
     const num = Number(this._args[idx]);

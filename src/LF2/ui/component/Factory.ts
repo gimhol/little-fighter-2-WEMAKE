@@ -27,8 +27,8 @@ class ComponentFactory {
         continue;
       }
       const { name, args = [], enabled = true, id = '', properties = {}, weight = 0 } = info;
-      const component = new cls(layout, name, { name, args, enabled, id, properties, weight })
-      component.init(...args)
+      const component = new cls(layout, name, { name, args, enabled, id, properties, weight }, args)
+      component.init?.()
       component.set_enabled(enabled);
       component.id = id || `${name}_${idx}`
       ret.push(component);
