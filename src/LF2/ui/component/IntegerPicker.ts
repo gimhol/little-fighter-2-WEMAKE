@@ -1,10 +1,10 @@
+import { GameKey } from "@/LF2/defines";
 import { ceil, clamp, floor, max, min, round } from "@/LF2/utils";
+import { IUIKeyEvent } from "../IUIKeyEvent";
+import { IUIPointerEvent } from "../IUIPointerEvent";
+import { UITextLoader } from "../UITextLoader";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
-import { IUIKeyEvent } from "../IUIKeyEvent";
-import { GameKey } from "@/LF2/defines";
-import { UITextLoader } from "../UITextLoader";
-import { IUIPointerEvent } from "../IUIPointerEvent";
 const { MIN_SAFE_INTEGER: MIN, MAX_SAFE_INTEGER: MAX } = Number;
 
 export interface IIntegerPickerCallbacks extends IUICompnentCallbacks {
@@ -20,28 +20,7 @@ export class IntegerPicker extends UIComponent<IIntegerPickerCallbacks> {
   protected _txt = new UITextLoader(() => this.node)
     .set_style(() => this.node.txts.value[0]?.style ?? {})
     .ignore_out_of_date();
-
-  override on_click(e: IUIPointerEvent): void {
-    const val = this._val >= this._max ? this._min : this._val + 1
-    this.set_val(val);
-  }
-
-  override on_key_down(e: IUIKeyEvent): void {
-    if (!this.node.focused) return;
-    switch (e.game_key) {
-      case GameKey.a: {
-        const val = this._val >= this._max ? this._min : this._val + 1
-        this.set_val(val);
-        break;
-      }
-      case GameKey.j: {
-        const val = this._val <= this._min ? this._max : this._val - 1
-        this.set_val(val);
-        break;
-      }
-    }
-  }
-  
+  protected _triggers: Set<String> = new Set();
   get val(): number { return this._val }
   set val(v: number) { this.set_val(v) }
   get min(): number { return this._min }
@@ -56,8 +35,38 @@ export class IntegerPicker extends UIComponent<IIntegerPickerCallbacks> {
     this.set_min(min(v1, v2));
     this.set_max(max(v1, v2));
     this.set_val(v3 ?? this.min);
+    (this.props.strs('triggers') ?? ['click']).forEach(v => this._triggers.add(v))
   }
-
+  override on_click(e: IUIPointerEvent): void {
+    if (!this._triggers.has('click')) return
+    switch (e.button) {
+      case 0: this.goto_next(); break;
+      case 2: this.goto_prev(); break;
+    }
+  }
+  override on_key_down(e: IUIKeyEvent): void {
+    const focused = this._triggers.has('no-focused')
+    if (!this.node.focused && !focused) return;
+    const need_aj = this._triggers.has('aj')
+    const need_ud = this._triggers.has('ud')
+    const need_lr = this._triggers.has('lr')
+    switch (e.game_key) {
+      case GameKey.j: if (need_aj) return this.goto_prev(); break;
+      case GameKey.a: if (need_aj) return this.goto_next(); break;
+      case GameKey.U: if (need_ud) return this.goto_prev(); break;
+      case GameKey.D: if (need_ud) return this.goto_next(); break;
+      case GameKey.L: if (need_lr) return this.goto_prev(); break;
+      case GameKey.R: if (need_lr) return this.goto_next(); break;
+    }
+  }
+  goto_next(): void {
+    const val = this._val >= this._max ? this._min : this._val + 1
+    this.set_val(val);
+  }
+  goto_prev(): void {
+    const val = this._val <= this._min ? this._max : this._val - 1
+    this.set_val(val);
+  }
   set_min(v: number): void {
     if (v > this._max) return this.set_max(v);
     else if (Number.isNaN(v)) v = MIN

@@ -4,4 +4,5 @@ export interface IPointingEvent {
   readonly scene_x: number;
   readonly scene_y: number;
   readonly is_pointing_event: true;
+  readonly button: number;
 }

@@ -1,4 +1,5 @@
 import { Difficulty } from "../../defines";
+import { IUIKeyEvent } from "../IUIKeyEvent";
 import { IUIPointerEvent } from "../IUIPointerEvent";
 import { UINode } from "../UINode";
 import { IJalousieCallbacks, Jalousie } from "./Jalousie";
@@ -29,7 +30,7 @@ export class EndingPageLogic extends UIComponent {
   override on_click(e: IUIPointerEvent): void {
     if (this.jalousie?.anim.done) this.jalousie.open = !this.jalousie.open
   }
-  override on_key_down(e: IUIPointerEvent): void {
+  override on_key_down(e: IUIKeyEvent): void {
     if (this.jalousie?.anim.done) this.jalousie.open = !this.jalousie.open
   }
   on_jalousie_anim_end(j: Jalousie): void {

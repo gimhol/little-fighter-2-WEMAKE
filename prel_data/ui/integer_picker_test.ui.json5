@@ -4,11 +4,10 @@
   color: "red",
   items: [
     {
-      id: "integer_picker",
-      name: "integer_picker",
-      pos: "100,100",
+      id: "click_integer_picker",
+      name: "click_integer_picker",
+      pos: "0,100",
       center: "0,0",
-      auto_focus: true,
       txt: [
         {
           i18n: "0",
@@ -22,6 +21,84 @@
         {
           name: "IntegerPicker",
           properties: { min: 0, max: 8, val: 8 },
+        },
+      ],
+    },
+    {
+      id: "aj_integer_picker",
+      name: "aj_integer_picker",
+      pos: "100,100",
+      center: "0,0",
+      txt: [
+        {
+          i18n: "0",
+          style: {
+            fill_style: "white",
+            font: '90px "Arial Black", Arial',
+          },
+        },
+      ],
+      component: [
+        {
+          name: "IntegerPicker",
+          properties: {
+            min: 0,
+            max: 8,
+            val: 8,
+            triggers: ["aj", "no-focused"],
+          },
+        },
+      ],
+    },
+    {
+      id: "ud_integer_picker",
+      name: "ud_integer_picker",
+      pos: "200,100",
+      center: "0,0",
+      txt: [
+        {
+          i18n: "0",
+          style: {
+            fill_style: "white",
+            font: '90px "Arial Black", Arial',
+          },
+        },
+      ],
+      component: [
+        {
+          name: "IntegerPicker",
+          properties: {
+            min: 0,
+            max: 8,
+            val: 8,
+            triggers: ["ud", "no-focused"],
+          },
+        },
+      ],
+    },
+    {
+      id: "lr_integer_picker",
+      name: "lr_integer_picker",
+      pos: "300,100",
+      center: "0,0",
+      txt: [
+        {
+          i18n: "0",
+          style: {
+            fill_style: "white",
+            font: '90px "Arial Black", Arial',
+          },
+        },
+      ],
+      component: [
+        {
+          name: "IntegerPicker",
+          properties: {
+            min: 0,
+            max: 8,
+            val: 8,
+            triggers: ["lr", "no-focused"],
+          },
         },
       ],
     },

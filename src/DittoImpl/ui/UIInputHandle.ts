@@ -27,9 +27,9 @@ export class UIInputHandle implements IUIInputHandle {
     const intersections = this.intersections(e.scene_x, e.scene_y, ui);
     for (const i of intersections) {
       this._pointer_down_uis.add(i.extra)
-      const e = new LF2PointerEvent(i.point);
-      i.extra.on_pointer_down(e);
-      if (e.stopped) break;
+      const _e = new LF2PointerEvent(i.point, e.button);
+      i.extra.on_pointer_down(_e);
+      if (_e.stopped) break;
     }
   }
   on_pointer_move(e: IPointingEvent) {
@@ -64,28 +64,28 @@ export class UIInputHandle implements IUIInputHandle {
     for (const i of intersections) {
       if (i.extra.pointer_down) {
         this._pointer_down_uis.delete(i.extra)
-        const e = new LF2PointerEvent(i.point);
-        i.extra.on_pointer_up(e);
-        if (e.stopped) break;
+        const _e = new LF2PointerEvent(i.point, e.button);
+        i.extra.on_pointer_up(_e);
+        if (_e.stopped) break;
       }
     }
     for (const i of intersections) {
       if (i.extra.click_flag) {
-        const e = new LF2PointerEvent(i.point);
-        i.extra.on_click(e);
-        if (e.stopped) break;
+        const _e = new LF2PointerEvent(i.point, e.button);
+        i.extra.on_click(_e);
+        if (_e.stopped) break;
       }
     }
     for (const i of this._pointer_down_uis) {
-      const e = new LF2PointerEvent(new T.Vector3(NaN, NaN, NaN));
-      i.on_pointer_cancel(e);
+      const _e = new LF2PointerEvent(new T.Vector3(NaN, NaN, NaN), e.button);
+      i.on_pointer_cancel(_e);
     }
     this._pointer_down_uis.clear()
   }
   on_pointer_cancel(e: IPointingEvent) {
     for (const i of this._pointer_down_uis) {
-      const e = new LF2PointerEvent(new T.Vector3(NaN, NaN, NaN));
-      i.on_pointer_cancel(e);
+      const _e = new LF2PointerEvent(new T.Vector3(NaN, NaN, NaN), e.button);
+      i.on_pointer_cancel(_e);
     }
     this._pointer_down_uis.clear()
   }
