@@ -49,6 +49,7 @@ export class CharMenuLogic extends UIComponent {
   get max_player(): number { return this.props.num('max_player') ?? 8 }
   get max_coms(): number { return this.max_player - this.players.size }
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
+
   get fighters() {
     return this.lf2.is_cheat_enabled(CheatType.LF2_NET)
       ? this.lf2.datas.fighters
