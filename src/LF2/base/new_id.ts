@@ -1,6 +1,6 @@
 import { TeamEnum } from "../defines/TeamEnum";
 
-let __id__ = 0;
+let __id__ = 100;
 export const new_id = () => "" + ++__id__;
 
 let __team__ = Number(TeamEnum.Max);

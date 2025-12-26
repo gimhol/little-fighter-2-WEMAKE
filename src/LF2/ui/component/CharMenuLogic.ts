@@ -1,6 +1,9 @@
 import { ILf2Callback } from "@/LF2/ILf2Callback";
+import { new_id } from "@/LF2/base";
+import FSM, { IState } from "@/LF2/base/FSM";
+import { Randoming } from "@/LF2/helper";
 import { between, ceil, max, min } from "@/LF2/utils";
-import type { PlayerInfo } from "../../PlayerInfo";
+import { PlayerInfo } from "../../PlayerInfo";
 import { CheatType, EntityGroup, GameKey, IEntityData, TeamEnum } from "../../defines";
 import { Defines } from "../../defines/defines";
 import { IUIKeyEvent } from "../IUIKeyEvent";
@@ -9,8 +12,6 @@ import { FighterName as CharMenuFighterName } from "./FighterName";
 import { PlayerName as CharMenuPlayerName } from "./PlayerName";
 import { PlayerTeamName as CharMenuPlayerTeamName } from "./PlayerTeamName";
 import { UIComponent } from "./UIComponent";
-import FSM, { IState } from "@/LF2/base/FSM";
-import { Randoming } from "@/LF2/helper";
 const SLOT_STEP_FIGHTER = 0;
 const SLOT_STEP_TEAM = 1;
 const SLOT_STEP_READY = 2;
@@ -147,13 +148,16 @@ export class CharMenuLogic extends UIComponent {
       state.step = min(state.step + 1, SLOT_STEP_READY)
     } else return;
     this.lf2.sounds.play_preset("join");
-    const all_player_ready = Array.from(this.players.values()).every(v => v.step === SLOT_STEP_READY)
-    if (all_player_ready) this.fsm.use(CharMenuState.CountingDown)
+    if (this.is_player_sel) {
+      const all_player_ready = Array.from(this.players.values()).every(v => v.step === SLOT_STEP_READY)
+      if (all_player_ready) this.fsm.use(CharMenuState.CountingDown)
+    }
     this.update_slots()
   }
+  get is_player_sel(): boolean { return this.fsm.state?.key === CharMenuState.PlayerSel }
   protected press_j(player: PlayerInfo) {
     const state = this.players.get(player)
-    if (!state) this.lf2.pop_ui();
+    if (!state) { if (this.is_player_sel) this.lf2.pop_ui(); }
     else if (state.step <= SLOT_STEP_FIGHTER) this.players.delete(player);
     else state.step = max(state.step - 1, SLOT_STEP_FIGHTER)
     this.lf2.sounds.play_preset("cancel");
@@ -188,7 +192,7 @@ export class CharMenuLogic extends UIComponent {
     }
     this.update_slots()
   }
-  
+
   protected press_u(player: PlayerInfo) {
     const state = this.players.get(player)
     if (state?.step !== SLOT_STEP_FIGHTER) return
@@ -242,7 +246,7 @@ export class CharMenuLogic extends UIComponent {
       this._count_down = max(0, this._count_down - 500)
       if (this.max_player <= this.players.size) return;
       const player = this.lf2.players.get(e.player);
-      if (!player || e.game_key !== GameKey.a) return;
+      if (!player || e.game_key !== GameKey.a || this.players.has(player)) return;
       this.press_a(player);
       this.fsm.use(CharMenuState.PlayerSel)
     },
@@ -254,6 +258,7 @@ export class CharMenuLogic extends UIComponent {
       const num = ceil(this._count_down / 1000)
       this._slots.forEach(v => v.head?.count_down(num))
       if (num > 0) return;
+      return CharMenuState.Computer
       return this.max_player <= this.players.size ?
         CharMenuState.GameSetting :
         CharMenuState.ComNumSel;
@@ -270,11 +275,57 @@ export class CharMenuLogic extends UIComponent {
       this.node.root.search_child("how_many_computer")?.set_visible(true);
     }
   }, {
+    key: CharMenuState.Computer,
+    on_key_down: e => {
+      const pair = this.last_com()
+      if (e.game_key === GameKey.a) {
+        if (!pair) { this.add_com(); return; }
+        const [player, state] = pair
+        if (!player.is_com) { this.add_com(); return; }
+        if (state.step === SLOT_STEP_READY) { this.add_com(); return; }
+        this.press_a(player)
+        if (state.step === SLOT_STEP_READY) this.add_com()
+        return;
+      }
+      if (!pair) return;
+      const [com] = pair
+      switch (e.game_key) {
+        case GameKey.j: this.press_j(com); break;
+        case GameKey.L: this.press_lr(com, -1); break;
+        case GameKey.R: this.press_lr(com, 1); break;
+        case GameKey.U: this.press_u(com); break;
+        default: return;
+      }
+      if (!this.players.has(com)) {
+        this.lf2.players.delete(com.id)
+        const lc = this.last_com()
+        if (!lc) this.fsm.use(CharMenuState.PlayerSel)
+        else this.press_j(lc[0])
+      }
+    }
+  }, {
     key: CharMenuState.GameSetting,
     enter: () => {
       this.update_slots()
     }
   }).use(CharMenuState.PlayerSel)
+
+  last_player(): [PlayerInfo, SlotState] | undefined {
+    const pairs = Array.from(this.players.entries())
+    return pairs.at(pairs.length - 1)
+  }
+  last_com(): [PlayerInfo, SlotState] | undefined {
+    const ret = this.last_player();
+    if (!ret?.[0].is_com) return void 0;
+    return ret;
+  }
+  add_com() {
+    if (this.max_player <= this.players.size) return;
+    const p = new PlayerInfo(new_id(), "com", false)
+    p.set_is_com(true, false);
+    this.lf2.players.set(p.id, p)
+    this.press_a(p)
+  }
 }
 export interface IGamePrepareState extends IState<CharMenuState> {
   on_key_down?(e: IUIKeyEvent): void;
