@@ -10,20 +10,12 @@
   ],
   "component": [
     "GamePrepareLogic(stage_mode)",
-    "SlotSelLogic(1)",
-    "SlotSelLogic(2)",
-    "SlotSelLogic(3)",
-    "SlotSelLogic(4)",
-    "SlotSelLogic(5)",
-    "SlotSelLogic(6)",
-    "SlotSelLogic(7)",
-    "SlotSelLogic(8)"
   ],
   "items": [
     {
       "id": "frame",
       "pos": "397, 225",
-      "template": "ui/char_menu.ui.json5"
+      "template": "ui/char_menu_2.ui.json5"
     },
     {
       "template": "ui/how_many_computer.ui.json5",
