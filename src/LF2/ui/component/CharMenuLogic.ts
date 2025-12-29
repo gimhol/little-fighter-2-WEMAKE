@@ -12,6 +12,7 @@ import { FighterName as CharMenuFighterName } from "./FighterName";
 import { PlayerName as CharMenuPlayerName } from "./PlayerName";
 import { PlayerTeamName as CharMenuPlayerTeamName } from "./PlayerTeamName";
 import { UIComponent } from "./UIComponent";
+import { UINode } from "../UINode";
 const SLOT_STEP_FIGHTER = 0;
 const SLOT_STEP_TEAM = 1;
 const SLOT_STEP_READY = 2;
@@ -258,7 +259,6 @@ export class CharMenuLogic extends UIComponent {
       const num = ceil(this._count_down / 1000)
       this._slots.forEach(v => v.head?.count_down(num))
       if (num > 0) return;
-      return CharMenuState.Computer
       return this.max_player <= this.players.size ?
         CharMenuState.GameSetting :
         CharMenuState.ComNumSel;
@@ -266,15 +266,24 @@ export class CharMenuLogic extends UIComponent {
     leave: () => {
       this._slots.forEach(v => v.head?.count_down(0))
     }
-  }, {
-    key: CharMenuState.ComNumSel,
-    enter: () => {
-      this.node.root.search_child("how_many_computer")?.set_visible(true);
-    },
-    leave: () => {
-      this.node.root.search_child("how_many_computer")?.set_visible(true);
+  }, new class implements IGamePrepareState {
+    readonly key = CharMenuState.ComNumSel;
+    readonly owner: CharMenuLogic;
+    protected how_many_computer?: UINode;
+    constructor(owner: CharMenuLogic) {
+      this.owner = owner
     }
-  }, {
+    enter = () => {
+      this.how_many_computer = this.owner.node.root.search_child("how_many_computer")
+      this.how_many_computer?.set_visible(true);
+    }
+    update = (dt: number) => {
+      if (!this.how_many_computer) return CharMenuState.GameSetting
+    }
+    leave = () => {
+      this.how_many_computer?.set_visible(true);
+    }
+  }(this), {
     key: CharMenuState.Computer,
     on_key_down: e => {
       const pair = this.last_com()

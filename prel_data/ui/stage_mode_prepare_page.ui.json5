@@ -1,29 +1,22 @@
 {
-  "name": "页面：闯关模式准备页",
-  "id": "stage_mode_prepare_page",
-  "color": "rgba(0, 0, 0, 0.5)",
-  "key_press_actions": [
-    [
-      "escape",
-      "set_ui(entry)"
-    ]
-  ],
-  "component": [
-    "GamePrepareLogic(stage_mode)",
-  ],
-  "items": [
+  name: "页面：闯关模式准备页",
+  id: "stage_mode_prepare_page",
+  color: "rgba(0, 0, 0, 0.5)",
+  component: ["GamePrepareLogic(stage_mode)"],
+  items: [
     {
-      "id": "frame",
-      "pos": "397, 225",
-      "template": "ui/char_menu_2.ui.json5"
+      id: "frame",
+      template: "ui/char_menu_2.ui.json5",
     },
     {
-      "template": "ui/how_many_computer.ui.json5",
-      "visible": false
+      id: "how_many_computer",
+      template: "ui/how_many_computer.ui.json5",
+      visible: false,
     },
     {
-      "template": "ui/game_prepare_menu.ui.json5",
-      "visible": false
-    }
-  ]
+      id: "game_settings_menu",
+      template: "ui/game_prepare_menu.ui.json5",
+      visible: false,
+    },
+  ],
 }
