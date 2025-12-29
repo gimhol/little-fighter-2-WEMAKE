@@ -6,7 +6,7 @@ import { FacingFlag } from "../../defines";
 import { Defines } from "../../defines/defines";
 import { Factory } from "../../entity/Factory";
 import { BackgroundNameText } from "./BackgroundNameText";
-import { CharMenuLogic } from "./CharMenuLogic";
+import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
 import { StageNameText } from "./StageNameText";
 import { UIComponent } from "./UIComponent";
 

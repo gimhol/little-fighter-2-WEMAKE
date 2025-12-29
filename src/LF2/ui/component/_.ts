@@ -58,7 +58,7 @@ import * as _3a from "./DanmuGameLogic";
 import * as _3b from "./PlayerNameInput";
 import * as _3c from "./FighterStatBar";
 import * as _3d from "./ComponentsPlayer";
-import * as _3e from "./CharMenuLogic"
+import * as _3e from "./CharMenu/CharMenuLogic"
 import * as _3f from "./IntegerPicker"
 /*** COMPONENTS IMPORT END ***/
 
