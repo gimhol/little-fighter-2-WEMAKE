@@ -55,7 +55,7 @@ export default function GamePad(props: IGamePadProps) {
     return lf2.world.callbacks.add({
       on_player_character_add(add_player_id) {
         if (add_player_id !== player_id) return;
-        set_controller(lf2.slot_fighters.get(player_id)?.ctrl);
+        set_controller(lf2.world.slot_fighters.get(player_id)?.ctrl);
       },
       on_player_character_del(del_player_id) {
         if (del_player_id !== player_id) return;

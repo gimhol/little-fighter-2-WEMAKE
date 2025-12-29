@@ -5,8 +5,6 @@ export interface IPurePlayerInfo {
   id: string;
   name: string;
   keys: Record<GK, string>;
-  team: string;
-  character: string;
   version: number;
   ctrl: CtrlDevice;
 }

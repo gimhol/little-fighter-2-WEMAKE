@@ -20,8 +20,9 @@ export class VsModeLogic extends UIComponent {
       // 各队伍存活计数
       const player_teams: { [x in string]?: number } = {};
 
-      for (const [, f] of this.world.slot_fighters)
-        player_teams[f.team] = 0 // 玩家队伍
+      for (const [, { fighter }] of this.lf2.players)
+        if (fighter)
+          player_teams[fighter.team] = 0 // 玩家队伍
 
       for (const e of this.world.entities) {
         if (is_character(e) && e.hp > 0 && player_teams[e.team] !== void 0)
@@ -49,17 +50,15 @@ export class VsModeLogic extends UIComponent {
   override on_start(): void {
     super.on_start?.();
     this.score_board = this.node.find_child("score_board")!
-    for (const [, f] of this.world.slot_fighters)
-      this.cancellers.push(f.callbacks.add(this.fighter_callbacks))
+    for (const [, { fighter: f }] of this.lf2.players)
+      if (f) this.cancellers.push(f.callbacks.add(this.fighter_callbacks))
     this.reset();
 
     const stat_bars = this.node.search_components(FighterStatBar)
 
     let player_count = 0;
-    for (const [, f] of this.lf2.slot_fighters) {
+    for (const [, { fighter: f }] of this.lf2.players)
       if (f) ++player_count
-      
-    }
     for (let i = 0; i < stat_bars.length; i++) {
       const stat_bar = stat_bars[i];
       let enabled = false;
@@ -75,7 +74,7 @@ export class VsModeLogic extends UIComponent {
       --i;
     }
 
-    for (const [, fighter] of this.lf2.slot_fighters) {
+    for (const [, { fighter }] of this.lf2.players) {
       if (!fighter) continue;
       const stat_bar = stat_bars.shift()
       if (!stat_bar) break;

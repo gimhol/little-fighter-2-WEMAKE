@@ -11,7 +11,7 @@ import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
 import { DummyEnum } from "./LF2/bot/DummyEnum";
 import LocalController from "./LF2/controller/LocalController";
-import { CheatType } from "./LF2/defines";
+import { CheatType, TeamEnum } from "./LF2/defines";
 import { GameKey } from "./LF2/defines/GameKey";
 import { Factory } from "./LF2/entity/Factory";
 import { is_bot_ctrl, is_local_ctrl } from "./LF2/entity/type_check";
@@ -48,20 +48,23 @@ export function PlayerRow(props: Props) {
   const [player_name, set_player_name] = useState<string>(info.name);
   const [editing_key, set_editing_key] = useState<GameKey | undefined>();
 
-  const [team, set_team] = useState<string>(info.team);
-  const [show_hidden, set_show_hidden] = useState<boolean>(false);
-  const [character_id, set_character_id] = useState<string>(info.character);
-  const [added, set_added] = useState(!!lf2.get_player_character(info.id));
+  const [team, set_team] = useState<string>();
+  const [show_hidden, set_show_hidden] = useState<boolean>();
+  const [character_id, set_character_id] = useState<string>();
+  const [added, set_added] = useState(
+    false
+    // !!lf2.get_player_character(info.id)
+  );
   const [key_settings_show, set_key_settings_show] = useState(false);
 
   const [dummy, set_dummy] = useState<DummyEnum | undefined | "">("")
 
-  useEffect(() => {
-    const ctrl = lf2.slot_fighters.get(info.id)?.ctrl;
-    if (is_bot_ctrl(ctrl)) {
-      ctrl.dummy = dummy ? dummy : void 0;
-    }
-  }, [dummy, info.id, lf2.slot_fighters])
+  // useEffect(() => {
+  //   const ctrl = world.slot_fighters.get(info.id)?.ctrl;
+  //   if (is_bot_ctrl(ctrl)) {
+  //     ctrl.dummy = dummy ? dummy : void 0;
+  //   }
+  // }, [dummy, info.id, world.slot_fighters])
 
   useEffect(() => {
     set_show_hidden(lf2.is_cheat_enabled("" + CheatType.LF2_NET));
@@ -81,13 +84,13 @@ export function PlayerRow(props: Props) {
       },
       on_name_changed: (name) => {
         set_player_name(name);
-        const character = lf2.get_player_character(info.id);
-        if (character) character.name = name;
+        // const character = lf2.get_player_character(info.id);
+        // if (character) character.name = name;
       },
       on_team_changed: (team) => {
         set_team(team);
-        const character = lf2.get_player_character(info.id);
-        if (character) character.team = team;
+        // const character = lf2.get_player_character(info.id);
+        // if (character) character.team = team;
       },
       on_character_changed: set_character_id,
     });
@@ -113,7 +116,7 @@ export function PlayerRow(props: Props) {
 
   const on_click_add = added
     ? () => {
-      lf2.del_player_character(info.id); // 移除玩家对应的角色
+      // lf2.del_player_character(info.id); // 移除玩家对应的角色
     }
     : () => {
       const real_character_id =
@@ -152,13 +155,13 @@ export function PlayerRow(props: Props) {
             lf2={lf2}
             value={character_id}
             placeholder="角色"
-            onChange={(v) => info.set_character(v!, true).save()}
+            onChange={(v) => set_character_id(v)}
             show_all={show_hidden}
           />
           <TeamSelect
             placeholder="队伍"
             value={team}
-            onChange={(v) => info.set_team(v!, true).save()}
+            onChange={(v) => set_team(v)}
           />
           <Button onClick={on_click_add}>{added ? "移除" : "加入"}</Button>
           <ToggleButton value={touch_pad_on} onClick={on_click_toggle_touch_pad}>
@@ -196,18 +199,18 @@ export function PlayerRow(props: Props) {
         <Combine>
           <Button
             onClick={() => {
-              const character = lf2.slot_fighters.get(info.id);
-              if (!character) return;
-              const ctrl = character.ctrl;
-              if (is_bot_ctrl(ctrl)) {
-                character.ctrl = new LocalController(
-                  info.id,
-                  character
-                );
-              } else {
-                character.ctrl = Factory.inst.get_ctrl(character.data.id, info.id, character);
-              }
-              ctrl?.dispose();
+              // const character = world.slot_fighters.get(info.id);
+              // if (!character) return;
+              // const ctrl = character.ctrl;
+              // if (is_bot_ctrl(ctrl)) {
+              //   character.ctrl = new LocalController(
+              //     info.id,
+              //     character
+              //   );
+              // } else {
+              //   character.ctrl = Factory.inst.create_ctrl(character.data.id, info.id, character);
+              // }
+              // ctrl?.dispose();
             }}>
             <>Bot</>
           </Button>

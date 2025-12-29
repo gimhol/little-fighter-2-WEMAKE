@@ -18,9 +18,9 @@ export class FighterHead extends UIComponent {
   get player(): PlayerInfo { return this.lf2.players.get(this.player_id)!; }
   img_loader = new UIImgLoader(() => this.node);
   get head() {
-    const character_id = this.player?.character;
-    if (!character_id) return Defines.BuiltIn_Imgs.RFACE;
-    const head = this.lf2.datas.find_character(character_id)?.base.head;
+    const fighter_data = this.player?.fighter?.data;
+    if (!fighter_data) return Defines.BuiltIn_Imgs.RFACE;
+    const head = fighter_data.base.head;
     return head ?? Defines.BuiltIn_Imgs.RFACE;
   }
 

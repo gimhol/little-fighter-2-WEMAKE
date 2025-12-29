@@ -3,7 +3,6 @@ import * as _1 from "./Alignment";
 import * as _2 from "./BackgroundNameText";
 import * as _3 from "./CameraCtrl";
 import * as _4 from "./CharMenuHead";
-import * as _5 from "./ComNumButton";
 import * as _6 from "./DemoModeLogic";
 import * as _7 from "./DifficultyText";
 import * as _8 from "./EndingPageLogic";
@@ -41,7 +40,6 @@ import * as _27 from "./ReachableGroup";
 import * as _28 from "./ScaleAnimation";
 import * as _29 from "./ScaleClickable";
 import * as _2a from "./SineOpacity";
-import * as _2b from "./SlotSelLogic";
 import * as _2c from "./Sounds";
 import * as _2d from "./StageModeLogic";
 import * as _2e from "./StageNameText";
@@ -66,7 +64,7 @@ import * as _3f from "./IntegerPicker"
 
 export const ALL_COMPONENTS = [
   /*** COMPONENTS MAP START ***/
-  _1.Alignment, _2.BackgroundNameText, _3.CameraCtrl, _4.CharMenuHead, _5.ComNumButton,
+  _1.Alignment, _2.BackgroundNameText, _3.CameraCtrl, _4.CharMenuHead,
   _6.DemoModeLogic, _7.DifficultyText, _8.EndingPageLogic, _9.FadeInOpacity, _a.FadeOutOpacity,
   _b.FighterHead, _c.FighterName, _d.FighterThumb, _e.FitChildren, _f.Flex, _10.FlexItem,
   _11.GamePrepareLogic, _12.HorizontalLayout, _13.ImgClickable, _14.ImgLoop, _15.LaunchPage,
@@ -74,7 +72,7 @@ export const ALL_COMPONENTS = [
   _1b.PlayerKeyText, _1c.PlayerName, _1d.Players, _1e.PlayerScore, _1f.PlayerScoreCell,
   _20.PlayerTeamName, _21.PlayingTimeText, _22.PositionAnimation, _23.PrefixAndDifficultyText,
   _24.RandomImg, _25.RandomTxt, _26.Reachable, _27.ReachableGroup, _28.ScaleAnimation,
-  _29.ScaleClickable, _2a.SineOpacity, _2b.SlotSelLogic, _2c.Sounds, _2d.StageModeLogic,
+  _29.ScaleClickable, _2a.SineOpacity, _2c.Sounds, _2d.StageModeLogic,
   _2e.StageNameText, _2f.StageTitleShow, _30.StageTitleText, _31.StageTransitions,
   _32.SummaryLogic, _33.TeamSituationText, _34.TextInput, _35.TxtClickable, _36.VerticalLayout,
   _37.VsModeLogic, _38.Jalousie, _39.PlayerKeyEdit, _3a.DanmuGameLogic, _3b.PlayerNameInput, _3c.FighterStatBar,

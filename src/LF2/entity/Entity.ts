@@ -964,29 +964,22 @@ export class Entity {
   ): Entity | undefined {
     const oid = this.lf2.random_get(opoint.oid);
     if (!oid) {
-      Ditto.warn(Entity.TAG + "::spawn_object", "oid got", oid);
+      Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, opoint: `, opoint);
       return;
     }
     const data = this.world.lf2.datas.find(oid);
     if (!data) {
-      Ditto.warn(
-        Entity.TAG + "::spawn_object",
-        "data not found! opoint:",
-        opoint,
-      );
+      Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, data: `, data, ` opoint: `, opoint);
+      debugger
       return;
     }
-    const create = Factory.inst.get_entity_creator(data.type);
-    if (!create) {
-      Ditto.warn(
-        Entity.TAG + "::spawn_object",
-        `creator of "${data.type}" not found! opoint:`,
-        opoint,
-      );
+    const entity = Factory.inst.create_entity(data.type, this.world, data);
+    if (!entity) {
+      Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, data: `, data, ` opoint: `, opoint);
+      debugger
       return;
     }
-    const entity = create(this.world, data);
-    entity.ctrl = Factory.inst.get_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
+    entity.ctrl = Factory.inst.create_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
     entity.on_spawn(this, opoint, offset_velocity, facing).attach(opoint.is_entity);
     if (entity.data.id === this.data.id) this.copies.add(entity)
     entity.key_role = false;
@@ -2022,7 +2015,7 @@ export class Entity {
 
   transform(data: IEntityData) {
     if (!is_local_ctrl(this.ctrl))
-      this.ctrl = Factory.inst.get_ctrl(data.id, this.ctrl.player_id, this);
+      this.ctrl = Factory.inst.create_ctrl(data.id, this.ctrl.player_id, this);
     const prev = this._data;
     this._data = data;
     const { armor } = this._data.base

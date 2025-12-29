@@ -1,20 +1,14 @@
+import { Ditto } from "@/LF2/ditto";
 import { new_team } from "../../base";
-import FSM, { IState } from "../../base/FSM";
 import Invoker from "../../base/Invoker";
 import LocalController from "../../controller/LocalController";
-import { EntityGroup, FacingFlag } from "../../defines";
+import { FacingFlag } from "../../defines";
 import { Defines } from "../../defines/defines";
-import { Entity } from "../../entity/Entity";
 import { Factory } from "../../entity/Factory";
-import { ceil, max } from "../../utils";
-import { map_no_void } from "../../utils/container_help/map_no_void";
-import { IUIKeyEvent } from "../IUIKeyEvent";
 import { BackgroundNameText } from "./BackgroundNameText";
-import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
-import { SlotSelLogic, SlotSelStatus } from "./SlotSelLogic";
+import { CharMenuLogic } from "./CharMenuLogic";
 import { StageNameText } from "./StageNameText";
 import { UIComponent } from "./UIComponent";
-
 
 export class GamePrepareLogic extends UIComponent {
   static override readonly TAG = 'GamePrepareLogic'
@@ -34,44 +28,48 @@ export class GamePrepareLogic extends UIComponent {
   }
 
   start_game() {
-    // const { far, near, left, right } = this.lf2.world.bg;
+    const char_menu_logic = this.node.search_component(CharMenuLogic)
+    if (!char_menu_logic) return;
+    const { far, near, left, right } = this.lf2.world.bg;
+    for (const [player, slot_info] of char_menu_logic.players) {
+      const { fighter: fighter_data } = slot_info;
+      if (!fighter_data) {
+        Ditto.warn(`[${GamePrepareLogic.TAG}::start_game] failed to create fighter. figher data: ${fighter_data}`);
+        debugger;
+        continue;
+      }
 
-    // for (const { player } of this.slots) {
-    //   if (!player?.joined) continue;
-    //   const character_data = this.lf2.datas.find_character(player.character);
-    //   if (!character_data) continue;
-    //   const character = new Entity(this.world, character_data);
-    //   character.name = player.is_com ? "com" : player.name;
-    //   character.team = player.team || new_team();
-    //   character.facing = this.lf2.random_get([FacingFlag.Left, FacingFlag.Right])!;
-
-    //   if (player.is_com) {
-    //     character.ctrl = Factory.inst.get_ctrl(
-    //       character_data.id,
-    //       player.id,
-    //       character
-    //     );
-    //   } else {
-    //     character.ctrl = new LocalController(player.id, character);
-    //   }
-    //   character.position.z = this.lf2.random_in(far, near);
-    //   character.position.x = this.lf2.random_in(left, right);
-    //   character.blinking = this.world.begin_blink_time;
-    //   character.attach();
-    // }
-
-    // const stage_name_text = this.node.root.search_component(
-    //   StageNameText,
-    //   (v) => v.node.visible && !v.node.disabled,
-    // );
-    // const background_name_text = this.node.root.search_component(
-    //   BackgroundNameText,
-    //   (v) => v.node.visible && !v.node.disabled,
-    // );
-    // if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
-    // else if (background_name_text) this.lf2.change_bg(background_name_text.background);
-    // if (stage_name_text) this.lf2.push_ui("stage_mode_page");
-    // else this.lf2.push_ui("vs_mode_page");
+      const fighter = Factory.inst.create_entity(fighter_data.type, this.world, fighter_data)
+      if (!fighter) {
+        Ditto.warn(`[${GamePrepareLogic.TAG}::start_game] failed to create fighter. figher data: ${fighter_data}`);
+        debugger;
+        continue;
+      }
+      fighter.name = player.name;
+      fighter.team = slot_info.team || new_team();
+      fighter.facing = this.lf2.random_get([FacingFlag.Left, FacingFlag.Right])!;
+      if (player.is_com) {
+        fighter.ctrl = Factory.inst.create_ctrl(fighter_data.id, player.id, fighter);
+      } else {
+        fighter.ctrl = new LocalController(player.id, fighter);
+      }
+      fighter.position.z = this.lf2.random_in(far, near);
+      fighter.position.x = this.lf2.random_in(left, right);
+      fighter.blinking = this.world.begin_blink_time;
+      fighter.attach();
+      const stage_name_text = this.node.root.search_component(
+        StageNameText,
+        (v) => v.node.visible && !v.node.disabled,
+      );
+      const background_name_text = this.node.root.search_component(
+        BackgroundNameText,
+        (v) => v.node.visible && !v.node.disabled,
+      );
+      if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
+      else if (background_name_text) this.lf2.change_bg(background_name_text.background);
+      if (stage_name_text) this.lf2.push_ui("stage_mode_page");
+      else this.lf2.push_ui("vs_mode_page");
+    }
   }
 
   override on_stop(): void {

@@ -117,7 +117,7 @@ export class StageModeLogic extends UIComponent {
     const stat_bars = this.node.search_components(FighterStatBar)
     let player_count = 0;
     let teams = new Set();
-    for (const [, f] of this.lf2.slot_fighters) {
+    for (const [, f] of this.world.slot_fighters) {
       if (f) {
         teams.add(f.team);
         ++player_count
@@ -134,7 +134,7 @@ export class StageModeLogic extends UIComponent {
       --i;
     }
 
-    for (const [, fighter] of this.lf2.slot_fighters) {
+    for (const [, fighter] of this.world.slot_fighters) {
       if (!fighter) continue;
       const stat_bar = stat_bars.shift()
       if (!stat_bar) break;

@@ -20,7 +20,7 @@ export class PlayerScore extends UIComponent {
     return this.args[0] || "";
   }
   get character(): Entity | undefined {
-    return this.lf2.slot_fighters.get(this.player_id);
+    return this.world.slot_fighters.get(this.player_id);
   }
   private _unmount_job = new Invoker();
 

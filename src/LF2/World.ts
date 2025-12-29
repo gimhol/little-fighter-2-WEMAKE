@@ -148,7 +148,9 @@ export class World extends WorldDataset {
     for (const entity of entities) {
       if (is_character(entity)) {
         this.callbacks.emit("on_fighter_add")(entity);
-        if (this.lf2.players.has(entity.ctrl.player_id)) {
+        const player = this.lf2.players.get(entity.ctrl.player_id)
+        if (player) {
+          player.fighter = entity
           this.slot_fighters.set(entity.ctrl.player_id, entity);
           this.callbacks.emit("on_player_character_add")(entity.ctrl.player_id);
         }
@@ -189,10 +191,10 @@ export class World extends WorldDataset {
     this.entity_map.delete(entity.id)
     if (is_character(entity))
       this.callbacks.emit("on_fighter_del")(entity);
-    if (entity.ctrl?.player_id) {
-      const ok = this.slot_fighters.delete(entity.ctrl.player_id);
-      if (ok) this.callbacks.emit("on_player_character_del")(entity.ctrl.player_id);
-    }
+    const player = this.lf2.players.get(entity.ctrl.player_id)
+    if (player) player.fighter = void 0
+    const ok = this.slot_fighters.delete(entity.ctrl.player_id);
+    if (ok) this.callbacks.emit("on_player_character_del")(entity.ctrl.player_id);
     this.renderer.del_entity(entity);
     entity.dispose();
     Factory.inst.release(entity)
@@ -740,23 +742,19 @@ export class World extends WorldDataset {
   etc(x: number, y: number, z: number, f: string): void {
     const data = this.lf2.datas.find(998);
     if (!data) {
-      Ditto.warn(
-        World.TAG + "::etc",
-        `data of "${998}" not found!`,
-      );
+      Ditto.warn(`[${World.TAG}::etc] failed, oid: ${998} data: ${data}`);
+      debugger;
       return;
     }
-
-    const create = Factory.inst.get_entity_creator(data.type)
-
-    if (!create) {
-      Ditto.warn(World.TAG + "::etc", `creator of "${998}" not found!`);
+    const o = Factory.inst.create_entity(data.type, this, data)
+    if (!o) {
+      Ditto.warn(`[${World.TAG}::etc] failed, oid: ${998} data: ${data}`);
+      debugger;
       return;
     }
-    const e = create(this, data);
-    e.position.set(round(x), round(y), round(z));
-    e.enter_frame({ id: f });
-    e.attach(false);
+    o.position.set(round(x), round(y), round(z));
+    o.enter_frame({ id: f });
+    o.attach(false);
   }
   get_bounding(e: Entity, f: IFrameInfo, i: IItrInfo | IBdyInfo): IBounding {
     const left =

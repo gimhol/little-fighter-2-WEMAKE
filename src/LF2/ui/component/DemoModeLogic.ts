@@ -1,6 +1,6 @@
 import { Entity } from "@/LF2/entity";
 import { new_team } from "../../base";
-import { Defines, EntityGroup, TeamEnum } from "../../defines";
+import { Defines, EntityGroup } from "../../defines";
 import { Factory } from "../../entity/Factory";
 import IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_character } from "../../entity/type_check";
@@ -9,8 +9,8 @@ import { floor } from "../../utils/math/base";
 import { UINode } from "../UINode";
 import { UITextLoader } from "../UITextLoader";
 import { CameraCtrl } from "./CameraCtrl";
-import { UIComponent } from "./UIComponent";
 import { FighterStatBar } from "./FighterStatBar";
+import { UIComponent } from "./UIComponent";
 
 export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   static override readonly TAG = 'DemoModeLogic'
@@ -85,27 +85,26 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       const character_data = this.lf2.random_take(character_datas);
       if (!character_data) continue;
 
-      const creator = Factory.inst.get_entity_creator(character_data.type);
-      if (!creator) return;
+      const fighter = Factory.inst.create_entity(character_data.type, this.world, character_data);
+      if (!fighter) return;
 
-      const character = creator(this.world, character_data);
-      character.name = "com";
-      character.team = player_teams.shift() ?? new_team();
-      character.facing = this.lf2.random_get([1, -1] as const)!;
-      character.callbacks.add(this);
-      character.key_role = true;
+      fighter.name = "com";
+      fighter.team = player_teams.shift() ?? new_team();
+      fighter.facing = this.lf2.random_get([1, -1] as const)!;
+      fighter.callbacks.add(this);
+      fighter.key_role = true;
 
       const { far, near, left, right } = this.lf2.world.bg;
 
-      character.ctrl = Factory.inst.get_ctrl(
+      fighter.ctrl = Factory.inst.create_ctrl(
         character_data.id,
         player.id,
-        character,
+        fighter,
       );
-      character.position.z = this.lf2.random_in(far, near);
-      character.position.x = this.lf2.random_in(left, right);
-      character.blinking = this.world.begin_blink_time;
-      character.attach();
+      fighter.position.z = this.lf2.random_in(far, near);
+      fighter.position.x = this.lf2.random_in(left, right);
+      fighter.blinking = this.world.begin_blink_time;
+      fighter.attach();
     }
 
     const stat_bars = this.node.search_components(FighterStatBar)
@@ -119,7 +118,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       --i;
     }
 
-    for (const [, fighter] of this.lf2.slot_fighters) {
+    for (const [, fighter] of this.world.slot_fighters) {
       if (!fighter) continue;
       const stat_bar = stat_bars.shift()
       if (!stat_bar) break;
@@ -128,7 +127,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   }
   override on_stop(): void {
     super.on_stop?.();
-    for (const [, v] of this.lf2.slot_fighters) {
+    for (const [, v] of this.world.slot_fighters) {
       v.callbacks.del(this);
     }
   }

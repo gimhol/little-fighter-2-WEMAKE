@@ -87,13 +87,11 @@ export default class Item {
   ): boolean {
     const data = this.data || this.randoming?.take().take();
     if (!data) { debugger; return false; }
-    const creator = Factory.inst.get_entity_creator(data.type);
-    if (!creator) { debugger; return false; }
-
+    const e = Factory.inst.create_entity(data.type, this.world, data);
+    if (!e) { debugger; return false; }
     let { hp, act, facing, x, y, z, reserve, hp_map, mp, mp_map } = this.info;
     if (this.times) this.times--;
-    const e = creator(this.world, data);
-    e.ctrl = Factory.inst.get_ctrl(e.data.id, "", e);
+    e.ctrl = Factory.inst.create_ctrl(e.data.id, "", e);
     e.dead_gone = true;
     e.reserve = reserve ?? 0;
     e.position.x = this.lf2.random_in(x, x + range_x);

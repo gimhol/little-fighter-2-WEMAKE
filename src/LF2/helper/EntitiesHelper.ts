@@ -36,7 +36,7 @@ export class EntitiesHelper {
     const ret: Entity[] = [];
     while (--num >= 0) {
       const entity = creator(this.lf2.world, data);
-      entity.ctrl = Factory.inst.get_ctrl(entity.data.id, "", entity)
+      entity.ctrl = Factory.inst.create_ctrl(entity.data.id, "", entity)
       entity.team = team === '?' ? this.team_randoming.take() : (team || new_team())
       this.lf2.random_entity_info(entity).attach();
       ret.push(entity);

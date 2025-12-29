@@ -23,7 +23,7 @@ export class FighterThumb extends UIComponent {
   }
 
   get character() {
-    return this.lf2.slot_fighters.get(this.player_id);
+    return this.world.slot_fighters.get(this.player_id);
   }
 
   get thumb_url(): string {
