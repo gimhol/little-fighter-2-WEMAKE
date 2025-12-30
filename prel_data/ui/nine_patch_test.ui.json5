@@ -1,0 +1,23 @@
+{
+  name: "页面：nine_patch_test",
+  id: "nine_patch_test",
+  items: [
+    {
+      pos: "200, 200",
+      center: "0.5,0.5",
+      visible: true,
+      size: "400,200",
+      img: {
+        path: "!sprite/frame@4x.png",
+        nine_patch: {
+          f_w: 72,
+          f_h: 72,
+          l_w: 28,
+          t_h: 28,
+          r_w: 28,
+          b_h: 28,
+        },
+      },
+    },
+  ],
+}

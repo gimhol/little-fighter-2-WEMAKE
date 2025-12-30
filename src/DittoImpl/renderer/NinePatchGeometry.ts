@@ -7,7 +7,7 @@ const normals = (() => {
   return new Float32BufferAttribute(nums, 3)
 })()
 
-interface INinePatchGeometryParams {
+export interface INinePatchGeometryParams {
   w?: number,
   h?: number
 
@@ -15,33 +15,40 @@ interface INinePatchGeometryParams {
   f_t?: number;
   f_r?: number;
   f_b?: number;
-
   f_w?: number,
   f_h?: number,
   l_w?: number,
   t_h?: number,
   r_w?: number,
   b_h?: number,
+  t_s?: number
 }
 export class NinePatchGeometry extends BufferGeometry {
   override readonly type: string = 'NinePatchGeometry'
   parameters: Required<INinePatchGeometryParams>;
-  constructor(params: INinePatchGeometryParams = {}) {
-    super();
+  static ensure_parameters(params: INinePatchGeometryParams): Required<INinePatchGeometryParams> {
     const {
       w = 1, h = 1, f_w = 1, f_h = 1, l_w = f_w * 0.4, r_w = f_w * 0.4,
       t_h = f_h * 0.4, b_h = f_h * 0.4, f_l = 0, f_t = 0, f_r = 0, f_b = 0,
+      t_s = 1,
     } = params;
-    this.parameters = { w, h, f_w, f_h, l_w, r_w, t_h, b_h, f_l, f_t, f_r, f_b }
+    return { w, h, f_w, f_h, l_w, r_w, t_h, b_h, f_l, f_t, f_r, f_b, t_s }
+  }
+  constructor(params: INinePatchGeometryParams = {}) {
+    super();
+    const {
+      w, h, f_w, f_h, l_w, r_w, t_h, b_h, f_l, f_t, f_r, f_b, t_s
+    } = this.parameters = NinePatchGeometry.ensure_parameters(params)
     const x0 = -w / 2;
-    const x1 = x0 + (l_w / w) * w;
-    const x2 = x0 + ((w - r_w) / w) * w;
     const x3 = w / 2;
+    const x1 = x0 + t_s * l_w;
+    const x2 = x3 - t_s * r_w;
     const xs = [x0, x1, x2, x3]
+
     const y0 = -h / 2;
-    const y1 = y0 + (t_h / h) * h;
-    const y2 = y0 + ((h - b_h) / h) * h;
+    const y1 = y0 + t_s * t_h;
     const y3 = h / 2;
+    const y2 = y3 - t_s * b_h;
     const ys = [y0, y1, y2, y3]
 
     const u0 = f_l / f_w

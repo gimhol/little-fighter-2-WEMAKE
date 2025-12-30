@@ -1,25 +1,26 @@
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
-import { IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
+import { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
 import { ceil, is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
-import { get_geometry } from "./GeometryKeeper";
+import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
 interface IUserData {
-  img?: IUIImgInfo;
   w?: number;
   h?: number;
   t_x?: number,
   t_y?: number,
   t_z?: number,
   ui_img?: IUIImgInfo,
+  img?: ImageInfo<T.Texture>,
+  nine_patch?: INinePatch,
 }
 export class UINodeRenderer implements IUINodeRenderer {
   mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
@@ -40,9 +41,10 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected center_version: number | null = null;
   protected scale_version: number | null = null;
   protected pos_version: number | null = null;
+  protected _img: ImageInfo<T.Texture> | undefined;
   get is_size_dirty() { return this.size_version != this.ui.size.version }
   get is_center_dirty() { return this.center_version != this.ui.center.version }
-  
+
   protected get dom() {
     if (this._dom) return this._dom;
     this._dom = document.createElement('div');
@@ -170,6 +172,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.ui.imgs.value[this.ui.img_idx.value] ||
       this.ui.txts.value[this.ui.txt_idx.value];
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
+    this._img = img;
     const color = this.ui.color.value;
     const texture: T.Texture = img ? img.pic?.texture : color ? white_texture() : empty_texture();
     const a = get_alpha_from_color(color) || 1
@@ -198,19 +201,31 @@ export class UINodeRenderer implements IUINodeRenderer {
   readonly user_data: IUserData = {}
 
   is_geo_changed(): boolean {
-    const { _w, _h, _tran_x, _tran_y, _tran_z } = this;
-    const { w, h, t_x, t_y, t_z } = this.user_data;
-    return _w != w || _h != h || t_x != _tran_x || t_y != _tran_y || t_z != _tran_z
+    const { _w, _h, _tran_x, _tran_y, _tran_z, _img } = this;
+    const _nine_path = this._ui_img?.nine_patch
+    const { w, h, t_x, t_y, t_z, nine_patch, img } = this.user_data;
+    return _w != w || _h != h || t_x != _tran_x || t_y != _tran_y ||
+      t_z != _tran_z || _nine_path != nine_patch || _img != img
   }
   protected next_geometry(): T.BufferGeometry {
     if (!this.is_geo_changed()) return this._geo;
-    const { _w: w, _h: h, _tran_x, _tran_y, _tran_z } = this;
-    this._geo = get_geometry(w, h, _tran_x, _tran_y, _tran_z);
+    const { _w: w, _h: h, _tran_x, _tran_y, _tran_z, _ui_img: ui_img, _img: img } = this;
+    const nine_patch = ui_img?.nine_patch;
+    if (ui_img && nine_patch && img) {
+      this._geo = get_ninepatch_geometry({
+        ...nine_patch, w, h, tx: _tran_x, ty: _tran_y, tz: _tran_z, t_s: 1 / img.scale
+      })
+    } else {
+      this._geo = get_plane_geometry({ w, h, tx: _tran_x, ty: _tran_y, tz: _tran_z });
+    }
+    this.user_data.img = img
+    this.user_data.nine_patch = nine_patch
     this.user_data.w = w;
     this.user_data.h = h;
     this.user_data.t_x = _tran_x;
     this.user_data.t_y = _tran_y;
     this.user_data.t_z = _tran_z;
+    this.user_data.nine_patch = nine_patch;
     return this._geo;
   }
 
@@ -236,7 +251,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     const t = this.mesh.material.map;
     if (!t || !this._ui_img) return;
     const { offsetAnimX, offsetAnimY } = this._ui_img
-    if (!offsetAnimX && !offsetAnimY && this.user_data.img == this._ui_img)
+    if (!offsetAnimX && !offsetAnimY && this.user_data.ui_img == this._ui_img)
       return
     const { wrapS, wrapT, repeatX, repeatY } = this._ui_img
     if (offsetAnimX !== void 0) t.offset.y += (dt / 1000) * offsetAnimX;

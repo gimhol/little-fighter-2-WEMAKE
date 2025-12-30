@@ -36,8 +36,14 @@ export interface IUIImgInfo {
 }
 
 export interface INinePatch {
-  lw?: number,
-  th?: number,
-  rw?: number,
-  bh?: number,
+  f_l?: number;
+  f_t?: number;
+  f_r?: number;
+  f_b?: number;
+  f_w?: number,
+  f_h?: number,
+  l_w?: number,
+  t_h?: number,
+  r_w?: number,
+  b_h?: number,
 }
