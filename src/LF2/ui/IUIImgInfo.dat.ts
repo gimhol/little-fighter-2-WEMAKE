@@ -1,6 +1,6 @@
 export interface IUIImgInfo {
   path: string;
-  
+
   /** 裁剪起始X坐标 */
   x?: number;
 
@@ -32,5 +32,12 @@ export interface IUIImgInfo {
   repeatY?: number;
   flip_x?: 0 | 1;
   flip_y?: 0 | 1;
+  nine_patch?: INinePatch
 }
 
+export interface INinePatch {
+  lw?: number,
+  th?: number,
+  rw?: number,
+  bh?: number,
+}

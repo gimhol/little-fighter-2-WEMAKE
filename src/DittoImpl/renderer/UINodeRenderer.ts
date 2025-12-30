@@ -12,7 +12,15 @@ import { get_geometry } from "./GeometryKeeper";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
-
+interface IUserData {
+  img?: IUIImgInfo;
+  w?: number;
+  h?: number;
+  t_x?: number,
+  t_y?: number,
+  t_z?: number,
+  ui_img?: IUIImgInfo,
+}
 export class UINodeRenderer implements IUINodeRenderer {
   mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   ui: UINode;
@@ -32,7 +40,9 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected center_version: number | null = null;
   protected scale_version: number | null = null;
   protected pos_version: number | null = null;
-
+  get is_size_dirty() { return this.size_version != this.ui.size.version }
+  get is_center_dirty() { return this.center_version != this.ui.center.version }
+  
   protected get dom() {
     if (this._dom) return this._dom;
     this._dom = document.createElement('div');
@@ -111,12 +121,8 @@ export class UINodeRenderer implements IUINodeRenderer {
   on_show(): void { }
   on_hide(): void { }
   on_start() {
+    this.update_center_and_size()
     const [x, y, z] = this.ui.pos.value;
-    const [c_x, c_y, c_z] = this.ui.center.value
-    this._c_x = c_x;
-    this._c_y = c_y;
-    this._c_z = c_z;
-
     this.mesh.position.set(x, -y, z)
     this.mesh.visible = this.ui.visible;
     this.mesh.name = `layout(name= ${this.ui.name}, id=${this.ui.id})`
@@ -184,70 +190,73 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.visible = v
     if (v) this.show_dom(); else this.hide_dom()
   }
-  protected _c_x: number = 0;
-  protected _c_y: number = 0;
-  protected _c_z: number = 0;
-  protected w: number = 0;
-  protected h: number = 0;
+  protected _tran_x: number = 0;
+  protected _tran_y: number = 0;
+  protected _tran_z: number = 0;
+  protected _w: number = 0;
+  protected _h: number = 0;
+  readonly user_data: IUserData = {}
 
+  is_geo_changed(): boolean {
+    const { _w, _h, _tran_x, _tran_y, _tran_z } = this;
+    const { w, h, t_x, t_y, t_z } = this.user_data;
+    return _w != w || _h != h || t_x != _tran_x || t_y != _tran_y || t_z != _tran_z
+  }
   protected next_geometry(): T.BufferGeometry {
-    const { w, h, _c_x, _c_y, _c_z } = this;
-    const { w: _w, h: _h, c_x, c_y, c_z } = this._geo.userData;
-
-    if (w === _w && h === _h && c_x === _c_x && c_y === _c_y && c_z === _c_z)
-      return this._geo;
-    this._geo.dispose();
-
-    const tran_x = round(w * (0.5 - _c_x));
-    const tran_y = round(h * (_c_y - 0.5));
-    const tran_z = round(_c_z);
-    const ret = get_geometry(w, h, tran_x, tran_y, tran_z);
-    ret.userData.w = w;
-    ret.userData.h = h;
-    ret.userData.c_x = _c_x;
-    ret.userData.c_y = _c_y;
-    ret.userData.c_z = _c_z;
-    return (this._geo = ret);
+    if (!this.is_geo_changed()) return this._geo;
+    const { _w: w, _h: h, _tran_x, _tran_y, _tran_z } = this;
+    this._geo = get_geometry(w, h, _tran_x, _tran_y, _tran_z);
+    this.user_data.w = w;
+    this.user_data.h = h;
+    this.user_data.t_x = _tran_x;
+    this.user_data.t_y = _tran_y;
+    this.user_data.t_z = _tran_z;
+    return this._geo;
   }
 
+  update_center_and_size() {
+    if (!this.is_size_dirty && !this.is_center_dirty) return;
+    const [w, h] = this.ui.size.value;
+    const [x, y, z] = this.ui.center.value
+    this._w = w;
+    this._h = h;
+    this._tran_x = round(w * (0.5 - x));
+    this._tran_y = round(h * (y - 0.5));
+    this._tran_z = round(z);
+  }
+  update_dom() {
+    if (this._dom && this.is_size_dirty) {
+      this._dom.style.width = `${this._w}px`
+      this._dom.style.height = `${this._h}px`
+    }
+    if (this._css_obj && this.is_center_dirty)
+      this._css_obj.center.set(this.ui.center.value[0], this.ui.center.value[1])
+  }
+  update_texture_attributes(dt: number) {
+    const t = this.mesh.material.map;
+    if (!t || !this._ui_img) return;
+    const { offsetAnimX, offsetAnimY } = this._ui_img
+    if (!offsetAnimX && !offsetAnimY && this.user_data.img == this._ui_img)
+      return
+    const { wrapS, wrapT, repeatX, repeatY } = this._ui_img
+    if (offsetAnimX !== void 0) t.offset.y += (dt / 1000) * offsetAnimX;
+    if (offsetAnimY !== void 0) t.offset.x += (dt / 1000) * offsetAnimY;
+    if (wrapS !== void 0) t.wrapS = (wrapS as any)
+    if (wrapT !== void 0) t.wrapT = (wrapT as any)
+    if (repeatX !== void 0) t.repeat.setX(repeatX)
+    if (repeatY !== void 0) t.repeat.setY(repeatY)
+    t.needsUpdate = true
+  }
 
   render(dt: number) {
-    if (
-      this.center_version !== this.ui.center.version ||
-      this.size_version !== this.ui.size.version
-    ) {
-      const [w, h] = this.ui.size.value;
-      const [x, y, z] = this.ui.center.value
-      this.w = w;
-      this.h = h;
-      this._c_x = x;
-      this._c_y = y;
-      this._c_z = z;
-      if (this._dom) {
-        this._dom.style.width = `${w}px`
-        this._dom.style.height = `${h}px`
-      }
-      this._css_obj?.center.set(x, y)
-    }
-
+    this.update_center_and_size()
+    this.update_dom();
     this.update_texture();
     if (this.ui.scale.version !== this.scale_version)
       this.mesh.scale.set(...this.ui.scale.value);
+    this.update_texture_attributes(dt)
 
     const sp = this.mesh;
-    if (sp && this._ui_img) {
-      const t = sp.material.map;
-      if (t) {
-        const { wrapS, wrapT, offsetAnimX, offsetAnimY, repeatX, repeatY } = this._ui_img
-        if (offsetAnimX !== void 0) t.offset.y += (dt / 1000) * offsetAnimX;
-        if (offsetAnimY !== void 0) t.offset.x += (dt / 1000) * offsetAnimY;
-        if (wrapS !== void 0) t.wrapS = (wrapS as any)
-        if (wrapT !== void 0) t.wrapT = (wrapT as any)
-        if (repeatX !== void 0) t.repeat.setX(repeatX)
-        if (repeatY !== void 0) t.repeat.setY(repeatY)
-        t.needsUpdate = true
-      }
-    }
     if (this.ui.pos.version !== this.pos_version) {
       const [x, y, z] = this.ui.pos.value
       sp.position.set(x, -y, z);
