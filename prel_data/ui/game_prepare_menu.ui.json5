@@ -1,244 +1,206 @@
 {
-  "id": "menu",
-  "name": "game_prepare_menu",
-  "_img": {
-    "path": "sprite/MENU_CLIP3.png",
-    "x": 348,
-    "y": 0,
-    "w": 304,
-    "h": 166
+  id: "menu",
+  name: "game_prepare_menu",
+  img: {
+    path: "!sprite/frame@4x.png",
+    nine_patch: {
+      f_w: 72,
+      f_h: 72,
+      l_w: 28,
+      t_h: 28,
+      r_w: 28,
+      b_h: 28,
+    },
   },
-  "size": "220,176",
-  "color": "#122565",
-  "pos": "10,10,1",
-  "items": [
+  size: "220,196",
+  pos: "10,10,1",
+  items: [
     {
-      "pos": "110,83",
-      "center": "0.5,0.5",
-      "component": [
+      pos: "110,83",
+      center: "0.5,0.5",
+      component: [
         "ReachableGroup(menu,ud,menu)",
         {
-          "name": "Flex",
-          "properties": {
-            "direction": "column",
-            "align": "center",
-            "fit": true,
-            "gap": 3,
-            "padding": "5,5,5,5"
-          }
-        }
+          name: "Flex",
+          properties: {
+            direction: "column",
+            align: "center",
+            fit: true,
+            gap: 3,
+            padding: "15,5,15,5",
+          },
+        },
       ],
-      "items": [
+      items: [
         {
-          "id": "btn_fight",
-          "auto_focus": true,
-          "template": "builtin_data/launch/menu_text_button.ui.json5",
-          "values": {
-            "text": "game_prepare_menu.fight"
+          id: "btn_fight",
+          auto_focus: true,
+          template: "builtin_data/launch/menu_text_button.ui.json5",
+          values: {
+            text: "game_prepare_menu.fight",
           },
-          "component": [
-            "Reachable(menu)"
-          ],
-          "actions": {
-            "click": [
-              "broadcast(start_game)",
-              "sound(ok)"
-            ]
-          }
+          component: ["Reachable(menu)"],
+          actions: {
+            click: ["broadcast(start_game)", "sound(ok)"],
+          },
         },
         {
-          "id": "btn_reset_all",
-          "template": "builtin_data/launch/menu_text_button.ui.json5",
-          "values": {
-            "text": "game_prepare_menu.reset_all"
+          id: "btn_reset_all",
+          template: "builtin_data/launch/menu_text_button.ui.json5",
+          values: {
+            text: "game_prepare_menu.reset_all",
           },
-          "component": [
-            "Reachable(menu)"
-          ],
-          "actions": {
-            "click": [
-              "broadcast(reset_gpl)",
-              "sound(ok)"
-            ]
-          }
+          component: ["Reachable(menu)"],
+          actions: {
+            click: ["broadcast(reset_gpl)", "sound(ok)"],
+          },
         },
         {
-          "id": "btn_update_random",
-          "template": "builtin_data/launch/menu_text_button.ui.json5",
-          "values": {
-            "text": "game_prepare_menu.reset_random"
+          id: "btn_update_random",
+          template: "builtin_data/launch/menu_text_button.ui.json5",
+          values: {
+            text: "game_prepare_menu.reset_random",
           },
-          "component": [
-            "Reachable(menu)"
-          ],
-          "actions": {
-            "click": [
-              "broadcast(update_random)",
-              "sound(ok)"
-            ]
-          }
+          component: ["Reachable(menu)"],
+          actions: {
+            click: ["broadcast(update_random)", "sound(ok)"],
+          },
         },
         {
-          "id": "background_row",
-          "component": [
+          id: "background_row",
+          component: [
             {
-              "name": "Flex",
-              "properties": {
-                "direction": "row",
-                "align": "center",
-                "fit": true,
-                "gap": 3
-              }
-            }
-          ],
-          "items": [
-            {
-              "id": "btn_switch_bg",
-              "template": "builtin_data/launch/menu_text_button.ui.json5",
-              "values": {
-                "text": "game_prepare_menu.background"
+              name: "Flex",
+              properties: {
+                direction: "row",
+                align: "center",
+                fit: true,
+                gap: 3,
               },
-              "component": [
-                "Reachable(menu)"
-              ],
-              "actions": {
-                "click": [
-                  "broadcast(switch_background)",
-                  "sound(ok)"
-                ]
-              }
+            },
+          ],
+          items: [
+            {
+              id: "btn_switch_bg",
+              template: "builtin_data/launch/menu_text_button.ui.json5",
+              values: {
+                text: "game_prepare_menu.background",
+              },
+              component: ["Reachable(menu)"],
+              actions: {
+                click: ["broadcast(switch_background)", "sound(ok)"],
+              },
             },
             {
-              "id": "background_text_bg",
-              "size": "119,21",
-              "color": "black",
-              "center": "0.5,0.5",
-              "items": [
+              id: "background_text_bg",
+              size: "119,21",
+              color: "black",
+              center: "0.5,0.5",
+              items: [
                 {
-                  "id": "background_name_text",
-                  "pos": "0,0",
-                  "center": "0.5,0.5",
-                  "component": [
-                    "BackgroundNameText()"
-                  ]
-                }
-              ]
-            }
-          ]
+                  id: "background_name_text",
+                  pos: "0,0",
+                  center: "0.5,0.5",
+                  component: ["BackgroundNameText()"],
+                },
+              ],
+            },
+          ],
         },
         {
-          "id": "stage_row",
-          "component": [
+          id: "stage_row",
+          component: [
             {
-              "name": "Flex",
-              "properties": {
-                "direction": "row",
-                "align": "center",
-                "fit": true,
-                "gap": 3
-              }
-            }
-          ],
-          "items": [
-            {
-              "id": "btn_switch_stage",
-              "template": "builtin_data/launch/menu_text_button.ui.json5",
-              "values": {
-                "text": "game_prepare_menu.stage"
+              name: "Flex",
+              properties: {
+                direction: "row",
+                align: "center",
+                fit: true,
+                gap: 3,
               },
-              "component": [
-                "Reachable(menu)"
-              ],
-              "actions": {
-                "click": [
-                  "broadcast(switch_stage)",
-                  "sound(ok)"
-                ]
-              }
+            },
+          ],
+          items: [
+            {
+              id: "btn_switch_stage",
+              template: "builtin_data/launch/menu_text_button.ui.json5",
+              values: {
+                text: "game_prepare_menu.stage",
+              },
+              component: ["Reachable(menu)"],
+              actions: {
+                click: ["broadcast(switch_stage)", "sound(ok)"],
+              },
             },
             {
-              "id": "stage_text_bg",
-              "size": "63,21",
-              "color": "black",
-              "center": "0.5,0.5",
-              "items": [
+              id: "stage_text_bg",
+              size: "63,21",
+              color: "black",
+              center: "0.5,0.5",
+              items: [
                 {
-                  "id": "stage_name_text",
-                  "pos": "0,0",
-                  "center": "0.5,0.5",
-                  "component": [
-                    "StageNameText()"
-                  ]
-                }
-              ]
-            }
-          ]
+                  id: "stage_name_text",
+                  pos: "0,0",
+                  center: "0.5,0.5",
+                  component: ["StageNameText()"],
+                },
+              ],
+            },
+          ],
         },
         {
-          "id": "difficulty_row",
-          "component": [
+          id: "difficulty_row",
+          component: [
             {
-              "name": "Flex",
-              "properties": {
-                "direction": "row",
-                "align": "center",
-                "fit": true,
-                "gap": 3
-              }
-            }
-          ],
-          "items": [
-            {
-              "id": "btn_difficulty",
-              "template": "builtin_data/launch/menu_text_button.ui.json5",
-              "values": {
-                "text": "game_prepare_menu.difficulty"
+              name: "Flex",
+              properties: {
+                direction: "row",
+                align: "center",
+                fit: true,
+                gap: 3,
               },
-              "component": [
-                "Reachable(menu)"
-              ],
-              "actions": {
-                "click": [
-                  "switch_difficulty()",
-                  "sound(ok)"
-                ]
-              }
+            },
+          ],
+          items: [
+            {
+              id: "btn_difficulty",
+              template: "builtin_data/launch/menu_text_button.ui.json5",
+              values: {
+                text: "game_prepare_menu.difficulty",
+              },
+              component: ["Reachable(menu)"],
+              actions: {
+                click: ["switch_difficulty()", "sound(ok)"],
+              },
             },
             {
-              "id": "difficulty_text_bg",
-              "size": "60,21",
-              "color": "black",
-              "center": "0.5,0.5",
-              "items": [
+              id: "difficulty_text_bg",
+              size: "60,21",
+              color: "black",
+              center: "0.5,0.5",
+              items: [
                 {
-                  "pos": "0,0",
-                  "center": "0.5,0.5",
-                  "id": "difficulty_text",
-                  "component": [
-                    "difficulty_text()"
-                  ]
-                }
-              ]
-            }
-          ]
+                  pos: "0,0",
+                  center: "0.5,0.5",
+                  id: "difficulty_text",
+                  component: ["difficulty_text()"],
+                },
+              ],
+            },
+          ],
         },
         {
-          "id": "btn_exit",
-          "template": "builtin_data/launch/menu_text_button.ui.json5",
-          "values": {
-            "text": "game_prepare_menu.exit"
+          id: "btn_exit",
+          template: "builtin_data/launch/menu_text_button.ui.json5",
+          values: {
+            text: "game_prepare_menu.exit",
           },
-          "component": [
-            "Reachable(menu)"
-          ],
-          "actions": {
-            "click": [
-              "pop_ui()",
-              "sound(cancel)"
-            ]
-          }
-        }
-      ]
-    }
-  ]
+          component: ["Reachable(menu)"],
+          actions: {
+            click: ["pop_ui()", "sound(cancel)"],
+          },
+        },
+      ],
+    },
+  ],
 }
