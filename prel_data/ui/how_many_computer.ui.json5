@@ -14,7 +14,16 @@
   },
   size: "365,111",
   pos: "204,175,1",
-  component: ["ReachableGroup(com_num,lr,how_many_computer)"],
+  component: [ "ReachableGroup(com_num,lr,how_many_computer)" ],
+  templates: {
+    com_num: { 
+      auto_focus: true,
+      component: [
+        "OpacityHover(0.3,1)",
+        "Reachable(com_num)",
+      ],
+    }
+  },
   items: [
     {
       txt: {
@@ -34,12 +43,7 @@
         },
       },
       pos: "30,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(0)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
     {
       txt: {
@@ -49,12 +53,7 @@
         },
       },
       pos: "70,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(1)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
     {
       txt: {
@@ -64,12 +63,7 @@
         },
       },
       pos: "110,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(2)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
     {
       txt: {
@@ -79,12 +73,7 @@
         },
       },
       pos: "150,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(3)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
     {
       txt: {
@@ -94,12 +83,7 @@
         },
       },
       pos: "190,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(4)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
     {
       txt: {
@@ -109,12 +93,7 @@
         },
       },
       pos: "230,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(5)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
     {
       txt: {
@@ -124,12 +103,7 @@
         },
       },
       pos: "270,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(6)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
     {
       txt: {
@@ -139,12 +113,7 @@
         },
       },
       pos: "310,60",
-      auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "ComNumButton(7)",
-        "Reachable(com_num)",
-      ],
+      template: "com_num",
     },
   ],
 }
