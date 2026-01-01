@@ -20,7 +20,16 @@ export class CharMenuState_ComSel extends CharMenuState_Base {
       if (!player.is_com) { this.owner.add_com(); return; }
       if (state.step === SlotStep.Ready) { this.owner.add_com(); return; }
       this.owner.press_a(player);
-      if (state.step === SlotStep.Ready) this.owner.add_com();
+
+      const com_num = Array.from(this.owner.players.keys()).reduce((r, v) => v.is_com ? r + 1 : r, 0)
+
+
+
+      if (state.step === SlotStep.Ready)
+        if (com_num >= this.owner.com_num)
+          this.owner.fsm.use(CharMenuState.GameSetting)
+        else
+          this.owner.add_com();
       return;
     }
     if (!pair) return;

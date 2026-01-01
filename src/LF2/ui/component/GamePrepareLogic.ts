@@ -9,6 +9,7 @@ import { BackgroundNameText } from "./BackgroundNameText";
 import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
 import { StageNameText } from "./StageNameText";
 import { UIComponent } from "./UIComponent";
+import { ILf2Callback } from "@/LF2/ILf2Callback";
 
 export class GamePrepareLogic extends UIComponent {
   static override readonly TAG = 'GamePrepareLogic'
@@ -26,7 +27,20 @@ export class GamePrepareLogic extends UIComponent {
       stage_row.set_visible(false).set_disabled(true);
     }
   }
-
+  protected _lf2_callbacks: ILf2Callback = {
+    on_broadcast: (message) => {
+      if (message === 'start_game') return this.start_game();
+    }
+  }
+  override on_start(): void {
+    super.on_start?.();
+    this.lf2.callbacks.add(this._lf2_callbacks)
+  }
+  override on_stop(): void {
+    this.lf2.change_stage(Defines.VOID_STAGE)
+    this.lf2.change_bg(Defines.VOID_BG)
+    this.lf2.callbacks.del(this._lf2_callbacks)
+  }
   start_game() {
     const char_menu_logic = this.node.search_component(CharMenuLogic)
     if (!char_menu_logic) return;
@@ -70,11 +84,6 @@ export class GamePrepareLogic extends UIComponent {
       if (stage_name_text) this.lf2.push_ui("stage_mode_page");
       else this.lf2.push_ui("vs_mode_page");
     }
-  }
-
-  override on_stop(): void {
-    this.lf2.change_stage(Defines.VOID_STAGE)
-    this.lf2.change_bg(Defines.VOID_BG)
   }
 }
 

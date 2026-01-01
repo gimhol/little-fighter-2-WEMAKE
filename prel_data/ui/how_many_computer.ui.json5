@@ -16,7 +16,7 @@
   pos: "204,175,1",
   component: [ "ReachableGroup(com_num,lr,how_many_computer)" ],
   templates: {
-    com_num: { 
+    com_num: {
       auto_focus: true,
       component: [
         "OpacityHover(0.3,1)",
@@ -36,6 +36,7 @@
       center: "0.5,0.5",
     },
     {
+      id: "com_num_0",
       txt: {
         i18n: "0",
         style: {
@@ -46,6 +47,7 @@
       template: "com_num",
     },
     {
+      id: "com_num_1",
       txt: {
         i18n: "1",
         style: {
@@ -56,6 +58,7 @@
       template: "com_num",
     },
     {
+      id: "com_num_2",
       txt: {
         i18n: "2",
         style: {
@@ -66,6 +69,7 @@
       template: "com_num",
     },
     {
+      id: "com_num_3",
       txt: {
         i18n: "3",
         style: {
@@ -76,6 +80,7 @@
       template: "com_num",
     },
     {
+      id: "com_num_4",
       txt: {
         i18n: "4",
         style: {
@@ -86,6 +91,7 @@
       template: "com_num",
     },
     {
+      id: "com_num_5",
       txt: {
         i18n: "5",
         style: {
@@ -96,6 +102,7 @@
       template: "com_num",
     },
     {
+      id: "com_num_6",
       txt: {
         i18n: "6",
         style: {
@@ -106,6 +113,7 @@
       template: "com_num",
     },
     {
+      id: "com_num_7",
       txt: {
         i18n: "7",
         style: {

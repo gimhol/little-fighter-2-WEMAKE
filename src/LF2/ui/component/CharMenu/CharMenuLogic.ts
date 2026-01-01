@@ -21,6 +21,7 @@ import { ICharMenuState } from "./ICharMenuState";
 import { ISlotPack } from "./ISlotPack";
 import { SlotState } from "./SlotState";
 import { SlotStep } from "./SlotStep";
+import { CharMenuState_GameSetting } from "./CharMenuState_GameSetting";
 
 /**
  * 角色选择逻辑
@@ -34,6 +35,7 @@ export class CharMenuLogic extends UIComponent {
   readonly players = new Map<PlayerInfo, SlotState>()
   protected _count_down: number = 5000;
   protected _randoming?: Randoming<IEntityData>;
+  com_num: number = 0;
   get max_player(): number { return this.props.num('max_player') ?? 8 }
   get max_coms(): number { return this.max_player - this.players.size }
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
@@ -47,6 +49,10 @@ export class CharMenuLogic extends UIComponent {
     on_cheat_changed: (cheat_name, enabled) => {
       if (cheat_name === CheatType.LF2_NET && !enabled)
         this.handle_fighters_hidden();
+    },
+    on_broadcast: (message) => {
+      if (message === 'reset_gpl') return this.reset();
+      if (message === 'update_random') return this.update_random();
     }
   }
   slots: ISlotPack[] = []
@@ -54,7 +60,6 @@ export class CharMenuLogic extends UIComponent {
     super.on_start?.();
     this._randoming = new Randoming(this.lf2.datas.find_group(EntityGroup.Regular).characters, this.lf2)
     this.lf2.callbacks.add(this._lf2_callbacks)
-
     const heads = this.node.search_components(CharMenuHead)
     const p_nam = this.node.search_components(CharMenuPlayerName)
     const f_nam = this.node.search_components(CharMenuFighterName)
@@ -75,12 +80,25 @@ export class CharMenuLogic extends UIComponent {
       this.slots.push(e)
     }
   }
+
   override on_stop(): void {
     super.on_stop?.();
     this.lf2.callbacks.del(this._lf2_callbacks)
   }
   override on_key_down(e: IUIKeyEvent): void {
     this.fsm.state?.on_key_down?.(e)
+  }
+  reset() {
+    this.players.clear();
+    this.update_slots()
+    this.fsm.use(CharMenuState.PlayerSel)
+  }
+  update_random() {
+    for (const [_, state] of this.players) {
+      if (!state.random) continue;
+      state.fighter = this._randoming?.take() ?? null
+    }
+    this.update_slots()
   }
   update_slots() {
     const { slots: slots } = this;
@@ -210,12 +228,9 @@ export class CharMenuLogic extends UIComponent {
     new CharMenuState_PlayerSel(this),
     new CharMenuState_CountingDown(this),
     new CharMenuState_ComNumSel(this),
-    new CharMenuState_ComSel(this), {
-    key: CharMenuState.GameSetting,
-    enter: () => {
-      this.update_slots()
-    }
-  }).use(CharMenuState.PlayerSel)
+    new CharMenuState_ComSel(this),
+    new CharMenuState_GameSetting(this),
+  ).use(CharMenuState.PlayerSel)
 
   last_player(): [PlayerInfo, SlotState] | undefined {
     const pairs = Array.from(this.players.entries())
