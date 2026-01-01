@@ -2,9 +2,15 @@
   id: "how_many_computer",
   name: "UI: 电脑玩家数量选择框",
   img: {
-    path: "!sprite/CMC.png",
-    w: 365,
-    h: 111,
+    path: "!sprite/frame@4x.png",
+    nine_patch: {
+      f_w: 72,
+      f_h: 72,
+      l_w: 28,
+      t_h: 28,
+      r_w: 28,
+      b_h: 28,
+    },
   },
   size: "365,111",
   pos: "204,175,1",

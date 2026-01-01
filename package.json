@@ -26,7 +26,6 @@
     "json4": "ts-json-schema-generator --path src/LF2/defines/IEntityData.ts --type IEntityData > .vscode/schema/obj.schema.json5",
     "json5": "ts-json-schema-generator --path src/LF2/ui/IUIInfo.dat.ts --type IUIInfo > .vscode/schema/ui.schema.json5",
     "json6": "ts-json-schema-generator --path src/LF2/defines/IItrInfo.ts --type IItrInfo > .vscode/schema/itr.schema.json5",
-
     "tool-dev": "npm run build_tool && node ./tool --tool-dev"
   },
   "dependencies": {
@@ -39,6 +38,7 @@
     "dexie": "^4.0.11",
     "json5": "^2.2.3",
     "jszip": "3.10.1",
+    "localforage": "^1.10.0",
     "promise-in-one": "^1.0.0",
     "qs": "^6.14.0",
     "rc-virtual-list": "^3.19.1",

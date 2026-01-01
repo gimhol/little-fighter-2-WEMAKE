@@ -50,15 +50,40 @@ import img_btn_2_3 from "./assets/btn_2_3.png";
 import img_btn_3_0 from "./assets/btn_3_0.png";
 import img_btn_3_1 from "./assets/btn_3_1.png";
 import img_btn_3_2 from "./assets/btn_3_2.png";
+import { useForage } from "./hooks/useForage";
 import "./init";
 import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
-import {
-  useLocalBoolean,
-  useLocalNumber,
-  useLocalString,
-} from "./useLocalStorage";
+
+type render_size_mode = "fixed" | "fill" | "cover" | "contain"
+type debug_ui_pos = "left" | "right" | "top" | "bottom"
+type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
+type sync_render = 0 | 1 | 2
+const init_s = () => ({
+  game_overlay: false,
+  showing_panel: "" as showing_panel,
+  dev_ui_open: false,
+  cheat_1: false,
+  cheat_2: false,
+  cheat_3: false,
+  muted: false,
+  bgm_muted: false,
+  sound_muted: false,
+  volume: 0.3,
+  bgm_volume: 0.5,
+  sound_volume: 1,
+  render_size_mode: 'contain' as render_size_mode,
+  render_fixed_scale: 1,
+  custom_render_fixed_scale: 1,
+  v_align: document.body.parentElement!.className.indexOf("portrait") >= 0 ? 0.3 : 0.5,
+  h_align: 0.5,
+  custom_h_align: 0.5,
+  custom_v_align: 0.5,
+  dev_ui_pos: 'bottom' as debug_ui_pos,
+  touchpad: '',
+  sync_render: 0 as sync_render
+})
 
 function App() {
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -71,66 +96,16 @@ function App() {
     [Workspaces | null, DomAdapter | null, HTMLElement | null, HTMLElement | null]
   >([null, null, null, null])
 
-  const [dat_viewer_open, set_dat_viewer_open] = useState(false);
-  const [editor_open, set_editor_open] = useState(false);
-  const [game_overlay, set_game_overlay] = useLocalBoolean(
-    "game_overlay",
-    false,
-  );
-  const [showing_panel, set_showing_panel] = useLocalString<
-    "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
-  >("showing_panel", "");
-  const [control_panel_visible, set_control_panel_visible] = useLocalBoolean(
-    "control_panel",
-    false,
-  );
-  const [cheat_1, _set_cheat_1] = useLocalBoolean("cheat_1", false);
-  const [cheat_2, _set_cheat_2] = useLocalBoolean("cheat_2", false);
-  const [cheat_3, _set_cheat_3] = useLocalBoolean("cheat_3", false);
   const [loading, set_loading] = useState(false);
   const [loaded, set_loaded] = useState(false);
   const [paused, _set_paused] = useState(false);
   const [bg_id, _set_bg_id] = useState(Defines.VOID_BG.id);
-  const [muted, _set_muted] = useLocalBoolean("total_muted", false);
-  const [bgm_muted, _set_bgm_muted] = useLocalBoolean("bgm_muted", false);
-  const [sound_muted, _set_sound_muted] = useLocalBoolean("sound_muted", false);
-  const [volume, _set_volume] = useLocalNumber<number>("total_volume", 0.3);
-  const [bgm_volume, _set_bgm_volume] = useLocalNumber<number>("bgm_volume", 0.5);
-  const [sound_volume, _set_sound_volume] = useLocalNumber<number>("sound_volume", 1,);
-  const [render_size_mode, set_render_size_mode] = useLocalString<
-    "fixed" | "fill" | "cover" | "contain"
-  >("render_size_mode", "contain");
-  const [render_fixed_scale, set_render_fixed_scale] = useLocalNumber<number>(
-    "render_fixed_scale",
-    1,
-  );
-  const [custom_render_fixed_scale, set_custom_render_fixed_scale] =
-    useLocalNumber<number>("custom_render_fixed_scale", 1);
-  const [v_align, set_v_align] = useLocalNumber<number>(
-    "v_align",
-    document.body.parentElement!.className.indexOf("portrait") >= 0 ? 0.3 : 0.5,
-  );
-  const [h_align, set_h_align] = useLocalNumber<number>("h_align", 0.5);
-  const [custom_h_align, set_custom_h_align] = useLocalNumber<number>(
-    "custom_h_align",
-    0.5,
-  );
-  const [custom_v_align, set_custom_v_align] = useLocalNumber<number>(
-    "custom_v_align",
-    0.5,
-  );
-  const [debug_ui_pos, set_debug_ui_pos] = useLocalString<
-    "left" | "right" | "top" | "bottom"
-  >("debug_ui_pos", "bottom");
-  const [touch_pad_on, set_touch_pad_on] = useLocalString<string>(
-    "touch_pad_on",
-    "",
-  );
+
+  const [dat_viewer_open, set_dat_viewer_open] = useState(false);
+  const [editor_open, set_editor_open] = useState(false);
+
+  const [s, set_state, state_ready] = useForage({ key: 'app_state', version: 1, init: init_s })
   const [is_fullscreen, _set_is_fullscreen] = useState(false);
-  const [sync_render, set_sync_render] = useLocalNumber<0 | 1 | 2>(
-    "sync_render",
-    0,
-  );
   const [indicator_flags, set_indicator_flags] = useState<number>(0);
 
   const update_once = () => {
@@ -174,6 +149,7 @@ function App() {
   }, [l])
 
   useEffect(() => {
+    if (!state_ready) return
     let lang = sobj.lang || hobj.lang;
     let dev = sobj.dev || hobj.dev
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
@@ -200,23 +176,21 @@ function App() {
 
     lf2.load("prel.zip.json").catch(LF2.IgnoreDisposed);
     set_lf2(lf2)
-    lf2.sounds.set_muted(muted);
-    lf2.sounds.set_volume(volume);
-    lf2.sounds.set_bgm_muted(bgm_muted);
-    lf2.sounds.set_bgm_volume(bgm_volume);
-    lf2.sounds.set_sound_muted(sound_muted);
-    lf2.sounds.set_sound_volume(sound_volume);
-    lf2.world.sync_render = sync_render;
-    _set_cheat_1(lf2.is_cheat_enabled(CheatType.LF2_NET));
-    _set_cheat_2(lf2.is_cheat_enabled(CheatType.HERO_FT));
-    _set_cheat_3(lf2.is_cheat_enabled(CheatType.GIM_INK));
+    lf2.sounds.set_muted(s.muted);
+    lf2.sounds.set_volume(s.volume);
+    lf2.sounds.set_bgm_muted(s.bgm_muted);
+    lf2.sounds.set_bgm_volume(s.bgm_volume);
+    lf2.sounds.set_sound_muted(s.sound_muted);
+    lf2.sounds.set_sound_volume(s.sound_volume);
+    lf2.world.sync_render = s.sync_render;
+    set_state(d => {
+      d.cheat_1 = lf2.is_cheat_enabled(CheatType.LF2_NET)
+      d.cheat_2 = lf2.is_cheat_enabled(CheatType.HERO_FT)
+      d.cheat_3 = lf2.is_cheat_enabled(CheatType.GIM_INK)
+    })
     _set_bg_id(lf2.world.stage.bg.id);
-    const on_touchstart = () => {
-      set_touch_pad_on(fisrt(lf2.players.keys())!);
-    };
-    const on_keydown = () => {
-      set_touch_pad_on("");
-    };
+    const on_touchstart = () => set_state(d => { d.touchpad = fisrt(lf2.players.keys())! })
+    const on_keydown = () => set_state(d => { d.touchpad = "" })
     window.addEventListener("touchstart", on_touchstart, { once: true });
     window.addEventListener("keydown", on_keydown);
     _set_is_fullscreen(!!fullscreen.target);
@@ -232,7 +206,8 @@ function App() {
           on_stage_change: (s) => _set_bg_id(s.bg.id),
           on_pause_change: (v) => _set_paused(v),
           on_dataset_change: (key, value) => {
-            if (key === 'sync_render') set_sync_render(value as any)
+            if (key !== 'sync_render') return
+            set_state(d => { d.sync_render = value as any })
           },
         }),
         lf2.callbacks.add({
@@ -256,15 +231,15 @@ function App() {
           on_cheat_changed: (cheat_name, enabled) => {
             switch (cheat_name) {
               case CheatType.LF2_NET:
-                _set_cheat_1(enabled);
+                set_state(d => { d.cheat_1 = enabled })
                 break;
               case CheatType.HERO_FT:
-                _set_cheat_2(enabled);
+                set_state(d => { d.cheat_2 = enabled })
                 break;
               case CheatType.GIM_INK:
-                _set_cheat_3(enabled);
-                set_control_panel_visible(enabled)
-                set_game_overlay(enabled)
+                set_state(d => {
+                  d.cheat_3 = d.dev_ui_open = d.game_overlay = enabled
+                })
                 break;
             }
           },
@@ -274,12 +249,12 @@ function App() {
           },
         }),
         lf2.sounds.callbacks.add({
-          on_muted_changed: _set_muted,
-          on_bgm_muted_changed: _set_bgm_muted,
-          on_sound_muted_changed: _set_sound_muted,
-          on_volume_changed: _set_volume,
-          on_bgm_volume_changed: _set_bgm_volume,
-          on_sound_volume_changed: _set_sound_volume,
+          on_muted_changed: v => set_state(d => { d.muted = v }),
+          on_bgm_muted_changed: v => set_state(d => { d.bgm_muted = v }),
+          on_sound_muted_changed: v => set_state(d => { d.sound_muted = v }),
+          on_volume_changed: v => set_state(d => { d.volume = v }),
+          on_bgm_volume_changed: v => set_state(d => { d.bgm_volume = v }),
+          on_sound_volume_changed: v => set_state(d => { d.sound_volume = v }),
         }),
         () => lf2.dispose(),
       )
@@ -287,7 +262,7 @@ function App() {
     return () => {
       invoker.invoke()
     };
-  }, [LF2, sobj, hobj]);
+  }, [LF2, sobj, hobj, state_ready]);
 
   const on_click_load_local_zip = () => {
     if (!lf2) return;
@@ -322,7 +297,7 @@ function App() {
     const ele = ele_game_canvas;
     const contaner = ele?.parentElement
     if (!ele || !contaner) return;
-    const scale: number = render_fixed_scale || custom_render_fixed_scale;
+    const scale: number = s.render_fixed_scale || s.custom_render_fixed_scale;
     const on_resize = () => {
       const screen_w = 794;
       const screen_h = 450;
@@ -333,7 +308,7 @@ function App() {
       let view_h = win_h;
       const s_1 = screen_w / screen_h;
       const s_2 = win_w / win_h;
-      switch (render_size_mode) {
+      switch (s.render_size_mode) {
         case "fill":
           ele.style.width = win_w + "px";
           ele.style.height = win_h + "px";
@@ -362,8 +337,8 @@ function App() {
           ele.style.height = (view_h = scale * screen_h) + "px";
           break;
       }
-      const h_align_ = h_align < -1 ? custom_h_align : h_align;
-      const v_align_ = v_align < -1 ? custom_v_align : v_align;
+      const h_align_ = s.h_align < -1 ? s.custom_h_align : s.h_align;
+      const v_align_ = s.v_align < -1 ? s.custom_v_align : s.v_align;
       ele.style.left = Math.floor((win_w - view_w) * h_align_) + "px";
       ele.style.top = Math.floor((win_h - view_h) * v_align_) + "px";
     };
@@ -379,13 +354,13 @@ function App() {
     };
   }, [
     game_cell,
-    render_size_mode,
-    render_fixed_scale,
-    custom_render_fixed_scale,
-    v_align,
-    h_align,
-    custom_h_align,
-    custom_v_align,
+    s.render_size_mode,
+    s.render_fixed_scale,
+    s.custom_render_fixed_scale,
+    s.v_align,
+    s.h_align,
+    s.custom_h_align,
+    s.custom_v_align,
     ele_game_canvas
   ]);
 
@@ -410,10 +385,9 @@ function App() {
   });
 
   useShortcut("F11", 0, () => toggle_fullscreen());
-  useShortcut("ctrl+F1", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_control_panel_visible((v) => !v));
-  useShortcut("ctrl+F3", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_game_overlay((v) => !v));
+  useShortcut("ctrl+F1", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.dev_ui_open = !d.dev_ui_open }));
+  useShortcut("ctrl+F3", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.game_overlay = !d.game_overlay }));
   useEffect(() => {
-
     const ele = ele_game_canvas;
     if (!ele) return;
     if (ui_id) {
@@ -463,17 +437,17 @@ function App() {
   useEffect(() => {
     if (!workspace) return;
     workspace.del("panel");
-    if (control_panel_visible) {
-      switch (debug_ui_pos) {
-        case "left": workspace.add("slot_1", debug_ui_pos, { id: "panel" }); break;
-        case "right": workspace.add("slot_1", debug_ui_pos, { id: "panel" }); break;
+    if (s.dev_ui_open) {
+      switch (s.dev_ui_pos) {
+        case "left": workspace.add("slot_1", s.dev_ui_pos, { id: "panel" }); break;
+        case "right": workspace.add("slot_1", s.dev_ui_pos, { id: "panel" }); break;
         case "top": workspace.add("slot_1", "up", { id: "panel" }); break;
         case "bottom": workspace.add("slot_1", "down", { id: "panel" }); break;
       }
       workspace.root.keep = true
     }
     workspace.confirm()
-  }, [workspace, debug_ui_pos, control_panel_visible])
+  }, [workspace, s.dev_ui_pos, s.dev_ui_open])
 
 
   const game_cell_view = game_cell ? createPortal(
@@ -488,15 +462,15 @@ function App() {
         onContextMenu={e => { e.preventDefault(); e.stopPropagation(); }}
         onContextMenuCapture={e => { e.preventDefault(); e.stopPropagation(); }}
       />
-      <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !game_overlay })} />
+      <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !s.game_overlay })} />
       <DanmuOverlay lf2={lf2} />
-      <GamePad player_id={touch_pad_on} lf2={lf2} />
+      <GamePad player_id={s.touchpad} lf2={lf2} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
       <div className={styles.debug_pannel}>
         <Show show={lf2?.is_cheat_enabled(CheatType.GIM_INK)}>
           <ToggleImgButton
-            checked={control_panel_visible}
-            onClick={() => set_control_panel_visible((v) => !v)}
+            checked={s.dev_ui_open}
+            onClick={() => set_state(d => { d.dev_ui_open = !d.dev_ui_open })}
             src={[img_btn_1_2, img_btn_1_3]}
           />
         </Show>
@@ -506,13 +480,13 @@ function App() {
           src={[img_btn_3_1, img_btn_3_2]}
         />
         <ToggleImgButton
-          checked={bgm_muted}
-          onClick={() => lf2?.sounds?.set_bgm_muted(!bgm_muted)}
+          checked={s.bgm_muted}
+          onClick={() => lf2?.sounds?.set_bgm_muted(!s.bgm_muted)}
           src={[img_btn_2_0, img_btn_3_0]}
         />
         <ToggleImgButton
-          checked={sound_muted}
-          onClick={() => lf2?.sounds?.set_sound_muted(!sound_muted)}
+          checked={s.sound_muted}
+          onClick={() => lf2?.sounds?.set_sound_muted(!s.sound_muted)}
           src={[img_btn_0_3, img_btn_1_0]}
         />
         <Show
@@ -551,7 +525,7 @@ function App() {
     </div>, game_cell, null) : null
 
   const pannel_cell_view = pannel_cell ? createPortal(
-    <div className={classNames(styles.debug_ui, styles["debug_ui_" + debug_ui_pos])}>
+    <div className={classNames(styles.debug_ui, styles["debug_ui_" + s.dev_ui_pos])}>
       <div className={styles.settings_row}>
         <Button onClick={on_click_download_zip}>下载数据包</Button>
         <Button onClick={on_click_load_local_zip} disabled={loading}>
@@ -565,12 +539,12 @@ function App() {
         <Select
           items={["top", "bottom", "left", "right"] as const}
           parse={(v) => [v, "位置：" + v]}
-          value={debug_ui_pos}
-          onChange={v => set_debug_ui_pos(v!)}
+          value={s.dev_ui_pos}
+          onChange={v => set_state(d => { d.dev_ui_pos = v! })}
         />
         <Button
           style={{ marginLeft: "auto" }}
-          onClick={() => set_control_panel_visible(false)}
+          onClick={() => set_state(d => { d.dev_ui_open = false })}
         >
           ✕
         </Button>
@@ -579,18 +553,18 @@ function App() {
         <Combine>
           <ToggleButton
             onChange={(v) => lf2?.sounds.set_muted(v)}
-            value={muted}
+            value={s.muted}
           >
             <>音量</>
             <>静音</>
           </ToggleButton>
-          <Show show={!muted}>
+          <Show show={!s.muted}>
             <InputNumber
               precision={0}
               min={0}
               max={100}
               step={1}
-              value={Math.ceil(volume * 100)}
+              value={Math.ceil(s.volume * 100)}
               onChange={(e) =>
                 lf2?.sounds.set_volume(e! / 100)
               }
@@ -598,17 +572,17 @@ function App() {
           </Show>
           <ToggleButton
             onChange={(v) => lf2?.sounds.set_bgm_muted(v)}
-            value={bgm_muted}>
+            value={s.bgm_muted}>
             <>音乐</>
             <>音乐(已禁用)</>
           </ToggleButton>
-          <Show show={!bgm_muted}>
+          <Show show={!s.bgm_muted}>
             <InputNumber
               precision={0}
               min={0}
               max={100}
               step={1}
-              value={Math.ceil(bgm_volume * 100)}
+              value={Math.ceil(s.bgm_volume * 100)}
               onChange={(e) =>
                 lf2?.sounds.set_bgm_volume(e! / 100)
               }
@@ -616,17 +590,17 @@ function App() {
           </Show>
           <ToggleButton
             onChange={(v) => lf2?.sounds.set_sound_muted(v)}
-            value={sound_muted}>
+            value={s.sound_muted}>
             <>音效</>
             <>音效(已禁用)</>
           </ToggleButton>
-          <Show show={!sound_muted}>
+          <Show show={!s.sound_muted}>
             <InputNumber
               precision={0}
               min={0}
               max={100}
               step={1}
-              value={Math.ceil(sound_volume * 100)}
+              value={Math.ceil(s.sound_volume * 100)}
               onChange={(e) =>
                 lf2?.sounds.set_sound_volume(e! / 100)
               }
@@ -644,73 +618,72 @@ function App() {
         />
         <Titled float_label="显示模式">
           <Select
-            value={render_size_mode}
-            onChange={v => set_render_size_mode(v!)}
+            value={s.render_size_mode}
+            onChange={(e) => set_state(d => { d.render_size_mode = e! })}
             placeholder="显示模式"
             parse={i => [i, i]}
             items={["fixed", "fill", "cover", "contain"] as const}
           />
         </Titled>
-        <Show show={render_size_mode === "fixed"}>
+        <Show show={s.render_size_mode === "fixed"}>
           <Titled float_label="缩放">
             <Combine>
               <Select
-                value={render_fixed_scale}
-                onChange={v => set_render_fixed_scale(v!)}
+                value={s.render_fixed_scale}
+                onChange={(e) => set_state(d => { d.render_fixed_scale = e! })}
                 items={arithmetic_progression(0, 4, 0.5)}
                 parse={(i) => [i, "✕" + (i || "?")]}
               />
-              <Show show={!render_fixed_scale}>
+              <Show show={!s.render_fixed_scale}>
                 <InputNumber
                   precision={2}
                   min={0}
-                  step={custom_render_fixed_scale <= 0.5 ? 0.1 : 0.5}
-                  value={custom_render_fixed_scale}
-                  onChange={(e) =>
-                    set_custom_render_fixed_scale(e!)
-                  } />
+                  step={s.custom_render_fixed_scale <= 0.5 ? 0.1 : 0.5}
+                  value={s.custom_render_fixed_scale}
+                  onChange={(e) => set_state(d => { d.custom_render_fixed_scale = e! })}
+                />
               </Show>
             </Combine>
           </Titled>
         </Show>
-        <Show show={render_size_mode !== "fill"}>
+        <Show show={s.render_size_mode !== "fill"}>
           <Titled float_label="对齐">
             <Combine>
               <Select
-                value={v_align}
-                onChange={v => set_v_align(v!)}
+                value={s.v_align}
+                onChange={(e) => set_state(d => { d.v_align = e! })}
                 items={[-2, 0, 0.5, 1]}
                 parse={(v, idx) => [
                   v, v <= -1 ? "?" : ["上", "中", "下"][idx - 1],
                 ]}
               />
-              <Show show={v_align < 0}>
+              <Show show={s.v_align < 0}>
                 <InputNumber
                   precision={2}
                   min={-1}
                   max={2}
                   step={0.1}
-                  value={custom_v_align}
-                  onChange={(e) => set_custom_v_align(e!)}
+                  value={s.custom_v_align}
+                  onChange={(e) => set_state(d => { d.custom_v_align = e! })}
                 />
               </Show>
               <Select
-                value={h_align}
-                onChange={v => set_h_align(v!)}
+                value={s.h_align}
+                onChange={(e) => set_state(d => { d.h_align = e! })}
                 items={[-2, 0, 0.5, 1]}
                 parse={(v, idx) => [
                   v,
                   v <= -1 ? "?" : ["左", "中", "右"][idx - 1],
                 ]}
               />
-              <Show show={h_align < 0}>
+              <Show show={s.h_align < 0}>
                 <InputNumber
                   precision={2}
                   min={-1}
                   max={2}
                   step={0.1}
-                  value={custom_h_align}
-                  onChange={(e) => set_custom_h_align(e!)}
+                  value={s.custom_h_align}
+                  onChange={(e) => set_state(d => { d.custom_h_align = e! })}
                 />
               </Show>
             </Combine>
@@ -758,8 +731,8 @@ function App() {
         <Combine>
           <ToggleButton
             title="ctrl+F3"
-            value={game_overlay}
-            onChange={set_game_overlay}
+            value={s.game_overlay}
+            onChange={v => set_state(d => { d.game_overlay = v })}
           >
             <>游戏覆盖</>
             <>游戏覆盖✓</>
@@ -778,7 +751,7 @@ function App() {
               { value: 2, label: "同步渲染(x0.5)✓" },
             ]}
             parse={i => [i.value, i.label]}
-            value={sync_render}
+            value={s.sync_render}
             onClick={() => { if (lf2) lf2.world.sync_render = (lf2.world.sync_render + 1) % 3 }}
           />
 
@@ -788,108 +761,106 @@ function App() {
         <Combine>
           <ToggleButton
             onChange={() =>
-              set_showing_panel((v) => (v === "stage" ? "" : "stage"))
+              set_state(d => { d.showing_panel = (d.showing_panel === "stage" ? "" : "stage") })
             }
-            value={showing_panel === "stage"}
+            value={s.showing_panel === "stage"}
           >
             <>关卡面板</>
             <>关卡面板✓</>
           </ToggleButton>
           <ToggleButton
             onChange={() =>
-              set_showing_panel((v) => (v === "bg" ? "" : "bg"))
+              set_state(d => { d.showing_panel = (d.showing_panel === "bg" ? "" : "bg") })
             }
-            value={showing_panel === "bg"}
+            value={s.showing_panel === "bg"}
           >
             <>背景面板</>
             <>背景面板✓</>
           </ToggleButton>
           <ToggleButton
             onChange={() =>
-              set_showing_panel((v) => (v === "weapon" ? "" : "weapon"))
+              set_state(d => { d.showing_panel = (d.showing_panel === "weapon" ? "" : "weapon") })
             }
-            value={showing_panel === "weapon"}
+            value={s.showing_panel === "weapon"}
           >
             <>武器面板</>
             <>武器面板✓</>
           </ToggleButton>
           <ToggleButton
             onChange={() =>
-              set_showing_panel((v) => (v === "bot" ? "" : "bot"))
+              set_state(d => { d.showing_panel = (d.showing_panel === "bot" ? "" : "bot") })
             }
-            value={showing_panel === "bot"}
+            value={s.showing_panel === "bot"}
           >
             <>Bot面板</>
             <>Bot面板✓</>
           </ToggleButton>
           <ToggleButton
             onChange={() =>
-              set_showing_panel((v) => (v === "player" ? "" : "player"))
+              set_state(d => { d.showing_panel = (d.showing_panel === "player" ? "" : "player") })
             }
-            value={showing_panel === "player"}
+            value={s.showing_panel === "player"}
           >
             <>玩家面板</>
             <>玩家面板✓</>
           </ToggleButton>
           <ToggleButton
             onChange={() =>
-              set_showing_panel((v) =>
-                v === "world_tuning" ? "" : "world_tuning",
-              )
+              set_state(d => { d.showing_panel = (d.showing_panel === "world_tuning" ? "" : "world_tuning") })
             }
-            value={showing_panel === "world_tuning"}>
+            value={s.showing_panel === "world_tuning"}>
             <>世界微调</>
             <>世界微调✓</>
           </ToggleButton>
         </Combine>
         <Combine>
           <StatusButton
-            value={touch_pad_on}
+            value={s.touchpad}
             items={touch_pad_player_items}
             parse={i => [i.value, i.label]}
-            onChange={(v) => set_touch_pad_on(v!)} />
+            onChange={(v) => set_state(d => d.touchpad = v!)} />
           <ToggleButton
             onChange={() => lf2?.toggle_cheat_enabled(CheatType.LF2_NET)}
-            value={cheat_1}>
+            value={s.cheat_1}>
             <>LF2_NET</>
             <>LF2_NET✓</>
           </ToggleButton>
           <ToggleButton
             onChange={() => lf2?.toggle_cheat_enabled(CheatType.HERO_FT)}
-            value={cheat_2}>
+            value={s.cheat_2}>
             <>HERO_FT</>
             <>HERO_FT✓</>
           </ToggleButton>
           <ToggleButton
             onChange={() => lf2?.toggle_cheat_enabled(CheatType.GIM_INK)}
-            value={cheat_3}>
+            value={s.cheat_3}>
             <>GIM_INK</>
             <>GIM_INK✓</>
           </ToggleButton>
         </Combine>
       </div>
-      <Show show={showing_panel === "player"}>
+      <Show show={s.showing_panel === "player"}>
         {players.map((info, idx) => (
           <PlayerRow
             key={idx}
             lf2={lf2!}
             info={info}
-            touch_pad_on={touch_pad_on === info.id}
+            touch_pad_on={s.touchpad === info.id}
             on_click_toggle_touch_pad={() =>
-              set_touch_pad_on(touch_pad_on === info.id ? "" : info.id)
+              set_state(d => { d.touchpad = d.touchpad === info.id ? "" : info.id })
             }
           />
         ))}
       </Show>
       <SettingsRows
         lf2={lf2}
-        show_stage_settings={showing_panel === "stage"}
-        show_bg_settings={showing_panel === "bg"}
-        show_weapon_settings={showing_panel === "weapon"}
-        show_bot_settings={showing_panel === "bot"}
-        show_world_tuning={showing_panel === "world_tuning"}
+        show_stage_settings={s.showing_panel === "stage"}
+        show_bg_settings={s.showing_panel === "bg"}
+        show_weapon_settings={s.showing_panel === "weapon"}
+        show_bot_settings={s.showing_panel === "bot"}
+        show_world_tuning={s.showing_panel === "world_tuning"}
       />
-    </div>, pannel_cell, null) : null
+    </div >, pannel_cell, null) : null
 
   return (
     <>
