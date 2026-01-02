@@ -23,9 +23,12 @@ export class CharMenuState_ComNumSel extends CharMenuState_Base {
     if (e.game_key === 'a') {
       const which = this.owner.node.root.focused_node?.id?.match(/com_num_(\d)/)?.at(1)
       const com_num = Number(which)
-      if (!(com_num >= 0)) return;
-      this.owner.com_num = com_num
-      this.owner.fsm.use(CharMenuState.ComSel)
+      if (com_num >= 0) {
+        this.owner.com_num = com_num
+        this.owner.fsm.use(CharMenuState.ComSel)
+      } else {
+        this.owner.fsm.use(CharMenuState.GameSetting)
+      }
     }
   }
 }
