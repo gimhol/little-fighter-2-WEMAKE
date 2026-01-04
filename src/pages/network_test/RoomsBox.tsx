@@ -65,7 +65,7 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
     if (!conn) return;
     set_room_creating(true)
     conn.send(MsgEnum.CreateRoom, {
-      min_players: 2,
+      min_players: 1,
       max_players: 4,
     }).then((resp) => {
       update_rooms()

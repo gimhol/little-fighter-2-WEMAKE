@@ -55,12 +55,14 @@ export class Room {
 
     this.title = req.title?.trim() || `${owner.player_info?.name}的房间`
     const { max_players = 4, min_players = 2 } = req
-    if (typeof max_players === 'number' && max_players >= 2)
-      this.max_players = Math.floor(max_players)
-
-    if (typeof min_players === 'number' && min_players < 2)
-      this.min_players = Math.floor(min_players)
-
+    if (typeof max_players === 'number')
+      this.max_players = Math.max(1, Math.floor(max_players))
+    if (typeof min_players === 'number')
+      this.min_players = Math.max(1, Math.floor(min_players))
+    const min = Math.min(this.max_players, this.min_players);
+    const max = Math.max(this.max_players, this.min_players);
+    this.min_players = min;
+    this.max_players = max
     this.players.add(owner);
     owner.room = this;
     owner.resp(req.type, req.pid, { room: this.room_info })
