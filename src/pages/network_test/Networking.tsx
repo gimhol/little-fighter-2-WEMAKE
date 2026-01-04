@@ -71,6 +71,7 @@ export function Networking(props: INetworkingProps) {
             }
           }
           lf2.world.update_once()
+          lf2.world.render_once(16)
           conn.send(MsgEnum.Tick, cur_req);
           break;
       }
