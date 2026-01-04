@@ -71,19 +71,19 @@ export class GamePrepareLogic extends UIComponent {
       fighter.position.x = this.lf2.random_in(left, right);
       fighter.blinking = this.world.begin_blink_time;
       fighter.attach();
-      const stage_name_text = this.node.root.search_component(
-        StageNameText,
-        (v) => v.node.visible && !v.node.disabled,
-      );
-      const background_name_text = this.node.root.search_component(
-        BackgroundNameText,
-        (v) => v.node.visible && !v.node.disabled,
-      );
-      if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
-      else if (background_name_text) this.lf2.change_bg(background_name_text.background);
-      if (stage_name_text) this.lf2.push_ui("stage_mode_page");
-      else this.lf2.push_ui("vs_mode_page");
     }
+    const stage_name_text = this.node.root.search_component(
+      StageNameText,
+      (v) => v.node.visible && !v.node.disabled,
+    );
+    const background_name_text = this.node.root.search_component(
+      BackgroundNameText,
+      (v) => v.node.visible && !v.node.disabled,
+    );
+    if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
+    else if (background_name_text) this.lf2.change_bg(background_name_text.background);
+    if (stage_name_text) this.lf2.push_ui("stage_mode_page");
+    else this.lf2.push_ui("vs_mode_page");
   }
 }
 
