@@ -646,4 +646,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   random_int() {
     return this._mt.int();
   }
+  seed(v: number): void {
+    this._mt.reset(v)
+  }
 }

@@ -45,6 +45,7 @@ export function Networking(props: INetworkingProps) {
           }
           lf2.load("data.zip.json")
           lf2.set_ui("loading")
+          lf2.seed(resp.seed ?? 0)
           break;
         case MsgEnum.Tick: {
           const { reqs, seq } = resp
