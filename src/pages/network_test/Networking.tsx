@@ -2,7 +2,7 @@
 import { Labels, LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
 import { IKeyEvent, IReqGameTick, MsgEnum, TInfo } from "@/Net";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";
 import { Connection } from "./Connection";
 import { ConnectionBox } from "./ConnectionBox";
@@ -10,9 +10,8 @@ import { RoomBox } from "./RoomBox";
 import { RoomsBox } from "./RoomsBox";
 import styles from "./styles.module.scss";
 import { TriState } from "./TriState";
-import { useRoom } from "./useRoom";
-import { useMessageHandler } from "./useMessageHandler";
 import { useCallbacks } from "./useCallbacks";
+import { useRoom } from "./useRoom";
 export interface INetworkingProps {
   lf2?: LF2 | undefined | null;
 }
@@ -58,7 +57,7 @@ export function Networking(props: INetworkingProps) {
               cmds: [...lf2.cmds],
               events: lf2.events.map<IKeyEvent>(r => ({
                 client_id: me.id,
-                player_id: r.player,
+                player_id: me.id + '#' + r.player,
                 game_key: r.game_key,
                 pressed: r.pressed
               }))
@@ -70,14 +69,12 @@ export function Networking(props: INetworkingProps) {
                 if (cmds?.length)
                   lf2.cmds.push(...cmds)
                 if (events?.length) {
-                  for (const { client_id, player_id, pressed = false, game_key = '' } of events) {
-                    if (!client_id) continue;
+                  for (const { player_id, pressed = false, game_key = '' } of events) {
                     if (!player_id) continue;
                     const gk = game_key as LGK
                     const label = Labels[gk]
                     if (!label) continue;
-                    const pid = client_id + '#' + player_id
-                    const le = new LF2KeyEvent(pid, pressed, gk, label)
+                    const le = new LF2KeyEvent(player_id, pressed, gk, label)
                     lf2.events.push(le)
                   }
                 }
