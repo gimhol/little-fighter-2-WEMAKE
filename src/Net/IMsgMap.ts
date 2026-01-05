@@ -5,16 +5,16 @@ import type { IReqExitRoom, IReqKick, IRespExitRoom, IRespKick } from "./IMsg_Ex
 import type { IReqGameTick, IRespGameTick } from "./IMsg_GameTick";
 import type { IReqJoinRoom, IRespJoinRoom } from "./IMsg_JoinRoom";
 import type { IReqListRooms, IRespListRooms } from "./IMsg_ListRooms";
-import type { IReqPlayerInfo, IRespPlayerInfo } from "./IMsg_PlayerInfo";
-import type { IReqPlayerReady, IRespPlayerReady } from "./IMsg_PlayerReady";
+import type { IReqClientInfo, IRespClientInfo } from "./IMsg_ClientInfo";
+import type { IReqClientReady, IRespClientReady } from "./IMsg_ClientReady";
 import type { IReqRoomStart, IRespRoomStart } from "./IMsg_RoomStart";
 import type { MsgEnum } from "./MsgEnum";
 import type { IReq, IResp } from "./_Base";
 export interface IMsgReqMap {
-  [MsgEnum.PlayerInfo]: IReqPlayerInfo,
+  [MsgEnum.ClientInfo]: IReqClientInfo,
   [MsgEnum.CreateRoom]: IReqCreateRoom,
   [MsgEnum.JoinRoom]: IReqJoinRoom,
-  [MsgEnum.PlayerReady]: IReqPlayerReady,
+  [MsgEnum.ClientReady]: IReqClientReady,
   [MsgEnum.RoomStart]: IReqRoomStart,
   [MsgEnum.ExitRoom]: IReqExitRoom,
   [MsgEnum.CloseRoom]: IReqCloseRoom,
@@ -25,10 +25,10 @@ export interface IMsgReqMap {
   [MsgEnum.Tick]: IReqGameTick,
 }
 export interface IMsgRespMap {
-  [MsgEnum.PlayerInfo]: IRespPlayerInfo,
+  [MsgEnum.ClientInfo]: IRespClientInfo,
   [MsgEnum.CreateRoom]: IRespCreateRoom,
   [MsgEnum.JoinRoom]: IRespJoinRoom,
-  [MsgEnum.PlayerReady]: IRespPlayerReady,
+  [MsgEnum.ClientReady]: IRespClientReady,
   [MsgEnum.RoomStart]: IRespRoomStart,
   [MsgEnum.ExitRoom]: IRespExitRoom,
   [MsgEnum.JoinRoom]: IRespJoinRoom,

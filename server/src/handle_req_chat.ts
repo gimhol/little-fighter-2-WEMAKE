@@ -16,7 +16,7 @@ export function handle_req_chat(client: Client, req: IReqChat): void {
     return
   }
   const { ctx, room } = client;
-  const { player_info: sender } = client;
+  const { client_info: sender } = client;
   const date = Date.now();
   const resp: TInfo<IRespChat> = { sender, date, text, target, seq: msg_seq++ };
   switch (target) {

@@ -2,14 +2,14 @@
  * 玩家信息
  *
  * @export
- * @interface IPlayerInfo
+ * @interface IClientInfo
  */
-export interface IPlayerInfo {
+export interface IClientInfo {
   /**
    * 玩家ID
    *
    * @type {string}
-   * @memberof IPlayerInfo
+   * @memberof IClientInfo
    */
   id?: string;
 
@@ -17,7 +17,7 @@ export interface IPlayerInfo {
    * 玩家姓名
    *
    * @type {string}
-   * @memberof IPlayerInfo
+   * @memberof IClientInfo
    */
   name?: string;
 }

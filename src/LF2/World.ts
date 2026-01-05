@@ -401,9 +401,10 @@ export class World extends WorldDataset {
           this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
           break;
         case 'f9':
-          for (const e of this.entities) {
-            if (is_weapon(e)) e.hp = 0;
-          }
+          this.stage.kill_all_enemies()
+          break;
+        case 'f10':
+          for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
           break;
       }
     }

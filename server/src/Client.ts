@@ -1,7 +1,7 @@
 import type { RawData, WebSocket } from 'ws';
 import type { Context } from './Context';
 import {
-  ErrCode, IMsgReqMap, IMsgRespMap, IPlayerInfo, IReq, IResp, ISendOpts,
+  ErrCode, IMsgReqMap, IMsgRespMap, IClientInfo, IReq, IResp, ISendOpts,
   MsgEnum, req_timeout_error, req_unknown_error, TInfo, TReq, TResp, IJob
 } from "./Net";
 import { Room } from './Room';
@@ -20,7 +20,7 @@ export class Client {
   readonly ctx: Context;
   protected _pid = 1;
   protected _jobs = new Map<string, IJob>();
-  player_info?: Required<IPlayerInfo>;
+  client_info?: Required<IClientInfo>;
   room?: Room;
   ready: boolean = false;
   constructor(ctx: Context, ws: WebSocket) {
@@ -76,7 +76,6 @@ export class Client {
 
   private handle_ws_msg = (msg: RawData) => {
     const str = '' + msg;
-    console.log(`[${Client.TAG}::handle_ws_msg] ${this.id} msg:`, str);
     try {
       const what: TReq | TResp = JSON.parse(str);
       if ('is_resp' in what) {
@@ -108,12 +107,12 @@ export class Client {
   private handle_req = (req: TReq) => {
     const { ctx } = this
     switch (req.type) {
-      case MsgEnum.PlayerInfo: {
-        const player_info = this.player_info = {
+      case MsgEnum.ClientInfo: {
+        const player_info = this.client_info = {
           id: this.id,
           name: req.name?.trim() || `玩家${this.id}`
         }
-        this.resp(req.type, req.pid, { player: player_info }).catch(() => void 0)
+        this.resp(req.type, req.pid, { client: player_info }).catch(() => void 0)
         break;
       }
       case MsgEnum.CreateRoom: {
@@ -151,7 +150,7 @@ export class Client {
         ) this.room?.exit(this, req);
         break;
       }
-      case MsgEnum.PlayerReady: {
+      case MsgEnum.ClientReady: {
         if (
           ensure_player_info(this, req) &&
           ensure_in_room(this, req)

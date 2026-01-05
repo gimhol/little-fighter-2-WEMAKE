@@ -1,7 +1,7 @@
 import { Callbacks } from "@/LF2/base";
 import {
-  IConnError, IJob, IMsgReqMap, IMsgRespMap, IPlayerInfo, IReq, IResp,
-  IRespPlayerInfo, IRoomInfo, ISendOpts, MsgEnum, req_timeout_error,
+  IConnError, IJob, IMsgReqMap, IMsgRespMap, IClientInfo, IReq, IResp,
+  IRespClientInfo, IRoomInfo, ISendOpts, MsgEnum, req_timeout_error,
   req_unknown_error, resp_error, TInfo, TReq, TResp
 } from "../../Net";
 
@@ -9,7 +9,7 @@ export interface IConnectionCallbacks {
   once?: boolean;
   on_open?(conn: Connection): void;
   on_close?(e: CloseEvent, conn: Connection): void;
-  on_register?(resp: IRespPlayerInfo, conn: Connection): void;
+  on_register?(resp: IRespClientInfo, conn: Connection): void;
   on_error?(error: IConnError, conn: Connection): void;
   on_message?(resp: TResp, conn: Connection): void;
   on_room_change?(room: IRoomInfo | undefined, conn: Connection): void;
@@ -23,7 +23,8 @@ export class Connection {
   protected _reopen?: () => void;
   protected _jobs = new Map<string, IJob>();
   protected _ws: WebSocket | null = null;
-  player?: IPlayerInfo;
+  protected _player?: IClientInfo;
+  get player(): IClientInfo | undefined { return this._player }
   room?: IRoomInfo;
   rooms: IRoomInfo[] = [];
   nickname: string;
@@ -34,12 +35,12 @@ export class Connection {
   }
   protected _on_open = () => {
     this.callbacks.emit('on_open')(this)
-    this.send(MsgEnum.PlayerInfo, {
+    this.send(MsgEnum.ClientInfo, {
       name: this.nickname
     }, {
       timeout: 1000
     }).then((resp) => {
-      this.player = resp.player;
+      this._player = resp.client;
       this.callbacks.emit('on_register')(resp, this)
     }).catch((e) => {
       this.close();
@@ -152,31 +153,31 @@ export class Connection {
         break;
       case MsgEnum.ExitRoom:
       case MsgEnum.Kick:
-        const room = resp.player?.id === this.player?.id ? void 0 : resp.room
+        const room = resp.client?.id === this._player?.id ? void 0 : resp.room
         this.callbacks.emit('on_room_change')(this.room = room, this)
         break;
-      case MsgEnum.PlayerReady: {
+      case MsgEnum.ClientReady: {
         const prev = this.room
         if (prev) {
           const room = { ...prev }
-          if (room.players)
-            for (const p of room.players)
-              if (p.id === resp.player?.id)
+          if (room.clients)
+            for (const p of room.clients)
+              if (p.id === resp.client?.id)
                 p.ready = !!resp.ready;
-          if (room.players) room.players = [...room.players]
+          if (room.clients) room.clients = [...room.clients]
           this.callbacks.emit('on_room_change')(this.room = room, this)
         }
         break;
       }
-      case MsgEnum.PlayerInfo: {
+      case MsgEnum.ClientInfo: {
         const prev = this.room
         if (prev) {
           const room = { ...prev }
-          if (room.players)
-            for (const p of room.players)
-              if (p.id === resp.player?.id)
-                Object.assign(p, resp.player)
-          if (room.players) room.players = [...room.players]
+          if (room.clients)
+            for (const p of room.clients)
+              if (p.id === resp.client?.id)
+                Object.assign(p, resp.client)
+          if (room.clients) room.clients = [...room.clients]
           this.callbacks.emit('on_room_change')(this.room = room, this)
         }
         break;

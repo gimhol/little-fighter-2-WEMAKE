@@ -1,14 +1,14 @@
 import type { IReq, IResp } from './_Base';
 import type { MsgEnum } from './MsgEnum';
 export interface IKeyEvent {
+  client_id?: string;
   player_id?: string;
-  player?: string;
   game_key?: string;
   pressed?: boolean;
 }
 export interface IReqGameTick extends IReq<MsgEnum.Tick> {
-  player_id?: string;
-  player_name?: string;
+  client_id?: string;
+  client_name?: string;
   seq?: number;
   cmds?: string[];
   events?: IKeyEvent[]

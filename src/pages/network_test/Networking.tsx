@@ -1,6 +1,6 @@
 
-import { Labels, LF2, LF2KeyEvent, LGK } from "@/LF2";
-import { IReqGameTick, MsgEnum, TInfo } from "@/Net";
+import { Labels, LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
+import { IKeyEvent, IReqGameTick, MsgEnum, TInfo } from "@/Net";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useEffect, useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";
@@ -33,6 +33,16 @@ export function Networking(props: INetworkingProps) {
 
       switch (resp.type) {
         case MsgEnum.RoomStart:
+          const players = conn.room?.clients
+          if (players) {
+            for (const player of players) {
+              for (let i = 1; i <= 8; i++) {
+                const k = `${player.id}#${i}`;
+                const pi = new PlayerInfo(k, player.name, false);
+                lf2.players.set(k, pi)
+              }
+            }
+          }
           lf2.load("data.zip.json")
           lf2.set_ui("loading")
           break;
@@ -43,9 +53,9 @@ export function Networking(props: INetworkingProps) {
           const cur_req: TInfo<IReqGameTick> = {
             seq: seq + 1,
             cmds: [...lf2.cmds],
-            events: lf2.events.map(r => ({
-              player_id: me.id,
-              player: r.player,
+            events: lf2.events.map<IKeyEvent>(r => ({
+              client_id: me.id,
+              player_id: r.player,
               game_key: r.game_key,
               pressed: r.pressed
             }))
@@ -57,13 +67,13 @@ export function Networking(props: INetworkingProps) {
               if (cmds?.length)
                 lf2.cmds.push(...cmds)
               if (events?.length) {
-                for (const { player_id, player, pressed = false, game_key = '' } of events) {
+                for (const { client_id, player_id, pressed = false, game_key = '' } of events) {
+                  if (!client_id) continue;
                   if (!player_id) continue;
-                  if (!player) continue;
                   const gk = game_key as LGK
                   const label = Labels[gk]
                   if (!label) continue;
-                  const pid = player_id === me.id ? player : player_id + '#' + player
+                  const pid = client_id + '#' + player_id
                   const le = new LF2KeyEvent(pid, pressed, gk, label)
                   lf2.events.push(le)
                 }

@@ -378,12 +378,9 @@ function App() {
     [players],
   );
 
-  useShortcut("F8", 0, () => lf2?.weapons.add_random(9));
-  useShortcut("F9", 0, () => lf2?.world.stage.kill_all_enemies());
-  useShortcut("F10", 0, () => {
-    if (lf2) for (const e of lf2.world.entities) if (is_weapon(e)) e.hp = 0;
-  });
-
+  useShortcut("F8", 0, () => lf2?.cmds.push('f8'));
+  useShortcut("F9", 0, () => lf2?.cmds.push('f9'));
+  useShortcut("F10", 0, () => lf2?.cmds.push('f10'));
   useShortcut("F11", 0, () => toggle_fullscreen());
   useShortcut("ctrl+F1", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.dev_ui_open = !d.dev_ui_open }));
   useShortcut("ctrl+F3", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.game_overlay = !d.game_overlay }));

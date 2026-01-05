@@ -1,5 +1,5 @@
-import type { IPlayerInfo } from "./IPlayerInfo";
-import type { IRoomPlayerInfo } from "./IRoomPlayerInfo";
+import type { IClientInfo } from "./IClientInfo";
+import type { IRoomClientInfo } from "./IRoomClientInfo";
 
 /**
  * 房间信息
@@ -35,18 +35,18 @@ export interface IRoomInfo {
   /**
    * 房主
    *
-   * @type {Required<IPlayerInfo>}
+   * @type {Required<IClientInfo>}
    * @memberof IRoomInfo
    */
-  owner?: Required<IPlayerInfo>;
+  owner?: Required<IClientInfo>;
 
   /**
-   * 房间内玩家
+   * 房间内客户端
    *
-   * @type {Required<IRoomPlayerInfo>[]}
+   * @type {Required<IRoomClientInfo>[]}
    * @memberof IRoomInfo
    */
-  players?: Required<IRoomPlayerInfo>[];
+  clients?: Required<IRoomClientInfo>[];
 
   /**
    * 最小玩家数

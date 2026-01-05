@@ -6,10 +6,10 @@ import {
   IReqCloseRoom, IReqCreateRoom,
   IReqExitRoom,
   IReqGameTick,
-  IReqJoinRoom, IReqKick, IReqPlayerReady, IReqRoomStart, IResp, IRespCloseRoom,
+  IReqJoinRoom, IReqKick, IReqClientReady, IReqRoomStart, IResp, IRespCloseRoom,
   IRespExitRoom,
   IRespGameTick,
-  IRespJoinRoom, IRespKick, IRespPlayerReady, IRoomInfo, MsgEnum, SystemPlayerInfo, TInfo
+  IRespJoinRoom, IRespKick, IRespClientReady, IRoomInfo, MsgEnum, SystemPlayerInfo, TInfo
 } from "./Net";
 import { random_str } from './random_str';
 
@@ -24,7 +24,7 @@ export class Room {
   min_players: number = 2;
   max_players: number = 4;
   title: string = `ROOM_${this.id}`;
-  players = new Set<Client>();
+  clients = new Set<Client>();
   tick_req_map = new Map<Client, IReqGameTick>()
   private _tick_seq = 0;
   get code() { return this._code; }
@@ -33,9 +33,9 @@ export class Room {
       title: this.title,
       code: this._code,
       id: this.id,
-      owner: this.owner.player_info!,
-      players: Array.from(this.players).map(v => ({
-        ...v.player_info!,
+      owner: this.owner.client_info!,
+      clients: Array.from(this.clients).map(v => ({
+        ...v.client_info!,
         ready: v.ready
       })),
       min_players: this.min_players,
@@ -53,7 +53,7 @@ export class Room {
     ctx.room_mgr.add(this)
 
 
-    this.title = req.title?.trim() || `${owner.player_info?.name}的房间`
+    this.title = req.title?.trim() || `${owner.client_info?.name}的房间`
     const { max_players = 4, min_players = 2 } = req
     if (typeof max_players === 'number')
       this.max_players = Math.max(1, Math.floor(max_players))
@@ -63,37 +63,37 @@ export class Room {
     const max = Math.max(this.max_players, this.min_players);
     this.min_players = min;
     this.max_players = max
-    this.players.add(owner);
+    this.clients.add(owner);
     owner.room = this;
     owner.resp(req.type, req.pid, { room: this.room_info })
 
   }
 
-  ready(client: Client, req: IReqPlayerReady = { type: MsgEnum.PlayerReady, is_req: true, pid: '' }) {
+  ready(client: Client, req: IReqClientReady = { type: MsgEnum.ClientReady, is_req: true, pid: '' }) {
     console.log(`[${Room.TAG}::ready]`)
-    const { players } = this;
-    const { player_info, room } = client;
+    const { clients: players } = this;
+    const { client_info: player_info, room } = client;
     if (!players.has(client)) return false;
     if (!player_info) return false;
     if (room !== this) return false;
 
     client.ready = req.ready ?? client.ready;
-    const resp: TInfo<IRespPlayerReady> = { player: player_info, ready: client.ready }
+    const resp: TInfo<IRespClientReady> = { client: player_info, ready: client.ready }
     this.broadcast(req.type, resp, client)
     client.resp(req.type, req.pid, resp)
     return true;
   }
   kick(req: IReqKick = { type: MsgEnum.Kick, is_req: true, pid: '' }) {
-    const { players } = this;
+    const { clients: players } = this;
     let client: Client | null = null
     for (const p of players) {
-      if (p.id === req.playerid) {
+      if (p.id === req.client_id) {
         client = p;
         break;
       }
     }
     if (!client) return false;
-    const { player_info, room } = client;
+    const { client_info: player_info, room } = client;
     if (room !== this) return false;
 
     client.ready = false
@@ -103,19 +103,19 @@ export class Room {
       room.owner = players.values().next().value!;
     const { room_info } = this;
     const resp: TInfo<IRespKick> = {
-      player: player_info,
+      client: player_info,
       room: room_info
     }
     this.broadcast(req.type, resp, client)
     client.resp(req.type, req.pid, resp).catch(() => void 0)
-    if (!this.players.size)
+    if (!this.clients.size)
       this.ctx.room_mgr.del(room)
   }
 
   exit(client: Client, req: IReqExitRoom = { type: MsgEnum.ExitRoom, is_req: true, pid: '' }) {
     console.log(`[${Room.TAG}::exit]`)
-    const { players } = this;
-    const { player_info, room } = client;
+    const { clients: players } = this;
+    const { client_info: player_info, room } = client;
     if (!players.has(client)) return;
     if (!player_info) return;
     if (room !== this) return;
@@ -127,7 +127,7 @@ export class Room {
       room.owner = players.values().next().value!;
     const { room_info } = this;
     const resp: TInfo<IRespExitRoom> = {
-      player: player_info,
+      client: player_info,
       room: room_info
     }
     this.broadcast(req.type, resp, client)
@@ -142,13 +142,13 @@ export class Room {
 
   join(client: Client, req: IReqJoinRoom = { type: MsgEnum.JoinRoom, is_req: true, pid: '' }) {
     console.log(`[${Room.TAG}::join]`)
-    const { players } = this;
-    const { player_info, room } = client;
+    const { clients: players } = this;
+    const { client_info: player_info, room } = client;
     if (players.has(client)) return false;
     if (!player_info) return false;
     if (room) return false;
 
-    if (this.players.size >= this.max_players) {
+    if (this.clients.size >= this.max_players) {
       client.resp(req.type, req.pid, { code: ErrCode.RoomIsFull, error: 'room is full' })
       return false
     }
@@ -171,8 +171,8 @@ export class Room {
   close(client: Client, info?: TInfo<IReqCloseRoom>) {
     console.log(`[${Room.TAG}::close]`)
     const req: IReqCloseRoom = { ...info, type: MsgEnum.CloseRoom, is_req: true, pid: '' }
-    const { players } = this;
-    const { player_info, room } = client;
+    const { clients: players } = this;
+    const { client_info: player_info, room } = client;
     if (!players.has(client)) return;
     if (!player_info) return;
     if (room !== this) return;
@@ -191,7 +191,7 @@ export class Room {
 
   start(client: Client, info?: TInfo<IReqRoomStart>) {
     const req: IReqRoomStart = { ...info, is_req: true, type: MsgEnum.RoomStart, pid: '' }
-    const { players } = this;
+    const { clients: players } = this;
     if (players.size < this.min_players) {
       client.resp(req.type, req.pid, { code: ErrCode.PlayersTooFew, error: 'players are too few' }).catch(() => void 0)
       return;
@@ -203,7 +203,7 @@ export class Room {
   }
 
   broadcast<T extends MsgEnum, Resp extends IResp = IMsgRespMap[T]>(type: T, resp: TInfo<Resp>, ...excludes: Client[]) {
-    for (const c of this.players)
+    for (const c of this.clients)
       if (!excludes.some(v => v === c))
         c.resp(type, '', resp).catch(e => { })
   }
@@ -211,14 +211,11 @@ export class Room {
   tick(client: Client, req: IReqGameTick) {
     if (req.seq !== this._tick_seq)
       return;
-    req.player_id = client.player_info?.id;
+    req.client_id = client.client_info?.id;
     if (this._tick_seq === 0)
-      req.player_name = client.player_info?.name;
-    req.events?.forEach(v => { v.player = req.player_id })
-
-
+      req.client_name = client.client_info?.name;
     this.tick_req_map.set(client, req)
-    if (this.tick_req_map.size !== this.players.size)
+    if (this.tick_req_map.size !== this.clients.size)
       return;
     const resp: TInfo<IRespGameTick> = { seq: this._tick_seq, reqs: [] }
     for (const [, req] of this.tick_req_map)

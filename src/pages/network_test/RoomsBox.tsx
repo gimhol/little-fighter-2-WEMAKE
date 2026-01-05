@@ -138,7 +138,7 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
             <Flex gap={10} direction='column' align='stretch' justify='space-between' style={{ padding: 5, boxSizing: 'border-box', height: 64 }}>
               <Flex gap={10}>
                 <Strong> 房名: {r.title} </Strong>
-                <Text> 人数: {r.players?.length}/{r.max_players} </Text>
+                <Text> 人数: {r.clients?.length}/{r.max_players} </Text>
               </Flex>
               <Flex gap={10}>
                 <Text style={{ flex: 1 }}> 房主: {r.owner?.name} </Text>

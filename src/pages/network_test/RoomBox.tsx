@@ -17,7 +17,7 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
   const { conn, ..._p } = props;
   const { room } = useRoom(conn)
   const { players, me, owner, all_ready, is_owner } = useMemo(() => {
-    const players = room?.players ?? []
+    const players = room?.clients ?? []
     const me = players.find(v => v.id == conn?.player?.id) || null;
     const owner = players.find(v => v.id == room?.owner?.id) || null;
     const all_ready = !!(
@@ -75,7 +75,7 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
                   <Show show={owner?.id === me?.id && !is_self}>
                     <Button
                       variants={['no_border', 'no_round', 'no_shadow']}
-                      onClick={() => conn?.send(MsgEnum.Kick, { playerid: other.id })}>
+                      onClick={() => conn?.send(MsgEnum.Kick, { client_id: other.id })}>
                       踢出
                     </Button>
                   </Show>
@@ -101,7 +101,7 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
         </Button>
         <Button
           variants={['no_border', 'no_round', 'no_shadow']}
-          onClick={() => conn?.send(MsgEnum.PlayerReady, { ready: !me?.ready })}>
+          onClick={() => conn?.send(MsgEnum.ClientReady, { ready: !me?.ready })}>
           {me?.ready ? '取消准备' : '准备!'}
         </Button>
       </Flex>

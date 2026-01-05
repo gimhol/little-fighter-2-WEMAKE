@@ -12,7 +12,7 @@ import { TReq } from './Net';
  * @return {boolean} 客户端不在房间内时，返回true，否则返回false
  */
 export function ensure_player_info(client: Client, req: TReq): boolean {
-  if (client.player_info) return true;
+  if (client.client_info) return true;
   client.resp(req.type, req.pid, {
     code: ErrCode.NotRegister,
     error: 'player info not set!'

@@ -1,5 +1,5 @@
 import type { IReq, IResp } from "./_Base";
-import type { IPlayerInfo } from "./IPlayerInfo";
+import type { IClientInfo } from "./IClientInfo";
 import type { MsgEnum } from "./MsgEnum";
 
 export interface IReqChat extends IReq<MsgEnum.Chat> {
@@ -23,7 +23,7 @@ export interface IReqChat extends IReq<MsgEnum.Chat> {
 export interface IRespChat extends IResp<MsgEnum.Chat> {
   seq?: number;
   /** 发送人 */
-  sender?: IPlayerInfo;
+  sender?: IClientInfo;
   /** 发送时间 */
   date?: number;
   target?: 'global' | 'room' | 'private';
