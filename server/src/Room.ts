@@ -27,6 +27,7 @@ export class Room {
   clients = new Set<Client>();
   tick_req_map = new Map<Client, IReqGameTick>()
   private _tick_seq = 0;
+  seed: number;
   get code() { return this._code; }
   get room_info(): Required<IRoomInfo> {
     return {
@@ -46,7 +47,7 @@ export class Room {
     const { ctx } = owner
     this.ctx = ctx
     this.owner = owner;
-
+    this.seed = Date.now()
     while (!this._code || ctx.room_mgr.codes.has(this._code)) {
       this._code = random_str();
     }
@@ -197,8 +198,8 @@ export class Room {
       return;
     }
 
-    this.broadcast(req.type, {}, client)
-    client.resp(req.type, req.pid, {}).catch(() => void 0)
+    this.broadcast(req.type, { seed: this.seed }, client)
+    client.resp(req.type, req.pid, { seed: this.seed }).catch(() => void 0)
     this._tick_seq = 0
   }
 
