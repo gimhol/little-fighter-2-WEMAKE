@@ -1,5 +1,5 @@
-import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
-import { KEY_NAME_LIST, LocalController } from "./controller";
+import { Callbacks, get_short_file_size_txt, new_id, PIO } from "./base";
+import { KEY_NAME_LIST } from "./controller";
 import * as D from "./defines";
 import * as I from "./ditto";
 import { Entity } from "./entity";

@@ -1,4 +1,3 @@
-import { V } from "react-router/dist/development/index-react-server-client-Da3kmxNd";
 import { Callbacks, FPS, ICollision } from "./base";
 import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
@@ -45,6 +44,8 @@ export class World extends WorldDataset {
   private _FPS = new FPS(0.9);
   private _UPS = new FPS(0.9);
   private _prev_time: number = 0;
+  private _fix_radio: number = 1;
+  private _update_count: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   private _game_time = new Times();
@@ -235,27 +236,34 @@ export class World extends WorldDataset {
     this._update_worker_id && Ditto.Interval.del(this._update_worker_id);
     this._update_worker_id = void 0;
   }
-
+  before_update?(): void;
+  after_update?(): void;
+  private _sleeping: boolean = false;
+  sleep(): void { this._sleeping = true }
+  awake(): void { this._sleeping = false }
   start_update() {
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
     this._prev_time = Date.now();
-    let _update_count = 0;
-    let _fix_radio = 1;
+    this._fix_radio = 1;
+    this._update_count = 0;
     const on_update = () => {
       const time = Date.now();
       const real_dt = time - this._prev_time;
-      if (real_dt < this._ideally_dt * _fix_radio) return;
-      _update_count++;
+      if (real_dt < this._ideally_dt * this._fix_radio) return;
+      if (this._sleeping) return;
+      this.before_update?.();
+      this._update_count++;
       this.update_once();
-
-      if (0 === _update_count % this.sync_render) {
+      if (0 === this._update_count % this.sync_render) {
         this.render_once(real_dt);
-        this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
+        if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
       }
       this._UPS.update(real_dt);
-      _fix_radio = this._UPS.value / 60;
+      this._fix_radio = this._UPS.value / 60;
       if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
       this._prev_time = time;
+      this.after_update?.();
+
     };
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
   }

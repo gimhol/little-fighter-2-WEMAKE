@@ -46,44 +46,47 @@ export function Networking(props: INetworkingProps) {
           lf2.load("data.zip.json")
           lf2.set_ui("loading")
           break;
-        case MsgEnum.Tick:
+        case MsgEnum.Tick: {
           const { reqs, seq } = resp
           if (typeof seq !== 'number') break
-          if (seq == 0) lf2.world.stop_update()
-          const cur_req: TInfo<IReqGameTick> = {
-            seq: seq + 1,
-            cmds: [...lf2.cmds],
-            events: lf2.events.map<IKeyEvent>(r => ({
-              client_id: me.id,
-              player_id: r.player,
-              game_key: r.game_key,
-              pressed: r.pressed
-            }))
-          }
-          if (reqs?.length) {
-            for (const { cmds, events } of reqs) {
-              lf2.cmds.length = 0;
-              lf2.events.length = 0;
-              if (cmds?.length)
-                lf2.cmds.push(...cmds)
-              if (events?.length) {
-                for (const { client_id, player_id, pressed = false, game_key = '' } of events) {
-                  if (!client_id) continue;
-                  if (!player_id) continue;
-                  const gk = game_key as LGK
-                  const label = Labels[gk]
-                  if (!label) continue;
-                  const pid = client_id + '#' + player_id
-                  const le = new LF2KeyEvent(pid, pressed, gk, label)
-                  lf2.events.push(le)
+
+          lf2.world.after_update = () => lf2.world.sleep()
+          lf2.world.before_update = () => {
+            const req: TInfo<IReqGameTick> = {
+              seq: seq + 1,
+              cmds: [...lf2.cmds],
+              events: lf2.events.map<IKeyEvent>(r => ({
+                client_id: me.id,
+                player_id: r.player,
+                game_key: r.game_key,
+                pressed: r.pressed
+              }))
+            }
+            if (reqs?.length) {
+              for (const { cmds, events } of reqs) {
+                lf2.cmds.length = 0;
+                lf2.events.length = 0;
+                if (cmds?.length)
+                  lf2.cmds.push(...cmds)
+                if (events?.length) {
+                  for (const { client_id, player_id, pressed = false, game_key = '' } of events) {
+                    if (!client_id) continue;
+                    if (!player_id) continue;
+                    const gk = game_key as LGK
+                    const label = Labels[gk]
+                    if (!label) continue;
+                    const pid = client_id + '#' + player_id
+                    const le = new LF2KeyEvent(pid, pressed, gk, label)
+                    lf2.events.push(le)
+                  }
                 }
               }
             }
+            conn.send(MsgEnum.Tick, req)
           }
-          lf2.world.update_once()
-          lf2.world.render_once(16)
-          conn.send(MsgEnum.Tick, cur_req);
+          lf2.world.awake()
           break;
+        }
       }
     }
   }, [lf2])
