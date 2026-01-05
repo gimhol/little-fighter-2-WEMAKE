@@ -1,6 +1,6 @@
 
 import { Labels, LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
-import { IKeyEvent, IReqGameTick, MsgEnum, TInfo } from "@/Net";
+import { IKeyEvent, IReqGameTick, IRespGameTick, MsgEnum, TInfo } from "@/Net";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";
@@ -15,6 +15,34 @@ import { useRoom } from "./useRoom";
 export interface INetworkingProps {
   lf2?: LF2 | undefined | null;
 }
+const before_update = (conn: Connection, lf2: LF2, resp: IRespGameTick) => {
+  const { reqs, seq } = resp
+  const me = conn.player;
+  if (!me || typeof seq !== 'number' || !reqs?.length) return;
+  const req: TInfo<IReqGameTick> = {
+    seq: seq + 1,
+    cmds: [...lf2.cmds],
+    events: lf2.events.map<IKeyEvent>(r => ({
+      client_id: me.id,
+      player_id: me.id + '#' + r.player,
+      game_key: r.game_key,
+      pressed: r.pressed
+    }))
+  }
+  for (const { cmds, events } of reqs) {
+    lf2.cmds.length = 0;
+    lf2.events.length = 0;
+    if (cmds?.length) lf2.cmds.push(...cmds)
+    if (!events?.length) continue;
+    for (const { player_id, pressed = false, game_key = '' } of events) {
+      if (!player_id) continue;
+      const gk = game_key as LGK
+      const le = new LF2KeyEvent(player_id, pressed, gk, gk)
+      lf2.events.push(le)
+    }
+  }
+  conn.send(MsgEnum.Tick, req)
+}
 export function Networking(props: INetworkingProps) {
   const { lf2 } = props;
   const ref_lf2 = useRef(lf2);
@@ -25,19 +53,16 @@ export function Networking(props: INetworkingProps) {
 
   useCallbacks(conn?.callbacks, {
     on_message: (resp, conn) => {
-
-      if (!lf2) return;
       const me = conn.player;
-      if (!me) return;
-
+      if (!lf2 || !me) return;
       switch (resp.type) {
         case MsgEnum.RoomStart:
-          const players = conn.room?.clients
-          if (players) {
-            for (const player of players) {
-              for (let i = 1; i <= 8; i++) {
-                const k = `${player.id}#${i}`;
-                const pi = new PlayerInfo(k, player.name, false);
+          const clients = conn.room?.clients
+          if (clients?.length) {
+            for (const client of clients) {
+              for (let i = 1; i <= 4; i++) {
+                const k = `${client.id}#${i}`;
+                const pi = new PlayerInfo(k, client.name, false);
                 lf2.players.set(k, pi)
               }
             }
@@ -47,41 +72,9 @@ export function Networking(props: INetworkingProps) {
           lf2.seed(resp.seed ?? 0)
           break;
         case MsgEnum.Tick: {
-          const { reqs, seq } = resp
-          if (typeof seq !== 'number') break
-
+          if (typeof resp.seq !== 'number') break
           lf2.world.after_update = () => lf2.world.sleep()
-          lf2.world.before_update = () => {
-            const req: TInfo<IReqGameTick> = {
-              seq: seq + 1,
-              cmds: [...lf2.cmds],
-              events: lf2.events.map<IKeyEvent>(r => ({
-                client_id: me.id,
-                player_id: me.id + '#' + r.player,
-                game_key: r.game_key,
-                pressed: r.pressed
-              }))
-            }
-            if (reqs?.length) {
-              for (const { cmds, events } of reqs) {
-                lf2.cmds.length = 0;
-                lf2.events.length = 0;
-                if (cmds?.length)
-                  lf2.cmds.push(...cmds)
-                if (events?.length) {
-                  for (const { player_id, pressed = false, game_key = '' } of events) {
-                    if (!player_id) continue;
-                    const gk = game_key as LGK
-                    const label = Labels[gk]
-                    if (!label) continue;
-                    const le = new LF2KeyEvent(player_id, pressed, gk, label)
-                    lf2.events.push(le)
-                  }
-                }
-              }
-            }
-            conn.send(MsgEnum.Tick, req)
-          }
+          lf2.world.before_update = () => before_update(conn, lf2, resp)
           lf2.world.awake()
           break;
         }
