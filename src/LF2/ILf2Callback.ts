@@ -1,5 +1,5 @@
-import type { Difficulty } from "./defines";
 import type { IZip } from "./ditto";
+import type { LF2 } from "./LF2";
 import type { PlayerInfo } from "./PlayerInfo";
 import type { UIComponent } from "./ui/component/UIComponent";
 import type { ICookedUIInfo } from "./ui/ICookedUIInfo";
@@ -28,7 +28,7 @@ export interface ILf2Callback {
 
   on_dispose?(): void;
   on_ui_loaded?(ui_infos: ICookedUIInfo[]): void;
-  on_prel_loaded?(): void;
+  on_prel_loaded?(lf2: LF2): void;
 
   on_broadcast?(message: string): void;
 

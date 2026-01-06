@@ -325,7 +325,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       }
       if (is_first) {
         this.set_ui(this.uiinfos[0]!)
-        this.callbacks.emit("on_prel_loaded")();
+        this.callbacks.emit("on_prel_loaded")(this);
       }
       this._playable = true;
       this.callbacks.emit("on_loading_end")();

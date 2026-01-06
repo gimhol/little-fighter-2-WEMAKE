@@ -25,11 +25,9 @@ import EditorView from "./EditorView";
 import { GameOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
 import { LF2 } from "./LF2/LF2";
-import Invoker from "./LF2/base/Invoker";
 import { CheatType } from "./LF2/defines";
 import { Defines } from "./LF2/defines/defines";
 import { Ditto } from "./LF2/ditto";
-import { is_weapon } from "./LF2/entity/type_check";
 import { IUIInfo } from "./LF2/ui/IUIInfo.dat";
 import { fisrt } from "./LF2/utils/container_help";
 import { arithmetic_progression } from "./LF2/utils/math/arithmetic_progression";
@@ -55,6 +53,7 @@ import "./init";
 import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
+import { useCallbacks } from "./pages/network_test/useCallbacks";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
@@ -86,6 +85,13 @@ const init_s = () => ({
 })
 
 function App() {
+  const l = useLocation()
+  const { sobj, hobj } = useMemo(() => {
+    const sobj = qs.parse(l.search.substring(1))
+    const hobj = qs.parse(l.hash.substring(1))
+    return { sobj, hobj }
+  }, [l])
+
   const [fullscreen] = useState(() => new Ditto.FullScreen());
   const ref_lf2 = useRef<LF2 | undefined>(void 0)
   const [lf2, set_lf2] = useState<LF2 | undefined>()
@@ -100,7 +106,7 @@ function App() {
   const [loaded, set_loaded] = useState(false);
   const [paused, _set_paused] = useState(false);
   const [bg_id, _set_bg_id] = useState(Defines.VOID_BG.id);
-
+  const [networking, set_networking] = useState(sobj.network === '1' || hobj.network === '1')
   const [dat_viewer_open, set_dat_viewer_open] = useState(false);
   const [editor_open, set_editor_open] = useState(false);
 
@@ -141,12 +147,74 @@ function App() {
 
   }, [lf2, ele_game_overlay])
 
-  const l = useLocation()
-  const { sobj, hobj } = useMemo(() => {
-    const sobj = qs.parse(l.search.substring(1))
-    const hobj = qs.parse(l.hash.substring(1))
-    return { sobj, hobj }
-  }, [l])
+  useCallbacks(fullscreen?.callbacks, {
+    onChange: (e) => _set_is_fullscreen(!!e),
+  }, [])
+
+  useCallbacks(lf2?.callbacks, {
+    on_broadcast: (message) => {
+      switch (message) {
+        case 'network_game': set_networking(prev => !prev); break;
+      }
+    },
+  })
+
+  useCallbacks(lf2?.callbacks, {
+    on_ui_loaded: (ui) => {
+      const layout_data_list = ui.map((l) => ({
+        id: l.id,
+        name: l.name,
+      }));
+      layout_data_list.unshift({ id: "", name: "无页面" });
+      set_uis(layout_data_list);
+
+      if (layout_data_list.length > 1)
+        _set_ui((v) => v || layout_data_list[1].id);
+    },
+    on_ui_changed: (v) => _set_ui(v?.id ?? ""),
+    on_loading_start: () => set_loading(true),
+    on_loading_end: () => {
+      set_loaded(true);
+      set_loading(false);
+    },
+    on_cheat_changed: (cheat_name, enabled) => {
+      switch (cheat_name) {
+        case CheatType.LF2_NET:
+          set_state(d => { d.cheat_1 = enabled })
+          break;
+        case CheatType.HERO_FT:
+          set_state(d => { d.cheat_2 = enabled })
+          break;
+        case CheatType.GIM_INK:
+          set_state(d => {
+            d.cheat_3 = d.dev_ui_open = d.game_overlay = enabled
+          })
+          break;
+      }
+    },
+    on_prel_loaded: (lf2) => {
+      const { test_ui } = qs.parse(window.location.search.substring(1))
+      if (typeof test_ui === 'string') lf2.set_ui(test_ui)
+    },
+  })
+
+  useCallbacks(lf2?.world.callbacks, {
+    on_stage_change: (s) => _set_bg_id(s.bg.id),
+    on_pause_change: (v) => _set_paused(v),
+    on_dataset_change: (key, value) => {
+      if (key !== 'sync_render') return
+      set_state(d => { d.sync_render = value as any })
+    },
+  })
+
+  useCallbacks(lf2?.sounds.callbacks, {
+    on_muted_changed: v => set_state(d => { d.muted = v }),
+    on_bgm_muted_changed: v => set_state(d => { d.bgm_muted = v }),
+    on_sound_muted_changed: v => set_state(d => { d.sound_muted = v }),
+    on_volume_changed: v => set_state(d => { d.volume = v }),
+    on_bgm_volume_changed: v => set_state(d => { d.bgm_volume = v }),
+    on_sound_volume_changed: v => set_state(d => { d.sound_volume = v }),
+  })
 
   useEffect(() => {
     if (!state_ready) return
@@ -195,72 +263,10 @@ function App() {
     window.addEventListener("keydown", on_keydown);
     _set_is_fullscreen(!!fullscreen.target);
     _set_paused(lf2.world.paused);
-    const invoker = new Invoker()
-      .add(
-        () => window.removeEventListener("keydown", on_keydown),
-        () => window.removeEventListener("touchstart", on_touchstart),
-        fullscreen.callbacks.add({
-          onChange: (e) => _set_is_fullscreen(!!e),
-        }),
-        lf2.world.callbacks.add({
-          on_stage_change: (s) => _set_bg_id(s.bg.id),
-          on_pause_change: (v) => _set_paused(v),
-          on_dataset_change: (key, value) => {
-            if (key !== 'sync_render') return
-            set_state(d => { d.sync_render = value as any })
-          },
-        }),
-        lf2.callbacks.add({
-          on_ui_loaded: (ui) => {
-            const layout_data_list = ui.map((l) => ({
-              id: l.id,
-              name: l.name,
-            }));
-            layout_data_list.unshift({ id: "", name: "无页面" });
-            set_uis(layout_data_list);
-
-            if (layout_data_list.length > 1)
-              _set_ui((v) => v || layout_data_list[1].id);
-          },
-          on_ui_changed: (v) => _set_ui(v?.id ?? ""),
-          on_loading_start: () => set_loading(true),
-          on_loading_end: () => {
-            set_loaded(true);
-            set_loading(false);
-          },
-          on_cheat_changed: (cheat_name, enabled) => {
-            switch (cheat_name) {
-              case CheatType.LF2_NET:
-                set_state(d => { d.cheat_1 = enabled })
-                break;
-              case CheatType.HERO_FT:
-                set_state(d => { d.cheat_2 = enabled })
-                break;
-              case CheatType.GIM_INK:
-                set_state(d => {
-                  d.cheat_3 = d.dev_ui_open = d.game_overlay = enabled
-                })
-                break;
-            }
-          },
-          on_prel_loaded: () => {
-            const { test_ui } = qs.parse(window.location.search.substring(1))
-            if (typeof test_ui === 'string') lf2.set_ui(test_ui)
-          },
-        }),
-        lf2.sounds.callbacks.add({
-          on_muted_changed: v => set_state(d => { d.muted = v }),
-          on_bgm_muted_changed: v => set_state(d => { d.bgm_muted = v }),
-          on_sound_muted_changed: v => set_state(d => { d.sound_muted = v }),
-          on_volume_changed: v => set_state(d => { d.volume = v }),
-          on_bgm_volume_changed: v => set_state(d => { d.bgm_volume = v }),
-          on_sound_volume_changed: v => set_state(d => { d.sound_volume = v }),
-        }),
-        () => lf2.dispose(),
-      )
-
     return () => {
-      invoker.invoke()
+      window.removeEventListener("keydown", on_keydown)
+      window.removeEventListener("touchstart", on_touchstart)
+      lf2.dispose()
     };
   }, [LF2, sobj, hobj, state_ready]);
 
@@ -870,7 +876,7 @@ function App() {
         onClose={() => set_editor_open(false)}
         style={{ background: 'black', position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, zIndex: 1 }}
         lf2={lf2} />
-      {(sobj.network === '1' || hobj.network === '1') && <Networking lf2={lf2} />}
+      {networking && <Networking lf2={lf2} />}
     </>
   );
 }

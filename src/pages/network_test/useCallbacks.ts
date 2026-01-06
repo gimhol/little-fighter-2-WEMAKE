@@ -1,9 +1,9 @@
-import { Callbacks } from "@/LF2";
-import { DependencyList, useRef, useEffect } from "react";
+import { NoEmitCallbacks } from "@/LF2";
+import { DependencyList, useEffect, useRef } from "react";
 
 
 export function useCallbacks<F extends {}>(
-  callbacks: Callbacks<F> | undefined | null,
+  callbacks: NoEmitCallbacks<F> | undefined | null,
   fn: F | (() => F),
   deps: DependencyList = []
 ) {

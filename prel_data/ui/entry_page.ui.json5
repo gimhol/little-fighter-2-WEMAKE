@@ -65,7 +65,7 @@
           },
           component: ["Reachable(main)"],
           actions: {
-            click: ["sound(ok)", "alert(还没想好呢)"],
+            click: ["sound(ok)", "broadcast(network_game)"],
           },
         },
         {
