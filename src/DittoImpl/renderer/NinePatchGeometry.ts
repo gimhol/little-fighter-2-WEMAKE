@@ -46,9 +46,10 @@ export class NinePatchGeometry extends BufferGeometry {
     const { w, h } = this.parameters = NinePatchGeometry.ensure_parameters(params)
     this.resize(w, h)
     this.setIndex(indices);
+    this.map_uv();
     this.setAttribute('normal', normals);
   }
-  map_mv() {
+  map_uv() {
     const {
       f_w, f_h, l_w, r_w, t_h, b_h, f_l, f_t, f_r, f_b
     } = this.parameters

@@ -2,7 +2,6 @@ import { Button } from "@/Component/Buttons/Button";
 import Combine, { ICombineProps } from "@/Component/Combine";
 import { Input } from "@/Component/Input";
 import { Text } from "@/Component/Text";
-import { MsgEnum } from "@/Net/MsgEnum";
 import { useFloating } from "@fimagine/dom-hooks/dist/useFloating";
 import { useForwardedRef } from "@fimagine/dom-hooks/dist/useForwardedRef";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
@@ -60,6 +59,7 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
         disabled={!!conn_state}
         data-flex={1}
         prefix={<Text size='s'>地址:</Text>}
+        onKeyDown={e => e.stopPropagation()}
       />
       <Combine>
         <Input
@@ -68,6 +68,7 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
           disabled={!!conn_state}
           data-flex={1}
           prefix={<Text size='s'>昵称:</Text>}
+          onKeyDown={e => e.stopPropagation()}
         />
         <Button
           disabled={conn_state === TriState.Pending || !address.trim()}
