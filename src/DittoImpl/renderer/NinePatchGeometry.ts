@@ -1,4 +1,3 @@
-import { floor } from "@/LF2";
 import { BufferGeometry, Float32BufferAttribute } from "three";
 
 const normals = (() => {
