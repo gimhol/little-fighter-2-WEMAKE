@@ -1,0 +1,13 @@
+{
+  main: {
+    REMOTE_DIR: "/root/backends/lfj",
+    REMOTE_BACKUP_DIR: "/root/backends/lfj_backup",
+    REMOTE_TMP_DIR: "/root/backends/lfj_tmp",
+    LOCAL_PATH: "./dist/cjs/index.js",
+    GIT_BRANCH: "",
+    GIT_IGNORED: true,
+    GIT_NO_BEHIND: false,
+    GIT_NO_AHEAD: false,
+    GIT_NO_DIRTY: false,
+  },
+}

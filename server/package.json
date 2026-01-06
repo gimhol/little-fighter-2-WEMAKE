@@ -6,12 +6,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "rollup -c -w",
     "build": "rollup -c",
-    "start": "rollup -c && node ./dist/cjs/index.js"
+    "start": "rollup -c && node ./dist/cjs/index.js",
+    "deploy": "fdeploy -s main -i deployer.private.json5 -p deployer.config.json5",
+    "flow": "npm run build && npm run deploy"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@fimagine/frontend_deployer": "^1.1.1",
     "@rollup/plugin-commonjs": "^28.0.7",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/ws": "^8.18.1",
