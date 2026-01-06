@@ -111,7 +111,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
 
     if (!keys_list.length) return false
 
-    const keys = random_get(keys_list)
+    const keys = me.lf2.random_get(keys_list)
     if (keys) this.ctrl.start(...keys).end(...keys)
 
     return true
