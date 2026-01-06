@@ -5,11 +5,19 @@ const normals = (() => {
   for (let i = 0; i < 36; ++i) nums.push(0, 0, 1)
   return new Float32BufferAttribute(nums, 3)
 })()
-
+const indices = (() => {
+  const nums: number[] = [];
+  for (let i = 0; i < 36; i += 4) {
+    nums.push(
+      i + 0, i + 2, i + 1,
+      i + 2, i + 3, i + 1
+    );
+  }
+  return nums
+})()
 export interface INinePatchGeometryParams {
   w?: number,
   h?: number
-
   f_l?: number;
   f_t?: number;
   f_r?: number;
@@ -35,9 +43,44 @@ export class NinePatchGeometry extends BufferGeometry {
   }
   constructor(params: INinePatchGeometryParams = {}) {
     super();
+    const { w, h } = this.parameters = NinePatchGeometry.ensure_parameters(params)
+    this.resize(w, h)
+    this.setIndex(indices);
+    this.setAttribute('normal', normals);
+  }
+  map_mv() {
     const {
-      w, h, f_w, f_h, l_w, r_w, t_h, b_h, f_l, f_t, f_r, f_b, t_s
-    } = this.parameters = NinePatchGeometry.ensure_parameters(params)
+      f_w, f_h, l_w, r_w, t_h, b_h, f_l, f_t, f_r, f_b
+    } = this.parameters
+    const u0 = f_l / f_w
+    const u3 = (f_w - f_r) / f_w
+    const u1 = u0 + l_w / f_w
+    const u2 = u3 - r_w / f_w
+    const us = [u0, u1, u2, u3]
+    const v0 = f_t / f_h
+    const v3 = (f_h - f_b) / f_h
+    const v1 = v0 + t_h / f_h
+    const v2 = v3 - b_h / f_h
+    const vs = [v0, v1, v2, v3]
+    const uvs: number[] = []
+    for (let y = 0; y < 3; ++y) {
+      for (let x = 0; x < 3; ++x) {
+        uvs.push(
+          us[x + 0], 1 - vs[y + 0],
+          us[x + 1], 1 - vs[y + 0],
+          us[x + 0], 1 - vs[y + 1],
+          us[x + 1], 1 - vs[y + 1],
+        )
+      }
+    }
+    this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+  }
+  resize(w: number, h: number) {
+    this.parameters.w = w;
+    this.parameters.h = h;
+    const {
+      l_w, r_w, t_h, b_h, t_s
+    } = this.parameters
     const x0 = -w / 2;
     const x3 = w / 2;
     const x1 = x0 + t_s * l_w;
@@ -49,19 +92,6 @@ export class NinePatchGeometry extends BufferGeometry {
     const y3 = h / 2;
     const y2 = y3 - t_s * b_h;
     const ys = [y0, y1, y2, y3]
-
-    const u0 = f_l / f_w
-    const u3 = (f_w - f_r) / f_w
-    const u1 = u0 + l_w / f_w
-    const u2 = u3 - r_w / f_w
-    const us = [u0, u1, u2, u3]
-
-    const v0 = f_t / f_h
-    const v3 = (f_h - f_b) / f_h
-    const v1 = v0 + t_h / f_h
-    const v2 = v3 - b_h / f_h
-    const vs = [v0, v1, v2, v3]
-    const uvs: number[] = []
     const vertices: number[] = []
     for (let y = 0; y < 3; ++y) {
       for (let x = 0; x < 3; ++x) {
@@ -71,26 +101,9 @@ export class NinePatchGeometry extends BufferGeometry {
           xs[x + 0], -ys[y + 1], 0,
           xs[x + 1], -ys[y + 1], 0
         )
-        uvs.push(
-          us[x + 0], 1 - vs[y + 0],
-          us[x + 1], 1 - vs[y + 0],
-          us[x + 0], 1 - vs[y + 1],
-          us[x + 1], 1 - vs[y + 1],
-        )
       }
     }
-
-    const indices: number[] = [];
-    for (let i = 0; i < 36; i += 4) {
-      indices.push(
-        i + 0, i + 2, i + 1,
-        i + 2, i + 3, i + 1
-      );
-    }
-    this.setIndex(indices);
     this.setAttribute('position', new Float32BufferAttribute(vertices, 3));
-    this.setAttribute('normal', normals);
-    this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
   }
   override copy(source: NinePatchGeometry) {
     super.copy(source);
