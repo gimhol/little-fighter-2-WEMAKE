@@ -37,9 +37,10 @@ class Lf2Updater {
       events: req_events
     }
     conn.send(MsgEnum.Tick, req)
+
+    lf2.cmds.length = 0;
+    lf2.events.length = 0;
     for (const { cmds, events } of reqs) {
-      lf2.cmds.length = 0;
-      lf2.events.length = 0;
       if (cmds?.length) lf2.cmds.push(...cmds)
       if (!events?.length) continue;
       for (const { player_id, pressed = false, game_key = '' } of events) {
