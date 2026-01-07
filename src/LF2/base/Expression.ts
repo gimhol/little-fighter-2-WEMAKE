@@ -77,6 +77,7 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
           p = i + 1;
           this.children.push(child);
         } else if ("|" === letter || "&" === letter) {
+          if (this.text[i + 1] == letter) ++i
           if (p < i) {
             const child = new Expression<T1, T2>(null, get_val_getter);
             child.judger(this.text.substring(p, i).replace(/\)*$/g, ""))

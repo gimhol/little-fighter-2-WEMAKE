@@ -1,7 +1,7 @@
 import { Expression } from "./Expression";
 
 const expression_result_pairs: [1 | 0, string, any][] = [
-  [0, "!(1==1)&!(1!=1)", false],
+  [0, "!(1==1)&&!(1!=1)", false],
   [0, "(1==1)&1==2", false],
   [0, "(1==1)&1==1", true],
   [0, "(1==1)&(1==2)", false],

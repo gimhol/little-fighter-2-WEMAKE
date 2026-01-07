@@ -1,6 +1,4 @@
 import { Animation } from "./Animation";
-import { Delay } from "./Delay";
-import Easing from "./Easing";
 export class Sequence extends Animation {
   static override TAG = 'Sequence';
 
@@ -50,7 +48,6 @@ export class Sequence extends Animation {
     if (reverse) {
       let idx = len - 1
       for (; idx >= 0; --idx) {
-        this.debug(`calc`, `anim idx=${idx}`)
         const anim = anims[idx]!;
         duration -= anim.duration;
         if (time > duration) {
@@ -60,11 +57,9 @@ export class Sequence extends Animation {
           break;
         }
       }
-      this.debug(`calc`, `anim idx=${idx}, value=${anims[idx]!.value}`)
     } else {
       let idx = 0
       for (; idx < len; ++idx) {
-        this.debug(`calc`, `anim idx=${idx}`)
         const anim = anims[idx]!;
         if (anim.duration > time) {
           anim.time = time;
@@ -74,7 +69,6 @@ export class Sequence extends Animation {
         }
         time -= anim.duration;
       }
-      this.debug(`calc`, `anim idx=${idx}, value=${anims[idx]!.value}`)
     }
     return this;
   }
