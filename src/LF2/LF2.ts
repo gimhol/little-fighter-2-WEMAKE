@@ -247,8 +247,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     for (const [cheat_name, { keys: k }] of this._CheatType_map) {
       if (k.startsWith(this._curr_key_list)) match = true;
       if (k !== this._curr_key_list) continue;
-      this.toggle_cheat_enabled(cheat_name);
+      this.cmds.push(cheat_name)
     }
+    
     if (!match) this._curr_key_list = "";
     if (e.times === 0) {
       for (const key_name of KEY_NAME_LIST) {

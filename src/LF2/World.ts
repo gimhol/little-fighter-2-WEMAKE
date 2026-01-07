@@ -3,7 +3,7 @@ import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   ALL_ENTITY_ENUM,
-  Builtin_FrameId, Defines,
+  Builtin_FrameId, CheatType, Defines,
   EntityGroup,
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
@@ -398,7 +398,7 @@ export class World extends WorldDataset {
         case 'f2': this.set_paused(2); break;
         case 'f4': this.lf2.pop_ui_safe(); break;
         case 'f5': this.playrate = this.playrate === 1 ? 100 : 1; break;
-        case 'f6': this.infinity_mp = !this.infinity_mp; break;
+      case 'f6': this.infinity_mp = !this.infinity_mp; break;
         case 'f7':
           for (const e of this.entities) {
             e.hp = e.hp_max;
@@ -413,6 +413,10 @@ export class World extends WorldDataset {
           break;
         case 'f10':
           for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+          break;
+        case CheatType.LF2_NET:
+        case CheatType.HERO_FT:
+          this.lf2.toggle_cheat_enabled(key);
           break;
       }
     }
