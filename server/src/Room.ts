@@ -5,10 +5,10 @@ import {
   IMsgRespMap,
   IReqCloseRoom, IReqCreateRoom,
   IReqExitRoom,
-  IReqGameTick,
+  IReqTick,
   IReqJoinRoom, IReqKick, IReqClientReady, IReqRoomStart, IResp, IRespCloseRoom,
   IRespExitRoom,
-  IRespGameTick,
+  IRespTick,
   IRespJoinRoom, IRespKick, IRespClientReady, IRoomInfo, MsgEnum, SystemPlayerInfo, TInfo
 } from "./Net";
 import { random_str } from './random_str';
@@ -25,7 +25,7 @@ export class Room {
   max_players: number = 4;
   title: string = `ROOM_${this.id}`;
   clients = new Set<Client>();
-  tick_req_map = new Map<Client, IReqGameTick>()
+  tick_req_map = new Map<Client, IReqTick>()
   private _tick_seq = 0;
   seed: number;
   get code() { return this._code; }
@@ -209,7 +209,7 @@ export class Room {
         c.resp(type, '', resp).catch(e => { })
   }
 
-  tick(client: Client, req: IReqGameTick) {
+  tick(client: Client, req: IReqTick) {
     if (req.seq !== this._tick_seq)
       return;
     req.client_id = client.client_info?.id;
@@ -218,7 +218,7 @@ export class Room {
     this.tick_req_map.set(client, req)
     if (this.tick_req_map.size !== this.clients.size)
       return;
-    const resp: TInfo<IRespGameTick> = { seq: this._tick_seq, reqs: [] }
+    const resp: TInfo<IRespTick> = { seq: this._tick_seq, reqs: [] }
     for (const [, req] of this.tick_req_map)
       resp.reqs?.push(req)
     this.broadcast(MsgEnum.Tick, resp)

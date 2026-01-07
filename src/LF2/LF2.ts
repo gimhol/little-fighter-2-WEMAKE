@@ -194,9 +194,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const { left: l, right: r, near: n, far: f } = this.world;
     e.id = new_id();
     e.facing = this.random_in(0, 100) % 2 ? -1 : 1;
-    e.position.x = this.random_in(l, r);
-    e.position.z = this.random_in(f, n);
-    e.position.y = 550;
+    e.position.set(
+      this.random_in(l, r),
+      this.random_in(f, n),
+      550,
+    )
     return e;
   }
 
@@ -249,7 +251,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       if (k !== this._curr_key_list) continue;
       this.cmds.push(cheat_name)
     }
-    
+
     if (!match) this._curr_key_list = "";
     if (e.times === 0) {
       for (const key_name of KEY_NAME_LIST) {

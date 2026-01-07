@@ -1,9 +1,9 @@
 import type { Client } from './Client';
 import { ensure_in_room } from './ensure_in_room';
 import { ensure_player_info } from './ensure_player_info';
-import { IReqGameTick } from './IMsg_GameTick';
+import { IReqTick } from './IMsg_Tick';
 
-export function handle_req_tick(client: Client, req: IReqGameTick): void {
+export function handle_req_tick(client: Client, req: IReqTick): void {
   const { room } = client;
   if (!ensure_player_info(client, req)) return;
   if (!ensure_in_room(client, req)) return;

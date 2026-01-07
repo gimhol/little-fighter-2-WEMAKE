@@ -25,7 +25,8 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
     }
   })
   const [conn, set_conn, ref_conn] = useStateRef<Connection | null>(null)
-  const [address, set_address] = useStateRef('ws://localhost:8080')
+  // const [address, set_address] = useStateRef('ws://localhost:8080')
+  const [address, set_address] = useStateRef('https://lfj.gim.ink')
   const [nickname, set_nickname] = useStateRef('')
   const [conn_state, set_connected] = useState<TriState>(TriState.False);
   const ref_on_state_change = useRef(on_state_change);

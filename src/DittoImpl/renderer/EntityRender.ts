@@ -143,9 +143,7 @@ export class EntityRender {
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     const { frame, facing } = entity;
     const { bpoint } = frame;
-    let x = (entity.position.x)
-    let y = (entity.position.y)
-    let z = (entity.position.z)
+    let { x, y, z } = entity.position
     if (
       this._x !== x ||
       this._y !== y ||

@@ -6,14 +6,14 @@ export interface IKeyEvent {
   game_key?: string;
   pressed?: boolean;
 }
-export interface IReqGameTick extends IReq<MsgEnum.Tick> {
+export interface IReqTick extends IReq<MsgEnum.Tick> {
   client_id?: string;
   client_name?: string;
   seq?: number;
   cmds?: string[];
   events?: IKeyEvent[]
 }
-export interface IRespGameTick extends IResp<MsgEnum.Tick> {
+export interface IRespTick extends IResp<MsgEnum.Tick> {
   seq?: number;
-  reqs?: IReqGameTick[];
+  reqs?: IReqTick[];
 }

@@ -1,6 +1,6 @@
 
 import { Labels, LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
-import { IKeyEvent, IReqGameTick, IRespGameTick, MsgEnum, TInfo } from "@/Net";
+import { IKeyEvent, IReqTick, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useMemo, useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";
@@ -12,13 +12,14 @@ import styles from "./styles.module.scss";
 import { TriState } from "./TriState";
 import { useCallbacks } from "./useCallbacks";
 import { useRoom } from "./useRoom";
+import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 export interface INetworkingProps {
   lf2?: LF2 | undefined | null;
 }
 class Lf2Updater {
   conn?: Connection | null;
   lf2?: LF2 | null;
-  resp?: IRespGameTick | null;
+  resp?: IRespTick | IRespKeyTick | null;
   before_update = () => {
     const { lf2, conn, resp } = this;
     if (!lf2 || !conn || !resp) return;
@@ -31,7 +32,7 @@ class Lf2Updater {
       game_key: r.game_key,
       pressed: r.pressed
     }))
-    const req: TInfo<IReqGameTick> = {
+    const req: TInfo<IReqTick> = {
       seq: seq + 1,
       cmds: lf2.cmds,
       events: req_events
@@ -86,6 +87,7 @@ export function Networking(props: INetworkingProps) {
           lf2.seed(resp.seed ?? 0)
           set_started(true)
           break;
+        case MsgEnum.KeyTick:
         case MsgEnum.Tick: {
           if (typeof resp.seq !== 'number') break
           if (resp.seq === 0) {

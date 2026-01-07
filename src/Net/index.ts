@@ -11,7 +11,7 @@ export * from "./IMsg_Chat";
 export * from "./IMsg_CloseRoom";
 export * from "./IMsg_CreateRoom";
 export * from "./IMsg_ExitRoom";
-export * from "./IMsg_GameTick";
+export * from "./IMsg_Tick";
 export * from "./IMsg_JoinRoom";
 export * from "./IMsg_ListRooms";
 export * from "./IMsg_ClientInfo";
