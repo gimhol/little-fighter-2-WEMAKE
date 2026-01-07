@@ -128,7 +128,7 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
       op === BinOp.Include ||
       op === BinOp.IncludedBy ||
       op === BinOp.NotInclude ||
-      op === BinOp.IncludedBy
+      op === BinOp.NotIncludedBy
     ) {
       if (!getter_1) val_1 = word_1.split(",");
       if (!getter_2) val_2 = word_2.split(",");
