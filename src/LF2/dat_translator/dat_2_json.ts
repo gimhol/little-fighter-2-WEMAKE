@@ -1,4 +1,4 @@
-import { IBgData, IStageInfo, WeaponType } from "../defines";
+import { IBgData, IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IBaseData } from "../defines/IBaseData";
 import { IDatIndex } from "../defines/IDatIndex";
@@ -157,6 +157,10 @@ export default function dat_to_json(
       break;
   }
   make_frames_special(ret);
+  // float_scaling_entity(ret)
+  // const r = find_float(ret, datIndex.file)
+  // if (r[0]) throw new Error('float found! ' + r[1])
+
   BotBuilder.check_all();
   BotBuilder.builders.length = 0
   return ret;

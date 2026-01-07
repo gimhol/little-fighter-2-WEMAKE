@@ -1,9 +1,9 @@
 import type { IState } from "../../base/FSM";
-import { GK, ItrKind, LGK, StateEnum } from "../../defines";
-import { find, random_get } from "../../utils";
-import type { BotController } from "../BotController";
-import type { BotStateEnum } from "../../defines/BotStateEnum";
 import { KEY_NAME_LIST } from "../../controller";
+import { GK, ItrKind, LGK, StateEnum } from "../../defines";
+import type { BotStateEnum } from "../../defines/BotStateEnum";
+import { find } from "../../utils";
+import type { BotController } from "../BotController";
 
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;

@@ -12,7 +12,7 @@ import { IFrameInfo } from "../defines/IFrameInfo";
 import { OpointKind } from "../defines/OpointKind";
 import { OpointMultiEnum } from "../defines/OpointMultiEnum";
 import { SpeedMode } from "../defines/SpeedMode";
-import { ensure } from "../utils";
+import { ceil, ensure, round } from "../utils";
 import { foreach } from "../utils/container_help/foreach";
 import { traversal } from "../utils/container_help/traversal";
 import { to_num } from "../utils/type_cast/to_num";
@@ -64,7 +64,7 @@ export function make_ball_data(
       frame.dvz = to_num(hit_j, 50) - 50;
     }
     const hit_a = take(frame, "hit_a");
-    if (hit_a) frame.hp = hit_a / 2;
+    if (hit_a) frame.hp = ceil(hit_a / 2);
 
     const hit_d = take(frame, "hit_d");
     if (hit_d && hit_d !== frame.id)
