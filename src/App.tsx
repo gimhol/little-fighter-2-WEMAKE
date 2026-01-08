@@ -54,6 +54,7 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
+import { CMD } from "./LF2/defines/CMD";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
@@ -384,9 +385,9 @@ function App() {
     [players],
   );
 
-  useShortcut("F8", 0, () => lf2?.cmds.push('f8'));
-  useShortcut("F9", 0, () => lf2?.cmds.push('f9'));
-  useShortcut("F10", 0, () => lf2?.cmds.push('f10'));
+  useShortcut("F8", 0, () => lf2?.cmds.push(CMD.F8));
+  useShortcut("F9", 0, () => lf2?.cmds.push(CMD.F9));
+  useShortcut("F10", 0, () => lf2?.cmds.push(CMD.F10));
   useShortcut("F11", 0, () => toggle_fullscreen());
   useShortcut("ctrl+F1", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.dev_ui_open = !d.dev_ui_open }));
   useShortcut("ctrl+F3", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.game_overlay = !d.game_overlay }));

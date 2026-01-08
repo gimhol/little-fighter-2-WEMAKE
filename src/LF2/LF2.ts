@@ -1,6 +1,7 @@
 import { Callbacks, get_short_file_size_txt, new_id, PIO } from "./base";
 import { KEY_NAME_LIST } from "./controller";
 import * as D from "./defines";
+import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
 import { Entity } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
@@ -16,7 +17,7 @@ import { World } from "./World";
 
 const cheat_info_pair = (n: D.CheatType) =>
   [
-    "" + n,
+    n,
     {
       keys: D.Defines.CheatKeys[n],
       sound: D.Defines.CheatTypeSounds[n],
@@ -203,7 +204,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   private _curr_key_list: string = "";
-  private readonly _CheatType_map = new Map<string, D.Defines.ICheatInfo>([
+  private readonly _CheatType_map = new Map<D.CheatType, D.Defines.ICheatInfo>([
     cheat_info_pair(D.CheatType.LF2_NET),
     cheat_info_pair(D.CheatType.HERO_FT),
     cheat_info_pair(D.CheatType.GIM_INK),
@@ -214,7 +215,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return !!this._CheatType_enable_map.get("" + name);
   }
   toggle_cheat_enabled(cheat_name: string | D.CheatType) {
-    const cheat_info = this._CheatType_map.get(cheat_name);
+    const cheat_info = this._CheatType_map.get(cheat_name as D.CheatType);
     if (!cheat_info) return;
     const { sound: s } = cheat_info;
     const sound_id = this._cheat_sound_id_map.get(cheat_name);
@@ -227,21 +228,15 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.callbacks.emit("on_cheat_changed")(cheat_name, enabled);
     this._curr_key_list = "";
   }
-  cmds: string[] = [];
+  cmds: (CMD | D.CheatType)[] = [];
   events: UI.LF2KeyEvent[] = [];
 
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
     const key_code = e.key.toLowerCase();
-    const ctrl_down = this.keyboard.is_key_down('control')
-    if (ctrl_down) {
-
-    } else {
-      switch (e.key) {
-        case 'f1': case 'f2': case 'f3': case 'f4': case 'f5':
-        case 'f6': case 'f7': case 'f8': case 'f9': case 'f10':
-          e.interrupt(); this.cmds.push(e.key); break;
-      }
+    if (key_code in CMD_NAMES) {
+      this.cmds.push(key_code as CMD);
+      e.interrupt();
     }
 
     this._curr_key_list += key_code;

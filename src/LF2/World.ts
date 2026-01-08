@@ -1,5 +1,6 @@
 import { Callbacks, FPS, ICollision } from "./base";
 import { Background } from "./bg/Background";
+import { CMD } from "./defines/CMD";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   ALL_ENTITY_ENUM,
@@ -385,37 +386,38 @@ export class World extends WorldDataset {
       if (!fighter) continue;
       const { ctrl } = fighter
       if (!is_local_ctrl(ctrl)) continue;
-      if (e.pressed) ctrl.on_key_down(e)
-      else ctrl.on_key_up(e)
+      if (e.pressed) ctrl.start(e.game_key)
+      else ctrl.end(e.game_key)
     }
   }
 
   protected handle_cmds() {
+
     if (!this.lf2.cmds.length) return;
     for (const key of this.lf2.cmds) {
       switch (key) {
-        case 'f1': this.paused = !this.paused; break;
-        case 'f2': this.set_paused(2); break;
-        case 'f4': this.lf2.pop_ui_safe(); break;
-        case 'f5': this.playrate = this.playrate === 1 ? 100 : 1; break;
-      case 'f6': this.infinity_mp = !this.infinity_mp; break;
-        case 'f7':
+        case CMD.F1: this.paused = !this.paused; break;
+        case CMD.F2: this.set_paused(2); break;
+        case CMD.F4: this.lf2.pop_ui_safe(); break;
+        case CMD.F5: this.playrate = this.playrate === 1 ? 100 : 1; break;
+        case CMD.F6: this.infinity_mp = !this.infinity_mp; break;
+        case CMD.F7:
           for (const e of this.entities) {
             e.hp = e.hp_max;
             e.mp = e.mp_max;
           }
           break;
-        case 'f8':
+        case CMD.F8:
           this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
           break;
-        case 'f9':
+        case CMD.F9:
           this.stage.kill_all_enemies()
           break;
-        case 'f10':
+        case CMD.F10:
           for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
           break;
-        case CheatType.LF2_NET:
-        case CheatType.HERO_FT:
+        case CMD.LF2_NET:
+        case CMD.HERO_FT:
           this.lf2.toggle_cheat_enabled(key);
           break;
       }

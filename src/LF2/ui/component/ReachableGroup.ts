@@ -1,8 +1,6 @@
-import { GameKey } from "../../defines/GameKey";
 import { max } from "../../utils/math/base";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import type { UINode } from "../UINode";
-import { Times } from "../utils";
 import { Reachable } from "./Reachable";
 import { UIComponent } from "./UIComponent";
 
@@ -57,25 +55,7 @@ export class ReachableGroup extends UIComponent {
     const next_idx = (idx + 1) % items.length;
     items[next_idx]!.node.focused = true;
   }
-  times = new Times(0, 10)
   override update(dt: number): void {
     super.update?.(dt);
-    for (const [k, player] of this.lf2.players) {
-      if (player.ctrl <= 0) continue;
-      const { direction } = this
-      const [ax = 0, ay = 0] = this.lf2.keyboard.axes(player.ctrl - 1)
-      const vv = direction === 'lr' ? ax : ay
-      if (vv > 0.22) {
-        if (this.times.add()) {
-          this.focus_next()
-        }
-      } else if (vv < -0.22) {
-        if (this.times.add()) {
-          this.focus_prev()
-        }
-      } else { 
-        this.times.end() 
-      }
-    }
   }
 }

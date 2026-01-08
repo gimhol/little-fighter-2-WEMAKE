@@ -42,7 +42,7 @@ class Lf2Updater {
     lf2.cmds.length = 0;
     lf2.events.length = 0;
     for (const { cmds, events } of reqs) {
-      if (cmds?.length) lf2.cmds.push(...cmds)
+      if (cmds?.length) lf2.cmds.push(...(cmds as any[]))
       if (!events?.length) continue;
       for (const { player_id, pressed = false, game_key = '' } of events) {
         if (!player_id) continue;
