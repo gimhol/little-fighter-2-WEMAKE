@@ -1,3 +1,3 @@
-export function fixed_float(n: number, digits?: number) {
-  return Number(n.toFixed(1));
+export function fixed_float(n: number, digits: number = 1) {
+  return Number(n.toFixed(digits));
 }

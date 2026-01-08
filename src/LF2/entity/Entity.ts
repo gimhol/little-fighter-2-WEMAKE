@@ -18,7 +18,7 @@ import { Ditto } from "../ditto";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, find, float_equal, floor, intersection, max, min, round } from "../utils";
+import { abs, clamp, find, float_equal, floor, intersection, max, min, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_num, is_positive, is_str } from "../utils/type_check";
@@ -1345,9 +1345,7 @@ export class Entity {
         pair[1] = time + 1;
       }
     }
-
     this.state?.pre_update?.(this);
-
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
       --this.wait;
@@ -1383,12 +1381,15 @@ export class Entity {
         }
       }
     }
+    if (vx) vx = round_float(vx, 1000)
+    if (vy) vy = round_float(vy, 1000)
+    if (vz) vz = round_float(vz, 1000)
     this._velocity.set(vx, vy, vz);
     if (!this.shaking && !this.motionless) {
       this.prev_position.set(this.position.x, this.position.y, this.position.z)
-      this.position.x = Number((this.position.x + vx).toFixed(4));
-      this.position.y = Number((this.position.y + vy).toFixed(4));
-      this.position.z = Number((this.position.z + vz).toFixed(4));
+      this.position.x = round_float(this.position.x + vx, 1000);
+      this.position.y = round_float(this.position.y + vy, 1000);
+      this.position.z = round_float(this.position.z + vz, 1000);
     }
     if (this.motionless > 0) {
       ++this.wait;
@@ -1434,6 +1435,7 @@ export class Entity {
         this.position.y = this.prev_position.y = ground_y;
         this.velocities[0].y = 0;
         this._velocity.y = 0;
+
         this.state?.on_landing?.(this);
         this.play_sound(this._data.base.drop_sounds);
 
