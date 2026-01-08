@@ -225,13 +225,7 @@ export class Entity {
     return this.ground.get_y(x, y, z)
   }
 
-  get velocity(): IVector3 { return this._velocity }
-  set velocity(v: IVector3) {
-    this._velocity.set(v.x, v.y, v.z);
-    this.velocities[0].set(v.x, v.y, v.z);
-    this.velocities.length = 1;
-  }
-
+  get velocity(): Readonly<IVector3> { return this._velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get is_attach() { return this._is_attach }
@@ -354,11 +348,7 @@ export class Entity {
   get lf2(): LF2 {
     return this.world.lf2;
   }
-  get velocity_0(): IVector3 {
-    if (this.velocities.length) return this.velocities[0]!;
-    return this.velocities[0] = new Ditto.Vector3(0, 0, 0);
-  }
-  get velocity_1(): IVector3 {
+  protected get velocity_1(): IVector3 {
     if (this.velocities.length > 1) return this.velocities[1]!;
     return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
   }
@@ -792,8 +782,7 @@ export class Entity {
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
     ) {
-      this.merge_velocities()
-      this.velocity_0.z = 0;
+      this.set_velocity_z(0)
     }
     switch (opoint.kind) {
       case OpointKind.Pick:
@@ -942,8 +931,7 @@ export class Entity {
               e.chasing = enemies[i % enemies.length]
               if (e.chasing) {
                 e.facing = (e.chasing.position.x > e.position.x) ? 1 : -1
-                e.merge_velocities();
-                e.velocity_0.x = (e.facing * abs(e.velocity_0.x))
+                e.set_velocity_x(e.facing * abs(e.velocity.x))
               }
             }
             break;
@@ -1029,7 +1017,7 @@ export class Entity {
    */
   handle_ground_velocity_decay(factor: number = 1) {
     if (this.position.y > this.ground_y || this.shaking || this.motionless) return;
-    let { x, z } = this.velocity_0;
+    let { x, z } = this.velocities[0];
     const is_landing_frame = this._landing_frame === this.frame;
 
     factor *= this.frame.friction_factor ?? this.world.friction_factor;
@@ -1053,13 +1041,11 @@ export class Entity {
       z += fz;
       if (z > 0) z = 0; // 不能因为摩擦力反向加速
     }
-
-    this.velocity_0.x = x;
-    this.velocity_0.z = z;
+    this.set_velocity(x, void 0, z)
   }
 
   handle_velocity_decay(friction: number) {
-    let { x, z } = this.velocity_0;
+    let { x, z } = this.velocity;
     if (x > 0) {
       x -= friction;
       if (x < 0) x = 0; // 不能因为摩擦力反向加速
@@ -1075,9 +1061,7 @@ export class Entity {
       z += friction;
       if (z > 0) z = 0; // 不能因为摩擦力反向加速
     }
-
-    this.velocity_0.x = x;
-    this.velocity_0.z = z;
+    this.set_velocity(x, void 0, z)
   }
 
   /**
@@ -1102,7 +1086,7 @@ export class Entity {
   private handle_gravity() {
     const { gravity_enabled = true } = this.frame;
     if (this.position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
-    this.velocity_0.y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
+    this.velocities[0].y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
   }
 
   private handle_frame_velocity() {
@@ -1121,8 +1105,7 @@ export class Entity {
       ctrl_y = 0,
       ctrl_z = 0,
     } = this.frame;
-    let { x: vx, y: vy, z: vz } = this.velocity_0;
-
+    let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
 
     if (!ctrl_x && dvx != void 0) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, this.facing);
@@ -1134,9 +1117,9 @@ export class Entity {
     if (!ctrl_z && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
     else if (UD && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
 
-    this.velocity_0.x = vx;
-    this.velocity_0.y = vy;
-    this.velocity_0.z = vz;
+    this.velocities[0].x = vx;
+    this.velocities[0].y = vy;
+    this.velocities[0].z = vz;
     if (vxm == SpeedMode.Extra && dvx) this.velocity_1.x = dvx
     if (vym == SpeedMode.Extra && dvy) this.velocity_1.y = dvy
     if (vzm == SpeedMode.Extra && dvz) this.velocity_1.z = dvz
@@ -1449,8 +1432,8 @@ export class Entity {
           if (result) this.enter_frame(result.which);
         }
         this.position.y = this.prev_position.y = ground_y;
-        this.velocity_0.y = 0;
-        this.velocity.y = 0;
+        this.velocities[0].y = 0;
+        this._velocity.y = 0;
         this.state?.on_landing?.(this);
         this.play_sound(this._data.base.drop_sounds);
 
@@ -1527,7 +1510,7 @@ export class Entity {
     if (!cpoint_a || !cpoint_b) {
       this._catcher = null;
       this.prev_cpoint_a = null;
-      this.velocity_0.y = 3;
+      this.set_velocity_y(3);
       this.next_frame = this.get_caught_cancel_frame();
       return true;
     }
@@ -1546,9 +1529,11 @@ export class Entity {
 
     if (throwinjury > 0) this.throwinjury = throwinjury;
     if (throwvx || throwvy || throwvz) {
-      this.velocity_0.z = throwvz * this.world.tvz_f * cer.ctrl.UD || 0;
-      this.velocity_0.x = throwvx * this.world.tvx_f * cer.facing;
-      this.velocity_0.y = throwvy * this.world.tvy_f;
+      this.set_velocity(
+        throwvz * this.world.tvz_f * cer.ctrl.UD || 0,
+        throwvx * this.world.tvx_f * cer.facing,
+        throwvy * this.world.tvy_f
+      )
       const { tx, ty, tz } = cpoint_a
       const w = this.frame.pic?.w || 0
       const h = this.frame.pic?.h || 0
@@ -1736,8 +1721,8 @@ export class Entity {
     return (
       is_character(this) &&
       is_character(target) && target.frame.state === StateEnum.Tired &&
-      ((this.velocity_0.x > 0 && target.position.x > this.position.x) ||
-        (this.velocity_0.x < 0 && target.position.x < this.position.x))
+      ((this.velocity.x > 0 && target.position.x > this.position.x) ||
+        (this.velocity.x < 0 && target.position.x < this.position.x))
     );
   }
 
@@ -1815,7 +1800,7 @@ export class Entity {
         dvx = strength * (dvx || 0) / weight;
         dvy = strength * (dvy || 0) / weight;
         const vx = (dvx - abs(vz / 2)) * this.facing;
-        this.velocity_0.set(vx, dvy, vz);
+        this.set_velocity(vx, dvy, vz);
         holder.holding = null;
         this.holder = null;
         return;
@@ -2004,7 +1989,7 @@ export class Entity {
       vz += v.z;
     }
     this.velocities.length = 1;
-    this.velocity_0.set(vx, vy, vz);
+    this.velocities[0].set(vx, vy, vz);
     this.velocity.set(vx, vy, vz);
   }
   set_velocity(
@@ -2017,16 +2002,16 @@ export class Entity {
     this._velocity.set(x, y, z);
   }
   set_velocity_x(v: number) {
-    this.merge_velocities()
-    this.velocity.x = this.velocities[0].x = v;
+    if (this.velocities.length > 1) this.merge_velocities()
+    this._velocity.x = this.velocities[0].x = v;
   }
   set_velocity_y(v: number) {
-    this.merge_velocities()
-    this.velocity.y = this.velocities[0].y = v;
+    if (this.velocities.length > 1) this.merge_velocities()
+    this._velocity.y = this.velocities[0].y = v;
   }
   set_velocity_z(v: number) {
-    this.merge_velocities()
-    this.velocity.z = this.velocities[0].z = v;
+    if (this.velocities.length > 1) this.merge_velocities()
+    this._velocity.z = this.velocities[0].z = v;
   }
   transform(data: IEntityData) {
     if (!is_local_ctrl(this.ctrl))

@@ -7,10 +7,6 @@ export class State_WeaponBroken extends State_Base {
   constructor(state: StateEnum = StateEnum.Weapon_Brokens) {
     super(state)
   }
-  override enter(e: Entity): void {
-    const { pre_emitter: emitter } = e;
-    if (emitter) e.velocity = emitter.velocity
-  }
   override on_landing(e: Entity): void {
     e.enter_frame(GONE_FRAME_INFO);
   }

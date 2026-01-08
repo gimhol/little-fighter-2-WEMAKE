@@ -60,7 +60,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
       } else {
         let { x: vx, y: vy, z: vz } = victim.velocity;
         if (itr.dvx) vx = itr.dvx * attacker.facing
-        if (victim.position.y > victim.ground_y && victim.velocity_0.y > 2)
+        if (victim.position.y > victim.ground_y && victim.velocity.y > 2)
           vy = 2;
         vz = 0;
         victim.set_velocity(vx, vy, vz)
