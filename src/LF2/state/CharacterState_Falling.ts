@@ -23,12 +23,13 @@ export default class CharacterState_Falling extends CharacterState_Base {
     }
     e.drop_holding();
     if (e.hp <= 0 && e.fuse_bys?.length) {
-      let { x, y } = e.velocity;
+      const { x: vx, y: vy, z: vz } = e.velocity;
+      let next_vx = vx;
       for (const fighter of e.fuse_bys) {
-        fighter.velocity_0.x = (x *= -1)
         if (fighter.position.y === 0)
           fighter.position.y = 1;
-        fighter.velocity_0.y = y
+        next_vx *= -1
+        fighter.set_velocity(next_vx, vy, vz)
       }
       e.dismiss_fusion(e.frame.id)
       if (e.next_frame) e.enter_frame(e.next_frame)
@@ -88,8 +89,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
       )
     ) {
       e.enter_frame({ id: indexes?.bouncing?.[d][1] });
-      e.merge_velocities()
-      e.velocity_0.y = e.world.cha_bc_spd;
+      e.set_velocity_y(e.world.cha_bc_spd)
       this._bouncings.add(e)
     } else {
       e.enter_frame({ id: indexes?.lying?.[d] });

@@ -14,15 +14,11 @@ export class CharacterState_Rowing extends CharacterState_Base {
 
     e.merge_velocities();
     const { x: prev_vx, y: prev_vy } = e.velocity;
-    if (prev_vx >= 0) {
-      e.velocity_0.x = dx;
-    } else {
-      e.velocity_0.x = -dx;
-    }
+    const next_vx = prev_vx >= 0 ? dx : -dx;
     const g_acc = e.world.gravity;
     const vy = g_acc * sqrt((2 * h) / g_acc);
-
-    e.velocity_0.y = calc_v(prev_vy, vy, SpeedMode.LF2, 0)
+    const next_vy = calc_v(prev_vy, vy, SpeedMode.LF2, 0)
+    e.set_velocity(next_vx, next_vy);
   }
   override on_landing(e: Entity): void {
     e.enter_frame({ id: e.data.indexes?.landing_1 });

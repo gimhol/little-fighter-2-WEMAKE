@@ -38,7 +38,7 @@ export default class WeaponState_Throwing extends WeaponState_Base {
         id: indexes?.throw_on_ground || indexes?.just_on_ground,
       });
     } else {
-      e.velocity_0.y = dvy;
+      e.set_velocity_y(dvy);
     }
   }
   override update(e: Entity): void {

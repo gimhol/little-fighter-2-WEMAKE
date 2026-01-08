@@ -26,8 +26,7 @@ export function handle_weapon_is_hit(collision: ICollision): void {
 
 
   if (victim.data.base.type !== W_T.Heavy || is_fly) {
-    victim.velocity_0.x = vx;
-    victim.velocity_0.y = vy;
+    victim.set_velocity(vx, vy, 0)
     victim.team = attacker.team;
     victim.next_frame = { id: victim.lf2.random_get(victim.data.indexes?.in_the_skys) };
   }

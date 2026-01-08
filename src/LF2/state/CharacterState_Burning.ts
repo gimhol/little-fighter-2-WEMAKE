@@ -34,8 +34,7 @@ export default class CharacterState_Burning extends CharacterState_Base {
       )
     ) {
       e.enter_frame({ id: indexes?.bouncing?.[-1][1] });
-      e.merge_velocities()
-      e.velocity_0.y = e.world.cha_bc_spd;
+      e.set_velocity_y(e.world.cha_bc_spd)
       this._bouncings.add(e)
     } else {
       e.enter_frame({ id: indexes?.lying?.[-1] });

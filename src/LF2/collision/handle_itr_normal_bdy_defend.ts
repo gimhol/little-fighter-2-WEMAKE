@@ -27,8 +27,8 @@ export function handle_itr_normal_bdy_defend(collision: ICollision) {
   handle_stiffness(collision)
   const [x, y, z] = victim.spark_point(a_cube, b_cube);
 
-  if (itr.dvx) victim.velocity_0.x = (itr.dvx * attacker.facing) / 2;
-  
+  if (itr.dvx) victim.set_velocity_x((itr.dvx * attacker.facing) / 2);
+
   if (victim.defend_value <= 0) {
     // 破防
     victim.defend_value = 0;

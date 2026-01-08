@@ -38,16 +38,17 @@ export default class CharacterState_Base extends State_Base {
   }
 
   override get_sudden_death_frame(target: Entity): INextFrame | undefined {
-    target.velocity_0.y = 2;
-    target.velocity_0.x = 2 * target.facing;
+    target.set_velocity(2 * target.facing, 2)
     if (target.data.indexes?.falling)
       return { id: target.data.indexes?.falling[1][1] };
     return void 0;
   }
 
   override get_caught_end_frame(target: Entity): INextFrame | undefined {
-    target.velocity_0.y = target.world.cvy_d;
-    target.velocity_0.x = -1 * target.world.cvx_d * target.facing;
+    target.set_velocity(
+      -1 * target.world.cvx_d * target.facing,
+      target.world.cvy_d,
+    )
     if (target.data.indexes?.falling)
       return { id: target.data.indexes.falling[-1][1] };
     return void 0;

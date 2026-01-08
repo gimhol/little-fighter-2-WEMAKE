@@ -9,8 +9,8 @@ import { get_val_from_world } from "./get_val_from_world";
 
 export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.TrendX]: e => {
-    if (e.velocity_0.x < 0) return -e.facing;
-    if (e.velocity_0.x > 0) return e.facing;
+    if (e.velocity.x < 0) return -e.facing;
+    if (e.velocity.x > 0) return e.facing;
     return 0;
   },
   [E_Val.PressFB]: e => e.ctrl.LR * e.facing,

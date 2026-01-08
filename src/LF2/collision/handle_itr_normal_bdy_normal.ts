@@ -1,12 +1,12 @@
 import { ICollision } from "../base";
-import { Defines, ItrEffect, ItrKind, SparkEnum, StateEnum, TFace } from "../defines";
-import { is_character, same_face, turn_face } from "../entity";
+import { Defines, ItrEffect, SparkEnum, StateEnum } from "../defines";
+import { is_character, same_face } from "../entity";
+import { handle_armor } from "./handle_armor";
 import { handle_fall } from "./handle_fall";
 import { handle_injury } from "./handle_injury";
 import { handle_itr_kind_freeze } from "./handle_itr_kind_freeze";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
-import { handle_armor } from "./handle_armor";
 
 export function handle_itr_normal_bdy_normal(collision: ICollision) {
   const { itr, attacker, victim, a_cube, b_cube } = collision;
@@ -53,16 +53,17 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
         victim.frame.state === StateEnum.Frozen ||
         (victim.fall_value <= Defines.DEFAULT_FALL_VALUE_DIZZY &&
           (StateEnum.Caught === victim.frame.state ||
-            victim.velocity_0.y > 0 ||
+            victim.velocity.y > 0 ||
             victim.position.y > victim.ground_y));
       if (is_fall) {
         handle_fall(collision);
       } else {
-        if (itr.dvx) victim.velocity_0.x = itr.dvx * attacker.facing;
+        let { x: vx, y: vy, z: vz } = victim.velocity;
+        if (itr.dvx) vx = itr.dvx * attacker.facing
         if (victim.position.y > victim.ground_y && victim.velocity_0.y > 2)
-          victim.velocity_0.y = 2;
-        victim.velocity_0.z = 0;
-
+          vy = 2;
+        vz = 0;
+        victim.set_velocity(vx, vy, vz)
         const [x, y, z] = victim.spark_point(a_cube, b_cube)
         if (itr.effect === ItrEffect.Sharp && is_character(victim)) {
           victim.world.spark(x, y, z, SparkEnum.Bleed);

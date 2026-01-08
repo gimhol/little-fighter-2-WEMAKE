@@ -4,8 +4,7 @@ import { round } from "../utils/math/base";
 
 export function handle_itr_kind_whirlwind(c: ICollision) {
   const { attacker, victim } = c;
-  victim.merge_velocities();
-  let { x, y, z } = victim.velocity_0;
+  let { x, y, z } = victim.velocity;
   const dz = round(victim.position.z - attacker.position.z);
   const dx = round(victim.position.x - attacker.position.x);
   let d = dx > 0 ? -1 : 1;
@@ -13,7 +12,7 @@ export function handle_itr_kind_whirlwind(c: ICollision) {
   y += y < 4 ? 1 : -1;
   x += d * 0.5;
   z += l * 0.5;
-  victim.velocity_0.set(x, y, z);
+  victim.set_velocity(x, y, z);
   switch (victim.type) {
     case EntityEnum.Weapon:
       switch (victim.frame.state) {

@@ -25,13 +25,11 @@ export const collision_action_handlers: IActionHandler = {
 
   [ActionType.A_REBOUND_VX]: function (action: IAction_ReboundVX, collision: ICollision) {
     const { attacker } = collision;
-    attacker.merge_velocities();
-    attacker.velocity_0.x = -attacker.velocity_0.x;
+    attacker.set_velocity_x(-attacker.velocity.x)
   },
   [ActionType.V_REBOUND_VX]: function (action: IAction_ReboundVX, collision: ICollision) {
     const { victim } = collision;
-    victim.merge_velocities();
-    victim.velocity_0.x = -victim.velocity_0.x;
+    victim.set_velocity_x(-victim.velocity.x)
   },
   [ActionType.V_TURN_FACE]: function (action: IAction_TurnFace, collision: ICollision) {
     const { victim } = collision;

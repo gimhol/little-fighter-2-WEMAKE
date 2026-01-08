@@ -7,8 +7,8 @@ import { handle_rest } from "./handle_rest";
 export function handle_itr_kind_magic_flute(collision: ICollision): void {
   handle_rest(collision)
   const { victim, attacker } = collision;
-  victim.merge_velocities();
-  if (victim.velocity_0.y < 3) victim.velocity_0.y += 3;
+  const { y } = victim.velocity
+  if (victim.velocity.y < 3) victim.set_velocity_y(y + 3)
   switch (victim.data.type) {
     case EntityEnum.Fighter:
       handle_injury(collision)

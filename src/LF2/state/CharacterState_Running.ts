@@ -9,12 +9,12 @@ export default class CharacterState_Running extends CharacterState_Base {
   }
   override update(e: Entity): void {
     super.update(e);
-    if (e.velocity_0.z) {
-      const dz = abs(e.velocity_0.z / 4);
-      if (e.velocity_0.x > 0) {
-        e.velocity_0.x -= dz;
-      } else if (e.velocity_0.x < 0) {
-        e.velocity_0.x += dz;
+    if (e.velocity.z) {
+      const dz = abs(e.velocity.z / 4);
+      if (e.velocity.x > 0) {
+        e.velocity.x -= dz;
+      } else if (e.velocity.x < 0) {
+        e.velocity.x += dz;
       }
     }
     if (e.hp <= 0) {

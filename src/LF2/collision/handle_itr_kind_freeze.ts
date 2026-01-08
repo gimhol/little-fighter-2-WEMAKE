@@ -12,14 +12,14 @@ export function handle_itr_kind_freeze(collision: ICollision) {
     victim.fall_value <= 0 ||
     (victim.fall_value <= Defines.DEFAULT_FALL_VALUE_DIZZY &&
       (StateEnum.Caught === victim.frame.state ||
-        victim.velocity_0.y > 0 ||
+        victim.velocity.y > 0 ||
         victim.position.y > victim.ground_y));
 
   if (is_fall && itr.dvy)
-    victim.velocity_0.y =
+    victim.velocity.y =
       (itr.dvy ?? attacker.world.ivy_d) * attacker.world.ivy_f;
-  if (itr.dvz) victim.velocity_0.z = itr.dvz * attacker.world.ivz_f;
-  victim.velocity_0.x =
+  if (itr.dvz) victim.velocity.z = itr.dvz * attacker.world.ivz_f;
+  victim.velocity.x =
     (itr.dvx ?? attacker.world.ivx_d) * attacker.facing * attacker.world.ivx_f;
   victim.next_frame = { id: victim.data.indexes?.ice };
   handle_injury(collision);

@@ -57,7 +57,7 @@ export class Entity {
    * @readonly
    * @type {IVector3[]}
    */
-  readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
+  protected readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
   readonly v_rests = new Map<string, ICollision>();
   readonly victims = new Map<string, ICollision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
@@ -227,8 +227,8 @@ export class Entity {
 
   get velocity(): IVector3 { return this._velocity }
   set velocity(v: IVector3) {
-    this._velocity.copy(v);
-    this.velocities[0].copy(v);
+    this._velocity.set(v.x, v.y, v.z);
+    this.velocities[0].set(v.x, v.y, v.z);
     this.velocities.length = 1;
   }
 
@@ -2007,12 +2007,27 @@ export class Entity {
     this.velocity_0.set(vx, vy, vz);
     this.velocity.set(vx, vy, vz);
   }
-  set_velocity(x: number, y: number, z: number) {
-    this.velocities[0].set(x, y, z);
+  set_velocity(
+    x: number = this.velocity.x,
+    y: number = this.velocity.y,
+    z: number = this.velocity.z
+  ) {
     this.velocities.length = 1;
+    this.velocities[0].set(x, y, z);
     this._velocity.set(x, y, z);
   }
-
+  set_velocity_x(v: number) {
+    this.merge_velocities()
+    this.velocity.x = this.velocities[0].x = v;
+  }
+  set_velocity_y(v: number) {
+    this.merge_velocities()
+    this.velocity.y = this.velocities[0].y = v;
+  }
+  set_velocity_z(v: number) {
+    this.merge_velocities()
+    this.velocity.z = this.velocities[0].z = v;
+  }
   transform(data: IEntityData) {
     if (!is_local_ctrl(this.ctrl))
       this.ctrl = Factory.inst.create_ctrl(data.id, this.ctrl.player_id, this);

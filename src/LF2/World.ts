@@ -1,10 +1,10 @@
 import { Callbacks, FPS, ICollision } from "./base";
 import { Background } from "./bg/Background";
-import { CMD } from "./defines/CMD";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   ALL_ENTITY_ENUM,
-  Builtin_FrameId, CheatType, Defines,
+  Builtin_FrameId,
+  Defines,
   EntityGroup,
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
@@ -13,6 +13,7 @@ import {
   StateEnum,
   WeaponType
 } from "./defines";
+import { CMD } from "./defines/CMD";
 import { Ditto } from "./ditto";
 import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
@@ -779,12 +780,12 @@ export class World extends WorldDataset {
     const top = e.position.y + f.centery - i.y;
     const far = e.position.z + i.z;
     return {
-      left,
-      right: left + i.w,
-      top,
-      bottom: top - i.h,
-      far,
-      near: far + i.l,
+      left: round(left),
+      right: round(left + i.w),
+      top: round(top),
+      bottom: round(top - i.h),
+      far: round(far),
+      near: round(far + i.l),
     };
   }
 

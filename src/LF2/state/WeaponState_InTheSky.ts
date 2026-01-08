@@ -30,7 +30,7 @@ export default class WeaponState_InTheSky extends WeaponState_Base {
     if (dvy < min_bounce_vy) {
       e.enter_frame({ id: indexes?.just_on_ground });
     } else {
-      e.velocity_0.y = dvy;
+      e.set_velocity_y(dvy);
     }
   }
   override update(e: Entity): void {

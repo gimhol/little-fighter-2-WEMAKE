@@ -27,8 +27,7 @@ export default class CharacterState_Jump extends CharacterState_Base {
     } = character.data.base;
     const g_acc = character.world.gravity;
     const vz = UD1 * dz;
-    character.merge_velocities();
-    character.velocity_0.set(
+    character.set_velocity(
       LR1 * (dx - abs(vz / 4)),
       g_acc * sqrt((2 * h) / g_acc),
       vz,
