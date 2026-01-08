@@ -1,5 +1,6 @@
 import { StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
+import { round_float } from "../utils";
 import { abs } from "../utils/math/base";
 import CharacterState_Base from "./CharacterState_Base";
 
@@ -9,13 +10,13 @@ export default class CharacterState_Running extends CharacterState_Base {
   }
   override update(e: Entity): void {
     super.update(e);
-    let { z: vz, x: vx } = e.velocity;
+    let { z: vz, x: vx } = e.velocities[0];
 
     if (vz) {
       const dz = abs(vz / 4);
       if (vx > dz) vx -= dz;
       if (vx < -dz) vx += dz;
-      e.set_velocity_x(vx);
+      e.velocities[0].x = round_float(vx);
     }
 
     if (e.hp <= 0) {

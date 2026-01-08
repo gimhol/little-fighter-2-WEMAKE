@@ -386,8 +386,11 @@ export class BotController extends BaseController implements Required<IBotDataSe
       this.entity.frame.state === StateEnum.Standing &&
       this.entity.resting <= 0
     ) {
-      this.entity.position.x = this.world.bg.width / 2;
-      this.entity.position.z = (this.world.bg.near + this.world.far) / 2;
+      this.entity.set_position(
+        this.world.bg.width / 2,
+        null,
+        (this.world.bg.near + this.world.far) / 2
+      )
       return true;
     }
     return false;

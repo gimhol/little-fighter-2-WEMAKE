@@ -286,11 +286,11 @@ export class World extends WorldDataset {
     const r = is_player ? player_r : enemy_r;
 
     const { x, z } = e.position;
-    if (x < l) e.position.x = l;
-    else if (x > r) e.position.x = r;
+    if (x < l) e.set_position_x(l);
+    else if (x > r) e.set_position_x(r);
 
-    if (z < far) e.position.z = far;
-    else if (z > near) e.position.z = near;
+    if (z < far) e.set_position_z(far);
+    else if (z > near) e.set_position_z(near);
   }
 
   /**
@@ -307,8 +307,8 @@ export class World extends WorldDataset {
     const { x, z } = e.position;
     if (x < left - 800) e.enter_frame(Defines.NEXT_FRAME_GONE);
     else if (x > right + 800) e.enter_frame(Defines.NEXT_FRAME_GONE);
-    if (z < far) e.position.z = far;
-    else if (z > near) e.position.z = near;
+    if (z < far) e.set_position_z(far);
+    else if (z > near) e.set_position_z(near);
   }
 
   /**
@@ -327,14 +327,14 @@ export class World extends WorldDataset {
     if (e.data.base.type === WeaponType.Drink) {
       const l = drink_l;
       const r = drink_r;
-      if (x < l) x = e.position.x = l;
-      else if (x > r) x = e.position.x = r;
+      if (x < l) e.set_position_x(x = l);
+      else if (x > r) e.set_position_x(x = r);
     }
 
     if (x < left - 100) e.enter_frame(Defines.NEXT_FRAME_GONE);
     else if (x > right + 100) e.enter_frame(Defines.NEXT_FRAME_GONE);
-    if (z < far) e.position.z = far;
-    else if (z > near) e.position.z = near;
+    if (z < far) e.set_position_z(far);
+    else if (z > near) e.set_position_z(near);
   }
 
   /**

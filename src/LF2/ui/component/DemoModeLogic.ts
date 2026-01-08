@@ -101,8 +101,11 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
         player.id,
         fighter,
       );
-      fighter.position.z = this.lf2.random_in(far, near);
-      fighter.position.x = this.lf2.random_in(left, right);
+      fighter.set_position(
+        this.lf2.random_in(left, right),
+        void 0,
+        this.lf2.random_in(far, near)
+      )
       fighter.blinking = this.world.begin_blink_time;
       fighter.attach();
     }

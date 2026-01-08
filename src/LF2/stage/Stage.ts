@@ -203,7 +203,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       }
       for (const entity of this.world.entities) {
         if (is_fighter(entity) && player_teams.has(entity.team))
-          entity.position.x = this.lf2.random_in(x, x + 50);
+          entity.set_position_x(this.lf2.random_in(x, x + 50));
       }
     }
     this.player_l = phase.player_l ?? 0

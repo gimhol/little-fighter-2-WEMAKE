@@ -197,8 +197,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     e.facing = this.random_in(0, 100) % 2 ? -1 : 1;
     e.position.set(
       this.random_in(l, r),
-      this.random_in(f, n),
       550,
+      this.random_in(f, n),
     )
     return e;
   }

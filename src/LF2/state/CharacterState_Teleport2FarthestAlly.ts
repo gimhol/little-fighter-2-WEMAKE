@@ -24,11 +24,13 @@ export default class CharacterState_Teleport2FarthestAlly extends CharacterState
     }
 
     if (!_tar) {
-      m.position.y = 0;
+      m.set_position_y(0);
       return;
     }
-    m.position.x = round(_tar.position.x - m.facing * 60);
-    m.position.z = round(_tar.position.z);
-    m.position.y = 0;
+    m.set_position(
+      round(_tar.position.x - m.facing * 60),
+      0,
+      round(_tar.position.z),
+    )
   }
 }

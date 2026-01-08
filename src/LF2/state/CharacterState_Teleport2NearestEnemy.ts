@@ -21,13 +21,14 @@ export default class CharacterState_Teleport2NearestEnemy extends CharacterState
         _tar = o;
       }
     }
-
     if (!_tar) {
-      m.position.y = 0;
+      m.set_position_y(0);
       return;
     }
-    m.position.x = round(_tar.position.x - m.facing * 120);
-    m.position.z = round(_tar.position.z);
-    m.position.y = 0;
+    m.set_position(
+      round(_tar.position.x - m.facing * 120),
+      0,
+      round(_tar.position.z),
+    )
   }
 }

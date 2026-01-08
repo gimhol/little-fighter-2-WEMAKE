@@ -94,10 +94,13 @@ export default class Item {
     e.ctrl = Factory.inst.create_ctrl(e.data.id, "", e);
     e.dead_gone = true;
     e.reserve = reserve ?? 0;
-    e.position.x = this.lf2.random_in(x, x + range_x);
-    e.position.z = is_num(z)
-      ? this.lf2.random_in(z - range_z, z + range_z)
-      : this.lf2.random_in(this.stage.near, this.stage.far);
+    e.set_position(
+      this.lf2.random_in(x, x + range_x),
+      null,
+      is_num(z)
+        ? this.lf2.random_in(z - range_z, z + range_z)
+        : this.lf2.random_in(this.stage.near, this.stage.far)
+    )
     if (this.info.join)
       e.dead_join = {
         hp: this.info.join,
@@ -118,12 +121,12 @@ export default class Item {
     if (is_num(mp) && !is_num(_mp)) _mp = mp;
     if (is_num(_mp)) e.mp = e.mp_max = _mp;
 
-    if (is_num(y)) e.position.y = y;
+    if (is_num(y)) e.set_position_y(y);
 
     if (is_fighter(e)) {
       e.name = e.data.base.name;
     } else if (is_weapon(e) && !is_num(y)) {
-      e.position.y = 450;
+      e.set_position_y(450);
     }
     e.team = this.stage.team;
     e.attach();

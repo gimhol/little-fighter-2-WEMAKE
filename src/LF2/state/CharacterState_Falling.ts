@@ -27,7 +27,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
       let next_vx = vx;
       for (const fighter of e.fuse_bys) {
         if (fighter.position.y === 0)
-          fighter.position.y = 1;
+          fighter.set_position_y(1);
         next_vx *= -1
         fighter.set_velocity(next_vx, vy, vz)
       }
