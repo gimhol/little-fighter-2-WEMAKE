@@ -354,7 +354,7 @@ export namespace Defines {
     ],
     ["3", { L: "", R: "", U: "", D: "", a: "", j: "", d: "" }],
     ["4", { L: "", R: "", U: "", D: "", a: "", j: "", d: "" }],
-    ["_", { L: "L", R: "R", U: "U", D: "D", a: "a", j: "j", d: "d" }],
+    ["_", { L: "_L", R: "_R", U: "_U", D: "_D", a: "_a", j: "_j", d: "_d" }],
   ]);
 
   export function get_default_keys(player_id: string): TKeys {
