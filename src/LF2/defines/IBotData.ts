@@ -16,6 +16,11 @@ export interface IBotData {
   id: string;
 
   /**
+   * 角色ID
+   */
+  oid: string;
+
+  /**
    * BOT动作表
    *
    * @type {{ [x in string]?: IBotAction }}

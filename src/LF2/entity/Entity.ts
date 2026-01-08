@@ -1365,31 +1365,30 @@ export class Entity {
       vy += v.y;
       vz += v.z;
     }
+    if (vx) vx = round_float(vx)
+    if (vy) vy = round_float(vy)
+    if (vz) vz = round_float(vz)
     for (const [, v] of this.v_rests) {
-      if (v.itr.kind === ItrKind.Block) {
-        if (
-          (vx < 0 && v.attacker.position.x < this.position.x) ||
-          (vx > 0 && v.attacker.position.x > this.position.x)
-        ) {
-          vx = 0;
-        }
-        if (
-          (vz < 0 && v.attacker.position.z < this.position.z) ||
-          (vz > 0 && v.attacker.position.z > this.position.z)
-        ) {
-          vz = 0;
-        }
+      if (v.itr.kind !== ItrKind.Block) continue
+      if (
+        (vx < 0 && v.attacker.position.x < this.position.x) ||
+        (vx > 0 && v.attacker.position.x > this.position.x)
+      ) {
+        vx = 0;
+      }
+      if (
+        (vz < 0 && v.attacker.position.z < this.position.z) ||
+        (vz > 0 && v.attacker.position.z > this.position.z)
+      ) {
+        vz = 0;
       }
     }
-    if (vx) vx = round_float(vx, 1000)
-    if (vy) vy = round_float(vy, 1000)
-    if (vz) vz = round_float(vz, 1000)
     this._velocity.set(vx, vy, vz);
     if (!this.shaking && !this.motionless) {
       this.prev_position.set(this.position.x, this.position.y, this.position.z)
-      this.position.x = round_float(this.position.x + vx, 1000);
-      this.position.y = round_float(this.position.y + vy, 1000);
-      this.position.z = round_float(this.position.z + vz, 1000);
+      this.position.x = round_float(this.position.x + vx);
+      this.position.y = round_float(this.position.y + vy);
+      this.position.z = round_float(this.position.z + vz);
     }
     if (this.motionless > 0) {
       ++this.wait;
@@ -1979,41 +1978,44 @@ export class Entity {
     return this._prev_frame;
   }
 
-  merge_velocities() {
+  merge_velocities(vx?: number, vy?: number, vz?: number) {
     if (this.velocities.length <= 1) {
-      this.velocity.copy(this.velocities[0]);
-      return;
+      const { x, y, z } = this.velocities[0]
+      this.set_velocity(vx ?? x, vy ?? y, vz ?? z);
+    } else {
+      let x = 0, y = 0, z = 0;
+      for (const v of this.velocities) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+      }
+      this.set_velocity(vx ?? x, vy ?? y, vz ?? z)
     }
-    let vx = 0, vy = 0, vz = 0;
-    for (const v of this.velocities) {
-      vx += v.x;
-      vy += v.y;
-      vz += v.z;
-    }
-    this.velocities.length = 1;
-    this.velocities[0].set(vx, vy, vz);
-    this.velocity.set(vx, vy, vz);
+
   }
   set_velocity(
-    x: number = this.velocity.x,
-    y: number = this.velocity.y,
-    z: number = this.velocity.z
+    x?: number,
+    y?: number,
+    z?: number
   ) {
     this.velocities.length = 1;
+    x = x === void 0 ? this.velocity.x : round_float(x)
+    y = y === void 0 ? this.velocity.y : round_float(x)
+    z = z === void 0 ? this.velocity.z : round_float(x)
     this.velocities[0].set(x, y, z);
     this._velocity.set(x, y, z);
   }
   set_velocity_x(v: number) {
-    if (this.velocities.length > 1) this.merge_velocities()
-    this._velocity.x = this.velocities[0].x = v;
+    if (this.velocities.length > 1) this.merge_velocities(v, void 0, void 0)
+    else this._velocity.x = this.velocities[0].x = round_float(v);
   }
   set_velocity_y(v: number) {
-    if (this.velocities.length > 1) this.merge_velocities()
-    this._velocity.y = this.velocities[0].y = v;
+    if (this.velocities.length > 1) this.merge_velocities(void 0, v, void 0)
+    else this._velocity.y = this.velocities[0].y = round_float(v);
   }
   set_velocity_z(v: number) {
-    if (this.velocities.length > 1) this.merge_velocities()
-    this._velocity.z = this.velocities[0].z = v;
+    if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, v)
+    else this._velocity.z = this.velocities[0].z = round_float(v);
   }
   transform(data: IEntityData) {
     if (!is_local_ctrl(this.ctrl))

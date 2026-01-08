@@ -22,6 +22,10 @@ export interface IArmorInfo {
    * 
    * 默认为false
    * 
+   * 例:
+   *   Julian，此值为true
+   *   Louis与Knight，此值为false
+   * 
    * @type {?number}
    * @memberof IArmorInfo
    */
@@ -32,11 +36,27 @@ export interface IArmorInfo {
    * 
    * 默认为false
    * 
+   * 例:
+   *   Julian，此值为true
+   *   Louis与Knight，此值为false
+   * 
    * @type {?number}
    * @memberof IArmorInfo
    */
   antifreeze?: number;
 
+  /**
+   * 是否为全时生效
+   * 
+   * 默认为true
+   * 
+   * 例:
+   *   Julian与Knight，此值为true
+   *   Louis，此值为false
+   * 
+   * @type {?boolean}
+   * @memberof IArmorInfo
+   */
   fulltime?: boolean;
 
   /** 

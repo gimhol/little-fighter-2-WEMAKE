@@ -20,7 +20,9 @@ export class BotBuilder {
   get bot(): IBotData {
     let ret = this.entity.base.bot
     if (!ret) ret = this.entity.base.bot = {
-      id: this.entity.base.bot_id ?? ('bot_' + this.entity.id), actions: {}
+      id: this.entity.base.bot_id ?? ('bot_' + this.entity.id),
+      oid: this.entity.id,
+      actions: {},
     }
     return ret;
   }
