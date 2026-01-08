@@ -6,6 +6,24 @@ import { CharMenuState_Base } from "./CharMenuState_Base";
 import { SlotStep } from "./SlotStep";
 
 export class CharMenuState_ComSel extends CharMenuState_Base {
+  /** 全部电脑玩家准备就绪 */
+  get all_com_ready(): boolean {
+    let count = 0;
+    for (const [v, s] of this.owner.players) {
+      if (!v.is_com) continue;
+      if (s.step !== SlotStep.Ready) continue;
+      ++count;
+    }
+    return count === this.owner.com_num
+  }
+  get com_count(): number {
+    let count = 0;
+    for (const [v, s] of this.owner.players)
+      if (v.is_com)
+        ++count;
+    return count
+  }
+
   constructor(owner: CharMenuLogic) {
     super(CharMenuState.ComSel, owner);
   }
@@ -20,15 +38,8 @@ export class CharMenuState_ComSel extends CharMenuState_Base {
       if (!player.is_com) { this.owner.add_com(); return; }
       if (state.step === SlotStep.Ready) { this.owner.add_com(); return; }
       this.owner.press_a(player);
-
-      const com_num = Array.from(this.owner.players.keys()).reduce((r, v) => v.is_com ? r + 1 : r, 0)
-
-
-
       if (state.step === SlotStep.Ready)
-        if (com_num >= this.owner.com_num)
-          this.owner.fsm.use(CharMenuState.GameSetting)
-        else
+        if (this.com_count < this.owner.com_num)
           this.owner.add_com();
       return;
     }
@@ -49,6 +60,7 @@ export class CharMenuState_ComSel extends CharMenuState_Base {
   }
   override update() {
     const [com] = this.owner.last_com() ?? [];
-    if (!com) return CharMenuState.PlayerSel;
+    if (!com) return CharMenuState.ComNumSel;
+    if (this.all_com_ready) return CharMenuState.GameSetting;
   }
 }

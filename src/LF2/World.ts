@@ -4,6 +4,7 @@ import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   ALL_ENTITY_ENUM,
   Builtin_FrameId,
+  CheatType,
   Defines,
   EntityGroup,
   HitFlag,
@@ -19,7 +20,7 @@ import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
   Entity, Factory, ICreator, is_ball,
   is_bot_ctrl,
-  is_character,
+  is_fighter as is_fighter,
   is_local_ctrl,
   is_weapon
 } from "./entity";
@@ -149,7 +150,7 @@ export class World extends WorldDataset {
   }
   add_entities(...entities: Entity[]) {
     for (const entity of entities) {
-      if (is_character(entity)) {
+      if (is_fighter(entity)) {
         this.callbacks.emit("on_fighter_add")(entity);
         const player = this.lf2.players.get(entity.ctrl.player_id)
         if (player) {
@@ -167,7 +168,7 @@ export class World extends WorldDataset {
   list_enemy_fighters(e: Entity, fn: (other: Entity) => boolean): Entity[] {
     const ret: Entity[] = []
     for (const o of this.entities) {
-      if (!e.is_ally(o) && is_character(o) && fn(o)) {
+      if (!e.is_ally(o) && is_fighter(o) && fn(o)) {
         ret.push(o)
       }
     }
@@ -179,7 +180,7 @@ export class World extends WorldDataset {
   list_ally_fighters(e: Entity, fn: (other: Entity) => boolean): Entity[] {
     const ret: Entity[] = []
     for (const o of this.entities) {
-      if (e.is_ally(o) && is_character(o) && fn(o)) {
+      if (e.is_ally(o) && is_fighter(o) && fn(o)) {
         ret.push(o)
       }
     }
@@ -192,7 +193,7 @@ export class World extends WorldDataset {
     if (!(this.entities.delete(entity) || this.incorporeities.delete(entity)))
       return false;
     this.entity_map.delete(entity.id)
-    if (is_character(entity))
+    if (is_fighter(entity))
       this.callbacks.emit("on_fighter_del")(entity);
     const player = this.lf2.players.get(entity.ctrl.player_id)
     if (player) player.fighter = void 0
@@ -343,7 +344,7 @@ export class World extends WorldDataset {
    * @memberof World
    */
   restrict(e: Entity): void {
-    if (is_character(e)) {
+    if (is_fighter(e)) {
       this.restrict_fighter(e);
     } else if (is_ball(e)) {
       this.restrict_ball(e);
@@ -393,34 +394,46 @@ export class World extends WorldDataset {
   }
 
   protected handle_cmds() {
-
     if (!this.lf2.cmds.length) return;
     for (const key of this.lf2.cmds) {
       switch (key) {
-        case CMD.F1: this.paused = !this.paused; break;
-        case CMD.F2: this.set_paused(2); break;
-        case CMD.F4: this.lf2.pop_ui_safe(); break;
-        case CMD.F5: this.playrate = this.playrate === 1 ? 100 : 1; break;
-        case CMD.F6: this.infinity_mp = !this.infinity_mp; break;
-        case CMD.F7:
-          for (const e of this.entities) {
-            e.hp = e.hp_max;
-            e.mp = e.mp_max;
-          }
-          break;
-        case CMD.F8:
-          this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
-          break;
-        case CMD.F9:
-          this.stage.kill_all_enemies()
-          break;
-        case CMD.F10:
-          for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
-          break;
         case CMD.LF2_NET:
         case CMD.HERO_FT:
           this.lf2.toggle_cheat_enabled(key);
-          break;
+          continue;
+        case CMD.F1:
+          this.paused = !this.paused;
+          continue;
+        case CMD.F2: this.set_paused(2);
+          continue;
+        case CMD.F4: this.lf2.pop_ui_safe();
+          continue;
+        case CMD.F5:
+          this.playrate = this.playrate === 1 ? 100 : 1;
+          continue;
+      }
+      if (this.stage.id === Defines.VOID_STAGE.id || this.lf2.is_cheat(CheatType.HERO_FT)) {
+        switch (key) {
+          case CMD.F6:
+            this.infinity_mp = !this.infinity_mp;
+            continue;
+          case CMD.F7:
+            for (const e of this.entities) {
+              if (!is_fighter(e)) continue;
+              e.hp = e.hp_r = e.hp_max;
+              e.mp = e.mp_max;
+            }
+            continue;
+          case CMD.F8:
+            this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+            continue;
+          case CMD.F9:
+            this.stage.kill_all_enemies()
+            continue;
+          case CMD.F10:
+            for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+            continue;
+        }
       }
     }
   }
@@ -453,18 +466,18 @@ export class World extends WorldDataset {
       for (const chaser of this._enemy_chasers) {
         const e = chaser.chasing;
         if (!e) continue;
-        if (!is_character(e) || chaser.is_ally(e) || e.hp <= 0)
+        if (!is_fighter(e) || chaser.is_ally(e) || e.hp <= 0)
           chaser.chasing = null;
       }
       for (const chaser of this._ally_chasers) {
         const e = chaser.chasing;
         if (!e) continue;
-        if (!is_character(e) || !chaser.is_ally(e) || e.hp <= 0)
+        if (!is_fighter(e) || !chaser.is_ally(e) || e.hp <= 0)
           chaser.chasing = null;
       }
     }
     for (const e of this.entities) {
-      if (update_chasing && is_character(e) && e.hp > 0) {
+      if (update_chasing && is_fighter(e) && e.hp > 0) {
         for (const chaser of this._enemy_chasers) {
           if (chaser.is_ally(e)) continue;
           const prev = chaser.chasing;

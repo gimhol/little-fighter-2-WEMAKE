@@ -211,7 +211,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   ]);
   private readonly _CheatType_enable_map = new Map<string, boolean>();
   private readonly _cheat_sound_id_map = new Map<string, string>();
-  is_cheat_enabled(name: string | D.CheatType) {
+  is_cheat(name: string | D.CheatType) {
     return !!this._CheatType_enable_map.get("" + name);
   }
   toggle_cheat_enabled(cheat_name: string | D.CheatType) {
@@ -625,7 +625,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
   switch_difficulty(): void {
     const { difficulty } = this.world;
-    const max = this.is_cheat_enabled(D.CheatType.LF2_NET) ? 4 : 3;
+    const max = this.is_cheat(D.CheatType.LF2_NET) ? 4 : 3;
     const next = (difficulty % max) + 1;
     this.world.difficulty = next;
   }

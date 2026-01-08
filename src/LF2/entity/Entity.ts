@@ -28,7 +28,7 @@ import type IEntityCallbacks from "./IEntityCallbacks";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_character, is_local_ctrl } from "./type_check";
+import { is_fighter, is_local_ctrl } from "./type_check";
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
@@ -796,7 +796,7 @@ export class Entity {
 
   get_opoint_speed_z(emitter: Entity, opoint: IOpointInfo): number {
     if (opoint.speedz !== void 0) return opoint.speedz;
-    if (!is_character(emitter)) return 0;
+    if (!is_fighter(emitter)) return 0;
     switch (this._data.id) {
       case BuiltIn_OID.FirenFlame:
         return Defines.DEFAULT_FIREN_FLAME_SPEED_Z;
@@ -1583,7 +1583,7 @@ export class Entity {
         // return;
       } else if (throwinjury === -1) {
         // TODO：变成抓住的人
-        if (is_character(this) && is_character(this._catching)) {
+        if (is_fighter(this) && is_fighter(this._catching)) {
           this.transfrom_to_another(this._catching._data);
           this.next_frame = this.find_auto_frame();
           return true;
@@ -1719,8 +1719,8 @@ export class Entity {
 
   dizzy_catch_test(target: Entity): boolean {
     return (
-      is_character(this) &&
-      is_character(target) && target.frame.state === StateEnum.Tired &&
+      is_fighter(this) &&
+      is_fighter(target) && target.frame.state === StateEnum.Tired &&
       ((this.velocity.x > 0 && target.position.x > this.position.x) ||
         (this.velocity.x < 0 && target.position.x < this.position.x))
     );

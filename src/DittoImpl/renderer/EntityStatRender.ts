@@ -1,7 +1,7 @@
 import { get_team_shadow_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
 import { GameKey, IVector3, Labels } from "@/LF2/defines";
-import { is_bot_ctrl, is_character, is_local_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { is_bot_ctrl, is_fighter, is_local_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
@@ -299,10 +299,9 @@ export class EntityStatRender implements IEntityCallbacks {
       has_stat_bar, ground
     } = this.entity;
     const gy = ground.get_y(x, y, z)
-    const is_fighter = is_character(this.entity)
-
-    this.name_node.visible = is_fighter && key_role && !invisible
-    this.bars_node.visible = !has_stat_bar && is_fighter && key_role && !invisible && hp > 0;
+    const _is_fighter = is_fighter(this.entity)
+    this.name_node.visible = _is_fighter && key_role && !invisible
+    this.bars_node.visible = !has_stat_bar && _is_fighter && key_role && !invisible && hp > 0;
 
     if (this.entity.healing) {
       const heading = (this.entity.update_id.value % 8) < 4;

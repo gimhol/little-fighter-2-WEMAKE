@@ -2,7 +2,7 @@
 import { ICollision } from "../base/ICollision";
 import { Defines, ItrEffect, SparkEnum, TFace } from "../defines";
 import { turn_face } from "../entity";
-import { is_character } from "../entity/type_check";
+import { is_fighter } from "../entity/type_check";
 
 export function handle_fall(collision: ICollision) {
   const { itr, attacker, victim, a_cube, b_cube } = collision;
@@ -28,7 +28,7 @@ export function handle_fall(collision: ICollision) {
 
   const spark_pos = victim.spark_point(a_cube, b_cube);
   let effect = SparkEnum.Hit;
-  if (itr.effect === ItrEffect.Sharp && is_character(victim)) {
+  if (itr.effect === ItrEffect.Sharp && is_fighter(victim)) {
     effect = is_critical ? SparkEnum.CriticalBleed : SparkEnum.BleedFall;
   } else {
     effect = is_critical ? SparkEnum.CriticalHit : SparkEnum.HitFall;

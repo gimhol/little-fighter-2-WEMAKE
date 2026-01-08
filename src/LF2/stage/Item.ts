@@ -3,7 +3,7 @@ import { TeamEnum } from "../defines/TeamEnum";
 import { Entity } from "../entity/Entity";
 import { Factory } from "../entity/Factory";
 import IEntityCallbacks from "../entity/IEntityCallbacks";
-import { is_character, is_weapon } from "../entity/type_check";
+import { is_fighter, is_weapon } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
 import { floor } from "../utils";
 import { is_num, is_str } from "../utils/type_check";
@@ -120,7 +120,7 @@ export default class Item {
 
     if (is_num(y)) e.position.y = y;
 
-    if (is_character(e)) {
+    if (is_fighter(e)) {
       e.name = e.data.base.name;
     } else if (is_weapon(e) && !is_num(y)) {
       e.position.y = 450;
@@ -130,10 +130,10 @@ export default class Item {
     e.callbacks.add(this.entity_cb);
     if (facing) e.facing = facing;
     if (is_str(act)) e.enter_frame({ id: act });
-    else if (is_character(e)) e.enter_frame({ id: "running_0" })
+    else if (is_fighter(e)) e.enter_frame({ id: "running_0" })
     else e.enter_frame(Defines.NEXT_FRAME_AUTO);
 
-    if (is_character(e)) this.fighters.add(e);
+    if (is_fighter(e)) this.fighters.add(e);
     return true;
   }
 

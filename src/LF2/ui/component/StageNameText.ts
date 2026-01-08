@@ -8,7 +8,7 @@ export class StageNameText extends UIComponent {
 
   private _stage: IStageInfo = Defines.VOID_STAGE;
   get show_all(): boolean {
-    return this.lf2.is_cheat_enabled(CheatType.GIM_INK);
+    return this.lf2.is_cheat(CheatType.GIM_INK);
   }
   get stages(): IStageInfo[] {
     const ret =

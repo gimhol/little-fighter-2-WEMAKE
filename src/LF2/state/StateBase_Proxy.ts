@@ -1,7 +1,7 @@
 import { ICollision } from "../base/ICollision";
 import { IFrameInfo, INextFrame } from "../defines";
 import { Entity } from "../entity/Entity";
-import { is_ball, is_character, is_weapon } from "../entity/type_check";
+import { is_ball, is_fighter, is_weapon } from "../entity/type_check";
 import BallState_Base from "./BallState_Base";
 import CharacterState_Base from "./CharacterState_Base";
 import State_Base from "./State_Base";
@@ -26,7 +26,7 @@ export class StateBase_Proxy extends State_Base implements Required<State_Base> 
     this.proxy = proxy
   }
   get_proxy(e: Entity) {
-    if (is_character(e)) return this.character_proxy;
+    if (is_fighter(e)) return this.character_proxy;
     if (is_weapon(e)) return this.weapon_proxy;
     if (is_ball(e)) return this.ball_proxy;
     return this.proxy;

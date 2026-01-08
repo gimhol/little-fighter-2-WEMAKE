@@ -1,6 +1,6 @@
 import { ICollision } from "../base";
 import { BdyKind, Defines, FrameBehavior } from "../defines";
-import { is_character } from "../entity";
+import { is_fighter } from "../entity";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 
@@ -10,7 +10,7 @@ export function handle_ball_hit_other(collision: ICollision): void {
   const { attacker, aframe, victim, bdy, itr } = collision;
   switch (aframe.behavior as FrameBehavior) {
     case FrameBehavior.JohnChase: {
-      if (!is_character(victim)) break
+      if (!is_fighter(victim)) break
       const { bdefend } = itr;
       if (bdy.kind === BdyKind.Normal) {
         attacker.hp = attacker.hp_r = 0;

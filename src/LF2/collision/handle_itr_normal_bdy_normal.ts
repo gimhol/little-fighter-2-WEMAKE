@@ -1,6 +1,6 @@
 import { ICollision } from "../base";
 import { Defines, ItrEffect, SparkEnum, StateEnum } from "../defines";
-import { is_character, same_face } from "../entity";
+import { is_fighter, same_face } from "../entity";
 import { handle_armor } from "./handle_armor";
 import { handle_fall } from "./handle_fall";
 import { handle_injury } from "./handle_injury";
@@ -65,7 +65,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
         vz = 0;
         victim.set_velocity(vx, vy, vz)
         const [x, y, z] = victim.spark_point(a_cube, b_cube)
-        if (itr.effect === ItrEffect.Sharp && is_character(victim)) {
+        if (itr.effect === ItrEffect.Sharp && is_fighter(victim)) {
           victim.world.spark(x, y, z, SparkEnum.Bleed);
         } else {
           victim.world.spark(x, y, z, SparkEnum.Hit);

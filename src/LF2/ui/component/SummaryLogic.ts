@@ -1,6 +1,6 @@
 import { ISummaryCallbacks } from "@/LF2/entity/Summary";
 import { summary_mgr } from "@/LF2/entity/SummaryMgr";
-import { Entity, IEntityCallbacks, is_character } from "../../entity";
+import { Entity, IEntityCallbacks, is_fighter } from "../../entity";
 import { IWorldCallbacks } from "../../IWorldCallbacks";
 import { max } from "../../utils";
 import { Times } from "../utils";
@@ -122,7 +122,7 @@ export class SummaryLogic extends UIComponent {
   override on_start(): void {
     super.on_start?.();
     for (const e of this.world.entities) {
-      if (is_character(e)) {
+      if (is_fighter(e)) {
         this.on_fighter_add(e)
       }
     }
@@ -158,7 +158,7 @@ export class SummaryLogic extends UIComponent {
         t.hp = 0;
       }
       for (const e of this.world.entities) {
-        if (!is_character(e)) continue;
+        if (!is_fighter(e)) continue;
         const t = this.team_sum(e.team)
         t.hp += e.hp
         t.reserve += e.reserve

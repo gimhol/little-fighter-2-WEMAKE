@@ -10,7 +10,7 @@ import {
   IBotAction, IBotDataSet,
   LGK, StateEnum
 } from "../defines";
-import { Entity, is_ball, is_character, is_weapon } from "../entity";
+import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { PlayerInfo } from "../PlayerInfo";
 import { abs, clamp, floor, max } from "../utils";
@@ -269,7 +269,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   }
 
   look_other(other: Entity) {
-    if (is_character(other)) {
+    if (is_fighter(other)) {
       if (this.entity.is_ally(other)) {
         return;
       }

@@ -6,7 +6,7 @@ import { Background } from "../bg/Background";
 import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhaseInfo } from "../defines";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
-import { is_character, is_weapon } from "../entity/type_check";
+import { is_fighter, is_weapon } from "../entity/type_check";
 import { floor, min } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
@@ -170,7 +170,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       for (const [, f] of this.world.slot_fighters)
         teams.add(f.team)
       for (const f of this.world.entities) {
-        if (!is_character(f) && !teams.has(f.team)) continue;
+        if (!is_fighter(f) && !teams.has(f.team)) continue;
         if (f.hp <= 0 && hp_respawn) {
           const hp = hp_respawn < 1 ?
             min(f.hp_max * hp_respawn, f.hp_max) :
@@ -202,7 +202,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
         player_teams.add(v.team);
       }
       for (const entity of this.world.entities) {
-        if (is_character(entity) && player_teams.has(entity.team))
+        if (is_fighter(entity) && player_teams.has(entity.team))
           entity.position.x = this.lf2.random_in(x, x + 50);
       }
     }
@@ -255,7 +255,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   kill_all_enemies() {
     for (const o of this.items) {
       for (const e of o.fighters) {
-        if (is_character(e) && e.team === this.team) e.hp = 0;
+        if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
   }
@@ -263,7 +263,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     for (const o of this.items) {
       if (!o.info.is_soldier) continue;
       for (const e of o.fighters) {
-        if (is_character(e) && e.team === this.team) e.hp = 0;
+        if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
   }
@@ -271,7 +271,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     for (const o of this.items) {
       if (!o.info.is_boss) continue;
       for (const e of o.fighters) {
-        if (is_character(e) && e.team === this.team) e.hp = 0;
+        if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
   }
@@ -279,7 +279,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     for (const o of this.items) {
       if (o.info.is_boss || o.info.is_soldier) continue;
       for (const e of o.fighters) {
-        if (is_character(e) && e.team === this.team) e.hp = 0;
+        if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
   }
@@ -293,7 +293,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       player_teams.add(v.team);
     }
     for (const e of this.world.entities) {
-      if (is_character(e) && player_teams.has(e.team)) continue;
+      if (is_fighter(e) && player_teams.has(e.team)) continue;
       else if (is_weapon(e) && e.holder && player_teams.has(e.holder.team))
         continue;
       temp.push(e);
@@ -313,7 +313,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   get should_goto_next_stage(): boolean {
     if (this.is_chapter_finish || !this.is_stage_finish)
       return false;
-    return !find(this.world.entities, e => is_character(e) && e.hp > 0 && e.position.x < this.cam_r)
+    return !find(this.world.entities, e => is_fighter(e) && e.hp > 0 && e.position.x < this.cam_r)
   }
 
   update() {

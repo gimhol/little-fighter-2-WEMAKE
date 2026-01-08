@@ -1,6 +1,6 @@
 import { BuiltIn_OID } from "@/LF2/defines";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
-import { is_character, type Entity } from "@/LF2/entity";
+import { is_fighter, type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
 import { Camera, OrthographicCamera } from "../_t";
@@ -89,7 +89,7 @@ export class WorldRenderer implements IWorldRenderer {
     );
 
     // Criminal...?
-    if (is_character(entity) || entity.data.id === BuiltIn_OID.Criminal) {
+    if (is_fighter(entity) || entity.data.id === BuiltIn_OID.Criminal) {
       pack.stat = new EntityStatRender(entity, this);
     } else if (pack.stat) {
       pack.stat.on_unmount();

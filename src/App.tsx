@@ -253,9 +253,9 @@ function App() {
     lf2.sounds.set_sound_volume(s.sound_volume);
     lf2.world.sync_render = s.sync_render;
     set_state(d => {
-      d.cheat_1 = lf2.is_cheat_enabled(CheatType.LF2_NET)
-      d.cheat_2 = lf2.is_cheat_enabled(CheatType.HERO_FT)
-      d.cheat_3 = lf2.is_cheat_enabled(CheatType.GIM_INK)
+      d.cheat_1 = lf2.is_cheat(CheatType.LF2_NET)
+      d.cheat_2 = lf2.is_cheat(CheatType.HERO_FT)
+      d.cheat_3 = lf2.is_cheat(CheatType.GIM_INK)
     })
     _set_bg_id(lf2.world.stage.bg.id);
     const on_touchstart = () => set_state(d => { d.touchpad = fisrt(lf2.players.keys())! })
@@ -389,8 +389,8 @@ function App() {
   useShortcut("F9", 0, () => lf2?.cmds.push(CMD.F9));
   useShortcut("F10", 0, () => lf2?.cmds.push(CMD.F10));
   useShortcut("F11", 0, () => toggle_fullscreen());
-  useShortcut("ctrl+F1", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.dev_ui_open = !d.dev_ui_open }));
-  useShortcut("ctrl+F3", 0, () => lf2?.is_cheat_enabled(CheatType.GIM_INK) && set_state(d => { d.game_overlay = !d.game_overlay }));
+  useShortcut("ctrl+F1", 0, () => lf2?.is_cheat(CheatType.GIM_INK) && set_state(d => { d.dev_ui_open = !d.dev_ui_open }));
+  useShortcut("ctrl+F3", 0, () => lf2?.is_cheat(CheatType.GIM_INK) && set_state(d => { d.game_overlay = !d.game_overlay }));
   useEffect(() => {
     const ele = ele_game_canvas;
     if (!ele) return;
@@ -471,7 +471,7 @@ function App() {
       <GamePad player_id={s.touchpad} lf2={lf2} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
       <div className={styles.debug_pannel}>
-        <Show show={lf2?.is_cheat_enabled(CheatType.GIM_INK)}>
+        <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
           <ToggleImgButton
             checked={s.dev_ui_open}
             onClick={() => set_state(d => { d.dev_ui_open = !d.dev_ui_open })}

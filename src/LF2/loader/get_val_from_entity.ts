@@ -2,7 +2,7 @@ import { CheatType, I_K, ItrKind } from "../defines";
 import { E_Val } from "../defines/EntityVal";
 import { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { Entity } from "../entity/Entity";
-import { is_ball, is_character, is_weapon } from "../entity/type_check";
+import { is_ball, is_fighter, is_weapon } from "../entity/type_check";
 import { find } from "../utils/container_help";
 import { between, clamp, round } from "../utils/math";
 import { get_val_from_world } from "./get_val_from_world";
@@ -18,9 +18,9 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.PressLR]: e => e.ctrl.LR,
   [E_Val.Holding_W_Type]: e => e.holding?.data.base.type ?? 0,
   [E_Val.HP_P]: e => clamp(round((100 * e.hp) / e.hp_max), 0, 100),
-  [E_Val.LF2_NET_ON]: e => e.lf2.is_cheat_enabled(CheatType.LF2_NET) ? 1 : 0,
-  [E_Val.HERO_FT_ON]: e => e.lf2.is_cheat_enabled(CheatType.HERO_FT) ? 1 : 0,
-  [E_Val.GIM_INK_ON]: e => e.lf2.is_cheat_enabled(CheatType.GIM_INK) ? 1 : 0,
+  [E_Val.LF2_NET_ON]: e => e.lf2.is_cheat(CheatType.LF2_NET) ? 1 : 0,
+  [E_Val.HERO_FT_ON]: e => e.lf2.is_cheat(CheatType.HERO_FT) ? 1 : 0,
+  [E_Val.GIM_INK_ON]: e => e.lf2.is_cheat(CheatType.GIM_INK) ? 1 : 0,
   [E_Val.HAS_TRANSFORM_DATA]: e => e.transform_datas ? 1 : 0,
   [E_Val.Catching]: e => e.catching ? 1 : 0,
   [E_Val.CAUGHT]: e => e.catcher ? 1 : 0,
@@ -35,13 +35,13 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
     }
     return 0;
   },
-  [E_Val.HitByCharacter]: e => find(e.collided_list, (c) => is_character(c.attacker)) ? 1 : 0,
+  [E_Val.HitByCharacter]: e => find(e.collided_list, (c) => is_fighter(c.attacker)) ? 1 : 0,
   [E_Val.HitByWeapon]: e => find(e.collided_list, (c) => is_weapon(c.attacker)) ? 1 : 0,
   [E_Val.HitByBall]: e => find(e.collided_list, (c) => is_ball(c.attacker)) ? 1 : 0,
   [E_Val.HitByState]: e => e.collided_list.map((i) => i.aframe.state),
   [E_Val.HitByItrKind]: e => e.collided_list.map((i) => i.itr.kind),
   [E_Val.HitByItrEffect]: e => e.collided_list.map((i) => i.itr.effect),
-  [E_Val.HitOnCharacter]: e => find(e.collision_list, (c) => is_character(c.victim)) ? 1 : 0,
+  [E_Val.HitOnCharacter]: e => find(e.collision_list, (c) => is_fighter(c.victim)) ? 1 : 0,
   [E_Val.HitOnWeapon]: e => find(e.collision_list, (c) => is_weapon(c.victim)) ? 1 : 0,
   [E_Val.HitOnBall]: e => find(e.collision_list, (c) => is_ball(c.victim)) ? 1 : 0,
   [E_Val.HitOnState]: e => e.collision_list.map((i) => i.bframe.state),

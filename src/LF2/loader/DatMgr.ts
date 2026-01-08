@@ -10,7 +10,7 @@ import { Factory } from "../entity";
 import {
   is_ball_data,
   is_bg_data,
-  is_character_data,
+  is_fighter_data,
   is_entity_data,
   is_weapon_data,
 } from "../entity/type_check";
@@ -63,7 +63,7 @@ class Inner {
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BallController(a, b));
     else if (is_weapon_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new InvalidController(a, b));
-    else if (is_character_data(data))
+    else if (is_fighter_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
 
     if (is_entity_data(data)) {

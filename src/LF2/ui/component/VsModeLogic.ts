@@ -1,6 +1,6 @@
 import { Defines, EntityGroup, GameKey, GONE_FRAME_INFO } from "../../defines";
 import type IEntityCallbacks from "../../entity/IEntityCallbacks";
-import { is_character } from "../../entity/type_check";
+import { is_fighter } from "../../entity/type_check";
 import { traversal } from "../../utils/container_help/traversal";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
@@ -25,7 +25,7 @@ export class VsModeLogic extends UIComponent {
           player_teams[fighter.team] = 0 // 玩家队伍
 
       for (const e of this.world.entities) {
-        if (is_character(e) && e.hp > 0 && player_teams[e.team] !== void 0)
+        if (is_fighter(e) && e.hp > 0 && player_teams[e.team] !== void 0)
           ++player_teams[e.team]!; // 存活计数++
       }
 

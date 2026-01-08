@@ -1,7 +1,7 @@
 import { ICollision, ICollisionHandler } from "../base";
 import { ALL_ENTITY_ENUM, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
-import { is_ball, is_character, is_weapon } from "../entity";
+import { is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
 import { handle_ball_frozen } from "./handle_ball_frozen";
 import { handle_ball_hit_other } from "./handle_ball_hit_other";
@@ -104,7 +104,7 @@ export class CollisionKeeper {
       is_ball(victim) &&
       victim.group?.some(v => v === EntityGroup.FreezableBall) &&
       attacker.group?.some(v => v === EntityGroup.Freezer) && (
-        is_character(attacker) ||
+        is_fighter(attacker) ||
         is_ball(victim) ||
         (is_weapon(attacker) && attacker.holder)
       )

@@ -67,7 +67,7 @@ export function PlayerRow(props: Props) {
   // }, [dummy, info.id, world.slot_fighters])
 
   useEffect(() => {
-    set_show_hidden(lf2.is_cheat_enabled("" + CheatType.LF2_NET));
+    set_show_hidden(lf2.is_cheat("" + CheatType.LF2_NET));
     return lf2.callbacks.add({
       on_cheat_changed: (name, enabled) => {
         if (name === "" + CheatType.LF2_NET) set_show_hidden(enabled);

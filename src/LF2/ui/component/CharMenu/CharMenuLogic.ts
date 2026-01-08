@@ -41,7 +41,7 @@ export class CharMenuLogic extends UIComponent {
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
 
   get fighters() {
-    return this.lf2.is_cheat_enabled(CheatType.LF2_NET)
+    return this.lf2.is_cheat(CheatType.LF2_NET)
       ? this.lf2.datas.fighters
       : this.lf2.datas.get_fighters_not_in_group(EntityGroup.Hidden);
   }

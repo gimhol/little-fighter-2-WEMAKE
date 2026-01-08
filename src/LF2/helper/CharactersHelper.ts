@@ -1,7 +1,7 @@
 
 import { EntityGroup, IEntityData } from "../defines";
 import { Entity } from "../entity/Entity";
-import { is_character } from "../entity/type_check";
+import { is_fighter } from "../entity/type_check";
 import { LF2 } from "../LF2";
 
 export class CharactersHelper {
@@ -11,7 +11,7 @@ export class CharactersHelper {
   }
   list(): Entity[] {
     const ret: Entity[] = [];
-    this.lf2.world.entities.forEach((v) => is_character(v) && ret.push(v));
+    this.lf2.world.entities.forEach((v) => is_fighter(v) && ret.push(v));
     return ret;
   }
   at(idx: number): Entity | undefined {
