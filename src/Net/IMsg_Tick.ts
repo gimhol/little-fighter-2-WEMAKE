@@ -11,7 +11,8 @@ export interface IReqTick extends IReq<MsgEnum.Tick> {
   client_name?: string;
   seq?: number;
   cmds?: string[];
-  events?: IKeyEvent[]
+  events?: IKeyEvent[];
+  randoms?: string;
 }
 export interface IRespTick extends IResp<MsgEnum.Tick> {
   seq?: number;

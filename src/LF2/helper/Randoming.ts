@@ -40,6 +40,6 @@ export class Randoming<T> {
   }
   protected random_in(l: number, r: number) {
     if (this.lf2) return this.lf2.random_in(l, r)
-    return Randoming.mt.in_range(l, r);
+    return Randoming.mt.range(l, r);
   }
 }

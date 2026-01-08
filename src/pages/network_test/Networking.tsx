@@ -1,6 +1,7 @@
 
-import { Labels, LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
+import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
 import { IKeyEvent, IReqTick, IRespTick, MsgEnum, TInfo } from "@/Net";
+import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useMemo, useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";
@@ -12,7 +13,6 @@ import styles from "./styles.module.scss";
 import { TriState } from "./TriState";
 import { useCallbacks } from "./useCallbacks";
 import { useRoom } from "./useRoom";
-import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 export interface INetworkingProps {
   lf2?: LF2 | undefined | null;
 }
@@ -20,6 +20,7 @@ class Lf2Updater {
   conn?: Connection | null;
   lf2?: LF2 | null;
   resp?: IRespTick | IRespKeyTick | null;
+
   before_update = () => {
     const { lf2, conn, resp } = this;
     if (!lf2 || !conn || !resp) return;
@@ -30,18 +31,34 @@ class Lf2Updater {
       client_id: me.id,
       player_id: me.id + '#' + r.player,
       game_key: r.game_key,
-      pressed: r.pressed
+      pressed: r.pressed,
     }))
     const req: TInfo<IReqTick> = {
       seq: seq + 1,
       cmds: lf2.cmds,
       events: req_events
     }
+    if (lf2.mt.debug) {
+      req.randoms = lf2.mt.cases.join()
+      lf2.mt.cases.length = 0;
+    }
+
+
+
     conn.send(MsgEnum.Tick, req)
 
     lf2.cmds.length = 0;
     lf2.events.length = 0;
-    for (const { cmds, events } of reqs) {
+    let _randoms: string | null | undefined = null;
+    for (const { cmds, events, randoms } of reqs) {
+      if (_randoms === null) {
+        _randoms = randoms
+      } else if (_randoms !== randoms) {
+        console.error(`randoms not equal!`, reqs)
+        debugger;
+        break;
+      }
+
       if (cmds?.length) lf2.cmds.push(...(cmds as any[]))
       if (!events?.length) continue;
       for (const { player_id, pressed = false, game_key = '' } of events) {
@@ -84,7 +101,7 @@ export function Networking(props: INetworkingProps) {
           }
           lf2.load("data.zip.json")
           lf2.set_ui("loading")
-          lf2.seed(resp.seed ?? 0)
+          lf2.mt.reset(resp.seed ?? 0, true)
           set_started(true)
           break;
         case MsgEnum.KeyTick:

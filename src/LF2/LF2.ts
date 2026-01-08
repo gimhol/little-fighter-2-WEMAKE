@@ -43,6 +43,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _loading: boolean = false;
   private _playable: boolean = false;
   private _mt = new MersenneTwister(Date.now())
+  get mt() { return this._mt }
   readonly bat_spreading_x = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VX, this)
   readonly bat_spreading_z = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VZ, this)
   readonly disater_spreading_x = new Helper.Randoming(D.Defines.DISATER_SPREADING_VX, this)
@@ -639,12 +640,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return a.splice(this.random_in(0, a.length), 1)[0]
   }
   random_in(l: number, r: number) {
-    return this._mt.in_range(l, r);
+    return this._mt.range(l, r);
   }
   random_int() {
     return this._mt.int();
-  }
-  seed(v: number): void {
-    this._mt.reset(v)
   }
 }
