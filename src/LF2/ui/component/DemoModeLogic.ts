@@ -22,13 +22,13 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
     this.node.search_child("curr_focus")!.visible = false
     this.score_board = this.node.find_child("score_board")!
 
-    const bg_data = this.lf2.random_get(this.lf2.datas.backgrounds);
+    const bg_data = this.lf2.mt.pick(this.lf2.datas.backgrounds);
     if (bg_data) this.lf2.change_bg(bg_data);
 
     const character_datas = this.lf2.datas.get_characters_of_group(
       EntityGroup.Regular,
     );
-    const player_count = floor(this.lf2.random_in(2, 8));
+    const player_count = floor(this.lf2.mt.range(2, 8));
     const player_teams: string[] = [];
 
     for (let i = 0; i < player_count; i++) {
@@ -37,14 +37,14 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
     this.world.paused = false;
     switch (player_count) {
       case 4: {
-        if (this.lf2.random_take([0, 1])) {
+        if (this.lf2.mt.take([0, 1])) {
           player_teams.fill(Defines.TeamEnum.Team_1, 0, 2);
           player_teams.fill(Defines.TeamEnum.Team_2, 2, 4);
         }
         break;
       }
       case 6: {
-        switch (this.lf2.random_take([0, 1, 2])) {
+        switch (this.lf2.mt.take([0, 1, 2])) {
           case 1: {
             player_teams.fill(Defines.TeamEnum.Team_1, 0, 3);
             player_teams.fill(Defines.TeamEnum.Team_2, 3, 6);
@@ -60,7 +60,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
         break;
       }
       case 8: {
-        switch (this.lf2.random_take([0, 1, 2])) {
+        switch (this.lf2.mt.take([0, 1, 2])) {
           case 1: {
             player_teams.fill(Defines.TeamEnum.Team_1, 0, 4);
             player_teams.fill(Defines.TeamEnum.Team_2, 4, 8);
@@ -82,7 +82,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       const player = player_infos[i]!;
       if (!player) continue;
 
-      const character_data = this.lf2.random_take(character_datas);
+      const character_data = this.lf2.mt.take(character_datas);
       if (!character_data) continue;
 
       const fighter = Factory.inst.create_entity(character_data.type, this.world, character_data);
@@ -90,7 +90,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
 
       fighter.name = "com";
       fighter.team = player_teams.shift() ?? new_team();
-      fighter.facing = this.lf2.random_get([1, -1] as const)!;
+      fighter.facing = this.lf2.mt.pick([1, -1] as const)!;
       fighter.callbacks.add(this);
       fighter.key_role = true;
 
@@ -102,9 +102,9 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
         fighter,
       );
       fighter.set_position(
-        this.lf2.random_in(left, right),
+        this.lf2.mt.range(left, right),
         void 0,
-        this.lf2.random_in(far, near)
+        this.lf2.mt.range(far, near)
       )
       fighter.blinking = this.world.begin_blink_time;
       fighter.attach();

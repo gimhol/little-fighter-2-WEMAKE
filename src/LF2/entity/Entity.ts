@@ -18,7 +18,7 @@ import { Ditto } from "../ditto";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, find, float_equal, floor, intersection, max, min, round, round_float } from "../utils";
+import { abs, clamp, find, float_equal, intersection, max, min, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_num, is_positive, is_str } from "../utils/type_check";
@@ -924,8 +924,10 @@ export class Entity {
           case FrameBehavior.JulianBallStart:
             e.merge_velocities();
             const { x } = e.velocity;
-            const zz = this.lf2.random_in(-5, 5) / 5;
-            const yy = this.lf2.random_in(-5, 5) / 10;
+            this.lf2.mt.mark = 'ao_1'
+            const zz = round_float(this.lf2.mt.range(-5, 5) / 5)
+            this.lf2.mt.mark = 'ao_2'
+            const yy = round_float(this.lf2.mt.range(-5, 5) / 10)
             e.set_velocity(x, yy, zz)
             break;
           case FrameBehavior.FirzenDisasterStart:
@@ -955,7 +957,8 @@ export class Entity {
     offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
     facing: TFace = this.facing
   ): Entity | undefined {
-    const oid = this.lf2.random_get(opoint.oid);
+    this.lf2.mt.mark = 'se_1'
+    const oid = this.lf2.mt.pick(opoint.oid);
     if (!oid) {
       Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, opoint: `, opoint);
       return;
@@ -1205,7 +1208,8 @@ export class Entity {
   drop_holding(): void {
     if (!this.holding) return;
     this.holding.follow_holder();
-    this.holding.enter_frame({ id: this.lf2.random_get(this.holding.data.indexes?.in_the_skys) });
+    this.lf2.mt.mark = 'dh_1'
+    this.holding.enter_frame({ id: this.lf2.mt.pick(this.holding.data.indexes?.in_the_skys) });
     this.holding.holder = null;
     this.holding = null;
   }
@@ -1246,7 +1250,7 @@ export class Entity {
     if (!this._mp_r_tick.add())
       return;
     const r_ratio = base.mp_r_ratio ?? this.world.mp_r_ratio;
-    const value = 1 + floor((500 - min(r_ratio * this._hp, 500)) / 100)
+    const value = 1 + round((500 - min(r_ratio * this._hp, 500)) / 100)
     this.mp = min(this._mp_max, this._mp + value);
   }
 
@@ -1321,20 +1325,22 @@ export class Entity {
           for (const e of this.world.slot_fighters.values()) {
             if (e.hp <= 0) continue;
             const d =
-              abs(floor(e.position.x - this._position.x)) +
-              abs(floor(e.position.z - this._position.z));
+              abs(round(e.position.x - this._position.x)) +
+              abs(round(e.position.z - this._position.z));
             if (d > max_distance) continue;
             max_distance = d;
             friend = e;
           }
           if (friend) {
-            this._position.x = this.lf2.random_in(
-              max(floor(friend.position.x - 100), this.world.stage.player_l),
-              min(floor(friend.position.x + 100), this.world.stage.player_r)
+            this.lf2.mt.mark = 'u_1'
+            this._position.x = this.lf2.mt.range(
+              max(round(friend.position.x - 100), this.world.stage.player_l),
+              min(round(friend.position.x + 100), this.world.stage.player_r)
             )
-            this._position.z = this.lf2.random_in(
-              min(floor(friend.position.z - 100), this.world.stage.far),
-              max(floor(friend.position.z + 100), this.world.stage.near)
+            this.lf2.mt.mark = 'u_2'
+            this._position.z = this.lf2.mt.range(
+              min(round(friend.position.z - 100), this.world.stage.far),
+              max(round(friend.position.z + 100), this.world.stage.near)
             )
           }
 
@@ -1719,7 +1725,8 @@ export class Entity {
       near: n,
       far: f,
     } = cross
-    const x = this.lf2.random_in(l, r);
+    this.lf2.mt.mark = 'sp_1'
+    const x = this.lf2.mt.range(l, r);
     const y = 2 + (b + t) / 2//this.lf2.random_in(b, t);
     const z = max(f, n) + 2;
     return [x, y, z] as const;
@@ -1930,7 +1937,8 @@ export class Entity {
     }
     let frame: IFrameInfo | undefined;
     if (id) {
-      frame = this.find_frame_by_id(this.lf2.random_get(id));
+      this.lf2.mt.mark = 'gnf_1'
+      frame = this.find_frame_by_id(this.lf2.mt.pick(id));
       if (!frame) return void 0;
     }
     if (!this.world.infinity_mp && frame) {
@@ -2059,7 +2067,8 @@ export class Entity {
 
   play_sound(sounds: string[] | undefined, pos: IPos = this._position) {
     if (!sounds?.length) return;
-    const sound = this.lf2.random_get(sounds);
+    this.lf2.mt.mark = 'ps_1'
+    const sound = this.lf2.mt.pick(sounds);
     if (!sound) return;
     const { x, y, z } = pos;
     this.lf2.sounds.play(sound, x, y, z);

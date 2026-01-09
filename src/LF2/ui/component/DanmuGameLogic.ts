@@ -32,7 +32,7 @@ export class DanmuGameLogic extends SummaryLogic {
     if (!this._cam_ctrl || this._cam_ctrl?.staring !== e) return
     // 聚焦角色被移除后，聚焦下一个角色
     this._staring_countdown.reset();
-    this._cam_ctrl.staring = this.lf2.random_get(this.lf2.characters.list())
+    this._cam_ctrl.staring = this.lf2.mt.pick(this.lf2.characters.list())
   }
   override on_start(): void {
     super.on_start?.();
@@ -146,7 +146,7 @@ export class DanmuGameLogic extends SummaryLogic {
   update_staring() {
     if (!this._cam_ctrl) return;
     const fighters = this.lf2.characters.list();
-    this._cam_ctrl.staring = this.lf2.random_get(fighters)
+    this._cam_ctrl.staring = this.lf2.mt.pick(fighters)
   }
   override update(dt: number): void {
     this.time += dt;

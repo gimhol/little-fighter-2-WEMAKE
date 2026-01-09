@@ -5,7 +5,7 @@ import { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { abs } from "../utils";
 import { get_val_getter_from_entity } from "./get_val_from_entity";
 export const bot_val_getters: Record<BotVal, (e: BotController) => any> = {
-  [BotVal.Desire]: e => e.desire(),
+  [BotVal.Desire]: e => e.desire("bot_val"),
   [BotVal.BotState]: e => e.fsm.state?.key ?? '',
   [BotVal.EnemyY]: e => e.get_chasing()?.entity?.position.y,
   [BotVal.EnemyDiffY]: e => {

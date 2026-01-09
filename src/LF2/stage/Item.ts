@@ -5,7 +5,7 @@ import { Factory } from "../entity/Factory";
 import IEntityCallbacks from "../entity/IEntityCallbacks";
 import { is_fighter, is_weapon } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
-import { floor } from "../utils";
+import { round } from "../utils";
 import { is_num, is_str } from "../utils/type_check";
 import { Stage } from "./Stage";
 
@@ -54,7 +54,7 @@ export default class Item {
   constructor(stage: Stage, info: IStageObjectInfo) {
     this.stage = stage;
     this.info = info;
-    this.times = info.times ? floor(info.times) : void 0;
+    this.times = info.times ? round(info.times) : void 0;
     const data_list: IEntityData[] = [];
     const randoming_list: Randoming<IEntityData>[] = []
     for (const oid of this.info.id) {
@@ -95,11 +95,11 @@ export default class Item {
     e.dead_gone = true;
     e.reserve = reserve ?? 0;
     e.set_position(
-      this.lf2.random_in(x, x + range_x),
+      this.lf2.mt.range(x, x + range_x),
       null,
       is_num(z)
-        ? this.lf2.random_in(z - range_z, z + range_z)
-        : this.lf2.random_in(this.stage.near, this.stage.far)
+        ? this.lf2.mt.range(z - range_z, z + range_z)
+        : this.lf2.mt.range(this.stage.near, this.stage.far)
     )
     if (this.info.join)
       e.dead_join = {
@@ -110,8 +110,8 @@ export default class Item {
     let _hp = hp_map?.[this.world.difficulty]
     if (!is_num(_hp) && is_num(hp)) {
       switch (this.world.difficulty) {
-        case Difficulty.Easy: _hp = floor(hp * 3 / 4); break;
-        case Difficulty.Crazy: _hp = floor(hp * 3 / 2); break;
+        case Difficulty.Easy: _hp = round(hp * 3 / 4); break;
+        case Difficulty.Crazy: _hp = round(hp * 3 / 2); break;
         default: _hp = hp;
       }
     }

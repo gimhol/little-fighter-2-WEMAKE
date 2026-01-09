@@ -1,5 +1,5 @@
 import { FacingFlag, IFrameInfo, IOpointInfo } from "../defines";
-import { floor } from "../utils/math/base";
+import { round } from "../utils/math/base";
 import { is_num, not_zero_num } from "../utils/type_check";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { take } from "./take";
@@ -16,7 +16,7 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
       if (facing >= 2 && facing <= 19) {
         act.facing = FacingFlag.Right;
       } else if (facing >= 20) {
-        opoint.multi = floor(facing / 10);
+        opoint.multi = round(facing / 10);
       }
     } else {
       act.facing = FacingFlag.None;

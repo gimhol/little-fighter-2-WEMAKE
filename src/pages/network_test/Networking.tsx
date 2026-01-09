@@ -1,6 +1,6 @@
 
-import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
-import { IKeyEvent, IReqTick, IRespTick, MsgEnum, TInfo } from "@/Net";
+import { BotState_Base, LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
+import { IKeyEvent, IReqTick, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useMemo, useRef, useState } from "react";
@@ -16,13 +16,67 @@ import { useRoom } from "./useRoom";
 export interface INetworkingProps {
   lf2?: LF2 | undefined | null;
 }
-class Lf2Updater {
+
+class Tester<V> {
+  private s = false
+  private v1: V;
+  private v0: V;
+  private comparer = (a: V, b: V) => a === b;
+  constructor(first: V, comparer?: typeof this.comparer) {
+    this.v1 = this.v0 = first;
+    if (comparer) this.comparer = comparer;
+  }
+  reset() {
+    this.v1 = this.v0;
+    this.s = false
+  }
+  test(value: V): boolean {
+    if (!this.s) {
+      this.s = true;
+      this.v1 = value;
+      return true;
+    }
+    return this.v1 === value
+  }
+}
+
+class Lf2NetworkDriver {
   conn?: Connection | null;
   lf2?: LF2 | null;
   resp?: IRespTick | IRespKeyTick | null;
   _f: boolean = false;
-  _r: string | null | undefined = null;
-  _p: string | null | undefined = null;
+  _r = new Tester<string | null | undefined>(null);
+  _p = new Tester<string | null | undefined>(null);
+  _a = new Tester<string | null | undefined>(null);
+  on_room_start(resp: IRespRoomStart) {
+    const { conn, lf2 } = this;
+    if (!conn || !lf2) return;
+    const clients = conn.room?.clients
+    if (clients?.length) {
+      for (const client of clients) {
+        for (let i = 1; i <= 4; i++) {
+          const k = `${client.id}#${i}`;
+          const pi = new PlayerInfo(k, client.name, false);
+          lf2.players.set(k, pi)
+        }
+      }
+    }
+    lf2.load("data.zip.json")
+    lf2.set_ui("loading")
+    lf2.mt.reset(resp.seed ?? 0, true)
+    BotState_Base.debug(true);
+  }
+  on_tick(resp: IRespTick | IRespKeyTick) {
+    const { conn, lf2 } = this;
+    if (!conn || !lf2) return;
+    if (typeof resp.seq !== 'number') return;
+    if (resp.seq === 0) {
+      lf2.world.after_update = this.after_update
+      lf2.world.before_update = this.before_update
+    }
+    this.resp = resp;
+    lf2.world.awake()
+  }
   before_update = () => {
     const { lf2, conn, resp } = this;
     if (!lf2 || !conn || !resp) return;
@@ -41,36 +95,34 @@ class Lf2Updater {
       events: req_events
     }
     if (lf2.mt.debug) {
-      req.randoms = lf2.mt.cases.join()
-      // req.positions = ''
-      // for (const e of lf2.world.entities) {
-      //   req.positions += `${e.id}(${e.position.x}, ${e.position.y}, ${e.position.z}) `
-      // }
+      req._r = lf2.mt.cases.join()
       lf2.mt.cases.length = 0;
+      req._p = Array.from(lf2.world.entities).map(e => `(${e.position.x}, ${e.position.y}, ${e.position.z})`).join(', ')
+      req._a = BotState_Base.cases.join()
+      BotState_Base.cases.length = 0
     }
     if (!this._f) conn.send(MsgEnum.Tick, req)
 
     lf2.cmds.length = 0;
     lf2.events.length = 0;
-    this._p = null
-    this._r = null
-    for (const { cmds, events, randoms, positions } of reqs) {
-      // if (this._p === null) {
-      //   this._p = positions
-      // } else if (this._p !== positions) {
-      //   console.error(`positions not equal!`, reqs)
-      //   this._f = true
-      // }
-      if (this._r === null) {
-        this._r = randoms
-      } else if (this._r !== randoms) {
-        console.error(`randoms not equal!`, reqs)
+    this._p.reset()
+    this._r.reset()
+    this._a.reset()
+    for (const req of reqs) {
+      const { cmds, events, _r, _p, _a } = req;
+      if (!this._a.test(_a)) {
+        console.error(`bot acations not equal!`, reqs.map(v => v._a))
         this._f = true
       }
-      if (this._f) {
-        debugger;
-        break;
+      if (!this._r.test(_r)) {
+        console.error(`randoms not equal!`, reqs.map(v => v._r))
+        this._f = true
       }
+      if (!this._p.test(_p)) {
+        console.error(`posiitons not equal!`, reqs.map(v => v._p))
+        this._f = true
+      }
+      if (this._f) { debugger; break; }
       if (cmds?.length) lf2.cmds.push(...(cmds as any[]))
       if (!events?.length) continue;
       for (const { player_id, pressed = false, game_key = '' } of events) {
@@ -84,6 +136,7 @@ class Lf2Updater {
   after_update = () => this.lf2?.world.sleep()
 }
 
+
 export function Networking(props: INetworkingProps) {
   const { lf2 } = props;
   const ref_lf2 = useRef(lf2);
@@ -91,7 +144,7 @@ export function Networking(props: INetworkingProps) {
   const [conn_state, set_conn_state] = useState<TriState>(TriState.False);
   const [conn, set_conn] = useStateRef<Connection | null>(null)
   const { room } = useRoom(conn)
-  const updater = useMemo(() => new Lf2Updater(), [])
+  const updater = useMemo(() => new Lf2NetworkDriver(), [])
   updater.conn = conn;
   updater.lf2 = lf2;
   const [started, set_started] = useState(false)
@@ -101,30 +154,12 @@ export function Networking(props: INetworkingProps) {
       if (!lf2 || !me) return;
       switch (resp.type) {
         case MsgEnum.RoomStart:
-          const clients = conn.room?.clients
-          if (clients?.length) {
-            for (const client of clients) {
-              for (let i = 1; i <= 4; i++) {
-                const k = `${client.id}#${i}`;
-                const pi = new PlayerInfo(k, client.name, false);
-                lf2.players.set(k, pi)
-              }
-            }
-          }
-          lf2.load("data.zip.json")
-          lf2.set_ui("loading")
-          lf2.mt.reset(resp.seed ?? 0, true)
+          updater.on_room_start(resp);
           set_started(true)
           break;
         case MsgEnum.KeyTick:
         case MsgEnum.Tick: {
-          if (typeof resp.seq !== 'number') break
-          if (resp.seq === 0) {
-            lf2.world.after_update = updater.after_update
-            lf2.world.before_update = updater.before_update
-          }
-          updater.resp = resp;
-          lf2.world.awake()
+          updater.on_tick(resp);
           break;
         }
       }

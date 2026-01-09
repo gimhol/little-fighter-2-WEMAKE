@@ -1,6 +1,6 @@
 import { BuiltIn_OID, Builtin_FrameId } from "../defines";
 import { Entity, turn_face } from "../entity";
-import { floor } from "../utils";
+import { round } from "../utils";
 
 
 export function handle_ball_frozen(attacker: Entity, victim: Entity) {
@@ -17,9 +17,9 @@ export function handle_ball_frozen(attacker: Entity, victim: Entity) {
     const p1 = attacker.position;
     const p2 = victim.position;
     freeze_ball.position.set(
-      floor(0.5 * (p1.x + p2.x)),
-      floor(p2.y),
-      floor(0.5 * (p1.z + p2.z))
+      round(0.5 * (p1.x + p2.x)),
+      round(p2.y),
+      round(0.5 * (p1.z + p2.z))
     );
     victim.enter_frame({ id: '20' })
   }

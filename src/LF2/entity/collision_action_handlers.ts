@@ -56,7 +56,7 @@ export const collision_action_handlers: IActionHandler = {
     } else if (a_v < v_v) {
       fighter_1 = victim;
       fighter_2 = attacker;
-    } else if (lf2.random_int() % 2) {
+    } else if (lf2.mt.int() % 2) {
       fighter_1 = attacker;
       fighter_2 = victim;
     } else {

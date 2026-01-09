@@ -13,7 +13,7 @@ import {
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { PlayerInfo } from "../PlayerInfo";
-import { abs, clamp, floor, max } from "../utils";
+import { abs, clamp, max, round } from "../utils";
 import { DummyEnum, dummy_updaters } from "./DummyEnum";
 import { IBotTarget } from "./IBotTarget";
 import { NearestTargets } from "./NearestTargets";
@@ -131,11 +131,11 @@ export class BotController extends BaseController implements Required<IBotDataSe
     let should_run = false
     const r_x_r = this.r_x_max - this.r_x_min
     if (r_x_r === 0) {
-      dx = floor(clamp(dx, 0, r_x_r) / r_x_r)
-      should_run = this.desire() <
+      dx = round(clamp(dx, 0, r_x_r) / r_x_r)
+      should_run = this.desire("rr1") <
         this.r_desire_min + (this.r_desire_max - this.r_desire_min) * dx;
     } else {
-      should_run = this.desire() < this.r_x_min;
+      should_run = this.desire("rr2") < this.r_x_min;
     }
     if (!should_run) return 0;
     return this.entity.position.x > chasing.position.x ? -1 : 1
@@ -352,8 +352,9 @@ export class BotController extends BaseController implements Required<IBotDataSe
     }
     return this;
   }
-  desire() {
-    return this.lf2.random_in(0, Defines.MAX_AI_DESIRE)
+  desire(mark: string) {
+    this.lf2.mt.mark = mark
+    return this.lf2.mt.range(0, Defines.MAX_AI_DESIRE)
   }
 
   override update() {
@@ -396,10 +397,11 @@ export class BotController extends BaseController implements Required<IBotDataSe
     return false;
   }
 
-  action_desire(): number {
-    let ret = this.desire(); // 默认action设置的desire是crazy的好了。
+  action_desire(mark: string): number {
+    let ret = this.desire(mark); // 默认action设置的desire是crazy的好了。
     for (let i = Difficulty.MAX - this.world.difficulty; i > 0; --i) {
-      ret += this.lf2.random_in(0, ret);
+      this.lf2.mt.mark = mark;
+      ret += this.lf2.mt.range(0, ret);
     }
     return ret;
   }
@@ -407,7 +409,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
     if (!action) return false
     const { facing } = this.entity;
     const { status, e_ray, judger, desire, keys } = action;
-    const action_desire = this.action_desire();
+    const action_desire = this.action_desire(action.keys.join());
     if (!desire || action_desire > desire) return false;
     if (status && !status.some(v => v === this.fsm.state?.key))
       return false;

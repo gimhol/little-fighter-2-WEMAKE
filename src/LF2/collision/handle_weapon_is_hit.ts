@@ -1,6 +1,6 @@
 import { ICollision } from "../base";
 import { BuiltIn_OID, Defines, W_T } from "../defines";
-import { floor } from "../utils";
+import { round } from "../utils";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
@@ -21,14 +21,15 @@ export function handle_weapon_is_hit(collision: ICollision): void {
 
   let weight_x = victim.data.base.weight || 1;
   let weight_y = victim.data.base.weight || 1;
-  let vx = floor((itr.dvx ? itr.dvx * attacker.facing : 0) / weight_x);
-  let vy = floor((itr.dvy ? itr.dvy : Defines.DEFAULT_IVY_D) / weight_y);
+  let vx = round((itr.dvx ? itr.dvx * attacker.facing : 0) / weight_x);
+  let vy = round((itr.dvy ? itr.dvy : Defines.DEFAULT_IVY_D) / weight_y);
 
 
   if (victim.data.base.type !== W_T.Heavy || is_fly) {
     victim.set_velocity(vx, vy, 0)
     victim.team = attacker.team;
-    victim.next_frame = { id: victim.lf2.random_get(victim.data.indexes?.in_the_skys) };
+    victim.lf2.mt.mark = 'hwih_1'
+    victim.next_frame = { id: victim.lf2.mt.pick(victim.data.indexes?.in_the_skys) };
   }
 
   if (
@@ -41,7 +42,8 @@ export function handle_weapon_is_hit(collision: ICollision): void {
   ) {
     const s = attacker.data.base.strength || 1
     vx = attacker.facing * s * 20
-    victim.next_frame = { id: victim.lf2.random_get(victim.data.indexes?.throwings) }
+    victim.lf2.mt.mark = 'hwih_2'
+    victim.next_frame = { id: victim.lf2.mt.pick(victim.data.indexes?.throwings) }
   }
 
 }

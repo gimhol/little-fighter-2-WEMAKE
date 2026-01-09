@@ -1,6 +1,6 @@
 import { ICollision } from "../base";
 import { ArmorEnum, Defines, SparkEnum } from "../defines";
-import { floor } from "../utils";
+import { round } from "../utils";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
 import { is_armor_work } from "./is_armor_work";
@@ -50,8 +50,8 @@ export function handle_armor(collision: ICollision): boolean {
     shaking = victim.world.itr_shaking,
     motionless = victim.world.itr_motionless
   } = itr
-  attacker.motionless = floor(motionless_ratio * motionless);
-  victim.shaking = floor(shaking_ratio * shaking);
+  attacker.motionless = round(motionless_ratio * motionless);
+  victim.shaking = round(shaking_ratio * shaking);
   victim.set_velocity(0, 0, 0)
   handle_rest(collision)
   handle_injury(collision, injury_ratio)

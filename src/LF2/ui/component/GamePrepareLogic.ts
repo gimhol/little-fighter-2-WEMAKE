@@ -61,16 +61,16 @@ export class GamePrepareLogic extends UIComponent {
       }
       fighter.name = player.name;
       fighter.team = slot_info.team || new_team();
-      fighter.facing = this.lf2.random_get([FacingFlag.Left, FacingFlag.Right])!;
+      fighter.facing = this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
       if (player.is_com) {
         fighter.ctrl = Factory.inst.create_ctrl(fighter_data.id, player.id, fighter);
       } else {
         fighter.ctrl = new LocalController(player.id, fighter);
       }
       fighter.set_position(
-        this.lf2.random_in(left, right),
+        this.lf2.mt.range(left, right),
         void 0,
-        this.lf2.random_in(far, near)
+        this.lf2.mt.range(far, near)
       )
       fighter.blinking = this.world.begin_blink_time;
       fighter.attach();

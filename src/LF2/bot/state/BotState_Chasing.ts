@@ -80,20 +80,20 @@ export class BotState_Chasing extends BotState_Base {
         } else if (a_facing < 0 && (abs_dx < c.w_atk_x || out_of_range)) { // 避免跑过头停下
           c.keep_press(GK.R)
         } else if (
-          c.desire() < c.r_atk_desire &&
+          c.desire("chasing_1") < c.r_atk_desire &&
           between(dist_en_x, 0, c.r_atk_x) &&
           between(abs_dz, 0, c.r_atk_z)
         ) {
           // 概率跑攻
           c.fast_click(GK.a).key_up(GK.R, GK.L)
-        } else if (c.desire() < c.r_stop_desire) {
+        } else if (c.desire("chasing_2") < c.r_stop_desire) {
           // 概率刹车
           c.fast_click(a_facing < 0 ? GK.R : GK.L)
         } else break;
         return
       }
       case StateEnum.Injured:
-        if (c.action_desire() < c.d_desire)
+        if (c.action_desire("chasing_3") < c.d_desire)
           c.fast_click(GK.d)
         break;
       case StateEnum.Catching:

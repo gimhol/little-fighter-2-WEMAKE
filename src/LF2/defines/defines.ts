@@ -1,4 +1,4 @@
-import { floor } from "../utils";
+import { round } from "../utils";
 import { arithmetic_progression } from "../utils/math/arithmetic_progression";
 import { Builtin_FrameId } from "./Builtin_FrameId";
 import { CheatType } from "./CheatType";
@@ -446,7 +446,7 @@ export namespace Defines {
 
 
   export function desire(ratio: number): number {
-    return floor(Defines.MAX_AI_DESIRE * ratio)
+    return round(Defines.MAX_AI_DESIRE * ratio)
   }
 
   /**

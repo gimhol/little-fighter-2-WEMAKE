@@ -39,7 +39,7 @@ export class Randoming<T> {
     return a.splice(this.random_in(0, a.length), 1)[0]
   }
   protected random_in(l: number, r: number) {
-    if (this.lf2) return this.lf2.random_in(l, r)
+    if (this.lf2) return this.lf2.mt.range(l, r)
     return Randoming.mt.range(l, r);
   }
 }

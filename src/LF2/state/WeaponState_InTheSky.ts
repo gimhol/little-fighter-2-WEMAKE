@@ -1,7 +1,7 @@
 
 import { IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
-import { floor } from "../utils";
+import { round } from "../utils";
 import WeaponState_Base from "./WeaponState_Base";
 
 export default class WeaponState_InTheSky extends WeaponState_Base {
@@ -18,7 +18,7 @@ export default class WeaponState_InTheSky extends WeaponState_Base {
   override on_landing(e: Entity): void {
     const { y: vy } = e.velocity;
     const { base, indexes } = e.data;
-    const dvy = floor(-vy * (base.bounce || 0));
+    const dvy = round(-vy * (base.bounce || 0));
     const min_bounce_vy = 2;
     if (this._unhurt_weapons.has(e)) {
       this._unhurt_weapons.delete(e);

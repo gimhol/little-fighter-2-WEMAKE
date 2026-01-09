@@ -20,7 +20,7 @@ import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
   Entity, Factory, ICreator, is_ball,
   is_bot_ctrl,
-  is_fighter as is_fighter,
+  is_fighter,
   is_local_ctrl,
   is_weapon
 } from "./entity";
@@ -30,7 +30,7 @@ import { LF2 } from "./LF2";
 import { manhattan } from "./manhattan";
 import { Stage } from "./stage/Stage";
 import { Times } from "./ui";
-import { abs, find, floor, is_num, min, round } from "./utils";
+import { abs, find, is_num, min, round } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -545,7 +545,7 @@ export class World extends WorldDataset {
   }
 
   update_camera() {
-    const old_cam_x = floor(this.renderer.cam_x);
+    const old_cam_x = round(this.renderer.cam_x);
     if (this.bg.id === Defines.VOID_BG.id) {
       this.renderer.cam_x = 0
       if (old_cam_x !== 0) {
@@ -583,7 +583,7 @@ export class World extends WorldDataset {
         }
       }
 
-      new_x = floor(new_x / l);
+      new_x = round(new_x / l);
     } else {
 
     }
@@ -610,7 +610,7 @@ export class World extends WorldDataset {
       if (this.renderer.cam_x > new_x) this.renderer.cam_x = new_x;
     }
 
-    const new_cam_x = floor(this.renderer.cam_x);
+    const new_cam_x = round(this.renderer.cam_x);
     if (old_cam_x !== new_cam_x) {
       this.callbacks.emit("on_cam_move")(new_cam_x);
     }
@@ -802,7 +802,7 @@ export class World extends WorldDataset {
     };
   }
 
-  private _ideally_dt: number = floor(1000 / 60);
+  private _ideally_dt: number = round(1000 / 60);
   private _playrate: number = 1;
 
   get playrate() {
@@ -812,7 +812,7 @@ export class World extends WorldDataset {
     if (v <= 0) throw new Error("playrate must be larger than 0");
     if (v === this._playrate) return;
     this._playrate = v;
-    this._ideally_dt = floor(1000 / 60) / this._playrate;
+    this._ideally_dt = round(1000 / 60) / this._playrate;
     this.start_update();
   }
 

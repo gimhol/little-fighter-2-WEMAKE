@@ -12,6 +12,7 @@ export class MersenneTwister {
   private _times: number = 0;
   private _debug: boolean = false
   readonly cases: string[] = []
+  mark: string = '';
   get times() { return this._times }
   get debug() { return this._debug }
   constructor(seed: number = Date.now()) {
@@ -20,6 +21,7 @@ export class MersenneTwister {
 
   reset(seed: number, debug: boolean = this._debug): this {
     this.cases.length = 0;
+    this.mark = ''
     this._debug = debug;
     this._matrix = 0x9908B0DF;
     this._upper_mask = 0x80000000;
@@ -49,7 +51,9 @@ export class MersenneTwister {
   }
 
   // 提取伪随机数
-  public int(debug = false): number {
+  public int(debug = this._debug): number {
+    const m = this.mark ? `[${this.mark}]` : void 0
+    this.mark = ''
     if (this._index >= _n) this.twist();
     let y = this._mt[this._index++]!;
     // 额外的位操作以改善分布
@@ -58,21 +62,43 @@ export class MersenneTwister {
     y ^= (y << 15) & 0xEFC60000;
     y ^= (y >>> 18);
     const ret = y >>> 0; // 确保返回32位无符号整数
-    if (this._debug && debug) this.cases.push(`int_${this._times}: ${ret}`)
+    if (debug) this.cases.push(`${m}int_${++this._times}: ${ret}`)
     return ret
   }
 
   /** 生成[0,1)范围内的浮点数 */
-  public float(debug = false): number {
-    const ret = round_float(this.int(true) / (0xFFFFFFFF + 1));
-    if (this._debug && debug) this.cases.push(`float_${this._times}: ${ret}`)
+  public float(debug = this._debug): number {
+    const m = this.mark ? `[${this.mark}]` : ''; this.mark = '';
+    const ret = round_float(this.int(false) / (0xFFFFFFFF + 1));
+    if (debug) this.cases.push(`${m}float_${++this._times}: ${ret}`)
     return ret;
   }
 
   /** 生成[min, max)范围内的整数 */
-  public range(min: number, max: number): number {
-    const ret = floor(this.float(true) * (max - min)) + min
-    if (this._debug) this.cases.push(`range_${this._times}: ${ret}`)
+  public range(min: number, max: number, debug = this._debug): number {
+    const m = this.mark ? `[${this.mark}]` : ''; this.mark = '';
+    const ret = floor(this.float(false) * (max - min)) + min
+    if (debug) this.cases.push(`${m}range_${++this._times}(${min}, ${max}): ${ret} `)
     return ret;
+  }
+
+  /**  */
+  public pick<T>(a: T | T[] | undefined, debug = this._debug): T | undefined {
+    const m = this.mark ? `[${this.mark}]` : ''; this.mark = '';
+    if (!a) return void 0;
+    if (!Array.isArray(a)) return a
+    const index = this.range(0, a.length, false)
+    if (debug) this.cases.push(`${m}pick_${++this._times}(${a.length}): ${index} `)
+    return a[index]
+  }
+
+  /**  */
+  public take<T>(a: T | T[] | undefined, debug = this._debug): T | undefined {
+    const m = this.mark ? `[${this.mark}]` : ''; this.mark = '';
+    if (!a) return void 0;
+    if (!Array.isArray(a)) return a
+    const index = this.range(0, a.length, false)
+    if (debug) this.cases.push(`${m}take_${++this._times}(${a.length}): ${index} `)
+    return a.splice(index, 1)[0];
   }
 }

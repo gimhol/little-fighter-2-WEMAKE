@@ -9,7 +9,7 @@ import { ImageInfo } from "../ditto/image/ImageInfo";
 import { TextInfo } from "../ditto/image/TextInfo";
 import { IUINodeRenderer } from "../ditto/render/IUINodeRenderer";
 import { IDebugging, make_debugging } from "../entity/make_debugging";
-import { floor } from "../utils";
+import { round } from "../utils";
 import { filter, find } from "../utils/container_help";
 import { is_bool, is_num, is_str } from "../utils/type_check";
 import { ICookedUIInfo } from "./ICookedUIInfo";
@@ -269,8 +269,8 @@ export class UINode implements IDebugging {
     const [cx, cy] = this.center.value;
     const [px, py] = this.pos.value;
     const [dw, dh] = this.size.value;
-    const l = px - floor(cx * dw);
-    const t = py - floor(cy * dh);
+    const l = px - round(cx * dw);
+    const t = py - round(cy * dh);
     const [w, h] = this.data.size;
     return l <= x && t <= y && l + w >= x && t + h >= y;
   }

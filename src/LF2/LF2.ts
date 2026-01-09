@@ -195,11 +195,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   random_entity_info(e: Entity) {
     const { left: l, right: r, near: n, far: f } = this.world;
     e.id = new_id();
-    e.facing = this.random_in(0, 100) % 2 ? -1 : 1;
+    e.facing = this.mt.range(0, 100) % 2 ? -1 : 1;
     e.position.set(
-      this.random_in(l, r),
+      this.mt.range(l, r),
       550,
-      this.random_in(f, n),
+      this.mt.range(f, n),
     )
     return e;
   }
@@ -467,7 +467,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   change_bg(arg: D.IBgData | string | undefined) {
     if (!arg) return;
     if (arg === D.Defines.RANDOM_BG || arg === D.Defines.RANDOM_BG.id || arg === '?')
-      arg = this.random_get(this.datas.backgrounds.filter(v => v.base.group.some(a => a === D.BackgroundGroup.Regular)))
+      arg = this.mt.pick(this.datas.backgrounds.filter(v => v.base.group.some(a => a === D.BackgroundGroup.Regular)))
     if (is_str(arg)) arg = this.datas.find_background(arg);
     if (!arg) return;
     this.world.stage.change_bg(arg);
@@ -629,20 +629,5 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const max = this.is_cheat(D.CheatType.LF2_NET) ? 4 : 3;
     const next = (difficulty % max) + 1;
     this.world.difficulty = next;
-  }
-
-  random_get<T>(a: T | T[] | undefined): T | undefined {
-    if (!a || !Array.isArray(a)) return a
-    return a[this.random_in(0, a.length)]
-  }
-  random_take<T>(a: T | T[] | undefined): T | undefined {
-    if (!a || !Array.isArray(a)) return a
-    return a.splice(this.random_in(0, a.length), 1)[0]
-  }
-  random_in(l: number, r: number) {
-    return this._mt.range(l, r);
-  }
-  random_int() {
-    return this._mt.int();
   }
 }

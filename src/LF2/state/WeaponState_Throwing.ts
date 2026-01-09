@@ -1,6 +1,6 @@
 import { IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
-import { floor } from "../utils/math/base";
+import { round } from "../utils/math/base";
 import WeaponState_Base from "./WeaponState_Base";
 
 export default class WeaponState_Throwing extends WeaponState_Base {
@@ -24,7 +24,7 @@ export default class WeaponState_Throwing extends WeaponState_Base {
     const { y: vy } = e.velocity;
     const { base, indexes } = e.data;
     const dvy =
-      floor(-vy * (base.bounce ?? 0));
+      round(-vy * (base.bounce ?? 0));
     const min_bounce_vy = 2;
     if (this._unhurt_weapons.has(e)) {
       this._unhurt_weapons.delete(e);

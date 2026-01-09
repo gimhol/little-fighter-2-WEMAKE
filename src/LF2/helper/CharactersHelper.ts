@@ -29,7 +29,7 @@ export class CharactersHelper {
   add_random(num = 1, team?: string, filter?: (e: IEntityData) => boolean): Entity[] {
     const ret: Entity[] = [];
     while (--num >= 0) {
-      const d = this.lf2.random_get(
+      const d = this.lf2.mt.pick(
         this.lf2.datas.fighters.filter(v => {
           return filter ? filter(v) : true
         })

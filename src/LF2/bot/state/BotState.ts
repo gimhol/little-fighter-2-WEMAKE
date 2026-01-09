@@ -29,7 +29,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
   random_jumping() {
     const c = this.ctrl;
     const { state } = c.entity.frame;
-    const desire = c.desire()
+    const desire = c.desire('random_jumping_1')
     switch (state) {
       case StateEnum.Running: {
         (
@@ -69,7 +69,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const me = c.entity;
     if (
       c.defends.targets.length <= 0 ||
-      c.action_desire() > c.d_desire
+      c.action_desire('handle_defends_1') > c.d_desire
     ) return me.frame.state === StateEnum.Defend;
 
     if (c.defends.targets[0].defendable === 1) {
@@ -90,6 +90,15 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
       c.start(GK.a).end(GK.a)
     }
   }
+  private static _action_count = 0;
+  private static debuging = false
+  static cases: string[] = [];
+  static debug(v: boolean) {
+    this.debuging = v;
+    this._action_count = 0;
+    this.cases.length = 0;
+  }
+
   handle_bot_actions(): boolean {
     const { ctrl: c } = this;
     const me = c.entity;
@@ -99,21 +108,24 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const keys_list: LGK[][] = []
     let action_ids = bot.frames?.[me.frame.id]
     if (action_ids) for (const aid of action_ids) {
-      const keys = this.ctrl.handle_action(bot.actions[aid])
+      const action = bot.actions[aid];
+      const keys = this.ctrl.handle_action(action)
       if (keys) keys_list.push(keys)
     }
 
     action_ids = bot.states?.[me.frame.state]
     if (action_ids) for (const aid of action_ids) {
-      const keys = this.ctrl.handle_action(bot.actions[aid])
+      const action = bot.actions[aid];
+      const keys = this.ctrl.handle_action(action)
       if (keys) keys_list.push(keys)
     }
 
     if (!keys_list.length) return false
 
-    const keys = me.lf2.random_get(keys_list)
+    me.lf2.mt.mark = 'hba_2'
+    const keys = me.lf2.mt.pick(keys_list)
     if (keys) this.ctrl.start(...keys).end(...keys)
-
+    if (BotState_Base.debuging && keys) BotState_Base.cases.push(`(${BotState_Base._action_count++})` + keys.join())
     return true
   }
 }

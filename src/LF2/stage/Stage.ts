@@ -7,7 +7,7 @@ import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhase
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
 import { is_fighter, is_weapon } from "../entity/type_check";
-import { floor, min } from "../utils";
+import { round, min } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
 import type IStageCallbacks from "./IStageCallbacks";
@@ -203,7 +203,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       }
       for (const entity of this.world.entities) {
         if (is_fighter(entity) && player_teams.has(entity.team))
-          entity.set_position_x(this.lf2.random_in(x, x + 50));
+          entity.set_position_x(this.lf2.mt.range(x, x + 50));
       }
     }
     this.player_l = phase.player_l ?? 0
@@ -242,7 +242,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     }
     const { ratio, times = 1 } = obj_info;
 
-    let spawn_count = ratio === void 0 ? 1 : floor(count * ratio);
+    let spawn_count = ratio === void 0 ? 1 : round(count * ratio);
     if (spawn_count <= 0 || !times) return;
 
     while (spawn_count > 0) {

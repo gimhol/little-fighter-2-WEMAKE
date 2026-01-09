@@ -92,7 +92,7 @@ export class VsModeLogic extends UIComponent {
     this.cancellers.length = 0;
   }
   override update(): void {
-    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.random_in(0, 10) < 5) {
+    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) < 5) {
       this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
     }
     if (this.state === 1 && this.gameover_timer.add()) {
