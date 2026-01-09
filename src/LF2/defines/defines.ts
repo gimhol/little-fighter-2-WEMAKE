@@ -258,6 +258,11 @@ export namespace Defines {
   export const MP_R_TICKS = 6;
   export const MP_R_RATIO = 1;
 
+  export const FALL_R_TICKS = 1;
+  export const FALL_R_VALUE = 1;
+  export const DEFEND_R_TICKS = 1;
+  export const DEFEND_R_VALUE = 1;
+
   export const DifficultyLabels: Record<Difficulty, string> = {
     [Difficulty.Easy]: "easy",
     [Difficulty.Normal]: "normal",

@@ -93,8 +93,12 @@ export class Entity {
   protected _toughness_resting_max!: number;
   protected _fall_value!: number;
   protected _fall_value_max!: number;
+  protected _fall_r_tick!: Times;
+  protected _fall_r_value!: number;
   protected _defend_value!: number;
   protected _defend_value_max!: number;
+  protected _defend_r_tick!: Times;
+  protected _defend_r_value!: number;
   protected _healing!: number;
   protected _defend_ratio!: number;
   public throwinjury!: number | null;
@@ -640,7 +644,11 @@ export class Entity {
     this._data = data;
     this.states = states;
     this._hp_r_tick = new Times(0, world.hp_r_ticks);
-    this._mp_r_tick = new Times(0, world.mp_r_ticks)
+    this._mp_r_tick = new Times(0, world.mp_r_ticks);
+    this._fall_r_tick = new Times(0, world.fall_r_ticks);
+    this._defend_r_tick = new Times(0, world.defend_r_ticks);
+    this._defend_r_value = world.defend_r_value;
+    this._fall_r_value = world.fall_r_value;
     this._hp_max = data.base.hp ?? Defines.DEFAULT_HP;
     this._ctrl = new InvalidController("", this);
     this._mp_max = data.base.mp ?? Defines.DEFAULT_MP;
@@ -734,11 +742,10 @@ export class Entity {
       y = y + emitter_frame.centery - opoint.y;
       x = x - emitter.facing * (emitter_frame.centerx - opoint.x);
     }
-
     this._position.set(
-      round(x),
-      round(y),
-      round(z + (opoint.z ?? 0))
+      round_float(x),
+      round_float(y),
+      round_float(z + (opoint.z ?? 0))
     );
 
     const result = this.get_next_frame(opoint.action);
@@ -776,18 +783,19 @@ export class Entity {
     this.velocities.length = 0
 
     const { dvy = 0, dvz = 0 } = this.frame
-    this.velocities.push(
-      new Ditto.Vector3(
-        ovx + o_dvx * facing,
-        ovy + o_dvy + dvy,
-        ovz + o_dvz + o_speedz * ud + dvz
-      ),
-    )
-    if (
+    const z_disabled =
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
-    ) {
-      this.set_velocity_z(0)
+    this.velocities.push(
+      new Ditto.Vector3(
+        round_float(ovx + o_dvx * facing),
+        round_float(ovy + o_dvy + dvy),
+        z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
+      ),
+    )
+    if (z_disabled) {
+      this.velocities[0].z = 0
+      this._velocity.z = 0;
     }
     switch (opoint.kind) {
       case OpointKind.Pick:
@@ -1195,8 +1203,10 @@ export class Entity {
     if (this.resting > 0) { this.resting--; return; }
     if (this.toughness_resting > 0) this.toughness_resting--;
     else if (this.toughness < this.toughness_max) this.toughness += 1;
-    if (this.fall_value < this.fall_value_max) this.fall_value += 1;
-    if (this.defend_value < this.defend_value_max) this.defend_value += 1;
+    if (this.fall_value < this.fall_value_max && this._fall_r_tick.add())
+      this.fall_value += this._fall_r_value;
+    if (this.defend_value < this.defend_value_max && this._defend_r_tick.add())
+      this.defend_value += this._defend_r_value;
   }
 
   /**

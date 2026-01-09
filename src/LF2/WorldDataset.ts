@@ -184,6 +184,12 @@ export class WorldDataset implements IWorldDataset {
   difficulty: Difficulty = Difficulty.Difficult;
   infinity_mp: boolean = false;
 
+
+  fall_r_ticks: number = Defines.FALL_R_TICKS;
+  fall_r_value: number = Defines.FALL_R_VALUE;
+  defend_r_ticks: number = Defines.DEFEND_R_TICKS;
+  defend_r_value: number = Defines.DEFEND_R_VALUE;
+  
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
   }

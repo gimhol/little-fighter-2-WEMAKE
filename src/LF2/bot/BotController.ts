@@ -125,6 +125,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
 
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.get_chasing()?.entity;
+    this.desire(`${chasing?.id ?? 'no chasing'}`)
     if (!chasing) return 0;
     let dx = abs(this.entity.position.x - chasing.position.x) - this.r_x_min
     // if (dx < 0) return 0;

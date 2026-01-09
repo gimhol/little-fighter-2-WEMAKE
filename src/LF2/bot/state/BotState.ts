@@ -16,20 +16,24 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const me = c.entity;
     const m_facing = me.facing
     const en = c.defends.get()?.entity;
-    if (!en) return false
 
+    if (!en) {
+      c.desire('dt_F')
+      return false
+    }
     const e_facing = en.facing
     if (e_facing == m_facing) { // 回头防御。
       if (e_facing < 0) c.key_down(GK.R).key_up(GK.L)
       else c.key_down(GK.L).key_up(GK.R)
     }
     c.start(GK.d).end(GK.d)
+    c.desire('dt_T')
     return true;
   }
   random_jumping() {
     const c = this.ctrl;
     const { state } = c.entity.frame;
-    const desire = c.desire('random_jumping_1')
+    const desire = c.desire('rj_1')
     switch (state) {
       case StateEnum.Running: {
         (

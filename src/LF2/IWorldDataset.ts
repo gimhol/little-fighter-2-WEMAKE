@@ -190,4 +190,17 @@ export interface IWorldDataset {
    * 是否无限蓝
    */
   infinity_mp: boolean;
+
+  
+  /** 恢复周期(每几帧回一次) */
+  fall_r_ticks: number;
+  
+  /** 恢复值(每次回多少) */
+  fall_r_value: number;
+
+  /** 恢复周期(每几帧回一次) */
+  defend_r_ticks: number;
+
+  /** 恢复值(每次回多少) */
+  defend_r_value: number;
 }
