@@ -20,7 +20,9 @@ class Lf2Updater {
   conn?: Connection | null;
   lf2?: LF2 | null;
   resp?: IRespTick | IRespKeyTick | null;
-
+  _f: boolean = false;
+  _r: string | null | undefined = null;
+  _p: string | null | undefined = null;
   before_update = () => {
     const { lf2, conn, resp } = this;
     if (!lf2 || !conn || !resp) return;
@@ -40,25 +42,35 @@ class Lf2Updater {
     }
     if (lf2.mt.debug) {
       req.randoms = lf2.mt.cases.join()
+      // req.positions = ''
+      // for (const e of lf2.world.entities) {
+      //   req.positions += `${e.id}(${e.position.x}, ${e.position.y}, ${e.position.z}) `
+      // }
       lf2.mt.cases.length = 0;
     }
-
-
-
-    conn.send(MsgEnum.Tick, req)
+    if (!this._f) conn.send(MsgEnum.Tick, req)
 
     lf2.cmds.length = 0;
     lf2.events.length = 0;
-    let _randoms: string | null | undefined = null;
-    for (const { cmds, events, randoms } of reqs) {
-      if (_randoms === null) {
-        _randoms = randoms
-      } else if (_randoms !== randoms) {
+    this._p = null
+    this._r = null
+    for (const { cmds, events, randoms, positions } of reqs) {
+      // if (this._p === null) {
+      //   this._p = positions
+      // } else if (this._p !== positions) {
+      //   console.error(`positions not equal!`, reqs)
+      //   this._f = true
+      // }
+      if (this._r === null) {
+        this._r = randoms
+      } else if (this._r !== randoms) {
         console.error(`randoms not equal!`, reqs)
+        this._f = true
+      }
+      if (this._f) {
         debugger;
         break;
       }
-
       if (cmds?.length) lf2.cmds.push(...(cmds as any[]))
       if (!events?.length) continue;
       for (const { player_id, pressed = false, game_key = '' } of events) {

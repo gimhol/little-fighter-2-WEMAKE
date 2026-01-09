@@ -1,4 +1,5 @@
 import { floor } from "./base";
+import { round_float } from "./round_float";
 
 const _n: number = 624;
 const _m: number = 397;
@@ -48,10 +49,8 @@ export class MersenneTwister {
   }
 
   // 提取伪随机数
-  public int(): number {
-    if (this._index >= _n) {
-      this.twist();
-    }
+  public int(debug = false): number {
+    if (this._index >= _n) this.twist();
     let y = this._mt[this._index++]!;
     // 额外的位操作以改善分布
     y ^= (y >>> 11);
@@ -59,21 +58,21 @@ export class MersenneTwister {
     y ^= (y << 15) & 0xEFC60000;
     y ^= (y >>> 18);
     const ret = y >>> 0; // 确保返回32位无符号整数
-    if (this._debug) this.cases.push(`int: ${ret}`)
+    if (this._debug && debug) this.cases.push(`int_${this._times}: ${ret}`)
     return ret
   }
 
-  // 生成[0,1)范围内的浮点数
-  public float(): number {
-    const ret = this.int() / (0xFFFFFFFF + 1);
-    if (this._debug) this.cases.push(`float: ${ret}`)
+  /** 生成[0,1)范围内的浮点数 */
+  public float(debug = false): number {
+    const ret = round_float(this.int(true) / (0xFFFFFFFF + 1));
+    if (this._debug && debug) this.cases.push(`float_${this._times}: ${ret}`)
     return ret;
   }
 
-  // 生成[min, max)范围内的整数
+  /** 生成[min, max)范围内的整数 */
   public range(min: number, max: number): number {
-    const ret = floor(this.float() * (max - min)) + min
-    if (this._debug) this.cases.push(`range: ${ret}`)
+    const ret = floor(this.float(true) * (max - min)) + min
+    if (this._debug) this.cases.push(`range_${this._times}: ${ret}`)
     return ret;
   }
 }

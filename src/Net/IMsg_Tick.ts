@@ -13,6 +13,7 @@ export interface IReqTick extends IReq<MsgEnum.Tick> {
   cmds?: string[];
   events?: IKeyEvent[];
   randoms?: string;
+  positions?: string;
 }
 export interface IRespTick extends IResp<MsgEnum.Tick> {
   seq?: number;

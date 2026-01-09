@@ -1,4 +1,3 @@
-import { Defines } from "../defines";
 import { Entity } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { IBotTarget } from "./IBotTarget";
