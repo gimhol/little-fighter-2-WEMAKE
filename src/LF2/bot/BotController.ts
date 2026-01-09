@@ -127,16 +127,17 @@ export class BotController extends BaseController implements Required<IBotDataSe
     const chasing = this.get_chasing()?.entity;
     if (!chasing) return 0;
     let dx = abs(this.entity.position.x - chasing.position.x) - this.r_x_min
-    if (dx < 0) return 0;
+    // if (dx < 0) return 0;
     let should_run = false
     const r_x_r = this.r_x_max - this.r_x_min
     if (r_x_r === 0) {
       dx = round(clamp(dx, 0, r_x_r) / r_x_r)
-      should_run = this.desire("rr1") <
-        this.r_desire_min + (this.r_desire_max - this.r_desire_min) * dx;
+      const min = this.r_desire_min + (this.r_desire_max - this.r_desire_min) * dx
+      should_run = this.desire(`rr1`) < min;
     } else {
-      should_run = this.desire("rr2") < this.r_x_min;
+      should_run = this.desire(`rr2 ${dx}`) < this.r_x_min;
     }
+    if (dx < 0) should_run = false
     if (!should_run) return 0;
     return this.entity.position.x > chasing.position.x ? -1 : 1
   }

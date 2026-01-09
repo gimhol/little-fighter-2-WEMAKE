@@ -1,4 +1,5 @@
 import { SpeedMode } from "../defines";
+import { round_float } from "../utils";
 /**
  * 计算新速度
  *
@@ -19,8 +20,8 @@ export function calc_v(
   switch (mode) {
     case SpeedMode.Fixed: return speed;
     case SpeedMode.Extra: return old;
-    case SpeedMode.FixedAcc: return old + speed;
-    case SpeedMode.Acc: return old + speed * direction;
+    case SpeedMode.FixedAcc: return round_float(old + speed);
+    case SpeedMode.Acc: return round_float(old + speed * direction);
     case SpeedMode.FixedLf2: {
       return (speed > 0 && old < speed) || (speed < 0 && old > speed)
         ? speed
@@ -29,19 +30,20 @@ export function calc_v(
     case SpeedMode.AccTo: {
       speed *= direction;
       acc = acc ? acc * direction : void 0;
-      if (!acc ||
+      if (
+        !acc ||
         (speed > 0 && old >= speed) ||
         (speed < 0 && old <= speed) ||
         (speed > old && acc < 0) ||
-        (speed < old && acc > 0))
-        return old;
-      return old + acc;
+        (speed < old && acc > 0)
+      ) return old;
+      return round_float(old + acc);
     }
     case SpeedMode.LF2:
     default:
       speed *= direction;
       return (speed > 0 && old < speed) || (speed < 0 && old > speed)
-        ? speed
+        ? round_float(speed)
         : old;
   }
 }

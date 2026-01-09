@@ -1,19 +1,22 @@
 import { FrameBehavior, GK, IFrameInfo, IVector3 } from "../defines";
+import { Ditto } from "../ditto";
+import { round_float } from "../utils";
 import { BaseController } from "./BaseController";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
 const { L, R, U, D, j, d } = GK
 export class BallController extends BaseController {
   readonly __is_ball_ctrl__ = true;
-  public target_position: IVector3 | null = null
+  public target_position: IVector3 = new Ditto.Vector3(0, 0, 0)
   override update(): ControllerUpdateResult {
-    if (this.entity.chasing) {
-      this.target_position = this.entity.chasing.position.clone();
+    const { chasing } = this.entity
+    if (chasing) {
+      let { x, y, z } = chasing.position
       const cy = this.entity.frame.chasing_y ?? 0.5;
-      this.target_position.y += this.entity.chasing.frame.centery * cy
+      y = round_float(y + chasing.frame.centery * cy)
+      this.target_position.set(x, y, z)
     }
     const { facing, hp, frame } = this.entity
-
-    if (this.target_position) {
+    if (chasing) {
       if (hp > 0) {
         const p1 = this.entity.position;
         const p2 = this.target_position;
@@ -34,8 +37,12 @@ export class BallController extends BaseController {
         if (vx > 0 && facing < 0) this.entity.facing = 1
         else if (vx < 0 && facing > 0) this.entity.facing = -1
 
-      } else this.target_lost(frame, facing);
-    } else this.target_lost(frame, facing);
+      } else {
+        this.target_lost(frame, facing);
+      }
+    } else {
+      this.target_lost(frame, facing);
+    }
     return super.update();
   }
 

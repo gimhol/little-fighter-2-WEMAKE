@@ -13,7 +13,6 @@ export default class BallState_Base extends State_Base {
         case FrameBehavior._03:
         case FrameBehavior.JulianBall:
           e.world.del_enemy_chaser(e);
-          if (ctrl) ctrl.target_position = null;
           break;
       }
       switch (frame.behavior as FrameBehavior) {
@@ -22,11 +21,11 @@ export default class BallState_Base extends State_Base {
         case FrameBehavior._03:
         case FrameBehavior.JulianBall:
           e.world.add_enemy_chaser(e);
-          if (ctrl) ctrl.target_position = ctrl.target_position ?? ctrl.entity.position.clone()
+          if (ctrl) ctrl.target_position.copy(ctrl.entity.position)
           break;
         case FrameBehavior.ChasingSameEnemy:
         case FrameBehavior.AngelBlessing:
-          if (ctrl) ctrl.target_position = ctrl.target_position ?? ctrl.entity.position.clone()
+          if (ctrl) ctrl.target_position.copy(ctrl.entity.position)
           break;
       }
     }
