@@ -4,7 +4,7 @@ import { bot_action_cases, mt_cases } from "@/LF2/cases_instances";
 import { IKeyEvent, IReqTick, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";
 import { Connection } from "./Connection";
 import { ConnectionBox } from "./ConnectionBox";
@@ -83,7 +83,7 @@ class Lf2NetworkDriver {
     const { lf2, conn, resp } = this;
     if (!lf2 || !conn || !resp) return;
     const { reqs, seq } = resp
-    const me = conn.player;
+    const me = conn.client;
     if (!me || typeof seq !== 'number' || !reqs?.length) return;
     const req_events: IKeyEvent[] = lf2.events.map<IKeyEvent>(r => ({
       client_id: me.id,
@@ -147,7 +147,7 @@ export function Networking(props: INetworkingProps) {
   const [started, set_started] = useState(false)
   useCallbacks(conn?.callbacks, {
     on_message: (resp, conn) => {
-      const me = conn.player;
+      const me = conn.client;
       if (!lf2 || !me) return;
       switch (resp.type) {
         case MsgEnum.RoomStart:
@@ -169,6 +169,16 @@ export function Networking(props: INetworkingProps) {
       if (lf2.zips.length < 1) return;
       conn?.send(MsgEnum.Tick, { seq: 0 });
     }
+  }, [lf2, conn])
+
+  useEffect(() => {
+    const player_names: string[] = []
+    if (lf2)
+      for (const [, { name }] of lf2.players)
+        if (player_names.length < 8)
+          player_names.push(name)
+    if (conn)
+      conn.set_players(player_names)
   }, [lf2, conn])
 
 

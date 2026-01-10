@@ -1,12 +1,12 @@
 /**
- * 玩家信息
+ * 客户端信息
  *
  * @export
  * @interface IClientInfo
  */
 export interface IClientInfo {
   /**
-   * 玩家ID
+   * 客户ID
    *
    * @type {string}
    * @memberof IClientInfo
@@ -14,10 +14,18 @@ export interface IClientInfo {
   id?: string;
 
   /**
-   * 玩家姓名
+   * 客户端姓名
    *
    * @type {string}
    * @memberof IClientInfo
    */
   name?: string;
+
+  /**
+   * 玩家姓名
+   * 
+   * @type {string}
+   * @memberof IClientInfo
+   */
+  players?: string[]
 }

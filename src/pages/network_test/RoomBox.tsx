@@ -18,7 +18,7 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
   const { room } = useRoom(conn)
   const { players, me, owner, all_ready, is_owner } = useMemo(() => {
     const players = room?.clients ?? []
-    const me = players.find(v => v.id == conn?.player?.id) || null;
+    const me = players.find(v => v.id == conn?.client?.id) || null;
     const owner = players.find(v => v.id == room?.owner?.id) || null;
     const all_ready = !!(
       !players.some(v => !v.ready) &&
@@ -60,7 +60,7 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
       </Flex>
       <List data={players} itemKey={r => r.id!} styles={{ verticalScrollBarThumb: { backgroundColor: 'rgba(255,255,255,0.3)' } }}>
         {(other, index) => {
-          const is_self = other.id === conn?.player?.id
+          const is_self = other.id === conn?.client?.id
           return (
             <Flex direction='column' align='stretch' gap={5}>
               <Flex gap={10} align='center' justify='space-between' style={{ margin: 5 }}>

@@ -1,6 +1,8 @@
 import { Callbacks } from "@/LF2/base";
 import {
-  IConnError, IJob, IMsgReqMap, IMsgRespMap, IClientInfo, IReq, IResp,
+  IClientInfo,
+  IConnError, IJob, IMsgReqMap, IMsgRespMap,
+  IReq, IResp,
   IRespClientInfo, IRoomInfo, ISendOpts, MsgEnum, req_timeout_error,
   req_unknown_error, resp_error, TInfo, TReq, TResp
 } from "../../Net";
@@ -23,24 +25,47 @@ export class Connection {
   protected _reopen?: () => void;
   protected _jobs = new Map<string, IJob>();
   protected _ws: WebSocket | null = null;
-  protected _player?: IClientInfo;
-  get player(): IClientInfo | undefined { return this._player }
+  protected _client?: IClientInfo;
+  protected _players: string[] = []
+  protected _nickname: string;
+  get client(): IClientInfo | undefined { return this._client }
   room?: IRoomInfo;
   rooms: IRoomInfo[] = [];
-  nickname: string;
   get url() { return this._ws?.url }
 
   constructor(nickname: string = '') {
-    this.nickname = nickname;
+    this._nickname = nickname;
+  }
+  set_nickname(nickname: string) {
+    this._nickname = nickname;
+    this._submit_client();
+  }
+  set_players(players: string[]) {
+    this._players = [...players];
+    this._submit_client();
+  }
+  protected _submit_client() {
+    this.send(MsgEnum.ClientInfo, {
+      name: this._nickname,
+      players: this._players,
+    }, {
+      timeout: 1000
+    }).then((resp) => {
+      this._client = resp.client;
+    }).catch((e) => {
+      this.close();
+      throw e;
+    })
   }
   protected _on_open = () => {
     this.callbacks.emit('on_open')(this)
     this.send(MsgEnum.ClientInfo, {
-      name: this.nickname
+      name: this._nickname,
+      players: this._players,
     }, {
       timeout: 1000
     }).then((resp) => {
-      this._player = resp.client;
+      this._client = resp.client;
       this.callbacks.emit('on_register')(resp, this)
     }).catch((e) => {
       this.close();
@@ -153,7 +178,7 @@ export class Connection {
         break;
       case MsgEnum.ExitRoom:
       case MsgEnum.Kick:
-        const room = resp.client?.id === this._player?.id ? void 0 : resp.room
+        const room = resp.client?.id === this._client?.id ? void 0 : resp.room
         this.callbacks.emit('on_room_change')(this.room = room, this)
         break;
       case MsgEnum.ClientReady: {

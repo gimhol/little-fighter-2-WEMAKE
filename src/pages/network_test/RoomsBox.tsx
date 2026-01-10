@@ -14,16 +14,19 @@ import styles from "./styles.module.scss";
 import { TriState } from "./TriState";
 import { useRoom } from "./useRoom";
 import { useRooms } from "./useRooms";
+import { LF2 } from "@/LF2";
 
 export interface IRoomsBoxProps extends IFrameProps {
   conn?: Connection | null;
   conn_state?: TriState;
+  lf2?: LF2 | null;
 }
 function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
   const {
     conn = null,
     conn_state = TriState.False,
     className,
+    lf2,
     ..._p
   } = props;
 
