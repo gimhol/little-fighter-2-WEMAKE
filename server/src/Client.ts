@@ -108,11 +108,13 @@ export class Client {
     const { ctx } = this
     switch (req.type) {
       case MsgEnum.ClientInfo: {
-        const player_info = this.client_info = {
+        const client_info = this.client_info = {
           id: this.id,
-          name: req.name?.trim() || `玩家${this.id}`
+          name: req.name?.trim() || `玩家${this.id}`,
+          players: req.players ?? [],
         }
-        this.resp(req.type, req.pid, { client: player_info }).catch(() => void 0)
+        this.resp(req.type, req.pid, { client: client_info }).catch(() => void 0);
+        if (this.room) this.room.broadcast(MsgEnum.ClientInfo, { client: client_info }, this)
         break;
       }
       case MsgEnum.CreateRoom: {

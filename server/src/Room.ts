@@ -143,10 +143,10 @@ export class Room {
 
   join(client: Client, req: IReqJoinRoom = { type: MsgEnum.JoinRoom, is_req: true, pid: '' }) {
     console.log(`[${Room.TAG}::join]`)
-    const { clients: players } = this;
-    const { client_info: player_info, room } = client;
-    if (players.has(client)) return false;
-    if (!player_info) return false;
+    const { clients } = this;
+    const { client_info, room } = client;
+    if (clients.has(client)) return false;
+    if (!client_info) return false;
     if (room) return false;
 
     if (this.clients.size >= this.max_players) {
@@ -154,18 +154,19 @@ export class Room {
       return false
     }
 
-    players.add(client);
+    clients.add(client);
     client.ready = false
     client.room = this;
     const { room_info } = this;
+
     const resp: TInfo<IRespJoinRoom> = {
-      player: player_info,
+      client: client_info,
       room: room_info
     }
     this.broadcast(req.type, resp, client)
     client.resp(req.type, req.pid, resp).catch(() => void 0)
-    for (const pl of players)
-      pl.resp(MsgEnum.Chat, '', { target: 'room', sender: SystemPlayerInfo, text: `玩家[${player_info.name}]加入了房间` }).catch(() => void 0)
+    for (const pl of clients)
+      pl.resp(MsgEnum.Chat, '', { target: 'room', sender: SystemPlayerInfo, text: `玩家[${client_info.name}]加入了房间` }).catch(() => void 0)
     return true;
   }
 

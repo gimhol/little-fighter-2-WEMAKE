@@ -7,5 +7,5 @@ export interface IReqClientInfo extends IReq<MsgEnum.ClientInfo> {
   players?: string[];
 }
 export interface IRespClientInfo extends IResp<MsgEnum.ClientInfo> {
-  client?: IClientInfo;
+  client?: Required<IClientInfo>;
 }

@@ -1,7 +1,7 @@
 
 import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
 import { bot_action_cases, mt_cases } from "@/LF2/cases_instances";
-import { IKeyEvent, IReqTick, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
+import { IKeyEvent, IReqTick, IRespClientInfo, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -56,9 +56,10 @@ class Lf2NetworkDriver {
     if (clients?.length) {
       for (const client of clients) {
         for (let i = 1; i <= 4; i++) {
-          const k = `${client.id}#${i}`;
-          const pi = new PlayerInfo(k, client.name, false);
-          lf2.players.set(k, pi)
+          const id = `${client.id}#${i}`;
+          const name = client.players[i] ?? i.toString();
+          const player = new PlayerInfo(id, name, false);
+          lf2.players.set(id, player)
         }
       }
     }
@@ -67,6 +68,21 @@ class Lf2NetworkDriver {
     lf2.mt.reset(resp.seed ?? 0, true)
     bot_action_cases.debug(true);
     mt_cases.debug(true)
+  }
+  update_client(resp: IRespClientInfo) {
+    const { lf2 } = this;
+    const { client } = resp
+    if (!client) return;
+    if (!lf2) return;
+
+    for (let i = 1; i <= 4; i++) {
+      const id = `${client.id}#${i}`;
+      const name = client.players[i] ?? i.toString();
+      const player = lf2.players.get(id)
+      if (!player) continue;
+      player.set_name(name, true)
+    }
+
   }
   on_tick(resp: IRespTick | IRespKeyTick) {
     const { conn, lf2 } = this;
@@ -150,6 +166,9 @@ export function Networking(props: INetworkingProps) {
       const me = conn.client;
       if (!lf2 || !me) return;
       switch (resp.type) {
+        case MsgEnum.ClientInfo:
+          updater.update_client(resp);
+          break;
         case MsgEnum.RoomStart:
           updater.on_room_start(resp);
           set_started(true)
