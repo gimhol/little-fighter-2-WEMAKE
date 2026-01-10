@@ -157,10 +157,6 @@ export class CharMenuLogic extends UIComponent {
     } else return;
 
     this.lf2.sounds.play_preset("join");
-    if (this.is_player_sel) {
-      const all_player_ready = Array.from(this.players.values()).every(v => v.step === SlotStep.Ready)
-      if (all_player_ready) this.fsm.use(CharMenuState.CountingDown)
-    }
     this.update_slots()
   }
   get is_player_sel(): boolean { return this.fsm.state?.key === CharMenuState.PlayerSel }

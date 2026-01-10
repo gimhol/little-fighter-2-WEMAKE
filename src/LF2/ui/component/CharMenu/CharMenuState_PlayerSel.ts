@@ -3,6 +3,7 @@ import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import type { CharMenuLogic } from "./CharMenuLogic";
 import { CharMenuState } from "./CharMenuState";
 import { CharMenuState_Base } from "./CharMenuState_Base";
+import { SlotStep } from "./SlotStep";
 
 export class CharMenuState_PlayerSel extends CharMenuState_Base {
   constructor(owner: CharMenuLogic) {
@@ -25,5 +26,15 @@ export class CharMenuState_PlayerSel extends CharMenuState_Base {
     const coms = Array.from(this.owner.players.keys()).filter(v => v.is_com);
     for (const com of coms) this.owner.players.delete(com);
     this.owner.update_slots();
+  }
+  override update(dt: number): void | CharMenuState | undefined {
+    const { players } = this.owner
+    let all_ready = players.size > 0;
+    for (const [, { step }] of players) {
+      if (step === SlotStep.Ready) continue;
+      all_ready = false;
+      break;
+    }
+    if (all_ready) return CharMenuState.CountingDown
   }
 }
