@@ -1,6 +1,6 @@
 
 import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
-import { bot_action_cases, mt_cases, suspicious_cases } from "@/LF2/cases_instances";
+import { bot_cases, mt_cases, sus_cases } from "@/LF2/cases_instances";
 import { IKeyEvent, IReqTick, IRespClientInfo, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
@@ -23,6 +23,7 @@ class Tester<V> {
   private v1: V;
   private v0: V;
   private comparer = (a: V, b: V) => a === b;
+  debugging = false
   constructor(first: V, comparer?: typeof this.comparer) {
     this.v1 = this.v0 = first;
     if (comparer) this.comparer = comparer;
@@ -32,6 +33,7 @@ class Tester<V> {
     this.s = false
   }
   test(value: V): boolean {
+    if (!this.debugging) return true;
     if (!this.s) {
       this.s = true;
       this.v1 = value;
@@ -65,12 +67,18 @@ class Lf2NetworkDriver {
         }
       }
     }
+    const debugging = true
+    bot_cases.debug(debugging);
+    mt_cases.debug(debugging)
+    sus_cases.debug(debugging)
+    this._p.debugging = debugging
+    this._a.debugging = debugging
+    this._r.debugging = debugging
+    this._s.debugging = debugging
     lf2.load("data.zip.json")
     lf2.set_ui("loading")
-    lf2.mt.reset(resp.seed ?? 0, true)
-    bot_action_cases.debug(true);
-    mt_cases.debug(true)
-    suspicious_cases.debug(true)
+    lf2.mt.reset(resp.seed ?? 0, debugging)
+    lf2.world.game_time.reset()
   }
   update_client(resp: IRespClientInfo) {
     const { lf2 } = this;
@@ -115,17 +123,19 @@ class Lf2NetworkDriver {
       cmds: lf2.cmds,
       events: req_events
     }
-    if (mt_cases.debugging) req._r = mt_cases.submit()
-    if (mt_cases.debugging) req._p = Array.from(lf2.world.entities).map(e => `(${e.position.x}, ${e.position.y}, ${e.position.z})`).join(', ')
-    if (bot_action_cases.debugging) req._a = bot_action_cases.submit();
-    if (suspicious_cases.debugging) req._s = suspicious_cases.submit();
+    if (this._p.debugging) req._r = mt_cases.submit()
+    if (this._r.debugging) req._p = Array.from(lf2.world.entities).map(e => `(${e.position.x}, ${e.position.y}, ${e.position.z})`).join(', ')
+    if (this._a.debugging) req._a = bot_cases.submit();
+    if (this._s.debugging) req._s = sus_cases.submit();
     if (!this._f) conn.send(MsgEnum.Tick, req);
     lf2.cmds.length = 0;
     lf2.events.length = 0;
+
     this._p.reset()
     this._r.reset()
     this._a.reset()
     this._s.reset()
+
     for (const req of reqs) {
       const { cmds, events, _r, _p, _a, _s } = req;
       if (!this._a.test(_a)) {

@@ -52,8 +52,7 @@ export class World extends WorldDataset {
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   private _game_time = new Times();
-
-  get game_time() { return this._game_time.value }
+  get game_time() { return this._game_time }
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
@@ -452,7 +451,7 @@ export class World extends WorldDataset {
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
-    const { game_time: time } = this;
+    const { game_time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
 
@@ -461,8 +460,8 @@ export class World extends WorldDataset {
     this.a_collisions.clear();
     this._used_itrs.clear()
     this._temp_entitis_set.clear();
-    const update_collisions = time % 2 === 0
-    const update_chasing = time % 8 === 0;
+    const update_collisions = game_time.value % 2 === 0
+    const update_chasing = game_time.value % 8 === 0;
     if (update_chasing) {
       for (const chaser of this._enemy_chasers) {
         const e = chaser.chasing;

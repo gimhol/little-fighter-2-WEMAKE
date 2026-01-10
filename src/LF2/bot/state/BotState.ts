@@ -1,4 +1,4 @@
-import { bot_action_cases } from "@/LF2/cases_instances";
+import { bot_cases } from "@/LF2/cases_instances";
 import type { IState } from "../../base/FSM";
 import { KEY_NAME_LIST } from "../../controller";
 import { GK, ItrKind, LGK, StateEnum } from "../../defines";
@@ -123,7 +123,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     me.lf2.mt.mark = 'hba_2'
     const keys = me.lf2.mt.pick(keys_list)
     if (keys) this.ctrl.start(...keys).end(...keys)
-    if (bot_action_cases && keys) bot_action_cases.push(keys.join())
+    if (bot_cases && keys) bot_cases.push(keys.join())
     return true
   }
 }

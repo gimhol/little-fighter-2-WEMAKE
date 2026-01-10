@@ -1,4 +1,4 @@
-import { bot_action_cases, mt_cases } from "@/LF2/cases_instances";
+import { bot_cases, mt_cases } from "@/LF2/cases_instances";
 import { floor } from "./base";
 import { round_float } from "./round_float";
 
@@ -92,4 +92,4 @@ export class MersenneTwister {
     return a.splice(index, 1)[0];
   }
 }
-bot_action_cases
+bot_cases

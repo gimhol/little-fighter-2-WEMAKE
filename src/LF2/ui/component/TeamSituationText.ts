@@ -59,7 +59,7 @@ export class TeamSituationText extends UIComponent {
   }
 
   override update(dt: number): void {
-    if (this.world.game_time % 30 === 0) this.rr();
+    if (this.world.game_time.value % 30 === 0) this.rr();
   }
 
   private rr() {

@@ -2,7 +2,7 @@ import { Ground } from "../Ground";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks, ICollision, new_id, new_team } from "../base";
-import { mt_cases, suspicious_cases } from "../cases_instances";
+import { mt_cases, sus_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
@@ -787,9 +787,9 @@ export class Entity {
     const vy = round_float(ovy + o_dvy + dvy)
     const vz = z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
     this.set_velocity(vx, vy, vz)
-    if (suspicious_cases.debugging) {
-      suspicious_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
-      suspicious_cases.push('on_spawn::vec1', vx, vy, vz)
+    if (sus_cases.debugging) {
+      sus_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
+      sus_cases.push('on_spawn::vec1', vx, vy, vz)
     }
 
     switch (opoint.kind) {
