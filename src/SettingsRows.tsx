@@ -356,4 +356,8 @@ const world_field_map: Record<keyof IWorldDataset, IFieldInfo> = {
   sync_render: { title: "sync_render", desc: "sync_render", type: '' },
   difficulty: { title: "difficulty", desc: "difficulty", type: '' },
   infinity_mp: { title: "infinity_mp", desc: "infinity_mp", type: 'boolean' },
+  fall_r_ticks: { title: "fall_r_ticks", desc: "fall_r_ticks", type: 'int' },
+  fall_r_value: { title: "fall_r_value", desc: "fall_r_value", type: 'int' },
+  defend_r_ticks: { title: "defend_r_ticks", desc: "defend_r_ticks", type: 'int' },
+  defend_r_value: { title: "defend_r_value", desc: "defend_r_value", type: 'int' }
 }

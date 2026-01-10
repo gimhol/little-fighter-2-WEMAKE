@@ -1,6 +1,6 @@
 
 import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
-import { bot_action_cases, mt_cases } from "@/LF2/cases_instances";
+import { bot_action_cases, mt_cases, suspicious_cases } from "@/LF2/cases_instances";
 import { IKeyEvent, IReqTick, IRespClientInfo, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
@@ -49,16 +49,18 @@ class Lf2NetworkDriver {
   _r = new Tester<string | null | undefined>(null);
   _p = new Tester<string | null | undefined>(null);
   _a = new Tester<string | null | undefined>(null);
+  _s = new Tester<string | null | undefined>(null);
   on_room_start(resp: IRespRoomStart) {
     const { conn, lf2 } = this;
-    if (!conn || !lf2) return;
+    const me = conn?.client;
+    if (!conn || !lf2 || !me) return;
     const clients = conn.room?.clients
     if (clients?.length) {
       for (const client of clients) {
         for (let i = 1; i <= 4; i++) {
           const id = `${client.id}#${i}`;
-          const name = client.players[i] ?? i.toString();
-          const player = new PlayerInfo(id, name, false);
+          const name = client.players?.[i] ?? i.toString();
+          const player = new PlayerInfo(id, name, false, client.id === me.id);
           lf2.players.set(id, player)
         }
       }
@@ -68,6 +70,7 @@ class Lf2NetworkDriver {
     lf2.mt.reset(resp.seed ?? 0, true)
     bot_action_cases.debug(true);
     mt_cases.debug(true)
+    suspicious_cases.debug(true)
   }
   update_client(resp: IRespClientInfo) {
     const { lf2 } = this;
@@ -77,7 +80,7 @@ class Lf2NetworkDriver {
 
     for (let i = 1; i <= 4; i++) {
       const id = `${client.id}#${i}`;
-      const name = client.players[i] ?? i.toString();
+      const name = client.players?.[i] ?? i.toString();
       const player = lf2.players.get(id)
       if (!player) continue;
       player.set_name(name, true)
@@ -112,17 +115,19 @@ class Lf2NetworkDriver {
       cmds: lf2.cmds,
       events: req_events
     }
-    if (mt_cases.debuging) req._r = mt_cases.submit()
-    if (mt_cases.debuging) req._p = Array.from(lf2.world.entities).map(e => `(${e.position.x}, ${e.position.y}, ${e.position.z})`).join(', ')
-    if (bot_action_cases.debuging) req._a = bot_action_cases.submit();
+    if (mt_cases.debugging) req._r = mt_cases.submit()
+    if (mt_cases.debugging) req._p = Array.from(lf2.world.entities).map(e => `(${e.position.x}, ${e.position.y}, ${e.position.z})`).join(', ')
+    if (bot_action_cases.debugging) req._a = bot_action_cases.submit();
+    if (suspicious_cases.debugging) req._s = suspicious_cases.submit();
     if (!this._f) conn.send(MsgEnum.Tick, req);
     lf2.cmds.length = 0;
     lf2.events.length = 0;
     this._p.reset()
     this._r.reset()
     this._a.reset()
+    this._s.reset()
     for (const req of reqs) {
-      const { cmds, events, _r, _p, _a } = req;
+      const { cmds, events, _r, _p, _a, _s } = req;
       if (!this._a.test(_a)) {
         console.error(`bot acations not equal!`, reqs.map(v => v._a))
         this._f = true
@@ -132,7 +137,11 @@ class Lf2NetworkDriver {
         this._f = true
       }
       if (!this._p.test(_p)) {
-        console.error(`posiitons not equal!`, reqs.map(v => v._p))
+        console.error(`positons not equal!`, reqs.map(v => v._p))
+        this._f = true
+      }
+      if (!this._s.test(_s)) {
+        console.error(`suspicious not equal!`, reqs.map(v => v._s))
         this._f = true
       }
       if (this._f) { debugger; break; }

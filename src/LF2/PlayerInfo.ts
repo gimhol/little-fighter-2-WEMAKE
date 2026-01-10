@@ -15,6 +15,7 @@ export class PlayerInfo {
   static readonly DATA_VERSION: number = 1;
   readonly callbacks = new Callbacks<IPlayerInfoCallback>();
   readonly local: boolean = true;
+  readonly mine: boolean = true;
   protected _info: IPurePlayerInfo;
   protected _is_com: boolean = false;
   private _fighter: Unsafe<Entity>;
@@ -30,8 +31,9 @@ export class PlayerInfo {
   get fighter(): Unsafe<Entity> { return this._fighter; }
   set fighter(v: Unsafe<Entity>) { this._fighter = v; }
 
-  constructor(id: string, name: string = id, local: boolean = true) {
-    this.local = local
+  constructor(id: string, name: string = id, local: boolean = true, mine: boolean = true) {
+    this.local = local;
+    this.mine = mine;
     this._info = { id, name, keys: Defines.get_default_keys(id), version: 0, ctrl: CtrlDevice.Keyboard };
     this.load();
   }

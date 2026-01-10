@@ -2,6 +2,7 @@ import { Ground } from "../Ground";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks, ICollision, new_id, new_team } from "../base";
+import { mt_cases, suspicious_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
@@ -28,7 +29,7 @@ import type IEntityCallbacks from "./IEntityCallbacks";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_fighter, is_local_ctrl } from "./type_check";
+import { is_fighter, is_human_ctrl as is_human_ctrl } from "./type_check";
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
@@ -734,19 +735,19 @@ export class Entity {
       this.facing = emitter.facing;
     }
     const { origin_type } = opoint
-    let { x, y, z } = emitter.position;
+    let { x: pos_x, y: pos_y, z: pos_z } = emitter.position;
     if (origin_type === 1) {
-      y = y - opoint.y;
-      x = x + emitter.facing * opoint.x;
+      pos_y = pos_y - opoint.y;
+      pos_x = pos_x + emitter.facing * opoint.x;
     } else {
-      y = y + emitter_frame.centery - opoint.y;
-      x = x - emitter.facing * (emitter_frame.centerx - opoint.x);
+      pos_y = pos_y + emitter_frame.centery - opoint.y;
+      pos_x = pos_x - emitter.facing * (emitter_frame.centerx - opoint.x);
     }
-    this._position.set(
-      round_float(x),
-      round_float(y),
-      round_float(z + (opoint.z ?? 0))
-    );
+    pos_x = round_float(pos_x)
+    pos_y = round_float(pos_y)
+    pos_z = round_float(pos_z + (opoint.z ?? 0))
+
+    this._position.set(pos_x, pos_y, pos_z);
 
     const result = this.get_next_frame(opoint.action);
     facing = result?.which.facing
@@ -763,40 +764,34 @@ export class Entity {
     } = opoint;
 
     const weight = this._data.base.weight || 1
-    o_dvx /= weight;
-    o_dvy /= weight;
-
-    let ud = emitter.ctrl?.UD || 0;
-    let { x: ovx, y: ovy, z: ovz } = offset_velocity;
+    o_dvy = round_float(o_dvy / weight);
+    const ud = emitter.ctrl?.UD || 0;
+    const { x: ovx, y: ovy, z: ovz } = offset_velocity;
     if (o_dvx > 0) {
-      o_dvx = o_dvx - abs(ovz / 2);
+      o_dvx = round_float(o_dvx / weight - abs(ovz / 2));
     } else {
-      o_dvx = o_dvx + abs(ovz / 2);
+      o_dvx = round_float(o_dvx / weight + abs(ovz / 2));
     }
 
     if (is_num(opoint.max_hp)) this.hp = this.hp_r = this.hp_max = opoint.max_hp;
     if (is_num(opoint.hp)) this.hp = this.hp_r = opoint.hp;
-
     if (is_num(opoint.max_mp)) this.mp = this.mp_max = opoint.max_mp;
     if (is_num(opoint.mp)) this.mp = opoint.mp;
-
-    this.velocities.length = 0
 
     const { dvy = 0, dvz = 0 } = this.frame
     const z_disabled =
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
-    this.velocities.push(
-      new Ditto.Vector3(
-        round_float(ovx + o_dvx * facing),
-        round_float(ovy + o_dvy + dvy),
-        z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
-      ),
-    )
-    if (z_disabled) {
-      this.velocities[0].z = 0
-      this._velocity.z = 0;
+
+    const vx = round_float(ovx + o_dvx * facing)
+    const vy = round_float(ovy + o_dvy + dvy)
+    const vz = z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
+    this.set_velocity(vx, vy, vz)
+    if (suspicious_cases.debugging) {
+      suspicious_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
+      suspicious_cases.push('on_spawn::vec1', vx, vy, vz)
     }
+
     switch (opoint.kind) {
       case OpointKind.Pick:
         emitter.drop_holding()
@@ -2055,7 +2050,7 @@ export class Entity {
     this._position.z = v ? round_float(v) : v
   }
   transform(data: IEntityData) {
-    if (!is_local_ctrl(this.ctrl))
+    if (!is_human_ctrl(this.ctrl))
       this.ctrl = Factory.inst.create_ctrl(data.id, this.ctrl.player_id, this);
     const prev = this._data;
     this._data = data;

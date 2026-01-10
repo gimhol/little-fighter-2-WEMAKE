@@ -4,7 +4,7 @@ import { BaseController } from "./BaseController";
 
 export class LocalController
   extends BaseController {
-  readonly __is_local_ctrl__ = true;
+  readonly __is_human_ctrl__ = true;
   readonly player: PlayerInfo;
   
   constructor(player_id: string, entity: Entity) {

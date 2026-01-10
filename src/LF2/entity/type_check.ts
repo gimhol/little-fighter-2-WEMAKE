@@ -15,8 +15,8 @@ export const is_base_ctrl = (v: any): v is BaseController =>
   v?.__is_base_ctrl__ === true;
 export const is_bot_ctrl = (v: any): v is BotController =>
   v?.__is_bot_ctrl__ === true;
-export const is_local_ctrl = (v: any): v is LocalController =>
-  v?.__is_local_ctrl__ === true;
+export const is_human_ctrl = (v: any): v is LocalController =>
+  v?.__is_human_ctrl__ === true;
 export const is_ball_ctrl = (v: any): v is BallController =>
   v?.__is_ball_ctrl__ === true;
 export const is_entity_data = (v: any): v is IEntityData =>

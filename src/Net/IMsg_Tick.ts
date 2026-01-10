@@ -15,6 +15,7 @@ export interface IReqTick extends IReq<MsgEnum.Tick> {
   _r?: string;
   _p?: string;
   _a?: string;
+  _s?: string;
 }
 export interface IRespTick extends IResp<MsgEnum.Tick> {
   seq?: number;

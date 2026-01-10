@@ -21,13 +21,13 @@ import {
   Entity, Factory, ICreator, is_ball,
   is_bot_ctrl,
   is_fighter,
-  is_local_ctrl,
+  is_human_ctrl,
   is_weapon
 } from "./entity";
 import { Ground } from "./Ground";
+import { manhattan_xz } from "./helper/manhattan_xz";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
-import { manhattan } from "./manhattan";
 import { Stage } from "./stage/Stage";
 import { Times } from "./ui";
 import { abs, find, is_num, min, round } from "./utils";
@@ -387,7 +387,7 @@ export class World extends WorldDataset {
       const fighter = this.slot_fighters.get(e.player)
       if (!fighter) continue;
       const { ctrl } = fighter
-      if (!is_local_ctrl(ctrl)) continue;
+      if (!is_human_ctrl(ctrl)) continue;
       if (e.pressed) ctrl.start(e.game_key)
       else ctrl.end(e.game_key)
     }
@@ -482,14 +482,14 @@ export class World extends WorldDataset {
         for (const chaser of this._enemy_chasers) {
           if (chaser.is_ally(e)) continue;
           const prev = chaser.chasing;
-          if (!prev || manhattan(prev, chaser) > manhattan(e, chaser)) {
+          if (!prev || manhattan_xz(prev, chaser) > manhattan_xz(e, chaser)) {
             chaser.chasing = e;
           }
         }
         for (const chaser of this._ally_chasers) {
           if (!chaser.is_ally(e)) continue;
           const prev = chaser.chasing;
-          if (!prev || manhattan(prev, chaser) > manhattan(e, chaser)) {
+          if (!prev || manhattan_xz(prev, chaser) > manhattan_xz(e, chaser)) {
             chaser.chasing = e;
           }
         }
@@ -566,27 +566,28 @@ export class World extends WorldDataset {
     } else if (this.slot_fighters.size) {
       let l = 0;
       new_x = 0;
-      const has_human_player = find(
-        this.slot_fighters,
-        ([_, p]) => is_local_ctrl(p.ctrl) && p.hp > 0,
-      );
-      if (has_human_player) { // 取中间部分
-        for (const [, player] of this.slot_fighters) {
-          const c = player.ctrl;
-          if (!is_local_ctrl(c)) continue;
-          new_x += player.position.x - this.screen_w / 2 + (player.facing * this.screen_w) / 6;
-          ++l;
+      /** 存活的本地人类玩家角色 */
+      const mines: Entity[] = [];
+      /** 存活的人类玩家角色 */
+      const humans: Entity[] = [];
+      /** 槽中角色 */
+      const fighters: Entity[] = []
+      for (const [, p] of this.slot_fighters) {
+        if (is_human_ctrl(p.ctrl) && p.hp > 0) {
+          if (p.ctrl.player.mine) {
+            mines.push(p)
+          } else {
+            humans.push(p)
+          }
         }
-      } else {
-        for (const [, player] of this.slot_fighters) {
-          new_x += player.position.x - this.screen_w / 2
-          ++l;
-        }
+        else fighters.push(p)
       }
-
+      const follows = mines.length ? mines : humans.length ? humans : fighters
+      for (const p of follows) {
+        new_x += p.position.x - this.screen_w / 2 + (p.facing * this.screen_w) / 6;
+        ++l;
+      }
       new_x = round(new_x / l);
-    } else {
-
     }
     if (new_x < max_cam_left) new_x = max_cam_left;
     if (new_x > max_cam_right - this.screen_w) new_x = max_cam_right - this.screen_w;

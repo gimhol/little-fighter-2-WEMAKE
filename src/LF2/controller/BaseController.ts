@@ -1,7 +1,7 @@
 import type { IFrameInfo, IHitKeyCollection, LGK, TNextFrame } from "../defines";
 import { GK, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
-import { is_bot_ctrl, is_local_ctrl } from "../entity/type_check";
+import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
 import { Times } from "../utils/Times";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
 import DoubleClick from "./DoubleClick";
@@ -247,7 +247,7 @@ export class BaseController {
         }
       }
 
-      if (is_local_ctrl(this)) {
+      if (is_human_ctrl(this)) {
         switch (this._key_downs) {
           case '': break;
           case GK.Defend:
@@ -292,7 +292,7 @@ export class BaseController {
       this._key_downs = '';
       this._key_downs = '';
     }
-    if (is_local_ctrl(this)) {
+    if (is_human_ctrl(this)) {
       if (this.dddd.hit) {
         this.world.etc(this.entity.position.x, this.entity.position.y, this.entity.position.z, "2")
         this.world.team_stay(this.entity.team)

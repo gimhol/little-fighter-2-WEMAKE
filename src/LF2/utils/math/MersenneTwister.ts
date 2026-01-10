@@ -61,7 +61,7 @@ export class MersenneTwister {
   }
 
   /** 生成[0,1)范围内的浮点数 */
-  public float(debugging = mt_cases.debuging): number {
+  public float(debugging = mt_cases.debugging): number {
     const ret = round_float(this.int(false) / (0xFFFFFFFF + 1));
     if (debugging) mt_cases.push(this.mark, 'float', ret)
     return ret;

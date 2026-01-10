@@ -4,7 +4,7 @@ export class Cases {
   protected times: number = 0;
   protected _debuging: boolean = false;
   constructor(name: string) { this.name = name; }
-  get debuging() { return this._debuging }
+  get debugging() { return this._debuging }
   debug(v: boolean): void {
     this._debuging = v;
     this.times = 0;

@@ -1,7 +1,7 @@
 import { get_team_shadow_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
 import { GameKey, IVector3, Labels } from "@/LF2/defines";
-import { is_bot_ctrl, is_fighter, is_local_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { is_bot_ctrl, is_fighter, is_human_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
@@ -252,7 +252,7 @@ export class EntityStatRender implements IEntityCallbacks {
     const sprite = this.name_node
     const { key_role, ctrl, team } = e;
     let text = ' ';
-    if (is_local_ctrl(ctrl)) {
+    if (is_human_ctrl(ctrl)) {
       text = ctrl.player.name || ' '
     } else if (is_bot_ctrl(ctrl) && ctrl.player) {
       text = "com"
