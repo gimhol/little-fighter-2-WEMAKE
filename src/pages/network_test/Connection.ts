@@ -38,16 +38,18 @@ export class Connection {
   }
   set_nickname(nickname: string) {
     this._nickname = nickname;
-    this._submit_client();
+    if (this._ws?.readyState === this._ws?.OPEN)
+      this._submit_client();
   }
   set_players(players: string[]) {
     this._players = [...players];
-    this._submit_client();
+    if (this._ws?.readyState === this._ws?.OPEN)
+      this._submit_client();
   }
   protected _submit_client() {
     this.send(MsgEnum.ClientInfo, {
       name: this._nickname,
-      // players: this._players,
+      players: this._players,
     }, {
       timeout: 1000
     }).then((resp) => {
@@ -61,7 +63,7 @@ export class Connection {
     this.callbacks.emit('on_open')(this)
     this.send(MsgEnum.ClientInfo, {
       name: this._nickname,
-      // players: this._players,
+      players: this._players,
     }, {
       timeout: 1000
     }).then((resp) => {
