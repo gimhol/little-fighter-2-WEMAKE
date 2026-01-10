@@ -6,9 +6,11 @@ export function req_unknown_error(req: IReq, error: Error): IConnError {
   const code = ErrCode.Unknown;
   const info = `unknown error`;
   return Object.assign(error, {
-    type: req.type,
-    pid: req.pid,
-    code: code,
-    error: info
+    lf2: {
+      type: req.type,
+      pid: req.pid,
+      code: code,
+      error: info
+    }
   });
 }

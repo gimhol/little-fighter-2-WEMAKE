@@ -47,7 +47,7 @@ export class Connection {
   protected _submit_client() {
     this.send(MsgEnum.ClientInfo, {
       name: this._nickname,
-      players: this._players,
+      // players: this._players,
     }, {
       timeout: 1000
     }).then((resp) => {
@@ -61,7 +61,7 @@ export class Connection {
     this.callbacks.emit('on_open')(this)
     this.send(MsgEnum.ClientInfo, {
       name: this._nickname,
-      players: this._players,
+      // players: this._players,
     }, {
       timeout: 1000
     }).then((resp) => {

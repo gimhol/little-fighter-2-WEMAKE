@@ -6,8 +6,10 @@ export function resp_error(resp: IResp): IConnError {
   const code = resp.code ?? ErrCode.Unknown;
   const info = resp.error ?? 'unknown error';
   return Object.assign(new Error(`[${code}]${info}`), {
-    type: resp.type ?? 'unknown',
-    code: code,
-    error: info
+    lf2: {
+      type: resp.type ?? 'unknown',
+      code: code,
+      error: info
+    }
   });
 }
