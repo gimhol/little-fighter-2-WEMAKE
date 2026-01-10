@@ -2,7 +2,7 @@
 import { GK, ItrKind, StateEnum } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
-import { find } from "../../utils";
+import { find, round_float } from "../../utils";
 import { BotState_Base } from "./BotState";
 export class BotState_Avoiding extends BotState_Base {
   readonly key = BotStateEnum.Avoiding;
@@ -49,9 +49,9 @@ export class BotState_Avoiding extends BotState_Base {
     const { left, right, near, far } = c.lf2.world.bg;
     let x_d: 0 | -1 | 1 = 0;
     if (enemy_x <= x) {
-      x_d = enemy_x < right - 200 ? 1 : -1;
+      x_d = enemy_x < round_float(right - 200) ? 1 : -1;
     } else {
-      x_d = enemy_x > left + 200 ? -1 : 1;
+      x_d = enemy_x > round_float(left + 200) ? -1 : 1;
     }
     switch (x_d) {
       case 1:
@@ -66,9 +66,9 @@ export class BotState_Avoiding extends BotState_Base {
 
     let z_d: 0 | -1 | 1 = 0;
     if (z <= enemy_z) {
-      z_d = enemy_z > far + 50 ? 1 : -1;
+      z_d = enemy_z > round_float(far + 50) ? 1 : -1;
     } else {
-      z_d = enemy_z < near - 50 ? -1 : 1;
+      z_d = enemy_z < round_float(near - 50) ? -1 : 1;
     }
     switch (z_d) {
       case 1:

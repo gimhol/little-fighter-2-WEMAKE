@@ -1,7 +1,7 @@
 import { KEY_NAME_LIST } from "../../controller/BaseController";
 import { Defines, GK, ItrKind, StateEnum } from "../../defines";
 import { manhattan_xz } from "../../helper/manhattan_xz";
-import { abs, between, find } from "../../utils";
+import { abs, between, find, round_float } from "../../utils";
 import { BotState_Base } from "./BotState";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 
@@ -28,31 +28,27 @@ export class BotState_Chasing extends BotState_Base {
     const { next_x: en_x, next_z: en_z, next_y: en_y } = c.guess_entity_pos(en);
     const { state } = me.frame;
 
-    const dist_av_x = a_facing * (en_x - my_x)
-    const dist_av_y = en_y - my_y
-    const dist_av_z = en_z - my_z
-
     /** 
      * 敌人与自己的距离X
      * 敌人在背后时为负数
      * 敌人在正面时为正数
      */
-    const dist_en_x = a_facing * (en_x - my_x)
+    const dist_en_x = round_float(a_facing * (en_x - my_x))
     /** 
      * 敌人与自己的距离y
      * 敌人在上方时为正数
      * 敌人在下面时为负数数
      */
-    const dist_en_y = en_y - my_y
+    const dist_en_y = round_float(en_y - my_y)
 
     /**
      * 敌人与自己的距离X
      */
-    const abs_dx = abs(my_x - en_x)
+    const abs_dx = round_float(abs(my_x - en_x))
     /**
      * 敌人与自己的距离Z
      */
-    const abs_dz = abs(my_z - en_z)
+    const abs_dz = round_float(abs(my_z - en_z))
 
     const x_reach = abs_dx <= c.w_atk_x;
     const z_reach = abs_dz <= c.w_atk_z;
@@ -103,9 +99,9 @@ export class BotState_Chasing extends BotState_Base {
       case StateEnum.Attacking:
       case StateEnum.BurnRun:
       case StateEnum.Z_Moveable:
-        if (my_z < en_z - c.w_atk_z) {
+        if (my_z < round_float(en_z - c.w_atk_z)) {
           c.keep_press(GK.D);
-        } else if (my_z > en_z + c.w_atk_z) {
+        } else if (my_z > round_float(en_z + c.w_atk_z)) {
           c.keep_press(GK.U);
         } else {
           c.key_up(GK.D, GK.U);
@@ -168,11 +164,11 @@ export class BotState_Chasing extends BotState_Base {
 
     }
     if (!out_of_range) {
-      if (my_x < en_x - c.w_atk_x) c.keep_press(GK.R);
-      else if (my_x > en_x + c.w_atk_x) c.keep_press(GK.L);
+      if (my_x < round_float(en_x - c.w_atk_x)) c.keep_press(GK.R);
+      else if (my_x > round_float(en_x + c.w_atk_x)) c.keep_press(GK.L);
       else c.key_up(GK.L, GK.R);
-      if (my_z < en_z - c.w_atk_z) c.keep_press(GK.D)
-      else if (my_z > en_z + c.w_atk_z) c.keep_press(GK.U)
+      if (my_z < round_float(en_z - c.w_atk_z)) c.keep_press(GK.D)
+      else if (my_z > round_float(en_z + c.w_atk_z)) c.keep_press(GK.U)
       else c.key_up(GK.U, GK.D);
     } else if (me.facing > 0 && my_x > en_x) {
       c.fast_click(GK.L)

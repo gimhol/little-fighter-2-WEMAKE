@@ -13,7 +13,7 @@ import {
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { PlayerInfo } from "../PlayerInfo";
-import { abs, clamp, max, round } from "../utils";
+import { abs, clamp, max, round, round_float } from "../utils";
 import { DummyEnum, dummy_updaters } from "./DummyEnum";
 import { IBotTarget } from "./IBotTarget";
 import { NearestTargets } from "./NearestTargets";
@@ -302,24 +302,29 @@ export class BotController extends BaseController implements Required<IBotDataSe
   guess_entity_pos(entity: Entity) {
     const { x: px, z: pz, y: py } = entity.position;
     const { x: vx, z: vz, y: vy } = entity.velocity;
-    let x = px + vx;
-    let z = pz + vz;
-    let y = py + vy;
+    let x = 0;
+    let z = 0;
+    let y = 0;
     switch (entity.frame.state) {
       case StateEnum.Jump:
-        x += 2 * vx;
-        z += 1 * vz;
-        y += 1 * vy;
+        x = round_float(px + 3 * vx);
+        z = round_float(pz + 2 * vz);
+        y = round_float(py + 2 * vy);
         break;
       case StateEnum.Running:
-        x += 3 * vx;
-        z += 1.5 * vz;
-        y += 1.5 * vy;
+        x = round_float(px + 4 * vx);
+        z = round_float(pz + 2.5 * vz);
+        y = round_float(py + 2.5 * vy);
         break;
       case StateEnum.Dash:
-        x += 4 * vx;
-        z += 2 * vz;
-        y += 2 * vy
+        x = round_float(px + 5 * vx);
+        z = round_float(pz + 3 * vz);
+        y = round_float(py + 3 * vy)
+        break;
+      default:
+        x = round_float(px + vx);
+        z = round_float(pz + vz);
+        y = round_float(py + vy)
         break;
     }
     return { x: px, z: pz, next_x: x, next_z: z, next_y: y };
@@ -400,7 +405,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
       this.lf2.mt.mark = mark;
       ret += this.lf2.mt.range(0, ret);
     }
-    return ret;
+    return (ret);
   }
   handle_action(action: IBotAction | undefined): LGK[] | false {
     if (!action) return false
