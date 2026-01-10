@@ -1549,9 +1549,9 @@ export class Entity {
     if (throwinjury > 0) this.throwinjury = throwinjury;
     if (throwvx || throwvy || throwvz) {
       this.set_velocity(
-        throwvz * this.world.tvz_f * cer.ctrl.UD || 0,
         throwvx * this.world.tvx_f * cer.facing,
-        throwvy * this.world.tvy_f
+        throwvy * this.world.tvy_f,
+        throwvz * this.world.tvz_f * cer.ctrl.UD || 0,
       )
       const { tx, ty, tz } = cpoint_a
       const w = this.frame.pic?.w || 0

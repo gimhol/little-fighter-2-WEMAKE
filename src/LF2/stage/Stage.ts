@@ -90,7 +90,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.depth = bg.depth;
     this.middle = bg.middle;
     this.drink_l = -1200;
-    this.drink_r = this.bg.width + 1200
+    this.drink_r = bg.width + 1200
     return this.world.bg = bg;
   }
 
