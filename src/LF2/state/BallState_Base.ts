@@ -42,7 +42,4 @@ export default class BallState_Base extends State_Base {
         break;
     }
   }
-  override update(e: Entity): void {
-    super.update(e)
-  }
 }

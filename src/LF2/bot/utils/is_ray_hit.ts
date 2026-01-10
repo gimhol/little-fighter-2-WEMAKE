@@ -23,7 +23,7 @@ export function is_ray_hit(a: Entity, b: Entity, ray: IBotRay) {
     return reverse;
 
   const [px, pz] = project_to_line(dx, dz, x * a.facing, z)
-  const dist = (dx - px) ** 2 + (dz - pz) ** 2
+  const dist = round_float((dx - px) ** 2 + (dz - pz) ** 2)
   const hit = round_float(dist) < max_d
   return reverse ? !hit : hit;
 }

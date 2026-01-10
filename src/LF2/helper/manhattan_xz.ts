@@ -1,5 +1,5 @@
 import { Entity } from "../entity";
-import { abs } from "../utils";
+import { abs, round_float } from "../utils";
 /**
  * 获取两实体在XZ平面上的曼哈顿距离
  *
@@ -9,6 +9,9 @@ import { abs } from "../utils";
  * @return {number} XZ平面上的曼哈顿距离
  */
 export function manhattan_xz(a: Entity, b: Entity): number {
-  return abs(a.position.x - b.position.x) + abs(a.position.z - b.position.z);
+  return round_float(
+    abs(a.position.x - b.position.x) +
+    abs(a.position.z - b.position.z)
+  )
 }
 

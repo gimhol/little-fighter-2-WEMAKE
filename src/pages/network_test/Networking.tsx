@@ -1,5 +1,6 @@
 
-import { BotState_Base, LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
+import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
+import { bot_action_cases, mt_cases } from "@/LF2/cases_instances";
 import { IKeyEvent, IReqTick, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
@@ -64,7 +65,8 @@ class Lf2NetworkDriver {
     lf2.load("data.zip.json")
     lf2.set_ui("loading")
     lf2.mt.reset(resp.seed ?? 0, true)
-    BotState_Base.debug(true);
+    bot_action_cases.debug(true);
+    mt_cases.debug(true)
   }
   on_tick(resp: IRespTick | IRespKeyTick) {
     const { conn, lf2 } = this;
@@ -94,15 +96,10 @@ class Lf2NetworkDriver {
       cmds: lf2.cmds,
       events: req_events
     }
-    if (lf2.mt.debug) {
-      req._r = lf2.mt.cases.join()
-      lf2.mt.cases.length = 0;
-      req._p = Array.from(lf2.world.entities).map(e => `(${e.position.x}, ${e.position.y}, ${e.position.z})`).join(', ')
-      req._a = BotState_Base.cases.join()
-      BotState_Base.cases.length = 0
-    }
-    if (!this._f) conn.send(MsgEnum.Tick, req)
-
+    if (mt_cases.debuging) req._r = mt_cases.submit()
+    if (mt_cases.debuging) req._p = Array.from(lf2.world.entities).map(e => `(${e.position.x}, ${e.position.y}, ${e.position.z})`).join(', ')
+    if (bot_action_cases.debuging) req._a = bot_action_cases.submit();
+    if (!this._f) conn.send(MsgEnum.Tick, req);
     lf2.cmds.length = 0;
     lf2.events.length = 0;
     this._p.reset()

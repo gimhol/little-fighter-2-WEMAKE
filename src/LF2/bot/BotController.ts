@@ -172,11 +172,6 @@ export class BotController extends BaseController implements Required<IBotDataSe
     super(player_id, entity);
     this.player = this.lf2.players.get(player_id)
   }
-  manhattan_to(a: Entity) {
-    const { x, z } = this.entity.position;
-    const { x: x1, z: z1 } = a.position;
-    return abs(x1 - x) + abs(z1 - z);
-  }
 
   /**
    * 判断是否应该追击某个对象

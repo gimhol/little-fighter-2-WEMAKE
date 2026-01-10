@@ -23,8 +23,8 @@ export default class WeaponState_InTheSky extends WeaponState_Base {
     if (this._unhurt_weapons.has(e)) {
       this._unhurt_weapons.delete(e);
       if (base.drop_hurt) {
-        e.hp -= base.drop_hurt;
-        e.hp_r -= base.drop_hurt;
+        e.hp -= round(base.drop_hurt);
+        e.hp_r -= round(base.drop_hurt);
       }
     }
     if (dvy < min_bounce_vy) {

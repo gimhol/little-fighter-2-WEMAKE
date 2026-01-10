@@ -39,7 +39,8 @@ export class BotState_Avoiding extends BotState_Base {
     }
     const { x, z } = me.position;
     const { x: enemy_x, z: enemy_z } = av.position;
-    const distance = c.manhattan_to(av);
+
+    const distance = manhattan_xz(me, av);
     if (distance > 200) {
       c.end(GK.L, GK.R, GK.U, GK.D);
       return;
