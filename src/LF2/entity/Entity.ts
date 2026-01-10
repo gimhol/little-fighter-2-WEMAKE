@@ -1711,7 +1711,6 @@ export class Entity {
   }
 
   start_caught(attacker: Entity, itr: IItrInfo) {
-    Ditto.debug(`start_caught`)
     if (itr.caughtact === void 0) {
       Ditto.warn(`[Entity::start_caught] cannot be caught, caughtact got ${itr.caughtact}`)
       return;
