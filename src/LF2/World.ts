@@ -261,11 +261,11 @@ export class World extends WorldDataset {
         this.render_once(real_dt);
         if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
       }
-      this._UPS.update(real_dt);
-      this._fix_radio = this._UPS.value / 60;
       if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
-      this._prev_time = time;
       this.after_update?.();
+      this._UPS.update(real_dt);
+      this._fix_radio = this._UPS.value / 70;
+      this._prev_time = time;
 
     };
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
@@ -399,6 +399,7 @@ export class World extends WorldDataset {
       switch (key) {
         case CMD.LF2_NET:
         case CMD.HERO_FT:
+        case CMD.GIM_INK:
           this.lf2.toggle_cheat_enabled(key);
           continue;
         case CMD.F1:

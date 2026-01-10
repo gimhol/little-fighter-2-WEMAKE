@@ -2,7 +2,7 @@ import { Ditto } from "@/LF2/ditto";
 import { new_team } from "../../base";
 import Invoker from "../../base/Invoker";
 import LocalController from "../../controller/LocalController";
-import { FacingFlag } from "../../defines";
+import { FacingFlag, TeamEnum } from "../../defines";
 import { Defines } from "../../defines/defines";
 import { Factory } from "../../entity/Factory";
 import { BackgroundNameText } from "./BackgroundNameText";
@@ -19,9 +19,11 @@ export class GamePrepareLogic extends UIComponent {
     super.on_resume();
     const background_row = this.node.search_child("background_row")!;
     const stage_row = this.node.search_child("stage_row")!;
+    const char_menu_logic = this.node.search_component(CharMenuLogic)
     if (this.game_mode === "stage_mode") {
       stage_row.set_visible(true).set_disabled(false);
       background_row.set_visible(false).set_disabled(true);
+      if (char_menu_logic) char_menu_logic.teams = [TeamEnum.Team_1]
     } else {
       background_row.set_visible(true).set_disabled(false);
       stage_row.set_visible(false).set_disabled(true);

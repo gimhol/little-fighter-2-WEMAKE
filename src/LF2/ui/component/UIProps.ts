@@ -37,10 +37,13 @@ export class UIProps {
         break;
     }
   }
+  set_strs(name: string, v: string[]) {
+    this.raw[name] = v;
+  }
   strs(name: string): string[] | null {
     if (!(name in this.raw)) return null;
     const out: string[] = [];
-    this._any_str_arr(this.raw[name], out)
+    this._any_str_arr(this.raw[name], out);
     return out;
   }
   bool(name: string): boolean | null {

@@ -4,7 +4,7 @@ import FSM from "@/LF2/base/FSM";
 import { Randoming } from "@/LF2/helper";
 import { between, max, min } from "@/LF2/utils";
 import { PlayerInfo } from "../../../PlayerInfo";
-import { CheatType, EntityGroup, IEntityData } from "../../../defines";
+import { CheatType, EntityGroup, IEntityData, TeamEnum } from "../../../defines";
 import { Defines } from "../../../defines/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { CharMenuHead } from "../CharMenuHead";
@@ -39,7 +39,7 @@ export class CharMenuLogic extends UIComponent {
   get max_player(): number { return this.props.num('max_player') ?? 8 }
   get max_coms(): number { return this.max_player - this.players.size }
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
-
+  set teams(v: string[]) { this.props.set_strs("teams", v) }
   get fighters() {
     return this.lf2.is_cheat(CheatType.LF2_NET)
       ? this.lf2.datas.fighters
@@ -145,12 +145,17 @@ export class CharMenuLogic extends UIComponent {
     if (!state && this.max_player <= this.players.size)
       return;
     if (!state) {
-      const slot_state = new SlotState()
+      const team = this.teams[0] ?? TeamEnum.Independent
+      const slot_state = new SlotState({ team })
       slot_state.fighter = this._randoming?.take() ?? null;
       this.players.set(player, slot_state);
     } else if (state.step < SlotStep.Ready) {
-      state.step = min(state.step + 1, SlotStep.Ready)
+      if (state.step + 1 === SlotStep.TeamSel && this.teams.length < 1)
+        state.step = SlotStep.Ready
+      else
+        state.step = min(state.step + 1, SlotStep.Ready)
     } else return;
+
     this.lf2.sounds.play_preset("join");
     if (this.is_player_sel) {
       const all_player_ready = Array.from(this.players.values()).every(v => v.step === SlotStep.Ready)
