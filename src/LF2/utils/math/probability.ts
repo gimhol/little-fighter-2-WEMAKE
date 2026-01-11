@@ -1,5 +1,5 @@
-import { clamp, pow } from "..";
-
+import { pow } from "../math/base";
+import { clamp } from "../math/clamp";
 /**
  * 单次触发的概率
  *
