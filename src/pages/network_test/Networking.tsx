@@ -67,7 +67,7 @@ class Lf2NetworkDriver {
         }
       }
     }
-    const debugging = true
+    const debugging = false
     bot_cases.debug(debugging);
     mt_cases.debug(debugging)
     sus_cases.debug(debugging)
