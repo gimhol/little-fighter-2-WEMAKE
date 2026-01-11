@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc & rollup -c rollup.config.mjs",
-    "start": "tsc & node ./",
+    "start": "npm run build & node ./",
     "help": "node ./ -- -h",
-    "dat-2-txt": "tsc & node ./ -- -dat-2-txt"
+    "dat-2-txt": "npm run build & node ./ -- -dat-2-txt",
+    "sea": "node --experimental-sea-config sea.json"
   },
   "author": "",
   "license": "ISC",

@@ -1,8 +1,7 @@
 import fs from "fs/promises";
-import json5 from "json5";
 import dat_to_json from "../../../src/LF2/dat_translator/dat_2_json";
-import { IDataLists } from "../../../src/LF2/defines/IDataLists";
-import { IEntityData } from "../../../src/LF2/defines/IEntityData";
+import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
+import type { IEntityData } from "../../../src/LF2/defines/IEntityData";
 import { read_lf2_dat_file } from "./read_lf2_dat_file";
 import { write_obj_file } from "./write_obj_file";
 export type IRet = ReturnType<typeof dat_to_json>;

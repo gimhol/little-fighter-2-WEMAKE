@@ -1,5 +1,5 @@
 import { read_indexes } from "../../../src/LF2/dat_translator/read_indexes";
-import { IDataLists } from "../../../src/LF2/defines/IDataLists";
+import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
 import { read_text_file } from "./read_text_file";
 import { write_obj_file } from "./write_obj_file";
 async function parse_indexes(
