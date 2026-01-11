@@ -8,12 +8,14 @@ import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { Connection } from "./Connection";
 import { TriState } from "./TriState";
+import { LF2 } from "@/LF2";
 export interface IConnectionBoxProps extends ICombineProps {
   on_conn_change?(conn: Connection | null): void;
   on_state_change?(conn_state: TriState): void;
+  lf2?: LF2 | null;
 }
 function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
-  const { on_state_change, on_conn_change, ..._p } = props;
+  const { on_state_change, on_conn_change, lf2, ..._p } = props;
   const [ref, on_ref] = useForwardedRef(f_ref)
   useFloating({
     responser: ref.current,
@@ -35,6 +37,21 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
   ref_on_conn_change.current = on_conn_change;
   useMemo(() => ref_on_conn_change.current?.(conn), [conn])
   useMemo(() => ref_on_state_change.current?.(conn_state), [conn_state])
+  useEffect(() => {
+    if (!lf2) return;
+    const players = [
+      lf2.players.get('1'),
+      lf2.players.get('2'),
+      lf2.players.get('3'),
+      lf2.players.get('4'),
+    ]
+    const player = players.find((p, i) => {
+      if (!p) return false;
+      return p.name.trim() && p.name !== `${i + 1}`
+    })
+    if (player) set_nickname(player.name)
+  }, [lf2])
+
   function connect() {
     if (ref_conn.current) return;
     const conn = new Connection(nickname);
@@ -51,6 +68,7 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
     conn.callbacks.once('on_register', () => set_connected(TriState.True))
     return () => conn?.close()
   }, [conn])
+
   return (
     <Combine direction='column' {..._p} ref={on_ref}>
       <Input

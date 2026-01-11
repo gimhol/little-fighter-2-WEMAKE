@@ -521,7 +521,7 @@ function App() {
         </Show>
         <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
           <ToggleImgButton
-            onClick={() => lf2?.pop_ui_safe()}
+            onClick={() => lf2?.cmds.push(CMD.F4)}
             src={[img_btn_2_3]}
           />
         </Show>

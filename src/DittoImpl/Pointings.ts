@@ -6,21 +6,20 @@ import { __PointingEvent } from "./__PointingEvent";
 export class __Pointings implements IPointings {
   protected _callbacks = new Callbacks<IPointingsCallback>();
   protected _ele?: HTMLElement;
+  enabled: boolean = true;
   get callback(): NoEmitCallbacks<IPointingsCallback> {
     return this._callbacks;
   }
-
   private _on_pointer_down = (e: PointerEvent) =>
-    this._callbacks.emit("on_pointer_down")(new __PointingEvent(this._ele, e));
+    this.enabled && this._callbacks.emit("on_pointer_down")(new __PointingEvent(this._ele, e));
   private _on_pointer_up = (e: PointerEvent) =>
-    this._callbacks.emit("on_pointer_up")(new __PointingEvent(this._ele, e));
+    this.enabled && this._callbacks.emit("on_pointer_up")(new __PointingEvent(this._ele, e));
   private _on_pointer_move = (e: PointerEvent) =>
-    this._callbacks.emit("on_pointer_move")(new __PointingEvent(this._ele, e));
+    this.enabled && this._callbacks.emit("on_pointer_move")(new __PointingEvent(this._ele, e));
   private _on_pointer_cancel = (e: PointerEvent) =>
-    this._callbacks.emit("on_pointer_cancel")(new __PointingEvent(this._ele, e));
+    this.enabled && this._callbacks.emit("on_pointer_cancel")(new __PointingEvent(this._ele, e));
   private _on_click = (e: MouseEvent) =>
-    this._callbacks.emit("on_click")(new __PointingEvent(this._ele, e));
-
+    this.enabled && this._callbacks.emit("on_click")(new __PointingEvent(this._ele, e));
   dispose() {
     this._ele?.removeEventListener("click", this._on_click);
     this._ele?.removeEventListener("pointermove", this._on_pointer_move);

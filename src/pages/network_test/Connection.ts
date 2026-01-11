@@ -29,6 +29,7 @@ export class Connection {
   protected _players: string[] = []
   protected _nickname: string;
   get client(): IClientInfo | undefined { return this._client }
+  get nickname(): string { return this._nickname }
   room?: IRoomInfo;
   rooms: IRoomInfo[] = [];
   get url() { return this._ws?.url }

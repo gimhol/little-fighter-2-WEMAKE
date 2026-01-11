@@ -77,6 +77,7 @@ class Lf2NetworkDriver {
     this._s.debugging = debugging
     lf2.load("data.zip.json")
     lf2.set_ui("loading")
+    lf2.pointings.enabled = false
     lf2.mt.reset(resp.seed ?? 0, debugging)
     lf2.world.game_time.reset()
   }
@@ -222,6 +223,7 @@ export function Networking(props: INetworkingProps) {
 
   return <>
     <ConnectionBox
+      lf2={lf2}
       on_conn_change={set_conn}
       on_state_change={set_conn_state}
       className={styles.rooms_box}
@@ -237,7 +239,7 @@ export function Networking(props: INetworkingProps) {
     <ChatBox
       conn={conn}
       className={styles.chat_box}
-      style={display_or_not(conn_state)} />
+      style={display_or_not(false && conn_state)} />
   </>
 }
 
