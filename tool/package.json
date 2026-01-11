@@ -2,24 +2,27 @@
   "name": "tool",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/tool/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc & rollup -c rollup.config.mjs",
     "start": "tsc & node ./",
-    "help": "tsc & node ./ -- -h",
+    "help": "node ./ -- -h",
     "dat-2-txt": "tsc & node ./ -- -dat-2-txt"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "command-exists": "^1.2.9",
-    "compressing": "^1.10.1",
+    "compressing": "^2.0.0",
     "json5": "^2.2.3"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/command-exists": "^1.2.3",
     "@types/node": "^20.11.19",
+    "rollup": "^4.55.1",
     "tslib": "^2.6.2",
     "typescript": "^5.5.2"
   }

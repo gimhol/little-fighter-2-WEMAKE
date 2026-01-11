@@ -9,13 +9,11 @@ import { check_is_str_ok } from "./utils/check_is_str_ok";
 import { classify } from "./utils/classify";
 import { convert_dat_file } from "./utils/convert_dat_file";
 import { convert_data_txt, write_index_file } from "./utils/convert_data_txt";
-import { merge_data_indexes } from "./utils/merge_data_indexes";
 import { convert_pic, convert_pic_2 } from "./utils/convert_pic";
 import { convert_sound } from "./utils/convert_sound";
+import { copy_dir } from "./utils/copy_dir";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
-import { IDataLists } from "../../src/LF2/defines/IDataLists";
-import { copy_dir } from "./utils/copy_dir";
 const {
   RAW_LF2_PATH,
   TEMP_DIR,
