@@ -1,0 +1,56 @@
+{
+  name: "页面：联网加载页",
+  id: "network_loading",
+  items: [
+    {
+      id: "bg_wait",
+      img: {
+        path: "!sprite/MENU_WAIT_SHORT.png",
+        w: 794,
+        h: 450,
+      },
+    },
+    {
+      id: "now_loading_text",
+      txt: {
+        i18n: "now_loading",
+        style: {
+          font: "16px Arial",
+          text_align: "center",
+        },
+      },
+      pos: "10,400",
+      center: "0,0",
+    },
+    {
+      id: "main_title",
+      img: {
+        path: "!sprite/MENU_CLIP.png",
+        x: 40,
+        y: 41,
+        w: 456,
+        h: 80,
+      },
+      center: "0, 0",
+      pos: "10,10",
+      opacity: 0.3,
+    },
+    {
+      id: "txt_loading_content",
+      component: ["LoadingContentText()"],
+      pos: "10,420",
+      center: "0,0",
+      txt: {
+        i18n: "",
+        style: {
+          font: "16px Arial",
+          disposable: true,
+        },
+      },
+    },
+    {
+      id: "stage_transition",
+      component: ["StageTransitions()"],
+    },
+  ],
+}

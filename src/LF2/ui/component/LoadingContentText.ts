@@ -43,6 +43,7 @@ export class LoadingContentText extends UIComponent {
   on_loading_end() {
     const page = this.str(0)
     if (page) this.lf2.set_ui(page)
+    else this.on_loading_content("waiting_others_players", 0)
   }
 
   on_loading_content(text: string, progress: number) {

@@ -1,5 +1,6 @@
 {
   "": {
+    "waiting_others_players": "Waiting for other players...",
     "goto_github_url": "https://github.com/gimhol/little-fighter-2-WEMAKE",
     "char_menu.player_colon": "Player：",
     "char_menu.fighter_colon": "Fighter：",
@@ -134,6 +135,7 @@
     "": "",
   },
   "zh-hans": {
+    "waiting_others_players": "正在等待其他玩家加载...",
     "entry_page.game_start": "开 始 游 戏",
     "entry_page.network_game": "联 机 游 戏",
     "entry_page.ctrl_settings": "控 制 设 置",
@@ -235,6 +237,7 @@
     "": "",
   },
   "zh-hant": {
+    "waiting_others_players": "正在等待其他玩家加載...",
     "entry_page.game_start": "開 始 游 戲",
     "entry_page.network_game": "連 線 遊 戲",
     "entry_page.ctrl_settings": "控 制 設 定",
