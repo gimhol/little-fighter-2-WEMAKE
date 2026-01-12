@@ -87,6 +87,7 @@ export class Client {
   }
 
   private handle_ws_msg = (msg: RawData) => {
+    console.info(`[${Client.TAG}::handle_ws_msg] msg: ${msg}`);
     const str = '' + msg;
     try {
       const what: TReq | TResp = JSON.parse(str);

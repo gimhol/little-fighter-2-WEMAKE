@@ -7,7 +7,7 @@ export interface IUseForageOpts<T> {
   init: T | (() => T);
 }
 export function useForage<T>(opts: IUseForageOpts<T>) {
-  const { key, init, version } = opts;
+  const { key, init, version = null } = opts;
   const [value, set_value] = useImmer<T>(init)
   const [ready, set_ready] = useState(false);
   useEffect(() => {

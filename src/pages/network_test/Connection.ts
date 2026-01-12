@@ -28,6 +28,7 @@ export class Connection {
   protected _client?: IClientInfo;
   protected _players: string[] = []
   protected _nickname: string;
+  protected _urls: string[] = []
   get client(): IClientInfo | undefined { return this._client }
   get nickname(): string { return this._nickname }
   room?: IRoomInfo;
@@ -61,6 +62,8 @@ export class Connection {
     })
   }
   protected _on_open = () => {
+    console.log(`[${Connection.TAG}::_on_open]`);
+    this._urls.length = 0;
     this.callbacks.emit('on_open')(this)
     this.send(MsgEnum.ClientInfo, {
       name: this._nickname,
@@ -107,6 +110,12 @@ export class Connection {
     }
   }
   protected _on_close = (e: CloseEvent) => {
+    console.log(`[${Connection.TAG}::_on_close]`);
+    if (this._urls.length) {
+      this.try_url(this._urls.shift())
+      return;
+    }
+
     if (this.room)
       this.callbacks.emit('on_room_change')(this.room = void 0, this)
     if (this.rooms.length)
@@ -115,23 +124,37 @@ export class Connection {
     this._ws = null;
   }
 
-  open(...args: ConstructorParameters<typeof WebSocket>) {
+  open(url: string) {
+    url = url.trim()
     switch (this._ws?.readyState) {
       case WebSocket.CONNECTING:
       case WebSocket.OPEN:
       case WebSocket.CLOSING:
         this._ws.close();
         if (this._reopen) this._ws.removeEventListener('close', this._reopen);
-        this._reopen = () => this.open(...args)
+        this._reopen = () => this.open(url)
         this._ws.addEventListener('close', this._reopen, { once: true });
         return;
     }
+    const protocols: string[] = ['wss://', 'ws://', 'https://', 'http://']
     this._reopen = void 0;
-    this._ws = new WebSocket(...args);
-    this._ws.addEventListener('message', this._on_message);
-    this._ws.addEventListener('open', this._on_open);
-    this._ws.addEventListener('close', this._on_close);
-    // this._ws.addEventListener('error', this._on_error);
+    if (protocols.some(protocol => url.startsWith(protocol)))
+      this._urls = [url]
+    else
+      this._urls = protocols.map(protocol => `${protocol}${url}`)
+    this.try_url(this._urls.shift())
+  }
+  protected try_url(url: string | undefined) {
+    console.info(`[${Connection.TAG}::try_url] url: `, url)
+    if (!url) return;
+    try {
+      this._ws = new WebSocket(url)
+      this._ws.addEventListener('message', this._on_message);
+      this._ws.addEventListener('open', this._on_open);
+      this._ws.addEventListener('close', this._on_close);
+    } catch (e) {
+      console.error(`[${Connection.TAG}] error:`, e)
+    }
   }
 
   close() {

@@ -5,10 +5,12 @@ import { Text } from "@/Component/Text";
 import { useFloating } from "@fimagine/dom-hooks/dist/useFloating";
 import { useForwardedRef } from "@fimagine/dom-hooks/dist/useForwardedRef";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
-import { ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Connection } from "./Connection";
 import { TriState } from "./TriState";
 import { LF2 } from "@/LF2";
+import { useCallbacks } from "./useCallbacks";
+import { useForage } from "@/hooks/useForage";
 export interface IConnectionBoxProps extends ICombineProps {
   on_conn_change?(conn: Connection | null): void;
   on_state_change?(conn_state: TriState): void;
@@ -28,8 +30,8 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
   })
   const [conn, set_conn, ref_conn] = useStateRef<Connection | null>(null)
   // const [address, set_address] = useStateRef('ws://localhost:8080')
-  const [address, set_address] = useStateRef('wss://lfj.gim.ink')
-  const [nickname, set_nickname] = useStateRef('')
+  const [address, set_address] = useStateRef('lfj.gim.ink')
+  const [nickname, set_nickname, nickname_ready] = useForage({ key: 'nickname', init: '' })
   const [conn_state, set_connected] = useState<TriState>(TriState.False);
   const ref_on_state_change = useRef(on_state_change);
   ref_on_state_change.current = on_state_change;
@@ -37,8 +39,9 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
   ref_on_conn_change.current = on_conn_change;
   useMemo(() => ref_on_conn_change.current?.(conn), [conn])
   useMemo(() => ref_on_state_change.current?.(conn_state), [conn_state])
+
   useEffect(() => {
-    if (!lf2) return;
+    if (!lf2 || !nickname_ready) return;
     const players = [
       lf2.players.get('1'),
       lf2.players.get('2'),
@@ -49,23 +52,28 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
       if (!p) return false;
       return p.name.trim() && p.name !== `${i + 1}`
     })
-    if (player) set_nickname(player.name)
-  }, [lf2])
+    if (player) set_nickname(prev => prev || player.name)
+  }, [lf2, nickname_ready])
 
   function connect() {
     if (ref_conn.current) return;
     const conn = new Connection(nickname);
     set_conn(conn);
   }
-  useEffect(() => {
-    if (!conn || !address) return;
-    conn.open(`${address}`)
-    set_connected(TriState.Pending);
-    conn.callbacks.once('on_close', (e) => {
+  useCallbacks(conn?.callbacks, {
+    on_register: () => {
+      set_connected(TriState.True)
+    },
+    on_close: () => {
       set_connected(TriState.False)
       set_conn(null)
-    })
-    conn.callbacks.once('on_register', () => set_connected(TriState.True))
+    }
+  })
+
+  useEffect(() => {
+    if (!conn || !address) return;
+    set_connected(TriState.Pending);
+    conn.open(`${address}`)
     return () => conn?.close()
   }, [conn])
 
