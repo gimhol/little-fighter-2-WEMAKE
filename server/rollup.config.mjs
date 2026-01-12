@@ -7,12 +7,15 @@ import json from '@rollup/plugin-json';
 let targets = [
   { dir: './dist', tsconfig: "./tsconfig.json" },
 ]
-let formats = ['cjs']
+const whats = [{
+  format: 'cjs',
+  suffix: 'cjs'
+}]
 const configs = [];
 
 // "amd", "cjs", "system", "es", "iife" or "umd"
 
-for (const format of formats) {
+for (const { format, suffix = 'js' } of whats) {
   for (const { dir, tsconfig } of targets) {
     const dist_dir = `${dir}/${format}`
     try {
@@ -23,7 +26,7 @@ for (const format of formats) {
     const bundle_js_config = {
       input: 'src/index.ts',
       output: {
-        file: `${dist_dir}/index.js`,
+        file: `${dist_dir}/index.${suffix}`,
         format,
         sourcemap: true,
         name: "lfj-node-server"
