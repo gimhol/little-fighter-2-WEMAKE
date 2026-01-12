@@ -515,7 +515,7 @@ function App() {
         <ToggleImgButton
           onClick={() => {
             if (!lf2) return;
-            lf2.cmds.push(CMD.F1)
+            lf2.cmds.push(CMD.F2)
             if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings')
               lf2.pop_ui_safe()
             else
