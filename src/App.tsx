@@ -26,6 +26,7 @@ import { GameOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
 import { LF2 } from "./LF2/LF2";
 import { CheatType } from "./LF2/defines";
+import { CMD } from "./LF2/defines/CMD";
 import { Defines } from "./LF2/defines/defines";
 import { Ditto } from "./LF2/ditto";
 import { IUIInfo } from "./LF2/ui/IUIInfo.dat";
@@ -54,7 +55,6 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
-import { CMD } from "./LF2/defines/CMD";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"

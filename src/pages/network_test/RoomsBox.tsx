@@ -15,6 +15,7 @@ import { TriState } from "./TriState";
 import { useRoom } from "./useRoom";
 import { useRooms } from "./useRooms";
 import { LF2 } from "@/LF2";
+import { useTranslation } from "react-i18next";
 
 export interface IRoomsBoxProps extends IFrameProps {
   conn?: Connection | null;
@@ -22,6 +23,7 @@ export interface IRoomsBoxProps extends IFrameProps {
   lf2?: LF2 | null;
 }
 function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
+  const { t } = useTranslation()
   const {
     conn = null,
     conn_state = TriState.False,
@@ -98,37 +100,42 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
     target: ref_floating_view.current,
     followPercent: true,
   })
-
   return (
     <Frame {..._p} className={cls_name} ref={on_ref}>
       <Flex gap={10} align='stretch' justify='space-between'>
         <Flex align='center' style={{ flex: 1, paddingLeft: 5, overflow: 'hidden' }} gap={5}>
-          <Strong style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>房间列表</Strong>
-          <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>{conn?.url}</Text>
+          <Strong style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>
+            {t('room_list')}
+          </Strong>
+          <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>
+            {conn?.url}
+            </Text>
         </Flex>
         <Flex>
           <Show show={!room && conn_state && !room_joining && !room_creating}>
             <Button
               variants={['no_border', 'no_round', 'no_shadow']}
               onClick={() => create_room()}>
-              创建房间
+              {t('create_room')}
             </Button>
           </Show>
           <Button
             variants={['no_border', 'no_round', 'no_shadow']}
             onClick={() => update_rooms()} >
-            刷新
+            {t('refresh')}
           </Button>
           <Button
             variants={['no_border', 'no_round', 'no_shadow']}
             onClick={() => conn?.close()} >
-            断开连接
+            {t('disconnect')}
           </Button>
         </Flex>
       </Flex>
       {rooms?.length === 0 ?
         <Flex direction='column' align='center' justify='center' style={{ height: 65, opacity: 0.5 }}>
-          <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>暂无房间，点击刷新或创建房间</Text>
+          <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>
+            {t('no_rooms')}
+          </Text>
         </Flex> : <Divider />
       }
       <List
@@ -140,16 +147,16 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
           <Flex direction='column' align='stretch' gap={5}>
             <Flex gap={10} direction='column' align='stretch' justify='space-between' style={{ padding: 5, boxSizing: 'border-box', height: 64 }}>
               <Flex gap={10}>
-                <Strong> 房名: {r.title} </Strong>
-                <Text> 人数: {r.clients?.length}/{r.max_players} </Text>
+                <Strong> {t('room_name')}: {r.title} </Strong>
+                <Text> {t('player_count')}: {r.clients?.length}/{r.max_players} </Text>
               </Flex>
               <Flex gap={10}>
-                <Text style={{ flex: 1 }}> 房主: {r.owner?.name} </Text>
+                <Text style={{ flex: 1 }}> {t('room_owner')}: {r.owner?.name} </Text>
                 <Button
                   variants={['no_border', 'no_round', 'no_shadow']}
                   disabled={!!room}
                   onClick={() => join_room(r.id!)}>
-                  加入
+                  {t("join")}
                 </Button>
               </Flex>
             </Flex>

@@ -6,6 +6,7 @@ import { Ditto } from "./LF2/ditto";
 import { Debug, Log, Warn } from "./Log";
 import actor from "./LF2/ui/action/Actor";
 import { UIActionEnum } from "./LF2/ui/UIActionEnum";
+import './i18n';
 actor
   .add(UIActionEnum.Alert, (_, msg) => window.alert(msg))
   .add(UIActionEnum.LinkTo, (_, url) => window.open(url))

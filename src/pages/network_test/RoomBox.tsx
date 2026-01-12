@@ -10,6 +10,7 @@ import Show from "@/Component/Show";
 import { Button } from "@/Component/Buttons/Button";
 import { MsgEnum } from "@/Net";
 import { useFloating, useForwardedRef } from "@fimagine/dom-hooks";
+import { useTranslation } from "react-i18next";
 export interface IRoomBoxProps extends HTMLAttributes<HTMLDivElement> {
   conn?: Connection | null
 }
@@ -49,7 +50,7 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
     }, 1000)
     return () => clearInterval(tid)
   }, [all_ready, conn, is_owner])
-
+  const { t } = useTranslation()
   return (
     <Frame {..._p} ref={on_ref}>
       <Flex direction='column' align='stretch' gap={5}>
@@ -68,7 +69,7 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
                   {other.name}
                 </Text>
                 <Text style={{ opacity: 0.5, verticalAlign: 'middle' }}>
-                  {is_self ? '(你)' : ''}
+                  {is_self ? `(${t('yourself')})` : ''}
                   {other.id == room?.owner?.id ? '👑' : ''}
                 </Text>
                 <Flex align='center'>
@@ -76,10 +77,10 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
                     <Button
                       variants={['no_border', 'no_round', 'no_shadow']}
                       onClick={() => conn?.send(MsgEnum.Kick, { client_id: other.id })}>
-                      踢出
+                      {t('kick')}
                     </Button>
                   </Show>
-                  <Text> {other.ready ? '已准备' : '未准备'} </Text>
+                  <Text> {other.ready ? t('ready_completed') : t('not_ready')} </Text>
                 </Flex>
               </Flex>
               <Divider />
@@ -90,19 +91,19 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
       {
         all_ready ?
           <Flex direction='row' align='stretch' justify='space-evenly' gap={5} style={{ margin: 5 }}>
-            即将开始，倒计时: {countdown}秒
+            {t("counting_down").replace('%1', "" + countdown)}
           </Flex> : null
       }
       <Flex direction='row' align='stretch' justify='space-evenly' gap={5} style={{ margin: 5 }}>
         <Button
           variants={['no_border', 'no_round', 'no_shadow']}
           onClick={() => conn?.send(MsgEnum.ExitRoom, {})}>
-          <Text> 退出房间 </Text>
+          <Text> {t('leave_room')} </Text>
         </Button>
         <Button
           variants={['no_border', 'no_round', 'no_shadow']}
           onClick={() => conn?.send(MsgEnum.ClientReady, { ready: !me?.ready })}>
-          {me?.ready ? '取消准备' : '准备!'}
+          {me?.ready ? t('cancal_ready') : t('get_ready')}
         </Button>
       </Flex>
     </Frame>

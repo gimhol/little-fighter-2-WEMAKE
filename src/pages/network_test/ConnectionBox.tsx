@@ -11,12 +11,15 @@ import { TriState } from "./TriState";
 import { LF2 } from "@/LF2";
 import { useCallbacks } from "./useCallbacks";
 import { useForage } from "@/hooks/useForage";
+import { useTranslation } from 'react-i18next';
+
 export interface IConnectionBoxProps extends ICombineProps {
   on_conn_change?(conn: Connection | null): void;
   on_state_change?(conn_state: TriState): void;
   lf2?: LF2 | null;
 }
 function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
+  const { t } = useTranslation();
   const { on_state_change, on_conn_change, lf2, ..._p } = props;
   const [ref, on_ref] = useForwardedRef(f_ref)
   useFloating({
@@ -29,7 +32,6 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
     }
   })
   const [conn, set_conn, ref_conn] = useStateRef<Connection | null>(null)
-  // const [address, set_address] = useStateRef('ws://localhost:8080')
   const [address, set_address] = useStateRef('lfj.gim.ink')
   const [nickname, set_nickname, nickname_ready] = useForage({ key: 'nickname', init: '' })
   const [conn_state, set_connected] = useState<TriState>(TriState.False);
@@ -85,7 +87,7 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
         onChange={set_address}
         disabled={!!conn_state}
         data-flex={1}
-        prefix={<Text size='s'>地址:</Text>}
+        prefix={<Text size='s'>{t('address')}:</Text>}
         onKeyDown={e => e.stopPropagation()}
       />
       <Combine>
@@ -94,16 +96,16 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
           onChange={set_nickname}
           disabled={!!conn_state}
           data-flex={1}
-          prefix={<Text size='s'>昵称:</Text>}
+          prefix={<Text size='s'>{t("nickname")}:</Text>}
           onKeyDown={e => e.stopPropagation()}
         />
         <Button
           disabled={conn_state === TriState.Pending || !address.trim()}
           onClick={connect}>
           {{
-            [TriState.False]: 'connect',
-            [TriState.Pending]: 'connecting...',
-            [TriState.True]: 'disconnect',
+            [TriState.False]: t('connect'),
+            [TriState.Pending]: t('connecting') + '...',
+            [TriState.True]: t('disconnect'),
           }[conn_state]}
         </Button>
       </Combine>

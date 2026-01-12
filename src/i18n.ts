@@ -1,0 +1,95 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+const zh_hans = {
+  "nickname": "昵称",
+  "connect": "连接",
+  "connecting": "连接中",
+  "disconnect": "断开链接",
+  "address": "地址",
+  "yourself": "你",
+  "cancal_ready": "取消准备",
+  "get_ready": "准备！",
+  "kick": "请出房间",
+  "leave_room": "退出房间",
+  "ready_completed": "准备就绪",
+  "not_ready": "",
+  "counting_down": "即将开始，倒计时: %1秒",
+  "refresh": "刷新",
+  "create_room": "创建房间",
+  "join": "加入",
+  "room_name": "房名",
+  "player_count": "人数",
+  "room_owner": "房主",
+  "room_list": "房间列表",
+  "no_rooms": "暂无房间，点击刷新或创建房间",
+
+}
+const zh_hant = {
+  "nickname": "暱稱",
+  "connect": "連接",
+  "connecting": "連接中",
+  "disconnect": "斷開連接",
+  "address": "地址",
+  "yourself": "你",
+  "cancal_ready": "取消準備",
+  "get_ready": "準備！",
+  "kick": "請出房間",
+  "leave_room": "退出房間",
+  "ready_completed": "準備就緒",
+  "not_ready": "",
+  "counting_down": "即將開始，倒數計時: %1秒",
+  "refresh": "刷新",
+  "create_room": "創建房間",
+  "join": "加入",
+  "room_name": "房名",
+  "player_count": "人數",
+  "room_owner": "房主",
+  "room_list": "房間列表",
+  "no_rooms": "暫無房間，點擊刷新或創建房間",
+
+}
+const en = {
+  "nickname": 'Nick Name',
+  "connect": "Connect",
+  "connecting": "Connecting",
+  "disconnect": "Disconnect",
+  "address": "Address",
+  "yourself": "Yourself",
+  "cancal_ready": "Cancel Ready",
+  "get_ready": "Ready!",
+  "kick": "kick",
+  "leave_room": "Leave",
+  "ready_completed": "Ready!",
+  "not_ready": "",
+  "counting_down": "Starting Soon, Countdown: %1s",
+  "refresh": "Refresh",
+  "create_room": "Create Room",
+  "join": "Join",
+  "room_name": "Room Name",
+  "player_count": "player_count",
+  "room_owner": "Owner",
+  "room_list": "Room List",
+  "no_rooms": "No Rooms Available. Click Refresh or Create Room",
+}
+const resources = {
+  "zh-Hans": { translation: zh_hans },
+  "zh-CN": { translation: zh_hans },
+  "zh-SG": { translation: zh_hans },
+  "zh-MY": { translation: zh_hans },
+  "zh-Hant": { translation: zh_hant },
+  "zh-TW": { translation: zh_hant },
+  "zh-HK": { translation: zh_hant },
+  "zh-MO": { translation: zh_hant },
+  en: { translation: en }
+};
+
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: 'en',
+    lng: navigator.language,
+    interpolation: { escapeValue: false }
+  });
+
+export default i18n;
