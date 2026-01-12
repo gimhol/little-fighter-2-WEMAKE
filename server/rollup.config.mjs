@@ -2,6 +2,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { rmSync } from 'fs';
 import typescript from 'rollup-plugin-typescript2';
+import json from '@rollup/plugin-json';
 
 let targets = [
   { dir: './dist', tsconfig: "./tsconfig.json" },
@@ -28,6 +29,7 @@ for (const format of formats) {
         name: "lfj-node-server"
       },
       plugins: [
+        json(),
         typescript({ tsconfig }),
         commonjs(),
         nodeResolve({ preferBuiltins: true })

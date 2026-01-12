@@ -12,10 +12,11 @@ import { ensure_room_owner } from './ensure_room_owner';
 import { handle_req_chat } from './handle_req_chat';
 import { handle_req_tick } from './handle_req_tick';
 
-let client_id = 0;
 export class Client {
   static readonly TAG = 'Client'
-  readonly id = 'client_' + (++client_id);
+  protected static last_client_id = 0;
+
+  readonly id = `client_${++Client.last_client_id}`;
   readonly ws: WebSocket;
   readonly ctx: Context;
   protected _pid = 1;
@@ -110,7 +111,7 @@ export class Client {
       case MsgEnum.ClientInfo: {
         const client_info = this.client_info = {
           id: this.id,
-          name: req.name?.trim() || `玩家${this.id}`,
+          name: req.name?.trim() || `${this.id}`,
           players: req.players ?? [],
         }
         this.resp(req.type, req.pid, { client: client_info }).catch(() => void 0);
