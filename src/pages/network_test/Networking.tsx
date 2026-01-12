@@ -67,7 +67,7 @@ class Lf2NetworkDriver {
         }
       }
     }
-    const debugging = false
+    const debugging = !0
     bot_cases.debug(debugging);
     mt_cases.debug(debugging)
     sus_cases.debug(debugging)
@@ -79,7 +79,6 @@ class Lf2NetworkDriver {
     lf2.set_ui("network_loading")
     lf2.pointings.enabled = false
     lf2.mt.reset(resp.seed ?? 0, debugging)
-    lf2.world.game_time.reset()
   }
   update_client(resp: IRespClientInfo) {
     const { lf2 } = this;
@@ -103,6 +102,7 @@ class Lf2NetworkDriver {
       lf2.world.after_update = this.after_update
       lf2.world.before_update = this.before_update
       lf2.set_ui("main_page");
+      lf2.world.game_time.reset()
     }
     this.resp = resp;
     lf2.world.awake()
