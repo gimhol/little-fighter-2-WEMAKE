@@ -2,7 +2,6 @@
   name: "页面：闯关模式",
   id: "stage_mode_page",
   component: ["SummaryLogic()", "StageModeLogic()"],
-  key_press_actions: [["escape", "set_ui(entry)"]],
   items: [
     "ui/center_pause_label.ui.json5",
     "ui/fighter_stat_s_x8.ui.json5",

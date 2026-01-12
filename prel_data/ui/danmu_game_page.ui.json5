@@ -5,12 +5,6 @@
     "DanmuGameLogic()",
     "CameraCtrl()"
   ],
-  "key_press_actions": [
-    [
-      "escape",
-      "set_ui(entry)"
-    ]
-  ],
   "items": [
     "ui/center_pause_label.ui.json5",
     {

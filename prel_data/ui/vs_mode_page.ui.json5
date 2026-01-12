@@ -2,7 +2,6 @@
   name: "页面：对战模式",
   id: "vs_mode_page",
   component: ["SummaryLogic()", "VsModeLogic()"],
-  key_press_actions: [["escape", "set_ui(entry)"]],
   items: [
     "ui/fighter_stat_1v1.ui.json5",
     "ui/fighter_stat_s_x8.ui.json5",

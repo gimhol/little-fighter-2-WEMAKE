@@ -1,3 +1,4 @@
+import { debug } from "console";
 import { Callbacks } from "../base";
 import { LF2 } from "../LF2";
 import { is_str } from "../utils";
@@ -13,12 +14,14 @@ export class UIStack {
   readonly lf2: LF2;
   readonly uis: UINode[] = [];
   readonly callback = new Callbacks<IUIStacksCallback>;
+  index: number
 
   get ui(): UINode | undefined {
     return this.uis[this.uis.length - 1];
   }
-  constructor(lf2: LF2) {
-    this.lf2 = lf2
+  constructor(lf2: LF2, index: number) {
+    this.lf2 = lf2;
+    this.index = index;
   }
   dispose(): void {
     this.uis.forEach(ui => {
@@ -37,9 +40,13 @@ export class UIStack {
       ? this.lf2.uiinfos?.find((v) => v.id === arg)
       : arg;
     const curr = info && UINode.create(this.lf2, info);
-    curr && this.uis.push(curr);
-    curr?.on_start();
-    curr?.on_resume();
+    if (curr) {
+      const [x, y, z] = curr.pos.value
+      curr.pos.push([x, y, z + this.index])
+      this.uis.push(curr);
+      curr.on_start();
+      curr.on_resume();
+    }
     if (curr || prev) this.callback.emit('on_set')(curr, prev, this)
   }
 
@@ -50,9 +57,13 @@ export class UIStack {
       ? this.lf2.uiinfos?.find((v) => v.id === arg)
       : arg;
     const curr = info && UINode.create(this.lf2, info);
-    curr && this.uis.push(curr);
-    curr?.on_start();
-    curr?.on_resume();
+    if (curr) {
+      const [x, y, z] = curr.pos.value
+      curr.pos.push([x, y, z + this.index])
+      this.uis.push(curr);
+      curr.on_start();
+      curr.on_resume();
+    }
     this.callback.emit('on_push')(curr, prev, this)
   }
 

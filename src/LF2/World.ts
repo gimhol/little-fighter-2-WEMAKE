@@ -371,13 +371,21 @@ export class World extends WorldDataset {
   }
 
   protected update_ui() {
-    const ui = this.lf2.ui
-    if (!ui || ui.disabled) return;
-    ui.update(16);
+    const { ui_stacks } = this.lf2
+    const len = ui_stacks.length
+    let flag = true
+    for (let i = len - 1; i >= 0; i--) {
+      const ui_stack = ui_stacks[i];
+      const { ui } = ui_stack
+      if (!ui || ui.disabled) continue;
+      ui.update(16);
 
-    for (const e of this.lf2.events)
-      if (e.pressed) ui.on_key_down(e)
-      else ui.on_key_up(e)
+      if (!flag) continue;
+      for (const e of this.lf2.events)
+        if (e.pressed) ui.on_key_down(e)
+        else ui.on_key_up(e)
+      flag = false
+    }
   }
 
   protected handle_keys() {
@@ -401,13 +409,9 @@ export class World extends WorldDataset {
         case CMD.GIM_INK:
           this.lf2.toggle_cheat_enabled(key);
           continue;
-        case CMD.F1:
-          this.paused = !this.paused;
-          continue;
-        case CMD.F2: this.set_paused(2);
-          continue;
-        case CMD.F4: this.lf2.pop_ui_safe();
-          continue;
+        case CMD.F1: this.paused = !this.paused; continue;
+        case CMD.F2: this.set_paused(2); continue;
+        case CMD.F4: this.lf2.pop_ui_safe(); continue;
         case CMD.F5:
           this.playrate = this.playrate === 1 ? 100 : 1;
           continue;

@@ -2,7 +2,6 @@
   name: "页面：DEMO模式",
   id: "demo_mode_page",
   component: ["DemoModeLogic()", "CameraCtrl()"],
-  key_press_actions: [["escape", "set_ui(entry)"]],
   items: [
     {
       pos: "0,0,5",

@@ -183,7 +183,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     LF2.instances.push(this)
     this.pointings.callback.add(new I.Ditto.UIInputHandle(this));
 
-    const ui_stack = new UI.UIStack(this);
+    const ui_stack = new UI.UIStack(this, 0);
     ui_stack.callback.add({
       on_set: (curr, prev) => this.callbacks.emit("on_ui_changed")(curr, prev),
       on_push: (curr, prev) => this.callbacks.emit("on_ui_changed")(curr, prev),
@@ -596,8 +596,13 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return word;
   };
 
-  set_ui(arg: string | UI.ICookedUIInfo | undefined): void {
-    this._ui_stacks[0].set(arg)
+  set_ui(arg: string | UI.ICookedUIInfo | undefined, index: number = 0): void {
+    if (index < 0) return;
+    if (index >= this._ui_stacks.length)
+      index = this._ui_stacks.length
+    if (!this._ui_stacks[index])
+      this._ui_stacks[index] = new UI.UIStack(this, index)
+    this._ui_stacks[index].set(arg)
   }
 
   pop_ui(inclusive?: boolean, until?: (ui: UI.UINode, index: number, stack: UI.UINode[]) => boolean): void {
@@ -605,13 +610,23 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   pop_ui_safe() {
-    const stack = this._ui_stacks[0];
-    if (!stack || stack.uis.length < 2) return;
-    stack.pop()
+    const stack_index = this._ui_stacks.length - 1
+    const stack = this._ui_stacks[stack_index];
+    if (!stack) return;
+    if (stack.uis.length > 1 || stack_index > 0)
+      stack.pop()
+    if (!stack.ui && stack_index > 0)
+      this._ui_stacks.splice(stack_index, 1)
+
   }
 
-  push_ui(arg: string | UI.ICookedUIInfo | undefined): void {
-    this._ui_stacks[0].push(arg)
+  push_ui(arg: string | UI.ICookedUIInfo | undefined, index: number = 0): void {
+    if (index < 0) return;
+    if (index >= this._ui_stacks.length)
+      index = this._ui_stacks.length
+    if (!this._ui_stacks[index])
+      this._ui_stacks[index] = new UI.UIStack(this, index)
+    this._ui_stacks[index].push(arg)
   }
 
   on_loading_content(content: string, progress: number) {

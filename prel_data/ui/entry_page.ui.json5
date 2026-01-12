@@ -2,7 +2,7 @@
   name: "页面：入口",
   id: "entry",
   color: "rgb(16, 32, 108)",
-  component: ["ReachableGroup(main,ud)"],
+  component: [ "ReachableGroup(main,ud)" ],
   items: [
     "builtin_data/launch/bg.ui.json5",
     "ui/jalousie_ns.ui.json5",
@@ -46,7 +46,7 @@
           values: {
             text: "entry_page.game_start",
           },
-          component: ["Reachable(main)"],
+          component: [ "Reachable(main)" ],
           actions: {
             click: [
               "sound(ok)",
@@ -63,9 +63,9 @@
           values: {
             text: "entry_page.network_game",
           },
-          component: ["Reachable(main)"],
+          component: [ "Reachable(main)" ],
           actions: {
-            click: ["sound(ok)", "broadcast(network_game)"],
+            click: [ "sound(ok)", "broadcast(network_game)" ],
           },
         },
         {
@@ -76,9 +76,9 @@
           values: {
             text: "entry_page.ctrl_settings",
           },
-          component: ["Reachable(main)"],
+          component: [ "Reachable(main)" ],
           actions: {
-            click: ["sound(ok)", "push_ui(ctrl_settings)"],
+            click: [ "sound(ok)", "push_ui(ctrl_settings,1)" ],
           },
         },
       ],

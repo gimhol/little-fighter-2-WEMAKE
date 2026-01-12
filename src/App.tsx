@@ -117,7 +117,7 @@ function App() {
 
   const update_once = () => {
     if (!lf2) return;
-    lf2.world.paused = true;
+    lf2.cmds.push(CMD.F2)
   };
 
   useEffect(() => {
@@ -508,27 +508,21 @@ function App() {
         >
           <ToggleImgButton
             checked={paused}
-            onClick={() => { if (lf2) lf2.world.paused = !paused }}
+            onClick={() => { if (lf2) lf2.cmds.push(CMD.F2) }}
             src={[img_btn_2_1, img_btn_2_2]}
           />
         </Show>
-        <Show
-          show={
-            uis.length > 1 &&
-            !loading &&
-            ui_id !== "launch" &&
-            ui_id !== "ctrl_settings"
-          }
-        >
-          <ToggleImgButton
-            onClick={() => {
-              if (!lf2) return;
-              lf2.world.paused = true;
-              lf2.push_ui("ctrl_settings");
-            }}
-            src={[img_btn_1_1, img_btn_1_1]}
-          />
-        </Show>
+        <ToggleImgButton
+          onClick={() => {
+            if (!lf2) return;
+            lf2.cmds.push(CMD.F1)
+            if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings')
+              lf2.pop_ui_safe()
+            else
+              lf2.set_ui("ctrl_settings", 1);
+          }}
+          src={[img_btn_1_1, img_btn_1_1]}
+        />
         <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
           <ToggleImgButton
             onClick={() => lf2?.cmds.push(CMD.F4)}
@@ -708,7 +702,7 @@ function App() {
         <Combine>
           <ToggleButton
             value={paused}
-            onClick={() => { if (lf2) lf2.world.paused = !paused }}
+            onClick={() => { if (lf2) lf2.cmds.push(CMD.F1) }}
           >
             <>游戏暂停</>
             <>游戏暂停✓</>
