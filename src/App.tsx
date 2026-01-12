@@ -503,26 +503,26 @@ function App() {
           onClick={() => lf2?.sounds?.set_sound_muted(!s.sound_muted)}
           src={[img_btn_0_3, img_btn_1_0]}
         />
-        <Show
-          show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}
-        >
+        <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}>
           <ToggleImgButton
             checked={paused}
             onClick={() => { if (lf2) lf2.cmds.push(CMD.F2) }}
             src={[img_btn_2_1, img_btn_2_2]}
           />
         </Show>
-        <ToggleImgButton
-          onClick={() => {
-            if (!lf2) return;
-            lf2.cmds.push(CMD.F2)
-            if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings')
-              lf2.pop_ui_safe()
-            else
-              lf2.set_ui("ctrl_settings", 1);
-          }}
-          src={[img_btn_1_1, img_btn_1_1]}
-        />
+        <Show show={!networking}>
+          <ToggleImgButton
+            onClick={() => {
+              if (!lf2) return;
+              lf2.cmds.push(CMD.F2)
+              if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings')
+                lf2.pop_ui_safe()
+              else
+                lf2.set_ui("ctrl_settings", 1);
+            }}
+            src={[img_btn_1_1, img_btn_1_1]}
+          />
+        </Show>
         <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
           <ToggleImgButton
             onClick={() => lf2?.cmds.push(CMD.F4)}
