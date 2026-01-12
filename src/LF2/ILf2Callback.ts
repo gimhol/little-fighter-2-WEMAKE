@@ -30,7 +30,7 @@ export interface ILf2Callback {
   on_ui_loaded?(ui_infos: ICookedUIInfo[]): void;
   on_prel_loaded?(lf2: LF2): void;
 
-  on_broadcast?(message: string): void;
+  on_broadcast?(message: string, lf2: LF2): void;
 
   on_zips_changed?(zips: IZip[]): void;
 

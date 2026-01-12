@@ -759,6 +759,9 @@ export class UINode implements IDebugging {
     for (const c of this._components) c.on_blur?.();
     this.renderer.on_blur?.()
   }
+  blur(): void {
+    this.focused = false;
+  }
 }
 type TCls<R = any> = abstract new (...args: any) => R;
 type TCond<T extends TCls> = (c: InstanceType<T>) => unknown;

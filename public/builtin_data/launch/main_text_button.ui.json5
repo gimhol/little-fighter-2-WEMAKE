@@ -17,6 +17,12 @@
       underline_color: "white",
       underline_width: 2,
     },
+    style_disabled: {
+      font: "bold 18px Arial",
+      fill_style: "gray",
+      underline_color: "gray",
+      underline_width: 2,
+    },
   },
   items: [
     {

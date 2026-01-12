@@ -619,7 +619,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   broadcast(message: string): void {
-    this.callbacks.emit("on_broadcast")(message);
+    this.callbacks.emit("on_broadcast")(message, this);
   }
   on_component_broadcast(component: UI.UIComponent, message: string) {
     this.callbacks.emit("on_component_broadcast")(component, message);

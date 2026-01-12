@@ -153,9 +153,19 @@ function App() {
   }, [])
 
   useCallbacks(lf2?.callbacks, {
-    on_broadcast: (message) => {
+    on_broadcast: (message, lf2) => {
       switch (message) {
-        case 'network_game': set_networking(prev => !prev); break;
+        case 'network_game':
+          set_networking(prev => {
+            const networking = !prev
+            // FIXME: ...
+            const btn_start = lf2.ui?.search_child("btn_game_start");
+            btn_start?.blur()
+            btn_start?.set_opacity(networking ? 0.3 : 1)
+            btn_start?.set_disabled(networking)
+            return networking
+          });
+          break;
       }
     },
   })
