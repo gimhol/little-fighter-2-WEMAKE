@@ -115,6 +115,7 @@ export class UINode implements IDebugging {
     return this._root._focused_node === this;
   }
   set focused(v: boolean) {
+    if (v === (this.focused_node === this)) return;
     if (v) this.focused_node = this;
     else if (this.focused_node === this) this.focused_node = void 0;
   }

@@ -110,6 +110,8 @@ export class UINodeRenderer implements IUINodeRenderer {
       else ele_input.removeAttribute('defaultValue')
       ele_input.value = text
       ele_input.onchange = () => text_input.text = ele_input.value
+      ele_input.onfocus = () => text_input.node.focused = true
+      ele_input.onblur = () => text_input.node.focused = false
       this.dom.appendChild(ele_input)
     }
   }
