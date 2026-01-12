@@ -28,19 +28,20 @@ export class Client {
   readonly ctx: Context;
   protected _pid = 1;
   protected _jobs = new Map<string, IJob>();
-  protected _socket: net.Socket;
+  protected sk: net.Socket;
   client_info?: Required<IClientInfo>;
   room?: Room;
   ready: boolean = false;
   is_admin: boolean = false;
   constructor(ctx: Context, ws: WebSocket, req: http.IncomingMessage) {
-    this._socket = req.socket
+    this.sk = req.socket
     this.ctx = ctx;
     this.ws = ws;
     ctx.client_mgr.all.add(this);
     ws.on('close', this.handle_ws_close)
     ws.on('error', e => console.error(`客户端 ${this.id} 发生错误:`, e));
     ws.on('message', this.handle_ws_msg)
+    console.log(`[${Client.TAG}::constructor] address: ${this.sk.remoteAddress}`)
   }
 
   req<
@@ -115,6 +116,7 @@ export class Client {
     }
   }
 
+
   private handle_req = (req: TReq) => {
     const { ctx } = this
     switch (req.type) {
@@ -126,6 +128,7 @@ export class Client {
         }
         this.resp(req.type, req.pid, { client: client_info }).catch(() => void 0);
         if (this.room) this.room.broadcast(MsgEnum.ClientInfo, { client: client_info }, this)
+        console.log(`[${Client.TAG}::${MsgEnum.ClientInfo}] ${JSON.stringify(client_info)}`)
         break;
       }
       case MsgEnum.CreateRoom: {
@@ -214,17 +217,17 @@ export class Client {
         if (!ensure_admin_info(this, req)) break;
         const clients: IFullClientInfo[] = []
         for (const c of ctx.client_mgr.all) {
-          c._socket.localAddress
+          c.sk.localAddress
           clients.push({
             ...c.client_info,
             admin: c.is_admin,
             ready: c.ready,
-            r_address: c._socket.remoteAddress,
-            r_port: c._socket.remotePort,
-            r_family: c._socket.remoteFamily,
-            l_address: c._socket.localAddress,
-            l_port: c._socket.localPort,
-            l_family: c._socket.localFamily,
+            r_address: c.sk.remoteAddress,
+            r_port: c.sk.remotePort,
+            r_family: c.sk.remoteFamily,
+            l_address: c.sk.localAddress,
+            l_port: c.sk.localPort,
+            l_family: c.sk.localFamily,
           })
         }
         this.resp(MsgEnum.ListClients, req.pid, { clients })

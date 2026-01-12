@@ -15,7 +15,6 @@ import { random_str } from './random_str';
 
 let room_id = 0;
 export class Room {
-
   static TAG = 'Room';
   readonly id = '' + (++room_id);
   readonly ctx: Context;
@@ -52,8 +51,6 @@ export class Room {
       this._code = random_str();
     }
     ctx.room_mgr.add(this)
-
-
     this.title = req.title?.trim() || `${owner.client_info?.name}的房间`
     const { max_players = 4, min_players = 2 } = req
     if (typeof max_players === 'number')
@@ -67,7 +64,7 @@ export class Room {
     this.clients.add(owner);
     owner.room = this;
     owner.resp(req.type, req.pid, { room: this.room_info })
-
+    console.log(`[${Room.TAG}::constructor] owner: ${this.owner.id}`)
   }
 
   ready(client: Client, req: IReqClientReady = { type: MsgEnum.ClientReady, is_req: true, pid: '' }) {
