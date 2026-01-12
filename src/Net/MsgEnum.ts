@@ -11,5 +11,8 @@ export enum MsgEnum {
   Error = "Error",
   Chat = "Chat",
   Tick = "Tick",
-  KeyTick = "KeyTick"
+  KeyTick = "KeyTick",
+
+  // for admin.
+  ListClients = 'ListClients'
 }

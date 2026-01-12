@@ -1,16 +1,23 @@
 import type { RawData, WebSocket } from 'ws';
 import type { Context } from './Context';
 import {
-  ErrCode, IMsgReqMap, IMsgRespMap, IClientInfo, IReq, IResp, ISendOpts,
-  MsgEnum, req_timeout_error, req_unknown_error, TInfo, TReq, TResp, IJob
-} from "./Net";
+  ErrCode,
+  IClientInfo,
+  IJob,
+  IMsgReqMap, IMsgRespMap,
+  IReq, IResp, ISendOpts,
+  MsgEnum, req_timeout_error, req_unknown_error, TInfo, TReq, TResp
+} from "./Net.js";
 import { Room } from './Room';
+import { ensure_admin_info } from './ensure_admin_info';
 import { ensure_in_room } from './ensure_in_room';
 import { ensure_not_in_room } from './ensure_not_in_room';
 import { ensure_player_info } from './ensure_player_info';
 import { ensure_room_owner } from './ensure_room_owner';
 import { handle_req_chat } from './handle_req_chat';
 import { handle_req_tick } from './handle_req_tick';
+import http from 'node:http';
+import net from 'node:net';
 
 export class Client {
   static readonly TAG = 'Client'
@@ -21,10 +28,13 @@ export class Client {
   readonly ctx: Context;
   protected _pid = 1;
   protected _jobs = new Map<string, IJob>();
+  protected _socket: net.Socket;
   client_info?: Required<IClientInfo>;
   room?: Room;
   ready: boolean = false;
-  constructor(ctx: Context, ws: WebSocket) {
+  is_admin: boolean = false;
+  constructor(ctx: Context, ws: WebSocket, req: http.IncomingMessage) {
+    this._socket = req.socket
     this.ctx = ctx;
     this.ws = ws;
     ctx.client_mgr.all.add(this);
@@ -200,6 +210,36 @@ export class Client {
       case MsgEnum.Tick:
         handle_req_tick(this, req);
         break;
+      case MsgEnum.ListClients:
+        if (!ensure_admin_info(this, req)) break;
+        const clients: IFullClientInfo[] = []
+        for (const c of ctx.client_mgr.all) {
+          c._socket.localAddress
+          clients.push({
+            ...c.client_info,
+            admin: c.is_admin,
+            ready: c.ready,
+            r_address: c._socket.remoteAddress,
+            r_port: c._socket.remotePort,
+            r_family: c._socket.remoteFamily,
+            l_address: c._socket.localAddress,
+            l_port: c._socket.localPort,
+            l_family: c._socket.localFamily,
+          })
+        }
+        this.resp(MsgEnum.ListClients, req.pid, { clients })
+        break;
     }
   }
+}
+
+interface IFullClientInfo extends IClientInfo {
+  admin?: boolean;
+  ready?: boolean;
+  r_address?: string;
+  r_port?: number;
+  r_family?: string;
+  l_address?: string;
+  l_port?: number;
+  l_family?: string;
 }

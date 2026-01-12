@@ -7,10 +7,11 @@ import type { IReqCreateRoom, IRespCreateRoom } from "./IMsg_CreateRoom";
 import type { IReqExitRoom, IReqKick, IRespExitRoom, IRespKick } from "./IMsg_ExitRoom";
 import type { IReqTick, IRespTick } from "./IMsg_Tick";
 import type { IReqJoinRoom, IRespJoinRoom } from "./IMsg_JoinRoom";
-import { IReqKeyTick, IRespKeyTick } from "./IMsg_KeyTick";
+import type { IReqKeyTick, IRespKeyTick } from "./IMsg_KeyTick";
 import type { IReqListRooms, IRespListRooms } from "./IMsg_ListRooms";
 import type { IReqRoomStart, IRespRoomStart } from "./IMsg_RoomStart";
 import type { MsgEnum } from "./MsgEnum";
+import type { IReqListClients, IRespListClients } from "./IMsg_ListClients";
 export interface IMsgReqMap {
   [MsgEnum.ClientInfo]: IReqClientInfo,
   [MsgEnum.CreateRoom]: IReqCreateRoom,
@@ -25,6 +26,7 @@ export interface IMsgReqMap {
   [MsgEnum.Chat]: IReqChat,
   [MsgEnum.Tick]: IReqTick,
   [MsgEnum.KeyTick]: IReqKeyTick,
+  [MsgEnum.ListClients]: IReqListClients,
 }
 export interface IMsgRespMap {
   [MsgEnum.ClientInfo]: IRespClientInfo,
@@ -41,4 +43,5 @@ export interface IMsgRespMap {
   [MsgEnum.Chat]: IRespChat,
   [MsgEnum.Tick]: IRespTick,
   [MsgEnum.KeyTick]: IRespKeyTick,
+  [MsgEnum.ListClients]: IRespListClients,
 }

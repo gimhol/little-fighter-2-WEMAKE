@@ -21,4 +21,5 @@ export const enum ErrCode {
   ChatMsgEmpty = 1011,
   ChatTargetEmpty = 1012,
   ChatTargetIncorrect = 1013,
+  NotAdmin = 1014,
 }
