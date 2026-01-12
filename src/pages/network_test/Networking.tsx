@@ -78,6 +78,7 @@ class Lf2NetworkDriver {
     lf2.load("data.zip.json")
     lf2.set_ui("network_loading")
     lf2.pointings.enabled = false
+    lf2.keyboard.enabled = false
     lf2.mt.reset(resp.seed ?? 0, debugging)
   }
   update_client(resp: IRespClientInfo) {
@@ -99,6 +100,7 @@ class Lf2NetworkDriver {
     if (!conn || !lf2) return;
     if (typeof resp.seq !== 'number') return;
     if (resp.seq === 0) {
+      lf2.keyboard.enabled = true
       lf2.world.after_update = this.after_update
       lf2.world.before_update = this.before_update
       lf2.set_ui("main_page");

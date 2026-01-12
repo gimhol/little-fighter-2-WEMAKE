@@ -36,6 +36,7 @@ class __KeyEvent implements IKeyEvent {
 
 export class __Keyboard implements IKeyboard {
   static TAG = '__Keyboard';
+  enabled: boolean = true;
   protected _callback = new Callbacks<IKeyboardCallback>();
   protected _times_map = new Map<string, number>();
   protected lf2: LF2;
@@ -45,11 +46,13 @@ export class __Keyboard implements IKeyboard {
     return this._callback;
   }
   protected _on_key_down = (e: KeyboardEvent) => {
+    if (!this.enabled) return;
     const key_code = e.key?.toLowerCase() || "";
     this.key_down(key_code, e)
   };
 
   protected _on_key_up = (e: KeyboardEvent) => {
+    if (!this.enabled) return;
     const key_code = e.key?.toLowerCase() || "";
     this.key_up(key_code, e)
   };
