@@ -2,7 +2,7 @@
 
 ![title](docs/image/readme.title.png)
 
-For English, see [README.en.md](README.en.md)  
+[Chinese](README.md) | [English](README.en.md)  
 
 觉得这个项目还不错？Star⭐支持一下吧！
 
@@ -11,6 +11,10 @@ For English, see [README.en.md](README.en.md)
 玩法、美术、音效音乐来自"Litter Fighter 2", 原作：Marti Wong，Starsky Wong.
 
 原作者Marti Wong现已推出《[Little Fighter 2 Remastered](https://lf2.net/)》，请在[Steam](https://store.steampowered.com/app/3249650)购买，以支持原作者。
+
+## 多人联机游戏
+
+- 见[《多人联机游戏》](./docs/Multiplayer%20Online%20Game.MD)
 
 ## 如何运行
 
@@ -34,6 +38,5 @@ For English, see [README.en.md](README.en.md)
   - [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
 
 ### 运行
-
 
 `npm run start`

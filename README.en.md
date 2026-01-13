@@ -2,7 +2,7 @@
 
 ![title](docs/image/readme.title.png)
 
-For Chinese, see [README.md](README.md)  
+[Chinese](README.md) | [English](README.en.md)  
 
 try it at [https://lf.gim.ink/](https://lf.gim.ink/)
 
@@ -13,6 +13,10 @@ gameplays, arts, and sounds are all from "Litter Fighter 2" basically, created b
 "LF2:Wemake" created by Gim in 2024."
 
 The original author, Marti Wong, has now launched "[Little Fighter 2 Remastered](https://lf2.net/)". Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.
+
+## Multiplayer Online Game
+
+- see ["Multiplayer Online Game"](./docs/Multiplayer%20Online%20Game.EN.MD)
 
 ## How to run
 
@@ -38,4 +42,3 @@ This step will generate lf2:wemake data based on the original lf2 data.
 ### Run
 
 `npm run start`
-
