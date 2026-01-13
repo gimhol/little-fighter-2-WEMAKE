@@ -22,3 +22,7 @@ itr与bdy的碰撞盒相交时，还需要通过HitFlag判定来决定其之间�
   - 或
     - itr.hit_flag = 0b0000001
     - bdy.hit_flag = 0b0000001 | 0b0100000
+
+## 需要更精细的碰撞判定？
+
+见：[Hit Test Expression.MD](./Hit%20Test%20Expression.MD)
