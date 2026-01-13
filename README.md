@@ -10,7 +10,7 @@
 
 玩法、美术、音效音乐来自"Litter Fighter 2", 原作：Marti Wong，Starsky Wong.
 
-原作者Marti Wong现已推出《[Little Fighter 2 Remastered](https://lf2.net/)》，请在[Steam](https://store.steampowered.com/app/3249650)购买，以支持原作者。
+**原作者Marti Wong现已推出《[Little Fighter 2 Remastered](https://lf2.net/)》，请在[Steam](https://store.steampowered.com/app/3249650)购买，以支持原作者。**
 
 ## 多人联机游戏
 
