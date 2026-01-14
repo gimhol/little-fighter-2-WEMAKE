@@ -1,5 +1,5 @@
 {
-  RAW_LF2_PATH: "./game_data",
+  LF2_PATH: "./game_data",
   OUT_DIR: "./public",
   TEMP_DIR: "./temp",
   DATA_ZIP_NAME: "data.zip",
