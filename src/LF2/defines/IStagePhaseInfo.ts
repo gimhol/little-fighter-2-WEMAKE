@@ -8,6 +8,8 @@ import { IStageObjectInfo } from "./IStageObjectInfo";
  * @interface IStagePhaseInfo
  */
 export interface IStagePhaseInfo {
+  title?: string;
+  /** @deprecated */
   bound: number;
   /** 玩家左边界 */
   player_l?: number;
@@ -25,7 +27,7 @@ export interface IStagePhaseInfo {
   drink_l?: number;
   /** 饮料右边界 */
   drink_r?: number;
-
+  /** 关卡描述 */
   desc?: string;
   objects: IStageObjectInfo[];
   music?: string;
@@ -72,11 +74,4 @@ export interface IStagePhaseInfo {
    * @type {?string}
    */
   end_action?: string;
-
-  /**
-   * 被打败后，加入队伍的血量
-   * 
-   * @type {?number}
-   */
-  join?: number;
 }

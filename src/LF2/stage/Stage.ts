@@ -27,7 +27,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   readonly items = new Set<Item>();
   private _is_stage_finish: boolean = false;
   private _is_chapter_finish: boolean = false;
-
+  get title(): string { return this.data.title ?? this.bg.name }
   /** 节是否结束 */
   get is_stage_finish(): boolean { return this._is_stage_finish; }
   /** 章是否结束 */

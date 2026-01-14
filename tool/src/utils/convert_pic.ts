@@ -1,7 +1,7 @@
 import command_exists from "command-exists";
 import fs from "fs/promises";
 import { exec_cmd } from "./exec_cmd";
-import { ILegacyPictureInfo } from "../../../src/LF2/defines/ILegacyPictureInfo";
+import type { ILegacyPictureInfo } from "../../../src/LF2/defines/ILegacyPictureInfo";
 function get_dst_path(out_dir: string, src_dir: string, src_path: string) {
   return src_path.replace(src_dir, out_dir).replace(/(.bmp)$/, ".png");
 }

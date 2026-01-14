@@ -112,9 +112,11 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
       stage_info.chapter = "survival"
       stage_info.bg = "bg_8";
       stage_info.title = 'SURVIVAL STAGE'
-      for (const p of stage_info.phases) {
+      for (let i = 0; i < stage_info.phases.length; i++) {
+        const p = stage_info.phases[i];
         p.drink_l = 0;
         p.drink_r = p.bound;
+        p.title = `Survival Stage ${i}`
       }
     }
     if (nid <= 9) {

@@ -2,7 +2,7 @@ import { readFileSync } from "fs";
 import fs from "fs/promises";
 import JSON5 from "json5";
 import path, { join } from "path";
-import { ILegacyPictureInfo } from "../../src/LF2/defines/ILegacyPictureInfo";
+import type { ILegacyPictureInfo } from "../../src/LF2/defines/ILegacyPictureInfo";
 import { data_2_txt } from "./data_2_txt";
 import { CacheInfos } from "./utils/cache_infos";
 import { check_is_str_ok } from "./utils/check_is_str_ok";
