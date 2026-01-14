@@ -2,41 +2,19 @@
 
 ![title](docs/image/readme.title.png)
 
-[Chinese](README.md) | [English](README.en.md)  
+[中文](README.md) | [English](README.en.md)
+
+[功能建议、体验反馈、技术交流](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
 
 觉得这个项目还不错？Star⭐支持一下吧！
 
 直接开试 [https://lf.gim.ink/](https://lf.gim.ink/)
 
-玩法、美术、音效音乐来自"Litter Fighter 2", 原作：Marti Wong，Starsky Wong.
+**玩法、美术、音效音乐来自"Litter Fighter 2", 原作：Marti Wong，Starsky Wong.**
 
 **原作者Marti Wong现已推出《[Little Fighter 2 Remastered](https://lf2.net/)》，请在[Steam](https://store.steampowered.com/app/3249650)购买，以支持原作者。**
 
-## 多人联机游戏
+## 快捷链接
 
-- 见[《多人联机游戏》](./docs/Multiplayer%20Online%20Game.MD)
-
-## 如何运行
-
-不太旧的node.js应该都可以运行本项目，我曾用以下node.js运行:
-
-- v22.16.0
-- v24.10.0
-
-### 依赖安装
-
-`npm i`
-
-### 构建数据
-
-`npm run build_data`
-
-本步骤将会根据lf2原数据生成lf2:wemake的数据
-
-- 一些必须的转换工具
-  - [ffmpeg](https://ffmpeg.org/download.html): 用于音频文件转格式
-  - [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
-
-### 运行
-
-`npm run start`
+- [多人联机游戏](./docs/Multiplayer%20Online%20Game.MD)
+- [构建与运行](./docs/Build%20Instructions/README.MD)
