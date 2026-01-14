@@ -15,11 +15,30 @@ interface IConf {
   DATA_DIR_PATH: string;
   FFMPEG_CMD: string;
   MAGICK_CMD: string;
+  CONF_FILE_PATH?: string;
 }
+const options: { key: keyof IConf, argv: string[] }[] = [
+  { key: 'CONF_FILE_PATH', argv: ['-c', '--conf'] },
+  { key: 'LF2_PATH', argv: ['-i', '--input'] },
+  { key: 'OUT_DIR', argv: ['-o', '--output'] },
+
+]
 let conf: IConf | null = null
 export async function read_conf(): Promise<IConf> {
   if (conf) return conf;
-  const conf_str = await fs.readFile("./converter.config.json5")
+  const argv_map: Partial<IConf> = {
+    CONF_FILE_PATH: "./converter.config.json5"
+  }
+  for (let i = 3; i < process.argv.length; i++) {
+    const key = process.argv[i];
+    const val = process.argv[i + 1];
+    const option = options.find(v => v.key === key || v.argv.some(b => b === key))
+    if (option) {
+      argv_map[option.key] = val;
+      ++i;
+    }
+  }
+  const conf_str = await fs.readFile(argv_map.CONF_FILE_PATH!)
     .then(buf => buf.toString())
     .catch(e => "{}");
   const {
@@ -27,7 +46,7 @@ export async function read_conf(): Promise<IConf> {
     TEMP_DIR = "./temp",
     OUT_DIR = "./public",
     DATA_ZIP_NAME = "data.zip",
-    PREL_DIR_PATH = "./prel_data",
+    PREL_DIR_PATH,// = "./prel_data",
     PREL_ZIP_NAME = "prel.zip",
     EXTRA_LF2_PATH,
     FFMPEG_PATH = "ffmpeg",
@@ -47,7 +66,8 @@ export async function read_conf(): Promise<IConf> {
     TXT_LF2_PATH,
     DATA_DIR_PATH,
     FFMPEG_CMD: FFMPEG_PATH,
-    MAGICK_CMD: MAGICK_PATH
+    MAGICK_CMD: MAGICK_PATH,
+    ...argv_map,
   }
   return conf;
 }

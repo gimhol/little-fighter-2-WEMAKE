@@ -1,7 +1,7 @@
 {
   "name": "lfj-node-server",
   "version": "1.0.0",
-  "main": "dist/cjs/index.cjs",
+  "main": "dist/cjs/server.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "rollup -c -w",

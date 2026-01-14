@@ -4,7 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 export default {
   input: './node_modules/.tool_tmp/tool/src/index.js',
   output: {
-    file: 'dist/index.js',
+    file: 'dist/tool.cjs',
     format: 'cjs'
   },
   plugins: [

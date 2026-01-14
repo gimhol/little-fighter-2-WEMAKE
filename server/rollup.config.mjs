@@ -26,7 +26,7 @@ for (const { format, suffix = 'js' } of whats) {
     const bundle_js_config = {
       input: 'src/index.ts',
       output: {
-        file: `${dist_dir}/index.${suffix}`,
+        file: `${dist_dir}/server.${suffix}`,
         format,
         sourcemap: true,
         name: "lfj-node-server"
