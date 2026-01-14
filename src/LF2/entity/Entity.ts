@@ -2,7 +2,7 @@ import { Ground } from "../Ground";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks, ICollision, new_id, new_team } from "../base";
-import { mt_cases, sus_cases } from "../cases_instances";
+import { sus_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
@@ -29,7 +29,7 @@ import type IEntityCallbacks from "./IEntityCallbacks";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_fighter, is_human_ctrl as is_human_ctrl } from "./type_check";
+import { is_fighter, is_human_ctrl } from "./type_check";
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
@@ -56,7 +56,7 @@ export class Entity {
    * @type {IVector3}
    */
   protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-
+  protected readonly _landing_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
   /**
    * 速度向量数组
    *
@@ -236,6 +236,7 @@ export class Entity {
   }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
+  get landing_velocity(): Readonly<IVector3> { return this._velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get is_attach() { return this._is_attach }
@@ -1450,9 +1451,11 @@ export class Entity {
           if (result) this.enter_frame(result.which);
         }
         this._position.y = this._prev_position.y = ground_y;
+        this._landing_velocity.x = this._velocity.x
+        this._landing_velocity.y = this._velocity.y
+        this._landing_velocity.z = this._velocity.z
         this.velocities[0].y = 0;
         this._velocity.y = 0;
-
         this.state?.on_landing?.(this);
         this.play_sound(this._data.base.drop_sounds);
 

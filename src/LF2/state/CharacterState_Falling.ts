@@ -81,7 +81,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
       find_direction(f, indexes?.falling) ||
       find_direction(f, indexes?.critical_hit) ||
       facing;
-    const { y: vy, x: vx } = e.velocity;
+    const { y: vy, x: vx } = e.landing_velocity;
     if (
       !this._bouncings.has(e) && (
         vy <= e.world.cha_bc_tst_spd_y ||
