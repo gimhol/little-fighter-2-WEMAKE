@@ -11,7 +11,12 @@ export class MersenneTwister {
   private _mt: number[] = new Array(_n);
   private _index: number = _n + 1;
   private _debugging: boolean = false;
+  private _seed: number = 0;
+  private _times: number = 0;
   mark: string = '';
+
+  get seed() { return this._seed; }
+
   constructor(seed: number = Date.now()) {
     this.reset(seed)
   }
@@ -19,6 +24,8 @@ export class MersenneTwister {
   reset(seed: number, debuging: boolean = false): this {
     this._debugging = debuging;
     this.mark = ''
+    this._seed = seed;
+    this._times = 0;
     this._matrix = 0x9908B0DF;
     this._upper_mask = 0x80000000;
     this._lower_mask = 0x7FFFFFFF;
@@ -57,6 +64,7 @@ export class MersenneTwister {
     y ^= (y >>> 18);
     const ret = y >>> 0; // 确保返回32位无符号整数
     if (debugging) mt_cases.push(this.mark, 'int', ret)
+    ++this._times;
     return ret
   }
 
