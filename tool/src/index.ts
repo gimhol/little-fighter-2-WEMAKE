@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+
 import fs from "fs/promises";
 import JSON5 from "json5";
 import path, { join } from "path";
@@ -14,18 +14,7 @@ import { convert_sound } from "./utils/convert_sound";
 import { copy_dir } from "./utils/copy_dir";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
-const {
-  RAW_LF2_PATH,
-  TEMP_DIR,
-  OUT_DIR,
-  DATA_ZIP_NAME,
-  PREL_DIR_PATH,
-  PREL_ZIP_NAME,
-  EXTRA_LF2_PATH,
-} = JSON5.parse(readFileSync("./converter.config.json5").toString());
 
-const TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt")
-const DATA_DIR_PATH = join(TEMP_DIR, "lf2_data")
 
 enum EntryEnum {
   MAIN = 1,
@@ -54,21 +43,63 @@ for (let i = 2; i < process.argv.length; ++i) {
   }
 }
 
+async function read_params(): Promise<{ [x in string]: string }> {
+  const conf_str = await fs.readFile("./converter.config.json5")
+    .then(buf => buf.toString())
+    .catch(e => "{}")
+  const {
+    RAW_LF2_PATH,
+    TEMP_DIR = "./temp",
+    OUT_DIR = "./public",
+    DATA_ZIP_NAME = "data.zip",
+    PREL_DIR_PATH,
+    PREL_ZIP_NAME,
+    EXTRA_LF2_PATH,
+  } = JSON5.parse(conf_str);
+  check_is_str_ok(["TEMP_DIR", TEMP_DIR])
+  const TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt")
+  const DATA_DIR_PATH = join(TEMP_DIR, "lf2_data")
+  return {
+    RAW_LF2_PATH,
+    TEMP_DIR,
+    OUT_DIR,
+    DATA_ZIP_NAME,
+    PREL_DIR_PATH,
+    PREL_ZIP_NAME,
+    EXTRA_LF2_PATH,
+    TXT_LF2_PATH,
+    DATA_DIR_PATH
+  }
+}
+
+
 async function make_prel_zip() {
+  const { PREL_DIR_PATH, OUT_DIR, PREL_ZIP_NAME } = await read_params();
   await make_zip_and_json(PREL_DIR_PATH, OUT_DIR, PREL_ZIP_NAME, (inf) => {
     inf.type = 'prel'
     return inf;
   });
 }
 
-async function main() {
-  check_is_str_ok(
+async function full_job() {
+  const {
     RAW_LF2_PATH,
     OUT_DIR,
     TEMP_DIR,
     DATA_ZIP_NAME,
     PREL_DIR_PATH,
     PREL_ZIP_NAME,
+    DATA_DIR_PATH,
+    EXTRA_LF2_PATH,
+  } = await read_params();
+
+  check_is_str_ok(
+    ['RAW_LF2_PATH', RAW_LF2_PATH],
+    ['OUT_DIR', OUT_DIR],
+    ['TEMP_DIR', TEMP_DIR],
+    ['DATA_ZIP_NAME', DATA_ZIP_NAME],
+    ['PREL_DIR_PATH', PREL_DIR_PATH],
+    ['PREL_ZIP_NAME', PREL_ZIP_NAME],
   );
   const cache_infos = await CacheInfos.create(
     path.join(TEMP_DIR, "cache_infos.json5"),
@@ -207,20 +238,28 @@ async function main() {
   await make_prel_zip();
 }
 
-switch (entry) {
-  case EntryEnum.MAIN:
-    main();
-    break;
-  case EntryEnum.HELP:
-    console.log("need_help");
-    break;
-  case EntryEnum.DAT_2_TXT:
-    data_2_txt(RAW_LF2_PATH, TXT_LF2_PATH);
-    break;
-  case EntryEnum.MAKE_PREL_ZIP:
-    make_prel_zip();
-    break;
-  case EntryEnum.TOOL_DEV:
-    console.log('!')
-    break;
+async function main() {
+  switch (entry) {
+    case EntryEnum.MAIN:
+      full_job();
+      break;
+    case EntryEnum.HELP:
+      console.log("need_help");
+      break;
+    case EntryEnum.DAT_2_TXT:
+      const {
+        RAW_LF2_PATH,
+        TXT_LF2_PATH,
+      } = await read_params();
+      data_2_txt(RAW_LF2_PATH, TXT_LF2_PATH);
+      break;
+    case EntryEnum.MAKE_PREL_ZIP:
+      make_prel_zip();
+      break;
+    case EntryEnum.TOOL_DEV:
+      console.log('!')
+      break;
+  }
 }
+
+main()
