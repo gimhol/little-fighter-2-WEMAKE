@@ -253,7 +253,7 @@ function App() {
       configurable: true
     })
 
-    lf2.load("prel.zip.json").catch(LF2.IgnoreDisposed);
+    lf2.load(LF2.BASE_PREL_URL).catch(LF2.IgnoreDisposed);
     set_lf2(lf2)
     lf2.sounds.set_muted(s.muted);
     lf2.sounds.set_volume(s.volume);

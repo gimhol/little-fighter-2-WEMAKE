@@ -6,6 +6,7 @@ export enum UIActionEnum {
   PopUI = 'pop_ui',
   LoopImg = 'loop_img',
   LoopTxt = 'loop_txt',
+  /** 加载数据，默认加载: data.zip.json */
   LoadData = 'load_data',
   Broadcast = 'broadcast',
   Sound = 'sound',

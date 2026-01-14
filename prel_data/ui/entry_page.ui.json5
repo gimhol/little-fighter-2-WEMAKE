@@ -51,7 +51,7 @@
             click: [
               "sound(ok)",
               "set_ui(loading)",
-              "load_data(data.zip.json)",
+              "load_data()",
             ],
           },
         },

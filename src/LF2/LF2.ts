@@ -34,6 +34,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   dev: boolean = false;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
+  static readonly BASE_DATA_URL: string = "data.zip.json";
+  static readonly BASE_PREL_URL: string = "prel.zip.json";
   static get instance() { return LF2.instances[0] }
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
@@ -280,6 +282,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load_zip_from_info_url')
     this.on_loading_content(`${info_url}`, 0);
     const [{ url, md5 }] = await I.Ditto.Importer.import_as_json([info_url]);
+    const zip_url = full_zip_url(info_url, url)
     this._dispose_check('load_zip_from_info_url')
     const exists = await I.Ditto.Cache.get(md5);
     this._dispose_check('load_zip_from_info_url')
@@ -288,8 +291,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       ret = await I.Ditto.Zip.read_buf(exists.name, exists.data);
       this._dispose_check('load_zip_from_info_url')
     } else {
-      ret = await I.Ditto.Zip.download(url, (progress, full_size) =>
-        this.on_loading_file(url, progress, full_size),
+      ret = await I.Ditto.Zip.download(zip_url, (progress, full_size) =>
+        this.on_loading_file(zip_url, progress, full_size),
       );
       this._dispose_check('load_zip_from_info_url')
       await I.Ditto.Cache.del(info_url, "");
@@ -645,4 +648,30 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const next = (difficulty % max) + 1;
     this.world.difficulty = next;
   }
+}
+
+/**
+ * 
+ * @param {string} info_url 
+ * @param {string} url 
+ * @returns 
+ */
+function full_zip_url(info_url: string, zip_url: string) {
+  if (
+    zip_url.startsWith('http://') ||
+    zip_url.startsWith('https://')
+  ) return zip_url
+  if (
+    !info_url.startsWith('http://') &&
+    !info_url.startsWith('https://')
+  ) return zip_url;
+  const s_idx = info_url.indexOf('?');
+  const h_idx = info_url.indexOf('#');
+  const end = (s_idx > 0 && h_idx > 0) ? Math.min(s_idx, h_idx) : s_idx > 0 ? s_idx : h_idx
+
+  const part_a = end > 0 ? info_url.substring(0, end) : info_url;
+  if (!part_a.endsWith('.zip.json')) return zip_url;
+  const part_b = end > 0 ? info_url.substring(end) : '';
+  const ttt = part_a.lastIndexOf('/')
+  return part_a.substring(0, ttt) + '/' + zip_url + part_b;
 }
