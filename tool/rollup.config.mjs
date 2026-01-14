@@ -1,4 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json'
+import resolve from '@rollup/plugin-node-resolve';
 export default {
   input: './node_modules/.tool_tmp/tool/src/index.js',
   output: {
@@ -6,8 +8,8 @@ export default {
     format: 'cjs'
   },
   plugins: [
-    commonjs({
-      transformMixedEsModules: true
-    })
+    json(),
+    resolve({ preferBuiltins: false }),
+    commonjs()
   ]
 };
