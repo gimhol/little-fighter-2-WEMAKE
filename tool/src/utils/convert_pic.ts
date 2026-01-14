@@ -1,7 +1,7 @@
 import command_exists from "command-exists";
 import fs from "fs/promises";
 import type { ILegacyPictureInfo } from "../../../src/LF2/defines/ILegacyPictureInfo";
-import { read_argv } from "../read_argv";
+import { read_conf } from "../read_conf";
 import { exec_cmd } from "./exec_cmd";
 function get_dst_path(out_dir: string, src_dir: string, src_path: string) {
   return src_path.replace(src_dir, out_dir).replace(/(.bmp)$/, ".png");
@@ -12,7 +12,7 @@ export async function convert_pic(
   src_path: string,
 ) {
   const dst_path = get_dst_path(out_dir, src_dir, src_path);
-  const { MAGICK_CMD } = await read_argv();
+  const { MAGICK_CMD } = await read_conf();
   if (!command_exists.sync(MAGICK_CMD))
     throw new Error(
       "magick not found, download it from: https://imagemagick.org/script/download.php",

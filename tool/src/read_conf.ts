@@ -3,7 +3,7 @@ import JSON5 from "json5";
 import { join } from "path/posix";
 import { check_is_str_ok } from "./utils/check_is_str_ok";
 
-interface IArgv {
+interface IConf {
   LF2_PATH: string;
   TEMP_DIR: string;
   OUT_DIR: string;
@@ -16,9 +16,9 @@ interface IArgv {
   FFMPEG_CMD: string;
   MAGICK_CMD: string;
 }
-let argv: IArgv | null = null
-export async function read_argv(): Promise<IArgv> {
-  if (argv) return argv;
+let conf: IConf | null = null
+export async function read_conf(): Promise<IConf> {
+  if (conf) return conf;
   const conf_str = await fs.readFile("./converter.config.json5")
     .then(buf => buf.toString())
     .catch(e => "{}");
@@ -36,7 +36,7 @@ export async function read_argv(): Promise<IArgv> {
   check_is_str_ok(["TEMP_DIR", TEMP_DIR]);
   const TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt");
   const DATA_DIR_PATH = join(TEMP_DIR, "lf2_data");
-  argv = {
+  conf = {
     LF2_PATH,
     TEMP_DIR,
     OUT_DIR,
@@ -49,5 +49,5 @@ export async function read_argv(): Promise<IArgv> {
     FFMPEG_CMD: FFMPEG_PATH,
     MAGICK_CMD: MAGICK_PATH
   }
-  return argv;
+  return conf;
 }

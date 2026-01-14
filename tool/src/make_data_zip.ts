@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import JSON5 from "json5";
 import path from "path";
 import type { ILegacyPictureInfo } from "../../src/LF2/defines";
-import { read_argv } from "./read_argv";
+import { read_conf } from "./read_conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { check_is_str_ok } from "./utils/check_is_str_ok";
 import { classify } from "./utils/classify";
@@ -17,7 +17,7 @@ import { write_file } from "./utils/write_file";
 export async function make_data_zip() {
   const {
     LF2_PATH, OUT_DIR, TEMP_DIR, DATA_ZIP_NAME, DATA_DIR_PATH, EXTRA_LF2_PATH,
-  } = await read_argv();
+  } = await read_conf();
 
   check_is_str_ok(
     ['LF2_PATH', LF2_PATH],
