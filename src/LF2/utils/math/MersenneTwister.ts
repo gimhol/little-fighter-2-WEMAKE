@@ -15,7 +15,8 @@ export class MersenneTwister {
   private _times: number = 0;
   mark: string = '';
 
-  get seed() { return this._seed; }
+  get seed(): number { return this._seed; }
+  get times(): number { return this._times; }
 
   constructor(seed: number = Date.now()) {
     this.reset(seed)
