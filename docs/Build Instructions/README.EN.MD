@@ -1,6 +1,6 @@
 # Building and Running
 
-[中文](./README.md) | [English](./README.en.md)  
+[中文](./README.MD) | [English](./README.EN.MD)
 
 This project should be able to run on node.js versions that are not too old. I have run this project with the following node.js versions:
 

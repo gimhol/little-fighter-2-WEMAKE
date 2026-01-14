@@ -1,6 +1,6 @@
 # 多人联机游戏
 
-[中文](Multiplayer%20Online%%20Game.MD) | [English](Multiplayer%20Online%20Game.EN.MD)  
+[中文](README.MD) | [English](README.EN.MD)  
 
 ## 一些废话
 

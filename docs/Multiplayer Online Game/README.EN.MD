@@ -1,6 +1,6 @@
 # Multiplayer Online Game
 
-[中文](README.md) | [英文](README.en.md)  
+[中文](README.MD) | [English](README.EN.MD)  
 
 ## Some Ramblings
 

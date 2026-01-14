@@ -1,6 +1,6 @@
 # 构建与运行
 
-[中文](./README.md) | [English](./README.en.md)  
+[中文](./README.MD) | [English](./README.EN.MD)
 
 不太旧的node.js应该都可以运行本项目，我曾用以下node.js运行:
 

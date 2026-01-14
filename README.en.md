@@ -2,9 +2,7 @@
 
 ![title](docs/image/readme.title.png)
 
-[中文](README.md) | [English](README.en.md)  
-
-
+[中文](./README.MD) | [English](./README.EN.MD)  
 
 try it at [https://lf.gim.ink/](https://lf.gim.ink/)
 
@@ -18,6 +16,6 @@ Think this project is pretty good? Consider starring it!
 
 ## 快捷链接
 
-- [Multiplayer Online Game](./docs/Multiplayer%20Online%20Game.EN.MD)
+- [Multiplayer Online Game](./docs/Multiplayer%20Online%20Game/README.EN.MD)
 - [Building and Running](./docs/Build%20Instructions/README.EN.MD)
 - [Feedback & Discussions](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
