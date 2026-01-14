@@ -18,5 +18,5 @@ Think this project is pretty good? Consider starring it!
 
 ## 快捷链接
 
-- [多人联机游戏](./docs/Multiplayer%20Online%20Game.EN.MD)
-- [构建与运行](./docs/Build%20Instructions/README.EN.MD)
+- [Multiplayer Online Game](./docs/Multiplayer%20Online%20Game.EN.MD)
+- [Building and Running](./docs/Build%20Instructions/README.EN.MD)
