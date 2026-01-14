@@ -4,7 +4,7 @@
 
 [中文](README.md) | [English](README.en.md)  
 
-[Feedback & Discussions](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
+
 
 try it at [https://lf.gim.ink/](https://lf.gim.ink/)
 
@@ -20,3 +20,4 @@ Think this project is pretty good? Consider starring it!
 
 - [Multiplayer Online Game](./docs/Multiplayer%20Online%20Game.EN.MD)
 - [Building and Running](./docs/Build%20Instructions/README.EN.MD)
+- [Feedback & Discussions](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
