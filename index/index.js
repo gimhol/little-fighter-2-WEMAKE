@@ -46,6 +46,7 @@ async function main() {
       title = version.title,
       desc = version.desc,
       url = version.url,
+      date = version.date,
       changelog = version.changelog,
     } = get_i18n(i18n)
 
@@ -54,14 +55,16 @@ async function main() {
     clone.id = id;
 
     /** @type {HTMLElement} */
-    el_url = clone.querySelector('.el_url')
+    const el_url = clone.querySelector('.el_url')
     el_url.href = url
     el_url.innerText = title
 
     /** @type {HTMLElement} */
-    el_desc = clone.querySelector('.el_desc')
+    const el_desc = clone.querySelector('.el_desc')
     el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc
 
+    const el_date = clone.querySelector('.el_date')
+    el_date.innerHTML = date
 
     const btn_goto_version = clone.querySelector('.btn_goto_version')
     btn_goto_version.href = url
@@ -70,7 +73,7 @@ async function main() {
     const el_changelog = clone.querySelector('.el_changelog')
     if (el_changelog && changelog?.length) {
       el_changelog.append(Array.isArray(changelog) ? changelog.join('\n') : changelog)
-    } else if(el_changelog){
+    } else if (el_changelog) {
       el_changelog.remove()
     }
 

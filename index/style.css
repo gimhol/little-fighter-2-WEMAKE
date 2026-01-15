@@ -38,6 +38,12 @@ button:hover {
   background-color: var(--divider-color);
 }
 
+.el_date {
+  opacity: 0.5;
+  font-size: 14px;
+  font-weight: normal;
+}
+
 .el_desc a,
 .link {
   color: var(--link-color);
