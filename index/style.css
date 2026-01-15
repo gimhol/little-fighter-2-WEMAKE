@@ -44,6 +44,7 @@ button:hover {
   font-weight: normal;
 }
 
+#game_desc a,
 .el_desc a,
 .link {
   color: var(--link-color);
@@ -51,6 +52,7 @@ button:hover {
   transition: all 200ms;
 }
 
+#game_desc a:hover,
 .el_desc a:hover,
 .link:hover {
   color: var(--link-color-hover);
@@ -124,6 +126,11 @@ button:hover {
   white-space: pre-wrap;
 }
 
+.el_changelog {
+  color: var(--txt-color);
+  white-space: pre-wrap;
+}
+
 #version_list {
   overflow: auto;
   display: flex;
@@ -184,7 +191,6 @@ button:hover {
   justify-content: center;
   padding: 5px;
 }
-
 
 .scrollview::-webkit-scrollbar {
   width: 8px;
