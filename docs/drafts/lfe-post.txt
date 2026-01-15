@@ -1,0 +1,54 @@
+I've also made a remastered version of LF2. Everyone is welcome to give it a try.
+
+Play-test address: https://lf.gim.ink/
+
+Since the logic is implemented according to my own understanding(and some tutorial for modifying), 
+many things are quite different from the original version. 
+
+Only the data and pictures are processed and converted from the original.
+
+- There are currently many issues:
+- There are some problems with the AI.
+[s]- Online multiplayer gaming has not been implemented yet.[/s]
+- Only VS Mode and Stage Mode are supported, with hardly any other modes.
+
+The only commendable thing is that this thing runs at 60 frames per second...
+
+Although I kind of hope someone can join me in the development, 
+considering that my personal development style is a bit erratic (I often make large-scale adjustments to some things), 
+I think I'll pass for now. 
+
+However, everyone is still welcome to run this project and give it a try.
+
+Project repository: https://github.com/gimhol/little-fighter-2-WEMAKE
+
+======================================================================
+
+I spent quite a bit of time resolving various issues regarding inconsistent calculation results.
+
+Finally, the online multiplayer function has been added. If you're interested, you can give it a try (for testing purposes).
+
+I haven't conducted a very thorough test, so I don't know if there will be any synchronization failures.
+
+- Tested on Windows Chrome and Windows Firefox (sometimes the "connect" button doesn't respond in Firefox...).
+- It can also be used on Android browsers, but there seem to be relatively significant performance issues.
+- The server is on Alibaba Cloud (Guangzhou), and its performance is rather poor.
+
+======================================================================
+
+The server is based on nodejs. Through testing, it can also run on Bun and Deno.
+
+If you want to run your own server, download "server.cjs" from the following link:
+
+https://github.com/gimhol/little-fighter-2-WEMAKE/releases/tag/v0.1.0
+
+Then run "node ./server.cjs".
+
+============================= 2025-01-15 ==============================
+
+Considering that the current data and logic are not stable, and to conduct some version management, 
+the original address will be changed to a directory page, as shown in the figure below:
+
+[img]https://lf.gim.ink/docs/image/index_page.png[/img]
+
+You need to click on the title to enter the game of the specified version.
