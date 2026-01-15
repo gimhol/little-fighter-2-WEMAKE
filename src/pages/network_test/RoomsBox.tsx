@@ -82,14 +82,14 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
     })
   }
 
-  function join_room(roomid: string) {
+  function join_room(roomid: string, pwd?: string) {
     if (
       !conn ||
       ref_room_joining.current ||
       ref_room_creating.current
     ) return;
     set_room_joining(true)
-    conn.send(MsgEnum.JoinRoom, { roomid }).catch(e => {
+    conn.send(MsgEnum.JoinRoom, { roomid, pwd }).catch(e => {
       alert('' + e)
     }).finally(() => {
       set_room_joining(false)
@@ -161,7 +161,7 @@ interface IRoomItemProps {
   rooms: IRoomInfo[];
   index: number;
   conn: Connection | null;
-  join_room(id: string): void
+  join_room(id: string, pwd?: string): void
 }
 function RoomItem(props: IRoomItemProps) {
   const { t } = useTranslation()
@@ -176,7 +176,6 @@ function RoomItem(props: IRoomItemProps) {
         <Flex gap={10}>
           <Strong> {t('room_name')}: {r.title} </Strong>
           <Text> {t('player_count')}: {r.clients?.length}/{r.max_players} </Text>
-          {r.need_pwd ? <Text>🔒</Text> : null}
         </Flex>
         <Flex gap={10}>
           <Text style={{ flex: 1, display: 'flex' }} >
@@ -194,7 +193,7 @@ function RoomItem(props: IRoomItemProps) {
           <Button
             variants={['no_border', 'no_round', 'no_shadow']}
             disabled={!!room || r.started}
-            onClick={() => join_room(r.id!)}>
+            onClick={() => join_room(r.id!, ref_input.current?.value?.toString() || void 0)}>
             {r.started ? t("game_running") : t("join")}
           </Button>
         </Flex>
