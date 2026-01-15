@@ -1,13 +1,4 @@
 {
-  release: {
-    SSH_HOST: "120.76.98.130",
-    SSH_PORT: "22",
-    REMOTE_DIR: "/root/frontends/lf2",
-    REMOTE_BACKUP_DIR: "/root/frontends/lf2_backup",
-    LOCAL_PATH: "./build",
-    GIT_BRANCH: "origin/main",
-    GIT_IGNORED: true
-  },
   oss: {
     SSH_ENABLED: false,
     GIT_IGNORED: true,

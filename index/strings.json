@@ -1,0 +1,16 @@
+{
+  "": {
+    "main_title": "Select the Game Version"
+  },
+  "zh": {
+    "main_title": "选择游戏版本"
+  },
+  "zh-hans": "zh",
+  "zh-hant": "zh",
+  "zh-cn": "zh-hans",
+  "zh-sg": "zh-hans",
+  "zh-my": "zh-hans",
+  "zh-tw": "zh-hant",
+  "zh-hk": "zh-hant",
+  "zh-mo": "zh-hant"
+}

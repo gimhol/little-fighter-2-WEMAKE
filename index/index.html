@@ -2,17 +2,73 @@
 <html>
 
 <head>
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#10206C" />
+  <meta name="description" content="Little Fighter 2 Wemake" />
+  <link rel="apple-touch-icon" href="/logo192.png" />
+  <title>LF2:Wemake</title>
+  <style>
+    html {
+      background-color: #10206C;
+      color: #FFFFFFDD;
+      padding: 0px 20px;
+    }
+
+    button {
+      border: none;
+      background: none;
+      outline: none;
+      color: white;
+      border-radius: 5px;
+      padding: 3px 5px;
+      transition: all 200ms;
+    }
+
+    button:hover {
+      background-color: #ffffff22;
+    }
+
+    a {
+      color: #ffffffff;
+    }
+
+    a:hover {
+      color: #ffffff55;
+    }
+
+    .btn_goto_version {
+      border: 2px #FFFFFF22 solid;
+      border-radius: 5px;
+      padding: 5px 10px;
+      font-size: 24px;
+    }
+    .el_desc {
+      color: #8393e4;
+      white-space: pre-wrap;
+    }
+
+    #version_list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+  </style>
 </head>
 
 <body>
-  <script>
-    fetch('./index.json?time=' + Math.floor(Date.now() / 60000))
-      .then(r => r.json())
-      .then((l) => {
-        if (!Array.isArray(l)) return;
-        if (l.length == 1) location.href = l[0].url
-      })
-  </script>
+  <h1 class="i18n_txt">main_title</h1>
+  <div id="version_list"></div>
+  <template id="btn_goto_version">
+    <div class="version_item_row">
+      <h2>
+        <a class="el_url"></a>
+        <button class="btn_goto_version i18n_txt">Go!</button>
+      </h2>
+      <div class="el_desc"></div>
+    </div>
+  </template>
+  <script src="./index.js"></script>
 </body>
 
 </html>
