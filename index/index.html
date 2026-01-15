@@ -7,65 +7,29 @@
   <meta name="theme-color" content="#10206C" />
   <meta name="description" content="Little Fighter 2 Wemake" />
   <link rel="apple-touch-icon" href="/logo192.png" />
+  <link rel="stylesheet" href="./style.css" />
   <title>LF2:Wemake</title>
-  <style>
-    html {
-      background-color: #10206C;
-      color: #FFFFFFDD;
-      padding: 0px 20px;
-    }
 
-    button {
-      border: none;
-      background: none;
-      outline: none;
-      color: white;
-      border-radius: 5px;
-      padding: 3px 5px;
-      transition: all 200ms;
-    }
-
-    button:hover {
-      background-color: #ffffff22;
-    }
-
-    a {
-      color: #ffffffff;
-    }
-
-    a:hover {
-      color: #ffffff55;
-    }
-
-    .btn_goto_version {
-      border: 2px #FFFFFF22 solid;
-      border-radius: 5px;
-      padding: 5px 10px;
-      font-size: 24px;
-    }
-
-    .el_desc {
-      color: #8393e4;
-      white-space: pre-wrap;
-    }
-
-    #version_list {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-  </style>
 </head>
 
 <body>
-  <h1 class="i18n_txt" data-text="main_title">Loading...</h1>
-  <div id="version_list"></div>
+  <div id="root">
+    <div id="head">
+      <h1 class="i18n_txt" data-text="main_title">Loading...</h1>
+    </div>
+    <div id="version_list" class="scrollview"></div>
+    <div id="foot">
+      <a class="icp_link" href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">粤ICP备2021170807号-1</a>
+    </div>
+  </div>
+
+
   <template id="btn_goto_version">
-    <div class="version_item_row">
-      <h2>
-        <a class="el_url"></a>
+    <div class="version_item">
+      <div class="row_1">
+        <h3 class="row_title"> <a class="el_url"></a> </h3>
         <button class="btn_goto_version">Go!</button>
-      </h2>
+      </div>
       <div class="el_desc"></div>
     </div>
   </template>
