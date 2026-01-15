@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+  <script>
+    fetch('./index.json?time=' + Math.floor(Date.now() / 60000))
+      .then(r => r.json())
+      .then((l) => {
+        if (!Array.isArray(l)) return;
+        if (l.length == 1) location.href = l[0].url
+      })
+  </script>
+</body>
+
+</html>
