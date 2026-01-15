@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "test": "jest",
     "build_tool": "cd ./tool && npm i && npm run build",
-    "": "npm run build_tool && node ./tool main",
+    "build_data": "npm run build_tool && node ./tool main",
     "build_prel": "npm run build_tool && node ./tool make-prel",
     "deploy": "fdeploy -s release -i deployer.private.json5 -p deployer.config.json5",
     "deploy:oss": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5",
