@@ -1,0 +1,9 @@
+{
+  objects: [
+    {
+      id: "0",
+      type: "0",
+      file: "data/template.obj.json5",
+    },
+  ],
+}
