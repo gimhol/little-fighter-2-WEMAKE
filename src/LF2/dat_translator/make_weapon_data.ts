@@ -1,4 +1,4 @@
-import { Builtin_FrameId, IDatIndex, IEntityInfo, StateEnum, WeaponType } from "../defines";
+import { Builtin_FrameId, HitFlag, IDatIndex, IEntityInfo, StateEnum, WeaponType } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameIndexes } from "../defines/IFrameIndexes";
@@ -100,11 +100,21 @@ export function make_weapon_data(
     if (
       v.state === StateEnum.Weapon_InTheSky ||
       v.state === StateEnum.HeavyWeapon_InTheSky
-    ) in_the_skys.push(k)
+    ) {
+      in_the_skys.push(k)
+      v.bdy?.forEach((v) => {
+        v.hit_flag = v.hit_flag | HitFlag.AllAlly
+      })
+    }
     if (
       v.state === StateEnum.Weapon_Throwing ||
       v.state === StateEnum.HeavyWeapon_InTheSky
-    ) throwings.push(k)
+    ) {
+      throwings.push(k)
+      v.bdy?.forEach((v) => {
+        v.hit_flag = v.hit_flag | HitFlag.AllAlly
+      })
+    }
     if (
       v.state === StateEnum.Weapon_OnHand ||
       v.state === StateEnum.HeavyWeapon_OnHand
