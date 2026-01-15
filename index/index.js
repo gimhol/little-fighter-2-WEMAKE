@@ -32,11 +32,10 @@ async function get_strings() {
 
 async function main() {
   const strings = await get_strings();
-  // const versions = await fetch('./versions.json?time=' + time_str).then(r => r.json())
+  const versions = await fetch('./versions.json?time=' + time_str).then(r => r.json())
   // if (l.length == 1) location.href = l[0].url;
-  
-  let versions = await fetch('./versions.json?time=' + time_str).then(r => r.json())
-  versions = [...versions, ...versions, ...versions, ...versions, ...versions, ...versions]
+  // let versions = await fetch('./versions.json?time=' + time_str).then(r => r.json())
+  // versions = [...versions, ...versions, ...versions, ...versions, ...versions, ...versions]
 
   if (!Array.isArray(versions)) return;
 
