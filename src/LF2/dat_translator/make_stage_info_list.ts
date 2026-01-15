@@ -82,12 +82,12 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
       const p = stage_info.phases[i];
       p.enemy_r = p.bound + 200;
       p.enemy_l = -200;
-      if (i > 0)
-        p.on_start = [StageActions.GoGoGoRight]
-      else if (i == stage_info.phases.length - 1)
+      p.on_end = [StageActions.EnterNextPhase]
+      if (i == stage_info.phases.length - 1)
         p.on_end = [StageActions.LoopGoGoGoRight]
-      else
-        p.on_end = [StageActions.EnterNextPhase]
+      else if (i > 0)
+        p.on_start = [StageActions.GoGoGoRight]
+
     }
     if (nid < 49 && stage_info.phases[0]) {
       stage_info.phases[0]!.health_up = stage_info.phases[0]!.respawn = {
