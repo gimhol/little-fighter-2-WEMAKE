@@ -24,7 +24,7 @@ export default class WeaponState_Throwing extends WeaponState_Base {
     const { y: vy } = e.landing_velocity;
     const { base, indexes } = e.data;
     const dvy = round_float(-vy * (base.bounce ?? 0));
-    const min_bounce_vy = 2;
+    const min_bounce_vy = 1;
     if (this._unhurt_weapons.has(e)) {
       this._unhurt_weapons.delete(e);
       if (base.drop_hurt) {
