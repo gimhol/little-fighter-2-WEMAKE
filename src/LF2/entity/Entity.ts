@@ -36,6 +36,7 @@ export class Entity {
 
   protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected _spawn_time: number = 0;
 
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
@@ -576,7 +577,7 @@ export class Entity {
 
   get chasing(): Entity | null { return this._chasing; }
   set chasing(e: Entity | null) { this._chasing = e || null; }
-
+  get spawn_time() { return this._spawn_time }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }
@@ -905,7 +906,7 @@ export class Entity {
         switch (opoint.spreading) {
           case void 0:
           case OpointSpreading.Normal:
-            v.z = (i - (count - 1) / 2) * 3.5;
+            v.z = (i - (count - 1) / 2) * 2.5;
             break;
           case OpointSpreading.Bat:
             v.x = this.lf2.bat_spreading_x.take()
@@ -996,13 +997,13 @@ export class Entity {
   }
 
   attach(is_entity = true): this {
+    this._spawn_time = this.world.game_time.value;
     this._is_attach = true
     this._is_incorporeity = !is_entity
     if (is_entity)
       this.world.add_entities(this);
     else
       this.world.add_incorporeities(this);
-
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
     return this;
