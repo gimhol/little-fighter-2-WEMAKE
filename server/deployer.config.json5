@@ -3,7 +3,7 @@
     REMOTE_DIR: "/root/backends/lfj",
     REMOTE_BACKUP_DIR: "/root/backends/lfj_backup",
     REMOTE_TMP_DIR: "/root/backends/lfj_tmp",
-    LOCAL_PATH: "./dist/cjs/index.js",
+    LOCAL_PATH: "./dist/cjs/server.cjs",
     GIT_BRANCH: "",
     GIT_IGNORED: true,
     GIT_NO_BEHIND: false,
