@@ -1,6 +1,6 @@
 import { Ditto } from "@/LF2/ditto";
+import { ILf2Callback } from "@/LF2/ILf2Callback";
 import { new_team } from "../../base";
-import Invoker from "../../base/Invoker";
 import LocalController from "../../controller/LocalController";
 import { FacingFlag, TeamEnum } from "../../defines";
 import { Defines } from "../../defines/defines";
@@ -9,7 +9,6 @@ import { BackgroundNameText } from "./BackgroundNameText";
 import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
 import { StageNameText } from "./StageNameText";
 import { UIComponent } from "./UIComponent";
-import { ILf2Callback } from "@/LF2/ILf2Callback";
 
 export class GamePrepareLogic extends UIComponent {
   static override readonly TAG = 'GamePrepareLogic'
