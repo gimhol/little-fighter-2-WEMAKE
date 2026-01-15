@@ -1,9 +1,9 @@
 [
   {
-    "id": "v0.1.1",
+    "id": "v0.1.2",
     "i18n": {
       "": {
-        "title": "LF2:Wemake v0.1.1",
+        "title": "LF2:Wemake v0.1.2",
         "desc": [
           "gameplays, arts, and sounds are all from \"Litter Fighter 2\" basically,",
           "created by Marti Wong and Starsky Wong in 1999.",
@@ -13,7 +13,7 @@
           "",
           "\"LF2:Wemake\" created by Gim in 2024."
         ],
-        "url": "https://lf.gim.ink/0.1.1/"
+        "url": "https://lf.gim.ink/0.1.2/"
       },
       "zh": {
         "desc": [

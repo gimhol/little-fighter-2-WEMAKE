@@ -4,6 +4,6 @@
     GIT_IGNORED: true,
     OSS_ENABLED: true,
     LOCAL_PATH: "./dist",
-    REMOTE_DIR: "0.1.1"
+    REMOTE_DIR: "0.1.2"
   }
 }
