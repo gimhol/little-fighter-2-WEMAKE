@@ -50,3 +50,4 @@ tsconfig.app.tsbuildinfo
 temp
 
 release
+index-deployer.private.json5
