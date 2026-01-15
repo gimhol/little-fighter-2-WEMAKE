@@ -97,28 +97,29 @@ export function make_weapon_data(
   const throwings: string[] = []
   const on_hands: string[] = []
   traversal(frames, (k, v) => {
-    if (
-      v.state === StateEnum.Weapon_InTheSky ||
-      v.state === StateEnum.HeavyWeapon_InTheSky
-    ) {
-      in_the_skys.push(k)
-      v.bdy?.forEach((v) => {
-        v.hit_flag = v.hit_flag | HitFlag.AllAlly
-      })
+    switch (v.state) {
+      case StateEnum.Weapon_InTheSky:
+        in_the_skys.push(k)
+        v.bdy?.forEach((v) => { v.hit_flag = v.hit_flag | HitFlag.AllAlly })
+        break;
+      case StateEnum.Weapon_Rebounding:
+      case StateEnum.HeavyWeapon_JustOnGround:
+        v.itr = void 0;
+        break;
+      case StateEnum.Weapon_Throwing:
+        throwings.push(k)
+        v.bdy?.forEach((v) => { v.hit_flag = v.hit_flag | HitFlag.AllAlly })
+        break;
+      case StateEnum.HeavyWeapon_InTheSky:
+        in_the_skys.push(k)
+        throwings.push(k)
+        v.bdy?.forEach((v) => { v.hit_flag = v.hit_flag | HitFlag.AllAlly })
+        break;
+      case StateEnum.Weapon_OnHand:
+      case StateEnum.HeavyWeapon_OnHand:
+        on_hands.push(k)
+        break;
     }
-    if (
-      v.state === StateEnum.Weapon_Throwing ||
-      v.state === StateEnum.HeavyWeapon_InTheSky
-    ) {
-      throwings.push(k)
-      v.bdy?.forEach((v) => {
-        v.hit_flag = v.hit_flag | HitFlag.AllAlly
-      })
-    }
-    if (
-      v.state === StateEnum.Weapon_OnHand ||
-      v.state === StateEnum.HeavyWeapon_OnHand
-    ) on_hands.push(k)
   })
 
   indexes.in_the_skys = in_the_skys.length ? in_the_skys : void 0
