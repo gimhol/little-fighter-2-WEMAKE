@@ -1,0 +1,162 @@
+html {
+  --divider-color: #FFFFFF22;
+  --link-color: #FFFFFFCC;
+  --link-color-hover: #FFFFFFFF;
+  --txt-color: #8393e4FF;
+  --primary-color: #10206C;
+  --primary-color-hover: #213492;
+  background-color: var(--primary-color);
+  color: #FFFFFFDD;
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+
+body {
+  padding: 0px;
+  margin: 0px;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  border: none;
+  background: none;
+  outline: none;
+  color: white;
+  border-radius: 5px;
+  padding: 3px 5px;
+  transition: all 200ms;
+}
+
+button:hover {
+  background-color: var(--divider-color);
+}
+
+.el_desc a,
+.link {
+  color: var(--link-color);
+  display: inline-block;
+  transition: all 200ms;
+}
+
+.el_desc a:hover,
+.link:hover {
+  color: var(--link-color-hover);
+  transform: scale(1.1);
+  background-color: var(--primary-color-hover);
+  padding: 0px 10px;
+  border-radius: 5px;
+  box-sizing: content-box;
+}
+
+button:hover {
+  transform: scale(1.2);
+}
+
+.el_desc {
+  color: var(--txt-color);
+  white-space: pre-wrap;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 800px;
+}
+
+#root>#head {
+  padding: 0px 20px;
+  border-bottom: 1px var(--divider-color) dashed;
+  display: flex;
+  align-items: center;
+}
+
+#root>#head>#main_title {
+  flex: 1;
+}
+
+#root>#version_list {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  height: 0px;
+}
+
+.github {
+  display: inline-block;
+
+  transform: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.github>img {
+  transition: all 200ms;
+}
+
+.github:hover>img {
+  transform: scale(1.2);
+}
+
+.go_div {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#root>#version_list>.version_item {
+  padding: 0px 8px 20px 20px;
+}
+
+#root>#version_list>.version_item:not(:last-child) {
+  border-bottom: 1px var(--divider-color) dashed;
+}
+
+#root>#version_list>.version_item>.row_1 {
+  display: flex;
+  align-items: center;
+}
+
+#root>#version_list>.version_item>.row_1>.row_title {
+  flex: 1;
+}
+
+#foot {
+  border-top: 1px var(--divider-color) dashed;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+}
+
+
+.scrollview::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: transparent;
+}
+
+.scrollview::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.scrollview::-webkit-scrollbar-thumb {
+  background: var(--divider-color);
+  border-radius: 4px;
+}
+
+.scrollview::-webkit-scrollbar-thumb:hover {
+  background: #FFFFFF88;
+}

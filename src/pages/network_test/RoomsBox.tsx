@@ -1,21 +1,22 @@
+import { Input, InputRef } from "@/Component/Input";
+import { LF2 } from "@/LF2";
 import { useFloating, useForwardedRef, useStateRef } from "@fimagine/dom-hooks";
 import classNames from "classnames";
 import List from "rc-virtual-list";
-import { ForwardedRef, forwardRef, useCallback, useEffect } from "react";
+import { ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../Component/Buttons/Button";
 import { Divider } from "../../Component/Divider";
 import { Flex } from "../../Component/Flex";
 import Frame, { IFrameProps } from "../../Component/Frame";
 import Show from "../../Component/Show";
 import { Strong, Text } from "../../Component/Text";
-import { MsgEnum } from "../../Net";
+import { IRoomInfo, MsgEnum } from "../../Net";
 import { Connection } from "./Connection";
 import styles from "./styles.module.scss";
 import { TriState } from "./TriState";
 import { useRoom } from "./useRoom";
 import { useRooms } from "./useRooms";
-import { LF2 } from "@/LF2";
-import { useTranslation } from "react-i18next";
 
 export interface IRoomsBoxProps extends IFrameProps {
   conn?: Connection | null;
@@ -89,7 +90,7 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
     ) return;
     set_room_joining(true)
     conn.send(MsgEnum.JoinRoom, { roomid }).catch(e => {
-      console.log(e)
+      alert('' + e)
     }).finally(() => {
       set_room_joining(false)
     })
@@ -109,7 +110,7 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
           </Strong>
           <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>
             {conn?.url}
-            </Text>
+          </Text>
         </Flex>
         <Flex>
           <Show show={!room && conn_state && !room_joining && !room_creating}>
@@ -143,34 +144,71 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
         itemKey={r => r.id!}
         itemHeight={65}
         style={{ flex: 1, overflow: 'auto' }}>
-        {(r, i) => <>
-          <Flex direction='column' align='stretch' gap={5}>
-            <Flex gap={10} direction='column' align='stretch' justify='space-between' style={{ padding: 5, boxSizing: 'border-box', height: 64 }}>
-              <Flex gap={10}>
-                <Strong> {t('room_name')}: {r.title} </Strong>
-                <Text> {t('player_count')}: {r.clients?.length}/{r.max_players} </Text>
-              </Flex>
-              <Flex gap={10}>
-                <Text style={{ flex: 1 }}> {t('room_owner')}: {r.owner?.name} </Text>
-                <Button
-                  variants={['no_border', 'no_round', 'no_shadow']}
-                  disabled={!!room}
-                  onClick={() => join_room(r.id!)}>
-                  {t("join")}
-                </Button>
-              </Flex>
-            </Flex>
-          </Flex>
-          <Divider />
-          <Show show={i == rooms.length - 1}>
-            <Flex direction='column' align='center' justify='center' style={{ opacity: 0.5, padding: 10 }}>
-              <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>到底了</Text>
-            </Flex>
-          </Show>
-        </>}
+        {(r, i) => <RoomItem
+          room={r}
+          conn={conn}
+          index={i}
+          rooms={rooms}
+          key={`room_${i}`}
+          join_room={join_room} />}
       </List>
     </Frame>
   )
+}
+
+interface IRoomItemProps {
+  room: IRoomInfo;
+  rooms: IRoomInfo[];
+  index: number;
+  conn: Connection | null;
+  join_room(id: string): void
+}
+function RoomItem(props: IRoomItemProps) {
+  const { t } = useTranslation()
+  const { room: r, join_room, rooms, index, conn } = props;
+  const ref_input = useRef<InputRef>(null);
+  const { room } = useRoom(conn)
+  if (!conn) return;
+  return <>
+    <Flex direction='column' align='stretch' gap={5}>
+      <Flex gap={10} direction='column' align='stretch' justify='space-between'
+        style={{ padding: 5, boxSizing: 'border-box', height: 64 }}>
+        <Flex gap={10}>
+          <Strong> {t('room_name')}: {r.title} </Strong>
+          <Text> {t('player_count')}: {r.clients?.length}/{r.max_players} </Text>
+          {r.need_pwd ? <Text>🔒</Text> : null}
+        </Flex>
+        <Flex gap={10}>
+          <Text style={{ flex: 1, display: 'flex' }} >
+            {
+              r.need_pwd ? <Input
+                prefix="🔒"
+                style={{ flex: 1 }}
+                variants={['no_border']}
+                size='s'
+                placeholder={t('pls_enter_pwd')}
+                ref={ref_input} /> :
+                null
+            }
+          </Text>
+          <Button
+            variants={['no_border', 'no_round', 'no_shadow']}
+            disabled={!!room || r.started}
+            onClick={() => join_room(r.id!)}>
+            {r.started ? t("game_running") : t("join")}
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>
+    <Divider />
+    <Show show={index == rooms.length - 1}>
+      <Flex direction='column' align='center' justify='center' style={{ opacity: 0.5, padding: 10 }}>
+        <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>
+          {t('load_finished')}
+        </Text>
+      </Flex>
+    </Show>
+  </>
 }
 
 export const RoomsBox = forwardRef<HTMLDivElement, IRoomsBoxProps>(_RoomsBox)

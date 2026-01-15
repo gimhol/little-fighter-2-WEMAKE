@@ -1,4 +1,4 @@
-import { Defines, EntityGroup, GameKey, GONE_FRAME_INFO, type IStagePhaseInfo } from "../../defines";
+import { Defines, EntityGroup, GameKey, GONE_FRAME_INFO, StageActions, type IStagePhaseInfo } from "../../defines";
 import type { Entity } from "../../entity";
 import type IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
@@ -84,13 +84,11 @@ export class StageModeLogic extends UIComponent {
         this.gogogo_loop?.stop();
         this.gogogo_loop?.node.set_visible(false)
         this.gogogo_loop?.node.set_opacity(0)
-      } else if (curr) {
-        this.gogogo?.start();
-        this.gogogo?.node.set_visible(true)
-      } else if(!stage.is_chapter_finish){
-        this.gogogo_loop?.start();
-        this.gogogo_loop?.node.set_visible(true)
       }
+      const { on_end } = prev || {};
+      const { on_start } = curr || {};
+      if (on_end?.length) this.handle_stage_actions(on_end)
+      if (on_start?.length) this.handle_stage_actions(on_start)
     },
     on_chapter_finish: (stage: Stage) => {
       this.debug('on_chapter_finish', stage)
@@ -100,6 +98,20 @@ export class StageModeLogic extends UIComponent {
     on_requrie_goto_next_stage: (stage: Stage) => {
       this.debug('on_requrie_goto_next_stage', stage)
       if (this.jalousie) this.jalousie.open = false;
+    }
+  }
+  handle_stage_actions(actions: (string | StageActions)[]) {
+    for (const action of actions) {
+      switch (action) {
+        case StageActions.GoGoGoRight:
+          this.gogogo?.start();
+          this.gogogo?.node.set_visible(true);
+          break
+        case StageActions.LoopGoGoGoRight:
+          this.gogogo_loop?.start();
+          this.gogogo_loop?.node.set_visible(true)
+          break;
+      }
     }
   }
   override on_start(): void {

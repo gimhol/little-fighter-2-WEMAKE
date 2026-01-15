@@ -101,4 +101,5 @@ export * from "./TextureWrapping";
 export * from "./WeaponType";
 export * from "./WorldVal";
 export * from "./IDeadJoin"
+export * from "./StageActions"
 /*** AUTO EXPORT END ***/

@@ -7,7 +7,7 @@ import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhase
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
 import { is_fighter, is_weapon } from "../entity/type_check";
-import { round, min } from "../utils";
+import { round, min, round_float, floor } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
 import type IStageCallbacks from "./IStageCallbacks";
@@ -242,7 +242,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     }
     const { ratio, times = 1 } = obj_info;
 
-    let spawn_count = ratio === void 0 ? 1 : round(count * ratio);
+    let spawn_count = ratio === void 0 ? 1 : floor(round_float(count * ratio, 10));
     if (spawn_count <= 0 || !times) return;
 
     while (spawn_count > 0) {

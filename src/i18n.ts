@@ -1,6 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 const zh_hans = {
+  "game_running": "已开始",
   "nickname": "昵称",
   "connect": "连接",
   "connecting": "连接中",
@@ -22,9 +23,13 @@ const zh_hans = {
   "room_owner": "房主",
   "room_list": "房间列表",
   "no_rooms": "暂无房间，点击刷新或创建房间",
-
+  "load_finished": "加载完毕",
+  "password": "密码",
+  "dont_need_password": "任意人可加入",
+  "pls_enter_pwd": "输入房间密码",
 }
 const zh_hant = {
+  "game_running": "已開始",
   "nickname": "暱稱",
   "connect": "連接",
   "connecting": "連接中",
@@ -46,9 +51,13 @@ const zh_hant = {
   "room_owner": "房主",
   "room_list": "房間列表",
   "no_rooms": "暫無房間，點擊刷新或創建房間",
-
+  "load_finished": "加载完毕",
+  "password": "密碼",
+  "dont_need_password": "任意人可加入",
+  "pls_enter_pwd": "輸入房間密碼",
 }
 const en = {
+  "game_running": "Started",
   "nickname": 'Nick Name',
   "connect": "Connect",
   "connecting": "Connecting",
@@ -70,6 +79,10 @@ const en = {
   "room_owner": "Owner",
   "room_list": "Room List",
   "no_rooms": "No Rooms Available. Click Refresh or Create Room",
+  "load_finished": "Load Finished",
+  "password": "Password",
+  "dont_need_password": "Anyone can join.",
+  "pls_enter_pwd": "Enter password",
 }
 const resources = {
   "zh-Hans": { translation: zh_hans },

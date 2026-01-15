@@ -36,6 +36,7 @@ export class Entity {
 
   protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected _spawn_time: number = 0;
 
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
@@ -236,7 +237,7 @@ export class Entity {
   }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
-  get landing_velocity(): Readonly<IVector3> { return this._velocity }
+  get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get is_attach() { return this._is_attach }
@@ -576,7 +577,7 @@ export class Entity {
 
   get chasing(): Entity | null { return this._chasing; }
   set chasing(e: Entity | null) { this._chasing = e || null; }
-
+  get spawn_time() { return this._spawn_time }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }
@@ -905,7 +906,7 @@ export class Entity {
         switch (opoint.spreading) {
           case void 0:
           case OpointSpreading.Normal:
-            v.z = (i - (count - 1) / 2) * 3.5;
+            v.z = (i - (count - 1) / 2) * 2.5;
             break;
           case OpointSpreading.Bat:
             v.x = this.lf2.bat_spreading_x.take()
@@ -996,13 +997,13 @@ export class Entity {
   }
 
   attach(is_entity = true): this {
+    this._spawn_time = this.world.game_time.value;
     this._is_attach = true
     this._is_incorporeity = !is_entity
     if (is_entity)
       this.world.add_entities(this);
     else
       this.world.add_incorporeities(this);
-
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
     return this;
@@ -1799,23 +1800,29 @@ export class Entity {
       if (wp_a.weaponact !== this.frame.id) {
         this.enter_frame({ id: wp_a.weaponact });
       }
-      const strength = this._data.base.strength || 1
-      const weight = this._data.base.weight || 1
+      const strength = this._data.base.strength || 1;
+      const weight = this._data.base.weight || 1;
       let { dvx, dvy, dvz } = wp_a;
+      const { x, y, z } = holder.position;
+      this.facing = holder.facing;
       if (wp_b) {
-        const { x, y, z } = holder.position;
-        this.facing = holder.facing;
         this._position.set(
           round(x + this.facing * (wp_a.x - cx_a + cx_b - wp_b.x)),
           round(y + cy_a - wp_a.y - cy_b + wp_b.y),
           round(z + wp_a.z - wp_b.z),
-        );
+        )
       }
+
       if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
         const nf = this.find_align_frame(
           this.frame.id,
           this.data.indexes?.on_hands,
           this.data.indexes?.throwings
+        )
+        this._position.set(
+          round(x + this.facing * (wp_a.x - cx_a)),
+          round(y + cy_a - wp_a.y),
+          round(z + wp_a.z),
         )
         this.enter_frame(nf);
         const vz = holder.ctrl ? holder.ctrl.UD * (dvz || 0) : 0;

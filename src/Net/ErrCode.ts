@@ -22,4 +22,6 @@ export const enum ErrCode {
   ChatTargetEmpty = 1012,
   ChatTargetIncorrect = 1013,
   NotAdmin = 1014,
+  RoomPwdWrong = 1015,
+  RoomAlreadyStart = 1016,
 }

@@ -12,6 +12,8 @@ import type { IReqListRooms, IRespListRooms } from "./IMsg_ListRooms";
 import type { IReqRoomStart, IRespRoomStart } from "./IMsg_RoomStart";
 import type { MsgEnum } from "./MsgEnum";
 import type { IReqListClients, IRespListClients } from "./IMsg_ListClients";
+import type { IReqRoomPwd, IRespRoomPwd } from "./IMsg_RoomPwd";
+
 export interface IMsgReqMap {
   [MsgEnum.ClientInfo]: IReqClientInfo,
   [MsgEnum.CreateRoom]: IReqCreateRoom,
@@ -27,6 +29,7 @@ export interface IMsgReqMap {
   [MsgEnum.Tick]: IReqTick,
   [MsgEnum.KeyTick]: IReqKeyTick,
   [MsgEnum.ListClients]: IReqListClients,
+  [MsgEnum.RoomPwd]: IReqRoomPwd,
 }
 export interface IMsgRespMap {
   [MsgEnum.ClientInfo]: IRespClientInfo,
@@ -44,4 +47,5 @@ export interface IMsgRespMap {
   [MsgEnum.Tick]: IRespTick,
   [MsgEnum.KeyTick]: IRespKeyTick,
   [MsgEnum.ListClients]: IRespListClients,
+  [MsgEnum.RoomPwd]: IRespRoomPwd,
 }

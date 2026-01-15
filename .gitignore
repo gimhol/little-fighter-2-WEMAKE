@@ -35,8 +35,8 @@ tool/json
 tool/dist
 
 deployer/dist
-deployer.private.json
-deployer.private.json5
+*.private.json
+*.private.json5
 
 build
 electron/web

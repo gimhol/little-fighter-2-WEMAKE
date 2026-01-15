@@ -3,7 +3,7 @@
     SSH_ENABLED: false,
     GIT_IGNORED: true,
     OSS_ENABLED: true,
-    LOCAL_PATH: "./dist",
-    REMOTE_DIR: "0.1.3"
+    LOCAL_PATH: "./index",
+    REMOTE_DIR: ""
   }
 }

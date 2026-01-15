@@ -43,6 +43,7 @@ export async function make_zip_and_json(
 ): Promise<void> {
   src_dir = src_dir.replace(/\\/g, "/");
   out_dir = out_dir.replace(/\\/g, "/");
+  await fs.mkdir(out_dir, { recursive: true }).catch(e => e)
   console.log("zipping", src_dir, "=>", join(out_dir, zip_name));
 
   const layout_dir = src_dir + '/ui'

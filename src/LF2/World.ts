@@ -697,8 +697,12 @@ export class World extends WorldDataset {
       !(itr.hit_flag & ally_flag) &&
       !(bdy.hit_flag & ally_flag)
     ) return;
-
-
+    if (
+      victim.team === attacker.team &&
+      victim.pre_emitter === attacker.pre_emitter &&
+      victim.spawn_time === attacker.spawn_time
+    ) return;
+    
     if (!itr.vrest && attacker.a_rest) return;
     if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
     const ax = attacker.position.x

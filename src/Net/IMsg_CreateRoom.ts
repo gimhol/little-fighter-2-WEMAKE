@@ -8,6 +8,7 @@ export interface IReqCreateRoom extends IReq<MsgEnum.CreateRoom> {
   client?: IClientInfo
   min_players?: number;
   max_players?: number;
+  pwd?: string;
 }
 export interface IRespCreateRoom extends IResp<MsgEnum.CreateRoom> {
   room?: IRoomInfo;

@@ -1,4 +1,5 @@
-import { Difficulty } from "../defines";
+import { Difficulty } from "../defines/Difficulty";
+import { StageActions } from "../defines/StageActions"
 import { IStageInfo } from "../defines/IStageInfo";
 import { IStageObjectInfo } from "../defines/IStageObjectInfo";
 import { IStagePhaseInfo } from "../defines/IStagePhaseInfo";
@@ -76,11 +77,17 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
     if (nid % 10 === 0) {
       stage_info.is_starting = true;
       stage_info.starting_name = "" + (1 + nid / 10);
-
     }
-    for (const p of stage_info.phases) {
+    for (let i = 0; i < stage_info.phases.length; i++) {
+      const p = stage_info.phases[i];
       p.enemy_r = p.bound + 200;
       p.enemy_l = -200;
+      p.on_end = [StageActions.EnterNextPhase]
+      if (i == stage_info.phases.length - 1)
+        p.on_end = [StageActions.LoopGoGoGoRight]
+      else if (i > 0)
+        p.on_start = [StageActions.GoGoGoRight]
+
     }
     if (nid < 49 && stage_info.phases[0]) {
       stage_info.phases[0]!.health_up = stage_info.phases[0]!.respawn = {
@@ -117,6 +124,8 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
         p.drink_l = 0;
         p.drink_r = p.bound;
         p.title = `Survival Stage ${i}`
+        p.on_start = void 0;
+        p.on_end = [StageActions.EnterNextPhase];
       }
     }
     if (nid <= 9) {
@@ -166,6 +175,14 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
     else if (nid <= 29) { s.next = '30' }
     else if (nid <= 39) { s.next = '40' }
     else if (nid <= 49) { s.next = 'end' }
+  }
+  for (const s of stage_infos) {
+    const next = stage_infos.find(v => v.id === s.next)
+    const is_stage_end = s.next === 'end' || !s.next || next?.chapter !== s.chapter;
+    if (!is_stage_end) continue;
+    const last_phase = s.phases[s.phases.length - 1]
+    if (!last_phase) continue;
+    last_phase.on_end = void 0;
   }
   return stage_infos
 }

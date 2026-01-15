@@ -11,6 +11,7 @@ import { Button } from "@/Component/Buttons/Button";
 import { MsgEnum } from "@/Net";
 import { useFloating, useForwardedRef } from "@fimagine/dom-hooks";
 import { useTranslation } from "react-i18next";
+import { Input } from "@/Component/Input";
 export interface IRoomBoxProps extends HTMLAttributes<HTMLDivElement> {
   conn?: Connection | null
 }
@@ -53,11 +54,24 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
   const { t } = useTranslation()
   return (
     <Frame {..._p} ref={on_ref}>
-      <Flex direction='column' align='stretch' gap={5}>
+      <Flex direction='column' align='stretch'>
         <Flex gap={10} align='center' justify='space-between' style={{ margin: 5 }}>
           <Strong>{`${room?.title} (${players?.length}/${room?.max_players})`}</Strong>
         </Flex>
         <Divider />
+        {
+          room?.owner?.id === conn?.client?.id ?
+            <>
+              <Input
+                size='s'
+                prefix={t('password')}
+                variants={['no_border']}
+                placeholder={t('dont_need_password')}
+                onBlur={e => conn?.send(MsgEnum.RoomPwd, { pwd: e.target.value?.trim() })}
+              />
+              <Divider />
+            </> : null
+        }
       </Flex>
       <List data={players} itemKey={r => r.id!} styles={{ verticalScrollBarThumb: { backgroundColor: 'rgba(255,255,255,0.3)' } }}>
         {(other, index) => {

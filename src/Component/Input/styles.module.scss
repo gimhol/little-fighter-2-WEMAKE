@@ -1,6 +1,6 @@
-@use "../../styles/lfui_hoverable_border.module.scss" as *;
-@use "../../styles/lfui_values.module.scss" as *;
-@use "../../styles/lfui_input_like.module.scss" as *;
+@use "../../styles/lfui_hoverable_border.module.scss"as *;
+@use "../../styles/lfui_values.module.scss"as *;
+@use "../../styles/lfui_input_like.module.scss"as *;
 
 .lfui_input {
   @extend .lfui_input_like;
@@ -19,14 +19,14 @@
 
   &>.lfui_input_prefix,
   &>.lfui_input_suffix {
-    color          : $primary_text_color;
+    color             : $primary_text_color;
     // opacity        : 0.5;
-    display        : inline-block;
-    transition     : all 200ms;
-    display        : flex;
-    align-items    : center;
-    justify-content: center;
-    align-self     : center;
+    display           : inline-block;
+    transition        : all 200ms;
+    display           : flex;
+    align-items       : center;
+    justify-content   : center;
+    align-self        : center;
   }
 
   &>.lfui_input_suffix.lfui_input_suffix_spacer {
@@ -53,33 +53,33 @@
   }
 
   &>.lfui_input_spacer {
-    position             : relative;
-
-    user-select          : none;
-    font-size            : inherit;
-    font-family          : inherit;
-    box-sizing           : border-box;
-    display              : inline-flex;
-    align-items          : center;
-    justify-content      : center;
-    overflow             : hidden;
-    min-height           : 0px;
-    flex                 : 1;
-    flex-grow            : 1;
-    flex-shrink          : 0;
+    position       : relative;
+    flex           : 1;
+    user-select    : none;
+    font-size      : inherit;
+    font-family    : inherit;
+    box-sizing     : border-box;
+    display        : inline-flex;
+    align-items    : center;
+    justify-content: center;
+    overflow       : hidden;
+    min-height     : 0px;
+    flex           : 1;
+    flex-grow      : 1;
+    flex-shrink    : 0;
 
     &>span {
-      pointer-events    : none;
-      font-family: inherit;
-      font-size  : inherit;
-      display    : inline-block;
-      position   : relative;
-      z-index    : 1;
-      white-space: pre;
-      opacity    : 0;
-      color      : red;
-      padding    : 0px 2px;
-      box-sizing : border-box;
+      pointer-events: none;
+      font-family   : inherit;
+      font-size     : inherit;
+      display       : inline-block;
+      position      : relative;
+      z-index       : 1;
+      white-space   : pre;
+      opacity       : 0;
+      color         : red;
+      padding       : 0px 2px;
+      box-sizing    : border-box;
 
       &::before {
         content: ' '; // keep

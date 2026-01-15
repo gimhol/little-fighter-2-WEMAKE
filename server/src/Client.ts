@@ -233,6 +233,13 @@ export class Client {
         }
         this.resp(MsgEnum.ListClients, req.pid, { clients })
         break;
+      case MsgEnum.RoomPwd:
+        if (
+          ensure_player_info(this, req) &&
+          ensure_in_room(this, req) &&
+          ensure_room_owner(this, req)
+        ) this.room?.set_pwd(this, req)
+        break;
     }
   }
 }

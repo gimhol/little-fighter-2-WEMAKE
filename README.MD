@@ -2,8 +2,7 @@
 
 ![title](docs/image/readme.title.png)
 
-[中文](README.md) | [English](README.en.md)
-
+[中文](README.MD) | [English](README.EN.MD)
 
 觉得这个项目还不错？Star⭐支持一下吧！
 

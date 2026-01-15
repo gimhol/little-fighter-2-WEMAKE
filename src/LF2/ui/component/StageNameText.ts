@@ -1,12 +1,17 @@
 import { CheatType, IStageInfo } from "../../defines";
 import { Defines } from "../../defines/defines";
-import { ui_load_txt } from "../ui_load_txt";
+import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 export class StageNameText extends UIComponent {
   static override readonly TAG = 'StageNameText'
 
   private _stage: IStageInfo = Defines.VOID_STAGE;
+  private _text_loader = new UITextLoader(() => this.node).set_style({
+    fill_style: "#9b9bff",
+    font: "15px Arial",
+  }).ignore_out_of_date();
+
   get show_all(): boolean {
     return this.lf2.is_cheat(CheatType.GIM_INK);
   }
@@ -48,17 +53,6 @@ export class StageNameText extends UIComponent {
       const bdt = this.world.lf2.datas.backgrounds.find(v => v.id === this._stage.bg);
       this.world.stage.change_bg(bdt ?? Defines.VOID_BG)
     }
-
-    ui_load_txt(this.lf2, {
-      i18n: this.text, style: {
-        fill_style: "#9b9bff",
-        font: "15px Arial",
-      }
-    }).then(v => {
-      this.node.txts.value = v;
-      this.node.txt_idx.value = 0;
-      const { w, h, scale } = v[0]!
-      this.node.size.value = [w / scale, h / scale];
-    })
+    this._text_loader.set_text([this.text])
   }
 }

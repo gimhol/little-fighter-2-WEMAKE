@@ -1,15 +1,35 @@
 
-import { zip } from "compressing"
-import fs from "fs/promises"
+import { spawn } from "child_process";
+import { zip } from "compressing";
+import fs from "fs/promises";
+
+export async function exec_cmd(cmd, args = [], opts = []) {
+  console.log(...arguments)
+  await new Promise((resolve, reject) => {
+    const shell = cmd.endsWith('.cmd') || cmd.endsWith('.bat')
+    const temp = spawn(cmd, args, { shell, ...opts }).on("exit", resolve).on("error", reject);
+    temp.stderr.on("data", (buf) =>
+      console.error("[stderr]: ", buf.toString()),
+    );
+  });
+}
 
 async function main() {
+  const npm = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
+  await exec_cmd(npm, ['install'], { cwd: 'tool' })
+  await exec_cmd(npm, ['run', 'build'], { cwd: 'tool' })
+  await exec_cmd(npm, ['install'], { cwd: 'server' })
+  await exec_cmd(npm, ['run', 'build'], { cwd: 'server' })
+  await exec_cmd(npm, ['install'])
+  await exec_cmd(npm, ['run', 'build_data'])
+  await exec_cmd(npm, ['run', 'build'])
   const { version } = await fs.readFile("./package.json").then(b => JSON.parse(b.toString()))
   const output_dir = `./release/${version}`
-
+  const outzip_path = `./release/Little-Fighter-2-Wemake-${version}.zip`
   await fs.mkdir(`${output_dir}/frontend`, { recursive: true }).catch(e => e)
   fs.cp("./dist", `${output_dir}/frontend`, { recursive: true })
-  fs.cp("./tool/dist/index.js", `${output_dir}/tool.cjs`)
-  fs.cp("./server/dist/cjs/index.cjs", `${output_dir}/server.cjs`)
-  await zip.compressDir(output_dir, output_dir + `.zip`, { ignoreBase: true });
+  fs.cp("./tool/dist/tool.cjs", `${output_dir}/tool.cjs`)
+  fs.cp("./server/dist/cjs/server.cjs", `${output_dir}/server.cjs`)
+  await zip.compressDir(output_dir, outzip_path, { ignoreBase: true });
 }
 main();

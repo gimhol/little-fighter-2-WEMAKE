@@ -6,7 +6,6 @@ import './init';
 import "./LF2/defines/defines";
 import { Paths } from "./Paths";
 
-// const router = createBrowserRouter(Paths.Routes);
 const router = createHashRouter(Paths.Routes);
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
