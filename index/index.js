@@ -46,6 +46,7 @@ async function main() {
       title = version.title,
       desc = version.desc,
       url = version.url,
+      changelog = version.changelog,
     } = get_i18n(i18n)
 
     /** @type {HTMLElement} */
@@ -61,8 +62,18 @@ async function main() {
     el_desc = clone.querySelector('.el_desc')
     el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc
 
+
     const btn_goto_version = clone.querySelector('.btn_goto_version')
     btn_goto_version.href = url
+
+
+    const el_changelog = clone.querySelector('.el_changelog')
+    if (el_changelog && changelog?.length) {
+      el_changelog.append(Array.isArray(changelog) ? changelog.join('\n') : changelog)
+    } else if(el_changelog){
+      el_changelog.remove()
+    }
+
     document.getElementById('version_list').append(clone)
   }
 
