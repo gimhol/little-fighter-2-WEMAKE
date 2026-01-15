@@ -236,7 +236,7 @@ export class Entity {
   }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
-  get landing_velocity(): Readonly<IVector3> { return this._velocity }
+  get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get is_attach() { return this._is_attach }
