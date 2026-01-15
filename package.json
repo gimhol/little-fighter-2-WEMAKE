@@ -16,6 +16,7 @@
     "build_prel": "npm run build_tool && node ./tool make-prel",
     "deploy": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5",
     "deploy:index": "fdeploy -s oss -i index-deployer.private.json5 -p index-deployer.config.json5",
+    "deploy:docs": "fdeploy -s oss -i docs-deployer.private.json5 -p docs-deployer.config.json5",
     "flow": "npm run build && npm run deploy",
     "flow:full": "npm run build_tool && npm run build_data && npm run flow:oss",
     "dat_2_txt": "npm run build_tool && node ./tool dat-2-txt",
