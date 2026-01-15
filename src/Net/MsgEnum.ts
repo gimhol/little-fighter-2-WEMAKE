@@ -12,7 +12,8 @@ export enum MsgEnum {
   Chat = "Chat",
   Tick = "Tick",
   KeyTick = "KeyTick",
-
+  RoomPwd = "RoomPwd",
+  
   // for admin.
   ListClients = 'ListClients'
 }

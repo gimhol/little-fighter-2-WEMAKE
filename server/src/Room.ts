@@ -3,13 +3,20 @@ import type { Context } from "./Context";
 import {
   ErrCode,
   IMsgRespMap,
+  IReqClientReady,
   IReqCloseRoom, IReqCreateRoom,
   IReqExitRoom,
+  IReqJoinRoom, IReqKick,
+  IReqRoomPwd,
+  IReqRoomStart,
   IReqTick,
-  IReqJoinRoom, IReqKick, IReqClientReady, IReqRoomStart, IResp, IRespCloseRoom,
+  IResp,
+  IRespClientReady,
+  IRespCloseRoom,
   IRespExitRoom,
+  IRespJoinRoom, IRespKick,
   IRespTick,
-  IRespJoinRoom, IRespKick, IRespClientReady, IRoomInfo, MsgEnum, SystemPlayerInfo, TInfo
+  IRoomInfo, MsgEnum, SystemPlayerInfo, TInfo
 } from "./Net";
 import { random_str } from './random_str';
 
@@ -25,8 +32,9 @@ export class Room {
   title: string = `ROOM_${this.id}`;
   clients = new Set<Client>();
   tick_req_map = new Map<Client, IReqTick>()
-  private _tick_seq = 0;
+  private _tick_seq = -1;
   seed: number;
+  pwd: string = '';
   get code() { return this._code; }
   get room_info(): Required<IRoomInfo> {
     return {
@@ -40,6 +48,8 @@ export class Room {
       })),
       min_players: this.min_players,
       max_players: this.max_players,
+      started: this._tick_seq >= 0,
+      need_pwd: !!this.pwd,
     }
   }
   constructor(owner: Client, req: IReqCreateRoom) {
@@ -109,7 +119,6 @@ export class Room {
     if (!this.clients.size)
       this.ctx.room_mgr.del(room)
   }
-
   exit(client: Client, req: IReqExitRoom = { type: MsgEnum.ExitRoom, is_req: true, pid: '' }) {
     console.log(`[${Room.TAG}::exit]`)
     const { clients: players } = this;
@@ -137,7 +146,6 @@ export class Room {
     for (const pl of players)
       pl.resp(MsgEnum.Chat, '', { target: 'room', sender: SystemPlayerInfo, text: `玩家[${player_info.name}]退出了房间` }).catch(() => void 0)
   }
-
   join(client: Client, req: IReqJoinRoom = { type: MsgEnum.JoinRoom, is_req: true, pid: '' }) {
     console.log(`[${Room.TAG}::join]`)
     const { clients } = this;
@@ -147,9 +155,21 @@ export class Room {
     if (room) return false;
 
     if (this.clients.size >= this.max_players) {
-      client.resp(req.type, req.pid, { code: ErrCode.RoomIsFull, error: 'room is full' })
+      client.resp(req.type, req.pid, { code: ErrCode.RoomIsFull, error: 'Room is full!' })
       return false
     }
+    const { pwd: a_pwd = '' } = this;
+    const { pwd: b_pwd = '' } = req;
+    if (a_pwd != b_pwd) {
+      client.resp(req.type, req.pid, { code: ErrCode.RoomPwdWrong, error: 'Wrong password!' })
+      return false
+    }
+    const all_client_ready = Array.from(this.clients).every(v => v.ready)
+    if (this._tick_seq >= 0 || all_client_ready) {
+      client.resp(req.type, req.pid, { code: ErrCode.RoomAlreadyStart, error: 'Game of this room has already started!' })
+      return false
+    }
+
 
     clients.add(client);
     client.ready = false
@@ -221,6 +241,10 @@ export class Room {
       resp.reqs?.push(req)
     this.broadcast(MsgEnum.Tick, resp)
     this.tick_req_map.clear()
-    this._tick_seq++
+    this._tick_seq++;
+  }
+
+  set_pwd(client: Client, req: IReqRoomPwd) {
+    this.pwd = req.pwd ?? '';
   }
 }

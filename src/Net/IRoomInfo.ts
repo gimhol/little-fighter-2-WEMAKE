@@ -63,4 +63,20 @@ export interface IRoomInfo {
    * @memberof IRoomInfo
    */
   max_players?: number;
+
+  /**
+   * 房间是否已开始
+   * 
+   * @type {boolean}
+   * @memberof IRoomInfo
+   */
+  started?: boolean;
+
+  /**
+   * 房间是否需要密码
+   * 
+   * @type {boolean}
+   * @memberof IRoomInfo
+   */
+  need_pwd?: boolean;
 }
