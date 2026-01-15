@@ -67,7 +67,8 @@ async function main() {
 
   const eles = document.querySelectorAll('.i18n_txt')
   for (const ele of eles) {
-    ele.textContent = strings[ele.textContent] ?? ele.textContent
+    const text = ele.getAttribute('data-text')
+    ele.textContent = strings[text] ?? text;
   }
 }
 main()

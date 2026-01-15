@@ -43,6 +43,7 @@
       padding: 5px 10px;
       font-size: 24px;
     }
+
     .el_desc {
       color: #8393e4;
       white-space: pre-wrap;
@@ -57,13 +58,13 @@
 </head>
 
 <body>
-  <h1 class="i18n_txt">main_title</h1>
+  <h1 class="i18n_txt" data-text="main_title">Loading...</h1>
   <div id="version_list"></div>
   <template id="btn_goto_version">
     <div class="version_item_row">
       <h2>
         <a class="el_url"></a>
-        <button class="btn_goto_version i18n_txt">Go!</button>
+        <button class="btn_goto_version">Go!</button>
       </h2>
       <div class="el_desc"></div>
     </div>
