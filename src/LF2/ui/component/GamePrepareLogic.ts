@@ -14,7 +14,7 @@ import { ILf2Callback } from "@/LF2/ILf2Callback";
 export class GamePrepareLogic extends UIComponent {
   static override readonly TAG = 'GamePrepareLogic'
   get game_mode(): string { return this.args[0] || ''; }
-  protected _unmount_jobs = new Invoker();
+
   override on_resume(): void {
     super.on_resume();
     const background_row = this.node.search_child("background_row")!;
@@ -29,6 +29,7 @@ export class GamePrepareLogic extends UIComponent {
       stage_row.set_visible(false).set_disabled(true);
     }
   }
+  
   protected _lf2_callbacks: ILf2Callback = {
     on_broadcast: (message) => {
       if (message === 'start_game') return this.start_game();
