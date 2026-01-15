@@ -1,7 +1,11 @@
 html {
   --divider-color: #FFFFFF22;
-
-  background-color: #10206C;
+  --link-color: #FFFFFFCC;
+  --link-color-hover: #FFFFFFFF;
+  --txt-color: #8393e4FF;
+  --primary-color: #10206C;
+  --primary-color-hover: #213492;
+  background-color: var(--primary-color);
   color: #FFFFFFDD;
   height: 100%;
   width: 100%;
@@ -34,22 +38,29 @@ button:hover {
   background-color: var(--divider-color);
 }
 
-a {
-  color: #ffffffff;
+.el_desc a,
+.link {
+  color: var(--link-color);
+  display: inline-block;
+  transition: all 200ms;
 }
 
-a:hover {
-  color: #ffffff55;
-}
-
-.btn_goto_version {
-  border: 2px var(--divider-color) solid;
+.el_desc a:hover,
+.link:hover {
+  color: var(--link-color-hover);
+  transform: scale(1.1);
+  background-color: var(--primary-color-hover);
+  padding: 0px 10px;
   border-radius: 5px;
-  font-size: 16px;
+  box-sizing: content-box;
+}
+
+button:hover {
+  transform: scale(1.2);
 }
 
 .el_desc {
-  color: #8393e4;
+  color: var(--txt-color);
   white-space: pre-wrap;
 }
 
@@ -64,6 +75,12 @@ a:hover {
 #root>#head {
   padding: 0px 20px;
   border-bottom: 1px var(--divider-color) dashed;
+  display: flex;
+  align-items: center;
+}
+
+#root>#head>#main_title {
+  flex: 1;
 }
 
 #root>#version_list {
@@ -75,8 +92,32 @@ a:hover {
   height: 0px;
 }
 
+.github {
+  display: inline-block;
+
+  transform: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.github>img {
+  transition: all 200ms;
+}
+
+.github:hover>img {
+  transform: scale(1.2);
+}
+
+.go_div {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #root>#version_list>.version_item {
-  padding: 0px 20px 20px;
+  padding: 0px 8px 20px 20px;
 }
 
 #root>#version_list>.version_item:not(:last-child) {
@@ -99,9 +140,6 @@ a:hover {
   padding: 5px;
 }
 
-.icp_link {
-  opacity: 0.5;
-}
 
 .scrollview::-webkit-scrollbar {
   width: 8px;

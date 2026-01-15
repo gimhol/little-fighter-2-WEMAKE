@@ -10,13 +10,15 @@
   <link rel="apple-touch-icon" href="/logo192.png" />
   <link rel="stylesheet" href="./style.css" />
   <title>LF2:Wemake</title>
-
 </head>
 
 <body>
   <div id="root">
     <div id="head">
-      <h1 class="i18n_txt" data-text="main_title">Loading...</h1>
+      <h1 id='main_title' class="i18n_txt" data-text="main_title">Loading...</h1>
+      <a class='github' href="https://github.com/gimhol/little-fighter-2-WEMAKE">
+        <img src="./github-mark-white.svg" width="24px">
+      </a>
     </div>
     <div id="version_list" class="scrollview"></div>
     <div id="foot">
@@ -26,12 +28,13 @@
     </div>
   </div>
 
-
   <template id="btn_goto_version">
     <div class="version_item">
       <div class="row_1">
-        <h3 class="row_title"> <a class="el_url"></a> </h3>
-        <button class="btn_goto_version">Go!</button>
+        <h3 class="row_title"> <a class="el_url link"></a> </h3>
+        <div class="go_div">
+          <a class="btn_goto_version link">Go</a>
+        </div>
       </div>
       <div class="el_desc"></div>
     </div>

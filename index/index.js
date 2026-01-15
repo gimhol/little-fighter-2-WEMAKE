@@ -62,7 +62,7 @@ async function main() {
     el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc
 
     const btn_goto_version = clone.querySelector('.btn_goto_version')
-    btn_goto_version.onclick = function () { location.href = url }
+    btn_goto_version.href = url
     document.getElementById('version_list').append(clone)
   }
 
