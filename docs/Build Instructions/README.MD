@@ -7,13 +7,12 @@
 - v22.16.0
 - v24.10.0
 
-## 依赖安装
-
-`npm i`
-
 ## 构建数据
 
-`npm run build_data`
+``` bash
+npm run build:tool
+npm run build:data
+```
 
 本步骤将会根据lf2原数据生成lf2:wemake的数据
 
@@ -23,4 +22,6 @@
 
 ## 运行
 
-`npm run start`
+``` bash
+npm run dev
+```
