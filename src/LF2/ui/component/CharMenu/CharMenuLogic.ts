@@ -16,12 +16,12 @@ import { CharMenuState } from "./CharMenuState";
 import { CharMenuState_ComNumSel } from "./CharMenuState_ComNumSel";
 import { CharMenuState_ComSel } from "./CharMenuState_ComSel";
 import { CharMenuState_CountingDown } from "./CharMenuState_CountingDown";
+import { CharMenuState_GameSetting } from "./CharMenuState_GameSetting";
 import { CharMenuState_PlayerSel } from "./CharMenuState_PlayerSel";
 import { ICharMenuState } from "./ICharMenuState";
 import { ISlotPack } from "./ISlotPack";
 import { SlotState } from "./SlotState";
 import { SlotStep } from "./SlotStep";
-import { CharMenuState_GameSetting } from "./CharMenuState_GameSetting";
 
 /**
  * 角色选择逻辑
@@ -32,6 +32,7 @@ import { CharMenuState_GameSetting } from "./CharMenuState_GameSetting";
  */
 export class CharMenuLogic extends UIComponent {
   static override readonly TAG = "CharMenuLogic";
+  readonly prev_players = new Map<PlayerInfo, SlotState>()
   readonly players = new Map<PlayerInfo, SlotState>()
   protected _count_down: number = 5000;
   protected _randoming?: Randoming<IEntityData>;
@@ -89,6 +90,8 @@ export class CharMenuLogic extends UIComponent {
     this.fsm.state?.on_key_down?.(e)
   }
   reset() {
+    for (const [k, v] of this.players)
+      this.prev_players.set(k, v);
     this.players.clear();
     this.update_slots()
     this.fsm.use(CharMenuState.PlayerSel)
@@ -145,9 +148,12 @@ export class CharMenuLogic extends UIComponent {
     if (!state && this.max_player <= this.players.size)
       return;
     if (!state) {
-      const team = this.teams[0] ?? TeamEnum.Independent
-      const slot_state = new SlotState({ team })
-      slot_state.fighter = this._randoming?.take() ?? null;
+      const slot_state = this.prev_players.get(player) ?? new SlotState({
+        team: this.teams[0] ?? TeamEnum.Independent,
+        fighter: this._randoming?.take() ?? null
+      })
+      slot_state.step = SlotStep.FighterSel;
+      this.prev_players.delete(player)
       this.players.set(player, slot_state);
     } else if (state.step < SlotStep.Ready) {
       if (state.step + 1 === SlotStep.TeamSel && this.teams.length < 1)
@@ -244,10 +250,18 @@ export class CharMenuLogic extends UIComponent {
   }
   add_com() {
     if (this.max_player <= this.players.size) return;
-    const p = new PlayerInfo(new_id(), "com", false)
-    p.set_is_com(true, false);
-    this.lf2.players.set(p.id, p)
-    this.press_a(p)
+    let com: PlayerInfo | null = null
+    for (const [_, p] of this.lf2.players) {
+      if (!p.is_com) continue;
+      if (p.is_com && this.players.has(p)) continue;
+      com = p;
+    }
+    if (!com) {
+      com = new PlayerInfo(`com_` + new_id(), "com", false)
+      com.set_is_com(true, false);
+      this.lf2.players.set(com.id, com)
+    }
+    this.press_a(com)
   }
 }
 
