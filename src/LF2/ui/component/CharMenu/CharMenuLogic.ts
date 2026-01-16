@@ -37,10 +37,19 @@ export class CharMenuLogic extends UIComponent {
   protected _count_down: number = 5000;
   protected _randoming?: Randoming<IEntityData>;
   com_num: number = 0;
+
   get max_player(): number { return this.props.num('max_player') ?? 8 }
-  get max_coms(): number { return this.max_player - this.players.size }
+  set max_player(v: number) { this.props.set_num('max_player', v) }
+
+  get min_player(): number { return this.props.num('min_player') ?? 8 }
+  set min_player(v: number) { this.props.set_num('min_player', v) }
+
+  get max_coms(): number { return Math.max(0, this.max_player - this.players.size) }
+  get min_coms(): number { return Math.max(0, this.min_player - this.players.size) }
+
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
   set teams(v: string[]) { this.props.set_strs("teams", v) }
+
   get fighters() {
     return this.lf2.is_cheat(CheatType.LF2_NET)
       ? this.lf2.datas.fighters
@@ -90,6 +99,7 @@ export class CharMenuLogic extends UIComponent {
     this.fsm.state?.on_key_down?.(e)
   }
   reset() {
+    this.prev_players.clear()
     for (const [k, v] of this.players)
       this.prev_players.set(k, v);
     this.players.clear();

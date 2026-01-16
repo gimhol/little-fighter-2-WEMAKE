@@ -12,6 +12,9 @@ export class UIProps {
     const v = this.raw[name];
     return is_num(v) ? v : null;
   }
+  set_num(name: string, v: number | null) {
+    this.raw[name] = v;
+  }
   str<T extends string = string>(name: string, one_of?: T[]): T | null {
     if (!(name in this.raw)) return null;
     const ret: T = this.raw[name];
