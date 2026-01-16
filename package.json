@@ -22,6 +22,7 @@
     "___deploy___": "___deploy___",
     "deploy": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5",
     "deploy:rn": "fdeploy -s oss -i deployer.private.json5 -p deployer.rn.config.json5",
+    "deploy:rn-temp": "fdeploy -s oss -i deployer.private.json5 -p ./lf2s/rn-lf2/upload-zip-file.config.json5",
     "deploy:index": "fdeploy -s oss -i index-deployer.private.json5 -p index-deployer.config.json5",
     "deploy:docs": "fdeploy -s oss -i docs-deployer.private.json5 -p docs-deployer.config.json5",
     "___flow___": "___flow___",
