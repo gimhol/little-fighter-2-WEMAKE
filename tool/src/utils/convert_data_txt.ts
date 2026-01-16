@@ -1,5 +1,6 @@
 import { read_indexes } from "../../../src/LF2/dat_translator/read_indexes";
 import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
+import { log } from "./log";
 import { read_text_file } from "./read_text_file";
 import { write_obj_file } from "./write_obj_file";
 async function parse_indexes(
@@ -13,6 +14,11 @@ export async function convert_data_txt(
   src_dir: string,
   out_dir: string,
 ): Promise<IDataLists | undefined> {
+  log(
+    `convert_data_txt(
+  src_dir = ${JSON.stringify(src_dir)},
+  out_dir = ${JSON.stringify(out_dir)}, 
+)`)
   const suffix = 'json5'
   const src_path = `${src_dir}/data/data.txt`;
   const dst_path = `${out_dir}/data/data.index.${suffix}`;

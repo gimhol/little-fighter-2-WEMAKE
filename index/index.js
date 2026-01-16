@@ -11,7 +11,6 @@ const lang = (() => {
   return a || b || c
 })()
 
-
 function get_i18n(all) {
   if (!all) return null;
   const base = all[''];
@@ -29,61 +28,137 @@ async function get_strings() {
   strings_map.set(lang, ret = get_i18n(all))
   return ret
 }
+/**
+ * 
+ * @returns {Promise<IGameInfo[]>}
+ */
+async function get_games() {
+  return await fetch('./games.json?time=' + time_str).then(r => r.json())
+}
 
 async function main() {
   const strings = await get_strings();
-  const versions = await fetch('./versions.json?time=' + time_str).then(r => r.json())
-  // if (l.length == 1) location.href = l[0].url;
-  // let versions = await fetch('./versions.json?time=' + time_str).then(r => r.json())
-  // versions = [...versions, ...versions, ...versions, ...versions, ...versions, ...versions]
-
-  if (!Array.isArray(versions)) return;
-
-  const { content } = document.getElementById('btn_goto_version')
-  for (const version of versions) {
-    const { i18n, id } = version;
-    const {
-      title = version.title,
-      desc = version.desc,
-      url = version.url,
-      date = version.date,
-      changelog = version.changelog,
-    } = get_i18n(i18n)
-
-    /** @type {HTMLElement} */
-    const clone = document.importNode(content, true);
-    clone.id = id;
-
-    /** @type {HTMLElement} */
-    const el_url = clone.querySelector('.el_url')
-    el_url.href = url
-    el_url.innerText = title
-
-    /** @type {HTMLElement} */
-    const el_desc = clone.querySelector('.el_desc')
-    el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc
-
-    const el_date = clone.querySelector('.el_date')
-    el_date.innerHTML = date
-
-    const btn_goto_version = clone.querySelector('.btn_goto_version')
-    btn_goto_version.href = url
-
-
-    const el_changelog = clone.querySelector('.el_changelog')
-    if (el_changelog && changelog?.length) {
-      el_changelog.append(Array.isArray(changelog) ? changelog.join('\n') : changelog)
-    } else if (el_changelog) {
-      el_changelog.remove()
-    }
-
-    document.getElementById('version_list').append(clone)
-  }
-
   const eles = document.querySelectorAll('.i18n_txt')
   for (const ele of eles) {
     const text = ele.getAttribute('data-text')
     ele.textContent = strings[text] ?? text;
   }
+  await fetch_games_list();
+}
+
+
+const state = {
+
+  /** @type {IGameInfo|undefined} */
+  actived: void 0,
+
+  /** @type {Info[]} */
+  games: []
+}
+
+class Info {
+  constructor(raw) {
+    this.raw = raw;
+    this.info = get_i18n(raw.i18n || {})
+    this.id = this.info.id || this.raw.id
+    this.title = this.info.title || this.raw.title
+    this.url = this.info.url || this.raw.url
+
+    this.date = this.info.date || this.raw.date
+
+    this.desc = this.info.desc || this.raw.desc
+    if (Array.isArray(this.desc)) this.desc = this.desc.join('\n')
+
+    this.changelog = this.info.changelog || this.raw.changelog
+    if (Array.isArray(this.changelog)) this.changelog = this.changelog.join('\n')
+  }
+}
+
+async function fetch_games_list(url = `games.json?time=${time_str}`) {
+  state.games.length = 0
+  state.games.push(...await get_games().then(v => v.map(b => new Info(b))))
+
+  const el_game_list = document.getElementById('game_list');
+  el_game_list.innerHTML = ''
+
+  const el_item_template = document.getElementById('game_item_template').content
+
+  for (const game of state.games) {
+    /** @type {HTMLElement} */
+    const el_item = document.importNode(el_item_template, true);
+    el_item.children.item(0).setAttribute('id', game.id);
+
+    /** @type {HTMLElement} */
+    const el_game_title = el_item.querySelector('.game_title')
+    el_game_title.append(game.title)
+    el_game_title.onclick = () => set_actived_game(game);
+
+    el_game_list.append(el_item)
+  }
+  set_actived_game(state.games[0]);
+}
+
+/**
+ *
+ *
+ * @param {Info} game
+ * @return {Promise<void>} 
+ */
+async function set_actived_game(game) {
+  console.log('set_actived_game(game), game = ', game)
+  if (state.actived === game) return;
+  state.actived = game;
+
+  document.querySelector('.game_item_actived')?.classList.remove('game_item_actived')
+  document.querySelector(`#${game.id}`)?.classList.add('game_item_actived')
+
+  await fetch_version_list(`${game.url}?time=' + time_str`)
+}
+
+async function fetch_version_list(url) {
+  const versions = await fetch(url).then(r => r.json())
+  const el_version_list = document.getElementById('version_list');
+  el_version_list.innerHTML = '';
+
+  const { content } = document.getElementById('version_item_template')
+  for (const data of versions) {
+    const { i18n, id } = data;
+    const {
+      title = data.title,
+      desc = data.desc,
+      url = data.url,
+      date = data.date,
+      changelog = data.changelog,
+    } = get_i18n(i18n)
+
+    /** @type {HTMLElement} */
+    const el_item = document.importNode(content, true);
+    el_item.id = id;
+
+    /** @type {HTMLElement} */
+    const el_url = el_item.querySelector('.el_url')
+    el_url.href = url
+    el_url.innerText = title
+
+    /** @type {HTMLElement} */
+    const el_desc = el_item.querySelector('.el_desc')
+    el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc
+
+    const el_date = el_item.querySelector('.el_date')
+    el_date.innerHTML = date
+
+    const btn_goto_version = el_item.querySelector('.btn_goto_version')
+    btn_goto_version.href = url
+
+
+    const el_changelog = el_item.querySelector('.el_changelog')
+    if (el_changelog && changelog?.length) {
+      el_changelog.append(Array.isArray(changelog) ? changelog.join('\n') : changelog)
+    } else if (el_changelog) {
+      el_changelog.remove()
+    }
+    el_version_list.append(el_item)
+  }
+
 }
 main()

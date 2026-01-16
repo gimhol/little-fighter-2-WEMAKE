@@ -296,10 +296,10 @@ function App() {
       a.download = url;
       a.click();
     }
-    download("data.zip.json")
-    download("data.zip")
-    download("prel.zip.json")
-    download("prel.zip")
+    download(LF2.BASE_DATA_URL + '?time=' + Date.now())
+    download(LF2.BASE_PREL_URL.replace(/.json$/, '') + '?time=' + Date.now())
+    download(LF2.BASE_PREL_URL + '?time=' + Date.now())
+    download(LF2.BASE_PREL_URL.replace(/.json$/, '') + '?time=' + Date.now())
   };
 
   const on_click_load_builtin = async () => {

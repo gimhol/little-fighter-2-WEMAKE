@@ -30,7 +30,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   log!: (_0: string, ..._1: any[]) => void;
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  lang: string = '';
+  lang: string = '';  
   dev: boolean = false;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
