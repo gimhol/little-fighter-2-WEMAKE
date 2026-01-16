@@ -1,0 +1,36 @@
+20110502 10 en
+ba 0 422 132 32    ? bae
+ba 132 422 132 32  ? bae
+ba 264 422 132 32  ? bae
+ba 396 422 132 32  ? bae
+ba 528 422 132 32  ? bae
+ba 660 422 132 32  ? bae
+ba 0 454 132 32    ? bae
+ba 132 454 132 32  ? bae
+ba 264 454 132 32  ? bae
+ba 396 454 132 32  ? bae
+ba 528 454 132 32  ? bae
+ba 660 454 132 32  ? bae
+ba 0 486 132 32    ? bae
+ba 132 486 132 32  ? bae
+ba 264 486 132 32  ? bae
+ba 396 486 132 32  ? bae
+ba 528 486 132 32  ? bae
+ba 660 486 132 32  ? bae
+ba 0 518 462 32  http://www.ztage.com/ bae
+ba 467 520 108 28  http://www.ztage.com/forum/ bae
+ba 264 518 132 32  ? bae
+ba 396 518 132 32  ? bae
+ba 528 518 132 32  ? bae
+ba 660 518 132 32  ? bae
+ta 0 0 0 ? tae
+ta 0 0 0 ? tae
+ta 0 0 0 ? tae
+ta 0 0 0 ? tae
+ta 0 196 580 http://www.herofighter.com/?utm_source=lf2exe&utm_medium=cpm&utm_campaign=lf2exe tae
+ta 196 198 580 http://www.littlefighter.com/figure_index.html tae
+ta 198 400 580 http://www.phygame.com tae
+ta 400 580 580 http://martiwong.com/worldcup/?utm_source=lf2exe&utm_medium=cpm&utm_campaign=lf2exe tae
+un 31 http://www.herofighter.com/?utm_source=lf2exe&utm_medium=cpm&utm_campaign=lf2exe une
+y 0 0 ye
+<end>
