@@ -9,13 +9,31 @@
         "desc": "",
         "changelog": [
           "fix: fix the problem that the background and level buttons do not respond",
-          "fix: fix the problem of incorrect display on the scoreboard"
+          "fix: fix the problem of incorrect display on the scoreboard",
+          "fix: Improved the performance of the weapon's bounce when it hits the ground.",
+          "fix: Fixed the problem of incorrect starting point for weapon throwing.",
+          "fix: Fixed the issue that airborne weapons can't be hit again.",
+          "feat: Rooms can now be password - protected.",
+          "fix: It's no longer possible to join a room that has already started or where all players are ready.",
+          "fix: The survival mode will correctly display the current stage number.",
+          "fix: The \"GO->\" will no longer be displayed in the survival mode.",
+          "fix: The \"GO->\" will no longer be displayed in the last sub-level of the mission - passing mode.",
+          "fix: Fixed the problem of incorrect relationship between difficulty and the number of enemies in the mission-passing/survival mode (the problem was that there were too many enemies)."
         ]
       },
       "zh": {
         "changelog": [
           "fix: 修复背景与关卡按钮无法响应的问题",
-          "fix: 修复分数版显示不正确的问题"
+          "fix: 修复分数版显示不正确的问题",
+          "fix: 改进了武器落地反弹的表现",
+          "fix: 修复了武器投掷出发点不正确的问题",
+          "fix: 修复空中武器无法被在此打中的问题",
+          "feat: 房间现在可以设置密码",
+          "fix: 无法再加入已经开始获全员已准备的房间",
+          "fix: 生存模式将正确显示当前阶段数",
+          "fix: 生存模式将不会显示\"GO->\"",
+          "fix: 闯关模式的最后一小关将不会显示\"GO->\"",
+          "fix: 修复闯关/生存模式，难度与敌人数量关系错误的问题（问题是敌人变多了）"
         ]
       },
       "zh-hans": "zh",
