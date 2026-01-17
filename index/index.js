@@ -109,9 +109,13 @@ async function set_actived_game(game) {
   if (state.actived === game) return;
   state.actived = game;
 
+  const el_game_desc = document.getElementById('game_desc')
+  if (game.desc) el_game_desc.style.display = 'block'
+  else el_game_desc.style.display = 'none'
+  el_game_desc.innerHTML = '' + game.desc
+
   document.querySelector('.game_item_actived')?.classList.remove('game_item_actived')
   document.querySelector(`#${game.id}`)?.classList.add('game_item_actived')
-
   await fetch_version_list(`${game.url}?time=' + time_str`)
 }
 
@@ -142,7 +146,9 @@ async function fetch_version_list(url) {
 
     /** @type {HTMLElement} */
     const el_desc = el_item.querySelector('.el_desc')
-    el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc
+    el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc ? desc : ''
+
+
 
     const el_date = el_item.querySelector('.el_date')
     el_date.innerHTML = date
@@ -152,6 +158,7 @@ async function fetch_version_list(url) {
 
 
     const el_changelog = el_item.querySelector('.el_changelog')
+    if (!el_desc.innerHTML) el_changelog.innerHTML = ''
     if (el_changelog && changelog?.length) {
       el_changelog.append(Array.isArray(changelog) ? changelog.join('\n') : changelog)
     } else if (el_changelog) {

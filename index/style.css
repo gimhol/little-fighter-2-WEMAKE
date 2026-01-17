@@ -111,12 +111,24 @@ button:hover {
   background-color: var(--primary-color-hover);
 }
 
+.main_right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#game_desc {
+  padding: 20px;
+  color: var(--txt-color);
+  border-bottom: 1px var(--divider-color) dashed;
+  white-space: pre-wrap;
+}
+
 #version_list {
   overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  flex: 1;
 }
 
 #main {
