@@ -13,7 +13,6 @@ enum CMDEnum {
 }
 
 async function main() {
-  console.log("process.argv[2]:", process.argv[2])
   switch (process.argv[2]?.toLowerCase()) {
     case CMDEnum.MAKE_DATA:
       return await make_data_zip();
