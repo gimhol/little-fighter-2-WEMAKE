@@ -23,7 +23,7 @@ function get_i18n(all) {
 async function get_strings() {
   let ret = strings_map.get(lang)
   if (ret) return ret;
-  const all = await fetch('./strings.json?time=' + time_str).then(r => r.json())
+  const all = await fetch(`./strings.json?time=${time_str}`).then(r => r.json())
   ret = get_i18n(all)
   strings_map.set(lang, ret = get_i18n(all))
   return ret
@@ -33,7 +33,7 @@ async function get_strings() {
  * @returns {Promise<IGameInfo[]>}
  */
 async function get_games() {
-  return await fetch('./games.json?time=' + time_str).then(r => r.json())
+  return await fetch(`./games.json?time=${time_str}`).then(r => r.json())
 }
 
 async function main() {
@@ -62,6 +62,7 @@ class Info {
     this.info = get_i18n(raw.i18n || {})
     this.id = this.info.id || this.raw.id
     this.title = this.info.title || this.raw.title
+    this.short_title = this.info.short_title || this.raw.short_title
     this.url = this.info.url || this.raw.url
 
     this.date = this.info.date || this.raw.date
@@ -89,10 +90,9 @@ async function fetch_games_list(url = `games.json?time=${time_str}`) {
     el_item.children.item(0).setAttribute('id', game.id);
 
     /** @type {HTMLElement} */
-    const el_game_title = el_item.querySelector('.game_title')
-    el_game_title.append(game.title)
-    el_game_title.onclick = () => set_actived_game(game);
-
+    const game_short_title = el_item.querySelector('.game_short_title')
+    game_short_title.append(game.short_title)
+    game_short_title.onclick = () => set_actived_game(game);
     el_game_list.append(el_item)
   }
   set_actived_game(state.games[0]);
@@ -109,6 +109,11 @@ async function set_actived_game(game) {
   if (state.actived === game) return;
   state.actived = game;
 
+  const el_game_title = document.getElementById('game_title')
+  if (game.title) el_game_title.style.display = 'block'
+  else el_game_title.style.display = 'none'
+  el_game_title.firstElementChild.innerHTML = '' + game.title
+
   const el_game_desc = document.getElementById('game_desc')
   if (game.desc) el_game_desc.style.display = 'block'
   else el_game_desc.style.display = 'none'
@@ -116,25 +121,19 @@ async function set_actived_game(game) {
 
   document.querySelector('.game_item_actived')?.classList.remove('game_item_actived')
   document.querySelector(`#${game.id}`)?.classList.add('game_item_actived')
-  await fetch_version_list(`${game.url}?time=' + time_str`)
+  const versions = await fetch_version_list(`${game.url}?time=${time_str}`)
+  document.querySelector(`#game_title_link`).href = versions?.[0].url
 }
 
 async function fetch_version_list(url) {
-  const versions = await fetch(url).then(r => r.json())
+  /** @type {Info[]} */
+  const versions = await fetch(url).then(a => a.json()).then(b => b.map(c => new Info(c)))
   const el_version_list = document.getElementById('version_list');
   el_version_list.innerHTML = '';
 
   const { content } = document.getElementById('version_item_template')
-  for (const data of versions) {
-    const { i18n, id } = data;
-    const {
-      title = data.title,
-      desc = data.desc,
-      url = data.url,
-      date = data.date,
-      changelog = data.changelog,
-    } = get_i18n(i18n)
-
+  for (const version of versions) {
+    const { title, desc, url, date, changelog, id } = version
     /** @type {HTMLElement} */
     const el_item = document.importNode(content, true);
     el_item.id = id;
@@ -147,8 +146,6 @@ async function fetch_version_list(url) {
     /** @type {HTMLElement} */
     const el_desc = el_item.querySelector('.el_desc')
     el_desc.innerHTML = Array.isArray(desc) ? desc.join('\n') : desc ? desc : ''
-
-
 
     const el_date = el_item.querySelector('.el_date')
     el_date.innerHTML = date
@@ -167,5 +164,6 @@ async function fetch_version_list(url) {
     el_version_list.append(el_item)
   }
 
+  return versions
 }
 main()

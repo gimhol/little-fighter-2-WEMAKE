@@ -23,7 +23,12 @@
     <div id="main">
       <div id="game_list" class="scrollview"></div>
       <div class="main_right">
-        <div id="game_desc"></div>
+        <div class="game_desc_zone">
+          <h3 id="game_title">
+            <a id="game_title_link" class=" el_url link"></a>
+          </h3>
+          <div id="game_desc"></div>
+        </div>
         <div id="version_list" class="scrollview"></div>
       </div>
     </div>
@@ -36,7 +41,7 @@
 
   <template id="game_item_template">
     <div class="game_item">
-      <button class="game_title"></button>
+      <button class="game_short_title"></button>
     </div>
   </template>
   <template id="version_item_template">

@@ -119,10 +119,13 @@ button:hover {
   flex-direction: column;
 }
 
-#game_desc {
-  padding: 20px;
-  color: var(--txt-color);
+.game_desc_zone {
+  padding: 0px 20px 20px;
   border-bottom: 1px var(--divider-color) dashed;
+}
+
+#game_desc {
+  color: var(--txt-color);
   white-space: pre-wrap;
 }
 

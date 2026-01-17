@@ -4,7 +4,7 @@
     "i18n": {
       "": {
         "date": "2026-01-17",
-        "title": "LF2:Wemake v0.1.4",
+        "title": "v0.1.4",
         "url": "https://lf.gim.ink/0.1.4/",
         "desc": "",
         "changelog": [
@@ -33,7 +33,7 @@
     "i18n": {
       "": {
         "date": "2026-01-15",
-        "title": "LF2:Wemake v0.1.3",
+        "title": "v0.1.3",
         "url": "https://lf.gim.ink/0.1.3/",
         "changelog": [
           "fix: weapon will have a more reasonable effect"
@@ -59,7 +59,7 @@
     "i18n": {
       "": {
         "date": "2026-01-15",
-        "title": "LF2:Wemake v0.1.2",
+        "title": "v0.1.2",
         "url": "https://lf.gim.ink/0.1.2/"
       },
       "zh": "",

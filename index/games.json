@@ -4,7 +4,8 @@
     "i18n": {
       "": {
         "date": "2026-01-15",
-        "title": "Origin",
+        "short_title": "Origin",
+        "title": "Little Fighter 2:Wemake",
         "desc": [
           "gameplays, arts, and sounds are all from \"Litter Fighter 2\" basically,",
           "created by Marti Wong and Starsky Wong in 1999.",
@@ -17,7 +18,8 @@
         "url": "versions.json"
       },
       "zh": {
-        "title": "原版",
+        "short_title": "原版",
+        "title": "Little Fighter 2:Wemake",
         "desc": [
           "玩法、美术、音效音乐来自《Litter Fighter 2》, 原作：Marti Wong，Starsky Wong。",
           "",
@@ -41,7 +43,8 @@
     "i18n": {
       "": {
         "date": "2026-01-15",
-        "title": "RN-LF2",
+        "short_title": "RN-LF2",
+        "title": "RN-LF2:Wemake",
         "desc": [
           "RN-LF2"
         ],
