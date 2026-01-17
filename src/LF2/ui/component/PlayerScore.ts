@@ -1,59 +1,33 @@
+import { is_fighter } from "@/LF2/entity";
 import Invoker from "../../base/Invoker";
 import { Entity } from "../../entity/Entity";
 import { UIComponent } from "./UIComponent";
 
 export class PlayerScore extends UIComponent {
   static override readonly TAG: string = 'PlayerScore'
-  private _hp_lost: number = 0;
-  private _mp_usage: number = 0;
-  private _lose: boolean = false;
-  get hp_lost() {
-    return this._hp_lost;
+  get index(): number { return this.num(0) ?? -1 }
+  get lose(): boolean | undefined {
+    const { fighter } = this;
+    if (!fighter) return void 0;
+    if (fighter.hp > 0) return false;
+    for (const o of this.world.entities) {
+      if (o !== fighter && is_fighter(o) && o.hp > 0 && o.team === fighter.team)
+        return false;
+    }
+    return true;
   }
-  get mp_usage() {
-    return this._mp_usage;
-  }
-  get lose() {
-    return this._lose;
-  }
-  get player_id(): string {
-    return this.args[0] || "";
-  }
-  get character(): Entity | undefined {
-    return this.world.slot_fighters.get(this.player_id);
+  get fighter(): Entity | undefined {
+    const { index } = this;
+    if (index < 0) return void 0;
+    const arr = Array.from(this.world.slot_fighters)
+    if (index >= arr.length) return void 0
+    return arr[index][1];
   }
   private _unmount_job = new Invoker();
 
   override on_resume(): void {
     super.on_resume();
-
-    this.node.visible = this.world.slot_fighters.size ? !!this.character : true;
-    this.character?.callbacks.add({
-      on_hp_changed: (e, value, prev) => {
-        if (value < prev) this._hp_lost += prev - value;
-      },
-      on_mp_changed: (e, value, prev) => {
-        if (value < prev) this._mp_usage += prev - value;
-      },
-      on_dead: (e) => {
-        if (!e.team) {
-          this._lose = true;
-          return;
-        }
-        for (const [, c] of this.world.slot_fighters) {
-          if (c.team !== e.team) continue;
-          if (c.hp > 0) {
-            this._lose = false;
-            return;
-          }
-        }
-        this._lose = true;
-      },
-    });
-  }
-
-  override on_show(): void {
-    super.on_show?.();
+    this.node.visible = !!this.fighter;
   }
 
   override on_pause(): void {

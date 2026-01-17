@@ -17,12 +17,12 @@ export class PlayerScoreCell extends UIComponent {
 
   override on_show(): void {
     super.on_show?.();
-    this._text_loader.set_text([this.get_txt()])
+    this._text_loader.set_text([ this.get_txt() ])
   }
 
   protected get_style(): IStyle {
     const s = this.player_score;
-    const c = this.player_score?.character;
+    const c = this.player_score?.fighter;
     if (!s || !c) return this.node.style;
     if (this.kind === "status") {
       let clr = this.node.style.fill_style;
@@ -35,7 +35,7 @@ export class PlayerScoreCell extends UIComponent {
   }
   protected get_txt() {
     const s = this.player_score;
-    const c = this.player_score?.character;
+    const c = this.player_score?.fighter;
     if (!s || !c) return "-";
     switch (this.kind) {
       case "kill":
@@ -43,9 +43,9 @@ export class PlayerScoreCell extends UIComponent {
       case "attack":
         return "" + summary_mgr.get(c.id).damage_sum;
       case "hp_lost":
-        return "" + s.hp_lost;
+        return "" + summary_mgr.get(c.id).hp_lost;
       case "mp_usage":
-        return "" + s.mp_usage;
+        return "" + summary_mgr.get(c.id).mp_usage;
       case "picking":
         return "" + summary_mgr.get(c.id).picking_sum
       case "status": {

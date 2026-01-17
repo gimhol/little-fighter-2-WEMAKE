@@ -115,6 +115,11 @@
     },
     {
       _opacity: 0,
+      component: ["PlayerScore(0)"],
+      template: "ui/player_score_row.ui.json5",
+    },
+    {
+      _opacity: 0,
       component: ["PlayerScore(1)"],
       template: "ui/player_score_row.ui.json5",
     },
@@ -146,11 +151,6 @@
     {
       _opacity: 0,
       component: ["PlayerScore(7)"],
-      template: "ui/player_score_row.ui.json5",
-    },
-    {
-      _opacity: 0,
-      component: ["PlayerScore(8)"],
       template: "ui/player_score_row.ui.json5",
     },
     {

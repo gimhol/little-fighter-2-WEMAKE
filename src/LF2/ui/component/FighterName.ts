@@ -37,3 +37,4 @@ export class FighterName extends UIComponent {
     this.node.opacity = this._decided ? 1 : this._opacity.value;
   }
 }
+
