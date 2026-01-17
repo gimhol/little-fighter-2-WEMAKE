@@ -71,6 +71,6 @@ fix: The "GO->" will no longer be displayed in the last sub-level of the mission
 fix: Fixed the problem of incorrect relationship between difficulty and the number of enemies in the mission-passing/survival mode 
 (the problem was that there were too many enemies).
 
-Experiment: I've chosen a revised version (RN-LF2) to test the data conversion tool. 
+Experiment: I've chosen a revised LF2 (RN-LF2) to test the data conversion. 
 Currently, there are still many problems. Now you can see it on the index page.
 
