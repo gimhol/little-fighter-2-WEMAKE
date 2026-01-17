@@ -38,6 +38,12 @@ button:hover {
   background-color: var(--divider-color);
 }
 
+.el_date {
+  opacity: 0.5;
+  font-size: 14px;
+  font-weight: normal;
+}
+
 .el_desc a,
 .link {
   color: var(--link-color);
@@ -83,18 +89,45 @@ button:hover {
   flex: 1;
 }
 
-#root>#version_list {
+#game_list {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-right: 1px var(--divider-color) dashed;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.game_item {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game_item_actived {
+  border-radius: 5px;
+  background-color: var(--primary-color-hover);
+}
+
+#version_list {
   overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 5px;
   flex: 1;
-  height: 0px;
+}
+
+#main {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  height: 0;
 }
 
 .github {
   display: inline-block;
-
   transform: none;
   display: flex;
   align-items: center;
@@ -116,20 +149,20 @@ button:hover {
   justify-content: center;
 }
 
-#root>#version_list>.version_item {
+#version_list>.version_item {
   padding: 0px 8px 20px 20px;
 }
 
-#root>#version_list>.version_item:not(:last-child) {
+#version_list>.version_item:not(:last-child) {
   border-bottom: 1px var(--divider-color) dashed;
 }
 
-#root>#version_list>.version_item>.row_1 {
+#version_list>.version_item>.row_1 {
   display: flex;
   align-items: center;
 }
 
-#root>#version_list>.version_item>.row_1>.row_title {
+#version_list>.version_item>.row_1>.row_title {
   flex: 1;
 }
 

@@ -39,6 +39,7 @@ export class WorldRenderer implements IWorldRenderer {
     return this.camera.position.x
   }
   set cam_x(v: number) {
+    v = Math.max(0, v)
     this.camera.position.x = v;
     for (const stack of this.lf2.ui_stacks) {
       for (const ui of stack.uis) {

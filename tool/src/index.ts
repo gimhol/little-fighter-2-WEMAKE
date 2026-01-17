@@ -8,8 +8,8 @@ enum CMDEnum {
   MAIN = "main",
   HELP = 'help',
   DAT_2_TXT = 'dat-2-txt',
-  MAKE_DATA = 'make-prel',
-  MAKE_PREL = 'make-data',
+  MAKE_DATA = 'make-data',
+  MAKE_PREL = 'make-prel',
 }
 
 async function main() {

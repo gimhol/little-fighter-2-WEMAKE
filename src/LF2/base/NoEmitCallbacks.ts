@@ -5,12 +5,11 @@ export const EFUNC = (..._args: any[]) => void 0
 class Pack<F extends {}> {
   readonly fn_name: keyof F;
   get emiting() { return this._emiting }
-  
+
   private _emiting: boolean = false;
   private _pendings: { args: any[] }[] = []
   private _set: Set<F> = new Set()
-  private _dels: Set<F> = new Set()
-  private _adds: Set<F> = new Set()
+  private _waits: { type: 'del' | 'add', who: F }[] = []
 
   constructor(fn_name: keyof F) {
     this.fn_name = fn_name
@@ -18,8 +17,7 @@ class Pack<F extends {}> {
 
   add(v: F): void {
     if (this._emiting) {
-      this._dels.delete(v);
-      this._adds.add(v);
+      this._waits.push({ type: 'add', who: v })
     } else {
       this._set.add(v);
     }
@@ -27,8 +25,7 @@ class Pack<F extends {}> {
 
   delete(v: F): void {
     if (this._emiting) {
-      this._adds.delete(v);
-      this._dels.add(v);
+      this._waits.push({ type: 'del', who: v })
     } else {
       this._set.delete(v);
     }
@@ -37,8 +34,6 @@ class Pack<F extends {}> {
   emit(args: any[]): void {
     this._pendings.push({ args });
     if (this.emiting) return;
-    this.handle_deletes();
-    this.handle_adds();
     this.handle_pendings();
   }
 
@@ -50,23 +45,18 @@ class Pack<F extends {}> {
       const f = (v as any)[this.fn_name];
       f.apply(v, pending.args);
       if ('once' in v && v.once)
-        this._dels.add(f)
+        this._waits.push({ type: 'del', who: f })
     }
+    this.handle_waits();
     this._emiting = false
   }
 
-  private handle_deletes() {
-    if (!this._dels.size) return
-    for (const v of this._dels)
-      this._set.delete(v)
-    this._dels.clear()
-  }
-
-  private handle_adds() {
-    if (!this._adds.size) return
-    for (const v of this._adds)
-      this._set.add(v)
-    this._adds.clear()
+  private handle_waits() {
+    if (!this._waits.length) return
+    for (const { type, who } of this._waits)
+      if (type === 'add') this._set.add(who);
+      else this._set.delete(who);
+    this._waits.length = 0
   }
 }
 

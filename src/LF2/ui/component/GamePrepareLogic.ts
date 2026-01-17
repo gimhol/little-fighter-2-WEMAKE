@@ -23,12 +23,14 @@ export class GamePrepareLogic extends UIComponent {
       stage_row.set_visible(true).set_disabled(false);
       background_row.set_visible(false).set_disabled(true);
       if (char_menu_logic) char_menu_logic.teams = [TeamEnum.Team_1]
+      if (char_menu_logic) char_menu_logic.min_player = 1;
     } else {
       background_row.set_visible(true).set_disabled(false);
       stage_row.set_visible(false).set_disabled(true);
+      if (char_menu_logic) char_menu_logic.min_player = 2;
     }
   }
-  
+
   protected _lf2_callbacks: ILf2Callback = {
     on_broadcast: (message) => {
       if (message === 'start_game') return this.start_game();

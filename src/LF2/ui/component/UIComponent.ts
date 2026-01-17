@@ -1,4 +1,3 @@
-import { ISchema } from "@/LF2/defines";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";
@@ -9,7 +8,6 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import type { UINode } from "../UINode";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIProps } from "./UIProps";
-import { make_schema } from "@/LF2/utils/schema";
 
 /**
  * 组件

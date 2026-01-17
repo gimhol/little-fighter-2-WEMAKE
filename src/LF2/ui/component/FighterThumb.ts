@@ -1,3 +1,4 @@
+import { Entity } from "@/LF2/entity";
 import { Sine } from "../../animation/Sine";
 import Invoker from "../../base/Invoker";
 import { Defines } from "../../defines/defines";
@@ -15,20 +16,11 @@ import { UIComponent } from "./UIComponent";
  */
 export class FighterThumb extends UIComponent {
   static override readonly TAG = 'FighterThumb'
-  private _player_id?: string;
-  img_loader = new UIImgLoader(() => this.node).ignore_out_of_date();
-
-  get player_id() {
-    return this.args[0] || this._player_id || "";
-  }
-
-  get character() {
-    return this.world.slot_fighters.get(this.player_id);
-  }
-
+  private fighter?: Entity;
+  private img_loader = new UIImgLoader(() => this.node).ignore_out_of_date();
   get thumb_url(): string {
     return (
-      this.character?.data.base.small ?? Defines.BuiltIn_Imgs.CHARACTER_THUMB
+      this.fighter?.data.base.small ?? Defines.BuiltIn_Imgs.CHARACTER_THUMB
     );
   }
 
@@ -45,7 +37,7 @@ export class FighterThumb extends UIComponent {
   }
   override on_resume(): void {
     super.on_resume();
-    this._player_id = this.node.lookup_component(PlayerScore)?.player_id;
+    this.fighter = this.node.lookup_component(PlayerScore)?.fighter;
   }
 
   override on_show(): void {

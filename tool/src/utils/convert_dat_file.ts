@@ -4,6 +4,7 @@ import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
 import type { IEntityData } from "../../../src/LF2/defines/IEntityData";
 import { read_lf2_dat_file } from "./read_lf2_dat_file";
 import { write_obj_file } from "./write_obj_file";
+import { log } from "./log";
 export type IRet = ReturnType<typeof dat_to_json>;
 
 export async function convert_dat_file(
@@ -12,6 +13,12 @@ export async function convert_dat_file(
   dst_path: string,
   indexes: IDataLists,
 ): Promise<IRet> {
+  log(`convert_dat_file(
+  out_dir = ${JSON.stringify(out_dir)},
+  src_path = ${JSON.stringify(src_path)}, 
+  dst_path = ${JSON.stringify(dst_path)}, 
+  indexes = ${indexes}, 
+)`)
   dst_path = dst_path.replace(/\\/g, '/');
   out_dir = out_dir.replace(/\\/g, '/');
 
@@ -21,7 +28,7 @@ export async function convert_dat_file(
     indexes.backgrounds.find((v) => index_file_value === v.file.replace(/\\/g, '/'));
 
   const txt = await read_lf2_dat_file(src_path);
-  const ret = dat_to_json(txt, index_info!);
+  const ret = dat_to_json(txt, index_info);
   if (!ret) {
     console.log("convert failed", src_path, "=>", dst_path);
     await fs.copyFile(src_path, dst_path);

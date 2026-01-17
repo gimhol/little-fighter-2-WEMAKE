@@ -20,7 +20,10 @@
         <img src="./github-mark-white.svg" width="24px">
       </a>
     </div>
-    <div id="version_list" class="scrollview"></div>
+    <div id="main">
+      <div id="game_list" class="scrollview"></div>
+      <div id="version_list" class="scrollview"></div>
+    </div>
     <div id="foot">
       <a class="icp_link link" href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
         粤ICP备2021170807号-1
@@ -28,17 +31,25 @@
     </div>
   </div>
 
-  <template id="btn_goto_version">
+  <template id="game_item_template">
+    <div class="game_item">
+      <button class="game_title"></button>
+    </div>
+  </template>
+  <template id="version_item_template">
     <div class="version_item">
       <div class="row_1">
-        <h3 class="row_title"> <a class="el_url link"></a> </h3>
+        <h3 class="row_title">
+          <a class="el_url link"></a>
+        </h3>
         <div class="go_div">
           <a class="btn_goto_version link">Go</a>
         </div>
+        <div class="el_date"></div>
       </div>
       <div class="el_desc"></div>
       <div class="el_changelog">
-        <h4> changelog </h3>
+        <h4>Changelog</h3>
       </div>
     </div>
   </template>

@@ -7,13 +7,12 @@ This project should be able to run on node.js versions that are not too old. I h
 - v22.16.0
 - v24.10.0
 
-## Dependency Installation
-
-`npm i`
-
 ## Data Building
 
-`npm run build_data`
+``` bash
+npm run build:tool
+npm run build:data
+```
 
 This step will generate lf2:wemake data based on the original lf2 data.
 
@@ -23,4 +22,6 @@ This step will generate lf2:wemake data based on the original lf2 data.
 
 ## Running
 
-`npm run start`
+``` bash
+npm run dev
+```

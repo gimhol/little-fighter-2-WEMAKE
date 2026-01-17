@@ -1,0 +1,61 @@
+[
+  {
+    "id": "Origin",
+    "i18n": {
+      "": {
+        "date": "2026-01-15",
+        "title": "Origin",
+        "desc": [
+          "gameplays, arts, and sounds are all from \"Litter Fighter 2\" basically,",
+          "created by Marti Wong and Starsky Wong in 1999.",
+          "",
+          "The original author, Marti Wong, has now launched <a href='https://lf2.net/'>\"Little Fighter 2 Remastered\"</a>. ",
+          "Please purchase it on <a href='https://store.steampowered.com/app/3249650'>Steam</a> to support the original author.",
+          "",
+          "\"LF2:Wemake\" created by Gim in 2024."
+        ],
+        "url": "versions.json"
+      },
+      "zh": {
+        "title": "原版",
+        "desc": [
+          "玩法、美术、音效音乐来自《Litter Fighter 2》, 原作：Marti Wong，Starsky Wong。",
+          "",
+          "原作者 Marti Wong 现已推出<a href='https://lf2.net/'>《Little Fighter 2 Remastered》</a>，请在 <a href='https://store.steampowered.com/app/3249650'>Steam</a> 购买，以支持原作者。",
+          "",
+          "LF2:Wemake created by Gim in 2024。"
+        ]
+      },
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  },
+  {
+    "id": "RN-LF2",
+    "i18n": {
+      "": {
+        "date": "2026-01-15",
+        "title": "RN-LF2",
+        "desc": [
+          "RN-LF2"
+        ],
+        "url": "versions-rn.json"
+      },
+      "zh": "",
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  }
+]

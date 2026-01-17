@@ -24,10 +24,11 @@ import { make_weapon_special } from "./make_weapon_special";
 
 export default function dat_to_json(
   full_str: string,
-  datIndex: IDatIndex,
+  datIndex?: IDatIndex | null,
 ): void | IStageInfo[] | IBgData | IBaseData {
   full_str = full_str.replace(/\\\\/g, "/");
   if (full_str.startsWith("<stage>")) return make_stage_infos(full_str);
+  if (!datIndex) return;
   if (full_str.startsWith("name:")) return make_bg_data(full_str, datIndex);
   const infos_str = match_block_once(full_str, "<bmp_begin>", "<bmp_end>");
   if (!infos_str) {
