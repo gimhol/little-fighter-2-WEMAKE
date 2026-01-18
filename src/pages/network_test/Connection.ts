@@ -16,6 +16,7 @@ export interface IConnectionCallbacks {
   on_message?(resp: TResp, conn: Connection): void;
   on_room_change?(room: IRoomInfo | undefined, conn: Connection): void;
   on_rooms_change?(rooms: IRoomInfo[], conn: Connection): void;
+  on_ping?(resp: IMsgRespMap[MsgEnum.Ping], conn: Connection): void;
 }
 
 export class Connection {
@@ -29,6 +30,9 @@ export class Connection {
   protected _players: string[] = []
   protected _nickname: string;
   protected _urls: string[] = []
+  protected _rtt: number = 0;
+  protected _ping_job_timer: number = 0;
+  get rtt() { return this._rtt; }
   get client(): IClientInfo | undefined { return this._client }
   get nickname(): string { return this._nickname }
   room?: IRoomInfo;
@@ -71,12 +75,14 @@ export class Connection {
     }, {
       timeout: 1000
     }).then((resp) => {
+      this.start_ping_job();
       this._client = resp.client;
       this.callbacks.emit('on_register')(resp, this)
     }).catch((e) => {
       this.close();
       throw e;
     })
+
   }
   protected _on_message = (event: MessageEvent<any>) => {
     // console.log(`[${Connection.TAG}::_on_message]`, event.data);
@@ -111,6 +117,7 @@ export class Connection {
   }
   protected _on_close = (e: CloseEvent) => {
     console.log(`[${Connection.TAG}::_on_close]`);
+    this.stop_ping_job();
     if (this._urls.length) {
       this.try_url(this._urls.shift())
       return;
@@ -168,7 +175,8 @@ export class Connection {
     Resp extends IResp = IMsgRespMap[T]
   >(type: T, msg: TInfo<Req>, options?: ISendOpts): Promise<Resp> {
     const ws = this._ws;
-    if (!ws) return Promise.reject(new Error(`[${Connection.TAG}] not open`))
+    if (!ws || ws.readyState !== ws.OPEN)
+      return Promise.reject(new Error(`[${Connection.TAG}] not open`))
     const pid = `${++this._pid}`;
     const _req: IReq = { pid, type, is_req: true, ...msg };
     return new Promise<Resp>((resolve, reject) => {
@@ -237,7 +245,24 @@ export class Connection {
         this.callbacks.emit('on_rooms_change')(this.rooms = resp.rooms ?? [], this)
         break;
       }
+      case MsgEnum.Ping: {
+        this._rtt = resp.time - Date.now();
+        console.log('rtt:', this._rtt)
+        this.callbacks.emit("on_ping")(resp, this);
+        break;
+      }
     }
+  }
+  ping() {
+    this.send(MsgEnum.Ping, { time: Date.now() })
+  }
+  start_ping_job() {
+    this.stop_ping_job();
+    this._ping_job_timer = window.setInterval(() => this.ping(), 500);
+  }
+  stop_ping_job() {
+    if (!this._ping_job_timer) return;
+    clearInterval(this._ping_job_timer);
   }
 }
 

@@ -240,6 +240,10 @@ export class Client {
           ensure_room_owner(this, req)
         ) this.room?.set_pwd(this, req)
         break;
+      case MsgEnum.Ping:
+        if (ensure_player_info(this, req))
+          this.resp(req.type, req.pid, { time: req.time })
+        break;
     }
   }
 }
