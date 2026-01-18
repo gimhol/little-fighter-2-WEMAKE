@@ -76,7 +76,7 @@ Currently, there are still many problems. Now you can see it on the index page.
 
 ============================= 2025-01-18 ==============================
 
-Sometimes it’s tricky to tell whether a object is an ally or an enemy.
+Sometimes it’s tricky to tell whether an object is an ally or an enemy.
 Especially when there are too many entities on the field, 
 or when you spot a projectile flying toward you from afar. 
 
