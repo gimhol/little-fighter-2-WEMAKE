@@ -89,8 +89,14 @@ export default class Item {
     if (!data) { debugger; return false; }
     const e = Factory.inst.create_entity(data.type, this.world, data);
     if (!e) { debugger; return false; }
-    let { hp, act, facing, x, y, z, reserve, hp_map, mp, mp_map } = this.info;
+    let {
+      hp, act, facing, x, y, z, reserve, hp_map, mp, mp_map,
+      outline_color
+    } = this.info;
     if (this.times) this.times--;
+    e.outline_color = outline_color
+    if (is_fighter(e)) e.outline_color = outline_color ?? '#FF0000'
+
     e.ctrl = Factory.inst.create_ctrl(e.data.id, "", e);
     e.dead_gone = true;
     e.reserve = reserve ?? 0;

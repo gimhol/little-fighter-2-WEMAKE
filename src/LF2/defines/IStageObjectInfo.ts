@@ -50,4 +50,5 @@ export interface IStageObjectInfo {
    */
   join?: number;
   join_team?: string;
+  outline_color?: string;
 }

@@ -196,7 +196,7 @@ export class ImageMgr implements IImageMgr {
     const key = this._gen_key(f);
     await this.load_img(key + '#white', f.path, [{
       type: 'mask',
-      packs: [{ operation: 'source-in', color: 'black' }]
+      packs: [{ operation: 'source-in', color: '#FFFFFF88' }]
     }])
     return this.load_img(key, f.path);
   }

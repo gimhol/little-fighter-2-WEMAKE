@@ -1,5 +1,5 @@
 import type { IEntityData, IFrameInfo, ITexturePieceInfo, TFace } from "@/LF2/defines";
-import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
+import { Builtin_FrameId, Defines, StateEnum } from "@/LF2/defines";
 import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
 import { clamp, floor, PI } from "@/LF2/utils";
@@ -53,7 +53,8 @@ export class EntityRender {
   protected blood_mesh_x = 0;
   protected blood_mesh_y = 0;
   protected blood_mesh_z = 0;
-  protected outline_width: number = 4;
+  protected outline_width: number = 2;
+  outline_color: string | undefined = void 0;
 
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
@@ -105,8 +106,10 @@ export class EntityRender {
         mesh.material.depthWrite = data.base.depth_write;
       if (typeof data.base.render_order === "number")
         mesh.renderOrder = data.base.render_order;
+      this.entity.outline_color
+      this.outline_color = Defines.TeamInfoMap[this.entity.team]?.outline_color
+      mesh.material.color = new T.Color(this.outline_color)
     }
-
     {
       const texture = this.images.get("0")?.pic?.texture;
       const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
@@ -126,12 +129,6 @@ export class EntityRender {
       if (typeof data.base.render_order === "number")
         mesh.renderOrder = data.base.render_order;
     }
-
-
-
-
-
-
     this.blood_mesh = this.blood_mesh || new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
     this.blood_mesh.visible = false;
   }
@@ -246,9 +243,9 @@ export class EntityRender {
 
     const is_visible = !entity.invisible;
     const is_blinking = !!entity.blinking;
-    main_mesh.visible = outline_mesh.visible = is_visible;
+    main_mesh.visible = is_visible;
     if (is_blinking && is_visible) {
-      main_mesh.visible = outline_mesh.visible = 0 === Math.floor(entity.blinking / 4) % 2;
+      main_mesh.visible = 0 === Math.floor(entity.blinking / 4) % 2;
     }
 
 
@@ -268,6 +265,11 @@ export class EntityRender {
       this.shaking_time = 0;
     }
 
+    if (this.entity.outline_color != this.outline_color) {
+      this.outline_color = this.entity.outline_color;
+      if (this.outline_color) outline_mesh.material.color.set(this.outline_color)
+    }
+    outline_mesh.visible = !!this.outline_color && main_mesh.visible
     outline_mesh.position.set(
       this.main_mesh.position.x - this.outline_width,
       this.main_mesh.position.y + this.outline_width,

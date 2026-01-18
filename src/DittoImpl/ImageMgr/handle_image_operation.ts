@@ -45,14 +45,17 @@ export function handle_image_operation_flip(src: HTMLCanvasElement | HTMLImageEl
 }
 export function handle_image_operation_mask(src: HTMLCanvasElement | HTMLImageElement, op: IImageOp_Color): HTMLCanvasElement {
   const { canvas, src_w, src_h } = pre_job(src);
+  const ctx = canvas.getContext('2d')!;
   const sx = 0;
   const sy = 0;
   const sw = src_w;
   const sh = src_h;
   canvas.width = sw;
-  canvas.height = sh
-  const ctx = canvas.getContext('2d')!;
-  ctx.drawImage(src, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
+  canvas.height = sh;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(src, sx, sy, sw, sh, 0, 0, sw, sh)
+
   for (const { operation, color } of op.packs) {
     ctx.globalCompositeOperation = operation
     temp_cavnas.width = canvas.width
