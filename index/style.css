@@ -44,6 +44,7 @@ button:hover {
   font-weight: normal;
 }
 
+#game_desc a,
 .el_desc a,
 .link {
   color: var(--link-color);
@@ -51,6 +52,7 @@ button:hover {
   transition: all 200ms;
 }
 
+#game_desc a:hover,
 .el_desc a:hover,
 .link:hover {
   color: var(--link-color-hover);
@@ -111,12 +113,32 @@ button:hover {
   background-color: var(--primary-color-hover);
 }
 
+.main_right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.game_desc_zone {
+  padding: 0px 20px 20px;
+  border-bottom: 1px var(--divider-color) dashed;
+}
+
+#game_desc {
+  color: var(--txt-color);
+  white-space: pre-wrap;
+}
+
+.el_changelog {
+  color: var(--txt-color);
+  white-space: pre-wrap;
+}
+
 #version_list {
   overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  flex: 1;
 }
 
 #main {
@@ -172,7 +194,6 @@ button:hover {
   justify-content: center;
   padding: 5px;
 }
-
 
 .scrollview::-webkit-scrollbar {
   width: 8px;

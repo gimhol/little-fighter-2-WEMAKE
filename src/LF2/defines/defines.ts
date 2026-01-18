@@ -273,6 +273,7 @@ export namespace Defines {
     i18n: string;
     txt_color: string;
     txt_shadow_color: string;
+    outline_color?: string;
   }
 
   export interface ITeamInfoMap {
@@ -300,21 +301,25 @@ export namespace Defines {
       i18n: "Team_1",
       txt_color: "#4f9bff",
       txt_shadow_color: "#001e46",
+      outline_color: "#4f9bff",
     },
     [TeamEnum.Team_2]: {
       i18n: "Team_2",
       txt_color: "#ff4f4f",
       txt_shadow_color: "#460000",
+      outline_color: "#ff4f4f",
     },
     [TeamEnum.Team_3]: {
       i18n: "Team_3",
       txt_color: "#3cad0f",
       txt_shadow_color: "#154103",
+      outline_color: "#3cad0f",
     },
     [TeamEnum.Team_4]: {
       i18n: "Team_4",
       txt_color: "#ffd34c",
       txt_shadow_color: "#9a5700",
+      outline_color: "#ffd34c",
     },
   };
 

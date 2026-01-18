@@ -38,6 +38,13 @@ export class Entity {
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected _spawn_time: number = 0;
 
+  protected _outline_color: string | undefined = void 0;
+  get outline_color(): string | undefined {
+    return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
+  };
+  set outline_color(v: string | undefined) {
+    this._outline_color = v;
+  }
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 
@@ -688,6 +695,7 @@ export class Entity {
     this.collided_list.length = 0;
     this.lastest_collision = null;
     this.lastest_collided = null;
+    this._outline_color = void 0;
   }
 
   set_holder(v: Entity | null): this {
