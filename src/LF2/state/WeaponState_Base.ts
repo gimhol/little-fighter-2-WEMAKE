@@ -1,4 +1,4 @@
-import { IFrameInfo } from "../defines";
+import { IFrameInfo, W_T } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
 import State_Base from "./State_Base";
@@ -26,8 +26,11 @@ export default class WeaponState_Base extends State_Base {
   hit_ground_rebouncing(e: Entity, nf: string | undefined) {
     const { y: vy, x: vx, z: vz } = e.landing_velocity;
     const { base, indexes } = e.data;
+    const is_base_ball =
+      e.data.base.type === W_T.Baseball ||
+      e.data.base.type === W_T.Drink;
     const dvy = round_float(-vy * (base.bounce ?? 0));
-    const dvx = round_float(vx * 0.5);
+    const dvx = round_float(vx * (is_base_ball ? 0.6 : 0.5));
     const dvz = round_float(vz * 0.5);
     const min_bounce_vy = 1;
     if (this._hit_ground_weapons.has(e)) {
@@ -41,6 +44,13 @@ export default class WeaponState_Base extends State_Base {
       e.enter_frame({ id: nf });
     } else {
       e.set_velocity(dvx, dvy, dvz);
+      if (!is_base_ball || (dvx > -6 && dvx < 6)) {
+        e.enter_frame(e.find_align_frame(
+          e.frame.id,
+          indexes?.throwings,
+          indexes?.in_the_skys
+        ));
+      }
     }
   }
 }

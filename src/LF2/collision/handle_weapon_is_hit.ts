@@ -1,6 +1,6 @@
 import { ICollision } from "../base";
 import { BuiltIn_OID, Defines, W_T } from "../defines";
-import { round } from "../utils";
+import { abs, round } from "../utils";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
@@ -25,25 +25,31 @@ export function handle_weapon_is_hit(collision: ICollision): void {
   let vy = round((itr.dvy ? itr.dvy : Defines.DEFAULT_IVY_D) / weight_y);
 
 
+  const is_base_ball =
+    victim.data.base.type === W_T.Baseball ||
+    victim.data.base.type === W_T.Drink;
+
   if (victim.data.base.type !== W_T.Heavy || is_fly) {
     victim.set_velocity(vx, vy, 0)
     victim.team = attacker.team;
     victim.lf2.mt.mark = 'hwih_1'
-    victim.next_frame = { id: victim.lf2.mt.pick(victim.data.indexes?.in_the_skys) };
+    let nid: string | undefined = void 0
+    if (is_base_ball && (vx >= 6 || vx <= -6))
+      nid = victim.lf2.mt.pick(victim.data.indexes?.throwings)
+    else
+      nid = victim.lf2.mt.pick(victim.data.indexes?.in_the_skys)
+    victim.next_frame = { id: nid };
   }
 
   if (
     attacker.data.id === BuiltIn_OID.Weapon_Stick &&
-    (
-      victim.data.id === BuiltIn_OID.Weapon_baseball ||
-      victim.data.id === BuiltIn_OID.Weapon_milk ||
-      victim.data.id === BuiltIn_OID.Weapon_Beer
-    )
+    is_base_ball
   ) {
     const s = attacker.data.base.strength || 1
-    vx = attacker.facing * s * 20
+    vx = attacker.facing * s * 20 // super fast!
     victim.lf2.mt.mark = 'hwih_2'
     victim.next_frame = { id: victim.lf2.mt.pick(victim.data.indexes?.throwings) }
+    victim.set_velocity(vx)
   }
 
 }
