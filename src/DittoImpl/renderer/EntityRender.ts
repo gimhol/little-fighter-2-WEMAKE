@@ -15,8 +15,9 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const images = lf2.images as ImageMgr
   for (const key of Object.keys(files)) {
     const img = images.find_by_pic_info(files[key]);
-    if (!img) continue;
-    ret.set(key, img.clone());
+    if (img) ret.set(key, img.clone());
+    const img_w = images.find_by_white_info(files[key]);
+    if (img_w) ret.set(key + '#w', img_w.clone());
   }
   return ret;
 }
@@ -31,6 +32,8 @@ export class EntityRender {
   protected images!: Map<string, RImageInfo>;
   entity!: Entity;
   protected main_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+  protected outline_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   protected variants = new Map<string, string[]>();
   protected shaking: number = 0;
@@ -50,6 +53,7 @@ export class EntityRender {
   protected blood_mesh_x = 0;
   protected blood_mesh_y = 0;
   protected blood_mesh_z = 0;
+  protected outline_width: number = 4;
 
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
@@ -82,24 +86,51 @@ export class EntityRender {
     }
     this._data = entity.data;
     this.images = get_img_map(lf2, entity.data);
-    const first_txt = this.images.get("0")?.pic?.texture;
-    const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
-      BODY_GEOMETRY,
-      new T.MeshBasicMaterial({
-        map: first_txt,
-        transparent: true,
-      }),
-    )
 
-    if (first_txt) first_txt.onUpdate = () => mesh.material.needsUpdate = true;
-    mesh.visible = false;
-    mesh.name = "Entity:" + data.id;
-    if (typeof data.base.depth_test === "boolean")
-      mesh.material.depthTest = data.base.depth_test;
-    if (typeof data.base.depth_write === "boolean")
-      mesh.material.depthWrite = data.base.depth_write;
-    if (typeof data.base.render_order === "number")
-      mesh.renderOrder = data.base.render_order;
+    {
+      const texture = this.images.get("0#w")?.pic?.texture;
+      const mesh = this.outline_mesh = this.outline_mesh || new T.Mesh(
+        BODY_GEOMETRY,
+        new T.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+        }),
+      )
+      if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
+      mesh.visible = false;
+      mesh.name = "Entity:" + data.id;
+      if (typeof data.base.depth_test === "boolean")
+        mesh.material.depthTest = data.base.depth_test;
+      if (typeof data.base.depth_write === "boolean")
+        mesh.material.depthWrite = data.base.depth_write;
+      if (typeof data.base.render_order === "number")
+        mesh.renderOrder = data.base.render_order;
+    }
+
+    {
+      const texture = this.images.get("0")?.pic?.texture;
+      const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
+        BODY_GEOMETRY,
+        new T.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+        }),
+      )
+      if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
+      mesh.visible = false;
+      mesh.name = "Entity:" + data.id;
+      if (typeof data.base.depth_test === "boolean")
+        mesh.material.depthTest = data.base.depth_test;
+      if (typeof data.base.depth_write === "boolean")
+        mesh.material.depthWrite = data.base.depth_write;
+      if (typeof data.base.render_order === "number")
+        mesh.renderOrder = data.base.render_order;
+    }
+
+
+
+
+
 
     this.blood_mesh = this.blood_mesh || new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
     this.blood_mesh.visible = false;
@@ -108,38 +139,60 @@ export class EntityRender {
   on_mount() {
     this.reset(this.entity);
     this.world_renderer.scene.inner.add(
+      this.outline_mesh,
       this.main_mesh,
       this.blood_mesh
     );
   }
 
   on_unmount(): void {
+    this.outline_mesh.removeFromParent();
     this.main_mesh.removeFromParent();
     this.blood_mesh.removeFromParent();
   }
 
   apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
-    const { images, main_mesh: entity_mesh } = this
+    const { images, main_mesh, outline_mesh } = this
     if (info) {
       const { x, y, w, h, tex, pixel_w, pixel_h } = info;
       const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
-      const img = images.get(real_tex);
-      if (img?.pic) {
-        img.pic.texture.offset.set(x, y);
-        img.pic.texture.repeat.set(w, h);
-        const { material: m } = entity_mesh;
-        if (img.pic.texture !== m.map) {
-          m.map = img.pic.texture;
-          m.needsUpdate = true;
+      {
+        const img = images.get(real_tex);
+        if (img?.pic) {
+          img.pic.texture.offset.set(x, y);
+          img.pic.texture.repeat.set(w, h);
+          const { material: m } = main_mesh;
+          if (img.pic.texture !== m.map) {
+            m.map = img.pic.texture;
+            m.needsUpdate = true;
+          }
         }
+        main_mesh.scale.set(pixel_w, pixel_h, 0);
       }
-      entity_mesh.scale.set(pixel_w, pixel_h, 0);
+      {
+        const img = images.get(real_tex + '#w');
+        if (img?.pic) {
+          img.pic.texture.offset.set(x, y);
+          img.pic.texture.repeat.set(w, h);
+          const { material: m } = outline_mesh;
+          if (img.pic.texture !== m.map) {
+            m.map = img.pic.texture;
+            m.needsUpdate = true;
+          }
+        }
+        outline_mesh.scale.set(
+          pixel_w + this.outline_width * 2,
+          pixel_h + this.outline_width * 2,
+          0
+        );
+      }
     } else {
-      entity_mesh.scale.set(0, 0, 0);
+      main_mesh.scale.set(0, 0, 0);
+      outline_mesh.scale.set(0, 0, 0);
     }
   }
   render(dt: number) {
-    const { entity, main_mesh: entity_mesh } = this;
+    const { entity, main_mesh, outline_mesh } = this;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     const { frame, facing } = entity;
     const { bpoint } = frame;
@@ -162,22 +215,22 @@ export class EntityRender {
       if (this._tex !== tex)
         this.apply_tex(entity, this._tex = tex)
       const { centerx, centery, state, bpoint } = frame;
-      const offset_x = entity.facing === 1 ? centerx : entity_mesh.scale.x - centerx;
+      const offset_x = entity.facing === 1 ? centerx : main_mesh.scale.x - centerx;
       if (state === StateEnum.Message) {
         let { cam_x } = this.entity.world.renderer;
         let cam_r = cam_x + this.entity.world.screen_w;
-        cam_r -= entity_mesh.scale.x - offset_x
+        cam_r -= main_mesh.scale.x - offset_x
         cam_x += offset_x
         x = clamp(x, cam_x, cam_r)
       }
       this.main_mesh_x = Math.round(x - offset_x)
       this.main_mesh_y = Math.round(y - z / 2 + centery)
       this.main_mesh_z = Math.round(z)
-      entity_mesh.position.set(this.main_mesh_x, this.main_mesh_y, this.main_mesh_z);
 
+      main_mesh.position.set(this.main_mesh_x, this.main_mesh_y, this.main_mesh_z);
       if (bpoint) {
         let { x: bx, y: by, z: bz = 0, r = 0 } = bpoint
-        bx = entity.facing === 1 ? bx : entity_mesh.scale.x - bx;
+        bx = entity.facing === 1 ? bx : main_mesh.scale.x - bx;
         this.blood_mesh.position.set(
           this.blood_mesh_x = this.main_mesh_x + bx - entity.facing / 2,
           this.blood_mesh_y = this.main_mesh_y - by - 0.5,
@@ -187,15 +240,15 @@ export class EntityRender {
       }
     }
 
-    const is_b_v = !!bpoint && entity_mesh.visible && entity.hp < entity.hp_max * 0.33;
+    const is_b_v = !!bpoint && main_mesh.visible && entity.hp < entity.hp_max * 0.33;
     this.blood_mesh.visible = is_b_v;
 
 
     const is_visible = !entity.invisible;
     const is_blinking = !!entity.blinking;
-    entity_mesh.visible = is_visible;
+    main_mesh.visible = outline_mesh.visible = is_visible;
     if (is_blinking && is_visible) {
-      entity_mesh.visible = 0 === Math.floor(entity.blinking / 4) % 2;
+      main_mesh.visible = outline_mesh.visible = 0 === Math.floor(entity.blinking / 4) % 2;
     }
 
 
@@ -208,11 +261,17 @@ export class EntityRender {
     if (this.shaking || this.extra_shaking_time > 0) {
       this.shaking_time += dt
       const f = (floor(this.shaking_time / 4) % 2) || -1
-      entity_mesh.position.x = this.main_mesh_x + facing * f;
+      main_mesh.position.x = this.main_mesh_x + facing * f;
       this.blood_mesh.position.x = this.blood_mesh_x + facing * f;
       if (!shaking) this.extra_shaking_time -= dt
     } else {
       this.shaking_time = 0;
     }
+
+    outline_mesh.position.set(
+      this.main_mesh.position.x - this.outline_width,
+      this.main_mesh.position.y + this.outline_width,
+      this.main_mesh.position.z
+    );
   }
 }

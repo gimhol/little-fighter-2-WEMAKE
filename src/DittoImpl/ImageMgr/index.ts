@@ -1,21 +1,22 @@
-import AsyncValuesKeeper from "../LF2/base/AsyncValuesKeeper";
-import { ILegacyPictureInfo } from "../LF2/defines/ILegacyPictureInfo";
-import type IPicture from "../LF2/defines/IPicture";
-import { IPictureInfo } from "../LF2/defines/IPictureInfo";
-import type { IStyle } from "../LF2/defines/IStyle";
-import { IImageMgr, ImageOperation } from "../LF2/ditto/image/IImageMgr";
-import type { LF2 } from "../LF2/LF2";
-import { validate_ui_img_operation_crop } from "../LF2/loader/validate_ui_img_operation_crop";
-import { get_alpha_from_color } from "../LF2/ui/utils/get_alpha_from_color";
-import { is_positive_int, max, round } from "../LF2/utils";
-import { create_img_ele } from "../Utils/create_img_ele";
-import { get_blob } from "../Utils/get_blob";
-import * as T from "./_t";
-import { md5 } from "./md5";
-import { p_create_picture } from "./renderer/create_picture";
-import { error_texture } from "./renderer/error_texture";
-import { RImageInfo } from "./RImageInfo";
-import { RTextInfo } from "./RTextInfo";
+import AsyncValuesKeeper from "../../LF2/base/AsyncValuesKeeper";
+import { ILegacyPictureInfo } from "../../LF2/defines/ILegacyPictureInfo";
+import type IPicture from "../../LF2/defines/IPicture";
+import { IPictureInfo } from "../../LF2/defines/IPictureInfo";
+import type { IStyle } from "../../LF2/defines/IStyle";
+import { IImageMgr, ImageOperation } from "../../LF2/ditto/image/IImageMgr";
+import type { LF2 } from "../../LF2/LF2";
+import { validate_ui_img_operation_crop } from "../../LF2/loader/validate_ui_img_operation_crop";
+import { get_alpha_from_color } from "../../LF2/ui/utils/get_alpha_from_color";
+import { is_positive_int, max, round } from "../../LF2/utils";
+import { create_img_ele } from "../../Utils/create_img_ele";
+import { get_blob } from "../../Utils/get_blob";
+import * as T from "../_t";
+import { md5 } from "../md5";
+import { p_create_picture } from "../renderer/create_picture";
+import { error_texture } from "../renderer/error_texture";
+import { RImageInfo } from "../RImageInfo";
+import { RTextInfo } from "../RTextInfo";
+import { handle_image_operation_mask as handle_image_operation_mask, handle_image_operation_crop, handle_image_operation_flip, handle_image_operation_resize } from "./handle_image_operation";
 export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
@@ -44,6 +45,7 @@ export class ImageMgr implements IImageMgr {
 
     const vaild_operations = operations?.filter(v => {
       switch (v.type) {
+        case "mask": return true;
         case "crop":
           return validate_ui_img_operation_crop(v)
         case "resize":
@@ -53,7 +55,6 @@ export class ImageMgr implements IImageMgr {
         case "flip":
           return v.x || v.y;
       }
-      return false;
     });
 
     if (!vaild_operations?.length) {
@@ -193,53 +194,25 @@ export class ImageMgr implements IImageMgr {
 
   async load_by_pic_info(f: ILegacyPictureInfo | IPictureInfo): Promise<RImageInfo> {
     const key = this._gen_key(f);
+    await this.load_img(key + '#white', f.path, [{
+      type: 'mask',
+      packs: [{ operation: 'source-in', color: 'black' }]
+    }])
     return this.load_img(key, f.path);
   }
-
+  find_by_white_info(f: IPictureInfo | ILegacyPictureInfo): RImageInfo | undefined {
+    return this.infos.get(this._gen_key(f) + '#white');
+  }
   find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): RImageInfo | undefined {
     return this.infos.get(this._gen_key(f));
   }
 
   private edit_image(src: HTMLCanvasElement | HTMLImageElement, op: ImageOperation): HTMLCanvasElement {
-    const src_w = src.width;
-    const src_h = src.height;
-    const src_url = src.getAttribute('src-url') || ''
     switch (op.type) {
-      case 'crop': {
-        const scale = Number(src.getAttribute("scale")) || 1
-        const ret = document.createElement("canvas")
-        ret.setAttribute('scale', '' + scale)
-        ret.setAttribute('src-url', src_url)
-        const sx = op.x ? op.x * scale : 0;
-        const sy = op.y ? op.y * scale : 0;
-        const sw = op.w ? op.w * scale : src_w;
-        const sh = op.h ? op.h * scale : src_h;
-        ret.width = op.dw ? op.dw * scale : sw;
-        ret.height = op.dh ? op.dh * scale : sh
-        const ctx = ret.getContext('2d');
-        ctx?.drawImage(src, sx, sy, sw, sh, 0, 0, ret.width, ret.height)
-        return ret;
-      }
-      case 'resize': {
-        const ret = document.createElement("canvas")
-        ret.setAttribute('src-url', src_url)
-        const dst_w = ret.width = op.w > 0 ? op.w : src_w
-        const dst_h = ret.height = op.h > 0 ? op.h : src_h
-        const dst_ctx = ret.getContext('2d');
-        dst_ctx?.drawImage(src, 0, 0, dst_w, dst_h, 0, 0, src_w, src_h)
-        return ret;
-      }
-      case 'flip': {
-        const ret = document.createElement("canvas")
-        ret.setAttribute('src-url', src_url)
-        const w = ret.width = src_w;
-        const h = ret.height = src_h;
-        const ctx = ret.getContext('2d');
-        if (op.x) { ctx?.scale(-1, 1); ctx?.translate(-w, 0) }
-        if (op.y) { ctx?.scale(1, -1); ctx?.translate(0, -h) }
-        ctx?.drawImage(src, 0, 0, w, h, 0, 0, w, h)
-        return ret;
-      }
+      case 'mask': return handle_image_operation_mask(src, op);
+      case 'crop': return handle_image_operation_crop(src, op);
+      case 'resize': return handle_image_operation_resize(src, op);
+      case 'flip': return handle_image_operation_flip(src, op);
     }
   }
 }

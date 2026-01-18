@@ -103,6 +103,7 @@ class Inner {
       if (!is_non_blank_str(src)) continue;
       this.lf2.on_loading_content(`${src}`, 0);
       await this.lf2.images.load_img(src, src);
+      // await this.lf2.images.load_img(src + '?white', src);
     }
     for (const k of Object.keys(Defines.BuiltIn_Dats)) {
       const src = (Defines.BuiltIn_Dats as any)[k];
