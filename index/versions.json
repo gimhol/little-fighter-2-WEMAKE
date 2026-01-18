@@ -1,4 +1,31 @@
 [
+    {
+    "id": "v0.1.4",
+    "i18n": {
+      "": {
+        "date": "2026-01-17",
+        "title": "v0.1.5",
+        "url": "https://lf.gim.ink/0.1.5/",
+        "desc": "",
+        "changelog": [
+          "feat: add “team outline” effect"
+        ]
+      },
+      "zh": {
+        "changelog": [
+          "feat: 添加“队伍描边”效果"
+        ]
+      },
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  },
   {
     "id": "v0.1.4",
     "i18n": {
