@@ -74,3 +74,24 @@ fix: Fixed the problem of incorrect relationship between difficulty and the numb
 Experiment: I've chosen a revised LF2 (RN-LF2) to test the data conversion. 
 Currently, there are still many problems. Now you can see it on the index page.
 
+============================= 2025-01-18 ==============================
+
+Sometimes it’s tricky to tell whether a object is an ally or an enemy.
+Especially when there are too many entities on the field, 
+or when you spot a projectile flying toward you from afar. 
+
+That’s why I’m trying to add a “team outline” effect to LF2: Wemake.（See figure below）
+
+[img]https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png[/img]
+
+[img]https://lf.gim.ink/docs/image/team_outline_effect_vs_mode.png[/img]
+
+This feature will double the texture loading volume, which will result in slower loading speeds.
+
+It will also double the number of rendered entities on the field, 
+which may affect the game performance as well. 
+However, it seems to run fine on my device for now.
+
+v0.1.5 release:
+
+feat: add “team outline” effect
