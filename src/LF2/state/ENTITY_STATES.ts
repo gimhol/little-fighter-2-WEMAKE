@@ -73,6 +73,7 @@ ENTITY_STATES.add(
   new CharacterState_Lying(),
   new CharacterState_Caught(),
   new CharacterState_Injured(),
+  new CharacterState_Injured(StateEnum.Tired),
   new CharacterState_Base(StateEnum.Z_Moveable),
   new CharacterState_Teleport2NearestEnemy(),
   new CharacterState_Teleport2FarthestAlly(),
@@ -84,8 +85,5 @@ ENTITY_STATES.add(
     override on_landing(e: Entity): void {
       e.enter_frame(e.frame.next);
     }
-  })(StateEnum.NextAsLanding),
-  new (class extends CharacterState_Base {
-    override on_landing(e: Entity): void { }
-  })(StateEnum.Injured),
+  })(StateEnum.NextAsLanding)
 );

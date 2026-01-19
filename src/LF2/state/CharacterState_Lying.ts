@@ -1,4 +1,4 @@
-import { StateEnum, type IFrameInfo } from "../defines";
+import { StateEnum, WeaponType, type IFrameInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import type { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";
@@ -9,7 +9,10 @@ export default class CharacterState_Lying extends CharacterState_Base {
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     e.ctrl.reset_key_list();
-    e.drop_holding();
+    const holding = e.holding
+    if (holding) e.drop_holding();
+    if (holding?.data.base.type === WeaponType.Heavy)
+      holding.team = e.team;
     e.toughness = e.toughness_max;
     e.toughness_resting = 0;
     if (e.hp <= 0) this.on_dead(e)

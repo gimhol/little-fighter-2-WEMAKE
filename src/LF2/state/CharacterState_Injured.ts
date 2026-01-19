@@ -9,7 +9,10 @@ export class CharacterState_Injured extends CharacterState_Base {
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     super.enter?.(e, prev_frame);
     e.ctrl.reset_key_list();
-    if (e.holding?.data.base.type === WeaponType.Heavy)
-      e.drop_holding() 
+    const holding = e.holding
+    if (holding?.data.base.type === WeaponType.Heavy) {
+      e.drop_holding()
+      holding.team = e.team;
+    }
   }
 }
