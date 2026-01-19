@@ -17,6 +17,7 @@ export class States {
   }
   add(...values: State_Base[]): this {
     for (const value of values) {
+    if (this.map.has(value.state)) debugger;
       this.map.set(value.state, value);
     }
     return this;

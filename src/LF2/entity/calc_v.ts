@@ -30,10 +30,12 @@ export function calc_v(
     case SpeedMode.AccTo: {
       speed *= direction;
       acc = acc ? acc * direction : void 0;
+      if (!acc) return old;
       if (
-        !acc ||
         (speed > 0 && old >= speed) ||
-        (speed < 0 && old <= speed) ||
+        (speed < 0 && old <= speed)
+      ) return speed
+      if (
         (speed > old && acc < 0) ||
         (speed < old && acc > 0)
       ) return old;

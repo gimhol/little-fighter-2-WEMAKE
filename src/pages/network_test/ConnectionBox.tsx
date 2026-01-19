@@ -12,6 +12,8 @@ import { LF2 } from "@/LF2";
 import { useCallbacks } from "./useCallbacks";
 import { useForage } from "@/hooks/useForage";
 import { useTranslation } from 'react-i18next';
+import Frame from "@/Component/Frame";
+import { Flex } from "@/Component/Flex";
 
 export interface IConnectionBoxProps extends ICombineProps {
   on_conn_change?(conn: Connection | null): void;
@@ -22,8 +24,10 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
   const { t } = useTranslation();
   const { on_state_change, on_conn_change, lf2, ..._p } = props;
   const [ref, on_ref] = useForwardedRef(f_ref)
+  const ref_responser = useRef<HTMLSpanElement>(null)
   useFloating({
-    responser: ref.current,
+    target: ref.current,
+    responser: ref_responser.current,
     pivot_x: 0,
     pivot_y: 1,
     followPercent: true,
@@ -80,18 +84,25 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
   }, [conn])
 
   return (
-    <Combine direction='column' {..._p} ref={on_ref}>
+    <Frame  {..._p} ref={on_ref}>
+
+      <Text size='s' style={{ padding: '2px 5px' }} ref={ref_responser}>
+        {t('connect_box')}
+      </Text>
       <Input
         style={{ width: '100%' }}
         value={address}
         onChange={set_address}
         disabled={!!conn_state}
         data-flex={1}
+        variants={['no_border']}
         prefix={<Text size='s'>{t('address')}:</Text>}
         onKeyDown={e => e.stopPropagation()}
       />
-      <Combine>
+      <Flex>
         <Input
+          variants={['no_border']}
+          style={{ flex: 1 }}
           value={nickname}
           onChange={set_nickname}
           disabled={!!conn_state}
@@ -100,6 +111,7 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
           onKeyDown={e => e.stopPropagation()}
         />
         <Button
+          variants={['no_border']}
           disabled={conn_state === TriState.Pending || !address.trim()}
           onClick={connect}>
           {{
@@ -108,8 +120,8 @@ function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivE
             [TriState.True]: t('disconnect'),
           }[conn_state]}
         </Button>
-      </Combine>
-    </Combine>
+      </Flex>
+    </Frame>
   )
 }
 export const ConnectionBox = forwardRef<HTMLDivElement, IConnectionBoxProps>(_ConnectionBox)

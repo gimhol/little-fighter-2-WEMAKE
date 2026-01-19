@@ -7,7 +7,7 @@ import { Context } from './Context.js';
 import { RoomMgr } from './RoomMgr.js';
 import "./init.js";
 import { read_file } from "./read_file.js";
-import arg from "../node_modules/arg/index.js"
+import arg from "../node_modules/arg"
 import info from "../package.json"
 
 const args = arg({

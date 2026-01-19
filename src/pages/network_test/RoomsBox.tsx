@@ -17,6 +17,7 @@ import styles from "./styles.module.scss";
 import { TriState } from "./TriState";
 import { useRoom } from "./useRoom";
 import { useRooms } from "./useRooms";
+import { useCallbacks } from "./useCallbacks";
 
 export interface IRoomsBoxProps extends IFrameProps {
   conn?: Connection | null;
@@ -42,6 +43,15 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
     if (!conn) return;
     conn.send(MsgEnum.ListRooms, {}, { loose: true }).catch(e => { })
   }, [conn])
+
+  const ref_rtt = useRef<HTMLSpanElement>(null)
+  useCallbacks(conn?.callbacks, {
+    on_ping: (resp, conn) => {
+      if (resp.client !== conn.client?.id) return;
+      const el = ref_rtt.current;
+      if (el) el.innerText = `${conn.rtt}ms`
+    }
+  }, [])
 
   useEffect(() => {
     if (!conn || conn_state !== TriState.True || room)
@@ -111,6 +121,7 @@ function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
           <Text style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>
             {conn?.url}
           </Text>
+          <Text ref={ref_rtt} />
         </Flex>
         <Flex>
           <Show show={!room && conn_state && !room_joining && !room_creating}>

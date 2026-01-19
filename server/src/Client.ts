@@ -87,7 +87,7 @@ export class Client {
   }
 
   private handle_ws_msg = (msg: RawData) => {
-    console.info(`[${Client.TAG}::handle_ws_msg] msg: ${msg}`);
+    // console.info(`[${Client.TAG}::handle_ws_msg] msg: ${msg}`);
     const str = '' + msg;
     try {
       const what: TReq | TResp = JSON.parse(str);
@@ -242,7 +242,9 @@ export class Client {
         break;
       case MsgEnum.Ping:
         if (ensure_player_info(this, req))
-          this.resp(req.type, req.pid, { time: req.time })
+          this.resp(req.type, req.pid, { time: req.time, client: this.id })
+        if (this.room)
+          this.room.broadcast(req.type, { time: req.time, client: this.id }, this)
         break;
     }
   }

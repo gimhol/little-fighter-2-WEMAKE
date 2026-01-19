@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, HTMLAttributes, useEffect, useMemo, useState } from "react";
+import { ForwardedRef, forwardRef, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { Connection } from "./Connection";
 import { useRoom } from "./useRoom";
 import Frame from "@/Component/Frame";
@@ -12,6 +12,7 @@ import { MsgEnum } from "@/Net";
 import { useFloating, useForwardedRef } from "@fimagine/dom-hooks";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/Component/Input";
+import { useCallbacks } from "./useCallbacks";
 export interface IRoomBoxProps extends HTMLAttributes<HTMLDivElement> {
   conn?: Connection | null
 }
@@ -36,6 +37,16 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
     target: ref_floating_view.current,
     followPercent: true,
   })
+  const ref_rtts = useRef<{ [x in string]?: HTMLSpanElement | null }>({})
+
+  useCallbacks(conn?.callbacks, {
+    on_ping: (resp, conn) => {
+      if (!resp.client) return
+      const el = ref_rtts.current[resp.client];
+      if (el) el.innerText = `${conn.rtt}ms`
+    }
+  }, [])
+
   useEffect(() => {
     let sec = 5
     set_countdown(sec);
@@ -75,13 +86,15 @@ export function _RoomBox(props: IRoomBoxProps, f_ref: ForwardedRef<HTMLDivElemen
       </Flex>
       <List data={players} itemKey={r => r.id!} styles={{ verticalScrollBarThumb: { backgroundColor: 'rgba(255,255,255,0.3)' } }}>
         {(other, index) => {
+          const client_id = '' + other.id
           const is_self = other.id === conn?.client?.id
           return (
             <Flex direction='column' align='stretch' gap={5}>
               <Flex gap={10} align='center' justify='space-between' style={{ margin: 5 }}>
-                <Text >
+                <Text>
                   {other.name}
                 </Text>
+                <Text ref={r => { ref_rtts.current[client_id] = r }} />
                 <Text style={{ opacity: 0.5, verticalAlign: 'middle' }}>
                   {is_self ? `(${t('yourself')})` : ''}
                   {other.id == room?.owner?.id ? '👑' : ''}

@@ -48,6 +48,8 @@ export async function convert_dat_file(
       await write_obj_file(bot_dst_path, bot);
     }
   }
+
+  console.log(src_path, "=>", dst_path);
   await write_obj_file(dst_path, ret);
   return ret;
 }

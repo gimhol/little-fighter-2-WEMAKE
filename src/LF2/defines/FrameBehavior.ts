@@ -21,7 +21,7 @@ export enum FrameBehavior {
   DennisChase = 2,
 
   /** 加速法追敌(追纵力较差) */
-  _03 = 3,
+  Boomerang = 3,
 
   /** 
    * 天使之祝福(别的dat档用了无效) 
