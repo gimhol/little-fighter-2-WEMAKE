@@ -30,7 +30,7 @@ export interface IMsgReqMap {
   [MsgEnum.KeyTick]: IReqKeyTick,
   [MsgEnum.ListClients]: IReqListClients,
   [MsgEnum.RoomPwd]: IReqRoomPwd,
-  [MsgEnum.Ping]: IReq<MsgEnum.Ping> & { time: number },
+  [MsgEnum.Ping]: IReq<MsgEnum.Ping> & { time: number, client?: string },
 }
 export interface IMsgRespMap {
   [MsgEnum.ClientInfo]: IRespClientInfo,
@@ -49,5 +49,5 @@ export interface IMsgRespMap {
   [MsgEnum.KeyTick]: IRespKeyTick,
   [MsgEnum.ListClients]: IRespListClients,
   [MsgEnum.RoomPwd]: IRespRoomPwd,
-  [MsgEnum.Ping]: IResp<MsgEnum.Ping> & { time: number },
+  [MsgEnum.Ping]: IResp<MsgEnum.Ping> & { time: number, client?: string },
 }
