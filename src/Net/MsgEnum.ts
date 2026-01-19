@@ -13,7 +13,8 @@ export enum MsgEnum {
   Tick = "Tick",
   KeyTick = "KeyTick",
   RoomPwd = "RoomPwd",
-  
+  Ping = "Ping",
+
   // for admin.
   ListClients = 'ListClients'
 }

@@ -95,3 +95,22 @@ However, it seems to run fine on my device for now.
 v0.1.5 release:
 
 feat: add “team outline” effect
+
+============================= 2025-01-19 ==============================
+
+
+服务器默认情况下会使用80端口，你可以进行如下检查：
+- 80端口是否被其他程序占用了
+- 80端口是否被防火墙拦击了
+
+The server uses port 80 by default. You can perform the following checks:
+- Whether port 80 is occupied by other programs
+- Whether port 80 is blocked by the firewall
+
+Server v1.0.1 release，It can be configured via parameters.
+
+example (run the server on port 8080):
+
+> node ./server.cjs --port 8080
+
+
