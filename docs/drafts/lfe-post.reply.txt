@@ -1,0 +1,44 @@
+My mistake. My game page uses HTTPS, 
+and in this case, the server must also be configured with an SSL certificate.
+
+================================================================================
+
+Modern browsers prohibit initiating insecure WebSocket connections(i.e., using the ws:// protocol) from HTTPS pages. 
+This is because insecure WebSocket connections may expose sensitive information, 
+thereby threatening the security of users' data. Therefore, 
+you must use the secure WebSocket protocol (i.e., wss://) to ensure the security of the connection.
+
+Some browsers may offer options to bypass this rule (though I don’t recommend doing so).
+
+I found a blog that provides these methods, but I haven’t verified whether they are feasible.
+https://www.damirscorner.com/blog/posts/20210528-AllowingInsecureWebsocketConnections.html
+
+Note: For security reasons, remember to revert this setting after use!
+
+================================================================================
+
+If your server supports HTTPS access, you can refer to the link below to configure the certificate.
+
+"Multiplayer Online Game"
+https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Multiplayer%20Online%20Game/README.EN.MD
+
+By the way, You can perform the following checks:
+- Whether port is occupied by other programs
+- Whether port is blocked by the firewall
+
+================================================================================
+
+If your server does not support HTTPS access，you cannot directly connect via my game page...
+
+In addition, I will figure out another way to make the server work without SSL certificates, 
+It is not certain whether this is feasible...
+
+================================================================================
+
+Later, I might wrap this web page with client-side frameworks to solve this problem.
+
+Or, You can deploy this web page on your own server. 
+I will try my best to package it for each release. 
+You can check it at the address below.
+
+https://github.com/gimhol/little-fighter-2-WEMAKE/releases
