@@ -12,7 +12,7 @@
           "fix: Adjusted the performance of hitting and being hit by baseball-like weapons",
           "fix: The boomerang can track enemies now",
           "feat: You can see your own latency in the room list",
-          "feat: In the room, you can see the latency of all room"
+          "feat: In the room, you can see the latency of all room members"
         ]
       },
       "zh": {
