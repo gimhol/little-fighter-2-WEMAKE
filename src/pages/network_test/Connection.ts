@@ -246,8 +246,7 @@ export class Connection {
         break;
       }
       case MsgEnum.Ping: {
-        this._rtt = resp.time - Date.now();
-        console.log('rtt:', this._rtt)
+        this._rtt = Date.now() - resp.time;
         this.callbacks.emit("on_ping")(resp, this);
         break;
       }
