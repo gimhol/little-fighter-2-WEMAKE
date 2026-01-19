@@ -1,6 +1,6 @@
 {
   "name": "lfj-node-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/cjs/server.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@fimagine/dom-hooks": "^1.0.5",
+    "arg": "^5.0.2",
     "dotenv": "^17.2.3",
     "ws": "^8.18.3"
   }
