@@ -24,7 +24,7 @@ export function handle_ball_hit_other(collision: ICollision): void {
       break;
     }
     case FrameBehavior.DennisChase:
-    case FrameBehavior._03:
+    case FrameBehavior.Boomerang:
     case FrameBehavior.AngelBlessing:
     case FrameBehavior.AngelBlessingStart:
     case FrameBehavior.DevilJudgementStart:
