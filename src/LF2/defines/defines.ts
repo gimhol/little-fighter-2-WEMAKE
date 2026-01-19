@@ -418,6 +418,13 @@ export namespace Defines {
   export const JOHN_CHASE_MAX_VY = 0.2
   export const JOHN_CHASE_ACC_Y = 0.01
 
+  export const BOOMERANG_CHASE_MAX_VX = 10
+  export const BOOMERANG_CHASE_ACC_X = 0.25
+  export const BOOMERANG_CHASE_MAX_VZ = 1.8
+  export const BOOMERANG_CHASE_ACC_Z = 0.1
+  /** @see {GRAVITY} */
+  export const BOOMERANG_GRAVITY = 0.052
+
   export const MAX_AI_DESIRE = 10000;
 
   export const AI_W_ATK_F_X = 50;

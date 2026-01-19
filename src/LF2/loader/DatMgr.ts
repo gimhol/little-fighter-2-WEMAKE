@@ -62,7 +62,7 @@ class Inner {
     if (is_ball_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BallController(a, b));
     else if (is_weapon_data(data))
-      Factory.inst.set_ctrl_creator(data.id, (a, b) => new InvalidController(a, b));
+      Factory.inst.set_ctrl_creator(data.id, (a, b) => new BallController(a, b));
     else if (is_fighter_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
 

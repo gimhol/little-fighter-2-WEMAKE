@@ -10,7 +10,7 @@ export default class BallState_Base extends State_Base {
       switch (prev_frame.behavior as FrameBehavior) {
         case FrameBehavior.JohnChase:
         case FrameBehavior.DennisChase:
-        case FrameBehavior._03:
+        case FrameBehavior.Boomerang:
         case FrameBehavior.JulianBall:
           e.world.del_enemy_chaser(e);
           break;
@@ -18,7 +18,7 @@ export default class BallState_Base extends State_Base {
       switch (frame.behavior as FrameBehavior) {
         case FrameBehavior.JohnChase:
         case FrameBehavior.DennisChase:
-        case FrameBehavior._03:
+        case FrameBehavior.Boomerang:
         case FrameBehavior.JulianBall:
           e.world.add_enemy_chaser(e);
           if (ctrl) ctrl.target_position.copy(ctrl.entity.position)
