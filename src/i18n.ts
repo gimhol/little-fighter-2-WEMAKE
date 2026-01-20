@@ -1,4 +1,5 @@
 import i18n from "i18next";
+import qs from "qs";
 import { initReactI18next } from "react-i18next";
 const zh_hans = {
   "game_running": "已开始",
@@ -89,8 +90,16 @@ const en = {
   "pls_enter_pwd": "Enter password",
   "custom_game": "Custom Game",
   "pls_drag_game_zip_in_here": "Click here to select the \"Game Data Zip File\".\nOr\nDrag the \"Game Data Zip File\" here to load the custom game.",
+  "custom_game_drop_err_0": "multiple files are not supported",
+  "custom_game_drop_err_1": "what you dragged in is not a file",
+  "custom_game_drop_err_2": "file got %1, why?",
+  "custom_game_load_file_err_0": '"index.json" or "index.json5" not found',
+  "custom_game_load_file_err_1": 'content of "index.json" should be a string array with a length more than 2',
+  "custom_game_load_file_err_2": '$1 not found',
+  "custom_game_load_file_err_3": 'datas not ',
 }
 const resources = {
+  "zh": { translation: zh_hans },
   "zh-Hans": { translation: zh_hans },
   "zh-CN": { translation: zh_hans },
   "zh-SG": { translation: zh_hans },
@@ -101,13 +110,16 @@ const resources = {
   "zh-MO": { translation: zh_hant },
   en: { translation: en }
 };
-
+const hobj = qs.parse(location.hash.substring(1))
+const sobj = qs.parse(location.search.substring(1))
+const hsobj = location.hash.indexOf('?') >= 1 ? qs.parse(location.hash.substring(location.hash.indexOf('?') + 1)) : {}
+const lang = sobj.lang || hobj.lang || hsobj.lang;
 i18n
   .use(initReactI18next)
   .init({
     resources,
     fallbackLng: 'en',
-    lng: navigator.language,
+    lng: typeof lang === 'string' ? lang : navigator.language,
     interpolation: { escapeValue: false }
   });
 
