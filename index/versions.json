@@ -1,18 +1,19 @@
 [
   {
-    "id": "v0.1.7",
+    "id": "v0.1.8",
     "i18n": {
       "": {
-        "date": "2026-01-19",
-        "title": "v0.1.7",
-        "url": "https://lf.gim.ink/0.1.7/",
+        "date": "2026-01-20",
+        "title": "v0.1.8",
+        "url": "https://lf.gim.ink/0.1.8/",
         "desc": "",
         "changelog": [
           "fix: The attacked will drop the heavy weapons they are holding correctly",
           "fix: Adjusted the performance of hitting and being hit by baseball-like weapons",
           "fix: The boomerang can track enemies now",
           "feat: You can see your own latency in the room list",
-          "feat: In the room, you can see the latency of all room members"
+          "feat: In the room, you can see the latency of all room members",
+          "fix: Fix the issues of bots not using moves and being overly defensive"
         ]
       },
       "zh": {
@@ -21,7 +22,8 @@
           "fix: 调整棒球类武器击中与被击中的表现",
           "fix: 回旋镖现在能跟踪敌人了",
           "feat: 房间列表可以看见自己延迟",
-          "feat: 房间中可以看见房间成员的延迟"
+          "feat: 房间中可以看见房间成员的延迟",
+          "fix: 修复bot不出招以及太会防御的问题"
         ]
       },
       "zh-hans": "zh",
