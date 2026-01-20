@@ -3,7 +3,7 @@ import classNames from "classnames";
 import qs from "qs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
 import "splittings-dom/dist/es/splittings-dom.css";
 import { Workspaces } from "splittings/dist/es/splittings";
@@ -55,6 +55,9 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
+import { download } from "./Utils/download";
+import { C } from "react-router/dist/development/index-react-server-client-Da3kmxNd";
+import { Paths } from "./Paths";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
@@ -87,6 +90,7 @@ const init_s = () => ({
 
 function App() {
   const l = useLocation()
+  const nav = useNavigate()
   const { sobj, hobj } = useMemo(() => {
     const sobj = qs.parse(l.search.substring(1))
     const hobj = qs.parse(l.hash.substring(1))
@@ -168,7 +172,8 @@ function App() {
           });
           break;
         case 'custom_game':
-          window.open(location.protocol + '//' + location.host + location.pathname + '#custom_game')
+          nav(Paths.All.custom_game)
+          // window.open(location.protocol + '//' + location.host + location.pathname + '#custom_game')
           break;
       }
     },
@@ -294,12 +299,6 @@ function App() {
   };
 
   const on_click_download_zip = () => {
-    const download = (url: string) => {
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = url;
-      a.click();
-    }
     download('data.zip.json?time=' + Date.now())
     download('data.zip?time=' + Date.now())
     download('prel.zip.json?time=' + Date.now())
@@ -888,4 +887,5 @@ function toggle_bit(v: number, b: number): number {
   return v & b ? v ^ b : v | b
 }
 export default App;
+
 

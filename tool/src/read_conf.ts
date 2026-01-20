@@ -16,6 +16,7 @@ interface IConf {
   FFMPEG_CMD: string;
   MAGICK_CMD: string;
   CONF_FILE_PATH?: string;
+  FULL_ZIP_NAME: string;
 }
 const options: { key: keyof IConf, argv: string[] }[] = [
   { key: 'CONF_FILE_PATH', argv: ['-c', '--conf'] },
@@ -51,6 +52,7 @@ export async function read_conf(): Promise<IConf> {
     EXTRA_LF2_PATH,
     FFMPEG_PATH = "ffmpeg",
     MAGICK_PATH = "magick",
+    FULL_ZIP_NAME = 'lfw.full.zip'
   } = JSON5.parse(conf_str);
   check_is_str_ok(["TEMP_DIR", TEMP_DIR]);
   const TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt");
@@ -63,6 +65,7 @@ export async function read_conf(): Promise<IConf> {
     PREL_DIR_PATH,
     PREL_ZIP_NAME,
     EXTRA_LF2_PATH,
+    FULL_ZIP_NAME,
     TXT_LF2_PATH,
     DATA_DIR_PATH,
     FFMPEG_CMD: FFMPEG_PATH,
