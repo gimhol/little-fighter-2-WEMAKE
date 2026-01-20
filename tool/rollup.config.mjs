@@ -1,6 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
 export default {
   input: './node_modules/.tool_tmp/tool/src/index.js',
   output: {
@@ -10,6 +11,13 @@ export default {
   plugins: [
     json(),
     resolve({ preferBuiltins: false }),
-    commonjs()
+    commonjs(),
+    terser({
+      compress: true,
+      output: {
+        indent_level: 0,
+        comments: false
+      }
+    })
   ]
 };
