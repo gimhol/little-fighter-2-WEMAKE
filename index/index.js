@@ -48,9 +48,11 @@ async function main() {
 
 
 const state = {
-
-  /** @type {IGameInfo|undefined} */
+  /** @type {Info|undefined} */
   actived: void 0,
+
+  /** @type {Info[]} */
+  versions: [],
 
   /** @type {Info[]} */
   games: []
@@ -67,11 +69,13 @@ class Info {
 
     this.date = this.info.date || this.raw.date
 
-    this.desc = this.info.desc || this.raw.desc
-    if (Array.isArray(this.desc)) this.desc = this.desc.join('\n')
+    this.md_desc = this.info.desc || this.raw.desc
+    if (Array.isArray(this.md_desc)) this.md_desc = this.md_desc.join('\n')
 
-    this.changelog = this.info.changelog || this.raw.changelog
-    if (Array.isArray(this.changelog)) this.changelog = this.changelog.join('\n')
+    this.desc = this.md_desc?.replace(/\[(.*?)\]\((.*?)\)/g, `<a href='$2'>$1</a>`)
+    this.md_changelog = this.info.changelog || this.raw.changelog
+    if (Array.isArray(this.md_changelog)) this.md_changelog = this.md_changelog.join('\n')
+    this.changelog = this.md_changelog?.replace(/\[(.*?)\]\((.*?)\)/g, `<a href='$2'>$1</a>`)
   }
 }
 
@@ -98,6 +102,7 @@ async function fetch_games_list(url = `games.json?time=${time_str}`) {
   set_actived_game(state.games[0]);
 }
 
+
 /**
  *
  *
@@ -107,30 +112,33 @@ async function fetch_games_list(url = `games.json?time=${time_str}`) {
 async function set_actived_game(game) {
   console.log('set_actived_game(game), game = ', game)
   if (state.actived === game) return;
+  clear_version_list();
   state.actived = game;
 
   const el_game_title = document.getElementById('game_title')
-  if (game.title) el_game_title.style.display = 'block'
+  if (game.title) el_game_title.style.display = ''
   else el_game_title.style.display = 'none'
   el_game_title.firstElementChild.innerHTML = '' + game.title
 
   const el_game_desc = document.getElementById('game_desc')
-  if (game.desc) el_game_desc.style.display = 'block'
+  if (game.desc) el_game_desc.style.display = ''
   else el_game_desc.style.display = 'none'
   el_game_desc.innerHTML = '' + game.desc
 
   document.querySelector('.game_item_actived')?.classList.remove('game_item_actived')
   document.querySelector(`#${game.id}`)?.classList.add('game_item_actived')
-  const versions = await fetch_version_list(`${game.url}?time=${time_str}`)
-  document.querySelector(`#game_title_link`).href = versions?.[0].url
+  state.versions = await fetch_version_list(`${game.url}?time=${time_str}`)
+  document.querySelector(`#game_title_link`).href = state.versions?.[0].url
 }
-
+function clear_version_list() {
+  const el_version_list = document.getElementById('version_list');
+  el_version_list.innerHTML = '';
+}
 async function fetch_version_list(url) {
+  clear_version_list();
   /** @type {Info[]} */
   const versions = await fetch(url).then(a => a.json()).then(b => b.map(c => new Info(c)))
   const el_version_list = document.getElementById('version_list');
-  el_version_list.innerHTML = '';
-
   const { content } = document.getElementById('version_item_template')
   for (const version of versions) {
     const { title, desc, url, date, changelog, id } = version
