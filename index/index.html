@@ -16,7 +16,7 @@
   <div id="root">
     <div id="head">
       <h1 id='main_title' class="i18n_txt" data-text="main_title">Loading...</h1>
-      <a class='github' href="https://github.com/gimhol/little-fighter-2-WEMAKE"  style="margin-right: 10px;">
+      <a class='github' href="https://github.com/gimhol/little-fighter-2-WEMAKE" style="margin-right: 10px;">
         <img src="./github-mark-white.svg" width="24px">
       </a>
       <a class='github' href="https://gim.ink">
@@ -28,7 +28,9 @@
       <div class="main_right">
         <div class="game_desc_zone">
           <h3 id="game_title">
-            <a id="game_title_link" class=" el_url link"></a>
+            <a id="game_title_link" class="el_url link"></a>
+            <div style="flex: 1;"></div>
+            <button onclick="copy_markdown()" title="copy as Markdown">MD</button>
           </h3>
           <div id="game_desc"></div>
         </div>
@@ -65,6 +67,7 @@
     </div>
   </template>
   <script src="./index.js"></script>
+  <script src="./copy_markdown.js"></script>
 </body>
 
 </html>

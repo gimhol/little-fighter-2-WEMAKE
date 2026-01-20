@@ -146,7 +146,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   /** 欲望值：停止跑步 */
   r_stop_desire = Defines.AI_R_STOP_DESIRE;
 
-  /** 防御 */
+  /** 欲望值: 防御 */
   d_desire = Defines.AI_DEF_DESIRE;
 
   get_chasing(): IBotTarget | undefined {
@@ -223,12 +223,16 @@ export class BotController extends BaseController implements Required<IBotDataSe
    * 判断是否应该防御某个对象
    *
    * @param {(Entity | null)} [e]
-   * @return {*}  {boolean}
+   * @return {0|1|2} 
+   *    无需防御时，返回0; 
+   *    需要防御时，返回1；
+   *    威胁无法防御时，返回2；
    * @memberof BotController
    */
   should_defend(e?: Entity | null): 0 | 1 | 2 {
     if (
       e?.is_attach != true ||
+      e.invisible ||
       this.entity.toughness ||
       this.entity.invisible ||
       this.entity.blinking ||
@@ -354,9 +358,30 @@ export class BotController extends BaseController implements Required<IBotDataSe
     }
     return this;
   }
+
+  /** 
+   * 获取随机值, 范围: 0~10000
+   * 
+   * 设计上，此值应该越小越容易触发动作，
+   * 但具体还是需要看使用地方的代码是怎么写的
+   * 
+   * usage:
+   * 
+   * if this.desire() < this.jump_desire: 
+   *    jump!
+   */
   desire(mark: string) {
     this.lf2.mt.mark = mark
     return this.lf2.mt.range(0, Defines.MAX_AI_DESIRE)
+  }
+
+  action_desire(mark: string): number {
+    let ret = this.desire(mark); // 默认action设置的desire是crazy的好了。
+    for (let i = Difficulty.MAX - this.world.difficulty; i > 0; --i) {
+      this.lf2.mt.mark = mark;
+      ret += this.lf2.mt.range(0, ret);
+    }
+    return ret;
   }
 
   override update() {
@@ -377,7 +402,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
       this.avoidings.del(({ entity }) => !this.should_avoid(entity))
       this.avoidings.sort(this.entity)
 
-      this.defends.del(({ entity }) => !this.should_defend(entity))
+      this.defends.del(({ entity }) => 1 != this.should_defend(entity))
       this.defends.sort(this.entity)
 
       this.fsm.update(1)
@@ -399,14 +424,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
     return false;
   }
 
-  action_desire(mark: string): number {
-    let ret = this.desire(mark); // 默认action设置的desire是crazy的好了。
-    for (let i = Difficulty.MAX - this.world.difficulty; i > 0; --i) {
-      this.lf2.mt.mark = mark;
-      ret += this.lf2.mt.range(0, ret);
-    }
-    return (ret);
-  }
+
   handle_action(action: IBotAction | undefined): LGK[] | false {
     if (!action) return false
     const { facing } = this.entity;

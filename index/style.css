@@ -44,6 +44,10 @@ button:hover {
   font-weight: normal;
 }
 
+#game_title {
+  display: flex;
+}
+
 #game_desc a,
 .el_desc a,
 .link {
