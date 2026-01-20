@@ -17,7 +17,7 @@ export interface IBotAction {
   /**
    * 动作欲望值，范围 [0, 10000]
    *
-   * 只有当前随机到的欲望值大于desire时，该Action才可能触发
+   * 只有当前随机到的欲望值小于desire时，该Action才可能触发
    */
   desire?: number;
 
