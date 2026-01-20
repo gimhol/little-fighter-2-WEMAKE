@@ -27,6 +27,8 @@ const zh_hans = {
   "password": "密码",
   "dont_need_password": "任意人可加入",
   "pls_enter_pwd": "输入房间密码",
+  "custom_game": "自定义游戏",
+  "pls_drag_game_zip_in_here": "点击此处选择“游戏数据包文件”\n或\n将“游戏数据包文件”拖拽至此以加载自定义游戏"
 }
 const zh_hant = {
   "game_running": "已開始",

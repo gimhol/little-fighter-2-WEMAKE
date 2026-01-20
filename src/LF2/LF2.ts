@@ -30,12 +30,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   log!: (_0: string, ..._1: any[]) => void;
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  lang: string = '';  
+  lang: string = '';
   dev: boolean = false;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
-  static readonly BASE_DATA_URL: string = "data.zip.json";
-  static readonly BASE_PREL_URL: string = "prel.zip.json";
+  static PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
+  static DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
   static get instance() { return LF2.instances[0] }
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }

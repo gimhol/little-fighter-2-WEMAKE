@@ -7,8 +7,15 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Edge against localhost",
+      "name": "Game",
       "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Custom Game",
+      "url": "http://localhost:3000#custom_game",
       "webRoot": "${workspaceFolder}"
     }
   ]
