@@ -28,7 +28,7 @@ const zh_hans = {
   "dont_need_password": "任意人可加入",
   "pls_enter_pwd": "输入房间密码",
   "custom_game": "自定义游戏",
-  "pls_drag_game_zip_in_here": "点击此处选择“游戏数据包文件”\n或\n将“游戏数据包文件”拖拽至此以加载自定义游戏"
+  "pls_drag_game_zip_in_here": "点击此处选择“游戏数据包文件”\n或\n将“游戏数据包文件”拖拽至此以加载自定义游戏",
 }
 const zh_hant = {
   "game_running": "已開始",
@@ -57,6 +57,8 @@ const zh_hant = {
   "password": "密碼",
   "dont_need_password": "任意人可加入",
   "pls_enter_pwd": "輸入房間密碼",
+  "custom_game": "自訂遊戲",
+  "pls_drag_game_zip_in_here": "點擊此處選擇「遊戲數據包文件」\n或\n將「遊戲數據包文件」拖曳至此以加載自定義遊戲",
 }
 const en = {
   "game_running": "Started",
@@ -85,6 +87,8 @@ const en = {
   "password": "Password",
   "dont_need_password": "Anyone can join.",
   "pls_enter_pwd": "Enter password",
+  "custom_game": "Custom Game",
+  "pls_drag_game_zip_in_here": "Click here to select the \"Game Data Zip File\".\nOr\nDrag the \"Game Data Zip File\" here to load the custom game.",
 }
 const resources = {
   "zh-Hans": { translation: zh_hans },
