@@ -17,4 +17,5 @@
 - [CHANGELOG](./CHANGELOG.MD)
 - [多人联机游戏](./docs/Multiplayer%20Online%20Game/README.MD)
 - [构建与运行](./docs/Build%20Instructions/README.MD)
+- [自定义游戏](./docs/Custom%20Game/README.MD)
 - [功能建议、体验反馈](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
