@@ -115,10 +115,6 @@ function App() {
   const [is_fullscreen, _set_is_fullscreen] = useState(false);
   const [indicator_flags, set_indicator_flags] = useState<number>(0);
 
-  const update_once = () => {
-    if (!lf2) return;
-    lf2.cmds.push(CMD.F2)
-  };
 
   useEffect(() => {
     if (!lf2) return;
@@ -159,12 +155,20 @@ function App() {
           set_networking(prev => {
             const networking = !prev
             // FIXME: ...
-            const btn_start = lf2.ui?.search_child("btn_game_start");
-            btn_start?.blur()
-            btn_start?.set_opacity(networking ? 0.3 : 1)
-            btn_start?.set_disabled(networking)
+            const btns = [
+              lf2.ui?.search_child("btn_game_start"),
+              lf2.ui?.search_child("btn_custom_game")
+            ]
+            for (const btn of btns) {
+              btn?.blur()
+              btn?.set_opacity(networking ? 0.3 : 1)
+              btn?.set_disabled(networking)
+            }
             return networking
           });
+          break;
+        case 'custom_game':
+          window.open(location.protocol + '//' + location.host + location.pathname + '#custom_game')
           break;
       }
     },
@@ -253,7 +257,7 @@ function App() {
       configurable: true
     })
 
-    lf2.load(LF2.BASE_PREL_URL).catch(LF2.IgnoreDisposed);
+    lf2.load(...LF2.PREL_ZIPS).catch(LF2.IgnoreDisposed);
     set_lf2(lf2)
     lf2.sounds.set_muted(s.muted);
     lf2.sounds.set_volume(s.volume);
@@ -296,17 +300,17 @@ function App() {
       a.download = url;
       a.click();
     }
-    download(LF2.BASE_DATA_URL + '?time=' + Date.now())
-    download(LF2.BASE_PREL_URL.replace(/.json$/, '') + '?time=' + Date.now())
-    download(LF2.BASE_PREL_URL + '?time=' + Date.now())
-    download(LF2.BASE_PREL_URL.replace(/.json$/, '') + '?time=' + Date.now())
+    download('data.zip.json?time=' + Date.now())
+    download('data.zip?time=' + Date.now())
+    download('prel.zip.json?time=' + Date.now())
+    download('prel.zip?time=' + Date.now())
   };
 
   const on_click_load_builtin = async () => {
     if (!lf2) return;
     lf2
-      .load("prel.zip.json")
-      .then(() => lf2.load("data.zip.json"))
+      .load(...LF2.PREL_ZIPS)
+      .then(() => lf2.load(...LF2.DATA_ZIPS))
       .catch((e) => Log.print("App -> on_click_load_builtin", e));
   };
 
@@ -463,7 +467,6 @@ function App() {
     workspace.confirm()
   }, [workspace, s.dev_ui_pos, s.dev_ui_open])
 
-
   const game_cell_view = game_cell ? createPortal(
     <div className={styles.game_contiainer}>
       <canvas
@@ -506,7 +509,7 @@ function App() {
         <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}>
           <ToggleImgButton
             checked={paused}
-            onClick={() => { if (lf2) lf2.cmds.push(CMD.F2) }}
+            onClick={() => lf2?.cmds.push(CMD.F1)}
             src={[img_btn_2_1, img_btn_2_2]}
           />
         </Show>
@@ -515,10 +518,8 @@ function App() {
             onClick={() => {
               if (!lf2) return;
               lf2.cmds.push(CMD.F2)
-              if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings')
-                lf2.pop_ui_safe()
-              else
-                lf2.set_ui("ctrl_settings", 1);
+              if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings') lf2.pop_ui_safe()
+              else lf2.set_ui("ctrl_settings", 1);
             }}
             src={[img_btn_1_1, img_btn_1_1]}
           />
@@ -702,12 +703,11 @@ function App() {
         <Combine>
           <ToggleButton
             value={paused}
-            onClick={() => { if (lf2) lf2.cmds.push(CMD.F1) }}
-          >
+            onClick={() => lf2?.cmds.push(CMD.F1)}>
             <>游戏暂停</>
             <>游戏暂停✓</>
           </ToggleButton>
-          <Button onClick={update_once}>
+          <Button onClick={() => lf2?.cmds.push(CMD.F2)}>
             更新一帧
           </Button>
           <ToggleButton
@@ -718,7 +718,6 @@ function App() {
             <>不限速度✓</>
           </ToggleButton>
         </Combine>
-
         <Combine>
           {
             Object.keys(INDICATINGS).map(k => {

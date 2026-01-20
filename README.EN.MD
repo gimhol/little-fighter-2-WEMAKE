@@ -16,7 +16,8 @@ Think this project is pretty good? Consider starring it!
 
 ## 快捷链接
 
-- [CHANGELOG](./docs/CHANGELOG.EN.MD)
+- [CHANGELOG](./CHANGELOG.EN.MD)
 - [Multiplayer Online Game](./docs/Multiplayer%20Online%20Game/README.EN.MD)
 - [Building and Running](./docs/Build%20Instructions/README.EN.MD)
+- [Custom Game](./docs/Custom%20Game/README.MD)
 - [Feedback & Discussions](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)

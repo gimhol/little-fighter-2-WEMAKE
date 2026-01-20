@@ -75,7 +75,7 @@ class Lf2NetworkDriver {
     this._a.debugging = debugging
     this._r.debugging = debugging
     this._s.debugging = debugging
-    lf2.load("data.zip.json")
+    lf2.load(...LF2.DATA_ZIPS)
     lf2.set_ui("network_loading")
     lf2.pointings.enabled = false
     lf2.keyboard.enabled = false

@@ -18,6 +18,7 @@
     "@rollup/plugin-commonjs": "^28.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "@types/ws": "^8.18.1",
     "rollup": "^4.52.4",
     "rollup-plugin-typescript2": "^0.36.0",

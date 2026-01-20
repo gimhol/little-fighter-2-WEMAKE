@@ -1,4 +1,5 @@
 import i18n from "i18next";
+import qs from "qs";
 import { initReactI18next } from "react-i18next";
 const zh_hans = {
   "game_running": "已开始",
@@ -27,6 +28,8 @@ const zh_hans = {
   "password": "密码",
   "dont_need_password": "任意人可加入",
   "pls_enter_pwd": "输入房间密码",
+  "custom_game": "自定义游戏",
+  "pls_drag_game_zip_in_here": "点击此处选择“游戏数据包文件”\n或\n将“游戏数据包文件”拖拽至此以加载自定义游戏",
 }
 const zh_hant = {
   "game_running": "已開始",
@@ -55,6 +58,8 @@ const zh_hant = {
   "password": "密碼",
   "dont_need_password": "任意人可加入",
   "pls_enter_pwd": "輸入房間密碼",
+  "custom_game": "自訂遊戲",
+  "pls_drag_game_zip_in_here": "點擊此處選擇「遊戲數據包文件」\n或\n將「遊戲數據包文件」拖曳至此以加載自定義遊戲",
 }
 const en = {
   "game_running": "Started",
@@ -83,8 +88,18 @@ const en = {
   "password": "Password",
   "dont_need_password": "Anyone can join.",
   "pls_enter_pwd": "Enter password",
+  "custom_game": "Custom Game",
+  "pls_drag_game_zip_in_here": "Click here to select the \"Game Data Zip File\".\nOr\nDrag the \"Game Data Zip File\" here to load the custom game.",
+  "custom_game_drop_err_0": "multiple files are not supported",
+  "custom_game_drop_err_1": "what you dragged in is not a file",
+  "custom_game_drop_err_2": "file got %1, why?",
+  "custom_game_load_file_err_0": '"index.json" or "index.json5" not found',
+  "custom_game_load_file_err_1": 'content of "index.json" should be a string array with a length more than 2',
+  "custom_game_load_file_err_2": '$1 not found',
+  "custom_game_load_file_err_3": 'datas not ',
 }
 const resources = {
+  "zh": { translation: zh_hans },
   "zh-Hans": { translation: zh_hans },
   "zh-CN": { translation: zh_hans },
   "zh-SG": { translation: zh_hans },
@@ -95,13 +110,16 @@ const resources = {
   "zh-MO": { translation: zh_hant },
   en: { translation: en }
 };
-
+const hobj = qs.parse(location.hash.substring(1))
+const sobj = qs.parse(location.search.substring(1))
+const hsobj = location.hash.indexOf('?') >= 1 ? qs.parse(location.hash.substring(location.hash.indexOf('?') + 1)) : {}
+const lang = sobj.lang || hobj.lang || hsobj.lang;
 i18n
   .use(initReactI18next)
   .init({
     resources,
     fallbackLng: 'en',
-    lng: navigator.language,
+    lng: typeof lang === 'string' ? lang : navigator.language,
     interpolation: { escapeValue: false }
   });
 

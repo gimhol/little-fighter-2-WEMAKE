@@ -1,11 +1,11 @@
 [
   {
-    "id": "v0.1.8",
+    "id": "v0.1.9",
     "i18n": {
       "": {
         "date": "2026-01-20",
-        "title": "v0.1.8",
-        "url": "https://lf.gim.ink/0.1.8/",
+        "title": "v0.1.9",
+        "url": "https://lf.gim.ink/0.1.9/",
         "desc": "",
         "changelog": [
           "- fix: The attacked will drop the heavy weapons they are holding correctly",
@@ -13,7 +13,8 @@
           "- fix: The boomerang can track enemies now",
           "- feat: You can see your own latency in the room list",
           "- feat: In the room, you can see the latency of all room members",
-          "- fix: Fix the issues of bots not using moves and being overly defensive"
+          "- fix: Fix the issues of bots not using moves and being overly defensive",
+          "- feat: Custom game supported"
         ]
       },
       "zh": {
@@ -23,7 +24,8 @@
           "- fix: 回旋镖现在能跟踪敌人了",
           "- feat: 房间列表可以看见自己延迟",
           "- feat: 房间中可以看见房间成员的延迟",
-          "- fix: 修复bot不出招以及太会防御的问题"
+          "- fix: 修复bot不出招以及太会防御的问题",
+          "- feat: 支持自定义游戏"
         ]
       },
       "zh-hans": "zh",
