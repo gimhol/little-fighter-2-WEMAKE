@@ -252,7 +252,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       --spawn_count;
     }
   }
-  kill_all_enemies() {
+  kill_all() {
     for (const o of this.items) {
       for (const e of o.fighters) {
         if (is_fighter(e) && e.team === this.team) e.hp = 0;
@@ -304,7 +304,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   all_boss_dead(): boolean {
     return !find(this.items, i => i.info.is_boss);
   }
-  all_enemies_dead(): boolean {
+  all_gone(): boolean {
     return !find(this.items, i => i.fighters.size);
   }
 

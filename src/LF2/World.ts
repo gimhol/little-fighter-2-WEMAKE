@@ -432,10 +432,22 @@ export class World extends WorldDataset {
             this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
             continue;
           case CMD.F9:
-            this.stage.kill_all_enemies()
+            this.stage.kill_all()
             continue;
           case CMD.F10:
             for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+            continue;
+          case CMD.KILL_ENEMIES:
+            this.stage.kill_all()
+            continue;
+          case CMD.KILL_BOSS:
+            this.stage.kill_boss()
+            continue;
+          case CMD.KILL_SOLIDERS:
+            this.stage.kill_soliders()
+            continue;
+          case CMD.KILL_OTHERS:
+            this.stage.kill_others()
             continue;
         }
       }
@@ -702,7 +714,7 @@ export class World extends WorldDataset {
       victim.pre_emitter === attacker.pre_emitter &&
       victim.spawn_time === attacker.spawn_time
     ) return;
-    
+
     if (!itr.vrest && attacker.a_rest) return;
     if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
     const ax = attacker.position.x

@@ -1,4 +1,5 @@
 import { Difficulty } from "./Difficulty";
+import { IDialogInfo } from "./IDialogInfo";
 import { IStageObjectInfo } from "./IStageObjectInfo";
 /**
  * 关卡阶段信息
@@ -59,4 +60,6 @@ export interface IStagePhaseInfo {
   end_condition?: string;
   on_start?: string[];
   on_end?: string[];
+
+  dialogs?: IDialogInfo[];
 }

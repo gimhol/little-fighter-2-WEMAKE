@@ -159,7 +159,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           </Combine>
         </Titled>
         <Combine>
-          <Button onClick={() => lf2.world.stage.kill_all_enemies()}>
+          <Button onClick={() => lf2.world.stage.kill_all()}>
             杀死全部敌人
           </Button>
           <Button onClick={() => lf2.world.stage.kill_boss()}>杀死Boss</Button>
