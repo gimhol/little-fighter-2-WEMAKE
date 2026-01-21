@@ -41,6 +41,6 @@ export function preprocess_pic(lf2: LF2, data: IEntityData, pic: IFramePictureIn
   };
   ret = { ...pic, 1: f_i_1, [-1]: f_i_2 };
   cache_map.set(ck, ret)
-  return pic;
+  return ret;
 }
 preprocess_pic.TAG = "preprocess_pic"
