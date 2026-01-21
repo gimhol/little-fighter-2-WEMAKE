@@ -4,13 +4,15 @@ import FSM from "../base/FSM";
 import { new_team } from "../base/new_id";
 import { Background } from "../bg/Background";
 import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhaseInfo } from "../defines";
+import { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
 import { is_fighter, is_weapon } from "../entity/type_check";
-import { round, min, round_float, floor } from "../utils";
+import { floor, min, round_float } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
 import type IStageCallbacks from "./IStageCallbacks";
+import { IDialogState, IReadonlyDialogState } from "./IStageCallbacks";
 import Item from "./Item";
 import { Status } from "./Status";
 
@@ -27,6 +29,10 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   readonly items = new Set<Item>();
   private _is_stage_finish: boolean = false;
   private _is_chapter_finish: boolean = false;
+  private _dialogs: IDialogState = {
+    index: -1,
+    list: []
+  };
   get title(): string { return this.data.title ?? this.bg.name }
   /** 节是否结束 */
   get is_stage_finish(): boolean { return this._is_stage_finish; }
@@ -160,7 +166,8 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.player_l = 0
     this.player_r = this.bg.right
     if (!phase) return;
-    const { objects, respawn, health_up, mp_up } = phase;
+
+    const { objects, respawn, health_up, mp_up, dialogs } = phase;
     const hp_recovery = health_up?.[this.world.difficulty] || 0;
     const hp_respawn = respawn?.[this.world.difficulty] || 0;
     const mp_recovery = mp_up?.[this.world.difficulty] || 0;
@@ -185,7 +192,6 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
         if (mp_recovery) f.mp = min(f.mp + mp_recovery, f.mp_max)
       }
     }
-
     this.play_phase_bgm();
     for (const object of objects) {
       this.spawn_object(object);
@@ -214,6 +220,28 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.cam_r = phase.camera_r ?? phase.bound ?? this.bg.right
     this.enemy_r = phase.enemy_r ?? ((phase.bound ?? this.bg.right) + 1200)
     this.drink_r = phase.drink_r ?? (this.bg.right + 1200)
+    if (dialogs) this.push_dialogs(dialogs)
+  }
+  push_dialogs(more: IDialogInfo[]) {
+    const prev = this._dialogs;
+    const curr = this._dialogs = {
+      ...prev,
+      list: [...prev.list, ...more]
+    }
+    this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
+  }
+  next_dialog() {
+    const prev = this._dialogs
+    const curr = this._dialogs = {
+      ...prev,
+      index: prev.index + 1,
+    }
+    this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
+  }
+  clear_dialogs() {
+    const prev = this._dialogs
+    const curr = this._dialogs = { index: -1, list: [] }
+    this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
 
   enter_phase(idx: number) {
@@ -305,11 +333,12 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     return !find(this.items, i => i.info.is_boss);
   }
   all_gone(): boolean {
-    
+    if (
+      this._dialogs.list.length &&
+      this._dialogs.index < this._dialogs.list.length
+    ) return false;
     return !find(this.items, i => i.fighters.size);
   }
-
-
   /** 是否应该进入下一关 */
   get should_goto_next_stage(): boolean {
     if (this.is_chapter_finish || !this.is_stage_finish)

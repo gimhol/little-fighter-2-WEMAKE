@@ -10,7 +10,7 @@ interface IConf {
   DATA_ZIP_NAME: string;
   PREL_DIR_PATH: string;
   PREL_ZIP_NAME: string;
-  EXTRA_LF2_PATH: string;
+  EXTRA_PATH: string;
   TXT_LF2_PATH: string;
   DATA_DIR_PATH: string;
   FFMPEG_CMD: string;
@@ -49,7 +49,7 @@ export async function read_conf(): Promise<IConf> {
     DATA_ZIP_NAME = "data.zip",
     PREL_DIR_PATH,// = "./prel_data",
     PREL_ZIP_NAME = "prel.zip",
-    EXTRA_LF2_PATH,
+    EXTRA_PATH,
     FFMPEG_PATH = "ffmpeg",
     MAGICK_PATH = "magick",
     FULL_ZIP_NAME = 'lfw.full.zip'
@@ -64,7 +64,7 @@ export async function read_conf(): Promise<IConf> {
     DATA_ZIP_NAME,
     PREL_DIR_PATH,
     PREL_ZIP_NAME,
-    EXTRA_LF2_PATH,
+    EXTRA_PATH,
     FULL_ZIP_NAME,
     TXT_LF2_PATH,
     DATA_DIR_PATH,

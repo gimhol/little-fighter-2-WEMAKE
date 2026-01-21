@@ -5,7 +5,7 @@
   DATA_ZIP_NAME: "data.zip",
   PREL_DIR_PATH: "./lf2s/origin/prel_data",
   PREL_ZIP_NAME: "prel.zip",
-  _EXTRA_LF2_PATH: "./v2_data",
+  EXTRA_PATH: "./extra_data",
   FFMPEG_PATH: "ffmpeg",
   MAGICK_PATH: "magick",
 }

@@ -26,3 +26,7 @@ export interface IDialogInfo {
    */
   close_by?: string;
 }
+
+export enum DialogCloseBy {
+  PRESS_A = 'press_a'
+}

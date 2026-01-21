@@ -16,7 +16,7 @@ import { write_file } from "./utils/write_file";
 
 export async function make_data_zip() {
   const {
-    LF2_PATH, OUT_DIR, TEMP_DIR, DATA_ZIP_NAME, DATA_DIR_PATH, EXTRA_LF2_PATH,
+    LF2_PATH, OUT_DIR, TEMP_DIR, DATA_ZIP_NAME, DATA_DIR_PATH, EXTRA_PATH,
   } = await read_conf();
 
   check_is_str_ok(
@@ -36,7 +36,7 @@ export async function make_data_zip() {
 
   const pic_list_map = new Map<string, ILegacyPictureInfo[]>();
   const indexes = await convert_data_txt(LF2_PATH, DATA_DIR_PATH);
-  if (EXTRA_LF2_PATH) await copy_dir(EXTRA_LF2_PATH, DATA_DIR_PATH);
+  if (EXTRA_PATH) await copy_dir(EXTRA_PATH, DATA_DIR_PATH);
   if (!indexes) throw Error('dat index file not found!');
   if (indexes) {
     for (const src_path of ress.file.dat) {
