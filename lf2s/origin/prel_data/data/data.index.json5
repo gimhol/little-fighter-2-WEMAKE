@@ -6,4 +6,11 @@
       file: "data/template.obj.json5",
     },
   ],
+  stages: [
+    {
+      id: "t",
+      type: "stage",
+      file: "data/t.stage.json5",
+    },
+  ],
 }

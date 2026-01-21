@@ -1,0 +1,199 @@
+[ {
+    bg: "bg_2",
+    id: "t",
+    name: "1-1",
+    phases: [
+      {
+        bound: 900,
+        desc: "",
+        objects: [
+          {
+            id: [
+              "30",
+            ],
+            x: 900,
+            facing: -1,
+            hp: 50,
+            times: 2,
+            ratio: 1,
+          },
+        ],
+        music: "bgm/stage1.wma.mp3",
+        enemy_r: 1100,
+        enemy_l: -200,
+        on_end: [
+          "enter_next_phase",
+        ],
+        respawn: {
+          "1": 200,
+          "2": 150,
+          "3": 100,
+          "4": 50,
+        },
+        health_up: {
+          "1": 200,
+          "2": 150,
+          "3": 100,
+          "4": 50,
+        },
+        mp_up: {
+          "1": 500,
+          "2": 500,
+          "3": 500,
+          "4": 500,
+        },
+        cam_jump_to_x: 0,
+        player_jump_to_x: 0,
+      },
+      {
+        bound: 1300,
+        desc: "",
+        objects: [
+          {
+            id: [
+              "30",
+            ],
+            x: 1300,
+            facing: -1,
+            hp: 50,
+            times: 2,
+            ratio: 1,
+          },
+          {
+            id: [
+              "31",
+            ],
+            x: 1300,
+            facing: -1,
+            hp: 50,
+            times: 1,
+          },
+          {
+            id: [
+              "31",
+            ],
+            x: 1300,
+            facing: -1,
+            hp: 50,
+            times: 1,
+            ratio: 0.4,
+          },
+        ],
+        enemy_r: 1500,
+        enemy_l: -200,
+        on_end: [
+          "enter_next_phase",
+        ],
+        on_start: [
+          "gogogo_right",
+        ],
+      },
+      {
+        bound: 1700,
+        desc: "",
+        objects: [
+          {
+            id: [
+              "3000",
+            ],
+            x: 1700,
+            facing: -1,
+            hp: 50,
+            times: 2,
+          },
+          {
+            id: [
+              "3000",
+            ],
+            x: 1700,
+            facing: -1,
+            hp: 50,
+            times: 2,
+            ratio: 1,
+          },
+        ],
+        enemy_r: 1900,
+        enemy_l: -200,
+        on_end: [
+          "enter_next_phase",
+        ],
+        on_start: [
+          "gogogo_right",
+        ],
+      },
+      {
+        bound: 2200,
+        desc: "",
+        objects: [
+          {
+            id: [
+              "122",
+            ],
+            x: 1100,
+            facing: -1,
+          },
+          {
+            id: [
+              "123",
+            ],
+            x: 1100,
+            facing: -1,
+          },
+          {
+            id: [
+              "30",
+            ],
+            x: 2200,
+            facing: -1,
+            hp: 50,
+            ratio: 1,
+          },
+          {
+            id: [
+              "30",
+            ],
+            x: 2200,
+            facing: -1,
+            hp: 50,
+          },
+          {
+            id: [
+              "31",
+            ],
+            x: 2200,
+            facing: -1,
+            hp: 50,
+          },
+          {
+            id: [
+              "31",
+            ],
+            x: 2200,
+            facing: -1,
+            hp: 50,
+            ratio: 0.4,
+          },
+          {
+            id: [
+              "31",
+            ],
+            x: 2200,
+            facing: -1,
+            hp: 50,
+            ratio: 0.2,
+          },
+        ],
+        enemy_r: 2400,
+        enemy_l: -200,
+        on_end: [
+          "loop_gogogo_right",
+        ],
+      },
+    ],
+    is_starting: true,
+    starting_name: "t",
+    chapter: "t_chapter_1",
+    title: "STAGE 1-1",
+    next: "1",
+  } 
+]
