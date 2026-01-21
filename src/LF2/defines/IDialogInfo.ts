@@ -1,5 +1,3 @@
-import { IEntityInfo } from "./IEntityInfo";
-
 export interface IDialogInfo {
   /** 
    * 对话框类型 
@@ -10,7 +8,7 @@ export interface IDialogInfo {
    * 说话的角色ID
    */
   fighter?: string;
-  
+
   /** 
    * 是否暂停游戏 
    */
