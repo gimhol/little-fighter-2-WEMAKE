@@ -9,6 +9,7 @@ The advantages are as follows:
 - Full-platform support (of course, this is due to modern browsers and technical standards).
 - Touch-screen support
 - The game's input method is different from that of LF2, and no key presses will be missed. (You can even press the 'right' twice in the same frame, and the character can still run...)
+- Support higher-resolution textures.
 
 The shortcomings are as follows
 - Since the logic is implemented according to my own understanding(and some tutorial for modifying), many things are quite different from the LF2. 
