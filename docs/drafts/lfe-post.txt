@@ -2,7 +2,7 @@ I've also made a remake version of LF2. Everyone is welcome to give it a try.
 
 Play address: https://lf.gim.ink/
 
-the data and pictures are processed and converted from the original.
+the data and pictures are processed and converted from the LF2 2.0a.
 
 The advantages are as follows:
 - Ideally, the game update frequency is 60 frames per second, which makes it look more fluent.
