@@ -27,7 +27,6 @@ However, everyone is still welcome to run this project and give it a try.
 Project repository: https://github.com/gimhol/little-fighter-2-WEMAKE
 [/spoiler]
 
-
 ================================= Screenshots ==================================
 [spoiler]
 [img]https://lf.gim.ink/docs/image/custom_game_guide_0.en.png[/img]
