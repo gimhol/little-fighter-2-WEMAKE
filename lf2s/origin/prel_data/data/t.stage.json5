@@ -193,7 +193,6 @@
     is_starting: true,
     starting_name: "t",
     chapter: "t_chapter_1",
-    title: "STAGE 1-1",
-    next: "1",
+    title: "STAGE 1-1"
   } 
 ]

@@ -1,12 +1,12 @@
 {
-  id: "0",
+  id: "gim",
   type: 8,
   base: {
-    name: "Template",
+    name: "Gim",
     files: {
       "0": {
         id: "0",
-        path: "sprite/template1/0.png",
+        path: "sprite/gim/0.png",
         row: 10,
         col: 7,
         cell_w: 79,
@@ -14,15 +14,15 @@
       },
       "1": {
         id: "1",
-        path: "sprite/template1/1.png",
+        path: "sprite/gim/1.png",
         row: 10,
         col: 7,
         cell_w: 79,
         cell_h: 79,
       },
     },
-    head: "sprite/template1/face.png",
-    small: "sprite/template1/s.png",
+    head: "sprite/gim/face.png",
+    small: "sprite/gim/s.png",
     jump_height: 76,
     jump_distance: 4,
     jump_distancez: 3,

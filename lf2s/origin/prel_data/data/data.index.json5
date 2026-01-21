@@ -1,9 +1,9 @@
 {
   objects: [
     {
-      id: "0",
+      id: "gim",
       type: "0",
-      file: "data/template.obj.json5",
+      file: "data/gim.obj.json5",
     },
   ],
   stages: [
