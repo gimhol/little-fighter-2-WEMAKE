@@ -305,6 +305,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     return !find(this.items, i => i.info.is_boss);
   }
   all_gone(): boolean {
+    
     return !find(this.items, i => i.fighters.size);
   }
 

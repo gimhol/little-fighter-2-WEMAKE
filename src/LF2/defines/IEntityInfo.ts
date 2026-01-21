@@ -4,6 +4,7 @@ import type { IOpointInfo } from "./IOpointInfo";
 import type { ILegacyPictureInfo } from "./ILegacyPictureInfo";
 import type { IBotData } from "./IBotData";
 import type { IDrinkInfo } from "./IDrinkInfo";
+import type { IFramePictureInfo } from "./IFramePictureInfo";
 export interface IEntityInfo {
   type?: number;
 
@@ -262,4 +263,6 @@ export interface IEntityInfo {
    * @type {number}
    */
   defend_ratio?: number;
+
+  portraits?: Record<string, IFramePictureInfo>;
 }

@@ -1,7 +1,6 @@
 import { LF2 } from "../LF2";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
-import { InvalidController } from "../controller/InvalidController";
 import { IBaseData, IBgData, IBotData, IDataLists, IEntityData, IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { Defines } from "../defines/defines";
@@ -10,8 +9,8 @@ import { Factory } from "../entity";
 import {
   is_ball_data,
   is_bg_data,
-  is_fighter_data,
   is_entity_data,
+  is_fighter_data,
   is_weapon_data,
 } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
