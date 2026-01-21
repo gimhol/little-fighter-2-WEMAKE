@@ -1,6 +1,5 @@
 import { Difficulty } from "./Difficulty";
 import { IStageObjectInfo } from "./IStageObjectInfo";
-
 /**
  * 关卡阶段信息
  *
