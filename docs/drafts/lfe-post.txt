@@ -16,8 +16,7 @@ The shortcomings are as follows
 - Only VS Mode and Stage Mode are supported, with hardly any other modes
 - The bot is a bit stupid
 
-=========== To developers who are interested(source code is here)  =============
-[spoiler]
+[spoiler=To developers who are interested (source code is here)]
 Although I kind of hope someone can join me in the development, 
 considering that my personal development style is a bit erratic (I often make large-scale adjustments to some things), 
 I think I'll pass for now. 
@@ -27,15 +26,13 @@ However, everyone is still welcome to run this project and give it a try.
 Project repository: https://github.com/gimhol/little-fighter-2-WEMAKE
 [/spoiler]
 
-================================= Screenshots ==================================
-[spoiler]
+[spoiler=Some screenshots]
 [img]https://lf.gim.ink/docs/image/custom_game_guide_0.en.png[/img]
 [img]https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png[/img]
 [img]https://lf.gim.ink/docs/image/team_outline_effect_vs_mode.png[/img]
 [/spoiler]
 
-=========================== Multiplayer Online Game ============================
-[spoiler]
+[spoiler=Multiplayer Online Game]
 I spent quite a bit of time resolving various issues regarding inconsistent calculation results.
 
 Finally, the online multiplayer function has been added. If you're interested, you can give it a try (for testing purposes).
@@ -57,8 +54,7 @@ Then run "node ./server.cjs".
 more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Multiplayer%20Online%20Game/README.EN.MD]Multiplayer Online Game[/url]
 [/spoiler]
 
-========================== 2025-01-21 v0.1.9 release ===========================
-[spoiler]
+[spoiler=2025-01-21: v0.1.9 release]
 changelog:
 
 - feat: Custom game supported
@@ -81,8 +77,7 @@ You can download the "original data package" in Figure 2 to try out this feature
 more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Custom%20Game/README.EN.MD]Custom Game[/url]
 [/spoiler]
 
-========================== 2025-01-18 v0.1.5 release ===========================
-[spoiler]
+[spoiler=2025-01-18: v0.1.5 release]
 Sometimes it’s tricky to tell whether an object is an ally or an enemy.
 Especially when there are too many entities on the field, 
 or when you spot a projectile flying toward you from afar. 
@@ -104,8 +99,7 @@ changelog:
 feat: add “team outline” effect
 [/spoiler]
 
-========================== 2025-01-17 v0.1.4 release ===========================
-[spoiler]
+[spoiler=2025-01-17: v0.1.4 release]
 changelog:
 
 fix: fix the problem that the background and level buttons do not respond,
@@ -126,8 +120,7 @@ Experiment: I've chosen a revised LF2 (RN-LF2) to test the data conversion.
 Currently, there are still many problems. Now you can see it on the index page.
 [/spoiler]
 
-========================== 2025-01-15 new index page ===========================
-[spoiler]
+[spoiler=2025-01-15: new index page]
 Considering that the current data and logic are not stable, and to conduct some version management, 
 the original address will be changed to a directory page, as shown in the figure below:
 
