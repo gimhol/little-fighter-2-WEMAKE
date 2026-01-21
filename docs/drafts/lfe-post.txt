@@ -1,19 +1,22 @@
-I've also made a remastered version of LF2. Everyone is welcome to give it a try.
+I've also made a remake version of LF2. Everyone is welcome to give it a try.
 
-Play-test address: https://lf.gim.ink/
+Play address: https://lf.gim.ink/
 
-Since the logic is implemented according to my own understanding(and some tutorial for modifying), 
-many things are quite different from the original version. 
+the data and pictures are processed and converted from the original.
 
-Only the data and pictures are processed and converted from the original.
+The advantages are as follows:
+- Ideally, the game update frequency is 60 frames per second, which makes it look more fluent.
+- Full-platform support (of course, this is due to modern browsers and technical standards).
+- Touch-screen support
+- The game's input method is different from that of LF2, and no key presses will be missed. (You can even press the 'right' twice in the same frame, and the character can still run...)
 
-- There are currently many issues:
-- There are some problems with the AI.
-[s]- Online multiplayer gaming has not been implemented yet.[/s]
-- Only VS Mode and Stage Mode are supported, with hardly any other modes.
+The shortcomings are as follows
+- Since the logic is implemented according to my own understanding(and some tutorial for modifying), many things are quite different from the LF2. 
+- Only VS Mode and Stage Mode are supported, with hardly any other modes
+- The bot is a bit stupid
 
-The only commendable thing is that this thing runs at 60 frames per second...
-
+=========== To developers who are interested(source code is here)  =============
+[spoiler]
 Although I kind of hope someone can join me in the development, 
 considering that my personal development style is a bit erratic (I often make large-scale adjustments to some things), 
 I think I'll pass for now. 
@@ -21,9 +24,18 @@ I think I'll pass for now.
 However, everyone is still welcome to run this project and give it a try.
 
 Project repository: https://github.com/gimhol/little-fighter-2-WEMAKE
+[/spoiler]
 
-======================================================================
 
+================================= Screenshots ==================================
+[spoiler]
+[img]https://lf.gim.ink/docs/image/custom_game_guide_0.en.png[/img]
+[img]https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png[/img]
+[img]https://lf.gim.ink/docs/image/team_outline_effect_vs_mode.png[/img]
+[/spoiler]
+
+=========================== Multiplayer Online Game ============================
+[spoiler]
 I spent quite a bit of time resolving various issues regarding inconsistent calculation results.
 
 Finally, the online multiplayer function has been added. If you're interested, you can give it a try (for testing purposes).
@@ -34,28 +46,67 @@ I haven't conducted a very thorough test, so I don't know if there will be any s
 - It can also be used on Android browsers, but there seem to be relatively significant performance issues.
 - The server is on Alibaba Cloud (Guangzhou), and its performance is rather poor.
 
-======================================================================
-
 The server is based on nodejs. Through testing, it can also run on Bun and Deno.
 
 If you want to run your own server, download "server.cjs" from the following link:
 
-https://github.com/gimhol/little-fighter-2-WEMAKE/releases/tag/v0.1.0
+https://github.com/gimhol/little-fighter-2-WEMAKE/releases
 
 Then run "node ./server.cjs".
 
-============================= 2025-01-15 ==============================
+more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Multiplayer%20Online%20Game/README.EN.MD]Multiplayer Online Game[/url]
+[/spoiler]
 
-Considering that the current data and logic are not stable, and to conduct some version management, 
-the original address will be changed to a directory page, as shown in the figure below:
+========================== 2025-01-21 v0.1.9 release ===========================
+[spoiler]
+changelog:
 
-[img]https://lf.gim.ink/docs/image/index_page.png[/img]
+- feat: Custom game supported
+- fix: The attacked will drop the heavy weapons they are holding correctly
+- fix: Adjusted the performance of hitting and being hit by baseball-like weapons
+- fix: The boomerang can track enemies now
+- feat: You can see your own latency in the room list
+- feat: In the room, you can see the latency of all room members
+- fix: Fix the issues of bots not using moves and being overly defensive
 
-You need to click on the title to enter the game of the specified version.
+About Custom game
 
-============================= 2025-01-17 ==============================
+"Custom game" actually means allowing the loading of other data packages 
+(but currently, apart from the original data package, no other packages are available for use). 
 
-v0.1.4 release:
+[img]https://lf.gim.ink/docs/image/custom_game_guide_0.en.png[/img]
+[img]https://lf.gim.ink/docs/image/custom_game_guide_1.en.png[/img]
+You can download the "original data package" in Figure 2 to try out this feature.
+
+more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Custom%20Game/README.EN.MD]Custom Game[/url]
+[/spoiler]
+
+========================== 2025-01-18 v0.1.5 release ===========================
+[spoiler]
+Sometimes it’s tricky to tell whether an object is an ally or an enemy.
+Especially when there are too many entities on the field, 
+or when you spot a projectile flying toward you from afar. 
+
+That’s why I’m trying to add a “team outline” effect to LF2: Wemake.（See figure below）
+
+[img]https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png[/img]
+
+[img]https://lf.gim.ink/docs/image/team_outline_effect_vs_mode.png[/img]
+
+This feature will double the texture loading volume, which will result in slower loading speeds.
+
+It will also double the number of rendered entities on the field, 
+which may affect the game performance as well. 
+However, it seems to run fine on my device for now.
+
+changelog:
+
+feat: add “team outline” effect
+[/spoiler]
+
+========================== 2025-01-17 v0.1.4 release ===========================
+[spoiler]
+changelog:
 
 fix: fix the problem that the background and level buttons do not respond,
 fix: fix the problem of incorrect display on the scoreboard
@@ -73,44 +124,14 @@ fix: Fixed the problem of incorrect relationship between difficulty and the numb
 
 Experiment: I've chosen a revised LF2 (RN-LF2) to test the data conversion. 
 Currently, there are still many problems. Now you can see it on the index page.
+[/spoiler]
 
-============================= 2025-01-18 ==============================
+========================== 2025-01-15 new index page ===========================
+[spoiler]
+Considering that the current data and logic are not stable, and to conduct some version management, 
+the original address will be changed to a directory page, as shown in the figure below:
 
-Sometimes it’s tricky to tell whether an object is an ally or an enemy.
-Especially when there are too many entities on the field, 
-or when you spot a projectile flying toward you from afar. 
+[img]https://lf.gim.ink/docs/image/index_page.png[/img]
 
-That’s why I’m trying to add a “team outline” effect to LF2: Wemake.（See figure below）
-
-[img]https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png[/img]
-
-[img]https://lf.gim.ink/docs/image/team_outline_effect_vs_mode.png[/img]
-
-This feature will double the texture loading volume, which will result in slower loading speeds.
-
-It will also double the number of rendered entities on the field, 
-which may affect the game performance as well. 
-However, it seems to run fine on my device for now.
-
-v0.1.5 release:
-
-feat: add “team outline” effect
-
-============================= 2025-01-19 ==============================
-
-
-服务器默认情况下会使用80端口，你可以进行如下检查：
-- 80端口是否被其他程序占用了
-- 80端口是否被防火墙拦击了
-
-The server uses port 80 by default. You can perform the following checks:
-- Whether port 80 is occupied by other programs
-- Whether port 80 is blocked by the firewall
-
-Server v1.0.1 release，It can be configured via parameters.
-
-example (run the server on port 8080):
-
-> node ./server.cjs --port 8080
-
-
+You need to click on the title to enter the game of the specified version.
+[/spoiler]
