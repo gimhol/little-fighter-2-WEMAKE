@@ -35,18 +35,22 @@ export class WorldRenderer implements IWorldRenderer {
       }
     }
   }
-  get cam_x(): number {
-    return this.camera.position.x
-  }
-  set cam_x(v: number) {
-    v = Math.max(0, v)
-    this.camera.position.x = v;
+  get cam_x(): number { return this.camera.position.x }
+  set cam_x(v: number) { this.set_cam_pos(v, this.cam_y) }
+  get cam_y(): number { return this.camera.position.y }
+  set cam_y(v: number) { this.set_cam_pos(this.cam_x, v) }
+  set_cam_pos(x: number, y: number): void {
+    x = Math.max(0, x)
+    y = Math.max(0, y)
+    this.camera.position.x = x;
+    this.camera.position.x = y;
     for (const stack of this.lf2.ui_stacks) {
       for (const ui of stack.uis) {
         const [a, b] = ui.pos.default_value;
         const [, , c] = ui.pos.value;
-        ui.pos.value = [a + v, b, c];
-        ui.renderer.x = v;
+        ui.pos.value = [a + x, b, c];
+        ui.renderer.x = x;
+        ui.renderer.y = y;
       }
     }
   }
