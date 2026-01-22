@@ -257,7 +257,7 @@ export class EntityStatRender implements IEntityCallbacks {
     } else if (is_bot_ctrl(ctrl) && ctrl.player) {
       text = "com"
     } else if (key_role) {
-      text = e.data.base.name
+      text = this.world_renderer.lf2.string(e.data.base.name)
     } else {
       text = 'com'
     }

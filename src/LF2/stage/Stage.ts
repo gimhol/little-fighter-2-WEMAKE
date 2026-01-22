@@ -49,7 +49,8 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   get phase_idx(): number { return this._phase_idx };
   get phase(): IStagePhaseInfo | undefined { return this._phase; };
-
+  get dialog_idx(): number { return this._dialogs.index }
+  get dialog(): IDialogInfo | undefined { return this._dialogs.list[this._dialogs.index] }
   /** 左边界 */
   left: number;
   /** 右边界 */

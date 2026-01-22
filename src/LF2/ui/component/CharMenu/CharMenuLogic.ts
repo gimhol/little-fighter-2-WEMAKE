@@ -133,7 +133,7 @@ export class CharMenuLogic extends UIComponent {
         if (fighter_name) {
           const decided = state.step > SlotStep.FighterSel
           if (state.random && !random_confirm) fighter_name.join(this.lf2.string('Random'), is_com, decided)
-          else if (state.fighter) fighter_name.join(state.fighter.base.name ?? "noname", is_com, decided)
+          else if (state.fighter) fighter_name.join(this.lf2.string(state.fighter.base.name) || "noname", is_com, decided)
         }
         if (team_name) {
           if (state.step >= SlotStep.TeamSel) {
