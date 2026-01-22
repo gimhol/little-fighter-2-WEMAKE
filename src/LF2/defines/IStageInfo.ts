@@ -4,15 +4,30 @@ import { IStagePhaseInfo } from "./IStagePhaseInfo";
  */
 export interface IStageInfo {
   /**
-   * 关卡使用的背景
+   * 关卡ID
+   *
+   * @type {string}
+   * @memberof IStageInfo
+   */
+  id: string;
+
+  /**
+   * 关卡使用的背景ID
+   * 
+   * @type {string}
+   * @memberof IStageInfo
    */
   bg: string;
-  id: string;
+  
   name: string;
+
   phases: IStagePhaseInfo[];
 
   /**
-   * 所属章
+   * 所属章ID
+   * 
+   * @type {string}
+   * @memberof IStageInfo
    */
   chapter?: string;
 
@@ -41,6 +56,9 @@ export interface IStageInfo {
 
   /**
    * 是否为首个小关
+   * 
+   * @type {boolean}
+   * @memberof IStageInfo
    */
   is_starting?: boolean;
 
@@ -48,6 +66,12 @@ export interface IStageInfo {
    * 起点名称
    */
   starting_name?: string;
-  
+
+  /**
+   * 大标题
+   *
+   * @type {string}
+   * @memberof IStageInfo
+   */
   title?: string;
 }

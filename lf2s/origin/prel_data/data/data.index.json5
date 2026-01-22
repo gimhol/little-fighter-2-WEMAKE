@@ -6,11 +6,18 @@
       file: "data/gim.obj.json5",
     },
   ],
+  backgrounds: [
+    {
+      id: "ash_forest",
+      type: "bg",
+      file: "bg/ash_forest/ash_forest.bg.json5",
+    },
+  ],
   stages: [
     {
-      id: "t",
+      id: "tutorial",
       type: "stage",
-      file: "data/t.stage.json5",
+      file: "data/tutorial.stage.json5",
     },
   ],
 }
