@@ -7,6 +7,8 @@
   "ui/ctrl_settings_page.ui.json5",
   "ui/danmu_game_page.ui.json5",
   "ui/demo_mode_page.ui.json5",
+  "ui/dialog_bottom_long.ui.json5",
+  "ui/dialog_bottom_right.ui.json5",
   "ui/ending_page.ui.json5",
   "ui/entry_page.ui.json5",
   "ui/fighter_stat_1v1.ui.json5",

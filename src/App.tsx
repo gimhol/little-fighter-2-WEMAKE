@@ -34,8 +34,10 @@ import { fisrt } from "./LF2/utils/container_help";
 import { arithmetic_progression } from "./LF2/utils/math/arithmetic_progression";
 import { Loading } from "./LoadingImg";
 import { Log } from "./Log";
+import { Paths } from "./Paths";
 import { PlayerRow } from "./PlayerRow";
 import SettingsRows from "./SettingsRows";
+import { download } from "./Utils/download";
 import { open_file } from "./Utils/open_file";
 import img_btn_0_3 from "./assets/btn_0_3.png";
 import img_btn_1_0 from "./assets/btn_1_0.png";
@@ -55,9 +57,6 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
-import { download } from "./Utils/download";
-import { C } from "react-router/dist/development/index-react-server-client-Da3kmxNd";
-import { Paths } from "./Paths";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
