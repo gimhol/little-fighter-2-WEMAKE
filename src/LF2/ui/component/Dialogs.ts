@@ -10,10 +10,10 @@ export class Dialogs extends UIComponent {
   protected _stage?: Stage;
   protected _text_node?: UINode;
   protected _text_loader = new UITextLoader(() => this._text_node)
-  protected _speaker_node?: UINode;
-  protected _speaker_loader = new UITextLoader(() => this._speaker_node)
-  protected _protrait_node?: UINode;
-  protected _protrait_loader = new UIImgLoader(() => this._protrait_node)
+  protected _talker_node?: UINode;
+  protected _talker_loader = new UITextLoader(() => this._talker_node)
+  protected _head_node?: UINode;
+  protected _head_loader = new UIImgLoader(() => this._head_node)
   protected readonly _world_cbs: IWorldCallbacks = {
     on_stage_change: c => this.set_stage(c),
   }
@@ -43,19 +43,26 @@ export class Dialogs extends UIComponent {
 
     if (!dialog) {
       this._text_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
-      this._speaker_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
-      this._protrait_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
+      this._talker_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
+      this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
       return;
     }
 
     const text = this.lf2.string(dialog.i18n)
     this._text_loader.set_text([text]).catch(e => Ditto.warn('' + e))
 
-
     const fighter = dialog.fighter ? this.lf2.datas.find_character(dialog.fighter) : void 0
     if (fighter) {
       const fighter_name = this.lf2.string(fighter.base.name)
-      this._speaker_loader.set_text([fighter_name]).catch(e => Ditto.warn('' + e))
+      this._talker_loader.set_text([fighter_name]).catch(e => Ditto.warn('' + e))
+    } else {
+      this._talker_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
+    }
+
+    if (fighter?.base.head) {
+      this._head_loader.set_img([fighter.base.head]).catch(e => Ditto.warn('' + e))
+    } else {
+      this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
     }
   }
 }
