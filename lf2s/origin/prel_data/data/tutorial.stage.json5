@@ -1,5 +1,5 @@
 [ {
-    bg: "bg_2",
+    bg: "ash_forest",
     id: "tutorial",
     name: "TUTORIAL",
     phases: [
