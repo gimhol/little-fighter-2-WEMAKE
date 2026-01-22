@@ -15,21 +15,77 @@
           b_h: 28,
         },
       },
-      size: "734, 130",
+      size: "734, 140",
       center: "0.5, 0.5",
       pos: "397, 355",
     },
     {
-      id: "txt",
+      id: "center_txt_pos",
       pos: "397, 355",
+      visible: false,
       center: "0.5, 0.5",
       txt: [
         {
           i18n: "tutorial.dialog_12",
           style: {
             fill_style: "white",
-            font: "12px Arial",
+            font: "13px Arial",
           },
+        },
+      ],
+    },
+    {
+      id: "left_txt_pos",
+      pos: "170, 355",
+      center: "0, 0.5",
+      txt: [
+        {
+          i18n: "tutorial.dialog_1",
+          style: {
+            fill_style: "white",
+            font: "13px Arial",
+          },
+        },
+      ],
+    },
+    {
+      id: "right_txt_pos",
+      // visible: false,
+      pos: "624, 355",
+      center: "1, 0.5",
+      txt: [
+        {
+          i18n: "tutorial.dialog_1",
+          style: {
+            fill_style: "white",
+            font: "13px Arial",
+          },
+        },
+      ],
+    },
+    {
+      id: "left_head_pos",
+      pos: "100, 355",
+      center: "0.5, 0.5",
+      size: "120, 120",
+      img: [
+        {
+          w: 120,
+          h: 120,
+          path: "sprite/gim/face.png",
+        },
+      ],
+    },
+    {
+      id: "right_head_pos",
+      pos: "694, 355",
+      center: "0.5, 0.5",
+      size: "120,120",
+      img: [
+        {
+          w: 120,
+          h: 120,
+          path: "sprite/gim/face.png",
         },
       ],
     },

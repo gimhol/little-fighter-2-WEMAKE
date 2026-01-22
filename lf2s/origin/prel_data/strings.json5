@@ -58,13 +58,13 @@
     "tutorial.dialog_8": [
       "Good! Next is [Run Attack].",
       "While [Run], press 'Attack' to perform a [Run Attack].",
-      "(Double-click the '⬅' or '➡' to [Run])",
+      "(Double-click the '⬅/➡' to [Run])",
     ],
     "tutorial.dialog_10": [
       "Good! Next is [Dash Attack].",
       "While [Dash], press 'Attack' to perform a [Dash Attack].",
       "",
-      "(Double-click the '⬅' or '➡' to [Run], then press 'Jump' to [Dash])",
+      "(Double-click the '⬅/➡' to [Run], then press 'Jump' to [Dash])",
     ],
     "tutorial.dialog_11": [
       "Good! But even experts can hardly avoid getting hurt completely.",
@@ -114,7 +114,7 @@
     "score_board.mp_usage": "MP Usage",
     "score_board.picking": "Picking",
     "score_board.status": "Status",
-    "score_board.press_atk_jmp_continue": "Press 'Attack' or 'Jump' to contimue",
+    "score_board.press_atk_jmp_continue": "Press 'Attack/Jump' to contimue",
     "score_board.time_used": "time:",
     goto_special_moves_table: "ⓘ Click here to see the special moves table of characters",
     "entry_page.game_start": "Game Start",
