@@ -9,7 +9,7 @@
         objects: [
           {
             id: [
-              "30",
+              "gim",
             ],
             x: 900,
             facing: -1,
@@ -18,12 +18,9 @@
             ratio: 1,
           },
         ],
-        music: "bgm/stage1.wma.mp3",
+        music: "",
         enemy_r: 1100,
         enemy_l: -200,
-        on_end: [
-          "enter_next_phase",
-        ],
         respawn: {
           "1": 200,
           "2": 150,

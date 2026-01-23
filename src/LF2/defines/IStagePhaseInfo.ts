@@ -30,7 +30,26 @@ export interface IStagePhaseInfo {
   /** 关卡描述 */
   desc?: string;
   objects: IStageObjectInfo[];
+
+  /** 
+   * 背景音乐 
+   * 
+   * 设为空字符将停止播放当前正在播放的背景音乐
+   * @type {string}
+   */
   music?: string;
+
+  /**
+   * 播放音效
+   * 
+   * @type {string}
+   */
+  sounds?: {
+    path: string,
+    x?: number,
+    y?: number,
+    z?: number
+  }[]
 
   respawn?: { [x in Difficulty]?: number };
 

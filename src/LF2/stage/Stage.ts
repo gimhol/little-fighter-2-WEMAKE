@@ -12,7 +12,7 @@ import { floor, min, round_float } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
 import type IStageCallbacks from "./IStageCallbacks";
-import { IDialogState, IReadonlyDialogState } from "./IStageCallbacks";
+import { IDialogState } from "./IStageCallbacks";
 import Item from "./Item";
 import { Status } from "./Status";
 
@@ -148,12 +148,23 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   private _stop_bgm?: () => void;
 
-  private play_phase_bgm() {
+  private play_phase_sounds() {
     const { phase } = this
     if (!phase) return;
-    const { music } = phase;
-    if (!music) return;
-    this._stop_bgm = this.lf2.sounds.play_bgm(music);
+    const { music, sounds } = phase;
+    if (music !== void 0) {
+      if (music) {
+        this._stop_bgm = this.lf2.sounds.play_bgm(music);
+      } else {
+        this._stop_bgm = void 0;
+        this.lf2.sounds.stop_bgm();
+      }
+    }
+    if (sounds?.length) {
+      for (const { path, x, y, z } of sounds) {
+        this.lf2.sounds.play(path, x, y, z)
+      }
+    }
   }
 
   stop_bgm(): void {
@@ -193,7 +204,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
         if (mp_recovery) f.mp = min(f.mp + mp_recovery, f.mp_max)
       }
     }
-    this.play_phase_bgm();
+    this.play_phase_sounds();
     for (const object of objects) {
       this.spawn_object(object);
     }
