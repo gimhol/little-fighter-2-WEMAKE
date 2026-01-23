@@ -44,16 +44,12 @@ export function handle_itr_normal_bdy_defend(collision: ICollision) {
   } else {
     victim.world.spark(x, y, z, SparkEnum.DefendHit);
     itr.actions?.forEach((action) => {
-      if (action.type === ActionType.A_Defend)
-        collision_action_handlers.a_next_frame(action, collision);
-      if (action.type === ActionType.V_Defend)
-        collision_action_handlers.v_next_frame(action, collision);
+      if (action.type === ActionType.A_Defend || action.type === ActionType.V_Defend)
+        collision_action_handlers[action.type](action, collision);
     })
     bdy.actions?.forEach((action) => {
-      if (action.type === ActionType.A_Defend)
-        collision_action_handlers.a_next_frame(action, collision);
-      if (action.type === ActionType.V_Defend)
-        collision_action_handlers.v_next_frame(action, collision);
+      if (action.type === ActionType.A_Defend || action.type === ActionType.V_Defend)
+        collision_action_handlers[action.type](action, collision);
     })
   }
 }
