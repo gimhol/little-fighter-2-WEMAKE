@@ -34,7 +34,7 @@ export function handle_itr_normal_bdy_defend(collision: ICollision) {
     victim.defend_value = 0;
     victim.world.spark(x, y, z, SparkEnum.BrokenDefend);
     itr.actions?.forEach((action) => {
-      if (action.type === ActionType.A_Defend || action.type === ActionType.V_Defend)
+      if (action.type === ActionType.A_BrokenDefend || action.type === ActionType.V_BrokenDefend)
         collision_action_handlers[action.type](action, collision);
     })
     bdy.actions?.forEach((action) => {
