@@ -4,7 +4,9 @@ export enum ActionType {
   /** 修改'攻方'下一帧 */
   A_NextFrame = 'a_next_frame',
   A_SetProp = 'a_set_prop',
+  /** 被'受方'防御时，修改'攻方'下一帧 */
   A_Defend = 'a_defend',
+  /** '受方'破防时，修改'攻方'下一帧 */
   A_BrokenDefend = 'a_broken_defend',
 
   /** '受方'发出声音 */
@@ -12,7 +14,9 @@ export enum ActionType {
   /** 修改'受方'下一帧 */
   V_NextFrame = 'v_next_frame',
   V_SetProp = 'v_set_prop',
+  /** 被'受方'防御时，修改'受方'下一帧 */
   V_Defend = 'v_defend',
+  /** '受方'破防时，修改'受方'下一帧 */
   V_BrokenDefend = 'v_broken_defend',
 
   /** 反转'攻方'的X轴速度 */
