@@ -7,10 +7,10 @@
       {
         bound: 900,
         desc: "",
-        objects:[],
+        objects: [],
         _objects: [
           {
-            id: [ "gim" ],
+            id: ["gim"],
             x: 900,
             facing: -1,
             hp: 50,
@@ -47,7 +47,82 @@
           {
             fighter: "gim",
             i18n: "tutorial.dialog_0",
-            end_test: "cur_dialog_time>60"
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_1",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_2",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_3",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_4",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_5",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_6",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_7",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_8",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_9",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_10",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_11",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_12",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_13",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_14",
+            end_test: "cur_dialog_time>60",
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_15",
+            end_test: "cur_dialog_time>60",
           },
         ],
       },
@@ -55,7 +130,7 @@
         bound: 901,
         objects: [
           {
-            id: [ "gim" ],
+            id: ["gim"],
             x: 900,
             facing: -1,
             hp: 50,
@@ -63,7 +138,7 @@
             ratio: 1,
           },
         ],
-      }
+      },
     ],
     is_starting: true,
     starting_name: "tutorial",

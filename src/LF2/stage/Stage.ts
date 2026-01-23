@@ -251,7 +251,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   next_dialog() {
     const prev = this._dialogs
     // prev.index == prev.list.length 代表结束，这是允许的。
-    if (prev.index < prev.list.length) return
+    if (prev.index >= prev.list.length) return
     const curr = this._dialogs = {
       ...prev, index: prev.index + 1,
     }
@@ -365,13 +365,23 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     return this.all_fighter_dead() && this.dialog_cleared();
   }
 
+  is_dialog_end(): boolean {
+    const end_tester = this.dialog?.end_tester
+    if (end_tester) return end_tester.run(this);
+    return false;
+  }
   check_phase_end(): boolean {
     const ret = this.is_phase_end()
     if (!ret) return ret
     this.enter_phase(this.phase_idx + 1);
     return ret
   }
-
+  check_dialog_end(): boolean {
+    const ret = this.is_dialog_end()
+    if (!ret) return ret
+    this.next_dialog();
+    return ret
+  }
   /** 是否应该进入下一关 */
   get should_goto_next_stage(): boolean {
     if (this.is_chapter_finish || !this.is_stage_finish)
@@ -385,5 +395,6 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.fsm.update(1);
 
     this.check_phase_end();
+    this.check_dialog_end();
   }
 }
