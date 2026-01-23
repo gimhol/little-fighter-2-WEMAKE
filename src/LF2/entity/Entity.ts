@@ -1337,7 +1337,7 @@ export class Entity {
 
           let max_distance = Number.MAX_SAFE_INTEGER
           let friend: Entity | undefined;
-          for (const e of this.world.slot_fighters.values()) {
+          for (const e of this.world.puppets.values()) {
             if (e.hp <= 0) continue;
             const d =
               abs(round(e.position.x - this._position.x)) +

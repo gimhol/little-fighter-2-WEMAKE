@@ -58,7 +58,7 @@ export class World extends WorldDataset {
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
-  readonly slot_fighters = new Map<string, Entity>();
+  readonly puppets = new Map<string, Entity>();
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();
   get bg() { return this._bg; }
@@ -156,7 +156,7 @@ export class World extends WorldDataset {
         const player = this.lf2.players.get(entity.ctrl.player_id)
         if (player) {
           player.fighter = entity
-          this.slot_fighters.set(entity.ctrl.player_id, entity);
+          this.puppets.set(entity.ctrl.player_id, entity);
           this.callbacks.emit("on_player_character_add")(entity.ctrl.player_id);
         }
       }
@@ -198,7 +198,7 @@ export class World extends WorldDataset {
       this.callbacks.emit("on_fighter_del")(entity);
     const player = this.lf2.players.get(entity.ctrl.player_id)
     if (player) player.fighter = void 0
-    const ok = this.slot_fighters.delete(entity.ctrl.player_id);
+    const ok = this.puppets.delete(entity.ctrl.player_id);
     if (ok) this.callbacks.emit("on_player_character_del")(entity.ctrl.player_id);
     this.renderer.del_entity(entity);
     entity.dispose();
@@ -393,7 +393,7 @@ export class World extends WorldDataset {
   protected handle_keys() {
     if (!this.lf2.events.length) return;
     for (const e of this.lf2.events) {
-      const fighter = this.slot_fighters.get(e.player)
+      const fighter = this.puppets.get(e.player)
       if (!fighter) continue;
       const { ctrl } = fighter
       if (!is_human_ctrl(ctrl)) continue;
@@ -581,7 +581,7 @@ export class World extends WorldDataset {
     let acc_ratio = 1;
     if (is_num(this.lock_cam_x)) {
       new_x = this.lock_cam_x;
-    } else if (this.slot_fighters.size) {
+    } else if (this.puppets.size) {
       let l = 0;
       new_x = 0;
       /** 存活的本地人类玩家角色 */
@@ -590,7 +590,7 @@ export class World extends WorldDataset {
       const humans: Entity[] = [];
       /** 槽中角色 */
       const fighters: Entity[] = []
-      for (const [, p] of this.slot_fighters) {
+      for (const [, p] of this.puppets) {
         if (is_human_ctrl(p.ctrl) && p.hp > 0) {
           if (p.ctrl.player.mine) {
             mines.push(p)

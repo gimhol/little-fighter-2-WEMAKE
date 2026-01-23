@@ -186,7 +186,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     const loop_players_fighters = hp_recovery || hp_respawn || mp_recovery
     if (loop_players_fighters) {
       const teams = new Set<string>()
-      for (const [, f] of this.world.slot_fighters)
+      for (const [, f] of this.world.puppets)
         teams.add(f.team)
       for (const f of this.world.entities) {
         if (!is_fighter(f) && !teams.has(f.team)) continue;
@@ -216,7 +216,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       const x = phase.player_jump_to_x;
 
       const player_teams = new Set<string>();
-      for (const [, v] of this.lf2.world.slot_fighters) {
+      for (const [, v] of this.lf2.world.puppets) {
         player_teams.add(v.team);
       }
       for (const entity of this.world.entities) {
@@ -267,7 +267,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   async spawn_object(obj_info: IStageObjectInfo) {
     if (this.world.stage !== this) return;
     let count = 0;
-    for (const [, c] of this.world.slot_fighters)
+    for (const [, c] of this.world.puppets)
       count += c.data.base.ce ?? 1;
     if (!count) count = 1;
 
@@ -329,7 +329,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
     const temp: Entity[] = [];
     const player_teams = new Set<string>();
-    for (const [, v] of this.lf2.world.slot_fighters) {
+    for (const [, v] of this.lf2.world.puppets) {
       player_teams.add(v.team);
     }
     for (const e of this.world.entities) {

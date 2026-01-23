@@ -19,7 +19,7 @@ export class PlayerScore extends UIComponent {
   get fighter(): Entity | undefined {
     const { index } = this;
     if (index < 0) return void 0;
-    const arr = Array.from(this.world.slot_fighters)
+    const arr = Array.from(this.world.puppets)
     if (index >= arr.length) return void 0
     return arr[index][1];
   }
