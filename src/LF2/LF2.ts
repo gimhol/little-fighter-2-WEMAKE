@@ -25,22 +25,25 @@ const cheat_info_pair = (n: D.CheatType) =>
   ] as const;
 
 export class LF2 implements I.IKeyboardCallback, IDebugging {
-  debug!: (_0: string, ..._1: any[]) => void;
-  warn!: (_0: string, ..._1: any[]) => void;
-  log!: (_0: string, ..._1: any[]) => void;
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  lang: string = '';
-  dev: boolean = false;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
   static PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
   static DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
-  static get instance() { return LF2.instances[0] }
+  static get instance(): LF2 | undefined { return LF2.instances[0] }
+  static get world(): World | undefined { return this.instance?.world }
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
-  private _disposed: boolean = false;
+  
+  lang: string = '';
+  dev: boolean = false;
+  debug!: (_0: string, ..._1: any[]) => void;
+  warn!: (_0: string, ..._1: any[]) => void;
+  log!: (_0: string, ..._1: any[]) => void;
+
   readonly callbacks = new Callbacks<ILf2Callback>();
+  private _disposed: boolean = false;
   private _ui_stacks: UI.UIStack[] = [];
   private _loading: boolean = false;
   private _playable: boolean = false;

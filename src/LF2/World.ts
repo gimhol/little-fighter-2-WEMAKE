@@ -29,6 +29,7 @@ import { manhattan_xz } from "./helper/manhattan_xz";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
+import { Transform } from "./Transform";
 import { Times } from "./ui";
 import { abs, is_num, min, round } from "./utils";
 import { WorldDataset } from "./WorldDataset";
@@ -50,11 +51,10 @@ export class World extends WorldDataset {
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   private _game_time = new Times();
-  x: number = 0;
-  y: number = 0;
-  z: number = 0;
 
   get game_time() { return this._game_time }
+
+  readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
@@ -457,6 +457,7 @@ export class World extends WorldDataset {
   }
 
   update_once() {
+    this.transform.update()
     this.update_ui();
     this.handle_keys();
     this.handle_cmds();
