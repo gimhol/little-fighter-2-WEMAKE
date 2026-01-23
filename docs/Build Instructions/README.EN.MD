@@ -20,6 +20,12 @@ This step will generate lf2:wemake data based on the original lf2 data.
   - [ffmpeg](https://ffmpeg.org/download.html): Used for converting audio file formats.
   - [magick](https://imagemagick.org/script/download.php): Used for converting image file formats.
 
+## init
+
+``` bash
+npm i
+```
+
 ## Running
 
 ``` bash
