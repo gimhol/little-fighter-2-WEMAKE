@@ -20,6 +20,12 @@ npm run build:data
   - [ffmpeg](https://ffmpeg.org/download.html): 用于音频文件转格式
   - [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
 
+## 初始化
+
+``` bash
+npm i
+```
+
 ## 运行
 
 ``` bash
