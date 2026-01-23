@@ -35,7 +35,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static get world(): World | undefined { return this.instance?.world }
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
-  
+
   lang: string = '';
   dev: boolean = false;
   debug!: (_0: string, ..._1: any[]) => void;
@@ -520,10 +520,17 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   protected _uiinfo_map = new Map<string, UI.IUIInfo>();
   protected _strings = new Map<string, { [x in string]?: string }>()
+  protected _strings_list = new Map<string, { [x in string]?: string[] }>();
   string(name: string): string {
     return (
       this._strings.get(this.lang)?.[name] ??
       this._strings.get("")?.[name] ?? name
+    )
+  }
+  strings(name: string): string[] {
+    return (
+      this._strings_list.get(this.lang)?.[name] ??
+      this._strings_list.get("")?.[name] ?? [name]
     )
   }
   load_strings(strings: any) {
@@ -549,7 +556,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       if (!collection) continue;
       this._strings.set(a, { ...collection });
       collection_pointers.splice(i, 1);
-      --i
+      --i;
     }
   }
 

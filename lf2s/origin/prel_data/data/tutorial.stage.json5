@@ -41,9 +41,12 @@
         cam_jump_to_x: 0,
         player_jump_to_x: 0,
         hide_stats: 1,
-        dialogs: [{ 
-          
-        }],
+        dialogs: [
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_0",
+          },
+        ],
       },
     ],
     is_starting: true,

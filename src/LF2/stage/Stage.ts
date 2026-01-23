@@ -238,16 +238,16 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     const prev = this._dialogs;
     const list = [...prev.list, ...more]
     let index = prev.index;
-    if (index < 0 || index >= prev.list.length)
-      index = prev.index + 1;
+    if (index < 0) index = prev.index + 1;
     const curr = this._dialogs = { ...prev, list, index }
     this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
   next_dialog() {
     const prev = this._dialogs
+    // prev.index == prev.list.length 代表结束，这是允许的。
+    if (prev.index < prev.list.length) return
     const curr = this._dialogs = {
-      ...prev,
-      index: prev.index + 1,
+      ...prev, index: prev.index + 1,
     }
     this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
@@ -345,13 +345,24 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   all_boss_dead(): boolean {
     return !find(this.items, i => i.info.is_boss);
   }
-  all_gone(): boolean {
-    if (
-      this._dialogs.list.length &&
-      this._dialogs.index < this._dialogs.list.length
-    ) return false;
-    return !find(this.items, i => i.fighters.size);
+  all_fighter_dead(): boolean {
+    return !find(this.items, i => i.fighters.size)
   }
+  /** 对话框已完毕 */
+  dialog_cleared(): boolean {
+    return this._dialogs.list.length < 0 || this._dialogs.index >= this._dialogs.list.length;
+  }
+  is_phase_end(): boolean {
+    return this.all_fighter_dead() && this.dialog_cleared();
+  }
+
+  check_phase_end(): boolean {
+    const ret = this.is_phase_end()
+    if (!ret) return ret
+    this.enter_phase(this.phase_idx + 1);
+    return ret
+  }
+
   /** 是否应该进入下一关 */
   get should_goto_next_stage(): boolean {
     if (this.is_chapter_finish || !this.is_stage_finish)

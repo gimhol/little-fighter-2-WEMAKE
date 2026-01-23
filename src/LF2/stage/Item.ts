@@ -45,8 +45,7 @@ export default class Item {
       } else {
         this.dispose();
       }
-      if (this.stage.all_gone())
-        this.stage.enter_phase(this.stage.phase_idx + 1);
+      this.stage.check_phase_end();
     },
   };
   constructor(stage: Stage, info: IStageObjectInfo) {

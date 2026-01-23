@@ -1,6 +1,7 @@
-import { Difficulty } from "./Difficulty";
-import { IDialogInfo } from "./IDialogInfo";
-import { IStageObjectInfo } from "./IStageObjectInfo";
+import type { Difficulty } from "./Difficulty";
+import type { IDialogInfo } from "./IDialogInfo";
+import type { IExpression } from "./IExpression";
+import type { IStageObjectInfo } from "./IStageObjectInfo";
 /**
  * 关卡阶段信息
  *
@@ -76,7 +77,23 @@ export interface IStagePhaseInfo {
    */
   player_jump_to_x?: number;
 
-  end_condition?: string;
+  /** 
+   * 结束判定 
+   * 
+   * @type {?string}
+   */
+  end_test?: string;
+
+  /**
+   * 结束测试器
+   * 读取数据时，通过end_test生成
+   * 
+   * 当end_test不存在，end_tester也不存在
+   * 
+   * 无结束测试器时, 对话框完毕，且敌人被清空视为结束
+   */
+  end_tester?: IExpression<any>;
+
   on_start?: string[];
   on_end?: string[];
 

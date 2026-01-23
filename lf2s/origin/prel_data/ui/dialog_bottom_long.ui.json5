@@ -1,6 +1,15 @@
 {
   id: "dialog_bottom_long",
   name: "对话框: 底部长条型",
+  component: [
+    {
+      name: "Dialogs",
+      properties: {
+        head_node_id: "left_head_pos",
+        text_node_id: "left_txt_pos",
+      },
+    },
+  ],
   items: [
     {
       id: "bg_dialog",
@@ -20,17 +29,15 @@
       pos: "397, 355",
     },
     {
-      id: "center_txt_pos",
-      pos: "397, 355",
-      visible: false,
+      id: "left_head_pos",
+      pos: "100, 355",
       center: "0.5, 0.5",
-      txt: [
+      size: "120, 120",
+      img: [
         {
-          i18n: "tutorial.dialog_12",
-          style: {
-            fill_style: "white",
-            font: "13px Arial",
-          },
+          w: 120,
+          h: 120,
+          path: "sprite/gim/face.png",
         },
       ],
     },
@@ -49,8 +56,23 @@
       ],
     },
     {
+      id: "center_txt_pos",
+      pos: "397, 355",
+      visible: false,
+      center: "0.5, 0.5",
+      txt: [
+        {
+          i18n: "tutorial.dialog_12",
+          style: {
+            fill_style: "white",
+            font: "13px Arial",
+          },
+        },
+      ],
+    },
+    {
       id: "right_txt_pos",
-      // visible: false,
+      visible: false,
       pos: "624, 355",
       center: "1, 0.5",
       txt: [
@@ -64,23 +86,11 @@
       ],
     },
     {
-      id: "left_head_pos",
-      pos: "100, 355",
-      center: "0.5, 0.5",
-      size: "120, 120",
-      img: [
-        {
-          w: 120,
-          h: 120,
-          path: "sprite/gim/face.png",
-        },
-      ],
-    },
-    {
       id: "right_head_pos",
       pos: "694, 355",
       center: "0.5, 0.5",
       size: "120,120",
+      visible: false,
       img: [
         {
           w: 120,

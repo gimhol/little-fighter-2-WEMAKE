@@ -13,21 +13,30 @@ export class Dialogs extends UIComponent {
   protected _head_node?: UINode;
   protected _head_loader = new UIImgLoader(() => this._head_node)
 
-  private _dialog: IDialogInfo | undefined;
   override on_start(): void {
     super.on_start?.();
+    const head_node_id = this.props.str('head_node_id')
+    const text_node_id = this.props.str('text_node_id')
+    const talker_node_id = this.props.str('talker_node_id')
+    if (head_node_id) this._head_node = this.node.search_child(head_node_id)
+    if (text_node_id) this._text_node = this.node.search_child(text_node_id)
+    if (talker_node_id) this._talker_node = this.node.search_child(talker_node_id)
     this._listner.start();
   }
+
   override on_stop(): void {
     this._listner.stop();
   }
+
   set_dialog(dialog: IDialogInfo | undefined) {
     if (!dialog) {
+      this.node.visible = false;
       this._text_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
       this._talker_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
       this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
       return;
     }
+    this.node.visible = true;
     const text = this.lf2.string(dialog.i18n)
     this._text_loader.set_text([text]).catch(e => Ditto.warn('' + e))
 
