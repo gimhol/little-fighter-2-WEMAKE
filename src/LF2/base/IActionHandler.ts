@@ -1,12 +1,13 @@
-import { ICollision } from ".";
-import { IAction_SetProp, IAction_Sound, TNextFrame } from "../defines";
-import { ActionType } from "../defines/ActionType";
-import { IAction_BrokenDefend } from "../defines/IAction_BrokenDefend";
-import { IAction_Defend } from "../defines/IAction_Defend";
-import { IAction_Fusion } from "../defines/IAction_Fusion";
-import { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
-import { IAction_TurnFace } from "../defines/IAction_TurnFace";
-import { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
+import type { ICollision } from "./ICollision";
+import type { IAction_SetProp, IAction_Sound, TNextFrame } from "../defines";
+import type { ActionType } from "../defines/ActionType";
+import type { IAction_Broadcast } from "../defines/IAction_Broadcast";
+import type { IAction_BrokenDefend } from "../defines/IAction_BrokenDefend";
+import type { IAction_Defend } from "../defines/IAction_Defend";
+import type { IAction_Fusion } from "../defines/IAction_Fusion";
+import type { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
+import type { IAction_TurnFace } from "../defines/IAction_TurnFace";
+import type { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
 
 export interface IActionHandler {
   [ActionType.A_Sound]: (action: IAction_Sound, collision: ICollision) => any;
@@ -24,4 +25,5 @@ export interface IActionHandler {
   [ActionType.V_TURN_FACE]: (action: IAction_TurnFace, collision: ICollision) => any;
   [ActionType.V_TURN_TEAM]: (action: IAction_TurnTeam, collision: ICollision) => any;
   [ActionType.FUSION]: (action: IAction_Fusion, collision: ICollision) => any;
+  [ActionType.BROADCAST]: (action: IAction_Broadcast, collision: ICollision) => any;
 }

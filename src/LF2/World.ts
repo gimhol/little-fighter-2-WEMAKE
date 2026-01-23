@@ -30,7 +30,7 @@ import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Times } from "./ui";
-import { abs, find, is_num, min, round } from "./utils";
+import { abs, is_num, min, round } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -53,7 +53,7 @@ export class World extends WorldDataset {
   x: number = 0;
   y: number = 0;
   z: number = 0;
-  
+
   get game_time() { return this._game_time }
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
@@ -729,6 +729,8 @@ export class World extends WorldDataset {
     const dy = vy - ay
     const dz = vz - az
     const collision: ICollision = {
+      lf2: this.lf2,
+      world: this,
       v_rest: !itr.arest && itr.vrest ? itr.vrest + this.vrest_offset : void 0,
       victim,
       attacker,

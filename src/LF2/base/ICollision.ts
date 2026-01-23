@@ -1,8 +1,15 @@
 
+import type { LF2 } from "../LF2";
+import type { World } from "../World"
 import type { IBdyInfo, IBounding, IFrameInfo, IItrInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
 
 export interface ICollision {
+  
+  readonly lf2: LF2;
+
+  readonly world: World;
+
   /**
    * 攻击方
    *
