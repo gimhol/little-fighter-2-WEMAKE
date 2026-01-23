@@ -48,7 +48,7 @@ export class WorldRenderer implements IWorldRenderer {
       for (const ui of stack.uis) {
         const [a, b] = ui.pos.default_value;
         const [, , c] = ui.pos.value;
-        ui.pos.value = [a + x, b, c];
+        ui.pos.value = [a + x, b + y, c];
         ui.renderer.x = x;
         ui.renderer.y = y;
       }
