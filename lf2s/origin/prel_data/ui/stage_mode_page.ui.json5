@@ -9,8 +9,6 @@
     "ui/gogogo_loop.ui.json5",
     {
       template: "ui/dialog_bottom_long.ui.json5",
-      visible: false,
-      scale: "0,0,1",
     },
     {
       center: "0.5,0.5",

@@ -18,6 +18,8 @@
       size: "734, 140",
       center: "0.5, 0.5",
       pos: "397, 355",
+      visible: false,
+      scale: "0,0,1",
       component: [
         {
           name: "Dialogs",
