@@ -1,4 +1,4 @@
-# 构建与运行
+# 开发、运行与构建
 
 [中文](./README.MD) | [English](./README.EN.MD)
 
@@ -12,8 +12,9 @@
 本步骤将会根据lf2原数据生成lf2:wemake的数据
 
 准备一些必须的转换工具
-  - [ffmpeg](https://ffmpeg.org/download.html): 用于音频文件转格式
-  - [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
+
+- [ffmpeg](https://ffmpeg.org/download.html): 用于音频文件转格式
+- [magick](https://imagemagick.org/script/download.php): 用于图片文件转格式
 
 ffmpeg与magick安装后，请确保在命令行中可以执行他们（tips: 你可以把他们添加到环境变量中）。
 
@@ -38,8 +39,19 @@ npm run build:data
 npm i
 ```
 
-## 运行
+## 运行 (开发)
 
 ``` bash
 npm run dev
 ```
+
+然后你可以在浏览器中打开`http://localhost:3000`开始游戏
+
+## 构建
+
+``` bash
+npm run build
+```
+
+完成后，你能看见一个dist目录，该目录下的内容是一个静态网页。
+你可以部署到自己喜欢的服务器上。
