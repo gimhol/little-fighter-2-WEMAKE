@@ -40,7 +40,8 @@ export class StageTitleShow extends UIComponent {
   on_stage_change(stage: Stage, prev?: Stage) {
     prev?.callbacks.del(this)
     stage.callbacks.add(this)
-    const title = stage.data.title ?? stage.bg.name ?? ""
+
+    const title = this.lf2.string(stage.data.title ?? stage.bg.name ?? "")
     this.node.visible = false;
     ui_load_txt(this.lf2, {
       i18n: title, style: {
