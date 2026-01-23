@@ -18,6 +18,7 @@ import { is_non_blank_str, is_str } from "../utils/type_check";
 import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
 import { preprocess_entity_data } from "./preprocess_entity_data";
+import { preprocess_stage } from "./preprocess_stage";
 
 export interface IDataListMap {
   background: IBgData[];
@@ -64,7 +65,6 @@ class Inner {
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BallController(a, b));
     else if (is_fighter_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
-
     if (is_entity_data(data)) {
       if (data.base.bot_id) {
         data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id)
@@ -116,6 +116,7 @@ class Inner {
     for (const file of index_files) {
       const { objects = [], backgrounds = [], stages = [], bots = [] } = await this.lf2.import_json<Partial<IDataLists>>(file, true)
         .then(r => r[0]).catch(e => { Ditto.warn(`FAIL TO LOAD DAT INDEX ${file}, ` + e); return {} as Partial<IDataLists> });
+
       data.objects.push(...objects)
       data.backgrounds.push(...backgrounds)
       data.stages.push(...stages)
@@ -171,7 +172,9 @@ class Inner {
         .then(r => r[0])
         .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
       this.lf2.on_loading_content(`${stage_file.file}`, 100);
-      stages.push(...stage_datas)
+      for (const stage of stage_datas) {
+        stages.push(preprocess_stage(stage))
+      }
     }
 
     if (!this.stages.find(v => v.id === Defines.VOID_STAGE.id))

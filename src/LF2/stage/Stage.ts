@@ -350,9 +350,11 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   }
   /** 对话框已完毕 */
   dialog_cleared(): boolean {
-    return this._dialogs.list.length < 0 || this._dialogs.index >= this._dialogs.list.length;
+    return this._dialogs.list.length <= 0 || this._dialogs.index >= this._dialogs.list.length;
   }
   is_phase_end(): boolean {
+    const end_tester = this.phase?.end_tester
+    if (end_tester) return end_tester.run(this);
     return this.all_fighter_dead() && this.dialog_cleared();
   }
 
