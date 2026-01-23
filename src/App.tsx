@@ -90,10 +90,10 @@ const init_s = () => ({
 function App() {
   const l = useLocation()
   const nav = useNavigate()
-  const { sobj, hobj } = useMemo(() => {
+  const { params } = useMemo(() => {
     const sobj = qs.parse(l.search.substring(1))
     const hobj = qs.parse(l.hash.substring(1))
-    return { sobj, hobj }
+    return { sobj, hobj, params: { ...sobj, ...hobj } }
   }, [l])
 
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -110,7 +110,7 @@ function App() {
   const [loaded, set_loaded] = useState(false);
   const [paused, _set_paused] = useState(false);
   const [bg_id, _set_bg_id] = useState(Defines.VOID_BG.id);
-  const [networking, set_networking] = useState(sobj.network === '1' || hobj.network === '1')
+  const [networking, set_networking] = useState(params.network === '1')
   const [dat_viewer_open, set_dat_viewer_open] = useState(false);
   const [editor_open, set_editor_open] = useState(false);
 
@@ -212,7 +212,7 @@ function App() {
       }
     },
     on_prel_loaded: (lf2) => {
-      const { test_ui } = qs.parse(window.location.search.substring(1))
+      const { test_ui } = params
       if (typeof test_ui === 'string') lf2.set_ui(test_ui)
     },
   })
@@ -237,8 +237,7 @@ function App() {
 
   useEffect(() => {
     if (!state_ready) return
-    let lang = sobj.lang || hobj.lang;
-    let dev = sobj.dev || hobj.dev
+    let { lang, dev } = params;
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
     const lf2 = ref_lf2.current = new LF2(dev == '1');
     lf2.lang = lang;
@@ -287,7 +286,7 @@ function App() {
       window.removeEventListener("touchstart", on_touchstart)
       lf2.dispose()
     };
-  }, [LF2, sobj, hobj, state_ready]);
+  }, [LF2, params, state_ready]);
 
   const on_click_load_local_zip = () => {
     if (!lf2) return;

@@ -6,7 +6,7 @@ import type { World } from "@/LF2/World";
 import { Camera, Object3D, OrthographicCamera } from "../_t";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
-import { EntityRenderer as EntityRenderer } from "./EntityRenderer";
+import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
 
