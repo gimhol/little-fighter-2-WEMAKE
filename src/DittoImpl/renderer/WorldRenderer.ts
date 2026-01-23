@@ -3,7 +3,7 @@ import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { is_fighter, type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
-import { Camera, OrthographicCamera } from "../_t";
+import { Camera, Object3D, OrthographicCamera } from "../_t";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
 import { EntityRenderer as EntityRenderer } from "./EntityRenderer";
@@ -16,7 +16,8 @@ export class WorldRenderer implements IWorldRenderer {
   bg_render: BgRender;
   scene: Scene;
   camera: Camera;
-  entity_renderers = new Set<EntityRenderer>();
+  readonly entity_renderers = new Set<EntityRenderer>();
+  readonly world_node = new Object3D();
 
   private _indicator_flags: number = 0;
   get indicator_flags() {
@@ -41,7 +42,6 @@ export class WorldRenderer implements IWorldRenderer {
   set cam_y(v: number) { this.set_cam_pos(this.cam_x, v) }
   set_cam_pos(x: number, y: number): void {
     x = Math.max(0, x)
-    y = Math.max(0, y)
     this.camera.position.x = x;
     this.camera.position.y = y;
     for (const stack of this.lf2.ui_stacks) {
@@ -49,8 +49,8 @@ export class WorldRenderer implements IWorldRenderer {
         const [a, b] = ui.pos.default_value;
         const [, , c] = ui.pos.value;
         ui.pos.value = [a + x, b + y, c];
-        ui.renderer.x = x;
-        ui.renderer.y = y;
+        ui.renderer.x = a + x;
+        ui.renderer.y = -(b + y);
       }
     }
   }
@@ -64,6 +64,7 @@ export class WorldRenderer implements IWorldRenderer {
     const h = world.screen_h;
     this.bg_render = new BgRender(this);
     this.scene = new Scene(world.lf2).set_size(w * 4, h * 4);
+    this.scene.inner.add(this.world_node);
     {
       const camera = this.camera = new OrthographicCamera()
       camera.left = 0;

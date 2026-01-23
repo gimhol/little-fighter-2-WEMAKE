@@ -135,7 +135,7 @@ export class EntityRender {
 
   on_mount() {
     this.reset(this.entity);
-    this.world_renderer.scene.inner.add(
+    this.world_renderer.world_node.add(
       this.outline_mesh,
       this.main_mesh,
       this.blood_mesh

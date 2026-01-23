@@ -151,7 +151,7 @@ export class EntityStatRender implements IEntityCallbacks {
   on_mount() {
     const { entity } = this;
     entity.callbacks.add(this);
-    this.world_renderer.scene.inner.add(this.bars_node, this.name_node, this.ctrl_node, this.reserve_node);
+    this.world_renderer.world_node.add(this.bars_node, this.name_node, this.ctrl_node, this.reserve_node);
     this.bars_node.visible = entity.key_role
     this.name_node.visible = entity.key_role
     this.ctrl_node.visible = false

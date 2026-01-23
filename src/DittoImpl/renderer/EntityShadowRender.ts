@@ -30,7 +30,7 @@ export class EntityShadowRender {
   }
 
   on_mount() {
-    (this.entity.world.renderer as WorldRenderer).scene.inner.add(this.mesh);
+    (this.entity.world.renderer as WorldRenderer).world_node.add(this.mesh);
   }
 
   on_unmount() {
