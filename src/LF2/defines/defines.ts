@@ -328,7 +328,7 @@ export namespace Defines {
     CHARACTER_THUMB = "sprite/CHARACTER_THUMB.png",
   }
   export enum BuiltIn_Dats {
-    Spark = "data/spark.json5",
+    Spark = "data/spark.json5"
   }
   export enum BuiltIn_Broadcast {
     ResetGPL = "reset_gpl",

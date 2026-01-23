@@ -11,6 +11,7 @@ import {
   IBdyInfo, IBounding, IEntityData,
   IFrameInfo, IItrInfo, ItrKind,
   IVector3,
+  O_ID,
   StateEnum,
   WeaponType
 } from "./defines";
@@ -38,7 +39,7 @@ export class World extends WorldDataset {
   readonly lf2: LF2;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
   private _spark_data?: IEntityData;
-  private _spark_creator?: ICreator<Entity, typeof Entity>;
+  private _etc_data?: IEntityData;
   private _bg: Background;
   private _stage: Stage;
   private _need_FPS: boolean = true;
@@ -58,6 +59,11 @@ export class World extends WorldDataset {
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
+  /** 
+   * 被玩家操作的角色 
+   * 键: 玩家ID
+   * 值: 角色
+   */
   readonly puppets = new Map<string, Entity>();
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();
@@ -760,11 +766,6 @@ export class World extends WorldDataset {
     return collision
   }
 
-  init_spark_data() {
-    this._spark_data = this.lf2.datas.find(Defines.BuiltIn_Dats.Spark);
-    this._spark_creator = this._spark_data ? Factory.inst.get_entity_creator(this._spark_data.type) : void 0;
-  }
-
   /**
    * 火花特效
    *
@@ -777,39 +778,36 @@ export class World extends WorldDataset {
    */
   spark(x: number, y: number, z: number, f: string): void {
     if (!this._spark_data)
-      this.init_spark_data();
-    if (!this._spark_data) {
-      Ditto.warn(
-        World.TAG + "::spark",
-        `data of "${Defines.BuiltIn_Dats.Spark}" not found!`,
-      );
+      this._spark_data = this.lf2.datas.find(Defines.BuiltIn_Dats.Spark);
+    const data = this._spark_data
+    if (!data) {
+      Ditto.warn(`[${World.TAG}::spark] "${Defines.BuiltIn_Dats.Spark}" data not found!`);
       return;
     }
-    if (!this._spark_creator) {
-      Ditto.warn(World.TAG + "::spark", `creator of "${this._spark_data.type}" not found!`);
+    const e = Factory.inst.create_entity(data.type, this, data);
+    if (!e) {
+      Ditto.warn(`[${World.TAG}::spark] failed`);
       return;
     }
-    const e = this._spark_creator(this, this._spark_data);
     e.position.set(round(x), round(y), round(z));
     e.enter_frame({ id: f });
     e.attach(false);
   }
   etc(x: number, y: number, z: number, f: string): void {
-    const data = this.lf2.datas.find(998);
+    if (!this._etc_data) this._etc_data = this.lf2.datas.find(O_ID.Etc);
+    const data = this._etc_data;
     if (!data) {
-      Ditto.warn(`[${World.TAG}::etc] failed, oid: ${998} data: ${data}`);
-      debugger;
+      Ditto.warn(`[${World.TAG}::etc] oid "${O_ID.Etc}" data not found!`);
       return;
     }
-    const o = Factory.inst.create_entity(data.type, this, data)
-    if (!o) {
-      Ditto.warn(`[${World.TAG}::etc] failed, oid: ${998} data: ${data}`);
-      debugger;
+    const e = Factory.inst.create_entity(data.type, this, data)
+    if (!e) {
+      Ditto.warn(`[${World.TAG}::etc] failed`);
       return;
     }
-    o.position.set(round(x), round(y), round(z));
-    o.enter_frame({ id: f });
-    o.attach(false);
+    e.position.set(round(x), round(y), round(z));
+    e.enter_frame({ id: f });
+    e.attach(false);
   }
   get_bounding(e: Entity, f: IFrameInfo, i: IItrInfo | IBdyInfo): IBounding {
     const left =

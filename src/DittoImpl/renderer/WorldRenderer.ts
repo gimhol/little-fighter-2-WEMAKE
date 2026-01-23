@@ -9,6 +9,7 @@ import { BgRender } from "./BgRender";
 import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
+import { floor, random_in } from "@/LF2";
 
 export class WorldRenderer implements IWorldRenderer {
   lf2: LF2;
@@ -122,8 +123,11 @@ export class WorldRenderer implements IWorldRenderer {
   }
 
   render(dt: number): void {
-    const { indicator_flags, transform: { x, y, z } } = this.world;
+    const { indicator_flags, transform } = this.world;
+    let { x, y, z, earthquake, earthquake_level } = transform
+    if (earthquake) x += random_in(-earthquake_level, earthquake_level)
     this.world_node.position.set(x, y, z);
+
     if (indicator_flags != this.indicator_flags)
       this.indicator_flags = indicator_flags;
     this.bg_render.render();

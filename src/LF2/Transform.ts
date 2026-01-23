@@ -6,6 +6,10 @@ export class Transform implements ITransform {
   protected _y: number = 0;
   protected _z: number = 0;
   protected _d: ITransform = { x: 0, y: 0, z: 0 };
+  // 临时写着玩的
+  earthquake_level: number = 0;
+  // 临时写着玩的
+  earthquake: number = 0;
   get d() { return this._d }
   get x() { return this._x }
   get y() { return this._y }
@@ -19,12 +23,15 @@ export class Transform implements ITransform {
     return { x, y, z }
   }
   update(): void {
+    if (this.earthquake)
+      this.earthquake--;
     const d = this._d
-    if (!d) return;
-    const { x, y, z } = this
-    if (d.x !== x) this._x = round_float(x + (d.x - x) * 0.1, 100)
-    if (d.y !== y) this._y = round_float(y + (d.y - y) * 0.1, 100)
-    if (d.z !== z) this._z = round_float(z + (d.z - z) * 0.1, 100)
+    if (d) {
+      const { x, y, z } = this
+      if (d.x !== x) this._x = round_float(x + (d.x - x) * 0.1, 100)
+      if (d.y !== y) this._y = round_float(y + (d.y - y) * 0.1, 100)
+      if (d.z !== z) this._z = round_float(z + (d.z - z) * 0.1, 100)
+    }
   }
   move_to(x: number = this.x, y: number = this.y, z: number = this.z, smooth: boolean = false): void {
     this._d.x = x

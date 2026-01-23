@@ -32,19 +32,15 @@
     rowing_distance: 2.5,
     fall_value: 140,
     defend_value: 120,
+    group: ["1000"],
   },
   indexes: {
     standing: "0",
-    heavy_obj_walk: [
-      "heavy_obj_walk_0",
-    ],
+    heavy_obj_walk: ["heavy_obj_walk_0"],
     picking_light: "115",
     picking_heavy: "117",
     ice: "200",
-    fire: [
-      "203",
-      "205",
-    ],
+    fire: ["203", "205"],
     injured: {
       "1": "222",
       "-1": "220",
@@ -55,45 +51,21 @@
       "-1": "230",
     },
     grand_injured: {
-      "1": [
-        "222",
-      ],
-      "-1": [
-        "220",
-      ],
+      "1": ["222"],
+      "-1": ["220"],
     },
-    in_the_skys: [
-      "212",
-    ],
+    in_the_skys: ["212"],
     critical_hit: {
-      "1": [
-        "186",
-      ],
-      "-1": [
-        "180",
-      ],
+      "1": ["186"],
+      "-1": ["180"],
     },
     falling: {
-      "1": [
-        "187",
-        "188",
-        "189",
-      ],
-      "-1": [
-        "181",
-        "182",
-        "183",
-      ],
+      "1": ["187", "188", "189"],
+      "-1": ["181", "182", "183"],
     },
     bouncing: {
-      "1": [
-        "190",
-        "191",
-      ],
-      "-1": [
-        "184",
-        "185",
-      ],
+      "1": ["190", "191"],
+      "-1": ["184", "185"],
     },
     landing_1: "215",
     landing_2: "219",
@@ -145,10 +117,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -162,10 +131,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -247,10 +213,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -264,10 +227,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -349,10 +309,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -366,10 +323,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -451,10 +405,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -468,10 +419,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -6495,10 +6443,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6512,10 +6457,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -6622,17 +6564,12 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6646,10 +6583,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -6739,17 +6673,12 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6763,10 +6692,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -6856,17 +6782,12 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6880,10 +6801,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -6973,17 +6891,12 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6997,10 +6910,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -7090,17 +7000,12 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -7114,10 +7019,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -7207,17 +7109,12 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: [
-              "20",
-              "25",
-            ],
+            id: ["20", "25"],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -7231,10 +7128,7 @@
             expression: "super_punch==1",
           },
           {
-            id: [
-              "60",
-              "65",
-            ],
+            id: ["60", "65"],
             facing: 3,
           },
         ],
@@ -7295,9 +7189,7 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
@@ -7370,9 +7262,7 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
@@ -7446,9 +7336,7 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
@@ -7521,9 +7409,7 @@
       hit: {
         a: [
           {
-            id: [
-              "45",
-            ],
+            id: ["45"],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
