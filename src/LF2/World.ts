@@ -36,10 +36,8 @@ export class World extends WorldDataset {
   static override readonly TAG: string = "World";
   readonly lf2: LF2;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
-
   private _spark_data?: IEntityData;
   private _spark_creator?: ICreator<Entity, typeof Entity>;
-
   private _bg: Background;
   private _stage: Stage;
   private _need_FPS: boolean = true;
@@ -52,6 +50,10 @@ export class World extends WorldDataset {
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   private _game_time = new Times();
+  x: number = 0;
+  y: number = 0;
+  z: number = 0;
+  
   get game_time() { return this._game_time }
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();

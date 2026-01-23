@@ -122,7 +122,8 @@ export class WorldRenderer implements IWorldRenderer {
   }
 
   render(dt: number): void {
-    const { indicator_flags } = this.world;
+    const { indicator_flags, x, y, z } = this.world;
+    this.world_node.position.set(x, y, z);
     if (indicator_flags != this.indicator_flags)
       this.indicator_flags = indicator_flags;
     this.bg_render.render();
