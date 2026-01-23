@@ -380,7 +380,7 @@ export namespace Defines {
     PAGEUP: "PG↑",
   }
 
-  export const DEFAULT_BREAK_DEFEND_VALUE = 32;
+  export const DEFAULT_BREAK_DEFEND_VALUE = 40;
 
   export const BAT_CHASE_SPREADING_VX = arithmetic_progression(-6, 6, 1)
   export const BAT_CHASE_SPREADING_VZ = arithmetic_progression(-2, 2, 1)

@@ -45,7 +45,6 @@ export default class Item {
       } else {
         this.dispose();
       }
-      this.stage.check_phase_end();
     },
   };
   constructor(stage: Stage, info: IStageObjectInfo) {

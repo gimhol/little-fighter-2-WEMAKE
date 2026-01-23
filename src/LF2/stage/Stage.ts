@@ -33,6 +33,8 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     index: -1,
     list: []
   };
+  phase_time: number = 0;
+  dialog_time: number = 0;
   get title(): string { return this.data.title ?? this.bg.name }
   /** 节是否结束 */
   get is_stage_finish(): boolean { return this._is_stage_finish; }
@@ -173,6 +175,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   private set_phase(phase: IStagePhaseInfo | undefined) {
     if (phase === this.phase) return;
+    this.phase_time = 0;
     const prev = this.phase
     this.callbacks.emit("on_phase_changed")(this, this._phase = phase, prev);
     this.player_l = 0
@@ -238,7 +241,10 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     const prev = this._dialogs;
     const list = [...prev.list, ...more]
     let index = prev.index;
-    if (index < 0) index = prev.index + 1;
+    if (index < 0) {
+      index = prev.index + 1;
+      this.dialog_time = 0;
+    }
     const curr = this._dialogs = { ...prev, list, index }
     this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
@@ -249,6 +255,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     const curr = this._dialogs = {
       ...prev, index: prev.index + 1,
     }
+    this.dialog_time = 0;
     this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
   clear_dialogs() {
@@ -373,6 +380,10 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   }
 
   update() {
+    if (this.phase) this.phase_time++
+    if (this.dialog) this.dialog_time++
     this.fsm.update(1);
+
+    this.check_phase_end();
   }
 }

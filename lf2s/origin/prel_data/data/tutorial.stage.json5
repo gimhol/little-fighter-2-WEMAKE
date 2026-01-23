@@ -7,9 +7,10 @@
       {
         bound: 900,
         desc: "",
-        objects: [
+        objects:[],
+        _objects: [
           {
-            id: ["gim"],
+            id: [ "gim" ],
             x: 900,
             facing: -1,
             hp: 50,
@@ -41,14 +42,28 @@
         cam_jump_to_x: 0,
         player_jump_to_x: 0,
         hide_stats: 1,
-        end_test: "enemies_cleared==1",
+        end_test: "cur_phase_time>1200",
         dialogs: [
           {
             fighter: "gim",
             i18n: "tutorial.dialog_0",
+            end_test: "cur_dialog_time>60"
           },
         ],
       },
+      {
+        bound: 901,
+        objects: [
+          {
+            id: [ "gim" ],
+            x: 900,
+            facing: -1,
+            hp: 50,
+            times: 2,
+            ratio: 1,
+          },
+        ],
+      }
     ],
     is_starting: true,
     starting_name: "tutorial",

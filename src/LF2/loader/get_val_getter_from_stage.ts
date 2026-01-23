@@ -7,6 +7,8 @@ export const stage_world_val_getters = new Map<string, undefined | IValGetter<St
 export const stage_val_getters: Record<S_Val, IValGetter<Stage>> = {
   [S_Val.EnemiesCleared]: (e) => e.all_fighter_dead() ? 1 : 0,
   [S_Val.DialogCleared]: (e) => e.dialog_cleared() ? 1 : 0,
+  [S_Val.CurPhaseTime]: (e) => e.phase_time,
+  [S_Val.CurDialogTime]: (e) => e.dialog_time,
 }
 
 export const get_val_getter_from_stage: IValGetterGetter<Stage> = (word: string): IValGetter<Stage> | undefined => {

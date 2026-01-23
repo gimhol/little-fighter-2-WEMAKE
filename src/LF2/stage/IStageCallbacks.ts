@@ -4,7 +4,7 @@ import type { Stage } from "./Stage";
 
 export interface IDialogState {
   index: number;
-  list: IDialogInfo[]
+  list: IDialogInfo[];
 }
 export interface IReadonlyDialogState {
   readonly index: number;
