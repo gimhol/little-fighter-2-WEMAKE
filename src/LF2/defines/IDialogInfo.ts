@@ -25,6 +25,12 @@ export interface IDialogInfo {
    * 默认: 'press_a'
    */
   close_by?: string;
+
+
+  /** 
+   * 隐藏状态栏 
+   */
+  hide_stats?: number;
 }
 
 export enum DialogCloseBy {

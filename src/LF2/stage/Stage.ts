@@ -232,14 +232,15 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.cam_r = phase.camera_r ?? phase.bound ?? this.bg.right
     this.enemy_r = phase.enemy_r ?? ((phase.bound ?? this.bg.right) + 1200)
     this.drink_r = phase.drink_r ?? (this.bg.right + 1200)
-    if (dialogs) this.push_dialogs(dialogs)
+    if (dialogs?.length) this.push_dialogs(dialogs)
   }
   push_dialogs(more: IDialogInfo[]) {
     const prev = this._dialogs;
-    const curr = this._dialogs = {
-      ...prev,
-      list: [...prev.list, ...more]
-    }
+    const list = [...prev.list, ...more]
+    let index = prev.index;
+    if (index < 0 || index >= prev.list.length)
+      index = prev.index + 1;
+    const curr = this._dialogs = { ...prev, list, index }
     this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
   next_dialog() {

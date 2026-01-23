@@ -81,4 +81,7 @@ export interface IStagePhaseInfo {
   on_end?: string[];
 
   dialogs?: IDialogInfo[];
+
+  /** 隐藏状态栏 */
+  hide_stats?: number;
 }

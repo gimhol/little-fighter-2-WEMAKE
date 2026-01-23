@@ -1,10 +1,12 @@
 
+import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
-import { UINode } from "../UINode";
-import { UIComponent } from "./UIComponent";
-import { SmoothNumber } from "./SmoothNumber";
 import { UIImgLoader } from "../UIImgLoader";
+import { UINode } from "../UINode";
 import { UITextLoader } from "../UITextLoader";
+import { SmoothNumber } from "./SmoothNumber";
+import { StageDialogListener } from "./StageDialogListener";
+import { UIComponent } from "./UIComponent";
 export class FighterStatBar extends UIComponent {
   static override readonly TAG: string = 'FighterStatBar'
   protected dark_hp_bar?: UINode
@@ -15,7 +17,7 @@ export class FighterStatBar extends UIComponent {
   protected defend_value_bar?: UINode;
   protected toughness_bar?: UINode;
   protected entity?: Entity;
-
+  protected dialog_listener = new StageDialogListener(this, (d) => this.set_dialog(d))
   protected defend_value_max = new SmoothNumber().on_change(() => this.update_defend_value())
   protected defend_value = new SmoothNumber().on_change(() => this.update_defend_value())
   protected fall_value_max = new SmoothNumber().on_change(() => this.update_fall_value())
@@ -63,6 +65,10 @@ export class FighterStatBar extends UIComponent {
     on_data_changed: () => this.update_head()
   }
   protected direction: string = '';
+
+  set_dialog(d: IDialogInfo | undefined): void {
+    this.node.visible = !d
+  }
   set_entity(entity: Entity | undefined) {
     if (this.entity === entity) return;
     if (this.entity) {
@@ -89,6 +95,7 @@ export class FighterStatBar extends UIComponent {
   }
   override on_start(): void {
     super.on_start?.();
+    this.dialog_listener.start();
     this.dark_hp_bar = this.node.find_child(this.props.str('dark_hp_bar')!)
     this.hp_bar = this.node.find_child(this.props.str('hp_bar')!)
     this.dark_mp_bar = this.node.find_child(this.props.str('dark_mp_bar')!)
@@ -106,7 +113,10 @@ export class FighterStatBar extends UIComponent {
     if (this.toughness_bar) this.toughness_bar_w = this.toughness_bar.size.value[0]
     this.direction = this.props.str('direction') ?? ''
   }
-
+  override on_stop(): void {
+    super.on_stop?.();
+    this.dialog_listener.stop();
+  }
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
     const node = this.defend_value_bar;
     if (!node || max === 0) return;
