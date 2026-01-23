@@ -23,33 +23,31 @@ export class StageTitleShow extends UIComponent {
     }
   }).ignore_out_of_date();
 
-  on_chapter_finish() {
+  set_text(text: string) {
     this.node.visible = false;
-    this._txt_loader.set_text(["STAGE CLEAR!"])
+    this._txt_loader.set_text([text]).then(() => {
+      this.node.visible = true;
+    })
     this._opactiy.start(false);
   }
-
+  on_chapter_finish() {
+    this.set_text("STAGE CLEAR!")
+  }
   on_stage_change(stage: Stage, prev?: Stage) {
     prev?.callbacks.del(this)
     stage.callbacks.add(this)
     const title = this.lf2.string(stage.data.title ?? stage.bg.name ?? "")
-    this.node.visible = false;
-    this._txt_loader.set_text([title])
-    this._opactiy.start(false);
+    this.set_text(title)
   }
 
   override on_start(): void {
     super.on_start?.();
+    this.world.callbacks.add(this)
     this.on_stage_change(this.world.stage)
   }
 
-  override on_resume(): void {
-    super.on_resume();
-    this.world.callbacks.add(this)
-  }
-
-  override on_pause(): void {
-    super.on_pause();
+  override on_stop(): void {
+    super.on_stop?.();
     this.world.callbacks.del(this)
   }
 

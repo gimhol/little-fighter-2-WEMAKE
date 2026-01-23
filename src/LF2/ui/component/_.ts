@@ -35,33 +35,34 @@ import * as a6 from "./PlayerKeyEdit";
 import * as a7 from "./PlayerKeyText";
 import * as a8 from "./PlayerName";
 import * as a9 from "./PlayerNameInput";
-import * as b0 from "./Players";
-import * as b1 from "./PlayerScore";
-import * as b2 from "./PlayerScoreCell";
-import * as b3 from "./PlayerScorePlayerName";
-import * as b4 from "./PlayerTeamName";
-import * as b5 from "./PlayingTimeText";
-import * as b6 from "./PositionAnimation";
-import * as b7 from "./PrefixAndDifficultyText";
-import * as b8 from "./RandomImg";
-import * as b9 from "./RandomTxt";
-import * as c0 from "./Reachable";
-import * as c1 from "./ReachableGroup";
-import * as c2 from "./ScaleAnimation";
-import * as c3 from "./ScaleClickable";
-import * as c4 from "./SineOpacity";
-import * as c5 from "./Sounds";
-import * as c6 from "./StageModeLogic";
-import * as c7 from "./StageNameText";
-import * as c8 from "./StageTitleShow";
-import * as c9 from "./StageTitleText";
-import * as d0 from "./StageTransitions";
-import * as d1 from "./SummaryLogic";
-import * as d2 from "./TeamSituationText";
-import * as d3 from "./TextInput";
-import * as d4 from "./TxtClickable";
-import * as d5 from "./VerticalLayout";
-import * as d6 from "./VsModeLogic";
+import * as aa from "./Players";
+import * as ab from "./PlayerScore";
+import * as ac from "./PlayerScoreCell";
+import * as ad from "./PlayerScorePlayerName";
+import * as ae from "./PlayerTeamName";
+import * as af from "./PlayingTimeText";
+import * as ag from "./PositionAnimation";
+import * as ah from "./PrefixAndDifficultyText";
+import * as ai from "./RandomImg";
+import * as aj from "./RandomTxt";
+import * as ak from "./Reachable";
+import * as al from "./ReachableGroup";
+import * as am from "./ScaleAnimation";
+import * as an from "./ScaleClickable";
+import * as ao from "./SineOpacity";
+import * as ap from "./Sounds";
+import * as aq from "./StageModeLogic";
+import * as ar from "./StageNameText";
+import * as as from "./StageTitleShow";
+import * as at from "./StageTitleText";
+import * as au from "./StageTransitions";
+import * as av from "./SummaryLogic";
+import * as aw from "./TeamSituationText";
+import * as ax from "./TextInput";
+import * as ay from "./TxtClickable";
+import * as az from "./VerticalLayout";
+import * as b0 from "./VsModeLogic";
+import * as b1 from "./HideWhenDialoging"
 /*** COMPONENTS IMPORT END ***/
 
 export const ALL_COMPONENTS = [
@@ -71,13 +72,14 @@ export const ALL_COMPONENTS = [
   n.FighterHead, o.FighterName, q.FighterThumb, r.FitChildren, s.Flex, t.FlexItem,
   u.GamePrepareLogic, v.HorizontalLayout, w.ImgClickable, x.ImgLoop, a0.LaunchPage,
   a1.LoadingContentText, a3.OpacityFlash, a2.OpacityAnimation, a4.OpacityHover, a5.PlayerCtrlType,
-  a7.PlayerKeyText, a8.PlayerName, b0.Players, b1.PlayerScore, b2.PlayerScoreCell,
-  b4.PlayerTeamName, b5.PlayingTimeText, b6.PositionAnimation, b7.PrefixAndDifficultyText,
-  b8.RandomImg, b9.RandomTxt, c0.Reachable, c1.ReachableGroup, c2.ScaleAnimation,
-  c3.ScaleClickable, c4.SineOpacity, c5.Sounds, c6.StageModeLogic,
-  c7.StageNameText, c8.StageTitleShow, c9.StageTitleText, d0.StageTransitions,
-  d1.SummaryLogic, d2.TeamSituationText, d3.TextInput, d4.TxtClickable, d5.VerticalLayout,
-  d6.VsModeLogic, z.Jalousie, a6.PlayerKeyEdit, g.DanmuGameLogic, a9.PlayerNameInput, p.FighterStatBar,
-  f.ComponentsPlayer, d.CharMenuLogic, y.IntegerPicker, b3.PlayerScorePlayerName, i.Dialogs
+  a7.PlayerKeyText, a8.PlayerName, aa.Players, ab.PlayerScore, ac.PlayerScoreCell,
+  ae.PlayerTeamName, af.PlayingTimeText, ag.PositionAnimation, ah.PrefixAndDifficultyText,
+  ai.RandomImg, aj.RandomTxt, ak.Reachable, al.ReachableGroup, am.ScaleAnimation,
+  an.ScaleClickable, ao.SineOpacity, ap.Sounds, aq.StageModeLogic,
+  ar.StageNameText, as.StageTitleShow, at.StageTitleText, au.StageTransitions,
+  av.SummaryLogic, aw.TeamSituationText, ax.TextInput, ay.TxtClickable, az.VerticalLayout,
+  b0.VsModeLogic, z.Jalousie, a6.PlayerKeyEdit, g.DanmuGameLogic, a9.PlayerNameInput, p.FighterStatBar,
+  f.ComponentsPlayer, d.CharMenuLogic, y.IntegerPicker, ad.PlayerScorePlayerName,
+  i.Dialogs, b1.HideWhenDialoging
   /*** COMPONENTS MAP END ***/
 ].map(v => [v.TAG, v] as const);

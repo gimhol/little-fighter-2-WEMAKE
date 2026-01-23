@@ -4,7 +4,10 @@
   component: ["SummaryLogic()", "StageModeLogic()"],
   items: [
     "ui/center_pause_label.ui.json5",
-    "ui/fighter_stat_s_x8.ui.json5",
+    {
+      template: "ui/fighter_stat_s_x8.ui.json5",
+      component: ["HideWhenDialoging()"],
+    },
     "ui/gogogo.ui.json5",
     "ui/gogogo_loop.ui.json5",
     {
@@ -18,17 +21,17 @@
     {
       pos: "397,10",
       center: "0.5,0",
-      component: ["StageTitleText()"],
+      component: ["StageTitleText()", "HideWhenDialoging()"],
     },
     {
       pos: "0,10",
       center: "0,0",
-      component: ["TeamSituationText(1)"],
+      component: ["TeamSituationText(1)", "HideWhenDialoging()"],
     },
     {
       pos: "794,10",
       center: "1,0",
-      component: ["TeamSituationText()"],
+      component: ["TeamSituationText()", "HideWhenDialoging()"],
     },
     {
       pos: "794,450",
