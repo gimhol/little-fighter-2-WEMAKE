@@ -30,7 +30,7 @@ export interface IStagePhaseInfo {
   drink_r?: number;
   /** 关卡描述 */
   desc?: string;
-  objects: IStageObjectInfo[];
+  objects?: IStageObjectInfo[];
 
   /** 
    * 背景音乐 
@@ -76,6 +76,14 @@ export interface IStagePhaseInfo {
    * @type {?number}
    */
   player_jump_to_x?: number;
+  player_jump_to_z?: number;
+
+  /**
+   * 玩家朝向
+   *
+   * @type {?number}
+   */
+  player_facing?: -1 | 1;
 
   /** 
    * 结束判定 

@@ -8,7 +8,7 @@ import { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
 import { is_fighter, is_weapon } from "../entity/type_check";
-import { floor, min, round_float } from "../utils";
+import { floor, max, min, round_float } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
 import type IStageCallbacks from "./IStageCallbacks";
@@ -208,25 +208,13 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       }
     }
     this.play_phase_sounds();
-    for (const object of objects) {
+    if (objects?.length) for (const object of objects) {
       this.spawn_object(object);
     }
     if (is_num(phase.cam_jump_to_x)) {
       this.world.renderer.cam_x = phase.cam_jump_to_x;
     }
 
-    if (is_num(phase.player_jump_to_x)) {
-      const x = phase.player_jump_to_x;
-
-      const player_teams = new Set<string>();
-      for (const [, v] of this.lf2.world.puppets) {
-        player_teams.add(v.team);
-      }
-      for (const entity of this.world.entities) {
-        if (is_fighter(entity) && player_teams.has(entity.team))
-          entity.set_position_x(this.lf2.mt.range(x, x + 50));
-      }
-    }
     this.player_l = phase.player_l ?? 0
     this.cam_l = phase.camera_l ?? 0
     this.enemy_l = phase.enemy_l ?? -1200
@@ -235,6 +223,37 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.cam_r = phase.camera_r ?? phase.bound ?? this.bg.right
     this.enemy_r = phase.enemy_r ?? ((phase.bound ?? this.bg.right) + 1200)
     this.drink_r = phase.drink_r ?? (this.bg.right + 1200)
+
+    const player_x = is_num(phase.player_jump_to_x) ? phase.player_jump_to_x : void 0;
+    const player_z = is_num(phase.player_jump_to_z) ? phase.player_jump_to_z : void 0;
+    const player_f = is_num(phase.player_facing) ? phase.player_facing : void 0;
+    if (player_x || player_z) {
+
+      const teams = new Set<string>();
+      for (const [, v] of this.lf2.world.puppets)
+        teams.add(v.team);
+
+      for (const entity of this.world.entities) {
+        if (!is_fighter(entity) || !teams.has(entity.team)) continue;
+        if (player_f === 1 || player_f === -1)
+          entity.facing = player_f
+        if (typeof player_x === 'number') {
+          const l = max(this.player_l, player_x - 50)
+          const r = min(this.player_r, player_x + 50)
+          const x = this.lf2.mt.range(l, r)
+          entity.set_position_x(x);
+        }
+        if (typeof player_z === 'number') {
+          const f = max(this.far, player_z - 50)
+          const n = min(this.near, player_z + 50)
+          const z = this.lf2.mt.range(f, n)
+          entity.set_position_z(z);
+        }
+
+      }
+    }
+
+
     if (dialogs?.length) this.push_dialogs(dialogs)
   }
   push_dialogs(more: IDialogInfo[]) {
