@@ -30,7 +30,7 @@
         enemy_l: -200,
         hide_stats: 1,
         // end_test: "cur_phase_time>1200",
-        world_pause: true,
+        // world_pause: true,
         dialogs: [
           {
             fighter: "gim",
@@ -40,7 +40,7 @@
           {
             fighter: "gim",
             i18n: "tutorial.dialog_1",
-            end_test: "cur_dialog_time>60",
+            end_test: "cur_dialog_time>60&&broadcast{{gim_walk",
           },
           {
             fighter: "gim",

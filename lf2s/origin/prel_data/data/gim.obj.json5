@@ -32,15 +32,15 @@
     rowing_distance: 2.5,
     fall_value: 140,
     defend_value: 120,
-    group: ["1000"],
+    group: [ "1000" ],
   },
   indexes: {
     standing: "0",
-    heavy_obj_walk: ["heavy_obj_walk_0"],
+    heavy_obj_walk: [ "heavy_obj_walk_0" ],
     picking_light: "115",
     picking_heavy: "117",
     ice: "200",
-    fire: ["203", "205"],
+    fire: [ "203", "205" ],
     injured: {
       "1": "222",
       "-1": "220",
@@ -51,21 +51,21 @@
       "-1": "230",
     },
     grand_injured: {
-      "1": ["222"],
-      "-1": ["220"],
+      "1": [ "222" ],
+      "-1": [ "220" ],
     },
-    in_the_skys: ["212"],
+    in_the_skys: [ "212" ],
     critical_hit: {
-      "1": ["186"],
-      "-1": ["180"],
+      "1": [ "186" ],
+      "-1": [ "180" ],
     },
     falling: {
-      "1": ["187", "188", "189"],
-      "-1": ["181", "182", "183"],
+      "1": [ "187", "188", "189" ],
+      "-1": [ "181", "182", "183" ],
     },
     bouncing: {
-      "1": ["190", "191"],
-      "-1": ["184", "185"],
+      "1": [ "190", "191" ],
+      "-1": [ "184", "185" ],
     },
     landing_1: "215",
     landing_2: "219",
@@ -117,7 +117,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -131,7 +131,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -147,7 +147,7 @@
           id: "running_0",
         },
       },
-      hold: {},
+      hold: { },
       key_down: {
         R: {
           id: "walking_0",
@@ -213,7 +213,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -227,7 +227,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -243,7 +243,7 @@
           id: "running_0",
         },
       },
-      hold: {},
+      hold: { },
       key_down: {
         R: {
           id: "walking_0",
@@ -309,7 +309,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -323,7 +323,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -339,7 +339,7 @@
           id: "running_0",
         },
       },
-      hold: {},
+      hold: { },
       key_down: {
         R: {
           id: "walking_0",
@@ -405,7 +405,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -419,7 +419,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -435,7 +435,7 @@
           id: "running_0",
         },
       },
-      hold: {},
+      hold: { },
       key_down: {
         R: {
           id: "walking_0",
@@ -2423,7 +2423,7 @@
         h: 79,
       },
       wait: 5,
-      next: {},
+      next: { },
       state: 7,
       centerx: 39,
       centery: 79,
@@ -2514,7 +2514,7 @@
         h: 79,
       },
       wait: 13,
-      next: {},
+      next: { },
       state: 6,
       centerx: 39,
       centery: 79,
@@ -2829,7 +2829,7 @@
         h: 79,
       },
       wait: 13,
-      next: {},
+      next: { },
       state: 6,
       centerx: 39,
       centery: 79,
@@ -3313,7 +3313,7 @@
         h: 79,
       },
       wait: 1,
-      next: {},
+      next: { },
       state: 9,
       centerx: 39,
       centery: 79,
@@ -3480,7 +3480,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3525,7 +3525,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3570,7 +3570,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3615,7 +3615,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3645,7 +3645,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3675,7 +3675,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3705,7 +3705,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3735,7 +3735,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 71,
@@ -3765,7 +3765,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3795,7 +3795,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3825,7 +3825,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3855,7 +3855,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3885,7 +3885,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3915,7 +3915,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 74,
@@ -3945,7 +3945,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 10,
       centerx: 39,
       centery: 79,
@@ -3975,7 +3975,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4032,7 +4032,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4114,7 +4114,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4179,7 +4179,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4253,7 +4253,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 72,
@@ -4277,7 +4277,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4301,7 +4301,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4358,7 +4358,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4440,7 +4440,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4505,7 +4505,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -4579,7 +4579,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 75,
@@ -4603,7 +4603,7 @@
         h: 79,
       },
       wait: 7,
-      next: {},
+      next: { },
       state: 12,
       centerx: 39,
       centery: 79,
@@ -5008,7 +5008,7 @@
         h: 79,
       },
       wait: 5,
-      next: {},
+      next: { },
       state: 15,
       centerx: 39,
       centery: 79,
@@ -5104,7 +5104,7 @@
           facing: 3,
         },
       },
-      hold: {},
+      hold: { },
     },
     "211": {
       id: "211",
@@ -5166,7 +5166,7 @@
           facing: 3,
         },
       },
-      hold: {},
+      hold: { },
       jump_flag: 1,
     },
     "212": {
@@ -5180,7 +5180,7 @@
         h: 79,
       },
       wait: 3,
-      next: {},
+      next: { },
       state: 4,
       centerx: 39,
       centery: 79,
@@ -5264,7 +5264,7 @@
           facing: 3,
         },
       },
-      hold: {},
+      hold: { },
     },
     "213": {
       id: "213",
@@ -5472,7 +5472,7 @@
         h: 79,
       },
       wait: 5,
-      next: {},
+      next: { },
       state: 5,
       centerx: 39,
       centery: 79,
@@ -5542,7 +5542,7 @@
         h: 79,
       },
       wait: 5,
-      next: {},
+      next: { },
       state: 5,
       centerx: 39,
       centery: 79,
@@ -6417,7 +6417,7 @@
         h: 79,
       },
       wait: 1,
-      next: {},
+      next: { },
       state: 0,
       centerx: 39,
       centery: 79,
@@ -6443,7 +6443,7 @@
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6457,7 +6457,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -6473,7 +6473,7 @@
           id: "running_0",
         },
       },
-      hold: {},
+      hold: { },
       key_down: {
         R: {
           id: "walking_0",
@@ -6564,12 +6564,12 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6583,7 +6583,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -6673,12 +6673,12 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6692,7 +6692,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -6782,12 +6782,12 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6801,7 +6801,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -6891,12 +6891,12 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -6910,7 +6910,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -7000,12 +7000,12 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -7019,7 +7019,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -7037,6 +7037,7 @@
       dvz: 2,
       ctrl_z: 1,
       ctrl_x: 1,
+      broadcasts: [ "gim_walk" ]
     },
     walking_5: {
       id: "walking_5",
@@ -7109,12 +7110,12 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             facing: 3,
             expression: "holding_w_type==4|(holding_w_type==3&press_F_B!=0)",
           },
           {
-            id: ["20", "25"],
+            id: [ "20", "25" ],
             facing: 3,
             expression: "holding_w_type==3|holding_w_type==1",
           },
@@ -7128,7 +7129,7 @@
             expression: "super_punch==1",
           },
           {
-            id: ["60", "65"],
+            id: [ "60", "65" ],
             facing: 3,
           },
         ],
@@ -7189,7 +7190,7 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
@@ -7262,7 +7263,7 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
@@ -7336,7 +7337,7 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
@@ -7409,7 +7410,7 @@
       hit: {
         a: [
           {
-            id: ["45"],
+            id: [ "45" ],
             expression: "holding_w_type==4|(press_F_B==1&holding_w_type!=0)",
           },
           {
@@ -7853,7 +7854,7 @@
           },
         ],
       },
-      hold: {},
+      hold: { },
       key_down: {
         B: {
           id: "19",
@@ -7908,7 +7909,7 @@
           },
         ],
       },
-      hold: {},
+      hold: { },
       key_down: {
         B: {
           id: "19",
@@ -7964,7 +7965,7 @@
           },
         ],
       },
-      hold: {},
+      hold: { },
       key_down: {
         B: {
           id: "19",
@@ -8019,7 +8020,7 @@
           },
         ],
       },
-      hold: {},
+      hold: { },
       key_down: {
         B: {
           id: "19",

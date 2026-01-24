@@ -19,7 +19,8 @@ import { CMD } from "./defines/CMD";
 import { Ditto } from "./ditto";
 import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
-  Entity, Factory, ICreator, is_ball,
+  Entity, Factory,
+  is_ball,
   is_bot_ctrl,
   is_fighter,
   is_human_ctrl,
@@ -266,6 +267,7 @@ export class World extends WorldDataset {
       this.update_once();
       this.lf2.events.length = 0;
       this.lf2.cmds.length = 0;
+      this.lf2.broadcasts.length = 0;
       if (0 === this._update_count % this.sync_render) {
         this.render_once(real_dt);
         if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
@@ -476,13 +478,15 @@ export class World extends WorldDataset {
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
-    this.stage.update();
-    if (this.stage.world_pause) return;
+
+    if (this.stage.world_pause) {
+      this.stage.update();
+      return;
+    }
 
     const { game_time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
-
     this.gone_entities.length = 0;
     this.v_collisions.length = 0;
     this.a_collisions.clear();
@@ -565,6 +569,7 @@ export class World extends WorldDataset {
       }
     }
     this.del_entities(this.gone_entities);
+    this.stage.update();
   }
 
   render_once(dt: number) {

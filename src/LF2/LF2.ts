@@ -236,7 +236,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
   cmds: (CMD | D.CheatType)[] = [];
   events: UI.LF2KeyEvent[] = [];
-
+  broadcasts: string[] = [];
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
     const key_code = e.key.toLowerCase();
@@ -646,6 +646,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.callbacks.emit("on_loading_content")(content, progress);
   }
   broadcast(message: string): void {
+    this.broadcasts.push(message);
     this.callbacks.emit("on_broadcast")(message, this);
   }
   on_component_broadcast(component: UI.UIComponent, message: string) {

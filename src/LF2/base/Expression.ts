@@ -152,10 +152,12 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
       this.run = () => result
       return;
     }
-    this.run = (t) => this.result = predicate(
-      this.val_1 = getter_1 ? getter_1(t, word_1, op as BinOp) : val_1,
-      this.val_2 = getter_2 ? getter_2(t, word_2, op as BinOp) : val_2,
-    )
+    this.run = (t) => {
+      const v1 = getter_1 ? getter_1(t, word_1, op as BinOp) : val_1
+      const v2 = getter_2 ? getter_2(t, word_2, op as BinOp) : val_2
+      this.result = predicate(v1, v2)
+      return this.result;
+    }
   }
   run = (e: T1): boolean => {
     let ret = false;

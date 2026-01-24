@@ -16,7 +16,7 @@ export const stage_val_getters: Record<S_Val, IValGetter<Stage>> = {
   [S_Val.PressDown]: (e) => e.lf2.events.some(v => v.game_key === GK.D && v.pressed) ? 1 : 0,
   [S_Val.PressLeft]: (e) => e.lf2.events.some(v => v.game_key === GK.L && v.pressed) ? 1 : 0,
   [S_Val.PressRight]: (e) => e.lf2.events.some(v => v.game_key === GK.R && v.pressed) ? 1 : 0,
-  [S_Val.Broadcast]: (e) => 0
+  [S_Val.Broadcast]: (e) => e.lf2.broadcasts
 }
 
 export const get_val_getter_from_stage: IValGetterGetter<Stage> = (word: string): IValGetter<Stage> | undefined => {
