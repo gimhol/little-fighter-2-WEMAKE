@@ -227,30 +227,27 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     const player_x = is_num(phase.player_jump_to_x) ? phase.player_jump_to_x : void 0;
     const player_z = is_num(phase.player_jump_to_z) ? phase.player_jump_to_z : void 0;
     const player_f = is_num(phase.player_facing) ? phase.player_facing : void 0;
-    if (player_x || player_z) {
 
-      const teams = new Set<string>();
-      for (const [, v] of this.lf2.world.puppets)
-        teams.add(v.team);
-
-      for (const entity of this.world.entities) {
-        if (!is_fighter(entity) || !teams.has(entity.team)) continue;
-        if (player_f === 1 || player_f === -1)
-          entity.facing = player_f
-        if (typeof player_x === 'number') {
-          const l = max(this.player_l, player_x - 50)
-          const r = min(this.player_r, player_x + 50)
-          const x = this.lf2.mt.range(l, r)
-          entity.set_position_x(x);
-        }
-        if (typeof player_z === 'number') {
-          const f = max(this.far, player_z - 50)
-          const n = min(this.near, player_z + 50)
-          const z = this.lf2.mt.range(f, n)
-          entity.set_position_z(z);
-        }
-
+    const teams = new Set<string>();
+    for (const [, v] of this.lf2.world.puppets)
+      teams.add(v.team);
+    for (const entity of this.world.entities) {
+      if (!is_fighter(entity) || !teams.has(entity.team)) continue;
+      if (player_f === 1 || player_f === -1)
+        entity.facing = player_f
+      if (typeof player_x === 'number') {
+        const l = max(this.player_l, player_x - 50)
+        const r = min(this.player_r, player_x + 50)
+        const x = this.lf2.mt.range(l, r)
+        entity.set_position_x(x);
       }
+      if (typeof player_z === 'number') {
+        const f = max(this.far, player_z - 50)
+        const n = min(this.near, player_z + 50)
+        const z = this.lf2.mt.range(f, n)
+        entity.set_position_z(z);
+      }
+
     }
 
 
