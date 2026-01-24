@@ -264,6 +264,8 @@ export class World extends WorldDataset {
       this.before_update?.();
       this._update_count++;
       this.update_once();
+      this.lf2.events.length = 0;
+      this.lf2.cmds.length = 0;
       if (0 === this._update_count % this.sync_render) {
         this.render_once(real_dt);
         if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
@@ -470,9 +472,6 @@ export class World extends WorldDataset {
     this.handle_cmds();
     this.update_camera();
     this.bg.update();
-
-    this.lf2.events.length = 0;
-    this.lf2.cmds.length = 0;
 
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
