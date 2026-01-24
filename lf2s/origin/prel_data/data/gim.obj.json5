@@ -2098,6 +2098,7 @@
       ],
       state_name: "StateEnum.Attacking",
       sound: "data/007.wav.mp3",
+      broadcasts: [ "gim_jump_attack" ]
     },
     "81": {
       id: "81",
