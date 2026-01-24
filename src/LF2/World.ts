@@ -398,6 +398,7 @@ export class World extends WorldDataset {
 
   protected handle_keys() {
     if (!this.lf2.events.length) return;
+    if (this.stage.control_disabled) return;
     for (const e of this.lf2.events) {
       const fighter = this.puppets.get(e.player)
       if (!fighter) continue;
@@ -476,8 +477,9 @@ export class World extends WorldDataset {
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
+    this.stage.update();
     if (this.stage.world_pause) return;
-    
+
     const { game_time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
@@ -564,7 +566,6 @@ export class World extends WorldDataset {
       }
     }
     this.del_entities(this.gone_entities);
-    this.stage.update();
   }
 
   render_once(dt: number) {

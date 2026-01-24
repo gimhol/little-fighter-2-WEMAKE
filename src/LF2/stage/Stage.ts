@@ -404,11 +404,13 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   get world_pause() {
     return !!this.phase?.world_pause
   }
+  get control_disabled() {
+    return !!this.phase?.control_disabled
+  }
   update() {
     if (this.phase) this.phase_time++
     if (this.dialog) this.dialog_time++
     this.fsm.update(1);
-
     this.check_phase_end();
     this.check_dialog_end();
   }

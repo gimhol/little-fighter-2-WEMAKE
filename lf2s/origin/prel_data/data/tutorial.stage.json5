@@ -6,9 +6,10 @@
     phases: [
       {
         bound: 900,
-        end_test: "cur_phase_time>120",
+        end_test: "cur_phase_time>240",
         player_jump_to_x: 0,
-        player_facing: 0,
+        player_facing: 1,
+        control_disabled: 1
       },
       {
         bound: 900,
@@ -30,6 +31,7 @@
         player_jump_to_x: 0,
         hide_stats: 1,
         end_test: "cur_phase_time>1200",
+        world_pause: true,
         dialogs: [
           {
             fighter: "gim",

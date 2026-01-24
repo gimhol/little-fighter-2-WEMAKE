@@ -111,4 +111,5 @@ export interface IStagePhaseInfo {
   hide_stats?: number;
 
   world_pause?: number;
+  control_disabled?: number;
 }
