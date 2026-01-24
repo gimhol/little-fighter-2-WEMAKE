@@ -109,4 +109,6 @@ export interface IStagePhaseInfo {
 
   /** 隐藏状态栏 */
   hide_stats?: number;
+
+  world_pause?: number;
 }

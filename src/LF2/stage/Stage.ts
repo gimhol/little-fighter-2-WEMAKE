@@ -247,10 +247,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
         const z = this.lf2.mt.range(f, n)
         entity.set_position_z(z);
       }
-
     }
-
-
     if (dialogs?.length) this.push_dialogs(dialogs)
   }
   push_dialogs(more: IDialogInfo[]) {
@@ -404,7 +401,9 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       return false;
     return !find(this.world.entities, e => is_fighter(e) && e.hp > 0 && e.position.x < this.cam_r)
   }
-
+  get world_pause() {
+    return !!this.phase?.world_pause
+  }
   update() {
     if (this.phase) this.phase_time++
     if (this.dialog) this.dialog_time++
