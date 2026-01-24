@@ -1,9 +1,8 @@
 {
   id: "dialog_bottom_long",
   name: "对话框: 底部长条型",
-  items: [
-    {
-      id: "bg_dialog",
+  templates: {
+    next_bro_frame: {
       img: {
         path: "!sprite/frame@4x.png",
         nine_patch: {
@@ -15,21 +14,90 @@
           b_h: 28,
         },
       },
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            followed: "bro:+1",
+            left: "left",
+            right: "right",
+            top: "top",
+            bottom: "bottom",
+            offset: {
+              l: -10,
+              t: -10,
+              b: 10,
+              r: 10,
+            }
+
+          }
+        }
+      ]
+    },
+    name_frame: {
+      img: {
+        path: "!sprite/frame@4x.png",
+        nine_patch: {
+          f_w: 72,
+          f_h: 72,
+          l_w: 28,
+          t_h: 28,
+          r_w: 28,
+          b_h: 28,
+        },
+      },
+      component: [
+        {
+          name: "Alignment",
+          properties: {
+            followed: "bro:+1",
+            left: "left",
+            right: "right",
+            top: "top",
+            bottom: "bottom",
+            offset: {
+              l: -5,
+              t: -5,
+              b: 2,
+              r: 5,
+            }
+
+          }
+        }
+      ]
+    }
+  },
+  items: [
+    {
+      id: "bg_dialog",
+      // img: {
+      //   path: "!sprite/frame@4x.png",
+      //   nine_patch: {
+      //     f_w: 72,
+      //     f_h: 72,
+      //     l_w: 28,
+      //     t_h: 28,
+      //     r_w: 28,
+      //     b_h: 28,
+      //   },
+      // },
       size: "734, 140",
       center: "0.5, 0.5",
       pos: "397, 355",
-      visible: false,
-      scale: "0,0,1",
+      _visible: false,
+      _scale: "0,0,1",
       component: [
         {
           name: "Dialogs",
           properties: {
             head_node_id: "left_head_pos",
             text_node_id: "left_txt_pos",
+            talker_node_id: "left_talker_pos",
           },
         },
       ],
       items: [
+        "next_bro_frame",
         {
           id: "left_head_pos",
           pos: "-297, 0",
@@ -43,63 +111,59 @@
             },
           ],
         },
+        "next_bro_frame",
         {
           id: "left_txt_pos",
-          pos: "-217, 0",
-          center: "0, 0.5",
+          pos: "-227, 0",
+          center: "0, 1",
           txt: [
             {
-              i18n: "tutorial.dialog_1",
+              i18n: "tutorial.dialog_5",
               style: {
                 fill_style: "white",
                 font: "13px Arial",
               },
             },
           ],
+          component: [
+            {
+              name: "Alignment",
+              properties: {
+                followed: "id:left_head_pos",
+                left: "right",
+                bottom: "bottom",
+              }
+            }
+          ]
         },
+        "name_frame",
         {
-          id: "center_txt_pos",
-          pos: "397, 0",
-          visible: false,
-          center: "0.5, 0.5",
+          id: "left_talker_pos",
+          pos: "0, 0",
+          center: "0, 1",
           txt: [
             {
-              i18n: "tutorial.dialog_12",
+              i18n: "Davis",
               style: {
                 fill_style: "white",
                 font: "13px Arial",
               },
             },
           ],
-        },
-        {
-          id: "right_txt_pos",
-          visible: false,
-          pos: "624, 0",
-          center: "1, 0.5",
-          txt: [
+          component: [
             {
-              i18n: "tutorial.dialog_1",
-              style: {
-                fill_style: "white",
-                font: "13px Arial",
-              },
-            },
-          ],
-        },
-        {
-          id: "right_head_pos",
-          pos: "694, 0",
-          center: "0.5, 0.5",
-          size: "120,120",
-          visible: false,
-          img: [
-            {
-              w: 120,
-              h: 120,
-              path: "sprite/gim/face.png",
-            },
-          ],
+              name: "Alignment",
+              properties: {
+                followed: "id:left_head_pos",
+                left: "left",
+                bottom: "bottom",
+                offset: {
+                  l: -5,
+                  b: 8,
+                }
+              }
+            }
+          ]
         },
       ],
     },
