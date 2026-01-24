@@ -33,7 +33,7 @@
           {
             fighter: "gim",
             i18n: "tutorial.dialog_0",
-            end_test: [ "press_attack==1", "cur_dialog_time>1200" ],
+            end_test: [ "press_attack==1", "cur_dialog_time>120" ],
           },
           {
             fighter: "gim",

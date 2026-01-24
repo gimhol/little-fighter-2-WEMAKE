@@ -112,4 +112,5 @@ export interface IStagePhaseInfo {
 
   world_pause?: number;
   control_disabled?: number;
+  weapon_rain_disabled?: number;
 }

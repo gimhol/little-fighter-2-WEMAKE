@@ -412,6 +412,9 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   get control_disabled() {
     return !!this.phase?.control_disabled
   }
+  get weapon_rain_disabled() {
+    return !!this.phase?.weapon_rain_disabled
+  }
   update() {
     if (this.phase) this.phase_time++
     if (this.dialog) this.dialog_time++
