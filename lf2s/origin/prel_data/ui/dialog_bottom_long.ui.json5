@@ -90,16 +90,16 @@
         {
           name: "Dialogs",
           properties: {
-            head_node_id: "left_head_pos",
-            text_node_id: "left_txt_pos",
-            talker_node_id: "left_talker_pos",
+            head_node_id: "head_pos",
+            text_node_id: "txt_pos",
+            talker_node_id: "talker_pos",
           },
         },
       ],
       items: [
         "next_bro_frame",
         {
-          id: "left_head_pos",
+          id: "head_pos",
           pos: "-297, 0",
           center: "0.5, 0.5",
           size: "120, 120",
@@ -113,7 +113,7 @@
         },
         "next_bro_frame",
         {
-          id: "left_txt_pos",
+          id: "txt_pos",
           pos: "-227, 0",
           center: "0, 1",
           txt: [
@@ -129,7 +129,7 @@
             {
               name: "Alignment",
               properties: {
-                followed: "id:left_head_pos",
+                followed: "id:head_pos",
                 left: "right",
                 bottom: "bottom",
               }
@@ -138,7 +138,7 @@
         },
         "name_frame",
         {
-          id: "left_talker_pos",
+          id: "talker_pos",
           pos: "0, 0",
           center: "0, 1",
           txt: [
@@ -154,7 +154,7 @@
             {
               name: "Alignment",
               properties: {
-                followed: "id:left_head_pos",
+                followed: "id:head_pos",
                 left: "left",
                 bottom: "bottom",
                 offset: {

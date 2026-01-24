@@ -41,7 +41,7 @@ export class Dialogs extends UIComponent {
     this.node.visible = true;
     const text = this.lf2.string(dialog.i18n)
     this._text_loader.set_text([text]).catch(e => Ditto.warn('' + e))
-    
+
     const fighter = dialog.fighter ? this.lf2.datas.find_character(dialog.fighter) : void 0
     if (fighter) {
       const fighter_name = this.lf2.string(fighter.base.name)
@@ -69,6 +69,6 @@ export class Dialogs extends UIComponent {
     } else {
       this.hide_dialog()
     }
-    this.world.transform.move_to(0, dialog ? 120 : 0, 0, true)
+    this.world.transform.move_to(0, dialog ? 60 : 0, 0, true)
   }
 }
