@@ -7,7 +7,7 @@ export enum StageVal {
 
   /** 当前对话框运行时长(以帧数计算…) */
   CurDialogTime = "cur_dialog_time",
-  
+
   PressAttack = "press_attack",
   PressJump = "press_jump",
   PressDefend = "press_defend",
@@ -15,6 +15,7 @@ export enum StageVal {
   PressDown = "press_down",
   PressLeft = "press_left",
   PressRight = "press_right",
+  Broadcast = "broadcast",
 }
 export const S_Val = StageVal
 export type S_Val = StageVal

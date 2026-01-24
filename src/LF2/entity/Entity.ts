@@ -877,6 +877,9 @@ export class Entity {
       this._catching = null;
       this._catcher = null;
     }
+    if (v.broadcasts?.length)
+      for (const m of v.broadcasts)
+        this.lf2.broadcast(m)
   }
 
   apply_opoints(opoints: IOpointInfo[]) {

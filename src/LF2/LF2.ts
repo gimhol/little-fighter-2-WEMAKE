@@ -645,7 +645,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   on_loading_content(content: string, progress: number) {
     this.callbacks.emit("on_loading_content")(content, progress);
   }
-
   broadcast(message: string): void {
     this.callbacks.emit("on_broadcast")(message, this);
   }
