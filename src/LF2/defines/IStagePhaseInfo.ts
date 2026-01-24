@@ -88,9 +88,9 @@ export interface IStagePhaseInfo {
   /** 
    * 结束判定 
    * 
-   * @type {?string}
+   * @type {string[]}
    */
-  end_test?: string;
+  end_test?: string[];
 
   /**
    * 结束测试器
@@ -100,7 +100,7 @@ export interface IStagePhaseInfo {
    * 
    * 无结束测试器时, 对话框完毕，且敌人被清空视为结束
    */
-  end_tester?: IExpression<any>;
+  end_testers?: IExpression<any>[];
 
   on_start?: string[];
   on_end?: string[];

@@ -11,6 +11,7 @@ import { is_fighter, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
+import { Expressions } from "./Expressions";
 import type IStageCallbacks from "./IStageCallbacks";
 import { IDialogState } from "./IStageCallbacks";
 import Item from "./Item";
@@ -53,6 +54,10 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   get phase(): IStagePhaseInfo | undefined { return this._phase; };
   get dialog_idx(): number { return this._dialogs.index }
   get dialog(): IDialogInfo | undefined { return this._dialogs.list[this._dialogs.index] }
+
+  dialog_end_tester = new Expressions<Stage>()
+  phase_end_tester = new Expressions<Stage>()
+
   /** 左边界 */
   left: number;
   /** 右边界 */
@@ -176,6 +181,8 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   private set_phase(phase: IStagePhaseInfo | undefined) {
     if (phase === this.phase) return;
     this.phase_time = 0;
+    this.phase_end_tester.reset(phase?.end_testers ?? [])
+
     const prev = this.phase
     this.callbacks.emit("on_phase_changed")(this, this._phase = phase, prev);
     this.player_l = 0
@@ -257,6 +264,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     if (index < 0) {
       index = prev.index + 1;
       this.dialog_time = 0;
+      this.dialog_end_tester.reset(list[index]?.end_testers ?? [])
     }
     const curr = this._dialogs = { ...prev, list, index }
     this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
@@ -265,9 +273,8 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     const prev = this._dialogs
     // prev.index == prev.list.length 代表结束，这是允许的。
     if (prev.index >= prev.list.length) return
-    const curr = this._dialogs = {
-      ...prev, index: prev.index + 1,
-    }
+    const curr = this._dialogs = { ...prev, index: prev.index + 1 }
+    this.dialog_end_tester.reset(curr.list[curr.index]?.end_testers ?? [])
     this.dialog_time = 0;
     this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
@@ -373,15 +380,13 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     return this._dialogs.list.length <= 0 || this._dialogs.index >= this._dialogs.list.length;
   }
   is_phase_end(): boolean {
-    const end_tester = this.phase?.end_tester
-    if (end_tester) return end_tester.run(this);
+    if (this.phase_end_tester.list.length)
+      return this.phase_end_tester.flow(this)
     return this.all_fighter_dead() && this.dialog_cleared();
   }
 
   is_dialog_end(): boolean {
-    const end_tester = this.dialog?.end_tester
-    if (end_tester) return end_tester.run(this);
-    return false;
+    return this.dialog_end_tester.flow(this)
   }
   check_phase_end(): boolean {
     const ret = this.is_phase_end()

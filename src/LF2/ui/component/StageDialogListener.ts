@@ -39,6 +39,7 @@ export class StageDialogListener {
     this.set_dialog(stage.dialog);
   }
   protected set_dialog(dialog: IDialogInfo | undefined) {
+    console.log('dialog', dialog)
     if (this._dialog == dialog) return;
     const prev = this._dialog;
     this._handler?.(this._dialog = dialog, prev);

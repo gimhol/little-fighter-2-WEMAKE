@@ -49,16 +49,16 @@
       "Next, you'll learn various attack methods.",
       "Press 'Attack' to perform a [Punch].",
     ],
+    "tutorial.dialog_8": [
+      "Good! Next is [Run Attack].",
+      "While [Run], press 'Attack' to perform a [Run Attack].",
+      "(Double-click the '⬅/➡' to [Run])",
+    ],
     "tutorial.dialog_9": [
       "Good! Next is [Jump Attack].",
       "While [Jump], press 'Attack' to perform a [Jump Attack].",
       "",
       "(Press 'Jump' to [Jump])",
-    ],
-    "tutorial.dialog_8": [
-      "Good! Next is [Run Attack].",
-      "While [Run], press 'Attack' to perform a [Run Attack].",
-      "(Double-click the '⬅/➡' to [Run])",
     ],
     "tutorial.dialog_10": [
       "Good! Next is [Dash Attack].",
