@@ -16,7 +16,12 @@ import { write_file } from "./utils/write_file";
 
 export async function make_data_zip() {
   const {
-    LF2_PATH, OUT_DIR, TEMP_DIR, DATA_ZIP_NAME, DATA_DIR_PATH, EXTRA_PATH,
+    LF2_PATH,
+    OUT_DIR,
+    TEMP_DIR,
+    DATA_ZIP_NAME,
+    DATA_DIR_PATH,
+    EXTRA_PATH,
   } = await read_conf();
 
   check_is_str_ok(

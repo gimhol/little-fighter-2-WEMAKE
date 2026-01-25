@@ -1,13 +1,14 @@
 
+import { zip } from "compressing";
+import { createWriteStream } from "fs";
 import { join } from "path";
+import { pipeline } from "stream/promises";
 import { data_2_txt } from "./data_2_txt";
 import { make_data_zip } from "./make_data_zip";
 import { make_prel_zip } from "./make_prel_zip";
 import { read_conf } from "./read_conf";
+import { show_main_usage } from "./show_main_usage";
 import { write_file } from "./utils/write_file";
-import { zip } from "compressing";
-import { createWriteStream } from "fs";
-import { pipeline } from "stream/promises";
 
 enum CMDEnum {
   MAIN = "main",
@@ -61,14 +62,13 @@ async function main() {
       const { LF2_PATH, TXT_LF2_PATH } = await read_conf();
       return data_2_txt(LF2_PATH, TXT_LF2_PATH);
     case CMDEnum.HELP:
-      console.log("need_help");
-      break;
+      return show_main_usage();
     default:
-      throw new Error(
-        `unknown cmd, should be one of those: [${Object.keys(CMDEnum).map(k => (CMDEnum as any)[k]).join(', ')}]`
-      )
+      console.log(`unknown cmd, should be one of those: [${Object.keys(CMDEnum).map(k => (CMDEnum as any)[k]).join(', ')}]`)
+      show_main_usage();
       break
   }
 }
 
 main()
+
