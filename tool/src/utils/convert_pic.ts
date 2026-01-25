@@ -3,20 +3,36 @@ import fs from "fs/promises";
 import type { ILegacyPictureInfo } from "../../../src/LF2/defines/ILegacyPictureInfo";
 import { read_conf } from "../read_conf";
 import { exec_cmd } from "./exec_cmd";
+export let is_magick_tried = false ;
 function get_dst_path(out_dir: string, src_dir: string, src_path: string) {
   return src_path.replace(src_dir, out_dir).replace(/(.bmp)$/, ".png");
 }
+const { MAGICK_CMD } = read_conf();
+export const is_magick_exists = command_exists.sync(MAGICK_CMD)
+
+export function print_magick_hints() {
+  if (is_magick_exists || !is_magick_tried) return;
+  const hints = `
+magick not found, download it from: https://imagemagick.org/script/download.php
+
+All image files will not be converted to PNG. 
+However, you can convert them to PNG in your own way.
+And you need to remove the color from the transparent areas(the originally black parts of the BMP)
+Then you need to put it into output zip file yourself.
+
+'lf2w_tool' currently only supports PNG.
+`
+  console.warn(hints)
+}
+
 export async function convert_pic(
   out_dir: string,
   src_dir: string,
   src_path: string,
 ) {
+  is_magick_tried = true;
+  if (!is_magick_exists) return;
   const dst_path = get_dst_path(out_dir, src_dir, src_path);
-  const { MAGICK_CMD } = await read_conf();
-  if (!command_exists.sync(MAGICK_CMD))
-    throw new Error(
-      "magick not found, download it from: https://imagemagick.org/script/download.php",
-    );
   await fs.rm(dst_path, { recursive: true, force: true }).catch((e) => void 0);
   console.log("convert pic 1", src_path, "=>", dst_path);
   await exec_cmd(
@@ -41,10 +57,8 @@ export async function convert_pic_2(
   src_path: string,
   pic: ILegacyPictureInfo,
 ) {
-  if (!command_exists.sync("magick"))
-    throw new Error(
-      "magick not found, download it from: https://imagemagick.org/script/download.php",
-    );
+  is_magick_tried = true;
+  if (!is_magick_exists) return;
   const { col: row, row: col, cell_w, cell_h } = pic;
   const w = (cell_w + 1) * col;
   const h = (cell_h + 1) * row;

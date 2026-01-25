@@ -22,7 +22,7 @@ export async function make_data_zip() {
     DATA_ZIP_NAME,
     DATA_DIR_PATH,
     EXTRA_PATH,
-  } = await read_conf();
+  } = read_conf();
 
   check_is_str_ok(
     ['LF2_PATH', LF2_PATH],

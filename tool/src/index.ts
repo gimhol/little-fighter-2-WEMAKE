@@ -9,6 +9,8 @@ import { make_prel_zip } from "./make_prel_zip";
 import { read_conf } from "./read_conf";
 import { show_main_usage } from "./show_main_usage";
 import { write_file } from "./utils/write_file";
+import { is_ffmpeg_exists, is_ffmpeg_tried, print_ffmpeg_hints } from "./utils/convert_sound";
+import { is_magick_exists, is_magick_tried, print_magick_hints } from "./utils/convert_pic";
 
 enum CMDEnum {
   MAIN = "main",
@@ -21,7 +23,7 @@ enum CMDEnum {
 async function make_full_zip() {
   const {
     OUT_DIR, PREL_ZIP_NAME, DATA_ZIP_NAME, FULL_ZIP_NAME
-  } = await read_conf();
+  } = read_conf();
 
   const prel_zip_path = join(OUT_DIR, PREL_ZIP_NAME)
   const data_zip_path = join(OUT_DIR, DATA_ZIP_NAME)
@@ -59,7 +61,7 @@ async function main() {
       await make_full_zip();
       return;
     case CMDEnum.DAT_2_TXT:
-      const { LF2_PATH, TXT_LF2_PATH } = await read_conf();
+      const { LF2_PATH, TXT_LF2_PATH } = read_conf();
       return data_2_txt(LF2_PATH, TXT_LF2_PATH);
     case CMDEnum.HELP:
       return show_main_usage();
@@ -70,5 +72,8 @@ async function main() {
   }
 }
 
-main()
+main().then(() => {
+  print_ffmpeg_hints();
+  print_magick_hints();
+})
 

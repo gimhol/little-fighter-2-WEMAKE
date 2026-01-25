@@ -1,4 +1,4 @@
-import fs from "fs/promises";
+import { readFileSync } from "fs";
 import JSON5 from "json5";
 import { join } from "path/posix";
 import { check_is_str_ok } from "./utils/check_is_str_ok";
@@ -25,7 +25,7 @@ const options: { key: keyof IConf, argv: string[] }[] = [
 
 ]
 let conf: IConf | null = null
-export async function read_conf(): Promise<IConf> {
+export function read_conf(): IConf {
   if (conf) return conf;
   const argv_map: Partial<IConf> = {
     CONF_FILE_PATH: "./converter.config.json5"
@@ -39,9 +39,8 @@ export async function read_conf(): Promise<IConf> {
       ++i;
     }
   }
-  const conf_str = await fs.readFile(argv_map.CONF_FILE_PATH!)
-    .then(buf => buf.toString())
-    .catch(e => "{}");
+
+  const conf_str = readFileSync(argv_map.CONF_FILE_PATH!).toString();
   const {
     LF2_PATH,
     TEMP_DIR = "./temp",
