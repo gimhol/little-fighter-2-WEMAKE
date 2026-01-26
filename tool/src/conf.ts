@@ -110,11 +110,24 @@ Object.keys(key_arg_records).map(k => {
 })
 export function make_conf(): Partial<IConf> {
   const conf: Partial<IConf> = {}
+
   Object.keys(key_arg_records).forEach((k) => {
     const key = k as keyof IConf;
     const info = key_arg_records[key]
     conf[key] = info.default || '';
   })
+  for (let i = 3; i < process.argv.length; i++) {
+    const key = process.argv[i];
+    const info = alias_arg_map.get(key);
+    if (!info) continue;
+    if (info.boolean) {
+      conf[info.key] = '1'
+    } else {
+      const value = process.argv[i + 1];
+      conf[info.key] = value ?? ''
+      ++i
+    }
+  }
   return conf;
 }
 function read_conf(): IConf {
@@ -134,43 +147,7 @@ function read_conf(): IConf {
 
     }
   }
-
-  const {
-    IN_LF2_DIR, TMP_DIR, OUT_DIR, OUT_DATA_NAME, IN_PREL_DIR, OUT_PREL_NAME,
-    IN_EXTRA_DIR, FFMPEG_CMD, MAGICK_CMD, OUT_FULL_NAME, TMP_TXT_DIR, TMP_DAT_DIR,
-    KEEP_MIRROR
-  } = conf;
-
-  // if (
-  //   !throw_blank("TMP_DIR", TMP_DIR) ||
-  //   !throw_blank("OUT_FULL_NAME", OUT_FULL_NAME) ||
-  //   !throw_blank("IN_LF2_DIR", IN_LF2_DIR) ||
-  //   !throw_blank("IN_PREL_DIR", IN_PREL_DIR) ||
-  //   !throw_blank("OUT_PREL_NAME", OUT_PREL_NAME) ||
-  //   !throw_blank("OUT_DIR", OUT_DIR) ||
-  //   !throw_blank("OUT_DATA_NAME", OUT_DATA_NAME) ||
-  //   !throw_blank("FFMPEG_CMD", FFMPEG_CMD) ||
-  //   !throw_blank("MAGICK_CMD", MAGICK_CMD) ||
-  //   !throw_blank("TMP_TXT_DIR", TMP_TXT_DIR) ||
-  //   !throw_blank("TMP_DAT_DIR", TMP_DAT_DIR)
-  // ) throw void 0
-
-
-  return {
-    IN_LF2_DIR,
-    TMP_DIR,
-    OUT_DIR,
-    OUT_DATA_NAME,
-    IN_PREL_DIR,
-    OUT_PREL_NAME,
-    IN_EXTRA_DIR,
-    OUT_FULL_NAME,
-    TMP_TXT_DIR,
-    TMP_DAT_DIR,
-    FFMPEG_CMD,
-    MAGICK_CMD,
-    KEEP_MIRROR
-  }
+  return conf
 }
 
 function throw_blank(name: string, v: any): v is string {

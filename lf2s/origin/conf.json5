@@ -2,10 +2,6 @@
   IN_LF2_DIR: "./lf2s/origin/game_data",
   OUT_DIR: "./public",
   TMP_DIR: "./temp/origin",
-  OUT_DATA_NAME: "data.zip",
   IN_PREL_DIR: "./lf2s/origin/prel_data",
-  OUT_PREL_NAME: "prel.zip",
-  IN_EXTRA_DIR: "./lf2s/origin/extra_data",
-  FFMPEG_PATH: "ffmpeg",
-  MAGICK_PATH: "magick",
+  IN_EXTRA_DIR: "./lf2s/origin/extra_data"
 }
