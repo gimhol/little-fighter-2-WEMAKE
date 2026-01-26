@@ -28,7 +28,7 @@ import { LF2 } from "./LF2/LF2";
 import { CheatType } from "./LF2/defines";
 import { CMD } from "./LF2/defines/CMD";
 import { Defines } from "./LF2/defines/defines";
-import { Ditto } from "./LF2/ditto";
+import { Ditto, IZip } from "./LF2/ditto";
 import { IUIInfo } from "./LF2/ui/IUIInfo.dat";
 import { fisrt } from "./LF2/utils/container_help";
 import { arithmetic_progression } from "./LF2/utils/math/arithmetic_progression";
@@ -168,6 +168,15 @@ function App() {
               btn?.set_disabled(networking)
             }
             return networking
+          });
+          break;
+        case 'select_extra_data':
+          open_file({ accept: '.zip', multiple: true }).then(async (files) => {
+            if (!files.length) return;
+            const zips: IZip[] = []
+            for (const file of files)
+              zips.push(await Ditto.Zip.read_file(file))
+            LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
           });
           break;
         case 'custom_game':

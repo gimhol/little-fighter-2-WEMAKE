@@ -65,7 +65,7 @@
           },
           component: [ "Reachable(main)" ],
           actions: {
-            click: [ "sound(ok)", "broadcast(custom_game)" ],
+            click: [ "sound(ok)", "broadcast(select_extra_data)" ],
           },
         },
         {
