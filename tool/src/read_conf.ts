@@ -19,9 +19,11 @@ interface IConf {
   FULL_ZIP_NAME: string;
 }
 interface IArgInfo {
+  key?: keyof IConf;
   argv: string[];
   default?: string;
 }
+
 const options_map: Record<keyof IConf, IArgInfo> = {
   LF2_PATH: { argv: ['-i', '--input'] },
   TEMP_DIR: { argv: ['-t', '--temp'], default: './temp' },
@@ -34,27 +36,34 @@ const options_map: Record<keyof IConf, IArgInfo> = {
   DATA_DIR_PATH: { argv: [] },
   FFMPEG_CMD: { argv: ['--ffmpeg'], default: 'ffmpeg' },
   MAGICK_CMD: { argv: ['--magick'], default: 'magick' },
-  CONF_FILE_PATH: { argv: ['-c', '--conf'] },
+  CONF_FILE_PATH: { argv: ['-c', '--conf'], default: './converter.config.json5' },
   FULL_ZIP_NAME: { argv: [], default: 'lfw.full.zip' }
 }
-const options: { key: keyof IConf, argv: string[] }[] = Object.keys(options_map).map(k => {
+const options: IArgInfo[] = Object.keys(options_map).map(k => {
   const key = k as keyof IConf;
-  const argv = [`--${k}`, ...options_map[key].argv]
-  return { key, argv }
+  const info = options_map[key]
+  info.argv.unshift(`--${k}`);
+  return { key, ...info }
 })
 
 let conf: IConf | null = null
 export function read_conf(): IConf {
   if (conf) return conf;
-  const argv_map: Partial<IConf> = {
-    CONF_FILE_PATH: "./converter.config.json5"
-  }
+  const argv_map: Partial<IConf> = {}
+  Object.keys(options_map).forEach((k) => {
+    const key = k as keyof IConf;
+    const info = options_map[key]
+    if (typeof info.default === 'string')
+      argv_map[key] = info.default;
+  })
+
+
   for (let i = 3; i < process.argv.length; i++) {
     const key = process.argv[i];
     const val = process.argv[i + 1];
     const option = options.find(v => v.key === key || v.argv.some(b => b === key))
     if (option) {
-      argv_map[option.key] = val;
+      argv_map[option.key!] = val;
       ++i;
     }
   }
