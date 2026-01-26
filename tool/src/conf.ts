@@ -17,7 +17,7 @@ export interface IConf {
    * @type {string}
    * @memberof IConf
    */
-  TMP_DIR: string;
+  TMP_DIR?: string;
 
   /**
    * 临时文本输出目录（用于 dat-2-txt）
@@ -141,19 +141,19 @@ function read_conf(): IConf {
     KEEP_MIRROR
   } = conf;
 
-  if (
-    !throw_blank("TMP_DIR", TMP_DIR) ||
-    !throw_blank("OUT_FULL_NAME", OUT_FULL_NAME) ||
-    !throw_blank("IN_LF2_DIR", IN_LF2_DIR) ||
-    !throw_blank("IN_PREL_DIR", IN_PREL_DIR) ||
-    !throw_blank("OUT_PREL_NAME", OUT_PREL_NAME) ||
-    !throw_blank("OUT_DIR", OUT_DIR) ||
-    !throw_blank("OUT_DATA_NAME", OUT_DATA_NAME) ||
-    !throw_blank("FFMPEG_CMD", FFMPEG_CMD) ||
-    !throw_blank("MAGICK_CMD", MAGICK_CMD) ||
-    !throw_blank("TMP_TXT_DIR", TMP_TXT_DIR) ||
-    !throw_blank("TMP_DAT_DIR", TMP_DAT_DIR)
-  ) throw void 0
+  // if (
+  //   !throw_blank("TMP_DIR", TMP_DIR) ||
+  //   !throw_blank("OUT_FULL_NAME", OUT_FULL_NAME) ||
+  //   !throw_blank("IN_LF2_DIR", IN_LF2_DIR) ||
+  //   !throw_blank("IN_PREL_DIR", IN_PREL_DIR) ||
+  //   !throw_blank("OUT_PREL_NAME", OUT_PREL_NAME) ||
+  //   !throw_blank("OUT_DIR", OUT_DIR) ||
+  //   !throw_blank("OUT_DATA_NAME", OUT_DATA_NAME) ||
+  //   !throw_blank("FFMPEG_CMD", FFMPEG_CMD) ||
+  //   !throw_blank("MAGICK_CMD", MAGICK_CMD) ||
+  //   !throw_blank("TMP_TXT_DIR", TMP_TXT_DIR) ||
+  //   !throw_blank("TMP_DAT_DIR", TMP_DAT_DIR)
+  // ) throw void 0
 
 
   return {
