@@ -4,7 +4,6 @@ import path from "path";
 import type { ILegacyPictureInfo } from "../../src/LF2/defines";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
-import { check_is_str_ok } from "./utils/check_is_str_ok";
 import { classify } from "./utils/classify";
 import { convert_dat_file } from "./utils/convert_dat_file";
 import { convert_data_txt, write_index_file } from "./utils/convert_data_txt";
@@ -23,13 +22,6 @@ export async function make_data_zip() {
     TMP_DIR,
     TMP_DAT_DIR,
   } = conf();
-
-  check_is_str_ok(
-    ['IN_LF2_DIR', IN_LF2_DIR],
-    ['OUT_DIR', OUT_DIR],
-    ['TMP_DIR', TMP_DIR],
-    ['OUT_DATA_NAME', OUT_DATA_NAME]
-  );
   const cache_infos = await CacheInfos.create(
     path.join(TMP_DIR, "cache_infos.json5")
   );

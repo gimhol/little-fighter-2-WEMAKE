@@ -15,7 +15,7 @@ enum CMDEnum {
   MAKE_DATA = 'make-data',
   MAKE_PREL = 'make-prel',
   ZIP_FULL = 'zip-full',
-  MAKE_CONF = 'make-conf',
+  PRINT_CONF = 'print-conf',
 }
 async function main() {
   switch (process.argv[2]?.toLowerCase()) {
@@ -27,19 +27,20 @@ async function main() {
       await make_prel_zip();
       await make_full_zip();
       return;
+    case CMDEnum.ZIP_FULL:
+      await make_full_zip();
     case CMDEnum.MAIN:
       await make_data_zip();
       await make_prel_zip();
       await make_full_zip();
       return;
-    case CMDEnum.ZIP_FULL:
-      await make_full_zip();
-      return;
     case CMDEnum.DAT_2_TXT:
       const { IN_LF2_DIR, TMP_TXT_DIR } = conf();
       return data_2_txt(IN_LF2_DIR, TMP_TXT_DIR);
-    case CMDEnum.MAKE_CONF:
-      console.log('You can copy the content below into json file: \n\n ' + JSON.stringify(make_conf(), null, 2))
+    case CMDEnum.PRINT_CONF:
+      const json = make_conf()
+      delete json.CONF_FILE;
+      console.log('You can copy the content below into json file: \n\n ' + JSON.stringify(json, null, 2))
       return;
     case CMDEnum.HELP:
       return show_main_usage();

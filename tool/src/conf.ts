@@ -1,6 +1,5 @@
 import { readFileSync } from "fs";
 import JSON5 from "json5";
-import { join } from "path";
 
 export interface IConf {
   CONF_FILE?: string;
@@ -88,8 +87,8 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   IN_EXTRA_DIR: { alias: [] },
 
   TMP_DIR: { alias: ['-t', '--temp'], default: './temp' },
-  TMP_TXT_DIR: { alias: [] },
-  TMP_DAT_DIR: { alias: [] },
+  TMP_TXT_DIR: { alias: [], default: './temp/lf2_txt' },
+  TMP_DAT_DIR: { alias: [], default: './temp/lf2_data' },
 
   OUT_DIR: { alias: ['-o', '--output'], default: './public' },
   OUT_DATA_NAME: { alias: [], default: 'data.zip' },
@@ -114,7 +113,6 @@ export function make_conf(): Partial<IConf> {
     const info = key_arg_records[key]
     conf[key] = info.default || '';
   })
-  
   return conf;
 }
 function read_conf(): IConf {
@@ -137,7 +135,7 @@ function read_conf(): IConf {
 
   const {
     IN_LF2_DIR, TMP_DIR, OUT_DIR, OUT_DATA_NAME, IN_PREL_DIR, OUT_PREL_NAME,
-    IN_EXTRA_DIR, FFMPEG_CMD, MAGICK_CMD, OUT_FULL_NAME
+    IN_EXTRA_DIR, FFMPEG_CMD, MAGICK_CMD, OUT_FULL_NAME, TMP_TXT_DIR, TMP_DAT_DIR
   } = conf;
 
   if (
@@ -149,12 +147,12 @@ function read_conf(): IConf {
     !throw_blank("OUT_DIR", OUT_DIR) ||
     !throw_blank("OUT_DATA_NAME", OUT_DATA_NAME) ||
     !throw_blank("FFMPEG_CMD", FFMPEG_CMD) ||
-    !throw_blank("MAGICK_CMD", MAGICK_CMD)
+    !throw_blank("MAGICK_CMD", MAGICK_CMD) ||
+    !throw_blank("TMP_TXT_DIR", TMP_TXT_DIR) ||
+    !throw_blank("TMP_DAT_DIR", TMP_DAT_DIR)
   ) throw void 0
 
-  let { TMP_TXT_DIR, TMP_DAT_DIR } = conf;
-  if (!TMP_TXT_DIR) TMP_TXT_DIR = join(TMP_DIR, "lf2_txt");
-  if (!TMP_DAT_DIR) TMP_DAT_DIR = join(TMP_DIR, "lf2_data");
+
   return {
     IN_LF2_DIR,
     TMP_DIR,
