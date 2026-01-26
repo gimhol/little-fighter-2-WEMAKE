@@ -8,7 +8,7 @@ import type { IBgData } from "./IBgData";
 import type { INextFrame } from "./INextFrame";
 import type { IPairByFace } from "./IPairByFace";
 import type { IStageInfo } from "./IStageInfo";
-import { SG } from "./StageGroup";
+import { StageGroup as SG } from "./StageGroup";
 import { TeamEnum as _TeamEnum } from "./TeamEnum";
 export interface TFrameIdPair extends IPairByFace<string> { }
 export interface TFrameIdListPair extends IPairByFace<string[]> { }
