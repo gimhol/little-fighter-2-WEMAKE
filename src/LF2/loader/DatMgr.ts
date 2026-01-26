@@ -177,7 +177,7 @@ class Inner {
       }
     }
 
-    if (!this.stages.find(v => v.id === Defines.VOID_STAGE.id))
+    if (!this.stages.length)
       this.stages.unshift(Defines.VOID_STAGE)
     for (const stage of stages) {
       const idx = this.stages.findIndex(v => v.id === stage.id);

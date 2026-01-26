@@ -74,4 +74,6 @@ export interface IStageInfo {
    * @memberof IStageInfo
    */
   title?: string;
+
+  group?: string[];
 }

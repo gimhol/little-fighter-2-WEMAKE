@@ -8,6 +8,7 @@ import type { IBgData } from "./IBgData";
 import type { INextFrame } from "./INextFrame";
 import type { IPairByFace } from "./IPairByFace";
 import type { IStageInfo } from "./IStageInfo";
+import { SG } from "./StageGroup";
 import { TeamEnum as _TeamEnum } from "./TeamEnum";
 export interface TFrameIdPair extends IPairByFace<string> { }
 export interface TFrameIdListPair extends IPairByFace<string[]> { }
@@ -176,6 +177,7 @@ export namespace Defines {
     id: "VOID_STAGE",
     name: "VOID_STAGE",
     phases: [],
+    group: [SG.Dev]
   };
 
   export const NEXT_FRAME_GONE: Readonly<INextFrame> = {

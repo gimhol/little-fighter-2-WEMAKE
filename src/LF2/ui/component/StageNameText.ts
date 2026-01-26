@@ -1,3 +1,4 @@
+import { StageGroup as SG } from "@/LF2/defines/StageGroup";
 import { CheatType, IStageInfo } from "../../defines";
 import { Defines } from "../../defines/defines";
 import { UITextLoader } from "../UITextLoader";
@@ -16,10 +17,18 @@ export class StageNameText extends UIComponent {
     return this.lf2.is_cheat(CheatType.GIM_INK);
   }
   get stages(): IStageInfo[] {
-    const ret =
-      this.lf2.stages?.filter((v) => v.id !== Defines.VOID_STAGE.id) || [];
-    if (this.show_all) return ret;
-    return ret.filter((v) => v.is_starting);
+    const cheat_0 = this.lf2.is_cheat(CheatType.LF2_NET);
+    const cheat_1 = this.lf2.is_cheat(CheatType.GIM_INK);
+    const all = this.lf2.datas.stages;
+    if (cheat_0 && cheat_1) return all
+    const ret = all.filter(v => {
+      if (!cheat_0 && v.group?.some(v => v == SG.Hidden))
+        return false;
+      if (!cheat_1 && (!v.is_starting && v.group?.some(v => v == SG.Dev)))
+        return false;
+      return true
+    })
+    return ret.length ? all : ret;
   }
   get stage(): IStageInfo {
     return this._stage;

@@ -51,8 +51,8 @@ export class CharMenuLogic extends UIComponent {
   set teams(v: string[]) { this.props.set_strs("teams", v) }
 
   get fighters(): readonly IEntityData[] {
-    const cheat_0 = CheatType.LF2_NET;
-    const cheat_1 = CheatType.GIM_INK;
+    const cheat_0 = this.lf2.is_cheat(CheatType.LF2_NET);
+    const cheat_1 = this.lf2.is_cheat(CheatType.GIM_INK);
     const all = this.lf2.datas.fighters;
     if (cheat_0 && cheat_1) return all
     const ret = all.filter(v => {
