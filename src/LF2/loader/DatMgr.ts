@@ -1,7 +1,6 @@
 import { LF2 } from "../LF2";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
-import { InvalidController } from "../controller/InvalidController";
 import { IBaseData, IBgData, IBotData, IDataLists, IEntityData, IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { Defines } from "../defines/defines";
@@ -10,8 +9,8 @@ import { Factory } from "../entity";
 import {
   is_ball_data,
   is_bg_data,
-  is_fighter_data,
   is_entity_data,
+  is_fighter_data,
   is_weapon_data,
 } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
@@ -19,6 +18,7 @@ import { is_non_blank_str, is_str } from "../utils/type_check";
 import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
 import { preprocess_entity_data } from "./preprocess_entity_data";
+import { preprocess_stage } from "./preprocess_stage";
 
 export interface IDataListMap {
   background: IBgData[];
@@ -65,7 +65,6 @@ class Inner {
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BallController(a, b));
     else if (is_fighter_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
-
     if (is_entity_data(data)) {
       if (data.base.bot_id) {
         data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id)
@@ -117,6 +116,7 @@ class Inner {
     for (const file of index_files) {
       const { objects = [], backgrounds = [], stages = [], bots = [] } = await this.lf2.import_json<Partial<IDataLists>>(file, true)
         .then(r => r[0]).catch(e => { Ditto.warn(`FAIL TO LOAD DAT INDEX ${file}, ` + e); return {} as Partial<IDataLists> });
+
       data.objects.push(...objects)
       data.backgrounds.push(...backgrounds)
       data.stages.push(...stages)
@@ -172,10 +172,12 @@ class Inner {
         .then(r => r[0])
         .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
       this.lf2.on_loading_content(`${stage_file.file}`, 100);
-      stages.push(...stage_datas)
+      for (const stage of stage_datas) {
+        stages.push(preprocess_stage(stage))
+      }
     }
 
-    if (!this.stages.find(v => v.id === Defines.VOID_STAGE.id))
+    if (!this.stages.length)
       this.stages.unshift(Defines.VOID_STAGE)
     for (const stage of stages) {
       const idx = this.stages.findIndex(v => v.id === stage.id);

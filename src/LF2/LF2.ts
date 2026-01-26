@@ -25,22 +25,25 @@ const cheat_info_pair = (n: D.CheatType) =>
   ] as const;
 
 export class LF2 implements I.IKeyboardCallback, IDebugging {
-  debug!: (_0: string, ..._1: any[]) => void;
-  warn!: (_0: string, ..._1: any[]) => void;
-  log!: (_0: string, ..._1: any[]) => void;
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  lang: string = '';
-  dev: boolean = false;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
   static PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
   static DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
-  static get instance() { return LF2.instances[0] }
+  static get instance(): LF2 | undefined { return LF2.instances[0] }
+  static get world(): World | undefined { return this.instance?.world }
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
-  private _disposed: boolean = false;
+
+  lang: string = '';
+  dev: boolean = false;
+  debug!: (_0: string, ..._1: any[]) => void;
+  warn!: (_0: string, ..._1: any[]) => void;
+  log!: (_0: string, ..._1: any[]) => void;
+
   readonly callbacks = new Callbacks<ILf2Callback>();
+  private _disposed: boolean = false;
   private _ui_stacks: UI.UIStack[] = [];
   private _loading: boolean = false;
   private _playable: boolean = false;
@@ -233,7 +236,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
   cmds: (CMD | D.CheatType)[] = [];
   events: UI.LF2KeyEvent[] = [];
-
+  broadcasts: string[] = [];
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
     const key_code = e.key.toLowerCase();
@@ -517,10 +520,17 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   protected _uiinfo_map = new Map<string, UI.IUIInfo>();
   protected _strings = new Map<string, { [x in string]?: string }>()
+  protected _strings_list = new Map<string, { [x in string]?: string[] }>();
   string(name: string): string {
     return (
       this._strings.get(this.lang)?.[name] ??
       this._strings.get("")?.[name] ?? name
+    )
+  }
+  strings(name: string): string[] {
+    return (
+      this._strings_list.get(this.lang)?.[name] ??
+      this._strings_list.get("")?.[name] ?? [name]
     )
   }
   load_strings(strings: any) {
@@ -546,7 +556,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       if (!collection) continue;
       this._strings.set(a, { ...collection });
       collection_pointers.splice(i, 1);
-      --i
+      --i;
     }
   }
 
@@ -635,8 +645,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   on_loading_content(content: string, progress: number) {
     this.callbacks.emit("on_loading_content")(content, progress);
   }
-
   broadcast(message: string): void {
+    this.broadcasts.push(message);
     this.callbacks.emit("on_broadcast")(message, this);
   }
   on_component_broadcast(component: UI.UIComponent, message: string) {

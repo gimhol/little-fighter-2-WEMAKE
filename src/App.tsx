@@ -3,7 +3,7 @@ import classNames from "classnames";
 import qs from "qs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
 import "splittings-dom/dist/es/splittings-dom.css";
 import { Workspaces } from "splittings/dist/es/splittings";
@@ -28,14 +28,16 @@ import { LF2 } from "./LF2/LF2";
 import { CheatType } from "./LF2/defines";
 import { CMD } from "./LF2/defines/CMD";
 import { Defines } from "./LF2/defines/defines";
-import { Ditto } from "./LF2/ditto";
+import { Ditto, IZip } from "./LF2/ditto";
 import { IUIInfo } from "./LF2/ui/IUIInfo.dat";
 import { fisrt } from "./LF2/utils/container_help";
 import { arithmetic_progression } from "./LF2/utils/math/arithmetic_progression";
 import { Loading } from "./LoadingImg";
 import { Log } from "./Log";
+import { Paths } from "./Paths";
 import { PlayerRow } from "./PlayerRow";
 import SettingsRows from "./SettingsRows";
+import { download } from "./Utils/download";
 import { open_file } from "./Utils/open_file";
 import img_btn_0_3 from "./assets/btn_0_3.png";
 import img_btn_1_0 from "./assets/btn_1_0.png";
@@ -87,10 +89,11 @@ const init_s = () => ({
 
 function App() {
   const l = useLocation()
-  const { sobj, hobj } = useMemo(() => {
+  const nav = useNavigate()
+  const { params } = useMemo(() => {
     const sobj = qs.parse(l.search.substring(1))
     const hobj = qs.parse(l.hash.substring(1))
-    return { sobj, hobj }
+    return { sobj, hobj, params: { ...sobj, ...hobj } }
   }, [l])
 
   const [fullscreen] = useState(() => new Ditto.FullScreen());
@@ -107,7 +110,7 @@ function App() {
   const [loaded, set_loaded] = useState(false);
   const [paused, _set_paused] = useState(false);
   const [bg_id, _set_bg_id] = useState(Defines.VOID_BG.id);
-  const [networking, set_networking] = useState(sobj.network === '1' || hobj.network === '1')
+  const [networking, set_networking] = useState(params.network === '1')
   const [dat_viewer_open, set_dat_viewer_open] = useState(false);
   const [editor_open, set_editor_open] = useState(false);
 
@@ -167,8 +170,18 @@ function App() {
             return networking
           });
           break;
+        case 'select_extra_data':
+          open_file({ accept: '.zip', multiple: true }).then(async (files) => {
+            if (!files.length) return;
+            const zips: IZip[] = []
+            for (const file of files)
+              zips.push(await Ditto.Zip.read_file(file))
+            LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
+          });
+          break;
         case 'custom_game':
-          window.open(location.protocol + '//' + location.host + location.pathname + '#custom_game')
+          nav(Paths.All.custom_game)
+          // window.open(location.protocol + '//' + location.host + location.pathname + '#custom_game')
           break;
       }
     },
@@ -208,7 +221,7 @@ function App() {
       }
     },
     on_prel_loaded: (lf2) => {
-      const { test_ui } = qs.parse(window.location.search.substring(1))
+      const { test_ui } = params
       if (typeof test_ui === 'string') lf2.set_ui(test_ui)
     },
   })
@@ -233,8 +246,7 @@ function App() {
 
   useEffect(() => {
     if (!state_ready) return
-    let lang = sobj.lang || hobj.lang;
-    let dev = sobj.dev || hobj.dev
+    let { lang, dev } = params;
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
     const lf2 = ref_lf2.current = new LF2(dev == '1');
     lf2.lang = lang;
@@ -283,7 +295,7 @@ function App() {
       window.removeEventListener("touchstart", on_touchstart)
       lf2.dispose()
     };
-  }, [LF2, sobj, hobj, state_ready]);
+  }, [LF2, params, state_ready]);
 
   const on_click_load_local_zip = () => {
     if (!lf2) return;
@@ -294,12 +306,6 @@ function App() {
   };
 
   const on_click_download_zip = () => {
-    const download = (url: string) => {
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = url;
-      a.click();
-    }
     download('data.zip.json?time=' + Date.now())
     download('data.zip?time=' + Date.now())
     download('prel.zip.json?time=' + Date.now())
@@ -888,4 +894,5 @@ function toggle_bit(v: number, b: number): number {
   return v & b ? v ^ b : v | b
 }
 export default App;
+
 

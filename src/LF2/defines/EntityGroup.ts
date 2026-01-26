@@ -46,5 +46,11 @@ export enum EntityGroup {
   /**
    * 可转化FreezableBall的对象
    */
-  Freezer = "Freezer"
+  Freezer = "Freezer",
+
+  /**
+   * 
+   */
+  Dev = "Dev",
 }
+

@@ -19,7 +19,7 @@ import { Ditto } from "../ditto";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, find, float_equal, intersection, max, min, round, round_float } from "../utils";
+import { abs, clamp, find, float_equal, floor, intersection, max, min, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_num, is_positive, is_str } from "../utils/type_check";
@@ -877,6 +877,9 @@ export class Entity {
       this._catching = null;
       this._catcher = null;
     }
+    if (v.broadcasts?.length)
+      for (const m of v.broadcasts)
+        this.lf2.broadcast(m)
   }
 
   apply_opoints(opoints: IOpointInfo[]) {
@@ -1265,7 +1268,7 @@ export class Entity {
     if (!this._mp_r_tick.add())
       return;
     const r_ratio = base.mp_r_ratio ?? this.world.mp_r_ratio;
-    const value = 1 + round((500 - min(r_ratio * this._hp, 500)) / 100)
+    const value = 1 + floor(round_float((500 - min(r_ratio * this._hp, 500)) / 100))
     this.mp = min(this._mp_max, this._mp + value);
   }
 
@@ -1337,7 +1340,7 @@ export class Entity {
 
           let max_distance = Number.MAX_SAFE_INTEGER
           let friend: Entity | undefined;
-          for (const e of this.world.slot_fighters.values()) {
+          for (const e of this.world.puppets.values()) {
             if (e.hp <= 0) continue;
             const d =
               abs(round(e.position.x - this._position.x)) +

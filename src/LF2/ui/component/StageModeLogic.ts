@@ -28,7 +28,7 @@ export class StageModeLogic extends UIComponent {
       // 队伍存活计数
       const player_teams: { [x in string]?: number } = {};
 
-      for (const [, f] of this.world.slot_fighters)
+      for (const [, f] of this.world.puppets)
         player_teams[f.team] = 0 // 玩家队伍
 
       for (const e of this.world.entities) {
@@ -122,14 +122,14 @@ export class StageModeLogic extends UIComponent {
     this.jalousie = this.node.search_component(Jalousie)
     this.gogogo = this.node.search_component(ComponentsPlayer, "play_gogogo")
     this.gogogo_loop = this.node.search_component(ComponentsPlayer, "play_gogogo_loop")
-    for (const [, f] of this.world.slot_fighters) {
+    for (const [, f] of this.world.puppets) {
       this.world_callbacks.on_fighter_add?.(f)
     }
 
     const stat_bars = this.node.search_components(FighterStatBar)
     let player_count = 0;
     let teams = new Set();
-    for (const [, f] of this.world.slot_fighters) {
+    for (const [, f] of this.world.puppets) {
       if (f) {
         teams.add(f.team);
         ++player_count
@@ -146,7 +146,7 @@ export class StageModeLogic extends UIComponent {
       --i;
     }
 
-    for (const [, fighter] of this.world.slot_fighters) {
+    for (const [, fighter] of this.world.puppets) {
       if (!fighter) continue;
       const stat_bar = stat_bars.shift()
       if (!stat_bar) break;
@@ -167,7 +167,12 @@ export class StageModeLogic extends UIComponent {
     this.lf2.world.callbacks.del(this.world_callbacks);
   }
   override update(dt: number): void {
-    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) < 5) {
+    if (
+      !this.world.paused &&
+      !this.lf2.world.stage.weapon_rain_disabled &&
+      this.weapon_drop_timer.add() &&
+      this.lf2.mt.range(0, 10) < 5
+    ) {
       this.lf2.weapons.add_random(1, true, EntityGroup.StageWeapon)
     }
     if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {

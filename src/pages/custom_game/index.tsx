@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import styles from "./styles.module.scss";
 import { useRef } from "react";
+import { download } from "@/Utils/download";
 
 export default function CustomGamePage() {
   const { t } = useTranslation();
@@ -94,6 +95,9 @@ export default function CustomGamePage() {
         onDrop={on_drop}>
         <h1>{t("custom_game")}</h1>
         <div>{t("pls_drag_game_zip_in_here")}</div>
+      </Button>
+      <Button onClick={() => download('lfw.full.zip')}>
+        {t("download_origin_full_zip_here")}
       </Button>
     </div >
   )

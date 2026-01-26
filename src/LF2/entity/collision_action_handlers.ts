@@ -1,6 +1,7 @@
 import { ICollision } from "../base";
 import { IActionHandler } from "../base/IActionHandler";
 import { ActionType } from "../defines/ActionType";
+import { IAction_Broadcast } from "../defines/IAction_Broadcast";
 import { IAction_Fusion } from "../defines/IAction_Fusion";
 import { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
 import { IAction_TurnFace } from "../defines/IAction_TurnFace";
@@ -20,7 +21,7 @@ export const collision_action_handlers: IActionHandler = {
   v_sound: (a, c) => c.victim.play_sound(a.data.path, a.data.pos),
   v_next_frame: (a, c) => c.victim.next_frame = c.victim.get_next_frame(a.data)?.which ?? c.victim.next_frame,
   v_set_prop: (a, c) => (c.victim as any)[a.prop_name] = a.prop_value,
-  v_broken_defend: () => 0, // 特殊对待，此处留空
+  v_broken_defend: () => 0,
   v_defend: () => 0,
 
   [ActionType.A_REBOUND_VX]: function (action: IAction_ReboundVX, collision: ICollision) {
@@ -78,5 +79,7 @@ export const collision_action_handlers: IActionHandler = {
     if (act) {
       fighter_1.next_frame = fighter_1.get_next_frame(act)?.frame ?? null;
     }
-  }
+  },
+  [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: ICollision) => lf2.broadcast(action.data)
+
 };

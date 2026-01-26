@@ -1,6 +1,7 @@
-import { Difficulty } from "./Difficulty";
-import { IStageObjectInfo } from "./IStageObjectInfo";
-
+import type { Difficulty } from "./Difficulty";
+import type { IDialogInfo } from "./IDialogInfo";
+import type { IExpression } from "./IExpression";
+import type { IStageObjectInfo } from "./IStageObjectInfo";
 /**
  * 关卡阶段信息
  *
@@ -29,8 +30,27 @@ export interface IStagePhaseInfo {
   drink_r?: number;
   /** 关卡描述 */
   desc?: string;
-  objects: IStageObjectInfo[];
+  objects?: IStageObjectInfo[];
+
+  /** 
+   * 背景音乐 
+   * 
+   * 设为空字符将停止播放当前正在播放的背景音乐
+   * @type {string}
+   */
   music?: string;
+
+  /**
+   * 播放音效
+   * 
+   * @type {string}
+   */
+  sounds?: {
+    path: string,
+    x?: number,
+    y?: number,
+    z?: number
+  }[]
 
   respawn?: { [x in Difficulty]?: number };
 
@@ -56,8 +76,41 @@ export interface IStagePhaseInfo {
    * @type {?number}
    */
   player_jump_to_x?: number;
+  player_jump_to_z?: number;
 
-  end_condition?: string;
+  /**
+   * 玩家朝向
+   *
+   * @type {?number}
+   */
+  player_facing?: -1 | 1;
+
+  /** 
+   * 结束判定 
+   * 
+   * @type {string[]}
+   */
+  end_test?: string[];
+
+  /**
+   * 结束测试器
+   * 读取数据时，通过end_test生成
+   * 
+   * 当end_test不存在，end_tester也不存在
+   * 
+   * 无结束测试器时, 对话框完毕，且敌人被清空视为结束
+   */
+  end_testers?: IExpression<any>[];
+
   on_start?: string[];
   on_end?: string[];
+
+  dialogs?: IDialogInfo[];
+
+  /** 隐藏状态栏 */
+  hide_stats?: number;
+
+  world_pause?: number;
+  control_disabled?: number;
+  weapon_rain_disabled?: number;
 }

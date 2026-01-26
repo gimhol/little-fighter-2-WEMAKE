@@ -1,6 +1,6 @@
 {
   "name": "little-fighter-j",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "type": "module",
   "private": true,
   "homepage": ".",
@@ -13,8 +13,9 @@
     "test": "jest",
     "___build___": "___build___",
     "build:tool": "cd ./tool && npm i && npm run build",
-    "build:data": " node ./tool main -c ./lf2s/origin/conf.json5",
+    "build:data": "node ./tool main -c ./lf2s/origin/conf.json5",
     "build:prel": " node ./tool make-prel -c ./lf2s/origin/conf.json5",
+    "zip": " node ./tool zip-full -c ./lf2s/origin/conf.json5",
     "dat_2_txt": "node ./tool dat-2-txt -c ./lf2s/origin/conf.json5",
     "build:data:rn": " node ./tool main -c ./lf2s/rn-lf2/conf.json5",
     "build:prel:rn": " node ./tool make-prel -c ./lf2s/rn-lf2/conf.json5",

@@ -21,6 +21,7 @@ import { Stage } from "./LF2/stage/Stage";
 import { list_writable_properties, TProperty } from "./LF2/utils/list_writable_properties";
 import { is_num } from "./LF2/utils/type_check";
 import { useLocalNumber, useLocalString } from "./useLocalStorage";
+import { CMD } from "./LF2/defines/CMD";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
   "enemy chaser": (e: Entity) => new BotController("", e),
@@ -159,14 +160,18 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           </Combine>
         </Titled>
         <Combine>
-          <Button onClick={() => lf2.world.stage.kill_all_enemies()}>
+          <Button onClick={() => lf2?.cmds.push(CMD.KILL_ENEMIES)}>
             杀死全部敌人
           </Button>
-          <Button onClick={() => lf2.world.stage.kill_boss()}>杀死Boss</Button>
-          <Button onClick={() => lf2.world.stage.kill_soliders()}>
+          <Button onClick={() => lf2?.cmds.push(CMD.KILL_BOSS)}>
+            杀死Boss
+          </Button>
+          <Button onClick={() => lf2?.cmds.push(CMD.KILL_SOLIDERS)}>
             杀死士兵
           </Button>
-          <Button onClick={() => lf2.world.stage.kill_others()}>杀死其他</Button>
+          <Button onClick={() => lf2?.cmds.push(CMD.KILL_OTHERS)}>
+            杀死其他
+          </Button>
         </Combine>
       </Show.Div>
 

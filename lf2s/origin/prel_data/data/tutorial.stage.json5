@@ -1,0 +1,145 @@
+[
+  {
+    bg: "ash_forest",
+    id: "tutorial",
+    name: "TUTORIAL",
+    group: ["Dev"],
+    phases: [
+      {
+        bound: 900,
+        end_test: ["cur_phase_time>240"],
+        cam_jump_to_x: 0,
+        player_jump_to_x: 0,
+        player_facing: 1,
+        control_disabled: 1,
+      },
+      {
+        bound: 900,
+        desc: "",
+        _objects: [
+          {
+            id: ["gim"],
+            x: 900,
+            facing: -1,
+            hp: 50,
+            times: 2,
+            ratio: 1,
+          },
+        ],
+        music: "",
+        enemy_r: 1100,
+        enemy_l: -200,
+        hide_stats: 1,
+        dialogs: [
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_0",
+            end_test: ["press_attack==1", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_1",
+            end_test: ["broadcast{{gim_walk", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_2",
+            end_test: ["broadcast{{gim_defense", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_3",
+            end_test: ["broadcast{{gim_jump", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_4",
+            end_test: ["broadcast{{gim_run", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_5",
+            end_test: ["broadcast{{gim_dash", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_6",
+            end_test: ["broadcast{{gim_dodge", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_7",
+            end_test: ["broadcast{{gim_punch", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_8",
+            end_test: ["broadcast{{gim_run_attack", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_9",
+            end_test: ["broadcast{{gim_jump_attack", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_10",
+            end_test: ["broadcast{{gim_dash_attack", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_11",
+            end_test: ["press_attack==1", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_12",
+            end_test: ["press_attack==1", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_13",
+            end_test: ["broadcast{{gim_d>a", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_14",
+            end_test: ["broadcast{{gim_d>j", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_15",
+            end_test: ["broadcast{{gim_d^j", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_16",
+            end_test: ["press_attack==1", "cur_dialog_time>120"],
+          },
+          {
+            fighter: "gim",
+            i18n: "tutorial.dialog_17",
+            end_test: ["press_attack==1", "cur_dialog_time>120"],
+          },
+        ],
+      },
+      {
+        bound: 901,
+        objects: [
+          {
+            id: ["gim"],
+            x: 900,
+            facing: -1,
+            hp: 50,
+            times: 2,
+            ratio: 1,
+          },
+        ],
+      },
+    ],
+    is_starting: true,
+    starting_name: "tutorial",
+    chapter: "tutorial_chapter",
+    title: "TUTORIAL",
+  },
+]

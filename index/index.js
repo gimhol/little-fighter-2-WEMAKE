@@ -2,9 +2,9 @@ const strings_map = new Map()
 const time_str = Math.floor(Date.now() / 60000);
 
 const lang = (() => {
-  const hashs = new URLSearchParams('?' + window.location.hash.substring(1));
+  const hashs = new URLSearchParams('?' + location.hash.substring(1));
   const a = hashs.get('lang')
-  const searchs = new URLSearchParams(window.location.search);
+  const searchs = new URLSearchParams(location.search);
   const b = searchs.get('lang')
   const c = navigator.language.toLowerCase();
   console.log({ a, b, c })
@@ -175,3 +175,34 @@ async function fetch_version_list(url) {
   return versions
 }
 main()
+
+
+const langs = ['zh', 'en']
+function update_lang_btn() {
+  const { search } = location
+  const s_obj = new URLSearchParams(search);
+  const lang = s_obj.get('lang') || navigator.language.toLowerCase();
+  const idx = langs.findIndex(v => lang.startsWith(v))
+  const el_lang_f = document.getElementById('lang_f')
+  const el_lang_b = document.getElementById('lang_b')
+  if (idx === 0) {
+    el_lang_f.innerText = '中'
+    el_lang_b.innerText = 'En'
+  } else {
+    el_lang_f.innerText = 'En'
+    el_lang_b.innerText = '中'
+  }
+}
+function switch_lang() {
+  const url = location.protocol + '//' + location.host + location.pathname;
+  const { search, hash } = location
+  const s_obj = new URLSearchParams(search);
+  let lang = s_obj.get('lang') || navigator.language.toLowerCase();
+  const idx = langs.findIndex(v => lang.startsWith(v))
+  lang = langs[(idx + 1) % langs.length]
+  s_obj.set('lang', lang)
+  const new_searh = s_obj.toString()
+  location.href = url + ('?' + new_searh) + hash;
+  update_lang_btn();
+}
+update_lang_btn();

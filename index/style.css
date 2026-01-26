@@ -152,19 +152,57 @@ button:hover {
   height: 0;
 }
 
-.github {
+.lang_btn_inner {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.lang_btn_inner_span {
+  font-size: 9px;
+  line-height: 9px;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
+  width: 16px;
+  height: 13px;
+  position: absolute;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.lang_btn_inner_span_f {
+  z-index: 1;
+  left: 1px;
+  top: 2px;
+  color: #10206C;
+  background-color: white;
+}
+
+.lang_btn_inner_span_b {
+  z-index: 0;
+  right: 1px;
+  bottom: 2px;
+}
+
+.head_right_btn {
   display: inline-block;
   transform: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0px;
 }
 
-.github>img {
+.head_right_btn>img {
   transition: all 200ms;
 }
 
-.github:hover>img {
+.head_right_btn:hover>img {
   transform: scale(1.2);
 }
 

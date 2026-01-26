@@ -55,6 +55,7 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
       let i = 0;
       let letter: string = "";
       let before: string = "";
+
       for (; i < count; ++i) {
         letter = this.text[i] || '';
         if ("!" === letter && this.text[i + 1] === "(") {
@@ -77,10 +78,14 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
           p = i + 1;
           this.children.push(child);
         } else if ("|" === letter || "&" === letter) {
-          if (this.text[i + 1] == letter) ++i
+          let db = false
+          if (this.text[i + 1] == letter) {
+            db = true;
+            ++i
+          }
           if (p < i) {
             const child = new Expression<T1, T2>(null, get_val_getter);
-            child.judger(this.text.substring(p, i).replace(/\)*$/g, ""))
+            child.judger(this.text.substring(p, db ? i - 1 : i).replace(/\)*$/g, ""))
             child.before = before;
             this.children.push(child);
             before = letter;
@@ -147,10 +152,12 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
       this.run = () => result
       return;
     }
-    this.run = (t) => this.result = predicate(
-      this.val_1 = getter_1 ? getter_1(t, word_1, op as BinOp) : val_1,
-      this.val_2 = getter_2 ? getter_2(t, word_2, op as BinOp) : val_2,
-    )
+    this.run = (t) => {
+      const v1 = getter_1 ? getter_1(t, word_1, op as BinOp) : val_1
+      const v2 = getter_2 ? getter_2(t, word_2, op as BinOp) : val_2
+      this.result = predicate(v1, v2)
+      return this.result;
+    }
   }
   run = (e: T1): boolean => {
     let ret = false;

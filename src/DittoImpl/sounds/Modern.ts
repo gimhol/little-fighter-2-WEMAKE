@@ -284,9 +284,10 @@ export class __Modern extends BaseSounds {
   }
 
   override dispose(): void {
-    super.dispose();
     this._r.clean();
+    this.stop_bgm();
     this._playings.forEach((v) => v.src_node.stop());
     this._playings.clear();
+    super.dispose();
   }
 }

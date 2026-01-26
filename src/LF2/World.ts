@@ -11,6 +11,7 @@ import {
   IBdyInfo, IBounding, IEntityData,
   IFrameInfo, IItrInfo, ItrKind,
   IVector3,
+  O_ID,
   StateEnum,
   WeaponType
 } from "./defines";
@@ -18,7 +19,8 @@ import { CMD } from "./defines/CMD";
 import { Ditto } from "./ditto";
 import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
-  Entity, Factory, ICreator, is_ball,
+  Entity, Factory,
+  is_ball,
   is_bot_ctrl,
   is_fighter,
   is_human_ctrl,
@@ -29,17 +31,16 @@ import { manhattan_xz } from "./helper/manhattan_xz";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
+import { Transform } from "./Transform";
 import { Times } from "./ui";
-import { abs, find, is_num, min, round } from "./utils";
+import { abs, is_num, min, round } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
   readonly lf2: LF2;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
-
   private _spark_data?: IEntityData;
-  private _spark_creator?: ICreator<Entity, typeof Entity>;
-
+  private _etc_data?: IEntityData;
   private _bg: Background;
   private _stage: Stage;
   private _need_FPS: boolean = true;
@@ -52,11 +53,19 @@ export class World extends WorldDataset {
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   private _game_time = new Times();
+
   get game_time() { return this._game_time }
+
+  readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
   readonly incorporeities = new Set<Entity>();
-  readonly slot_fighters = new Map<string, Entity>();
+  /** 
+   * 被玩家操作的角色 
+   * 键: 玩家ID
+   * 值: 角色
+   */
+  readonly puppets = new Map<string, Entity>();
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();
   get bg() { return this._bg; }
@@ -154,7 +163,7 @@ export class World extends WorldDataset {
         const player = this.lf2.players.get(entity.ctrl.player_id)
         if (player) {
           player.fighter = entity
-          this.slot_fighters.set(entity.ctrl.player_id, entity);
+          this.puppets.set(entity.ctrl.player_id, entity);
           this.callbacks.emit("on_player_character_add")(entity.ctrl.player_id);
         }
       }
@@ -196,7 +205,7 @@ export class World extends WorldDataset {
       this.callbacks.emit("on_fighter_del")(entity);
     const player = this.lf2.players.get(entity.ctrl.player_id)
     if (player) player.fighter = void 0
-    const ok = this.slot_fighters.delete(entity.ctrl.player_id);
+    const ok = this.puppets.delete(entity.ctrl.player_id);
     if (ok) this.callbacks.emit("on_player_character_del")(entity.ctrl.player_id);
     this.renderer.del_entity(entity);
     entity.dispose();
@@ -256,6 +265,9 @@ export class World extends WorldDataset {
       this.before_update?.();
       this._update_count++;
       this.update_once();
+      this.lf2.events.length = 0;
+      this.lf2.cmds.length = 0;
+      this.lf2.broadcasts.length = 0;
       if (0 === this._update_count % this.sync_render) {
         this.render_once(real_dt);
         if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
@@ -390,8 +402,9 @@ export class World extends WorldDataset {
 
   protected handle_keys() {
     if (!this.lf2.events.length) return;
+    if (this.stage.control_disabled) return;
     for (const e of this.lf2.events) {
-      const fighter = this.slot_fighters.get(e.player)
+      const fighter = this.puppets.get(e.player)
       if (!fighter) continue;
       const { ctrl } = fighter
       if (!is_human_ctrl(ctrl)) continue;
@@ -432,10 +445,22 @@ export class World extends WorldDataset {
             this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
             continue;
           case CMD.F9:
-            this.stage.kill_all_enemies()
+            this.stage.kill_all()
             continue;
           case CMD.F10:
             for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+            continue;
+          case CMD.KILL_ENEMIES:
+            this.stage.kill_all()
+            continue;
+          case CMD.KILL_BOSS:
+            this.stage.kill_boss()
+            continue;
+          case CMD.KILL_SOLIDERS:
+            this.stage.kill_soliders()
+            continue;
+          case CMD.KILL_OTHERS:
+            this.stage.kill_others()
             continue;
         }
       }
@@ -443,22 +468,25 @@ export class World extends WorldDataset {
   }
 
   update_once() {
+    this.transform.update()
     this.update_ui();
     this.handle_keys();
     this.handle_cmds();
     this.update_camera();
     this.bg.update();
 
-    this.lf2.events.length = 0;
-    this.lf2.cmds.length = 0;
-
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
+
+    if (this.stage.world_pause) {
+      this.stage.update();
+      return;
+    }
+
     const { game_time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
-
     this.gone_entities.length = 0;
     this.v_collisions.length = 0;
     this.a_collisions.clear();
@@ -566,7 +594,7 @@ export class World extends WorldDataset {
     let acc_ratio = 1;
     if (is_num(this.lock_cam_x)) {
       new_x = this.lock_cam_x;
-    } else if (this.slot_fighters.size) {
+    } else if (this.puppets.size) {
       let l = 0;
       new_x = 0;
       /** 存活的本地人类玩家角色 */
@@ -575,7 +603,7 @@ export class World extends WorldDataset {
       const humans: Entity[] = [];
       /** 槽中角色 */
       const fighters: Entity[] = []
-      for (const [, p] of this.slot_fighters) {
+      for (const [, p] of this.puppets) {
         if (is_human_ctrl(p.ctrl) && p.hp > 0) {
           if (p.ctrl.player.mine) {
             mines.push(p)
@@ -702,7 +730,7 @@ export class World extends WorldDataset {
       victim.pre_emitter === attacker.pre_emitter &&
       victim.spawn_time === attacker.spawn_time
     ) return;
-    
+
     if (!itr.vrest && attacker.a_rest) return;
     if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
     const ax = attacker.position.x
@@ -715,6 +743,8 @@ export class World extends WorldDataset {
     const dy = vy - ay
     const dz = vz - az
     const collision: ICollision = {
+      lf2: this.lf2,
+      world: this,
       v_rest: !itr.arest && itr.vrest ? itr.vrest + this.vrest_offset : void 0,
       victim,
       attacker,
@@ -743,11 +773,6 @@ export class World extends WorldDataset {
     return collision
   }
 
-  init_spark_data() {
-    this._spark_data = this.lf2.datas.find(Defines.BuiltIn_Dats.Spark);
-    this._spark_creator = this._spark_data ? Factory.inst.get_entity_creator(this._spark_data.type) : void 0;
-  }
-
   /**
    * 火花特效
    *
@@ -760,39 +785,36 @@ export class World extends WorldDataset {
    */
   spark(x: number, y: number, z: number, f: string): void {
     if (!this._spark_data)
-      this.init_spark_data();
-    if (!this._spark_data) {
-      Ditto.warn(
-        World.TAG + "::spark",
-        `data of "${Defines.BuiltIn_Dats.Spark}" not found!`,
-      );
+      this._spark_data = this.lf2.datas.find(Defines.BuiltIn_Dats.Spark);
+    const data = this._spark_data
+    if (!data) {
+      Ditto.warn(`[${World.TAG}::spark] "${Defines.BuiltIn_Dats.Spark}" data not found!`);
       return;
     }
-    if (!this._spark_creator) {
-      Ditto.warn(World.TAG + "::spark", `creator of "${this._spark_data.type}" not found!`);
+    const e = Factory.inst.create_entity(data.type, this, data);
+    if (!e) {
+      Ditto.warn(`[${World.TAG}::spark] failed`);
       return;
     }
-    const e = this._spark_creator(this, this._spark_data);
     e.position.set(round(x), round(y), round(z));
     e.enter_frame({ id: f });
     e.attach(false);
   }
   etc(x: number, y: number, z: number, f: string): void {
-    const data = this.lf2.datas.find(998);
+    if (!this._etc_data) this._etc_data = this.lf2.datas.find(O_ID.Etc);
+    const data = this._etc_data;
     if (!data) {
-      Ditto.warn(`[${World.TAG}::etc] failed, oid: ${998} data: ${data}`);
-      debugger;
+      Ditto.warn(`[${World.TAG}::etc] oid "${O_ID.Etc}" data not found!`);
       return;
     }
-    const o = Factory.inst.create_entity(data.type, this, data)
-    if (!o) {
-      Ditto.warn(`[${World.TAG}::etc] failed, oid: ${998} data: ${data}`);
-      debugger;
+    const e = Factory.inst.create_entity(data.type, this, data)
+    if (!e) {
+      Ditto.warn(`[${World.TAG}::etc] failed`);
       return;
     }
-    o.position.set(round(x), round(y), round(z));
-    o.enter_frame({ id: f });
-    o.attach(false);
+    e.position.set(round(x), round(y), round(z));
+    e.enter_frame({ id: f });
+    e.attach(false);
   }
   get_bounding(e: Entity, f: IFrameInfo, i: IItrInfo | IBdyInfo): IBounding {
     const left =
