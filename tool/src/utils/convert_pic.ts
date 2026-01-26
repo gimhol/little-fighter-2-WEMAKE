@@ -1,17 +1,18 @@
 import command_exists from "command-exists";
 import fs from "fs/promises";
 import type { ILegacyPictureInfo } from "../../../src/LF2/defines/ILegacyPictureInfo";
-import { read_conf } from "../read_conf";
+import { conf } from "../conf";
 import { exec_cmd } from "./exec_cmd";
-export let is_magick_tried = false ;
+export let is_magick_tried = false;
 function get_dst_path(out_dir: string, src_dir: string, src_path: string) {
   return src_path.replace(src_dir, out_dir).replace(/(.bmp)$/, ".png");
 }
-const { MAGICK_CMD } = read_conf();
-export const is_magick_exists = command_exists.sync(MAGICK_CMD)
 
 export function print_magick_hints() {
-  if (is_magick_exists || !is_magick_tried) return;
+  if (!is_magick_tried) return;
+  const { MAGICK_CMD } = conf();
+  const is_magick_exists = command_exists.sync(MAGICK_CMD)
+  if (is_magick_exists) return;
   const hints = `
 magick not found, download it from: https://imagemagick.org/script/download.php
 
@@ -31,6 +32,8 @@ export async function convert_pic(
   src_path: string,
 ) {
   is_magick_tried = true;
+  const { MAGICK_CMD } = conf();
+  const is_magick_exists = command_exists.sync(MAGICK_CMD)
   if (!is_magick_exists) return;
   const dst_path = get_dst_path(out_dir, src_dir, src_path);
   await fs.rm(dst_path, { recursive: true, force: true }).catch((e) => void 0);
@@ -58,6 +61,8 @@ export async function convert_pic_2(
   pic: ILegacyPictureInfo,
 ) {
   is_magick_tried = true;
+  const { MAGICK_CMD } = conf();
+  const is_magick_exists = command_exists.sync(MAGICK_CMD)
   if (!is_magick_exists) return;
   const { col: row, row: col, cell_w, cell_h } = pic;
   const w = (cell_w + 1) * col;

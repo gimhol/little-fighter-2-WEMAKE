@@ -1,16 +1,12 @@
 
-import { zip } from "compressing";
-import { createWriteStream } from "fs";
-import { join } from "path";
-import { pipeline } from "stream/promises";
 import { data_2_txt } from "./data_2_txt";
 import { make_data_zip } from "./make_data_zip";
 import { make_prel_zip } from "./make_prel_zip";
-import { read_conf } from "./read_conf";
+import { conf, make_conf } from "./conf";
 import { show_main_usage } from "./show_main_usage";
-import { write_file } from "./utils/write_file";
-import { is_ffmpeg_exists, is_ffmpeg_tried, print_ffmpeg_hints } from "./utils/convert_sound";
-import { is_magick_exists, is_magick_tried, print_magick_hints } from "./utils/convert_pic";
+import { print_ffmpeg_hints } from "./utils/convert_sound";
+import { print_magick_hints } from "./utils/convert_pic";
+import { make_full_zip } from "./make_full_zip";
 
 enum CMDEnum {
   MAIN = "main",
@@ -19,28 +15,7 @@ enum CMDEnum {
   MAKE_DATA = 'make-data',
   MAKE_PREL = 'make-prel',
   ZIP_FULL = 'zip-full',
-}
-async function make_full_zip() {
-  const {
-    OUT_DIR, PREL_ZIP_NAME, DATA_ZIP_NAME, FULL_ZIP_NAME
-  } = read_conf();
-
-  const prel_zip_path = join(OUT_DIR, PREL_ZIP_NAME)
-  const data_zip_path = join(OUT_DIR, DATA_ZIP_NAME)
-  const index_path = join(OUT_DIR, 'index.json')
-  const index_str = JSON.stringify([
-    PREL_ZIP_NAME,
-    DATA_ZIP_NAME
-  ])
-  await write_file(index_path, index_str)
-  const zip_stream = new zip.Stream();
-  zip_stream.addEntry(prel_zip_path)
-  zip_stream.addEntry(data_zip_path)
-  zip_stream.addEntry(index_path)
-
-  const full_zip_path = join(OUT_DIR, FULL_ZIP_NAME)
-  const dest_stream = createWriteStream(full_zip_path);
-  await pipeline(zip_stream, dest_stream);
+  MAKE_CONF = 'make-conf',
 }
 async function main() {
   switch (process.argv[2]?.toLowerCase()) {
@@ -61,8 +36,11 @@ async function main() {
       await make_full_zip();
       return;
     case CMDEnum.DAT_2_TXT:
-      const { LF2_PATH, TXT_LF2_PATH } = read_conf();
-      return data_2_txt(LF2_PATH, TXT_LF2_PATH);
+      const { IN_LF2_DIR, TMP_TXT_DIR } = conf();
+      return data_2_txt(IN_LF2_DIR, TMP_TXT_DIR);
+    case CMDEnum.MAKE_CONF:
+      console.log('You can copy the content below into json file: \n\n ' + JSON.stringify(make_conf(), null, 2))
+      return;
     case CMDEnum.HELP:
       return show_main_usage();
     default:

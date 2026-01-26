@@ -1,11 +1,9 @@
 import command_exists from "command-exists";
 import fs from "fs/promises";
-import { read_conf } from "../read_conf";
+import { conf } from "../conf";
 import { exec_cmd } from "./exec_cmd";
 
-const { FFMPEG_CMD } = read_conf();
-export const is_ffmpeg_exists = command_exists.sync(FFMPEG_CMD)
-export let is_ffmpeg_tried = false ;
+export let is_ffmpeg_tried = false;
 function get_dst_path(
   out_dir: string,
   src_dir: string,
@@ -14,7 +12,10 @@ function get_dst_path(
   return src_path.replace(src_dir, out_dir) + ".mp3";
 }
 export function print_ffmpeg_hints() {
-  if (is_ffmpeg_exists || !is_ffmpeg_tried) return;
+  if (!is_ffmpeg_tried) return;
+  const { FFMPEG_CMD } = conf();
+  const is_ffmpeg_exists = command_exists.sync(FFMPEG_CMD)
+  if (is_ffmpeg_exists) return;
   const hints = `
 ffmpeg not found, download it from: https://ffmpeg.org/download.html
 
@@ -28,6 +29,8 @@ Then you need to put it into output zip file yourself.
 }
 export async function convert_sound(dst_path: string, src_path: string) {
   is_ffmpeg_tried = true;
+  const { FFMPEG_CMD } = conf();
+  const is_ffmpeg_exists = command_exists.sync(FFMPEG_CMD)
   if (!is_ffmpeg_exists) return;
   console.log("convert", src_path, "=>", dst_path);
   await fs.rm(dst_path, { recursive: true, force: true }).catch(() => void 0);

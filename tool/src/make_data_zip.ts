@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import JSON5 from "json5";
 import path from "path";
 import type { ILegacyPictureInfo } from "../../src/LF2/defines";
-import { read_conf } from "./read_conf";
+import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { check_is_str_ok } from "./utils/check_is_str_ok";
 import { classify } from "./utils/classify";
@@ -16,37 +16,37 @@ import { write_file } from "./utils/write_file";
 
 export async function make_data_zip() {
   const {
-    LF2_PATH,
+    IN_LF2_DIR,
+    IN_EXTRA_DIR,
     OUT_DIR,
-    TEMP_DIR,
-    DATA_ZIP_NAME,
-    DATA_DIR_PATH,
-    EXTRA_PATH,
-  } = read_conf();
+    OUT_DATA_NAME,
+    TMP_DIR,
+    TMP_DAT_DIR,
+  } = conf();
 
   check_is_str_ok(
-    ['LF2_PATH', LF2_PATH],
+    ['IN_LF2_DIR', IN_LF2_DIR],
     ['OUT_DIR', OUT_DIR],
-    ['TEMP_DIR', TEMP_DIR],
-    ['DATA_ZIP_NAME', DATA_ZIP_NAME]
+    ['TMP_DIR', TMP_DIR],
+    ['OUT_DATA_NAME', OUT_DATA_NAME]
   );
   const cache_infos = await CacheInfos.create(
-    path.join(TEMP_DIR, "cache_infos.json5")
+    path.join(TMP_DIR, "cache_infos.json5")
   );
-  const ress = await classify(LF2_PATH);
+  const ress = await classify(IN_LF2_DIR);
   for (const src_path of ress.directories) {
-    const dst_path = src_path.replace(LF2_PATH, DATA_DIR_PATH);
+    const dst_path = src_path.replace(IN_LF2_DIR, TMP_DAT_DIR);
     await fs.mkdir(dst_path, { recursive: true }).catch((_) => void 0);
   }
 
   const pic_list_map = new Map<string, ILegacyPictureInfo[]>();
-  const indexes = await convert_data_txt(LF2_PATH, DATA_DIR_PATH);
-  if (EXTRA_PATH) await copy_dir(EXTRA_PATH, DATA_DIR_PATH);
+  const indexes = await convert_data_txt(IN_LF2_DIR, TMP_DAT_DIR);
+  if (IN_EXTRA_DIR) await copy_dir(IN_EXTRA_DIR, TMP_DAT_DIR);
   if (!indexes) throw Error('dat index file not found!');
   if (indexes) {
     for (const src_path of ress.file.dat) {
       let type: 'bg' | 'obj' | 'index' | 'stage' = 'obj';
-      const a = src_path.replace(LF2_PATH, '');
+      const a = src_path.replace(IN_LF2_DIR, '');
       if (a.startsWith('/bg/') || a.startsWith('bg/'))
         type = 'bg';
       else if (src_path.endsWith('/stage.dat'))
@@ -58,8 +58,8 @@ export async function make_data_zip() {
         type = 'obj';
 
       const dst_path = convert_dat_file.get_dst_path(
-        DATA_DIR_PATH,
-        LF2_PATH,
+        TMP_DAT_DIR,
+        IN_LF2_DIR,
         src_path,
         type
       );
@@ -69,7 +69,7 @@ export async function make_data_zip() {
         "dat_v1"
       );
       const json = await convert_dat_file(
-        DATA_DIR_PATH,
+        TMP_DAT_DIR,
         src_path,
         dst_path,
         indexes
@@ -98,12 +98,12 @@ export async function make_data_zip() {
   const imgs = [...ress.file.bmp, ...ress.file.png];
   for (const src_path of imgs) {
     const dst_path = convert_pic.get_dst_path(
-      DATA_DIR_PATH,
-      LF2_PATH,
+      TMP_DAT_DIR,
+      IN_LF2_DIR,
       src_path
     );
     const pic_list = pic_list_map.get(
-      dst_path.replace(DATA_DIR_PATH + "/", "")
+      dst_path.replace(TMP_DAT_DIR + "/", "")
     );
     if (!pic_list?.length) {
       const cache_info = await cache_infos.get_info(src_path, dst_path);
@@ -112,11 +112,11 @@ export async function make_data_zip() {
         console.log("not changed:", src_path, "=>", dst_path);
         continue;
       }
-      await convert_pic(DATA_DIR_PATH, LF2_PATH, src_path);
+      await convert_pic(TMP_DAT_DIR, IN_LF2_DIR, src_path);
       await cache_info.update();
     } else {
       for (const pic of pic_list) {
-        const dst_path = convert_pic_2.get_dst_path(DATA_DIR_PATH, pic);
+        const dst_path = convert_pic_2.get_dst_path(TMP_DAT_DIR, pic);
         const cache_info = await cache_infos.get_info(src_path, dst_path);
         const is_changed = await cache_info.is_changed();
         if (!is_changed) {
@@ -132,8 +132,8 @@ export async function make_data_zip() {
   const sounds = [...ress.file.wav, ...ress.file.wma];
   for (const src_path of sounds) {
     const dst_path = convert_sound.get_dst_path(
-      DATA_DIR_PATH,
-      LF2_PATH,
+      TMP_DAT_DIR,
+      IN_LF2_DIR,
       src_path
     );
     const cache_info = await cache_infos.get_info(src_path, dst_path);
@@ -147,7 +147,7 @@ export async function make_data_zip() {
   }
 
   for (const src_path of ress.unknown) {
-    const dst_path = src_path.replace(LF2_PATH, DATA_DIR_PATH);
+    const dst_path = src_path.replace(IN_LF2_DIR, TMP_DAT_DIR);
     const cache_info = await cache_infos.get_info(src_path, dst_path);
     const is_changed = await cache_info.is_changed();
     if (!is_changed) {
@@ -159,8 +159,8 @@ export async function make_data_zip() {
     await cache_info.update();
   }
   await cache_infos.save();
-  await write_index_file(indexes, DATA_DIR_PATH);
-  await make_zip_and_json(DATA_DIR_PATH, OUT_DIR, DATA_ZIP_NAME, (inf) => {
+  await write_index_file(indexes, TMP_DAT_DIR);
+  await make_zip_and_json(TMP_DAT_DIR, OUT_DIR, OUT_DATA_NAME, (inf) => {
     inf.type = 'data';
     return inf;
   });
