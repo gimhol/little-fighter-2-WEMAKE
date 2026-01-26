@@ -18,12 +18,31 @@ interface IConf {
   CONF_FILE_PATH?: string;
   FULL_ZIP_NAME: string;
 }
-const options: { key: keyof IConf, argv: string[] }[] = [
-  { key: 'CONF_FILE_PATH', argv: ['-c', '--conf'] },
-  { key: 'LF2_PATH', argv: ['-i', '--input'] },
-  { key: 'OUT_DIR', argv: ['-o', '--output'] },
+interface IArgInfo {
+  argv: string[];
+  default?: string;
+}
+const options_map: Record<keyof IConf, IArgInfo> = {
+  LF2_PATH: { argv: ['-i', '--input'] },
+  TEMP_DIR: { argv: ['-t', '--temp'], default: './temp' },
+  OUT_DIR: { argv: ['-o', '--output'], default: './public' },
+  DATA_ZIP_NAME: { argv: [], default: 'data.zip' },
+  PREL_DIR_PATH: { argv: [] },
+  PREL_ZIP_NAME: { argv: [], default: 'prel.zip' },
+  EXTRA_PATH: { argv: [] },
+  TXT_LF2_PATH: { argv: [] },
+  DATA_DIR_PATH: { argv: [] },
+  FFMPEG_CMD: { argv: ['--ffmpeg'], default: 'ffmpeg' },
+  MAGICK_CMD: { argv: ['--magick'], default: 'magick' },
+  CONF_FILE_PATH: { argv: ['-c', '--conf'] },
+  FULL_ZIP_NAME: { argv: [], default: 'lfw.full.zip' }
+}
+const options: { key: keyof IConf, argv: string[] }[] = Object.keys(options_map).map(k => {
+  const key = k as keyof IConf;
+  const argv = [`--${k}`, ...options_map[key].argv]
+  return { key, argv }
+})
 
-]
 let conf: IConf | null = null
 export function read_conf(): IConf {
   if (conf) return conf;
