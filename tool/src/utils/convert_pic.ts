@@ -21,7 +21,7 @@ However, you can convert them to PNG in your own way.
 And you need to remove the color from the transparent areas(the originally black parts of the BMP)
 Then you need to put it into output zip file yourself.
 
-'lf2w_tool' currently only supports PNG.
+'lf2w-tool' currently only supports PNG.
 `
   console.warn(hints)
 }

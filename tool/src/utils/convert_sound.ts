@@ -23,7 +23,7 @@ All audio files will not be converted to MP3.
 However, you can convert them to MP3 in your own way.
 Then you need to put it into output zip file yourself.
 
-'lf2w_tool' currently only supports MP3.
+'lf2w-tool' currently only supports MP3.
 `
   console.warn(hints)
 }
@@ -40,7 +40,7 @@ export async function convert_sound(dst_path: string, src_path: string) {
     "-codec:a",
     "libmp3lame",
     "-b:a",
-    "64k",
+    "128k",
     "-ar",
     "44100",
     dst_path,
