@@ -36,11 +36,16 @@ async function main() {
       return;
     case CMDEnum.DAT_2_TXT:
       const { IN_LF2_DIR, TMP_TXT_DIR } = conf();
+      if (!IN_LF2_DIR) return console.log("failed! because 'IN_LF2_DIR' is not set in 'conf file'.")
+      if (!TMP_TXT_DIR) return console.log("failed! because 'TMP_TXT_DIR' is not set in 'conf file'.")
       return data_2_txt(IN_LF2_DIR, TMP_TXT_DIR);
     case CMDEnum.PRINT_CONF:
-      const json = make_conf()
+      const json = {
+        description: "You can copy it into json file. or run 'lf2w-tool print-conf > conf.json' to write it into 'conf.json'",
+        ...make_conf()
+      }
       delete json.CONF_FILE;
-      console.log('You can copy the content below into json file: \n\n ' + JSON.stringify(json, null, 2))
+      console.log(JSON.stringify(json, null, 2))
       return;
     case CMDEnum.HELP:
       return show_main_usage();

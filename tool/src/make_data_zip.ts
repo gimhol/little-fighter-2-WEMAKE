@@ -1,4 +1,4 @@
-import fs from "fs/promises";
+import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
 import path from "path";
 import type { ILegacyPictureInfo } from "../../src/LF2/defines";
@@ -21,7 +21,19 @@ export async function make_data_zip() {
     OUT_DATA_NAME,
     TMP_DIR,
     TMP_DAT_DIR,
+    KEEP_MIRROR,
   } = conf();
+  if (!IN_LF2_DIR)
+    return console.log("'data zip' will not be created, because 'IN_LF2_DIR' is not set in 'conf file'.")
+  if (!OUT_DIR)
+    return console.log("'data zip' will not be created, because 'OUT_DIR' is not set in 'conf file'.")
+  if (!OUT_DATA_NAME)
+    return console.log("'data zip' will not be created, because 'OUT_DATA_NAME' is not set in 'conf file'.")
+  if (!TMP_DIR)
+    return console.log("'data zip' will not be created, because 'TMP_DIR' is not set in 'conf file'.")
+  if (!TMP_DAT_DIR)
+    return console.log("'data zip' will not be created, because 'TMP_DAT_DIR' is not set in 'conf file'.")
+
   const cache_infos = await CacheInfos.create(
     path.join(TMP_DIR, "cache_infos.json5")
   );
@@ -98,6 +110,11 @@ export async function make_data_zip() {
       dst_path.replace(TMP_DAT_DIR + "/", "")
     );
     if (!pic_list?.length) {
+      if (dst_path.endsWith('_mirror.png') && !KEEP_MIRROR) {
+        await rm(dst_path).catch(() => void 0)
+        console.log("mirror pic ignored:", src_path);
+        continue;
+      }
       const cache_info = await cache_infos.get_info(src_path, dst_path);
       const is_changed = await cache_info.is_changed();
       if (!is_changed) {
@@ -109,6 +126,11 @@ export async function make_data_zip() {
     } else {
       for (const pic of pic_list) {
         const dst_path = convert_pic_2.get_dst_path(TMP_DAT_DIR, pic);
+        if (dst_path.endsWith('_mirror.png') && !KEEP_MIRROR) {
+          await rm(dst_path).catch(() => void 0)
+          console.log("mirror pic ignored:", src_path);
+          continue;
+        }
         const cache_info = await cache_infos.get_info(src_path, dst_path);
         const is_changed = await cache_info.is_changed();
         if (!is_changed) {

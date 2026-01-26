@@ -14,7 +14,7 @@ function get_dst_path(
 export function print_ffmpeg_hints() {
   if (!is_ffmpeg_tried) return;
   const { FFMPEG_CMD } = conf();
-  const is_ffmpeg_exists = command_exists.sync(FFMPEG_CMD)
+  const is_ffmpeg_exists = FFMPEG_CMD && command_exists.sync(FFMPEG_CMD)
   if (is_ffmpeg_exists) return;
   const hints = `
 ffmpeg not found, download it from: https://ffmpeg.org/download.html
@@ -30,7 +30,7 @@ Then you need to put it into output zip file yourself.
 export async function convert_sound(dst_path: string, src_path: string) {
   is_ffmpeg_tried = true;
   const { FFMPEG_CMD } = conf();
-  const is_ffmpeg_exists = command_exists.sync(FFMPEG_CMD)
+  const is_ffmpeg_exists = FFMPEG_CMD && command_exists.sync(FFMPEG_CMD)
   if (!is_ffmpeg_exists) return;
   console.log("convert", src_path, "=>", dst_path);
   await fs.rm(dst_path, { recursive: true, force: true }).catch(() => void 0);

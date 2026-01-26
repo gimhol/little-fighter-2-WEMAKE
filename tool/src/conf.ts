@@ -4,9 +4,9 @@ import JSON5 from "json5";
 export interface IConf {
   CONF_FILE?: string;
 
-  IN_LF2_DIR: string;
+  IN_LF2_DIR?: string;
 
-  IN_PREL_DIR: string;
+  IN_PREL_DIR?: string;
 
   IN_EXTRA_DIR?: string;
 
@@ -26,7 +26,7 @@ export interface IConf {
    * @type {string}
    * @memberof IConf
    */
-  TMP_TXT_DIR: string;
+  TMP_TXT_DIR?: string;
 
   /**
    * 临时数据输出目录（用于make-data）
@@ -35,7 +35,7 @@ export interface IConf {
    * @type {string}
    * @memberof IConf
    */
-  TMP_DAT_DIR: string;
+  TMP_DAT_DIR?: string;
 
   /**
    * 临时数据输出目录（用于make-data）
@@ -44,17 +44,16 @@ export interface IConf {
    * @type {string}
    * @memberof IConf
    */
-  OUT_DIR: string;
-
-  OUT_DATA_NAME: string;
-  OUT_PREL_NAME: string;
+  OUT_DIR?: string;
+  OUT_DATA_NAME?: string;
+  OUT_PREL_NAME?: string;
 
   /**
    * @default `lfw.full.zip`
    * @type {string}
    * @memberof IConf
    */
-  OUT_FULL_NAME: string;
+  OUT_FULL_NAME?: string;
 
   /**
    * 
@@ -62,7 +61,7 @@ export interface IConf {
    * @type {string}
    * @memberof IConf
    */
-  FFMPEG_CMD: string;
+  FFMPEG_CMD?: string;
 
   /**
    * 
@@ -70,7 +69,9 @@ export interface IConf {
    * @type {string}
    * @memberof IConf
    */
-  MAGICK_CMD: string;
+  MAGICK_CMD?: string;
+
+  KEEP_MIRROR?: string;
 }
 interface IArgInfo {
   key: keyof IConf;
@@ -97,6 +98,7 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
 
   FFMPEG_CMD: { alias: ['--ffmpeg'], default: 'ffmpeg' },
   MAGICK_CMD: { alias: ['--magick'], default: 'magick' },
+  KEEP_MIRROR: { alias: [], boolean: true },
 }
 const alias_arg_map = new Map<string, IArgInfo>();
 
@@ -135,7 +137,8 @@ function read_conf(): IConf {
 
   const {
     IN_LF2_DIR, TMP_DIR, OUT_DIR, OUT_DATA_NAME, IN_PREL_DIR, OUT_PREL_NAME,
-    IN_EXTRA_DIR, FFMPEG_CMD, MAGICK_CMD, OUT_FULL_NAME, TMP_TXT_DIR, TMP_DAT_DIR
+    IN_EXTRA_DIR, FFMPEG_CMD, MAGICK_CMD, OUT_FULL_NAME, TMP_TXT_DIR, TMP_DAT_DIR,
+    KEEP_MIRROR
   } = conf;
 
   if (
@@ -166,6 +169,7 @@ function read_conf(): IConf {
     TMP_DAT_DIR,
     FFMPEG_CMD,
     MAGICK_CMD,
+    KEEP_MIRROR
   }
 }
 
