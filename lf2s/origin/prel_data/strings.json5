@@ -3,7 +3,7 @@
     "tutorial.key_hints": [
       "If you haven't set up the key bindings,",
       "please click the gear button in the upper-right corner",
-      " to view and configure the key bindings."
+      " to view and configure the key bindings.",
     ],
     "tutorial.dialog_0": [
       "Stop! You don't seem to be a local...",
@@ -96,8 +96,8 @@
       "",
       "( Please press Ⓓ + ⬆ + Ⓐ )",
     ],
-    "tutorial.dialog_16": [ "Very good... I've learned your moves...", "…………" ],
-    "tutorial.dialog_17": [ "I'll take over the path ahead of you. DIE!!" ],
+    "tutorial.dialog_16": ["Very good... I've learned your moves...", "…………"],
+    "tutorial.dialog_17": ["I'll take over the path ahead of you. DIE!!"],
     waiting_others_players: "Waiting for other players...",
     goto_github_url: "https://github.com/gimhol/little-fighter-2-WEMAKE",
     "char_menu.player_colon": "Player：",
@@ -121,6 +121,7 @@
     "entry_page.network_game": "Network Game",
     "entry_page.custom_game": "Custom Game",
     "entry_page.ctrl_settings": "Control Settings",
+    "entry_page.extra_data": "Extra Data",
     "main_page.vs_mode": "VS mode",
     "main_page.stage_mode": "Stage mode",
     "main_page.1v1_championship_mode": "1 on 1 Championship",
@@ -162,14 +163,14 @@
       "Congratulations, you have finished the stage mode.",
       "Try challenging a higher level!",
       "",
-      "                                                         —— from \"LF2 2.0a\"",
+      '                                                         —— from "LF2 2.0a"',
     ],
     old_ending_0_1: [
       "Congratulations, you have finished the stage mode.",
       "To reveal the secret characters,",
-      "just type \"lf2.net\" at character selection menu!",
+      'just type "lf2.net" at character selection menu!',
       "",
-      "                                                         —— from \"LF2 2.0a\"",
+      '                                                         —— from "LF2 2.0a"',
     ],
     old_ending_1: [
       "Thank you very much for your support in LF2.",
@@ -178,7 +179,7 @@
       "we hope LF2 will leave a print in every players's heart! After 10 years,",
       "20 years... hope you all will still remember the game!",
       "",
-      "                                                         —— from \"LF2 2.0a\"",
+      '                                                         —— from "LF2 2.0a"',
     ],
     old_ending_2: [
       "After LF2 is finished, we shall all go back to",
@@ -189,7 +190,7 @@
       "Hope there will be one day we can have opportunity",
       "to work together again, to create a more fantastic game!",
       "",
-      "                                                         —— from \"LF2 2.0a\"",
+      '                                                         —— from "LF2 2.0a"',
     ],
     old_ending_3: [
       "Thank you again for all your support. Long live LF2!",
@@ -197,7 +198,7 @@
       "LF2 Design Team",
       "Sep 2002",
       "",
-      "                                                         —— from \"LF2 2.0a\"",
+      '                                                         —— from "LF2 2.0a"',
     ],
     gim_ending_0: [
       "小熊的《Little Fighter 2 Remaster》已上架Stream！各位可以支持下。",
@@ -234,7 +235,7 @@
     "": "",
   },
   "zh-hans": {
-    "KK": "ⒶⒿⒹ",
+    KK: "ⒶⒿⒹ",
     "tutorial.key_hints": "如果你未进行按键设置，请点击右上角齿轮按钮，查看并设置键位",
     "tutorial.dialog_0": [
       "停！看起来你不像是本地人……\n",
@@ -258,7 +259,7 @@
     "tutorial.dialog_4": [
       "很好！接下来是【奔跑】\n",
       "【站立】时，双击'⬅'或'➡'开始【奔跑】\n",
-      "然后，你可以按 '反方向'停止奔跑"
+      "然后，你可以按 '反方向'停止奔跑",
     ],
     "tutorial.dialog_5": [
       "很好！接下来是【冲跳】\n",
@@ -313,17 +314,15 @@
       "看来这就是你的远程攻击方式了！\n",
       "( 请按 Ⓓ + ➡ + Ⓙ )",
     ],
-    "tutorial.dialog_15": [
-      "非常强的侧踢！\n",
-      "( 请按 Ⓓ + ⬆ + Ⓐ )",
-    ],
-    "tutorial.dialog_16": [ "非常好……我已经学会了你的招式了……", "…………" ],
-    "tutorial.dialog_17": [ "接下来的路，就由我来替你走吧，死吧！" ],
+    "tutorial.dialog_15": ["非常强的侧踢！\n", "( 请按 Ⓓ + ⬆ + Ⓐ )"],
+    "tutorial.dialog_16": ["非常好……我已经学会了你的招式了……", "…………"],
+    "tutorial.dialog_17": ["接下来的路，就由我来替你走吧，死吧！"],
     waiting_others_players: "正在等待其他玩家加载...",
     "entry_page.game_start": "开 始 游 戏",
     "entry_page.custom_game": "自 定 义 游 戏",
     "entry_page.network_game": "联 机 游 戏",
     "entry_page.ctrl_settings": "控 制 设 置",
+    "entry_page.extra_data": "附 加 数 据",
     "main_page.vs_mode": "对 决 模 式",
     "main_page.stage_mode": "闯 关 模 式",
     "main_page.1v1_championship_mode": "单人淘汰赛",
@@ -422,7 +421,7 @@
     "": "",
   },
   "zh-hant": {
-    "KK": "ⒶⒿⒹ",
+    KK: "ⒶⒿⒹ",
     "tutorial.key_hints": "如果你未進行按鍵設置，請點擊右上角齒輪按鈕，查看並設置鍵位",
     "tutorial.dialog_0": [
       "停！看起來你不像是本地人……\n",
@@ -446,7 +445,7 @@
     "tutorial.dialog_4": [
       "很好！接下來是【奔跑】\n",
       "【站立】時，雙擊 '⬅' 或 '➡' 開始【奔跑】\n",
-      "然後，你可以按 '反方向'停止奔跑"
+      "然後，你可以按 '反方向'停止奔跑",
     ],
     "tutorial.dialog_5": [
       "很好！接下來是【衝跳】\n",
@@ -499,17 +498,15 @@
       "看來這就是你的遠程攻擊方式了！\n",
       "( 請按 Ⓓ + ➡ + Ⓙ )",
     ],
-    "tutorial.dialog_15": [
-      "非常強的側踢！還有呢？",
-      "( 請按 Ⓓ + ⬆ + Ⓐ )",
-    ],
-    "tutorial.dialog_16": [ "非常好……我已經學會了你的招式了……", "…………" ],
-    "tutorial.dialog_17": [ "接下來的路，就由我來替你走吧，死吧！" ],
+    "tutorial.dialog_15": ["非常強的側踢！還有呢？", "( 請按 Ⓓ + ⬆ + Ⓐ )"],
+    "tutorial.dialog_16": ["非常好……我已經學會了你的招式了……", "…………"],
+    "tutorial.dialog_17": ["接下來的路，就由我來替你走吧，死吧！"],
     waiting_others_players: "正在等待其他玩家加載...",
     "entry_page.game_start": "開 始 游 戲",
     "entry_page.custom_game": "自 訂 遊 戲",
     "entry_page.network_game": "連 線 遊 戲",
     "entry_page.ctrl_settings": "控 制 設 定",
+    "entry_page.extra_data": "附 加 數 據",
     "main_page.vs_mode": "對 決 模 式",
     "main_page.stage_mode": "闖 關 模 式",
     "main_page.1v1_championship_mode": "單人淘汰賽",
