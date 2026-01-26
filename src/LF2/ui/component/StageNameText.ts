@@ -24,11 +24,13 @@ export class StageNameText extends UIComponent {
     const ret = all.filter(v => {
       if (!cheat_0 && v.group?.some(v => v == SG.Hidden))
         return false;
-      if (!cheat_1 && (!v.is_starting && v.group?.some(v => v == SG.Dev)))
+      if (!cheat_1 && v.group?.some(v => v == SG.Dev))
         return false;
+      if (!cheat_1 && !v.is_starting)
+        return false
       return true
     })
-    return ret.length ? all : ret;
+    return ret.length ? ret : all;
   }
   get stage(): IStageInfo {
     return this._stage;

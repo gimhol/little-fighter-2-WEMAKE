@@ -62,7 +62,7 @@ export class CharMenuLogic extends UIComponent {
         return false;
       return true
     })
-    return ret.length ? all : ret;
+    return ret.length ? ret : all;
   }
   protected _lf2_callbacks: ILf2Callback = {
     on_cheat_changed: (cheat_name, enabled) => {
