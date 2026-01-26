@@ -56,8 +56,6 @@ export function read_conf(): IConf {
     if (typeof info.default === 'string')
       argv_map[key] = info.default;
   })
-
-
   for (let i = 3; i < process.argv.length; i++) {
     const key = process.argv[i];
     const val = process.argv[i + 1];
@@ -69,22 +67,27 @@ export function read_conf(): IConf {
   }
 
   const conf_str = readFileSync(argv_map.CONF_FILE_PATH!).toString();
+  Object.assign(argv_map, JSON5.parse(conf_str))
   const {
     LF2_PATH,
     TEMP_DIR = "./temp",
     OUT_DIR = "./public",
     DATA_ZIP_NAME = "data.zip",
-    PREL_DIR_PATH,// = "./prel_data",
+    PREL_DIR_PATH,
     PREL_ZIP_NAME = "prel.zip",
     EXTRA_PATH,
-    FFMPEG_PATH = "ffmpeg",
-    MAGICK_PATH = "magick",
-    FULL_ZIP_NAME = 'lfw.full.zip'
-  } = JSON5.parse(conf_str);
+    FFMPEG_CMD = "ffmpeg",
+    MAGICK_CMD = "magick",
+    FULL_ZIP_NAME
+  } = argv_map;
   check_is_str_ok(["TEMP_DIR", TEMP_DIR]);
   const TXT_LF2_PATH = join(TEMP_DIR, "lf2_txt");
   const DATA_DIR_PATH = join(TEMP_DIR, "lf2_data");
-  conf = {
+  if (typeof FULL_ZIP_NAME !== 'string') throw new Error('');
+  if (typeof LF2_PATH !== 'string') throw new Error('');
+  if (typeof PREL_DIR_PATH !== 'string') throw new Error('');
+  if (typeof EXTRA_PATH !== 'string') throw new Error('');
+  return conf = {
     LF2_PATH,
     TEMP_DIR,
     OUT_DIR,
@@ -95,9 +98,8 @@ export function read_conf(): IConf {
     FULL_ZIP_NAME,
     TXT_LF2_PATH,
     DATA_DIR_PATH,
-    FFMPEG_CMD: FFMPEG_PATH,
-    MAGICK_CMD: MAGICK_PATH,
+    FFMPEG_CMD,
+    MAGICK_CMD,
     ...argv_map,
   }
-  return conf;
 }
