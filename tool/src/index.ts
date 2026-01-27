@@ -1,5 +1,6 @@
 
-import { conf, make_conf } from "./conf";
+import { readFile } from "fs";
+import { conf, make_conf, set_conf } from "./conf";
 import { data_2_txt } from "./data_2_txt";
 import { make_data_zip } from "./make_data_zip";
 import { make_full_zip } from "./make_full_zip";
@@ -12,6 +13,7 @@ import { is_json } from "./utils/is_file";
 import { read_dir_info_json } from "./utils/read_dir_info_json";
 import { write_file } from "./utils/write_file";
 import { waitForKeyPress } from "./waitForKeyPress";
+import path from "path";
 
 enum CMDEnum {
   MAIN = "main",
@@ -59,7 +61,8 @@ async function main() {
       if (await is_dir(argv_2)) {
         const json = conf()
         const info = await read_dir_info_json(argv_2)
-        console.log(info)
+        const conf_file = json.CONF_FILE || `./${path.basename(argv_2)}.conf.json`
+        console.log({ conf_file, dir_info_json: info })
         if (info.type === 'prel') {
           console.log(`got a dir, will try to zip it to 'prel zip'`)
           json.IN_PREL_DIR = argv_2
@@ -69,11 +72,13 @@ async function main() {
           json.IN_LF2_DIR = argv_2
           if (typeof info.output === 'string') json.OUT_DATA_NAME
         }
-        await write_file(json.CONF_FILE!, JSON.stringify(json, null, 2))
+        await write_file(conf_file, JSON.stringify(json, null, 2))
+        set_conf(conf_file)
+        console.log({ conf: json })
         await make_data_zip();
         await make_prel_zip();
         await make_full_zip();
-      } if (await is_json(argv_2)) {
+      } else if (await is_json(argv_2)) {
         console.log(`got a json file, will try to use it as 'conf file'`)
         await make_data_zip();
         await make_prel_zip();

@@ -35,7 +35,7 @@ export function read_indexes(
       if (item.id === "201") item.hash = "henry_arrow";
       if (item.id === "202") item.hash = "rudolf_weapon";
       return item;
-    });
+    }) || [];
 
   const backgrounds = match_block_once(text, "<background>", "<background_end>")
     ?.split(/\n|\r/)
@@ -53,7 +53,11 @@ export function read_indexes(
         }
       }
       return item;
-    });
-  if (!objects || !backgrounds) return void 0;
-  return { objects, backgrounds, stages: [], bots: [] };
+    }) || [];
+  return {
+    objects,
+    backgrounds,
+    stages: [],
+    bots: []
+  };
 }
