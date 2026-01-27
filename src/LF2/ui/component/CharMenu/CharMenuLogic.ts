@@ -4,7 +4,7 @@ import FSM from "@/LF2/base/FSM";
 import { Randoming } from "@/LF2/helper";
 import { between, max, min } from "@/LF2/utils";
 import { PlayerInfo } from "../../../PlayerInfo";
-import { CheatType, EntityGroup, IEntityData, TeamEnum } from "../../../defines";
+import { CheatType, EntityGroup as EG, IEntityData, TeamEnum } from "../../../defines";
 import { Defines } from "../../../defines/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { CharMenuHead } from "../CharMenuHead";
@@ -50,15 +50,24 @@ export class CharMenuLogic extends UIComponent {
   get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
   set teams(v: string[]) { this.props.set_strs("teams", v) }
 
-  get fighters() {
-    return this.lf2.is_cheat(CheatType.LF2_NET)
-      ? this.lf2.datas.fighters
-      : this.lf2.datas.get_fighters_not_in_group(EntityGroup.Hidden);
+  get fighters(): readonly IEntityData[] {
+    const cheat_0 = this.lf2.is_cheat(CheatType.LF2_NET);
+    const cheat_1 = this.lf2.is_cheat(CheatType.GIM_INK);
+    const all = this.lf2.datas.fighters;
+    if (cheat_0 && cheat_1) return all
+    const ret = all.filter(v => {
+      if (!cheat_0 && v.base.group?.some(v => v == EG.Hidden))
+        return false;
+      if (!cheat_1 && v.base.group?.some(v => v == EG.Dev))
+        return false;
+      return true
+    })
+    return ret.length ? ret : all;
   }
   protected _lf2_callbacks: ILf2Callback = {
     on_cheat_changed: (cheat_name, enabled) => {
       if (cheat_name === CheatType.LF2_NET && !enabled)
-        this.handle_fighters_hidden();
+        this.handle_fighters_changed();
     },
     on_broadcast: (message) => {
       if (message === 'reset_gpl') return this.reset();
@@ -68,7 +77,7 @@ export class CharMenuLogic extends UIComponent {
   slots: ISlotPack[] = []
   override on_start(): void {
     super.on_start?.();
-    this._randoming = new Randoming(this.lf2.datas.find_group(EntityGroup.Regular).characters, this.lf2)
+    this._randoming = new Randoming(this.lf2.datas.find_group(EG.Regular).characters, this.lf2)
     this.lf2.callbacks.add(this._lf2_callbacks)
     const heads = this.node.search_components(CharMenuHead)
     const p_nam = this.node.search_components(CharMenuPlayerName)
@@ -133,7 +142,7 @@ export class CharMenuLogic extends UIComponent {
         if (fighter_name) {
           const decided = state.step > SlotStep.FighterSel
           if (state.random && !random_confirm) fighter_name.join(this.lf2.string('Random'), is_com, decided)
-          else if (state.fighter) fighter_name.join(state.fighter.base.name ?? "noname", is_com, decided)
+          else if (state.fighter) fighter_name.join(this.lf2.string(state.fighter.base.name) || "noname", is_com, decided)
         }
         if (team_name) {
           if (state.step >= SlotStep.TeamSel) {
@@ -228,7 +237,7 @@ export class CharMenuLogic extends UIComponent {
    *
    * @protected
    */
-  protected handle_fighters_hidden() {
+  protected handle_fighters_changed() {
     const { fighters } = this;
     for (const [, s] of this.players) {
       const hidden = !fighters.some(v => v === s.fighter)

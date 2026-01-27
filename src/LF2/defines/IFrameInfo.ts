@@ -166,6 +166,8 @@ export interface IFrameInfo {
   gravity_enabled?: boolean;
 
   chasing_y?: number;
+
+  broadcasts?: string[];
 }
 
 
@@ -219,4 +221,5 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   friction_factor: ++order,
   gravity: ++order,
   gravity_enabled: ++order,
+  broadcasts: ++order,
 }

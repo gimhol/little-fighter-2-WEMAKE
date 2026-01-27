@@ -11,7 +11,11 @@ export enum CMD {
   F10 = 'f10',
   LF2_NET = CheatType.LF2_NET,
   HERO_FT = CheatType.HERO_FT,
-  GIM_INK = CheatType.GIM_INK
+  GIM_INK = CheatType.GIM_INK,
+  KILL_ENEMIES = 'KILL_ENEMIES',
+  KILL_BOSS = 'KILL_BOSS',
+  KILL_SOLIDERS = 'KILL_SOLIDERS',
+  KILL_OTHERS = 'KILL_OTHERS',
 }
 export const CMD_NAMES: Record<CMD, string> = {
   [CMD.F1]: "F1",
@@ -25,5 +29,9 @@ export const CMD_NAMES: Record<CMD, string> = {
   [CMD.F10]: "F10",
   [CMD.LF2_NET]: "LF2_NET",
   [CMD.HERO_FT]: "HERO_FT",
-  [CMD.GIM_INK]: "GIM_INK"
+  [CMD.GIM_INK]: "GIM_INK",
+  [CMD.KILL_ENEMIES]: "KILL_ENEMIES",
+  [CMD.KILL_BOSS]: "KILL_BOSS",
+  [CMD.KILL_SOLIDERS]: "KILL_SOLIDERS",
+  [CMD.KILL_OTHERS]: "KILL_OTHERS"
 }

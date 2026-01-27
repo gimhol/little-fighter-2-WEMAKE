@@ -35,7 +35,7 @@ export class BgRender {
         this.layers.push(layer_render);
         this.obj_3d.add(layer_render.mesh);
       }
-      this.world_renderer.scene.inner.add(this.obj_3d);
+      this.world_renderer.world_node.add(this.obj_3d);
     }
   }
 

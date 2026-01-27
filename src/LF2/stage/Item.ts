@@ -45,10 +45,6 @@ export default class Item {
       } else {
         this.dispose();
       }
-
-      if (this.stage.all_enemies_dead())
-        this.stage.enter_phase(this.stage.phase_idx + 1);
-
     },
   };
   constructor(stage: Stage, info: IStageObjectInfo) {

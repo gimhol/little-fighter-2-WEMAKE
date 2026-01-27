@@ -32,7 +32,7 @@ export default class CharacterState_Lying extends CharacterState_Base {
   }
   override on_dead(e: Entity): void {
     const player_teams = new Set<string>()
-    for (const [, f] of e.world.slot_fighters) {
+    for (const [, f] of e.world.puppets) {
       player_teams.add(f.team)
     }
     if (e.reserve) --e.reserve;

@@ -56,6 +56,19 @@
           },
         },
         {
+          id: "btn_extra_data",
+          size: "200,22",
+          center: "0.5, 0.5",
+          template: "builtin_data/launch/main_text_button.ui.json5",
+          values: {
+            text: "entry_page.extra_data",
+          },
+          component: [ "Reachable(main)" ],
+          actions: {
+            click: [ "sound(ok)", "broadcast(select_extra_data)" ],
+          },
+        },
+        {
           id: "btn_custom_game",
           size: "200,22",
           center: "0.5, 0.5",

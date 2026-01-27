@@ -69,3 +69,12 @@ test(`expression case`, () => {
   const result = exp.run("input")
   expect(result).toBe(true)
 })
+
+test(`expression case`, () => {
+  const exp = new Expression<any>("a==0&&b==1", (ww) => (input, word, op) => word)
+  exp.children[0].before
+  expect(exp.children[0].before).toBe('')
+  expect(exp.children[0].text).toBe('a==0')
+  expect(exp.children[1].before).toBe('&')
+  expect(exp.children[1].text).toBe('b==1')
+})

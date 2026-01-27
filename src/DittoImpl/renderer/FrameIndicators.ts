@@ -104,8 +104,8 @@ export class FrameIndicators {
   private _prev_frame?: IFrameInfo;
   private _prev_face?: number;
 
-  get scene() {
-    return (this._entity.world.renderer as WorldRenderer).scene;
+  get world_node() {
+    return (this._entity.world.renderer as WorldRenderer).world_node;
   }
   get frame() {
     return this._entity.frame;
@@ -135,7 +135,7 @@ export class FrameIndicators {
       line_geometry,
       new T.LineMaterial(INDICATORS_INFO[k]),
     ));
-    this.scene.inner.add(ret);
+    this.world_node.add(ret);
     return ret;
   }
 
@@ -188,7 +188,7 @@ export class FrameIndicators {
   hide_indicators(k: keyof typeof this._indicators_map) {
     const indicators = this._indicators_map[k]
     if (!indicators.length) return
-    this.scene.inner.remove(...indicators);
+    this.world_node.remove(...indicators);
     indicators.length = 0;
   }
 
@@ -196,7 +196,7 @@ export class FrameIndicators {
 
   on_unmount() {
     foreach(this._indicators_map, (list) => {
-      list.forEach((item) => this.scene.inner.remove(item));
+      list.forEach((item) => this.world_node.remove(item));
       list.length = 0;
     });
   }

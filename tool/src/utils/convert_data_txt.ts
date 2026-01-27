@@ -1,5 +1,6 @@
 import { read_indexes } from "../../../src/LF2/dat_translator/read_indexes";
 import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
+import { is_file } from "./is_file";
 import { log } from "./log";
 import { read_text_file } from "./read_text_file";
 import { write_obj_file } from "./write_obj_file";
@@ -8,6 +9,7 @@ async function parse_indexes(
   suffix: 'json5' | 'json'
 ): Promise<IDataLists | undefined> {
   const text = await read_text_file(src_path);
+  log(`[parse_indexes] text:\n`, text)
   return read_indexes(text, suffix);
 }
 export async function convert_data_txt(
@@ -21,16 +23,18 @@ export async function convert_data_txt(
 )`)
   const suffix = 'json5'
   const src_path = `${src_dir}/data/data.txt`;
+  const stage_path = `${src_dir}/data/stage.dat`;
   const dst_path = `${out_dir}/data/data.index.${suffix}`;
   console.log("convert", src_path, "=>", dst_path);
   const indexes = await parse_indexes(src_path, suffix)
-  if (indexes) {
+  if (indexes && await is_file(stage_path)) {
     indexes.stages = [{
       id: "default_stages",
       type: "stage",
       file: "data/stage.stage.json5",
     }]
   }
+  console.log({ indexes })
   await write_obj_file(dst_path, indexes);
   return indexes;
 }

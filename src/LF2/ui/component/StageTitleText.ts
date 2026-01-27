@@ -30,7 +30,7 @@ export class StageTitleText extends UIComponent {
     this.set_phase(stage?.phase || null)
   }
   set_phase(phase: IStagePhaseInfo | null) {
-    const title = phase?.title ?? this._stage?.title ?? ''
+    const title = this.lf2.string(phase?.title ?? this._stage?.title ?? '')
     this.set_title(title)
   }
   set_title(title: string) {

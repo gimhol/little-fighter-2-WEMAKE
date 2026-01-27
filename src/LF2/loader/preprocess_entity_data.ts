@@ -8,6 +8,7 @@ import { check_frame } from "./check_frame";
 import { get_val_from_bot_ctrl } from "./get_val_from_bot_ctrl";
 import { preprocess_frame } from "./preprocess_frame";
 import { preprocess_next_frame } from "./preprocess_next_frame";
+import { preprocess_pic } from "./preprocess_pic";
 
 export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
   const { images, sounds } = lf2;
@@ -26,11 +27,12 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
 
   if (data.on_dead) data.on_dead = preprocess_next_frame(data.on_dead);
   if (data.on_exhaustion) data.on_exhaustion = preprocess_next_frame(data.on_exhaustion);
-  const { frames, base: { files } } = data;
+  const { frames, base: { files, portraits } } = data;
 
   traversal(files, (_, v) => jobs.push(images.load_by_pic_info(v)));
   if (jobs.length) await Promise.all(jobs);
-
+  
+  traversal(portraits, (k, v, o) => o[k] = preprocess_pic(lf2, data, v));
   traversal(frames, (k, v, o) => o[k] = preprocess_frame(lf2, data, v, jobs));
   traversal(frames, (_, v) => {
     const errors: string[] = []
@@ -59,5 +61,6 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   })
   return data;
 }
+
 
 

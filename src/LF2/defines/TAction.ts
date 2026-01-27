@@ -1,12 +1,14 @@
-import { IAction_BrokenDefend } from "./IAction_BrokenDefend";
-import { IAction_Defend } from "./IAction_Defend";
-import { IAction_Fusion } from "./IAction_Fusion";
-import { IAction_NextFrame } from "./IAction_NextFrame";
-import { IAction_ReboundVX } from "./IAction_ReboundVX";
-import { IAction_SetProp } from "./IAction_SetProp";
-import { IAction_Sound } from "./IAction_Sound";
-import { IAction_TurnFace } from "./IAction_TurnFace";
-import { IAction_TurnTeam } from "./IAction_TurnTeam";
+import type { IAction_Broadcast } from "./IAction_Broadcast";
+import type { IAction_BrokenDefend } from "./IAction_BrokenDefend";
+import type { IAction_Defend } from "./IAction_Defend";
+import type { IAction_Fusion } from "./IAction_Fusion";
+import type { IAction_NextFrame } from "./IAction_NextFrame";
+import type { IAction_ReboundVX } from "./IAction_ReboundVX";
+import type { IAction_SetProp } from "./IAction_SetProp";
+import type { IAction_Sound } from "./IAction_Sound";
+import type { IAction_TurnFace } from "./IAction_TurnFace";
+import type { IAction_TurnTeam } from "./IAction_TurnTeam";
+
 
 export type TAction =
   IAction_Sound |
@@ -17,4 +19,5 @@ export type TAction =
   IAction_ReboundVX |
   IAction_TurnFace |
   IAction_TurnTeam |
-  IAction_Fusion;
+  IAction_Fusion |
+  IAction_Broadcast;

@@ -12,7 +12,7 @@ Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to sup
 
 ## Changelog
 
-### v0.1.8
+### v0.1.9
 
 2026-01-20
 
@@ -22,6 +22,7 @@ Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to sup
 - feat: You can see your own latency in the room list
 - feat: In the room, you can see the latency of all room members
 - fix: Fix the issues of bots not using moves and being overly defensive
+- feat: Custom game supported
 
 ### v0.1.5
 

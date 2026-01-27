@@ -1,9 +1,23 @@
 {
   objects: [
     {
-      id: "0",
+      id: "gim",
       type: "0",
-      file: "data/template.obj.json5",
+      file: "data/gim.obj.json5",
+    },
+  ],
+  backgrounds: [
+    {
+      id: "ash_forest",
+      type: "bg",
+      file: "bg/ash_forest/ash_forest.bg.json5",
+    },
+  ],
+  stages: [
+    {
+      id: "tutorial",
+      type: "stage",
+      file: "data/tutorial.stage.json5",
     },
   ],
 }

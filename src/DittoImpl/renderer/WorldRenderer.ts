@@ -3,12 +3,13 @@ import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { is_fighter, type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
-import { Camera, OrthographicCamera } from "../_t";
+import { Camera, Object3D, OrthographicCamera } from "../_t";
 import { Scene } from "../Scene";
 import { BgRender } from "./BgRender";
-import { EntityRenderer as EntityRenderer } from "./EntityRenderer";
+import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
+import { floor, random_in } from "@/LF2";
 
 export class WorldRenderer implements IWorldRenderer {
   lf2: LF2;
@@ -16,7 +17,8 @@ export class WorldRenderer implements IWorldRenderer {
   bg_render: BgRender;
   scene: Scene;
   camera: Camera;
-  entity_renderers = new Set<EntityRenderer>();
+  readonly entity_renderers = new Set<EntityRenderer>();
+  readonly world_node = new Object3D();
 
   private _indicator_flags: number = 0;
   get indicator_flags() {
@@ -35,18 +37,21 @@ export class WorldRenderer implements IWorldRenderer {
       }
     }
   }
-  get cam_x(): number {
-    return this.camera.position.x
-  }
-  set cam_x(v: number) {
-    v = Math.max(0, v)
-    this.camera.position.x = v;
+  get cam_x(): number { return this.camera.position.x }
+  set cam_x(v: number) { this.set_cam_pos(v, this.cam_y) }
+  get cam_y(): number { return this.camera.position.y }
+  set cam_y(v: number) { this.set_cam_pos(this.cam_x, v) }
+  set_cam_pos(x: number, y: number): void {
+    x = Math.max(0, x)
+    this.camera.position.x = x;
+    this.camera.position.y = y;
     for (const stack of this.lf2.ui_stacks) {
       for (const ui of stack.uis) {
         const [a, b] = ui.pos.default_value;
         const [, , c] = ui.pos.value;
-        ui.pos.value = [a + v, b, c];
-        ui.renderer.x = v;
+        ui.pos.value = [a + x, b + y, c];
+        ui.renderer.x = a + x;
+        ui.renderer.y = -(b + y);
       }
     }
   }
@@ -60,6 +65,7 @@ export class WorldRenderer implements IWorldRenderer {
     const h = world.screen_h;
     this.bg_render = new BgRender(this);
     this.scene = new Scene(world.lf2).set_size(w * 4, h * 4);
+    this.scene.inner.add(this.world_node);
     {
       const camera = this.camera = new OrthographicCamera()
       camera.left = 0;
@@ -117,7 +123,11 @@ export class WorldRenderer implements IWorldRenderer {
   }
 
   render(dt: number): void {
-    const { indicator_flags } = this.world;
+    const { indicator_flags, transform } = this.world;
+    let { x, y, z, earthquake, earthquake_level } = transform
+    if (earthquake) x += random_in(-earthquake_level, earthquake_level)
+    this.world_node.position.set(x, y, z);
+
     if (indicator_flags != this.indicator_flags)
       this.indicator_flags = indicator_flags;
     this.bg_render.render();

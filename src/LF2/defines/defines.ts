@@ -8,6 +8,7 @@ import type { IBgData } from "./IBgData";
 import type { INextFrame } from "./INextFrame";
 import type { IPairByFace } from "./IPairByFace";
 import type { IStageInfo } from "./IStageInfo";
+import { StageGroup as SG } from "./StageGroup";
 import { TeamEnum as _TeamEnum } from "./TeamEnum";
 export interface TFrameIdPair extends IPairByFace<string> { }
 export interface TFrameIdListPair extends IPairByFace<string[]> { }
@@ -176,6 +177,7 @@ export namespace Defines {
     id: "VOID_STAGE",
     name: "VOID_STAGE",
     phases: [],
+    group: [SG.Dev]
   };
 
   export const NEXT_FRAME_GONE: Readonly<INextFrame> = {
@@ -328,7 +330,7 @@ export namespace Defines {
     CHARACTER_THUMB = "sprite/CHARACTER_THUMB.png",
   }
   export enum BuiltIn_Dats {
-    Spark = "data/spark.json5",
+    Spark = "data/spark.json5"
   }
   export enum BuiltIn_Broadcast {
     ResetGPL = "reset_gpl",
@@ -380,7 +382,7 @@ export namespace Defines {
     PAGEUP: "PG↑",
   }
 
-  export const DEFAULT_BREAK_DEFEND_VALUE = 32;
+  export const DEFAULT_BREAK_DEFEND_VALUE = 40;
 
   export const BAT_CHASE_SPREADING_VX = arithmetic_progression(-6, 6, 1)
   export const BAT_CHASE_SPREADING_VZ = arithmetic_progression(-2, 2, 1)

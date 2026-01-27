@@ -4,13 +4,16 @@ import FSM from "../base/FSM";
 import { new_team } from "../base/new_id";
 import { Background } from "../bg/Background";
 import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhaseInfo } from "../defines";
+import { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
 import { is_fighter, is_weapon } from "../entity/type_check";
-import { round, min, round_float, floor } from "../utils";
+import { floor, max, min, round_float } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
+import { Expressions } from "./Expressions";
 import type IStageCallbacks from "./IStageCallbacks";
+import { IDialogState } from "./IStageCallbacks";
 import Item from "./Item";
 import { Status } from "./Status";
 
@@ -27,6 +30,12 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   readonly items = new Set<Item>();
   private _is_stage_finish: boolean = false;
   private _is_chapter_finish: boolean = false;
+  private _dialogs: IDialogState = {
+    index: -1,
+    list: []
+  };
+  phase_time: number = 0;
+  dialog_time: number = 0;
   get title(): string { return this.data.title ?? this.bg.name }
   /** 节是否结束 */
   get is_stage_finish(): boolean { return this._is_stage_finish; }
@@ -43,6 +52,11 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   get phase_idx(): number { return this._phase_idx };
   get phase(): IStagePhaseInfo | undefined { return this._phase; };
+  get dialog_idx(): number { return this._dialogs.index }
+  get dialog(): IDialogInfo | undefined { return this._dialogs.list[this._dialogs.index] }
+
+  dialog_end_tester = new Expressions<Stage>()
+  phase_end_tester = new Expressions<Stage>()
 
   /** 左边界 */
   left: number;
@@ -141,12 +155,23 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   private _stop_bgm?: () => void;
 
-  private play_phase_bgm() {
+  private play_phase_sounds() {
     const { phase } = this
     if (!phase) return;
-    const { music } = phase;
-    if (!music) return;
-    this._stop_bgm = this.lf2.sounds.play_bgm(music);
+    const { music, sounds } = phase;
+    if (music !== void 0) {
+      if (music) {
+        this._stop_bgm = this.lf2.sounds.play_bgm(music);
+      } else {
+        this._stop_bgm = void 0;
+        this.lf2.sounds.stop_bgm();
+      }
+    }
+    if (sounds?.length) {
+      for (const { path, x, y, z } of sounds) {
+        this.lf2.sounds.play(path, x, y, z)
+      }
+    }
   }
 
   stop_bgm(): void {
@@ -155,19 +180,23 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   private set_phase(phase: IStagePhaseInfo | undefined) {
     if (phase === this.phase) return;
+    this.phase_time = 0;
+    this.phase_end_tester.reset(phase?.end_testers ?? [])
+
     const prev = this.phase
     this.callbacks.emit("on_phase_changed")(this, this._phase = phase, prev);
     this.player_l = 0
     this.player_r = this.bg.right
     if (!phase) return;
-    const { objects, respawn, health_up, mp_up } = phase;
+
+    const { objects, respawn, health_up, mp_up, dialogs } = phase;
     const hp_recovery = health_up?.[this.world.difficulty] || 0;
     const hp_respawn = respawn?.[this.world.difficulty] || 0;
     const mp_recovery = mp_up?.[this.world.difficulty] || 0;
     const loop_players_fighters = hp_recovery || hp_respawn || mp_recovery
     if (loop_players_fighters) {
       const teams = new Set<string>()
-      for (const [, f] of this.world.slot_fighters)
+      for (const [, f] of this.world.puppets)
         teams.add(f.team)
       for (const f of this.world.entities) {
         if (!is_fighter(f) && !teams.has(f.team)) continue;
@@ -185,27 +214,14 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
         if (mp_recovery) f.mp = min(f.mp + mp_recovery, f.mp_max)
       }
     }
-
-    this.play_phase_bgm();
-    for (const object of objects) {
+    this.play_phase_sounds();
+    if (objects?.length) for (const object of objects) {
       this.spawn_object(object);
     }
     if (is_num(phase.cam_jump_to_x)) {
       this.world.renderer.cam_x = phase.cam_jump_to_x;
     }
 
-    if (is_num(phase.player_jump_to_x)) {
-      const x = phase.player_jump_to_x;
-
-      const player_teams = new Set<string>();
-      for (const [, v] of this.lf2.world.slot_fighters) {
-        player_teams.add(v.team);
-      }
-      for (const entity of this.world.entities) {
-        if (is_fighter(entity) && player_teams.has(entity.team))
-          entity.set_position_x(this.lf2.mt.range(x, x + 50));
-      }
-    }
     this.player_l = phase.player_l ?? 0
     this.cam_l = phase.camera_l ?? 0
     this.enemy_l = phase.enemy_l ?? -1200
@@ -214,6 +230,58 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.cam_r = phase.camera_r ?? phase.bound ?? this.bg.right
     this.enemy_r = phase.enemy_r ?? ((phase.bound ?? this.bg.right) + 1200)
     this.drink_r = phase.drink_r ?? (this.bg.right + 1200)
+
+    const player_x = is_num(phase.player_jump_to_x) ? phase.player_jump_to_x : void 0;
+    const player_z = is_num(phase.player_jump_to_z) ? phase.player_jump_to_z : void 0;
+    const player_f = is_num(phase.player_facing) ? phase.player_facing : void 0;
+
+    const teams = new Set<string>();
+    for (const [, v] of this.lf2.world.puppets)
+      teams.add(v.team);
+    for (const entity of this.world.entities) {
+      if (!is_fighter(entity) || !teams.has(entity.team)) continue;
+      if (player_f === 1 || player_f === -1)
+        entity.facing = player_f
+      if (typeof player_x === 'number') {
+        const l = max(this.player_l, player_x - 50)
+        const r = min(this.player_r, player_x + 50)
+        const x = this.lf2.mt.range(l, r)
+        entity.set_position_x(x);
+      }
+      if (typeof player_z === 'number') {
+        const f = max(this.far, player_z - 50)
+        const n = min(this.near, player_z + 50)
+        const z = this.lf2.mt.range(f, n)
+        entity.set_position_z(z);
+      }
+    }
+    if (dialogs?.length) this.push_dialogs(dialogs)
+  }
+  push_dialogs(more: IDialogInfo[]) {
+    const prev = this._dialogs;
+    const list = [...prev.list, ...more]
+    let index = prev.index;
+    if (index < 0) {
+      index = prev.index + 1;
+      this.dialog_time = 0;
+      this.dialog_end_tester.reset(list[index]?.end_testers ?? [])
+    }
+    const curr = this._dialogs = { ...prev, list, index }
+    this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
+  }
+  next_dialog() {
+    const prev = this._dialogs
+    // prev.index == prev.list.length 代表结束，这是允许的。
+    if (prev.index >= prev.list.length) return
+    const curr = this._dialogs = { ...prev, index: prev.index + 1 }
+    this.dialog_end_tester.reset(curr.list[curr.index]?.end_testers ?? [])
+    this.dialog_time = 0;
+    this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
+  }
+  clear_dialogs() {
+    const prev = this._dialogs
+    const curr = this._dialogs = { index: -1, list: [] }
+    this.callbacks.emit('on_dialogs_changed')(curr, prev, this)
   }
 
   enter_phase(idx: number) {
@@ -227,7 +295,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   async spawn_object(obj_info: IStageObjectInfo) {
     if (this.world.stage !== this) return;
     let count = 0;
-    for (const [, c] of this.world.slot_fighters)
+    for (const [, c] of this.world.puppets)
       count += c.data.base.ce ?? 1;
     if (!count) count = 1;
 
@@ -252,7 +320,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       --spawn_count;
     }
   }
-  kill_all_enemies() {
+  kill_all() {
     for (const o of this.items) {
       for (const e of o.fighters) {
         if (is_fighter(e) && e.team === this.team) e.hp = 0;
@@ -289,7 +357,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
     const temp: Entity[] = [];
     const player_teams = new Set<string>();
-    for (const [, v] of this.lf2.world.slot_fighters) {
+    for (const [, v] of this.lf2.world.puppets) {
       player_teams.add(v.team);
     }
     for (const e of this.world.entities) {
@@ -304,19 +372,54 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   all_boss_dead(): boolean {
     return !find(this.items, i => i.info.is_boss);
   }
-  all_enemies_dead(): boolean {
-    return !find(this.items, i => i.fighters.size);
+  all_fighter_dead(): boolean {
+    return !find(this.items, i => i.fighters.size)
+  }
+  /** 对话框已完毕 */
+  dialog_cleared(): boolean {
+    return this._dialogs.list.length <= 0 || this._dialogs.index >= this._dialogs.list.length;
+  }
+  is_phase_end(): boolean {
+    if (this.phase_end_tester.list.length)
+      return this.phase_end_tester.flow(this)
+    return this.all_fighter_dead() && this.dialog_cleared();
   }
 
-
+  is_dialog_end(): boolean {
+    return this.dialog_end_tester.flow(this)
+  }
+  check_phase_end(): boolean {
+    const ret = this.is_phase_end()
+    if (!ret) return ret
+    this.enter_phase(this.phase_idx + 1);
+    return ret
+  }
+  check_dialog_end(): boolean {
+    const ret = this.is_dialog_end()
+    if (!ret) return ret
+    this.next_dialog();
+    return ret
+  }
   /** 是否应该进入下一关 */
   get should_goto_next_stage(): boolean {
     if (this.is_chapter_finish || !this.is_stage_finish)
       return false;
     return !find(this.world.entities, e => is_fighter(e) && e.hp > 0 && e.position.x < this.cam_r)
   }
-
+  get world_pause() {
+    return !!this.phase?.world_pause
+  }
+  get control_disabled() {
+    return !!this.phase?.control_disabled
+  }
+  get weapon_rain_disabled() {
+    return !!this.phase?.weapon_rain_disabled
+  }
   update() {
+    if (this.phase) this.phase_time++
+    if (this.dialog) this.dialog_time++
     this.fsm.update(1);
+    this.check_phase_end();
+    this.check_dialog_end();
   }
 }

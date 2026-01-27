@@ -1,10 +1,10 @@
 
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
-import { UINode } from "../UINode";
-import { UIComponent } from "./UIComponent";
-import { SmoothNumber } from "./SmoothNumber";
 import { UIImgLoader } from "../UIImgLoader";
+import { UINode } from "../UINode";
 import { UITextLoader } from "../UITextLoader";
+import { SmoothNumber } from "./SmoothNumber";
+import { UIComponent } from "./UIComponent";
 export class FighterStatBar extends UIComponent {
   static override readonly TAG: string = 'FighterStatBar'
   protected dark_hp_bar?: UINode
@@ -15,7 +15,6 @@ export class FighterStatBar extends UIComponent {
   protected defend_value_bar?: UINode;
   protected toughness_bar?: UINode;
   protected entity?: Entity;
-
   protected defend_value_max = new SmoothNumber().on_change(() => this.update_defend_value())
   protected defend_value = new SmoothNumber().on_change(() => this.update_defend_value())
   protected fall_value_max = new SmoothNumber().on_change(() => this.update_fall_value())
@@ -63,6 +62,7 @@ export class FighterStatBar extends UIComponent {
     on_data_changed: () => this.update_head()
   }
   protected direction: string = '';
+
   set_entity(entity: Entity | undefined) {
     if (this.entity === entity) return;
     if (this.entity) {
@@ -106,7 +106,6 @@ export class FighterStatBar extends UIComponent {
     if (this.toughness_bar) this.toughness_bar_w = this.toughness_bar.size.value[0]
     this.direction = this.props.str('direction') ?? ''
   }
-
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
     const node = this.defend_value_bar;
     if (!node || max === 0) return;

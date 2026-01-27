@@ -121,7 +121,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       --i;
     }
 
-    for (const [, fighter] of this.world.slot_fighters) {
+    for (const [, fighter] of this.world.puppets) {
       if (!fighter) continue;
       const stat_bar = stat_bars.shift()
       if (!stat_bar) break;
@@ -130,7 +130,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   }
   override on_stop(): void {
     super.on_stop?.();
-    for (const [, v] of this.world.slot_fighters) {
+    for (const [, v] of this.world.puppets) {
       v.callbacks.del(this);
     }
   }
@@ -139,7 +139,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
     // 各队伍存活计数
     const player_teams: { [x in string]?: number } = {};
 
-    for (const [, f] of this.world.slot_fighters)
+    for (const [, f] of this.world.puppets)
       player_teams[f.team] = 0 // 玩家队伍
 
     for (const e of this.world.entities) {

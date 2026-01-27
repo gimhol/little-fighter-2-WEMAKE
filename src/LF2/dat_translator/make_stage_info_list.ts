@@ -60,7 +60,7 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
             else (object as any)[key] = to_num(value) ?? (object as any)[key];
             object.facing = object.x < 0 ? 1 : -1;
           }
-          phase_info.objects.push(object);
+          phase_info.objects?.push(object);
         }
       }
       stage_info.phases.push(phase_info);
@@ -162,6 +162,7 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
     if (!first_phase) return;
     first_phase.cam_jump_to_x = 0;
     first_phase.player_jump_to_x = 0;
+    first_phase.player_facing = 1;
   }
   stage_infos.sort((a, b) => Number(a.id) - Number(b.id));
   for (const s of stage_infos) {

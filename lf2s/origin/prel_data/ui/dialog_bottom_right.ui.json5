@@ -1,0 +1,37 @@
+{
+  id: "dialog_bottom_right",
+  name: "对话框: 底部右侧型",
+  items: [
+    {
+      id: "bg_dialog",
+      img: {
+        path: "!sprite/frame@4x.png",
+        nine_patch: {
+          f_w: 72,
+          f_h: 72,
+          l_w: 28,
+          t_h: 28,
+          r_w: 28,
+          b_h: 28,
+        },
+      },
+      size: "367, 130",
+      center: "0.5, 0.5",
+      pos: "580, 355",
+    },
+    {
+      id: "txt",
+      pos: "580, 355",
+      center: "0.5, 0.5",
+      txt: [
+        {
+          i18n: "tutorial.dialog_12",
+          style: {
+            fill_style: "white",
+            font: "14px Arial",
+          },
+        },
+      ],
+    },
+  ],
+}

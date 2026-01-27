@@ -1,4 +1,4 @@
 export function log(...any: any[]) {
-  return;
-  // return console.log(...any);
+  // return;
+  return console.log(...any);
 }
