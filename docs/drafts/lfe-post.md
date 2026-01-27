@@ -1,3 +1,9 @@
+# LF2:Wemake(open source web-based LF2)
+
+[url](https://lf-empire.de/forum/showthread.php?tid=11552)
+
+## Content
+
 I've also made a remake version of LF2. Everyone is welcome to give it a try.
 
 Play address: https://lf.gim.ink/
@@ -5,6 +11,7 @@ Play address: https://lf.gim.ink/
 the data and pictures are processed and converted from the LF2 2.0a.
 
 The advantages are as follows:
+
 - Ideally, the game update frequency is 60 frames per second, which makes it look more fluent.
 - Full-platform support (of course, this is due to modern browsers and technical standards).
 - Touch-screen support
@@ -12,6 +19,7 @@ The advantages are as follows:
 - Support higher-resolution textures.
 
 The shortcomings are as follows
+
 - Since the logic is implemented according to my own understanding(and some tutorial for modifying), many things are quite different from the LF2. 
 - Only VS Mode and Stage Mode are supported, with hardly any other modes
 - The bot is a bit stupid
