@@ -14,7 +14,7 @@ And then I enabled "Extra Data" loading in LF2W, Unlike "Custom Game" it require
 
 ================================================================================
 
-I tested out the characters from these two forum posts listed below
+I tested out the characters from these two forum posts listed below:
 
 [url=https://lf-empire.de/forum/showthread.php?tid=11546][Char] Neno and Nano[/url]
 [url=https://lf-empire.de/forum/showthread.php?tid=11398][Char] DeepRV (Remixed version)[/url]
@@ -23,7 +23,11 @@ Sorry for trying these out without asking first – a big thank you to the creat
 
 The results can be seen in the "Usage Example Video" below
 
-[spoiler=Usage Example Video]
+[b]File names and directory names are case-sensitive.[/b]
+
+[spoiler=How To Gen Extra Data Zip]
+[/spoiler]
+[spoiler=How To Use Extra Data Zip]
 [/spoiler]
 
 [spoiler=Other development details]
