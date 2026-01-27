@@ -66,11 +66,13 @@ async function main() {
         if (info.type === 'prel') {
           console.log(`got a dir, will try to zip it to 'prel zip'`)
           json.IN_PREL_DIR = argv_2
-          if (typeof info.output === 'string') json.OUT_PREL_NAME
+          if (typeof info.output === 'string') json.OUT_PREL_NAME = info.output
+          else json.OUT_PREL_NAME = `${path.basename(argv_2)}.prel.zip`
         } else {
           console.log(`got a dir, will try to zip it to 'data zip'`)
           json.IN_LF2_DIR = argv_2
-          if (typeof info.output === 'string') json.OUT_DATA_NAME
+          if (typeof info.output === 'string') json.OUT_DATA_NAME = info.output
+          else json.OUT_DATA_NAME = `${path.basename(argv_2)}.data.zip`
         }
         await write_file(conf_file, JSON.stringify(json, null, 2))
         set_conf(conf_file)

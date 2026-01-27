@@ -10,9 +10,7 @@ Finally, I improved the "Conversion Tool" to make it easier to use.
 
 (Let's tentatively call the "Conversion Tool" lf2w-tool)
 
-And then I enabled "Extra Data" loading in LF2W.
-
-(Unlike "Custom Game" it requires "Full Data") 
+And then I enabled "Extra Data" loading in LF2W, Unlike "Custom Game" it requires "Full Data"
 
 ================================================================================
 
