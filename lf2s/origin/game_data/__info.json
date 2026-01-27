@@ -1,1 +1,5 @@
-"游戏内容资源包"
+{
+  "type": "data",
+  "output": "data.zip",
+  "description": "游戏内容资源包"
+}

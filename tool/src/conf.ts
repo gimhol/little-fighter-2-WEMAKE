@@ -110,7 +110,6 @@ Object.keys(key_arg_records).map(k => {
 })
 export function make_conf(): Partial<IConf> {
   const conf: Partial<IConf> = {}
-
   Object.keys(key_arg_records).forEach((k) => {
     const key = k as keyof IConf;
     const info = key_arg_records[key]
@@ -130,18 +129,15 @@ export function make_conf(): Partial<IConf> {
   }
   return conf;
 }
-function read_conf(): IConf {
+function read_conf(file?: string): IConf {
   const conf: Partial<IConf> = make_conf();
-  const { CONF_FILE } = conf;
-  const conf_files = CONF_FILE ? [CONF_FILE] : [
-    './conf.json5',
-    './conf.json'
-  ]
+  const conf_files = file ? [file] : conf.CONF_FILE ? [conf.CONF_FILE] : ['./conf.json5', './conf.json']
   for (const conf_file of conf_files) {
     try {
       const conf_str = readFileSync(conf_file).toString();
       const more = JSON5.parse(conf_str)
       Object.assign(conf, more)
+      conf.CONF_FILE = conf_file
       break;
     } catch (e) {
 
@@ -149,11 +145,8 @@ function read_conf(): IConf {
   }
   return conf
 }
-
-function throw_blank(name: string, v: any): v is string {
-  if (typeof v !== 'string') throw new Error(`"${name}" not set`)
-  if (!v.trim()) throw new Error(`"${name}" got blank`)
-  return true
+let _conf_file: string | undefined
+export function set_conf(conf_file: string) {
+  _conf_file = conf_file
 }
-
-export const conf: () => IConf = () => read_conf()
+export const conf: () => IConf = () => read_conf(_conf_file)

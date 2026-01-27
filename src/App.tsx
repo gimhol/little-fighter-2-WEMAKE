@@ -315,8 +315,7 @@ function App() {
   const on_click_load_builtin = async () => {
     if (!lf2) return;
     lf2
-      .load(...LF2.PREL_ZIPS)
-      .then(() => lf2.load(...LF2.DATA_ZIPS))
+      .load(...LF2.PREL_ZIPS, ...LF2.DATA_ZIPS)
       .catch((e) => Log.print("App -> on_click_load_builtin", e));
   };
 

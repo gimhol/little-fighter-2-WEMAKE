@@ -29,8 +29,14 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly instances: LF2[] = []
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
-  static PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
-  static DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
+  
+  static get PREL_ZIPS() { return this._PREL_ZIPS }
+  static get DATA_ZIPS() { return this._DATA_ZIPS }
+  static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v }
+  static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v }
+  private static _PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
+  private static _DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
+
   static get instance(): LF2 | undefined { return LF2.instances[0] }
   static get world(): World | undefined { return this.instance?.world }
   static get ui() { return LF2.instances[0].ui }

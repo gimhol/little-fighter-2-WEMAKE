@@ -6,13 +6,19 @@ import { file_md5_str } from "./file_md5_str";
 import { is_dir } from "./is_dir";
 import { write_file } from "./write_file";
 import { write_obj_file } from "./write_obj_file";
-
+import { read_full_dir_info_json } from "./read_full_dir_info_json";
+export interface IDirInfo {
+  type?: string,
+  output?: string,
+  description?: string,
+  children?: { [x in string]?: IDirInfo }
+}
 export interface IZipFileInfo {
   url: string;
   md5: string;
   time: string;
   type: string;
-  infos?: { [x in string]?: any };
+  info?: { [x in string]?: any };
   version: number;
 }
 /**
@@ -68,28 +74,11 @@ export async function make_zip_and_json(
   await fs.unlink(zip_path).catch(() => { });
   await zip.compressDir(src_dir, zip_path, { ignoreBase: true });
 
-  async function read_sub_info_json(path: string, infos: any = {}) {
-    const items = await fs.readdir(path);
-    for (const name of items) {
-      const sub_path = join(path, name).replace(/\\/g, "/");
-      const stat = await fs.stat(sub_path);
-      if (stat.isDirectory()) {
-        await read_sub_info_json(sub_path, infos);
-      } else if (stat.isFile()) {
-        if (name === "__info.json") {
-          infos[path.replace(src_dir, "/")] = await fs
-            .readFile(sub_path)
-            .then((v) => JSON.parse(v.toString()));
-        }
-      }
-    }
-    return infos;
-  }
   let inf: IZipFileInfo = {
     type: '',
     url: zip_name,
     md5: await file_md5_str(zip_path),
-    infos: await read_sub_info_json(src_dir),
+    info: await read_full_dir_info_json(src_dir),
     time: new Date().toISOString(),
     version: Defines.DATA_VERSION
   };

@@ -1,1 +1,5 @@
-"游戏预加载资源包, 存放了UI布局/UI图片/UI需要用到的声音，其中strings是国际化文本"
+{
+  "type": "prel",
+  "output": "prel.zip",
+  "description": "游戏预加载资源包, 存放了UI布局/UI图片/UI需要用到的声音，其中strings是国际化文本"
+}
