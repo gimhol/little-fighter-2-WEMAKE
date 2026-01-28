@@ -6,6 +6,7 @@ import * as I from "./ditto";
 import { Entity } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
 import * as Helper from "./helper";
+import { I18N } from "./I18N";
 import { ILf2Callback } from "./ILf2Callback";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
@@ -29,7 +30,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly instances: LF2[] = []
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
-  
+
   static get PREL_ZIPS() { return this._PREL_ZIPS }
   static get DATA_ZIPS() { return this._DATA_ZIPS }
   static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v }
@@ -42,7 +43,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
 
-  lang: string = '';
+  get lang(): string { return this._i18n.lang }
+  set lang(v: string) { this._i18n.lang = v }
   dev: boolean = false;
   debug!: (_0: string, ..._1: any[]) => void;
   warn!: (_0: string, ..._1: any[]) => void;
@@ -325,7 +327,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.set_ui("loading");
     if (is_first) {
       const [obj] = await this.import_json("builtin_data/launch/strings.json5")
-      this.load_strings(obj)
+      this._i18n.add(obj)
     }
     this._dispose_check('load')
     try {
@@ -363,9 +365,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private async load_data(zip: I.IZip, md5: string) {
     this._dispose_check('load_data')
 
-    await zip.file("strings.json")?.json().then(r => this.load_strings(r))
+    await zip.file("strings.json")?.json().then(r => this._i18n.add(r))
     this._dispose_check('load_data')
-    await zip.file("strings.json5")?.json().then(r => this.load_strings(r))
+    await zip.file("strings.json5")?.json().then(r => this._i18n.add(r))
     this._dispose_check('load_data')
     this.zips.unshift(zip);
     this.md5s.unshift(md5);
@@ -525,46 +527,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   protected _uiinfo_map = new Map<string, UI.IUIInfo>();
+  protected _i18n = new I18N();
   protected _strings = new Map<string, { [x in string]?: string }>()
   protected _strings_list = new Map<string, { [x in string]?: string[] }>();
-  string(name: string): string {
-    return (
-      this._strings.get(this.lang)?.[name] ??
-      this._strings.get("")?.[name] ?? name
-    )
-  }
-  strings(name: string): string[] {
-    return (
-      this._strings_list.get(this.lang)?.[name] ??
-      this._strings_list.get("")?.[name] ?? [name]
-    )
-  }
-  load_strings(strings: any) {
-    const collection_pointers: [string, string][] = []
-    for (const key in strings) {
-      const collection = strings[key];
-      if (typeof collection === 'string' && collection !== key)
-        collection_pointers.push([key, collection]);
-      else if (typeof collection === 'object') {
-        for (const key in collection) {
-          const v = collection[key]
-          if (Array.isArray(v))
-            collection[key] = v.join('\n')
-        }
-        const prev = this._strings.get(key)
-        if (prev) this._strings.set(key, { ...collection, ...prev });
-        else this._strings.set(key, collection)
-      }
-    }
-    for (let i = 0; i < collection_pointers.length; i++) {
-      const [a, b] = collection_pointers[i];
-      const collection = this._strings.get(b)
-      if (!collection) continue;
-      this._strings.set(a, { ...collection });
-      collection_pointers.splice(i, 1);
-      --i;
-    }
-  }
+  string(name: string): string { return this._i18n.string(name) }
+  strings(name: string): string[] { return this._i18n.strings(name) }
 
   protected async load_builtin_ui(): Promise<UI.ICookedUIInfo[]> {
     this._dispose_check('load_builtin_ui')
@@ -691,3 +658,4 @@ function full_zip_url(info_url: string, zip_url: string) {
   const ttt = part_a.lastIndexOf('/')
   return part_a.substring(0, ttt) + '/' + zip_url + part_b;
 }
+
