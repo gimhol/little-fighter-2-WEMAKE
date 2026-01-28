@@ -159,7 +159,7 @@ export class BaseController {
       */
       return false;
     }
-    return time > 0 && this.time - time <= this.entity.world.key_hit_duration;
+    return time >= 0 && this.time - time <= this.entity.world.key_hit_duration;
   }
   is_end(k: string): boolean;
   is_end(k: LGK): boolean;
@@ -172,14 +172,41 @@ export class BaseController {
   is_start(k: LGK): boolean {
     return !!this.keys[k]?.is_start();
   }
-  press(...keys: LGK[]) {
-    for (const k of keys) if (this.is_end(k)) this.start(k);
+
+  click(...keys: LGK[]): this {
+    for (const k of keys)
+      this.start(k).end(k);
     return this;
   }
-  release(...keys: LGK[]) {
-    for (const k of keys) if (!this.is_end(k)) this.end(k);
+  dbl_click(...keys: LGK[]): this {
+    for (const k of keys)
+      this.start(k).end(k).start(k).end(k);
     return this;
   }
+  /** 
+   * 按下按键
+   * 
+   * 当按键已处于按下状态时，将被忽略
+   */
+  key_down(...keys: LGK[]): this {
+    for (const k of keys)
+      if (this.is_end(k))
+        this.start(k);
+    return this;
+  }
+
+  /** 
+   * 抬起按键 
+   * 
+   * 当按键已处于抬起状态时，将被忽略
+   */
+  key_up(...keys: LGK[]): this {
+    for (const k of keys)
+      if (!this.is_end(k))
+        this.end(k);
+    return this;
+  }
+
   constructor(player_id: string, entity: Entity) {
     this.player_id = player_id;
     this.entity = entity;
@@ -355,7 +382,6 @@ export class BaseController {
     for (const name of KEY_NAME_LIST) {
       const key = this.keys[name];
 
-
       if (kd_map) {
         /** 按键判定 */
         let act = kd_map[name];
@@ -395,6 +421,7 @@ export class BaseController {
     frame?.seq_map && this.check_hit_seqs(frame.seq_map, ret);
     /** 这里不想支持过长的指令 */
     if (this._key_list && this._key_list.length >= 10) this._key_list = '';
+    
     return ret;
   }
 

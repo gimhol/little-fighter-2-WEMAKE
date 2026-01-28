@@ -3,8 +3,8 @@ import { manhattan_xz } from "../helper/manhattan_xz";
 import { IBotTarget } from "./IBotTarget";
 
 export class NearestTargets {
-  targets: IBotTarget[] = [];
   max: number;
+  targets: IBotTarget[] = [];
   entities = new Set<Entity>();
 
   constructor(max: number) { this.max = max; }

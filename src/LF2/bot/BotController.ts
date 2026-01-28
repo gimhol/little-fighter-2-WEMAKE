@@ -50,7 +50,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   en_out_of_range: boolean = false;
   /** 走攻触发范围X */
   get w_atk_x() {
-    const chasing = this.get_chasing()?.entity;
+    const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
     return this.entity.facing === chasing.facing ?
       this.w_atk_f_x :
@@ -68,7 +68,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   r_atk_z = Defines.AI_R_ATK_Z;
   /** 跑攻触发范围X */
   get r_atk_x() {
-    const chasing = this.get_chasing()?.entity;
+    const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
     return this.entity.facing === chasing.facing ? this.r_atk_b_x : this.r_atk_f_x;
   }
@@ -81,7 +81,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   d_atk_z = Defines.AI_D_ATK_Z;
   /** 冲跳攻触发范围X */
   get d_atk_x() {
-    const chasing = this.get_chasing()?.entity;
+    const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
     return this.entity.facing === chasing.facing ? this.d_atk_b_x : this.d_atk_f_x;
   }
@@ -97,12 +97,14 @@ export class BotController extends BaseController implements Required<IBotDataSe
   j_atk_y_max = Defines.AI_J_ATK_Y_MAX;
   /** 跳攻触发范围X */
   get j_atk_x() {
-    const chasing = this.get_chasing()?.entity;
+    const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
     return this.entity.facing === chasing.facing ? this.j_atk_b_x : this.j_atk_f_x;
   }
-
+  /** 跳越欲望 */
   jump_desire = Defines.AI_J_DESIRE;
+
+  /** 冲刺欲望 */
   dash_desire = Defines.AI_D_DESIRE;
 
   /** 最小欲望值：跑步 */
@@ -124,7 +126,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   r_x_max = Defines.AI_R_X_MAX;
 
   get r_desire(): -1 | 1 | 0 {
-    const chasing = this.get_chasing()?.entity;
+    const chasing = this.chasings.get()?.entity;
     this.desire(`${chasing?.id ?? 'no chasing'}`)
     if (!chasing) return 0;
     let dx = abs(this.entity.position.x - chasing.position.x) - this.r_x_min
@@ -149,17 +151,15 @@ export class BotController extends BaseController implements Required<IBotDataSe
   /** 欲望值: 防御 */
   d_desire = Defines.AI_DEF_DESIRE;
 
-  get_chasing(): IBotTarget | undefined {
-    return this.chasings.get()
-  }
+  /** 追击对象 */
+  readonly chasings = new NearestTargets(Defines.AI_MAX_CHASINGS_ENEMIES);
 
-  get_avoiding(): IBotTarget | undefined {
-    return this.avoidings.get()
-  }
+  /** 躲避对象 */
+  readonly avoidings = new NearestTargets(Defines.AI_MAX_AVOIDING_ENEMIES);
 
-  chasings = new NearestTargets(Defines.AI_MAX_CHASINGS_ENEMIES);
-  avoidings = new NearestTargets(Defines.AI_MAX_AVOIDING_ENEMIES);
-  defends = new NearestTargets(Defines.AI_MAX_DEFENDS_ENEMIES);
+  /** 防御对象  */
+  readonly defends = new NearestTargets(Defines.AI_MAX_DEFENDS_ENEMIES);
+
   private _dummy?: DummyEnum;
   get dummy(): DummyEnum | undefined {
     return this._dummy;
@@ -334,31 +334,6 @@ export class BotController extends BaseController implements Required<IBotDataSe
     return { x: px, z: pz, next_x: x, next_z: z, next_y: y };
   }
 
-  key_up(...ks: LGK[]): this {
-    for (const k of ks) if (!this.is_end(k)) this.end(k)
-    return this;
-  }
-  key_down(...ks: LGK[]): this {
-    for (const k of ks) if (this.is_end(k)) this.start(k)
-    return this;
-  }
-  fast_click(...ks: LGK[]): this {
-    for (const k of ks) {
-      this.key_down(k).key_up(k)
-      const ck = CONFLICTS_KEY_MAP[k]
-      if (ck) this.key_up(ck)
-    }
-    return this;
-  }
-  keep_press(...ks: LGK[]): this {
-    for (const k of ks) {
-      this.key_down(k)
-      const ck = CONFLICTS_KEY_MAP[k]
-      if (ck) this.key_up(ck)
-    }
-    return this;
-  }
-
   /** 
    * 获取随机值, 范围: 0~10000
    * 
@@ -434,7 +409,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
     if (status && !status.some(v => v === this.fsm.state?.key))
       return false;
     if (e_ray) {
-      const chasing = this.get_chasing()?.entity;
+      const chasing = this.chasings.get()?.entity;
       if (!chasing) return false;
       let ray_hit = false
       for (const r of e_ray) {
