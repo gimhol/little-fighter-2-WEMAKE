@@ -1,21 +1,23 @@
 [
   {
-    "id": "v0.1.11",
+    "id": "v0.1.12",
     "i18n": {
       "": {
-        "date": "2026-01-27",
-        "title": "v0.1.11",
-        "url": "https://lf.gim.ink/0.1.11/",
+        "date": "2026-01-28",
+        "title": "v0.1.12",
+        "url": "https://lf.gim.ink/0.1.12/",
         "desc": "",
         "changelog": [
-          "- fix:  The MP recovery speed has been corrected. (It was too fast before...)",
-          "- feat: Extra Data supported"
+          "- fix: The MP recovery speed has been corrected. (It was too fast before...)",
+          "- feat: Extra Data supported",
+          "- chore: there will be some fighting on the 'Main Page' :D"
         ]
       },
       "zh": {
         "changelog": [
           "- fix:  修复MP恢复速度. (之前太快了)",
-          "- feat: 支持额外数据"
+          "- feat: 支持额外数据",
+          "- chore: 主页将会存在两个正在打交的小朋友:D"
         ]
       },
       "zh-hans": "zh",
