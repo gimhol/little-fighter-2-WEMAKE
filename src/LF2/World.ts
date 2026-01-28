@@ -422,17 +422,19 @@ export class World extends WorldDataset {
       const cmd = cmds[i];
       switch (cmd) {
         case CMD.SET_DIFFICULTY: {
-          const d = Number(cmds[i + 1]);
+          i += 1;
+          const d = Number(cmds[this.itr_motionless]);
           if (d == 1 || d == 2 || d == 3 || d == 4)
             this.difficulty = d;
+          else Ditto.warn(`SET_DIFFICULTY failed, difficulty got ${d}.`)
           continue;
         }
         case CMD.DEL_PUPPET: {
-          const player_id = cmds[i + 1];
+          i += 1;
+          const player_id = cmds[i];
           const entity = this.puppets.get(player_id);
           if (entity) this.del_entity(entity);
           else Ditto.warn('DEL_PUPPET failed, puppet not found.')
-          i += 1;
           continue;
         }
         case CMD.LF2_NET:
