@@ -82,14 +82,14 @@ export class I18N {
     const m = this._strings.get(this._lang);
     if (!m) return name;
     let ret = m[name]
-    if (!ret) ret = m[name] = name
+    if (ret == void 0) ret = m[name] = name
     return ret
   }
   strings(name: string): string[] {
     const m = this._lists.get(this._lang);
     if (!m) return [name];
     let ret = m[name]
-    if (!ret) ret = m[name] = [name]
+    if (ret == void 0) ret = m[name] = [name]
     return ret
   }
 }

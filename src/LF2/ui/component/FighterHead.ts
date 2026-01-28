@@ -26,22 +26,15 @@ export class FighterHead extends UIComponent {
 
   protected _unmount_jobs = new Invoker();
 
-  protected _player_callbacks: IPlayerInfoCallback = {
-    on_joined_changed: () => this.handle_changed(),
-    on_character_changed: () => this.handle_changed(),
-    on_random_character_changed: () => this.handle_changed(),
-  }
   constructor(...args: ConstructorParameters<typeof UIComponent>) {
     super(...args);
   }
   override on_resume(): void {
     super.on_resume();
-    this.player?.callbacks.add(this._player_callbacks);
   }
 
   override on_pause(): void {
     super.on_pause();
-    this.player?.callbacks.del(this._player_callbacks);
     this._unmount_jobs.invoke_and_clear();
   }
 

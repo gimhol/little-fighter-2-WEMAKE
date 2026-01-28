@@ -203,12 +203,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       on_pop: (curr, poppeds) => this.callbacks.emit("on_ui_changed")(curr, poppeds[0]),
     })
     this.ui_stacks.push(ui_stack)
-    this._i18n.add({
-      '': {
-        VERSION_NAME: LF2.VERSION_NAME,
-        DATA_LIST: LF2.PREL_ZIPS.map(v => typeof v === 'string' ? v : v.name)
-      }
-    })
+    this._i18n.add({ '': { VERSION_NAME: LF2.VERSION_NAME } })
+    this.update_zip_names()
   }
 
   random_entity_info(e: Entity) {
@@ -613,7 +609,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       ...LF2._DATA_ZIPS.filter(v => v != 'data.zip.json').map(v => typeof v === 'string' ? v : v.name)
     ]
     this._i18n.add({ '': { DATA_LIST } })
-    this.callbacks.emit('on_zips_changed')(this)
+    this.callbacks.emit('on_extra_zips_changed')(this)
   }
 }
 

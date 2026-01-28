@@ -64,6 +64,7 @@ import * as az from "./VerticalLayout";
 import * as b0 from "./VsModeLogic";
 import * as b1 from "./HideWhenDialoging"
 import * as b2 from "./LittleFunnyAutoGame"
+import * as b3 from "./ExtraZipText"
 /*** COMPONENTS IMPORT END ***/
 
 export const ALL_COMPONENTS = [
@@ -81,6 +82,6 @@ export const ALL_COMPONENTS = [
   av.SummaryLogic, aw.TeamSituationText, ax.TextInput, ay.TxtClickable, az.VerticalLayout,
   b0.VsModeLogic, z.Jalousie, a6.PlayerKeyEdit, g.DanmuGameLogic, a9.PlayerNameInput, p.FighterStatBar,
   f.ComponentsPlayer, d.CharMenuLogic, y.IntegerPicker, ad.PlayerScorePlayerName,
-  i.Dialogs, b1.HideWhenDialoging, b2.LittleFunnyAutoGame
+  i.Dialogs, b1.HideWhenDialoging, b2.LittleFunnyAutoGame, b3.ExtraZipText
   /*** COMPONENTS MAP END ***/
 ].map(v => [v.TAG, v] as const);
