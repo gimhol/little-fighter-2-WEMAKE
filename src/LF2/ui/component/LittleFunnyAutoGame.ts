@@ -8,7 +8,6 @@ export class LittleFunnyAutoGame extends UIComponent {
   private _datas: IEntityData[] = [];
   private _lr: number = 0;
   private _fighters = new Set<Entity>()
-  private _team: number = 0;
   private _fighter_cbs: IEntityCallbacks = {
     on_disposed: (e) => {
       e.callbacks.del(this._fighter_cbs);
@@ -33,7 +32,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     const fighter = Factory.inst.create_entity(data.type, this.world, data)
     if (!fighter) return;
     fighter.ctrl = Factory.inst.create_ctrl(data.id, '', fighter);
-    fighter.team = '' + (this._team + 1);
+    fighter.team = new_team();
     fighter.set_position_x(this._lr * this.world.bg.width)
     fighter.facing = this._lr ? -1 : 1;
     this._fighters.add(fighter)
@@ -45,7 +44,6 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.attach()
     fighter.enter_frame({ id: "running_0" })
     this._lr = (this._lr + 1) % 2
-    this._team = (this._team + 1) % 4
   }
   override on_pause(): void {
     super.on_pause?.();
