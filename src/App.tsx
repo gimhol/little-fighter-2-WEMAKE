@@ -472,6 +472,29 @@ function App() {
     workspace.confirm()
   }, [workspace, s.dev_ui_pos, s.dev_ui_open])
 
+  const on_drop = async (e: React.DragEvent) => {
+    if (lf2?.ui?.id !== 'entry') return;
+    e.preventDefault();
+    try {
+      const { items } = e.dataTransfer;
+      const zips: IZip[] = []
+      for (let i = 0; i < items.length; i++) {
+        const file = items[i].getAsFile()
+        if (!file) continue;
+        const zip = await Ditto.Zip.read_file(file).catch(e => {
+          Ditto.warn('' + e)
+          return null
+        })
+        if (!zip) continue;
+        zips.push(zip);
+      }
+      const set = new Set(LF2.DATA_ZIPS.map(v => typeof v === 'string' ? v : v.name))
+      LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips.filter(z => !set.has(z.name))]
+      debugger
+    } catch (e) {
+      alert('' + e)
+    }
+  }
   const game_cell_view = game_cell ? createPortal(
     <div className={styles.game_contiainer}>
       <canvas
@@ -483,10 +506,12 @@ function App() {
         draggable={false}
         onContextMenu={e => { e.preventDefault(); e.stopPropagation(); }}
         onContextMenuCapture={e => { e.preventDefault(); e.stopPropagation(); }}
+        onDragOver={e => { if (lf2?.ui?.id === 'entry') e.preventDefault() }}
+        onDrop={on_drop}
       />
       <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !s.game_overlay })} />
       <DanmuOverlay lf2={lf2} />
-      <GamePad id='game_pad'player_id={s.touchpad} lf2={lf2} />
+      <GamePad id='game_pad' player_id={s.touchpad} lf2={lf2} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
       <div className={styles.debug_pannel}>
         <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
