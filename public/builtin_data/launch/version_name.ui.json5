@@ -1,0 +1,12 @@
+{
+  id: "version_name",
+  pos: "1,449",
+  center: "0,1",
+  txt: {
+    i18n: "VERSION_NAME",
+    style: {
+      fill_style: "white",
+      font: "9px Arial",
+    },
+  },
+}

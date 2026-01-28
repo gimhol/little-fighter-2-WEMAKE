@@ -28,7 +28,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = '0.1.12'
+  static readonly VERSION_NAME: string = 'v0.1.12'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -204,6 +204,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       on_pop: (curr, poppeds) => this.callbacks.emit("on_ui_changed")(curr, poppeds[0]),
     })
     this.ui_stacks.push(ui_stack)
+    this._i18n.add({ '': { VERSION_NAME: LF2.VERSION_NAME } })
   }
 
   random_entity_info(e: Entity) {
