@@ -53,11 +53,11 @@ export default function GamePad(props: IGamePadProps) {
   useEffect(() => {
     if (!lf2 || !player_id) return;
     return lf2.world.callbacks.add({
-      on_player_character_add(add_player_id) {
+      on_puppet_add(add_player_id) {
         if (add_player_id !== player_id) return;
         set_controller(lf2.world.puppets.get(player_id)?.ctrl);
       },
-      on_player_character_del(del_player_id) {
+      on_puppet_del(del_player_id) {
         if (del_player_id !== player_id) return;
         set_controller(void 0);
       },
@@ -197,6 +197,7 @@ export default function GamePad(props: IGamePadProps) {
       }
       handle_touchs();
     };
+
     pad.addEventListener("touchstart", on_touch_start, { passive: false });
     pad.addEventListener("touchmove", on_touch_move, { passive: false });
     pad.addEventListener("touchend", on_touch_end, { passive: false });

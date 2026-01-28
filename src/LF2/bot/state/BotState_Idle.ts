@@ -17,8 +17,8 @@ export class BotState_Idle extends BotState_Base {
     const { ctrl: c } = this;
     if (c.following) return BotStateEnum.Following;
     const me = c.entity;
-    const en = c.get_chasing()?.entity
-    const av = c.get_avoiding()?.entity
+    const en = c.chasings.get()?.entity
+    const av = c.avoidings.get()?.entity
 
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
       return BotStateEnum.Avoiding;

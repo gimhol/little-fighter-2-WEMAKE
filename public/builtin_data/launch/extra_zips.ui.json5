@@ -1,0 +1,13 @@
+{
+  id: "extra_zips",
+  pos: "792,449",
+  center: "1,1",
+  component: [ "ExtraZipText" ],
+  txt: {
+    i18n: "DATA_LIST",
+    style: {
+      fill_style: "white",
+      font: "9px Arial",
+    },
+  },
+}

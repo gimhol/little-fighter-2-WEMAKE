@@ -8,6 +8,8 @@
     "ui/jalousie_ns.ui.json5",
     "ui/bg_l_face.ui.json5",
     "ui/bg_r_face.ui.json5",
+    "builtin_data/launch/version_name.ui.json5",
+    "builtin_data/launch/extra_zips.ui.json5",
     {
       id: "main_title",
       img: {

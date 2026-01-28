@@ -35,6 +35,12 @@ I'm too lazy to write a Usage for now, so I'll provide two screen recordings bel
 [url=https://lf.gim.ink/docs/drafts/how_to_use_extra_data_zip.mp4]Video: How To Use Extra Data Zip[/url]
 [url=https://lf.gim.ink/docs/drafts/extra_data.data.zip]extra_data.data.zip(What I generated in the video)[/url]
 
+Or you can drag & drop 'extra data zip' in 'Entry Page'(page before loading) or 'Main Page'(page after loading)。
+You can see the file name you want to load at the bottom-right corner of the page.
+[spoiler= Gif: Drag & Drop the 'extra data zip']
+[img]https://lf.gim.ink/docs/image/dnd_extra_data_in_main_page.gif[/img]
+[/spoiler]
+
 It's the same principle as adding new characters. You can add new stages and backgrounds. 
 (However, the situation of ID duplication hasn't been tested yet. :( )
 

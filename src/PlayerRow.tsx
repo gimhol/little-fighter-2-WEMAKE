@@ -6,18 +6,18 @@ import CharacterSelect from "./Component/CharacterSelect";
 import Combine from "./Component/Combine";
 import { Input } from "./Component/Input";
 import Select from "./Component/Select";
-import Show from "./Component/Show";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
+import { BaseController, Entity, new_team } from "./LF2";
 import { DummyEnum } from "./LF2/bot/DummyEnum";
 import LocalController from "./LF2/controller/LocalController";
-import { CheatType, TeamEnum } from "./LF2/defines";
 import { GameKey } from "./LF2/defines/GameKey";
 import { Factory } from "./LF2/entity/Factory";
-import { is_bot_ctrl, is_human_ctrl } from "./LF2/entity/type_check";
+import { is_bot_ctrl } from "./LF2/entity/type_check";
 import { LF2 } from "./LF2/LF2";
 import { PlayerInfo } from "./LF2/PlayerInfo";
 import { random_get } from "./LF2/utils/math/random";
+import { useCallbacks } from "./pages/network_test/useCallbacks";
 const key_names: Record<GameKey, string> = {
   U: "上",
   D: "下",
@@ -37,63 +37,59 @@ interface Props {
 }
 export function PlayerRow(props: Props) {
   const {
-    lf2,
-    info,
-    visible = true,
-    touch_pad_on,
-    on_click_toggle_touch_pad,
+    lf2, info, visible = true, touch_pad_on, on_click_toggle_touch_pad,
   } = props;
 
   const [keys, set_keys] = useState<Record<GameKey, string>>(info.keys);
-  const [player_name, set_player_name] = useState<string>(info.name);
+  const [name, set_name] = useState<string>(info.name);
   const [editing_key, set_editing_key] = useState<GameKey | undefined>();
-
   const [team, set_team] = useState<string>();
-  const [show_hidden, set_show_hidden] = useState<boolean>();
-  const [character_id, set_character_id] = useState<string>();
-  const [added, set_added] = useState(
-    false
-    // !!lf2.get_player_character(info.id)
-  );
+  const [oid, set_oid] = useState<string>();
+  const [puppet, set_puppet] = useState<Entity>()
+  const [ctrl, set_ctrl] = useState<BaseController>()
   const [key_settings_show, set_key_settings_show] = useState(false);
-
   const [dummy, set_dummy] = useState<DummyEnum | undefined | "">("")
 
-  // useEffect(() => {
-  //   const ctrl = world.slot_fighters.get(info.id)?.ctrl;
-  //   if (is_bot_ctrl(ctrl)) {
-  //     ctrl.dummy = dummy ? dummy : void 0;
-  //   }
-  // }, [dummy, info.id, world.slot_fighters])
+  useCallbacks(lf2.world.callbacks, {
+    on_puppet_add: (pid) => {
+      if (pid != info.id) return;
+      const p = lf2.world.puppets.get(info.id)
+      set_puppet(p)
+      set_ctrl(p?.ctrl)
+      set_team(p?.team ?? '')
+    },
+    on_puppet_del: (pid) => {
+      if (pid != info.id) return;
+      set_puppet(void 0)
+      set_ctrl(void 0)
+    },
+  }, [info])
 
+  useCallbacks(puppet?.callbacks, {
+    on_team_changed: (_, value) => set_team(value ?? ''),
+    on_ctrl_changed: (value) => set_ctrl(value),
+  })
   useEffect(() => {
-    set_show_hidden(lf2.is_cheat("" + CheatType.LF2_NET));
-    return lf2.callbacks.add({
-      on_cheat_changed: (name, enabled) => {
-        if (name === "" + CheatType.LF2_NET) set_show_hidden(enabled);
-      },
-    });
-  }, [lf2]);
+    const p = lf2.world.puppets.get(info.id)
+    set_puppet(p)
+    set_team(p?.team ?? '')
+    set_ctrl(p?.ctrl)
+  }, [lf2, info])
+  useEffect(() => {
+    if (!puppet) return;
+    const ctrl = puppet?.ctrl;
+    if (!is_bot_ctrl(ctrl)) return;
+    ctrl.dummy = dummy ? dummy : void 0;
+  }, [dummy, puppet])
+
+  useCallbacks(info.callbacks, {
+    on_key_changed: (name, key) => set_keys((v) => ({ ...v, [name]: key })),
+    on_name_changed: (name) => set_name(name)
+  })
 
   useEffect(() => {
     set_keys(info.keys);
-    set_player_name(info.name);
-    return info.callbacks.add({
-      on_key_changed: (name, key) => {
-        set_keys((v) => ({ ...v, [name]: key }));
-      },
-      on_name_changed: (name) => {
-        set_player_name(name);
-        // const character = lf2.get_player_character(info.id);
-        // if (character) character.name = name;
-      },
-      on_team_changed: (team) => {
-        set_team(team);
-        // const character = lf2.get_player_character(info.id);
-        // if (character) character.team = team;
-      },
-      on_character_changed: set_character_id,
-    });
+    set_name(info.name);
   }, [info, lf2]);
 
   useEffect(() => {
@@ -114,30 +110,12 @@ export function PlayerRow(props: Props) {
 
   if (!lf2 || visible === false) return null;
 
-  const on_click_add = added
-    ? () => {
-      // lf2.del_player_character(info.id); // 移除玩家对应的角色
-    }
-    : () => {
-      const real_character_id =
-        character_id || random_get(lf2.datas.fighters)?.id;
-      if (!real_character_id) {
-        debugger;
-        return;
-      }
-      const character = lf2.add_player_character(info.id, real_character_id);
-      if (!character) {
-        debugger;
-        return;
-      }
-      set_added(true);
-      character.callbacks.add({
-        on_disposed: () => set_added(false),
-        on_team_changed: (_, team) => set_team("" + team),
-      });
-    };
-
-
+  const on_click_toggle = () => {
+    if (puppet) { lf2.del_puppet(info.id) }
+    const oid = random_get(lf2.datas.fighters)?.id;
+    if (!oid) { debugger; return; }
+    lf2.add_puppet(info.id, oid, team);
+  }
   return (
     <div className={styles.settings_row}>
       <Titled float_label={"玩家" + info.id}>
@@ -147,23 +125,38 @@ export function PlayerRow(props: Props) {
             clearable
             maxLength={50}
             title="enter player name"
-            value={player_name}
+            value={name}
             onChange={(e) => info.set_name(e, true)}
-            onBlur={(e) => info.set_name(e.target.value.trim() || info.id, true).save()}
+            onBlur={(e) => {
+              const name = e.target.value.trim() || info.id;
+              info.set_name(name, true).save()
+              if (puppet) puppet.name = name
+            }}
           />
           <CharacterSelect
             lf2={lf2}
-            value={character_id}
+            value={oid}
             placeholder="角色"
-            onChange={(v) => set_character_id(v)}
-            show_all={show_hidden}
+            onChange={(v) => {
+              set_oid(v)
+              if (!puppet) return;
+              let _oid = oid || random_get(lf2.datas.fighters)?.id
+              if (!_oid) return;
+              const data = lf2.datas.find_fighter(_oid)
+              if (!data) return;
+              puppet.transform(data);
+            }}
           />
           <TeamSelect
             placeholder="队伍"
             value={team}
-            onChange={(v) => set_team(v)}
+            onChange={(v) => {
+              set_team(v)
+              if (!puppet) return;
+              puppet.team = team || new_team();
+            }}
           />
-          <Button onClick={on_click_add}>{added ? "移除" : "加入"}</Button>
+          <Button onClick={on_click_toggle}>{!!puppet ? "移除" : "加入"}</Button>
           <ToggleButton value={touch_pad_on} onClick={on_click_toggle_touch_pad}>
             <>触摸板</>
             <>触摸板✓</>
@@ -195,33 +188,24 @@ export function PlayerRow(props: Props) {
             );
           })}
       </Combine>
-      <Show show={added}>
-        <Combine>
-          <Button
-            onClick={() => {
-              // const character = world.slot_fighters.get(info.id);
-              // if (!character) return;
-              // const ctrl = character.ctrl;
-              // if (is_bot_ctrl(ctrl)) {
-              //   character.ctrl = new LocalController(
-              //     info.id,
-              //     character
-              //   );
-              // } else {
-              //   character.ctrl = Factory.inst.create_ctrl(character.data.id, info.id, character);
-              // }
-              // ctrl?.dispose();
-            }}>
-            <>Bot</>
-          </Button>
-          <Select
-            items={["", ...Object.keys(DummyEnum)]}
-            parse={(k) => k ? [(DummyEnum as any)[k], k] : ["", "not dummy"]}
-            value={dummy}
-            onChange={set_dummy}
-          />
-        </Combine>
-      </Show>
+      {
+        !puppet ? null :
+          <Combine>
+            <Button
+              onClick={() => {
+                if (is_bot_ctrl(ctrl)) puppet.ctrl = new LocalController(info.id, puppet);
+                else puppet.ctrl = Factory.inst.create_ctrl(puppet.data.id, info.id, puppet);
+              }}>
+              {is_bot_ctrl(ctrl) ? <>Bot√</> : <>Bot</>}
+            </Button>
+            <Select
+              items={["", ...Object.keys(DummyEnum)]}
+              parse={(k) => k ? [(DummyEnum as any)[k], k] : ["", "not dummy"]}
+              value={dummy}
+              onChange={set_dummy}
+            />
+          </Combine>
+      }
     </div>
   );
 

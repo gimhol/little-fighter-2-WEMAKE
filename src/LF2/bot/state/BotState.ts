@@ -36,25 +36,13 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const { state } = c.entity.frame;
     const desire = c.desire('rj_1')
     switch (state) {
-      case StateEnum.Running: {
-        (
-          desire < c.dash_desire ?
-            c.key_down :
-            c.key_up
-        ).call(c, GK.j)
+      case StateEnum.Running:
+        if (desire < c.dash_desire) c.key_down(GK.j).key_up(GK.j)
         break;
-      }
       case StateEnum.Standing:
-      case StateEnum.Walking: {
-        (
-          desire < c.jump_desire ?
-            c.key_down :
-            c.key_up
-        ).call(c, GK.j)
+      case StateEnum.Walking:
+        if (desire < c.jump_desire) c.key_down(GK.j).key_up(GK.j)
         break;
-      }
-      default:
-        c.key_up(GK.j);
     }
   }
   update(dt: number): BotStateEnum | undefined | void {
@@ -80,9 +68,9 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     if (c.defends.targets[0].defendable === 1) {
       const dx = c.defends.targets[0].entity.position.x - me.position.x
       const t_facing = c.defends.targets[0].entity.facing
-      if (dx > 0 && t_facing < 0) c.keep_press(GK.R)
-      if (dx < 0 && t_facing > 0) c.keep_press(GK.L)
-      c.fast_click(GK.d).key_up(GK.L, GK.R)
+      if (dx > 0 && t_facing < 0) c.key_down(GK.R).key_up(GK.L)
+      if (dx < 0 && t_facing > 0) c.key_down(GK.L).key_up(GK.R)
+      c.click(GK.d).key_up(GK.L, GK.R)
     } else {
       // 不可防御的攻击
     }

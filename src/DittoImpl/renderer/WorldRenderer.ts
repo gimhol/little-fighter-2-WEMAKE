@@ -124,10 +124,10 @@ export class WorldRenderer implements IWorldRenderer {
 
   render(dt: number): void {
     const { indicator_flags, transform } = this.world;
-    let { x, y, z, earthquake, earthquake_level } = transform
+    let { x, y, z, earthquake, earthquake_level, scale_x, scale_y, scale_z } = transform
     if (earthquake) x += random_in(-earthquake_level, earthquake_level)
     this.world_node.position.set(x, y, z);
-
+    this.world_node.scale.set(scale_x, scale_y, scale_z);
     if (indicator_flags != this.indicator_flags)
       this.indicator_flags = indicator_flags;
     this.bg_render.render();

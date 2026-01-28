@@ -6,6 +6,7 @@
   component: ["LaunchPage(entry)"],
   items: [
     "builtin_data/launch/bg.ui.json5",
+    "builtin_data/launch/version_name.ui.json5",
     {
       id: "tap_to_launch",
       txt: {

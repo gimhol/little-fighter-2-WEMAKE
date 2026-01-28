@@ -33,22 +33,24 @@ export class BotState_Following extends BotState_Base {
         case StateEnum.Standing:
         case StateEnum.Walking:
           this.handle_block()
-          if (my_x < bound_l) c.fast_click(GK.R);
-          else if (my_x > bound_r) c.fast_click(GK.L);
+          if (my_x < bound_l) c.click(GK.R).key_up(GK.L);
+          else if (my_x > bound_r) c.click(GK.L).key_up(GK.R);
           else c.key_up(GK.R, GK.L);
-          if (my_z < bound_t) c.keep_press(GK.D);
-          else if (my_z > bound_b) c.keep_press(GK.U);
+          if (my_z < bound_t) c.key_down(GK.D).key_up(GK.U);
+          else if (my_z > bound_b) c.key_down(GK.U).key_up(GK.D);
           else c.key_up(GK.U, GK.D);
           break;
         case StateEnum.Dash:
         case StateEnum.Jump:
         case StateEnum.Running:
           this.handle_block()
-          if (my_x > bound_r) c.keep_press(GK.L);
-          else if (my_x < bound_l) c.keep_press(GK.R);
-          else c.keep_press(me.facing < 0 ? GK.R : GK.L);
-          if (my_z < bound_t) c.keep_press(GK.D);
-          else if (my_z > bound_b) c.keep_press(GK.U);
+          if (my_x > bound_r) c.key_down(GK.L).key_up(GK.R);
+          else if (my_x < bound_l) c.key_down(GK.R).key_up(GK.L);
+          else if (me.facing < 0) c.key_down(GK.R).key_up(GK.L);
+          else c.key_down(GK.L).key_up(GK.R);
+
+          if (my_z < bound_t) c.key_down(GK.D).key_up(GK.U);
+          else if (my_z > bound_b) c.key_down(GK.U).key_up(GK.D);
           else c.key_up(GK.U, GK.D);
           break;
       }
@@ -61,8 +63,8 @@ export class BotState_Following extends BotState_Base {
 
     delete c.following;
     this.ctrl.key_up(...KEY_NAME_LIST);
-    const en = c.get_chasing()?.entity;
-    const av = c.get_avoiding()?.entity;
+    const en = c.chasings.get()?.entity;
+    const av = c.avoidings.get()?.entity;
 
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
       return BotStateEnum.Avoiding;

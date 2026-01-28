@@ -1,11 +1,12 @@
-import { Callbacks, get_short_file_size_txt, new_id, PIO } from "./base";
-import { KEY_NAME_LIST } from "./controller";
+import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
+import { KEY_NAME_LIST, LocalController } from "./controller";
 import * as D from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
-import { Entity } from "./entity";
+import { Entity, Factory } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
 import * as Helper from "./helper";
+import { I18N } from "./I18N";
 import { ILf2Callback } from "./ILf2Callback";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
@@ -27,22 +28,23 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
+  static readonly VERSION_NAME: string = 'v0.1.12'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
-  
+
   static get PREL_ZIPS() { return this._PREL_ZIPS }
   static get DATA_ZIPS() { return this._DATA_ZIPS }
-  static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v }
-  static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v }
+  static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
+  static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
   private static _PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
   private static _DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
-
   static get instance(): LF2 | undefined { return LF2.instances[0] }
   static get world(): World | undefined { return this.instance?.world }
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
 
-  lang: string = '';
+  get lang(): string { return this._i18n.lang }
+  set lang(v: string) { this._i18n.lang = v }
   dev: boolean = false;
   debug!: (_0: string, ..._1: any[]) => void;
   warn!: (_0: string, ..._1: any[]) => void;
@@ -201,6 +203,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       on_pop: (curr, poppeds) => this.callbacks.emit("on_ui_changed")(curr, poppeds[0]),
     })
     this.ui_stacks.push(ui_stack)
+    this._i18n.add({ '': { VERSION_NAME: LF2.VERSION_NAME } })
+    this.update_zip_names()
   }
 
   random_entity_info(e: Entity) {
@@ -240,7 +244,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.callbacks.emit("on_cheat_changed")(cheat_name, enabled);
     this._curr_key_list = "";
   }
-  cmds: (CMD | D.CheatType)[] = [];
+  cmds: (CMD | D.CheatType | string)[] = [];
   events: UI.LF2KeyEvent[] = [];
   broadcasts: string[] = [];
   on_key_down(e: I.IKeyEvent) {
@@ -325,7 +329,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.set_ui("loading");
     if (is_first) {
       const [obj] = await this.import_json("builtin_data/launch/strings.json5")
-      this.load_strings(obj)
+      this._i18n.add(obj)
     }
     this._dispose_check('load')
     try {
@@ -363,9 +367,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private async load_data(zip: I.IZip, md5: string) {
     this._dispose_check('load_data')
 
-    await zip.file("strings.json")?.json().then(r => this.load_strings(r))
+    await zip.file("strings.json")?.json().then(r => this._i18n.add(r))
     this._dispose_check('load_data')
-    await zip.file("strings.json5")?.json().then(r => this.load_strings(r))
+    await zip.file("strings.json5")?.json().then(r => this._i18n.add(r))
     this._dispose_check('load_data')
     this.zips.unshift(zip);
     this.md5s.unshift(md5);
@@ -417,63 +421,34 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.sounds.dispose();
     this.keyboard.dispose();
     this.pointings.dispose();
-
     this._ui_stacks.forEach(u => u.dispose())
     this._ui_stacks.length = 0;
-
     const i = LF2.instances.indexOf(this);
     if (i >= 0) LF2.instances.splice(i, 1);
   }
-  add_player_character(player_id: string, character_id: string): Entity | undefined {
-    return void 0
-    // const player_info = this.players.get(player_id);
-    // if (!player_info) { debugger; return; }
-    // const data = this.datas.fighters.find((v) => v.id === character_id);
-    // if (!data) { debugger; return; }
-    // let x = 0;
-    // let y = 0;
-    // let z = 0;
-    // let vx = 0;
-    // let vy = 0;
-    // let vz = 0;
-    // let old_facing: D.TFace = 1;
-    // let old_frame_id: string = D.Builtin_FrameId.Auto;
-    // const old = this.slot_fighters.get(player_id);
-    // if (old) {
-    //   x = old.position.x;
-    //   y = old.position.y;
-    //   z = old.position.z;
-    //   vx = old.velocity_0.x;
-    //   vy = old.velocity_0.y;
-    //   vz = old.velocity_0.z;
-    //   old_facing = old.facing;
-    //   old_frame_id = old.frame.id;
-    //   this.world.del_entity(old);
-    // }
-
-    // const character = new Entity(this.world, data);
-    // character.id = old?.id ?? new_id();
-    // character.position.x = x;
-    // character.position.y = y;
-    // character.position.z = z;
-    // character.velocity_0.x = vx;
-    // character.velocity_0.y = vy;
-    // character.velocity_0.z = vz;
-    // character.facing = old_facing;
-    // character.name = player_info.name;
-    // character.team = player_info.team ?? new_team();
-    // character.enter_frame({ id: old_frame_id });
-    // if (!old) {
-    //   this.random_entity_info(character);
-    // }
-    // character.ctrl = new LocalController(player_id, character);
-    // character.attach();
-    // return character;
+  add_puppet(player_id: string, oid: string, team?: string): Entity | undefined {
+    const player_info = this.players.get(player_id);
+    if (!player_info) { debugger; return; }
+    const data = this.datas.fighters.find((v) => v.id === oid);
+    if (!data) { debugger; return; }
+    let fighter = this.world.puppets.get(player_id);
+    if (!fighter) {
+      fighter = Factory.inst.create_entity(data.type, this.world, data)
+      if (!fighter) return void 0;
+      fighter.name = player_info.name;
+      fighter.team = team || new_team();
+      fighter.ctrl = new LocalController(player_id, fighter);
+      fighter.attach();
+      this.random_entity_info(fighter);
+    } else {
+      if (team) fighter.team = team
+      fighter.transform(data)
+    }
+    return fighter;
   }
-  // del_player_character(player_id: string) {
-  //   const old = this.slot_fighters.get(player_id);
-  //   if (old) this.world.del_entity(old);
-  // }
+  del_puppet(player_id: string) {
+    this.cmds.push(CMD.DEL_PUPPET, player_id)
+  }
   change_bg(bg_info: D.IBgData): void;
   change_bg(bg_id: string): void;
   change_bg(arg: D.IBgData | string | undefined) {
@@ -525,46 +500,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   protected _uiinfo_map = new Map<string, UI.IUIInfo>();
+  protected _i18n = new I18N();
   protected _strings = new Map<string, { [x in string]?: string }>()
   protected _strings_list = new Map<string, { [x in string]?: string[] }>();
-  string(name: string): string {
-    return (
-      this._strings.get(this.lang)?.[name] ??
-      this._strings.get("")?.[name] ?? name
-    )
-  }
-  strings(name: string): string[] {
-    return (
-      this._strings_list.get(this.lang)?.[name] ??
-      this._strings_list.get("")?.[name] ?? [name]
-    )
-  }
-  load_strings(strings: any) {
-    const collection_pointers: [string, string][] = []
-    for (const key in strings) {
-      const collection = strings[key];
-      if (typeof collection === 'string' && collection !== key)
-        collection_pointers.push([key, collection]);
-      else if (typeof collection === 'object') {
-        for (const key in collection) {
-          const v = collection[key]
-          if (Array.isArray(v))
-            collection[key] = v.join('\n')
-        }
-        const prev = this._strings.get(key)
-        if (prev) this._strings.set(key, { ...collection, ...prev });
-        else this._strings.set(key, collection)
-      }
-    }
-    for (let i = 0; i < collection_pointers.length; i++) {
-      const [a, b] = collection_pointers[i];
-      const collection = this._strings.get(b)
-      if (!collection) continue;
-      this._strings.set(a, { ...collection });
-      collection_pointers.splice(i, 1);
-      --i;
-    }
-  }
+  string(name: string): string { return this._i18n.string(name) }
+  strings(name: string): string[] { return this._i18n.strings(name) }
 
   protected async load_builtin_ui(): Promise<UI.ICookedUIInfo[]> {
     this._dispose_check('load_builtin_ui')
@@ -661,8 +601,15 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   switch_difficulty(): void {
     const { difficulty } = this.world;
     const max = this.is_cheat(D.CheatType.LF2_NET) ? 4 : 3;
-    const next = (difficulty % max) + 1;
-    this.world.difficulty = next;
+    this.cmds.push(CMD.SET_DIFFICULTY, '' + (difficulty % max) + 1)
+  }
+  private update_zip_names() {
+    const DATA_LIST = [
+      ...LF2._PREL_ZIPS.filter(v => v != 'prel.zip.json').map(v => typeof v === 'string' ? v : v.name),
+      ...LF2._DATA_ZIPS.filter(v => v != 'data.zip.json').map(v => typeof v === 'string' ? v : v.name)
+    ]
+    this._i18n.add({ '': { DATA_LIST } })
+    this.callbacks.emit('on_extra_zips_changed')(this)
   }
 }
 
@@ -691,3 +638,4 @@ function full_zip_url(info_url: string, zip_url: string) {
   const ttt = part_a.lastIndexOf('/')
   return part_a.substring(0, ttt) + '/' + zip_url + part_b;
 }
+

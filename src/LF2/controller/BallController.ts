@@ -22,17 +22,17 @@ export class BallController extends BaseController {
         const p2 = this.target_position;
         const vx = this.entity.velocity.x;
         this.entity.merge_velocities();
-        if (p2.x < p1.x) this.press(L).release(R)
-        else if (p2.x > p1.x) this.press(R).release(L)
-        else this.release(L, R)
+        if (p2.x < p1.x) this.key_down(L).key_up(R)
+        else if (p2.x > p1.x) this.key_down(R).key_up(L)
+        else this.key_up(L, R)
 
-        if (p2.z < p1.z) this.press(U).release(D)
-        else if (p2.z > p1.z) this.press(D).release(U)
-        else this.release(U, D)
+        if (p2.z < p1.z) this.key_down(U).key_up(D)
+        else if (p2.z > p1.z) this.key_down(D).key_up(U)
+        else this.key_up(U, D)
 
-        if (p1.y > p2.y) this.press(d).release(j)
-        else if (p1.y < p2.y) this.press(j).release(d)
-        else this.release(j, d)
+        if (p1.y > p2.y) this.key_down(d).key_up(j)
+        else if (p1.y < p2.y) this.key_down(j).key_up(d)
+        else this.key_up(j, d)
 
         if (vx > 0 && facing < 0) this.entity.facing = 1
         else if (vx < 0 && facing > 0) this.entity.facing = -1
@@ -49,18 +49,18 @@ export class BallController extends BaseController {
   private target_lost(frame: IFrameInfo, facing: number) {
     if (frame.behavior === FrameBehavior.JohnBiscuitLeaving) {
       const p1 = this.entity.position;
-      this.press(facing === -1 ? L : R);
-      this.release(facing === -1 ? R : L, U, D);
-      if (p1.y > 40) this.press(d).release(j);
-      else if (p1.y < 40) this.press(j).release(d);
-      else this.release(j, d);
+      this.key_down(facing === -1 ? L : R);
+      this.key_up(facing === -1 ? R : L, U, D);
+      if (p1.y > 40) this.key_down(d).key_up(j);
+      else if (p1.y < 40) this.key_down(j).key_up(d);
+      else this.key_up(j, d);
     } else {
       const p1 = this.entity.position;
-      this.press(facing === -1 ? L : R);
-      this.release(facing === -1 ? R : L, U, D);
-      if (p1.y > 40) this.press(d).release(j);
-      else if (p1.y < 40) this.press(j).release(d);
-      else this.release(j, d);
+      this.key_down(facing === -1 ? L : R);
+      this.key_up(facing === -1 ? R : L, U, D);
+      if (p1.y > 40) this.key_down(d).key_up(j);
+      else if (p1.y < 40) this.key_down(j).key_up(d);
+      else this.key_up(j, d);
     }
   }
 }

@@ -52,5 +52,7 @@
       id: "stage_transition",
       component: ["StageTransitions()"],
     },
+    "builtin_data/launch/version_name.ui.json5",
+    "builtin_data/launch/extra_zips.ui.json5",
   ],
 }

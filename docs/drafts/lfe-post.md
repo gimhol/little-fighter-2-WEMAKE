@@ -20,14 +20,14 @@ The advantages are as follows:
 
 The shortcomings are as follows
 
-- Since the logic is implemented according to my own understanding(and some tutorial for modifying), many things are quite different from the LF2. 
+- Since the logic is implemented according to my own understanding(and some tutorial for modifying), many things are quite different from the LF2.
 - Only VS Mode and Stage Mode are supported, with hardly any other modes
 - The bot is a bit stupid
 
 [spoiler=To developers who are interested (source code is here)]
-Although I kind of hope someone can join me in the development, 
-considering that my personal development style is a bit erratic (I often make large-scale adjustments to some things), 
-I think I'll pass for now. 
+Although I kind of hope someone can join me in the development,
+considering that my personal development style is a bit erratic (I often make large-scale adjustments to some things),
+I think I'll pass for now.
 
 However, everyone is still welcome to run this project and give it a try.
 
@@ -62,6 +62,19 @@ Then run "node ./server.cjs".
 more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Multiplayer%20Online%20Game/README.EN.MD]Multiplayer Online Game[/url]
 [/spoiler]
 
+[spoiler=2025-01-28: v0.1.12 release]
+changelog:
+
+- fix: The MP recovery speed has been corrected. (It was too fast before...)
+- feat: Extra Data supported
+- chore: there will be some fighting on the 'Main Page' :D
+
+[img]https://lf.gim.ink/docs/image/main_page_small_fighting.gif[/img]
+
+About Extra Data, See Thread: [url=https://lf-empire.de/forum/editpost.php?pid=210297]lf2w-tool (Conversion Tool for Little Fighter 2 Wemake)[/url]
+[img]https://lf.gim.ink/docs/image/dnd_extra_data_in_main_page.gif[/img]
+[/spoiler]
+
 [spoiler=2025-01-21: v0.1.9 release]
 changelog:
 
@@ -75,8 +88,8 @@ changelog:
 
 About Custom game
 
-"Custom game" actually means allowing the loading of other data packages 
-(but currently, apart from the original data package, no other packages are available for use). 
+"Custom game" actually means allowing the loading of other data packages
+(but currently, apart from the original data package, no other packages are available for use).
 
 [img]https://lf.gim.ink/docs/image/custom_game_guide_0.en.png[/img]
 [img]https://lf.gim.ink/docs/image/custom_game_guide_1.en.png[/img]
@@ -87,8 +100,8 @@ more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/d
 
 [spoiler=2025-01-18: v0.1.5 release]
 Sometimes it’s tricky to tell whether an object is an ally or an enemy.
-Especially when there are too many entities on the field, 
-or when you spot a projectile flying toward you from afar. 
+Especially when there are too many entities on the field,
+or when you spot a projectile flying toward you from afar.
 
 That’s why I’m trying to add a “team outline” effect to LF2: Wemake.（See figure below）
 
@@ -98,8 +111,8 @@ That’s why I’m trying to add a “team outline” effect to LF2: Wemake.（S
 
 This feature will double the texture loading volume, which will result in slower loading speeds.
 
-It will also double the number of rendered entities on the field, 
-which may affect the game performance as well. 
+It will also double the number of rendered entities on the field,
+which may affect the game performance as well.
 However, it seems to run fine on my device for now.
 
 changelog:
@@ -121,15 +134,15 @@ fix: It's no longer possible to join a room that has already started or where al
 fix: The survival mode will correctly display the current stage number.
 fix: The "GO->" will no longer be displayed in the survival mode.
 fix: The "GO->" will no longer be displayed in the last sub-level of the mission-passing mode.
-fix: Fixed the problem of incorrect relationship between difficulty and the number of enemies in the mission-passing/survival mode 
+fix: Fixed the problem of incorrect relationship between difficulty and the number of enemies in the mission-passing/survival mode
 (the problem was that there were too many enemies).
 
-Experiment: I've chosen a revised LF2 (RN-LF2) to test the data conversion. 
+Experiment: I've chosen a revised LF2 (RN-LF2) to test the data conversion.
 Currently, there are still many problems. Now you can see it on the index page.
 [/spoiler]
 
 [spoiler=2025-01-15: new index page]
-Considering that the current data and logic are not stable, and to conduct some version management, 
+Considering that the current data and logic are not stable, and to conduct some version management,
 the original address will be changed to a directory page, as shown in the figure below:
 
 [img]https://lf.gim.ink/docs/image/index_page.png[/img]

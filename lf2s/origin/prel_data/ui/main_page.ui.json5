@@ -2,11 +2,14 @@
   name: "页面：主页",
   id: "main_page",
   color: "rgb(16, 32, 108)",
-  component: ["ReachableGroup(main,ud)"],
+  pos: "0,0,-450",
+  component: ["ReachableGroup(main,ud)", "LittleFunnyAutoGame"],
   items: [
     "builtin_data/launch/bg.ui.json5",
     "ui/bg_l_face.ui.json5",
     "ui/bg_r_face.ui.json5",
+    "builtin_data/launch/version_name.ui.json5",
+    "builtin_data/launch/extra_zips.ui.json5",
     {
       id: "main_title",
       img: {
@@ -69,6 +72,7 @@
           size: "200,22",
           center: "0.5, 0.5",
           template: "builtin_data/launch/main_text_button.ui.json5",
+          visible: false,
           values: {
             text: "main_page.1v1_championship_mode",
           },
@@ -82,6 +86,7 @@
           size: "200,22",
           center: "0.5, 0.5",
           template: "builtin_data/launch/main_text_button.ui.json5",
+          visible: false,
           values: {
             text: "main_page.2v2_championship_mode",
           },
@@ -95,6 +100,7 @@
           size: "200,22",
           center: "0.5, 0.5",
           template: "builtin_data/launch/main_text_button.ui.json5",
+          visible: false,
           values: {
             text: "main_page.battle_mode",
           },

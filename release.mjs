@@ -8,9 +8,9 @@ export async function exec_cmd(cmd, args = [], opts = []) {
   await new Promise((resolve, reject) => {
     const shell = cmd.endsWith('.cmd') || cmd.endsWith('.bat')
     const temp = spawn(cmd, args, { shell, ...opts }).on("exit", resolve).on("error", reject);
-    temp.stderr.on("data", (buf) =>
-      console.error("[stderr]: ", buf.toString()),
-    );
+    // temp.stderr.on("data", (buf) =>
+    //   // console.error("[stderr]: ", buf.toString()),
+    // );
   });
 }
 
@@ -30,7 +30,11 @@ async function main() {
   await fs.cp("./dist", `${output_dir}/frontend`, { recursive: true })
   await fs.cp("./tool/dist/tool.cjs", `${output_dir}/tool.cjs`)
   await fs.cp("./server/dist/cjs/server.cjs", `${output_dir}/server.cjs`)
-  console.log({output_dir, outzip_path})
+  console.log({ output_dir, outzip_path })
   await zip.compressDir(output_dir, outzip_path);
 }
-main();
+main().then(() => {
+  console.log('done')
+}).catch(e => {
+  console.log('failed, reason' + e)
+});
