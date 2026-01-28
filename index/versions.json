@@ -10,13 +10,17 @@
         "changelog": [
           "- fix: The MP recovery speed has been corrected. (It was too fast before...)",
           "- feat: Extra Data supported",
+          "- fix: Removed the buttons on the main page whose functions are not yet supported.",
+          "- feat: Some pages now support viewing the version number and the file name of the extra data.",
           "- chore: there will be some fighting on the 'Main Page' :D"
         ]
       },
       "zh": {
         "changelog": [
-          "- fix:  修复MP恢复速度. (之前太快了)",
-          "- feat: 支持额外数据",
+          "- fix: 修复MP恢复速度. (之前太快了)",
+          "- fix: 移除了主页上暂时还没支持其功能的按钮",
+          "- feat: 一些页面支持看版本号与额外数据文件名",
+          "- feat: 支持加载额外数据",
           "- chore: 主页将会存在两个正在打交的小朋友:D"
         ]
       },
