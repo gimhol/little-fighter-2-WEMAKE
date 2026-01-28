@@ -151,9 +151,9 @@ export namespace Defines {
       shadow: "",
       shadowsize: [0, 0],
       left: 0,
-      right: 794,
-      far: -468,
-      near: -216,
+      right: MODERN_SCREEN_WIDTH * 2,
+      far: -0,
+      near: -0,
       group: []
     },
   };

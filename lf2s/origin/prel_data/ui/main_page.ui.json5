@@ -2,7 +2,8 @@
   name: "页面：主页",
   id: "main_page",
   color: "rgb(16, 32, 108)",
-  component: ["ReachableGroup(main,ud)"],
+  pos: "0,0,-450",
+  component: ["ReachableGroup(main,ud)", "LittleFunnyAutoGame"],
   items: [
     "builtin_data/launch/bg.ui.json5",
     "ui/bg_l_face.ui.json5",
