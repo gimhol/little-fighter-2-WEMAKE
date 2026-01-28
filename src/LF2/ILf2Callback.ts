@@ -35,4 +35,6 @@ export interface ILf2Callback {
   on_zips_changed?(zips: IZip[]): void;
 
   on_component_broadcast?(component: UIComponent, message: string): void;
+
+  on_zips_changed?(lf2: LF2): void;
 }

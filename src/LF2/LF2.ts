@@ -34,11 +34,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   static get PREL_ZIPS() { return this._PREL_ZIPS }
   static get DATA_ZIPS() { return this._DATA_ZIPS }
-  static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v }
-  static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v }
+  static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
+  static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
   private static _PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
   private static _DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
-
   static get instance(): LF2 | undefined { return LF2.instances[0] }
   static get world(): World | undefined { return this.instance?.world }
   static get ui() { return LF2.instances[0].ui }
@@ -204,7 +203,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       on_pop: (curr, poppeds) => this.callbacks.emit("on_ui_changed")(curr, poppeds[0]),
     })
     this.ui_stacks.push(ui_stack)
-    this._i18n.add({ '': { VERSION_NAME: LF2.VERSION_NAME } })
+    this._i18n.add({
+      '': {
+        VERSION_NAME: LF2.VERSION_NAME,
+        DATA_LIST: LF2.PREL_ZIPS.map(v => typeof v === 'string' ? v : v.name)
+      }
+    })
   }
 
   random_entity_info(e: Entity) {
@@ -601,8 +605,15 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   switch_difficulty(): void {
     const { difficulty } = this.world;
     const max = this.is_cheat(D.CheatType.LF2_NET) ? 4 : 3;
-    const next = (difficulty % max) + 1;
-    this.world.difficulty = next;
+    this.cmds.push(CMD.SET_DIFFICULTY, '' + (difficulty % max) + 1)
+  }
+  private update_zip_names() {
+    const DATA_LIST = [
+      ...LF2._PREL_ZIPS.filter(v => v != 'prel.zip.json').map(v => typeof v === 'string' ? v : v.name),
+      ...LF2._DATA_ZIPS.filter(v => v != 'data.zip.json').map(v => typeof v === 'string' ? v : v.name)
+    ]
+    this._i18n.add({ '': { DATA_LIST } })
+    this.callbacks.emit('on_zips_changed')(this)
   }
 }
 

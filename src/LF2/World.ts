@@ -6,6 +6,7 @@ import {
   Builtin_FrameId,
   CheatType,
   Defines,
+  Difficulty,
   EntityGroup,
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
@@ -420,6 +421,12 @@ export class World extends WorldDataset {
     for (let i = 0; i < cmds.length; i++) {
       const cmd = cmds[i];
       switch (cmd) {
+        case CMD.SET_DIFFICULTY: {
+          const d = Number(cmds[i + 1]);
+          if (d == 1 || d == 2 || d == 3 || d == 4)
+            this.difficulty = d;
+          continue;
+        }
         case CMD.DEL_PUPPET: {
           const player_id = cmds[i + 1];
           const entity = this.puppets.get(player_id);
