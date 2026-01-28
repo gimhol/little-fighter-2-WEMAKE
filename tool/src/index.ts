@@ -96,8 +96,8 @@ async function main() {
 main().then(() => {
   print_ffmpeg_hints();
   print_magick_hints();
-  waitForKeyPress();
+  if (!conf().DONT_WAIT) waitForKeyPress();
 }).catch((e) => {
   console.log(e)
-  waitForKeyPress();
+  if (!conf().DONT_WAIT) waitForKeyPress();
 })

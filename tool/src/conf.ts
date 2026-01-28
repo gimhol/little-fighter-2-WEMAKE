@@ -72,6 +72,8 @@ export interface IConf {
   MAGICK_CMD?: string;
 
   KEEP_MIRROR?: string;
+
+  DONT_WAIT?: string;
 }
 interface IArgInfo {
   key: keyof IConf;
@@ -99,6 +101,7 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   FFMPEG_CMD: { alias: ['--ffmpeg'], default: 'ffmpeg' },
   MAGICK_CMD: { alias: ['--magick'], default: 'magick' },
   KEEP_MIRROR: { alias: [], boolean: true },
+  DONT_WAIT: { alias: ['-d', '--dont-wait'], boolean: true },
 }
 const alias_arg_map = new Map<string, IArgInfo>();
 
