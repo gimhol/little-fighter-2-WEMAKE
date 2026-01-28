@@ -22,7 +22,7 @@ export class CharactersHelper {
     num: number,
     team?: string,
   ): Entity[] {
-    if (typeof data === "string") data = this.lf2.datas.find_character(data);
+    if (typeof data === "string") data = this.lf2.datas.find_fighter(data);
     if (!data) return [];
     return this.lf2.entities.add(data, num, team);
   }

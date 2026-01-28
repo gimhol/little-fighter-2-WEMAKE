@@ -164,7 +164,7 @@ export class World extends WorldDataset {
         if (player) {
           player.fighter = entity
           this.puppets.set(entity.ctrl.player_id, entity);
-          this.callbacks.emit("on_player_character_add")(entity.ctrl.player_id);
+          this.callbacks.emit("on_puppet_add")(entity.ctrl.player_id);
         }
       }
       this.entities.add(entity);
@@ -206,7 +206,7 @@ export class World extends WorldDataset {
     const player = this.lf2.players.get(entity.ctrl.player_id)
     if (player) player.fighter = void 0
     const ok = this.puppets.delete(entity.ctrl.player_id);
-    if (ok) this.callbacks.emit("on_player_character_del")(entity.ctrl.player_id);
+    if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
     this.renderer.del_entity(entity);
     entity.dispose();
     Factory.inst.release(entity)
@@ -414,55 +414,60 @@ export class World extends WorldDataset {
   }
 
   protected handle_cmds() {
-    if (!this.lf2.cmds.length) return;
-    for (const key of this.lf2.cmds) {
-      switch (key) {
+    const { cmds } = this.lf2;
+    if (!cmds.length) return;
+    const stage_limit = this.stage.id !== Defines.VOID_STAGE.id && !this.lf2.is_cheat(CheatType.HERO_FT)
+    for (let i = 0; i < cmds.length; i++) {
+      const cmd = cmds[i];
+      switch (cmd) {
+        case CMD.DEL_PUPPET: {
+          const player_id = cmds[i + 1];
+          const entity = this.puppets.get(player_id);
+          if (entity) this.del_entity(entity);
+          else Ditto.warn('DEL_PUPPET failed, puppet not found.')
+          i += 1;
+          continue;
+        }
         case CMD.LF2_NET:
         case CMD.HERO_FT:
-        case CMD.GIM_INK:
-          this.lf2.toggle_cheat_enabled(key);
-          continue;
+        case CMD.GIM_INK: this.lf2.toggle_cheat_enabled(cmd); continue;
         case CMD.F1: this.paused = !this.paused; continue;
         case CMD.F2: this.set_paused(2); continue;
         case CMD.F4: this.lf2.pop_ui_safe(); continue;
-        case CMD.F5:
-          this.playrate = this.playrate === 1 ? 100 : 1;
+        case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
+        case CMD.F6:
+          if (stage_limit) continue;
+          this.infinity_mp = !this.infinity_mp;
           continue;
-      }
-      if (this.stage.id === Defines.VOID_STAGE.id || this.lf2.is_cheat(CheatType.HERO_FT)) {
-        switch (key) {
-          case CMD.F6:
-            this.infinity_mp = !this.infinity_mp;
-            continue;
-          case CMD.F7:
-            for (const e of this.entities) {
-              if (!is_fighter(e)) continue;
-              e.hp = e.hp_r = e.hp_max;
-              e.mp = e.mp_max;
-            }
-            continue;
-          case CMD.F8:
-            this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
-            continue;
-          case CMD.F9:
-            this.stage.kill_all()
-            continue;
-          case CMD.F10:
-            for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
-            continue;
-          case CMD.KILL_ENEMIES:
-            this.stage.kill_all()
-            continue;
-          case CMD.KILL_BOSS:
-            this.stage.kill_boss()
-            continue;
-          case CMD.KILL_SOLIDERS:
-            this.stage.kill_soliders()
-            continue;
-          case CMD.KILL_OTHERS:
-            this.stage.kill_others()
-            continue;
-        }
+        case CMD.F7:
+          if (stage_limit) continue;
+          for (const e of this.entities) {
+            if (!is_fighter(e)) continue;
+            e.hp = e.hp_r = e.hp_max;
+            e.mp = e.mp_max;
+          }
+          continue;
+        case CMD.F8:
+          if (!stage_limit) this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+          continue;
+        case CMD.F9:
+          if (!stage_limit) this.stage.kill_all()
+          continue;
+        case CMD.F10:
+          if (!stage_limit) for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+          continue;
+        case CMD.KILL_ENEMIES:
+          if (!stage_limit) this.stage.kill_all()
+          continue;
+        case CMD.KILL_BOSS:
+          if (!stage_limit) this.stage.kill_boss()
+          continue;
+        case CMD.KILL_SOLIDERS:
+          if (!stage_limit) this.stage.kill_soliders()
+          continue;
+        case CMD.KILL_OTHERS:
+          if (!stage_limit) this.stage.kill_others()
+          continue;
       }
     }
   }

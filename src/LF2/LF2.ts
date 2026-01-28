@@ -1,9 +1,9 @@
-import { Callbacks, get_short_file_size_txt, new_id, PIO } from "./base";
-import { KEY_NAME_LIST } from "./controller";
+import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
+import { KEY_NAME_LIST, LocalController } from "./controller";
 import * as D from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
-import { Entity } from "./entity";
+import { Entity, Factory } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
 import * as Helper from "./helper";
 import { I18N } from "./I18N";
@@ -242,7 +242,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.callbacks.emit("on_cheat_changed")(cheat_name, enabled);
     this._curr_key_list = "";
   }
-  cmds: (CMD | D.CheatType)[] = [];
+  cmds: (CMD | D.CheatType | string)[] = [];
   events: UI.LF2KeyEvent[] = [];
   broadcasts: string[] = [];
   on_key_down(e: I.IKeyEvent) {
@@ -419,63 +419,34 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.sounds.dispose();
     this.keyboard.dispose();
     this.pointings.dispose();
-
     this._ui_stacks.forEach(u => u.dispose())
     this._ui_stacks.length = 0;
-
     const i = LF2.instances.indexOf(this);
     if (i >= 0) LF2.instances.splice(i, 1);
   }
-  add_player_character(player_id: string, character_id: string): Entity | undefined {
-    return void 0
-    // const player_info = this.players.get(player_id);
-    // if (!player_info) { debugger; return; }
-    // const data = this.datas.fighters.find((v) => v.id === character_id);
-    // if (!data) { debugger; return; }
-    // let x = 0;
-    // let y = 0;
-    // let z = 0;
-    // let vx = 0;
-    // let vy = 0;
-    // let vz = 0;
-    // let old_facing: D.TFace = 1;
-    // let old_frame_id: string = D.Builtin_FrameId.Auto;
-    // const old = this.slot_fighters.get(player_id);
-    // if (old) {
-    //   x = old.position.x;
-    //   y = old.position.y;
-    //   z = old.position.z;
-    //   vx = old.velocity_0.x;
-    //   vy = old.velocity_0.y;
-    //   vz = old.velocity_0.z;
-    //   old_facing = old.facing;
-    //   old_frame_id = old.frame.id;
-    //   this.world.del_entity(old);
-    // }
-
-    // const character = new Entity(this.world, data);
-    // character.id = old?.id ?? new_id();
-    // character.position.x = x;
-    // character.position.y = y;
-    // character.position.z = z;
-    // character.velocity_0.x = vx;
-    // character.velocity_0.y = vy;
-    // character.velocity_0.z = vz;
-    // character.facing = old_facing;
-    // character.name = player_info.name;
-    // character.team = player_info.team ?? new_team();
-    // character.enter_frame({ id: old_frame_id });
-    // if (!old) {
-    //   this.random_entity_info(character);
-    // }
-    // character.ctrl = new LocalController(player_id, character);
-    // character.attach();
-    // return character;
+  add_puppet(player_id: string, oid: string, team?: string): Entity | undefined {
+    const player_info = this.players.get(player_id);
+    if (!player_info) { debugger; return; }
+    const data = this.datas.fighters.find((v) => v.id === oid);
+    if (!data) { debugger; return; }
+    let fighter = this.world.puppets.get(player_id);
+    if (!fighter) {
+      fighter = Factory.inst.create_entity(data.type, this.world, data)
+      if (!fighter) return void 0;
+      fighter.name = player_info.name;
+      fighter.team = team || new_team();
+      fighter.ctrl = new LocalController(player_id, fighter);
+      fighter.attach();
+      this.random_entity_info(fighter);
+    } else {
+      if (team) fighter.team = team
+      fighter.transform(data)
+    }
+    return fighter;
   }
-  // del_player_character(player_id: string) {
-  //   const old = this.slot_fighters.get(player_id);
-  //   if (old) this.world.del_entity(old);
-  // }
+  del_puppet(player_id: string) {
+    this.cmds.push(CMD.DEL_PUPPET, player_id)
+  }
   change_bg(bg_info: D.IBgData): void;
   change_bg(bg_id: string): void;
   change_bg(arg: D.IBgData | string | undefined) {

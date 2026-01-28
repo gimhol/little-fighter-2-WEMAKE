@@ -6,7 +6,7 @@ export class CharacterState_TransformToLouisEX extends State_Base {
     super(state)
   }
   override enter(e: Entity): void {
-    const d = e.lf2.datas.find_character("50");
+    const d = e.lf2.datas.find_fighter("50");
     if (d) {
       e.transform(d);
       e.enter_frame(e.find_auto_frame());

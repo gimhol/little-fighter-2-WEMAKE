@@ -553,8 +553,10 @@ export class Entity {
   set ctrl(v: BaseController | undefined) {
     if (!v) return;
     if (this._ctrl === v) return;
-    this._ctrl?.dispose();
+    const prev = this._ctrl
     this._ctrl = v;
+    this.callbacks.emit('on_ctrl_changed')(v, prev, this)
+    prev.dispose();
   }
   get key_role(): boolean {
     if (this._key_role !== null) return this._key_role;
@@ -2076,7 +2078,6 @@ export class Entity {
     const prev = this._data;
     this._data = data;
     const { armor } = this._data.base
-
     if (armor) {
       this.armor = armor
       this.toughness = this.toughness_max = armor.toughness

@@ -42,7 +42,7 @@ export class Dialogs extends UIComponent {
     const text = this.lf2.string(dialog.i18n)
     this._text_loader.set_text([text]).catch(e => Ditto.warn('' + e))
 
-    const fighter = dialog.fighter ? this.lf2.datas.find_character(dialog.fighter) : void 0
+    const fighter = dialog.fighter ? this.lf2.datas.find_fighter(dialog.fighter) : void 0
     if (fighter) {
       const fighter_name = this.lf2.string(fighter.base.name)
       this._talker_loader.set_text([fighter_name]).catch(e => Ditto.warn('' + e))

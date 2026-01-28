@@ -23,8 +23,8 @@ export interface IWorldCallbacks {
 
   on_pause_change?(pause: boolean): void;
 
-  on_player_character_add?(player_id: string): void;
-  on_player_character_del?(player_id: string): void;
+  on_puppet_add?(player_id: string): void;
+  on_puppet_del?(player_id: string): void;
 
   /**
    * 渲染帧率变化回调

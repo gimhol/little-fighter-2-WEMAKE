@@ -486,7 +486,7 @@ function App() {
       />
       <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !s.game_overlay })} />
       <DanmuOverlay lf2={lf2} />
-      <GamePad player_id={s.touchpad} lf2={lf2} />
+      <GamePad id='game_pad'player_id={s.touchpad} lf2={lf2} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
       <div className={styles.debug_pannel}>
         <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>

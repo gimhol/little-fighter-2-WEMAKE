@@ -1,8 +1,10 @@
+import { BaseController } from "../controller";
 import { IEntityData } from "../defines";
 import type { Unsafe } from "../utils/type_check/Unsafe";
 import type { Entity } from "./Entity";
 
 export interface IEntityCallbacks<E extends Entity = Entity> {
+  on_ctrl_changed?(v: BaseController, prev: BaseController, e: Entity): void;
   on_holder_changed?(e: E, value: Unsafe<Entity>, prev: Unsafe<Entity>): void;
 
   on_holding_changed?(e: E, value: Unsafe<Entity>, prev: Unsafe<Entity>): void;

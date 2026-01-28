@@ -271,11 +271,11 @@ export default class DatMgr {
       : this.weapons.find(arg_0);
   }
 
-  find_character(id: string): IEntityData | undefined;
-  find_character(
+  find_fighter(id: string): IEntityData | undefined;
+  find_fighter(
     predicate: IFindPredicate<IEntityData>,
   ): IEntityData | undefined;
-  find_character(
+  find_fighter(
     arg_0: string | IFindPredicate<IEntityData>,
   ): IEntityData | undefined {
     return is_str(arg_0)
