@@ -66,8 +66,8 @@ export namespace Defines {
   export const DAFUALT_QUBE_LENGTH: number = 24;
   export const DAFUALT_QUBE_LENGTH_POW2: number = 576;
 
-  export const DEFAULT_RESTING_MAX: number = 30;
-  export const DEFAULT_TOUGHNESS_RESTING_MAX: number = 30;
+  export const DEFAULT_RESTING_MAX: number = 60;
+  export const DEFAULT_TOUGHNESS_RESTING_MAX: number = 60;
 
   /**
    * 默认值：角色进入场地时的闪烁无敌时间
