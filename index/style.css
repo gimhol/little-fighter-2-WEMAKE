@@ -256,3 +256,62 @@ button:hover {
 .scrollview::-webkit-scrollbar-thumb:hover {
   background: #FFFFFF88;
 }
+
+#changelog_md_mask {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: #00000055;
+  z-index: 1;
+}
+
+#changelog_md_modal {
+  position: fixed;
+  display: inline-block;
+  box-shadow: 0px 5px 15px -3px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  top: 20px;
+  background-color: var(--primary-color);
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 0px;
+  height: 0px;
+  transition: all 220ms;
+}
+
+#changelog_md_modal>button {
+  height: 24px;
+  width: 24px;
+  padding: 0px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  vertical-align: middle;
+  line-height: 24px;
+}
+
+#changelog_md_modal>#btn_close {
+  position: absolute;
+  right: 15px;
+  top: 5px;
+}
+
+#changelog_md_modal>#btn_copy {
+  position: absolute;
+  right: 45px;
+  top: 5px;
+}
+
+#changelog_md_content {
+  overflow: auto;
+  padding: 20px 20px;
+  min-width: 100px;
+  min-height: 100px;
+  max-height: calc(100vh - 100px);
+  max-width: calc(100vh - 100px);
+}

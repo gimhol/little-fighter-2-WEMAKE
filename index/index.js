@@ -206,3 +206,4 @@ function switch_lang() {
   update_lang_btn();
 }
 update_lang_btn();
+
