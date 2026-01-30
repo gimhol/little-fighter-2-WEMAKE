@@ -528,35 +528,31 @@ function App() {
       <DanmuOverlay lf2={lf2} />
       <GamePad id='game_pad' player_id={s.touchpad} lf2={lf2} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
-      <div className={styles.debug_pannel}>
+      <div className={styles.top_bar}>
         <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
           <ToggleImgButton
             checked={s.dev_ui_open}
             onClick={() => set_state(d => { d.dev_ui_open = !d.dev_ui_open })}
-            src={[img_btn_1_2, img_btn_1_3]}
-          />
+            src={[img_btn_1_2, img_btn_1_3]} />
         </Show>
-        <ToggleImgButton
-          checked={is_fullscreen}
-          onClick={() => toggle_fullscreen()}
-          src={[img_btn_3_1, img_btn_3_2]}
-        />
+        <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
+          <ToggleImgButton
+            onClick={() => lf2?.cmds.push(CMD.F4)}
+            src={[img_btn_2_3]} />
+        </Show>
         <ToggleImgButton
           checked={s.bgm_muted}
           onClick={() => lf2?.sounds?.set_bgm_muted(!s.bgm_muted)}
-          src={[img_btn_2_0, img_btn_3_0]}
-        />
+          src={[img_btn_2_0, img_btn_3_0]} />
         <ToggleImgButton
           checked={s.sound_muted}
           onClick={() => lf2?.sounds?.set_sound_muted(!s.sound_muted)}
-          src={[img_btn_0_3, img_btn_1_0]}
-        />
+          src={[img_btn_0_3, img_btn_1_0]} />
         <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}>
           <ToggleImgButton
             checked={paused}
             onClick={() => lf2?.cmds.push(CMD.F1)}
-            src={[img_btn_2_1, img_btn_2_2]}
-          />
+            src={[img_btn_2_1, img_btn_2_2]} />
         </Show>
         <Show show={!networking}>
           <ToggleImgButton
@@ -569,12 +565,10 @@ function App() {
             src={[img_btn_1_1, img_btn_1_1]}
           />
         </Show>
-        <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
-          <ToggleImgButton
-            onClick={() => lf2?.cmds.push(CMD.F4)}
-            src={[img_btn_2_3]}
-          />
-        </Show>
+        <ToggleImgButton
+          checked={is_fullscreen}
+          onClick={() => toggle_fullscreen()}
+          src={[img_btn_3_1, img_btn_3_2]} />
       </div>
     </div>, game_cell, null) : null
 

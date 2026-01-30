@@ -30,20 +30,31 @@
     }
   }
 
-  .debug_pannel {
+  .top_bar {
     position       : absolute;
-    right          : 10px;
-    top            : 10px;
+    right          : 0px;
+    top            : 0px;
     pointer-events : none;
     user-select    : none;
     display        : flex;
     justify-content: flex-end;
     align-items    : flex-start;
+    gap            : 0px;
+
+    button {
+      pointer-events: all;
+      padding       : 0px;
+      transform     : scale(0.6, 0.6);
+      transition    : all 255ms;
+    }
+
+    button:hover {
+      transform: scale(0.8, 0.8);
+    }
   }
 
-  .debug_pannel button {
-    pointer-events: all;
-  }
+
+
 }
 
 .loading_img {
