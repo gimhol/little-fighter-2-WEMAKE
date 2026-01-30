@@ -39,3 +39,15 @@
   SSL_KEY_FILE_PATH=SSL的密钥文件（不需要SSL的话留空）
   SSL_CER_FILE_PATH=SSL的证书文件（不需要SSL的话留空）
   ```
+
+## 顺带一提
+
+在通常情况下，如果你的服务器不支持https访问的话，
+[lf.gim.ink](https://lf.gim.ink)运行的游戏将无法连接你的服务器的。
+
+除非让你的浏览器允许在https的页面中进行“不安全的连接”
+
+如果你用的是Firefox, 你可以搜索 “火狐如何设置 network.websocket.allowInsecureFromHTTPS”
+如果你用的是Chorme, 你可以搜索 “How to allow Chrome (browser) to load insecure content?”
+
+**如果你做了这些,请务必记得还原这些设置!!!**

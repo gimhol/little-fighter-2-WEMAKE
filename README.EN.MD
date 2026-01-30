@@ -21,3 +21,10 @@ Think this project is pretty good? Consider starring it!
 - [Building and Running](./docs/Build%20Instructions/README.EN.MD)
 - [Custom Game](./docs/Custom%20Game/README.MD)
 - [Feedback & Discussions](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
+
+## What's next?
+
+- Support for 3D models and animations?
+- Support for more diverse level functions?
+- Continuing to implement other game modes of LF2?
+- Video recording and playback?
