@@ -31,30 +31,30 @@
   }
 
   .top_bar {
-    position       : absolute;
-    right          : 0px;
-    top            : 0px;
-    pointer-events : none;
-    user-select    : none;
-    display        : flex;
-    justify-content: flex-end;
-    align-items    : flex-start;
-    gap            : 0px;
+    --wails-draggable: drag;
+    position         : absolute;
+    right            : 0px;
+    top              : 0px;
+    left             : 0px;
+    pointer-events   : none;
+    user-select      : none;
+    display          : flex;
+    justify-content  : flex-end;
+    align-items      : flex-start;
+    gap              : 0px;
 
     button {
-      pointer-events: all;
-      padding       : 0px;
-      transform     : scale(0.6, 0.6);
-      transition    : all 255ms;
+      --wails-draggable: no-drag;
+      pointer-events   : all;
+      padding          : 0px;
+      transform        : scale(0.6, 0.6);
+      transition       : all 255ms;
     }
 
     button:hover {
       transform: scale(0.8, 0.8);
     }
   }
-
-
-
 }
 
 .loading_img {

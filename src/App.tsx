@@ -40,17 +40,21 @@ import SettingsRows from "./SettingsRows";
 import { download } from "./Utils/download";
 import { open_file } from "./Utils/open_file";
 import img_btn_0_3 from "./assets/btn_0_3.png";
+import img_btn_0_4 from "./assets/btn_0_4.png";
 import img_btn_1_0 from "./assets/btn_1_0.png";
 import img_btn_1_1 from "./assets/btn_1_1.png";
 import img_btn_1_2 from "./assets/btn_1_2.png";
 import img_btn_1_3 from "./assets/btn_1_3.png";
+import img_btn_1_4 from "./assets/btn_1_4.png";
 import img_btn_2_0 from "./assets/btn_2_0.png";
 import img_btn_2_1 from "./assets/btn_2_1.png";
 import img_btn_2_2 from "./assets/btn_2_2.png";
 import img_btn_2_3 from "./assets/btn_2_3.png";
+import img_btn_2_4 from "./assets/btn_2_4.png";
 import img_btn_3_0 from "./assets/btn_3_0.png";
 import img_btn_3_1 from "./assets/btn_3_1.png";
 import img_btn_3_2 from "./assets/btn_3_2.png";
+import img_btn_3_3 from "./assets/btn_3_3.png";
 import { useForage } from "./hooks/useForage";
 import "./init";
 import { DatViewer } from "./pages/dat_viewer/DatViewer";
@@ -569,6 +573,26 @@ function App() {
           checked={is_fullscreen}
           onClick={() => toggle_fullscreen()}
           src={[img_btn_3_1, img_btn_3_2]} />
+        {
+          !window.runtime?.WindowMinimise ? null :
+            <ToggleImgButton
+              onClick={() => window.runtime?.WindowMinimise?.()}
+              src={[img_btn_0_4, img_btn_0_4]} />
+        }
+        {
+          !window.runtime?.WindowToggleMaximise ? null :
+            <ToggleImgButton
+              checked={is_fullscreen}
+              onClick={() => window.runtime?.WindowToggleMaximise?.()}
+              src={[img_btn_1_4, img_btn_2_4]} />
+        }
+        {
+          !window.runtime?.Quit ? null :
+            <ToggleImgButton
+              checked={is_fullscreen}
+              onClick={() => window.runtime?.Quit?.()}
+              src={[img_btn_3_3, img_btn_3_3]} />
+        }
       </div>
     </div>, game_cell, null) : null
 
