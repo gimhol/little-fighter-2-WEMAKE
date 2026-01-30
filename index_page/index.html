@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html lang="zh">
 <html>
 
 <head>
@@ -22,11 +22,12 @@
           <span id='lang_b' class="lang_btn_inner_span lang_btn_inner_span_b">En</span>
         </div>
       </button>
-      <a class='head_right_btn' href="https://github.com/gimhol/little-fighter-2-WEMAKE" style="margin-right: 10px;">
-        <img src="./github-mark-white.svg" width="24px">
+      <a class='head_right_btn' href="https://github.com/gimhol/little-fighter-2-WEMAKE" title="github"
+        style="margin-right: 10px;">
+        <img src="./github-mark-white.svg" width="24px" alt="goto github">
       </a>
-      <a class='head_right_btn' href="https://gim.ink">
-        <img src="./gim.ink.png" width="24px">
+      <a class='head_right_btn' href="https://gim.ink" title="gim.ink">
+        <img src="./gim-ink.png" width="30px" alt="goto gim.ink">
       </a>
     </div>
     <div id="main">
@@ -36,7 +37,7 @@
           <h3 id="game_title">
             <a id="game_title_link" class="el_url link"></a>
             <div style="flex: 1;"></div>
-            <button onclick="copy_markdown()" title="copy as Markdown">MD</button>
+            <button onclick="view_markdown()" title="copy as Markdown">MD</button>
           </h3>
           <div id="game_desc"></div>
         </div>
@@ -49,7 +50,17 @@
       </a> -->
     </div>
   </div>
-
+  <div id="changelog_md_mask">
+    <div id="changelog_md_modal">
+      <button id="btn_copy" onclick="copy_markdown()">
+        📋
+      </button>
+      <button id="btn_close" onclick="close_md_modal()">
+        ✖︎
+      </button>
+      <div id="changelog_md_content" class="scrollview" contenteditable="true" tabindex="-1"></div>
+    </div>
+  </div>
   <template id="game_item_template">
     <div class="game_item">
       <button class="game_short_title"></button>
@@ -73,7 +84,8 @@
     </div>
   </template>
   <script src="./index.js"></script>
-  <script src="./copy_markdown.js"></script>
+  <script src="./view_markdown.js"></script>
+  <script src="./md_modal.js"></script>
 </body>
 
 </html>

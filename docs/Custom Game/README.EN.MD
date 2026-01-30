@@ -2,54 +2,36 @@
 
 [中文](README.MD) | [English](README.EN.MD)
 
-Essentially, LF2:Wemake is actually an action game framework. 
+LF2:Wemake is designed to be a web game that can run on modern browsers. You gotta download all the core resources. After downloading, you need to unzip and process them.
 
-It can "play" the UI and content of the game package, and this framework is compatible with the LF2 logic.
+Once they're downloaded, they'll be cached, so you don't have to process them again. But it still takes time to read and pre - process the resources.
 
-LF2:Wemake has also roughly implemented a somewhat usable UI framework.
+Take the original LF2:Wemake for example:
 
-However, the corresponding editor is not supported yet...
+- Right after the "Launch Page" shows up, the game will start loading prel.zip right away.
+- After prel.zip is loaded, you will enter the "Entry Page".
+- In the "Entry Page", you have to click "Start Game" to start loading data.zip.
 
-## Custom Game Package
+We do this to let players see something quicker.
 
-Essentially, the "custom game package" is a Zip archive. Inside this Zip, there are multiple (more than two) zip files and one index.json file.
+Normally, prel.zip should include all the UI pages and related UI resources like sounds and pictures.
+To see the in-game interface as soon as possible, this package should be as small as possible.
 
-- The content of index.json is a string array of paths, pointing to each Zip file within the "custom game package".
-- The first Zip file is "prel.zip" (pre-loaded data).
-- The other Zip files are all "data.zip" (game data).
+data.zip contains stuff like character, weapon, background, and stage data, along with related resources like sounds and pictures, so it's gonna be pretty big.
 
-For example:
+To keep the same logic, a "Custom Game Package" also has to have one prel.zip and at least one data.zip.
 
-Pack the data of LF2:Wemake into a "custom game package" named full.zip. The internal directory structure of full.zip can be like this:
+## By the way
 
-``` plaintext
-full.zip
-  ├── data.zip
-  ├── index.json
-  └── prel.zip
-```
+Actually, you could stuff everything into prel.zip.
+But then players would have to stare at the "Launch Page" for a really long time...
 
-And the content of index.json is:
+(There's actually one character, one stage, and one background in prel.zip. It's for my convenience during development.)
 
-``` json
-[
-  "prel.zip",
-  "data.zip"
-]
-```
+## How to Generate a Custom Game Package
 
-## Why do we need "prel.zip" and "data.zip"?
+TODO
 
-LF2:Wemake is designed as a web game that can run on modern browsers.
+## How to Use a Custom Game Package
 
-Taking a non-custom game as an example, LF2:Wemake will load "prel.zip" immediately after the launch page is displayed.
-
-After the "launch page", it will enter the "entry page". Only after clicking "Start Game" on this page will it load "data.zip".
-
-So this mechanism is very important for the following reasons:
-
-Therefore, "prel.zip" generally contains all the UI pages and related resources (such as sounds and images).
-
-To allow players to see the in-game interface as soon as possible, the size of this package should be as small as possible.
-
-To maintain the same logic, the "custom game package" must also contain one "prel.zip" and at least one "data.zip".
+TODO

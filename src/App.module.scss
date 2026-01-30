@@ -30,19 +30,30 @@
     }
   }
 
-  .debug_pannel {
-    position       : absolute;
-    right          : 10px;
-    top            : 10px;
-    pointer-events : none;
-    user-select    : none;
-    display        : flex;
-    justify-content: flex-end;
-    align-items    : flex-start;
-  }
+  .top_bar {
+    --wails-draggable: drag;
+    position         : absolute;
+    right            : 0px;
+    top              : 0px;
+    left             : 0px;
+    // pointer-events   : none;
+    user-select      : none;
+    display          : flex;
+    justify-content  : flex-end;
+    align-items      : flex-start;
+    gap              : 0px;
 
-  .debug_pannel button {
-    pointer-events: all;
+    button {
+      --wails-draggable: no-drag;
+      pointer-events   : all;
+      padding          : 0px;
+      transform        : scale(0.6, 0.6);
+      transition       : all 255ms;
+    }
+
+    button:hover {
+      transform: scale(0.8, 0.8);
+    }
   }
 }
 

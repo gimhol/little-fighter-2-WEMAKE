@@ -18,8 +18,8 @@ export function make_fighter_data_julian(data: IEntityData) {
     fireproof: 1,
     antifreeze: 1,
     hit_sounds: ["data/002.wav.mp3"],
-    type: ArmorEnum.Fall,
-    toughness: Defines.DEFAULT_FALL_VALUE_CRITICAL,
+    type: ArmorEnum.Defend,
+    toughness: Defines.DEFAULT_DEFEND_VALUE_MAX,
   };
   for (const k in data.frames) {
     data.frames[k].opoint?.forEach((opoint) => {

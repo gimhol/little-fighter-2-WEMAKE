@@ -46,6 +46,7 @@ export class __FullScreen<T extends Element = any> implements IFullScreen<T> {
     return !!this.target;
   }
   enter(element: T): Promise<void> {
+    if (window.runtime?.WindowFullscreen) window.runtime?.WindowFullscreen?.();
     const d = document as any;
     if (is_false(d.mozFullScreenEnabled))
       return Promise.reject(new Error("全屏功能已被禁用"));
@@ -55,9 +56,11 @@ export class __FullScreen<T extends Element = any> implements IFullScreen<T> {
     else if (is_fun(e.msRequestFullscreen)) return e.msRequestFullscreen();
     else if (is_fun(e.webkitRequestFullScreen))
       return e.webkitRequestFullScreen();
+
     return Promise.reject(new Error("不支持全屏"));
   }
   exit() {
+    if (window.runtime?.WindowUnfullscreen) window.runtime?.WindowUnfullscreen?.();
     if (is_fun(document.exitFullscreen)) return document.exitFullscreen();
     const d = document as any;
     if (is_fun(d.msExitFullscreen)) return d.msExitFullscreen();

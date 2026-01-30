@@ -1,5 +1,5 @@
 import FSM from "../base/FSM";
-import { BaseController, CONFLICTS_KEY_MAP, KEY_NAME_LIST } from "../controller/BaseController";
+import { BaseController, KEY_NAME_LIST } from "../controller/BaseController";
 import {
   ATTCKING_ITR_KINDS,
   ATTCKING_STATES,
@@ -15,7 +15,6 @@ import { manhattan_xz } from "../helper/manhattan_xz";
 import { PlayerInfo } from "../PlayerInfo";
 import { abs, clamp, max, round, round_float } from "../utils";
 import { DummyEnum, dummy_updaters } from "./DummyEnum";
-import { IBotTarget } from "./IBotTarget";
 import { NearestTargets } from "./NearestTargets";
 import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
 import { BotState_Following } from "./state/BotState_Following";

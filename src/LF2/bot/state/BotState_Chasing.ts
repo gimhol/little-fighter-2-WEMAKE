@@ -197,6 +197,5 @@ export class BotState_Chasing extends BotState_Base {
       }
     }
   }
-
 }
 

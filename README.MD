@@ -19,3 +19,10 @@
 - [构建与运行](./docs/Build%20Instructions/README.MD)
 - [自定义游戏](./docs/Custom%20Game/README.MD)
 - [功能建议、体验反馈](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
+
+## 接下来是？
+
+- 支持3d模型与动画?
+- 更丰富的关卡功能支持？
+- 继续实现LF2的其他游戏模式？
+- 录像与回放？

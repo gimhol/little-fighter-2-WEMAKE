@@ -40,17 +40,21 @@ import SettingsRows from "./SettingsRows";
 import { download } from "./Utils/download";
 import { open_file } from "./Utils/open_file";
 import img_btn_0_3 from "./assets/btn_0_3.png";
+import img_btn_0_4 from "./assets/btn_0_4.png";
 import img_btn_1_0 from "./assets/btn_1_0.png";
 import img_btn_1_1 from "./assets/btn_1_1.png";
 import img_btn_1_2 from "./assets/btn_1_2.png";
 import img_btn_1_3 from "./assets/btn_1_3.png";
+import img_btn_1_4 from "./assets/btn_1_4.png";
 import img_btn_2_0 from "./assets/btn_2_0.png";
 import img_btn_2_1 from "./assets/btn_2_1.png";
 import img_btn_2_2 from "./assets/btn_2_2.png";
 import img_btn_2_3 from "./assets/btn_2_3.png";
+import img_btn_2_4 from "./assets/btn_2_4.png";
 import img_btn_3_0 from "./assets/btn_3_0.png";
 import img_btn_3_1 from "./assets/btn_3_1.png";
 import img_btn_3_2 from "./assets/btn_3_2.png";
+import img_btn_3_3 from "./assets/btn_3_3.png";
 import { useForage } from "./hooks/useForage";
 import "./init";
 import { DatViewer } from "./pages/dat_viewer/DatViewer";
@@ -115,6 +119,7 @@ function App() {
   const [editor_open, set_editor_open] = useState(false);
 
   const [s, set_state, state_ready] = useForage({ key: 'app_state', version: 1, init: init_s })
+  const [is_maximised, set_is_maximised] = useState(false);
   const [is_fullscreen, _set_is_fullscreen] = useState(false);
   const [indicator_flags, set_indicator_flags] = useState<number>(0);
 
@@ -528,35 +533,31 @@ function App() {
       <DanmuOverlay lf2={lf2} />
       <GamePad id='game_pad' player_id={s.touchpad} lf2={lf2} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
-      <div className={styles.debug_pannel}>
+      <div className={styles.top_bar}>
         <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
           <ToggleImgButton
             checked={s.dev_ui_open}
             onClick={() => set_state(d => { d.dev_ui_open = !d.dev_ui_open })}
-            src={[img_btn_1_2, img_btn_1_3]}
-          />
+            src={[img_btn_1_2, img_btn_1_3]} />
         </Show>
-        <ToggleImgButton
-          checked={is_fullscreen}
-          onClick={() => toggle_fullscreen()}
-          src={[img_btn_3_1, img_btn_3_2]}
-        />
+        <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
+          <ToggleImgButton
+            onClick={() => lf2?.cmds.push(CMD.F4)}
+            src={[img_btn_2_3]} />
+        </Show>
         <ToggleImgButton
           checked={s.bgm_muted}
           onClick={() => lf2?.sounds?.set_bgm_muted(!s.bgm_muted)}
-          src={[img_btn_2_0, img_btn_3_0]}
-        />
+          src={[img_btn_2_0, img_btn_3_0]} />
         <ToggleImgButton
           checked={s.sound_muted}
           onClick={() => lf2?.sounds?.set_sound_muted(!s.sound_muted)}
-          src={[img_btn_0_3, img_btn_1_0]}
-        />
+          src={[img_btn_0_3, img_btn_1_0]} />
         <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}>
           <ToggleImgButton
             checked={paused}
             onClick={() => lf2?.cmds.push(CMD.F1)}
-            src={[img_btn_2_1, img_btn_2_2]}
-          />
+            src={[img_btn_2_1, img_btn_2_2]} />
         </Show>
         <Show show={!networking}>
           <ToggleImgButton
@@ -569,12 +570,36 @@ function App() {
             src={[img_btn_1_1, img_btn_1_1]}
           />
         </Show>
-        <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
-          <ToggleImgButton
-            onClick={() => lf2?.cmds.push(CMD.F4)}
-            src={[img_btn_2_3]}
-          />
-        </Show>
+        <ToggleImgButton
+          checked={is_fullscreen}
+          onClick={() => toggle_fullscreen()}
+          src={[img_btn_3_1, img_btn_3_2]} />
+        {
+          !window.runtime?.WindowMinimise ? null :
+            <ToggleImgButton
+              onClick={() => window.runtime?.WindowMinimise?.()}
+              src={[img_btn_0_4, img_btn_0_4]} />
+        }
+        {
+          !window.runtime?.WindowToggleMaximise ? null :
+            <ToggleImgButton
+              checked={is_maximised}
+              onClick={async () => {
+                const f = await window.runtime?.WindowIsFullscreen?.()
+                if (f) return fullscreen.exit();
+                const m = await window.runtime?.WindowIsMaximised?.()
+                set_is_maximised(!m)
+                window.runtime?.WindowToggleMaximise?.()
+              }}
+              src={[img_btn_1_4, img_btn_2_4]} />
+        }
+        {
+          !window.runtime?.Quit ? null :
+            <ToggleImgButton
+              checked={is_fullscreen}
+              onClick={() => window.runtime?.Quit?.()}
+              src={[img_btn_3_3, img_btn_3_3]} />
+        }
       </div>
     </div>, game_cell, null) : null
 

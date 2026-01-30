@@ -3,6 +3,7 @@ import { LF2 } from "../LF2/LF2";
 import { floor } from "../LF2/utils";
 import * as T from "./_t";
 import styles from "./styles.module.scss";
+import { Defines } from "@/LF2";
 
 export class Scene {
   readonly is_scene_node = true;
@@ -23,18 +24,14 @@ export class Scene {
   on_win_resize = () => {
     if (!this._css_renderer || !this._renderer) return;
     const styles = window.getComputedStyle(this._renderer.domElement)
-
     let w = parseInt(styles.width)
     let h = parseInt(styles.height)
-    const scale = w / this.lf2.world.width
-    w = floor(w / scale)
-    h = floor(h / scale)
-
-    this._css_renderer.setSize(w, h)
+    const scale = w / Defines.CLASSIC_SCREEN_WIDTH
+    this._css_renderer.setSize(w / scale, h / scale)
     this._css_renderer.domElement.style.top = styles.top;
     this._css_renderer.domElement.style.left = styles.left;
-    this._css_renderer.domElement.style.width = `${w}px`;
-    this._css_renderer.domElement.style.height = `${h}px`;
+    this._css_renderer.domElement.style.width = floor(w / scale) + 'px';
+    this._css_renderer.domElement.style.height = floor(h / scale) + 'px';
     this._css_renderer.domElement.style.zIndex = '1';
     this._css_renderer.domElement.style.transform = `scale(${scale})`
     this._css_renderer.domElement.style.transformOrigin = `0px 0px`
@@ -55,7 +52,7 @@ export class Scene {
       this._css_renderer = new CSS2DRenderer();
       this._css_renderer.domElement.className = styles.css_2d_renderer
       this.on_win_resize()
-      document.body.appendChild(this._css_renderer.domElement);
+      canvas.parentElement?.appendChild(this._css_renderer.domElement);
     } else {
       this._canvas_ob.disconnect()
     }
@@ -77,8 +74,7 @@ export class Scene {
 
   dispose(): void {
     window.removeEventListener('resize', this.on_win_resize)
-    if (this._css_renderer)
-      document.body.removeChild(this._css_renderer?.domElement);
+    if (this._css_renderer) this._css_renderer?.domElement.remove()
     this._canvas_ob.disconnect()
     this._renderer?.clear();
     this._renderer?.dispose();

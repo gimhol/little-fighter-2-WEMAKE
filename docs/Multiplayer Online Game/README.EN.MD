@@ -40,3 +40,14 @@ You may want to use your own device as the online server.
   SSL_CER_FILE_PATH=any_ssl_cert_file_path_if_u_need_ssl
   ```
   
+## Incidentally
+
+Normally, if your server does not support HTTPS,
+the games running on [lf.gim.ink](https://lf.gim.ink) will not be able to connect to your server.
+
+Unless you allow "insecure connections" in the HTTPS page in your browser.
+
+If you are using Firefox, you can google for "How to set network.websocket.allowInsecureFromHTTPS in Firefox".
+If you are using Chrome, you can google for "How to allow Chrome (browser) to load insecure content?".
+
+**If you make these changes, be sure to remember to restore these settings!!!**
