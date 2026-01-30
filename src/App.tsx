@@ -119,6 +119,7 @@ function App() {
   const [editor_open, set_editor_open] = useState(false);
 
   const [s, set_state, state_ready] = useForage({ key: 'app_state', version: 1, init: init_s })
+  const [is_maximised, set_is_maximised] = useState(false);
   const [is_fullscreen, _set_is_fullscreen] = useState(false);
   const [indicator_flags, set_indicator_flags] = useState<number>(0);
 
@@ -582,8 +583,14 @@ function App() {
         {
           !window.runtime?.WindowToggleMaximise ? null :
             <ToggleImgButton
-              checked={is_fullscreen}
-              onClick={() => window.runtime?.WindowToggleMaximise?.()}
+              checked={is_maximised}
+              onClick={async () => {
+                const f = await window.runtime?.WindowIsFullscreen?.()
+                if (f) return fullscreen.exit();
+                const m = await window.runtime?.WindowIsMaximised?.()
+                set_is_maximised(!m)
+                window.runtime?.WindowToggleMaximise?.()
+              }}
               src={[img_btn_1_4, img_btn_2_4]} />
         }
         {
