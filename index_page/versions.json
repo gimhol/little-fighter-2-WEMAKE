@@ -6,6 +6,9 @@
         "date": "2026-01-28",
         "title": "v0.1.12",
         "url": "https://lf.gim.ink/0.1.12/",
+        "downloads": {
+          "win_x64": "https://lf.gim.ink/downloads/little-fighter-2-wemake-v0.1.12"
+        },
         "desc": "",
         "changelog": [
           "- fix: The MP recovery speed has been corrected. (It was too fast before...)",

@@ -62,9 +62,18 @@ button:hover {
   color: var(--link-color-hover);
   transform: scale(1.1);
   background-color: var(--primary-color-hover);
-  padding: 0px 10px;
   border-radius: 5px;
-  box-sizing: content-box;
+}
+#game_desc a>*,
+.el_desc a>*,
+.link>* {
+  transition: all 200ms;
+}
+
+#game_desc a:hover>*,
+.el_desc a:hover>*,
+.link:hover>* {
+  transform: scale(1.2);
 }
 
 button:hover {
@@ -211,6 +220,7 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
 }
 
 #version_list>.version_item {
@@ -315,3 +325,4 @@ button:hover {
   max-height: calc(100vh - 100px);
   max-width: calc(100vh - 100px);
 }
+

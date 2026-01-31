@@ -77,6 +77,11 @@ class Info {
     if (Array.isArray(this.md_changelog)) this.md_changelog = this.md_changelog.join('\n')
     this.changelog = this.md_changelog?.replace(/\[(.*?)\]\((.*?)\)/g, `<a href='$2'>$1</a>`)
   }
+  get_download_url(type) {
+    if (typeof type !== 'string') return void 0;
+    if (typeof this.info.downloads !== 'object') return void 0;
+    return this.info.downloads[type] || ''
+  }
 }
 
 async function fetch_games_list(url = `games.json?time=${time_str}`) {
@@ -158,9 +163,14 @@ async function fetch_version_list(url) {
     const el_date = el_item.querySelector('.el_date')
     el_date.innerHTML = date
 
-    const btn_goto_version = el_item.querySelector('.btn_goto_version')
-    btn_goto_version.href = url
+    const btn_play_in_browser = el_item.getElementById('btn_play_in_browser')
+    btn_play_in_browser.href = url
 
+    const btn_download_win_x64 = el_item.getElementById('btn_download_win_x64')
+
+    const win_x64_url = version.get_download_url('win_x64')
+    if (win_x64_url) btn_download_win_x64.href = win_x64_url
+    else btn_download_win_x64.remove()
 
     const el_changelog = el_item.querySelector('.el_changelog')
     if (!el_desc.innerHTML) el_changelog.innerHTML = ''
