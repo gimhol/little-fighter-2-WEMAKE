@@ -6,7 +6,12 @@
 
 I've also made a remake version of LF2. Everyone is welcome to give it a try.
 
-Play address: https://lf.gim.ink/
+Play on https://lf.gim.ink/
+
+[spoiler=Why is it called Wemake instead of Remake?]
+This is because the "W" means "Web" and also represents "We". I hope this project can support the works created by everyone.
+(And because of my bad English :p)
+[/spoiler]
 
 the data and pictures are processed and converted from the LF2 2.0a.
 
@@ -62,13 +67,26 @@ Then run "node ./server.cjs".
 more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Multiplayer%20Online%20Game/README.EN.MD]Multiplayer Online Game[/url]
 [/spoiler]
 
-[spoiler=2025-01-31: Local Clients Supporting(Windows) ]
-I use [url=https://wails.io/]Wails[/url] to make this project run like a client.
-Now you can download it from [url=https://lf.gim.ink/]lf.gim.ink[/url] by clicking the 'windows icon'
-[img]https://lf.gim.ink/docs/image/click_for_win_app_downloading.png[/img]
+[spoiler=What's Next?]
+[list]
+[*]Support for 3D models and animations?
+[*]Support for more game mode?
+[*]Continuing to implement other game modes of LF2?
+[*]Video recording and playback?
+[/list]
+
+I don't know. Each one is difficult. :s
+There are most likely a lot of potential problems to be fixed. :(
 [/spoiler]
 
-[spoiler=2025-01-28: v0.1.12 release]
+[spoiler=2025-01-31: Local Clients Supported(Windows) ]
+I use [url=https://wails.io/]Wails[/url] to make this project run like a client. :D
+Now you can download it from [url=https://lf.gim.ink/]lf.gim.ink[/url] by clicking the 'windows icon'
+[img]https://lf.gim.ink/docs/image/click_for_win_app_downloading.png[/img]
+[img]https://lf.gim.ink/docs/image/win_app_looklike.png[/img]
+[/spoiler]
+
+[spoiler=2025-01-28: v0.1.12 (Extra Data Supported)release]
 changelog:
 
 - fix: The MP recovery speed has been corrected. (It was too fast before...)
@@ -83,7 +101,7 @@ About Extra Data, See Thread: [url=https://lf-empire.de/forum/editpost.php?pid=2
 [img]https://lf.gim.ink/docs/image/dnd_extra_data_in_main_page.gif[/img]
 [/spoiler]
 
-[spoiler=2025-01-21: v0.1.9 release]
+[spoiler=2025-01-21: v0.1.9 (Custom game supported) release]
 changelog:
 
 - feat: Custom game supported
