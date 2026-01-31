@@ -97,7 +97,7 @@ changelog:
 
 [img]https://lf.gim.ink/docs/image/main_page_small_fighting.gif[/img]
 
-About Extra Data, See Thread: [url=https://lf-empire.de/forum/editpost.php?pid=210297]lf2w-tool (Conversion Tool for Little Fighter 2 Wemake)[/url]
+About Extra Data, See Thread: [url=https://lf-empire.de/forum/showthread.php?tid=11556]lf2w-tool (Conversion Tool for Little Fighter 2 Wemake)[/url]
 [img]https://lf.gim.ink/docs/image/dnd_extra_data_in_main_page.gif[/img]
 [/spoiler]
 
