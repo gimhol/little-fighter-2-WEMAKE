@@ -164,8 +164,10 @@ async function fetch_version_list(url) {
     el_date.innerHTML = date
 
     const btn_play_in_browser = el_item.getElementById('btn_play_in_browser')
-    btn_play_in_browser.href = url
 
+    if (url) btn_play_in_browser.href = url
+    else btn_play_in_browser.remove()
+    
     const btn_download_win_x64 = el_item.getElementById('btn_download_win_x64')
 
     const win_x64_url = version.get_download_url('win_x64')

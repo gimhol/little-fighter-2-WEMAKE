@@ -43,7 +43,6 @@
       "": {
         "date": "2026-01-20",
         "title": "v0.1.9",
-        "url": "https://lf.gim.ink/0.1.9/",
         "desc": "",
         "changelog": [
           "- fix: The attacked will drop the heavy weapons they are holding correctly",
@@ -82,7 +81,6 @@
       "": {
         "date": "2026-01-17",
         "title": "v0.1.5",
-        "url": "https://lf.gim.ink/0.1.5/",
         "desc": "",
         "changelog": [
           "- feat: add “team outline” effect"
@@ -109,7 +107,6 @@
       "": {
         "date": "2026-01-17",
         "title": "v0.1.4",
-        "url": "https://lf.gim.ink/0.1.4/",
         "desc": "",
         "changelog": [
           "- fix: fix the problem that the background and level buttons do not respond",
@@ -138,7 +135,6 @@
       "": {
         "date": "2026-01-15",
         "title": "v0.1.3",
-        "url": "https://lf.gim.ink/0.1.3/",
         "changelog": [
           "- fix: weapon will have a more reasonable effect",
           "- fix: Improved the performance of the weapon's bounce when it hits the ground.",
