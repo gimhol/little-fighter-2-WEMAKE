@@ -157,7 +157,8 @@ async function fetch_version_list(url) {
       el_url.href = url
       el_url.innerText = title
     } else {
-      el_url.href = url
+      el_url.target = ''
+      el_url.href = location.href
       el_url.innerText = title + '(Unavailable)'
     }
 
