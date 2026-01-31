@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import { join } from "path";
+import { log } from "./utils/log";
 import { read_lf2_dat_file } from "./utils/read_lf2_dat_file";
-const { log } = console;
 
 /**
  * 将dat文件转为txt文件

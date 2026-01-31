@@ -1,15 +1,16 @@
 import {
   IFrameInfo, IDatIndex, FrameBehavior, Defines, SpeedMode, ItrKind, HitFlag, ActionType,
-  CollisionVal as C_Val, BuiltIn_OID, OpointKind, OpointMultiEnum, OpointSpreading, FacingFlag
+  CollisionVal as C_Val, BuiltIn_OID, OpointKind, OpointMultiEnum, OpointSpreading, FacingFlag,
+  EntityVal
 } from "../defines";
-import { ensure, round_float } from "../utils";
+import { ensure } from "../utils";
 import { CondMaker } from "./CondMaker";
-import { hp_gt_0 } from "./make_ball_data";
 import { jan_chase_start } from "./jan_chase_start";
 import { jan_chaseh_start } from "./jan_chaseh_start";
 import { firzen_disater_start } from "./firzen_disater_start";
 import { take } from "./take";
 
+const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
 export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
   const hit_Fa = take(frame, "hit_Fa");
   if (hit_Fa) {

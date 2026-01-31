@@ -1,5 +1,5 @@
 
-import { readFile } from "fs";
+import path from "path";
 import { conf, make_conf, set_conf } from "./conf";
 import { data_2_txt } from "./data_2_txt";
 import { make_data_zip } from "./make_data_zip";
@@ -10,10 +10,10 @@ import { print_magick_hints } from "./utils/convert_pic";
 import { print_ffmpeg_hints } from "./utils/convert_sound";
 import { is_dir } from "./utils/is_dir";
 import { is_json } from "./utils/is_file";
+import { log } from "./utils/log";
 import { read_dir_info_json } from "./utils/read_dir_info_json";
 import { write_file } from "./utils/write_file";
 import { waitForKeyPress } from "./waitForKeyPress";
-import path from "path";
 
 enum CMDEnum {
   MAIN = "main",
@@ -43,9 +43,9 @@ async function main() {
       await make_full_zip();
       return;
     case CMDEnum.DAT_2_TXT:
-      const { IN_LF2_DIR, TMP_TXT_DIR } = conf();
-      if (!IN_LF2_DIR) return console.log("failed! because 'IN_LF2_DIR' is not set in 'conf file'.")
-      if (!TMP_TXT_DIR) return console.log("failed! because 'TMP_TXT_DIR' is not set in 'conf file'.")
+      const { IN_LF2_DIR, TMP_TXT_DIR } = conf;
+      if (!IN_LF2_DIR) return log("failed! because 'IN_LF2_DIR' is not set in 'conf file'.")
+      if (!TMP_TXT_DIR) return log("failed! because 'TMP_TXT_DIR' is not set in 'conf file'.")
       return data_2_txt(IN_LF2_DIR, TMP_TXT_DIR);
     case CMDEnum.PRINT_CONF:
       const json = {
@@ -53,40 +53,40 @@ async function main() {
         ...make_conf()
       }
       delete json.CONF_FILE;
-      console.log(JSON.stringify(json, null, 2))
+      log(JSON.stringify(json, null, 2))
       return;
     case CMDEnum.HELP:
       return show_main_usage();
     default:
       if (await is_dir(argv_2)) {
-        const json = conf()
-        const info = await read_dir_info_json(argv_2)
+        const json = conf
+        const dir_info = await read_dir_info_json(argv_2)
         const conf_file = json.CONF_FILE || `./${path.basename(argv_2)}.conf.json`
-        console.log({ conf_file, dir_info_json: info })
-        if (info.type === 'prel') {
-          console.log(`got a dir, will try to zip it to 'prel zip'`)
+        log({ conf_file, dir_info_json: dir_info })
+        if (dir_info.type === 'prel') {
+          log(`got a dir, will try to zip it to 'prel zip'`)
           json.IN_PREL_DIR = argv_2
-          if (typeof info.output === 'string') json.OUT_PREL_NAME = info.output
+          if (typeof dir_info.output === 'string') json.OUT_PREL_NAME = dir_info.output
           else json.OUT_PREL_NAME = `${path.basename(argv_2)}.prel.zip`
         } else {
-          console.log(`got a dir, will try to zip it to 'data zip'`)
+          log(`got a dir, will try to zip it to 'data zip'`)
           json.IN_LF2_DIR = argv_2
-          if (typeof info.output === 'string') json.OUT_DATA_NAME = info.output
+          if (typeof dir_info.output === 'string') json.OUT_DATA_NAME = dir_info.output
           else json.OUT_DATA_NAME = `${path.basename(argv_2)}.data.zip`
         }
         await write_file(conf_file, JSON.stringify(json, null, 2))
         set_conf(conf_file)
-        console.log({ conf: json })
+        log({ conf: json })
         await make_data_zip();
         await make_prel_zip();
         await make_full_zip();
       } else if (await is_json(argv_2)) {
-        console.log(`got a json file, will try to use it as 'conf file'`)
+        log(`got a json file, will try to use it as 'conf file'`)
         await make_data_zip();
         await make_prel_zip();
         await make_full_zip();
       } else {
-        console.log(`unknown cmd, should be one of those: [${Object.keys(CMDEnum).map(k => (CMDEnum as any)[k]).join(', ')}]`)
+        log(`unknown cmd, should be one of those: [${Object.keys(CMDEnum).map(k => (CMDEnum as any)[k]).join(', ')}]`)
         show_main_usage();
       }
       break
@@ -96,8 +96,8 @@ async function main() {
 main().then(() => {
   print_ffmpeg_hints();
   print_magick_hints();
-  if (!conf().DONT_WAIT) waitForKeyPress();
+  if (!conf.DONT_WAIT) waitForKeyPress();
 }).catch((e) => {
-  console.log(e)
-  if (!conf().DONT_WAIT) waitForKeyPress();
+  log(e)
+  if (!conf.DONT_WAIT) waitForKeyPress();
 })

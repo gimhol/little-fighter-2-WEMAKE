@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import JSON5 from "json5";
+import { join } from "path";
 
 export interface IConf {
   CONF_FILE?: string;
@@ -74,6 +75,7 @@ export interface IConf {
   KEEP_MIRROR?: string;
 
   DONT_WAIT?: string;
+  DEBUG?: string;
 }
 interface IArgInfo {
   key: keyof IConf;
@@ -90,8 +92,8 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   IN_EXTRA_DIR: { alias: [] },
 
   TMP_DIR: { alias: ['-t', '--temp'], default: './temp' },
-  TMP_TXT_DIR: { alias: [], default: './temp/lf2_txt' },
-  TMP_DAT_DIR: { alias: [], default: './temp/lf2_data' },
+  TMP_TXT_DIR: { alias: [] },
+  TMP_DAT_DIR: { alias: [] },
 
   OUT_DIR: { alias: ['-o', '--output'], default: './public' },
   OUT_DATA_NAME: { alias: [], default: 'data.zip' },
@@ -102,6 +104,7 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   MAGICK_CMD: { alias: ['--magick'], default: 'magick' },
   KEEP_MIRROR: { alias: [], boolean: true },
   DONT_WAIT: { alias: ['-d', '--dont-wait'], boolean: true },
+  DEBUG: { alias: [], boolean: true },
 }
 const alias_arg_map = new Map<string, IArgInfo>();
 
@@ -146,10 +149,14 @@ function read_conf(file?: string): IConf {
 
     }
   }
+  if (conf.TMP_DIR && !conf.TMP_TXT_DIR) conf.TMP_TXT_DIR = join(conf.TMP_DIR, 'lf2_txt').replace(/\\/g, '/')
+  if (conf.TMP_DIR && !conf.TMP_DAT_DIR) conf.TMP_DAT_DIR = join(conf.TMP_DIR, 'lf2_data').replace(/\\/g, '/')
   return conf
 }
-let _conf_file: string | undefined
+
+export const conf: IConf = read_conf()
+
 export function set_conf(conf_file: string) {
-  _conf_file = conf_file
+  Object.assign(conf, read_conf(conf_file))
 }
-export const conf: () => IConf = () => read_conf(_conf_file)
+

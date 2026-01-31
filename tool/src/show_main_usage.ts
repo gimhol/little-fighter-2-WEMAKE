@@ -1,3 +1,5 @@
+import { info } from "./utils/log"
+
 const text = `
 lf2w-tool <command> -c "./conf.json"
 
@@ -31,5 +33,5 @@ lf2w-tool zip-full      Zip 'data.zip' and 'prel.zip'
 lf2w-tool dat-2-txt     Parse .dat file into .txt file.
 `.trim()
 export function show_main_usage() {
-  console.log(text)
+  info(text)
 }

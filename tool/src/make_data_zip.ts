@@ -10,6 +10,7 @@ import { convert_data_txt, write_index_file } from "./utils/convert_data_txt";
 import { convert_pic, convert_pic_2 } from "./utils/convert_pic";
 import { convert_sound } from "./utils/convert_sound";
 import { copy_dir } from "./utils/copy_dir";
+import { log } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
 
@@ -22,17 +23,17 @@ export async function make_data_zip() {
     TMP_DIR,
     TMP_DAT_DIR,
     KEEP_MIRROR,
-  } = conf();
+  } = conf;
   if (!IN_LF2_DIR)
-    return console.log("'data zip' will not be created, because 'IN_LF2_DIR' is not set in 'conf file'.")
+    return log("'data zip' will not be created, because 'IN_LF2_DIR' is not set in 'conf file'.")
   if (!OUT_DIR)
-    return console.log("'data zip' will not be created, because 'OUT_DIR' is not set in 'conf file'.")
+    return log("'data zip' will not be created, because 'OUT_DIR' is not set in 'conf file'.")
   if (!OUT_DATA_NAME)
-    return console.log("'data zip' will not be created, because 'OUT_DATA_NAME' is not set in 'conf file'.")
+    return log("'data zip' will not be created, because 'OUT_DATA_NAME' is not set in 'conf file'.")
   if (!TMP_DIR)
-    return console.log("'data zip' will not be created, because 'TMP_DIR' is not set in 'conf file'.")
+    return log("'data zip' will not be created, because 'TMP_DIR' is not set in 'conf file'.")
   if (!TMP_DAT_DIR)
-    return console.log("'data zip' will not be created, because 'TMP_DAT_DIR' is not set in 'conf file'.")
+    return log("'data zip' will not be created, because 'TMP_DAT_DIR' is not set in 'conf file'.")
 
   const cache_infos = await CacheInfos.create(
     path.join(TMP_DIR, "cache_infos.json5")
@@ -112,13 +113,13 @@ export async function make_data_zip() {
     if (!pic_list?.length) {
       if (dst_path.endsWith('_mirror.png') && !KEEP_MIRROR) {
         await rm(dst_path).catch(() => void 0)
-        console.log("mirror pic ignored:", src_path);
+        log("mirror pic ignored:", src_path);
         continue;
       }
       const cache_info = await cache_infos.get_info(src_path, dst_path);
       const is_changed = await cache_info.is_changed();
       if (!is_changed) {
-        console.log("not changed:", src_path, "=>", dst_path);
+        log("not changed:", src_path, "=>", dst_path);
         continue;
       }
       await convert_pic(TMP_DAT_DIR, IN_LF2_DIR, src_path);
@@ -128,13 +129,13 @@ export async function make_data_zip() {
         const dst_path = convert_pic_2.get_dst_path(TMP_DAT_DIR, pic);
         if (dst_path.endsWith('_mirror.png') && !KEEP_MIRROR) {
           await rm(dst_path).catch(() => void 0)
-          console.log("mirror pic ignored:", src_path);
+          log("mirror pic ignored:", src_path);
           continue;
         }
         const cache_info = await cache_infos.get_info(src_path, dst_path);
         const is_changed = await cache_info.is_changed();
         if (!is_changed) {
-          console.log("not changed:", src_path, "=>", dst_path);
+          log("not changed:", src_path, "=>", dst_path);
           continue;
         }
         await convert_pic_2(dst_path, src_path, pic);
@@ -153,7 +154,7 @@ export async function make_data_zip() {
     const cache_info = await cache_infos.get_info(src_path, dst_path);
     const is_changed = await cache_info.is_changed();
     if (!is_changed) {
-      console.log("not changed:", src_path, "=>", dst_path);
+      log("not changed:", src_path, "=>", dst_path);
       continue;
     }
     await convert_sound(dst_path, src_path);
@@ -165,10 +166,10 @@ export async function make_data_zip() {
     const cache_info = await cache_infos.get_info(src_path, dst_path);
     const is_changed = await cache_info.is_changed();
     if (!is_changed) {
-      console.log("not changed:", src_path, "=>", dst_path);
+      log("not changed:", src_path, "=>", dst_path);
       continue;
     }
-    console.log("copy", src_path, "=>", dst_path);
+    log("copy", src_path, "=>", dst_path);
     await fs.copyFile(src_path, dst_path);
     await cache_info.update();
   }

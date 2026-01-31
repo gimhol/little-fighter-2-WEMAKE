@@ -4,9 +4,10 @@ import { join } from "path";
 import { Defines } from "../../../src/LF2/defines";
 import { file_md5_str } from "./file_md5_str";
 import { is_dir } from "./is_dir";
+import { log } from "./log";
+import { read_full_dir_info_json } from "./read_full_dir_info_json";
 import { write_file } from "./write_file";
 import { write_obj_file } from "./write_obj_file";
-import { read_full_dir_info_json } from "./read_full_dir_info_json";
 export interface IDirInfo {
   type?: string,
   output?: string,
@@ -50,7 +51,7 @@ export async function make_zip_and_json(
   src_dir = src_dir.replace(/\\/g, "/");
   out_dir = out_dir.replace(/\\/g, "/");
   await fs.mkdir(out_dir, { recursive: true }).catch(e => e)
-  console.log("zipping", src_dir, "=>", join(out_dir, zip_name));
+  log("zipping", src_dir, "=>", join(out_dir, zip_name));
 
   const layout_dir = src_dir + '/ui'
   const layout_index_file = src_dir + '/ui/_index.json5'

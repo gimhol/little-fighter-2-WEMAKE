@@ -1,10 +1,12 @@
 import readline from 'readline';
+import { info } from './utils/log';
+
 export function waitForKeyPress() {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  console.log('\nPress any key to exit...');
+  info('\nPress any key to exit...');
 
   rl.on('keypress', (str, key) => {
     rl.close();
