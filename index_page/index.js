@@ -153,8 +153,13 @@ async function fetch_version_list(url) {
 
     /** @type {HTMLElement} */
     const el_url = el_item.querySelector('.el_url')
-    el_url.href = url
-    el_url.innerText = title
+    if (url) {
+      el_url.href = url
+      el_url.innerText = title
+    } else {
+      el_url.href = url
+      el_url.innerText = title + '(Unavailable)'
+    }
 
     /** @type {HTMLElement} */
     const el_desc = el_item.querySelector('.el_desc')
@@ -167,7 +172,7 @@ async function fetch_version_list(url) {
 
     if (url) btn_play_in_browser.href = url
     else btn_play_in_browser.remove()
-    
+
     const btn_download_win_x64 = el_item.getElementById('btn_download_win_x64')
 
     const win_x64_url = version.get_download_url('win_x64')
