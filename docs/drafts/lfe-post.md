@@ -62,6 +62,12 @@ Then run "node ./server.cjs".
 more details: [url=https://github.com/gimhol/little-fighter-2-WEMAKE/blob/main/docs/Multiplayer%20Online%20Game/README.EN.MD]Multiplayer Online Game[/url]
 [/spoiler]
 
+[spoiler=2025-01-31: Local Clients Supporting(Windows) ]
+I use [url=https://wails.io/]Wails[/url] to make this project run like a client.
+Now you can download it from [url=https://lf.gim.ink/]lf.gim.ink[/url] by clicking the 'windows icon'
+[img]https://lf.gim.ink/docs/image/click_for_win_app_downloading.png[/img]
+[/spoiler]
+
 [spoiler=2025-01-28: v0.1.12 release]
 changelog:
 
