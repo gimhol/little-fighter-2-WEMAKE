@@ -67,6 +67,8 @@ changelog:
 
 - fix: The MP recovery speed has been corrected. (It was too fast before...)
 - feat: Extra Data supported
+- fix: Removed the buttons on the main page whose functions are not yet supported.
+- feat: Some pages now support viewing the version number and the file name of the extra data.
 - chore: there will be some fighting on the 'Main Page' :D
 
 [img]https://lf.gim.ink/docs/image/main_page_small_fighting.gif[/img]
