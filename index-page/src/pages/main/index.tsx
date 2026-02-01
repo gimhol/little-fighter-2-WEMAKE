@@ -13,6 +13,9 @@ import { useMovingBg } from "../../useMovingBg";
 import { Card } from "./Card";
 import { Info } from "./Info";
 import styles from "./styles.module.scss";
+import { useLocation, useNavigate } from "react-router";
+import { Paths } from "../../Paths";
+import QueryString from "qs";
 
 const time_str = Math.floor(Date.now() / 60000);
 export default function MainPage() {
@@ -32,19 +35,30 @@ export default function MainPage() {
   const ref_lang = useRef<'zh' | 'en'>('zh')
   ref_lang.current = i18n.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
   const is_en = ref_lang.current === 'en';
-
   useMovingBg(document.documentElement)
-
+  const nav = useNavigate()
+  useEffect(() => {
+    if (!actived_game) return;
+    nav({
+      pathname: Paths.All.main_page,
+      search: `?game=${actived_game.id}`,
+    }, {
+      replace: true
+    })
+  }, [actived_game, nav])
+  const loc = useLocation()
   useEffect(() => {
     const ab = new AbortController();
     set_games_loading(true)
     fetch(`games.json?time=${time_str}`, { signal: ab.signal })
-      .then(resp => new Promise<any>((r) => setTimeout(() => r(resp.json()), 1000)))
-      .then(raw_list => {
+      .then(resp => { return resp.json() })
+      .then((raw_list: any[]) => {
         if (ab.signal.aborted) return;
         const list = raw_list.map((raw_item: any) => new Info(raw_item, ref_lang.current))
-        set_actived_game(list[0])
-        set_is_cards_view(list[0]?.type == 'cards')
+        const { game } = QueryString.parse(loc.search.substring(1))
+        const a = list.find(v => v.id === game) ?? list[0]
+        set_actived_game(a)
+        set_is_cards_view(a?.type == 'cards')
         set_games(list)
       }).catch(e => {
         if (ab.signal.aborted) return;
@@ -54,6 +68,7 @@ export default function MainPage() {
         set_games_loading(false)
       })
     return () => ab.abort()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

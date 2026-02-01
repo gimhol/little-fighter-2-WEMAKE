@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import React from "react"
 import type { RouteObject } from "react-router"
 export namespace Paths {

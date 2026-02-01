@@ -1,6 +1,6 @@
 [
   {
-    "id": "Origin",
+    "id": "origin",
     "i18n": {
       "": {
         "type": "cards",
@@ -38,7 +38,7 @@
     }
   },
   {
-    "id": "RN-LF2",
+    "id": "rn_lf2",
     "i18n": {
       "": {
         "date": "2026-01-15",
@@ -50,6 +50,41 @@
         "versions": "versions-rn.json"
       },
       "zh": "",
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  },
+  {
+    "id": "extra_fighters",
+    "type": "cards",
+    "i18n": {
+      "": {
+        "date": "2026-02-02",
+        "short_title": "Extra Fighters",
+        "title": "Extra Fighters",
+        "desc": [
+          "You can download the character packs you want.",
+          "Then open LF2:Wemake and drag the \"character packs\" ",
+          "onto the Entry Page or the Main Page.",
+          "After loading, you'll be able to select these characters :D"
+        ],
+        "versions": "versions-rn.json"
+      },
+      "zh": {
+        "short_title": "角色包",
+        "title": "额外角色包",
+        "desc": [
+          "你可以下载想要的角色包",
+          "然后打开LF2:Wemake，将 '角色包' 拖拽至入口页或主页中",
+          "加载完成后，你就能选择这些角色了 :D"
+        ]
+      },
       "zh-hans": "zh",
       "zh-hant": "zh",
       "zh-cn": "zh-hans",
