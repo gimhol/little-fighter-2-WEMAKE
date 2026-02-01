@@ -1,12 +1,16 @@
+/* eslint-disable react-hooks/refs */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import img_browser_mark_white from "../../assets/img_browser_mark_white.svg";
 import img_gim_ink from "../../assets/img_gim_ink.png";
 import img_github_mark_white from "../../assets/img_github_mark_white.svg";
-import img_windows_x64_white from "../../assets/img_windows_x64_white.svg";
 import img_markdown_white from "../../assets/img_markdown_white.svg";
+import img_windows_x64_white from "../../assets/img_windows_x64_white.svg";
 import { Loading } from "../../LoadingImg";
+import { useMovingBg } from "../../useMovingBg";
+import { Card } from "./Card";
 import { Info } from "./Info";
 import styles from "./styles.module.scss";
 
@@ -24,6 +28,9 @@ export default function MainPage() {
   const ref_lang = useRef<'zh' | 'en'>('zh')
   ref_lang.current = i18n.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
   const is_en = ref_lang.current === 'en';
+
+  useMovingBg(document.documentElement)
+
   useEffect(() => {
     const ab = new AbortController();
     set_games_loading(true)
@@ -135,7 +142,7 @@ export default function MainPage() {
                   {
                     loading ? null :
                       <button onClick={() => set_md_open(true)} title="copy as Markdown">
-                        <img src={img_markdown_white} alt="copy as Markdown" width={20}/>
+                        <img src={img_markdown_white} alt="copy as Markdown" width={20} />
                       </button>
                   }
 
@@ -143,8 +150,16 @@ export default function MainPage() {
                 <div className={styles.game_desc} dangerouslySetInnerHTML={{ __html: actived_game?.desc }} />
               </div>
           }
+
+          <div className={classnames(styles.card_list, styles.scrollview)}>
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+          </div>
           {
-            !versions?.length ? null :
+            (!0 || !versions?.length) ? null :
               <div className={classnames(styles.version_list, styles.scrollview)}>
                 {
                   versions.map(version => {
@@ -233,3 +248,4 @@ export default function MainPage() {
     }
   </>
 }
+

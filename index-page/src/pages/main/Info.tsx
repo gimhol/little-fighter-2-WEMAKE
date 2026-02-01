@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isString } from "lodash";
 export function get_i18n(all: any, lang: string) {
   if (!all) return null;
@@ -29,13 +30,13 @@ export class Info {
     this.md_desc = this.cur.desc || this.raw.desc;
     if (Array.isArray(this.md_desc)) this.md_desc = this.md_desc.join('\n');
     this.desc = this.md_desc
-      ?.replace(/\!\[(.*?)\]\((.*?)\)/g, `<img src='$2' alt='$1'>`)
+      ?.replace(/!\[(.*?)\]\((.*?)\)/g, `<img src='$2' alt='$1'>`)
       .replace(/\[(.*?)\]\((.*?)\)/g, `<a href='$2' target='_blank'>$1</a>`);
     this.md_changelog = this.cur.changelog || this.raw.changelog;
     if (Array.isArray(this.md_changelog)) this.md_changelog = this.md_changelog.join('\n');
 
     this.changelog = this.md_changelog
-      ?.replace(/\!\[(.*?)\]\((.*?)\)/g, `<img src='$2' alt='$1'>`)
+      ?.replace(/!\[(.*?)\]\((.*?)\)/g, `<img src='$2' alt='$1'>`)
       .replace(/\[(.*?)\]\((.*?)\)/g, `<a href='$2' target='_blank'>$1</a>`);
     const { versions } = this.cur;
     this.versions_url = isString(versions) ? versions : void 0;
@@ -54,7 +55,7 @@ export class Info {
     const raw = this.cur[name] || this.raw[name];
     Object.assign(this, { [name]: raw });
   }
-  with_lang(lang: any): Info {
+  with_lang(lang: string): Info {
     const ret = new Info(this.raw, lang);
     ret.versions = this.versions?.map(v => v.with_lang(lang));
     return ret;
