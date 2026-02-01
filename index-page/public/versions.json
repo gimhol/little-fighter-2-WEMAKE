@@ -11,6 +11,7 @@
         },
         "desc": "",
         "author": "Gim",
+        "author_url": "https://gim.ink",
         "changelog": [
           "- fix: The MP recovery speed has been corrected. (It was too fast before...)",
           "- feat: Extra Data supported",
@@ -46,6 +47,7 @@
         "title": "v0.1.9",
         "desc": "",
         "author": "Gim",
+        "author_url": "https://gim.ink",
         "changelog": [
           "- fix: The attacked will drop the heavy weapons they are holding correctly",
           "- fix: Adjusted the performance of hitting and being hit by baseball-like weapons",
@@ -86,6 +88,7 @@
         "desc": "",
         "cover": "https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png",
         "author": "Gim",
+        "author_url": "https://gim.ink",
         "changelog": [
           "- feat: add “team outline” effect"
         ]
@@ -113,6 +116,7 @@
         "title": "v0.1.4",
         "desc": "",
         "author": "Gim",
+        "author_url": "https://gim.ink",
         "changelog": [
           "- fix: fix the problem that the background and level buttons do not respond",
           "- fix: fix the problem of incorrect display on the scoreboard"
@@ -141,6 +145,7 @@
         "date": "2026-01-15",
         "title": "v0.1.3",
         "author": "Gim",
+        "author_url": "https://gim.ink",
         "changelog": [
           "- fix: weapon will have a more reasonable effect",
           "- fix: Improved the performance of the weapon's bounce when it hits the ground.",
@@ -186,6 +191,7 @@
         "title": "v0.1.2"
       },
       "author": "Gim",
+      "author_url": "https://gim.ink",
       "zh": "",
       "zh-hans": "zh",
       "zh-hant": "zh",

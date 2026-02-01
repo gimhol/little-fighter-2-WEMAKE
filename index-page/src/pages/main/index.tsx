@@ -192,23 +192,22 @@ export default function MainPage() {
                         }}>
                         <div className={styles.card_head}>
                           <div className={styles.left}>
-                            <a target="_blank" draggable={false} href={url}>
+                            <a target="_blank" draggable={false} href={url} onClick={e => url && e.stopPropagation()}>
                               {version.title}
                               <span className={styles.prefix}>
                                 {url ? null : ` (${t('version_unavailable')})`}
                               </span>
                             </a>
-
                           </div>
                           <div className={styles.mid}></div>
                           <div className={styles.right}>
                             {!url ? null :
-                              <a title={pl_in_browser} draggable={false} target="_blank" href={url}>
+                              <a title={pl_in_browser} draggable={false} target="_blank" href={url} onClick={e => e.stopPropagation()}>
                                 <img src={img_browser_mark_white} width="16px" draggable={false} alt={pl_in_browser} />
                               </a>
                             }
                             {!win_x64_url ? null :
-                              <a title={dl_win_x64} draggable={false} target="_blank" href={win_x64_url}>
+                              <a title={dl_win_x64} draggable={false} target="_blank" href={win_x64_url} onClick={e => e.stopPropagation()}>
                                 <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
                               </a>
                             }
@@ -240,7 +239,14 @@ export default function MainPage() {
                             <span className={styles.prefix}>
                               {t('author')}
                             </span>
-                            {version.author}
+                            <a
+                              draggable={false}
+                              target='_blank'
+                              href={version.author_url}
+                              title={t('visit_author_link')}
+                              onClick={e => e.stopPropagation()}>
+                              {version.author}
+                            </a>
                           </div>
                           <div className={styles.mid}>
                           </div>

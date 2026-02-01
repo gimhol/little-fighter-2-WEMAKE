@@ -7,11 +7,12 @@ const zh = {
   "main_title": "选你所选",
   "version_unavailable": "此版本已停用",
   "dl_win_x64": "下载 Windows x64 应用",
-  "pl_in_browser": "在浏览器中开玩",
+  "pl_in_browser": "在浏览器中进行游戏",
   "goto_github": "打开Github项目地址",
   "goto_gimink": "打开作者博客",
   "switch_lang": "切换语言 / Switch Language",
   "no_content": "无内容",
+  "visit_author_link": "访问作者链接"
 }
 const en = {
   "author": "author",
@@ -24,6 +25,7 @@ const en = {
   "goto_gimink": "Visit Author Blog",
   "switch_lang": "切换语言 / Switch Language",
   "no_content": "No Content",
+  "visit_author_link": "Visit Author Link"
 }
 const resources = {
   "zh": { translation: zh },

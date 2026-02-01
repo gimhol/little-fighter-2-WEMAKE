@@ -24,6 +24,7 @@ export class Info {
   cover?: string;
   markdown: string = '';
   author?: string;
+  author_url?: string;
   type?: string;
   private _versions?: Info[];
 
@@ -51,6 +52,7 @@ export class Info {
     this.read_str('url');
     this.read_str('type');
     this.read_str('author');
+    this.read_str('author_url');
     this.read_str('cover');
     this.update_markdown()
   }
