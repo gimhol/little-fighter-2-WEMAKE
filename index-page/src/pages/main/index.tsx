@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import img_browser_mark_white from "../../assets/img_browser_mark_white.svg";
 import img_gim_ink from "../../assets/img_gim_ink.png";
 import img_github_mark_white from "../../assets/img_github_mark_white.svg";
-import img_windows_x64_mark_white from "../../assets/img_windows_x64_mark_white.svg";
+import img_windows_x64_white from "../../assets/img_windows_x64_white.svg";
+import img_markdown_white from "../../assets/img_markdown_white.svg";
 import { Loading } from "../../LoadingImg";
 import { Info } from "./Info";
 import styles from "./styles.module.scss";
@@ -133,8 +134,8 @@ export default function MainPage() {
                   <div style={{ flex: 1 }}></div>
                   {
                     loading ? null :
-                      <button onClick={() => set_md_open(true)}
-                        title="copy as Markdown">MD
+                      <button onClick={() => set_md_open(true)} title="copy as Markdown">
+                        <img src={img_markdown_white} alt="copy as Markdown" width={20}/>
                       </button>
                   }
 
@@ -166,7 +167,7 @@ export default function MainPage() {
                             }
                             {!win_x64_url ? null :
                               <a title={t('dl_win_x64')} target="_blank" href={win_x64_url}>
-                                <img src={img_windows_x64_mark_white} width="24px" alt={t('pl_in_browser')} />
+                                <img src={img_windows_x64_white} width="24px" alt={t('pl_in_browser')} />
                               </a>
                             }
                             <div className={styles.el_date}>
@@ -179,8 +180,11 @@ export default function MainPage() {
                             <div className={styles.el_desc} dangerouslySetInnerHTML={{ __html: version.desc }} />
                         }
                         {
-                          !version.changelog ? null : <>
+                          !version.desc || !version.changelog ? null :
                             <h4>Changelog</h4>
+                        }
+                        {
+                          !version.changelog ? null : <>
                             <div className={styles.el_changelog} dangerouslySetInnerHTML={{ __html: version.changelog }} />
                           </>
                         }
