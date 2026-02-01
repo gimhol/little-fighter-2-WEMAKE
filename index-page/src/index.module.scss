@@ -1,0 +1,108 @@
+:global {
+  :root {
+    // font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    // line-height: 1.5;
+    // font-weight: 400;
+
+    // color-scheme: light dark;
+    // color: rgba(255, 255, 255, 0.87);
+    // background-color: #242424;
+
+    // font-synthesis: none;
+    // text-rendering: optimizeLegibility;
+    // -webkit-font-smoothing: antialiased;
+    // -moz-osx-font-smoothing: grayscale;
+    --divider-color        : #FFFFFF22;
+    --link-color           : #FFFFFFFF;
+    --link-color-hover     : #FFFFFFFF;
+    --txt-color            : #8393e4FF;
+    --primary-color        : #10206C;
+    --primary-color-hover  : #213492;
+    --primary-color-actived: #1b2a75;
+
+  }
+
+  #root {
+    height   : 100%;
+    width    : 100%;
+    max-width: 800px;
+  }
+
+  html {
+    background-color : var(--primary-color);
+    background-image : url(./assets/img_bg.png);
+    background-repeat: repeat;
+    background-position: 50% 50%;
+    color            : #FFFFFFDD;
+    height           : 100%;
+    width            : 100%;
+    padding          : 0px;
+    margin           : 0px;
+    overflow         : hidden;
+  }
+
+  body {
+    padding        : 0px;
+    margin         : 0px;
+    height         : 100%;
+    width          : 100%;
+    overflow       : hidden;
+    display        : flex;
+    justify-content: center;
+  }
+
+  button {
+    border       : none;
+    background   : none;
+    outline      : none;
+    color        : white;
+    border-radius: 5px;
+    padding      : 3px 5px;
+    transition   : all 200ms;
+  }
+
+  a {
+    color      : var(--link-color);
+    transition : all 200ms;
+    padding    : 0px;
+    display    : inline-flex;
+    align-items: center;
+
+    &>img {
+      display       : inline-block;
+      user-select   : none;
+      pointer-events: none;
+    }
+  }
+
+  a:hover,
+  button:hover {
+    border-radius   : 5px;
+    background-color: var(--divider-color);
+  }
+
+  * {
+    color: var(--txt-color);
+  }
+}
+
+.loading_img_l {
+  opacity    : 0;
+  transition : opacity 1000ms;
+  object-fit : none;
+  user-select: none;
+  margin     : auto;
+  display    : inline-block;
+  width      : 132px;
+  height     : 84px;
+}
+
+.loading_img_s {
+  opacity    : 0;
+  transition : opacity 1000ms;
+  object-fit : none;
+  user-select: none;
+  display    : inline-block;
+  width      : 31px;
+  height     : 21px;
+}

@@ -1,0 +1,271 @@
+.main_page {
+  display       : flex;
+  flex-direction: column;
+  height        : 100%;
+  width         : 100%;
+  max-width     : 800px;
+
+  &>.head {
+    padding      : 0px 20px;
+    border-bottom: 1px var(--divider-color) dashed;
+    display      : flex;
+    align-items  : center;
+    gap          : 10px;
+    position     : relative;
+
+    .main_title {
+      flex    : 1;
+      position: relative;
+    }
+
+    .head_right_btn {
+      display        : inline-block;
+      transform      : none;
+      display        : flex;
+      align-items    : center;
+      justify-content: center;
+      width          : 24px;
+      height         : 24px;
+      padding        : 0px;
+    }
+
+    .head_right_btn>img {
+      transition: all 200ms;
+    }
+
+    .head_right_btn:hover>img {
+      transform: scale(1.2);
+    }
+
+    .lang_btn_inner {
+      position: relative;
+      width   : 24px;
+      height  : 24px;
+    }
+
+    .lang_btn_inner_span {
+      font-size      : 9px;
+      line-height    : 9px;
+      vertical-align : middle;
+      display        : flex;
+      align-items    : center;
+      justify-content: center;
+      border         : 1px solid white;
+      width          : 16px;
+      height         : 13px;
+      position       : absolute;
+      border-radius  : 3px;
+      box-sizing     : border-box;
+    }
+
+    .lang_btn_inner_span_f {
+      z-index         : 1;
+      left            : 1px;
+      top             : 2px;
+      color           : #10206C;
+      background-color: white;
+    }
+
+    .lang_btn_inner_span_b {
+      z-index: 0;
+      right  : 1px;
+      bottom : 2px;
+    }
+
+  }
+
+  &>.main {
+    display    : flex;
+    flex       : 1;
+    align-items: stretch;
+    height     : 0;
+
+    .game_list {
+      overflow      : auto;
+      display       : flex;
+      flex-direction: column;
+      gap           : 5px;
+      border-right  : 1px var(--divider-color) dashed;
+      padding       : 5px;
+      box-sizing    : border-box;
+    }
+
+    .main_right {
+      flex          : 1;
+      display       : flex;
+      flex-direction: column;
+
+      .game_desc_zone {
+        padding      : 0px 20px 20px;
+        border-bottom: 1px var(--divider-color) dashed;
+
+        .game_title {
+          display    : flex;
+          cursor     : pointer;
+          user-select: none;
+        }
+
+        .game_desc {
+          white-space: pre-wrap;
+        }
+      }
+
+      .version_list {
+        overflow      : auto;
+        display       : flex;
+        flex-direction: column;
+        gap           : 5px;
+      }
+    }
+
+  }
+
+  &>.foot {
+    border-top     : 1px var(--divider-color) dashed;
+    display        : flex;
+    justify-content: center;
+    padding        : 5px;
+  }
+}
+
+.game_item {
+  padding        : 5px;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  transition     : all 255ms;
+  cursor         : pointer;
+  user-select    : none;
+  border-radius  : 5px;
+}
+
+.game_item:hover {
+  background-color: var(--primary-color-hover);
+}
+
+.game_item_actived {
+  @extend .game_item;
+  background-color: var(--primary-color-actived);
+}
+
+.scrollview {
+  &::-webkit-scrollbar {
+    width           : 8px;
+    height          : 8px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-track {
+    background   : transparent;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background   : var(--divider-color);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #FFFFFF88;
+  }
+}
+
+
+.version_item {
+  padding: 0px 8px 20px 20px;
+
+  &:not(:last-child) {
+    border-bottom: 1px var(--divider-color) dashed;
+  }
+
+  &>.row_1 {
+    display    : flex;
+    align-items: center;
+  }
+
+  &>.row_1>.row_title {
+    flex: 1;
+  }
+
+  .go_div {
+    min-width      : 48px;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    gap            : 10px;
+  }
+
+  .el_date {
+    opacity    : 0.5;
+    font-size  : 14px;
+    font-weight: normal;
+  }
+
+  .el_changelog {
+    white-space: pre-wrap;
+  }
+
+
+  .el_desc {
+    white-space: pre-wrap;
+  }
+}
+
+.changelog_md_mask {
+  position        : fixed;
+  left            : 0px;
+  right           : 0px;
+  top             : 0px;
+  bottom          : 0px;
+  justify-content : center;
+  align-items     : center;
+  background-color: #00000055;
+  display         : flex;
+  z-index         : 1;
+}
+
+.changelog_md_modal {
+  position        : fixed;
+  display         : inline-block;
+  box-shadow      : 0px 5px 15px -3px rgba(0, 0, 0, 0.5);
+  border-radius   : 10px;
+  top             : 20px;
+  background-color: var(--primary-color);
+  box-sizing      : border-box;
+  overflow        : hidden;
+  transition      : all 220ms;
+}
+
+.changelog_md_modal>button {
+  height         : 24px;
+  width          : 24px;
+  padding        : 0px;
+  align-items    : center;
+  justify-content: center;
+  display        : flex;
+  vertical-align : middle;
+  line-height    : 24px;
+}
+
+.changelog_md_modal>.btn_close {
+  position: absolute;
+  right   : 10px;
+  top     : 10px;
+}
+
+.changelog_md_modal>.btn_copy {
+  position: absolute;
+  right   : 40px;
+  top     : 10px;
+}
+
+.changelog_md_content {
+  white-space: pre-wrap;
+  overflow   : auto;
+  padding    : 20px 20px;
+  min-width  : 100px;
+  min-height : 100px;
+  max-height : calc(100vh - 100px);
+  max-width  : calc(100vh - 100px);
+  outline    : none;
+}

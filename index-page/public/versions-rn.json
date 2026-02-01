@@ -1,0 +1,22 @@
+[
+  {
+    "id": "v0.1.3",
+    "i18n": {
+      "": {
+        "date": "2026-01-16",
+        "title": "v0.1.3 (Under development)",
+        "desc": "v0.1.3 (Under development)",
+        "url": "https://lf.gim.ink/rn/0.1.3/"
+      },
+      "zh": "",
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  }
+]
