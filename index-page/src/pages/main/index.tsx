@@ -17,12 +17,16 @@ import styles from "./styles.module.scss";
 const time_str = Math.floor(Date.now() / 60000);
 export default function MainPage() {
   const { t, i18n } = useTranslation()
+  const pl_in_browser = t('pl_in_browser')
+  const dl_win_x64 = t('dl_win_x64')
   const [games, set_games] = useState<Info[]>()
   const [versions, set_versions] = useState<Info[]>()
   const [actived_game, set_actived_game] = useState<Info>()
   const [games_loading, set_games_loading] = useState(false);
   const [versions_loading, set_versions_loading] = useState(false);
+  const [game_desc_open, set_game_desc_open] = useState(true)
   const [md_open, set_md_open] = useState(false);
+  const [is_cards_view, set_is_cards_view] = useState(false)
   const loading = versions_loading || games_loading
 
   const ref_lang = useRef<'zh' | 'en'>('zh')
@@ -40,6 +44,7 @@ export default function MainPage() {
         if (ab.signal.aborted) return;
         const list = raw_list.map((raw_item: any) => new Info(raw_item, ref_lang.current))
         set_actived_game(list[0])
+        set_is_cards_view(list[0]?.type == 'cards')
         set_games(list)
       }).catch(e => {
         if (ab.signal.aborted) return;
@@ -90,6 +95,7 @@ export default function MainPage() {
             const next_actived_game = next_games?.find(v => v.id === actived_game?.id)
             const next_versions = next_actived_game?.versions
             set_actived_game(next_actived_game)
+            set_is_cards_view(next_actived_game?.type == 'cards')
             set_games(next_games)
             set_versions(next_versions)
           }}
@@ -106,16 +112,16 @@ export default function MainPage() {
         <a
           className={styles.head_right_btn}
           href="https://github.com/gimhol/little-fighter-2-WEMAKE"
-          target="_blank"
+          target="_blank" draggable={false}
           title={t('goto_github')}>
-          <img src={img_github_mark_white} width="24px" alt={t('goto_github')} />
+          <img src={img_github_mark_white} width="20px" alt={t('goto_github')} />
         </a>
         <a
           className={styles.head_right_btn}
           href="https://gim.ink"
-          target="_blank"
+          target="_blank" draggable={false}
           title={t('goto_gimink')}>
-          <img src={img_gim_ink} width="30px" alt={t('goto_gimink')} />
+          <img src={img_gim_ink} width="26px" alt={t('goto_gimink')} />
         </a>
       </div>
       <div className={styles.main}>
@@ -125,7 +131,10 @@ export default function MainPage() {
               {games?.map((v) => {
                 const cls_name = (actived_game?.id === v.id) ? styles.game_item_actived : styles.game_item
                 return (
-                  <button className={cls_name} key={v.id} onClick={() => set_actived_game(v)}>
+                  <button className={cls_name} key={v.id} onClick={() => {
+                    set_actived_game(v)
+                    set_is_cards_view(v.type == 'cards')
+                  }}>
                     {v.short_title}
                   </button>
                 )
@@ -137,29 +146,119 @@ export default function MainPage() {
             !actived_game ? null :
               <div className={styles.game_desc_zone}>
                 <h3 className={styles.game_title}>
-                  <a target="_blank">{actived_game?.title}</a>
+                  <a target="_blank" draggable={false} href={versions?.find(v => v.url)?.url}>
+                    {actived_game?.title}
+                  </a>
                   <div style={{ flex: 1 }}></div>
                   {
                     loading ? null :
-                      <button onClick={() => set_md_open(true)} title="copy as Markdown">
+                      <button className={styles.btn} onClick={() => set_md_open(true)} title="copy as Markdown">
                         <img src={img_markdown_white} alt="copy as Markdown" width={20} />
                       </button>
                   }
-
+                  <button className={styles.btn} onClick={() => set_is_cards_view(!is_cards_view)} title="Cards or List">
+                    <span className={styles.btn_span}>{is_cards_view ? 'L' : 'C'}</span>
+                  </button>
+                  <button className={styles.btn} onClick={() => set_game_desc_open(!game_desc_open)} title="▼ or ▲">
+                    <span className={styles.btn_span}>{game_desc_open ? '▲' : '▼'}</span>
+                  </button>
                 </h3>
-                <div className={styles.game_desc} dangerouslySetInnerHTML={{ __html: actived_game?.desc }} />
+                {!game_desc_open ? null :
+                  <div
+                    className={styles.game_desc}
+                    dangerouslySetInnerHTML={{ __html: actived_game?.desc }} />
+                }
               </div>
           }
 
-          <div className={classnames(styles.card_list, styles.scrollview)}>
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-          </div>
           {
-            (!0 || !versions?.length) ? null :
+            (!is_cards_view || !versions?.length) ? null :
+              <div className={classnames(styles.card_list, styles.scrollview)}>
+                {
+                  versions?.map(version => {
+                    const { url, cover, desc, changelog } = version;
+                    const win_x64_url = version.get_download_url('win_x64');
+                    const default_url = url ?? win_x64_url;
+                    return (
+                      <Card
+                        key={version.id}
+                        title={url ? pl_in_browser : win_x64_url ? dl_win_x64 : void 0}
+                        onClick={() => {
+                          if (!default_url) return;
+                          const a = document.createElement('a')
+                          a.href = default_url
+                          a.target = '_blank'
+                          a.click()
+                        }}>
+                        <div className={styles.card_head}>
+                          <div className={styles.left}>
+                            <a target="_blank" draggable={false} href={url}>
+                              {version.title}
+                              <span className={styles.prefix}>
+                                {url ? null : ` (${t('version_unavailable')})`}
+                              </span>
+                            </a>
+
+                          </div>
+                          <div className={styles.mid}></div>
+                          <div className={styles.right}>
+                            {!url ? null :
+                              <a title={pl_in_browser} draggable={false} target="_blank" href={url}>
+                                <img src={img_browser_mark_white} width="16px" draggable={false} alt={pl_in_browser} />
+                              </a>
+                            }
+                            {!win_x64_url ? null :
+                              <a title={dl_win_x64} draggable={false} target="_blank" href={win_x64_url}>
+                                <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
+                              </a>
+                            }
+                          </div>
+                        </div>
+                        <div className={classnames(styles.card_main)}>
+                          {
+                            !cover ? null : <div className={classnames(styles.pic_zone)}>
+                              <img draggable={false} src={cover} />
+                            </div>
+                          }
+                          {
+                            !(desc || changelog) ? null :
+                              <div className={classnames(cover ? styles.info_zone_half : styles.info_zone, styles.scrollview)}>
+                                {!desc ? null : <div dangerouslySetInnerHTML={{ __html: desc }} />}
+                                {!desc || !changelog ? null : <div>Changelog</div>}
+                                {!changelog ? null : <><div dangerouslySetInnerHTML={{ __html: changelog }} /></>}
+                              </div>
+                          }
+                          {
+                            (cover || desc || changelog) ? null :
+                              <div className={classnames(styles.no_content)}>
+                                {t('no_content')}
+                              </div>
+                          }
+                        </div>
+                        <div className={styles.card_foot}>
+                          <div className={styles.left}>
+                            <span className={styles.prefix}>
+                              {t('author')}
+                            </span>
+                            {version.author}
+                          </div>
+                          <div className={styles.mid}>
+                          </div>
+                          <div className={styles.right}>
+                            <span className={styles.prefix}>
+                              {t('date')}
+                            </span>
+                            {version.date}
+                          </div>
+                        </div>
+                      </Card>
+                    )
+                  })
+                }
+              </div>
+          }
+          {
+            (is_cards_view || !versions?.length) ? null :
               <div className={classnames(styles.version_list, styles.scrollview)}>
                 {
                   versions.map(version => {
@@ -169,20 +268,20 @@ export default function MainPage() {
                       <div className={styles.version_item} key={version.id}>
                         <div className={styles.row_1}>
                           <h3 className={styles.row_title}>
-                            <a target="_blank" href={url}>
+                            <a target="_blank" draggable={false} href={url}>
                               {version.title}
                               {url ? null : ` (${t('version_unavailable')})`}
                             </a>
                           </h3>
                           <div className={styles.go_div}>
                             {!url ? null :
-                              <a title={t('pl_in_browser')} target="_blank" href={url}>
-                                <img src={img_browser_mark_white} width="24px" alt={t('dl_win_x64')} />
+                              <a title={pl_in_browser} target="_blank" href={url}>
+                                <img src={img_browser_mark_white} width="24px" alt={pl_in_browser} />
                               </a>
                             }
                             {!win_x64_url ? null :
-                              <a title={t('dl_win_x64')} target="_blank" href={win_x64_url}>
-                                <img src={img_windows_x64_white} width="24px" alt={t('pl_in_browser')} />
+                              <a title={dl_win_x64} target="_blank" href={win_x64_url}>
+                                <img src={img_windows_x64_white} width="24px" alt={dl_win_x64} />
                               </a>
                             }
                             <div className={styles.el_date}>

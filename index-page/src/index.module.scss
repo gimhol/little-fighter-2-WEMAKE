@@ -28,6 +28,11 @@
     max-width: 800px;
   }
 
+  h1 {
+    margin: 5px;
+    font-size: 1.5em;
+  }
+
   html {
     background-color : var(--primary-color);
     background-image : url(./assets/img_bg.png);
@@ -51,13 +56,16 @@
   }
 
   button {
-    border       : none;
-    background   : none;
-    outline      : none;
-    color        : white;
-    border-radius: 5px;
-    padding      : 3px 5px;
-    transition   : all 200ms;
+    border         : none;
+    background     : none;
+    outline        : none;
+    color          : white;
+    border-radius  : 5px;
+    padding        : 3px 5px;
+    transition     : all 200ms;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
   }
 
   a {

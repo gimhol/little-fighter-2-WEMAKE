@@ -21,7 +21,10 @@ export class Info {
   date?: string;
   versions_url?: string;
   url?: string;
+  cover?: string;
   markdown: string = '';
+  author?: string;
+  type?: string;
   private _versions?: Info[];
 
   constructor(raw: any, lang: any) {
@@ -46,7 +49,9 @@ export class Info {
     this.read_str('title');
     this.read_str('date');
     this.read_str('url');
-
+    this.read_str('type');
+    this.read_str('author');
+    this.read_str('cover');
     this.update_markdown()
   }
   get versions() { return this._versions; }

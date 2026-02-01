@@ -2,15 +2,20 @@ import i18n from "i18next";
 import qs from "qs";
 import { initReactI18next } from "react-i18next";
 const zh = {
-  "main_title": "Little Fighter 2 Wemake",
+  "author": "作者",
+  "date": "日期",
+  "main_title": "选你所选",
   "version_unavailable": "此版本已停用",
   "dl_win_x64": "下载 Windows x64 应用",
   "pl_in_browser": "在浏览器中开玩",
   "goto_github": "打开Github项目地址",
   "goto_gimink": "打开作者博客",
   "switch_lang": "切换语言 / Switch Language",
+  "no_content": "无内容",
 }
 const en = {
+  "author": "author",
+  "date": "date",
   "main_title": "Select Game Version",
   "version_unavailable": "Version Unavailable",
   "dl_win_x64": "Download Window x64 Application",
@@ -18,6 +23,7 @@ const en = {
   "goto_github": "Visit this Project on Github",
   "goto_gimink": "Visit Author Blog",
   "switch_lang": "切换语言 / Switch Language",
+  "no_content": "No Content",
 }
 const resources = {
   "zh": { translation: zh },

@@ -10,6 +10,7 @@
           "win_x64": "https://lf.gim.ink/downloads/little-fighter-2-wemake-v0.1.12.zip"
         },
         "desc": "",
+        "author": "Gim",
         "changelog": [
           "- fix: The MP recovery speed has been corrected. (It was too fast before...)",
           "- feat: Extra Data supported",
@@ -44,6 +45,7 @@
         "date": "2026-01-20",
         "title": "v0.1.9",
         "desc": "",
+        "author": "Gim",
         "changelog": [
           "- fix: The attacked will drop the heavy weapons they are holding correctly",
           "- fix: Adjusted the performance of hitting and being hit by baseball-like weapons",
@@ -82,6 +84,8 @@
         "date": "2026-01-17",
         "title": "v0.1.5",
         "desc": "",
+        "cover": "https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png",
+        "author": "Gim",
         "changelog": [
           "- feat: add “team outline” effect"
         ]
@@ -108,6 +112,7 @@
         "date": "2026-01-17",
         "title": "v0.1.4",
         "desc": "",
+        "author": "Gim",
         "changelog": [
           "- fix: fix the problem that the background and level buttons do not respond",
           "- fix: fix the problem of incorrect display on the scoreboard"
@@ -135,6 +140,7 @@
       "": {
         "date": "2026-01-15",
         "title": "v0.1.3",
+        "author": "Gim",
         "changelog": [
           "- fix: weapon will have a more reasonable effect",
           "- fix: Improved the performance of the weapon's bounce when it hits the ground.",
@@ -179,6 +185,7 @@
         "date": "2026-01-15",
         "title": "v0.1.2"
       },
+      "author": "Gim",
       "zh": "",
       "zh-hans": "zh",
       "zh-hant": "zh",
