@@ -1,0 +1,47 @@
+.viewer {
+  padding: 10px;
+
+  hr {
+    color           : #88888855;
+    background-color: #88888855;
+    border-width    : 1px;
+    border-style    : dashed;
+    border-top-width: 0px;
+    margin          : 10px;
+  }
+
+  blockquote {
+    background-color: #88888822;
+    margin          : 0px;
+    padding         : 10px;
+    border-radius   : 5px;
+  }
+
+  p {
+    margin: 0px;
+  }
+
+  ul {
+    padding: 0px;
+    margin : 0px;
+
+    li {
+      display: flex;
+      margin : 0px;
+    }
+  }
+}
+
+.viewer.plain {
+  padding: 2px;
+
+  * {
+    font-size: 9px !important;
+    padding  : 2px;
+    margin   : 2px;
+  }
+
+  hr {
+    padding: 0px;
+  }
+}

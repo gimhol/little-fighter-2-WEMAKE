@@ -1,0 +1,26 @@
+[
+  {
+    "id": "goku_and_goku_ssj",
+    "i18n": {
+      "": {
+        "date": "2026-02-02",
+        "title": "Goku & Goku SSJ",
+        "cover": "https://lf.gim.ink/downloads/fighters/Goku%20%26%20Goku%20SSJ.webp",
+        "url": "https://lf.gim.ink/downloads/fighters/Goku%20%26%20Goku%20SSJ.data.zip",
+        "url_type": "download",
+        "desc_url": "https://lf.gim.ink/downloads/fighters/Goku%20%26%20Goku%20SSJ.md",
+        "author": "Memento",
+        "author_url": "https://lf-empire.de/forum/member.php?action=profile&uid=752"
+      },
+      "zh": "",
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  }
+]

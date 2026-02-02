@@ -1,7 +1,5 @@
 :root {
   font-family            : system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height            : 1.5;
-  font-weight            : 400;
   font-synthesis         : none;
   text-rendering         : optimizeLegibility;
   -webkit-font-smoothing : antialiased;
@@ -21,16 +19,11 @@
   max-width: 800px;
 }
 
-h1 {
-  margin   : 5px;
-  font-size: 1.2em;
-}
-
 html {
   background-color : var(--primary-color);
   background-image : url(./assets/img_bg.png);
   background-repeat: repeat;
-  color            : #FFFFFFDD;
+  color            : var(--txt-color);
   height           : 100%;
   width            : 100%;
   padding          : 0px;
@@ -79,8 +72,4 @@ a:hover,
 button:hover {
   border-radius   : 5px;
   background-color: var(--divider-color);
-}
-
-* {
-  color: var(--txt-color);
 }

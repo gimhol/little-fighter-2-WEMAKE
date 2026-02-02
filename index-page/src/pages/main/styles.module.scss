@@ -7,6 +7,7 @@
   width         : 100%;
   max-width     : 800px;
 
+
   &>.head {
     padding      : 0px 10px;
     border-bottom: 1px var(--divider-color) dashed;
@@ -16,8 +17,10 @@
     position     : relative;
 
     .main_title {
-      flex    : 1;
-      position: relative;
+      flex     : 1;
+      position : relative;
+      margin   : 5px;
+      font-size: 1.2em;
     }
 
     .head_right_btn {
@@ -100,18 +103,23 @@
       width         : 0px;
 
       .game_desc_zone {
-        padding      : 0px 20px 0px;
+        padding      : 0px 5px 0px 20px;
         border-bottom: 1px var(--divider-color) dashed;
 
         .game_title {
-          display    : flex;
-          cursor     : pointer;
-          user-select: none;
+          display      : flex;
+          cursor       : pointer;
+          user-select  : none;
+          margin-bottom: 5px;
+          margin-top   : 5px;
         }
 
         .game_desc {
-          white-space   : pre-wrap;
-          padding-bottom: 20px;
+          font-size  : 12px;
+
+          p {
+            margin: 0px;
+          }
         }
 
         .btn {
@@ -201,12 +209,8 @@
   }
 
   .el_changelog {
-    white-space: pre-wrap;
   }
-
-
   .el_desc {
-    white-space: pre-wrap;
   }
 }
 

@@ -1,11 +1,11 @@
-import img_browser_mark_white from "@/assets/img_browser_mark_white.svg";
 import img_windows_x64_white from "@/assets/img_windows_x64_white.svg";
-import type { Info } from "@/base/Info";
+import { Info } from "@/base/Info";
 import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Link } from "../link";
+import { Viewer } from "../markdown/Viewer";
 import { Mask } from "../mask";
 import { CardBase, type ICardBaseProps } from "./CardBase";
 import { DetailCard } from "./DetailCard";
@@ -17,10 +17,10 @@ export interface IInfoCardProps extends ICardBaseProps {
 const classNames = { card: csses.info_card }
 export function InfoCard(props: IInfoCardProps) {
   const { t } = useTranslation()
-  const pl_in_browser = t('pl_in_browser')
+  const open_in_browser = t('open_in_browser')
   const dl_win_x64 = t('dl_win_x64')
-  const { info: info } = props;
-  const { url, cover, desc, changelog } = info;
+  const { info } = props;
+  const { url, url_type, cover, desc, changelog, unavailable, desc_url, changelog_url } = info;
   const win_x64_url = info.get_download_url('win_x64');
   const ref_el = useRef<HTMLDivElement>(null)
   const [test_mask_style, set_test_mask] = useState<React.CSSProperties>({})
@@ -69,6 +69,17 @@ export function InfoCard(props: IInfoCardProps) {
 
   </>, document.body)
 
+  const markdown = desc || changelog;
+  const markdown_url = desc_url || changelog_url;
+
+  const txts: { [x in string]?: string } = {
+    [Info.OPEN_IN_BROWSER]: open_in_browser
+  }
+
+  const title_suffix =
+    <span className={csses.prefix}>
+      {unavailable ? t('unavailable') : url_type ? (txts[url_type] || url_type) : ''}
+    </span>
   return <>
     <CardBase
       floating
@@ -80,19 +91,14 @@ export function InfoCard(props: IInfoCardProps) {
         <div className={csses.info_card_head}>
           <div className={csses.left}>
             <Link href={url} style={{ padding: `0px 5px` }}>
-              {info.title}{url ? ' ▸' : null}
+              {info.title}
+              {url_type === Info.OPEN_IN_BROWSER && url ? ' ▸' : null}
             </Link>
-            <span className={csses.prefix}>
-              {url ? pl_in_browser : t('version_unavailable')}
-            </span>
+            {title_suffix}
           </div>
           <div className={csses.mid}></div>
           <div className={csses.right}>
-            {!url ? null :
-              <Link title={pl_in_browser} href={url} >
-                <img src={img_browser_mark_white} width="16px" draggable={false} alt={pl_in_browser} />
-              </Link>
-            }
+
             {!win_x64_url ? null :
               <Link title={dl_win_x64} href={win_x64_url}>
                 <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
@@ -102,21 +108,17 @@ export function InfoCard(props: IInfoCardProps) {
         </div>
         <div className={csses.info_card_main}>
           {
-            !cover ? null : <div className={classnames(csses.pic_zone)}>
-              <img draggable={false} src={cover} />
-            </div>
+            !cover ? null : <img className={classnames(csses.pic_zone)} draggable={false} src={cover} />
           }
           {
-            !(desc || changelog) ? null :
+            !(markdown || markdown_url) ? null :
               <div className={classnames(cover ? csses.info_zone_half : csses.info_zone, csses.scrollview)}>
-                {!desc && !changelog ? null : <div dangerouslySetInnerHTML={{ __html: desc || changelog }} />}
+                <Viewer plain content={markdown} url={markdown_url} />
               </div>
           }
           {
-            (cover || desc || changelog) ? null :
-              <div className={classnames(csses.no_content)}>
-                {t('no_content')}
-              </div>
+            (cover || desc || changelog || markdown_url) ? null :
+              <div className={classnames(csses.no_content)}>{t('no_content')}</div>
           }
         </div>
         <div className={csses.info_card_foot}>

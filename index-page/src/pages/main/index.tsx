@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/refs */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "@/components/link";
+import { Viewer } from "@/components/markdown/Viewer";
 import classnames from "classnames";
 import QueryString from "qs";
 import { useEffect, useRef, useState } from "react";
@@ -21,7 +22,7 @@ import styles from "./styles.module.scss";
 const time_str = Math.floor(Date.now() / 60000);
 export default function MainPage() {
   const { t, i18n } = useTranslation()
-  const pl_in_browser = t('pl_in_browser')
+  const open_in_browser = t('open_in_browser')
   const dl_win_x64 = t('dl_win_x64')
   const [games, set_games] = useState<Info[]>()
   const [versions, set_versions] = useState<Info[]>()
@@ -177,11 +178,7 @@ export default function MainPage() {
                     <span className={styles.btn_span} style={{ transform: `rotateZ(${game_desc_open ? 0 : 180}deg)` }}>▲</span>
                   </button>
                 </h3>
-                {!game_desc_open ? null :
-                  <div
-                    className={styles.game_desc}
-                    dangerouslySetInnerHTML={{ __html: actived_game?.desc }} />
-                }
+                {!game_desc_open ? null : <Viewer content={actived_game?.desc} />}
               </div>
           }
           {
@@ -203,13 +200,13 @@ export default function MainPage() {
                           <h3 className={styles.row_title}>
                             <Link href={url}>
                               {version.title}
-                              {url ? null : ` (${t('version_unavailable')})`}
+                              {url ? null : ` (${t('unavailable')})`}
                             </Link>
                           </h3>
                           <div className={styles.go_div}>
                             {!url ? null :
-                              <Link title={pl_in_browser} href={url}>
-                                <img src={img_browser_mark_white} width="24px" alt={pl_in_browser} />
+                              <Link title={open_in_browser} href={url}>
+                                <img src={img_browser_mark_white} width="24px" alt={open_in_browser} />
                               </Link>
                             }
                             {!win_x64_url ? null :
@@ -223,8 +220,7 @@ export default function MainPage() {
                           </div>
                         </div>
                         {
-                          !version.desc ? null :
-                            <div className={styles.el_desc} dangerouslySetInnerHTML={{ __html: version.desc }} />
+                          !version.desc ? null : <Viewer className={styles.el_desc} content={version?.desc} />
                         }
                         {
                           !version.desc || !version.changelog ? null :
@@ -232,7 +228,7 @@ export default function MainPage() {
                         }
                         {
                           !version.changelog ? null : <>
-                            <div className={styles.el_changelog} dangerouslySetInnerHTML={{ __html: version.changelog }} />
+                            <Viewer className={styles.el_changelog} content={version?.changelog} />
                           </>
                         }
                       </div>

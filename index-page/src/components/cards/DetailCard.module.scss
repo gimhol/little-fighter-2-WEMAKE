@@ -24,6 +24,7 @@
 
     .prefix {
       font-size: 9px;
+      opacity  : 0.5;
     }
 
     a {
@@ -57,7 +58,6 @@
     background-color: rgba(0, 0, 0, 0.5);
     border-radius   : 5px;
     margin          : 0px 5px;
-    white-space     : pre-wrap;
     font-size       : 12px;
     overflow        : hidden;
     display         : flex;
@@ -67,7 +67,8 @@
       overflow: hidden;
       position: relative;
       flex    : 1;
-
+      position: absolute;
+      width   : 100%;
       img {
         display   : inline-block;
         object-fit: cover;
@@ -77,15 +78,11 @@
     }
 
     .info_zone {
-      border-radius: 5px;
-      overflow     : auto;
-      user-select  : text
-    }
-
-    .info_zone_half {
-      @extend .info_zone;
-      background-color: rgba(0, 0, 0, 0.5);
-      max-height      : 50%;
+      position        : relative;
+      border-radius   : 5px;
+      overflow        : auto;
+      user-select     : text;
+      background-color: rgba(0, 0, 0, 0.8);
     }
 
     .no_content {
