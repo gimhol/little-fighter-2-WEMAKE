@@ -36,7 +36,7 @@ const broken_pieces_opoints = (...frame_ids: (string | string[])[]): IOpointInfo
 const handled = new Set<any>();
 export function make_weapon_special(data: IEntityData) {
   const num_data_id = Number(data.id);
-  if (num_data_id >= 100 || num_data_id <= 199) {
+  if (num_data_id >= 100 && num_data_id <= 199) {
     data.base.group = ensure(data.base.group,
       EntityGroup.VsWeapon,
       EntityGroup.StageWeapon,
