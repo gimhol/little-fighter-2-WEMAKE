@@ -42,17 +42,12 @@ export function DetailCard(props: IDetailCardProps) {
           </div>
           <div className={csses.mid}></div>
           <div className={csses.right}>
-            {!win_x64_url ? null :
-              <Link title={dl_win_x64} href={win_x64_url}>
-                <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
-              </Link>
-            }
-            {
-              !onClose ? null :
-                <Link onClick={e => { e.stopPropagation(); onClose?.() }}>
-                  ✖︎
-                </Link>
-            }
+            <Link title={dl_win_x64} href={win_x64_url} emptyAsGone>
+              <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
+            </Link>
+            <Link onClick={e => { e.stopPropagation(); onClose?.() }}>
+              ✖︎
+            </Link>
           </div>
         </div>
         <div className={csses.detail_card_main}>

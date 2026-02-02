@@ -25,16 +25,12 @@ export function InfoListItem(props: { info: Info }) {
           </Link>
         </h3>
         <div className={csses.go_div}>
-          {!url ? null :
-            <Link title={open_in_browser} href={url}>
-              <img src={img_browser_mark_white} width="24px" alt={open_in_browser} />
-            </Link>
-          }
-          {!win_x64_url ? null :
-            <Link title={dl_win_x64} href={win_x64_url}>
-              <img src={img_windows_x64_white} width="24px" alt={dl_win_x64} />
-            </Link>
-          }
+          <Link title={open_in_browser} href={url} emptyAsGone>
+            <img src={img_browser_mark_white} width="24px" alt={open_in_browser} />
+          </Link>
+          <Link title={dl_win_x64} href={win_x64_url} emptyAsGone>
+            <img src={img_windows_x64_white} width="24px" alt={dl_win_x64} />
+          </Link>
           <button className={csses.btn} onClick={() => set_game_desc_open(!game_desc_open)} title="▼ or ▲">
             <span className={csses.btn_span} style={{ transform: `rotateZ(${game_desc_open ? 0 : 180}deg)` }}>▲</span>
           </button>

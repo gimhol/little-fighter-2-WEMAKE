@@ -89,11 +89,9 @@ export function InfoCard(props: IInfoCardProps) {
           </div>
           <div className={csses.mid}></div>
           <div className={csses.right}>
-            {!win_x64_url ? null :
-              <Link title={dl_win_x64} href={win_x64_url}>
-                <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
-              </Link>
-            }
+            <Link title={dl_win_x64} href={win_x64_url} emptyAsGone>
+              <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
+            </Link>
           </div>
         </div>
         <div className={csses.info_card_main}>
