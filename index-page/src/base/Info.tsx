@@ -9,11 +9,11 @@ export function get_i18n(all: any, lang: string) {
   return { ...base, ...more }
 }
 
-
 export class Info {
   static readonly OPEN_IN_BROWSER = 'open_in_browser';
   static readonly PLAY_IN_BROWSER = 'play_in_browser';
   static readonly DOWNLOAD = 'download';
+
   raw: any;
   cur: any;
   id: any;

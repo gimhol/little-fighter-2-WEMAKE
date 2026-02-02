@@ -1,11 +1,11 @@
 @import url(@/theme/common.module.scss);
 
 .main_page {
-  display       : flex;
-  flex-direction: column;
-  height        : 100%;
-  width         : 100%;
-  max-width     : 800px;
+  display          : flex;
+  flex-direction   : column;
+  height           : 100%;
+  width            : 100%;
+  // max-width     : 800px;
 
 
   &>.head {
@@ -115,7 +115,7 @@
         }
 
         .game_desc {
-          font-size  : 12px;
+          font-size: 12px;
 
           p {
             margin: 0px;
@@ -178,41 +178,6 @@
   background-color: var(--primary-color-actived);
 }
 
-.version_item {
-  padding: 0px 8px 20px 20px;
-
-  &:not(:last-child) {
-    border-bottom: 1px var(--divider-color) dashed;
-  }
-
-  &>.row_1 {
-    display    : flex;
-    align-items: center;
-  }
-
-  &>.row_1>.row_title {
-    flex: 1;
-  }
-
-  .go_div {
-    min-width      : 48px;
-    display        : flex;
-    align-items    : center;
-    justify-content: center;
-    gap            : 10px;
-  }
-
-  .el_date {
-    opacity    : 0.5;
-    font-size  : 14px;
-    font-weight: normal;
-  }
-
-  .el_changelog {
-  }
-  .el_desc {
-  }
-}
 
 .changelog_md_mask {
   position        : fixed;
@@ -274,15 +239,16 @@
 }
 
 .card_list {
-  overflow             : auto;
-  justify-content      : flex-start;
-  row-gap              : 15px;
-  padding              : 20px 0px;
-  display              : grid;
-  grid-auto-rows       : auto;
-  grid-template-columns: repeat(3, 33%);
+  overflow       : auto;
+  justify-content: flex-start;
+  row-gap        : 15px;
+  column-gap     : 15px;
+  padding        : 20px 20px;
+  display        : flex;
 
-  &>*:last-child {
-    margin-right: 0;
-  }
+  flex-direction          : row;
+  flex-wrap               : wrap;
+  // display              : grid;
+  // grid-auto-rows       : auto;
+  // grid-template-columns: repeat(3, 33%);
 }

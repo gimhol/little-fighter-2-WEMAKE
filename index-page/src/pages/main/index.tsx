@@ -7,23 +7,20 @@ import QueryString from "qs";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
-import img_browser_mark_white from "../../assets/img_browser_mark_white.svg";
 import img_gim_ink from "../../assets/img_gim_ink.png";
 import img_github_mark_white from "../../assets/img_github_mark_white.svg";
 import img_markdown_white from "../../assets/img_markdown_white.svg";
-import img_windows_x64_white from "../../assets/img_windows_x64_white.svg";
 import { Info } from "../../base/Info";
 import { InfoCard } from "../../components/cards/InfoCard";
 import { Loading } from "../../components/loading/LoadingImg";
 import { Paths } from "../../Paths";
 import { useMovingBg } from "../../useMovingBg";
+import { InfoListItem } from "./InfoListItem";
 import styles from "./styles.module.scss";
 
 const time_str = Math.floor(Date.now() / 60000);
 export default function MainPage() {
   const { t, i18n } = useTranslation()
-  const open_in_browser = t('open_in_browser')
-  const dl_win_x64 = t('dl_win_x64')
   const [games, set_games] = useState<Info[]>()
   const [versions, set_versions] = useState<Info[]>()
   const [actived_game, set_actived_game] = useState<Info>()
@@ -192,47 +189,7 @@ export default function MainPage() {
               <div className={classnames(styles.version_list, styles.scrollview)}>
                 {
                   versions.map(version => {
-                    const { url } = version;
-                    const win_x64_url = version.get_download_url('win_x64')
-                    return (
-                      <div className={styles.version_item} key={version.id}>
-                        <div className={styles.row_1}>
-                          <h3 className={styles.row_title}>
-                            <Link href={url}>
-                              {version.title}
-                              {url ? null : ` (${t('unavailable')})`}
-                            </Link>
-                          </h3>
-                          <div className={styles.go_div}>
-                            {!url ? null :
-                              <Link title={open_in_browser} href={url}>
-                                <img src={img_browser_mark_white} width="24px" alt={open_in_browser} />
-                              </Link>
-                            }
-                            {!win_x64_url ? null :
-                              <Link title={dl_win_x64} href={win_x64_url}>
-                                <img src={img_windows_x64_white} width="24px" alt={dl_win_x64} />
-                              </Link>
-                            }
-                            <div className={styles.el_date}>
-                              {version.date}
-                            </div>
-                          </div>
-                        </div>
-                        {
-                          !version.desc ? null : <Viewer className={styles.el_desc} content={version?.desc} />
-                        }
-                        {
-                          !version.desc || !version.changelog ? null :
-                            <h4>Changelog</h4>
-                        }
-                        {
-                          !version.changelog ? null : <>
-                            <Viewer className={styles.el_changelog} content={version?.changelog} />
-                          </>
-                        }
-                      </div>
-                    )
+                    return <InfoListItem info={version} key={version.id} />
                   })
                 }
               </div>

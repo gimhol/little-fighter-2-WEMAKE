@@ -1,0 +1,36 @@
+@import url(@/theme/common.module.scss);
+
+.info_list_item_root {
+  padding: 0px 8px 0px 20px;
+
+  &:not(:last-child) {
+    border-bottom: 1px var(--divider-color) dashed;
+  }
+
+  &>.row_1 {
+    display    : flex;
+    align-items: center;
+  }
+
+  &>.row_1>.row_title {
+    flex: 1;
+  }
+
+  .go_div {
+    min-width      : 48px;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    gap            : 10px;
+  }
+
+  .el_date {
+    opacity    : 0.5;
+    font-size  : 14px;
+    font-weight: normal;
+  }
+
+  .el_changelog {}
+
+  .el_desc {}
+}

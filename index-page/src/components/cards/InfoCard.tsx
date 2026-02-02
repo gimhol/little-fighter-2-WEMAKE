@@ -17,7 +17,6 @@ export interface IInfoCardProps extends ICardBaseProps {
 const classNames = { card: csses.info_card }
 export function InfoCard(props: IInfoCardProps) {
   const { t } = useTranslation()
-  const open_in_browser = t('open_in_browser')
   const dl_win_x64 = t('dl_win_x64')
   const { info } = props;
   const { url, url_type, cover, desc, changelog, unavailable, desc_url, changelog_url } = info;
@@ -25,6 +24,7 @@ export function InfoCard(props: IInfoCardProps) {
   const ref_el = useRef<HTMLDivElement>(null)
   const [test_mask_style, set_test_mask] = useState<React.CSSProperties>({})
   const [detail_open, set_test_mask_open] = useState(false)
+  const title_suffix = unavailable ? t('unavailable') : url_type ? t(url_type) : void 0;
 
   useEffect(() => {
     if (!detail_open) return void 0
@@ -32,9 +32,9 @@ export function InfoCard(props: IInfoCardProps) {
       set_test_mask(prev => {
         return {
           ...prev,
-          left: 50, top: 50,
-          width: 'calc(100% - 100px)',
-          height: 'calc(100% - 100px)'
+          left: '5%', top: '5%',
+          width: 'calc(90%)',
+          height: 'calc(90%)'
         }
       })
     }, 50)
@@ -69,17 +69,6 @@ export function InfoCard(props: IInfoCardProps) {
 
   </>, document.body)
 
-  const markdown = desc || changelog;
-  const markdown_url = desc_url || changelog_url;
-
-  const txts: { [x in string]?: string } = {
-    [Info.OPEN_IN_BROWSER]: open_in_browser
-  }
-
-  const title_suffix =
-    <span className={csses.prefix}>
-      {unavailable ? t('unavailable') : url_type ? (txts[url_type] || url_type) : ''}
-    </span>
   return <>
     <CardBase
       floating
@@ -90,15 +79,16 @@ export function InfoCard(props: IInfoCardProps) {
       <div className={csses.info_card_inner}>
         <div className={csses.info_card_head}>
           <div className={csses.left}>
-            <Link href={url} style={{ padding: `0px 5px` }}>
+            <Link className={csses.title} href={url}>
               {info.title}
               {url_type === Info.OPEN_IN_BROWSER && url ? ' ▸' : null}
             </Link>
-            {title_suffix}
+            <span className={csses.suffix}>
+              {title_suffix}
+            </span>
           </div>
           <div className={csses.mid}></div>
           <div className={csses.right}>
-
             {!win_x64_url ? null :
               <Link title={dl_win_x64} href={win_x64_url}>
                 <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
@@ -111,13 +101,14 @@ export function InfoCard(props: IInfoCardProps) {
             !cover ? null : <img className={classnames(csses.pic_zone)} draggable={false} src={cover} />
           }
           {
-            !(markdown || markdown_url) ? null :
+            !(info.desc || info.desc_url || info.changelog || info.changelog_url) ? null :
               <div className={classnames(cover ? csses.info_zone_half : csses.info_zone, csses.scrollview)}>
-                <Viewer plain content={markdown} url={markdown_url} />
+                <Viewer plain content={info.desc} url={info.desc_url} whenLoaded={t => info.desc = t} />
+                <Viewer plain content={info.changelog} url={info.changelog_url} whenLoaded={t => info.changelog = t} />
               </div>
           }
           {
-            (cover || desc || changelog || markdown_url) ? null :
+            (cover || info.desc || info.desc_url || info.changelog || info.changelog_url) ? null :
               <div className={classnames(csses.no_content)}>{t('no_content')}</div>
           }
         </div>

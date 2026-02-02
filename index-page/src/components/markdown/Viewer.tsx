@@ -1,15 +1,19 @@
+import classnames from "classnames";
 import { marked } from "marked";
 import { useEffect, useState } from "react";
-import classnames from "classnames";
 import csses from "./Viewer.module.scss";
 
 export interface IViewerProps extends React.HTMLAttributes<HTMLDivElement> {
   content?: string;
   url?: string;
-  plain?: boolean
+  plain?: boolean;
+  emptyAsGone?: boolean;
+  whenLoaded?(txt: string): void;
 }
 export function Viewer(props: IViewerProps) {
-  const { content, className, plain = false, url, ..._p } = props;
+  const {
+    content, className, emptyAsGone = false, plain = false, url, whenLoaded, ..._p
+  } = props;
   const [__html, set_html] = useState<string>('')
 
   useEffect(() => {
@@ -21,12 +25,15 @@ export function Viewer(props: IViewerProps) {
     const ab = new AbortController()
     fetch(url, { signal: ab.signal })
       .then(r => r.text())
-      .then((txt) => marked.parse(txt))
+      .then((txt) => {
+        whenLoaded?.(txt);
+        return marked.parse(txt)
+      })
       .then((v) => set_html(v))
       .catch(e => console.warn(e))
     return () => ab.abort();
   }, [url, content])
-
+  if (emptyAsGone && !__html) return <></>
   return (
     <div
       {..._p}
