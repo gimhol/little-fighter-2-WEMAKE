@@ -1,0 +1,158 @@
+@import url(@/theme/common.module.scss);
+
+.card_root {
+  transition     : transform 255ms;
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(1.025);
+  }
+
+  .card {
+    user-select          : none;
+    width                : 210px;
+    height               : 300px;
+    border-radius        : 5px;
+    box-shadow           : 0px 5px 15px -3px rgba(0, 0, 0, 0.8);
+    box-sizing           : content-box;
+    background-image     : url(../../assets/img_bg.png);
+    background-repeat    : repeat;
+    background-color     : rgba(0, 0, 0, 0.5);
+    background-blend-mode: color-burn;
+    transition           : transform 45ms, box-shadow 255ms;
+    transform-style      : preserve-3d;
+    perspective-origin   : 50% 50%;
+    border               : none;
+    outline              : none;
+    padding              : 0px;
+    overflow             : hidden;
+    display              : inline-flex;
+    flex-direction       : column;
+    align-items          : stretch;
+
+    .card_head {
+      padding      : 2px 5px;
+      overflow     : hidden;
+      text-overflow: ellipsis;
+      white-space  : nowrap;
+      display      : flex;
+      align-items  : center;
+
+      .prefix {
+        font-size: 9px;
+      }
+
+      a {
+        user-select: none;
+      }
+
+      img {
+        user-select   : none;
+        pointer-events: none;
+      }
+
+      .left {
+        color: white;
+      }
+
+      .mid {
+        flex: 1;
+      }
+
+      .right {
+        color      : white;
+        display    : flex;
+        align-items: center;
+        gap        : 5px;
+      }
+    }
+
+    .card_main {
+      position        : relative;
+      flex            : 1;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius   : 5px;
+      margin          : 0px 5px;
+      white-space     : pre-wrap;
+      font-size       : 12px;
+      overflow        : hidden;
+      display         : flex;
+      flex-direction  : column;
+
+      .pic_zone {
+        overflow: hidden;
+        position: relative;
+        flex    : 1;
+
+        img {
+          display   : inline-block;
+          object-fit: cover;
+          width     : 100%;
+          height    : 100%;
+        }
+      }
+
+      .info_zone {
+        border-radius: 5px;
+        overflow     : auto;
+        user-select  : text
+      }
+
+      .info_zone_half {
+        @extend .info_zone;
+        background-color: rgba(0, 0, 0, 0.5);
+        max-height      : 50%;
+      }
+
+      .no_content {
+        position  : absolute;
+        color     : gray;
+        width     : 100%;
+        text-align: center;
+        top       : 0px;
+        left      : 0px;
+        bottom    : 0px;
+        right     : 0px;
+        font-size : 20px;
+      }
+    }
+
+    .card_foot {
+      user-select: text;
+      padding    : 2px 5px;
+      display    : flex;
+      font-size  : 12px;
+
+      .prefix {
+        font-size: 9px;
+      }
+
+      .left {
+        display    : flex;
+        align-items: center;
+        color      : white;
+      }
+
+      .mid {
+        flex: 1;
+      }
+
+      .right {
+        display    : flex;
+        align-items: center;
+        color      : white;
+      }
+    }
+  }
+
+  .card:hover {
+    box-shadow: 0px 5px 15px -3px rgba(0, 0, 0, 0.5);
+    cursor    : pointer;
+  }
+}

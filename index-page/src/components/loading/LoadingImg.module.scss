@@ -1,0 +1,22 @@
+.loading_img_l {
+  opacity       : 0;
+  transition    : opacity 1000ms;
+  object-fit    : none;
+  user-select   : none;
+  margin        : auto;
+  display       : inline-block;
+  width         : 132px;
+  height        : 84px;
+  pointer-events: none;
+}
+
+.loading_img_s {
+  opacity       : 0;
+  transition    : opacity 1000ms;
+  object-fit    : none;
+  user-select   : none;
+  display       : inline-block;
+  width         : 31px;
+  height        : 21px;
+  pointer-events: none;
+}

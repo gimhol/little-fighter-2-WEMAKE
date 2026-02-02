@@ -1,19 +1,20 @@
 
 import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
-import styles from "./styles.module.scss";
+import styles from "./CardBase.module.scss";
 
 function lerp(from: number, to: number, factor: number) {
   return from + (to - from) * factor;
 }
-export function Card(props: React.HTMLAttributes<HTMLDivElement>) {
+export interface ICardBaseProps extends React.HTMLAttributes<HTMLDivElement> {
+  __keep?: never
+}
+export function CardBase(props: ICardBaseProps) {
   const { className, children, ..._p } = props;
   const ref_div = useRef<HTMLDivElement>(null)
   const [el_card, set_el_card] = useState<HTMLDivElement | null>(null)
   const [card_style, set_card_style] = useState<React.CSSProperties>({})
   const [is_pointer_down, set_is_pointer_down] = useState(false);
-
-  // useMovingBg(el_card)
   useEffect(() => set_el_card(ref_div.current), [])
   const on_pointer_move = (e: React.PointerEvent) => {
     const el = el_card;

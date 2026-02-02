@@ -1,21 +1,22 @@
 /* eslint-disable react-hooks/refs */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Link } from "@/components/link";
 import classnames from "classnames";
+import QueryString from "qs";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router";
 import img_browser_mark_white from "../../assets/img_browser_mark_white.svg";
 import img_gim_ink from "../../assets/img_gim_ink.png";
 import img_github_mark_white from "../../assets/img_github_mark_white.svg";
 import img_markdown_white from "../../assets/img_markdown_white.svg";
 import img_windows_x64_white from "../../assets/img_windows_x64_white.svg";
-import { Loading } from "../../LoadingImg";
-import { useMovingBg } from "../../useMovingBg";
-import { Card } from "./Card";
-import { Info } from "./Info";
-import styles from "./styles.module.scss";
-import { useLocation, useNavigate } from "react-router";
+import { Info } from "../../base/Info";
+import { InfoCard } from "../../components/cards/InfoCard";
+import { Loading } from "../../components/loading/LoadingImg";
 import { Paths } from "../../Paths";
-import QueryString from "qs";
+import { useMovingBg } from "../../useMovingBg";
+import styles from "./styles.module.scss";
 
 const time_str = Math.floor(Date.now() / 60000);
 export default function MainPage() {
@@ -124,20 +125,18 @@ export default function MainPage() {
             </span>
           </div>
         </button>
-        <a
+        <Link
           className={styles.head_right_btn}
           href="https://github.com/gimhol/little-fighter-2-WEMAKE"
-          target="_blank" draggable={false}
           title={t('goto_github')}>
           <img src={img_github_mark_white} width="20px" alt={t('goto_github')} />
-        </a>
-        <a
+        </Link>
+        <Link
           className={styles.head_right_btn}
           href="https://gim.ink"
-          target="_blank" draggable={false}
           title={t('goto_gimink')}>
           <img src={img_gim_ink} width="26px" alt={t('goto_gimink')} />
-        </a>
+        </Link>
       </div>
       <div className={styles.main}>
         {
@@ -161,9 +160,9 @@ export default function MainPage() {
             !actived_game ? null :
               <div className={styles.game_desc_zone}>
                 <h3 className={styles.game_title}>
-                  <a target="_blank" draggable={false} href={versions?.find(v => v.url)?.url}>
+                  <Link href={versions?.find(v => v.url)?.url}>
                     {actived_game?.title}
-                  </a>
+                  </Link>
                   <div style={{ flex: 1 }}></div>
                   {
                     loading ? null :
@@ -175,7 +174,7 @@ export default function MainPage() {
                     <span className={styles.btn_span}>{is_cards_view ? 'L' : 'C'}</span>
                   </button>
                   <button className={styles.btn} onClick={() => set_game_desc_open(!game_desc_open)} title="▼ or ▲">
-                    <span className={styles.btn_span}>{game_desc_open ? '▲' : '▼'}</span>
+                    <span className={styles.btn_span} style={{ transform: `rotateZ(${game_desc_open ? 0 : 180}deg)` }}>▲</span>
                   </button>
                 </h3>
                 {!game_desc_open ? null :
@@ -185,97 +184,10 @@ export default function MainPage() {
                 }
               </div>
           }
-
           {
             (!is_cards_view || !versions?.length) ? null :
               <div className={classnames(styles.card_list, styles.scrollview)}>
-                {
-                  versions?.map(version => {
-                    const { url, cover, desc, changelog } = version;
-                    const win_x64_url = version.get_download_url('win_x64');
-                    const default_url = url ?? win_x64_url;
-                    return (
-                      <Card
-                        key={version.id}
-                        title={url ? pl_in_browser : win_x64_url ? dl_win_x64 : void 0}
-                        onClick={() => {
-                          if (!default_url) return;
-                          const a = document.createElement('a')
-                          a.href = default_url
-                          a.target = '_blank'
-                          a.click()
-                        }}>
-                        <div className={styles.card_head}>
-                          <div className={styles.left}>
-                            <a target="_blank" draggable={false} href={url} onClick={e => url && e.stopPropagation()}>
-                              {version.title}
-                              <span className={styles.prefix}>
-                                {url ? null : ` (${t('version_unavailable')})`}
-                              </span>
-                            </a>
-                          </div>
-                          <div className={styles.mid}></div>
-                          <div className={styles.right}>
-                            {!url ? null :
-                              <a title={pl_in_browser} draggable={false} target="_blank" href={url} onClick={e => e.stopPropagation()}>
-                                <img src={img_browser_mark_white} width="16px" draggable={false} alt={pl_in_browser} />
-                              </a>
-                            }
-                            {!win_x64_url ? null :
-                              <a title={dl_win_x64} draggable={false} target="_blank" href={win_x64_url} onClick={e => e.stopPropagation()}>
-                                <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
-                              </a>
-                            }
-                          </div>
-                        </div>
-                        <div className={classnames(styles.card_main)}>
-                          {
-                            !cover ? null : <div className={classnames(styles.pic_zone)}>
-                              <img draggable={false} src={cover} />
-                            </div>
-                          }
-                          {
-                            !(desc || changelog) ? null :
-                              <div className={classnames(cover ? styles.info_zone_half : styles.info_zone, styles.scrollview)}>
-                                {!desc ? null : <div dangerouslySetInnerHTML={{ __html: desc }} />}
-                                {!desc || !changelog ? null : <div>Changelog</div>}
-                                {!changelog ? null : <><div dangerouslySetInnerHTML={{ __html: changelog }} /></>}
-                              </div>
-                          }
-                          {
-                            (cover || desc || changelog) ? null :
-                              <div className={classnames(styles.no_content)}>
-                                {t('no_content')}
-                              </div>
-                          }
-                        </div>
-                        <div className={styles.card_foot}>
-                          <div className={styles.left}>
-                            <span className={styles.prefix}>
-                              {t('author')}
-                            </span>
-                            <a
-                              draggable={false}
-                              target='_blank'
-                              href={version.author_url}
-                              title={t('visit_author_link')}
-                              onClick={e => e.stopPropagation()}>
-                              {version.author}
-                            </a>
-                          </div>
-                          <div className={styles.mid}>
-                          </div>
-                          <div className={styles.right}>
-                            <span className={styles.prefix}>
-                              {t('date')}
-                            </span>
-                            {version.date}
-                          </div>
-                        </div>
-                      </Card>
-                    )
-                  })
-                }
+                {versions?.map(version => <InfoCard info={version} key={version.id} />)}
               </div>
           }
           {
@@ -289,21 +201,21 @@ export default function MainPage() {
                       <div className={styles.version_item} key={version.id}>
                         <div className={styles.row_1}>
                           <h3 className={styles.row_title}>
-                            <a target="_blank" draggable={false} href={url}>
+                            <Link href={url}>
                               {version.title}
                               {url ? null : ` (${t('version_unavailable')})`}
-                            </a>
+                            </Link>
                           </h3>
                           <div className={styles.go_div}>
                             {!url ? null :
-                              <a title={pl_in_browser} target="_blank" href={url}>
+                              <Link title={pl_in_browser} href={url}>
                                 <img src={img_browser_mark_white} width="24px" alt={pl_in_browser} />
-                              </a>
+                              </Link>
                             }
                             {!win_x64_url ? null :
-                              <a title={dl_win_x64} target="_blank" href={win_x64_url}>
+                              <Link title={dl_win_x64} href={win_x64_url}>
                                 <img src={img_windows_x64_white} width="24px" alt={dl_win_x64} />
-                              </a>
+                              </Link>
                             }
                             <div className={styles.el_date}>
                               {version.date}
