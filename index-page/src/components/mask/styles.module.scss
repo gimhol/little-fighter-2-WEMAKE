@@ -1,0 +1,12 @@
+.mask {
+  z-index       : 10;
+  position      : absolute;
+  top           : 0;
+  bottom        : 0;
+  left          : 0;
+  right         : 0;
+  background    : #00000055;
+  transition    : all 255ms;
+  opacity       : 0;
+  pointer-events: none;
+}

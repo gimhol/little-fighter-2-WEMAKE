@@ -2,82 +2,35 @@ import img_browser_mark_white from "@/assets/img_browser_mark_white.svg";
 import img_windows_x64_white from "@/assets/img_windows_x64_white.svg";
 import type { Info } from "@/base/Info";
 import classnames from "classnames";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "../link";
-import { Mask } from "../mask";
 import { CardBase, type ICardBaseProps } from "./CardBase";
-import { DetailCard } from "./DetailCard";
-import csses from "./InfoCard.module.scss";
+import csses from "./DetailCard.module.scss";
 
-export interface IInfoCardProps extends ICardBaseProps {
-  info: Info
+export interface IDetailCardProps extends ICardBaseProps {
+  info: Info;
+  onClose?(): void;
 }
-const classNames = { card: csses.info_card }
-export function InfoCard(props: IInfoCardProps) {
+const classNames = { card: csses.detail_card }
+export function DetailCard(props: IDetailCardProps) {
+  const { info, onClose, ..._p } = props;
   const { t } = useTranslation()
   const pl_in_browser = t('pl_in_browser')
   const dl_win_x64 = t('dl_win_x64')
-  const { info: info } = props;
   const { url, cover, desc, changelog } = info;
   const win_x64_url = info.get_download_url('win_x64');
   const ref_el = useRef<HTMLDivElement>(null)
-  const [test_mask_style, set_test_mask] = useState<React.CSSProperties>({})
-  const [detail_open, set_test_mask_open] = useState(false)
-
-  useEffect(() => {
-    if (!detail_open) return void 0
-    setTimeout(() => {
-      set_test_mask(prev => {
-        return {
-          ...prev,
-          left: 50, top: 50,
-          width: 'calc(100% - 100px)',
-          height: 'calc(100% - 100px)'
-        }
-      })
-    }, 50)
-
-  }, [detail_open])
-  const close_detail = () => {
-    set_test_mask_open(false)
-    const { width, height, left, top } = ref_el.current!.firstElementChild!.getBoundingClientRect()
-    set_test_mask({ position: 'fixed', width, height, left, top, transition: 'all 255ms' })
-  }
-  const open_detail = () => {
-    set_test_mask_open(true)
-    const { width, height, left, top } = ref_el.current!.firstElementChild!.getBoundingClientRect()
-    set_test_mask({ position: 'fixed', width, height, left, top, transition: 'all 255ms' })
-  }
-  const mask = createPortal(<>
-    <Mask
-      open={detail_open}
-      closeOnMask
-      onClose={close_detail}>
-      <DetailCard
-        floating={false}
-        info={info}
-        style={test_mask_style}
-        styles={{ card: { width: '100%', height: '100%' } }}
-        onClick={e => {
-          e.stopPropagation()
-        }}
-        onClose={close_detail}
-      />
-    </Mask>
-
-  </>, document.body)
-
   return <>
     <CardBase
       floating
       key={info.id}
-      onClick={open_detail}
+      title={url ? pl_in_browser : win_x64_url ? dl_win_x64 : void 0}
       classNames={classNames}
-      __ref={ref_el}>
-      <div className={csses.info_card_inner}>
-        <div className={csses.info_card_head}>
+      __ref={ref_el}
+      {..._p}>
+      <div className={csses.detail_card_inner}>
+        <div className={csses.detail_card_head}>
           <div className={csses.left}>
             <Link href={url} style={{ padding: `0px 5px` }}>
               {info.title}{url ? ' ▸' : null}
@@ -98,9 +51,15 @@ export function InfoCard(props: IInfoCardProps) {
                 <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
               </Link>
             }
+            {
+              !onClose ? null :
+                <Link onClick={e => { e.stopPropagation(); onClose?.() }}>
+                  ✖︎
+                </Link>
+            }
           </div>
         </div>
-        <div className={csses.info_card_main}>
+        <div className={csses.detail_card_main}>
           {
             !cover ? null : <div className={classnames(csses.pic_zone)}>
               <img draggable={false} src={cover} />
@@ -109,7 +68,9 @@ export function InfoCard(props: IInfoCardProps) {
           {
             !(desc || changelog) ? null :
               <div className={classnames(cover ? csses.info_zone_half : csses.info_zone, csses.scrollview)}>
-                {!desc && !changelog ? null : <div dangerouslySetInnerHTML={{ __html: desc || changelog }} />}
+                {!desc ? null : <div dangerouslySetInnerHTML={{ __html: desc }} />}
+                {!desc || !changelog ? null : <div>Changelog</div>}
+                {!changelog ? null : <><div dangerouslySetInnerHTML={{ __html: changelog }} /></>}
               </div>
           }
           {
@@ -119,7 +80,7 @@ export function InfoCard(props: IInfoCardProps) {
               </div>
           }
         </div>
-        <div className={csses.info_card_foot}>
+        <div className={csses.detail_card_foot}>
           <div className={csses.left}>
             <span className={csses.prefix}>
               {t('author')}
@@ -141,6 +102,5 @@ export function InfoCard(props: IInfoCardProps) {
         </div>
       </div>
     </CardBase>
-    {mask}
   </>
 }

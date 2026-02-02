@@ -1,5 +1,3 @@
-import { href } from "react-router";
-
 export interface ILinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   __keep?: never;
 }
@@ -8,7 +6,9 @@ export function Link(props: ILinkProps) {
     draggable = false,
     target = '_blank',
     href,
-    onClick = e => { if (href) e.stopPropagation() }
+    onClick = e => {
+      if (href) e.stopPropagation()
+    }
   } = props
   return (
     <a {...props}

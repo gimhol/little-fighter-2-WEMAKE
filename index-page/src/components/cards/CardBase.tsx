@@ -1,21 +1,34 @@
 
 import classnames from "classnames";
-import { useEffect, useRef, useState } from "react";
-import styles from "./CardBase.module.scss";
+import { useEffect, useMemo, useRef, useState } from "react";
+import csses from "./CardBase.module.scss";
 
 function lerp(from: number, to: number, factor: number) {
   return from + (to - from) * factor;
 }
 export interface ICardBaseProps extends React.HTMLAttributes<HTMLDivElement> {
   __keep?: never
+  __ref?: React.Ref<HTMLDivElement>;
+  floating?: boolean;
+  styles?: {
+    root?: React.CSSProperties,
+    card?: React.CSSProperties,
+  },
+  classNames?: {
+    root?: string,
+    card?: string,
+  }
 }
 export function CardBase(props: ICardBaseProps) {
-  const { className, children, ..._p } = props;
+  const {
+    className, children, __ref, floating = true, styles, style, classNames,
+    ..._p
+  } = props;
   const ref_div = useRef<HTMLDivElement>(null)
   const [el_card, set_el_card] = useState<HTMLDivElement | null>(null)
-  const [card_style, set_card_style] = useState<React.CSSProperties>({})
+  const [dynamic_card_style, set_dynamic_card_style] = useState<React.CSSProperties>({})
   const [is_pointer_down, set_is_pointer_down] = useState(false);
-  useEffect(() => set_el_card(ref_div.current), [])
+
   const on_pointer_move = (e: React.PointerEvent) => {
     const el = el_card;
     if (!el) return;
@@ -26,38 +39,64 @@ export function CardBase(props: ICardBaseProps) {
     const ry = lerp(8, -8, y)
     const transform = `rotateX(${rx}deg) rotateY(${ry}deg)`
     const filter = `contrast(${lerp(1.1, 0.9, x)})`;
-    set_card_style({ filter, transform })
+    set_dynamic_card_style(prev => (
+      filter === prev.filter &&
+      transform === prev.transform
+    ) ? prev : { filter, transform })
   }
   const on_pointer_leave = () => {
-    set_card_style({
-      filter: 'contrast(1)',
-      transform: 'rotateX(0deg) rotateY(0deg)'
-    })
+    const filter = 'contrast(1)'
+    const transform = 'rotateX(0deg) rotateY(0deg)'
+    set_dynamic_card_style(prev => (
+      filter === prev.filter &&
+      transform === prev.transform
+    ) ? prev : { filter, transform })
   }
   const on_pointer_down = (e: React.PointerEvent) => {
     if (e.button != 0) return;
     set_is_pointer_down(true);
-    set_card_style({
-      filter: 'contrast(1)',
-      transform: 'rotateX(0deg) rotateY(0deg)'
-    })
+    const filter = 'contrast(1)'
+    const transform = 'rotateX(0deg) rotateY(0deg)'
+    set_dynamic_card_style(prev => (
+      filter === prev.filter &&
+      transform === prev.transform
+    ) ? prev : { filter, transform })
   }
   const on_pointer_up = (e: React.PointerEvent) => {
     if (e.button != 0) return;
     set_is_pointer_down(false)
     on_pointer_move(e)
   }
+  useEffect(() => set_el_card(ref_div.current), [])
+
+  const cls_root = classnames(
+    csses.card_root,
+    { [csses.floating]: floating },
+    classNames?.root,
+    className
+  )
+  const cls_card = classnames(csses.card, classNames?.card)
+  const styles_root = styles?.root
+  const styles_card = styles?.card
+  const sty_root = useMemo(() => {
+    return { ...styles_root, ...style }
+  }, [styles_root, style])
+
+  const sty_card = useMemo(() => {
+    return { ...dynamic_card_style, ...styles_card }
+  }, [styles_card, dynamic_card_style])
+
   return (
-    <div className={classnames(styles.card_root, className)} {..._p}>
+    <div className={cls_root} ref={__ref} style={sty_root} {..._p}>
       <div
         ref={ref_div}
-        className={classnames(styles.card)}
-        onPointerMove={is_pointer_down ? void 0 : on_pointer_move}
-        onPointerLeave={on_pointer_leave}
-        onPointerDown={on_pointer_down}
-        onPointerUp={on_pointer_up}
-        onPointerCancel={on_pointer_up}
-        style={card_style} >
+        className={cls_card}
+        onPointerMove={(!floating || is_pointer_down) ? void 0 : on_pointer_move}
+        onPointerLeave={floating ? on_pointer_leave : void 0}
+        onPointerDown={floating ? on_pointer_down : void 0}
+        onPointerUp={floating ? on_pointer_up : void 0}
+        onPointerCancel={floating ? on_pointer_up : void 0}
+        style={sty_card} >
         {children}
       </div>
     </div >

@@ -1,24 +1,20 @@
 @import url(@/theme/common.module.scss);
 
-.info_card {
+.detail_card {
   width        : 210px;
   height       : 300px;
   border-radius: 5px;
   box-shadow   : 0px 5px 15px -3px rgba(0, 0, 0, 0.8);
 }
 
-.info_card_inner {
+.detail_card_inner {
   display       : flex;
   flex-direction: column;
   flex          : 1;
   position      : relative;
   overflow      : hidden;
 
-  .prefix {
-    font-size      : 9px;
-  }
-
-  .info_card_head {
+  .detail_card_head {
     padding      : 2px 5px;
     overflow     : hidden;
     text-overflow: ellipsis;
@@ -26,6 +22,9 @@
     display      : flex;
     align-items  : center;
 
+    .prefix {
+      font-size: 9px;
+    }
 
     a {
       user-select: none;
@@ -52,7 +51,7 @@
     }
   }
 
-  .info_card_main {
+  .detail_card_main {
     position        : relative;
     flex            : 1;
     background-color: rgba(0, 0, 0, 0.5);
@@ -102,11 +101,15 @@
     }
   }
 
-  .info_card_foot {
+  .detail_card_foot {
     user-select: text;
     padding    : 2px 5px;
     display    : flex;
     font-size  : 12px;
+
+    .prefix {
+      font-size: 9px;
+    }
 
     .left {
       display    : flex;
