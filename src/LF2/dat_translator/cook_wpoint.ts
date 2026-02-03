@@ -11,7 +11,7 @@ export function cook_wpoint(unsure_wpoint: IWpointInfo, frame: IFrameInfo) {
   unsure_wpoint.x = y || 0
 
   const z = take(unsure_wpoint, "z");
-  unsure_wpoint.z = y || 0
+  unsure_wpoint.z = z || 0
 
   const dvx = take(unsure_wpoint, "dvx");
   if (not_zero_num(dvx)) unsure_wpoint.dvx = dvx * 0.5;
