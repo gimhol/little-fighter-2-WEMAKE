@@ -15,6 +15,17 @@
     align-items  : center;
     position     : relative;
 
+    .btn_toggle_game_list {
+      overflow: hidden;
+      width   : 0px;
+
+      @media screen and (min-width: 0px) and (max-width: 480px) {
+        width      : 24px;
+        display    : inline-flex;
+        flex-shrink: 0;
+      }
+    }
+
     .main_title {
       flex     : 1;
       position : relative;
@@ -65,6 +76,12 @@
     align-items: stretch;
     height     : 0;
 
+    .game_list {
+      @media screen and (min-width: 0px) and (max-width: 480px) {
+        display: none;
+      }
+    }
+
     .main_right {
       flex          : 1;
       display       : flex;
@@ -77,6 +94,7 @@
 
         .game_title {
           display      : flex;
+          flex-wrap    : wrap;
           cursor       : pointer;
           user-select  : none;
           margin-bottom: 5px;
@@ -115,6 +133,16 @@
 }
 
 
+
+
+.game_list_mask {
+  .game_list {
+    background-image: url(../../assets/img_bg.png);
+    box-shadow      : 0px 5px 15px -3px rgba(0, 0, 0, 0.5);
+    border-right    : none;
+  }
+}
+
 .game_list {
   overflow      : auto;
   display       : flex;
@@ -124,12 +152,7 @@
   padding       : 5px;
   box-sizing    : border-box;
   flex-shrink   : 1;
-
-  @media screen and (min-width: 0px) and (max-width: 480px) {
-    display: none;
-  }
 }
-
 
 .game_item {
   padding        : 5px;

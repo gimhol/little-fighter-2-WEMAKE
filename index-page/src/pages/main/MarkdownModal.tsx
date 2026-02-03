@@ -42,11 +42,13 @@ export function MarkdownModal(props: { info?: Info } & IMaskProps) {
             gone={loading}
             letter="📋"
             onClick={() => navigator.clipboard.writeText(markdown)}
+            title="Copy Markdown"
             stopPropagation>
           </IconButton>
           <IconButton
             letter="✖︎"
             onClick={onClose}
+            title="Close"
             stopPropagation />
         </div>
         <div

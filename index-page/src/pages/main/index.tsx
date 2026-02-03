@@ -9,6 +9,7 @@ import { Collapse } from "@/components/collapse/Collapse";
 import { Link } from "@/components/link";
 import { Loading } from "@/components/loading/LoadingImg";
 import { Viewer } from "@/components/markdown/Viewer";
+import { Mask } from "@/components/mask";
 import { Paths } from "@/Paths";
 import { useMovingBg } from "@/useMovingBg";
 import classnames from "classnames";
@@ -18,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 import { InfoListItem } from "./InfoListItem";
 import { LangButton } from "./LangButton";
-import { MarkdownButton, MarkdownModal } from "./MarkdownModal";
+import { MarkdownButton } from "./MarkdownModal";
 import csses from "./styles.module.scss";
 
 const time_str = Math.floor(Date.now() / 60000);
@@ -31,7 +32,6 @@ export default function MainPage() {
   const [games_loading, set_games_loading] = useState(false);
   const [versions_loading, set_versions_loading] = useState(false);
   const [game_desc_open, set_game_desc_open] = useState(window.innerWidth > 480)
-  const [md_open, set_md_open] = useState(false);
   const [is_cards_view, set_is_cards_view] = useState(false)
   const loading = versions_loading || games_loading
 
@@ -100,10 +100,26 @@ export default function MainPage() {
 
   const [game_list_open, set_game_list_open] = useState(false);
 
+  const game_list = !games?.length || games.length <= 1 ? null :
+    <div className={classnames(csses.game_list, csses.scrollview)}>
+      {games?.map((v) => {
+        const cls_name = (actived_game?.id === v.id) ? csses.game_item_actived : csses.game_item
+        return (
+          <button className={cls_name} key={v.id} onClick={() => {
+            set_actived_game(v);
+            set_is_cards_view(v.type == 'cards');
+            set_game_list_open(false)
+          }}>
+            {v.short_title}
+          </button>
+        )
+      })}
+    </div>
+
   return <>
     <div className={csses.main_page}>
       <div className={csses.head}>
-        <IconButton onClick={() => set_game_list_open(!game_list_open)} img={img_menu} title={t('menu')} />
+        <IconButton className={csses.btn_toggle_game_list} onClick={() => set_game_list_open(!game_list_open)} img={img_menu} title={t('menu')} />
         <h1 className={csses.main_title}>
           {t("main_title")}
         </h1>
@@ -127,22 +143,7 @@ export default function MainPage() {
           img={img_gimink} />
       </div>
       <div className={csses.main}>
-        {
-          !games?.length || games.length <= 1 ? null :
-            <div className={classnames(csses.game_list, csses.scrollview)}>
-              {games?.map((v) => {
-                const cls_name = (actived_game?.id === v.id) ? csses.game_item_actived : csses.game_item
-                return (
-                  <button className={cls_name} key={v.id} onClick={() => {
-                    set_actived_game(v)
-                    set_is_cards_view(v.type == 'cards')
-                  }}>
-                    {v.short_title}
-                  </button>
-                )
-              })}
-            </div>
-        }
+        {game_list}
         <div className={csses.main_right}>
           {
             !actived_game ? null :
@@ -192,10 +193,14 @@ export default function MainPage() {
       </div>
     </div>
     <Loading big loading={loading} style={{ position: 'absolute', margin: 'auto auto' }} />
-    <MarkdownModal
-      info={actived_game}
-      open={md_open && !!actived_game}
-      onClose={() => set_md_open(false)} />
+    <Mask
+      className={csses.game_list_mask}
+      container={() => document.body}
+      closeOnMask
+      open={game_list_open}
+      onClose={() => set_game_list_open(false)}>
+      {game_list}
+    </Mask>
   </>
 }
 

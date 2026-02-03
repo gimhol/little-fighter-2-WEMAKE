@@ -12,7 +12,7 @@ export interface IMaskProps extends React.HTMLAttributes<HTMLDivElement> {
 let _mask_count = 0;
 export function Mask(props: IMaskProps) {
   const {
-    style, open, onClose, className, closeOnMask = false,
+    style, open, onClose, className, closeOnMask = true,
     onClick, onKeyDown, container, ..._p
   } = props;
   const ref_el = useRef<HTMLDivElement>(null)
