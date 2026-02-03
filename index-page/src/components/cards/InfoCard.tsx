@@ -1,9 +1,10 @@
-import img_windows_x64_white from "@/assets/img_windows_x64_white.svg";
+import windows_x64 from "@/assets/svg/windows_x64.svg";
 import { Info } from "@/base/Info";
+import { MarkdownButton } from "@/pages/main/MarkdownModal";
 import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
+import { IconButton } from "../button/IconButton";
 import { Link } from "../link";
 import { Viewer } from "../markdown/Viewer";
 import { Mask } from "../mask";
@@ -19,56 +20,26 @@ export function InfoCard(props: IInfoCardProps) {
   const { t } = useTranslation()
   const dl_win_x64 = t('dl_win_x64')
   const { info } = props;
-  const { url, url_type, cover, desc, changelog, unavailable, desc_url, changelog_url } = info;
+  const { url, url_type, cover, unavailable } = info;
   const win_x64_url = info.get_download_url('win_x64');
   const ref_el = useRef<HTMLDivElement>(null)
-  const [test_mask_style, set_test_mask] = useState<React.CSSProperties>({})
-  const [detail_open, set_test_mask_open] = useState(false)
+  const [detail_style, set_detail_style] = useState<React.CSSProperties>({})
+  const [detail_open, set_detail_open] = useState(false)
   const title_suffix = unavailable ? t('unavailable') : url_type ? t(url_type) : void 0;
-
   useEffect(() => {
     if (!detail_open) return void 0
-    setTimeout(() => {
-      set_test_mask(prev => {
-        return {
-          ...prev,
-          left: '5%', top: '5%',
-          width: 'calc(90%)',
-          height: 'calc(90%)'
-        }
-      })
-    }, 50)
-
+    setTimeout(() => set_detail_style({}), 50)
   }, [detail_open])
   const close_detail = () => {
-    set_test_mask_open(false)
+    set_detail_open(false)
     const { width, height, left, top } = ref_el.current!.firstElementChild!.getBoundingClientRect()
-    set_test_mask({ position: 'fixed', width, height, left, top, transition: 'all 255ms' })
+    set_detail_style({ width, height, left, top })
   }
   const open_detail = () => {
-    set_test_mask_open(true)
+    set_detail_open(true)
     const { width, height, left, top } = ref_el.current!.firstElementChild!.getBoundingClientRect()
-    set_test_mask({ position: 'fixed', width, height, left, top, transition: 'all 255ms' })
+    set_detail_style({ width, height, left, top })
   }
-  const mask = createPortal(<>
-    <Mask
-      open={detail_open}
-      closeOnMask
-      onClose={close_detail}>
-      <DetailCard
-        floating={false}
-        info={info}
-        style={test_mask_style}
-        styles={{ card: { width: '100%', height: '100%' } }}
-        onClick={e => {
-          e.stopPropagation()
-        }}
-        onClose={close_detail}
-      />
-    </Mask>
-
-  </>, document.body)
-
   return <>
     <CardBase
       floating
@@ -89,9 +60,8 @@ export function InfoCard(props: IInfoCardProps) {
           </div>
           <div className={csses.mid}></div>
           <div className={csses.right}>
-            <Link title={dl_win_x64} href={win_x64_url} emptyAsGone>
-              <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
-            </Link>
+            <MarkdownButton info={info} />
+            <IconButton title={dl_win_x64} href={win_x64_url} gone={!win_x64_url} img={windows_x64} />
           </div>
         </div>
         <div className={csses.info_card_main}>
@@ -101,8 +71,8 @@ export function InfoCard(props: IInfoCardProps) {
           {
             !(info.desc || info.desc_url || info.changelog || info.changelog_url) ? null :
               <div className={classnames(cover ? csses.info_zone_half : csses.info_zone, csses.scrollview)}>
-                <Viewer plain content={info.desc} url={info.desc_url} whenLoaded={t => info.desc = t} />
-                <Viewer plain content={info.changelog} url={info.changelog_url} whenLoaded={t => info.changelog = t} />
+                <Viewer plain content={info.desc} url={info.desc_url} whenLoaded={v => info.set_desc(v)} />
+                <Viewer plain content={info.changelog} url={info.changelog_url} whenLoaded={v => info.set_changelog(v)} />
               </div>
           }
           {
@@ -132,6 +102,23 @@ export function InfoCard(props: IInfoCardProps) {
         </div>
       </div>
     </CardBase>
-    {mask}
+
+    <Mask
+      container={() => document.body}
+      open={detail_open}
+      closeOnMask
+      onClose={close_detail}>
+      <DetailCard
+        floating={false}
+        info={info}
+        classNames={{
+          root: csses.detail_card_modal,
+          card: csses.detail_card_inner,
+        }}
+        style={detail_style}
+        onClick={e => e.stopPropagation()}
+        onClose={close_detail}
+      />
+    </Mask>
   </>
 }

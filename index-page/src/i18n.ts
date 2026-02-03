@@ -4,7 +4,7 @@ import { initReactI18next } from "react-i18next";
 const zh = {
   "author": "作者",
   "date": "日期",
-  "main_title": "选你所选",
+  "main_title": "Wemakeit",
   "unavailable": "已停用",
   "dl_win_x64": "下载 Windows x64 应用",
   "open_in_browser": "浏览器中打开",
@@ -18,7 +18,7 @@ const zh = {
 const en = {
   "author": "author",
   "date": "date",
-  "main_title": "Select Game Version",
+  "main_title": "Wemakeit",
   "unavailable": "Unavailable",
   "dl_win_x64": "Download Window x64 Application",
   "open_in_browser": "Open in Browser",

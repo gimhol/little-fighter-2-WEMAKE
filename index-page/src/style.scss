@@ -1,22 +1,23 @@
 :root {
-  font-family            : system-ui, Avenir, Helvetica, Arial, sans-serif;
-  font-synthesis         : none;
-  text-rendering         : optimizeLegibility;
-  -webkit-font-smoothing : antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --divider-color        : #FFFFFF22;
-  --link-color           : #FFFFFFFF;
-  --link-color-hover     : #FFFFFFFF;
-  --txt-color            : #8393e4FF;
-  --primary-color        : #10206C;
-  --primary-color-hover  : #213492;
-  --primary-color-actived: #1b2a75;
+  font-family             : system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-synthesis          : none;
+  text-rendering          : optimizeLegibility;
+  -webkit-font-smoothing  : antialiased;
+  -moz-osx-font-smoothing : grayscale;
+  --divider-color         : #FFFFFF22;
+  --link-color            : #FFFFFFFF;
+  --link-color-hover      : #FFFFFFFF;
+  --txt-color             : #8393e4FF;
+  --primary-color         : #10206C;
+  --primary-color-hover   : #213492;
+  --primary-color-actived : #1b2a75;
+  --small-screen-width-min: 0px;
 }
 
 #root {
-  height   : 100%;
-  width    : 100%;
-  // max-width: 800px;
+  height    : 100%;
+  width     : 100%;
+  transition: all 255ms;
 }
 
 html {

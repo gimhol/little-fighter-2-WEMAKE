@@ -73,7 +73,7 @@
           "Then open LF2:Wemake and drag the \"character packs\" ",
           "onto the Entry Page or the Main Page.\n",
           "After loading, you'll be able to select these characters :D\n",
-          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls>"
+          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
         ],
         "versions": "extra-fighters.json"
       },
@@ -84,7 +84,7 @@
           "你可以下载想要的角色包\n\n",
           "然后打开LF2:Wemake，将 '角色包' 拖拽至入口页或主页中",
           "加载完成后，你就能选择这些角色了 :D\n\n",
-          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls>"
+          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
         ]
       },
       "zh-hans": "zh",

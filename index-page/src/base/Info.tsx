@@ -28,7 +28,6 @@ export class Info {
   url?: string;
   url_type?: string;
   cover?: string;
-  markdown: string = '';
   author?: string;
   author_url?: string;
   type?: string;
@@ -57,13 +56,17 @@ export class Info {
     this.read_str('author_url');
     this.read_str('cover');
     this.read_str('unavailable');
-    this.update_markdown()
   }
   get versions() { return this._versions; }
-  set versions(v: Info[] | undefined) { this._versions = v; this.update_markdown(); }
+  set versions(v: Info[] | undefined) { this._versions = v; }
   private read_str(name: keyof this) {
     const raw = this.cur[name] || this.raw[name];
     Object.assign(this, { [name]: raw });
+  }
+  private get_str(name: keyof this): string | undefined {
+    const raw = this.cur[name] || this.raw[name];
+    if (raw === void 0 || raw === null) return void 0
+    return '' + raw;
   }
   with_lang(lang: string): Info {
     const ret = new Info(this.raw, lang);
@@ -74,24 +77,45 @@ export class Info {
     if (typeof this.cur.downloads !== 'object') return void 0;
     return this.cur.downloads[type] || '';
   }
-  update_markdown() {
-    this.read_str('markdown')
-    if (!this.markdown) {
-      let text = `# ${this.title}`
-      text += '\n\n'
-      text += `[中文](CHANGELOG.MD) | [English](CHANGELOG.EN.MD)`
-      text += '\n\n'
-      if (this.desc) text += `${this.desc}\n\n`
-      if (this.versions?.length) {
-        text += '## Changelog\n\n'
-        for (const version of this.versions) {
-          text += `### ${version.title}\n\n`
-          if (version.date) text += `${version.date}\n\n`
-          if (version.desc) text += `${version.desc}\n\n`
-          if (version.changelog) text += `${version.changelog}\n\n`
-        }
+  async markdown() {
+    const md = this.get_str('markdown')
+    if (md) return md;
+
+    let text = `# ${this.title}`
+    text += '\n\n'
+    text += `[中文](CHANGELOG.MD) | [English](CHANGELOG.EN.MD)`
+    text += '\n\n'
+    text += await this.fetch_desc().then(r => r ? `${r}\n\n` : '')
+    text += await this.fetch_changelog().then(r => r ? `${r}\n\n` : '')
+
+    if (this.versions?.length) {
+      text += '## Changelog\n\n'
+      for (const version of this.versions) {
+        text += `### ${version.title}\n\n`
+        if (version.date) text += `${version.date}\n\n`
+        text += await version.fetch_desc().then(r => r ? `${r}\n\n` : '')
+        text += await version.fetch_changelog().then(r => r ? `${r}\n\n` : '')
       }
-      this.markdown = text;
     }
+    return text;
   }
+
+  async fetch_desc() {
+    if (this.desc) return this.desc
+    if (!this.desc_url) return '';
+    return await fetch(this.desc_url, { mode: 'cors' })
+      .then(r => r.text())
+      .then(v => this.desc = v)
+      .catch(e => '' + e)
+  }
+  async fetch_changelog() {
+    if (this.changelog) return this.changelog
+    if (!this.changelog_url) return '';
+    return await fetch(this.changelog_url, { mode: 'cors' })
+      .then(r => r.text())
+      .then(v => this.changelog = v)
+      .catch(e => '' + e)
+  }
+  set_desc(v: string) { this.desc = v; }
+  set_changelog(v: string) { this.changelog = v; }
 }

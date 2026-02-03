@@ -1,45 +1,25 @@
 @import url(@/theme/common.module.scss);
 
 .main_page {
-  display          : flex;
-  flex-direction   : column;
-  height           : 100%;
-  width            : 100%;
-  // max-width     : 800px;
+  display       : flex;
+  flex-direction: column;
+  height        : 100%;
+  width         : 100%;
 
+  --padding-right: 10px;
 
   &>.head {
-    padding      : 0px 10px;
+    padding      : 0px var(--padding-right);
     border-bottom: 1px var(--divider-color) dashed;
     display      : flex;
     align-items  : center;
-    gap          : 10px;
     position     : relative;
 
     .main_title {
       flex     : 1;
       position : relative;
-      margin   : 5px;
+      margin   : 5px 0px;
       font-size: 1.2em;
-    }
-
-    .head_right_btn {
-      display        : inline-block;
-      transform      : none;
-      display        : flex;
-      align-items    : center;
-      justify-content: center;
-      width          : 24px;
-      height         : 24px;
-      padding        : 0px;
-    }
-
-    .head_right_btn>img {
-      transition: all 200ms;
-    }
-
-    .head_right_btn:hover>img {
-      transform: scale(1.2);
     }
 
     .lang_btn_inner {
@@ -85,17 +65,6 @@
     align-items: stretch;
     height     : 0;
 
-    .game_list {
-      overflow      : auto;
-      display       : flex;
-      flex-direction: column;
-      gap           : 5px;
-      border-right  : 1px var(--divider-color) dashed;
-      padding       : 5px;
-      box-sizing    : border-box;
-      flex-shrink   : 1;
-    }
-
     .main_right {
       flex          : 1;
       display       : flex;
@@ -103,7 +72,7 @@
       width         : 0px;
 
       .game_desc_zone {
-        padding      : 0px 5px 0px 20px;
+        padding      : 0px var(--padding-right);
         border-bottom: 1px var(--divider-color) dashed;
 
         .game_title {
@@ -122,20 +91,8 @@
           }
         }
 
-        .btn {
-          width : 30px;
-          height: 30px;
-        }
-
         .btn_span {
-          display        : flex;
-          align-items    : center;
-          justify-content: center;
-          font-size      : 10px;
-          line-height    : 10px;
-          color          : white;
-          vertical-align : middle;
-          transition     : all 255ms;
+          font-weight: 900
         }
       }
 
@@ -156,6 +113,23 @@
     padding        : 5px;
   }
 }
+
+
+.game_list {
+  overflow      : auto;
+  display       : flex;
+  flex-direction: column;
+  gap           : 5px;
+  border-right  : 1px var(--divider-color) dashed;
+  padding       : 5px;
+  box-sizing    : border-box;
+  flex-shrink   : 1;
+
+  @media screen and (min-width: 0px) and (max-width: 480px) {
+    display: none;
+  }
+}
+
 
 .game_item {
   padding        : 5px;
@@ -178,53 +152,26 @@
   background-color: var(--primary-color-actived);
 }
 
-
-.changelog_md_mask {
-  position        : fixed;
-  left            : 0px;
-  right           : 0px;
-  top             : 0px;
-  bottom          : 0px;
-  justify-content : center;
-  align-items     : center;
-  background-color: #00000055;
-  display         : flex;
-  z-index         : 1;
-}
-
 .changelog_md_modal {
   position        : fixed;
   display         : inline-block;
   box-shadow      : 0px 5px 15px -3px rgba(0, 0, 0, 0.5);
   border-radius   : 10px;
-  top             : 20px;
   background-color: var(--primary-color);
   box-sizing      : border-box;
   overflow        : hidden;
   transition      : all 220ms;
-}
+  max-width       : 100%;
+  max-height      : 100%;
 
-.changelog_md_modal>button {
-  height         : 24px;
-  width          : 24px;
-  padding        : 0px;
-  align-items    : center;
-  justify-content: center;
-  display        : flex;
-  vertical-align : middle;
-  line-height    : 24px;
-}
-
-.changelog_md_modal>.btn_close {
-  position: absolute;
-  right   : 10px;
-  top     : 10px;
-}
-
-.changelog_md_modal>.btn_copy {
-  position: absolute;
-  right   : 40px;
-  top     : 10px;
+  >.right_top_zone {
+    position   : absolute;
+    right      : 0px;
+    top        : 0px;
+    display    : flex;
+    padding    : 5px;
+    align-items: center;
+  }
 }
 
 .changelog_md_content {
@@ -245,10 +192,12 @@
   column-gap     : 15px;
   padding        : 20px 20px;
   display        : flex;
+  flex-direction : row;
+  flex-wrap      : wrap;
 
-  flex-direction          : row;
-  flex-wrap               : wrap;
-  // display              : grid;
-  // grid-auto-rows       : auto;
-  // grid-template-columns: repeat(3, 33%);
+  @media screen and (min-width: 0px) and (max-width: 480px) {
+    flex-wrap     : nowrap;
+    align-items   : center;
+    flex-direction: column;
+  }
 }

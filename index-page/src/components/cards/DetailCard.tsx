@@ -1,20 +1,22 @@
-import img_windows_x64_white from "@/assets/img_windows_x64_white.svg";
+import windows_x64 from "@/assets/svg/windows_x64.svg";
 import { Info } from "@/base/Info";
 import classnames from "classnames";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { IconButton } from "../button/IconButton";
 import { Link } from "../link";
 import { Viewer } from "../markdown/Viewer";
 import { CardBase, type ICardBaseProps } from "./CardBase";
 import csses from "./DetailCard.module.scss";
+import { MarkdownButton } from "@/pages/main/MarkdownModal";
 
 export interface IDetailCardProps extends ICardBaseProps {
   info: Info;
   onClose?(): void;
 }
-const classNames = { card: csses.detail_card }
+const private_classnames = { card: csses.detail_card }
 export function DetailCard(props: IDetailCardProps) {
-  const { info, onClose, ..._p } = props;
+  const { info, onClose, classNames, ..._p } = props;
   const { t } = useTranslation()
   const dl_win_x64 = t('dl_win_x64')
   const { url, cover, desc, desc_url, changelog_url, changelog, unavailable, url_type } = info;
@@ -25,8 +27,10 @@ export function DetailCard(props: IDetailCardProps) {
     <CardBase
       floating
       key={info.id}
-      title={title_suffix}
-      classNames={classNames}
+      classNames={{
+        ...classNames,
+        card: classnames(private_classnames.card, classNames?.card)
+      }}
       __ref={ref_el}
       {..._p}>
       <div className={csses.detail_card_inner}>
@@ -42,12 +46,9 @@ export function DetailCard(props: IDetailCardProps) {
           </div>
           <div className={csses.mid}></div>
           <div className={csses.right}>
-            <Link title={dl_win_x64} href={win_x64_url} emptyAsGone>
-              <img src={img_windows_x64_white} width="16px" draggable={false} alt={dl_win_x64} />
-            </Link>
-            <Link onClick={e => { e.stopPropagation(); onClose?.() }}>
-              ✖︎
-            </Link>
+            <MarkdownButton info={info} />
+            <IconButton title={dl_win_x64} img={windows_x64} href={win_x64_url} gone={!win_x64_url} />
+            <IconButton letter='✖︎' onClick={onClose} stopPropagation />
           </div>
         </div>
         <div className={csses.detail_card_main}>

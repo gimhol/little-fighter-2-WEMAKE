@@ -15,7 +15,6 @@ export function Viewer(props: IViewerProps) {
     content, className, emptyAsGone = false, plain = false, url, whenLoaded, ..._p
   } = props;
   const [__html, set_html] = useState<string>('')
-
   useEffect(() => {
     if (!url) {
       Promise.resolve(marked.parse(content || ''))
@@ -23,7 +22,7 @@ export function Viewer(props: IViewerProps) {
       return;
     }
     const ab = new AbortController()
-    fetch(url, { signal: ab.signal })
+    fetch(url, { signal: ab.signal, mode: 'cors' })
       .then(r => r.text())
       .then((txt) => {
         whenLoaded?.(txt);
@@ -32,7 +31,9 @@ export function Viewer(props: IViewerProps) {
       .then((v) => set_html(v))
       .catch(e => console.warn(e))
     return () => ab.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, content])
+
   if (emptyAsGone && !__html) return <></>
   return (
     <div

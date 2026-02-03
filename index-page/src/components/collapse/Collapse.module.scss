@@ -1,0 +1,12 @@
+.collapse_root {
+  position     : relative;
+  transition   : height 255ms;
+  // height    : 0px;
+  overflow     : hidden;
+
+  >.collapse_inner {
+    position: absolute;
+    width   : 100%;
+    height  : unset;
+  }
+}
