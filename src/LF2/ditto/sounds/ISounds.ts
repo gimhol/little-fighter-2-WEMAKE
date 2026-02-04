@@ -5,6 +5,7 @@ import type { ISoundsCallback } from "./ISoundsCallback";
 export interface ISounds {
   get callbacks(): NoEmitCallbacks<ISoundsCallback>;
 
+  is_random: boolean;
   /**
    * 获取背景音乐的音量
    *

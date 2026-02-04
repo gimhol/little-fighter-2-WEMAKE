@@ -6,6 +6,8 @@ import type { ISoundsCallback } from "./ISoundsCallback";
 
 export class BaseSounds implements ISounds {
   readonly lf2: LF2;
+  get is_random(): boolean { return false };
+  set is_random(v: boolean) { };
   constructor(lf2: LF2) {
     this.lf2 = lf2;
   }

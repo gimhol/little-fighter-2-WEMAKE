@@ -17,6 +17,13 @@ export class __Fallback extends BaseSounds {
   protected _sound_volume: number = 1;
   protected _bgm_muted: boolean = false;
   protected _sound_muted: boolean = false;
+  protected _is_random: boolean = false;
+  override get is_random() { return this._is_random; }
+  override set is_random(v: boolean) {
+    if (v === this._is_random) return;
+    this._is_random = v;
+    // TODO: support random.
+  }
 
   override bgm_volume(): number {
     return this._bgm_volume;
@@ -110,7 +117,6 @@ export class __Fallback extends BaseSounds {
     delete this._bgm_ele;
     this._prev_bgm_url = null;
   }
-
   override play_bgm(name: string, restart?: boolean | undefined): () => void {
     if (!restart && this._prev_bgm_url === name) return () => { };
     const prev = this.bgm();
@@ -127,6 +133,8 @@ export class __Fallback extends BaseSounds {
     const req_id = this._req_id;
     this._prev_bgm_url = name;
     this._callbacks.emit("on_bgm_changed")(name, prev, this);
+    this._is_random = name === '?'
+    // TODO: support random.
     return () => {
       if (req_id === this._req_id) this.stop_bgm();
     };
