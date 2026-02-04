@@ -1,11 +1,11 @@
-import axios from "axios";
 import AsyncValuesKeeper from "@/LF2/base/AsyncValuesKeeper";
 import { Defines } from "@/LF2/defines/defines";
 import { BaseSounds } from "@/LF2/ditto/sounds/BaseSounds";
-import { clamp } from "@/LF2/utils/math/clamp";
-import float_equal from "@/LF2/utils/math/float_equal";
 import { Randoming } from "@/LF2/helper/Randoming";
 import { LF2 } from "@/LF2/LF2";
+import { clamp } from "@/LF2/utils/math/clamp";
+import float_equal from "@/LF2/utils/math/float_equal";
+import type { WorldRenderer } from "../renderer/WorldRenderer";
 
 export class __Modern extends BaseSounds {
   readonly ctx = new AudioContext();
@@ -205,7 +205,8 @@ export class __Modern extends BaseSounds {
   }
 
   protected get_l_r_vol(x?: number): number[] {
-    const edge_w = Defines.CLASSIC_SCREEN_WIDTH / 2;
+    const scale = (this.lf2.world.renderer as WorldRenderer).world_node.scale.x
+    const edge_w = (Defines.CLASSIC_SCREEN_WIDTH / scale) / 2;
     const viewer_x = this.lf2.world.renderer.cam_x + edge_w;
     const sound_x = x ?? viewer_x;
     const muted = this._muted || this._sound_muted;
@@ -215,10 +216,9 @@ export class __Modern extends BaseSounds {
       Math.max(
         0,
         1 -
-        Math.abs(
-          (sound_x - viewer_x + edge_w) / Defines.CLASSIC_SCREEN_WIDTH,
+        Math.abs((sound_x - viewer_x + edge_w) / Defines.CLASSIC_SCREEN_WIDTH,
         ),
-      ),
+      ) * scale,
       (muted ? 0 : this._volume * this._sound_volume) *
       Math.max(
         0,
@@ -226,7 +226,7 @@ export class __Modern extends BaseSounds {
         Math.abs(
           (sound_x - viewer_x - edge_w) / Defines.CLASSIC_SCREEN_WIDTH,
         ),
-      ),
+      ) * scale,
     ];
   }
   override play(name: string, x?: number, y?: number, z?: number): string {
