@@ -206,8 +206,10 @@ export class __Modern extends BaseSounds {
 
   protected get_l_r_vol(x?: number): number[] {
     const scale = (this.lf2.world.renderer as WorldRenderer).world_node.scale.x
-    const edge_w = (Defines.CLASSIC_SCREEN_WIDTH / scale) / 2;
-    const viewer_x = this.lf2.world.renderer.cam_x + edge_w;
+    const full_w = Defines.CLASSIC_SCREEN_WIDTH / scale
+    const half_w = full_w / 2;
+    const viewer_x = this.lf2.world.renderer.cam_x + half_w;
+  
     const sound_x = x ?? viewer_x;
     const muted = this._muted || this._sound_muted;
     return [
@@ -216,7 +218,7 @@ export class __Modern extends BaseSounds {
       Math.max(
         0,
         1 -
-        Math.abs((sound_x - viewer_x + edge_w) / Defines.CLASSIC_SCREEN_WIDTH,
+        Math.abs((sound_x - viewer_x + half_w) / full_w,
         ),
       ) * scale,
       (muted ? 0 : this._volume * this._sound_volume) *
@@ -224,7 +226,7 @@ export class __Modern extends BaseSounds {
         0,
         1 -
         Math.abs(
-          (sound_x - viewer_x - edge_w) / Defines.CLASSIC_SCREEN_WIDTH,
+          (sound_x - viewer_x - half_w) / full_w,
         ),
       ) * scale,
     ];
