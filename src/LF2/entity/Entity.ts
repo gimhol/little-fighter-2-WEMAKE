@@ -9,7 +9,7 @@ import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
   FrameBehavior, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
-  is_independent, ItrKind, IVector3, OpointKind, OpointMultiEnum,
+  is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
 import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
@@ -1099,7 +1099,9 @@ export class Entity {
    * 有`velocity.y -= State_Base.get_gravity() ?? World.gravity`
    *
    * 以下情况不响应重力:
-   *
+   * 
+   * - 被持有，或被抓
+   * 
    * - 实体处于地面或地面以下（position.y <= ground_y）
    *
    * - 角色处于shaking中（即实体被某物击中, see IItrInfo.shaking）
@@ -1112,6 +1114,7 @@ export class Entity {
    * @see {World.gravity}
    */
   private handle_gravity() {
+    if (this.holder && this.catcher) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
     this.velocities[0].y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
@@ -1807,47 +1810,67 @@ export class Entity {
       this.holder = null;
       return;
     }
-    const { wpoint: wp_a, centerx: cx_a, centery: cy_a, } = holder.frame;
-    const { wpoint: wp_b, centerx: cx_b, centery: cy_b, } = this.frame;
-    if (wp_a) {
-      if (wp_a.weaponact !== this.frame.id) {
-        this.enter_frame({ id: wp_a.weaponact });
-      }
-      const strength = this._data.base.strength || 1;
-      const weight = this._data.base.weight || 1;
-      let { dvx, dvy, dvz } = wp_a;
-      const { x, y, z } = holder.position;
-      this.facing = holder.facing;
-      if (wp_b) {
-        this._position.set(
-          round(x + this.facing * (wp_a.x - cx_a + cx_b - wp_b.x)),
-          round(y + cy_a - wp_a.y - cy_b + wp_b.y),
-          round(z + wp_a.z - wp_b.z),
-        )
-      }
+    const {
+      wpoint: wp_a = {} as Partial<IWpointInfo>,
+      centerx: cx_a, centery: cy_a,
+    } = holder.frame;
+    const {
+      wpoint: wp_b = {} as Partial<IWpointInfo>,
+      centerx: cx_b, centery: cy_b,
+    } = this.frame;
 
-      if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
-        const nf = this.find_align_frame(
-          this.frame.id,
-          this.data.indexes?.on_hands,
-          this.data.indexes?.throwings
-        )
-        this._position.set(
-          round(x + this.facing * (wp_a.x - cx_a)),
-          round(y + cy_a - wp_a.y),
-          round(z + wp_a.z),
-        )
-        this.enter_frame(nf);
-        const vz = holder.ctrl ? holder.ctrl.UD * (dvz || 0) : 0;
-        dvx = strength * (dvx || 0) / weight;
-        dvy = strength * (dvy || 0) / weight;
-        const vx = (dvx - abs(vz / 2)) * this.facing;
-        this.set_velocity(vx, dvy, vz);
-        holder.holding = null;
-        this.holder = null;
-        return;
-      }
+    if (wp_a.weaponact !== this.frame.id) {
+      // 还原wpoint丢失的情况
+      if (wp_a.weaponact)
+        this.enter_frame({ id: wp_a.weaponact });
+      else
+        this.enter_frame(this.find_auto_frame());
     }
+
+    const strength = this._data.base.strength || 1;
+    const weight = this._data.base.weight || 1;
+    let { dvx, dvy, dvz } = wp_a;
+    const { x, y, z } = holder.position;
+    this.facing = holder.facing;
+    const { x: wa_x = 0, y: wa_y = 0, z: wa_z = 0 } = wp_a;
+    const { x: wb_x = 0, y: wb_y = 0, z: wb_z = 0 } = wp_b
+
+    if (wp_a) {
+      this._position.set(
+        round(x + this.facing * (wa_x - cx_a + cx_b - wb_x)),
+        round(y + cy_a - wa_y - cy_b + wb_y),
+        round(z + wa_z - wb_z),
+      )
+    } else { // 还原wpoint丢失的情况
+      this._position.set(
+        round(x + this.facing * (wa_x - cx_a)),
+        round(y + cy_a - wa_y),
+        round(z + wa_z),
+      )
+    }
+
+    if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
+      const nf = this.find_align_frame(
+        this.frame.id,
+        this.data.indexes?.on_hands,
+        this.data.indexes?.throwings
+      )
+      this._position.set(
+        round(x + this.facing * (wa_x - cx_a)),
+        round(y + cy_a - wa_y),
+        round(z + wa_z),
+      )
+      this.enter_frame(nf);
+      const vz = holder.ctrl ? holder.ctrl.UD * (dvz || 0) : 0;
+      dvx = strength * (dvx || 0) / weight;
+      dvy = strength * (dvy || 0) / weight;
+      const vx = (dvx - abs(vz / 2)) * this.facing;
+      this.set_velocity(vx, dvy, vz);
+      holder.holding = null;
+      this.holder = null;
+      return;
+    }
+
   }
 
   enter_frame(which: TNextFrame): void {
