@@ -20,6 +20,7 @@ import { InfoListItem } from "./InfoListItem";
 import { LangButton } from "./LangButton";
 import { MarkdownButton } from "./MarkdownModal";
 import csses from "./styles.module.scss";
+import { ExtraDataFromView } from "./ExtraDataFromView";
 
 const time_str = Math.floor(Date.now() / 60000);
 
@@ -32,6 +33,7 @@ export default function MainPage() {
   const [versions_loading, set_versions_loading] = useState(false);
   const [game_desc_open, set_game_desc_open] = useState(window.innerWidth > 480)
   const [is_cards_view, set_is_cards_view] = useState(false)
+  const [ss_open, set_ss_open] = useState(false)
   const loading = versions_loading || games_loading
   const { game_in_path } = useParams();
   const ref_lang = useRef<'zh' | 'en'>('zh')
@@ -135,6 +137,10 @@ export default function MainPage() {
           set_versions(next_versions)
         }} />
         <IconButton
+          onClick={() => set_ss_open(true)}
+          title={t('submit_extra_data')}
+          letter="📤" />
+        <IconButton
           href="https://github.com/gimhol/little-fighter-2-WEMAKE"
           title={t('goto_github')}
           img={img_github} />
@@ -201,6 +207,13 @@ export default function MainPage() {
       open={game_list_open}
       onClose={() => set_game_list_open(false)}>
       {game_list}
+    </Mask>
+    <Mask container={() => document.body} open={ss_open} onClose={() => set_ss_open(false)}>
+      <ExtraDataFromView />
+      <IconButton
+        style={{ position: 'absolute', right: 10, top: 10 }}
+        letter='✖︎'
+        onClick={() => set_ss_open(false)} />
     </Mask>
   </>
 }

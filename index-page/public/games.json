@@ -73,12 +73,11 @@
           "Then open LF2:Wemake and drag the 'Extra Datas' ",
           "onto the Entry Page or the Main Page.",
           "After loading, you'll be able to play the content in 'Extra Datas' 😀\n",
-          "---",
-          "If you want to use your own characters, weapons, backgrounds, or even stages in LF2:Wemake, ",
-          "you can check out this ['Conversion Tool'](/tools).\n",
           "> 'Extra Data' is basically a Zip file. Don't need to unzip it after downloading from here.",
-          "> For how to use the 'Extra Datas', please look at the video below. ",
-          "> <video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
+          "For how to use the 'Extra Datas', please look at the video below. ",
+          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>\n",
+          "If you want to use your own characters, weapons, backgrounds, or even stages in LF2:Wemake,",
+          "you can check out this ['Conversion Tool'](/tools)."
         ],
         "versions": "extra-fighters.json"
       },
@@ -89,11 +88,10 @@
           "你可以下载想要的 '数据包' ，",
           "然后打开LF2:Wemake，将'数据包'拖拽至入口页或主页中，",
           "加载完成后，你就能玩'数据包'中的内容了 😀\n",
-          "---",
-          "如果想在LF2:Wemake中用自己的角色、武器、背景甚至是关卡，可以查看这个['转换工具'](/tools)\n\n",
           "> '数据包'本质就是个Zip文件，从这里下载后你不需要解压它。",
-          "> 关于'数据包'的使用方式，请参考下方视频：",
-          "> <video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
+          "关于'数据包'的使用方式，请参考下方视频：",
+          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>\n",
+          "如果想在LF2:Wemake中用自己的角色、武器、背景甚至是关卡，可以查看这个['转换工具'](/tools)"
         ]
       },
       "zh-hans": "zh",

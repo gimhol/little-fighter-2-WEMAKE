@@ -1,0 +1,21 @@
+.bytemd {
+  // --bg-color: rgb(9, 6, 32);
+  // background: var(--bg-color);
+  // color     : var(--txt-color);
+
+  // .bytemd-editor {
+  //   background: var(--bg-color);
+  // }
+
+  // .bytemd-toolbar {
+  //   background: var(--bg-color);
+  // }
+
+  .bytemd-status-right {
+    >label {
+      display: flex !important;
+    }
+
+    display: flex !important;
+  }
+}

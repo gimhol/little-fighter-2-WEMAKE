@@ -2,6 +2,7 @@ import classnames from "classnames";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import csses from "./styles.module.scss";
+import { ctrl_a_bounding } from "./ctrl_a_bounding";
 
 export interface IMaskProps extends React.HTMLAttributes<HTMLDivElement> {
   open?: boolean;
@@ -49,6 +50,7 @@ export function Mask(props: IMaskProps) {
           e.preventDefault();
           onClose?.();
         }
+        ctrl_a_bounding(e, ref_el.current)
       }}
       onClick={e => {
         if (onClick) return onClick?.(e);

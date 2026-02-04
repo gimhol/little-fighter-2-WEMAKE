@@ -7,6 +7,7 @@ import { type IMaskProps, Mask } from "@/components/mask";
 import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import csses from "./styles.module.scss";
+import { ctrl_a_bounding } from "@/components/mask/ctrl_a_bounding";
 
 export function MarkdownModal(props: { info?: Info } & IMaskProps) {
   const { info, onClose, open, container = () => document.body, ..._p } = props;
@@ -55,17 +56,7 @@ export function MarkdownModal(props: { info?: Info } & IMaskProps) {
           ref={ref_md_zone}
           className={classnames(csses.changelog_md_content, csses.scrollview)}
           dangerouslySetInnerHTML={{ __html: markdown }}
-          onKeyDown={e => {
-            if (!(e.ctrlKey || e.metaKey) || e.key?.toLowerCase() !== 'a') return;
-            const selection = window.getSelection();
-            if (!selection) return;
-            if (!ref_md_zone.current) return;
-            const range = document.createRange();
-            range.selectNodeContents(ref_md_zone.current);
-            selection.removeAllRanges();
-            selection.addRange(range);
-            e.preventDefault();
-          }}
+          onKeyDown={e => ctrl_a_bounding(e, ref_md_zone.current)}
           tabIndex={-1} />
         <Loading style={{ position: 'absolute' }} loading={loading} big />
       </div>

@@ -5,8 +5,9 @@
   overflow     : hidden;
 
   >.collapse_inner {
-    position: absolute;
-    width   : 100%;
-    height  : unset;
+    position  : absolute;
+    width     : 100%;
+    height    : unset;
+    box-sizing: border-box;
   }
 }
