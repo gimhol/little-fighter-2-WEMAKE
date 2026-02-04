@@ -8,12 +8,12 @@
         "short_title": "Origin",
         "title": "Little Fighter 2: Wemake",
         "desc": [
-          "gameplays, arts, and sounds are all from \"Litter Fighter 2\" basically,",
+          "gameplays, arts, and sounds are all from 'Litter Fighter 2' basically,",
           "created by Marti Wong and Starsky Wong in 1999.",
-          "The original author, Marti Wong, has now launched [\"Little Fighter 2 Remastered\"](https://lf2.net/). ",
+          "The original author, Marti Wong, has now launched ['Little Fighter 2 Remastered'](https://lf2.net/). ",
           "Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.",
           "",
-          "\"LF2:Wemake\" created by Gim in 2024."
+          "'LF2:Wemake' created by Gim in 2024."
         ],
         "versions": "versions.json"
       },
@@ -61,30 +61,69 @@
     }
   },
   {
-    "id": "extra_fighters",
+    "id": "extra_datas",
     "type": "cards",
     "i18n": {
       "": {
         "date": "2026-02-02",
-        "short_title": "Extra Fighters",
-        "title": "Extra Fighters",
+        "short_title": "Extra Datas",
+        "title": "Extra Datas",
         "desc": [
-          "You can download the character packs you want.\n",
-          "Then open LF2:Wemake and drag the \"character packs\" ",
-          "onto the Entry Page or the Main Page.\n",
-          "After loading, you'll be able to select these characters :D\n",
-          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
+          "You can download the 'Extra Datas' you want.",
+          "Then open LF2:Wemake and drag the 'Extra Datas' ",
+          "onto the Entry Page or the Main Page.",
+          "After loading, you'll be able to play the content in 'Extra Datas' 😀\n",
+          "---",
+          "If you want to use your own characters, weapons, backgrounds, or even stages in LF2:Wemake, ",
+          "you can check out this ['Conversion Tool'](/tools).\n",
+          "> 'Extra Data' is basically a Zip file. Don't need to unzip it after downloading from here.",
+          "> For how to use the 'Extra Datas', please look at the video below. ",
+          "> <video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
         ],
         "versions": "extra-fighters.json"
       },
       "zh": {
-        "short_title": "角色包",
-        "title": "额外角色包",
+        "short_title": "额外数据包",
+        "title": "额外数据包",
         "desc": [
-          "你可以下载想要的角色包\n\n",
-          "然后打开LF2:Wemake，将 '角色包' 拖拽至入口页或主页中",
-          "加载完成后，你就能选择这些角色了 :D\n\n",
-          "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
+          "你可以下载想要的 '数据包' ，",
+          "然后打开LF2:Wemake，将'数据包'拖拽至入口页或主页中，",
+          "加载完成后，你就能玩'数据包'中的内容了 😀\n",
+          "---",
+          "如果想在LF2:Wemake中用自己的角色、武器、背景甚至是关卡，可以查看这个['转换工具'](/tools)\n\n",
+          "> '数据包'本质就是个Zip文件，从这里下载后你不需要解压它。",
+          "> 关于'数据包'的使用方式，请参考下方视频：",
+          "> <video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>"
+        ]
+      },
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  },
+  {
+    "id": "tools",
+    "type": "cards",
+    "i18n": {
+      "": {
+        "date": "2026-02-04",
+        "short_title": "Conversion Tool",
+        "title": "Conversion Tool",
+        "desc": [
+          "You can use this tool to convert LF2 data into 'Extra Data Zip' that can be used by LF2W."
+        ],
+        "versions": "conversion-tool.json"
+      },
+      "zh": {
+        "short_title": "转换工具",
+        "title": "转换工具",
+        "desc": [
+          "你可以使用这个工具将 LF2 数据转换成能被 LF2W 使用的‘额外数据压缩包’"
         ]
       },
       "zh-hans": "zh",

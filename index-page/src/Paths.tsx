@@ -4,18 +4,20 @@ import type { RouteObject } from "react-router"
 export namespace Paths {
   export enum All {
     _ = '',
-    main_page = '/'
+    main_page = '/',
+    main_page_with = '/:game_in_path'
   }
   export const Components: Record<All, React.ComponentType | null> = {
     [All._]: null,
-    [All.main_page]: React.lazy(() => import("./pages/main"))
+    [All.main_page]: React.lazy(() => import("./pages/main")),
+    [All.main_page_with]: React.lazy(() => import("./pages/main"))
   }
   export const Relations: { [x in All]?: All[] } = {
     [All._]: [
-      All.main_page
+      All.main_page,
+      All.main_page_with
     ]
   }
-
   export const gen_route_obj = (path: All, parent?: All): RouteObject => {
     let str_path: string = path
     if (parent !== void 0) {

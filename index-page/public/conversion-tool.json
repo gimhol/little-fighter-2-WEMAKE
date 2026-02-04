@@ -1,0 +1,27 @@
+[
+  {
+    "id": "lfw2-tool",
+    "i18n": {
+      "": {
+        "date": "2026-02-04",
+        "title": "v1.0.0",
+        "_url": "https://lf.gim.ink/0.1.12/",
+        "url_type": "download",
+        "desc": "This is first.",
+        "author": "Gim",
+        "author_url": "https://gim.ink"
+      },
+      "zh": {
+        "desc": "This is first."
+      },
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  }
+]

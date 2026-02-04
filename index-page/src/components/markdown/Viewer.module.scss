@@ -1,18 +1,23 @@
 .viewer {
   padding: 10px;
 
+  video {
+    display      : block;
+    border-radius: 5px;
+    margin       : 5px;
+  }
+
   hr {
-    color           : #88888855;
-    background-color: #88888855;
     border-width    : 1px;
     border-style    : dashed;
     border-top-width: 0px;
-    margin          : 10px;
+    margin          : 10px 0px;
+    border-color    : var(--divider-color);
   }
 
   blockquote {
     background-color: #88888822;
-    margin          : 0px;
+    margin          : 5px 0px;
     padding         : 10px;
     border-radius   : 5px;
   }

@@ -13,7 +13,8 @@ const zh = {
   "goto_gimink": "打开作者博客",
   "switch_lang": "切换语言 / Switch Language",
   "no_content": "无内容",
-  "visit_author_link": "访问作者链接"
+  "visit_author_link": "访问作者链接",
+  "download": "下载",
 }
 const en = {
   "author": "author",
@@ -27,7 +28,8 @@ const en = {
   "goto_gimink": "Visit Author Blog",
   "switch_lang": "切换语言 / Switch Language",
   "no_content": "No Content",
-  "visit_author_link": "Visit Author Link"
+  "visit_author_link": "Visit Author Link",
+  "download": "Download",
 }
 const resources = {
   "zh": { translation: zh },

@@ -13,10 +13,9 @@ import { Mask } from "@/components/mask";
 import { Paths } from "@/Paths";
 import { useMovingBg } from "@/useMovingBg";
 import classnames from "classnames";
-import QueryString from "qs";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { InfoListItem } from "./InfoListItem";
 import { LangButton } from "./LangButton";
 import { MarkdownButton } from "./MarkdownModal";
@@ -34,7 +33,7 @@ export default function MainPage() {
   const [game_desc_open, set_game_desc_open] = useState(window.innerWidth > 480)
   const [is_cards_view, set_is_cards_view] = useState(false)
   const loading = versions_loading || games_loading
-
+  const { game_in_path } = useParams();
   const ref_lang = useRef<'zh' | 'en'>('zh')
   ref_lang.current = i18n.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
 
@@ -42,14 +41,20 @@ export default function MainPage() {
   const nav = useNavigate()
   useEffect(() => {
     if (!actived_game) return;
-    nav({
-      pathname: Paths.All.main_page,
-      search: `?game=${actived_game.id}`,
-    }, {
-      replace: true
-    })
+    const pn = Paths.All.main_page_with.replace(':game_in_path', actived_game.id);
+    nav({ pathname: pn }, { replace: true })
   }, [actived_game, nav])
-  const loc = useLocation()
+
+  useEffect(() => {
+    if (!games?.length) {
+      set_actived_game(void 0)
+      return;
+    }
+    const a = games.find(v => v.id === game_in_path) ?? games[0]
+    set_actived_game(a)
+    set_is_cards_view(a?.type == 'cards')
+  }, [game_in_path, games])
+
   useEffect(() => {
     const ab = new AbortController();
     set_games_loading(true)
@@ -58,10 +63,6 @@ export default function MainPage() {
       .then((raw_list: any[]) => {
         if (ab.signal.aborted) return;
         const list = raw_list.map((raw_item: any) => new Info(raw_item, ref_lang.current))
-        const { game } = QueryString.parse(loc.search.substring(1))
-        const a = list.find(v => v.id === game) ?? list[0]
-        set_actived_game(a)
-        set_is_cards_view(a?.type == 'cards')
         set_games(list)
       }).catch(e => {
         if (ab.signal.aborted) return;
