@@ -1,4 +1,5 @@
 import { IEntityData, ArmorEnum, Defines } from "../../defines";
+import { BotBuilder } from "./BotBuilder";
 /**
  *
  * @todo
@@ -13,5 +14,13 @@ export function make_fighter_data_knigt(data: IEntityData): IEntityData {
     type: ArmorEnum.Defend,
     toughness: Defines.DEFAULT_DEFEND_VALUE_MAX,
   };
+  BotBuilder.make(data).set_dataset({
+    w_atk_f_x: 90,
+    w_atk_b_x: 90,
+    j_atk_f_x: 90,
+    j_atk_b_x: 90,
+    d_atk_f_x: 200,
+    r_atk_f_x: 150,
+  })
   return data;
 }
