@@ -1384,7 +1384,9 @@ export class Entity {
     this.state?.pre_update?.(this);
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
-      --this.wait;
+      if (this._catcher || this._bearer) {
+        --this.wait;
+      }
     } else {
       const nf = this.get_next_frame(this.frame.next);
       if (nf) this.next_frame = { ...nf.which, judger: void 0 }
