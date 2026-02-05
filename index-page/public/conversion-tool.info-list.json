@@ -4,15 +4,15 @@
     "i18n": {
       "": {
         "date": "2026-02-04",
-        "title": "v1.0.0",
-        "_url": "https://lf.gim.ink/0.1.12/",
+        "title": "lf2w-tool v1.0.0",
+        "url": "https://lf.gim.ink/downloads/lf2w-tool/lf2w-tool-win-x64-v1.0.0.zip",
         "url_type": "download",
-        "desc": "This is first.",
+        "desc": "I haven't decided what to write for the description...\n\nBut anyway, this is the first version of the conversion tool.",
         "author": "Gim",
         "author_url": "https://gim.ink"
       },
       "zh": {
-        "desc": "This is first."
+        "desc": "没想好描述写什么...\n\n但总之，这是第一版转换工具"
       },
       "zh-hans": "zh",
       "zh-hant": "zh",

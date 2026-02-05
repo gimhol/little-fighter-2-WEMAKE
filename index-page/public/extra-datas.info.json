@@ -15,7 +15,10 @@
         "For how to use the 'Extra Datas', please look at the video below. ",
         "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>\n",
         "If you want to use your own characters, weapons, backgrounds, or even stages in LF2:Wemake,",
-        "you can check out this ['Conversion Tool'](/tools)."
+        "you can check out this ['Conversion Tool'](/tools).\n",
+        "But I'm unable to support AI scripts at present 🤦. ",
+        "Support for AI script functionality may be added in future updates, ",
+        "and such AI scripts will likely need to be written in TypeScript/JavaScript instead of ActionScript."
       ],
       "children": "extra-datas.info-list.json"
     },
@@ -29,7 +32,8 @@
         "> '数据包'本质就是个Zip文件，从这里下载后你不需要解压它。",
         "关于'数据包'的使用方式，请参考下方视频：",
         "<video width='320' src='https://lf.gim.ink/docs/video/download_and_use_extra_data.mp4' controls></video>\n",
-        "如果想在LF2:Wemake中用自己的角色、武器、背景甚至是关卡，可以查看这个['转换工具'](/tools)"
+        "如果想在LF2:Wemake中用自己的角色、武器、背景甚至是关卡，可以查看这个['转换工具'](/tools)\n",
+        "但我无法支持目前的AI脚本🤦，可能后续会支持AI脚本功能，其AI脚本可能需要Typescript/Javascript来写，而不是ActionScript。"
       ]
     },
     "zh-hans": "zh",

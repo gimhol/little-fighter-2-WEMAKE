@@ -9,7 +9,12 @@
         "desc": [
           "You can use this tool to convert LF2 data into 'Extra Data Zip' that can be used by LF2W.",
           "> For how to use the conversion tool, please look at the video below: ",
-          "<video width='320' src='https://lf.gim.ink/docs/video/how_to_use_the_conversion_tool_basic.mp4' controls></video>\n"
+          "<video width='320' src='https://lf.gim.ink/docs/video/how_to_use_the_conversion_tool_basic.mp4' controls></video>",
+          "In the video, \"Memento's LF2 pack 2026\" by Memento was used for demonstration,",
+          "and you can find it in the ['Extra Datas'](/extra_datas).\n",
+          "But I'm unable to support AI scripts at present 🤦. ",
+          "Support for AI script functionality may be added in future updates, ",
+          "and such AI scripts will likely need to be written in TypeScript/JavaScript instead of ActionScript."
         ],
         "children": "conversion-tool.info-list.json"
       },
@@ -19,7 +24,10 @@
         "desc": [
           "你可以使用这个工具将 LF2 数据转换成能被 LF2W 使用的‘额外数据压缩包’",
           "> 关于工具的基本使用方法，参见下方视频：",
-          "<video width='320' src='https://lf.gim.ink/docs/video/how_to_use_the_conversion_tool_basic.mp4' controls></video>\n"
+          "<video width='320' src='https://lf.gim.ink/docs/video/how_to_use_the_conversion_tool_basic.mp4' controls></video>",
+          "视频中用了 [Memento](https://lf-empire.de/forum/member.php?action=profile&uid=752) 的 \"Memento's LF2 pack 2026\" 来演示, ",
+          "你可以在[\"额外数据\"](/extra_datas)中找到它。\n",
+          "但我无法支持目前的AI脚本🤦，可能后续会支持AI脚本功能，其AI脚本可能需要Typescript/Javascript来写，而不是ActionScript。"
         ]
       },
       "zh-hans": "zh",
