@@ -32,7 +32,12 @@ export class BGMSwitcher extends UIComponent {
     e.stop_propagation();
     const { offset } = this;
     const list = ['Random', 'Slient', ...this.lf2.bgms]
-    const next = loop_offset(list, this.text, offset || 1)
+
+    let o = 0;
+    if (offset) o = offset
+    else if (e.button === 1) o = 1
+    else if (e.button === 2) o = -1
+    const next = loop_offset(list, this.text, o)
     switch (next) {
       case 'Random':
         this._which = 'Random';
