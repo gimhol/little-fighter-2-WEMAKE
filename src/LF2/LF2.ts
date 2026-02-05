@@ -28,7 +28,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.12'
+  static readonly VERSION_NAME: string = 'v0.1.13'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 

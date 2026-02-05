@@ -1,5 +1,51 @@
 [
   {
+    "id": "v0.1.13",
+    "i18n": {
+      "": {
+        "date": "2026-02-xx",
+        "title": "v0.1.13🚧",
+        "unavailable": "1",
+        "desc": "",
+        "author": "Gim",
+        "author_url": "https://gim.ink",
+        "changelog": [
+          "- feat(prel): In the bottom-left corner of the 'VS Mode Prepare Page', the background music can be switched by clicking the left/middle/right mouse button.",
+          "- fix(game): Support background music overwrite with the same name under multiple extra-datas.",
+          "- fix(game): For the caught character and the held weapon, their wait value will no longer decrease.",
+          "- fix(game): Allow the cpoint or its xy of the caught character to be lost, and its performance aligns with the original version.",
+          "- fix(game): Fix the problem of incorrect channel effect of the battle sound in the main page (it will be quieter).",
+          "- fix(game): After leaving the main page, objects in the scene can be correctly cleared.",
+          "- fix(game): Allow the wpoint or its xy to be lost, and its performance aligns with the original version (comparable to Henry shooting an arrow backwards while dashing with a weapon).",
+          "- fix(data): Beer is no longer regarded as a 'Stage Weapons' (beer will no longer drop randomly during 'Stage Mode').",
+          "- fix(tool): Weapons outside the range of [100,199] are no longer regarded as 'Stage/VS Weapons' (they will no longer drop during Stage/VS Mode)."
+        ]
+      },
+      "zh": {
+        "changelog": [
+          "- feat(prel): '对战模式准备页'的左下角将能通过点击鼠标/左/中/右键切换背景音乐",
+          "- fix(game): 支持多数据包下，背景音乐同名覆盖",
+          "- fix(game): 被抓者和被持有的武器，其 wait 不再减少",
+          "- fix(game): 将允许被抓者的 cpoint 或其坐标丢失，其表现对齐原版",
+          "- fix(game): 修复主页中战斗音效声道效果不正确的问题（将会更小声）",
+          "- fix(game): 离开主页后，将能正确清除场景中的对象",
+          "- fix(game): 将允许wpoint或其坐标丢失，其表现对齐原版（参考 Henry 持武器冲跳向后射箭）",
+          "- fix(data): 啤酒不再视为'关卡武器'（闯关不再随机掉啤酒）",
+          "- fix(data): 调整了LouisEX与Knight攻击触发范围",
+          "- fix(tool): [100,199]外的武器不再视为“闯关/对战武器”（闯关/对战不再掉落他们）"
+        ]
+      },
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  },
+  {
     "id": "v0.1.12",
     "i18n": {
       "": {

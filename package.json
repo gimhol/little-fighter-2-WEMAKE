@@ -1,6 +1,6 @@
 {
   "name": "little-fighter-2-wemake",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "type": "module",
   "private": true,
   "homepage": ".",
@@ -21,8 +21,8 @@
     "build:prel:rn": " node ./tool make-prel -c ./lf2s/rn-lf2/conf.json5 -d",
     "dat_2_txt:rn": "node ./tool dat-2-txt -c ./lf2s/rn-lf2/conf.json5 -d",
     "___deploy___": "___deploy___",
-    "deploy": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR 0.1.12 --LOCAL_PATH ./dist",
-    "deploy:rn": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR rn/0.1.12 --LOCAL_PATH ./dist",
+    "deploy": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR 0.1.13 --LOCAL_PATH ./dist",
+    "deploy:rn": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR rn/0.1.13 --LOCAL_PATH ./dist",
     "deploy:rn-temp": "fdeploy -s oss -i deployer.private.json5 -p ./lf2s/rn-lf2/upload-zip-file.config.json5",
     "deploy:index": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR \"\" --LOCAL_PATH index-page/dist",
     "deploy:docs": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR docs --LOCAL_PATH docs",
