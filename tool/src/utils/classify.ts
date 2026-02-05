@@ -1,59 +1,39 @@
-import fs from "fs/promises";
-export interface ClassifyResult {
-  directories: string[];
-  unknown: string[];
-  file: {
-    dat: string[];
-    wma: string[];
-    wav: string[];
-    png: string[];
-    bmp: string[];
-    lfr: string[];
-    exe: string[];
-  };
-}
-const get_default_result = (): ClassifyResult => ({
-  directories: [],
-  unknown: [],
-  file: {
-    dat: [],
-    wma: [],
-    wav: [],
-    png: [],
-    bmp: [],
-    lfr: [],
-    exe: [],
-  },
-});
-const known_extensions = Object.keys(
-  get_default_result().file,
-) as (keyof ClassifyResult["file"])[];
+import { readdirSync, statSync } from "fs";
+export class ClassifyResult {
+  directories: string[] = [];
+  protected file: { [x in string]?: string[] } = {};
 
-export async function classify(
+  get_files(...suffix: string[]): string[] {
+    const ret: string[] = [];
+    for (const s of suffix) {
+      const l = this.file[s]
+      if (l?.length) ret.push(...l)
+    }
+    return ret;
+  }
+  add(suffix: string | undefined, filepath: string) {
+    const s = '' + suffix?.toLowerCase()
+    const l = this.file[s] || (this.file[s] = [])
+    l.push(filepath)
+  }
+}
+
+export function classify(
   cur_dir_path: string,
-  result?: ClassifyResult,
-): Promise<ClassifyResult> {
-  result = result ?? get_default_result();
-  for (const name of await fs.readdir(cur_dir_path)) {
+  result: ClassifyResult = new ClassifyResult(),
+): ClassifyResult {
+  for (const name of readdirSync(cur_dir_path)) {
     const sub_path = cur_dir_path + "/" + name;
-    const stat = await fs.stat(sub_path);
+    const stat = statSync(sub_path);
     if (stat.isFile()) {
-      let known = false;
-      for (const key of known_extensions) {
-        if (name.endsWith("." + key)) {
-          result.file[key].push(sub_path);
-          known = true;
-          break;
-        }
-      }
-      if (!known) {
-        result.unknown.push(sub_path);
-      }
+      const parts = name.split('.').filter(Boolean)
+      result.add(parts[parts.length - 1], sub_path)
+      if (parts.length === 1) result.add('', sub_path)
       continue;
     }
     if (stat.isDirectory()) {
       result.directories.push(sub_path);
-      await classify(sub_path, result);
+      classify(sub_path, result);
       continue;
     }
   }

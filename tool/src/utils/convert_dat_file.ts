@@ -1,8 +1,7 @@
-import fs from "fs/promises";
 import dat_to_json from "../../../src/LF2/dat_translator/dat_2_json";
 import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
 import type { IEntityData } from "../../../src/LF2/defines/IEntityData";
-import { debug, info } from "./log";
+import { debug, error, info } from "./log";
 import { read_lf2_dat_file } from "./read_lf2_dat_file";
 import { write_obj_file } from "./write_obj_file";
 export type IRet = ReturnType<typeof dat_to_json>;
@@ -30,8 +29,11 @@ export async function convert_dat_file(
   const txt = await read_lf2_dat_file(src_path);
   const ret = dat_to_json(txt, index_info);
   if (!ret) {
-    info("convert failed", src_path, "=>", dst_path);
-    await fs.copyFile(src_path, dst_path);
+    error("Convert failed", [
+      src_path,
+      "If this file is not used, please remove it.",
+      'Otherwise, please add it to data.txt.'
+    ].join('\n    '));
     return void 0;
   }
   if (dst_path.endsWith('.obj.json5')) {
@@ -49,7 +51,7 @@ export async function convert_dat_file(
     }
   }
 
-  info(src_path, "=>", dst_path);
+  info(src_path, "=>\n    "+ dst_path);
   await write_obj_file(dst_path, ret);
   return ret;
 }

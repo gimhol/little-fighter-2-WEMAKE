@@ -6,7 +6,7 @@ export function waitForKeyPress() {
     input: process.stdin,
     output: process.stdout
   });
-  info('\nPress any key to exit...');
+  info('Press any key to exit...');
 
   rl.on('keypress', (str, key) => {
     rl.close();

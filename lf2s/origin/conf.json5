@@ -10,7 +10,7 @@
   OUT_DATA_NAME: "data.zip",
   OUT_PREL_NAME: "prel.zip",
   OUT_FULL_NAME: "lfw.full.zip",
-  FFMPEG_CMD: "ffmpeg",
+  FFMPEG_CMD: "C:/CUsers/Gimho/little-fighter-j/tool/exe/win/x64/_ffmpeg.exe",
   MAGICK_CMD: "magick",
   KEEP_MIRROR: "",
   DEBUG: "",

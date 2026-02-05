@@ -7,8 +7,12 @@ import { match_hash_end } from "../utils/string_parser/match_hash_end";
 export function read_indexes(
   text: string | undefined | null,
   suffix: 'json5' | 'json'
-): IDataLists | undefined {
-  if (!text) return void 0;
+): IDataLists | string {
+
+  if (!text) return '[read_indexes] failed, text got empty!'
+  if (text.indexOf('[NOT_READY]') >= 0) 
+    return `[read_indexes] failed, '[NOT_READY]' mark still exists.`
+  
   const objects = match_block_once(text, "<object>", "<object_end>")
     ?.split(/\n|\r/)
     .filter((v) => v)
@@ -54,6 +58,7 @@ export function read_indexes(
       }
       return item;
     }) || [];
+
   return {
     objects,
     backgrounds,

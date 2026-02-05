@@ -1,18 +1,18 @@
 
-import path from "path";
-import { conf, make_conf, set_conf } from "./conf";
+import path, { join } from "path";
+import package_json from "../package.json";
+import { conf, dont_wait, make_conf } from "./conf";
 import { data_2_txt } from "./data_2_txt";
 import { make_data_zip } from "./make_data_zip";
 import { make_full_zip } from "./make_full_zip";
 import { make_prel_zip } from "./make_prel_zip";
 import { show_main_usage } from "./show_main_usage";
-import { print_magick_hints } from "./utils/convert_pic";
-import { print_ffmpeg_hints } from "./utils/convert_sound";
+import { print_magick_hints } from "./utils/convert_image";
+import { print_ffmpeg_hints } from "./utils/convert_audio";
 import { is_dir } from "./utils/is_dir";
 import { is_json } from "./utils/is_file";
 import { log } from "./utils/log";
 import { read_dir_info_json } from "./utils/read_dir_info_json";
-import { write_file } from "./utils/write_file";
 import { waitForKeyPress } from "./waitForKeyPress";
 
 enum CMDEnum {
@@ -23,10 +23,15 @@ enum CMDEnum {
   MAKE_PREL = 'make-prel',
   ZIP_FULL = 'zip-full',
   PRINT_CONF = 'print-conf',
+  VERSION = 'version',
 }
-async function main() {
+
+async function main(): Promise<any> {
   const argv_2 = process.argv[2]
   switch (argv_2) {
+    case CMDEnum.VERSION:
+      console.log(package_json.version)
+      return 'DONT_WAIT'
     case CMDEnum.MAKE_DATA:
       await make_data_zip();
       await make_full_zip();
@@ -37,15 +42,16 @@ async function main() {
       return;
     case CMDEnum.ZIP_FULL:
       await make_full_zip();
+      return;
     case CMDEnum.MAIN:
       await make_data_zip();
       await make_prel_zip();
       await make_full_zip();
       return;
     case CMDEnum.DAT_2_TXT:
-      const { IN_LF2_DIR, TMP_TXT_DIR } = conf;
-      if (!IN_LF2_DIR) return log("failed! because 'IN_LF2_DIR' is not set in 'conf file'.")
-      if (!TMP_TXT_DIR) return log("failed! because 'TMP_TXT_DIR' is not set in 'conf file'.")
+      const { IN_LF2_DIR, TMP_TXT_DIR } = conf();
+      if (!IN_LF2_DIR) return log("Failed! because 'IN_LF2_DIR' is not set in 'conf file'.")
+      if (!TMP_TXT_DIR) return log("Failed! because 'TMP_TXT_DIR' is not set in 'conf file'.")
       return data_2_txt(IN_LF2_DIR, TMP_TXT_DIR);
     case CMDEnum.PRINT_CONF:
       const json = {
@@ -58,30 +64,39 @@ async function main() {
     case CMDEnum.HELP:
       return show_main_usage();
     default:
-      if (await is_dir(argv_2)) {
-        const json = conf
+      if (!argv_2) {
+        return show_main_usage();
+      } else if (await is_dir(argv_2)) {
+        log(`Got a dir`)
+        const basename = path.basename(argv_2)
         const dir_info = await read_dir_info_json(argv_2)
-        const conf_file = json.CONF_FILE || `./${path.basename(argv_2)}.conf.json`
-        log({ conf_file, dir_info_json: dir_info })
+        const c = conf(`./${basename}.conf.json`, conf => {
+          if (dir_info.info_file_ok) {
+            log(dir_info.info_file, dir_info)
+          }
+          if (dir_info.type === 'prel') {
+            conf.IN_PREL_DIR = argv_2
+            if (typeof dir_info.output === 'string') conf.OUT_PREL_NAME = dir_info.output
+            else conf.OUT_PREL_NAME = `${path.basename(argv_2)}.prel.zip`
+          } else {
+            conf.TMP_DIR = argv_2 + '.temp';
+            conf.OUT_DIR = argv_2 + '.output';
+            conf.IN_LF2_DIR = argv_2
+            if (typeof dir_info.output === 'string') conf.OUT_DATA_NAME = dir_info.output
+            else conf.OUT_DATA_NAME = `${path.basename(argv_2)}.data.zip`
+          }
+        })
         if (dir_info.type === 'prel') {
-          log(`got a dir, will try to zip it to 'prel zip'`)
-          json.IN_PREL_DIR = argv_2
-          if (typeof dir_info.output === 'string') json.OUT_PREL_NAME = dir_info.output
-          else json.OUT_PREL_NAME = `${path.basename(argv_2)}.prel.zip`
+          log(`Will try to zip it to "prel zip", path:\n    "${join(c.OUT_DIR!, c.OUT_PREL_NAME!).replace(/\\/g, '/')}"`)
         } else {
-          log(`got a dir, will try to zip it to 'data zip'`)
-          json.IN_LF2_DIR = argv_2
-          if (typeof dir_info.output === 'string') json.OUT_DATA_NAME = dir_info.output
-          else json.OUT_DATA_NAME = `${path.basename(argv_2)}.data.zip`
+          log(`Will try to zip it to "data zip", path:\n    "${join(c.OUT_DIR!, c.OUT_DATA_NAME!).replace(/\\/g, '/')}"`)
         }
-        await write_file(conf_file, JSON.stringify(json, null, 2))
-        set_conf(conf_file)
-        log({ conf: json })
         await make_data_zip();
         await make_prel_zip();
         await make_full_zip();
       } else if (await is_json(argv_2)) {
-        log(`got a json file, will try to use it as 'conf file'`)
+        conf(argv_2)
+        log(`Got a json file, will try to use it as 'conf file'`)
         await make_data_zip();
         await make_prel_zip();
         await make_full_zip();
@@ -93,11 +108,11 @@ async function main() {
   }
 }
 
-main().then(() => {
+main().then((r) => {
   print_ffmpeg_hints();
   print_magick_hints();
-  if (!conf.DONT_WAIT) waitForKeyPress();
+  if (!dont_wait() && r != 'DONT_WAIT') waitForKeyPress();
 }).catch((e) => {
   log(e)
-  if (!conf.DONT_WAIT) waitForKeyPress();
+  if (!dont_wait()) waitForKeyPress();
 })

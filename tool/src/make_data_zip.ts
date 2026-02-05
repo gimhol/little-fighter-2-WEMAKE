@@ -1,55 +1,71 @@
 import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
 import path from "path";
-import type { ILegacyPictureInfo } from "../../src/LF2/defines";
+import type { IDataLists, ILegacyPictureInfo } from "../../src/LF2/defines";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { classify } from "./utils/classify";
 import { convert_dat_file } from "./utils/convert_dat_file";
 import { convert_data_txt, write_index_file } from "./utils/convert_data_txt";
-import { convert_pic, convert_pic_2 } from "./utils/convert_pic";
-import { convert_sound } from "./utils/convert_sound";
+import { convert_whole_image, convert_grid_image } from "./utils/convert_image";
+import { convert_audio } from "./utils/convert_audio";
 import { copy_dir } from "./utils/copy_dir";
-import { log } from "./utils/log";
+import { debug, error, log } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
 
 export async function make_data_zip() {
+  debug(`make_data_zip()`)
   const {
     IN_LF2_DIR,
+    CONF_FILE,
     IN_EXTRA_DIR,
     OUT_DIR,
     OUT_DATA_NAME,
     TMP_DIR,
     TMP_DAT_DIR,
     KEEP_MIRROR,
-  } = conf;
-  if (!IN_LF2_DIR)
-    return log("'data zip' will not be created, because 'IN_LF2_DIR' is not set in 'conf file'.")
-  if (!OUT_DIR)
-    return log("'data zip' will not be created, because 'OUT_DIR' is not set in 'conf file'.")
+    COPYS_SUFFIX,
+    AUDIO_SUFFIX,
+    IMAGE_SUFFIX,
+  } = conf();
   if (!OUT_DATA_NAME)
-    return log("'data zip' will not be created, because 'OUT_DATA_NAME' is not set in 'conf file'.")
+    return log(`'data zip' will not be created, because 'OUT_DATA_NAME' is not set in '${CONF_FILE}'.`)
+  if (!IN_LF2_DIR)
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'IN_LF2_DIR' is not set in '${CONF_FILE}'.`)
+  if (!OUT_DIR)
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'OUT_DIR' is not set in '${CONF_FILE}'.`)
   if (!TMP_DIR)
-    return log("'data zip' will not be created, because 'TMP_DIR' is not set in 'conf file'.")
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'TMP_DIR' is not set in '${CONF_FILE}'.`)
   if (!TMP_DAT_DIR)
-    return log("'data zip' will not be created, because 'TMP_DAT_DIR' is not set in 'conf file'.")
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'TMP_DAT_DIR' is not set in '${CONF_FILE}'.`)
+  if (!COPYS_SUFFIX)
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'COPYS_SUFFIX' is not set in '${CONF_FILE}'.`)
+  if (!AUDIO_SUFFIX)
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'AUDIO_SUFFIX' is not set in '${CONF_FILE}'.`)
+  if (!IMAGE_SUFFIX)
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'IMAGE_SUFFIX' is not set in '${CONF_FILE}'.`)
 
   const cache_infos = await CacheInfos.create(
     path.join(TMP_DIR, "cache_infos.json5")
   );
-  const ress = await classify(IN_LF2_DIR);
+  const ress = classify(IN_LF2_DIR);
+  let indexes: IDataLists | undefined;
+  try {
+    indexes = await convert_data_txt(IN_LF2_DIR, TMP_DAT_DIR);
+    if (!indexes) return error(`'${OUT_DATA_NAME}' will not be created, because 'data.txt' is not found!`)
+  } catch (e) {
+    return error(`'${OUT_DATA_NAME}' will not be created, reason: ${e}\n`, e)
+  }
   for (const src_path of ress.directories) {
     const dst_path = src_path.replace(IN_LF2_DIR, TMP_DAT_DIR);
     await fs.mkdir(dst_path, { recursive: true }).catch((_) => void 0);
   }
 
   const pic_list_map = new Map<string, ILegacyPictureInfo[]>();
-  const indexes = await convert_data_txt(IN_LF2_DIR, TMP_DAT_DIR);
   if (IN_EXTRA_DIR) await copy_dir(IN_EXTRA_DIR, TMP_DAT_DIR);
-  if (!indexes) throw Error('dat index file not found!');
   if (indexes) {
-    for (const src_path of ress.file.dat) {
+    for (const src_path of ress.get_files('dat')) {
       let type: 'bg' | 'obj' | 'index' | 'stage' = 'obj';
       const a = src_path.replace(IN_LF2_DIR, '');
       if (a.startsWith('/bg/') || a.startsWith('bg/'))
@@ -58,7 +74,6 @@ export async function make_data_zip() {
         type = 'stage';
       else if (src_path.endsWith('/data.idx.dat'))
         type = 'index';
-
       else
         type = 'obj';
 
@@ -100,9 +115,9 @@ export async function make_data_zip() {
       await cache_info.update();
     }
   }
-  const imgs = [...ress.file.bmp, ...ress.file.png];
-  for (const src_path of imgs) {
-    const dst_path = convert_pic.get_dst_path(
+  const bmps = ress.get_files(...IMAGE_SUFFIX.split(','))
+  for (const src_path of bmps) {
+    const dst_path = convert_whole_image.get_dst_path(
       TMP_DAT_DIR,
       IN_LF2_DIR,
       src_path
@@ -113,40 +128,40 @@ export async function make_data_zip() {
     if (!pic_list?.length) {
       if (dst_path.endsWith('_mirror.png') && !KEEP_MIRROR) {
         await rm(dst_path).catch(() => void 0)
-        log("mirror pic ignored:", src_path);
+        log("Mirror image ignored:", src_path);
         continue;
       }
       const cache_info = await cache_infos.get_info(src_path, dst_path);
       const is_changed = await cache_info.is_changed();
       if (!is_changed) {
-        log("not changed:", src_path, "=>", dst_path);
+        log("Not changed:", src_path, "=>\n    " + dst_path);
         continue;
       }
-      await convert_pic(TMP_DAT_DIR, IN_LF2_DIR, src_path);
+      await convert_whole_image(TMP_DAT_DIR, IN_LF2_DIR, src_path);
       await cache_info.update();
     } else {
       for (const pic of pic_list) {
-        const dst_path = convert_pic_2.get_dst_path(TMP_DAT_DIR, pic);
+        const dst_path = convert_grid_image.get_dst_path(TMP_DAT_DIR, pic);
         if (dst_path.endsWith('_mirror.png') && !KEEP_MIRROR) {
           await rm(dst_path).catch(() => void 0)
-          log("mirror pic ignored:", src_path);
+          log("Mirror image ignored:", src_path);
           continue;
         }
         const cache_info = await cache_infos.get_info(src_path, dst_path);
         const is_changed = await cache_info.is_changed();
         if (!is_changed) {
-          log("not changed:", src_path, "=>", dst_path);
+          log("Not changed:", src_path, "=>\n    " + dst_path);
           continue;
         }
-        await convert_pic_2(dst_path, src_path, pic);
+        await convert_grid_image(dst_path, src_path, pic);
         await cache_info.update();
       }
     }
   }
 
-  const sounds = [...ress.file.wav, ...ress.file.wma];
+  const sounds = ress.get_files(...AUDIO_SUFFIX.split(','))
   for (const src_path of sounds) {
-    const dst_path = convert_sound.get_dst_path(
+    const dst_path = convert_audio.get_dst_path(
       TMP_DAT_DIR,
       IN_LF2_DIR,
       src_path
@@ -154,22 +169,22 @@ export async function make_data_zip() {
     const cache_info = await cache_infos.get_info(src_path, dst_path);
     const is_changed = await cache_info.is_changed();
     if (!is_changed) {
-      log("not changed:", src_path, "=>", dst_path);
+      log("Not changed:", src_path, "=>\n    " + dst_path);
       continue;
     }
-    await convert_sound(dst_path, src_path);
+    await convert_audio(dst_path, src_path);
     await cache_info.update();
   }
 
-  for (const src_path of ress.unknown) {
+  for (const src_path of ress.get_files(...COPYS_SUFFIX.split(','))) {
     const dst_path = src_path.replace(IN_LF2_DIR, TMP_DAT_DIR);
     const cache_info = await cache_infos.get_info(src_path, dst_path);
     const is_changed = await cache_info.is_changed();
     if (!is_changed) {
-      log("not changed:", src_path, "=>", dst_path);
+      log("Not changed:", src_path, "=>\n    " + dst_path);
       continue;
     }
-    log("copy", src_path, "=>", dst_path);
+    log("Copy", src_path, "=>\n    " + dst_path);
     await fs.copyFile(src_path, dst_path);
     await cache_info.update();
   }

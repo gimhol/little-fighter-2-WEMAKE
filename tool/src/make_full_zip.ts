@@ -3,21 +3,22 @@ import { createWriteStream, existsSync } from "fs";
 import { join } from "path/posix";
 import { pipeline } from "stream/promises";
 import { conf } from "./conf";
-import { info } from "./utils/log";
+import { debug, info } from "./utils/log";
 import { write_file } from "./utils/write_file";
 
 export async function make_full_zip() {
+  debug(`make_full_zip()`)
   const {
-    OUT_DIR, OUT_PREL_NAME, OUT_DATA_NAME, OUT_FULL_NAME
-  } = conf;
+    OUT_DIR, OUT_PREL_NAME, OUT_DATA_NAME, OUT_FULL_NAME, CONF_FILE
+  } = conf();
   if (!OUT_DIR)
-    return info("'full zip' will not be created, because 'OUT_DIR' is not set in 'conf file'.")
+    return info(`'full zip' will not be created, because 'OUT_DIR' is not set in '${CONF_FILE}'.`)
   if (!OUT_PREL_NAME)
-    return info("'full zip' will not be created, because 'OUT_PREL_NAME' is not set in 'conf file'.")
+    return info(`'full zip' will not be created, because 'OUT_PREL_NAME' is not set in '{CONF_FILE}'.`)
   if (!OUT_DATA_NAME)
-    return info("'full zip' will not be created, because 'OUT_DATA_NAME' is not set in 'conf file'.")
+    return info(`'full zip' will not be created, because 'OUT_DATA_NAME' is not set in '{CONF_FILE}'.`)
   if (!OUT_FULL_NAME)
-    return info("'full zip' will not be created, because 'OUT_FULL_NAME' is not set in 'conf file'.")
+    return info(`'full zip' will not be created, because 'OUT_FULL_NAME' is not set in '{CONF_FILE}'.`)
   const prel_zip_path = join(OUT_DIR, OUT_PREL_NAME);
   const data_zip_path = join(OUT_DIR, OUT_DATA_NAME);
   if (
@@ -25,7 +26,7 @@ export async function make_full_zip() {
     !existsSync(data_zip_path)
   ) {
     info(`'full zip' will not be created. 'prel zip' or 'data zip' does not exist.`)
-    return 
+    return
   }
 
   const index_path = join(OUT_DIR, 'index.json');

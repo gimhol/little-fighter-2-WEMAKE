@@ -1,37 +1,55 @@
-import { info } from "./utils/log"
+import { basename } from "path";
+export let whoami = "lf2w-tool";
+const [argv0, argv1] = process.argv;
+if (argv0 === 'bun') whoami = basename(argv1)
 
 const text = `
-lf2w-tool <command> -c "./conf.json"
+\x1B[36m[Guidance on Drag-and-Generate]\x1B[0m
 
-Example: lf2w-tool main -c "./conf.json"
+Usage 1:
 
-About "conf.json", see Usage "lf2w-tool print-conf"
+You can drag a similar LF2 directory to ${whoami}, 
+Some intermediate directories and files will be generated.
+Then a 'conf.json5' and a './public/data.zip' file will be automatically generated.
 
-Usage:
+Usage 1:
+You can drag a 'conf.json5' to ${whoami},
+It will read the configuration from the 'conf.json5'.
+And generate 'data.zip', 'prel.zip' and 'full.zip' for you
+(Depending on whether the configuration is complete).
 
-lf2w-tool help          Print out 'help' information.
+\x1B[36m[Guidance on Command-line]\x1B[0m
 
-lf2w-tool print-conf    Print out the template of the "conf file". 
+Example: ${whoami} main
+         ${whoami} help
+
+\x1B[36m[More Usage]\x1B[0m
+
+${whoami} version       Print out version.
+${whoami} help          Print out 'help' information.
+
+${whoami} print-conf    Print out the template of the "conf file". 
                         You can copy it into your "conf file", 
                         then edit it and use it.
                         
-lf2w-tool main          Just like 'lf2w-tool make-data' + 
-                                  'lf2w-tool make-prel' + 
-                                  'lf2w-tool zip-full'
+${whoami} main          Just like '${whoami} make-data' + 
+                                  '${whoami} make-prel' + 
+                                  '${whoami} zip-full'
 
-lf2w-tool make-data     Convert the 'LF2 dir' to 'LF2W dir',
+${whoami} make-data     Convert the 'LF2 dir' to 'LF2W dir',
                         then zip 'LF2W dir' into 'data.zip',
                         and this will generate a 'data.zip.json' too.
 
-lf2w-tool make-prel     Zip 'prel dir' into 'prel.zip', 
+${whoami} make-prel     Zip 'prel dir' into 'prel.zip', 
                         and this will generate a 'prel.zip.json' too.
 
-lf2w-tool zip-full      Zip 'data.zip' and 'prel.zip' 
+${whoami} zip-full      Zip 'data.zip' and 'prel.zip' 
                         with an index.json into 'full.zip'.
 
 
-lf2w-tool dat-2-txt     Parse .dat file into .txt file.
+${whoami} dat-2-txt     Parse .dat file into .txt file.
 `.trim()
+
 export function show_main_usage() {
-  info(text)
+  console.log(text)
 }
