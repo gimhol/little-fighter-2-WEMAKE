@@ -1384,7 +1384,7 @@ export class Entity {
     this.state?.pre_update?.(this);
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
-      if (this._catcher || this._bearer) {
+      if (!this._catcher && !this._bearer) {
         --this.wait;
       }
     } else {
