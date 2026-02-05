@@ -1547,8 +1547,7 @@ export class Entity {
 
     const frame_a = cer.frame;
     const { cpoint: cpoint_a } = frame_a;
-    const { cpoint: cpoint_b } = this.frame;
-    if (!cpoint_a || !cpoint_b) {
+    if (!cpoint_a) {
       this._catcher = null;
       this.prev_cpoint_a = null;
       this.set_velocity_y(3);
@@ -1609,8 +1608,7 @@ export class Entity {
       this._catch_time += cpoint_a.decrease;
       if (this._catch_time < 0) this._catch_time = 0;
     }
-    const { cpoint: cpoint_b } = this._catching.frame;
-    if (!cpoint_a || !cpoint_b) {
+    if (!cpoint_a) {
       this._catching = null;
       this._catch_time = this._catch_time_max;
       this.next_frame = this.get_catching_cancel_frame();
@@ -1651,17 +1649,21 @@ export class Entity {
       centery: centery_a,
       cpoint: c_a,
     } = this._catcher.frame;
-    const { centerx: centerx_b, centery: centery_b, cpoint: c_b } = this.frame;
-    if (!c_a || !c_b) return;
+    const {
+      centerx: centerx_b,
+      centery: centery_b,
+      cpoint: c_b
+    } = this.frame;
+    if (!c_a) return;
     if (c_a.throwvx || c_a.throwvx || c_a.throwvx) return;
 
     const face_a = this._catcher.facing;
     const face_b = this.facing;
     const { x: px, y: py, z: pz } = this._catcher.position;
-    this._position.x =
-      px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b.x);
-    this._position.y = round(py + centery_a - c_a.y + c_b.y - centery_b);
-    this._position.z = round(pz + c_a.z - c_b.z);
+    const { x: c_b_x = 0, y: c_b_y = 0, z: c_b_z = 0 } = c_b || {}
+    this._position.x = px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b_x);
+    this._position.y = round(py + centery_a - c_a.y + c_b_y - centery_b);
+    this._position.z = round(pz + c_a.z - c_b_z);
   }
 
   /**
