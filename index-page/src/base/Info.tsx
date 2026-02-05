@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isString } from "lodash";
 export function get_i18n(all: any, lang: string) {
   if (!all) return null;
   const base = all[''];
@@ -42,7 +41,7 @@ export class Info {
     this.changelog = this.cur.changelog || this.raw.changelog;
     if (Array.isArray(this.changelog)) this.changelog = this.changelog.join('\n');
     const { children } = this.cur;
-    if (isString(children)) {
+    if (typeof children === 'string') {
       this.children_url = children
     } else if (Array.isArray(children)) {
       this._children = children
