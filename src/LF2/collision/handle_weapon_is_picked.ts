@@ -5,7 +5,7 @@ import { summary_mgr } from "../entity/SummaryMgr";
 export function handle_weapon_is_picked(collision: ICollision): void {
   const { victim, attacker } = collision;
   if (attacker.holding) return;
-  victim.holder = attacker;
+  victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;
   if (victim.data.base.type === WeaponType.Heavy) {

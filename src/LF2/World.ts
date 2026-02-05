@@ -709,7 +709,7 @@ export class World extends WorldDataset {
     }
     switch (aframe.state) {
       case StateEnum.Weapon_OnHand: {
-        const atk = attacker.holder?.frame.wpoint?.attacking;
+        const atk = attacker.bearer?.frame.wpoint?.attacking;
         if (!atk) return;
         const itr_prefab = attacker.data.itr_prefabs?.[atk];
         if (!itr_prefab) return;

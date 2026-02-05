@@ -139,7 +139,7 @@ export class Entity {
   protected _hp!: number;
   protected _hp_r!: number;
   protected _hp_max!: number;
-  protected _holder!: Entity | null;
+  protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
   protected _emitter_opoint!: IOpointInfo | null;
 
@@ -372,12 +372,12 @@ export class Entity {
     return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
   }
 
-  get holder(): Entity | null {
-    return this._holder;
+  get bearer(): Entity | null {
+    return this._bearer;
   }
 
-  set holder(v: Entity | null) {
-    this.set_holder(v);
+  set bearer(v: Entity | null) {
+    this.set_bearer(v);
   }
 
   get holding(): Entity | null {
@@ -641,7 +641,7 @@ export class Entity {
     this._hp_r = Defines.DEFAULT_HP;
     this._hp_max = Defines.DEFAULT_HP;
     this._landing_frame = null;
-    this._holder = null;
+    this._bearer = null;
     this._holding = null;
     this._emitters.length = 0;
     this._emitter_opoint = null;
@@ -700,10 +700,10 @@ export class Entity {
     this._outline_color = void 0;
   }
 
-  set_holder(v: Entity | null): this {
-    if (this._holder === v) return this;
-    const old = this._holder;
-    this._holder = v;
+  set_bearer(v: Entity | null): this {
+    if (this._bearer === v) return this;
+    const old = this._bearer;
+    this._bearer = v;
     this.callbacks.emit("on_holder_changed")(this, v, old);
     return this;
   }
@@ -807,8 +807,8 @@ export class Entity {
     switch (opoint.kind) {
       case OpointKind.Pick:
         emitter.drop_holding()
-        this.holder = emitter;
-        this.holder.holding = this;
+        this.bearer = emitter;
+        this.bearer.holding = this;
         break;
     }
     return this;
@@ -1114,7 +1114,7 @@ export class Entity {
    * @see {World.gravity}
    */
   private handle_gravity() {
-    if (this.holder && this.catcher) return;
+    if (this.bearer && this.catcher) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
     this.velocities[0].y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
@@ -1230,10 +1230,10 @@ export class Entity {
    */
   drop_holding(): void {
     if (!this.holding) return;
-    this.holding.follow_holder();
+    this.holding.follow_bearer();
     this.lf2.mt.mark = 'dh_1'
     this.holding.enter_frame({ id: this.lf2.mt.pick(this.holding.data.indexes?.in_the_skys) });
-    this.holding.holder = null;
+    this.holding.bearer = null;
     this.holding = null;
   }
 
@@ -1371,7 +1371,7 @@ export class Entity {
         }
       }
     }
-    this.follow_holder();
+    this.follow_bearer();
     for (const pair of this._opoints) {
       const [opoint, time] = pair
       if (time === opoint.interval) {
@@ -1492,7 +1492,7 @@ export class Entity {
       this.old_ground_y = ground_y;
     }
     this.world.restrict(this);
-    this.holding?.follow_holder();
+    this.holding?.follow_bearer();
     this.collision_list.length = 0;
     this.collided_list.length = 0;
   }
@@ -1802,18 +1802,18 @@ export class Entity {
     return this.team === other.team;
   }
 
-  follow_holder() {
-    const holder = this.holder;
-    if (!holder) return;
-    if (this.hp <= 0 && this.holder) {
-      holder.holding = null;
-      this.holder = null;
+  follow_bearer() {
+    const bearer = this.bearer;
+    if (!bearer) return;
+    if (this.hp <= 0 && this.bearer) {
+      bearer.holding = null;
+      this.bearer = null;
       return;
     }
     const {
       wpoint: wp_a = {} as Partial<IWpointInfo>,
       centerx: cx_a, centery: cy_a,
-    } = holder.frame;
+    } = bearer.frame;
     const {
       wpoint: wp_b = {} as Partial<IWpointInfo>,
       centerx: cx_b, centery: cy_b,
@@ -1830,8 +1830,8 @@ export class Entity {
     const strength = this._data.base.strength || 1;
     const weight = this._data.base.weight || 1;
     let { dvx, dvy, dvz } = wp_a;
-    const { x, y, z } = holder.position;
-    this.facing = holder.facing;
+    const { x, y, z } = bearer.position;
+    this.facing = bearer.facing;
     const { x: wa_x = 0, y: wa_y = 0, z: wa_z = 0 } = wp_a;
     const { x: wb_x = 0, y: wb_y = 0, z: wb_z = 0 } = wp_b
 
@@ -1861,13 +1861,13 @@ export class Entity {
         round(z + wa_z),
       )
       this.enter_frame(nf);
-      const vz = holder.ctrl ? holder.ctrl.UD * (dvz || 0) : 0;
+      const vz = bearer.ctrl ? bearer.ctrl.UD * (dvz || 0) : 0;
       dvx = strength * (dvx || 0) / weight;
       dvy = strength * (dvy || 0) / weight;
       const vx = (dvx - abs(vz / 2)) * this.facing;
       this.set_velocity(vx, dvy, vz);
-      holder.holding = null;
-      this.holder = null;
+      bearer.holding = null;
+      this.bearer = null;
       return;
     }
 

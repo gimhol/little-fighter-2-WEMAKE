@@ -31,7 +31,7 @@ export class CharacterState_Drink extends CharacterState_Base {
       holding.lf2.mt.mark = 'cs_d_1'
       holding.enter_frame({ id: holding.lf2.mt.pick(holding.data.indexes?.in_the_skys) });
       holding.set_velocity(3 * e.facing, 4, 0);
-      holding.holder = null;
+      holding.bearer = null;
       e.holding = null;
       e.enter_frame(Defines.NEXT_FRAME_AUTO);
     }

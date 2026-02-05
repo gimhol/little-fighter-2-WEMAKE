@@ -106,7 +106,7 @@ export class CollisionKeeper {
       attacker.group?.some(v => v === EntityGroup.Freezer) && (
         is_fighter(attacker) ||
         is_ball(victim) ||
-        (is_weapon(attacker) && attacker.holder)
+        (is_weapon(attacker) && attacker.bearer)
       )
     ) {
       handle_ball_frozen(attacker, victim);
