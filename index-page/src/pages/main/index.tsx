@@ -2,6 +2,7 @@
 import img_gimink from "@/assets/svg/gimink.svg";
 import img_github from "@/assets/svg/github.svg";
 import img_menu from "@/assets/svg/menu.svg";
+import img_upload from "@/assets/svg/upload.svg";
 import { Info } from "@/base/Info";
 import { IconButton } from "@/components/button/IconButton";
 import { InfoCard } from "@/components/cards/InfoCard";
@@ -163,7 +164,7 @@ export default function MainPage() {
         <IconButton
           onClick={() => set_ss_open(true)}
           title={t('submit_extra_data')}
-          letter="📤" />
+          img={img_upload} />
         <IconButton
           href="https://github.com/gimhol/little-fighter-2-WEMAKE"
           title={t('goto_github')}
