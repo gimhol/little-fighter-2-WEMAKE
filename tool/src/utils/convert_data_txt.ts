@@ -1,6 +1,6 @@
 import { warn } from "console";
 import { X_OK } from "constants";
-import { accessSync, writeFileSync } from "fs";
+import { accessSync, mkdirSync, writeFileSync } from "fs";
 import { read_indexes } from "../../../src/LF2/dat_translator/read_indexes";
 import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
 import { is_file } from "./is_file";
@@ -36,6 +36,9 @@ export async function convert_data_txt(
       `"${src_path}"\n`,
       "Will create it for you, please edit it and retry again."
     ].join('\n    '))
+    try {
+      mkdirSync(`${src_dir}/data`, { recursive: true })
+    } catch (e) { }
     writeFileSync(src_path, `
 [NOT_READY] Please remove this line after the editing or LF2W-TOOL will not use this file.
 <object>
@@ -47,7 +50,7 @@ export async function convert_data_txt(
   }
   const stage_path = `${src_dir}/data/stage.dat`;
   const dst_path = `${out_dir}/data/data.index.${suffix}`;
-  info("convert", src_path, "=>\n    "+ dst_path);
+  info("Convert", src_path, "=>\n    " + dst_path);
   const indexes = await parse_indexes(src_path, suffix)
   if (await is_file(stage_path)) {
     indexes.stages = [{
