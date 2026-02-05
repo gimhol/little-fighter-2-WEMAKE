@@ -6,6 +6,7 @@ import type { ISoundsCallback } from "./ISoundsCallback";
 
 export class BaseSounds implements ISounds {
   readonly lf2: LF2;
+  private _origins: { [x in string]?: string } = {};
   get is_random(): boolean { return false };
   set is_random(v: boolean) { };
   constructor(lf2: LF2) {
@@ -66,7 +67,25 @@ export class BaseSounds implements ISounds {
     y?: number,
     z?: number,
   ): Promise<string> {
-    if (!this.has(src)) await this.load(src, src);
+    do {
+      if (!this.has(src)) {
+        // 不存在，加载便是
+        await this.load(src, src);
+        break;
+      }
+      const [obj, , origin] = this.lf2.sniff_from_zips(src, false)
+      // 非本地存在资源，说明来自网络，不必重载
+      if (!obj || !origin) break;
+
+      // 判断是否来源是否产生了变化
+      if (this.get_origin(src) === origin) break;
+
+      // 可能后面又有新数据包加载覆盖了，重新加载之
+      this.unload(src)
+
+      await this.load(src, src);
+    } while (0)
+
     return this.play(src, x, y, z);
   }
   play_preset(t: string, x?: number, y?: number, z?: number): void {
@@ -82,5 +101,14 @@ export class BaseSounds implements ISounds {
         this.play_with_load(t, x, y, z);
         break;
     }
+  }
+  set_origin(name: string, origin: string): void {
+    this._origins[name] = origin;
+  }
+  get_origin(name: string): string | undefined {
+    return this._origins[name];
+  }
+  unload(name: string): void {
+
   }
 }

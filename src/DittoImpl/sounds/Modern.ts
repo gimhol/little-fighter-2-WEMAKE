@@ -149,9 +149,10 @@ export class __Modern extends BaseSounds {
   override load(name: string, src: string): Promise<AudioBuffer> {
     return this._r.fetch(name, async () => {
       this.lf2.on_loading_content(`${name}`, 0);
-      const [dat] = await this.lf2.import_array_buffer(src, false);
+      const [dat, , origin] = await this.lf2.import_array_buffer(src, false);
       const buf = this.ctx.decodeAudioData(dat);
       this.lf2.on_loading_content(`${name}`, 100);
+      if (origin) this.set_origin(name, origin)
       return buf;
     });
   }
@@ -210,6 +211,16 @@ export class __Modern extends BaseSounds {
       };
       this.apply_bgm_volume();
     };
+    do {
+      const [obj, , origin] = this.lf2.sniff_from_zips(real_name, false)
+      // 非本地存在资源，说明来自网络，不必重载
+      if (!obj || !origin) break;
+
+      // 判断是否来源是否产生了变化
+      if (this.get_origin(real_name) === origin)
+        break;
+      this.unload(real_name)
+    } while (0)
     if (buf) {
       start(buf);
     } else {
@@ -307,5 +318,10 @@ export class __Modern extends BaseSounds {
     this._playings.forEach((v) => v.src_node.stop());
     this._playings.clear();
     super.dispose();
+  }
+
+  override unload(name: string): void {
+    super.unload(name)
+    this._r.del(name)
   }
 }

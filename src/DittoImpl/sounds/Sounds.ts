@@ -115,4 +115,14 @@ export class __Sounds implements ISounds {
   dispose(): void {
     this.inner.dispose();
   }
+
+  set_origin(name: string, origin: string): void {
+    return this.inner.set_origin(name, origin);
+  }
+  get_origin(name: string): string | undefined {
+    return this.inner.get_origin(name);
+  }
+  unload(name: string): void {
+    return this.inner.unload(name);
+  }
 }

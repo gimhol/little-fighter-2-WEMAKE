@@ -173,4 +173,8 @@ export interface ISounds {
     z?: number,
   ): void;
   play_preset(t: string, x?: number, y?: number, z?: number): void;
+
+  set_origin(name: string, origin: string): void;
+  get_origin(name: string): string | undefined;
+  unload(name: string): void;
 }

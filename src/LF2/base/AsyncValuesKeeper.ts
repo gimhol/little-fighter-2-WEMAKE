@@ -39,6 +39,21 @@ export default class AsyncValuesKeeper<V> {
     });
   }
 
+  /**
+   * 覆盖
+   *
+   * @param {string} key 键
+   * @param {() => Promise<V>} job 
+   * @return {Promise<V>}
+   * @memberof AsyncValuesKeeper
+   */
+  async overwrite(key: string, job: () => Promise<V>): Promise<V> {
+    const value = await job();
+    this.values.set(key, value);
+    return value;
+  }
+
+
   clean(): void {
     this.values.clear()
   }
