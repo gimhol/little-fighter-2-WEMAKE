@@ -6,13 +6,13 @@ import { UIComponent } from "./UIComponent";
 export class BGMSwitcher extends UIComponent {
   static override readonly TAG: string = "BGMSwitcher";
   private _text_loader = new UITextLoader(() => this.node).ignore_out_of_date();
-  private _which: 'Slient' | 'Random' | '' = '';
+  private _which: 'Silent' | 'Random' | '' = '';
   private _sounds_cbs = {
     on_bgm_changed: () => this._text_loader.set_text(['BGM: ' + this.text])
   }
   get offset(): number { return this.num(0) ?? 0; }
   get which(): boolean { return this.which }
-  get text(): string { return this._which || this.lf2.sounds.bgm() || "Slient"; }
+  get text(): string { return this._which || this.lf2.sounds.bgm() || "Silent"; }
   override on_resume(): void {
     super.on_resume();
     if (this.lf2.sounds.is_random)
@@ -31,20 +31,24 @@ export class BGMSwitcher extends UIComponent {
     e.stop_immediate_propagation()
     e.stop_propagation();
     const { offset } = this;
-    const list = ['Random', 'Slient', ...this.lf2.bgms]
+    const list = ['Silent', 'Random', ...this.lf2.bgms]
 
     let o = 0;
-    if (offset) o = offset
-    else if (e.button === 0) o = 1
-    else if (e.button === 2) o = -1
-    const next = loop_offset(list, this.text, o)
+    let next: string | undefined = void 0;
+    if (offset) next = loop_offset(list, this.text, offset)
+    else if (e.button === 0) next = loop_offset(list, this.text, 1)
+    else if (e.button === 1) next = this.text === 'Silent' ? 'Random' : 'Silent'
+    else if (e.button === 2) next = loop_offset(list, this.text, -1)
+    else return;
+
+
     switch (next) {
       case 'Random':
         this._which = 'Random';
         this.lf2.sounds.play_bgm('?');
         break;
-      case 'Slient':
-        this._which = 'Slient';
+      case 'Silent':
+        this._which = 'Silent';
         this.lf2.sounds.stop_bgm();
         break;
       default:
