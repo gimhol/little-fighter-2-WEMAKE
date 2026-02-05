@@ -16,13 +16,42 @@ import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
+import { ExtraDataFromView } from "./ExtraDataFromView";
 import { InfoListItem } from "./InfoListItem";
 import { LangButton } from "./LangButton";
 import { MarkdownButton } from "./MarkdownModal";
 import csses from "./styles.module.scss";
-import { ExtraDataFromView } from "./ExtraDataFromView";
 
 const time_str = Math.floor(Date.now() / 60000);
+async function fetch_info(url: string, lang: string, init: RequestInit) {
+  const resp = await fetch(url, init);
+  const raw = await resp.json();
+  if (!raw || typeof raw !== 'object') void 0;
+  return new Info(raw, lang)
+}
+async function fetch_info_list(url: string, lang: string, init: RequestInit & { histories?: Map<string, Info> } = {}) {
+  const { signal, histories = new Map<string, Info>() } = init;
+
+  const resp = await fetch(url, init);
+  const raw_list = await resp.json();
+  if (!Array.isArray(raw_list)) throw new Error(`[fetch_info_list] failed, got ${raw_list}`)
+  if (signal?.aborted) return;
+
+  const cooked_list: Info[] = [];
+  for (const raw_item of raw_list) {
+    if (!raw_item) continue;
+    if (typeof raw_item === 'object') {
+      cooked_list.push(new Info(raw_item, lang))
+      continue;
+    }
+    if (typeof raw_item === 'string') {
+      const history_key = `[${lang}]${raw_item}`
+      const history = histories.get(history_key) || await fetch_info(raw_item, lang, { signal });
+      cooked_list.push(history)
+    }
+  }
+  return cooked_list;
+}
 
 export default function MainPage() {
   const { t, i18n } = useTranslation()
@@ -60,11 +89,9 @@ export default function MainPage() {
   useEffect(() => {
     const ab = new AbortController();
     set_games_loading(true)
-    fetch(`games.json?time=${time_str}`, { signal: ab.signal })
-      .then(resp => { return resp.json() })
-      .then((raw_list: any[]) => {
+    fetch_info_list(`games.json?time=${time_str}`, ref_lang.current, { signal: ab.signal })
+      .then((list) => {
         if (ab.signal.aborted) return;
-        const list = raw_list.map((raw_item: any) => new Info(raw_item, ref_lang.current))
         set_games(list)
       }).catch(e => {
         if (ab.signal.aborted) return;
@@ -74,22 +101,19 @@ export default function MainPage() {
         set_games_loading(false)
       })
     return () => ab.abort()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (!actived_game) { return; }
-    const { versions, versions_url } = actived_game;
+    const { children: versions, children_url: versions_url } = actived_game;
     if (versions?.length) { set_versions(versions); return; }
     if (!versions_url) return;
     const ab = new AbortController()
     set_versions_loading(true)
-    fetch(versions_url)
-      .then(r => r.json())
-      .then(raw_list => {
+    fetch_info_list(versions_url, ref_lang.current, { signal: ab.signal })
+      .then(list => {
         if (ab.signal.aborted) return;
-        const list = raw_list.map((raw_item: any) => new Info(raw_item, ref_lang.current))
-        actived_game.versions = list
+        actived_game.children = list
         set_versions(list)
       }).catch(e => {
         if (ab.signal.aborted) return;
@@ -130,7 +154,7 @@ export default function MainPage() {
           console.log(next)
           const next_games = games?.map(v => v.with_lang(next))
           const next_actived_game = next_games?.find(v => v.id === actived_game?.id)
-          const next_versions = next_actived_game?.versions
+          const next_versions = next_actived_game?.children
           set_actived_game(next_actived_game)
           set_is_cards_view(next_actived_game?.type == 'cards')
           set_games(next_games)

@@ -1,0 +1,34 @@
+  {
+    "id": "tools",
+    "type": "cards",
+    "i18n": {
+      "": {
+        "date": "2026-02-04",
+        "short_title": "Conversion Tool",
+        "title": "Conversion Tool",
+        "desc": [
+          "You can use this tool to convert LF2 data into 'Extra Data Zip' that can be used by LF2W.",
+          "> For how to use the conversion tool, please look at the video below: ",
+          "<video width='320' src='https://lf.gim.ink/docs/video/how_to_use_the_conversion_tool_basic.mp4' controls></video>\n"
+        ],
+        "children": "conversion-tool.info-list.json"
+      },
+      "zh": {
+        "short_title": "转换工具",
+        "title": "转换工具",
+        "desc": [
+          "你可以使用这个工具将 LF2 数据转换成能被 LF2W 使用的‘额外数据压缩包’",
+          "> 关于工具的基本使用方法，参见下方视频：",
+          "<video width='320' src='https://lf.gim.ink/docs/video/how_to_use_the_conversion_tool_basic.mp4' controls></video>\n"
+        ]
+      },
+      "zh-hans": "zh",
+      "zh-hant": "zh",
+      "zh-cn": "zh-hans",
+      "zh-sg": "zh-hans",
+      "zh-my": "zh-hans",
+      "zh-tw": "zh-hant",
+      "zh-hk": "zh-hant",
+      "zh-mo": "zh-hant"
+    }
+  }

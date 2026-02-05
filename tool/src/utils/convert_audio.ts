@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { conf } from "../conf";
+import { _conf, conf } from "../conf";
 import { whoami } from "../show_main_usage";
 import { exec_cmd } from "./exec_cmd";
 import { find_real_cmd } from "./find_real_cmd";
@@ -15,7 +15,7 @@ function get_dst_path(
 }
 
 export function print_ffmpeg_hints() {
-  const { FFMPEG_CMD, FFMPEG_OPTS } = conf();
+  const { FFMPEG_CMD, FFMPEG_OPTS } = _conf ?? {};
   if (!is_ffmpeg_tried || FFMPEG_CMD && find_real_cmd(FFMPEG_CMD)) return;
   const hints = `
 ================== ffmpeg not found ==================
@@ -41,7 +41,7 @@ export async function convert_audio(dst_path: string, src_path: string) {
   const { FFMPEG_CMD, FFMPEG_OPTS } = conf();
   if (!FFMPEG_CMD) return;
   const real_cmd = find_real_cmd(FFMPEG_CMD);
-  info("Convert audio", src_path, "=>\n    "+ dst_path);
+  info("Convert audio", src_path, "=>\n    " + dst_path);
   await fs.rm(dst_path, { recursive: true, force: true }).catch(() => void 0);
   const args = [
     "-i",

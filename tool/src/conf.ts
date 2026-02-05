@@ -263,7 +263,7 @@ const i_hate_backslash = (conf: IConf) => {
     conf[k as keyof IConf] = v.replace(/\\/g, '/')
   }
 }
-let _conf: IConf | undefined = void 0;
+export let _conf: IConf | undefined = void 0;
 export const conf: typeof read_conf = (file, handle_new_conf) => _conf ? _conf : _conf = read_conf(file, handle_new_conf)
 export function set_conf(conf_file: string): IConf {
   _conf = Object.assign(_conf ?? {}, read_conf(conf_file))

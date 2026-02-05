@@ -24,7 +24,7 @@ export class Info {
   changelog?: string;
   changelog_url?: string;
   date?: string;
-  versions_url?: string;
+  children_url?: string;
   url?: string;
   url_type?: string;
   cover?: string;
@@ -32,7 +32,7 @@ export class Info {
   author_url?: string;
   type?: string;
   unavailable?: string;
-  private _versions?: Info[];
+  private _children?: Info[];
 
   constructor(raw: any, lang: any) {
     this.raw = raw;
@@ -41,27 +41,24 @@ export class Info {
     if (Array.isArray(this.desc)) this.desc = this.desc.join('\n');
     this.changelog = this.cur.changelog || this.raw.changelog;
     if (Array.isArray(this.changelog)) this.changelog = this.changelog.join('\n');
-    const { versions } = this.cur;
-    this.versions_url = isString(versions) ? versions : void 0;
-    this.read_str('desc_url');
-    this.read_str('changelog_url');
-    this.read_str('short_title');
-    this.read_str('id');
-    this.read_str('title');
-    this.read_str('date');
-    this.read_str('url');
-    this.read_str('url_type');
-    this.read_str('type');
-    this.read_str('author');
-    this.read_str('author_url');
-    this.read_str('cover');
-    this.read_str('unavailable');
+    const { children } = this.cur;
+    if (isString(children)) {
+      this.children_url = children
+    } else if (Array.isArray(children)) {
+      this._children = children
+    }
+    this.read_str(
+      'desc_url', 'changelog_url', 'short_title', 'id', 'title', 'date', 'url',
+      'url_type', 'type', 'author', 'author_url', 'cover', 'unavailable'
+    );
   }
-  get versions() { return this._versions; }
-  set versions(v: Info[] | undefined) { this._versions = v; }
-  private read_str(name: keyof this) {
-    const raw = this.cur[name] || this.raw[name];
-    Object.assign(this, { [name]: raw });
+  get children() { return this._children; }
+  set children(v: Info[] | undefined) { this._children = v; }
+  private read_str(...names: (keyof this)[]): void {
+    for (const name of names) {
+      const raw = this.cur[name] || this.raw[name];
+      Object.assign(this, { [name]: raw });
+    }
   }
   private get_str(name: keyof this): string | undefined {
     const raw = this.cur[name] || this.raw[name];
@@ -70,7 +67,7 @@ export class Info {
   }
   with_lang(lang: string): Info {
     const ret = new Info(this.raw, lang);
-    ret.versions = this.versions?.map(v => v.with_lang(lang));
+    ret.children = this.children?.map(v => v.with_lang(lang));
     return ret;
   }
   get_download_url(type: string) {
@@ -88,9 +85,9 @@ export class Info {
     text += await this.fetch_desc().then(r => r ? `${r}\n\n` : '')
     text += await this.fetch_changelog().then(r => r ? `${r}\n\n` : '')
 
-    if (this.versions?.length) {
+    if (this.children?.length) {
       text += '## Changelog\n\n'
-      for (const version of this.versions) {
+      for (const version of this.children) {
         text += `### ${version.title}\n\n`
         if (version.date) text += `${version.date}\n\n`
         text += await version.fetch_desc().then(r => r ? `${r}\n\n` : '')

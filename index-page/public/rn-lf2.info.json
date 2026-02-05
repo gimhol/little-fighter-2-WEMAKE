@@ -1,0 +1,23 @@
+{
+  "id": "rn_lf2",
+  "i18n": {
+    "": {
+      "date": "2026-01-15",
+      "short_title": "RN-LF2",
+      "title": "RN-LF2:Wemake",
+      "desc": [
+        "RN-LF2"
+      ],
+      "children": "rn-lf2.info-list.json"
+    },
+    "zh": "",
+    "zh-hans": "zh",
+    "zh-hant": "zh",
+    "zh-cn": "zh-hans",
+    "zh-sg": "zh-hans",
+    "zh-my": "zh-hans",
+    "zh-tw": "zh-hant",
+    "zh-hk": "zh-hant",
+    "zh-mo": "zh-hant"
+  }
+}

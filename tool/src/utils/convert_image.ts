@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import type { ILegacyPictureInfo } from "../../../src/LF2/defines/ILegacyPictureInfo";
-import { conf } from "../conf";
+import { _conf, conf } from "../conf";
 import { whoami } from "../show_main_usage";
 import { exec_cmd } from "./exec_cmd";
 import { find_real_cmd } from "./find_real_cmd";
@@ -11,7 +11,7 @@ function get_dst_path(out_dir: string, src_dir: string, src_path: string) {
 }
 
 export function print_magick_hints() {
-  const { MAGICK_CMD } = conf();
+  const { MAGICK_CMD } = _conf ?? {}
   if (!is_magick_tried || (MAGICK_CMD && find_real_cmd(MAGICK_CMD))) return;
   const hints = `
 ====================== magick not found ======================
