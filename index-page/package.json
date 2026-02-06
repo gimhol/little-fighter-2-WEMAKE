@@ -19,6 +19,7 @@
     "@bytemd/plugin-medium-zoom": "^1.22.0",
     "@bytemd/plugin-mermaid": "^1.22.0",
     "@bytemd/react": "^1.22.0",
+    "@fingerprintjs/fingerprintjs": "^5.0.1",
     "classnames": "^2.5.1",
     "current-device": "^0.10.2",
     "marked": "^17.0.1",
