@@ -22,6 +22,7 @@ import { InfoListItem } from "./InfoListItem";
 import { LangButton } from "./LangButton";
 import { MarkdownButton } from "./MarkdownModal";
 import csses from "./styles.module.scss";
+import { get_fingerprint } from "@/utils/fingerprint";
 
 const time_str = Math.floor(Date.now() / 60000);
 async function fetch_info(url: string, lang: string, init: RequestInit) {
@@ -53,6 +54,10 @@ async function fetch_info_list(url: string, lang: string, init: RequestInit & { 
   }
   return cooked_list;
 }
+let prev_location = ''
+
+
+
 
 export default function MainPage() {
   const { t, i18n } = useTranslation()
@@ -66,6 +71,25 @@ export default function MainPage() {
   const [ss_open, set_ss_open] = useState(false)
   const loading = versions_loading || games_loading
   const { game_in_path } = useParams();
+
+  useEffect(() => {
+    const curr_location = location.toString();
+    if (curr_location === prev_location) return;
+    prev_location = curr_location;
+
+    get_fingerprint().then(r => {
+      const headers = {
+        'Content-Type': 'application/json',
+        "Fingerprint": r.visitorId,
+      }
+      fetch('https://gim.ink/api/events/add?type=visit', {
+        method: 'POST', headers, body: JSON.stringify({ uri: curr_location }),
+        mode: 'cors',
+      })
+    })
+
+  })
+
   const ref_lang = useRef<'zh' | 'en'>('zh')
   ref_lang.current = i18n.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
 
