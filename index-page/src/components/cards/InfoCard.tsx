@@ -11,6 +11,7 @@ import { Mask } from "../mask";
 import { CardBase, type ICardBaseProps } from "./CardBase";
 import { DetailCard } from "./DetailCard";
 import csses from "./InfoCard.module.scss";
+import { submit_click_event } from "@/utils/events";
 
 export interface IInfoCardProps extends ICardBaseProps {
   info: Info
@@ -35,10 +36,13 @@ export function InfoCard(props: IInfoCardProps) {
     const { width, height, left, top } = ref_el.current!.firstElementChild!.getBoundingClientRect()
     set_detail_style({ width, height, left, top })
   }
-  const open_detail = () => {
+  const open_detail = (e: React.MouseEvent) => {
     set_detail_open(true)
     const { width, height, left, top } = ref_el.current!.firstElementChild!.getBoundingClientRect()
     set_detail_style({ width, height, left, top })
+    submit_click_event(e.target as HTMLElement, {
+      title: info.title
+    })
   }
   return <>
     <CardBase

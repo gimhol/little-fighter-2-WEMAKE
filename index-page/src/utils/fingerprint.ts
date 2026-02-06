@@ -21,4 +21,9 @@ export async function read_fingerprint(): Promise<GetResult> {
 export async function get_fingerprint(): Promise<GetResult> {
   return result || await read_fingerprint()
 }
-read_fingerprint().catch(e => console.error('fingerprint error', e));
+read_fingerprint().catch(e => {
+  console.error('fingerprint error', e)
+});
+
+
+
