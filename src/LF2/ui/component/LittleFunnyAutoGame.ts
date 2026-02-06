@@ -54,7 +54,7 @@ export class LittleFunnyAutoGame extends UIComponent {
       f.callbacks.del(this._fighter_cbs);
     for (const f of this.world.entities)
       this.world.del_entity(f);
-    for (const f of this.world.incorporeities)
+    for (const f of this.world.ghosts)
       this.world.del_entity(f);
   }
 }

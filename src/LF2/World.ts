@@ -60,7 +60,7 @@ export class World extends WorldDataset {
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
-  readonly incorporeities = new Set<Entity>();
+  readonly ghosts = new Set<Entity>();
   /** 
    * 被玩家操作的角色 
    * 键: 玩家ID
@@ -151,9 +151,9 @@ export class World extends WorldDataset {
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
   }
-  add_incorporeities(...entities: Entity[]) {
+  add_ghosts(...entities: Entity[]) {
     for (const entity of entities) {
-      this.incorporeities.add(entity);
+      this.ghosts.add(entity);
       this.renderer.add_entity(entity);
     }
   }
@@ -199,7 +199,7 @@ export class World extends WorldDataset {
   }
 
   del_entity(entity: Entity) {
-    if (!(this.entities.delete(entity) || this.incorporeities.delete(entity)))
+    if (!(this.entities.delete(entity) || this.ghosts.delete(entity)))
       return false;
     this.entity_map.delete(entity.id)
     if (is_fighter(entity))
@@ -570,7 +570,7 @@ export class World extends WorldDataset {
       for (const [, c] of this.a_collisions)
         collisions_keeper.handle(c)
     }
-    for (const e of this.incorporeities) {
+    for (const e of this.ghosts) {
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||

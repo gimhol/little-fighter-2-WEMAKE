@@ -1016,7 +1016,7 @@ export class Entity {
     if (is_entity)
       this.world.add_entities(this);
     else
-      this.world.add_incorporeities(this);
+      this.world.add_ghosts(this);
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
     return this;

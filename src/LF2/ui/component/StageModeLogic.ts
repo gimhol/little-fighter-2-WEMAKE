@@ -157,6 +157,7 @@ export class StageModeLogic extends UIComponent {
     this.lf2.change_bg(Defines.VOID_BG)
     this.lf2.change_stage(Defines.VOID_STAGE)
     this.world.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+    this.world.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
   }
   override on_resume(): void {
     this.lf2.world.stage.callbacks.add(this.stage_callbacks);
