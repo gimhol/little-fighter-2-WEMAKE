@@ -4,15 +4,12 @@ import { Defines } from "../../defines/defines";
 import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
-export class StageNameText extends UIComponent {
-  static override readonly TAG = 'StageNameText'
+export class StageSwitcher extends UIComponent {
+  static override readonly TAG = 'StageSwitcher'
 
   private _stage: IStageInfo = Defines.VOID_STAGE;
-  private _text_loader = new UITextLoader(() => this.node).set_style({
-    fill_style: "#9b9bff",
-    font: "15px Arial",
-  }).ignore_out_of_date();
-
+  private _text_loader = new UITextLoader(() => this.node)
+    .ignore_out_of_date();
   get show_all(): boolean {
     return this.lf2.is_cheat(CheatType.GIM_INK);
   }

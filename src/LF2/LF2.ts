@@ -601,10 +601,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   on_component_broadcast(component: UI.UIComponent, message: string) {
     this.callbacks.emit("on_component_broadcast")(component, message);
   }
-  switch_difficulty(): void {
+  switch_difficulty(): void {]
     const { difficulty } = this.world;
     const max = this.is_cheat(D.CheatType.LF2_NET) ? 4 : 3;
-    this.cmds.push(CMD.SET_DIFFICULTY, '' + (difficulty % max) + 1)
+    this.cmds.push(CMD.SET_DIFFICULTY, '' + ((difficulty % max) + 1))
   }
   private update_zip_names() {
     const DATA_LIST = [

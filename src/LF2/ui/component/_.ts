@@ -1,6 +1,6 @@
 /*** COMPONENTS IMPORT START ***/
 import * as a from "./Alignment";
-import * as b from "./BackgroundNameText";
+import * as b from "./BackgroundSwitcher";
 import * as c from "./CameraCtrl";
 import * as d from "./CharMenu/CharMenuLogic";
 import * as e from "./CharMenuHead";
@@ -52,7 +52,7 @@ import * as an from "./ScaleClickable";
 import * as ao from "./SineOpacity";
 import * as ap from "./Sounds";
 import * as aq from "./StageModeLogic";
-import * as ar from "./StageNameText";
+import * as ar from "./StageSwitcher";
 import * as as from "./StageTitleShow";
 import * as at from "./StageTitleText";
 import * as au from "./StageTransitions";
@@ -70,7 +70,7 @@ import * as b4 from "./BGMSwitcher";
 
 export const ALL_COMPONENTS = [
   /*** COMPONENTS MAP START ***/
-  a.Alignment, b.BackgroundNameText, c.CameraCtrl, e.CharMenuHead,
+  a.Alignment, b.BackgroundSwitcher, c.CameraCtrl, e.CharMenuHead,
   h.DemoModeLogic, j.DifficultyText, k.EndingPageLogic, l.FadeInOpacity, m.FadeOutOpacity,
   n.FighterHead, o.FighterName, q.FighterThumb, r.FitChildren, s.Flex, t.FlexItem,
   u.GamePrepareLogic, v.HorizontalLayout, w.ImgClickable, x.ImgLoop, a0.LaunchPage,
@@ -79,7 +79,7 @@ export const ALL_COMPONENTS = [
   ae.PlayerTeamName, af.PlayingTimeText, ag.PositionAnimation, ah.PrefixAndDifficultyText,
   ai.RandomImg, aj.RandomTxt, ak.Reachable, al.ReachableGroup, am.ScaleAnimation,
   an.ScaleClickable, ao.SineOpacity, ap.Sounds, aq.StageModeLogic,
-  ar.StageNameText, as.StageTitleShow, at.StageTitleText, au.StageTransitions,
+  ar.StageSwitcher, as.StageTitleShow, at.StageTitleText, au.StageTransitions,
   av.SummaryLogic, aw.TeamSituationText, ax.TextInput, ay.TxtClickable, az.VerticalLayout,
   b0.VsModeLogic, z.Jalousie, a6.PlayerKeyEdit, g.DanmuGameLogic, a9.PlayerNameInput, p.FighterStatBar,
   f.ComponentsPlayer, d.CharMenuLogic, y.IntegerPicker, ad.PlayerScorePlayerName,

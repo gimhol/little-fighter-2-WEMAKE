@@ -5,11 +5,10 @@ import LocalController from "../../controller/LocalController";
 import { FacingFlag, TeamEnum } from "../../defines";
 import { Defines } from "../../defines/defines";
 import { Factory } from "../../entity/Factory";
-import { BackgroundNameText } from "./BackgroundNameText";
+import { BackgroundSwitcher } from "./BackgroundSwitcher";
 import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
-import { StageNameText } from "./StageNameText";
+import { StageSwitcher } from "./StageSwitcher";
 import { UIComponent } from "./UIComponent";
-import { round } from "@/LF2/utils";
 
 export class GamePrepareLogic extends UIComponent {
   static override readonly TAG = 'GamePrepareLogic'
@@ -51,11 +50,11 @@ export class GamePrepareLogic extends UIComponent {
     if (!char_menu_logic) return;
 
     const stage_name_text = this.node.root.search_component(
-      StageNameText,
+      StageSwitcher,
       (v) => v.node.visible && !v.node.disabled,
     );
     const background_name_text = this.node.root.search_component(
-      BackgroundNameText,
+      BackgroundSwitcher,
       (v) => v.node.visible && !v.node.disabled,
     );
     if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);

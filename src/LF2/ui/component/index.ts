@@ -1,6 +1,6 @@
 /*** AUTO EXPORT START ***/
 export * from "./Alignment";
-export * from "./BackgroundNameText";
+export * from "./BackgroundSwitcher";
 export * from "./CameraCtrl";
 export * from "./CharMenuHead";
 export * from "./DanmuGameLogic";
@@ -55,7 +55,7 @@ export * from "./ScaleClickable";
 export * from "./SineOpacity";
 export * from "./Sounds";
 export * from "./StageModeLogic";
-export * from "./StageNameText";
+export * from "./StageSwitcher";
 export * from "./StageTitleShow";
 export * from "./StageTitleText";
 export * from "./StageTransitions";
