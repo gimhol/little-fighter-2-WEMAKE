@@ -11,6 +11,8 @@
         "author_url": "https://gim.ink",
         "changelog": [
           "- feat(prel): In the bottom-left corner of the 'VS Mode Prepare Page', the background music can be switched by clicking the left/middle/right mouse button.",
+          "- fix(game): Fix the incorrect performance when two people pick up a weapon as the same time",
+          "- fix(game): fix the performance when two people grab one person as the same time",
           "- fix(game): Support background music overwrite with the same name under multiple extra-datas.",
           "- fix(game): For the caught character and the held weapon, their wait value will no longer decrease.",
           "- fix(game): Allow the cpoint or its xy of the caught character to be lost, and its performance aligns with the original version.",
@@ -24,6 +26,8 @@
       "zh": {
         "changelog": [
           "- feat(prel): '对战模式准备页'的左下角将能通过点击鼠标/左/中/右键切换背景音乐",
+          "- fix(game): 修复两人同时捡一个武器时的表现",
+          "- fix(game): 修复两人同时抓一个人时的表现",
           "- fix(game): 支持多数据包下，背景音乐同名覆盖",
           "- fix(game): 被抓者和被持有的武器，其 wait 不再减少",
           "- fix(game): 将允许被抓者的 cpoint 或其坐标丢失，其表现对齐原版",
