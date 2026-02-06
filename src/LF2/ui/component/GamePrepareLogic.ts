@@ -9,6 +9,7 @@ import { BackgroundNameText } from "./BackgroundNameText";
 import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
 import { StageNameText } from "./StageNameText";
 import { UIComponent } from "./UIComponent";
+import { round } from "@/LF2/utils";
 
 export class GamePrepareLogic extends UIComponent {
   static override readonly TAG = 'GamePrepareLogic'
@@ -48,7 +49,21 @@ export class GamePrepareLogic extends UIComponent {
   start_game() {
     const char_menu_logic = this.node.search_component(CharMenuLogic)
     if (!char_menu_logic) return;
+
+    const stage_name_text = this.node.root.search_component(
+      StageNameText,
+      (v) => v.node.visible && !v.node.disabled,
+    );
+    const background_name_text = this.node.root.search_component(
+      BackgroundNameText,
+      (v) => v.node.visible && !v.node.disabled,
+    );
+    if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
+    else if (background_name_text) this.lf2.change_bg(background_name_text.background);
     const { far, near, left, right } = this.lf2.world.bg;
+
+    let cam_x = this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
+    this.world.renderer.cam_x = cam_x
     for (const [player, slot_info] of char_menu_logic.players) {
       const { fighter: fighter_data } = slot_info;
       if (!fighter_data) {
@@ -72,23 +87,16 @@ export class GamePrepareLogic extends UIComponent {
         fighter.ctrl = new LocalController(player.id, fighter);
       }
       fighter.set_position(
-        this.lf2.mt.range(left, right),
+        this.lf2.mt.range(
+          (cam_x + 1 * Defines.MODERN_SCREEN_WIDTH / 3),
+          (cam_x + 2 * Defines.MODERN_SCREEN_WIDTH / 3)
+        ),
         void 0,
         this.lf2.mt.range(far, near)
       )
       fighter.blinking = this.world.begin_blink_time;
       fighter.attach();
     }
-    const stage_name_text = this.node.root.search_component(
-      StageNameText,
-      (v) => v.node.visible && !v.node.disabled,
-    );
-    const background_name_text = this.node.root.search_component(
-      BackgroundNameText,
-      (v) => v.node.visible && !v.node.disabled,
-    );
-    if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
-    else if (background_name_text) this.lf2.change_bg(background_name_text.background);
     if (stage_name_text) this.lf2.push_ui("stage_mode_page");
     else this.lf2.push_ui("vs_mode_page");
   }
