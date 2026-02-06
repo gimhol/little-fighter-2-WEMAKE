@@ -5,6 +5,7 @@ import { summary_mgr } from "../entity/SummaryMgr";
 export function handle_weapon_is_picked(collision: ICollision): void {
   const { victim, attacker } = collision;
   if (attacker.holding) return;
+  if (victim.bearer) return;
   victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;
