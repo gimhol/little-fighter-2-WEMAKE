@@ -12,6 +12,15 @@ export interface IFramePictureInfo {
   /** 高度（像素） */
   h: number;
 
+  /** 旋转 */
+  r?: number;
+  
+  /** 旋转中心x */
+  ox?: number;
+  
+  /** 旋转中心y */
+  oy?: number;
+
   /** 纹理数据 */
   1?: ITexturePieceInfo;
 
