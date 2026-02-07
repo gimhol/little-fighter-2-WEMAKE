@@ -10,7 +10,7 @@ export class ExtraZipText extends UIComponent {
     on_extra_zips_changed: (lf2) => {
       const extra_zips = lf2.string('DATA_LIST')
       if (extra_zips) {
-        const text = lf2.string('entry_page.extra_data') + ':\n' + extra_zips
+        const text = lf2.string('extra_data') + ':\n' + extra_zips
         this._txt_loader.set_text([text])
       } else {
         this._txt_loader.set_text([' '])

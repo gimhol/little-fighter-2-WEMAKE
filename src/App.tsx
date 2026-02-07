@@ -501,12 +501,12 @@ function App() {
         return []
       }
     }
-    if (lf2.ui?.id === 'entry') {
+    if (lf2.ui?.id === 'entry' || lf2.ui?.id === 'launch') {
       e.preventDefault();
       const zips = await read_zips()
       if (!zips.length) return
       LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
-    } else if (lf2.ui?.id === 'main_page') {
+    } else if (lf2.ui?.id?.toLowerCase().indexOf('loading') == -1 && !networking) {
       e.preventDefault();
       const zips = await read_zips()
       if (!zips.length) return
