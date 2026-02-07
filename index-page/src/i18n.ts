@@ -29,6 +29,7 @@ const zh = {
   "edit_your_extra_data_info": "提交数据包🚧",
   "base_info": "基本信息",
   "WIP": "🚧",
+  "unpublished": "未发布",
 }
 const en = {
   "author": "author",
@@ -58,6 +59,7 @@ const en = {
   "edit_your_extra_data_info": "Submit Your Extra Data",
   "base_info": "Base Info",
   "WIP": "🚧",
+  "unpublished": "Unpublished",
 }
 const resources = {
   "zh": { translation: zh },

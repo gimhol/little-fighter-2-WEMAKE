@@ -5,25 +5,30 @@
       "type": "cards",
       "date": "2026-01-15",
       "short_title": "Origin",
-      "title": "Little Fighter 2: Wemake",
+      "title": "Little Fighter 2 Wemake",
       "desc": [
-        "gameplays, arts, and sounds are all from 'Litter Fighter 2' basically,",
-        "created by Marti Wong and Starsky Wong in 1999.",
-        "The original author, Marti Wong, has now launched ['Little Fighter 2 Remastered'](https://lf2.net/). ",
-        "Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.",
-        "",
-        "'LF2:Wemake' created by Gim in 2024."
+        "'Little Fighter 2 Wemake' is **unofficial** Open-Source Web-based Remaked LF2 created by Gim in 2024.",
+        "> **Gameplays, arts, and sounds are all from 'Litter Fighter 2' basically,<br>",
+        "created by Marti Wong and Starsky Wong in 1999.<br>",
+        "The original author, Marti Wong, has now launched ['Little Fighter 2 Remastered'](https://lf2.net/). <br>",
+        "Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.**"
       ],
       "children": "origin-game.info-list.json"
     },
     "zh": {
       "short_title": "原版",
       "desc": [
-        "玩法、美术、音效音乐来自《Litter Fighter 2》, 原作：Marti Wong，Starsky Wong。",
-        "原作者 Marti Wong 现已推出[《Little Fighter 2 Remastered》](https://lf2.net/)，",
-        "请在 [Steam](https://store.steampowered.com/app/3249650) 购买，以支持原作者。",
-        "",
-        "LF2:Wemake created by Gim in 2024。"
+        "《Little Fighter 2 Wemake》是**非官方的**开源网页重制版LF2，created by Gim in 2024.<br>",
+        "> **玩法、美术、音乐来自《Litter Fighter 2》, 原作：Marti Wong，Starsky Wong。",
+        "原作者现已推出[《Little Fighter 2 Remastered》](https://lf2.net/)，",
+        "请在 [Steam](https://store.steampowered.com/app/3249650) 购买，以支持原作者。**\n",
+        "当前目标是尽量与原版一致，并支持更强大的功能，以及尽可能支持现存的改档，对比原版有以下亮点：",
+        "1. 60UPS 更新率，看起来更流畅",
+        "2. 支持多模组、支持贴图半透明、2/3/4倍分辨率贴图、贴图旋转...",
+        "3. 场地物品数量无限制",
+        "4. 全平台支持（这要归功于现代浏览器与技术标准）",
+        "5. 支持触摸屏（但搓玻璃的体验很难做好，但实际上你也可以给手机加上蓝牙手柄）",
+        "6. 输入方式的调整（这可能是个优化？）"
       ]
     },
     "zh-hans": "zh",

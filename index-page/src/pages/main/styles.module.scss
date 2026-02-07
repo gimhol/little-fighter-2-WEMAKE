@@ -113,13 +113,6 @@
           font-weight: 900
         }
       }
-
-      .version_list {
-        overflow      : auto;
-        display       : flex;
-        flex-direction: column;
-        gap           : 5px;
-      }
     }
 
   }
@@ -223,4 +216,11 @@
     align-items   : center;
     flex-direction: column;
   }
+}
+
+.version_list {
+  overflow      : auto;
+  display       : flex;
+  flex-direction: column;
+  gap           : 5px;
 }

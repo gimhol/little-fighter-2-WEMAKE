@@ -1,4 +1,4 @@
-# LF2:Wemake(open source web-based LF2)
+# LF2Wemake(open source web-based LF2)
 
 [url](https://lf-empire.de/forum/showthread.php?tid=11552)
 

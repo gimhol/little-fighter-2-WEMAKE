@@ -12,7 +12,7 @@ export class Info {
   static readonly OPEN_IN_BROWSER = 'open_in_browser';
   static readonly PLAY_IN_BROWSER = 'play_in_browser';
   static readonly DOWNLOAD = 'download';
-
+  readonly parent: Info | null = null;
   raw: any;
   cur: any;
   id: any;
@@ -23,6 +23,8 @@ export class Info {
   changelog?: string;
   changelog_url?: string;
   date?: string;
+
+  children_title: string = "Changelog";
   children_url?: string;
   url?: string;
   url_type?: string;
@@ -31,9 +33,13 @@ export class Info {
   author_url?: string;
   type?: string;
   unavailable?: string;
+  unavailable_reason?: string;
   private _children?: Info[];
+  lang: string;
 
-  constructor(raw: any, lang: any) {
+  constructor(raw: any, lang: string, parent: Info | null = null) {
+    this.parent = parent;
+    this.lang = lang;
     this.raw = raw;
     this.cur = get_i18n(raw.i18n || {}, lang);
     this.desc = this.cur.desc || this.raw.desc;
@@ -48,14 +54,15 @@ export class Info {
     }
     this.read_str(
       'desc_url', 'changelog_url', 'short_title', 'id', 'title', 'date', 'url',
-      'url_type', 'type', 'author', 'author_url', 'cover', 'unavailable'
+      'url_type', 'type', 'author', 'author_url', 'cover', 'unavailable', 'children_title',
+      'unavailable_reason',
     );
   }
   get children() { return this._children; }
   set children(v: Info[] | undefined) { this._children = v; }
   private read_str(...names: (keyof this)[]): void {
     for (const name of names) {
-      const raw = this.cur[name] || this.raw[name];
+      const raw = this.cur[name] || this.raw[name] || this[name];
       Object.assign(this, { [name]: raw });
     }
   }
@@ -65,7 +72,7 @@ export class Info {
     return '' + raw;
   }
   with_lang(lang: string): Info {
-    const ret = new Info(this.raw, lang);
+    const ret = new Info(this.raw, lang, this.parent);
     ret.children = this.children?.map(v => v.with_lang(lang));
     return ret;
   }
@@ -85,7 +92,7 @@ export class Info {
     text += await this.fetch_changelog().then(r => r ? `${r}\n\n` : '')
 
     if (this.children?.length) {
-      text += '## Changelog\n\n'
+      text += `## ${this.children_title}\n\n`
       for (const version of this.children) {
         text += `### ${version.title}\n\n`
         if (version.date) text += `${version.date}\n\n`

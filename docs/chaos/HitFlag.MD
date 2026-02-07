@@ -1,6 +1,6 @@
 # HitFlag.MD
 
-在LF2:WEMAKE中，bdy与itr的碰撞采用了更复杂的判定方式。
+在LF2Wemake中，bdy与itr的碰撞采用了更复杂的判定方式。
 
 itr与bdy的碰撞盒相交时，还需要通过HitFlag判定来决定其之间能否产生碰撞。
 

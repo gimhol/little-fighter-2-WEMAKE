@@ -9,7 +9,7 @@ This project should be able to run on node.js versions that are not too old. I h
 
 ## Data Building
 
-This step will generate the lf2:wemake data based on the original lf2 data.
+This step will generate the LF2Wemake data based on the original lf2 data.
 
 Prepare some necessary conversion tools:
 
