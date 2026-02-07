@@ -30,6 +30,7 @@ export function CardBase(props: ICardBaseProps) {
   const [is_pointer_down, set_is_pointer_down] = useState(false);
 
   const on_pointer_move = (e: React.PointerEvent) => {
+    if (is_pointer_down) return;
     const el = el_card;
     if (!el) return;
     const r = el.getBoundingClientRect();
@@ -63,12 +64,10 @@ export function CardBase(props: ICardBaseProps) {
     ) ? prev : { filter, transform })
   }
   const on_pointer_up = (e: React.PointerEvent) => {
-    if (e.button != 0) return;
     set_is_pointer_down(false)
     on_pointer_move(e)
   }
   useEffect(() => set_el_card(ref_div.current), [])
-
   const cls_root = classnames(
     csses.card_root,
     { [csses.floating]: floating },
@@ -91,7 +90,7 @@ export function CardBase(props: ICardBaseProps) {
       <div
         ref={ref_div}
         className={cls_card}
-        onPointerMove={(!floating || is_pointer_down) ? void 0 : on_pointer_move}
+        onPointerMove={(floating && !is_pointer_down) ? on_pointer_move : void 0}
         onPointerLeave={floating ? on_pointer_leave : void 0}
         onPointerDown={floating ? on_pointer_down : void 0}
         onPointerUp={floating ? on_pointer_up : void 0}

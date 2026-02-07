@@ -36,6 +36,7 @@ export function MarkdownModal(props: { info?: Info } & IMaskProps) {
       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       onClose={onClose}
       container={container}
+      onClick={(e) => e.stopPropagation()}
       {..._p}>
       <div className={classnames(csses.changelog_md_modal)}>
         <div className={classnames(csses.right_top_zone)}>
