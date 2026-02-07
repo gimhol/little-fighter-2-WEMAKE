@@ -25,7 +25,7 @@ export function submit_event(type: string, event: any) {
   })
 }
 
-export function submit_click_event(target: HTMLElement, must?: any) {
+export function submit_click_event<T extends IClickEventData>(target: HTMLElement, must?: Partial<T>) {
   const el = target
   const el_a = el.closest(`a`);
   if (el_a) {
@@ -48,11 +48,43 @@ export function submit_click_event(target: HTMLElement, must?: any) {
 }
 
 document.addEventListener(`click`, e => submit_click_event(e.target as HTMLElement), { capture: true });
-function base_click_data(el: HTMLElement, output: any = {}) {
-  return Object.assign(output, {
-    el: el.tagName,
-    title: el.title || output.title || void 0,
-    what: el.getAttribute('data-wevents') || output.what || void 0,
-    inner: el.innerText.trim() || void 0,
-  })
+
+function base_click_data<T extends IClickEventData>(
+  el: HTMLElement,
+  output: Partial<T> = {}
+) {
+  const more: Partial<IClickEventData> = {}
+  for (const [key, prop, attr = key] of common_attrs) {
+    let value: string | undefined;
+    if (prop) value = el[prop]?.toString().trim()
+    if (!value) value = el.getAttribute(attr)?.trim()
+    if (!value) value = output[key]?.trim()
+    more[key] = value
+  }
+  return Object.assign(output, more)
+}
+export function create_click_data_props(o: { what?: string } = {}) {
+  return { [`data-what`]: o.what }
+}
+
+const common_attrs: [keyof IClickEventData, (keyof HTMLElement)?, string?][] = [
+  ["el", 'tagName'],
+  ["id"],
+  ["class"],
+  ["style"],
+  ["title"],
+  ["what", void 0, 'data-what'],
+  ["inner", 'innerText'],
+]
+
+
+
+export interface IClickEventData {
+  el?: string;
+  id?: string;
+  class?: string;
+  style?: string;
+  title?: string;
+  what?: string;
+  inner?: string;
 }

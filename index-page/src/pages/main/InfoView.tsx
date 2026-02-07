@@ -7,14 +7,14 @@ import { Link } from "@/components/link";
 import { Viewer } from "@/components/markdown/Viewer";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import csses from "./InfoListItem.module.scss";
+import csses from "./InfoView.module.scss";
 import { MarkdownButton } from "./MarkdownModal";
-export interface IInfoListItemProps {
+export interface IInfoViewProps {
   info: Info;
   open?: boolean;
   whenOpen?(open: boolean): void
 }
-export function InfoListItem(props: IInfoListItemProps) {
+export function InfoView(props: IInfoViewProps) {
   const { info, open, whenOpen } = props;
   const { t } = useTranslation()
   const { url, unavailable, url_type } = info;
@@ -27,7 +27,7 @@ export function InfoListItem(props: IInfoListItemProps) {
   const title_suffix = unavailable ? t('unavailable') : url_type ? t(url_type) : void 0;
   const has_content = !!(info?.desc || info.desc_url || info.changelog || info.changelog_url)
   return (
-    <div className={csses.info_list_item_root} key={info.id}>
+    <div className={csses.info_view_root} key={info.id}>
       <div className={csses.row_1}>
         <h3 className={csses.row_title}>
           <Link href={url}>
@@ -48,8 +48,16 @@ export function InfoListItem(props: IInfoListItemProps) {
         </div>
       </div>
       <Collapse open={__open && has_content}>
-        <Viewer content={info?.desc} url={info.desc_url} whenLoaded={t => info.set_desc(t)} emptyAsGone />
-        <Viewer content={info?.changelog} url={info.changelog_url} whenLoaded={t => info.set_changelog(t)} emptyAsGone />
+        <Viewer
+          emptyAsGone
+          content={info?.desc}
+          url={info.desc_url}
+          whenLoaded={t => info.set_desc(t)} />
+        <Viewer
+          emptyAsGone
+          content={info?.changelog}
+          url={info.changelog_url}
+          whenLoaded={t => info.set_changelog(t)} />
       </Collapse>
     </div>
   )

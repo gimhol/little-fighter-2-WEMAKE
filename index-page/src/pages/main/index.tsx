@@ -13,13 +13,13 @@ import { Viewer } from "@/components/markdown/Viewer";
 import { Mask } from "@/components/mask";
 import { Paths } from "@/Paths";
 import { useMovingBg } from "@/useMovingBg";
-import { submit_visit_event } from "@/utils/events";
+import { create_click_data_props as click_data_props, submit_visit_event } from "@/utils/events";
 import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 import { ExtraDataFromView } from "./ExtraDataFromView";
-import { InfoListItem } from "./InfoListItem";
+import { InfoView } from "./InfoView";
 import { LangButton } from "./LangButton";
 import { MarkdownButton } from "./MarkdownModal";
 import csses from "./styles.module.scss";
@@ -188,6 +188,15 @@ export default function MainPage() {
             !actived_game ? null :
               <div className={csses.game_desc_zone}>
                 <h3 className={csses.game_title}>
+                  <IconButton
+                    onClick={() => {
+                      set_game_desc_open(!game_desc_open)
+                    }}
+                    title="▼ or ▲"
+                    style={{ transform: `rotateZ(${game_desc_open ? 0 : -90}deg)` }}
+                    letter='▼'
+                    {...click_data_props({ what: 'hello' })}
+                  />
                   <Link href={versions?.find(v => v.url)?.url}>
                     {actived_game?.title}
                   </Link>
@@ -195,9 +204,6 @@ export default function MainPage() {
                   <MarkdownButton info={actived_game} />
                   <IconButton onClick={() => set_is_cards_view(!is_cards_view)} title="Cards or List"
                     letter={is_cards_view ? 'L' : 'C'} />
-                  <IconButton onClick={() => set_game_desc_open(!game_desc_open)} title="▼ or ▲"
-                    style={{ transform: `rotateZ(${game_desc_open ? 0 : 180}deg)` }}
-                    letter='▲' />
                 </h3>
                 <Collapse open={game_desc_open}>
                   <Viewer content={actived_game?.desc} />
@@ -215,7 +221,7 @@ export default function MainPage() {
               <div className={classnames(csses.version_list, csses.scrollview)}>
                 {
                   versions.map((version, idx) => {
-                    return <InfoListItem info={version} key={version.id} open={idx === 0} />
+                    return <InfoView info={version} key={version.id} open={idx === 0} />
                   })
                 }
               </div>
