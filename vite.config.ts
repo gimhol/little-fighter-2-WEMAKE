@@ -1,11 +1,20 @@
 import react from '@vitejs/plugin-react';
+import { createHtmlPlugin } from 'vite-plugin-html';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import json from "./package.json"
 
 export default defineConfig({
   base: './',
   plugins: [
-    react()
+    react(),
+    createHtmlPlugin({
+      inject: {
+        data: {
+          title: `Little Fighter 2 Wemake v${json.version}`
+        }
+      }
+    })
   ],
   resolve: {
     alias: {
