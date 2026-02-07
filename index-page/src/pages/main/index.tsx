@@ -128,44 +128,6 @@ export default function MainPage() {
             open={window.innerWidth > 480}
           />
         )}
-        <div className={''}>
-          {/* {
-            (!actived_game) ? null :
-              <div className={csses.game_desc_zone}>
-                <h3 className={csses.game_title}>
-                  <CollapseButton
-                    open={game_desc_open}
-                    whenChange={set_game_desc_open} />
-                  <Link href={versions?.find(v => v.url)?.url}>
-                    {actived_game?.title}
-                  </Link>
-                  <div style={{ flex: 1 }}></div>
-                  <MarkdownButton info={actived_game} />
-                  <IconButton onClick={() => set_is_cards_view(!is_cards_view)} title="Cards or List"
-                    letter={is_cards_view ? 'L' : 'C'} />
-                </h3>
-                <Collapse open={game_desc_open}>
-                  <Viewer content={actived_game?.desc} />
-                </Collapse>
-              </div>
-          }
-          {
-            (!is_cards_view || !versions?.length) ? null :
-              <div className={classnames(csses.card_list, csses.scrollview)}>
-                {versions?.map(version => <InfoCard info={version} key={version.id} />)}
-              </div>
-          }
-          {
-            (is_cards_view || !versions?.length) ? null :
-              <div className={classnames(csses.version_list, csses.scrollview)}>
-                {
-                  versions.map((version, idx) => {
-                    return <InfoView info={version} key={version.id} open={idx === 0} />
-                  })
-                }
-              </div>
-          } */}
-        </div>
       </div>
       <div className={csses.foot}>
         {/* <a className={styles.link}

@@ -7,7 +7,12 @@ export function get_i18n(all: any, lang: string) {
     more = all[more];
   return { ...base, ...more }
 }
-
+export interface InfoProp {
+  key?: keyof Info;
+  type: 'string';
+  max?: number;
+  placeholder?: 'string'
+}
 export class Info {
   static readonly OPEN_IN_BROWSER = 'open_in_browser';
   static readonly PLAY_IN_BROWSER = 'play_in_browser';
@@ -23,7 +28,6 @@ export class Info {
   changelog?: string;
   changelog_url?: string;
   date?: string;
-
   children_title: string = "Changelog";
   children_url?: string;
   url?: string;
@@ -121,4 +125,39 @@ export class Info {
   }
   set_desc(v: string) { this.desc = v; }
   set_changelog(v: string) { this.changelog = v; }
+}
+
+export const mod_info_props: Record<keyof Info, InfoProp | undefined> = {
+  parent: undefined,
+  raw: undefined,
+  cur: undefined,
+  id: undefined,
+  
+  title: { type: 'string', },
+  author: { type: 'string', },
+  author_url: { type: 'string', },
+  cover: { type: 'string', },
+  url: { type: 'string', },
+
+  url_type: undefined,
+  short_title: undefined,
+  desc: undefined,
+  desc_url: undefined,
+  changelog: undefined,
+  changelog_url: undefined,
+  date: undefined,
+  children_title: undefined,
+  children_url: undefined,
+  type: undefined,
+  unavailable: undefined,
+  unavailable_reason: undefined,
+  lang: undefined,
+  children: undefined,
+  with_lang: undefined,
+  get_download_url: undefined,
+  markdown: undefined,
+  fetch_desc: undefined,
+  fetch_changelog: undefined,
+  set_desc: undefined,
+  set_changelog: undefined
 }
