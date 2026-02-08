@@ -13,7 +13,7 @@ import { submit_visit_event } from "@/utils/events";
 import classnames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { InfoView } from "../info";
 import { ExtraDataFromView } from "./ExtraDataFromView";
 import { fetch_info_list } from "./fetch_info_list";
@@ -39,12 +39,13 @@ export default function MainPage() {
   ref_lang.current = i18n.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
 
   useMovingBg(document.documentElement)
-  const nav = useNavigate()
+  const nav = useNavigate();
+  const { search, hash } = useLocation();
   useEffect(() => {
     if (!actived_game) return;
     const pn = Paths.All.main_page_with.replace(':game_in_path', actived_game.id);
-    nav({ pathname: pn }, { replace: true })
-  }, [actived_game, nav])
+    nav({ pathname: pn, search, hash }, { replace: true })
+  }, [actived_game, nav, search, hash])
 
   useEffect(() => {
     if (!games?.length) {
