@@ -1488,6 +1488,7 @@ export class Entity {
         this._position.y = ground_y;
         this._prev_position.y = ground_y;
       } else if (this._position.y < ground_y) {
+        // TODO: allow spawn under ground?
         this._position.y = ground_y;
         this._prev_position.y = ground_y;
       }
