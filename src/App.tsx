@@ -19,7 +19,8 @@ import Show from "./Component/Show";
 import Titled from "./Component/Titled";
 import { DanmuOverlay } from "./DanmuOverlay";
 import { __Pointings } from "./DittoImpl";
-import { Indicating, INDICATINGS } from "./DittoImpl/renderer/FrameIndicators";
+import { Indicating } from "./DittoImpl/renderer/FrameIndicators";
+import { INDICATINGS } from "./DittoImpl/renderer/INDICATINGS";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
 import { GameOverlay } from "./GameOverlay";
@@ -575,13 +576,13 @@ function App() {
           onClick={() => toggle_fullscreen()}
           src={[img_btn_3_1, img_btn_3_2]} />
         {
-          !window.runtime?.WindowMinimise ? null :
+          is_fullscreen || !window.runtime?.WindowMinimise ? null :
             <ToggleImgButton
               onClick={() => window.runtime?.WindowMinimise?.()}
               src={[img_btn_0_4, img_btn_0_4]} />
         }
         {
-          !window.runtime?.WindowToggleMaximise ? null :
+          is_fullscreen || !window.runtime?.WindowToggleMaximise ? null :
             <ToggleImgButton
               checked={is_maximised}
               onClick={async () => {
@@ -594,7 +595,7 @@ function App() {
               src={[img_btn_1_4, img_btn_2_4]} />
         }
         {
-          !window.runtime?.Quit ? null :
+          is_fullscreen || !window.runtime?.Quit ? null :
             <ToggleImgButton
               checked={is_fullscreen}
               onClick={() => window.runtime?.Quit?.()}

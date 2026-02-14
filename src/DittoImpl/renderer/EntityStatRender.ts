@@ -6,6 +6,7 @@ import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
 import { WorldRenderer } from "./WorldRenderer";
+import { INDICATINGS } from "./INDICATINGS";
 
 const BAR_W = 40;
 const BAR_H = 3;
@@ -325,7 +326,8 @@ export class EntityStatRender implements IEntityCallbacks {
     const name_y = floor(gy - z / 2 - this.name_node.scale.y);
     this.set_name_position(_x, name_y, z);
 
-    for (const [k, { node }] of this.key_nodes) {
+    this.ctrl_node.visible = !!(this.entity.lf2.world.indicator_flags & INDICATINGS.ctrl);
+    if (this.ctrl_node.visible) for (const [k, { node }] of this.key_nodes) {
       node.visible = !this.entity.ctrl.is_end(k)
     }
   }
