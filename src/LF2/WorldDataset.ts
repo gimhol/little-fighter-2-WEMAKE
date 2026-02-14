@@ -46,6 +46,10 @@ export class WorldDataset implements IWorldDataset {
   ivy_f: number = 1;
   ivz_f: number = 1;
   ivx_f: number = 1;
+
+  /** 
+   * 默认itr.dvy
+   */
   ivy_d: number = Defines.DEFAULT_IVY_D;
   ivx_d: number = 4;
   cvy_d: number = 3;

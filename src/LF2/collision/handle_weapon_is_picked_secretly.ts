@@ -4,8 +4,11 @@ import { summary_mgr } from "../entity/SummaryMgr";
 
 export function handle_weapon_is_picked_secretly(collision: ICollision): void {
   const { victim, attacker } = collision;
-  if (attacker.holding || victim.data.base.type === WeaponType.Heavy) return;
-  victim.holder = attacker;
+
+  if (victim.bearer) return;
+  if (attacker.holding) return;
+  if (victim.data.base.type === WeaponType.Heavy) return;
+  victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;
 

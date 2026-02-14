@@ -101,7 +101,16 @@
                   id: "background_name_text",
                   pos: "0,0",
                   center: "0.5,0.5",
-                  component: ["BackgroundNameText()"],
+                  txt: [
+                    {
+                      i18n: "",
+                      style: {
+                        fill_style: "#9b9bff",
+                        font: "15px Arial",
+                      },
+                    },
+                  ],
+                  component: ["BackgroundSwitcher()"],
                 },
               ],
             },
@@ -142,7 +151,16 @@
                   id: "stage_name_text",
                   pos: "0,0",
                   center: "0.5,0.5",
-                  component: ["StageNameText()"],
+                  txt: [
+                    {
+                      i18n: "",
+                      style: {
+                        fill_style: "#9b9bff",
+                        font: "15px Arial",
+                      },
+                    },
+                  ],
+                  component: ["StageSwitcher()"],
                 },
               ],
             },

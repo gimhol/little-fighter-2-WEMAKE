@@ -60,7 +60,7 @@ export class World extends WorldDataset {
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
-  readonly incorporeities = new Set<Entity>();
+  readonly ghosts = new Set<Entity>();
   /** 
    * 被玩家操作的角色 
    * 键: 玩家ID
@@ -151,9 +151,9 @@ export class World extends WorldDataset {
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
   }
-  add_incorporeities(...entities: Entity[]) {
+  add_ghosts(...entities: Entity[]) {
     for (const entity of entities) {
-      this.incorporeities.add(entity);
+      this.ghosts.add(entity);
       this.renderer.add_entity(entity);
     }
   }
@@ -199,7 +199,7 @@ export class World extends WorldDataset {
   }
 
   del_entity(entity: Entity) {
-    if (!(this.entities.delete(entity) || this.incorporeities.delete(entity)))
+    if (!(this.entities.delete(entity) || this.ghosts.delete(entity)))
       return false;
     this.entity_map.delete(entity.id)
     if (is_fighter(entity))
@@ -422,16 +422,13 @@ export class World extends WorldDataset {
       const cmd = cmds[i];
       switch (cmd) {
         case CMD.SET_DIFFICULTY: {
-          i += 1;
-          const d = Number(cmds[this.itr_motionless]);
-          if (d == 1 || d == 2 || d == 3 || d == 4)
-            this.difficulty = d;
+          const d = Number(cmds[i += 1]);
+          if (Difficulty[d]) this.difficulty = d;
           else Ditto.warn(`SET_DIFFICULTY failed, difficulty got ${d}.`)
           continue;
         }
         case CMD.DEL_PUPPET: {
-          i += 1;
-          const player_id = cmds[i];
+          const player_id = cmds[i += 1];
           const entity = this.puppets.get(player_id);
           if (entity) this.del_entity(entity);
           else Ditto.warn('DEL_PUPPET failed, puppet not found.')
@@ -506,7 +503,7 @@ export class World extends WorldDataset {
     this.a_collisions.clear();
     this._used_itrs.clear()
     this._temp_entitis_set.clear();
-    const update_collisions = game_time.value % 2 === 0
+    const update_collisions = game_time.value % 1 === 0
     const update_chasing = game_time.value % 8 === 0;
     if (update_chasing) {
       for (const chaser of this._enemy_chasers) {
@@ -573,7 +570,7 @@ export class World extends WorldDataset {
       for (const [, c] of this.a_collisions)
         collisions_keeper.handle(c)
     }
-    for (const e of this.incorporeities) {
+    for (const e of this.ghosts) {
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
@@ -712,7 +709,7 @@ export class World extends WorldDataset {
     }
     switch (aframe.state) {
       case StateEnum.Weapon_OnHand: {
-        const atk = attacker.holder?.frame.wpoint?.attacking;
+        const atk = attacker.bearer?.frame.wpoint?.attacking;
         if (!atk) return;
         const itr_prefab = attacker.data.itr_prefabs?.[atk];
         if (!itr_prefab) return;
@@ -777,7 +774,8 @@ export class World extends WorldDataset {
       dx,
       dy,
       dz,
-      m_distance: abs(dx) + abs(dy) + abs(dz)
+      m_distance: abs(dx) + abs(dy) + abs(dz),
+      duration: 0,
     };
     if (
       bdy.tester?.run(collision) === false ||

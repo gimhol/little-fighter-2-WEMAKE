@@ -11,7 +11,9 @@ import { take_not_zero_num } from "./take_not_zero_num";
 import { take_num } from "./take_num";
 
 export function cook_cpoint(unsure_cpoint: ICpointInfo, frame: IFrameInfo): void {
-
+  unsure_cpoint.x = take_not_zero_num(unsure_cpoint, "x") || 0;
+  unsure_cpoint.y = take_not_zero_num(unsure_cpoint, "y") || 0;
+  unsure_cpoint.z = take_not_zero_num(unsure_cpoint, "z") || 0;
   unsure_cpoint.throwvx = take_not_zero_num(unsure_cpoint, "throwvx", n => n * 0.5);
   unsure_cpoint.throwvy = take_not_zero_num(unsure_cpoint, "throwvy", n => n * -0.5);
   unsure_cpoint.throwvz = take_not_zero_num(unsure_cpoint, "throwvz", n => n * 1);

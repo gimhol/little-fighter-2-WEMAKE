@@ -37,6 +37,8 @@ export function make_figther_data_louisex(data: IEntityData): IEntityData {
     w_atk_b_x: 90,
     j_atk_f_x: 90,
     j_atk_b_x: 90,
+    d_atk_f_x: 200,
+    r_atk_f_x: 200,
   });
   return data;
 }

@@ -1,11 +1,11 @@
-import axios from "axios";
 import AsyncValuesKeeper from "@/LF2/base/AsyncValuesKeeper";
 import { Defines } from "@/LF2/defines/defines";
 import { BaseSounds } from "@/LF2/ditto/sounds/BaseSounds";
-import { clamp } from "@/LF2/utils/math/clamp";
-import float_equal from "@/LF2/utils/math/float_equal";
 import { Randoming } from "@/LF2/helper/Randoming";
 import { LF2 } from "@/LF2/LF2";
+import { clamp } from "@/LF2/utils/math/clamp";
+import float_equal from "@/LF2/utils/math/float_equal";
+import type { WorldRenderer } from "../renderer/WorldRenderer";
 
 export class __Modern extends BaseSounds {
   readonly ctx = new AudioContext();
@@ -35,7 +35,20 @@ export class __Modern extends BaseSounds {
   protected _bgm_muted: boolean = false;
   protected _sound_muted: boolean = false;
   protected _bgms: Randoming<string>
-
+  protected _is_random: boolean = false;
+  override get is_random() { return this._is_random; }
+  override set is_random(v: boolean) {
+    if (v === this._is_random) return;
+    this._is_random = v;
+    const src_node = this._bgm_node?.src_node;
+    if (!src_node) return;
+    if (this._is_random) {
+      src_node.addEventListener('ended', this._random_next, { once: true })
+    } else {
+      src_node.loop = true;
+      src_node.removeEventListener('ended', this._random_next)
+    }
+  }
   override bgm_volume(): number {
     return this._bgm_volume;
   }
@@ -136,9 +149,10 @@ export class __Modern extends BaseSounds {
   override load(name: string, src: string): Promise<AudioBuffer> {
     return this._r.fetch(name, async () => {
       this.lf2.on_loading_content(`${name}`, 0);
-      const [dat] = await this.lf2.import_array_buffer(src, false);
+      const [dat, , origin] = await this.lf2.import_array_buffer(src, false);
       const buf = this.ctx.decodeAudioData(dat);
       this.lf2.on_loading_content(`${name}`, 100);
+      if (origin) this.set_origin(name, origin)
       return buf;
     });
   }
@@ -146,14 +160,18 @@ export class __Modern extends BaseSounds {
     super(lf2);
     this._bgms = new Randoming(this.lf2.bgms, this.lf2)
   }
-
-  override stop_bgm(): void {
+  private _stop_bgm(): void {
     if (!this._bgm_node) return;
-    const prev = this.bgm();
     this._bgm_name = null;
     this._bgm_node.src_node.removeEventListener('ended', this._random_next)
     this._bgm_node.src_node.stop();
     this._prev_bgm_url = null;
+
+  }
+  override stop_bgm(): void {
+    if (!this._bgm_node) return;
+    const prev = this.bgm();
+    this._stop_bgm();
     this._callbacks.emit("on_bgm_changed")(null, prev, this);
   }
   _random_next = () => this.play_bgm('?')
@@ -161,39 +179,48 @@ export class __Modern extends BaseSounds {
     if (!restart && this._prev_bgm_url === name) return () => { };
 
     const prev = this.bgm();
-
     const real_name = name === '?' ?
       this._bgms.set_src(this.lf2.bgms).take() :
       name;
-    this.stop_bgm();
+    this._stop_bgm();
     this._bgm_name = real_name;
     this._prev_bgm_url = real_name;
+    this._is_random = name === '?'
     ++this._req_id;
 
     const req_id = this._req_id;
     const ctx = this.ctx;
     const buf = this._r.get(real_name);
     const start = (buf: AudioBuffer) => {
+      if (this._bgm_name !== real_name) return;
       const src_node = ctx.createBufferSource();
       src_node.buffer = buf;
       src_node.start();
-
       const gain_node = this.ctx.createGain();
       gain_node.connect(ctx.destination);
       src_node.connect(gain_node);
-      if (name !== '?') {
+      if (this._is_random) {
+        src_node.addEventListener('ended', this._random_next, { once: true })
+      } else {
         src_node.loop = true;
         src_node.removeEventListener('ended', this._random_next)
-      } else {
-        src_node.addEventListener('ended', this._random_next, { once: true })
       }
-
       this._bgm_node = {
         src_node,
         gain_node,
       };
       this.apply_bgm_volume();
     };
+    do {
+      const [obj, , origin] = this.lf2.sniff_from_zips(real_name, false)
+      // 非本地存在资源，说明来自网络，不必重载
+      if (!obj || !origin) break;
+
+      // 判断是否来源是否产生了变化
+      if (this.get_origin(real_name) === origin)
+        break;
+      this.unload(real_name)
+    } while (0)
     if (buf) {
       start(buf);
     } else {
@@ -205,8 +232,11 @@ export class __Modern extends BaseSounds {
   }
 
   protected get_l_r_vol(x?: number): number[] {
-    const edge_w = Defines.CLASSIC_SCREEN_WIDTH / 2;
-    const viewer_x = this.lf2.world.renderer.cam_x + edge_w;
+    const scale = (this.lf2.world.renderer as WorldRenderer).world_node.scale.x
+    const full_w = Defines.CLASSIC_SCREEN_WIDTH / scale
+    const half_w = full_w / 2;
+    const viewer_x = this.lf2.world.renderer.cam_x + half_w;
+
     const sound_x = x ?? viewer_x;
     const muted = this._muted || this._sound_muted;
     return [
@@ -215,18 +245,17 @@ export class __Modern extends BaseSounds {
       Math.max(
         0,
         1 -
-        Math.abs(
-          (sound_x - viewer_x + edge_w) / Defines.CLASSIC_SCREEN_WIDTH,
+        Math.abs((sound_x - viewer_x + half_w) / full_w,
         ),
-      ),
+      ) * scale,
       (muted ? 0 : this._volume * this._sound_volume) *
       Math.max(
         0,
         1 -
         Math.abs(
-          (sound_x - viewer_x - edge_w) / Defines.CLASSIC_SCREEN_WIDTH,
+          (sound_x - viewer_x - half_w) / full_w,
         ),
-      ),
+      ) * scale,
     ];
   }
   override play(name: string, x?: number, y?: number, z?: number): string {
@@ -289,5 +318,10 @@ export class __Modern extends BaseSounds {
     this._playings.forEach((v) => v.src_node.stop());
     this._playings.clear();
     super.dispose();
+  }
+
+  override unload(name: string): void {
+    super.unload(name)
+    this._r.del(name)
   }
 }

@@ -9,7 +9,7 @@ import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
   FrameBehavior, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
-  is_independent, ItrKind, IVector3, OpointKind, OpointMultiEnum,
+  is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
 import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
@@ -139,7 +139,7 @@ export class Entity {
   protected _hp!: number;
   protected _hp_r!: number;
   protected _hp_max!: number;
-  protected _holder!: Entity | null;
+  protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
   protected _emitter_opoint!: IOpointInfo | null;
 
@@ -372,12 +372,12 @@ export class Entity {
     return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
   }
 
-  get holder(): Entity | null {
-    return this._holder;
+  get bearer(): Entity | null {
+    return this._bearer;
   }
 
-  set holder(v: Entity | null) {
-    this.set_holder(v);
+  set bearer(v: Entity | null) {
+    this.set_bearer(v);
   }
 
   get holding(): Entity | null {
@@ -630,6 +630,7 @@ export class Entity {
     this._catching = null
     this._catcher = null
     this._velocity.set(0, 0, 0)
+    this._landing_velocity.set(0, 0, 0)
     this.velocities.length = 0;
     this.velocities[0] = new Ditto.Vector3(0, 0, 0)
     this.callbacks.clear();
@@ -641,7 +642,7 @@ export class Entity {
     this._hp_r = Defines.DEFAULT_HP;
     this._hp_max = Defines.DEFAULT_HP;
     this._landing_frame = null;
-    this._holder = null;
+    this._bearer = null;
     this._holding = null;
     this._emitters.length = 0;
     this._emitter_opoint = null;
@@ -700,10 +701,10 @@ export class Entity {
     this._outline_color = void 0;
   }
 
-  set_holder(v: Entity | null): this {
-    if (this._holder === v) return this;
-    const old = this._holder;
-    this._holder = v;
+  set_bearer(v: Entity | null): this {
+    if (this._bearer === v) return this;
+    const old = this._bearer;
+    this._bearer = v;
     this.callbacks.emit("on_holder_changed")(this, v, old);
     return this;
   }
@@ -807,8 +808,8 @@ export class Entity {
     switch (opoint.kind) {
       case OpointKind.Pick:
         emitter.drop_holding()
-        this.holder = emitter;
-        this.holder.holding = this;
+        this.bearer = emitter;
+        this.bearer.holding = this;
         break;
     }
     return this;
@@ -1016,7 +1017,7 @@ export class Entity {
     if (is_entity)
       this.world.add_entities(this);
     else
-      this.world.add_incorporeities(this);
+      this.world.add_ghosts(this);
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
     return this;
@@ -1099,7 +1100,9 @@ export class Entity {
    * 有`velocity.y -= State_Base.get_gravity() ?? World.gravity`
    *
    * 以下情况不响应重力:
-   *
+   * 
+   * - 被持有，或被抓
+   * 
    * - 实体处于地面或地面以下（position.y <= ground_y）
    *
    * - 角色处于shaking中（即实体被某物击中, see IItrInfo.shaking）
@@ -1112,6 +1115,7 @@ export class Entity {
    * @see {World.gravity}
    */
   private handle_gravity() {
+    if (this.bearer && this.catcher) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
     this.velocities[0].y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
@@ -1227,10 +1231,10 @@ export class Entity {
    */
   drop_holding(): void {
     if (!this.holding) return;
-    this.holding.follow_holder();
+    this.holding.follow_bearer();
     this.lf2.mt.mark = 'dh_1'
     this.holding.enter_frame({ id: this.lf2.mt.pick(this.holding.data.indexes?.in_the_skys) });
-    this.holding.holder = null;
+    this.holding.bearer = null;
     this.holding = null;
   }
 
@@ -1308,10 +1312,10 @@ export class Entity {
     this.mp_recovering();
 
     if (this.frame.hp) this.hp -= this.frame.hp;
+
     if (this.shaking <= 0) {
       for (const [k, v] of this.v_rests) {
-        if (v.attacker.shaking) continue;
-        if (v.v_rest && v.v_rest >= 0) --v.v_rest;
+        if (v.v_rest && v.v_rest > 0) --v.v_rest;
         else this.v_rests.delete(k);
       }
     }
@@ -1319,7 +1323,7 @@ export class Entity {
       if (v.v_rest) this.victims.delete(k)
 
     if (this.motionless <= 0 && this.shaking <= 0)
-      this.a_rest >= 1 ? this.a_rest-- : (this.a_rest = 0);
+      this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
 
     if (this._invisible_duration > 0) {
       this._invisible_duration--;
@@ -1368,7 +1372,7 @@ export class Entity {
         }
       }
     }
-    this.follow_holder();
+    this.follow_bearer();
     for (const pair of this._opoints) {
       const [opoint, time] = pair
       if (time === opoint.interval) {
@@ -1381,7 +1385,9 @@ export class Entity {
     this.state?.pre_update?.(this);
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
-      --this.wait;
+      if (!this._catcher && !this._bearer) {
+        --this.wait;
+      }
     } else {
       const nf = this.get_next_frame(this.frame.next);
       if (nf) this.next_frame = { ...nf.which, judger: void 0 }
@@ -1483,13 +1489,14 @@ export class Entity {
         this._position.y = ground_y;
         this._prev_position.y = ground_y;
       } else if (this._position.y < ground_y) {
-        this._position.y = ground_y;
-        this._prev_position.y = ground_y;
+        // TODO: allow spawn under ground?
+        // this._position.y = ground_y;
+        // this._prev_position.y = ground_y;
       }
       this.old_ground_y = ground_y;
     }
     this.world.restrict(this);
-    this.holding?.follow_holder();
+    this.holding?.follow_bearer();
     this.collision_list.length = 0;
     this.collided_list.length = 0;
   }
@@ -1518,7 +1525,7 @@ export class Entity {
   /**
    * 获取“被抓取消”帧
    *
-   * 被抓后，抓人者的“抓取值”未降至0，且任意一方的帧缺少cpoint时，视为“被抓取消”，
+   * 被抓后，抓人者的“抓取值”未降至0，且catcher的帧缺少cpoint时，视为“被抓取消”，
    * 此时跳去的帧即为“被抓结束”帧
    *
    * @returns 下帧信息
@@ -1542,8 +1549,7 @@ export class Entity {
 
     const frame_a = cer.frame;
     const { cpoint: cpoint_a } = frame_a;
-    const { cpoint: cpoint_b } = this.frame;
-    if (!cpoint_a || !cpoint_b) {
+    if (!cpoint_a) {
       this._catcher = null;
       this.prev_cpoint_a = null;
       this.set_velocity_y(3);
@@ -1604,8 +1610,7 @@ export class Entity {
       this._catch_time += cpoint_a.decrease;
       if (this._catch_time < 0) this._catch_time = 0;
     }
-    const { cpoint: cpoint_b } = this._catching.frame;
-    if (!cpoint_a || !cpoint_b) {
+    if (!cpoint_a) {
       this._catching = null;
       this._catch_time = this._catch_time_max;
       this.next_frame = this.get_catching_cancel_frame();
@@ -1646,17 +1651,21 @@ export class Entity {
       centery: centery_a,
       cpoint: c_a,
     } = this._catcher.frame;
-    const { centerx: centerx_b, centery: centery_b, cpoint: c_b } = this.frame;
-    if (!c_a || !c_b) return;
+    const {
+      centerx: centerx_b,
+      centery: centery_b,
+      cpoint: c_b
+    } = this.frame;
+    if (!c_a) return;
     if (c_a.throwvx || c_a.throwvx || c_a.throwvx) return;
 
     const face_a = this._catcher.facing;
     const face_b = this.facing;
     const { x: px, y: py, z: pz } = this._catcher.position;
-    this._position.x =
-      px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b.x);
-    this._position.y = round(py + centery_a - c_a.y + c_b.y - centery_b);
-    this._position.z = round(pz + c_a.z - c_b.z);
+    const { x: c_b_x = 0, y: c_b_y = 0, z: c_b_z = 0 } = c_b || {}
+    this._position.x = px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b_x);
+    this._position.y = round(py + centery_a - c_a.y + c_b_y - centery_b);
+    this._position.z = round(pz + c_a.z - c_b_z);
   }
 
   /**
@@ -1799,55 +1808,75 @@ export class Entity {
     return this.team === other.team;
   }
 
-  follow_holder() {
-    const holder = this.holder;
-    if (!holder) return;
-    if (this.hp <= 0 && this.holder) {
-      holder.holding = null;
-      this.holder = null;
+  follow_bearer() {
+    const bearer = this.bearer;
+    if (!bearer) return;
+    if (this.hp <= 0 && this.bearer) {
+      bearer.holding = null;
+      this.bearer = null;
       return;
     }
-    const { wpoint: wp_a, centerx: cx_a, centery: cy_a, } = holder.frame;
-    const { wpoint: wp_b, centerx: cx_b, centery: cy_b, } = this.frame;
-    if (wp_a) {
-      if (wp_a.weaponact !== this.frame.id) {
-        this.enter_frame({ id: wp_a.weaponact });
-      }
-      const strength = this._data.base.strength || 1;
-      const weight = this._data.base.weight || 1;
-      let { dvx, dvy, dvz } = wp_a;
-      const { x, y, z } = holder.position;
-      this.facing = holder.facing;
-      if (wp_b) {
-        this._position.set(
-          round(x + this.facing * (wp_a.x - cx_a + cx_b - wp_b.x)),
-          round(y + cy_a - wp_a.y - cy_b + wp_b.y),
-          round(z + wp_a.z - wp_b.z),
-        )
-      }
+    const {
+      wpoint: wp_a = {} as Partial<IWpointInfo>,
+      centerx: cx_a, centery: cy_a,
+    } = bearer.frame;
+    const {
+      wpoint: wp_b = {} as Partial<IWpointInfo>,
+      centerx: cx_b, centery: cy_b,
+    } = this.frame;
 
-      if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
-        const nf = this.find_align_frame(
-          this.frame.id,
-          this.data.indexes?.on_hands,
-          this.data.indexes?.throwings
-        )
-        this._position.set(
-          round(x + this.facing * (wp_a.x - cx_a)),
-          round(y + cy_a - wp_a.y),
-          round(z + wp_a.z),
-        )
-        this.enter_frame(nf);
-        const vz = holder.ctrl ? holder.ctrl.UD * (dvz || 0) : 0;
-        dvx = strength * (dvx || 0) / weight;
-        dvy = strength * (dvy || 0) / weight;
-        const vx = (dvx - abs(vz / 2)) * this.facing;
-        this.set_velocity(vx, dvy, vz);
-        holder.holding = null;
-        this.holder = null;
-        return;
-      }
+    if (wp_a.weaponact !== this.frame.id) {
+      // 还原wpoint丢失的情况
+      if (wp_a.weaponact)
+        this.enter_frame({ id: wp_a.weaponact });
+      else
+        this.enter_frame(this.find_auto_frame());
     }
+
+    const strength = this._data.base.strength || 1;
+    const weight = this._data.base.weight || 1;
+    let { dvx, dvy, dvz } = wp_a;
+    const { x, y, z } = bearer.position;
+    this.facing = bearer.facing;
+    const { x: wa_x = 0, y: wa_y = 0, z: wa_z = 0 } = wp_a;
+    const { x: wb_x = 0, y: wb_y = 0, z: wb_z = 0 } = wp_b
+
+    if (wp_a) {
+      this._position.set(
+        round(x + this.facing * (wa_x - cx_a + cx_b - wb_x)),
+        round(y + cy_a - wa_y - cy_b + wb_y),
+        round(z + wa_z - wb_z),
+      )
+    } else { // 还原wpoint丢失的情况
+      this._position.set(
+        round(x + this.facing * (wa_x - cx_a)),
+        round(y + cy_a - wa_y),
+        round(z + wa_z),
+      )
+    }
+
+    if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
+      const nf = this.find_align_frame(
+        this.frame.id,
+        this.data.indexes?.on_hands,
+        this.data.indexes?.throwings
+      )
+      this._position.set(
+        round(x + this.facing * (wa_x - cx_a)),
+        round(y + cy_a - wa_y),
+        round(z + wa_z),
+      )
+      this.enter_frame(nf);
+      const vz = bearer.ctrl ? bearer.ctrl.UD * (dvz || 0) : 0;
+      dvx = strength * (dvx || 0) / weight;
+      dvy = strength * (dvy || 0) / weight;
+      const vx = (dvx - abs(vz / 2)) * this.facing;
+      this.set_velocity(vx, dvy, vz);
+      bearer.holding = null;
+      this.bearer = null;
+      return;
+    }
+
   }
 
   enter_frame(which: TNextFrame): void {

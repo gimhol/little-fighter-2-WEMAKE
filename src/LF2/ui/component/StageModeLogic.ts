@@ -21,7 +21,7 @@ export class StageModeLogic extends UIComponent {
   gogogo_loop?: ComponentsPlayer;
   score_board!: UINode;
   protected state: 0 | 1 | 2 = 0;
-  protected weapon_drop_timer = new Times(0, 300);
+  protected weapon_drop_timer = new Times(0, 1200);
   protected gameover_timer = new Times(0, 180);
   protected entity_callbacks: IEntityCallbacks = {
     on_dead: () => {
@@ -157,6 +157,7 @@ export class StageModeLogic extends UIComponent {
     this.lf2.change_bg(Defines.VOID_BG)
     this.lf2.change_stage(Defines.VOID_STAGE)
     this.world.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+    this.world.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
   }
   override on_resume(): void {
     this.lf2.world.stage.callbacks.add(this.stage_callbacks);
@@ -171,7 +172,7 @@ export class StageModeLogic extends UIComponent {
       !this.world.paused &&
       !this.lf2.world.stage.weapon_rain_disabled &&
       this.weapon_drop_timer.add() &&
-      this.lf2.mt.range(0, 10) < 5
+      this.lf2.mt.range(0, 10) <= 2
     ) {
       this.lf2.weapons.add_random(1, true, EntityGroup.StageWeapon)
     }

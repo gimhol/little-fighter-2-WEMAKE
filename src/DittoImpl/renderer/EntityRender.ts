@@ -2,13 +2,14 @@ import type { IEntityData, IFrameInfo, ITexturePieceInfo, TFace } from "@/LF2/de
 import { Builtin_FrameId, Defines, StateEnum } from "@/LF2/defines";
 import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
-import { clamp, floor, PI } from "@/LF2/utils";
+import { clamp, floor, random_in, round } from "@/LF2/utils";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
 import { get_color_material } from "./MaterialKeeper";
 import type { WorldRenderer } from "./WorldRenderer";
+const vec001 = new T.Vector3(0, 0, 1)
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
@@ -31,14 +32,14 @@ export class EntityRender {
 
   protected images!: Map<string, RImageInfo>;
   entity!: Entity;
+  protected node!: T.Object3D;
   protected main_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   protected outline_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
-
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+
   protected variants = new Map<string, string[]>();
   protected shaking: number = 0;
-  protected shaking_time: number = 0;
-  protected extra_shaking_time: number = 0;
+  protected shaking_x: number = 0;
   protected _data?: IEntityData;
 
   protected _tex?: ITexturePieceInfo
@@ -47,14 +48,13 @@ export class EntityRender {
   protected _x?: number;
   protected _y?: number;
   protected _z?: number;
-  protected main_mesh_x = 0;
-  protected main_mesh_y = 0;
-  protected main_mesh_z = 0;
-  protected blood_mesh_x = 0;
-  protected blood_mesh_y = 0;
-  protected blood_mesh_z = 0;
+  protected x = 0;
+  protected y = 0;
+  protected z = 0;
   protected outline_width: number = 2;
   outline_color: string | undefined = void 0;
+  protected offset_x: number = 0;
+  protected offset_y: number = 0;
 
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
@@ -69,15 +69,11 @@ export class EntityRender {
     this._x = void 0;
     this._y = void 0;
     this._z = void 0;
-    this.main_mesh_x = 0;
-    this.main_mesh_y = 0;
-    this.main_mesh_z = 0;
-    this.blood_mesh_x = 0;
-    this.blood_mesh_y = 0;
-    this.blood_mesh_z = 0;
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
     this.shaking = 0;
-    this.shaking_time = 0;
-    this.extra_shaking_time = 0;
+    this.shaking_x = 0;
     const { lf2, data } = entity;
     this.variants.clear();
     for (const k in data.base.files) {
@@ -131,21 +127,21 @@ export class EntityRender {
     }
     this.blood_mesh = this.blood_mesh || new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
     this.blood_mesh.visible = false;
+    this.node = this.node || new T.Object3D();
   }
 
   on_mount() {
     this.reset(this.entity);
-    this.world_renderer.world_node.add(
-      this.outline_mesh,
-      this.main_mesh,
-      this.blood_mesh
-    );
+    this.node.add(this.outline_mesh, this.main_mesh, this.blood_mesh)
+    this.blood_mesh.position.z = 1;
+    this.world_renderer.world_node.add(this.node);
   }
 
   on_unmount(): void {
     this.outline_mesh.removeFromParent();
     this.main_mesh.removeFromParent();
     this.blood_mesh.removeFromParent();
+    this.node.removeFromParent();
   }
 
   apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
@@ -177,22 +173,28 @@ export class EntityRender {
             m.needsUpdate = true;
           }
         }
-        outline_mesh.scale.set(
-          pixel_w + this.outline_width * 2,
-          pixel_h + this.outline_width * 2,
-          0
-        );
       }
-    } else {
-      main_mesh.scale.set(0, 0, 0);
-      outline_mesh.scale.set(0, 0, 0);
     }
   }
+  update_shaking(dt: number) {
+    const { entity: { shaking, facing } } = this;
+    if (shaking == this.shaking) return;
+
+    if (this.shaking = shaking) {
+      const x = floor(this.shaking / 2) % 2 ? 1 : -1
+      this.shaking_x = facing * random_in(0, 3) * x;
+    } else {
+      this.shaking_x = 0;
+    }
+
+  }
   render(dt: number) {
-    const { entity, main_mesh, outline_mesh } = this;
+    this.update_shaking(dt)
+    const { entity, main_mesh } = this;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     const { frame, facing } = entity;
-    const { bpoint } = frame;
+    if (entity.data !== this._data)
+      this.reset(entity);
     let { x, y, z } = entity.position
     if (
       this._x !== x ||
@@ -206,12 +208,11 @@ export class EntityRender {
       this._z = z;
       this._frame = frame;
       this._facing = facing;
-      if (entity.data !== this._data)
-        this.reset(entity);
-      const tex = frame.pic?.[facing]
+      const pic = frame.pic
+      const tex = pic?.[facing]
       if (this._tex !== tex)
         this.apply_tex(entity, this._tex = tex)
-      const { centerx, centery, state, bpoint } = frame;
+      const { centerx, centery, state } = frame;
       const offset_x = entity.facing === 1 ? centerx : main_mesh.scale.x - centerx;
       if (state === StateEnum.Message) {
         let { cam_x } = this.entity.world.renderer;
@@ -220,60 +221,63 @@ export class EntityRender {
         cam_x += offset_x
         x = clamp(x, cam_x, cam_r)
       }
-      this.main_mesh_x = Math.round(x - offset_x)
-      this.main_mesh_y = Math.round(y - z / 2 + centery)
-      this.main_mesh_z = Math.round(z)
-
-      main_mesh.position.set(this.main_mesh_x, this.main_mesh_y, this.main_mesh_z);
-      if (bpoint) {
-        let { x: bx, y: by, z: bz = 0, r = 0 } = bpoint
-        bx = entity.facing === 1 ? bx : main_mesh.scale.x - bx;
-        this.blood_mesh.position.set(
-          this.blood_mesh_x = this.main_mesh_x + bx - entity.facing / 2,
-          this.blood_mesh_y = this.main_mesh_y - by - 0.5,
-          this.blood_mesh_z = this.main_mesh_z + bz
-        );
-        this.blood_mesh.setRotationFromAxisAngle(r_vec3, r * PI / 180)
+      this.offset_x = -offset_x;
+      this.offset_y = centery;
+      if (pic?.r) {
+        const c1 = new T.Vector2(pic.ox ?? (pic.w / 2), -(pic.oy ?? (pic.h / 2)))
+        const cc = c1.clone().rotateAround(vec001, pic.r)
+        this.offset_x -= (cc.x - c1.x)
+        this.offset_y -= (cc.y - c1.y)
+        main_mesh.setRotationFromAxisAngle(vec001, pic.r)
       }
+      this.x = round(x);
+      this.y = round(y - z / 2);
+      this.z = round(z);
+      this.node.position.set(this.x, this.y, this.z)
     }
-
-    const is_b_v = !!bpoint && main_mesh.visible && entity.hp < entity.hp_max * 0.33;
-    this.blood_mesh.visible = is_b_v;
-
-
-    const is_visible = !entity.invisible;
-    const is_blinking = !!entity.blinking;
-    main_mesh.visible = is_visible;
-    if (is_blinking && is_visible) {
+    main_mesh.position.set(
+      this.offset_x + this.shaking_x,
+      this.offset_y,
+      0
+    );
+    const visible = !entity.invisible;
+    const blinking = !!entity.blinking;
+    main_mesh.visible = visible;
+    if (blinking && visible) {
       main_mesh.visible = 0 === Math.floor(entity.blinking / 4) % 2;
     }
+    this.render_bpoint();
+    this.render_outline();
 
-
-    const { shaking } = entity
-    if (shaking != this.shaking) {
-      if (!shaking) this.extra_shaking_time = EXTRA_SHAKING_TIME;
-      this.shaking = shaking;
-    }
-
-    if (this.shaking || this.extra_shaking_time > 0) {
-      this.shaking_time += dt
-      const f = (floor(this.shaking_time / 4) % 2) || -1
-      main_mesh.position.x = this.main_mesh_x + facing * f;
-      this.blood_mesh.position.x = this.blood_mesh_x + facing * f;
-      if (!shaking) this.extra_shaking_time -= dt
-    } else {
-      this.shaking_time = 0;
-    }
+  }
+  private render_outline() {
+    const { outline_mesh, main_mesh } = this;
 
     if (this.entity.outline_color != this.outline_color) {
       this.outline_color = this.entity.outline_color;
       if (this.outline_color) outline_mesh.material.color.set(this.outline_color)
     }
     outline_mesh.visible = !!this.outline_color && main_mesh.visible
-    outline_mesh.position.set(
-      this.main_mesh.position.x - this.outline_width,
-      this.main_mesh.position.y + this.outline_width,
-      this.main_mesh.position.z
-    );
+    if (!outline_mesh.visible) return;
+    let sx = main_mesh.scale.x;
+    let sy = main_mesh.scale.y;
+    const lw = this.outline_width;
+    const ow = lw * 2;
+    const x = main_mesh.position.x - lw;
+    const y = main_mesh.position.y + lw
+    outline_mesh.position.set(x, y, -0.1)
+    outline_mesh.scale.set(sx + ow, sy + ow, 0);
+  }
+  private render_bpoint() {
+    const { entity, main_mesh } = this;
+    const { bpoint } = entity.frame
+    const visible = !!bpoint && main_mesh.visible && entity.hp < entity.hp_max * 0.33;
+    this.blood_mesh.visible = visible
+    if (!bpoint || !visible) return
+
+    let { x: bx, y: by, z: bz = 0.1, r = 0 } = bpoint;
+    bx = entity.facing === 1 ? bx : main_mesh.scale.x - bx;
+    this.blood_mesh.position.set(this.offset_x + bx, this.offset_y - by, bz);
+
   }
 }

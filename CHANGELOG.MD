@@ -1,4 +1,4 @@
-# Little Fighter 2: Wemake
+# Little Fighter 2 Wemake
 
 [中文](CHANGELOG.MD) | [English](CHANGELOG.EN.MD)
 
@@ -6,7 +6,7 @@
 
 原作者 Marti Wong 现已推出[《Little Fighter 2 Remastered》](https://lf2.net/)，请在 [Steam](https://store.steampowered.com/app/3249650) 购买，以支持原作者。
 
-LF2:Wemake created by Gim in 2024。
+LF2Wemake created by Gim in 2024。
 
 ## Changelog
 

@@ -13,7 +13,7 @@ import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
 import * as UI from "./ui";
-import { fisrt, is_str, MersenneTwister } from "./utils";
+import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
 
 const cheat_info_pair = (n: D.CheatType) =>
@@ -28,7 +28,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.12'
+  static readonly VERSION_NAME: string = 'v0.1.13'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -126,17 +126,21 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   readonly bgms: string[] = []
 
-
-  protected find_in_zip(paths: string[]): I.IZipObject | undefined {
-    const len = paths.length;
-    for (let i = 0; i < len; i++) {
-      const idx = i
-      const path = paths[idx];
-      const obj = fisrt(this.zips, (z) => z.file(path));
-      if (!obj) continue;
-      return obj;
-    }
+  sniff_from_zips(path: string, exact: boolean) {
+    const paths = exact ? [path] : get_import_fallbacks(path)[0];
+    return this.find_from_zips(paths)
   }
+
+  protected find_from_zips(paths: string[]): [I.IZipObject, I.IZip, string] | [undefined, undefined, undefined] {
+    for (const zip of this.zips) {
+      for (const path of paths) {
+        const file = zip.file(path)
+        if (file) return [file, zip, `[${zip.name}]${file.name}`]
+      }
+    }
+    return [void 0, void 0, void 0];
+  }
+
 
   /**
    * TODO
@@ -148,12 +152,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    * @memberof LF2
    */
   @PIO
-  async import_json<C = any>(path: string, exact: boolean = true): Promise<[C, I.HitUrl]> {
+  async import_json<C = any>(path: string, exact: boolean = true): Promise<[C, I.HitUrl, string?]> {
     const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const zip_obj = this.find_in_zip(paths)
-    if (zip_obj) return [await zip_obj.json<C>(), zip_obj.name];
-    const ret = await I.Ditto.Importer.import_as_json<C>(paths);
-    return ret;
+    const [zip_obj, , origin] = this.find_from_zips(paths)
+    if (zip_obj && origin) return [await zip_obj.json<C>(), zip_obj.name, origin];
+    return await I.Ditto.Importer.import_as_json<C>(paths);
   }
 
   /**
@@ -164,17 +167,17 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    * @return {Promise<[I.BlobUrl, I.HitUrl]>}
    * @memberof LF2
    */
-  @PIO async import_resource(path: string, exact: boolean): Promise<[I.BlobUrl, I.HitUrl]> {
+  @PIO async import_resource(path: string, exact: boolean): Promise<[I.BlobUrl, I.HitUrl, string?]> {
     const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const zip_obj = this.find_in_zip(paths)
-    if (zip_obj) return [await zip_obj.blob_url(), zip_obj.name];
+    const [zip_obj, , origin] = this.find_from_zips(paths)
+    if (zip_obj && origin) return [await zip_obj.blob_url(), zip_obj.name, origin];
     return I.Ditto.Importer.import_as_blob_url(paths);
   }
 
-  @PIO async import_array_buffer(path: string, exact: boolean): Promise<[ArrayBuffer, I.HitUrl]> {
+  @PIO async import_array_buffer(path: string, exact: boolean): Promise<[ArrayBuffer, I.HitUrl, string?]> {
     const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const zip_obj = this.find_in_zip(paths)
-    if (zip_obj) return [await zip_obj.array_buffer(), zip_obj.name];
+    const [zip_obj, , origin] = this.find_from_zips(paths)
+    if (zip_obj && origin) return [await zip_obj.array_buffer(), zip_obj.name, origin];
     return I.Ditto.Importer.import_as_array_buffer(paths);
   }
 
@@ -404,7 +407,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         this.entities.add(d, num, team_1);
     }
     if (zip) {
-      const bgms = zip.file(/bgm\/.*?/)
+      const bgms = zip.file(/bgm\/.*?\.mp3$/)
       for (const bgm of bgms) {
         this.bgms.some(v => v === bgm.name) ||
           this.bgms.push(bgm.name)
@@ -598,10 +601,16 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   on_component_broadcast(component: UI.UIComponent, message: string) {
     this.callbacks.emit("on_component_broadcast")(component, message);
   }
-  switch_difficulty(): void {
-    const { difficulty } = this.world;
-    const max = this.is_cheat(D.CheatType.LF2_NET) ? 4 : 3;
-    this.cmds.push(CMD.SET_DIFFICULTY, '' + (difficulty % max) + 1)
+  switch_difficulty(offset: number = 1): void {
+    const list = [
+      D.Difficulty.Easy,
+      D.Difficulty.Normal,
+      D.Difficulty.Difficult,
+    ]
+    if (this.is_cheat(D.CheatType.LF2_NET))
+      list.push(D.Difficulty.Crazy)
+    const next = loop_offset(list, this.world.difficulty, offset)
+    this.cmds.push(CMD.SET_DIFFICULTY, '' + next)
   }
   private update_zip_names() {
     const DATA_LIST = [

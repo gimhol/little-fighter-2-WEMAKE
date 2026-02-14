@@ -362,7 +362,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     }
     for (const e of this.world.entities) {
       if (is_fighter(e) && player_teams.has(e.team)) continue;
-      else if (is_weapon(e) && e.holder && player_teams.has(e.holder.team))
+      else if (is_weapon(e) && e.bearer && player_teams.has(e.bearer.team))
         continue;
       temp.push(e);
     }

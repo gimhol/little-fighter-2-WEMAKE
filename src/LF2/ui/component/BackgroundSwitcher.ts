@@ -4,13 +4,11 @@ import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 
-export class BackgroundNameText extends UIComponent {
-  static override readonly TAG = 'BackgroundNameText'
+export class BackgroundSwitcher extends UIComponent {
+  static override readonly TAG = 'BackgroundSwitcher'
   private _background: IBgData = Defines.RANDOM_BG;
-  private _text_loader = new UITextLoader(() => this.node).set_style({
-    fill_style: "#9b9bff",
-    font: "15px Arial",
-  }).ignore_out_of_date();
+  private _text_loader = new UITextLoader(() => this.node)
+    .ignore_out_of_date();
 
   get backgrounds(): IBgData[] {
     const ret = this.lf2.datas.backgrounds?.filter((v) => v.id !== Defines.VOID_BG.id) || []

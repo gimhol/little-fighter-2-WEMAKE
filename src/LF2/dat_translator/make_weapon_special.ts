@@ -36,7 +36,7 @@ const broken_pieces_opoints = (...frame_ids: (string | string[])[]): IOpointInfo
 const handled = new Set<any>();
 export function make_weapon_special(data: IEntityData) {
   const num_data_id = Number(data.id);
-  if (num_data_id >= 100 || num_data_id <= 199) {
+  if (num_data_id >= 100 && num_data_id <= 199) {
     data.base.group = ensure(data.base.group,
       EntityGroup.VsWeapon,
       EntityGroup.StageWeapon,
@@ -128,6 +128,7 @@ export function make_weapon_special(data: IEntityData) {
       data.base.brokens = broken_pieces_opoints(box0, box1, box2, box3, box3);
       break;
     case BuiltIn_OID.Weapon_Beer:
+      data.base.group = [EntityGroup.VsWeapon];
       data.base.weight = Defines.WEAPON_WEIGHT_LIGHT;
       data.base.brokens = broken_pieces_opoints(
         beer1, beer2, beer2, beer2, beer2, milk2, milk2, milk2, milk2, milk2

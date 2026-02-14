@@ -36,7 +36,10 @@ export function DatViewer(props: IDatViewerProps) {
     if (file.name.endsWith(".txt")) {
       const txt = await read_file(file, { as: "Text" }).then(v => v.replace(/\r/g, ""));
       const data_indexes = read_indexes(txt, 'json5')
-      if (data_indexes) ref_data_indexes.current = data_indexes;
+      if (typeof data_indexes == 'string')
+        console.error(data_indexes)
+      else
+        ref_data_indexes.current = data_indexes;
       _ref_txt_dat.current = txt;
       _ref_txt_json.current = json5.stringify(data_indexes, null, 2);
       if (_ref_textarea_dat.current)

@@ -2,9 +2,9 @@ import { Defines, EntityGroup, GameKey, GONE_FRAME_INFO } from "../../defines";
 import type IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
 import { traversal } from "../../utils/container_help/traversal";
+import { Times } from "../../utils/Times";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
-import { Times } from "../../utils/Times";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
 
@@ -13,7 +13,7 @@ export class VsModeLogic extends UIComponent {
   protected score_board?: UINode;
   protected state: 0 | 1 | 2 = 0;
   protected cancellers: (() => void)[] = [];
-  protected weapon_drop_timer = new Times(0, 300);
+  protected weapon_drop_timer = new Times(0, 1200);
   protected gameover_timer = new Times(0, 180);
   protected fighter_callbacks: IEntityCallbacks = {
     on_dead: () => {
@@ -84,15 +84,13 @@ export class VsModeLogic extends UIComponent {
   override on_stop(): void {
     this.lf2.change_bg(Defines.VOID_BG)
     this.lf2.change_stage(Defines.VOID_STAGE)
-    this.world.entities.forEach(v => {
-      v.enter_frame(GONE_FRAME_INFO)
-      v.next_frame = GONE_FRAME_INFO
-    })
+    this.world.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+    this.world.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
     for (const func of this.cancellers) func()
     this.cancellers.length = 0;
   }
   override update(): void {
-    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) < 5) {
+    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) <= 2) {
       this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
     }
     if (this.state === 1 && this.gameover_timer.add()) {

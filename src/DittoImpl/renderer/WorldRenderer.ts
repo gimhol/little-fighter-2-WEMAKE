@@ -10,6 +10,7 @@ import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
 import { floor, random_in } from "@/LF2";
+import { INDICATINGS } from "./INDICATINGS";
 
 export class WorldRenderer implements IWorldRenderer {
   lf2: LF2;
@@ -28,13 +29,8 @@ export class WorldRenderer implements IWorldRenderer {
     if (this._indicator_flags === v) return;
     this._indicator_flags = v;
     for (const renderer of this.entity_renderers) {
-      if (v) {
-        if (!renderer.indi) renderer.indi = new FrameIndicators(renderer.entity)
-        renderer.indi.flags = v;
-      } else {
-        if (renderer.indi) renderer.indi.on_unmount();
-        renderer.indi = null;
-      }
+      this.ensure_stat(renderer)
+      this.ensure_indi(renderer)
     }
   }
   get cam_x(): number { return this.camera.position.x }
@@ -89,28 +85,38 @@ export class WorldRenderer implements IWorldRenderer {
       // this.scene.add_camera(camera);
       // camera.updateProjectionMatrix(); 
     }
-
+  }
+  ensure_stat(pack: EntityRenderer) {
+    // Criminal...?
+    if (
+      is_fighter(pack.entity) ||
+      pack.entity.data.id === BuiltIn_OID.Criminal ||
+      (this._indicator_flags & INDICATINGS.ctrl)
+    ) {
+      if (!pack.stat) {
+        pack.stat = new EntityStatRender(pack.entity, this);
+        pack.stat.on_mount()
+      }
+    } else if (pack.stat) {
+      pack.stat.on_unmount();
+      pack.stat = null
+    }
+  }
+  ensure_indi(pack: EntityRenderer) {
+    if (this._indicator_flags ^ INDICATINGS.ctrl) {
+      if (!pack.indi) pack.indi = new FrameIndicators(pack.entity);
+      pack.indi.flags = this._indicator_flags
+    } else if (pack.indi) {
+      pack.indi.on_unmount();
+      pack.indi = null
+    }
   }
   add_entity(entity: Entity): void {
     const pack: EntityRenderer = entity.renderer ? entity.renderer : (
       entity.renderer = new EntityRenderer(entity)
     );
-
-    // Criminal...?
-    if (is_fighter(entity) || entity.data.id === BuiltIn_OID.Criminal) {
-      pack.stat = new EntityStatRender(entity, this);
-    } else if (pack.stat) {
-      pack.stat.on_unmount();
-      pack.stat = null
-    }
-
-    if (this.indicator_flags) {
-      pack.indi = new FrameIndicators(entity);
-      pack.indi.flags = this.indicator_flags
-    } else if (pack.indi) {
-      pack.indi.on_unmount();
-      pack.indi = null
-    }
+    this.ensure_stat(pack)
+    this.ensure_indi(pack)
     pack.mount();
     this.entity_renderers.add(pack)
   }

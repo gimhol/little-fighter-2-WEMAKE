@@ -9,6 +9,8 @@ export class __Sounds implements ISounds {
   readonly inner: ISounds;
   readonly cls_list: (new (lf2: LF2) => ISounds)[] = [__Modern, __Fallback];
 
+  get is_random() { return this.inner.is_random }
+  set is_random(v) { this.inner.is_random = v }
   get callbacks() {
     return this.inner.callbacks;
   }
@@ -112,5 +114,15 @@ export class __Sounds implements ISounds {
 
   dispose(): void {
     this.inner.dispose();
+  }
+
+  set_origin(name: string, origin: string): void {
+    return this.inner.set_origin(name, origin);
+  }
+  get_origin(name: string): string | undefined {
+    return this.inner.get_origin(name);
+  }
+  unload(name: string): void {
+    return this.inner.unload(name);
   }
 }

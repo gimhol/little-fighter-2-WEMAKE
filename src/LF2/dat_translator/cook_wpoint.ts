@@ -4,6 +4,15 @@ import { take } from "./take";
 import { take_not_zero_num } from "./take_not_zero_num";
 
 export function cook_wpoint(unsure_wpoint: IWpointInfo, frame: IFrameInfo) {
+  const x = take(unsure_wpoint, "x");
+  unsure_wpoint.x = x || 0
+
+  const y = take(unsure_wpoint, "y");
+  unsure_wpoint.y = y || 0
+
+  const z = take(unsure_wpoint, "z");
+  unsure_wpoint.z = z || 0
+
   const dvx = take(unsure_wpoint, "dvx");
   if (not_zero_num(dvx)) unsure_wpoint.dvx = dvx * 0.5;
 

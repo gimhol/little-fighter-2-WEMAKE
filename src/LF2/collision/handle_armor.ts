@@ -41,8 +41,8 @@ export function handle_armor(collision: ICollision): boolean {
   victim.toughness -= decrease_value;
   const [x, y, z] = victim.spark_point(a_cube, b_cube);
   const spark_type = fall >= Defines.DEFAULT_FALL_VALUE_CRITICAL ?
-    SparkEnum.SlientCriticalHit :
-    SparkEnum.SlientHit;
+    SparkEnum.SilentCriticalHit :
+    SparkEnum.SilentHit;
   victim.world.spark(x, y, z, spark_type);
   const sounds = victim.toughness > 0 ? hit_sounds : dead_sounds;
   if (sounds) for (const s of sounds) victim.lf2.sounds.play(s, x, y, z);

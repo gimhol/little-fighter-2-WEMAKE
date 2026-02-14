@@ -4,14 +4,18 @@ import { join } from "path";
 import { Defines } from "../../../src/LF2/defines";
 import { file_md5_str } from "./file_md5_str";
 import { is_dir } from "./is_dir";
+import { log } from "./log";
+import { read_full_dir_info_json } from "./read_full_dir_info_json";
 import { write_file } from "./write_file";
 import { write_obj_file } from "./write_obj_file";
-import { read_full_dir_info_json } from "./read_full_dir_info_json";
 export interface IDirInfo {
+  info_file_ok: boolean;
+  exists?: boolean;
   type?: string,
   output?: string,
   description?: string,
-  children?: { [x in string]?: IDirInfo }
+  children?: { [x in string]?: IDirInfo },
+  info_file?: string;
 }
 export interface IZipFileInfo {
   url: string;
@@ -50,7 +54,7 @@ export async function make_zip_and_json(
   src_dir = src_dir.replace(/\\/g, "/");
   out_dir = out_dir.replace(/\\/g, "/");
   await fs.mkdir(out_dir, { recursive: true }).catch(e => e)
-  console.log("zipping", src_dir, "=>", join(out_dir, zip_name));
+  log("Zipping", src_dir, "=>\n    "+ join(out_dir, zip_name).replace(/\\/g, "/"));
 
   const layout_dir = src_dir + '/ui'
   const layout_index_file = src_dir + '/ui/_index.json5'
@@ -65,9 +69,9 @@ export async function make_zip_and_json(
   }).catch(e => { })
 
   if (!(await is_dir(src_dir)))
-    throw new Error("[make_zip_and_json] src_dir " + src_dir + "不是目录");
+    throw new Error("[make_zip_and_json] src_dir " + src_dir + " is not dir");
   if (!(await is_dir(out_dir)))
-    throw new Error("[make_zip_and_json] out_dir " + out_dir + "不是目录");
+    throw new Error("[make_zip_and_json] out_dir " + out_dir + " is not dir");
 
   const zip_path = join(out_dir, zip_name);
   const inf_path = join(out_dir, zip_name + ".json");

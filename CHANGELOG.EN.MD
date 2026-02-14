@@ -1,4 +1,4 @@
-# Little Fighter 2: Wemake
+# Little Fighter 2 Wemake
 
 [中文](CHANGELOG.MD) | [English](CHANGELOG.EN.MD)
 
@@ -8,7 +8,7 @@ created by Marti Wong and Starsky Wong in 1999.
 The original author, Marti Wong, has now launched ["Little Fighter 2 Remastered"](https://lf2.net/). 
 Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.
 
-"LF2:Wemake" created by Gim in 2024.
+"LF2Wemake" created by Gim in 2024.
 
 ## Changelog
 

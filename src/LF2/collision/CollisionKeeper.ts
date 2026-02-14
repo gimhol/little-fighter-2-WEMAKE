@@ -1,5 +1,5 @@
 import { ICollision, ICollisionHandler } from "../base";
-import { ALL_ENTITY_ENUM, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, TEntityEnum } from "../defines";
+import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
 import { is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
@@ -23,23 +23,44 @@ import { handle_weapon_is_hit } from "./handle_weapon_is_hit";
 import { handle_weapon_is_picked } from "./handle_weapon_is_picked";
 import { handle_weapon_is_picked_secretly } from "./handle_weapon_is_picked_secretly";
 
+
+
 export class CollisionKeeper {
   protected pair_map: Map<string, ((collision: ICollision) => void)[]> = new Map();
+
+  /**
+   * 添加一个碰撞处理器
+   * 
+   * @param a_type_list     响应的攻方的类型：武器/角色/气功波 数组
+   * @param itr_kind_list   响应的攻击框的类型 数组
+   * @param v_type_list     响应的受方的类型：武器/角色/气功波 数组
+   * @param bdy_kind_list   响应的受击框的类型 数组
+   * @param fn              碰撞处理器
+   * @param a_state_list    响应的攻方的帧状态 数组
+   * @param v_state_list    响应的受方的帧状态 数组
+   */
   add(
     a_type_list: TEntityEnum[],
     itr_kind_list: ItrKind[],
     v_type_list: TEntityEnum[],
     bdy_kind_list: BdyKind[],
     fn: (collision: ICollision) => void,
+    a_state_list: StateEnum[] = ALL_STATES,
+    v_state_list: StateEnum[] = ALL_STATES,
   ) {
     for (const itr_kind of itr_kind_list) {
       for (const a_type of a_type_list) {
         for (const bdy_kind of bdy_kind_list) {
           for (const v_type of v_type_list) {
-            const key = [a_type, itr_kind, v_type, bdy_kind].join("_")
-            const fns = this.pair_map.get(key) || []
-            fns.push(fn)
-            this.pair_map.set(key, fns);
+            for (const a_state of a_state_list) {
+              for (const b_state of v_state_list) {
+                // 这确实很地狱，妈的。
+                const key = [a_type, itr_kind, v_type, bdy_kind, a_state, b_state].join("_")
+                const fns = this.pair_map.get(key) || []
+                fns.push(fn)
+                this.pair_map.set(key, fns);
+              }
+            }
           }
         }
       }
@@ -55,6 +76,8 @@ export class CollisionKeeper {
     itr_kind: ItrKind,
     v_type: TEntityEnum,
     bdy_kind: BdyKind,
+    a_state: StateEnum,
+    b_state: StateEnum,
   ) {
     if (itr_kind === void 0) {
       console.warn("[CollisionHandler] itr.kind got", itr_kind);
@@ -64,7 +87,7 @@ export class CollisionKeeper {
       console.warn("[CollisionHandler] bdy.kind got", bdy_kind);
       debugger;
     }
-    return this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}`);
+    return this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}_${a_state}_${b_state}`);
   }
   handler(collision: ICollision) {
     return this.get(
@@ -72,6 +95,8 @@ export class CollisionKeeper {
       collision.itr.kind,
       collision.victim.data.type,
       collision.bdy.kind,
+      collision.attacker.frame.state,
+      collision.victim.frame.state,
     )
   }
   handle(collision: ICollision) {
@@ -106,7 +131,7 @@ export class CollisionKeeper {
       attacker.group?.some(v => v === EntityGroup.Freezer) && (
         is_fighter(attacker) ||
         is_ball(victim) ||
-        (is_weapon(attacker) && attacker.holder)
+        (is_weapon(attacker) && attacker.bearer)
       )
     ) {
       handle_ball_frozen(attacker, victim);
@@ -224,6 +249,25 @@ collisions_keeper.add(
   [EntityEnum.Weapon],
   [BdyKind.Normal],
   handle_weapon_is_hit,
+  void 0,
+  [
+    StateEnum.HeavyWeapon_OnGround,
+    StateEnum.HeavyWeapon_InTheSky,
+    StateEnum.HeavyWeapon_JustOnGround,
+    StateEnum.Weapon_Throwing,
+    StateEnum.Weapon_InTheSky,
+    StateEnum.Weapon_Rebounding
+  ]
+);
+
+collisions_keeper.add(
+  [EntityEnum.Weapon, EntityEnum.Ball],
+  [ItrKind.Normal],
+  [EntityEnum.Weapon],
+  [BdyKind.Normal],
+  handle_weapon_is_hit,
+  void 0,
+  [StateEnum.Weapon_OnGround]
 );
 
 collisions_keeper.add(

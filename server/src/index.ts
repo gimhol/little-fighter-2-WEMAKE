@@ -18,7 +18,7 @@ const args = arg({
 })
 function handle_help() {
   console.log(`
-LF2:Wemake Multiplayer Server v${info.version}
+LF2Wemake Multiplayer Server v${info.version}
 Options:
   -h, --help
   -p, --port
@@ -37,7 +37,7 @@ async function main() {
     handle_help();
     return;
   }
-  console.log(`LF2:Wemake Multiplayer Server v${info.version}`)
+  console.log(`LF2Wemake Multiplayer Server v${info.version}`)
   const ssl_key = (args['--ssl-key-path'] as string) || await read_file(process.env.SSL_KEY_FILE_PATH);
   const ssl_cer = (args['--ssl-cer-parh'] as string) || await read_file(process.env.SSL_CER_FILE_PATH);
   const https_port = (args['--port'] as Number) || Number(process.env.HTTPS_PORT) || 443

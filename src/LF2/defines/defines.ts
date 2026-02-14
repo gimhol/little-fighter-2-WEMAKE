@@ -37,7 +37,7 @@ export namespace Defines {
    *
    * @type {number}
    */
-  export const DEFAULT_ITR_SHAKING: number = 4;
+  export const DEFAULT_ITR_SHAKING: number = 8;
 
   /**
    * 默认值：击中敌人的对象停顿多少帧
@@ -45,7 +45,7 @@ export namespace Defines {
    * @type {number}
    * @memberof World
    */
-  export const DEFAULT_ITR_MOTIONLESS: number = 4;
+  export const DEFAULT_ITR_MOTIONLESS: number = 8;
   export const DEFAULT_ITR_A_REST: number = 8;
   export const DEFAULT_CATCH_TIME: number = 680;
   export const DEFAULT_ITR_FALL: number = 40;
@@ -53,10 +53,9 @@ export namespace Defines {
   /**
    * 默认值：当角色fall_value低于DEFAULT_FALL_VALUE_DIZZY时，角色应当进入眩晕状态
    *
-   * @type {number}
    * @memberof World
    */
-  export const DEFAULT_FALL_VALUE_DIZZY: number = 40;
+  export const DEFAULT_FALL_VALUE_DIZZY = 40;
 
   /**
    * 默认值：
@@ -66,7 +65,7 @@ export namespace Defines {
   export const DAFUALT_QUBE_LENGTH: number = 24;
   export const DAFUALT_QUBE_LENGTH_POW2: number = 576;
 
-  export const DEFAULT_RESTING_MAX: number = 60;
+  export const DEFAULT_RESTING_MAX: number = 40;
   export const DEFAULT_TOUGHNESS_RESTING_MAX: number = 60;
 
   /**
@@ -425,7 +424,7 @@ export namespace Defines {
   export const BOOMERANG_CHASE_MAX_VZ = 1.8
   export const BOOMERANG_CHASE_ACC_Z = 0.1
   /** @see {GRAVITY} */
-  export const BOOMERANG_GRAVITY = 0.052
+  // export const BOOMERANG_GRAVITY = 0.052
 
   export const MAX_AI_DESIRE = 10000 as const;
 
@@ -501,7 +500,7 @@ export namespace Defines {
    * 
    * @link https://lf-empire.de/forum/showthread.php?tid=11204
    */
-  export const DEFAULT_IVY_D: number = 3.5;
+  export const DEFAULT_IVY_D: number = 5;
 
   export const WEAPON_WEIGHT_HEAVY = 1.1;
   export const WEAPON_WEIGHT_ARROW = 0.74;

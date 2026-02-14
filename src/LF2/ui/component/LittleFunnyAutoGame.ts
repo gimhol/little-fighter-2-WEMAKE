@@ -19,6 +19,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     super.on_resume?.()
     this._lr = 0;
     this.world.transform.scale_to(0.5, 0.5, 0.5)
+    this.world.paused = false;
     this.lf2.change_bg(Defines.VOID_BG)
     this.add_fighter();
     this.add_fighter();
@@ -48,9 +49,12 @@ export class LittleFunnyAutoGame extends UIComponent {
   override on_pause(): void {
     super.on_pause?.();
     this.world.transform.scale_to(1, 1, 1, false)
-    for (const f of this._fighters) {
+    this.world.paused = false;
+    for (const f of this._fighters)
       f.callbacks.del(this._fighter_cbs);
+    for (const f of this.world.entities)
       this.world.del_entity(f);
-    }
+    for (const f of this.world.ghosts)
+      this.world.del_entity(f);
   }
 }

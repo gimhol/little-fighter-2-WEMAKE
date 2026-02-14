@@ -2,11 +2,11 @@
 
 [中文](README.MD) | [English](README.EN.MD)
 
-LF2:Wemake is designed to be a web game that can run on modern browsers. You gotta download all the core resources. After downloading, you need to unzip and process them.
+LF2Wemake is designed to be a web game that can run on modern browsers. You gotta download all the core resources. After downloading, you need to unzip and process them.
 
 Once they're downloaded, they'll be cached, so you don't have to process them again. But it still takes time to read and pre - process the resources.
 
-Take the original LF2:Wemake for example:
+Take the original LF2Wemake for example:
 
 - Right after the "Launch Page" shows up, the game will start loading prel.zip right away.
 - After prel.zip is loaded, you will enter the "Entry Page".
