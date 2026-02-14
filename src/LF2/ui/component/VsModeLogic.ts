@@ -13,7 +13,7 @@ export class VsModeLogic extends UIComponent {
   protected score_board?: UINode;
   protected state: 0 | 1 | 2 = 0;
   protected cancellers: (() => void)[] = [];
-  protected weapon_drop_timer = new Times(0, 300);
+  protected weapon_drop_timer = new Times(0, 1200);
   protected gameover_timer = new Times(0, 180);
   protected fighter_callbacks: IEntityCallbacks = {
     on_dead: () => {
@@ -90,7 +90,7 @@ export class VsModeLogic extends UIComponent {
     this.cancellers.length = 0;
   }
   override update(): void {
-    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) < 5) {
+    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) <= 2) {
       this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
     }
     if (this.state === 1 && this.gameover_timer.add()) {
