@@ -31,8 +31,12 @@ export class BallController extends BaseController {
       if (p1.y > p2.y) this.key_down(d).key_up(j)
       else if (p1.y < p2.y) this.key_down(j).key_up(d)
       else this.key_up(j, d)
-      if (vx > 0 && facing < 0) this.entity.facing = 1
-      else if (vx < 0 && facing > 0) this.entity.facing = -1
+
+      if (frame.behavior !== FrameBehavior.Boomerang) {
+        if (vx > 0 && facing < 0) this.entity.facing = 1
+        else if (vx < 0 && facing > 0) this.entity.facing = -1
+      }
+
     } else if (this._chasing) {
       this.target_lost(frame, facing);
       this._chasing = void 0

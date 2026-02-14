@@ -78,7 +78,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.dvy = Defines.DENNIS_CHASE_MAX_VY;
       frame.acc_y = Defines.DENNIS_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
-      
+
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       frame.on_dead = { id: '5' };
       switch (frame.id) {
@@ -93,10 +93,17 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.dvx = Defines.BOOMERANG_CHASE_MAX_VX;
       frame.acc_x = Defines.BOOMERANG_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
+
       frame.dvz = Defines.BOOMERANG_CHASE_MAX_VZ;
       frame.acc_z = Defines.BOOMERANG_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      frame.gravity = Defines.BOOMERANG_GRAVITY;
+      // datIndex.type
+
+      frame.dvy = Defines.DENNIS_CHASE_MAX_VY;
+      frame.acc_y = Defines.DENNIS_CHASE_ACC_Y;
+      frame.vym = SpeedMode.AccTo;
+
+      // frame.gravity = Defines.BOOMERANG_GRAVITY;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       frame.chasing_y = 0.5;
       break;

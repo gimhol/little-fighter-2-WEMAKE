@@ -424,7 +424,7 @@ export namespace Defines {
   export const BOOMERANG_CHASE_MAX_VZ = 1.8
   export const BOOMERANG_CHASE_ACC_Z = 0.1
   /** @see {GRAVITY} */
-  export const BOOMERANG_GRAVITY = 0.052
+  // export const BOOMERANG_GRAVITY = 0.052
 
   export const MAX_AI_DESIRE = 10000 as const;
 
