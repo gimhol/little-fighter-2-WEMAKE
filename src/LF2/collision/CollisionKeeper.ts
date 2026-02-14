@@ -27,6 +27,18 @@ import { handle_weapon_is_picked_secretly } from "./handle_weapon_is_picked_secr
 
 export class CollisionKeeper {
   protected pair_map: Map<string, ((collision: ICollision) => void)[]> = new Map();
+
+  /**
+   * 添加一个碰撞处理器
+   * 
+   * @param a_type_list     响应的攻方的类型：武器/角色/气功波 数组
+   * @param itr_kind_list   响应的攻击框的类型 数组
+   * @param v_type_list     响应的受方的类型：武器/角色/气功波 数组
+   * @param bdy_kind_list   响应的受击框的类型 数组
+   * @param fn              碰撞处理器
+   * @param a_state_list    响应的攻方的帧状态 数组
+   * @param v_state_list    响应的受方的帧状态 数组
+   */
   add(
     a_type_list: TEntityEnum[],
     itr_kind_list: ItrKind[],
@@ -34,14 +46,14 @@ export class CollisionKeeper {
     bdy_kind_list: BdyKind[],
     fn: (collision: ICollision) => void,
     a_state_list: StateEnum[] = ALL_STATES,
-    b_state_list: StateEnum[] = ALL_STATES,
+    v_state_list: StateEnum[] = ALL_STATES,
   ) {
     for (const itr_kind of itr_kind_list) {
       for (const a_type of a_type_list) {
         for (const bdy_kind of bdy_kind_list) {
           for (const v_type of v_type_list) {
             for (const a_state of a_state_list) {
-              for (const b_state of b_state_list) {
+              for (const b_state of v_state_list) {
                 // 这确实很地狱，妈的。
                 const key = [a_type, itr_kind, v_type, bdy_kind, a_state, b_state].join("_")
                 const fns = this.pair_map.get(key) || []
