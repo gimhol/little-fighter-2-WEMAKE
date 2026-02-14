@@ -2,7 +2,7 @@ import type { IEntityData, IFrameInfo, ITexturePieceInfo, TFace } from "@/LF2/de
 import { Builtin_FrameId, Defines, StateEnum } from "@/LF2/defines";
 import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
-import { clamp, floor, round } from "@/LF2/utils";
+import { clamp, floor, random_in, round } from "@/LF2/utils";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
@@ -40,8 +40,6 @@ export class EntityRender {
   protected variants = new Map<string, string[]>();
   protected shaking: number = 0;
   protected shaking_x: number = 0;
-  protected shaking_time: number = 0;
-  protected extra_shaking_time: number = 0;
   protected _data?: IEntityData;
 
   protected _tex?: ITexturePieceInfo
@@ -75,9 +73,7 @@ export class EntityRender {
     this.y = 0;
     this.z = 0;
     this.shaking = 0;
-    this.shaking_time = 0;
     this.shaking_x = 0;
-    this.extra_shaking_time = 0;
     const { lf2, data } = entity;
     this.variants.clear();
     for (const k in data.base.files) {
@@ -182,18 +178,15 @@ export class EntityRender {
   }
   update_shaking(dt: number) {
     const { entity: { shaking, facing } } = this;
-    if (shaking != this.shaking) {
-      if (!shaking) this.extra_shaking_time = EXTRA_SHAKING_TIME;
-      this.shaking = shaking;
-    }
-    if (this.shaking || this.extra_shaking_time > 0) {
-      this.shaking_time += dt
-      this.shaking_x = facing * (floor(this.shaking_time / 4) % 2) || -1;
-      if (!shaking) this.extra_shaking_time -= dt
+    if (shaking == this.shaking) return;
+
+    if (this.shaking = shaking) {
+      const x = floor(this.shaking / 2) % 2 ? 1 : -1
+      this.shaking_x = facing * random_in(0, 3) * x;
     } else {
       this.shaking_x = 0;
-      this.shaking_time = 0;
     }
+
   }
   render(dt: number) {
     this.update_shaking(dt)

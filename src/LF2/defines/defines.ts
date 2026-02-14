@@ -37,7 +37,7 @@ export namespace Defines {
    *
    * @type {number}
    */
-  export const DEFAULT_ITR_SHAKING: number = 4;
+  export const DEFAULT_ITR_SHAKING: number = 8;
 
   /**
    * 默认值：击中敌人的对象停顿多少帧
