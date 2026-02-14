@@ -1,5 +1,5 @@
 import { ICollision, ICollisionHandler } from "../base";
-import { ALL_ENTITY_ENUM, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
+import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
 import { is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
@@ -23,6 +23,8 @@ import { handle_weapon_is_hit } from "./handle_weapon_is_hit";
 import { handle_weapon_is_picked } from "./handle_weapon_is_picked";
 import { handle_weapon_is_picked_secretly } from "./handle_weapon_is_picked_secretly";
 
+
+
 export class CollisionKeeper {
   protected pair_map: Map<string, ((collision: ICollision) => void)[]> = new Map();
   add(
@@ -31,8 +33,8 @@ export class CollisionKeeper {
     v_type_list: TEntityEnum[],
     bdy_kind_list: BdyKind[],
     fn: (collision: ICollision) => void,
-    a_state_list: StateEnum[] = [],
-    b_state_list: StateEnum[] = [],
+    a_state_list: StateEnum[] = ALL_STATES,
+    b_state_list: StateEnum[] = ALL_STATES,
   ) {
     for (const itr_kind of itr_kind_list) {
       for (const a_type of a_type_list) {
@@ -62,6 +64,8 @@ export class CollisionKeeper {
     itr_kind: ItrKind,
     v_type: TEntityEnum,
     bdy_kind: BdyKind,
+    a_state: StateEnum,
+    b_state: StateEnum,
   ) {
     if (itr_kind === void 0) {
       console.warn("[CollisionHandler] itr.kind got", itr_kind);
@@ -71,7 +75,7 @@ export class CollisionKeeper {
       console.warn("[CollisionHandler] bdy.kind got", bdy_kind);
       debugger;
     }
-    return this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}`);
+    return this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}_${a_state}_${b_state}`);
   }
   handler(collision: ICollision) {
     return this.get(
@@ -79,6 +83,8 @@ export class CollisionKeeper {
       collision.itr.kind,
       collision.victim.data.type,
       collision.bdy.kind,
+      collision.attacker.frame.state,
+      collision.victim.frame.state,
     )
   }
   handle(collision: ICollision) {
@@ -249,7 +255,7 @@ collisions_keeper.add(
   [BdyKind.Normal],
   handle_weapon_is_hit,
   void 0,
-  [ StateEnum.Weapon_OnGround ]
+  [StateEnum.Weapon_OnGround]
 );
 
 collisions_keeper.add(
