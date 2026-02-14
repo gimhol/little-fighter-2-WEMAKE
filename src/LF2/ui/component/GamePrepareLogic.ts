@@ -82,7 +82,11 @@ export class GamePrepareLogic extends UIComponent {
       }
       fighter.name = player.name;
       fighter.team = slot_info.team || new_team();
-      fighter.facing = this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
+
+      fighter.facing = is_stage_mode ?
+        FacingFlag.Right :
+        this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
+
       if (player.is_com) {
         fighter.ctrl = Factory.inst.create_ctrl(fighter_data.id, player.id, fighter);
       } else {

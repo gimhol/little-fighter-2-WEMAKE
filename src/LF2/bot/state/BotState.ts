@@ -17,11 +17,11 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const me = c.entity;
     const m_facing = me.facing
     const en = c.defends.get()?.entity;
-
     if (!en) {
       c.desire('dt_F')
       return false
     }
+    if (c.desire('dt_P') > c.d_desire) return false
     const e_facing = en.facing
     if (e_facing == m_facing) { // 回头防御。
       if (e_facing < 0) c.key_down(GK.R).key_up(GK.L)
