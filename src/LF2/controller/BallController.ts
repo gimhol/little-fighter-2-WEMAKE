@@ -1,6 +1,7 @@
 
 import { FrameBehavior, GK, type IFrameInfo, type IVector3 } from "../defines";
 import { Ditto } from "../ditto";
+import { is_ball } from "../entity";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
 import { BaseController } from "./BaseController";
@@ -31,12 +32,9 @@ export class BallController extends BaseController {
       if (p1.y > p2.y) this.key_down(d).key_up(j)
       else if (p1.y < p2.y) this.key_down(j).key_up(d)
       else this.key_up(j, d)
-
-      if (frame.behavior !== FrameBehavior.Boomerang) {
-        if (vx > 0 && facing < 0) this.entity.facing = 1
-        else if (vx < 0 && facing > 0) this.entity.facing = -1
+      if (is_ball(this.entity)) {
+        this.entity.facing = vx > 0 ? 1 : -1
       }
-
     } else if (this._chasing) {
       this.target_lost(frame, facing);
       this._chasing = void 0
