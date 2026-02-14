@@ -1,5 +1,5 @@
 import { ICollision, ICollisionHandler } from "../base";
-import { ALL_ENTITY_ENUM, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, TEntityEnum } from "../defines";
+import { ALL_ENTITY_ENUM, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
 import { is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
@@ -31,15 +31,22 @@ export class CollisionKeeper {
     v_type_list: TEntityEnum[],
     bdy_kind_list: BdyKind[],
     fn: (collision: ICollision) => void,
+    a_state_list: StateEnum[] = [],
+    b_state_list: StateEnum[] = [],
   ) {
     for (const itr_kind of itr_kind_list) {
       for (const a_type of a_type_list) {
         for (const bdy_kind of bdy_kind_list) {
           for (const v_type of v_type_list) {
-            const key = [a_type, itr_kind, v_type, bdy_kind].join("_")
-            const fns = this.pair_map.get(key) || []
-            fns.push(fn)
-            this.pair_map.set(key, fns);
+            for (const a_state of a_state_list) {
+              for (const b_state of b_state_list) {
+                // 这确实很地狱，妈的。
+                const key = [a_type, itr_kind, v_type, bdy_kind, a_state, b_state].join("_")
+                const fns = this.pair_map.get(key) || []
+                fns.push(fn)
+                this.pair_map.set(key, fns);
+              }
+            }
           }
         }
       }
@@ -224,6 +231,25 @@ collisions_keeper.add(
   [EntityEnum.Weapon],
   [BdyKind.Normal],
   handle_weapon_is_hit,
+  void 0,
+  [
+    StateEnum.HeavyWeapon_OnGround,
+    StateEnum.HeavyWeapon_InTheSky,
+    StateEnum.HeavyWeapon_JustOnGround,
+    StateEnum.Weapon_Throwing,
+    StateEnum.Weapon_InTheSky,
+    StateEnum.Weapon_Rebounding
+  ]
+);
+
+collisions_keeper.add(
+  [EntityEnum.Weapon, EntityEnum.Ball],
+  [ItrKind.Normal],
+  [EntityEnum.Weapon],
+  [BdyKind.Normal],
+  handle_weapon_is_hit,
+  void 0,
+  [ StateEnum.Weapon_OnGround ]
 );
 
 collisions_keeper.add(

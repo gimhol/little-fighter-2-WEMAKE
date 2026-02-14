@@ -65,7 +65,7 @@ export namespace Defines {
   export const DAFUALT_QUBE_LENGTH: number = 24;
   export const DAFUALT_QUBE_LENGTH_POW2: number = 576;
 
-  export const DEFAULT_RESTING_MAX: number = 60;
+  export const DEFAULT_RESTING_MAX: number = 45;
   export const DEFAULT_TOUGHNESS_RESTING_MAX: number = 60;
 
   /**
