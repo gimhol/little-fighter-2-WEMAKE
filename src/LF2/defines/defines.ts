@@ -45,7 +45,7 @@ export namespace Defines {
    * @type {number}
    * @memberof World
    */
-  export const DEFAULT_ITR_MOTIONLESS: number = 4;
+  export const DEFAULT_ITR_MOTIONLESS: number = 8;
   export const DEFAULT_ITR_A_REST: number = 8;
   export const DEFAULT_CATCH_TIME: number = 680;
   export const DEFAULT_ITR_FALL: number = 40;
@@ -65,7 +65,7 @@ export namespace Defines {
   export const DAFUALT_QUBE_LENGTH: number = 24;
   export const DAFUALT_QUBE_LENGTH_POW2: number = 576;
 
-  export const DEFAULT_RESTING_MAX: number = 45;
+  export const DEFAULT_RESTING_MAX: number = 40;
   export const DEFAULT_TOUGHNESS_RESTING_MAX: number = 60;
 
   /**
@@ -500,7 +500,7 @@ export namespace Defines {
    * 
    * @link https://lf-empire.de/forum/showthread.php?tid=11204
    */
-  export const DEFAULT_IVY_D: number = 3.5;
+  export const DEFAULT_IVY_D: number = 5;
 
   export const WEAPON_WEIGHT_HEAVY = 1.1;
   export const WEAPON_WEIGHT_ARROW = 0.74;

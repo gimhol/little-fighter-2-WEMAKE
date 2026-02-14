@@ -774,7 +774,8 @@ export class World extends WorldDataset {
       dx,
       dy,
       dz,
-      m_distance: abs(dx) + abs(dy) + abs(dz)
+      m_distance: abs(dx) + abs(dy) + abs(dz),
+      duration: 0,
     };
     if (
       bdy.tester?.run(collision) === false ||

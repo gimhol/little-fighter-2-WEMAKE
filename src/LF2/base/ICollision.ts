@@ -5,7 +5,7 @@ import type { IBdyInfo, IBounding, IFrameInfo, IItrInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
 
 export interface ICollision {
-  
+
   readonly lf2: LF2;
 
   readonly world: World;
@@ -96,4 +96,6 @@ export interface ICollision {
   dy: number;
   dz: number;
   m_distance: number;
+  
+  duration: number;
 }
