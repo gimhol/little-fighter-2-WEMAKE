@@ -61,8 +61,11 @@ export class GamePrepareLogic extends UIComponent {
     else if (background_name_text) this.lf2.change_bg(background_name_text.background);
     const { far, near, left, right } = this.lf2.world.bg;
 
-    let cam_x = this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
+    const is_stage_mode = this.game_mode === "stage_mode"
+    let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
+
     this.world.renderer.cam_x = cam_x
+
     for (const [player, slot_info] of char_menu_logic.players) {
       const { fighter: fighter_data } = slot_info;
       if (!fighter_data) {
@@ -85,14 +88,15 @@ export class GamePrepareLogic extends UIComponent {
       } else {
         fighter.ctrl = new LocalController(player.id, fighter);
       }
-      fighter.set_position(
+      const x = is_stage_mode ?
         this.lf2.mt.range(
+          (cam_x + 40),
+          (cam_x + 80)
+        ) : this.lf2.mt.range(
           (cam_x + 1 * Defines.MODERN_SCREEN_WIDTH / 3),
           (cam_x + 2 * Defines.MODERN_SCREEN_WIDTH / 3)
-        ),
-        void 0,
-        this.lf2.mt.range(far, near)
-      )
+        )
+      fighter.set_position(x, void 0, this.lf2.mt.range(far, near))
       fighter.blinking = this.world.begin_blink_time;
       fighter.attach();
     }
