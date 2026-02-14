@@ -53,10 +53,9 @@ export namespace Defines {
   /**
    * 默认值：当角色fall_value低于DEFAULT_FALL_VALUE_DIZZY时，角色应当进入眩晕状态
    *
-   * @type {number}
    * @memberof World
    */
-  export const DEFAULT_FALL_VALUE_DIZZY: number = 40;
+  export const DEFAULT_FALL_VALUE_DIZZY = 40;
 
   /**
    * 默认值：

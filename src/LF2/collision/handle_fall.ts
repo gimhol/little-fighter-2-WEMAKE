@@ -24,7 +24,7 @@ export function handle_fall(collision: ICollision) {
     0,
   )
 
-  const is_critical = !!(itr.fall && itr.fall > Defines.DEFAULT_FALL_VALUE_CRITICAL)
+  const is_critical = !!(itr.fall && itr.fall >= Defines.DEFAULT_FALL_VALUE_CRITICAL)
 
   const spark_pos = victim.spark_point(a_cube, b_cube);
   let effect = SparkEnum.Hit;

@@ -43,6 +43,10 @@ export interface IWorldDataset {
   ivy_f: number;
   ivz_f: number;
   ivx_f: number;
+
+  /**
+   * 默认itr.dvy
+   */
   ivy_d: number;
   ivx_d: number;
 

@@ -503,7 +503,7 @@ export class World extends WorldDataset {
     this.a_collisions.clear();
     this._used_itrs.clear()
     this._temp_entitis_set.clear();
-    const update_collisions = game_time.value % 2 === 0
+    const update_collisions = game_time.value % 1 === 0
     const update_chasing = game_time.value % 8 === 0;
     if (update_chasing) {
       for (const chaser of this._enemy_chasers) {
