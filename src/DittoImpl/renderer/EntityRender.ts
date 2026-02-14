@@ -228,7 +228,7 @@ export class EntityRender {
         cam_x += offset_x
         x = clamp(x, cam_x, cam_r)
       }
-      this.offset_x = -offset_x + this.shaking_x;
+      this.offset_x = -offset_x;
       this.offset_y = centery;
       if (pic?.r) {
         const c1 = new T.Vector2(pic.ox ?? (pic.w / 2), -(pic.oy ?? (pic.h / 2)))
@@ -241,8 +241,12 @@ export class EntityRender {
       this.y = round(y - z / 2);
       this.z = round(z);
       this.node.position.set(this.x, this.y, this.z)
-      main_mesh.position.set(this.offset_x, this.offset_y, 0);
     }
+    main_mesh.position.set(
+      this.offset_x + this.shaking_x,
+      this.offset_y,
+      0
+    );
     const visible = !entity.invisible;
     const blinking = !!entity.blinking;
     main_mesh.visible = visible;
