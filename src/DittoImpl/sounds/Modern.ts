@@ -283,12 +283,22 @@ export class __Modern extends BaseSounds {
     const merger_node = this.ctx.createChannelMerger(2);
 
     const l_gain_node = this.ctx.createGain();
-    l_gain_node.gain.value = l_vol;
+
+    if (Number.isFinite(l_vol) && !Number.isNaN(l_vol))
+      l_gain_node.gain.value = l_vol;
+    else
+      debugger;
     l_gain_node.connect(merger_node, 0, 0);
     splitter_node.connect(l_gain_node, 0);
 
     const r_gain_node = this.ctx.createGain();
-    r_gain_node.gain.value = r_vol;
+
+    if (Number.isFinite(r_vol) && !Number.isNaN(r_vol))
+      r_gain_node.gain.value = r_vol;
+    else
+      debugger;
+
+
     r_gain_node.connect(merger_node, 0, 1);
     splitter_node.connect(r_gain_node, 0);
 
