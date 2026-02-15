@@ -184,10 +184,10 @@ export class EntityStatRender implements IEntityCallbacks {
   on_team_changed(e: Entity): void { this.update_name_sprite(e); this.update_reverse_sprite(e); }
   on_reserve_changed(e: Entity): void { this.update_reverse_sprite(e) }
   on_hp_changed(e: Entity): void { this.hp_bar.val = e.hp; }
-  on_hp_max_changed(e: Entity): void { this.self_healing_hp_bar.max = e.hp_max; }
+  on_hp_max_changed(e: Entity): void { this.self_healing_hp_bar.max = e.hp_max; this.hp_bar.max = e.hp_max; }
+  on_hp_r_changed(e: Entity): void { this.self_healing_hp_bar.val = e.hp_r; }
   on_mp_changed(e: Entity): void { this.mp_bar.val = e.mp; }
   on_mp_max_changed(e: Entity): void { this.self_healing_mp_bar.max = e.mp_max; }
-  on_hp_r_changed(e: Entity): void { this.self_healing_hp_bar.val = e.hp_r; }
   on_fall_value_changed(e: Entity): void { this.fall_value_bar.val = e.fall_value; }
   on_fall_value_max_changed(e: Entity): void { this.fall_value_bar.max = e.fall_value_max; }
   on_defend_value_changed(e: Entity): void { this.defend_value_bar.val = e.defend_value; }
