@@ -176,19 +176,18 @@ export class EntityRender {
   update_shaking(dt: number) {
     const { entity: { shaking, facing } } = this;
     if (shaking == this.shaking) return;
-
     if (this.shaking = shaking) {
       const x = floor(this.shaking / 2) % 2 ? 1 : -1
-      this.shaking_x = facing * random_in(0, 3) * x;
+      this.shaking_x = facing * random_in(0, 2) * x;
     } else {
       this.shaking_x = 0;
     }
 
   }
   render(dt: number) {
-    this.update_shaking(dt)
     const { entity, main_mesh } = this;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
+    this.update_shaking(dt)
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
