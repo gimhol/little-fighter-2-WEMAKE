@@ -911,8 +911,7 @@ export class Entity {
           case OpointMultiEnum.AccordingEnemies:
             enemies = this.world.list_enemy_fighters(this, o => o.hp > 0)
             if (skip_zero && !enemies.length) break;
-            if (skip_zero)
-              count = clamp(enemies.length, min, max);
+            count = clamp(enemies.length, min, max);
             break;
           case OpointMultiEnum.AccordingAllies:
             allies = this.world.list_ally_fighters(this, o => o.hp > 0)
