@@ -8,13 +8,13 @@ export type __KEEP__ = IOpointInfo
  */
 export enum OpointMultiEnum {
   /** 
-   * 根据敌人数量，等比生成
+   * 根据敌人数量生成
    * @see {IOpointInfo.multi}
    */
   AccordingEnemies = 0,
 
   /**
-   * 根据队友数量，等比生成
+   * 根据队友数量生成
    * @see {IOpointInfo.multi}
    */
   AccordingAllies = 1,

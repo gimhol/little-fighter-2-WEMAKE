@@ -902,15 +902,22 @@ export class Entity {
       if (is_num(multi)) {
         count = multi;
       } else if (multi) {
-        multi_type = multi.type
-        switch (multi.type) {
+        const {
+          type, min = 0, max = 355,
+          // TODO: 改用skip_zero来表达
+          skip_zero = opoint.spreading === OpointSpreading.FirzenDisater
+        } = multi
+        switch (multi_type = type) {
           case OpointMultiEnum.AccordingEnemies:
             enemies = this.world.list_enemy_fighters(this, o => o.hp > 0)
-            count = max(multi.min, enemies.length);
+            if (skip_zero && !enemies.length) break;
+            if (skip_zero)
+              count = clamp(enemies.length, min, max);
             break;
           case OpointMultiEnum.AccordingAllies:
             allies = this.world.list_ally_fighters(this, o => o.hp > 0)
-            count = max(multi.min, allies.length);
+            if (skip_zero && !allies.length) break;
+            count = clamp(allies.length, min, max);
             break;
         }
       }
