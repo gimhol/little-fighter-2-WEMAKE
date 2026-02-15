@@ -8,8 +8,8 @@ import type { ImageMgr } from "../ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
 import { get_color_material } from "./MaterialKeeper";
+import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
-const vec001 = new T.Vector3(0, 0, 1)
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
@@ -25,8 +25,6 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
-const EXTRA_SHAKING_TIME = 30;
-const r_vec3 = new T.Vector3(0, 0, -1);
 export class EntityRender {
   readonly world_renderer: WorldRenderer;
 
@@ -83,7 +81,6 @@ export class EntityRender {
     }
     this._data = entity.data;
     this.images = get_img_map(lf2, entity.data);
-
     {
       const texture = this.images.get("0#w")?.pic?.texture;
       const mesh = this.outline_mesh = this.outline_mesh || new T.Mesh(
@@ -224,10 +221,12 @@ export class EntityRender {
       this.offset_x = -offset_x;
       this.offset_y = centery;
       if (pic?.r) {
-        const c1 = new T.Vector2(pic.ox ?? (pic.w / 2), -(pic.oy ?? (pic.h / 2)))
-        const cc = c1.clone().rotateAround(vec001, pic.r)
-        this.offset_x -= (cc.x - c1.x)
-        this.offset_y -= (cc.y - c1.y)
+
+        const c1x = vec2.x = pic.ox ?? (pic.w / 2)
+        const c1y = vec2.y = -(pic.oy ?? (pic.h / 2))
+        const cc = vec2.rotateAround(vec001, pic.r)
+        this.offset_x -= (cc.x - c1x)
+        this.offset_y -= (cc.y - c1y)
         main_mesh.setRotationFromAxisAngle(vec001, pic.r)
       }
       this.x = round(x);
