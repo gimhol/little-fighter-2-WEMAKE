@@ -1,7 +1,7 @@
 import { Defines, Difficulty } from "./defines";
-import { IWorldDataset } from "./IWorldDataset";
+import { IWorldDataset, world_dataset_field_map as world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
-
+import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {
   static readonly TAG: string = 'WorldDataset';
   /** 
@@ -192,9 +192,23 @@ export class WorldDataset implements IWorldDataset {
   fall_r_value: number = Defines.FALL_R_VALUE;
   defend_r_ticks: number = Defines.DEFEND_R_TICKS;
   defend_r_value: number = Defines.DEFEND_R_VALUE;
+  fall_value_max: number = Defines.DEFAULT_FALL_VALUE_MAX;
+  catch_time_max: number = Defines.DEFAULT_CATCH_TIME;
+  defend_value_max: number = Defines.DEFAULT_DEFEND_VALUE_MAX;
+  defend_ratio: number = Defines.DEFAULT_DEFEND_INJURY_RATIO
+  mp_max: number = Defines.DEFAULT_MP_MAX;
+  hp_max: number = Defines.DEFAULT_HP_MAX;
+  resting_max: number = Defines.DEFAULT_RESTING_MAX;
 
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
+    Object.assign(this, wdataset)
   }
   on_dataset_change?: (k: string, curr: any, prev: any) => void;
+  dump_dataset() {
+    const ret: any = {}
+    for (const k in world_dataset_fields)
+      ret[k] = (this as any)[k];
+    return ret;
+  }
 }

@@ -25,18 +25,18 @@ export namespace Defines {
   export const MODERN_SCREEN_WIDTH = 794;
   export const MODERN_SCREEN_HEIGHT = 450;
 
-  export const DEFAULT_HP = 500;
-  export const DEFAULT_MP = 500;
+  export const DEFAULT_HP_MAX = 500;
+  export const DEFAULT_MP_MAX = 500;
   export const DEFAULT_FALL_VALUE_MAX = 140;
   export const DEFAULT_DEFEND_VALUE_MAX = 90;
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
   export const DEFAULT_FIREN_FLAME_SPEED_Z = 0.5;
 
   /** 被击中的对象晃动多少帧 */
-  export const DEFAULT_ITR_SHAKING = 5;
+  export const DEFAULT_ITR_SHAKING = 6;
 
   /** 击中敌人的对象停顿多少帧 */
-  export const DEFAULT_ITR_MOTIONLESS = 5;
+  export const DEFAULT_ITR_MOTIONLESS = 6;
   export const DEFAULT_ITR_A_REST = 8;
   export const DEFAULT_CATCH_TIME = 680;
   export const DEFAULT_ITR_FALL = 40;
@@ -380,7 +380,6 @@ export namespace Defines {
   }
 
   export const DEFAULT_BREAK_DEFEND_VALUE = 32;
-  export const DEFAULT_DEFEND_VALUE = 90;
   export const BAT_CHASE_SPREADING_VX = arithmetic_progression(-6, 6, 1)
   export const BAT_CHASE_SPREADING_VZ = arithmetic_progression(-2, 2, 1)
   export const BAT_CHASE_MAX_VX = 7

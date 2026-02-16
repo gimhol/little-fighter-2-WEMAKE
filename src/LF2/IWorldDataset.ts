@@ -146,6 +146,14 @@ export interface IWorldDataset {
 
   /** 恢复值(每次回多少) */
   defend_r_value: number;
+
+  fall_value_max: number;
+  catch_time_max: number;
+  defend_value_max: number;
+  defend_ratio: number;
+  mp_max: number;
+  hp_max: number;
+  resting_max: number;
 }
 interface IFieldInfo {
   title: string;
@@ -155,7 +163,7 @@ interface IFieldInfo {
   max?: number;
   step?: number;
 }
-export const world_field_map: Record<keyof IWorldDataset, IFieldInfo> = {
+export const world_dataset_field_map: Record<keyof IWorldDataset, IFieldInfo> = {
   gravity: { title: "重力", desc: "重力", type: 'float' },
   begin_blink_time: { title: "入场闪烁时长", desc: "入场闪烁时长", type: 'int' },
   gone_blink_time: { title: "消失闪烁时长", desc: "消失闪烁时长", type: 'int' },
@@ -195,7 +203,7 @@ export const world_field_map: Record<keyof IWorldDataset, IFieldInfo> = {
   friction_z: { title: "地面摩擦Z", desc: "在地面的物体，每帧Z速度将±=此值,向0靠近", type: 'float' },
   screen_w: { title: "screen_w", desc: "screen_w", type: '' },
   screen_h: { title: "screen_h", desc: "screen_h", type: '' },
-  sync_render: { title: "sync_render", desc: "sync_render", type: '' },
+  sync_render: { title: "sync_render", desc: "sync_render", type: 'int', min: 0, max: 2, step: 1 },
   difficulty: { title: "difficulty", desc: "difficulty", type: '' },
   infinity_mp: { title: "infinity_mp", desc: "infinity_mp", type: 'boolean', min: 0, max: 1, step: 1 },
   fall_r_ticks: { title: "fall_r_ticks", desc: "fall_r_ticks", type: 'int' },
@@ -203,4 +211,11 @@ export const world_field_map: Record<keyof IWorldDataset, IFieldInfo> = {
   defend_r_ticks: { title: "defend_r_ticks", desc: "defend_r_ticks", type: 'int' },
   defend_r_value: { title: "defend_r_value", desc: "defend_r_value", type: 'int' },
   itr_arest: { title: "itr_arest", desc: "itr_arest", type: 'int' },
+  fall_value_max: { title: "fall_value_max", desc: "fall_value_max", type: 'int' },
+  catch_time_max: { title: "catch_time_max", desc: "catch_time_max", type: 'int' },
+  defend_value_max: { title: "defend_value_max", desc: "defend_value_max", type: 'int' },
+  defend_ratio: { title: "defend_ratio", desc: "defend_ratio", type: 'int' },
+  mp_max: { title: "mp_max", desc: "mp_max", type: 'int' },
+  hp_max: { title: "hp_max", desc: "hp_max", type: 'int' },
+  resting_max: { title: "resting_max", desc: "resting_max", type: 'int' },
 }

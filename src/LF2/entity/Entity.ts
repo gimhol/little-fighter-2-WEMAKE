@@ -99,21 +99,21 @@ export class Entity {
   public dismiss_data!: IEntityData | null;
   public has_stat_bar!: boolean;
   protected _resting!: number;
-  protected _resting_max!: number;
+  protected _resting_max?: number; // fallback from world
   protected _toughness!: number;
   protected _toughness_max!: number;
   protected _toughness_resting!: number;
   protected _toughness_resting_max!: number;
   protected _fall_value!: number;
-  protected _fall_value_max!: number;
+  protected _fall_value_max?: number;
   protected _fall_r_tick!: Times;
   protected _fall_r_value!: number;
   protected _defend_value!: number;
-  protected _defend_value_max!: number;
+  protected _defend_value_max?: number; // fallback from world
   protected _defend_r_tick!: Times;
   protected _defend_r_value!: number;
   protected _healing!: number;
-  protected _defend_ratio!: number;
+  protected _defend_ratio?: number; // fallback from world
   public throwinjury!: number | null;
   public facing!: TFace;
   public frame!: IFrameInfo;
@@ -139,10 +139,10 @@ export class Entity {
    */
   protected _team!: string;
   protected _mp!: number;
-  protected _mp_max!: number;
+  protected _mp_max?: number;
   protected _hp!: number;
   protected _hp_r!: number;
-  protected _hp_max!: number;
+  protected _hp_max?: number;
   protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
   protected _emitter_opoint!: IOpointInfo | null;
@@ -158,7 +158,7 @@ export class Entity {
    * 当抓住一个被击晕的人时，此值充满。
    */
   protected _catch_time!: number;
-  protected _catch_time_max!: number;
+  protected _catch_time_max?: number;
 
   /**
    * 隐身计数，每帧-1
@@ -270,9 +270,9 @@ export class Entity {
     if (o === v) return;
     this._toughness_resting_max = v;
   }
-  get resting_max(): number { return this._resting_max; }
+  get resting_max(): number { return this._resting_max ?? this.world.resting_max; }
   set resting_max(v: number) {
-    const o = this._resting_max;
+    const o = this.resting_max;
     if (o === v) return;
     this._resting_max = v;
     this.callbacks.emit("on_resting_max_changed")(this, v, o);
@@ -320,9 +320,16 @@ export class Entity {
     if (o === v) return;
     this._toughness_resting = v;
   }
-  get fall_value_max(): number { return this._fall_value_max; }
+  get catch_time_max(): number { return this._catch_time_max ?? this.world.catch_time_max; }
+  set catch_time_max(v: number) {
+    const o = this.catch_time_max;
+    if (o === v) return;
+    this._catch_time_max = v;
+    this.callbacks.emit("on_catch_time_max_changed")(this, v, o);
+  }
+  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value_max; }
   set fall_value_max(v: number) {
-    const o = this._fall_value_max;
+    const o = this.fall_value_max;
     if (o === v) return;
     this._fall_value_max = v;
     this.callbacks.emit("on_fall_value_max_changed")(this, v, o);
@@ -338,9 +345,9 @@ export class Entity {
     }
     this.callbacks.emit("on_defend_value_changed")(this, v, o);
   }
-  get defend_value_max(): number { return this._defend_value_max; }
+  get defend_value_max(): number { return this._defend_value_max ?? this.world.defend_value_max }
   set defend_value_max(v: number) {
-    const o = this._defend_value_max;
+    const o = this.defend_value_max;
     if (o === v) return;
     this._defend_value_max = v;
     this.callbacks.emit("on_defend_value_max_changed")(this, v, o);
@@ -354,13 +361,12 @@ export class Entity {
     this.callbacks.emit("on_healing_changed")(this, v, o);
   }
 
-  get defend_ratio(): number { return this._defend_ratio; }
+  get defend_ratio(): number { return this._defend_ratio ?? this.world.defend_ratio; }
   set defend_ratio(v: number) {
-    const o = this._defend_ratio;
+    const o = this.defend_ratio;
     if (o === v) return;
     this._defend_ratio = v;
   }
-
 
   get catching() {
     return this._catching;
@@ -457,20 +463,22 @@ export class Entity {
     }
   }
   get mp_max(): number {
-    return this._mp_max;
+    return this._mp_max ?? this.world.mp_max;
   }
   set mp_max(v: number) {
-    const o = this._mp_max;
+    const o = this.mp_max;
     v = max(0, v)
+    if (v === o) return;
     this.callbacks.emit("on_mp_max_changed")(this, (this._mp_max = v), o);
   }
 
   get hp_max(): number {
-    return this._hp_max;
+    return this._hp_max ?? this.world.hp_max;
   }
   set hp_max(v: number) {
-    const o = this._hp_max;
+    const o = this.hp_max;
     v = max(0, v)
+    if (v === o) return;
     this.callbacks.emit("on_hp_max_changed")(this, (this._hp_max = v), o);
   }
 
@@ -600,7 +608,8 @@ export class Entity {
     this.reset(world, data, states)
   }
 
-  reset(world: World, data: IEntityData, states: States = ENTITY_STATES) {
+  reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
+    this._data = d;
     this.world = world;
     this.ground = Ground.Default;
     this.id = new_id();
@@ -621,17 +630,16 @@ export class Entity {
     this.has_stat_bar = false;
     this._game_time = -1;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
-    this._resting_max = Defines.DEFAULT_RESTING_MAX;
+    this._resting_max = d.base.resting;
     this._resting = 0;
-    this._fall_value = Defines.DEFAULT_FALL_VALUE_MAX;
     this._toughness = 0;
     this._toughness_max = 0;
     this._toughness_resting = 0;
-    this._fall_value_max = Defines.DEFAULT_FALL_VALUE_MAX;
-    this._defend_value = Defines.DEFAULT_DEFEND_VALUE_MAX;
-    this._defend_value_max = Defines.DEFAULT_DEFEND_VALUE_MAX;
+    this._fall_value_max = d.base.fall_value;
+    this._defend_value_max = d.base.defend_value;
+    this._defend_ratio = d.base.defend_ratio;
     this._healing = 0;
-    this._defend_ratio = Defines.DEFAULT_DEFEND_INJURY_RATIO;
+    this._catch_time_max = d.base.catch_time;
     this.throwinjury = null;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
@@ -646,18 +654,12 @@ export class Entity {
     this.callbacks.clear();
     this._name = ""
     this._team = new_team();
-    this._mp = Defines.DEFAULT_MP;
-    this._mp_max = Defines.DEFAULT_MP;
-    this._hp = Defines.DEFAULT_HP;
-    this._hp_r = Defines.DEFAULT_HP;
-    this._hp_max = Defines.DEFAULT_HP;
     this._landing_frame = null;
     this._bearer = null;
     this._holding = null;
     this._emitters.length = 0;
     this._emitter_opoint = null;
     this.next_frame = null;
-
     this.a_rest = 0;
     this.v_rests.clear()
     this.blockers.clear()
@@ -665,8 +667,6 @@ export class Entity {
     this.victims.clear()
     this.motionless = 0;
     this.shaking = 0;
-
-    this._data = data;
     this.states = states;
     this._hp_r_tick = new Times(0, world.hp_r_ticks);
     this._mp_r_tick = new Times(0, world.mp_r_ticks);
@@ -674,25 +674,19 @@ export class Entity {
     this._defend_r_tick = new Times(0, world.defend_r_ticks);
     this._defend_r_value = world.defend_r_value;
     this._fall_r_value = world.fall_r_value;
-    this._hp_max = data.base.hp ?? Defines.DEFAULT_HP;
+    this._hp_max = d.base.hp;
     this._ctrl = new InvalidController("", this);
-    this._mp_max = data.base.mp ?? Defines.DEFAULT_MP;
-    this._defend_ratio = data.base.defend_ratio ?? Defines.DEFAULT_DEFEND_INJURY_RATIO;
+    this._mp_max = d.base.mp;
+    this._defend_ratio = d.base.defend_ratio
 
     const { armor } = this._data.base
-    this.armor = armor || null
-    if (armor) this.toughness = this.toughness_max = armor.toughness
-
-    this._catch_time_max = data.base.catch_time ?? Defines.DEFAULT_CATCH_TIME;
-    this.fall_value_max = this._data.base.fall_value ?? Defines.DEFAULT_FALL_VALUE_MAX;
-    this.defend_value_max = this._data.base.defend_value ?? Defines.DEFAULT_DEFEND_VALUE_MAX;
-    this.resting_max = this._data.base.resting ?? Defines.DEFAULT_RESTING_MAX;
+    this.armor = armor || null;
+    if (armor) this.toughness = this.toughness_max = armor.toughness;
     this.fall_value = this.fall_value_max;
     this.defend_value = this.defend_value_max;
-    this._hp = this._hp_r = this._hp_max;
-    this._mp = this._mp_max;
-    this._catch_time_max = Defines.DEFAULT_CATCH_TIME
-    this._catch_time = Defines.DEFAULT_CATCH_TIME
+    this._hp = this._hp_r = this.hp_max;
+    this._mp = this.mp_max;
+    this._catch_time = this.catch_time_max;
     this._invisible_duration = 0;
     this._invulnerable_duration = 0;
     this._blinking_duration = 0;
@@ -702,7 +696,7 @@ export class Entity {
     this._dead_gone = null;
     this._dead_join = null;
 
-    this.drink = data.base.drink ? new DrinkInfo(data.base.drink) : null
+    this.drink = d.base.drink ? new DrinkInfo(d.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
     this._chasing = null;
@@ -763,11 +757,11 @@ export class Entity {
       pos_y = pos_y + emitter_frame.centery - opoint.y;
       pos_x = pos_x - emitter.facing * (emitter_frame.centerx - opoint.x);
     }
-    pos_x = round_float(pos_x)
-    pos_y = round_float(pos_y)
-    pos_z = round_float(pos_z + (opoint.z ?? 0))
-
-    this._position.set(pos_x, pos_y, pos_z);
+    this.set_position(
+      pos_x,
+      pos_y,
+      pos_z + (opoint.z ?? 0)
+    );
 
     const result = this.get_next_frame(opoint.action);
     facing = result?.which.facing
@@ -1280,7 +1274,7 @@ export class Entity {
    * @memberof Entity
    */
   mp_recovering(): void {
-    if (this._hp <= 0 || this._mp >= this._mp_max || this._blinking_duration || this._invisible_duration)
+    if (this._hp <= 0 || this._mp >= this.mp_max || this._blinking_duration || this._invisible_duration)
       return;
     const { base } = this._data
     this._mp_r_tick.max = base.mp_r_ticks ?? this.world.mp_r_ticks;
@@ -1288,7 +1282,7 @@ export class Entity {
       return;
     const r_ratio = base.mp_r_ratio ?? this.world.mp_r_ratio;
     const value = 1 + floor(round_float((500 - min(r_ratio * this._hp, 500)) / 100))
-    this.mp = min(this._mp_max, this._mp + value);
+    this.mp = min(this.mp_max, this._mp + value);
   }
 
   /**
@@ -1564,54 +1558,35 @@ export class Entity {
     }
 
     const frame_a = cer.frame;
-    const { cpoint: cpoint_a } = frame_a;
-    if (!cpoint_a) {
+    const { cpoint: cp_a } = frame_a;
+    if (!cp_a) {
       this._catcher = null;
       this.prev_cpoint_a = null;
       this.set_velocity_y(3);
       this.next_frame = this.get_caught_cancel_frame();
       return true;
     }
-    if (this.prev_cpoint_a !== cpoint_a) {
-      const { injury } = cpoint_a;
+
+    if (this.prev_cpoint_a !== cp_a) {
+      const { injury } = cp_a;
       if (injury) {
         this.hp -= injury;
         this.hp_r -= round(injury * (1 - this.world.hp_recoverability))
       }
-      if (cpoint_a.shaking && cpoint_a.shaking > 0)
-        this.shaking = cpoint_a.shaking;
+      if (cp_a.shaking && cp_a.shaking > 0)
+        this.shaking = cp_a.shaking;
     }
-    this.prev_cpoint_a = cpoint_a;
+    this.prev_cpoint_a = cp_a;
 
-    const { throwvx = 0, throwvy = 0, throwvz = 0, throwinjury = 0 } = cpoint_a;
-
-    if (throwinjury > 0) this.throwinjury = throwinjury;
-    if (throwvx || throwvy || throwvz) {
-      this.set_velocity(
-        throwvx * this.world.tvx_f * cer.facing,
-        throwvy * this.world.tvy_f,
-        throwvz * this.world.tvz_f * cer.ctrl.UD || 0,
-      )
-      const { tx, ty, tz } = cpoint_a
-      const w = this.frame.pic?.w || 0
-      const h = this.frame.pic?.h || 0
-
-
-
-      if (tx !== void 0)
-        this._position.x = cer.position.x - cer.facing * (frame_a.centerx - tx) - this.facing * (this.frame.centerx - w / 2);
-
-      if (ty !== void 0) this._position.y = cer.position.y + frame_a.centery - ty - h / 2;
-      if (tz !== void 0) this._position.z = cer.position.z + tz;
-
-
-
-
+    const { throwvx: tx = 0, throwvy: ty = 0, throwvz: tz = 0, throwinjury: ti = 0 } = cp_a;
+    if (ti > 0) this.throwinjury = ti;
+    if (tx || ty || tz) {
+      this.follow_catcher();
       this._catcher = null;
       this.prev_cpoint_a = null;
     }
-    if (cpoint_a.vaction) {
-      const nf = this.get_next_frame(cpoint_a.vaction)?.which
+    if (cp_a.vaction) {
+      const nf = this.get_next_frame(cp_a.vaction)?.which
       if (nf) this.next_frame = nf;
       return !!nf
     };
@@ -1632,7 +1607,7 @@ export class Entity {
     }
     if (!cpoint_a) {
       this._catching = null;
-      this._catch_time = this._catch_time_max;
+      this._catch_time = this.catch_time_max;
       this.next_frame = this.get_catching_cancel_frame();
       return true;
     }
@@ -1665,29 +1640,36 @@ export class Entity {
   }
 
   follow_catcher() {
-    if (!this._catcher) return;
-    const {
-      centerx: centerx_a,
-      centery: centery_a,
-      cpoint: c_a,
-    } = this._catcher.frame;
-    const {
-      centerx: centerx_b,
-      centery: centery_b,
-      cpoint: c_b
-    } = this.frame;
-    if (!c_a) return;
-    if (c_a.throwvx || c_a.throwvx || c_a.throwvx) return;
-
-    const face_a = this._catcher.facing;
-    const face_b = this.facing;
-    const { x: px, y: py, z: pz } = this._catcher.position;
-    const { x: c_b_x = 0, y: c_b_y = 0, z: c_b_z = 0 } = c_b || {}
-    this._position.set(
-      px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b_x),
-      round(py + centery_a - c_a.y + c_b_y - centery_b),
-      round(pz + c_a.z - c_b_z),
+    const a = this._catcher;
+    const b = this;
+    if (!a) return;
+    const { centerx: afx, centery: afy, cpoint: ac, } = a.frame;
+    if (!ac) return;
+    const { throwvx: tx = 0, throwvy: ty = 0, throwvz: tz = 0 } = ac;
+    const { centerx: bfx, centery: bfy, cpoint: bc } = this.frame;
+    const { x: ax, y: ay, z: az } = a.position;
+    const a_face = a.facing;
+    const { x: acx = 0, y: acy = 0, z: acz = 0 } = ac
+    if (tx || ty || tz) {
+      const vx = (tx * this.world.tvx_f * a_face)
+      const vy = (ty * this.world.tvy_f)
+      const vz = (tz * this.world.tvz_f) * (a.ctrl.UD || 0)
+      this.set_velocity(vx, vy, vz)
+      this.set_position(
+        vx + ax - a_face * (afx - acx),
+        vy + ay + afy - acy,
+        vz + az + acz,
+      )
+      return;
+    }
+    const b_face = b.facing;
+    const { x: bcx = 0, y: bcy = 0, z: bcz = 0 } = bc || {}
+    this.set_position(
+      ax - a_face * (afx - acx) + b_face * (bfx - bcx),
+      ay + afy - acy + bcy - bfy,
+      az + acz - bcz,
     )
+
   }
 
   /**
@@ -1746,7 +1728,7 @@ export class Entity {
       Ditto.warn(`[Entity::start_caught] cannot catch, catchingact got ${itr.catchingact}`);
       return;
     }
-    this._catch_time = this._catch_time_max;
+    this._catch_time = this.catch_time_max;
     this._catching = target;
     const next_frame = this.get_next_frame(itr.catchingact)?.which || null;
     if (next_frame) this.enter_frame(next_frame)
@@ -1876,7 +1858,7 @@ export class Entity {
       else
         this.enter_frame(this.find_auto_frame());
     }
-    
+
     const {
       wpoint: wp_b = {} as Partial<IWpointInfo>,
       centerx: cx_b, centery: cy_b,
@@ -1891,16 +1873,16 @@ export class Entity {
     const { x: wb_x = 0, y: wb_y = 0, z: wb_z = 0 } = wp_b
 
     if (wp_a) {
-      this._position.set(
-        round(x + this.facing * (wa_x - cx_a + cx_b - wb_x)),
-        round(y + cy_a - wa_y - cy_b + wb_y),
-        round(z + wa_z - wb_z),
+      this.set_position(
+        x + this.facing * (wa_x - cx_a + cx_b - wb_x),
+        y + cy_a - wa_y - cy_b + wb_y,
+        z + wa_z - wb_z,
       )
     } else { // 还原wpoint丢失的情况
-      this._position.set(
-        round(x + this.facing * (wa_x - cx_a)),
-        round(y + cy_a - wa_y),
-        round(z + wa_z),
+      this.set_position(
+        x + this.facing * (wa_x - cx_a),
+        y + cy_a - wa_y,
+        z + wa_z,
       )
     }
 
@@ -1910,7 +1892,7 @@ export class Entity {
         this.data.indexes?.on_hands,
         this.data.indexes?.throwings
       )
-      this._position.set(
+      this.set_position(
         round(x + this.facing * (wa_x - cx_a)),
         round(y + cy_a - wa_y),
         round(z + wa_z),

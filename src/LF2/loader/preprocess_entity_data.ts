@@ -14,11 +14,6 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   const { images, sounds } = lf2;
 
   const { small, head } = data.base;
-  data.base.fall_value = data.base.fall_value ?? Defines.DEFAULT_FALL_VALUE_MAX;
-  data.base.defend_value = data.base.defend_value ?? Defines.DEFAULT_DEFEND_VALUE_MAX;
-  data.base.hp = data.base.hp ?? Defines.DEFAULT_HP;
-  data.base.mp = data.base.mp ?? Defines.DEFAULT_MP;
-
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));
   is_non_blank_str(head) && jobs.push(images.load_img(head, head));
   data.base.dead_sounds?.forEach(i => is_non_blank_str(i) && sounds.load(i, i));

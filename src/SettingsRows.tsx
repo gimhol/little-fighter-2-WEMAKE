@@ -10,7 +10,7 @@ import Select from "./Component/Select";
 import Show from "./Component/Show";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
-import { IWorldDataset, world_field_map } from "./LF2/IWorldDataset";
+import { IWorldDataset, world_dataset_field_map } from "./LF2/IWorldDataset";
 import { LF2 } from "./LF2/LF2";
 import { BotController } from "./LF2/bot/BotController";
 import { BaseController } from "./LF2/controller/BaseController";
@@ -22,6 +22,7 @@ import { list_writable_properties, TProperty } from "./LF2/utils/list_writable_p
 import { is_num } from "./LF2/utils/type_check";
 import { useLocalNumber, useLocalString } from "./useLocalStorage";
 import { CMD } from "./LF2/defines/CMD";
+import { download } from "./Utils/download";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
   "enemy chaser": (e: Entity) => new BotController("", e),
@@ -274,7 +275,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
         className={csses.settings_row}
         show={props.show_world_tuning !== false}>
         {world_properties?.map((v, idx) => {
-          const r = world_field_map[v.name as keyof IWorldDataset]
+          const r = world_dataset_field_map[v.name as keyof IWorldDataset]
           if (!r) return null
           const { title, desc = title, type } = r
           if (!type) return null;
@@ -321,6 +322,20 @@ export default function SettingsRows(props: ISettingsRowsProps) {
             </Titled>
           );
         })}
+        <Button onClick={() => {
+          const json_blob = new Blob([
+            JSON.stringify(
+              {
+                __is_world_dataset__: true,
+                ...lf2.world.dump_dataset(),
+              }
+            )], {
+            type: 'application/json;charset=utf-8'
+          })
+          download(URL.createObjectURL(json_blob), 'world.wdataset.json')
+        }}>
+          Dump Dataset
+        </Button>
       </Show.Div>
     </>
   );

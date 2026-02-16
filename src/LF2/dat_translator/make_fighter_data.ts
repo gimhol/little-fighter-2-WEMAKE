@@ -56,8 +56,6 @@ export function make_character_data(
   if (info.jump_distance) info.jump_distance /= 2;
   if (info.rowing_distance) info.rowing_distance /= 2;
 
-  info.fall_value = Defines.DEFAULT_FALL_VALUE_MAX;
-  info.defend_value = Defines.DEFAULT_DEFEND_VALUE_MAX;
   const round_trip_frames_map: any = {};
   const frame_mp_hp_map = new Map<string, [number, number]>();
 
