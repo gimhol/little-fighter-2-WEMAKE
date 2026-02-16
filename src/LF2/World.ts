@@ -434,9 +434,13 @@ export class World extends WorldDataset {
           else Ditto.warn('DEL_PUPPET failed, puppet not found.')
           continue;
         }
-        case CMD.LF2_NET:
-        case CMD.HERO_FT:
-        case CMD.GIM_INK: this.lf2.toggle_cheat_enabled(cmd); continue;
+        case CMD.LF2_NET: case CMD.LF2_NET_ON: case CMD.LF2_NET_OFF:
+        case CMD.HERO_FT: case CMD.HERO_FT_ON: case CMD.HERO_FT_OFF:
+        case CMD.GIM_INK: case CMD.GIM_INK_ON: case CMD.GIM_INK_OFF:
+          const [cheat, state] = cmd.split('#')
+          this.lf2.set_cheat(cheat, state !== void 0 ? state === '1' : void 0);
+          continue;
+
         case CMD.F1: this.paused = !this.paused; continue;
         case CMD.F2: this.set_paused(2); continue;
         case CMD.F4: this.lf2.pop_ui_safe(); continue;
@@ -536,13 +540,7 @@ export class World extends WorldDataset {
           }
         }
       }
-      e.update();
-      if (
-        e.frame.id === Builtin_FrameId.Gone ||
-        e.frame.state === StateEnum.Gone
-      ) {
-        this.gone_entities.push(e);
-      }
+
       if (update_collisions) {
         const a_ctrl = e.ctrl
         for (const b of this._temp_entitis_set) {
@@ -561,6 +559,13 @@ export class World extends WorldDataset {
           else if (collision1?.handlers) this.add_collisions(collision1)
           else if (collision2?.handlers) this.add_collisions(collision2)
         }
+      }
+      e.update();
+      if (
+        e.frame.id === Builtin_FrameId.Gone ||
+        e.frame.state === StateEnum.Gone
+      ) {
+        this.gone_entities.push(e);
       }
       this._temp_entitis_set.add(e);
     }

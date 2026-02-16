@@ -3,7 +3,7 @@ import { arithmetic_progression } from "../utils/math/arithmetic_progression";
 import { Builtin_FrameId } from "./Builtin_FrameId";
 import { CheatType } from "./CheatType";
 import { Difficulty } from "./Difficulty";
-import type { GameKey } from "./GameKey";
+import { GK, type GameKey } from "./GameKey";
 import type { IBgData } from "./IBgData";
 import type { INextFrame } from "./INextFrame";
 import type { IPairByFace } from "./IPairByFace";
@@ -32,23 +32,14 @@ export namespace Defines {
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
   export const DEFAULT_FIREN_FLAME_SPEED_Z = 0.5;
 
-  /**
-   * 默认值：被击中的对象晃动多少帧
-   *
-   * @type {number}
-   */
-  export const DEFAULT_ITR_SHAKING: number = 8;
+  /** 被击中的对象晃动多少帧 */
+  export const DEFAULT_ITR_SHAKING = 5;
 
-  /**
-   * 默认值：击中敌人的对象停顿多少帧
-   *
-   * @type {number}
-   * @memberof World
-   */
-  export const DEFAULT_ITR_MOTIONLESS: number = 8;
-  export const DEFAULT_ITR_A_REST: number = 8;
-  export const DEFAULT_CATCH_TIME: number = 680;
-  export const DEFAULT_ITR_FALL: number = 40;
+  /** 击中敌人的对象停顿多少帧 */
+  export const DEFAULT_ITR_MOTIONLESS = 5;
+  export const DEFAULT_ITR_A_REST = 8;
+  export const DEFAULT_CATCH_TIME = 680;
+  export const DEFAULT_ITR_FALL = 40;
 
   /**
    * 默认值：当角色fall_value低于DEFAULT_FALL_VALUE_DIZZY时，角色应当进入眩晕状态
@@ -195,6 +186,12 @@ export namespace Defines {
     [CheatType.GIM_INK]: "gim.ink",
   };
 
+  export const CheatGameKeys: Record<CheatType, string> = {
+    [CheatType.LF2_NET]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.a, GK.d, GK.a].join(''),
+    [CheatType.HERO_FT]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.j, GK.a, GK.j, GK.a].join(''),
+    [CheatType.GIM_INK]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.j, GK.d, GK.j].join(''),
+  };
+
   export const CheatTypeSounds: Record<CheatType, string> = {
     [CheatType.LF2_NET]: "data/m_pass.wav.mp3",
     [CheatType.HERO_FT]: "data/m_end.wav.mp3",
@@ -203,6 +200,7 @@ export namespace Defines {
 
   export interface ICheatInfo {
     keys: string;
+    gkeys: string;
     sound: string;
   }
 
@@ -522,6 +520,10 @@ export namespace Defines {
   export const AI_MAX_CHASINGS_ENEMIES = 1;
   export const AI_MAX_AVOIDING_ENEMIES = 1;
   export const AI_MAX_DEFENDS_ENEMIES = 3;
+
+  export const DEFAULT_IVX_F = 1;
+  export const DEFAULT_IVY_F = 1.18;
+  export const DEFAULT_IVZ_F = 1;
 }
 
 export default Defines;

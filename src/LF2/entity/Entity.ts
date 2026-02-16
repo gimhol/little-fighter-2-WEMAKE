@@ -1130,15 +1130,15 @@ export class Entity {
   private update_velocity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const {
-      acc_x,
-      acc_y,
-      acc_z,
       dvx,
       dvy,
       dvz,
       vxm = SpeedMode.LF2,
-      vym = SpeedMode.Acc,
+      vym = SpeedMode.AccTo,
       vzm = SpeedMode.LF2,
+      acc_x = (vxm == SpeedMode.AccTo) ? dvx : void 0,
+      acc_y = (vym == SpeedMode.AccTo) ? dvy : void 0,
+      acc_z = (vzm == SpeedMode.AccTo) ? dvz : void 0,
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
@@ -1320,11 +1320,9 @@ export class Entity {
 
     if (this.frame.hp) this.hp -= this.frame.hp;
 
-    if (this.shaking <= 0) {
-      for (const [k, v] of this.v_rests) {
-        if (v.rest > 0) --v.rest;
-        else this.del_v_rest(k)
-      }
+    for (const [k, v] of this.v_rests) {
+      if (v.rest > 0) --v.rest;
+      else this.del_v_rest(k)
     }
     for (const [k, v] of this.victims)
       if (v.rest) this.victims.delete(k)

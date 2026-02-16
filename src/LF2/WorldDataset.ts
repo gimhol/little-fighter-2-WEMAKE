@@ -43,9 +43,10 @@ export class WorldDataset implements IWorldDataset {
    * @memberof World
    */
   fvz_f: number = Defines.DEFAULT_FVZ_F;
-  ivy_f: number = 1;
-  ivz_f: number = 1;
-  ivx_f: number = 1;
+
+  ivx_f: number = Defines.DEFAULT_IVX_F;
+  ivy_f: number = Defines.DEFAULT_IVY_F;
+  ivz_f: number = Defines.DEFAULT_IVZ_F;
 
   /** 
    * 默认itr.dvy
@@ -100,8 +101,8 @@ export class WorldDataset implements IWorldDataset {
    */
   gone_blink_time: number = Defines.DEFAULT_GONE_BLINK_TIME;
   vrest_offset: number = 0;
+  itr_arest: number = Defines.DEFAULT_ITR_A_REST;
   arest_offset: number = 0;
-  arest_offset_2: number = 0;
 
   /**
    * “帧等待数”偏移值
@@ -187,13 +188,11 @@ export class WorldDataset implements IWorldDataset {
   sync_render: number = 0;
   difficulty: Difficulty = Difficulty.Difficult;
   infinity_mp: boolean = false;
-
-
   fall_r_ticks: number = Defines.FALL_R_TICKS;
   fall_r_value: number = Defines.FALL_R_VALUE;
   defend_r_ticks: number = Defines.DEFEND_R_TICKS;
   defend_r_value: number = Defines.DEFEND_R_VALUE;
-  
+
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
   }

@@ -4,7 +4,7 @@ import { round_float } from "../utils";
  * 计算新速度
  *
  * @export
- * @param {number} speed 原速度值
+ * @param {number} current 原速度值
  * @param {number} value 新速度值
  * @param {SpeedMode} mode 速度模式
  * @param {(number | undefined)} acc 加速度
@@ -12,40 +12,35 @@ import { round_float } from "../utils";
  * @return {*}  {number}
  */
 export function calc_v(
-  speed: number,
+  current: number,
   value: number,
   mode: SpeedMode,
-  acc: number | undefined,
+  acc: number = 0,
   direction: 1 | -1 = 1): number {
   switch (mode) {
     case SpeedMode.Fixed: return value;
-    case SpeedMode.Extra: return speed;
-    case SpeedMode.FixedAcc: return round_float(speed + value);
-    case SpeedMode.Acc: return round_float(speed + value * direction);
+    case SpeedMode.Extra: return current;
+    case SpeedMode.FixedAcc: return round_float(current + value);
+    case SpeedMode.Acc: return round_float(current + value * direction);
     case SpeedMode.FixedLf2: {
-      return (value > 0 && speed < value) || (value < 0 && speed > value)
-        ? value
-        : speed;
+      const target = value;
+      if (current < target && target > 0) return round_float(target)
+      if (current > target && target < 0) return round_float(target)
+      return current;
     }
     case SpeedMode.AccTo: {
-      value *= direction;
-      acc = acc ? acc * direction : void 0;
-      if (!acc) return speed;
-      if (
-        (value > 0 && speed >= value) ||
-        (value < 0 && speed <= value)
-      ) return value
-      if (
-        (value > speed && acc < 0) ||
-        (value < speed && acc > 0)
-      ) return speed;
-      return round_float(speed + acc);
+      /** 目标速度 */
+      const target = (value *= direction);
+      acc *= direction;
+      if (!acc) return current;
+      if (current >= target && acc > 0) return current;
+      if (current <= target && acc < 0) return current;
+      return round_float(current + acc);
     }
-    case SpeedMode.LF2:
-    default:
-      value *= direction;
-      return (value > 0 && speed < value) || (value < 0 && speed > value)
-        ? round_float(value)
-        : speed;
+    case SpeedMode.LF2: default:
+      const target = (value *= direction);
+      if (current < target && target > 0) return round_float(target)
+      if (current > target && target < 0) return round_float(target)
+      return current;
   }
 }

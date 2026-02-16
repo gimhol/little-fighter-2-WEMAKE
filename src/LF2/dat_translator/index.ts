@@ -32,7 +32,7 @@ export * from "./make_entity_data";
 export * from "./make_entity_special";
 export * from "./make_fighter_data";
 export * from "./make_fighter_special";
-export * from "./make_frames";
+export * from "./cook_frames";
 export * from "./make_frames_special";
 export * from "./make_frame_state";
 export * from "./make_itr_prefabs";

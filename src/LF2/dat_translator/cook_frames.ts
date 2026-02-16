@@ -15,6 +15,7 @@ import { IEntityInfo } from "../defines/IEntityInfo";
 import { IFrameInfo } from "../defines/IFrameInfo";
 import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
 import { SpeedMode } from "../defines/SpeedMode";
+import { round_float } from "../utils";
 import { abs, floor } from "../utils/math/base";
 import { match_all } from "../utils/string_parser/match_all";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";
@@ -33,10 +34,7 @@ import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_frame_state } from "./make_frame_state";
 import { take } from "./take";
 
-export function make_frames(
-  text: string,
-  files: IEntityInfo["files"],
-): Record<string, IFrameInfo> {
+export function cook_frames(text: string, files: IEntityInfo["files"]): Record<string, IFrameInfo> {
   const frames: Record<string, IFrameInfo> = {};
   const frame_regexp = /<frame>\s+(.*?)\s+(.*)((.|\n)+?)<frame_end>/g;
   for (const [, frame_id, frame_name, content] of match_all(
@@ -48,11 +46,9 @@ export function make_frames(
     const bdy_list = r1.sections;
     _content = r1.remains;
 
-
     const r2 = take_sections<IItrInfo>(_content, "itr:", "itr_end:");
     const itr_list = r2.sections;
     _content = r2.remains;
-
 
     const r3 = take_sections<IOpointInfo>(_content, "opoint:", "opoint_end:");
     const opoint_list = r3.sections;
@@ -176,13 +172,13 @@ export function make_frames(
       frame.ctrl_x = 0;
     } else if (not_zero_num(dvx)) {
       if (dvx >= 501 && dvx <= 549) {
-        frame.dvx = Number(((dvx - 550) * 0.5).toFixed(1));
+        frame.dvx = round_float((dvx - 550) * 0.5);
         frame.vxm = SpeedMode.FixedLf2;
       } else if (dvx >= 551) {
-        frame.dvx = Number(((dvx - 550) * 0.5).toFixed(1));
+        frame.dvx = round_float((dvx - 550) * 0.5);
         frame.vxm = SpeedMode.FixedLf2;
       } else {
-        frame.dvx = Number((dvx * 0.5).toFixed(1));
+        frame.dvx = round_float(dvx * 0.5);
       }
     }
 
@@ -194,13 +190,13 @@ export function make_frames(
       frame.ctrl_y = 0;
     } else if (not_zero_num(dvy)) {
       if (dvy >= 501 && dvy <= 549) {
-        frame.dvy = (dvy - 550) * -0.285;
+        frame.dvy = round_float((dvy - 550) * -0.5);
         frame.vym = SpeedMode.FixedLf2;
       } else if (dvy >= 551) {
-        frame.dvy = (dvy - 550) * -0.285;
+        frame.dvy = round_float((dvy - 550) * -0.5);
         frame.vym = SpeedMode.FixedLf2;
       } else {
-        frame.dvy = dvy * -0.285;
+        frame.dvy = round_float((dvy * -0.5))
       }
     }
 
