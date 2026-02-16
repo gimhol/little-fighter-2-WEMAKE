@@ -14,7 +14,7 @@ export function handle_weapon_is_picked(collision: ICollision): void {
   } else {
     attacker.enter_frame({ id: attacker.data.indexes?.picking_light })
   }
-    victim.follow_bearer()
+  victim.follow_bearer()
   summary_mgr.get(attacker.id).picking_sum += 1
   if (!is_independent(attacker.team))
     summary_mgr.get(attacker.team).picking_sum += 1;
