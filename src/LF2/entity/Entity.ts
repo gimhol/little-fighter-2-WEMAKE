@@ -37,8 +37,8 @@ export class Entity {
   protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected _spawn_time: number = 0;
-
   protected _outline_color: string | undefined = void 0;
+  protected _game_time: number = -1; // 每次update前与world对齐
   get outline_color(): string | undefined {
     return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
   };
@@ -73,6 +73,7 @@ export class Entity {
    */
   readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
   readonly v_rests = new Map<string, ICollision>();
+  readonly blockers = new Set<ICollision>();
   readonly victims = new Map<string, ICollision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
   protected readonly _emitters: string[] = [];
@@ -587,6 +588,11 @@ export class Entity {
   get chasing(): Entity | null { return this._chasing; }
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
+
+  get gravity(): number {
+    return this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity
+  }
+
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }
@@ -610,6 +616,7 @@ export class Entity {
     this.dismiss_data = null;
     this.copies.clear()
     this.has_stat_bar = false;
+    this._game_time = -1;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
     this._resting_max = Defines.DEFAULT_RESTING_MAX;
     this._resting = 0;
@@ -650,6 +657,7 @@ export class Entity {
 
     this.a_rest = 0;
     this.v_rests.clear()
+    this.blockers.clear()
     this.victims.clear()
     this.motionless = 0;
     this.shaking = 0;
@@ -1007,10 +1015,12 @@ export class Entity {
     entity.dead_gone = true;
 
     for (const [k, v] of this.v_rests) {
+      const v2 = { ...v };
       /*
       Note: 继承v_rests，避免重复反弹ball...
       */
-      entity.v_rests.set(k, { ...v });
+      entity.v_rests.set(k, v2);
+      if (v.itr.kind === ItrKind.Block) entity.blockers.add(v2);
     }
 
     return entity;
@@ -1121,14 +1131,14 @@ export class Entity {
    * @see {World.gravity}
    */
   private handle_gravity() {
-    if (this.bearer && this.catcher) return;
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
-    this.velocities[0].y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
+    this.velocities[0].y -= this.gravity;
   }
 
-  private handle_frame_velocity() {
-    if (this.shaking || this.motionless) return;
+  private update_velocity() {
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const {
       acc_x,
       acc_y,
@@ -1311,6 +1321,7 @@ export class Entity {
   }
 
   update(): void {
+    this._game_time = this.world.game_time.value;
     this.update_id.add()
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.check_fusion_dismissing()) return;
@@ -1321,8 +1332,12 @@ export class Entity {
 
     if (this.shaking <= 0) {
       for (const [k, v] of this.v_rests) {
-        if (v.v_rest && v.v_rest > 0) --v.v_rest;
-        else this.v_rests.delete(k);
+        if (v.v_rest && v.v_rest > 0) {
+          --v.v_rest;
+        } else {
+          this.v_rests.delete(k);
+          this.blockers.delete(v);
+        }
       }
     }
     for (const [k, v] of this.victims)
@@ -1378,7 +1393,8 @@ export class Entity {
         }
       }
     }
-    this.follow_bearer();
+
+
     for (const pair of this._opoints) {
       const [opoint, time] = pair
       if (time === opoint.interval) {
@@ -1400,41 +1416,10 @@ export class Entity {
       else this.next_frame = this.find_auto_frame()
     }
     this.handle_gravity();
-    this.handle_frame_velocity();
+    this.update_velocity();
     this.state?.update(this);
-    let vx = 0;
-    let vy = 0;
-    let vz = 0;
-    for (const v of this.velocities) {
-      vx += v.x;
-      vy += v.y;
-      vz += v.z;
-    }
-    if (vx) vx = round_float(vx)
-    if (vy) vy = round_float(vy)
-    if (vz) vz = round_float(vz)
-    for (const [, v] of this.v_rests) {
-      if (v.itr.kind !== ItrKind.Block) continue
-      if (
-        (vx < 0 && v.attacker.position.x < this._position.x) ||
-        (vx > 0 && v.attacker.position.x > this._position.x)
-      ) {
-        vx = 0;
-      }
-      if (
-        (vz < 0 && v.attacker.position.z < this._position.z) ||
-        (vz > 0 && v.attacker.position.z > this._position.z)
-      ) {
-        vz = 0;
-      }
-    }
-    this._velocity.set(vx, vy, vz);
-    if (!this.shaking && !this.motionless) {
-      this._prev_position.set(this._position.x, this._position.y, this._position.z)
-      this._position.x = round_float(this._position.x + vx);
-      this._position.y = round_float(this._position.y + vy);
-      this._position.z = round_float(this._position.z + vz);
-    }
+    this.update_position();
+
     if (this.motionless > 0) {
       ++this.wait;
       --this.motionless;
@@ -1501,10 +1486,44 @@ export class Entity {
       }
       this.old_ground_y = ground_y;
     }
-    this.world.restrict(this);
-    this.holding?.follow_bearer();
+    this._holding?.follow_bearer();
     this.collision_list.length = 0;
     this.collided_list.length = 0;
+  }
+
+  update_position() {
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    let vx = 0, vy = 0, vz = 0;
+    for (const v of this.velocities) {
+      vx += v.x;
+      vy += v.y;
+      vz += v.z;
+    }
+    if (vx) vx = round_float(vx)
+    if (vy) vy = round_float(vy)
+    if (vz) vz = round_float(vz)
+    for (const v of this.blockers) {
+      if (
+        (vx < 0 && v.attacker.position.x < this._position.x) ||
+        (vx > 0 && v.attacker.position.x > this._position.x)
+      ) {
+        vx = 0;
+      }
+      if (
+        (vz < 0 && v.attacker.position.z < this._position.z) ||
+        (vz > 0 && v.attacker.position.z > this._position.z)
+      ) {
+        vz = 0;
+      }
+    }
+    this._velocity.set(vx, vy, vz);
+    if (!this.shaking && !this.motionless) {
+      this._prev_position.set(this._position.x, this._position.y, this._position.z)
+      this._position.x = round_float(this._position.x + vx);
+      this._position.y = round_float(this._position.y + vy);
+      this._position.z = round_float(this._position.z + vz);
+    }
+    this.world.restrict(this);
   }
 
   /**
