@@ -28,7 +28,7 @@ export namespace Defines {
   export const DEFAULT_HP = 500;
   export const DEFAULT_MP = 500;
   export const DEFAULT_FALL_VALUE_MAX = 140;
-  export const DEFAULT_DEFEND_VALUE_MAX = 120;
+  export const DEFAULT_DEFEND_VALUE_MAX = 90;
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
   export const DEFAULT_FIREN_FLAME_SPEED_Z = 0.5;
 
@@ -379,8 +379,8 @@ export namespace Defines {
     PAGEUP: "PG↑",
   }
 
-  export const DEFAULT_BREAK_DEFEND_VALUE = 40;
-
+  export const DEFAULT_BREAK_DEFEND_VALUE = 32;
+  export const DEFAULT_DEFEND_VALUE = 90;
   export const BAT_CHASE_SPREADING_VX = arithmetic_progression(-6, 6, 1)
   export const BAT_CHASE_SPREADING_VZ = arithmetic_progression(-2, 2, 1)
   export const BAT_CHASE_MAX_VX = 7
