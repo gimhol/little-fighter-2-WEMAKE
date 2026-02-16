@@ -1,4 +1,6 @@
+import { ChaseLost } from "./ChaseLost";
 import { FrameBehavior } from "./FrameBehavior";
+import { HitFlag } from "./HitFlag";
 import type { IBdyInfo } from "./IBdyInfo";
 import type { IBpointInfo } from "./IBpointInfo";
 import type { ICpointInfo } from "./ICpointInfo";
@@ -149,11 +151,28 @@ export interface IFrameInfo {
 
   /**
    * 原ball的hit_Fa
+   * 
+   * 跟踪效果改由chase决定
    *
    * @type {?number}
    * @see {FrameBehavior}
    */
   behavior?: number | FrameBehavior;
+
+
+  chase?: {
+    /**
+     * 跟踪对象的标志
+     */
+    flag: number | HitFlag
+
+    /** 
+     * 跟踪对象丢失后的行为
+     */
+    lost?: number | ChaseLost;
+
+    oy?: number
+  };
 
   friction_z?: number;
   friction_x?: number;
@@ -165,7 +184,6 @@ export interface IFrameInfo {
    */
   gravity_enabled?: boolean;
 
-  chasing_y?: number;
 
   broadcasts?: string[];
 }
@@ -193,7 +211,6 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   ctrl_x: ++order,
   ctrl_y: ++order,
   ctrl_z: ++order,
-  chasing_y: ++order,
   itr: ++order,
   bdy: ++order,
   opoint: ++order,
@@ -216,6 +233,7 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   on_exhaustion: ++order,
   on_landing: ++order,
   behavior: ++order,
+  chase: ++order,
   friction_z: ++order,
   friction_x: ++order,
   friction_factor: ++order,

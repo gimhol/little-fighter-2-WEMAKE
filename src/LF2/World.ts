@@ -28,13 +28,14 @@ import {
   is_weapon
 } from "./entity";
 import { Ground } from "./Ground";
+import { closer_one } from "./helper/closer_one";
 import { manhattan_xz } from "./helper/manhattan_xz";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Transform } from "./Transform";
 import { Times } from "./ui";
-import { abs, is_num, min, round } from "./utils";
+import { abs, is_num, min, round, round_float } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -366,20 +367,16 @@ export class World extends WorldDataset {
   }
 
   private gone_entities: Entity[] = [];
-  private _enemy_chasers = new Set<Entity>();
-  private _ally_chasers = new Set<Entity>();
-  add_enemy_chaser(entity: Entity) {
-    this._enemy_chasers.add(entity);
+  private _chasers = new Map<Entity, number>();
+  get_chaser_flag(entity: Entity): number | undefined {
+    return this._chasers.get(entity)
   }
-  del_enemy_chaser(entity: Entity) {
-    this._enemy_chasers.delete(entity);
-    entity.chasing = null;
+  add_chaser(entity: Entity, flag: HitFlag | number) {
+    this._chasers.set(entity, flag);
   }
-  add_ally_chaser(entity: Entity) {
-    this._ally_chasers.add(entity);
-  }
-  del_ally_chaser(entity: Entity) {
-    this._ally_chasers.delete(entity);
+  del_chaser(entity: Entity) {
+    this._chasers.delete(entity);
+    entity.ctrl.chase_pos.copy(entity.position);
     entity.chasing = null;
   }
 
@@ -417,7 +414,7 @@ export class World extends WorldDataset {
   protected handle_cmds() {
     const { cmds } = this.lf2;
     if (!cmds.length) return;
-    const stage_limit = this.stage.id !== Defines.VOID_STAGE.id && !this.lf2.is_cheat(CheatType.HERO_FT)
+    const stage_limit = () => this.stage.id !== Defines.VOID_STAGE.id && !this.lf2.is_cheat(CheatType.HERO_FT)
     for (let i = 0; i < cmds.length; i++) {
       const cmd = cmds[i];
       switch (cmd) {
@@ -446,11 +443,11 @@ export class World extends WorldDataset {
         case CMD.F4: this.lf2.pop_ui_safe(); continue;
         case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
-          if (stage_limit) continue;
+          if (stage_limit()) continue;
           this.infinity_mp = !this.infinity_mp;
           continue;
         case CMD.F7:
-          if (stage_limit) continue;
+          if (stage_limit()) continue;
           for (const e of this.entities) {
             if (!is_fighter(e)) continue;
             e.hp = e.hp_r = e.hp_max;
@@ -458,25 +455,25 @@ export class World extends WorldDataset {
           }
           continue;
         case CMD.F8:
-          if (!stage_limit) this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+          if (!stage_limit()) this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
           continue;
         case CMD.F9:
-          if (!stage_limit) this.stage.kill_all()
+          if (!stage_limit()) this.stage.kill_all()
           continue;
         case CMD.F10:
-          if (!stage_limit) for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+          if (!stage_limit()) for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
           continue;
         case CMD.KILL_ENEMIES:
-          if (!stage_limit) this.stage.kill_all()
+          if (!stage_limit()) this.stage.kill_all()
           continue;
         case CMD.KILL_BOSS:
-          if (!stage_limit) this.stage.kill_boss()
+          if (!stage_limit()) this.stage.kill_boss()
           continue;
         case CMD.KILL_SOLIDERS:
-          if (!stage_limit) this.stage.kill_soliders()
+          if (!stage_limit()) this.stage.kill_soliders()
           continue;
         case CMD.KILL_OTHERS:
-          if (!stage_limit) this.stage.kill_others()
+          if (!stage_limit()) this.stage.kill_others()
           continue;
       }
     }
@@ -509,38 +506,12 @@ export class World extends WorldDataset {
     this._temp_entitis_set.clear();
     const update_collisions = game_time.value % 1 === 0
     const update_chasing = game_time.value % 8 === 0;
-    if (update_chasing) {
-      for (const chaser of this._enemy_chasers) {
-        const e = chaser.chasing;
-        if (!e) continue;
-        if (!is_fighter(e) || chaser.is_ally(e) || e.hp <= 0)
-          chaser.chasing = null;
-      }
-      for (const chaser of this._ally_chasers) {
-        const e = chaser.chasing;
-        if (!e) continue;
-        if (!is_fighter(e) || !chaser.is_ally(e) || e.hp <= 0)
-          chaser.chasing = null;
-      }
-    }
     for (const e of this.entities) {
-      if (update_chasing && is_fighter(e) && e.hp > 0) {
-        for (const chaser of this._enemy_chasers) {
-          if (chaser.is_ally(e)) continue;
-          const prev = chaser.chasing;
-          if (!prev || manhattan_xz(prev, chaser) > manhattan_xz(e, chaser)) {
-            chaser.chasing = e;
-          }
-        }
-        for (const chaser of this._ally_chasers) {
-          if (!chaser.is_ally(e)) continue;
-          const prev = chaser.chasing;
-          if (!prev || manhattan_xz(prev, chaser) > manhattan_xz(e, chaser)) {
-            chaser.chasing = e;
-          }
+      if (update_chasing && this._chasers.size) {
+        for (const [c] of this._chasers) {
+          c.update_chasing(e)
         }
       }
-
       if (update_collisions) {
         const a_ctrl = e.ctrl
         for (const b of this._temp_entitis_set) {

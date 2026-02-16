@@ -7,7 +7,7 @@ import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
-  FrameBehavior, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  FrameBehavior, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
@@ -16,6 +16,7 @@ import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
 import { IArmorInfo } from "../defines/IArmorInfo";
 import { Ditto } from "../ditto";
+import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
@@ -878,7 +879,13 @@ export class Entity {
       this.set_state(next_state_code)
     }
     if (this._prev_frame !== this.frame) {
-      this.state?.on_frame_changed?.(this, this.frame, this._prev_frame)
+      this.state?.on_frame_changed?.(this, this.frame, this._prev_frame);
+      const pre_chase = this._prev_frame.chase?.flag;
+      const cur_chase = this.frame.chase?.flag;
+      if (pre_chase && !cur_chase)
+        this.world.del_chaser(this)
+      else if (cur_chase && pre_chase != cur_chase)
+        this.world.add_chaser(this, cur_chase)
     }
     if (v.invisible) this.invisibility(v.invisible);
     if (v.opoint) this.apply_opoints(v.opoint);
@@ -1812,7 +1819,33 @@ export class Entity {
     this._invisible_duration = duration;
   }
 
-
+  update_chasing(lookup: Entity) {
+    const a = this.chasing;
+    const b = this.should_chase(a) ? a : this.chasing = null;
+    const c = this.should_chase(lookup) ? lookup : null;
+    const d = this.chasing = closer_one(this, b, c);
+    if (!d) {
+      this.ctrl.chase_pos.copy(this.position)
+      return;
+    }
+    let { x, y, z } = d.position
+    const cy = this.frame.chase?.oy ?? 0.5;
+    y = round_float(y + d.frame.centery * cy)
+    this.ctrl.chase_pos.set(x, y, z)
+  }
+  should_chase(other: Entity | null = this.chasing): boolean {
+    if (!other) return false;
+    const { chase } = this.frame;
+    if (!chase) return false;
+    const { flag } = chase
+    const target = other.get_flag(this)
+    return (target & flag) == target
+  }
+  get_flag(other: Entity): number {
+    let ret = this.team === other.team ? HitFlag.Ally : HitFlag.Enemy;
+    if (this.hp <= 0) ret |= HitFlag.Dead;
+    return ret | this.type;
+  }
   is_ally(other: Entity): boolean {
     return this.team === other.team;
   }

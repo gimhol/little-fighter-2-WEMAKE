@@ -1,5 +1,6 @@
-import type { IFrameInfo, IHitKeyCollection, LGK, TNextFrame } from "../defines";
+import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TNextFrame } from "../defines";
 import { GK, StateEnum } from "../defines";
+import { Ditto } from "../ditto";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
 import { Times } from "../utils/Times";
@@ -34,6 +35,7 @@ export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
   readonly player_id: string;
+  readonly chase_pos: IVector3 = new Ditto.Vector3(0, 0, 0);
 
   private _time = new Times(10, Number.MAX_SAFE_INTEGER);
   private _disposers = new Set<() => void>();
@@ -421,7 +423,7 @@ export class BaseController {
     frame?.seq_map && this.check_hit_seqs(frame.seq_map, ret);
     /** 这里不想支持过长的指令 */
     if (this._key_list && this._key_list.length >= 10) this._key_list = '';
-    
+
     return ret;
   }
 
