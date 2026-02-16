@@ -1951,7 +1951,6 @@ export class Entity {
         v.rest = 0;
       this.victims.clear()
     }
-    this.v_rests
 
     if (flags.facing !== void 0) {
       this.facing = this.handle_facing_flag(flags.facing);
