@@ -1596,13 +1596,17 @@ export class Entity {
       const w = this.frame.pic?.w || 0
       const h = this.frame.pic?.h || 0
 
+
+
       if (tx !== void 0)
-        this._position.x = cer.position.x -
-          cer.facing * (frame_a.centerx - tx) -
-          this.facing * (this.frame.centerx - w / 2);
+        this._position.x = cer.position.x - cer.facing * (frame_a.centerx - tx) - this.facing * (this.frame.centerx - w / 2);
 
       if (ty !== void 0) this._position.y = cer.position.y + frame_a.centery - ty - h / 2;
       if (tz !== void 0) this._position.z = cer.position.z + tz;
+
+
+
+
       this._catcher = null;
       this.prev_cpoint_a = null;
     }
@@ -1679,9 +1683,11 @@ export class Entity {
     const face_b = this.facing;
     const { x: px, y: py, z: pz } = this._catcher.position;
     const { x: c_b_x = 0, y: c_b_y = 0, z: c_b_z = 0 } = c_b || {}
-    this._position.x = px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b_x);
-    this._position.y = round(py + centery_a - c_a.y + c_b_y - centery_b);
-    this._position.z = round(pz + c_a.z - c_b_z);
+    this._position.set(
+      px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b_x),
+      round(py + centery_a - c_a.y + c_b_y - centery_b),
+      round(pz + c_a.z - c_b_z),
+    )
   }
 
   /**
@@ -1862,10 +1868,6 @@ export class Entity {
       wpoint: wp_a = {} as Partial<IWpointInfo>,
       centerx: cx_a, centery: cy_a,
     } = bearer.frame;
-    const {
-      wpoint: wp_b = {} as Partial<IWpointInfo>,
-      centerx: cx_b, centery: cy_b,
-    } = this.frame;
 
     if (wp_a.weaponact !== this.frame.id) {
       // 还原wpoint丢失的情况
@@ -1874,6 +1876,11 @@ export class Entity {
       else
         this.enter_frame(this.find_auto_frame());
     }
+    
+    const {
+      wpoint: wp_b = {} as Partial<IWpointInfo>,
+      centerx: cx_b, centery: cy_b,
+    } = this.frame;
 
     const strength = this._data.base.strength || 1;
     const weight = this._data.base.weight || 1;
