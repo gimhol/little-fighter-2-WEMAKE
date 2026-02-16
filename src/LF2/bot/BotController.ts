@@ -34,19 +34,11 @@ export class BotController extends BaseController implements Required<IBotDataSe
 
   readonly __is_bot_ctrl__ = true;
 
-  /** 走攻触发范围X(敌人正对) */
-  w_atk_f_x = Defines.AI_W_ATK_F_X;
-  /** 走攻触发范围X(敌人背对) */
-  w_atk_b_x = Defines.AI_W_ATK_B_X;
-  /** 走攻盲区 */
-  w_atk_m_x = Defines.AI_W_ATK_M_X;
-
-  /** 走攻触发范围Z */
-  w_atk_z = Defines.AI_W_ATK_Z;
   data_set: IBotDataSet | undefined;
   behavior?: 'stay' | 'move';
   following?: [number, number, number];
   en_out_of_range: boolean = false;
+  
   /** 走攻触发范围X */
   get w_atk_x() {
     const chasing = this.chasings.get()?.entity;
@@ -55,8 +47,33 @@ export class BotController extends BaseController implements Required<IBotDataSe
       this.w_atk_f_x :
       this.w_atk_b_x;
   }
+  /** 跑攻触发范围X */
+  get r_atk_x() {
+    const chasing = this.chasings.get()?.entity;
+    if (!chasing) return 0;
+    return this.entity.facing === chasing.facing ? this.r_atk_b_x : this.r_atk_f_x;
+  }
+  /** 冲跳攻触发范围X */
+  get d_atk_x() {
+    const chasing = this.chasings.get()?.entity;
+    if (!chasing) return 0;
+    return this.entity.facing === chasing.facing ? this.d_atk_b_x : this.d_atk_f_x;
+  }
+  /** 跳攻触发范围X */
+  get j_atk_x() {
+    const chasing = this.chasings.get()?.entity;
+    if (!chasing) return 0;
+    return this.entity.facing === chasing.facing ? this.j_atk_b_x : this.j_atk_f_x;
+  }
 
-
+  /** 走攻触发范围X(敌人正对) */
+  w_atk_f_x = Defines.AI_W_ATK_F_X;
+  /** 走攻触发范围X(敌人背对) */
+  w_atk_b_x = Defines.AI_W_ATK_B_X;
+  /** 走攻盲区 */
+  w_atk_m_x = Defines.AI_W_ATK_M_X;
+  /** 走攻触发范围Z */
+  w_atk_z = Defines.AI_W_ATK_Z;
   /** 跑攻欲望值 */
   r_atk_desire = Defines.AI_R_ATK_DESIRE;
   /** 跑攻触发范围X(敌人正对) */
@@ -65,26 +82,12 @@ export class BotController extends BaseController implements Required<IBotDataSe
   r_atk_b_x = Defines.AI_R_ATK_F_X;
   /** 跑攻触发范围Z */
   r_atk_z = Defines.AI_R_ATK_Z;
-  /** 跑攻触发范围X */
-  get r_atk_x() {
-    const chasing = this.chasings.get()?.entity;
-    if (!chasing) return 0;
-    return this.entity.facing === chasing.facing ? this.r_atk_b_x : this.r_atk_f_x;
-  }
-
   /** 冲跳攻触发范围X(敌人正对) */
   d_atk_f_x = Defines.AI_D_ATK_F_X;
   /** 冲跳攻触发范围X(敌人正对) */
   d_atk_b_x = Defines.AI_D_ATK_B_X;
   /** 冲跳攻触发范围Z */
   d_atk_z = Defines.AI_D_ATK_Z;
-  /** 冲跳攻触发范围X */
-  get d_atk_x() {
-    const chasing = this.chasings.get()?.entity;
-    if (!chasing) return 0;
-    return this.entity.facing === chasing.facing ? this.d_atk_b_x : this.d_atk_f_x;
-  }
-
   /** 跳攻触发范围X(敌人正对) */
   j_atk_f_x = Defines.AI_J_ATK_F_X;
   /** 跳攻触发范围X(敌人正对) */
@@ -94,24 +97,14 @@ export class BotController extends BaseController implements Required<IBotDataSe
   /** 跳攻触发范围Y */
   j_atk_y_min = Defines.AI_J_ATK_Y_MIN;
   j_atk_y_max = Defines.AI_J_ATK_Y_MAX;
-  /** 跳攻触发范围X */
-  get j_atk_x() {
-    const chasing = this.chasings.get()?.entity;
-    if (!chasing) return 0;
-    return this.entity.facing === chasing.facing ? this.j_atk_b_x : this.j_atk_f_x;
-  }
   /** 跳越欲望 */
   jump_desire = Defines.AI_J_DESIRE;
-
   /** 冲刺欲望 */
   dash_desire = Defines.AI_D_DESIRE;
-
   /** 最小欲望值：跑步 */
   r_desire_min = Defines.AI_R_DESIRE_MIN;
-
   /** 最大欲望值：跑步 */
   r_desire_max = Defines.AI_R_DESIRE_MAX;
-
   /** 
    * 最小起跑范围X 
    * 距离敌人小于于等于此距离时，此时奔跑欲望值最小
