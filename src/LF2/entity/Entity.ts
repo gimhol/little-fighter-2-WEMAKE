@@ -73,7 +73,9 @@ export class Entity {
    */
   readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
   readonly v_rests = new Map<string, ICollision>();
-  readonly blockers = new Set<ICollision>();
+  readonly blockers = new Map<string, ICollision>();
+  readonly superpunchs = new Map<string, ICollision>();
+
   readonly victims = new Map<string, ICollision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
   protected readonly _emitters: string[] = [];
@@ -658,6 +660,7 @@ export class Entity {
     this.a_rest = 0;
     this.v_rests.clear()
     this.blockers.clear()
+    this.superpunchs.clear()
     this.victims.clear()
     this.motionless = 0;
     this.shaking = 0;
@@ -723,11 +726,6 @@ export class Entity {
     this._holding = v;
     this.callbacks.emit("on_holding_changed")(this, v, old);
     return this;
-  }
-
-  get_v_rest(id: string): number {
-    const v = this.v_rests.get(id);
-    return v?.v_rest ?? 0;
   }
 
   find_auto_frame(): IFrameInfo {
@@ -1013,16 +1011,8 @@ export class Entity {
     if (entity.data.id === this.data.id) this.copies.add(entity)
     entity.key_role = false;
     entity.dead_gone = true;
-
-    for (const [k, v] of this.v_rests) {
-      const v2 = { ...v };
-      /*
-      Note: 继承v_rests，避免重复反弹ball...
-      */
-      entity.v_rests.set(k, v2);
-      if (v.itr.kind === ItrKind.Block) entity.blockers.add(v2);
-    }
-
+    /* Note: 继承v_rests，避免重复反弹ball... */
+    for (const [, v] of this.v_rests) entity.add_v_rest({ ...v })
     return entity;
   }
 
@@ -1332,16 +1322,12 @@ export class Entity {
 
     if (this.shaking <= 0) {
       for (const [k, v] of this.v_rests) {
-        if (v.v_rest && v.v_rest > 0) {
-          --v.v_rest;
-        } else {
-          this.v_rests.delete(k);
-          this.blockers.delete(v);
-        }
+        if (v.rest > 0) --v.rest;
+        else this.del_v_rest(k)
       }
     }
     for (const [k, v] of this.victims)
-      if (v.v_rest) this.victims.delete(k)
+      if (v.rest) this.victims.delete(k)
 
     if (this.motionless <= 0 && this.shaking <= 0)
       this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
@@ -1502,7 +1488,7 @@ export class Entity {
     if (vx) vx = round_float(vx)
     if (vy) vy = round_float(vy)
     if (vz) vz = round_float(vz)
-    for (const v of this.blockers) {
+    for (const [, v] of this.blockers) {
       if (
         (vx < 0 && v.attacker.position.x < this._position.x) ||
         (vx > 0 && v.attacker.position.x > this._position.x)
@@ -1942,7 +1928,7 @@ export class Entity {
     if (flags.id === Builtin_FrameId.Auto) {
       this.a_rest = 0;
       for (const [_, v] of this.victims)
-        v.v_rest = 0;
+        v.rest = 0;
       this.victims.clear()
     }
     this.v_rests
@@ -2158,6 +2144,20 @@ export class Entity {
     const emittier_id = this.emitters[idx];
     if (!emittier_id) return;
     return this.world.entity_map.get(emittier_id);
+  }
+
+  get_v_rest(a_id: string): number {
+    return this.v_rests.get(a_id)?.rest || 0;
+  }
+  add_v_rest(c: ICollision) {
+    this.v_rests.set(c.a_id, c);
+    if (c.itr.kind === ItrKind.Block) this.blockers.set(c.a_id, c);
+    if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.a_id, c);
+  }
+  del_v_rest(a_id: string) {
+    this.v_rests.delete(a_id);
+    this.blockers.delete(a_id);
+    this.superpunchs.delete(a_id);
   }
 }
 

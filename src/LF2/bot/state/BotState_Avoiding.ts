@@ -34,9 +34,8 @@ export class BotState_Avoiding extends BotState_Base {
         if (this.defend_test())
           return;
     }
-    if (find(me.v_rests, v => v[1].itr.kind === ItrKind.Block)) {
-      c.start(GK.a).end(GK.a)
-    }
+    if (me.blockers.size) c.start(GK.a).end(GK.a)
+    
     const { x, z } = me.position;
     const { x: enemy_x, z: enemy_z } = av.position;
 

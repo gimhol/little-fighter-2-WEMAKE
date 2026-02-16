@@ -9,7 +9,8 @@ export interface ICollision {
   readonly lf2: LF2;
 
   readonly world: World;
-
+  readonly a_id: string;
+  readonly v_id: string;
   /**
    * 攻击方
    *
@@ -80,10 +81,9 @@ export interface ICollision {
    * @type {number}
    * @memberof ICollision
    */
-  v_rest?: number;
+  rest: number;
 
   handlers?: ((collision: ICollision) => void)[];
-
 
   ax: number;
   ay: number;
@@ -96,6 +96,6 @@ export interface ICollision {
   dy: number;
   dz: number;
   m_distance: number;
-  
+
   duration: number;
 }

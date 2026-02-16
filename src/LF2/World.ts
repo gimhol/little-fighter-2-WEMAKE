@@ -744,19 +744,21 @@ export class World extends WorldDataset {
 
     if (!itr.vrest && attacker.a_rest) return;
     if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
-    const ax = attacker.position.x
-    const ay = attacker.position.y
-    const az = attacker.position.z
-    const vx = victim.position.x
-    const vy = victim.position.y
-    const vz = victim.position.z
-    const dx = vx - ax
-    const dy = vy - ay
-    const dz = vz - az
+    const ax = attacker.position.x;
+    const ay = attacker.position.y;
+    const az = attacker.position.z;
+    const vx = victim.position.x;
+    const vy = victim.position.y;
+    const vz = victim.position.z;
+    const dx = vx - ax;
+    const dy = vy - ay;
+    const dz = vz - az;
     const collision: ICollision = {
       lf2: this.lf2,
       world: this,
-      v_rest: !itr.arest && itr.vrest ? itr.vrest + this.vrest_offset : void 0,
+      rest: (!itr.arest && itr.vrest) ? (itr.vrest + this.vrest_offset) : 0,
+      v_id: victim.id,
+      a_id: attacker.id,
       victim,
       attacker,
       itr,

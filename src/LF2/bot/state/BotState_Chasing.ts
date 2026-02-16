@@ -110,9 +110,7 @@ export class BotState_Chasing extends BotState_Base {
       case StateEnum.Standing:
       case StateEnum.Walking: {
         if (this.defend_test()) return;
-        if (find(me.v_rests, v => v[1].itr.kind === ItrKind.Block)) {
-          c.start(GK.a).end(GK.a)
-        }
+        if (me.blockers.size) c.start(GK.a).end(GK.a)
         if (!out_of_range) {
           const { r_desire } = c;
           if (r_desire > 0) {

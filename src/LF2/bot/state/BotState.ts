@@ -46,9 +46,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const me = c.entity;
     if (c.world.stage.is_stage_finish) {
       c.key_down(GK.R).key_up(...KEY_NAME_LIST);
-      if (find(me.v_rests, v => v[1].itr.kind === ItrKind.Block)) {
-        c.start(GK.a).end(GK.a);
-      }
+      if (me.blockers.size) c.start(GK.a).end(GK.a)
     }
   }
   enter?(): void;
@@ -75,9 +73,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
   handle_block() {
     const { ctrl: c } = this;
     const { entity: me } = c
-    if (find(me.v_rests, v => v[1].itr.kind === ItrKind.Block)) {
-      c.start(GK.a).end(GK.a)
-    }
+    if (me.blockers.size) c.start(GK.a).end(GK.a)
   }
 
 

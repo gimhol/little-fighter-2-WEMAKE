@@ -25,8 +25,7 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.Catching]: e => e.catching ? 1 : 0,
   [E_Val.CAUGHT]: e => e.catcher ? 1 : 0,
   [E_Val.RequireSuperPunch]: e => {
-    for (const [, { itr, attacker }] of e.v_rests) {
-      if (itr.kind !== ItrKind.SuperPunchMe) continue;
+    for (const [, { attacker }] of e.superpunchs) {
       // 小于0时，眩晕者在攻击者左侧，否则在右侧
       const diff_x = e.position.x - attacker.position.x;
       if ((between(diff_x, -20, 20)) ||
