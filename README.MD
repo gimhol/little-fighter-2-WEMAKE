@@ -1,4 +1,4 @@
-# Little Fighter 2 Wemake
+# Little Fighter Wemake
 
 ![title](docs/image/readme.title.png)
 

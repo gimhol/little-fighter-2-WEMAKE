@@ -1,4 +1,4 @@
-# Little Fighter 2 Wemake
+# Little Fighter Wemake
 
 ![title](docs/image/readme.title.png)
 
@@ -10,7 +10,7 @@ Think this project is pretty good? Consider starring it!
 
 **gameplays, arts, and sounds are all from "Litter Fighter 2" basically, created by Marti Wong and Starsky Wong in 1999.
 
-"LF2Wemake" created by Gim in 2024."**
+"Little Fighter Wemake" created by Gim in 2024."**
 
 **The original author, Marti Wong, has now launched "[Little Fighter 2 Remastered](https://lf2.net/)". Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.**
 
