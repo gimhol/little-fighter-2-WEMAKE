@@ -27,6 +27,7 @@ export function make_ball_special(data: IEntityData) {
       });
       break;
     case BuiltIn_OID.JanChase:
+      data.base.drop_sounds = data.base.hit_sounds;
       data.frames['50'].invisible = data.frames['50'].wait;
       data.frames['51'].invisible = data.frames['51'].wait;
       data.frames['52'].invisible = data.frames['52'].wait;
@@ -68,6 +69,7 @@ export function make_ball_special(data: IEntityData) {
       })
       break;
     case BuiltIn_OID.FirzenChasef:
+      data.base.drop_sounds = data.base.hit_sounds;
       data.frames['59'].invisible = data.frames['59'].wait;
       data.frames['80'].invisible = data.frames['80'].wait;
       data.frames['81'].invisible = data.frames['81'].wait;
@@ -92,6 +94,7 @@ export function make_ball_special(data: IEntityData) {
       })
       break;
     case BuiltIn_OID.FirzenChasei:
+      data.base.drop_sounds = data.base.hit_sounds;
       traversal(data.frames, (_, f) => {
         if (f.behavior === FrameBehavior.ChasingSameEnemy) {
           f.opoint = ensure(f.opoint, {

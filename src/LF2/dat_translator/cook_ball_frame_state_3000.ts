@@ -17,7 +17,6 @@ import { edit_bdy_info } from "./edit_bdy_info";
 export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
   const bdy_list = frame.bdy ? frame.bdy : (frame.bdy = []);
   const new_bdy: IBdyInfo[] = [];
-  frame.on_landing = frame.on_landing ?? { id: "10" }
   for (const bdy of bdy_list) {
 
     const cond = new CondMaker<C_Val>()

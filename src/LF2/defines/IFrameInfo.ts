@@ -186,7 +186,6 @@ export interface IChaseInfo {
    */
   lost: number | ChaseLost;
 
-
   oy?: number
 }
 

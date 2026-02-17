@@ -452,6 +452,7 @@ export class Entity {
 
     this.callbacks.emit("on_hp_changed")(this, v, o);
     if (o > 0 && v <= 0) {
+      this.world.del_chaser(this);
       this.callbacks.emit("on_dead")(this);
       this.state?.on_dead?.(this);
       if (this._data.base.brokens?.length) {
@@ -878,12 +879,15 @@ export class Entity {
     }
     if (this._prev_frame !== this.frame) {
       this.state?.on_frame_changed?.(this, this.frame, this._prev_frame);
-      const pre_chase = this._prev_frame.chase?.flag;
-      const cur_chase = this.frame.chase?.flag;
-      if (pre_chase && !cur_chase)
-        this.world.del_chaser(this)
-      else if (cur_chase && pre_chase != cur_chase)
-        this.world.add_chaser(this, cur_chase)
+
+      if (this.hp > 0) {
+        const pre_chase = this._prev_frame.chase?.flag;
+        const cur_chase = this.frame.chase?.flag;
+        if (pre_chase && !cur_chase)
+          this.world.del_chaser(this)
+        else if (cur_chase && pre_chase != cur_chase)
+          this.world.add_chaser(this, cur_chase)
+      }
     }
     if (v.invisible) this.invisibility(v.invisible);
     if (v.opoint) this.apply_opoints(v.opoint);
@@ -1055,7 +1059,6 @@ export class Entity {
    */
   handle_ground_velocity_decay(factor: number = 1) {
     if (this._position.y > this.ground_y || this.shaking || this.motionless) return;
-    let { x, z } = this.velocities[0];
     const landing = this._landing_frame === this.frame;
     factor *= landing ? this.world_dataset('land_friction_factor') : this.world_dataset('friction_factor')
     const fx = landing ? this.world_dataset('land_friction_x') : this.world_dataset('friction_x')
@@ -1811,11 +1814,12 @@ export class Entity {
       this.position.y,
       this.position.z
     )
-    if (!d) return;
-    let { x, y, z } = d.position
-    const cy = this.frame.chase?.oy ?? 0.5;
-    y = y + d.frame.centery * cy
-    this.ctrl.set_chase_pos(x, y, z)
+    // follow
+    if (d) this.ctrl.set_chase_pos(
+      d.position.x,
+      d.position.y,
+      d.position.z
+    )
   }
   should_chase(other: Entity | null): boolean {
     if (!other) return false;

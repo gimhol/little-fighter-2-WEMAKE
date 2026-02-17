@@ -34,11 +34,11 @@ export function make_ball_data(
     info.dead_sounds = [weapon_broken_sound];
   }
 
-  let weapon_drop_sound = take_str(info, "weapon_drop_sound");
-  if (weapon_drop_sound) {
-    weapon_drop_sound = (weapon_drop_sound + ".mp3").replace(/\\/g, '/');
-    info.drop_sounds = [weapon_drop_sound];
-  }
+  // let weapon_drop_sound = take_str(info, "weapon_drop_sound");
+  // if (weapon_drop_sound) {
+  //   weapon_drop_sound = (weapon_drop_sound + ".mp3").replace(/\\/g, '/');
+  //   info.drop_sounds = [weapon_drop_sound];
+  // }
 
   let weapon_hit_sound = take_str(info, "weapon_hit_sound");
   if (weapon_hit_sound) {

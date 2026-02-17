@@ -2,6 +2,7 @@
 import { FrameBehavior, GK, IChaseInfo } from "../defines";
 import { ChaseLost } from "../defines/ChaseLost";
 import type { Entity } from "../entity/Entity";
+import { round_float } from "../utils";
 import { BaseController } from "./BaseController";
 import { type ControllerUpdateResult } from "./ControllerUpdateResult";
 const { L, R, U, D, j, d } = GK
@@ -22,27 +23,31 @@ export class BallController extends BaseController {
     return super.update();
   }
   private update_chasing(chase: IChaseInfo) {
-    const { chasing, facing } = this.entity;
+    const { chasing, facing, hp } = this.entity;
     if (!this._chasing && chasing) this.start_chasing(chase)
-    const p1 = this.entity.position;
-    const p2 = this._chasing?.position || this.chase_pos;
-    if (this._chasing || (chase.lost & ChaseLost.Hover)) {
+    const me = this.entity.position;
+
+    let { x, y, z } = chasing?.position || this.chase_pos;
+    if (chasing)
+      y = round_float(y + chasing.frame.centery * (chase.oy ?? 0.5))
+
+    if (hp > 0 && (this._chasing || (chase.lost & ChaseLost.Hover))) {
       this.entity.merge_velocities();
-      if (p2.x < p1.x) this.key_down(L).key_up(R)
-      else if (p2.x > p1.x) this.key_down(R).key_up(L)
+      if (x < me.x) this.key_down(L).key_up(R)
+      else if (x > me.x) this.key_down(R).key_up(L)
       else this.key_up(L, R)
-      if (p2.z < p1.z) this.key_down(U).key_up(D)
-      else if (p2.z > p1.z) this.key_down(D).key_up(U)
+      if (z < me.z) this.key_down(U).key_up(D)
+      else if (z > me.z) this.key_down(D).key_up(U)
       else this.key_up(U, D)
 
-      if (p1.y > p2.y) this.key_down(d).key_up(j)
-      else if (p1.y < p2.y) this.key_down(j).key_up(d)
+      if (me.y > y) this.key_down(d).key_up(j)
+      else if (me.y < y) this.key_down(j).key_up(d)
       else this.key_up(j, d)
-    } else if (chase.lost & ChaseLost.Leave) {
+    } else {
       const p1 = this.entity.position;
       this.key_down(facing < 0 ? L : R).key_up(facing < 0 ? R : L, U, D);
-      if (p1.y > p2.y) this.key_down(d).key_up(j)
-      else if (p1.y < p2.y) this.key_down(j).key_up(d)
+      if (p1.y > y) this.key_down(d).key_up(j)
+      else if (p1.y < y) this.key_down(j).key_up(d)
       else this.key_up(j, d)
     }
     if (this._chasing && !chasing)
