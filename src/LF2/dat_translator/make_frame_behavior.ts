@@ -1,6 +1,6 @@
 import {
   IFrameInfo, IDatIndex, FrameBehavior, Defines, SpeedMode, ItrKind, HitFlag, ActionType,
-  CollisionVal as C_Val, BuiltIn_OID, OpointKind, OpointMultiEnum, OpointSpreading, FacingFlag,
+  CollisionVal as C_Val, BuiltIn_OID, OpointKind, OpointMultiEnum, OpointSpreading, FacingFlag as FF,
   EntityVal
 } from "../defines";
 import { ensure } from "../utils";
@@ -20,6 +20,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
   }
   switch (hit_Fa as FrameBehavior) {
     case FrameBehavior.AngelBlessing:
+      frame.facing = FF.VX;
       frame.dvx = Defines.ANGEL_BLESSING_MAX_VX;
       frame.acc_x = Defines.ANGEL_BLESSING_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -53,6 +54,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.chase = { flag: HitFlag.AllyFighter, lost: ChaseLost.Leave | ChaseLost.End };
       break;
     case FrameBehavior.JohnChase:
+      frame.facing = FF.VX;
       frame.dvx = Defines.JOHN_CHASE_MAX_VX;
       frame.acc_x = Defines.JOHN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -66,6 +68,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0.5 };
       break;
     case FrameBehavior.DennisChase: {
+      frame.facing = FF.VX;
       frame.dvx = Defines.DENNIS_CHASE_MAX_VX;
       frame.acc_x = Defines.DENNIS_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -114,6 +117,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       jan_chase_start(frame);
       break;
     case FrameBehavior.ChasingSameEnemy:
+      frame.facing = FF.VX;
       frame.dvx = Defines.DISATER_CHASE_MAX_VX;
       frame.acc_x = Defines.DISATER_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -153,6 +157,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       firzen_disater_start(frame);
       break;
     case FrameBehavior.JohnBiscuitLeaving:
+      frame.facing = FF.VX;
       frame.dvx = 15;
       frame.acc_x = 2;
       frame.vxm = SpeedMode.AccTo;
@@ -192,7 +197,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         oid: BuiltIn_OID.FreezeColumn,
         x: -45,
         y: 24,
-        action: { id: "100", facing: FacingFlag.Backward },
+        action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
         oid: BuiltIn_OID.FreezeColumn,
@@ -200,7 +205,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         y: 24,
         z: -60,
         dvz: -4,
-        action: { id: "100", facing: FacingFlag.Backward },
+        action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
         oid: BuiltIn_OID.FreezeColumn,
@@ -208,7 +213,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         y: 24,
         z: 60,
         dvz: 4,
-        action: { id: "100", facing: FacingFlag.Backward },
+        action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
         oid: BuiltIn_OID.FirenFlame,
@@ -303,6 +308,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       });
       break;
     case FrameBehavior.Bat:
+      frame.facing = FF.VX;
       frame.dvx = Defines.BAT_CHASE_MAX_VX;
       frame.acc_x = Defines.BAT_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -326,6 +332,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       });
       break;
     case FrameBehavior.JulianBall: {
+      frame.facing = FF.VX;
       frame.dvx = Defines.DENNIS_CHASE_MAX_VX;
       frame.acc_x = Defines.DENNIS_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;

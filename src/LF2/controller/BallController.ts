@@ -1,6 +1,5 @@
 
 import { FrameBehavior, GK, type IFrameInfo } from "../defines";
-import { is_ball } from "../entity";
 import type { Entity } from "../entity/Entity";
 import { BaseController } from "./BaseController";
 import { type ControllerUpdateResult } from "./ControllerUpdateResult";
@@ -32,8 +31,6 @@ export class BallController extends BaseController {
         else if (p1.y < p2.y) this.key_down(j).key_up(d)
         else this.key_up(j, d)
       }
-      if (is_ball(this.entity))
-        this.entity.facing = vx > 0 ? 1 : -1;
     }
   }
   private lost_chasing(frame: IFrameInfo, facing: number) {
