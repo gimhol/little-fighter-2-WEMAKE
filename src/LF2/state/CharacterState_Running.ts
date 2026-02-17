@@ -10,13 +10,12 @@ export default class CharacterState_Running extends CharacterState_Base {
   }
   override update(e: Entity): void {
     super.update(e);
-    let { z: vz, x: vx } = e.velocities[0];
-
-    if (vz) {
-      const dz = abs(vz / 4);
-      if (vx > dz) vx -= dz;
-      if (vx < -dz) vx += dz;
-      e.velocities[0].x = round_float(vx);
+    let { x, z } = e.velocity;
+    if (z) {
+      const dz = abs(z / 4);
+      if (x > dz) x -= dz;
+      if (x < -dz) x += dz;
+      e.set_velocity_z(x)
     }
 
     if (e.hp <= 0) {

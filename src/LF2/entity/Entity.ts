@@ -1,4 +1,5 @@
 import { Ground } from "../Ground";
+import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks, ICollision, new_id, new_team } from "../base";
@@ -72,7 +73,7 @@ export class Entity {
    * @readonly
    * @type {IVector3[]}
    */
-  readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
+  private readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
   readonly v_rests = new Map<string, ICollision>();
   readonly blockers = new Map<string, ICollision>();
   readonly superpunchs = new Map<string, ICollision>();
@@ -377,11 +378,14 @@ export class Entity {
   get lf2(): LF2 {
     return this.world.lf2;
   }
-  protected get velocity_1(): IVector3 {
-    if (this.velocities.length > 1) return this.velocities[1]!;
+  get velocity_0(): Readonly<IVector3> {
+    if (this.velocities.length > 0) return this.velocities[0];
+    return this.velocities[0] = new Ditto.Vector3(0, 0, 0);
+  }
+  get velocity_1(): Readonly<IVector3> {
+    if (this.velocities.length > 1) return this.velocities[1];
     return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
   }
-
   get bearer(): Entity | null {
     return this._bearer;
   }
@@ -1052,13 +1056,19 @@ export class Entity {
   handle_ground_velocity_decay(factor: number = 1) {
     if (this._position.y > this.ground_y || this.shaking || this.motionless) return;
     let { x, z } = this.velocities[0];
-    const is_landing_frame = this._landing_frame === this.frame;
+    const landing = this._landing_frame === this.frame;
+    factor *= landing ? this.world_dataset('land_friction_factor') : this.world_dataset('friction_factor')
+    const fx = landing ? this.world_dataset('land_friction_x') : this.world_dataset('friction_x')
+    const fz = landing ? this.world_dataset('land_friction_z') : this.world_dataset('friction_z')
+    this.handle_velocity_decay(fx, fz, factor)
+  }
 
-    factor *= this.frame.friction_factor ?? this.world.friction_factor;
-    x *= factor;
-    z *= factor;
-
-    const fx = this.frame.friction_x ?? (is_landing_frame ? this.world.land_friction_x : this.world.friction_x)
+  handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
+    let { x, z } = this.velocities[0];
+    if (factor != void 0) {
+      x *= factor;
+      z *= factor;
+    }
     if (x > 0) {
       x -= fx;
       if (x < 0) x = 0; // 不能因为摩擦力反向加速
@@ -1066,8 +1076,6 @@ export class Entity {
       x += fx;
       if (x > 0) x = 0; // 不能因为摩擦力反向加速
     }
-
-    const fz = this.frame.friction_z ?? (is_landing_frame ? this.world.land_friction_z : this.world.friction_z)
     if (z > 0) {
       z -= fz;
       if (z < 0) z = 0; // 不能因为摩擦力反向加速
@@ -1075,29 +1083,8 @@ export class Entity {
       z += fz;
       if (z > 0) z = 0; // 不能因为摩擦力反向加速
     }
-    this.velocities[0].x = x;
-    this.velocities[0].z = z;
-  }
-
-  handle_velocity_decay(friction: number) {
-    let { x, z } = this.velocities[0];
-    if (x > 0) {
-      x -= friction;
-      if (x < 0) x = 0; // 不能因为摩擦力反向加速
-    } else if (x < 0) {
-      x += friction;
-      if (x > 0) x = 0; // 不能因为摩擦力反向加速
-    }
-
-    if (z > 0) {
-      z -= friction;
-      if (z < 0) z = 0; // 不能因为摩擦力反向加速
-    } else if (z < 0) {
-      z += friction;
-      if (z > 0) z = 0; // 不能因为摩擦力反向加速
-    }
-    this.velocities[0].x = x;
-    this.velocities[0].z = z;
+    this.set_velocity_0_x(x)
+    this.set_velocity_0_z(z);
   }
 
   /**
@@ -1156,15 +1143,13 @@ export class Entity {
     if (!ctrl_z && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
     else if (UD && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
 
-    this.velocities[0].x = vx;
-    this.velocities[0].y = vy;
-    this.velocities[0].z = vz;
-    if (vxm == SpeedMode.Extra && dvx) this.velocity_1.x = dvx
-    if (vym == SpeedMode.Extra && dvy) this.velocity_1.y = dvy
-    if (vzm == SpeedMode.Extra && dvz) this.velocity_1.z = dvz
-    if (vxm == SpeedMode.Fixed) this.velocity_1.x = 0
-    if (vym == SpeedMode.Fixed) this.velocity_1.y = 0
-    if (vzm == SpeedMode.Fixed) this.velocity_1.z = 0
+    this.set_velocity_0(vx, vy, vz);
+    if (vxm == SpeedMode.Extra && dvx) this.set_velocity_1_x(dvx)
+    if (vym == SpeedMode.Extra && dvy) this.set_velocity_1_y(dvy)
+    if (vzm == SpeedMode.Extra && dvz) this.set_velocity_1_z(dvz)
+    if (vxm == SpeedMode.Fixed) this.set_velocity_1_x(0)
+    if (vym == SpeedMode.Fixed) this.set_velocity_1_y(0)
+    if (vzm == SpeedMode.Fixed) this.set_velocity_1_z(0)
   }
 
   dismiss_fusion(frame_id: string) {
@@ -1315,6 +1300,7 @@ export class Entity {
     this._game_time = this.world.game_time.value;
     this.update_id.add()
     if (this.next_frame) this.enter_frame(this.next_frame);
+    if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
     if (this.check_fusion_dismissing()) return;
     this.hp_recovering()
     this.mp_recovering();
@@ -1469,6 +1455,7 @@ export class Entity {
         // this._position.y = ground_y;
         // this._prev_position.y = ground_y;
       }
+      if (this._landing_frame !== this.frame) this._landing_frame = null
       this.old_ground_y = ground_y;
     }
     this._holding?.follow_bearer();
@@ -1503,10 +1490,16 @@ export class Entity {
     }
     this._velocity.set(vx, vy, vz);
     if (!this.shaking && !this.motionless) {
-      this._prev_position.set(this._position.x, this._position.y, this._position.z)
-      this._position.x = round_float(this._position.x + vx);
-      this._position.y = round_float(this._position.y + vy);
-      this._position.z = round_float(this._position.z + vz);
+      this._prev_position.set(
+        this._position.x,
+        this._position.y,
+        this._position.z
+      )
+      this.set_position(
+        this._position.x + vx,
+        this._position.y + vy,
+        this._position.z + vz
+      )
     }
     this.world.restrict(this);
   }
@@ -1816,7 +1809,7 @@ export class Entity {
 
     // lost
     if (!d && a) this.ctrl.chase_pos.copy(this.position)
-    if(!d) return;
+    if (!d) return;
     let { x, y, z } = d.position
     const cy = this.frame.chase?.oy ?? 0.5;
     y = round_float(y + d.frame.centery * cy)
@@ -1998,9 +1991,16 @@ export class Entity {
       case FacingFlag.Left:
       case FacingFlag.Right:
         return facing;
-      default:
-        return this.facing;
+      case FacingFlag.VX: {
+        const vx = this.velocity.x
+        return vx > 0 ? -1 : vx < 0 ? 1 : this.facing
+      }
+      case FacingFlag.AntiVX: {
+        const vx = this.velocity.x
+        return vx > 0 ? 1 : vx < 0 ? -1 : this.facing
+      }
     }
+    return this.facing;
   }
 
   get_next_frame(which: TNextFrame): INextFrameResult | undefined {
@@ -2094,11 +2094,62 @@ export class Entity {
       this.set_velocity(vx ?? x, vy ?? y, vz ?? z)
     }
   }
+  set_velocity_0_x(x: number) {
+    if (!Number.isFinite(x) || Number.isNaN(x)) debugger;
+    const v = this.velocity_0;
+    if (v.x !== x) this.velocities[0].x = round_float(x)
+  }
+  set_velocity_0_y(y: number) {
+    if (!Number.isFinite(y) || Number.isNaN(y)) debugger;
+    const v = this.velocity_0;
+    if (v.y !== y) this.velocities[0].y = round_float(y)
+  }
+  set_velocity_0_z(z: number) {
+    if (!Number.isFinite(z) || Number.isNaN(z)) debugger;
+    const v = this.velocity_0;
+    if (v.z !== z) this.velocities[0].z = round_float(z)
+  }
+  set_velocity_1_x(x: number) {
+    if (!Number.isFinite(x) || Number.isNaN(x)) debugger;
+    const v = this.velocity_1;
+    if (v.x !== x) this.velocities[1].x = round_float(x)
+  }
+  set_velocity_1_y(y: number) {
+    if (!Number.isFinite(y) || Number.isNaN(y)) debugger;
+    const v = this.velocity_1;
+    if (v.y !== y) this.velocities[1].y = round_float(y)
+  }
+  set_velocity_1_z(z: number) {
+    if (!Number.isFinite(z) || Number.isNaN(z)) debugger;
+    const v = this.velocity_1;
+    if (v.z !== z) this.velocities[1].z = round_float(z)
+  }
+  set_velocity_0(
+    x?: number | null,
+    y?: number | null,
+    z?: number | null,
+  ) {
+    if (x !== null && x !== void 0) this.set_velocity_0_x(x)
+    if (y !== null && y !== void 0) this.set_velocity_0_y(y)
+    if (z !== null && z !== void 0) this.set_velocity_0_z(z)
+  }
+  set_velocity_1(
+    x?: number | null,
+    y?: number | null,
+    z?: number | null,
+  ) {
+    if (x !== null && x !== void 0) this.set_velocity_1_x(x)
+    if (y !== null && y !== void 0) this.set_velocity_1_y(y)
+    if (z !== null && z !== void 0) this.set_velocity_1_z(z)
+  }
   set_velocity(
     x?: number | null,
     y?: number | null,
     z?: number | null,
   ) {
+    if (!Number.isFinite(x) || Number.isNaN(x)) debugger;
+    if (!Number.isFinite(y) || Number.isNaN(y)) debugger;
+    if (!Number.isFinite(z) || Number.isNaN(z)) debugger;
     this.velocities.length = 1;
     x = (x === null || x === void 0) ? this.velocity.x : x ? round_float(x) : x
     y = (y === null || y === void 0) ? this.velocity.y : y ? round_float(y) : y
@@ -2108,28 +2159,36 @@ export class Entity {
   }
   set_velocity_x(v: number) {
     if (this.velocities.length > 1) this.merge_velocities(v, void 0, void 0)
-    else this._velocity.x = this.velocities[0].x = v ? round_float(v) : v;
+    else this.set_velocity_0_x(v)
   }
   set_velocity_y(v: number) {
+    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
     if (this.velocities.length > 1) this.merge_velocities(void 0, v, void 0)
-    else this._velocity.y = this.velocities[0].y = v ? round_float(v) : v;
+    else this.set_velocity_0_y(v)
   }
   set_velocity_z(v: number) {
+    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
     if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, v)
-    else this._velocity.z = this.velocities[0].z = v ? round_float(v) : v;
+    else this.set_velocity_0_z(v)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
+    if (!Number.isFinite(x) || Number.isNaN(x)) debugger;
+    if (!Number.isFinite(y) || Number.isNaN(y)) debugger;
+    if (!Number.isFinite(z) || Number.isNaN(z)) debugger;
     if (x !== null && x !== void 0) this._position.x = x ? round_float(x) : x
     if (y !== null && y !== void 0) this._position.y = y ? round_float(y) : y
     if (z !== null && z !== void 0) this._position.z = z ? round_float(z) : z
   }
   set_position_x(v: number) {
+    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
     this._position.x = v ? round_float(v) : v
   }
   set_position_y(v: number) {
+    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
     this._position.y = v ? round_float(v) : v
   }
   set_position_z(v: number) {
+    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
     this._position.z = v ? round_float(v) : v
   }
   transform(data: IEntityData) {
@@ -2178,6 +2237,11 @@ export class Entity {
     this.v_rests.delete(a_id);
     this.blockers.delete(a_id);
     this.superpunchs.delete(a_id);
+  }
+
+  world_dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
+    const v = (this.frame as Partial<IWorldDataset>)[name]
+    return v ?? this.world[name]
   }
 }
 

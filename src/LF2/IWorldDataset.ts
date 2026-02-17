@@ -121,6 +121,9 @@ export interface IWorldDataset {
   friction_factor: number;
   friction_x: number;
   friction_z: number;
+  land_friction_factor: number,
+  land_friction_x: number;
+  land_friction_z: number;
   screen_w: number;
   screen_h: number;
   gravity: number;
@@ -201,6 +204,9 @@ export const world_dataset_field_map: Record<keyof IWorldDataset, IFieldInfo> = 
   friction_factor: { title: "地速衰减系数", desc: "在地面的物体，速度将每帧乘以此值", type: 'float' },
   friction_x: { title: "地面摩擦X", desc: "在地面的物体，每帧X速度将±=此值,向0靠近", type: 'float' },
   friction_z: { title: "地面摩擦Z", desc: "在地面的物体，每帧Z速度将±=此值,向0靠近", type: 'float' },
+  land_friction_factor: { title: "落地摩擦X", desc: "在物体着地时，当前动作结束前，速度将每帧乘以此值", type: 'float' },
+  land_friction_x: { title: "落地摩擦X", desc: "在物体着地时，当前动作结束前，每帧X速度将±=此值,向0靠近", type: 'float' },
+  land_friction_z: { title: "落地摩擦Z", desc: "在物体着地时，当前动作结束前，每帧Z速度将±=此值,向0靠近", type: 'float' },
   screen_w: { title: "screen_w", desc: "screen_w", type: '' },
   screen_h: { title: "screen_h", desc: "screen_h", type: '' },
   sync_render: { title: "sync_render", desc: "sync_render", type: 'int', min: 0, max: 2, step: 1 },
