@@ -1,53 +1,62 @@
 
-import { FrameBehavior, GK, type IFrameInfo } from "../defines";
+import { FrameBehavior, GK, IChaseInfo } from "../defines";
+import { ChaseLost } from "../defines/ChaseLost";
 import type { Entity } from "../entity/Entity";
 import { BaseController } from "./BaseController";
 import { type ControllerUpdateResult } from "./ControllerUpdateResult";
 const { L, R, U, D, j, d } = GK
 export class BallController extends BaseController {
   readonly __is_ball_ctrl__ = true;
-  private _chasing: Entity | undefined = void 0;
+  private _chasing: Entity | null | undefined = void 0;
 
   override update(): ControllerUpdateResult {
-    const { chasing, facing, hp, frame } = this.entity;
-    this.update_chasing();
+    const { frame: { chase, behavior }, facing } = this.entity;
+    if (behavior === FrameBehavior.JohnBiscuitLeaving) {
+      const p1 = this.entity.position;
+      this.key_down(facing < 0 ? L : R).key_up(facing < 0 ? R : L, U, D);
+      if (p1.y > 40) this.key_down(d).key_up(j);
+      else if (p1.y < 40) this.key_down(j).key_up(d);
+      else this.key_up(j, d);
+    }
+    if (chase) this.update_chasing(chase)
     return super.update();
   }
-  update_chasing() {
-    const p2 = this.chase_pos;
-    const vx = this.entity.velocity.x;
-    const { chasing, facing, frame: { chase } } = this.entity;
-    if (chase) {
-      if (p2) {
-        const p1 = this.entity.position;
-        this.entity.merge_velocities();
-        if (p2.x < p1.x) this.key_down(L).key_up(R)
-        else if (p2.x > p1.x) this.key_down(R).key_up(L)
-        else this.key_up(L, R)
-        if (p2.z < p1.z) this.key_down(U).key_up(D)
-        else if (p2.z > p1.z) this.key_down(D).key_up(U)
-        else this.key_up(U, D)
-        if (p1.y > p2.y) this.key_down(d).key_up(j)
-        else if (p1.y < p2.y) this.key_down(j).key_up(d)
-        else this.key_up(j, d)
-      }
+  private update_chasing(chase: IChaseInfo) {
+    const { chasing, facing } = this.entity;
+    if (!this._chasing && chasing) this.start_chasing(chase)
+    const p1 = this.entity.position;
+    const p2 = this._chasing?.position || this.chase_pos;
+    if (this._chasing || (chase.lost & ChaseLost.Hover)) {
+      this.entity.merge_velocities();
+      if (p2.x < p1.x) this.key_down(L).key_up(R)
+      else if (p2.x > p1.x) this.key_down(R).key_up(L)
+      else this.key_up(L, R)
+      if (p2.z < p1.z) this.key_down(U).key_up(D)
+      else if (p2.z > p1.z) this.key_down(D).key_up(U)
+      else this.key_up(U, D)
+
+      if (p1.y > p2.y) this.key_down(d).key_up(j)
+      else if (p1.y < p2.y) this.key_down(j).key_up(d)
+      else this.key_up(j, d)
+    } else if (chase.lost & ChaseLost.Leave) {
+      const p1 = this.entity.position;
+      this.key_down(facing < 0 ? L : R).key_up(facing < 0 ? R : L, U, D);
+      if (p1.y > p2.y) this.key_down(d).key_up(j)
+      else if (p1.y < p2.y) this.key_down(j).key_up(d)
+      else this.key_up(j, d)
     }
+    if (this._chasing && !chasing)
+      this.end_chasing(chase)
+    this._chasing = chasing;
   }
-  private lost_chasing(frame: IFrameInfo, facing: number) {
-    if (frame.behavior === FrameBehavior.JohnBiscuitLeaving) {
-      const p1 = this.entity.position;
-      this.key_down(facing === -1 ? L : R);
-      this.key_up(facing === -1 ? R : L, U, D);
-      if (p1.y > 40) this.key_down(d).key_up(j);
-      else if (p1.y < 40) this.key_down(j).key_up(d);
-      else this.key_up(j, d);
-    } else {
-      const p1 = this.entity.position;
-      this.key_down(facing === -1 ? L : R);
-      this.key_up(facing === -1 ? R : L, U, D);
-      if (p1.y > 40) this.key_down(d).key_up(j);
-      else if (p1.y < 40) this.key_down(j).key_up(d);
-      else this.key_up(j, d);
-    }
+  private start_chasing(chase: IChaseInfo) {
+
+  }
+  private end_chasing(chase: IChaseInfo) {
+    this.set_chase_pos(
+      this.entity.position.x,
+      this.entity.position.y,
+      this.entity.position.z,
+    )
   }
 }

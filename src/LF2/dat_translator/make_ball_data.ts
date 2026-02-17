@@ -8,7 +8,7 @@ import { IEntityData } from "../defines/IEntityData";
 import { IEntityInfo } from "../defines/IEntityInfo";
 import { IFrameInfo } from "../defines/IFrameInfo";
 import { SpeedMode } from "../defines/SpeedMode";
-import { ceil, ensure } from "../utils";
+import { ceil, ensure, round_float } from "../utils";
 import { foreach } from "../utils/container_help/foreach";
 import { traversal } from "../utils/container_help/traversal";
 import { to_num } from "../utils/type_cast/to_num";
@@ -58,7 +58,7 @@ export function make_ball_data(
     const hit_j = take(frame, "hit_j");
     if (hit_j !== 0) {
       frame.vzm = SpeedMode.Extra
-      frame.dvz = to_num(hit_j, 50) - 50;
+      frame.dvz = round_float((to_num(hit_j, 50) - 50) / 2);
     }
     const hit_a = take(frame, "hit_a");
     if (hit_a) frame.hp = ceil(hit_a / 2);

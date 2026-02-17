@@ -1801,22 +1801,28 @@ export class Entity {
   }
 
   update_chasing(lookup: Entity) {
-
     const a = this.chasing;
     const b = this.should_chase(a) ? a : this.chasing = null;
     const c = this.should_chase(lookup) ? lookup : null;
     const d = this.chasing = closer_one(this, b, c);
-
     // lost
-    if (!d && a) this.ctrl.chase_pos.copy(this.position)
+    if (!d && a) this.ctrl.set_chase_pos(
+      this.position.x,
+      this.position.y,
+      this.position.z
+    )
     if (!d) return;
     let { x, y, z } = d.position
     const cy = this.frame.chase?.oy ?? 0.5;
-    y = round_float(y + d.frame.centery * cy)
-    this.ctrl.chase_pos.set(x, y, z)
+    y = y + d.frame.centery * cy
+    this.ctrl.set_chase_pos(x, y, z)
   }
-  should_chase(other: Entity | null = this.chasing): boolean {
+  should_chase(other: Entity | null): boolean {
     if (!other) return false;
+    if (
+      other.frame.id === Builtin_FrameId.Gone ||
+      other.frame.id === Builtin_FrameId.None
+    ) return false;
     const { chase } = this.frame;
     if (!chase) return false;
     const { flag } = chase
@@ -2095,32 +2101,32 @@ export class Entity {
     }
   }
   set_velocity_0_x(x: number) {
-    if(is_f_num(x)) debugger;
+    if (is_f_num(x)) debugger;
     const v = this.velocity_0;
     if (v.x !== x) this.velocities[0].x = round_float(x)
   }
   set_velocity_0_y(y: number) {
-    if(is_f_num(y)) debugger;
+    if (is_f_num(y)) debugger;
     const v = this.velocity_0;
     if (v.y !== y) this.velocities[0].y = round_float(y)
   }
   set_velocity_0_z(z: number) {
-    if(is_f_num(z)) debugger;
+    if (is_f_num(z)) debugger;
     const v = this.velocity_0;
     if (v.z !== z) this.velocities[0].z = round_float(z)
   }
   set_velocity_1_x(x: number) {
-    if(is_f_num(x)) debugger;
+    if (is_f_num(x)) debugger;
     const v = this.velocity_1;
     if (v.x !== x) this.velocities[1].x = round_float(x)
   }
   set_velocity_1_y(y: number) {
-    if(is_f_num(y)) debugger;
+    if (is_f_num(y)) debugger;
     const v = this.velocity_1;
     if (v.y !== y) this.velocities[1].y = round_float(y)
   }
   set_velocity_1_z(z: number) {
-    if(is_f_num(z)) debugger;
+    if (is_f_num(z)) debugger;
     const v = this.velocity_1;
     if (v.z !== z) this.velocities[1].z = round_float(z)
   }
@@ -2147,7 +2153,7 @@ export class Entity {
     y?: number | null,
     z?: number | null,
   ) {
-    if(is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
+    if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
     this.velocities.length = 1;
     x = (x === null || x === void 0) ? this.velocity.x : x ? round_float(x) : x
     y = (y === null || y === void 0) ? this.velocity.y : y ? round_float(y) : y
@@ -2156,36 +2162,36 @@ export class Entity {
     this._velocity.set(x, y, z);
   }
   set_velocity_x(x: number) {
-    if(is_f_num(x)) debugger;
+    if (is_f_num(x)) debugger;
     if (this.velocities.length > 1) this.merge_velocities(x, void 0, void 0)
     else this.set_velocity_0_x(x)
   }
   set_velocity_y(y: number) {
-    if(is_f_num(y)) debugger;
+    if (is_f_num(y)) debugger;
     if (this.velocities.length > 1) this.merge_velocities(void 0, y, void 0)
     else this.set_velocity_0_y(y)
   }
   set_velocity_z(z: number) {
-    if(is_f_num(z)) debugger;
+    if (is_f_num(z)) debugger;
     if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, z)
     else this.set_velocity_0_z(z)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
-    if(is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
+    if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
     if (x !== null && x !== void 0) this._position.x = x ? round_float(x) : x
     if (y !== null && y !== void 0) this._position.y = y ? round_float(y) : y
     if (z !== null && z !== void 0) this._position.z = z ? round_float(z) : z
   }
   set_position_x(x: number) {
-    if(is_f_num(x)) debugger;
+    if (is_f_num(x)) debugger;
     this._position.x = x ? round_float(x) : x
   }
   set_position_y(y: number) {
-    if(is_f_num(y)) debugger;
+    if (is_f_num(y)) debugger;
     this._position.y = y ? round_float(y) : y
   }
   set_position_z(z: number) {
-    if(is_f_num(z)) debugger;
+    if (is_f_num(z)) debugger;
     this._position.z = z ? round_float(z) : z
   }
   transform(data: IEntityData) {

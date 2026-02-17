@@ -162,20 +162,7 @@ export interface IFrameInfo extends Partial<IWorldDataset> {
   behavior?: number | FrameBehavior;
 
 
-  chase?: {
-    /**
-     * 跟踪对象的标志
-     */
-    flag: number | HitFlag
-
-    /** 
-     * 跟踪对象丢失后的行为
-     */
-    lost?: number | ChaseLost;
-
-
-    oy?: number
-  };
+  chase?: IChaseInfo;
 
   /**
    * 是否响应重力
@@ -188,6 +175,20 @@ export interface IFrameInfo extends Partial<IWorldDataset> {
   facing?: FacingFlag;
 }
 
+export interface IChaseInfo {
+  /**
+   * 跟踪对象的标志
+   */
+  flag: number | HitFlag
+
+  /** 
+   * 跟踪对象丢失后的行为
+   */
+  lost: number | ChaseLost;
+
+
+  oy?: number
+}
 
 let order = -1;
 export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
