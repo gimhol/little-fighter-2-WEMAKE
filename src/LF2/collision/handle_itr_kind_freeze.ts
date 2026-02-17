@@ -20,6 +20,7 @@ export function handle_itr_kind_freeze(collision: ICollision) {
   if (is_fall && itr.dvy) vy = (itr.dvy ?? attacker.world.ivy_d) * attacker.world.ivy_f;
   if (itr.dvz) vz = itr.dvz * attacker.world.ivz_f;
   vx = (itr.dvx ?? attacker.world.ivx_d) * attacker.facing * attacker.world.ivx_f;
+
   victim.set_velocity(vx, vy, vz)
   victim.next_frame = { id: victim.data.indexes?.ice };
   handle_injury(collision);

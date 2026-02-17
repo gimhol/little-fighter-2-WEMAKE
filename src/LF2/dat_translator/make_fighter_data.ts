@@ -165,7 +165,6 @@ export function make_character_data(ctx: IDatContext): IEntityData {
        */
       case 110:
       case 111: {
-        hit_next_frame.turn_back(frame);
         if (frame.bdy?.length)
           for (const bdy of frame.bdy) {
             bdy.actions = ensure(bdy.actions,
@@ -181,7 +180,6 @@ export function make_character_data(ctx: IDatContext): IEntityData {
       }
       /** jump */
       case 210: case 211: case 212: {
-        hit_next_frame.turn_back(frame);
         if (frame_id === "211") frame.jump_flag = 1;
         if (frame_id === "212") add_key_down_jump_atk(frame); // jump_atk
         break;
@@ -347,6 +345,16 @@ export function make_character_data(ctx: IDatContext): IEntityData {
           })
         break;
     }
+
+    switch (frame.state) {
+      case StateEnum.Standing:
+      case StateEnum.Jump:
+      case StateEnum.Defend:
+      case StateEnum.Walking:
+        hit_next_frame.turn_back(frame)
+        break;
+    }
+
     switch (frame.state) {
       case StateEnum.Frozen:
         edit_next_frame(frame.next, (i) => {
@@ -357,7 +365,6 @@ export function make_character_data(ctx: IDatContext): IEntityData {
           }
         });
         break;
-
       case StateEnum.Standing:
         editing
           .hit("a",
@@ -394,7 +401,6 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         break;
       }
       case StateEnum.Walking:
-        hit_next_frame.turn_back(frame)
         /** heavy_obj_walk */
         if (
           frame_id !== "12" &&

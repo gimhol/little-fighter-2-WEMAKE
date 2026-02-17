@@ -57,21 +57,21 @@ export class WorldDataset implements IWorldDataset {
   cvx_d: number = 2;
 
   /**
-   * X轴丢人初速度系数
+   * X轴丢人速度系数
    *
    * @type {number}
    */
   tvx_f: number = Defines.DEFAULT_TVX_F;
 
   /**
-   * Y轴丢人初速度系数
+   * Y轴丢人速度系数
    *
    * @type {number}
    */
   tvy_f: number = Defines.DEFAULT_TVY_F;
 
   /**
-   * Z轴丢人初速度系数
+   * Z轴丢人速度系数
    *
    * @type {number}
    */
