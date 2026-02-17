@@ -2095,32 +2095,32 @@ export class Entity {
     }
   }
   set_velocity_0_x(x: number) {
-    if (!Number.isFinite(x) || Number.isNaN(x)) debugger;
+    if ((x && !Number.isFinite(x)) || Number.isNaN(x)) debugger;
     const v = this.velocity_0;
     if (v.x !== x) this.velocities[0].x = round_float(x)
   }
   set_velocity_0_y(y: number) {
-    if (!Number.isFinite(y) || Number.isNaN(y)) debugger;
+    if ((y && !Number.isFinite(y)) || Number.isNaN(y)) debugger;
     const v = this.velocity_0;
     if (v.y !== y) this.velocities[0].y = round_float(y)
   }
   set_velocity_0_z(z: number) {
-    if (!Number.isFinite(z) || Number.isNaN(z)) debugger;
+    if ((z && !Number.isFinite(z)) || Number.isNaN(z)) debugger;
     const v = this.velocity_0;
     if (v.z !== z) this.velocities[0].z = round_float(z)
   }
   set_velocity_1_x(x: number) {
-    if (!Number.isFinite(x) || Number.isNaN(x)) debugger;
+    if ((x && !Number.isFinite(x)) || Number.isNaN(x)) debugger;
     const v = this.velocity_1;
     if (v.x !== x) this.velocities[1].x = round_float(x)
   }
   set_velocity_1_y(y: number) {
-    if (!Number.isFinite(y) || Number.isNaN(y)) debugger;
+    if ((y && !Number.isFinite(y)) || Number.isNaN(y)) debugger;
     const v = this.velocity_1;
     if (v.y !== y) this.velocities[1].y = round_float(y)
   }
   set_velocity_1_z(z: number) {
-    if (!Number.isFinite(z) || Number.isNaN(z)) debugger;
+    if ((z && !Number.isFinite(z)) || Number.isNaN(z)) debugger;
     const v = this.velocity_1;
     if (v.z !== z) this.velocities[1].z = round_float(z)
   }
@@ -2157,39 +2157,40 @@ export class Entity {
     this.velocities[0].set(x, y, z);
     this._velocity.set(x, y, z);
   }
-  set_velocity_x(v: number) {
-    if (this.velocities.length > 1) this.merge_velocities(v, void 0, void 0)
-    else this.set_velocity_0_x(v)
+  set_velocity_x(x: number) {
+    if ((x && !Number.isFinite(x)) || Number.isNaN(x)) debugger;
+    if (this.velocities.length > 1) this.merge_velocities(x, void 0, void 0)
+    else this.set_velocity_0_x(x)
   }
-  set_velocity_y(v: number) {
-    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
-    if (this.velocities.length > 1) this.merge_velocities(void 0, v, void 0)
-    else this.set_velocity_0_y(v)
+  set_velocity_y(y: number) {
+    if ((y && !Number.isFinite(y)) || Number.isNaN(y)) debugger;
+    if (this.velocities.length > 1) this.merge_velocities(void 0, y, void 0)
+    else this.set_velocity_0_y(y)
   }
-  set_velocity_z(v: number) {
-    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
-    if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, v)
-    else this.set_velocity_0_z(v)
+  set_velocity_z(z: number) {
+    if ((z && !Number.isFinite(z)) || Number.isNaN(z)) debugger;
+    if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, z)
+    else this.set_velocity_0_z(z)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
-    if (!Number.isFinite(x) || Number.isNaN(x)) debugger;
-    if (!Number.isFinite(y) || Number.isNaN(y)) debugger;
-    if (!Number.isFinite(z) || Number.isNaN(z)) debugger;
+    if ((x && !Number.isFinite(x)) || Number.isNaN(x)) debugger;
+    if ((y && !Number.isFinite(y)) || Number.isNaN(y)) debugger;
+    if ((z && !Number.isFinite(z)) || Number.isNaN(z)) debugger;
     if (x !== null && x !== void 0) this._position.x = x ? round_float(x) : x
     if (y !== null && y !== void 0) this._position.y = y ? round_float(y) : y
     if (z !== null && z !== void 0) this._position.z = z ? round_float(z) : z
   }
-  set_position_x(v: number) {
-    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
-    this._position.x = v ? round_float(v) : v
+  set_position_x(x: number) {
+    if ((x && !Number.isFinite(x)) || Number.isNaN(x)) debugger;
+    this._position.x = x ? round_float(x) : x
   }
-  set_position_y(v: number) {
-    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
-    this._position.y = v ? round_float(v) : v
+  set_position_y(y: number) {
+    if ((y && !Number.isFinite(y)) || Number.isNaN(y)) debugger;
+    this._position.y = y ? round_float(y) : y
   }
-  set_position_z(v: number) {
-    if (!Number.isFinite(v) || Number.isNaN(v)) debugger;
-    this._position.z = v ? round_float(v) : v
+  set_position_z(z: number) {
+    if ((z && !Number.isFinite(z)) || Number.isNaN(z)) debugger;
+    this._position.z = z ? round_float(z) : z
   }
   transform(data: IEntityData) {
     if (!is_human_ctrl(this.ctrl))
