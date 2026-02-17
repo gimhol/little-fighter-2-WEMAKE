@@ -1808,14 +1808,15 @@ export class Entity {
   }
 
   update_chasing(lookup: Entity) {
+
     const a = this.chasing;
     const b = this.should_chase(a) ? a : this.chasing = null;
     const c = this.should_chase(lookup) ? lookup : null;
     const d = this.chasing = closer_one(this, b, c);
-    if (!d) {
-      this.ctrl.chase_pos.copy(this.position)
-      return;
-    }
+
+    // lost
+    if (!d && a) this.ctrl.chase_pos.copy(this.position)
+    if(!d) return;
     let { x, y, z } = d.position
     const cy = this.frame.chase?.oy ?? 0.5;
     y = round_float(y + d.frame.centery * cy)

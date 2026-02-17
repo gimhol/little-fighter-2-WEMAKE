@@ -35,8 +35,7 @@ export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
   readonly player_id: string;
-  readonly chase_pos: IVector3 = new Ditto.Vector3(0, 0, 0);
-
+  private _chase_pos: IVector3 | null = null;
   private _time = new Times(10, Number.MAX_SAFE_INTEGER);
   private _disposers = new Set<() => void>();
 
@@ -52,6 +51,9 @@ export class BaseController {
   set disposer(f: (() => void)[] | (() => void)) {
     if (Array.isArray(f)) for (const i of f) this._disposers.add(i);
     else this._disposers.add(f);
+  }
+    get chase_pos(): IVector3 {
+    return this._chase_pos || (this._chase_pos = this.entity.position.clone());
   }
   entity: Entity;
   keys: Record<LGK, KeyStatus> = {

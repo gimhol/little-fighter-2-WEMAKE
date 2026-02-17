@@ -171,6 +171,7 @@ export interface IFrameInfo {
      */
     lost?: number | ChaseLost;
 
+    
     oy?: number
   };
 
