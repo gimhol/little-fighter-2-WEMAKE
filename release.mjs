@@ -1,8 +1,7 @@
 
-import { zip } from "compressing"
-import fs from "fs/promises"
 import { spawn } from "child_process";
-import { cwd } from "process";
+import { zip } from "compressing";
+import fs from "fs/promises";
 
 export async function exec_cmd(cmd, args = [], opts = []) {
   console.log(...arguments)
