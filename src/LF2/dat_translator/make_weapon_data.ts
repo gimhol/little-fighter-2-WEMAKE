@@ -1,9 +1,12 @@
-import { Builtin_FrameId, HitFlag, StateEnum, WeaponType } from "../defines";
+import { Builtin_FrameId, HitFlag, SpeedMode, StateEnum, WeaponType } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameIndexes } from "../defines/IFrameIndexes";
 import { traversal } from "../utils/container_help/traversal";
+import { round_float } from "../utils/math/round_float";
+import { to_num } from "../utils/type_cast/to_num";
+import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_frame_behavior } from "./make_frame_behavior";
 import { make_itr_prefabs } from "./make_itr_prefabs";
 import { take } from "./take";
@@ -92,6 +95,18 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
   const throwings: string[] = []
   const on_hands: string[] = []
   traversal(frames, (k, frame) => {
+    const hit_j = take(frame, "hit_j");
+    if (hit_j !== 0) {
+      frame.vzm = SpeedMode.Extra
+      frame.dvz = round_float((to_num(hit_j, 50) - 50) / 2);
+    }
+    const hit_a = take(frame, "hit_a");
+    if (hit_a) frame.hp = round_float(hit_a / 2, 10);
+
+    const hit_d = take(frame, "hit_d");
+    if (hit_d && hit_d !== frame.id)
+      frame.on_dead = get_next_frame_by_raw_id(hit_d);
+
     make_frame_behavior(frame, datIndex)
     switch (frame.state) {
       case StateEnum.Weapon_InTheSky:
