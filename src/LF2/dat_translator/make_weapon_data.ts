@@ -1,8 +1,8 @@
-import { Builtin_FrameId, FrameBehavior, HitFlag, IDatIndex, IEntityInfo, StateEnum, WeaponType } from "../defines";
+import { Builtin_FrameId, HitFlag, StateEnum, WeaponType } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
+import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameIndexes } from "../defines/IFrameIndexes";
-import { IFrameInfo } from "../defines/IFrameInfo";
 import { traversal } from "../utils/container_help/traversal";
 import { make_frame_behavior } from "./make_frame_behavior";
 import { make_itr_prefabs } from "./make_itr_prefabs";
@@ -41,12 +41,8 @@ const indexes_map: Record<WeaponType, IFrameIndexes> = {
   },
 };
 
-export function make_weapon_data(
-  info: IEntityInfo,
-  full_str: string,
-  frames: Record<string, IFrameInfo>,
-  datIndex: IDatIndex,
-): IEntityData {
+export function make_weapon_data(ctx: IDatContext): IEntityData {
+  const { base: info, frames, text: full_str, index: datIndex } = ctx
   info.name = datIndex.hash ?? datIndex.file.replace(/[^a-z|A-Z|0-9|_]/g, "");
   switch ('' + datIndex.type) {
     case "1":

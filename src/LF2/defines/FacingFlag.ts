@@ -10,11 +10,14 @@ export enum FacingFlag {
 
   /** 向左 */
   Left = -1,
+  L = -1,
 
   /** 向右 */
   Right = 1,
+  R = 1,
 
   Backward = 2,
+  B = 2,
 
   /**
    * 跟随控制器
@@ -45,4 +48,6 @@ export enum FacingFlag {
   VX = 7,
   
   AntiVX = 8,
+
+  Trend = 9,
 }

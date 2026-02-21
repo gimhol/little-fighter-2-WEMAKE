@@ -2018,6 +2018,12 @@ export class Entity {
         const vx = this.velocity.x
         return vx > 0 ? -1 : vx < 0 ? 1 : this.facing
       }
+      case FacingFlag.Trend: {
+        const { LR } = this.ctrl;
+        if (LR) return LR;
+        const vx = this.velocity.x;
+        return vx > 0 ? 1 : vx < 0 ? -1 : this.facing;
+      }
     }
     return this.facing;
   }
@@ -2025,19 +2031,25 @@ export class Entity {
   get_next_frame(which: TNextFrame): INextFrameResult | undefined {
     if (Array.isArray(which)) {
       const l = which.length;
+      const remains: INextFrame[] = []
       for (let i = 0; i < l; ++i) {
         const nf: INextFrame | undefined = which[i];
         if (!nf) continue;
+        if (!nf.judger) {
+          remains.push(nf)
+          continue;
+        }
         const f = this.get_next_frame(nf);
         if (f) return f;
       }
-      return void 0;
+      const next = this.lf2.mt.pick(remains)
+      if (!next) return;
+      return this.get_next_frame(next);
     }
     const id = which.id;
     const judger = which.judger;
     const use_hp = which.hp;
     const use_mp = which.mp;
-
     if (judger && !judger.run(this)) {
       return void 0;
     }

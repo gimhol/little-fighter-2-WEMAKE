@@ -1,20 +1,20 @@
-import { FacingFlag as FF, IEntityInfo, IFrameInfo, ItrKind, StateEnum, TNextFrame, WeaponType as WT } from "../defines";
+import { FacingFlag as FF, IFrameInfo, ItrKind, StateEnum, TNextFrame, WeaponType as WT } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { BdyKind } from "../defines/BdyKind";
 import { EntityEnum } from "../defines/EntityEnum";
 import { EntityVal as EV } from "../defines/EntityVal";
+import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameIndexes } from "../defines/IFrameIndexes";
 import { INextFrame } from "../defines/INextFrame";
 import { ensure, round } from "../utils";
-import { set_obj_field } from "../utils/container_help/set_obj_field";
 import { take_number } from "../utils/container_help/take_number";
 import { traversal } from "../utils/container_help/traversal";
 import { is_num, is_str } from "../utils/type_check";
 import { CondMaker } from "./CondMaker";
 import { FrameEditing } from "./FrameEditing";
 import { cook_file_variants } from "./cook_file_variants";
-import { cook_next_frame_mp_hp } from "./cook_next_frame_mp_hp";
+import { cook_next_frame_cost } from "./cook_next_frame_cost";
 import { add_next_frame, edit_next_frame } from "./edit_next_frame";
 import {
   get_next_frame_by_raw_id,
@@ -24,10 +24,8 @@ import { take } from "./take";
 import { take_raw_frame_mp } from "./take_raw_frame_mp";
 const k_9 = ["Fa", "Fj", "Da", "Dj", "Ua", "Uj", "ja"] as const;
 
-export function make_character_data(
-  info: IEntityInfo,
-  frames: Record<string, IFrameInfo>,
-): IEntityData {
+export function make_character_data(ctx: IDatContext): IEntityData {
+  const { base: info, frames } = ctx
   const walking_frame_rate = take_number(info, "walking_frame_rate", 3);
   const running_frame_rate = take_number(info, "running_frame_rate", 3);
   const walking_speed = take_number(info, "walking_speed", 0);
@@ -53,7 +51,7 @@ export function make_character_data(
   if (info.rowing_distance) info.rowing_distance /= 2;
 
   const round_trip_frames_map: any = {};
-  const frame_mp_hp_map = new Map<string, [number, number]>();
+  const frame_mp_hp_map = new Map<string, { mp: number, hp: number }>();
 
   traversal(frames, (frame_id, frame) => {
     frame_mp_hp_map.set(frame_id, take_raw_frame_mp(frame));
@@ -62,64 +60,27 @@ export function make_character_data(
   for (const [frame_id, frame] of traversal(frames)) {
     if (Array.isArray(frame.next)) {
       for (const n of frame.next)
-        cook_next_frame_mp_hp(n, "next", frame_mp_hp_map);
+        cook_next_frame_cost(n, "next", frame_mp_hp_map);
     } else {
-      cook_next_frame_mp_hp(frame.next, "next", frame_mp_hp_map);
+      cook_next_frame_cost(frame.next, "next", frame_mp_hp_map);
     }
 
+    const editing = new FrameEditing(frame, frame_mp_hp_map);
     const hit_a = take(frame, "hit_a");
-    if (hit_a)
-      frame.hit = set_obj_field(
-        frame.hit,
-        "a",
-        get_next_frame_by_raw_id(hit_a, "hit", frame_mp_hp_map),
-      );
     const hit_j = take(frame, "hit_j");
-    if (hit_j)
-      frame.hit = set_obj_field(
-        frame.hit,
-        "j",
-        get_next_frame_by_raw_id(hit_j, "hit", frame_mp_hp_map),
-      );
     const hit_d = take(frame, "hit_d");
-    if (hit_d)
-      frame.hit = set_obj_field(
-        frame.hit,
-        "d",
-        get_next_frame_by_raw_id(hit_d, "hit", frame_mp_hp_map),
-      );
+
+    if (hit_a) editing.hit('a', hit_a)
+    if (hit_j) editing.hit('j', hit_j)
+    if (hit_d) editing.hit('d', hit_d)
 
     k_9.forEach((k) => {
       const next = take(frame, `hit_${k}`);
-
       if (!is_str(next) && !is_num(next)) return;
       if (next === "0" || next === 0) return;
-
-      if (!frame.hit) frame.hit = {};
-      if (!frame.seqs) frame.seqs = {};
-      const nf = get_next_frame_by_raw_id(next, "hit", frame_mp_hp_map);
-
-      if (k === "Fa" || k === "Fj") {
-        frame.seqs["L" + k[1]] = {
-          ...nf,
-          facing:
-            nf.facing === FF.Backward
-              ? FF.Right
-              : FF.Left,
-        };
-        frame.seqs["R" + k[1]] = {
-          ...nf,
-          facing:
-            nf.facing === FF.Backward
-              ? FF.Right
-              : FF.Right,
-        };
-      } else {
-        frame.seqs[k] = nf;
-      }
+      editing.seq(k, next);
     });
 
-    const editing = new FrameEditing(frame);
     switch (Number(frame.id)) {
       /** standing */
       case 0: case 1: case 2: case 3: case 4: break;
@@ -143,9 +104,9 @@ export function make_character_data(
           ...hit_next_frame.drink(),
           ...hit_next_frame.super_punch(),
           ...hit_next_frame.punch())
-          .hit('j', { id: "210" }) // jump
-          .hit('d', { id: "110" }) // defend
-          .hit('FF', { id: "running_0" })
+          .hit('j', "210") // jump
+          .hit('d', "110") // defend
+          .hit('FF', "running_0")
         frame.dvx = walking_speed / 2;
         frame.dvz = walking_speedz;
         frame.ctrl_z = 1;
@@ -170,9 +131,9 @@ export function make_character_data(
             .done()
         }, { // run_atk
           id: "85"
-        }).hit('j', { id: "213" }) // dash
-          .hit('d', { id: "102" }) // rowing
-          .keydown('B', { id: "218" }); // running_stop
+        }).hit('j', "213") // dash
+          .hit('d', "102") // rowing
+          .keydown('B', "218"); // running_stop
         frame.dvx = Number((running_speed / 2).toFixed(1));
         frame.dvz = running_speedz;
         frame.ctrl_z = 1;
@@ -180,9 +141,9 @@ export function make_character_data(
       }
       /** heavy_obj_walk */
       case 12: case 13: case 14: case 15: {
-        frame.hit = frame.hit || {};
-        frame.hit.FF = { id: "heavy_obj_run_0" };
-        frame.hit.a = add_next_frame(frame.hit.a, { id: "50", facing: FF.Ctrl }); // running_stop
+        editing
+          .hit('FF', 'heavy_obj_run_0')
+          .hit('a', { id: "50", facing: FF.Ctrl })
         frame.dvx = heavy_walking_speed / 2;
         frame.dvz = heavy_walking_speedz;
         frame.ctrl_x = frame.ctrl_z = 1;
@@ -190,11 +151,9 @@ export function make_character_data(
       }
       /** heavy_obj_run */
       case 16: case 17: case 18: {
-        frame.hit = frame.hit || {};
-        frame.hold = frame.hold || {};
-        frame.key_down = frame.key_down || {};
-        frame.key_down.B = { id: "19" }; // running_stop
-        frame.hit.a = add_next_frame(frame.hit.a, { id: "50" });
+        editing
+          .hit('a', '50') // throw
+          .keydown('B', '19') // running_stop
         frame.dvx = Number((heavy_running_speed / 2).toFixed(1));
         frame.dvz = heavy_running_speedz;
         frame.ctrl_z = 1;
@@ -236,18 +195,16 @@ export function make_character_data(
         if (frame_id === "217" && frames[216]) hit_next_frame.turn_back(frame, "216"); // turn back;
         // julian和knight的dash非常特殊……
         if (frame.state === StateEnum.Dash && (frame_id === "213" || frame_id === "216")) {
-          frame.key_down = frame.key_down || {};
-          frame.key_down.a = add_next_frame(frame.key_down.a,
-            {
-              id: "52", facing: FF.Ctrl,
-              expression: new CondMaker<EV>()
-                .one_of(
-                  EV.Holding_W_Type,
-                  WT.Baseball,
-                  WT.Drink,
-                )
-                .done(),
-            }, {
+          editing.keydown('a', {
+            id: "52", facing: FF.Ctrl,
+            expression: new CondMaker<EV>()
+              .one_of(
+                EV.Holding_W_Type,
+                WT.Baseball,
+                WT.Drink,
+              )
+              .done(),
+          }, {
             id: "40", facing: FF.Ctrl,
             expression: new CondMaker<EV>()
               .one_of(
@@ -258,7 +215,6 @@ export function make_character_data(
           }, { id: "90" },
           ); // dash_atk
         }
-
         if (frame.state === StateEnum.Jump) {
           add_key_down_jump_atk(frame)
           frame.state = StateEnum.Dash
@@ -312,16 +268,12 @@ export function make_character_data(
               s_hit_a && hit_a.push(s_hit_a);
               t_hit_a && hit_a.push(...t_hit_a);
               a_hit_a && hit_a.push(a_hit_a);
-              frame.hit = frame.hit || {};
-              frame.hit.a = add_next_frame(frame.hit.a, ...hit_a);
+              editing.hit('a', ...hit_a);
             } else if (c === 1) {
               frame.hit = frame.hit || {};
-              if (s_hit_a)
-                frame.hit.a = add_next_frame(frame.hit.a, s_hit_a);
-              else if (t_hit_a)
-                frame.hit.a = add_next_frame(frame.hit.a, ...t_hit_a);
-              else if (a_hit_a)
-                frame.hit.a = add_next_frame(frame.hit.a, a_hit_a);
+              if (s_hit_a) editing.hit('a', s_hit_a)
+              else if (t_hit_a) editing.hit('a', ...t_hit_a);
+              else if (a_hit_a) editing.hit('a', a_hit_a);
             }
           }
         }
@@ -359,12 +311,9 @@ export function make_character_data(
         break;
 
       /** （186~191）falling 向后 */
-      case 186:
-        break;
-      case 187:
-      case 188:
-        if (!frame.hit) frame.hit = {};
-        frame.hit.j = add_next_frame(frame.hit.j, {
+      case 186: break;
+      case 187: case 188:
+        editing.hit('j', {
           id: "108",
           expression: new CondMaker<EV>()
             .add(EV.HP, ">", 0)
@@ -380,35 +329,22 @@ export function make_character_data(
         break;
       /** crouch */
       case 215:
-        const to_dash_frame: TNextFrame = [{
-          id: "213",
-          expression: new CondMaker<EV>()
-            .add(EV.PressLR, "==", -1)
-            .done(),
-          facing: FF.Left,
-        }, {
-          id: "213",
-          expression: new CondMaker<EV>()
-            .add(EV.PressLR, "==", 1)
-            .done(),
-          facing: FF.Right,
-        }, {
-          id: "214",
-          expression: new CondMaker<EV>()
-            .add(EV.TrendX, "==", -1)
-            .done(),
-        }, {
-          id: "213",
-          expression: new CondMaker<EV>()
-            .add(EV.TrendX, "==", 1)
-            .done(),
-        },]; // dash
-        frame.hit = frame.hit || {};
-        frame.hit.d = { id: "102", facing: FF.Ctrl };
-        frame.hit.j = to_dash_frame;
-        // frame.hold = frame.hold || {};
-        // frame.hold.d = { id: '102', facing: FacingFlag.ByController };
-        // frame.hold.j = to_dash_frame;
+        editing
+          .hit('d', { id: "102", facing: FF.Ctrl })
+          .hit('j', { // dash
+            id: "214",
+            expression: new CondMaker<EV>()
+              .add(EV.PressLR, "==", 0)
+              .add(EV.TrendX, "==", -1)
+              .done(),
+          }, { // dash
+            id: "213",
+            expression: new CondMaker<EV>()
+              .add(EV.PressLR, "!=", 0)
+              .or(EV.TrendX, '!=', 0)
+              .done(),
+            facing: FF.Trend,
+          })
         break;
     }
     switch (frame.state) {
@@ -423,23 +359,20 @@ export function make_character_data(
         break;
 
       case StateEnum.Standing:
-        frame.hit = frame.hit || {};
-        frame.hold = frame.hold || {};
-        frame.key_down = frame.key_down || {}
-        frame.hit.a = [
-          ...hit_next_frame.weapon_atk(),
-          ...hit_next_frame.super_punch(),
-          ...hit_next_frame.punch(),
-        ]; // punch
-        frame.hit.j = hit_next_frame.jump();
-        frame.hit.d = hit_next_frame.defend();
-        hit_next_frame.turn_back(frame)
-        frame.key_down.U =
-          frame.key_down.D =
-          frame.key_down.L =
-          frame.key_down.R =
-          { id: "walking_0", facing: FF.Ctrl }; // walking
-        frame.hit.FF = frame.hit.FF = { id: "running_0" };
+        editing
+          .hit("a",
+            ...hit_next_frame.weapon_atk(),
+            ...hit_next_frame.drink(),
+            ...hit_next_frame.super_punch(),
+            ...hit_next_frame.punch(),
+          )
+          .hit('j', ...hit_next_frame.jump())
+          .hit('d', ...hit_next_frame.defend())
+          .hit('FF', 'running_0')
+          .keydown(
+            ['U', 'D', 'L', 'R'], // walking
+            { id: "walking_0", facing: FF.Ctrl }
+          )
         break;
       case StateEnum.BurnRun:
       case StateEnum.Z_Moveable:
@@ -469,22 +402,21 @@ export function make_character_data(
           frame_id !== "14" &&
           frame_id !== "15"
         ) {
-          frame.hit = frame.hit || {};
-          frame.hit.a = [
-            ...hit_next_frame.weapon_atk(),
-            ...hit_next_frame.drink(),
-            ...hit_next_frame.super_punch(),
-            ...hit_next_frame.punch(),
-          ];
-          frame.hit.j = hit_next_frame.jump()
-          frame.hit.d = hit_next_frame.defend()
-          frame.hit.FF = { id: "running_0" };
+          editing
+            .hit("a",
+              ...hit_next_frame.weapon_atk(),
+              ...hit_next_frame.drink(),
+              ...hit_next_frame.super_punch(),
+              ...hit_next_frame.punch(),
+            )
+            .hit('j', ...hit_next_frame.jump())
+            .hit('d', ...hit_next_frame.defend())
+            .hit('FF', 'running_0')
           frame.dvx = walking_speed / 2;
           frame.dvz = walking_speedz;
           frame.ctrl_x = frame.ctrl_z = 1;
           frame.wait = walking_frame_rate * 2 - 1;
         }
-        hit_next_frame.turn_back(frame);
         round_trip_frames_map[frame.name] =
           round_trip_frames_map[frame.name] || [];
         round_trip_frames_map[frame.name].push(frame);
@@ -493,10 +425,9 @@ export function make_character_data(
       case StateEnum.Running: {
         /** heavy_obj_run */
         if (frame_id !== "16" && frame_id !== "17" && frame_id !== "18") {
-          frame.hit = frame.hit || {};
-          frame.hit.a = [{
+          editing.hit('a', { // run_atk
             // 丢出武器
-            id: ["45"],
+            id: "45",
             expression: new CondMaker<EV>()
               .add(EV.Holding_W_Type, "==", WT.Baseball)
               .or((v) => v
@@ -511,11 +442,10 @@ export function make_character_data(
                 WT.Knife,
                 WT.Stick,
               ).done(),
-          }, { id: "85" },]; // run_atk
-          frame.hit.j = { id: "213" }; // dash
-          frame.hit.d = { id: "102" }; // rowing
-          frame.key_down = frame.key_down || {};
-          frame.key_down.B = { id: "218" }; // running_stop
+          }, { id: "85" })
+            .hit('j', "213") // dash
+            .hit('d', "102") // rowing
+            .keydown('B', '218') // running_stop
           frame.dvx = Number((running_speed / 2).toFixed(1));
           frame.dvz = running_speedz;
           frame.ctrl_z = 1;
@@ -617,37 +547,9 @@ export function make_character_data(
 
 function add_key_down_jump_atk(frame: IFrameInfo) {
   frame.key_down = frame.key_down || {}
-  frame.key_down.a = add_next_frame({
-    id: "52", // 角色跳跃丢出武器
-    facing: FF.Ctrl,
-    desc: "空中丢出武器",
-    expression: new CondMaker<EV>()
-      .one_of(
-        EV.Holding_W_Type,
-        WT.Baseball,
-        WT.Drink
-      )
-      .or((v) => v
-        .add(EV.PressFB, "!=", 0)
-        .and(EV.Holding_W_Type, "!=", WT.None)
-      )
-      .done(),
-  }, {
-    id: "30", // 角色跳跃用武器攻击
-    facing: FF.Ctrl,
-    desc: "空中武器攻击",
-    expression: new CondMaker<EV>()
-      .one_of(
-        EV.Holding_W_Type,
-        WT.Knife,
-        WT.Stick
-      )
-      .done(),
-  }, {
-    id: "80", // 角色跳跃攻击
-    desc: "跳跃攻击",
-    facing: FF.Ctrl,
-  });
+  frame.key_down.a = add_next_frame(
+    frame.key_down.a,
+    ...hit_next_frame.jump_atk());
 }
 
 function cook_transform_begin_expression_to_hit<

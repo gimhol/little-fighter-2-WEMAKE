@@ -1,6 +1,7 @@
 import { IBgData, IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IBaseData } from "../defines/IBaseData";
+import { IDatContext } from "../defines/IDatContext";
 import { IDatIndex } from "../defines/IDatIndex";
 import { IEntityData } from "../defines/IEntityData";
 import { IEntityInfo } from "../defines/IEntityInfo";
@@ -8,6 +9,7 @@ import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
 import { set_obj_field } from "../utils/container_help/set_obj_field";
 import { match_block_once } from "../utils/string_parser/match_block";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";
+import { cook_frames } from "./cook_frames";
 import { BotBuilder } from "./fighters/BotBuilder";
 import { make_ball_data } from "./make_ball_data";
 import { make_ball_special } from "./make_ball_special";
@@ -16,7 +18,6 @@ import { make_entity_data } from "./make_entity_data";
 import { make_entity_special } from "./make_entity_special";
 import { make_character_data } from "./make_fighter_data";
 import { make_fighter_special } from "./make_fighter_special";
-import { cook_frames } from "./cook_frames";
 import { make_frames_special } from "./make_frames_special";
 import { make_stage_info_list as make_stage_infos } from "./make_stage_info_list";
 import { make_weapon_data } from "./make_weapon_data";
@@ -109,35 +110,33 @@ export default function dat_to_json(
       continue;
     }
   }
-
+  const ctx: IDatContext = {
+    index: datIndex,
+    base: base,
+    text: full_str,
+    frames: {},
+    data: void 0
+  }
+  const frames = ctx.frames = cook_frames(ctx)
   switch ("" + datIndex.type) {
     case "0":
-      ret = make_character_data(base, cook_frames(full_str, base.files));
+      ret = ctx.data = make_character_data(ctx);
       break;
-    case "1":
-      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
-      break;
-    case "2":
-      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
+    case "1": case "2": case "4": case "6":
+      ret = ctx.data = make_weapon_data(ctx);
       break;
     case "3":
-      ret = make_ball_data(base, cook_frames(full_str, base.files), datIndex);
-      break;
-    case "4":
-      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
+      ret = ctx.data = make_ball_data(ctx);
       break;
     case "5":
-      ret = make_entity_data(base, cook_frames(full_str, base.files));
-      break;
-    case "6":
-      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
+      ret = ctx.data = make_entity_data(ctx);
       break;
     default:
       console.warn(
         "[dat_to_json] unknow dat type:",
         JSON.stringify(datIndex.type),
       );
-      ret = make_entity_data(base, cook_frames(full_str, base.files));
+      ret = ctx.data = make_entity_data(ctx);
       break;
   }
   if (ret) ret.id = datIndex.id;

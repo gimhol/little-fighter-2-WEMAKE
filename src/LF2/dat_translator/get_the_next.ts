@@ -1,10 +1,10 @@
 import { Builtin_FrameId, FacingFlag, INextFrame } from "../defines";
-import { cook_next_frame_mp_hp } from "./cook_next_frame_mp_hp";
+import { cook_next_frame_cost as cook_next_frame_cost } from "./cook_next_frame_cost";
 
 export const get_next_frame_by_raw_id = (
   id: number | string,
   type?: "next" | "hit",
-  frame_mp_hp_map?: Map<string, [number, number]>,
+  frame_mp_hp_map?: Map<string, { mp: number, hp: number }>,
 ): INextFrame => {
   if ("" + id === "1000") return { id: Builtin_FrameId.Gone };
   if ("" + id === "999") return { id: Builtin_FrameId.Auto };
@@ -26,7 +26,7 @@ export const get_next_frame_by_raw_id = (
         id: "" + -id,
         facing: FacingFlag.Backward,
       };
-      cook_next_frame_mp_hp(ret, type, frame_mp_hp_map);
+      cook_next_frame_cost(ret, type, frame_mp_hp_map);
       return ret;
     }
   }
@@ -35,10 +35,10 @@ export const get_next_frame_by_raw_id = (
       id: id.substring(1),
       facing: FacingFlag.Backward,
     };
-    cook_next_frame_mp_hp(ret, type, frame_mp_hp_map);
+    cook_next_frame_cost(ret, type, frame_mp_hp_map);
     return ret;
   }
   const ret: INextFrame = { id: "" + id };
-  cook_next_frame_mp_hp(ret, type, frame_mp_hp_map);
+  cook_next_frame_cost(ret, type, frame_mp_hp_map);
   return ret;
 };

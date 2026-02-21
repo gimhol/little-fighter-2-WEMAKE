@@ -63,4 +63,38 @@ export namespace hit_next_frame {
         .done(),
     }]
   }
+  export function jump_atk(): INextFrame[] {
+    return [{
+      id: "52", // 角色跳跃丢出武器
+      facing: FF.Ctrl,
+      desc: "空中丢出武器",
+      expression: new CondMaker<EV>()
+        .one_of(
+          EV.Holding_W_Type,
+          WT.Baseball,
+          WT.Drink
+        )
+        .or((v) => v
+          .add(EV.PressFB, "!=", 0)
+          .and(EV.Holding_W_Type, "!=", WT.None)
+        )
+        .done(),
+    }, {
+      id: "30", // 角色跳跃用武器攻击
+      facing: FF.Ctrl,
+      desc: "空中武器攻击",
+      expression: new CondMaker<EV>()
+        .one_of(
+          EV.Holding_W_Type,
+          WT.Knife,
+          WT.Stick
+        )
+        .done(),
+    }, {
+      id: "80", // 角色跳跃攻击
+      desc: "跳跃攻击",
+      facing: FF.Ctrl,
+    }]
+  }
+
 }

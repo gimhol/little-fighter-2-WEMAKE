@@ -15,13 +15,13 @@ import { take } from "./take";
  * 
  * @export
  * @param {*} frame 
- * @returns {[number, number]} [MP,HP]
+ * @returns {{ mp: number, hp: number }} 
  */
-export function take_raw_frame_mp(frame: any): [number, number] {
+export function take_raw_frame_mp(frame: any): { mp: number, hp: number } {
   const mp = take(frame, "mp");
-  if (!is_num(mp)) return [0, 0];
-  if (mp < 1000 && mp > -1000) return [mp, 0];
+  if (!is_num(mp)) return { mp: 0, hp: 0 };
+  if (mp < 1000 && mp > -1000) return { mp, hp: 0 };
   const _mp = mp % 1000;
   const hp = (mp - _mp) / 100;
-  return [_mp, hp];
+  return { mp: _mp, hp };
 }
