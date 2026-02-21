@@ -16,7 +16,7 @@ import { make_entity_data } from "./make_entity_data";
 import { make_entity_special } from "./make_entity_special";
 import { make_character_data } from "./make_fighter_data";
 import { make_fighter_special } from "./make_fighter_special";
-import { make_frames } from "./make_frames";
+import { cook_frames } from "./cook_frames";
 import { make_frames_special } from "./make_frames_special";
 import { make_stage_info_list as make_stage_infos } from "./make_stage_info_list";
 import { make_weapon_data } from "./make_weapon_data";
@@ -112,32 +112,32 @@ export default function dat_to_json(
 
   switch ("" + datIndex.type) {
     case "0":
-      ret = make_character_data(base, make_frames(full_str, base.files));
+      ret = make_character_data(base, cook_frames(full_str, base.files));
       break;
     case "1":
-      ret = make_weapon_data(base, full_str, make_frames(full_str, base.files), datIndex);
+      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
       break;
     case "2":
-      ret = make_weapon_data(base, full_str, make_frames(full_str, base.files), datIndex);
+      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
       break;
     case "3":
-      ret = make_ball_data(base, make_frames(full_str, base.files), datIndex);
+      ret = make_ball_data(base, cook_frames(full_str, base.files), datIndex);
       break;
     case "4":
-      ret = make_weapon_data(base, full_str, make_frames(full_str, base.files), datIndex);
+      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
       break;
     case "5":
-      ret = make_entity_data(base, make_frames(full_str, base.files));
+      ret = make_entity_data(base, cook_frames(full_str, base.files));
       break;
     case "6":
-      ret = make_weapon_data(base, full_str, make_frames(full_str, base.files), datIndex);
+      ret = make_weapon_data(base, full_str, cook_frames(full_str, base.files), datIndex);
       break;
     default:
       console.warn(
         "[dat_to_json] unknow dat type:",
         JSON.stringify(datIndex.type),
       );
-      ret = make_entity_data(base, make_frames(full_str, base.files));
+      ret = make_entity_data(base, cook_frames(full_str, base.files));
       break;
   }
   if (ret) ret.id = datIndex.id;

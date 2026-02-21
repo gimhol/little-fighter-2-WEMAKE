@@ -31,17 +31,17 @@
   }
 
   .top_bar {
-    --wails-draggable: drag;
-    position         : absolute;
-    right            : 0px;
-    top              : 0px;
-    left             : 0px;
+    --wails-draggable   : drag;
+    position            : absolute;
+    right               : 0px;
+    top                 : 0px;
+    left                : 0px;
     // pointer-events   : none;
-    user-select      : none;
-    display          : flex;
-    justify-content  : flex-end;
-    align-items      : flex-start;
-    gap              : 0px;
+    user-select         : none;
+    display             : flex;
+    justify-content     : flex-end;
+    align-items         : flex-start;
+    gap                 : 0px;
 
     button {
       --wails-draggable: no-drag;
@@ -186,6 +186,11 @@
   white-space: nowrap;
   align-items: center;
   flex-wrap  : wrap;
+}
+
+
+.world_dataset_input {
+  width: 120px;
 }
 
 .portrait {

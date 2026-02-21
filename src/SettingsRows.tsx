@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./App.module.scss";
+import csses from "./App.module.scss";
 import { Button } from "./Component/Buttons/Button";
 import CharacterSelect from "./Component/CharacterSelect";
 import Combine from "./Component/Combine";
@@ -10,7 +10,7 @@ import Select from "./Component/Select";
 import Show from "./Component/Show";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
-import { IWorldDataset } from "./LF2/IWorldDataset";
+import { IWorldDataset, world_dataset_field_map } from "./LF2/IWorldDataset";
 import { LF2 } from "./LF2/LF2";
 import { BotController } from "./LF2/bot/BotController";
 import { BaseController } from "./LF2/controller/BaseController";
@@ -22,6 +22,7 @@ import { list_writable_properties, TProperty } from "./LF2/utils/list_writable_p
 import { is_num } from "./LF2/utils/type_check";
 import { useLocalNumber, useLocalString } from "./useLocalStorage";
 import { CMD } from "./LF2/defines/CMD";
+import { download } from "./Utils/download";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
   "enemy chaser": (e: Entity) => new BotController("", e),
@@ -134,7 +135,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   return (
     <>
       <Show.Div
-        className={styles.settings_row}
+        className={csses.settings_row}
         show={props.show_stage_settings !== false}
       >
         <Titled float_label="关卡">
@@ -160,22 +161,22 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           </Combine>
         </Titled>
         <Combine>
-          <Button onClick={() => lf2?.cmds.push(CMD.KILL_ENEMIES)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_ENEMIES)}>
             杀死全部敌人
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.KILL_BOSS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_BOSS)}>
             杀死Boss
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.KILL_SOLIDERS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_SOLIDERS)}>
             杀死士兵
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.KILL_OTHERS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_OTHERS)}>
             杀死其他
           </Button>
         </Combine>
       </Show.Div>
 
-      <Show.Div className={styles.settings_row} show={props.show_bg_settings !== false}>
+      <Show.Div className={csses.settings_row} show={props.show_bg_settings !== false}>
         <Titled float_label="背景">
           <Select
             value={bg_id}
@@ -201,7 +202,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       </Show.Div>
 
       <Show.Div
-        className={styles.settings_row}
+        className={csses.settings_row}
         show={props.show_weapon_settings !== false}
       >
 
@@ -238,7 +239,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       </Show.Div>
 
       <Show.Div
-        className={styles.settings_row}
+        className={csses.settings_row}
         show={props.show_bot_settings !== false}
       >
         <Titled float_label="添加BOT">
@@ -271,15 +272,23 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       </Show.Div >
 
       <Show.Div
-        className={styles.settings_row}
-        show={props.show_world_tuning !== false}
-      >
+        className={csses.settings_row}
+        show={props.show_world_tuning !== false}>
         {world_properties?.map((v, idx) => {
-          const r = world_field_map[v.name as keyof IWorldDataset]
+          const r = world_dataset_field_map[v.name as keyof IWorldDataset]
           if (!r) return null
           const { title, desc = title, type } = r
           if (!type) return null;
           let ref: InputRef | null = null;
+          let defaultValue: number | undefined = void 0;;
+          switch (type) {
+            case "boolean":
+              defaultValue = (lf2.world as any)[v.name] ? 1 : 0;
+              break;
+            case "int": case "float":
+              defaultValue = (lf2.world as any)[v.name];
+              break;
+          }
           return (
             <Titled
               float_label={title}
@@ -289,11 +298,17 @@ export default function SettingsRows(props: ISettingsRowsProps) {
                 <InputNumber
                   precision={type === 'float' ? 2 : 0}
                   ref={(r) => { ref = r }}
-                  placeholder={v.name}
-                  step={type === 'float' ? 0.01 : type === 'int' ? 1 : 0.01}
-                  defaultValue={(lf2.world as any)[v.name]}
-                  onChange={(e) =>
-                    ((lf2.world as any)[v.name] = e)
+                  min={r.min}
+                  max={r.max}
+                  step={r.step ?? (type === 'float' ? 0.01 : type === 'int' ? 1 : 0.01)}
+                  defaultValue={defaultValue}
+                  className={csses.world_dataset_input}
+                  onChange={(e) => {
+                    switch (type) {
+                      case "boolean": (lf2.world as any)[v.name] = !!e; break;
+                      case "int": case "float": (lf2.world as any)[v.name] = e; break;
+                    }
+                  }
                   } />
                 <Button
                   title="重置"
@@ -307,62 +322,23 @@ export default function SettingsRows(props: ISettingsRowsProps) {
             </Titled>
           );
         })}
+        <Button onClick={() => {
+          const json_blob = new Blob([
+            JSON.stringify(
+              {
+                __is_world_dataset__: true,
+                ...lf2.world.dump_dataset(),
+              }
+            )], {
+            type: 'application/json;charset=utf-8'
+          })
+          download(URL.createObjectURL(json_blob), 'world.wdataset.json')
+        }}>
+          Dump Dataset
+        </Button>
       </Show.Div>
     </>
   );
 }
 
-interface IFieldInfo {
-  title: string;
-  type: '' | 'int' | 'float' | 'boolean';
-  desc?: string;
-}
-const world_field_map: Record<keyof IWorldDataset, IFieldInfo> = {
-  gravity: { title: "重力", desc: "重力", type: 'float' },
-  begin_blink_time: { title: "入场闪烁时长", desc: "入场闪烁时长", type: 'int' },
-  gone_blink_time: { title: "消失闪烁时长", desc: "消失闪烁时长", type: 'int' },
-  lying_blink_time: { title: "起身闪烁时长", desc: "起身闪烁时长", type: 'int' },
-  double_click_interval: { title: "双击判定时长", desc: "双击判定时长", type: 'int' },
-  key_hit_duration: { title: "按键判定时长", desc: "按键判定时长", type: 'int' },
-  itr_shaking: { title: "受伤摇晃时长", desc: "受伤摇晃时长", type: 'int' },
-  itr_motionless: { title: "命中停顿时长", desc: "命中停顿时长", type: 'int' },
-  hp_healing_ticks: { title: "治疗回血周期", desc: "治疗效果下，每几帧回血一次", type: 'int' },
-  hp_healing_value: { title: "治疗回血量", desc: "治疗效果下，每次回血多少", type: 'int' },
-  fvx_f: { title: "dvx缩放系数", desc: "fvx_f", type: 'float' },
-  fvy_f: { title: "dvy缩放系数", desc: "fvy_f", type: 'float' },
-  fvz_f: { title: "dvz缩放系数", desc: "fvz_f", type: 'float' },
-  ivy_f: { title: "ivy_f", desc: "ivy_f", type: 'float' },
-  ivz_f: { title: "ivz_f", desc: "ivz_f", type: 'float' },
-  ivx_f: { title: "ivx_f", desc: "ivx_f", type: 'float' },
-  ivy_d: { title: "itr默认dvy", desc: "默认的攻击Y轴速度", type: 'float' },
-  ivx_d: { title: "itr默认dvx", desc: "默认的攻击X轴速度", type: 'float' },
-  cvy_d: { title: "cvy_d", desc: "cvy_d", type: 'float' },
-  cvx_d: { title: "cvx_d", desc: "cvx_d", type: 'float' },
-  tvx_f: { title: "X轴丢人初速度系数", desc: "tvx_f", type: 'float' },
-  tvy_f: { title: "Y轴丢人初速度系数", desc: "tvy_f", type: 'float' },
-  tvz_f: { title: "Z轴丢人初速度系数", desc: "tvz_f", type: 'float' },
-  vrest_offset: { title: "vrest_offset", desc: "vrest_offset", type: 'int' },
-  arest_offset: { title: "arest_offset", desc: "arest_offset", type: 'int' },
-  arest_offset_2: { title: "arest_offset_2", desc: "arest_offset_2", type: 'int' },
-  frame_wait_offset: { title: "frame_wait_offset", desc: "frame_wait_offset", type: 'int' },
-  cha_bc_spd: { title: "cha_bc_spd", desc: "cha_bc_spd", type: 'float' },
-  cha_bc_tst_spd_x: { title: "cha_bc_tst_spd_x", desc: "cha_bc_tst_spd_x", type: 'float' },
-  cha_bc_tst_spd_y: { title: "cha_bc_tst_spd_y", desc: "cha_bc_tst_spd_y", type: 'float' },
-  hp_recoverability: { title: "可回血比例", desc: "可回血比例", type: 'float' },
-  hp_r_ticks: { title: "自动回血周期", desc: "每几帧回血一次", type: 'int' },
-  hp_r_value: { title: "自动回血量", desc: "每次回血多少", type: 'int' },
-  mp_r_ticks: { title: "自动回蓝周期", desc: "每几帧回蓝一次", type: 'int' },
-  mp_r_ratio: { title: "mp_r_ratio", desc: "mp_r_ratio", type: 'int' },
-  friction_factor: { title: "地速衰减系数", desc: "在地面的物体，速度将每帧乘以此值", type: 'float' },
-  friction_x: { title: "地面摩擦X", desc: "在地面的物体，每帧X速度将±=此值,向0靠近", type: 'float' },
-  friction_z: { title: "地面摩擦Z", desc: "在地面的物体，每帧Z速度将±=此值,向0靠近", type: 'float' },
-  screen_w: { title: "screen_w", desc: "screen_w", type: '' },
-  screen_h: { title: "screen_h", desc: "screen_h", type: '' },
-  sync_render: { title: "sync_render", desc: "sync_render", type: '' },
-  difficulty: { title: "difficulty", desc: "difficulty", type: '' },
-  infinity_mp: { title: "infinity_mp", desc: "infinity_mp", type: 'boolean' },
-  fall_r_ticks: { title: "fall_r_ticks", desc: "fall_r_ticks", type: 'int' },
-  fall_r_value: { title: "fall_r_value", desc: "fall_r_value", type: 'int' },
-  defend_r_ticks: { title: "defend_r_ticks", desc: "defend_r_ticks", type: 'int' },
-  defend_r_value: { title: "defend_r_value", desc: "defend_r_value", type: 'int' }
-}
+

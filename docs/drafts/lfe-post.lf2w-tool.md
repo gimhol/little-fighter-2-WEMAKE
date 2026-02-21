@@ -1,13 +1,13 @@
-# lf2w-tool (Conversion Tool for Little Fighter 2 Wemake)
+# lf2w-tool (Conversion Tool for Little Fighter Wemake)
 
 [url](https://foo.bar)
 
 ## Content
-"lf2w-tool" is Conversion Tool for Little Fighter 2 Wemake
+"lf2w-tool" is Conversion Tool for Little Fighter Wemake
 
 You can use this tool to convert LF2 data into "extra data packages" that can be used by LF2W.
 
-[url=https://lf-empire.de/forum/showthread.php?tid=11552]What is Little Fighter 2 Wemake[/url](hereinafter referred to as LF2W)
+[url=https://lf-empire.de/forum/showthread.php?tid=11552]What is Little Fighter Wemake[/url](hereinafter referred to as LF2W)
 
 ================================================================================
 

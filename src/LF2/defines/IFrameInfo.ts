@@ -1,4 +1,8 @@
+import { IWorldDataset } from "../IWorldDataset";
+import { ChaseLost } from "./ChaseLost";
+import { FacingFlag } from "./FacingFlag";
 import { FrameBehavior } from "./FrameBehavior";
+import { HitFlag } from "./HitFlag";
 import type { IBdyInfo } from "./IBdyInfo";
 import type { IBpointInfo } from "./IBpointInfo";
 import type { ICpointInfo } from "./ICpointInfo";
@@ -19,7 +23,7 @@ import type { StateEnum } from "./StateEnum";
  * @export
  * @interface IFrameInfo
  */
-export interface IFrameInfo {
+export interface IFrameInfo extends Partial<IWorldDataset> {
   /**
    * 帧ID
    * 
@@ -149,27 +153,41 @@ export interface IFrameInfo {
 
   /**
    * 原ball的hit_Fa
+   * 
+   * 跟踪效果改由chase决定
    *
    * @type {?number}
    * @see {FrameBehavior}
    */
   behavior?: number | FrameBehavior;
 
-  friction_z?: number;
-  friction_x?: number;
-  friction_factor?: number;
 
-  gravity?: number;
+  chase?: IChaseInfo;
+
   /**
    * 是否响应重力
    */
   gravity_enabled?: boolean;
 
-  chasing_y?: number;
 
   broadcasts?: string[];
+
+  facing?: FacingFlag;
 }
 
+export interface IChaseInfo {
+  /**
+   * 跟踪对象的标志
+   */
+  flag: number | HitFlag
+
+  /** 
+   * 跟踪对象丢失后的行为
+   */
+  lost: number | ChaseLost;
+
+  oy?: number
+}
 
 let order = -1;
 export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
@@ -193,7 +211,6 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   ctrl_x: ++order,
   ctrl_y: ++order,
   ctrl_z: ++order,
-  chasing_y: ++order,
   itr: ++order,
   bdy: ++order,
   opoint: ++order,
@@ -216,10 +233,65 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   on_exhaustion: ++order,
   on_landing: ++order,
   behavior: ++order,
+  chase: ++order,
   friction_z: ++order,
   friction_x: ++order,
   friction_factor: ++order,
   gravity: ++order,
   gravity_enabled: ++order,
   broadcasts: ++order,
+  facing: ++order,
+  itr_shaking: ++order,
+  itr_motionless: ++order,
+  itr_arest: ++order,
+  fvx_f: ++order,
+  fvy_f: ++order,
+  fvz_f: ++order,
+  ivy_f: ++order,
+  ivz_f: ++order,
+  ivx_f: ++order,
+  ivy_d: ++order,
+  ivx_d: ++order,
+  cvy_d: ++order,
+  cvx_d: ++order,
+  tvx_f: ++order,
+  tvy_f: ++order,
+  tvz_f: ++order,
+  begin_blink_time: ++order,
+  lying_blink_time: ++order,
+  gone_blink_time: ++order,
+  vrest_offset: ++order,
+  arest_offset: ++order,
+  frame_wait_offset: ++order,
+  cha_bc_spd: ++order,
+  cha_bc_tst_spd_x: ++order,
+  cha_bc_tst_spd_y: ++order,
+  hp_recoverability: ++order,
+  hp_r_ticks: ++order,
+  hp_r_value: ++order,
+  hp_healing_ticks: ++order,
+  hp_healing_value: ++order,
+  mp_r_ticks: ++order,
+  mp_r_ratio: ++order,
+  double_click_interval: ++order,
+  key_hit_duration: ++order,
+  land_friction_factor: ++order,
+  land_friction_x: ++order,
+  land_friction_z: ++order,
+  screen_w: ++order,
+  screen_h: ++order,
+  sync_render: ++order,
+  difficulty: ++order,
+  infinity_mp: ++order,
+  fall_r_ticks: ++order,
+  fall_r_value: ++order,
+  defend_r_ticks: ++order,
+  defend_r_value: ++order,
+  fall_value_max: ++order,
+  catch_time_max: ++order,
+  defend_value_max: ++order,
+  defend_ratio: ++order,
+  mp_max: ++order,
+  hp_max: ++order,
+  resting_max: ++order
 }

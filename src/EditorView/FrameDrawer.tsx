@@ -47,7 +47,7 @@ export class FrameDrawer extends Shape<FrameDrawerData> {
       r = Math.max((x + w) - pic.w, r);
       b = Math.max((y + h) - pic.h, b);
     };
-    const check_vec2 = ({ x, y }: { x: number, y: number }) => {
+    const check_vec2 = ({ x = 0, y = 0 }: { x?: number, y?: number }) => {
       x -= 20;
       y -= 20
       l = Math.min(x, l);
@@ -108,7 +108,7 @@ export class FrameDrawer extends Shape<FrameDrawerData> {
   }
   draw_cpoint(ctx: CanvasRenderingContext2D, cpoint: ICpointInfo) {
     ctx.beginPath();
-    const { x, y } = cpoint;
+    const { x = 0, y = 0 } = cpoint;
     ctx.moveTo(x, y + 2);
     ctx.lineTo(x - 2, y);
     ctx.lineTo(x, y - 2);

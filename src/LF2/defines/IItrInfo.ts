@@ -105,6 +105,8 @@ export interface IItrInfo extends IQube {
    */
   caughtact?: TNextFrame;
 
+  on_hit_ground?: TNextFrame;
+
   actions?: TAction[];
 
   /**

@@ -1,4 +1,5 @@
 import { Ground } from "../Ground";
+import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks, ICollision, new_id, new_team } from "../base";
@@ -7,7 +8,7 @@ import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
-  FrameBehavior, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  FrameBehavior, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
@@ -16,13 +17,14 @@ import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
 import { IArmorInfo } from "../defines/IArmorInfo";
 import { Ditto } from "../ditto";
+import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
 import { abs, clamp, find, float_equal, floor, intersection, max, min, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
-import { is_num, is_positive, is_str } from "../utils/type_check";
+import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
 import { DrinkInfo } from "./DrinkInfo";
 import { Factory, ICreator } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
@@ -37,8 +39,8 @@ export class Entity {
   protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected _spawn_time: number = 0;
-
   protected _outline_color: string | undefined = void 0;
+  protected _game_time: number = -1; // 每次update前与world对齐
   get outline_color(): string | undefined {
     return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
   };
@@ -71,8 +73,11 @@ export class Entity {
    * @readonly
    * @type {IVector3[]}
    */
-  readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
+  private readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
   readonly v_rests = new Map<string, ICollision>();
+  readonly blockers = new Map<string, ICollision>();
+  readonly superpunchs = new Map<string, ICollision>();
+
   readonly victims = new Map<string, ICollision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
   protected readonly _emitters: string[] = [];
@@ -95,21 +100,21 @@ export class Entity {
   public dismiss_data!: IEntityData | null;
   public has_stat_bar!: boolean;
   protected _resting!: number;
-  protected _resting_max!: number;
+  protected _resting_max?: number; // fallback from world
   protected _toughness!: number;
   protected _toughness_max!: number;
   protected _toughness_resting!: number;
   protected _toughness_resting_max!: number;
   protected _fall_value!: number;
-  protected _fall_value_max!: number;
+  protected _fall_value_max?: number;
   protected _fall_r_tick!: Times;
   protected _fall_r_value!: number;
   protected _defend_value!: number;
-  protected _defend_value_max!: number;
+  protected _defend_value_max?: number; // fallback from world
   protected _defend_r_tick!: Times;
   protected _defend_r_value!: number;
   protected _healing!: number;
-  protected _defend_ratio!: number;
+  protected _defend_ratio?: number; // fallback from world
   public throwinjury!: number | null;
   public facing!: TFace;
   public frame!: IFrameInfo;
@@ -135,10 +140,10 @@ export class Entity {
    */
   protected _team!: string;
   protected _mp!: number;
-  protected _mp_max!: number;
+  protected _mp_max?: number;
   protected _hp!: number;
   protected _hp_r!: number;
-  protected _hp_max!: number;
+  protected _hp_max?: number;
   protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
   protected _emitter_opoint!: IOpointInfo | null;
@@ -154,7 +159,7 @@ export class Entity {
    * 当抓住一个被击晕的人时，此值充满。
    */
   protected _catch_time!: number;
-  protected _catch_time_max!: number;
+  protected _catch_time_max?: number;
 
   /**
    * 隐身计数，每帧-1
@@ -266,9 +271,9 @@ export class Entity {
     if (o === v) return;
     this._toughness_resting_max = v;
   }
-  get resting_max(): number { return this._resting_max; }
+  get resting_max(): number { return this._resting_max ?? this.world.resting_max; }
   set resting_max(v: number) {
-    const o = this._resting_max;
+    const o = this.resting_max;
     if (o === v) return;
     this._resting_max = v;
     this.callbacks.emit("on_resting_max_changed")(this, v, o);
@@ -316,9 +321,16 @@ export class Entity {
     if (o === v) return;
     this._toughness_resting = v;
   }
-  get fall_value_max(): number { return this._fall_value_max; }
+  get catch_time_max(): number { return this._catch_time_max ?? this.world.catch_time_max; }
+  set catch_time_max(v: number) {
+    const o = this.catch_time_max;
+    if (o === v) return;
+    this._catch_time_max = v;
+    this.callbacks.emit("on_catch_time_max_changed")(this, v, o);
+  }
+  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value_max; }
   set fall_value_max(v: number) {
-    const o = this._fall_value_max;
+    const o = this.fall_value_max;
     if (o === v) return;
     this._fall_value_max = v;
     this.callbacks.emit("on_fall_value_max_changed")(this, v, o);
@@ -334,9 +346,9 @@ export class Entity {
     }
     this.callbacks.emit("on_defend_value_changed")(this, v, o);
   }
-  get defend_value_max(): number { return this._defend_value_max; }
+  get defend_value_max(): number { return this._defend_value_max ?? this.world.defend_value_max }
   set defend_value_max(v: number) {
-    const o = this._defend_value_max;
+    const o = this.defend_value_max;
     if (o === v) return;
     this._defend_value_max = v;
     this.callbacks.emit("on_defend_value_max_changed")(this, v, o);
@@ -350,13 +362,12 @@ export class Entity {
     this.callbacks.emit("on_healing_changed")(this, v, o);
   }
 
-  get defend_ratio(): number { return this._defend_ratio; }
+  get defend_ratio(): number { return this._defend_ratio ?? this.world.defend_ratio; }
   set defend_ratio(v: number) {
-    const o = this._defend_ratio;
+    const o = this.defend_ratio;
     if (o === v) return;
     this._defend_ratio = v;
   }
-
 
   get catching() {
     return this._catching;
@@ -367,11 +378,14 @@ export class Entity {
   get lf2(): LF2 {
     return this.world.lf2;
   }
-  protected get velocity_1(): IVector3 {
-    if (this.velocities.length > 1) return this.velocities[1]!;
+  get velocity_0(): Readonly<IVector3> {
+    if (this.velocities.length > 0) return this.velocities[0];
+    return this.velocities[0] = new Ditto.Vector3(0, 0, 0);
+  }
+  get velocity_1(): Readonly<IVector3> {
+    if (this.velocities.length > 1) return this.velocities[1];
     return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
   }
-
   get bearer(): Entity | null {
     return this._bearer;
   }
@@ -438,6 +452,7 @@ export class Entity {
 
     this.callbacks.emit("on_hp_changed")(this, v, o);
     if (o > 0 && v <= 0) {
+      this.world.del_chaser(this);
       this.callbacks.emit("on_dead")(this);
       this.state?.on_dead?.(this);
       if (this._data.base.brokens?.length) {
@@ -453,20 +468,22 @@ export class Entity {
     }
   }
   get mp_max(): number {
-    return this._mp_max;
+    return this._mp_max ?? this.world.mp_max;
   }
   set mp_max(v: number) {
-    const o = this._mp_max;
+    const o = this.mp_max;
     v = max(0, v)
+    if (v === o) return;
     this.callbacks.emit("on_mp_max_changed")(this, (this._mp_max = v), o);
   }
 
   get hp_max(): number {
-    return this._hp_max;
+    return this._hp_max ?? this.world.hp_max;
   }
   set hp_max(v: number) {
-    const o = this._hp_max;
+    const o = this.hp_max;
     v = max(0, v)
+    if (v === o) return;
     this.callbacks.emit("on_hp_max_changed")(this, (this._hp_max = v), o);
   }
 
@@ -587,11 +604,17 @@ export class Entity {
   get chasing(): Entity | null { return this._chasing; }
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
+
+  get gravity(): number {
+    return this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity
+  }
+
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }
 
-  reset(world: World, data: IEntityData, states: States = ENTITY_STATES) {
+  reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
+    this._data = d;
     this.world = world;
     this.ground = Ground.Default;
     this.id = new_id();
@@ -610,18 +633,18 @@ export class Entity {
     this.dismiss_data = null;
     this.copies.clear()
     this.has_stat_bar = false;
+    this._game_time = -1;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
-    this._resting_max = Defines.DEFAULT_RESTING_MAX;
+    this._resting_max = d.base.resting;
     this._resting = 0;
-    this._fall_value = Defines.DEFAULT_FALL_VALUE_MAX;
     this._toughness = 0;
     this._toughness_max = 0;
     this._toughness_resting = 0;
-    this._fall_value_max = Defines.DEFAULT_FALL_VALUE_MAX;
-    this._defend_value = Defines.DEFAULT_DEFEND_VALUE_MAX;
-    this._defend_value_max = Defines.DEFAULT_DEFEND_VALUE_MAX;
+    this._fall_value_max = d.base.fall_value;
+    this._defend_value_max = d.base.defend_value;
+    this._defend_ratio = d.base.defend_ratio;
     this._healing = 0;
-    this._defend_ratio = Defines.DEFAULT_DEFEND_INJURY_RATIO;
+    this._catch_time_max = d.base.catch_time;
     this.throwinjury = null;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
@@ -636,25 +659,19 @@ export class Entity {
     this.callbacks.clear();
     this._name = ""
     this._team = new_team();
-    this._mp = Defines.DEFAULT_MP;
-    this._mp_max = Defines.DEFAULT_MP;
-    this._hp = Defines.DEFAULT_HP;
-    this._hp_r = Defines.DEFAULT_HP;
-    this._hp_max = Defines.DEFAULT_HP;
     this._landing_frame = null;
     this._bearer = null;
     this._holding = null;
     this._emitters.length = 0;
     this._emitter_opoint = null;
     this.next_frame = null;
-
     this.a_rest = 0;
     this.v_rests.clear()
+    this.blockers.clear()
+    this.superpunchs.clear()
     this.victims.clear()
     this.motionless = 0;
     this.shaking = 0;
-
-    this._data = data;
     this.states = states;
     this._hp_r_tick = new Times(0, world.hp_r_ticks);
     this._mp_r_tick = new Times(0, world.mp_r_ticks);
@@ -662,25 +679,19 @@ export class Entity {
     this._defend_r_tick = new Times(0, world.defend_r_ticks);
     this._defend_r_value = world.defend_r_value;
     this._fall_r_value = world.fall_r_value;
-    this._hp_max = data.base.hp ?? Defines.DEFAULT_HP;
+    this._hp_max = d.base.hp;
     this._ctrl = new InvalidController("", this);
-    this._mp_max = data.base.mp ?? Defines.DEFAULT_MP;
-    this._defend_ratio = data.base.defend_ratio ?? Defines.DEFAULT_DEFEND_INJURY_RATIO;
+    this._mp_max = d.base.mp;
+    this._defend_ratio = d.base.defend_ratio
 
     const { armor } = this._data.base
-    this.armor = armor || null
-    if (armor) this.toughness = this.toughness_max = armor.toughness
-
-    this._catch_time_max = data.base.catch_time ?? Defines.DEFAULT_CATCH_TIME;
-    this.fall_value_max = this._data.base.fall_value ?? Defines.DEFAULT_FALL_VALUE_MAX;
-    this.defend_value_max = this._data.base.defend_value ?? Defines.DEFAULT_DEFEND_VALUE_MAX;
-    this.resting_max = this._data.base.resting ?? Defines.DEFAULT_RESTING_MAX;
+    this.armor = armor || null;
+    if (armor) this.toughness = this.toughness_max = armor.toughness;
     this.fall_value = this.fall_value_max;
     this.defend_value = this.defend_value_max;
-    this._hp = this._hp_r = this._hp_max;
-    this._mp = this._mp_max;
-    this._catch_time_max = Defines.DEFAULT_CATCH_TIME
-    this._catch_time = Defines.DEFAULT_CATCH_TIME
+    this._hp = this._hp_r = this.hp_max;
+    this._mp = this.mp_max;
+    this._catch_time = this.catch_time_max;
     this._invisible_duration = 0;
     this._invulnerable_duration = 0;
     this._blinking_duration = 0;
@@ -690,7 +701,7 @@ export class Entity {
     this._dead_gone = null;
     this._dead_join = null;
 
-    this.drink = data.base.drink ? new DrinkInfo(data.base.drink) : null
+    this.drink = d.base.drink ? new DrinkInfo(d.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
     this._chasing = null;
@@ -715,11 +726,6 @@ export class Entity {
     this._holding = v;
     this.callbacks.emit("on_holding_changed")(this, v, old);
     return this;
-  }
-
-  get_v_rest(id: string): number {
-    const v = this.v_rests.get(id);
-    return v?.v_rest ?? 0;
   }
 
   find_auto_frame(): IFrameInfo {
@@ -756,11 +762,11 @@ export class Entity {
       pos_y = pos_y + emitter_frame.centery - opoint.y;
       pos_x = pos_x - emitter.facing * (emitter_frame.centerx - opoint.x);
     }
-    pos_x = round_float(pos_x)
-    pos_y = round_float(pos_y)
-    pos_z = round_float(pos_z + (opoint.z ?? 0))
-
-    this._position.set(pos_x, pos_y, pos_z);
+    this.set_position(
+      pos_x,
+      pos_y,
+      pos_z + (opoint.z ?? 0)
+    );
 
     const result = this.get_next_frame(opoint.action);
     facing = result?.which.facing
@@ -872,7 +878,16 @@ export class Entity {
       this.set_state(next_state_code)
     }
     if (this._prev_frame !== this.frame) {
-      this.state?.on_frame_changed?.(this, this.frame, this._prev_frame)
+      this.state?.on_frame_changed?.(this, this.frame, this._prev_frame);
+
+      if (this.hp > 0) {
+        const pre_chase = this._prev_frame.chase?.flag;
+        const cur_chase = this.frame.chase?.flag;
+        if (pre_chase && !cur_chase)
+          this.world.del_chaser(this)
+        else if (cur_chase && pre_chase != cur_chase)
+          this.world.add_chaser(this, cur_chase)
+      }
     }
     if (v.invisible) this.invisibility(v.invisible);
     if (v.opoint) this.apply_opoints(v.opoint);
@@ -902,15 +917,21 @@ export class Entity {
       if (is_num(multi)) {
         count = multi;
       } else if (multi) {
-        multi_type = multi.type
-        switch (multi.type) {
+        const {
+          type, min = 0, max = 355,
+          // TODO: 改用skip_zero来表达
+          skip_zero = opoint.spreading === OpointSpreading.FirzenDisater
+        } = multi
+        switch (multi_type = type) {
           case OpointMultiEnum.AccordingEnemies:
             enemies = this.world.list_enemy_fighters(this, o => o.hp > 0)
-            count = max(multi.min, enemies.length);
+            if (skip_zero && !enemies.length) break;
+            count = clamp(enemies.length, min, max);
             break;
           case OpointMultiEnum.AccordingAllies:
             allies = this.world.list_ally_fighters(this, o => o.hp > 0)
-            count = max(multi.min, allies.length);
+            if (skip_zero && !allies.length) break;
+            count = clamp(allies.length, min, max);
             break;
         }
       }
@@ -999,14 +1020,8 @@ export class Entity {
     if (entity.data.id === this.data.id) this.copies.add(entity)
     entity.key_role = false;
     entity.dead_gone = true;
-
-    for (const [k, v] of this.v_rests) {
-      /*
-      Note: 继承v_rests，避免重复反弹ball...
-      */
-      entity.v_rests.set(k, { ...v });
-    }
-
+    /* Note: 继承v_rests，避免重复反弹ball... */
+    for (const [, v] of this.v_rests) entity.add_v_rest({ ...v })
     return entity;
   }
 
@@ -1044,14 +1059,19 @@ export class Entity {
    */
   handle_ground_velocity_decay(factor: number = 1) {
     if (this._position.y > this.ground_y || this.shaking || this.motionless) return;
+    const landing = this._landing_frame === this.frame;
+    factor *= landing ? this.world_dataset('land_friction_factor') : this.world_dataset('friction_factor')
+    const fx = landing ? this.world_dataset('land_friction_x') : this.world_dataset('friction_x')
+    const fz = landing ? this.world_dataset('land_friction_z') : this.world_dataset('friction_z')
+    this.handle_velocity_decay(fx, fz, factor)
+  }
+
+  handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
     let { x, z } = this.velocities[0];
-    const is_landing_frame = this._landing_frame === this.frame;
-
-    factor *= this.frame.friction_factor ?? this.world.friction_factor;
-    x *= factor;
-    z *= factor;
-
-    const fx = this.frame.friction_x ?? (is_landing_frame ? this.world.land_friction_x : this.world.friction_x)
+    if (factor != void 0) {
+      x *= factor;
+      z *= factor;
+    }
     if (x > 0) {
       x -= fx;
       if (x < 0) x = 0; // 不能因为摩擦力反向加速
@@ -1059,8 +1079,6 @@ export class Entity {
       x += fx;
       if (x > 0) x = 0; // 不能因为摩擦力反向加速
     }
-
-    const fz = this.frame.friction_z ?? (is_landing_frame ? this.world.land_friction_z : this.world.friction_z)
     if (z > 0) {
       z -= fz;
       if (z < 0) z = 0; // 不能因为摩擦力反向加速
@@ -1068,29 +1086,8 @@ export class Entity {
       z += fz;
       if (z > 0) z = 0; // 不能因为摩擦力反向加速
     }
-    this.velocities[0].x = x;
-    this.velocities[0].z = z;
-  }
-
-  handle_velocity_decay(friction: number) {
-    let { x, z } = this.velocities[0];
-    if (x > 0) {
-      x -= friction;
-      if (x < 0) x = 0; // 不能因为摩擦力反向加速
-    } else if (x < 0) {
-      x += friction;
-      if (x > 0) x = 0; // 不能因为摩擦力反向加速
-    }
-
-    if (z > 0) {
-      z -= friction;
-      if (z < 0) z = 0; // 不能因为摩擦力反向加速
-    } else if (z < 0) {
-      z += friction;
-      if (z > 0) z = 0; // 不能因为摩擦力反向加速
-    }
-    this.velocities[0].x = x;
-    this.velocities[0].z = z;
+    this.set_velocity_0_x(x)
+    this.set_velocity_0_z(z);
   }
 
   /**
@@ -1115,24 +1112,24 @@ export class Entity {
    * @see {World.gravity}
    */
   private handle_gravity() {
-    if (this.bearer && this.catcher) return;
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
-    this.velocities[0].y -= this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity;
+    this.velocities[0].y -= this.gravity;
   }
 
-  private handle_frame_velocity() {
-    if (this.shaking || this.motionless) return;
+  private update_velocity() {
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const {
-      acc_x,
-      acc_y,
-      acc_z,
       dvx,
       dvy,
       dvz,
       vxm = SpeedMode.LF2,
-      vym = SpeedMode.Acc,
+      vym = SpeedMode.AccTo,
       vzm = SpeedMode.LF2,
+      acc_x = (vxm == SpeedMode.AccTo) ? dvx : void 0,
+      acc_y = (vym == SpeedMode.AccTo) ? dvy : void 0,
+      acc_z = (vzm == SpeedMode.AccTo) ? dvz : void 0,
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
@@ -1149,15 +1146,13 @@ export class Entity {
     if (!ctrl_z && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
     else if (UD && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
 
-    this.velocities[0].x = vx;
-    this.velocities[0].y = vy;
-    this.velocities[0].z = vz;
-    if (vxm == SpeedMode.Extra && dvx) this.velocity_1.x = dvx
-    if (vym == SpeedMode.Extra && dvy) this.velocity_1.y = dvy
-    if (vzm == SpeedMode.Extra && dvz) this.velocity_1.z = dvz
-    if (vxm == SpeedMode.Fixed) this.velocity_1.x = 0
-    if (vym == SpeedMode.Fixed) this.velocity_1.y = 0
-    if (vzm == SpeedMode.Fixed) this.velocity_1.z = 0
+    this.set_velocity_0(vx, vy, vz);
+    if (vxm == SpeedMode.Extra && dvx) this.set_velocity_1_x(dvx)
+    if (vym == SpeedMode.Extra && dvy) this.set_velocity_1_y(dvy)
+    if (vzm == SpeedMode.Extra && dvz) this.set_velocity_1_z(dvz)
+    if (vxm == SpeedMode.Fixed) this.set_velocity_1_x(0)
+    if (vym == SpeedMode.Fixed) this.set_velocity_1_y(0)
+    if (vzm == SpeedMode.Fixed) this.set_velocity_1_z(0)
   }
 
   dismiss_fusion(frame_id: string) {
@@ -1267,7 +1262,7 @@ export class Entity {
    * @memberof Entity
    */
   mp_recovering(): void {
-    if (this._hp <= 0 || this._mp >= this._mp_max || this._blinking_duration || this._invisible_duration)
+    if (this._hp <= 0 || this._mp >= this.mp_max || this._blinking_duration || this._invisible_duration)
       return;
     const { base } = this._data
     this._mp_r_tick.max = base.mp_r_ticks ?? this.world.mp_r_ticks;
@@ -1275,7 +1270,7 @@ export class Entity {
       return;
     const r_ratio = base.mp_r_ratio ?? this.world.mp_r_ratio;
     const value = 1 + floor(round_float((500 - min(r_ratio * this._hp, 500)) / 100))
-    this.mp = min(this._mp_max, this._mp + value);
+    this.mp = min(this.mp_max, this._mp + value);
   }
 
   /**
@@ -1305,22 +1300,22 @@ export class Entity {
   }
 
   update(): void {
+    this._game_time = this.world.game_time.value;
     this.update_id.add()
     if (this.next_frame) this.enter_frame(this.next_frame);
+    if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
     if (this.check_fusion_dismissing()) return;
     this.hp_recovering()
     this.mp_recovering();
 
     if (this.frame.hp) this.hp -= this.frame.hp;
 
-    if (this.shaking <= 0) {
-      for (const [k, v] of this.v_rests) {
-        if (v.v_rest && v.v_rest > 0) --v.v_rest;
-        else this.v_rests.delete(k);
-      }
+    for (const [k, v] of this.v_rests) {
+      if (v.rest > 0) --v.rest;
+      else this.del_v_rest(k)
     }
     for (const [k, v] of this.victims)
-      if (v.v_rest) this.victims.delete(k)
+      if (v.rest) this.victims.delete(k)
 
     if (this.motionless <= 0 && this.shaking <= 0)
       this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
@@ -1372,7 +1367,8 @@ export class Entity {
         }
       }
     }
-    this.follow_bearer();
+
+
     for (const pair of this._opoints) {
       const [opoint, time] = pair
       if (time === opoint.interval) {
@@ -1394,41 +1390,10 @@ export class Entity {
       else this.next_frame = this.find_auto_frame()
     }
     this.handle_gravity();
-    this.handle_frame_velocity();
+    this.update_velocity();
     this.state?.update(this);
-    let vx = 0;
-    let vy = 0;
-    let vz = 0;
-    for (const v of this.velocities) {
-      vx += v.x;
-      vy += v.y;
-      vz += v.z;
-    }
-    if (vx) vx = round_float(vx)
-    if (vy) vy = round_float(vy)
-    if (vz) vz = round_float(vz)
-    for (const [, v] of this.v_rests) {
-      if (v.itr.kind !== ItrKind.Block) continue
-      if (
-        (vx < 0 && v.attacker.position.x < this._position.x) ||
-        (vx > 0 && v.attacker.position.x > this._position.x)
-      ) {
-        vx = 0;
-      }
-      if (
-        (vz < 0 && v.attacker.position.z < this._position.z) ||
-        (vz > 0 && v.attacker.position.z > this._position.z)
-      ) {
-        vz = 0;
-      }
-    }
-    this._velocity.set(vx, vy, vz);
-    if (!this.shaking && !this.motionless) {
-      this._prev_position.set(this._position.x, this._position.y, this._position.z)
-      this._position.x = round_float(this._position.x + vx);
-      this._position.y = round_float(this._position.y + vy);
-      this._position.z = round_float(this._position.z + vz);
-    }
+    this.update_position();
+
     if (this.motionless > 0) {
       ++this.wait;
       --this.motionless;
@@ -1463,9 +1428,19 @@ export class Entity {
       }
       const old_ground_y = this.old_ground_y ?? ground_y;
       const on_ground = this._prev_position.y <= old_ground_y;
-      const hit_ground = (this.velocity.y < 0 || !on_ground) && this._position.y <= ground_y
+      const just_land = (this.velocity.y < 0 || !on_ground) && this._position.y <= ground_y
+      const itrs = this.itr;
+
+      if (itrs?.length && this.velocity.y < 0) for (const itr of itrs) {
+        if (!itr.on_hit_ground) continue;
+        if ((this._position.y + this.frame.centery - itr.y - itr.h) > ground_y)
+          continue;
+        const result = this.get_next_frame(itr.on_hit_ground)
+        if (result) this.enter_frame(result.which);
+      }
+
       // 落地
-      if (hit_ground) {
+      if (just_land) {
         if (this.frame.on_landing) {
           const result = this.get_next_frame(this.frame.on_landing);
           if (result) this.enter_frame(result.which);
@@ -1478,7 +1453,6 @@ export class Entity {
         this._velocity.y = 0;
         this.state?.on_landing?.(this);
         this.play_sound(this._data.base.drop_sounds);
-
         if (this.throwinjury) {
           this.hp -= this.throwinjury;
           this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
@@ -1493,12 +1467,53 @@ export class Entity {
         // this._position.y = ground_y;
         // this._prev_position.y = ground_y;
       }
+      if (this._landing_frame !== this.frame) this._landing_frame = null
       this.old_ground_y = ground_y;
     }
-    this.world.restrict(this);
-    this.holding?.follow_bearer();
+    this._holding?.follow_bearer();
     this.collision_list.length = 0;
     this.collided_list.length = 0;
+  }
+
+  update_position() {
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    let vx = 0, vy = 0, vz = 0;
+    for (const v of this.velocities) {
+      vx += v.x;
+      vy += v.y;
+      vz += v.z;
+    }
+    if (vx) vx = round_float(vx)
+    if (vy) vy = round_float(vy)
+    if (vz) vz = round_float(vz)
+    for (const [, v] of this.blockers) {
+      if (
+        (vx < 0 && v.attacker.position.x < this._position.x) ||
+        (vx > 0 && v.attacker.position.x > this._position.x)
+      ) {
+        vx = 0;
+      }
+      if (
+        (vz < 0 && v.attacker.position.z < this._position.z) ||
+        (vz > 0 && v.attacker.position.z > this._position.z)
+      ) {
+        vz = 0;
+      }
+    }
+    this._velocity.set(vx, vy, vz);
+    if (!this.shaking && !this.motionless) {
+      this._prev_position.set(
+        this._position.x,
+        this._position.y,
+        this._position.z
+      )
+      this.set_position(
+        this._position.x + vx,
+        this._position.y + vy,
+        this._position.z + vz
+      )
+    }
+    this.world.restrict(this);
   }
 
   /**
@@ -1548,50 +1563,35 @@ export class Entity {
     }
 
     const frame_a = cer.frame;
-    const { cpoint: cpoint_a } = frame_a;
-    if (!cpoint_a) {
+    const { cpoint: cp_a } = frame_a;
+    if (!cp_a) {
       this._catcher = null;
       this.prev_cpoint_a = null;
       this.set_velocity_y(3);
       this.next_frame = this.get_caught_cancel_frame();
       return true;
     }
-    if (this.prev_cpoint_a !== cpoint_a) {
-      const { injury } = cpoint_a;
+
+    if (this.prev_cpoint_a !== cp_a) {
+      const { injury } = cp_a;
       if (injury) {
         this.hp -= injury;
         this.hp_r -= round(injury * (1 - this.world.hp_recoverability))
       }
-      if (cpoint_a.shaking && cpoint_a.shaking > 0)
-        this.shaking = cpoint_a.shaking;
+      if (cp_a.shaking && cp_a.shaking > 0)
+        this.shaking = cp_a.shaking;
     }
-    this.prev_cpoint_a = cpoint_a;
+    this.prev_cpoint_a = cp_a;
 
-    const { throwvx = 0, throwvy = 0, throwvz = 0, throwinjury = 0 } = cpoint_a;
-
-    if (throwinjury > 0) this.throwinjury = throwinjury;
-    if (throwvx || throwvy || throwvz) {
-      this.set_velocity(
-        throwvx * this.world.tvx_f * cer.facing,
-        throwvy * this.world.tvy_f,
-        throwvz * this.world.tvz_f * cer.ctrl.UD || 0,
-      )
-      const { tx, ty, tz } = cpoint_a
-      const w = this.frame.pic?.w || 0
-      const h = this.frame.pic?.h || 0
-
-      if (tx !== void 0)
-        this._position.x = cer.position.x -
-          cer.facing * (frame_a.centerx - tx) -
-          this.facing * (this.frame.centerx - w / 2);
-
-      if (ty !== void 0) this._position.y = cer.position.y + frame_a.centery - ty - h / 2;
-      if (tz !== void 0) this._position.z = cer.position.z + tz;
+    const { throwvx: tx = 0, throwvy: ty = 0, throwvz: tz = 0, throwinjury: ti = 0 } = cp_a;
+    if (ti > 0) this.throwinjury = ti;
+    if (tx || ty || tz) {
+      this.follow_catcher();
       this._catcher = null;
       this.prev_cpoint_a = null;
     }
-    if (cpoint_a.vaction) {
-      const nf = this.get_next_frame(cpoint_a.vaction)?.which
+    if (cp_a.vaction) {
+      const nf = this.get_next_frame(cp_a.vaction)?.which
       if (nf) this.next_frame = nf;
       return !!nf
     };
@@ -1612,7 +1612,7 @@ export class Entity {
     }
     if (!cpoint_a) {
       this._catching = null;
-      this._catch_time = this._catch_time_max;
+      this._catch_time = this.catch_time_max;
       this.next_frame = this.get_catching_cancel_frame();
       return true;
     }
@@ -1645,27 +1645,36 @@ export class Entity {
   }
 
   follow_catcher() {
-    if (!this._catcher) return;
-    const {
-      centerx: centerx_a,
-      centery: centery_a,
-      cpoint: c_a,
-    } = this._catcher.frame;
-    const {
-      centerx: centerx_b,
-      centery: centery_b,
-      cpoint: c_b
-    } = this.frame;
-    if (!c_a) return;
-    if (c_a.throwvx || c_a.throwvx || c_a.throwvx) return;
+    const a = this._catcher;
+    const b = this;
+    if (!a) return;
+    const { centerx: afx, centery: afy, cpoint: ac, } = a.frame;
+    if (!ac) return;
+    const { throwvx: tx = 0, throwvy: ty = 0, throwvz: tz = 0 } = ac;
+    const { centerx: bfx, centery: bfy, cpoint: bc } = this.frame;
+    const { x: ax, y: ay, z: az } = a.position;
+    const a_face = a.facing;
+    const { x: acx = 0, y: acy = 0, z: acz = 0 } = ac
+    if (tx || ty || tz) {
+      const vx = (tx * this.world.tvx_f * a_face)
+      const vy = (ty * this.world.tvy_f)
+      const vz = (tz * this.world.tvz_f) * (a.ctrl.UD || 0)
+      this.set_velocity(vx, vy, vz)
+      this.set_position(
+        vx + ax - a_face * (afx - acx),
+        vy + ay + afy - acy,
+        vz + az + acz,
+      )
+      return;
+    }
+    const b_face = b.facing;
+    const { x: bcx = 0, y: bcy = 0, z: bcz = 0 } = bc || {}
+    this.set_position(
+      ax - a_face * (afx - acx) + b_face * (bfx - bcx),
+      ay + afy - acy + bcy - bfy,
+      az + acz - bcz,
+    )
 
-    const face_a = this._catcher.facing;
-    const face_b = this.facing;
-    const { x: px, y: py, z: pz } = this._catcher.position;
-    const { x: c_b_x = 0, y: c_b_y = 0, z: c_b_z = 0 } = c_b || {}
-    this._position.x = px - face_a * (centerx_a - c_a.x) + face_b * (centerx_b - c_b_x);
-    this._position.y = round(py + centery_a - c_a.y + c_b_y - centery_b);
-    this._position.z = round(pz + c_a.z - c_b_z);
   }
 
   /**
@@ -1724,7 +1733,7 @@ export class Entity {
       Ditto.warn(`[Entity::start_caught] cannot catch, catchingact got ${itr.catchingact}`);
       return;
     }
-    this._catch_time = this._catch_time_max;
+    this._catch_time = this.catch_time_max;
     this._catching = target;
     const next_frame = this.get_next_frame(itr.catchingact)?.which || null;
     if (next_frame) this.enter_frame(next_frame)
@@ -1803,7 +1812,41 @@ export class Entity {
     this._invisible_duration = duration;
   }
 
-
+  update_chasing(lookup: Entity) {
+    const a = this.chasing;
+    const b = this.should_chase(a) ? a : this.chasing = null;
+    const c = this.should_chase(lookup) ? lookup : null;
+    const d = this.chasing = closer_one(this, b, c);
+    // lost
+    if (!d && a) this.ctrl.set_chase_pos(
+      this.position.x,
+      this.position.y,
+      this.position.z
+    )
+    // follow
+    if (d) this.ctrl.set_chase_pos(
+      d.position.x,
+      d.position.y,
+      d.position.z
+    )
+  }
+  should_chase(other: Entity | null): boolean {
+    if (!other) return false;
+    if (
+      other.frame.id === Builtin_FrameId.Gone ||
+      other.frame.id === Builtin_FrameId.None
+    ) return false;
+    const { chase } = this.frame;
+    if (!chase) return false;
+    const { flag } = chase
+    const target = other.get_flag(this)
+    return (target & flag) == target
+  }
+  get_flag(other: Entity): number {
+    let ret = this.team === other.team ? HitFlag.Ally : HitFlag.Enemy;
+    if (this.hp <= 0) ret |= HitFlag.Dead;
+    return ret | this.type;
+  }
   is_ally(other: Entity): boolean {
     return this.team === other.team;
   }
@@ -1820,10 +1863,6 @@ export class Entity {
       wpoint: wp_a = {} as Partial<IWpointInfo>,
       centerx: cx_a, centery: cy_a,
     } = bearer.frame;
-    const {
-      wpoint: wp_b = {} as Partial<IWpointInfo>,
-      centerx: cx_b, centery: cy_b,
-    } = this.frame;
 
     if (wp_a.weaponact !== this.frame.id) {
       // 还原wpoint丢失的情况
@@ -1832,6 +1871,11 @@ export class Entity {
       else
         this.enter_frame(this.find_auto_frame());
     }
+
+    const {
+      wpoint: wp_b = {} as Partial<IWpointInfo>,
+      centerx: cx_b, centery: cy_b,
+    } = this.frame;
 
     const strength = this._data.base.strength || 1;
     const weight = this._data.base.weight || 1;
@@ -1842,16 +1886,16 @@ export class Entity {
     const { x: wb_x = 0, y: wb_y = 0, z: wb_z = 0 } = wp_b
 
     if (wp_a) {
-      this._position.set(
-        round(x + this.facing * (wa_x - cx_a + cx_b - wb_x)),
-        round(y + cy_a - wa_y - cy_b + wb_y),
-        round(z + wa_z - wb_z),
+      this.set_position(
+        x + this.facing * (wa_x - cx_a + cx_b - wb_x),
+        y + cy_a - wa_y - cy_b + wb_y,
+        z + wa_z - wb_z,
       )
     } else { // 还原wpoint丢失的情况
-      this._position.set(
-        round(x + this.facing * (wa_x - cx_a)),
-        round(y + cy_a - wa_y),
-        round(z + wa_z),
+      this.set_position(
+        x + this.facing * (wa_x - cx_a),
+        y + cy_a - wa_y,
+        z + wa_z,
       )
     }
 
@@ -1861,7 +1905,7 @@ export class Entity {
         this.data.indexes?.on_hands,
         this.data.indexes?.throwings
       )
-      this._position.set(
+      this.set_position(
         round(x + this.facing * (wa_x - cx_a)),
         round(y + cy_a - wa_y),
         round(z + wa_z),
@@ -1917,10 +1961,9 @@ export class Entity {
     if (flags.id === Builtin_FrameId.Auto) {
       this.a_rest = 0;
       for (const [_, v] of this.victims)
-        v.v_rest = 0;
+        v.rest = 0;
       this.victims.clear()
     }
-    this.v_rests
 
     if (flags.facing !== void 0) {
       this.facing = this.handle_facing_flag(flags.facing);
@@ -1967,9 +2010,16 @@ export class Entity {
       case FacingFlag.Left:
       case FacingFlag.Right:
         return facing;
-      default:
-        return this.facing;
+      case FacingFlag.VX: {
+        const vx = this.velocity.x
+        return vx > 0 ? 1 : vx < 0 ? -1 : this.facing
+      }
+      case FacingFlag.AntiVX: {
+        const vx = this.velocity.x
+        return vx > 0 ? -1 : vx < 0 ? 1 : this.facing
+      }
     }
+    return this.facing;
   }
 
   get_next_frame(which: TNextFrame): INextFrameResult | undefined {
@@ -2063,11 +2113,60 @@ export class Entity {
       this.set_velocity(vx ?? x, vy ?? y, vz ?? z)
     }
   }
+  set_velocity_0_x(x: number) {
+    if (is_f_num(x)) debugger;
+    const v = this.velocity_0;
+    if (v.x !== x) this.velocities[0].x = round_float(x)
+  }
+  set_velocity_0_y(y: number) {
+    if (is_f_num(y)) debugger;
+    const v = this.velocity_0;
+    if (v.y !== y) this.velocities[0].y = round_float(y)
+  }
+  set_velocity_0_z(z: number) {
+    if (is_f_num(z)) debugger;
+    const v = this.velocity_0;
+    if (v.z !== z) this.velocities[0].z = round_float(z)
+  }
+  set_velocity_1_x(x: number) {
+    if (is_f_num(x)) debugger;
+    const v = this.velocity_1;
+    if (v.x !== x) this.velocities[1].x = round_float(x)
+  }
+  set_velocity_1_y(y: number) {
+    if (is_f_num(y)) debugger;
+    const v = this.velocity_1;
+    if (v.y !== y) this.velocities[1].y = round_float(y)
+  }
+  set_velocity_1_z(z: number) {
+    if (is_f_num(z)) debugger;
+    const v = this.velocity_1;
+    if (v.z !== z) this.velocities[1].z = round_float(z)
+  }
+  set_velocity_0(
+    x?: number | null,
+    y?: number | null,
+    z?: number | null,
+  ) {
+    if (x !== null && x !== void 0) this.set_velocity_0_x(x)
+    if (y !== null && y !== void 0) this.set_velocity_0_y(y)
+    if (z !== null && z !== void 0) this.set_velocity_0_z(z)
+  }
+  set_velocity_1(
+    x?: number | null,
+    y?: number | null,
+    z?: number | null,
+  ) {
+    if (x !== null && x !== void 0) this.set_velocity_1_x(x)
+    if (y !== null && y !== void 0) this.set_velocity_1_y(y)
+    if (z !== null && z !== void 0) this.set_velocity_1_z(z)
+  }
   set_velocity(
     x?: number | null,
     y?: number | null,
     z?: number | null,
   ) {
+    if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
     this.velocities.length = 1;
     x = (x === null || x === void 0) ? this.velocity.x : x ? round_float(x) : x
     y = (y === null || y === void 0) ? this.velocity.y : y ? round_float(y) : y
@@ -2075,31 +2174,38 @@ export class Entity {
     this.velocities[0].set(x, y, z);
     this._velocity.set(x, y, z);
   }
-  set_velocity_x(v: number) {
-    if (this.velocities.length > 1) this.merge_velocities(v, void 0, void 0)
-    else this._velocity.x = this.velocities[0].x = v ? round_float(v) : v;
+  set_velocity_x(x: number) {
+    if (is_f_num(x)) debugger;
+    if (this.velocities.length > 1) this.merge_velocities(x, void 0, void 0)
+    else this.set_velocity_0_x(x)
   }
-  set_velocity_y(v: number) {
-    if (this.velocities.length > 1) this.merge_velocities(void 0, v, void 0)
-    else this._velocity.y = this.velocities[0].y = v ? round_float(v) : v;
+  set_velocity_y(y: number) {
+    if (is_f_num(y)) debugger;
+    if (this.velocities.length > 1) this.merge_velocities(void 0, y, void 0)
+    else this.set_velocity_0_y(y)
   }
-  set_velocity_z(v: number) {
-    if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, v)
-    else this._velocity.z = this.velocities[0].z = v ? round_float(v) : v;
+  set_velocity_z(z: number) {
+    if (is_f_num(z)) debugger;
+    if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, z)
+    else this.set_velocity_0_z(z)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
+    if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
     if (x !== null && x !== void 0) this._position.x = x ? round_float(x) : x
     if (y !== null && y !== void 0) this._position.y = y ? round_float(y) : y
     if (z !== null && z !== void 0) this._position.z = z ? round_float(z) : z
   }
-  set_position_x(v: number) {
-    this._position.x = v ? round_float(v) : v
+  set_position_x(x: number) {
+    if (is_f_num(x)) debugger;
+    this._position.x = x ? round_float(x) : x
   }
-  set_position_y(v: number) {
-    this._position.y = v ? round_float(v) : v
+  set_position_y(y: number) {
+    if (is_f_num(y)) debugger;
+    this._position.y = y ? round_float(y) : y
   }
-  set_position_z(v: number) {
-    this._position.z = v ? round_float(v) : v
+  set_position_z(z: number) {
+    if (is_f_num(z)) debugger;
+    this._position.z = z ? round_float(z) : z
   }
   transform(data: IEntityData) {
     if (!is_human_ctrl(this.ctrl))
@@ -2133,6 +2239,25 @@ export class Entity {
     const emittier_id = this.emitters[idx];
     if (!emittier_id) return;
     return this.world.entity_map.get(emittier_id);
+  }
+
+  get_v_rest(a_id: string): number {
+    return this.v_rests.get(a_id)?.rest || 0;
+  }
+  add_v_rest(c: ICollision) {
+    this.v_rests.set(c.a_id, c);
+    if (c.itr.kind === ItrKind.Block) this.blockers.set(c.a_id, c);
+    if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.a_id, c);
+  }
+  del_v_rest(a_id: string) {
+    this.v_rests.delete(a_id);
+    this.blockers.delete(a_id);
+    this.superpunchs.delete(a_id);
+  }
+
+  world_dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
+    const v = (this.frame as Partial<IWorldDataset>)[name]
+    return v ?? this.world[name]
   }
 }
 

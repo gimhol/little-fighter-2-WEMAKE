@@ -898,19 +898,19 @@ function App() {
             parse={i => [i.value, i.label]}
             onChange={(v) => set_state(d => d.touchpad = v!)} />
           <ToggleButton
-            onChange={() => lf2?.toggle_cheat_enabled(CheatType.LF2_NET)}
+            onChange={() => lf2?.set_cheat(CheatType.LF2_NET)}
             value={s.cheat_1}>
             <>LF2_NET</>
             <>LF2_NET✓</>
           </ToggleButton>
           <ToggleButton
-            onChange={() => lf2?.toggle_cheat_enabled(CheatType.HERO_FT)}
+            onChange={() => lf2?.set_cheat(CheatType.HERO_FT)}
             value={s.cheat_2}>
             <>HERO_FT</>
             <>HERO_FT✓</>
           </ToggleButton>
           <ToggleButton
-            onChange={() => lf2?.toggle_cheat_enabled(CheatType.GIM_INK)}
+            onChange={() => lf2?.set_cheat(CheatType.GIM_INK)}
             value={s.cheat_3}>
             <>GIM_INK</>
             <>GIM_INK✓</>

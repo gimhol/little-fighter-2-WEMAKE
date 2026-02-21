@@ -21,6 +21,7 @@ const cheat_info_pair = (n: D.CheatType) =>
     n,
     {
       keys: D.Defines.CheatKeys[n],
+      gkeys: D.Defines.CheatGameKeys[n],
       sound: D.Defines.CheatTypeSounds[n],
     },
   ] as const;
@@ -28,7 +29,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.13'
+  static readonly VERSION_NAME: string = 'v0.1.14'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -222,30 +223,29 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return e;
   }
 
-  private _curr_key_list: string = "";
-  private readonly _CheatType_map = new Map<D.CheatType, D.Defines.ICheatInfo>([
+  private _keys = ''
+  private _gkeys = new Map<string, string>()
+  private _gkeys_matchs = new Set<string>()
+  private readonly _cheat_infos = new Map<D.CheatType, D.Defines.ICheatInfo>([
     cheat_info_pair(D.CheatType.LF2_NET),
     cheat_info_pair(D.CheatType.HERO_FT),
     cheat_info_pair(D.CheatType.GIM_INK),
   ]);
-  private readonly _CheatType_enable_map = new Map<string, boolean>();
-  private readonly _cheat_sound_id_map = new Map<string, string>();
+  private readonly _cheat_enables = new Map<string, boolean>();
+
   is_cheat(name: string | D.CheatType) {
-    return !!this._CheatType_enable_map.get("" + name);
+    return !!this._cheat_enables.get("" + name);
   }
-  toggle_cheat_enabled(cheat_name: string | D.CheatType) {
-    const cheat_info = this._CheatType_map.get(cheat_name as D.CheatType);
-    if (!cheat_info) return;
-    const { sound: s } = cheat_info;
-    const sound_id = this._cheat_sound_id_map.get(cheat_name);
-    if (sound_id) this.sounds.stop(sound_id);
-    this.sounds
-      .play_with_load(s)
-      .then((v) => this._cheat_sound_id_map.set(cheat_name, v));
-    const enabled = !this._CheatType_enable_map.get(cheat_name);
-    this._CheatType_enable_map.set(cheat_name, enabled);
-    this.callbacks.emit("on_cheat_changed")(cheat_name, enabled);
-    this._curr_key_list = "";
+  set_cheat(name: string | D.CheatType, enable?: boolean) {
+    const enabled = this._cheat_enables.get(name);
+    enable = enable ?? (!enabled)
+    if (enabled === enable) return;
+    const cheat = this._cheat_infos.get(name as D.CheatType);
+    if (!cheat) return;
+    if (cheat.sound) this.sounds.play_with_load(cheat.sound);
+    this._cheat_enables.set(name, enable);
+    this.callbacks.emit("on_cheat_changed")(name, enable);
+    this._keys = "";
   }
   cmds: (CMD | D.CheatType | string)[] = [];
   events: UI.LF2KeyEvent[] = [];
@@ -258,24 +258,33 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       e.interrupt();
     }
 
-    this._curr_key_list += key_code;
-    let match = false;
-    for (const [cheat_name, { keys: k }] of this._CheatType_map) {
-      if (k.startsWith(this._curr_key_list)) match = true;
-      if (k !== this._curr_key_list) continue;
-      this.cmds.push(cheat_name)
-    }
 
-    if (!match) this._curr_key_list = "";
     if (e.times === 0) {
       for (const key_name of KEY_NAME_LIST) {
         for (const [pid, player] of this.players) {
           if (!player.local) continue;
           if (player.keys[key_name] !== key_code) continue
+          this._gkeys.set(pid, (this._gkeys.get(pid) || '') + key_name)
           this.events.push(new UI.LF2KeyEvent(pid, true, key_name, key_code));
         }
       }
     }
+
+    let match = false;
+    this._gkeys_matchs.clear()
+    this._keys += key_code;
+    for (const [cheat_name, { keys: k, gkeys: g }] of this._cheat_infos) {
+      for (const [pid, gkeys] of this._gkeys) {
+        if (g.startsWith(gkeys)) this._gkeys_matchs.add(pid);
+        if (g === gkeys) this.cmds.push(cheat_name)
+      }
+      if (k.startsWith(this._keys)) match = true;
+      if (k === this._keys) this.cmds.push(cheat_name)
+    }
+    for (const [k] of this._gkeys)
+      if (!this._gkeys_matchs.has(k))
+        this._gkeys.delete(k)
+    if (!match) this._keys = "";
   }
 
   on_key_up(e: I.IKeyEvent) {

@@ -19,8 +19,7 @@ export function cook_cpoint(unsure_cpoint: ICpointInfo, frame: IFrameInfo): void
   unsure_cpoint.throwvz = take_not_zero_num(unsure_cpoint, "throwvz", n => n * 1);
   unsure_cpoint.throwinjury = take_not_zero_num(unsure_cpoint, "throwinjury", n => n * 1);
   unsure_cpoint.decrease = take_num(unsure_cpoint, 'decrease', n => -abs(n));
-
-  unsure_cpoint.z = 0;
+  
   const cover = take_not_zero_num(unsure_cpoint, "cover", n => n);
   if (cover == 11) unsure_cpoint.z = 2;
   if (cover == 10) unsure_cpoint.z = -2;
@@ -39,11 +38,5 @@ export function cook_cpoint(unsure_cpoint: ICpointInfo, frame: IFrameInfo): void
 
     if (unsure_cpoint.throwvx)
       delete unsure_cpoint.vaction?.facing;
-  }
-
-  if (unsure_cpoint.throwvx && unsure_cpoint.throwinjury != -1) {
-    // for normal throw & louis throw
-    unsure_cpoint.tx = unsure_cpoint.throwvx < 0 ? 0 : 80;
-    unsure_cpoint.ty = 10;
   }
 }

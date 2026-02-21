@@ -11,7 +11,7 @@ export default defineConfig({
     createHtmlPlugin({
       inject: {
         data: {
-          title: `Little Fighter 2 Wemake v${json.version}`
+          title: `Little Fighter Wemake v${json.version}`
         }
       }
     })

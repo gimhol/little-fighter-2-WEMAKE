@@ -1,7 +1,8 @@
-import type { IFrameInfo, IHitKeyCollection, LGK, TNextFrame } from "../defines";
+import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TNextFrame } from "../defines";
 import { GK, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
+import { is_f_num, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
 import DoubleClick from "./DoubleClick";
@@ -34,7 +35,7 @@ export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
   readonly player_id: string;
-
+  private _chase_pos: IVector3 | null = null;
   private _time = new Times(10, Number.MAX_SAFE_INTEGER);
   private _disposers = new Set<() => void>();
 
@@ -50,6 +51,19 @@ export class BaseController {
   set disposer(f: (() => void)[] | (() => void)) {
     if (Array.isArray(f)) for (const i of f) this._disposers.add(i);
     else this._disposers.add(f);
+  }
+  get chase_pos(): Readonly<IVector3> {
+    if (!this._chase_pos)
+      this._chase_pos = this.entity.position.clone()
+    return this._chase_pos
+  }
+  set_chase_pos(x: number, y: number, z: number) {
+    if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
+    this.chase_pos.set(
+      round_float(x),
+      round_float(y),
+      round_float(z)
+    )
   }
   entity: Entity;
   keys: Record<LGK, KeyStatus> = {
@@ -421,7 +435,7 @@ export class BaseController {
     frame?.seq_map && this.check_hit_seqs(frame.seq_map, ret);
     /** 这里不想支持过长的指令 */
     if (this._key_list && this._key_list.length >= 10) this._key_list = '';
-    
+
     return ret;
   }
 

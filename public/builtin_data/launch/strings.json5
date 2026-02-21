@@ -2,19 +2,19 @@
   "": {
     "init.tap_any_place_to_launch": "CLICK ANYWHERE TO CONTINUE",
     "init.sound_warning": "After starting, the sound and background music will play. \nClick the speaker icon in the upper-right corner to turn off the sound. \nClick the musical note icon in the upper-right corner to turn off the background music.",
-    "init.long_description": 'gameplays, arts, and sounds are all from "Litter Fighter 2" basically.\ncreated by Marti Wong and Starsky Wong in 1999.\n\n"LF2Wemake" created by Gim in 2024.',
+    "init.long_description": 'gameplays, arts, and sounds are all from "Litter Fighter 2" basically.\ncreated by Marti Wong and Starsky Wong in 1999.\n\n"Little Fighter Wemake" created by Gim in 2024.',
     "extra_data": "Extra Data",
   },
   "zh-hans": {
     "init.tap_any_place_to_launch": "点击任意位置继续",
     "init.sound_warning": "开始后将播放声音，点击右上方喇叭关闭声音\n将播放背景音乐，点击右上方音符关闭背景音乐",
-    "init.long_description": '大部分玩法、美术、音效音乐来自 "Litter Fighter 2" \n原作：Marti Wong，Starsky Wong.\n\n"LF2Wemake" created by Gim in 2024.',
+    "init.long_description": '大部分玩法、美术、音效音乐来自 "Litter Fighter 2" \n原作：Marti Wong，Starsky Wong.\n\n"Little Fighter Wemake" created by Gim in 2024.',
     "extra_data": "附 加 模 组",
   },
   "zh-hant": {
     "init.tap_any_place_to_launch": "點擊任何位置繼續",
     "init.sound_warning": "開始後將播放聲音，點擊右上方喇叭關閉聲音\n將播放背景音樂，點擊右上方音符關閉背景音樂",
-    "init.long_description": '大部分玩法、美術、音效音樂來自 "Litter Fighter 2" \n原作：Marti Wong，Starsky Wong.\n\n"LF2Wemake" created by Gim in 2024.',
+    "init.long_description": '大部分玩法、美術、音效音樂來自 "Litter Fighter 2" \n原作：Marti Wong，Starsky Wong.\n\n"Little Fighter Wemake" created by Gim in 2024.',
     "extra_data": "附 加 模 組",
   },
   "zh-cn": "zh-hans",

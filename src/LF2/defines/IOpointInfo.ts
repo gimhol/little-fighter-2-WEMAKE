@@ -86,7 +86,16 @@ export interface IOpointInfo {
    * @see {FacingFlag}
    * @type {?number}
    */
-  multi?: number | { type: OpointMultiEnum; min: number };
+  multi?: number | {
+    /** 生成数量的决定方式 */
+    type: OpointMultiEnum;
+    /** 数量零时，将不生成（数量需参见决定方式） */
+    skip_zero?: boolean
+    /** 至少产生多少个 */
+    min?: number;
+    /** 至多产生多少个 */
+    max?: number;
+  };
 
   /**
    * 最大血量

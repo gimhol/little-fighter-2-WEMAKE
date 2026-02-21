@@ -14,7 +14,7 @@ export function float_scaling_entity(ret: IEntityData) {
     if (!v) return;
     ([
       'dvx', 'dvy', 'dvz', 'acc_x', 'acc_y', 'acc_z', 'ctrl_x', 'ctrl_y',
-      'ctrl_z', 'friction_x', 'friction_z', 'gravity', 'chasing_y'
+      'ctrl_z', 'friction_x', 'friction_z', 'gravity'
     ] as const).forEach(k => {
       if (is_num(v[k])) v[k] = floor(10000 * v[k]);
     });

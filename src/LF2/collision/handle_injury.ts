@@ -3,7 +3,7 @@ import { is_independent } from "../defines/TeamEnum";
 import { summary_mgr } from "../entity/SummaryMgr";
 import { round } from "../utils";
 
-export function handle_injury(c: ICollision, scale: number = 1) {
+export function handle_injury(c: ICollision, scale = 1, keep_toughness = false) {
   let { itr, victim, attacker } = c;
   if (!itr.injury) return;
   const injury = round(itr.injury * scale);
@@ -13,6 +13,8 @@ export function handle_injury(c: ICollision, scale: number = 1) {
 
   victim.hp -= injury;
   victim.hp_r -= round(injury * (1 - victim.world.hp_recoverability));
+
+  if(!keep_toughness) victim.toughness = 0;
 
   const _attacker = attacker.src_emitter || attacker;
 

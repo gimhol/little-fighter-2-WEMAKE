@@ -1,4 +1,4 @@
-# LF2Wemake(open source web-based LF2)
+# LFW(open source web-based LF2)
 
 [url](https://lf-empire.de/forum/showthread.php?tid=11552)
 
@@ -97,7 +97,7 @@ changelog:
 
 [img]https://lf.gim.ink/docs/image/main_page_small_fighting.gif[/img]
 
-About Extra Data, See Thread: [url=https://lf-empire.de/forum/showthread.php?tid=11556]lf2w-tool (Conversion Tool for Little Fighter 2 Wemake)[/url]
+About Extra Data, See Thread: [url=https://lf-empire.de/forum/showthread.php?tid=11556]lf2w-tool (Conversion Tool for Little Fighter Wemake)[/url]
 [img]https://lf.gim.ink/docs/image/dnd_extra_data_in_main_page.gif[/img]
 [/spoiler]
 
@@ -129,7 +129,7 @@ Sometimes it’s tricky to tell whether an object is an ally or an enemy.
 Especially when there are too many entities on the field,
 or when you spot a projectile flying toward you from afar.
 
-That’s why I’m trying to add a “team outline” effect to LF2: Wemake.（See figure below）
+That’s why I’m trying to add a “team outline” effect to LFW.（See figure below）
 
 [img]https://lf.gim.ink/docs/image/team_outline_effect_stage_mode.png[/img]
 

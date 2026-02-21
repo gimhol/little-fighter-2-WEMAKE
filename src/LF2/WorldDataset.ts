@@ -1,7 +1,7 @@
 import { Defines, Difficulty } from "./defines";
-import { IWorldDataset } from "./IWorldDataset";
+import { IWorldDataset, world_dataset_field_map as world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
-
+import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {
   static readonly TAG: string = 'WorldDataset';
   /** 
@@ -43,9 +43,10 @@ export class WorldDataset implements IWorldDataset {
    * @memberof World
    */
   fvz_f: number = Defines.DEFAULT_FVZ_F;
-  ivy_f: number = 1;
-  ivz_f: number = 1;
-  ivx_f: number = 1;
+
+  ivx_f: number = Defines.DEFAULT_IVX_F;
+  ivy_f: number = Defines.DEFAULT_IVY_F;
+  ivz_f: number = Defines.DEFAULT_IVZ_F;
 
   /** 
    * 默认itr.dvy
@@ -100,8 +101,8 @@ export class WorldDataset implements IWorldDataset {
    */
   gone_blink_time: number = Defines.DEFAULT_GONE_BLINK_TIME;
   vrest_offset: number = 0;
+  itr_arest: number = Defines.DEFAULT_ITR_A_REST;
   arest_offset: number = 0;
-  arest_offset_2: number = 0;
 
   /**
    * “帧等待数”偏移值
@@ -165,7 +166,8 @@ export class WorldDataset implements IWorldDataset {
    * @memberof WorldDataset
    */
   friction_z: number = Defines.FRICTION_Z;
-
+  
+  land_friction_factor: number = Defines.FRICTION_FACTOR;
   /**
    * 地面摩擦X 在地面的物体，每帧X速度将±=此值,向0靠近
    *
@@ -187,15 +189,27 @@ export class WorldDataset implements IWorldDataset {
   sync_render: number = 0;
   difficulty: Difficulty = Difficulty.Difficult;
   infinity_mp: boolean = false;
-
-
   fall_r_ticks: number = Defines.FALL_R_TICKS;
   fall_r_value: number = Defines.FALL_R_VALUE;
   defend_r_ticks: number = Defines.DEFEND_R_TICKS;
   defend_r_value: number = Defines.DEFEND_R_VALUE;
-  
+  fall_value_max: number = Defines.DEFAULT_FALL_VALUE_MAX;
+  catch_time_max: number = Defines.DEFAULT_CATCH_TIME;
+  defend_value_max: number = Defines.DEFAULT_DEFEND_VALUE_MAX;
+  defend_ratio: number = Defines.DEFAULT_DEFEND_INJURY_RATIO
+  mp_max: number = Defines.DEFAULT_MP_MAX;
+  hp_max: number = Defines.DEFAULT_HP_MAX;
+  resting_max: number = Defines.DEFAULT_RESTING_MAX;
+
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
+    Object.assign(this, wdataset)
   }
   on_dataset_change?: (k: string, curr: any, prev: any) => void;
+  dump_dataset() {
+    const ret: any = {}
+    for (const k in world_dataset_fields)
+      ret[k] = (this as any)[k];
+    return ret;
+  }
 }

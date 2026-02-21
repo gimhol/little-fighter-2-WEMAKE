@@ -39,22 +39,22 @@ export function cook_frame_indicator_info(frame: IFrameInfo) {
     o.indicator_info = { 1: rect_1, [-1]: rect_2 };
   });
   if (cpoint) {
-    const o = cpoint;
+    const { x: ox = 0, y: oy = 0, z: oz = 0 } = cpoint;
     const w = 2;
     const h = 2;
     const rect_1: IQube = {
       w,
       h,
-      x: f_qube_1.x + o.x - w / 2,
-      y: f_qube_1.y + f_qube_1.h - o.y - h / 2,
-      z: o.z || 0,
+      x: f_qube_1.x + ox - w / 2,
+      y: f_qube_1.y + f_qube_1.h - oy - h / 2,
+      z: oz || 0,
       l: 0,
     };
     const rect_2: IQube = {
       ...rect_1,
-      x: f_qube_2.x + f_qube_1.w - w - o.x,
+      x: f_qube_2.x + f_qube_1.w - w - ox,
     };
-    o.indicator_info = { 1: rect_1, [-1]: rect_2 };
+    cpoint.indicator_info = { 1: rect_1, [-1]: rect_2 };
   }
   if (bpoint) {
     const o = bpoint;

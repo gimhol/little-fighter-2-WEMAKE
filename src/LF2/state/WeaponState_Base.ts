@@ -1,37 +1,10 @@
 import { is_ball_ctrl } from "../entity/type_check";
-import { FrameBehavior, IFrameInfo, W_T } from "../defines";
+import { FrameBehavior, HitFlag, IFrameInfo, W_T } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
 import State_Base from "./State_Base";
 
 export default class WeaponState_Base extends State_Base {
-  override on_frame_changed(e: Entity, frame: IFrameInfo, prev_frame: IFrameInfo): void {
-    if (prev_frame.behavior !== frame.behavior) {
-      const ctrl = is_ball_ctrl(e.ctrl) ? e.ctrl : null
-      switch (prev_frame.behavior as FrameBehavior) {
-        case FrameBehavior.JohnChase:
-        case FrameBehavior.DennisChase:
-        case FrameBehavior.Boomerang:
-        case FrameBehavior.JulianBall:
-          e.world.del_enemy_chaser(e);
-          break;
-      }
-      switch (frame.behavior as FrameBehavior) {
-        case FrameBehavior.JohnChase:
-        case FrameBehavior.DennisChase:
-        case FrameBehavior.Boomerang:
-        case FrameBehavior.JulianBall:
-          e.world.add_enemy_chaser(e);
-          if (ctrl) ctrl.target_position.copy(ctrl.entity.position)
-          break;
-        case FrameBehavior.ChasingSameEnemy:
-        case FrameBehavior.AngelBlessing:
-          if (ctrl) ctrl.target_position.copy(ctrl.entity.position)
-          break;
-      }
-    }
-  }
-
   /**
    * 用于确保丢出的武器只受一次跌落伤害
    * @protected

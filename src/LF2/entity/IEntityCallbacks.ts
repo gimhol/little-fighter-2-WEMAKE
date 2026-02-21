@@ -153,6 +153,7 @@ export interface IEntityCallbacks<E extends Entity = Entity> {
   on_toughness_changed?(e: E, value: number, prev: number): void;
   on_toughness_max_changed?(e: E, value: number, prev: number): void;
   on_reserve_changed?(e: E, value: number, prev: number): void;
+  on_catch_time_max_changed?(e: E, value: number, prev: number): void;
 
   on_data_changed?(value: IEntityData, prev: IEntityData, e: E): void;
 }

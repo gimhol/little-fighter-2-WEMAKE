@@ -150,69 +150,50 @@ export class EntityStatRender implements IEntityCallbacks {
   }
 
   on_mount() {
-    const { entity } = this;
-    entity.callbacks.add(this);
+    const { entity: e } = this;
+    e.callbacks.add(this);
     this.world_renderer.world_node.add(this.bars_node, this.name_node, this.ctrl_node, this.reserve_node);
-    this.bars_node.visible = entity.key_role
-    this.name_node.visible = entity.key_role
+    this.bars_node.visible = e.key_role
+    this.name_node.visible = e.key_role
     this.ctrl_node.visible = false
-
-    this.on_name_changed(entity)
-    this.on_reserve_changed(entity)
+    this.on_name_changed(e)
+    this.on_reserve_changed(e)
+    this.on_hp_changed(e)
+    this.on_hp_max_changed(e)
+    this.on_mp_changed(e)
+    this.on_mp_max_changed(e)
+    this.on_hp_r_changed(e)
+    this.on_fall_value_changed(e)
+    this.on_fall_value_max_changed(e)
+    this.on_defend_value_changed(e)
+    this.on_defend_value_max_changed(e)
+    this.on_toughness_changed(e)
+    this.on_toughness_max_changed(e)
   }
 
   on_unmount() {
-    const { entity } = this;
+    const { entity: e } = this;
     this.bars_node.removeFromParent();
     this.name_node.removeFromParent();
     this.ctrl_node.removeFromParent();
     this.reserve_node.removeFromParent();
-    entity.callbacks.del(this);
+    e.callbacks.del(this);
   }
 
-  on_name_changed(entity: Entity): void {
-    this.update_name_sprite(entity)
-  }
-  on_team_changed(entity: Entity): void {
-    this.update_name_sprite(entity)
-    this.update_reverse_sprite(entity)
-  }
-  on_reserve_changed(entity: Entity): void {
-    this.update_reverse_sprite(entity)
-  }
-  on_hp_changed(_e: Entity, value: number): void {
-    this.hp_bar.val = value;
-  }
-  on_hp_max_changed(_e: Entity, value: number): void {
-    this.self_healing_hp_bar.max = value;
-  }
-  on_mp_changed(_e: Entity, value: number): void {
-    this.mp_bar.val = value;
-  }
-  on_mp_max_changed(_e: Entity, value: number): void {
-    this.self_healing_mp_bar.max = value;
-  }
-  on_hp_r_changed(_e: Entity, value: number): void {
-    this.self_healing_hp_bar.val = value;
-  }
-  on_fall_value_changed(_e: Entity, value: number): void {
-    this.fall_value_bar.val = value;
-  }
-  on_fall_value_max_changed(_e: Entity, value: number): void {
-    this.fall_value_bar.max = value;
-  }
-  on_defend_value_changed(_e: Entity, value: number): void {
-    this.defend_value_bar.val = value;
-  }
-  on_defend_value_max_changed(_e: Entity, value: number): void {
-    this.defend_value_bar.max = value;
-  }
-  on_toughness_changed(_e: Entity, value: number): void {
-    this.toughness_value_bar.val = value;
-  }
-  on_toughness_max_changed(_e: Entity, value: number): void {
-    this.toughness_value_bar.max = value;
-  }
+  on_name_changed(e: Entity): void { this.update_name_sprite(e) }
+  on_team_changed(e: Entity): void { this.update_name_sprite(e); this.update_reverse_sprite(e); }
+  on_reserve_changed(e: Entity): void { this.update_reverse_sprite(e) }
+  on_hp_changed(e: Entity): void { this.hp_bar.val = e.hp; }
+  on_hp_max_changed(e: Entity): void { this.self_healing_hp_bar.max = e.hp_max; this.hp_bar.max = e.hp_max; }
+  on_hp_r_changed(e: Entity): void { this.self_healing_hp_bar.val = e.hp_r; }
+  on_mp_changed(e: Entity): void { this.mp_bar.val = e.mp; }
+  on_mp_max_changed(e: Entity): void { this.self_healing_mp_bar.max = e.mp_max; }
+  on_fall_value_changed(e: Entity): void { this.fall_value_bar.val = e.fall_value; }
+  on_fall_value_max_changed(e: Entity): void { this.fall_value_bar.max = e.fall_value_max; }
+  on_defend_value_changed(e: Entity): void { this.defend_value_bar.val = e.defend_value; }
+  on_defend_value_max_changed(e: Entity): void { this.defend_value_bar.max = e.defend_value_max; }
+  on_toughness_changed(e: Entity): void { this.toughness_value_bar.val = e.toughness; }
+  on_toughness_max_changed(e: Entity): void { this.toughness_value_bar.max = e.toughness_max; }
   private update_reverse_sprite(e: Entity) {
     const sprite = this.reserve_node
     const { team, reserve } = e;
@@ -314,7 +295,6 @@ export class EntityStatRender implements IEntityCallbacks {
       this.hp_bar.color = "rgb(255,0,0)";
       this._heading = false;
     }
-
 
     const _x = floor(x);
     const bar_y = floor(y - z / 2 + BAR_BG_H + 5 + centery);

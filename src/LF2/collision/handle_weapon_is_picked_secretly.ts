@@ -11,6 +11,7 @@ export function handle_weapon_is_picked_secretly(collision: ICollision): void {
   victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;
+  victim.follow_bearer()
 
   summary_mgr.get(attacker.id).picking_sum += 1
   if (!is_independent(attacker.team))

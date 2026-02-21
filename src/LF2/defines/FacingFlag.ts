@@ -40,5 +40,9 @@ export enum FacingFlag {
    * @see {BaseController.LR}
    * @see {Entity.controller}
    */
-  AntiCtrl = 6
+  AntiCtrl = 6,
+
+  VX = 7,
+  
+  AntiVX = 8,
 }

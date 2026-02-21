@@ -1,13 +1,24 @@
 import {
-  IFrameInfo, IDatIndex, FrameBehavior, Defines, SpeedMode, ItrKind, HitFlag, ActionType,
-  CollisionVal as C_Val, BuiltIn_OID, OpointKind, OpointMultiEnum, OpointSpreading, FacingFlag,
-  EntityVal
+  ActionType,
+  BuiltIn_OID,
+  CollisionVal as C_Val,
+  Defines,
+  EntityVal,
+  FacingFlag as FF,
+  FrameBehavior,
+  HitFlag,
+  IDatIndex,
+  IFrameInfo,
+  ItrKind,
+  OpointKind, OpointMultiEnum, OpointSpreading,
+  SpeedMode
 } from "../defines";
+import { ChaseLost } from "../defines/ChaseLost";
 import { ensure } from "../utils";
 import { CondMaker } from "./CondMaker";
+import { firzen_disater_start } from "./firzen_disater_start";
 import { jan_chase_start } from "./jan_chase_start";
 import { jan_chaseh_start } from "./jan_chaseh_start";
-import { firzen_disater_start } from "./firzen_disater_start";
 import { take } from "./take";
 
 const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
@@ -19,6 +30,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
   }
   switch (hit_Fa as FrameBehavior) {
     case FrameBehavior.AngelBlessing:
+      frame.facing = FF.VX;
       frame.dvx = Defines.ANGEL_BLESSING_MAX_VX;
       frame.acc_x = Defines.ANGEL_BLESSING_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -36,7 +48,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         w: 32,
         h: 34,
         injury: 100,
-        hit_flag: HitFlag.Ally | HitFlag.Fighter,
+        hit_flag: HitFlag.AllyFighter,
         l: 24,
         z: -12,
         actions: [
@@ -49,24 +61,24 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         ],
         test: new CondMaker().and(C_Val.VictimIsChasing, "==", 1).done()
       });
+      frame.chase = { flag: HitFlag.AllyFighter, lost: ChaseLost.Leave | ChaseLost.End };
       break;
     case FrameBehavior.JohnChase:
+      frame.facing = FF.VX;
       frame.dvx = Defines.JOHN_CHASE_MAX_VX;
       frame.acc_x = Defines.JOHN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
-
       frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
       frame.acc_z = Defines.JOHN_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-
       frame.dvy = Defines.JOHN_CHASE_MAX_VY;
       frame.acc_y = Defines.JOHN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
-
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.chasing_y = 0.5;
+      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0.5 };
       break;
     case FrameBehavior.DennisChase: {
+      frame.facing = FF.VX;
       frame.dvx = Defines.DENNIS_CHASE_MAX_VX;
       frame.acc_x = Defines.DENNIS_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -87,6 +99,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         case '3': frame.key_down = { 'B': { id: '1', wait: 'i', expression: hp_gt_0 } }; break;
         case '4': frame.key_down = { 'B': { id: '2', wait: 'i', expression: hp_gt_0 } }; break;
       }
+      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0.5 };
       break;
     }
     case FrameBehavior.Boomerang:
@@ -105,7 +118,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
 
       // frame.gravity = Defines.BOOMERANG_GRAVITY;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.chasing_y = 0.5;
+      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Leave };
       break;
     case FrameBehavior.AngelBlessingStart:
       jan_chaseh_start(frame);
@@ -114,6 +127,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       jan_chase_start(frame);
       break;
     case FrameBehavior.ChasingSameEnemy:
+      frame.facing = FF.VX;
       frame.dvx = Defines.DISATER_CHASE_MAX_VX;
       frame.acc_x = Defines.DISATER_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -124,15 +138,21 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.acc_y = Defines.DISATER_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_z = 1;
-      switch (datIndex.id) {
-        case BuiltIn_OID.FirzenChasef:
-        case BuiltIn_OID.FirzenChasei:
-          frame.on_landing = { id: "60" };
-          break;
-        case BuiltIn_OID.JanChase:
-          frame.on_landing = { id: "10" };
-          break;
-      }
+      frame.itr?.forEach(itr => {
+        switch (datIndex.id) {
+          case BuiltIn_OID.FirzenChasef:
+          case BuiltIn_OID.FirzenChasei:
+            itr.on_hit_ground = { id: "60" };
+            break;
+          default:
+            itr.on_hit_ground = { id: "10" };
+            break;
+        }
+      })
+      frame.chase = {
+        flag: HitFlag.EnemyFighter,
+        lost: ChaseLost.Hover | ChaseLost.End
+      };
       break;
     case FrameBehavior.BatStart:
       frame.opoint = ensure(frame.opoint, {
@@ -152,6 +172,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       firzen_disater_start(frame);
       break;
     case FrameBehavior.JohnBiscuitLeaving:
+      frame.facing = FF.VX;
       frame.dvx = 15;
       frame.acc_x = 2;
       frame.vxm = SpeedMode.AccTo;
@@ -191,7 +212,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         oid: BuiltIn_OID.FreezeColumn,
         x: -45,
         y: 24,
-        action: { id: "100", facing: FacingFlag.Backward },
+        action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
         oid: BuiltIn_OID.FreezeColumn,
@@ -199,7 +220,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         y: 24,
         z: -60,
         dvz: -4,
-        action: { id: "100", facing: FacingFlag.Backward },
+        action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
         oid: BuiltIn_OID.FreezeColumn,
@@ -207,7 +228,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         y: 24,
         z: 60,
         dvz: 4,
-        action: { id: "100", facing: FacingFlag.Backward },
+        action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
         oid: BuiltIn_OID.FirenFlame,
@@ -302,6 +323,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       });
       break;
     case FrameBehavior.Bat:
+      frame.facing = FF.VX;
       frame.dvx = Defines.BAT_CHASE_MAX_VX;
       frame.acc_x = Defines.BAT_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -312,6 +334,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.acc_y = Defines.BAT_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
+      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover };
       break;
     case FrameBehavior.JulianBallStart:
       frame.opoint = ensure(frame.opoint, {
@@ -324,6 +347,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       });
       break;
     case FrameBehavior.JulianBall: {
+      frame.facing = FF.VX;
       frame.dvx = Defines.DENNIS_CHASE_MAX_VX;
       frame.acc_x = Defines.DENNIS_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
@@ -340,6 +364,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       } else if (fid >= 1 && fid <= 9) {
         frame.key_down = { 'B': { id: '' + (fid + 50), wait: 'i', expression: hp_gt_0 } }; break;
       }
+      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover };
       break;
     }
   }

@@ -10,11 +10,11 @@ export function handle_weapon_is_picked(collision: ICollision): void {
   attacker.holding = victim;
   victim.team = attacker.team;
   if (victim.data.base.type === WeaponType.Heavy) {
-    attacker.next_frame = { id: attacker.data.indexes?.picking_heavy };
+    attacker.enter_frame({ id: attacker.data.indexes?.picking_heavy })
   } else {
-    attacker.next_frame = { id: attacker.data.indexes?.picking_light };
+    attacker.enter_frame({ id: attacker.data.indexes?.picking_light })
   }
-
+  victim.follow_bearer()
   summary_mgr.get(attacker.id).picking_sum += 1
   if (!is_independent(attacker.team))
     summary_mgr.get(attacker.team).picking_sum += 1;
