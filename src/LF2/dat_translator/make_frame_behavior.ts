@@ -1,15 +1,25 @@
 import {
-  IFrameInfo, IDatIndex, FrameBehavior, Defines, SpeedMode, ItrKind, HitFlag, ActionType,
-  CollisionVal as C_Val, BuiltIn_OID, OpointKind, OpointMultiEnum, OpointSpreading, FacingFlag as FF,
-  EntityVal
+  ActionType,
+  BuiltIn_OID,
+  CollisionVal as C_Val,
+  Defines,
+  EntityVal,
+  FacingFlag as FF,
+  FrameBehavior,
+  HitFlag,
+  IDatIndex,
+  IFrameInfo,
+  ItrKind,
+  OpointKind, OpointMultiEnum, OpointSpreading,
+  SpeedMode
 } from "../defines";
+import { ChaseLost } from "../defines/ChaseLost";
 import { ensure } from "../utils";
 import { CondMaker } from "./CondMaker";
+import { firzen_disater_start } from "./firzen_disater_start";
 import { jan_chase_start } from "./jan_chase_start";
 import { jan_chaseh_start } from "./jan_chaseh_start";
-import { firzen_disater_start } from "./firzen_disater_start";
 import { take } from "./take";
-import { ChaseLost } from "../defines/ChaseLost";
 
 const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
 export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
@@ -128,16 +138,21 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.acc_y = Defines.DISATER_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_z = 1;
-      switch (datIndex.id) {
-        case BuiltIn_OID.FirzenChasef:
-        case BuiltIn_OID.FirzenChasei:
-          frame.on_landing = { id: "60" };
-          break;
-        case BuiltIn_OID.JanChase:
-          frame.on_landing = { id: "10" };
-          break;
-      }
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover | ChaseLost.End };
+      frame.itr?.forEach(itr => {
+        switch (datIndex.id) {
+          case BuiltIn_OID.FirzenChasef:
+          case BuiltIn_OID.FirzenChasei:
+            itr.on_hit_ground = { id: "60" };
+            break;
+          default:
+            itr.on_hit_ground = { id: "10" };
+            break;
+        }
+      })
+      frame.chase = {
+        flag: HitFlag.EnemyFighter,
+        lost: ChaseLost.Hover | ChaseLost.End
+      };
       break;
     case FrameBehavior.BatStart:
       frame.opoint = ensure(frame.opoint, {

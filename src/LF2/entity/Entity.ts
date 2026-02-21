@@ -1428,9 +1428,19 @@ export class Entity {
       }
       const old_ground_y = this.old_ground_y ?? ground_y;
       const on_ground = this._prev_position.y <= old_ground_y;
-      const hit_ground = (this.velocity.y < 0 || !on_ground) && this._position.y <= ground_y
+      const just_land = (this.velocity.y < 0 || !on_ground) && this._position.y <= ground_y
+      const itrs = this.itr;
+
+      if (itrs?.length && this.velocity.y < 0) for (const itr of itrs) {
+        if (!itr.on_hit_ground) continue;
+        if ((this._position.y + this.frame.centery - itr.y - itr.h) > ground_y)
+          continue;
+        const result = this.get_next_frame(itr.on_hit_ground)
+        if (result) this.enter_frame(result.which);
+      }
+
       // 落地
-      if (hit_ground) {
+      if (just_land) {
         if (this.frame.on_landing) {
           const result = this.get_next_frame(this.frame.on_landing);
           if (result) this.enter_frame(result.which);
@@ -1443,7 +1453,6 @@ export class Entity {
         this._velocity.y = 0;
         this.state?.on_landing?.(this);
         this.play_sound(this._data.base.drop_sounds);
-
         if (this.throwinjury) {
           this.hp -= this.throwinjury;
           this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
