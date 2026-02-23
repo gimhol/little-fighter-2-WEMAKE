@@ -159,6 +159,7 @@ export interface IWorldDataset {
   resting_max: number;
   vrest_after_shaking: number;
   arest_after_motionless: number;
+  invisible_blinking: number;
 }
 interface IFieldInfo {
   title: string;
@@ -227,5 +228,6 @@ export const world_dataset_field_map: Record<keyof IWorldDataset, IFieldInfo> = 
   hp_max: { title: "hp_max", desc: "hp_max", type: 'int' },
   resting_max: { title: "resting_max", desc: "resting_max", type: 'int' },
   vrest_after_shaking: { title: "vrest_after_shaking", desc: "vrest_after_shaking", type: 'int', min: 0, max: 1, step: 1 },
-  arest_after_motionless: { title: "arest_after_motionless", desc: "arest_after_motionless", type: 'int', min: 0, max: 1, step: 1 }
+  arest_after_motionless: { title: "arest_after_motionless", desc: "arest_after_motionless", type: 'int', min: 0, max: 1, step: 1 },
+  invisible_blinking: { title: "invisible_blinking", desc: "invisible_blinking", type: 'int', min: 0, max: 9999, step: 1 },
 }

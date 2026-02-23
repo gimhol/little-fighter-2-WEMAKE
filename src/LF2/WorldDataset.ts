@@ -202,6 +202,7 @@ export class WorldDataset implements IWorldDataset {
   resting_max: number = Defines.DEFAULT_RESTING_MAX;
   vrest_after_shaking: number = 0;
   arest_after_motionless: number = 0;
+  invisible_blinking: number = 120;
 
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
