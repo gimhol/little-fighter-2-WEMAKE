@@ -1,4 +1,4 @@
-import { BdyKind, Defines, FacingFlag, IFrameInfo, ItrKind, OpointKind, StateEnum } from "../defines";
+import { BdyKind, BuiltIn_OID, Defines, FacingFlag, IFrameInfo, ItrKind, OpointKind, StateEnum } from "../defines";
 import { HitFlag } from "../defines/HitFlag";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { ensure } from "../utils";
@@ -26,61 +26,59 @@ export function make_frame_state(frame: IFrameInfo) {
     }
     case StateEnum.OLD_LouisCastOff: {
       frame.state = StateEnum.Attacking;
-      frame.opoint = ensure(frame.opoint,
-        {
-          kind: OpointKind.Normal,
-          x: 39,
-          y: 79,
-          oid: "218",
-          dvy: 5,
-          action: { id: "auto" },
-          speedz: 0
-        },
-        {
-          kind: OpointKind.Normal,
-          x: 39,
-          y: 79,
-          oid: "217",
-          dvy: 4,
-          dvx: -5,
-          dvz: 4,
-          action: { id: "auto", facing: FacingFlag.Backward },
-          speedz: 0
-        },
-        {
-          kind: OpointKind.Normal,
-          x: 39,
-          y: 79,
-          oid: "217",
-          dvy: 4,
-          dvx: -5,
-          dvz: -4,
-          action: { id: "auto", facing: FacingFlag.Backward },
-          speedz: 0
-        },
-        {
-          kind: OpointKind.Normal,
-          x: 39,
-          y: 79,
-          oid: "217",
-          dvy: 4,
-          dvx: -5,
-          dvz: 4,
-          action: { id: "auto" },
-          speedz: 0
-        },
-        {
-          kind: OpointKind.Normal,
-          x: 39,
-          y: 79,
-          oid: "217",
-          dvy: 4,
-          dvx: -5,
-          dvz: -4,
-          action: { id: "auto" },
-          speedz: 0
-        }
-      );
+      const dvy_a = 6
+      const dvy_b = 5
+      const dvx_b = 7
+      const dvx_z = 5
+      frame.opoint = ensure(frame.opoint, {
+        kind: OpointKind.Normal,
+        x: 39,
+        y: 79,
+        oid: BuiltIn_OID.Weapon_LouisArmourB,
+        dvy: dvy_a,
+        action: { id: "auto" },
+        speedz: 0
+      }, {
+        kind: OpointKind.Normal,
+        x: 39,
+        y: 79,
+        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        dvy: dvy_b,
+        dvx: -dvx_b,
+        dvz: dvx_z,
+        action: { id: "auto", facing: FacingFlag.Backward },
+        speedz: 0
+      }, {
+        kind: OpointKind.Normal,
+        x: 39,
+        y: 79,
+        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        dvy: dvy_b,
+        dvx: -dvx_b,
+        dvz: -dvx_z,
+        action: { id: "auto", facing: FacingFlag.Backward },
+        speedz: 0
+      }, {
+        kind: OpointKind.Normal,
+        x: 39,
+        y: 79,
+        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        dvy: dvy_b,
+        dvx: -dvx_b,
+        dvz: dvx_z,
+        action: { id: "auto" },
+        speedz: 0
+      }, {
+        kind: OpointKind.Normal,
+        x: 39,
+        y: 79,
+        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        dvy: dvy_b,
+        dvx: -dvx_b,
+        dvz: -dvx_z,
+        action: { id: "auto" },
+        speedz: 0
+      });
       break;
     }
     case StateEnum.Falling: {
