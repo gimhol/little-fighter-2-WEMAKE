@@ -333,7 +333,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
             id: "214",
             expression: new CondMaker<EV>()
               .add(EV.PressLR, "==", 0)
-              .add(EV.TrendX, "==", -1)
+              .and(EV.TrendX, "==", -1)
               .done(),
           }, { // dash
             id: "213",
