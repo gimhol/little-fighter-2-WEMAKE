@@ -26,10 +26,11 @@ export function make_frame_state(frame: IFrameInfo) {
     }
     case StateEnum.OLD_LouisCastOff: {
       frame.state = StateEnum.Attacking;
-      const dvy_a = 6
-      const dvy_b = 5
-      const dvx_b = 7
-      const dvx_z = 5
+      const dvy_a = 5
+      const dvy_b = 4
+      const dvx_b = 5.5
+      const dvx_z = 4.5
+      const y_b = 70
       frame.opoint = ensure(frame.opoint, {
         kind: OpointKind.Normal,
         x: 39,
@@ -41,7 +42,7 @@ export function make_frame_state(frame: IFrameInfo) {
       }, {
         kind: OpointKind.Normal,
         x: 39,
-        y: 79,
+        y: y_b,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
@@ -51,7 +52,7 @@ export function make_frame_state(frame: IFrameInfo) {
       }, {
         kind: OpointKind.Normal,
         x: 39,
-        y: 79,
+        y: y_b,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
@@ -61,7 +62,7 @@ export function make_frame_state(frame: IFrameInfo) {
       }, {
         kind: OpointKind.Normal,
         x: 39,
-        y: 79,
+        y: y_b,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
@@ -71,11 +72,11 @@ export function make_frame_state(frame: IFrameInfo) {
       }, {
         kind: OpointKind.Normal,
         x: 39,
-        y: 79,
+        y: y_b,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
-        dvz: -dvx_z,
+        dvz: -4,
         action: { id: "auto" },
         speedz: 0
       });
