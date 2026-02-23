@@ -732,7 +732,7 @@ export class World extends WorldDataset {
       world: this,
       rest: (!itr.arest && itr.vrest) ? (itr.vrest + this.vrest_offset) : 0,
       v_id: victim.id,
-      a_id: attacker.id,
+    a_id: attacker.id,
       victim,
       attacker,
       itr,

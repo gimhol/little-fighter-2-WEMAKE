@@ -1310,14 +1310,15 @@ export class Entity {
 
     if (this.frame.hp) this.hp -= this.frame.hp;
 
-    for (const [k, v] of this.v_rests) {
-      if (v.rest > 0) --v.rest;
-      else this.del_v_rest(k)
-    }
+    if (this.shaking <= 0 || !this.world.vrest_after_shaking)
+      for (const [k, v] of this.v_rests) {
+        if (v.rest > 0) --v.rest;
+        else this.del_v_rest(k)
+      }
     for (const [k, v] of this.victims)
       if (v.rest) this.victims.delete(k)
 
-    if (this.motionless <= 0 && this.shaking <= 0)
+    if (this.motionless <= 0 || !this.world.arest_after_motionless)
       this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
 
     if (this._invisible_duration > 0) {

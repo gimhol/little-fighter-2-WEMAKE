@@ -166,7 +166,7 @@ export class WorldDataset implements IWorldDataset {
    * @memberof WorldDataset
    */
   friction_z: number = Defines.FRICTION_Z;
-  
+
   land_friction_factor: number = Defines.FRICTION_FACTOR;
   /**
    * 地面摩擦X 在地面的物体，每帧X速度将±=此值,向0靠近
@@ -200,6 +200,8 @@ export class WorldDataset implements IWorldDataset {
   mp_max: number = Defines.DEFAULT_MP_MAX;
   hp_max: number = Defines.DEFAULT_HP_MAX;
   resting_max: number = Defines.DEFAULT_RESTING_MAX;
+  vrest_after_shaking: number = 0;
+  arest_after_motionless: number = 0;
 
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))

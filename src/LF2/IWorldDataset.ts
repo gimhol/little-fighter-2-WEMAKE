@@ -157,6 +157,8 @@ export interface IWorldDataset {
   mp_max: number;
   hp_max: number;
   resting_max: number;
+  vrest_after_shaking: number;
+  arest_after_motionless: number;
 }
 interface IFieldInfo {
   title: string;
@@ -211,7 +213,7 @@ export const world_dataset_field_map: Record<keyof IWorldDataset, IFieldInfo> = 
   screen_h: { title: "screen_h", desc: "screen_h", type: '' },
   sync_render: { title: "sync_render", desc: "sync_render", type: 'int', min: 0, max: 2, step: 1 },
   difficulty: { title: "difficulty", desc: "difficulty", type: '' },
-  infinity_mp: { title: "infinity_mp", desc: "infinity_mp", type: 'boolean', min: 0, max: 1, step: 1 },
+  infinity_mp: { title: "infinity_mp", desc: "infinity_mp", type: 'int', min: 0, max: 1, step: 1 },
   fall_r_ticks: { title: "fall_r_ticks", desc: "fall_r_ticks", type: 'int' },
   fall_r_value: { title: "fall_r_value", desc: "fall_r_value", type: 'int' },
   defend_r_ticks: { title: "defend_r_ticks", desc: "defend_r_ticks", type: 'int' },
@@ -224,4 +226,6 @@ export const world_dataset_field_map: Record<keyof IWorldDataset, IFieldInfo> = 
   mp_max: { title: "mp_max", desc: "mp_max", type: 'int' },
   hp_max: { title: "hp_max", desc: "hp_max", type: 'int' },
   resting_max: { title: "resting_max", desc: "resting_max", type: 'int' },
+  vrest_after_shaking: { title: "vrest_after_shaking", desc: "vrest_after_shaking", type: 'int', min: 0, max: 1, step: 1 },
+  arest_after_motionless: { title: "arest_after_motionless", desc: "arest_after_motionless", type: 'int', min: 0, max: 1, step: 1 }
 }
