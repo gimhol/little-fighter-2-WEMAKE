@@ -35,7 +35,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Transform } from "./Transform";
 import { Times } from "./ui";
-import { abs, is_num, min, round, round_float } from "./utils";
+import { abs, is_num, max, min, round, round_float } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -727,12 +727,15 @@ export class World extends WorldDataset {
     const dx = vx - ax;
     const dy = vy - ay;
     const dz = vz - az;
+    let rest = 2;
+    if (!itr.arest && itr.vrest) 
+      rest = max(2, itr.vrest + this.vrest_offset - this.itr_motionless - 4)
     const collision: ICollision = {
       lf2: this.lf2,
       world: this,
-      rest: (!itr.arest && itr.vrest) ? (itr.vrest + this.vrest_offset) : 0,
+      rest,
       v_id: victim.id,
-    a_id: attacker.id,
+      a_id: attacker.id,
       victim,
       attacker,
       itr,
