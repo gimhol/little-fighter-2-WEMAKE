@@ -163,6 +163,12 @@ export interface IWorldDataset {
   vrest_after_shaking: number;
   arest_after_motionless: number;
   invisible_blinking: number;
+  jump_x_f: number;
+  jump_z_f: number;
+  jump_h_f: number;
+  dash_x_f: number;
+  dash_z_f: number;
+  dash_h_f: number;
 }
 interface IFieldInfo {
   key: keyof IWorldDataset;
@@ -175,6 +181,12 @@ interface IFieldInfo {
 }
 const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>> = {
   gravity: { title: "重力", desc: "重力", type: 'float' },
+  jump_x_f: { title: "跳跃X距离系数", desc: "跳跃X距离系数", type: 'float' },
+  jump_z_f: { title: "跳跃Z距离系数", desc: "跳跃Z距离系数", type: 'float' },
+  jump_h_f: { title: "跳跃高度系数", desc: "跳跃高度系数", type: 'float' },
+  dash_x_f: { title: "跑跳X距离系数", desc: "跑跃X距离系数", type: 'float' },
+  dash_z_f: { title: "跑跳Z距离系数", desc: "跑跃Z距离系数", type: 'float' },
+  dash_h_f: { title: "跑跳高度系数", desc: "跑跃高度系数", type: 'float' },
   weapon_throwing_gravity: { title: "投掷武器重力", desc: "投掷武器重力", type: 'float' },
   begin_blink_time: { title: "入场闪烁时长", desc: "入场闪烁时长", type: 'int' },
   gone_blink_time: { title: "消失闪烁时长", desc: "消失闪烁时长", type: 'int' },
