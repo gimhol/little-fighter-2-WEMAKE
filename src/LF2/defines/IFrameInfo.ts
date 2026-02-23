@@ -298,5 +298,12 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   min_arest: ++order,
   vrest_after_shaking: ++order,
   arest_after_motionless: ++order,
-  invisible_blinking: ++order
+  invisible_blinking: ++order,
+  weapon_throwing_gravity: ++order,
+  jump_x_f: ++order,
+  jump_z_f: ++order,
+  jump_h_f: ++order,
+  dash_x_f: ++order,
+  dash_z_f: ++order,
+  dash_h_f: ++order,
 }
