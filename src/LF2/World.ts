@@ -727,7 +727,7 @@ export class World extends WorldDataset {
     const dx = vx - ax;
     const dy = vy - ay;
     const dz = vz - az;
-    let rest = 2;
+    let rest = 0;
     if (!itr.arest && itr.vrest) 
       rest = max(2, itr.vrest + this.vrest_offset - this.itr_motionless - 4)
     const collision: ICollision = {
