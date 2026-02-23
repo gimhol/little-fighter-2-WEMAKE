@@ -227,7 +227,7 @@ export const world_dataset_field_map: Record<keyof IWorldDataset, IFieldInfo> = 
   mp_max: { title: "mp_max", desc: "mp_max", type: 'int' },
   hp_max: { title: "hp_max", desc: "hp_max", type: 'int' },
   resting_max: { title: "resting_max", desc: "resting_max", type: 'int' },
-  vrest_after_shaking: { title: "vrest_after_shaking", desc: "vrest_after_shaking", type: 'int', min: 0, max: 1, step: 1 },
-  arest_after_motionless: { title: "arest_after_motionless", desc: "arest_after_motionless", type: 'int', min: 0, max: 1, step: 1 },
-  invisible_blinking: { title: "invisible_blinking", desc: "invisible_blinking", type: 'int', min: 0, max: 9999, step: 1 },
+  vrest_after_shaking: { title: "vrest是否在shaking后更新", desc: "vrest是否在shaking后更新", type: 'int', min: 0, max: 1, step: 1 },
+  arest_after_motionless: { title: "arest是否在motionless后更新", desc: "arest是否在motionless后更新", type: 'int', min: 0, max: 1, step: 1 },
+  invisible_blinking: { title: "隐身结束后的闪烁时长", desc: "隐身结束后的闪烁时长", type: 'int', min: 0, max: 9999, step: 1 },
 }
