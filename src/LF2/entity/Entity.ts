@@ -1310,7 +1310,7 @@ export class Entity {
 
     if (this.frame.hp) this.hp -= this.frame.hp;
 
-    if (this.shaking <= 0 || !this.world_dataset('vrest_after_shaking'))
+    if (this.shaking <= 0 || 0 == this.world_dataset('vrest_after_shaking'))
       for (const [k, v] of this.v_rests) {
         if (v.rest > 0) --v.rest;
         else this.del_v_rest(k)
@@ -1318,7 +1318,7 @@ export class Entity {
     for (const [k, v] of this.victims)
       if (v.rest) this.victims.delete(k)
 
-    if (this.motionless <= 0 || !this.world_dataset('arest_after_motionless'))
+    if (0 == this.world_dataset('arest_after_motionless') || this.motionless <= 0)
       this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
 
     if (this._invisible_duration > 0) {
@@ -1398,7 +1398,8 @@ export class Entity {
     if (this.motionless > 0) {
       ++this.wait;
       --this.motionless;
-    } else if (this.shaking > 0) {
+    }
+    if (this.shaking > 0) {
       ++this.wait;
       --this.shaking;
     }

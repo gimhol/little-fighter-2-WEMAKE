@@ -420,6 +420,9 @@ export namespace Defines {
   export const BOOMERANG_CHASE_ACC_X = 0.25
   export const BOOMERANG_CHASE_MAX_VZ = 1.8
   export const BOOMERANG_CHASE_ACC_Z = 0.1
+  export const BOOMERANG_CHASE_MAX_VY = 0.2
+  export const BOOMERANG_CHASE_ACC_Y = 0.1
+
   /** @see {GRAVITY} */
   // export const BOOMERANG_GRAVITY = 0.052
 

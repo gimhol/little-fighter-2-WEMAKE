@@ -110,13 +110,11 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.dvz = Defines.BOOMERANG_CHASE_MAX_VZ;
       frame.acc_z = Defines.BOOMERANG_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      // datIndex.type
 
-      frame.dvy = Defines.DENNIS_CHASE_MAX_VY;
-      frame.acc_y = Defines.DENNIS_CHASE_ACC_Y;
+      frame.dvy = Defines.BOOMERANG_CHASE_MAX_VY;
+      frame.acc_y = Defines.BOOMERANG_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
 
-      // frame.gravity = Defines.BOOMERANG_GRAVITY;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Leave };
       break;

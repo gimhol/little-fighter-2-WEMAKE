@@ -19,8 +19,8 @@ export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
   if (!itr) return;
   itr.hit_flag = HitFlag.AllEnemy;
 
-  itr.vrest = take_positive_num(itr, "vrest", n => max(2, 2 * n))
-  itr.arest = take_positive_num(itr, "arest", n => max(2, 2 * n))
+  itr.vrest = take_positive_num(itr, "vrest", n => 2 * n)
+  itr.arest = take_positive_num(itr, "arest", n => 2 * n)
 
   const src_dvx = itr.dvx
   itr.dvx = take_not_zero_num(itr, "dvx", n => fixed_float(n * 0.5, 4));

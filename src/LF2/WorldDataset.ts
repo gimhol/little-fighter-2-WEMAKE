@@ -201,7 +201,7 @@ export class WorldDataset implements IWorldDataset {
   hp_max: number = Defines.DEFAULT_HP_MAX;
   resting_max: number = Defines.DEFAULT_RESTING_MAX;
   vrest_after_shaking: number = 0;
-  arest_after_motionless: number = 0;
+  arest_after_motionless: number = 1;
   invisible_blinking: number = 120;
 
   constructor() {
