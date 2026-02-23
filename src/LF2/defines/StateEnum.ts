@@ -160,5 +160,5 @@ export const ATTCKING_STATES: readonly StateEnum[] = [
 ]
 export const ALL_STATES = Object.keys(StateEnum).map(k => {
   const v = (StateEnum as any)[k]
-  return typeof v === 'number' ? v : null
+  return typeof v === 'number' ? v as StateEnum : null
 }).filter(v => v !== null && v != StateEnum.Gone)
