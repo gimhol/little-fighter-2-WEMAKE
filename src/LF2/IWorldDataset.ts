@@ -129,6 +129,7 @@ export interface IWorldDataset {
   screen_w: number;
   screen_h: number;
   gravity: number;
+  weapon_throwing_gravity: number;
   sync_render: number;
 
   /**
@@ -174,6 +175,7 @@ interface IFieldInfo {
 }
 const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>> = {
   gravity: { title: "重力", desc: "重力", type: 'float' },
+  weapon_throwing_gravity: { title: "投掷武器重力", desc: "投掷武器重力", type: 'float' },
   begin_blink_time: { title: "入场闪烁时长", desc: "入场闪烁时长", type: 'int' },
   gone_blink_time: { title: "消失闪烁时长", desc: "消失闪烁时长", type: 'int' },
   lying_blink_time: { title: "起身闪烁时长", desc: "起身闪烁时长", type: 'int' },

@@ -231,9 +231,6 @@ export namespace Defines {
    * @type {number}
    */
   export const KEY_HIT_DURATION: number = 10;
-  export const GRAVITY: number = 0.48; // 0.38;
-
-
   export const FRICTION_FACTOR: number = 1; // 0.894427191;
   export const FRICTION_X: number = 0.3;
   export const FRICTION_Z: number = 0.3;
@@ -423,8 +420,6 @@ export namespace Defines {
   export const BOOMERANG_CHASE_MAX_VY = 0.2
   export const BOOMERANG_CHASE_ACC_Y = 0.1
 
-  /** @see {GRAVITY} */
-  // export const BOOMERANG_GRAVITY = 0.052
 
   export const MAX_AI_DESIRE = 10000 as const;
 
