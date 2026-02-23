@@ -293,5 +293,10 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   defend_ratio: ++order,
   mp_max: ++order,
   hp_max: ++order,
-  resting_max: ++order
+  resting_max: ++order,
+  min_vrest: ++order,
+  min_arest: ++order,
+  vrest_after_shaking: ++order,
+  arest_after_motionless: ++order,
+  invisible_blinking: ++order
 }

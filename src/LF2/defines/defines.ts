@@ -37,7 +37,7 @@ export namespace Defines {
 
   /** 击中敌人的对象停顿多少帧 */
   export const DEFAULT_ITR_MOTIONLESS = 6;
-  export const DEFAULT_ITR_A_REST = 8;
+  export const DEFAULT_ITR_A_REST = 20;
   export const DEFAULT_CATCH_TIME = 680;
   export const DEFAULT_ITR_FALL = 40;
 
@@ -397,8 +397,8 @@ export namespace Defines {
   export const ANGEL_BLESSING_MAX_VX = 7
   export const ANGEL_BLESSING_ACC_X = 0.25
   export const ANGEL_BLESSING_ACC_Z = 0.25
-  export const ANGEL_BLESSING_MAX_VY = 0.2
-  export const ANGEL_BLESSING_ACC_Y = 0.01
+  export const ANGEL_BLESSING_MAX_VY = 0.5
+  export const ANGEL_BLESSING_ACC_Y = 0.02
 
   export const DISATER_SPREADING_VX = arithmetic_progression(-5, 5, 1)
   export const DISATER_SPREADING_VY = arithmetic_progression(2, 8, 0.5)
@@ -494,13 +494,6 @@ export namespace Defines {
    * @type {number}
    */
   export const DEFAULT_ARMOR_SHAKING_RATIO: number = 3
-
-  /**
-   * 默认击飞速度
-   * 
-   * @link https://lf-empire.de/forum/showthread.php?tid=11204
-   */
-  export const DEFAULT_IVY_D: number = 5;
 
   export const WEAPON_WEIGHT_HEAVY = 1.1;
   export const WEAPON_WEIGHT_ARROW = 0.74;

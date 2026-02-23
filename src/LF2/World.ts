@@ -444,7 +444,7 @@ export class World extends WorldDataset {
         case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
           if (stage_limit()) continue;
-          this.infinity_mp = !this.infinity_mp;
+          this.infinity_mp = this.infinity_mp ? 0 : 1;
           continue;
         case CMD.F7:
           if (stage_limit()) continue;
@@ -728,8 +728,8 @@ export class World extends WorldDataset {
     const dy = vy - ay;
     const dz = vz - az;
     let rest = 0;
-    if (!itr.arest && itr.vrest) 
-      rest = max(2, itr.vrest + this.vrest_offset - this.itr_motionless - 4)
+    if (!itr.arest && itr.vrest)
+      rest = max(this.min_vrest, itr.vrest + this.vrest_offset)
     const collision: ICollision = {
       lf2: this.lf2,
       world: this,
@@ -756,10 +756,9 @@ export class World extends WorldDataset {
       m_distance: abs(dx) + abs(dy) + abs(dz),
       duration: 0,
     };
-    if (
-      bdy.tester?.run(collision) === false ||
-      itr.tester?.run(collision) === false
-    ) return;
+
+    if (bdy.tester?.run(collision) === false) return void 0;
+    if (itr.tester?.run(collision) === false) return void 0;
 
     return collision
   }

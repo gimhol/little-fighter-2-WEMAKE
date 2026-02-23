@@ -45,7 +45,7 @@ export class VsModeLogic extends UIComponent {
     this.state = 0;
     this.world.paused = false;
     this.world.playrate = 1;
-    this.world.infinity_mp = false;
+    this.world.infinity_mp = 0;
   }
   override on_start(): void {
     super.on_start?.();

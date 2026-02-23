@@ -13,7 +13,6 @@ export class CondMaker<T extends string = string> {
     op?: TBinOp,
     value?: any,
   ): this {
-    if (this._parts.length) this._parts.push("&");
     if (typeof arg1 !== "function") this._parts.push(`${arg1}${op}${value}`);
     else this._parts.push(arg1(new CondMaker()));
     return this;
