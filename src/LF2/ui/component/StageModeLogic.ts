@@ -68,6 +68,13 @@ export class StageModeLogic extends UIComponent {
       if (this.jalousie) this.jalousie.open = true;
     }
   }
+  protected reset() {
+    this.gameover_timer.reset()
+    this.state = 0;
+    this.world.paused = false;
+    this.world.playrate = 1;
+    this.world.infinity_mp = 0;
+  }
   protected stage_callbacks: IStageCallbacks = {
     on_phase_changed: (
       stage: Stage,
@@ -117,7 +124,6 @@ export class StageModeLogic extends UIComponent {
   override on_start(): void {
     super.on_start?.();
     if (this.world.paused) this.world.paused = false;
-    this.world.playrate = 1;
     this.score_board = this.node.find_child("score_board")!
     this.jalousie = this.node.search_component(Jalousie)
     this.gogogo = this.node.search_component(ComponentsPlayer, "play_gogogo")
@@ -152,6 +158,7 @@ export class StageModeLogic extends UIComponent {
       if (!stat_bar) break;
       stat_bar.set_entity(fighter)
     }
+    this.reset()
   }
   override on_stop(): void {
     this.lf2.change_bg(Defines.VOID_BG)

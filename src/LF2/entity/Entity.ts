@@ -1599,7 +1599,14 @@ export class Entity {
     };
     return false
   }
-
+  drop_catching(): boolean {
+    if (!this._catching) return false;
+    if (this._catching._catcher === this)
+      this._catching._catcher = null;
+    this._catching = null;
+    this.next_frame = this.get_catching_end_frame();
+    return true;
+  }
   update_catching(): boolean {
     if (!this._catching) return false;
     if (!this._catch_time) {

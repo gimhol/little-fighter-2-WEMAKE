@@ -37,6 +37,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
       e.dismiss_fusion(e.frame.id)
       if (e.next_frame) e.enter_frame(e.next_frame)
     }
+    if (e.catcher) e.catcher.drop_catching()
   }
   is_bouncing_frame(e: Entity) {
     return !!this._bouncing_frames_map.get(e.data.id)?.has(e.frame.id);
