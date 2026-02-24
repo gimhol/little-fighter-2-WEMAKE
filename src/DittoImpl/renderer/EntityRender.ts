@@ -57,7 +57,7 @@ const fragment_shader = `
     );
     vec4 color = texture2D(pTexture, uv);
     color.rgb = gamma_correct(color.rgb);
-    if(outlineAlpha <= 0.0) {
+    if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
       gl_FragColor = color;
       return;
     }
@@ -89,8 +89,8 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       offsetY: { value: 0 },
       repeatW: { value: 0 },
       repeatH: { value: 0 },
-      outlineColor: { value: new T.Color("#ff0000") },
-      outlineAlpha: { value: 0.8 },
+      outlineColor: { value: new T.Color("#000000") },
+      outlineAlpha: { value: 0 },
       outlineWidth: { value: 1 }
     },
     vertexShader: vertex_shader,
@@ -301,7 +301,7 @@ export class EntityRender {
     if (m instanceof T.ShaderMaterial) {
       if (this.outline_color) {
         m.uniforms.outlineColor.value = new T.Color(this.outline_color);
-        m.uniforms.outlineAlpha.value = 0.8
+        m.uniforms.outlineAlpha.value = 0.7
       } else {
         m.uniforms.outlineAlpha.value = 0
       }
