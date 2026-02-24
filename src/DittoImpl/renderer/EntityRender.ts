@@ -17,14 +17,87 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   for (const key of Object.keys(files)) {
     const img = images.find_by_pic_info(files[key]);
     if (img) ret.set(key, img.clone());
-    const img_w = images.find_by_white_info(files[key]);
-    if (img_w) ret.set(key + '#w', img_w.clone());
   }
   return ret;
 }
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
+
+const vertex_shader = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`
+const fragment_shader = `
+  uniform sampler2D pTexture;
+  uniform float offsetX;
+  uniform float offsetY;
+  uniform float repeatW;
+  uniform float repeatH;
+  uniform float outlineWidth;
+  uniform float outlineAlpha;
+  uniform vec3 outlineColor;
+  
+  varying vec2 vUv;
+  
+  const float gamma = 2.2;
+  vec3 gamma_correct(vec3 color) {
+    return pow(color, vec3(1.0 / gamma));
+  }
+  vec3 gamma_invert(vec3 color) {
+    return pow(color, vec3(gamma));
+  }
+  void main() {
+    vec2 uv = vec2(
+      (vUv.x * repeatW) + offsetX,
+      (vUv.y * repeatH) + offsetY
+    );
+    vec4 color = texture2D(pTexture, uv);
+    color.rgb = gamma_correct(color.rgb);
+    if(outlineAlpha <= 0.0) {
+      gl_FragColor = color;
+      return;
+    }
+
+    float outline = 0.0;
+    vec2 texel = vec2(outlineWidth) / vec2(textureSize(pTexture, 0));
+    float center = texture2D(pTexture, uv).a;
+    float up     = texture2D(pTexture, uv + vec2(0, -texel.y)).a;
+    float down   = texture2D(pTexture, uv + vec2(0,  texel.y)).a;
+    float left   = texture2D(pTexture, uv + vec2(-texel.x, 0)).a;
+    float right  = texture2D(pTexture, uv + vec2( texel.x, 0)).a;
+    outline = max(
+      max(abs(center - up), abs(center - down)),
+      max(abs(center - left), abs(center - right))
+    );
+    if (outline > 0.1 && center < 0.1) {
+      gl_FragColor.rgb = gamma_correct(outlineColor);
+      gl_FragColor.a = outlineAlpha;
+    } else {
+      gl_FragColor = color;
+    }
+  }
+`
+function get_material(texture: T.Texture<unknown> | undefined) {
+  return new T.ShaderMaterial({
+    uniforms: {
+      pTexture: { value: texture },
+      offsetX: { value: 0 },
+      offsetY: { value: 0 },
+      repeatW: { value: 0 },
+      repeatH: { value: 0 },
+      outlineColor: { value: new T.Color("#ff0000") },
+      outlineAlpha: { value: 0.8 },
+      outlineWidth: { value: 1 }
+    },
+    vertexShader: vertex_shader,
+    fragmentShader: fragment_shader,
+    transparent: true
+  });
+}
 export class EntityRender {
   readonly world_renderer: WorldRenderer;
 
@@ -32,7 +105,6 @@ export class EntityRender {
   entity!: Entity;
   protected node!: T.Object3D;
   protected main_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
-  protected outline_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
 
   protected variants = new Map<string, string[]>();
@@ -81,47 +153,22 @@ export class EntityRender {
     }
     this._data = entity.data;
     this.images = get_img_map(lf2, entity.data);
-    {
-      const texture = this.images.get("0#w")?.pic?.texture;
-      const mesh = this.outline_mesh = this.outline_mesh || new T.Mesh(
-        BODY_GEOMETRY,
-        new T.MeshBasicMaterial({
-          map: texture,
-          transparent: true,
-        }),
-      )
-      if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
-      mesh.visible = false;
-      mesh.name = "Entity:" + data.id;
-      if (typeof data.base.depth_test === "boolean")
-        mesh.material.depthTest = data.base.depth_test;
-      if (typeof data.base.depth_write === "boolean")
-        mesh.material.depthWrite = data.base.depth_write;
-      if (typeof data.base.render_order === "number")
-        mesh.renderOrder = data.base.render_order;
-      this.entity.outline_color
-      this.outline_color = Defines.TeamInfoMap[this.entity.team]?.outline_color
-      mesh.material.color = new T.Color(this.outline_color)
-    }
-    {
-      const texture = this.images.get("0")?.pic?.texture;
-      const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
-        BODY_GEOMETRY,
-        new T.MeshBasicMaterial({
-          map: texture,
-          transparent: true,
-        }),
-      )
-      if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
-      mesh.visible = false;
-      mesh.name = "Entity:" + data.id;
-      if (typeof data.base.depth_test === "boolean")
-        mesh.material.depthTest = data.base.depth_test;
-      if (typeof data.base.depth_write === "boolean")
-        mesh.material.depthWrite = data.base.depth_write;
-      if (typeof data.base.render_order === "number")
-        mesh.renderOrder = data.base.render_order;
-    }
+
+    const texture = this.images.get("0")?.pic?.texture;
+    const material = get_material(texture);
+    const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
+      BODY_GEOMETRY, material
+    )
+    if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
+    mesh.visible = false;
+    mesh.name = "Entity:" + data.id;
+    if (typeof data.base.depth_test === "boolean")
+      mesh.material.depthTest = data.base.depth_test;
+    if (typeof data.base.depth_write === "boolean")
+      mesh.material.depthWrite = data.base.depth_write;
+    if (typeof data.base.render_order === "number")
+      mesh.renderOrder = data.base.render_order;
+
     this.blood_mesh = this.blood_mesh || new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
     this.blood_mesh.visible = false;
     this.node = this.node || new T.Object3D();
@@ -129,48 +176,45 @@ export class EntityRender {
 
   on_mount() {
     this.reset(this.entity);
-    this.node.add(this.outline_mesh, this.main_mesh, this.blood_mesh)
+    this.node.add(
+      // this.outline_mesh, 
+      this.main_mesh,
+      this.blood_mesh
+    )
     this.blood_mesh.position.z = 1;
     this.world_renderer.world_node.add(this.node);
   }
 
   on_unmount(): void {
-    this.outline_mesh.removeFromParent();
     this.main_mesh.removeFromParent();
     this.blood_mesh.removeFromParent();
     this.node.removeFromParent();
   }
 
   apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
-    const { images, main_mesh, outline_mesh } = this
+    const { images, main_mesh } = this
     if (info) {
       const { x, y, w, h, tex, pixel_w, pixel_h } = info;
       const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
-      {
-        const img = images.get(real_tex);
-        if (img?.pic) {
+
+      const img = images.get(real_tex);
+      if (img?.pic) {
+        const { material: m } = main_mesh;
+        // 检查材质类型并更新纹理
+        if (m instanceof T.ShaderMaterial) {
+          m.uniforms.pTexture.value = img.pic.texture;
+          m.uniforms.offsetX.value = x;
+          m.uniforms.offsetY.value = y;
+          m.uniforms.repeatW.value = w;
+          m.uniforms.repeatH.value = h;
+        } else {
           img.pic.texture.offset.set(x, y);
           img.pic.texture.repeat.set(w, h);
-          const { material: m } = main_mesh;
-          if (img.pic.texture !== m.map) {
-            m.map = img.pic.texture;
-            m.needsUpdate = true;
-          }
-        }
-        main_mesh.scale.set(pixel_w, pixel_h, 0);
-      }
-      {
-        const img = images.get(real_tex + '#w');
-        if (img?.pic) {
-          img.pic.texture.offset.set(x, y);
-          img.pic.texture.repeat.set(w, h);
-          const { material: m } = outline_mesh;
-          if (img.pic.texture !== m.map) {
-            m.map = img.pic.texture;
-            m.needsUpdate = true;
-          }
+          m.map = img.pic.texture;
         }
       }
+      main_mesh.scale.set(pixel_w, pixel_h, 0);
+
     }
   }
   update_shaking(dt: number) {
@@ -246,25 +290,21 @@ export class EntityRender {
     }
     this.render_bpoint();
     this.render_outline();
-
   }
   private render_outline() {
-    const { outline_mesh, main_mesh } = this;
-
+    const { main_mesh } = this;
     if (this.entity.outline_color != this.outline_color) {
       this.outline_color = this.entity.outline_color;
-      if (this.outline_color) outline_mesh.material.color.set(this.outline_color)
     }
-    outline_mesh.visible = !!this.outline_color && main_mesh.visible
-    if (!outline_mesh.visible) return;
-    let sx = main_mesh.scale.x;
-    let sy = main_mesh.scale.y;
-    const lw = this.outline_width;
-    const ow = lw * 2;
-    const x = main_mesh.position.x - lw;
-    const y = main_mesh.position.y + lw
-    outline_mesh.position.set(x, y, -0.1)
-    outline_mesh.scale.set(sx + ow, sy + ow, 0);
+    const { material: m } = main_mesh;
+    if (m instanceof T.ShaderMaterial) {
+      if (this.outline_color) {
+        m.uniforms.outlineColor.value = new T.Color(this.outline_color);
+        m.uniforms.outlineAlpha.value = 0.8
+      } else {
+        m.uniforms.outlineAlpha.value = 0
+      }
+    }
   }
   private render_bpoint() {
     const { entity, main_mesh } = this;
