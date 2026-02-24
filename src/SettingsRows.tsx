@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import { useImmer } from "use-immer";
 import csses from "./App.module.scss";
 import { Button } from "./Component/Buttons/Button";
 import CharacterSelect from "./Component/CharacterSelect";
 import Combine from "./Component/Combine";
 import { Cross } from "./Component/Icons/Cross";
-import { InputRef } from "./Component/Input";
 import { InputNumber } from "./Component/Input";
 import Select from "./Component/Select";
 import Show from "./Component/Show";
@@ -16,13 +16,13 @@ import { BotController } from "./LF2/bot/BotController";
 import { BaseController } from "./LF2/controller/BaseController";
 import { InvalidController } from "./LF2/controller/InvalidController";
 import { Defines, Difficulty, IStageInfo, IStagePhaseInfo } from "./LF2/defines";
+import { CMD } from "./LF2/defines/CMD";
 import { Entity } from "./LF2/entity/Entity";
 import { Stage } from "./LF2/stage/Stage";
-import { list_writable_properties, TProperty } from "./LF2/utils/list_writable_properties";
 import { is_num } from "./LF2/utils/type_check";
-import { useLocalNumber, useLocalString } from "./useLocalStorage";
-import { CMD } from "./LF2/defines/CMD";
 import { download } from "./Utils/download";
+import { useLocalNumber, useLocalString } from "./useLocalStorage";
+import { WorldDataset } from "./pages/dev_panel/world_dataset";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
   "enemy chaser": (e: Entity) => new BotController("", e),
@@ -57,7 +57,6 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   const [difficulty, set_difficulty] = useState<Difficulty>(
     lf2?.world.difficulty ?? Difficulty.Difficult,
   );
-  const [world_properties, set_world_properties] = useState<TProperty[]>();
   useEffect(() => {
     set_bgm(lf2?.sounds.bgm() ?? "");
     set_difficulty(lf2?.world.difficulty ?? Difficulty.Difficult);
@@ -88,8 +87,6 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       }),
     ];
 
-    const ppp = list_writable_properties(lf2.world)
-    set_world_properties(ppp);
     return () => a.forEach((b) => b());
   }, [lf2]);
 
@@ -131,6 +128,32 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     });
   };
   const phase_desc = stage_phase_list[stage_phase_idx]?.desc;
+
+  const [dwds, set_dwds] = useImmer<Partial<IWorldDataset>>({})
+  const [cwds, set_cwds] = useImmer<Partial<IWorldDataset>>({})
+  const [ready, set_ready] = useState(false)
+  useEffect(() => {
+    if (!lf2.world) return;
+    if (!ready) return;
+    Object.assign(lf2.world, cwds)
+  }, [ready, cwds, lf2])
+
+  useEffect(() => {
+    if (!lf2.world) return;
+    set_dwds(d => {
+      for (const [k] of world_dataset_field_map) {
+        const key = k as keyof IWorldDataset;
+        d[key] = lf2.world[key]
+      }
+    })
+    set_cwds(d => {
+      for (const [k] of world_dataset_field_map) {
+        const key = k as keyof IWorldDataset;
+        d[key] = lf2.world[key]
+      }
+    })
+    set_ready(true);
+  }, [lf2, set_dwds, set_cwds])
 
   return (
     <>
@@ -274,68 +297,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       <Show.Div
         className={csses.settings_row}
         show={props.show_world_tuning !== false}>
-        {world_properties?.map((v, idx) => {
-          const r = world_dataset_field_map[v.name as keyof IWorldDataset]
-          if (!r) return null
-          const { title, desc = title, type } = r
-          if (!type) return null;
-          let ref: InputRef | null = null;
-          let defaultValue: number | undefined = void 0;;
-          switch (type) {
-            case "boolean":
-              defaultValue = (lf2.world as any)[v.name] ? 1 : 0;
-              break;
-            case "int": case "float":
-              defaultValue = (lf2.world as any)[v.name];
-              break;
-          }
-          return (
-            <Titled
-              float_label={title}
-              title={desc}
-              key={v.name + "_" + idx}>
-              <Combine>
-                <InputNumber
-                  precision={type === 'float' ? 2 : 0}
-                  ref={(r) => { ref = r }}
-                  min={r.min}
-                  max={r.max}
-                  step={r.step ?? (type === 'float' ? 0.01 : type === 'int' ? 1 : 0.01)}
-                  defaultValue={defaultValue}
-                  className={csses.world_dataset_input}
-                  onChange={(e) => {
-                    switch (type) {
-                      case "boolean": (lf2.world as any)[v.name] = !!e; break;
-                      case "int": case "float": (lf2.world as any)[v.name] = e; break;
-                    }
-                  }
-                  } />
-                <Button
-                  title="重置"
-                  onClick={(_) => {
-                    (lf2.world as any)[v.name] = Number(v.default_value);
-                    ref!.value = "" + v.default_value;
-                  }}>
-                  <Cross />
-                </Button>
-              </Combine>
-            </Titled>
-          );
-        })}
-        <Button onClick={() => {
-          const json_blob = new Blob([
-            JSON.stringify(
-              {
-                __is_world_dataset__: true,
-                ...lf2.world.dump_dataset(),
-              }
-            )], {
-            type: 'application/json;charset=utf-8'
-          })
-          download(URL.createObjectURL(json_blob), 'world.wdataset.json')
-        }}>
-          Dump Dataset
-        </Button>
+        <WorldDataset lf2={lf2} />
       </Show.Div>
     </>
   );

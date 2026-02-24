@@ -19,8 +19,8 @@ export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
   if (!itr) return;
   itr.hit_flag = HitFlag.AllEnemy;
 
-  itr.vrest = take_positive_num(itr, "vrest", n => max(2, 2 * n))
-  itr.arest = take_positive_num(itr, "arest", n => max(2, 2 * n))
+  itr.vrest = take_positive_num(itr, "vrest", n => 2 * n)
+  itr.arest = take_positive_num(itr, "arest", n => 2 * n)
 
   const src_dvx = itr.dvx
   itr.dvx = take_not_zero_num(itr, "dvx", n => fixed_float(n * 0.5, 4));
@@ -28,7 +28,6 @@ export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
   itr.dvy = take_not_zero_num(itr, "dvy", n => fixed_float(n * -0.5, 4));
   itr.fall = take_not_zero_num(itr, "fall", n => n * 2);
   itr.bdefend = take_not_zero_num(itr, "bdefend", n => n * 2);
-
 
   const zwidth = take_not_zero_num(itr, "zwidth") ?? Defines.DAFUALT_QUBE_LENGTH / 2;
   itr.l = 2 * zwidth;
@@ -47,24 +46,20 @@ export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
       const cond_maker = new CondMaker<C_Val>()
       switch (itr.effect) {
         case ItrEffect.Fire:
-          cond_maker.and(c => c
+          cond_maker
             .add(C_Val.VictimState, "!=", StateEnum.Burning)
-            .or(C_Val.AttackerState, "!=", StateEnum.BurnRun)
-          );
+            .or(C_Val.AttackerState, "!=", StateEnum.BurnRun);
           break;
         case ItrEffect.MFire1:
           cond_maker
-            .and(C_Val.VictimType, "!=", EntityEnum.Fighter)
-            .or(c => c
-              .add(C_Val.VictimState, "!=", StateEnum.BurnRun)
-              .and(C_Val.VictimState, "!=", StateEnum.Burning)
-            );
+            .and(C_Val.VictimType, "==", EntityEnum.Fighter)
+            .and(C_Val.VictimState, "!=", StateEnum.BurnRun)
+            .and(C_Val.VictimState, "!=", StateEnum.Burning);
           break;
         case ItrEffect.MFire2:
-          cond_maker.and(c => c
+          cond_maker
             .add(C_Val.VictimState, "!=", StateEnum.BurnRun)
-            .and(C_Val.VictimState, "!=", StateEnum.Burning),
-          );
+            .and(C_Val.VictimState, "!=", StateEnum.Burning)
           break;
         case ItrEffect.Through:
           cond_maker.and(C_Val.VictimType, "!=", EntityEnum.Fighter);

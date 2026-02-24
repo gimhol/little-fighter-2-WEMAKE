@@ -8,33 +8,34 @@ export default class CharacterState_Jump extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Jump) {
     super(state)
   }
-  override update(character: Entity): void {
-    character.handle_ground_velocity_decay();
+  override update(e: Entity): void {
+    e.handle_ground_velocity_decay();
 
-    const { jump_flag } = character.get_prev_frame();
+    const { jump_flag } = e.get_prev_frame();
     if (!jump_flag) {
-      this._jumpings.delete(character);
+      this._jumpings.delete(e);
       return;
     }
-    if (this._jumpings.has(character)) {
+    if (this._jumpings.has(e)) {
       return;
     }
-    const { LR: LR1 = 0, UD: UD1 = 0 } = character.ctrl || {};
-    const {
+    const { LR: LR1 = 0, UD: UD1 = 0 } = e.ctrl || {};
+    let {
       jump_height: h = 0,
       jump_distance: dx = 0,
       jump_distancez: dz = 0,
-    } = character.data.base;
-    const g_acc = character.world.gravity;
+    } = e.data.base;
+    dz *= e.world.jump_z_f
+    dx *= e.world.jump_x_f
+    h *= e.world.jump_h_f
+    const { gravity } = e;
     const vz = UD1 * dz;
-    character.set_velocity(
-      LR1 * (dx - abs(vz / 4)),
-      g_acc * sqrt((2 * h) / g_acc),
-      vz,
-    );
-    this._jumpings.add(character);
+    const vx = LR1 * (dx - abs(vz / 4))
+    const vy = gravity * sqrt((2 * h) / gravity)
+    e.set_velocity(vx, vy, vz);
+    this._jumpings.add(e);
   }
-  override on_landing(character: Entity): void {
-    character.enter_frame({ id: character.data.indexes?.landing_1 });
+  override on_landing(e: Entity): void {
+    e.enter_frame({ id: e.data.indexes?.landing_1 });
   }
 }

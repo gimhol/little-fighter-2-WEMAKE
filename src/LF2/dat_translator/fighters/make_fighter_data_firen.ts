@@ -36,6 +36,7 @@ export function make_fighter_data_firen(data: IEntityData) {
       h: 60,
       test: new CondMaker<C_Val>()
         .add(C_Val.BdyCode, '==', 123)
+        .and(C_Val.VictimOID, '==', BuiltIn_OID.Freeze)
         .and(C_Val.BdyHitFlag, '==', HitFlag.Fighter | HitFlag.Ally)
         .and(C_Val.SameFacing, '==', 0)
         .done()

@@ -1310,20 +1310,21 @@ export class Entity {
 
     if (this.frame.hp) this.hp -= this.frame.hp;
 
-    for (const [k, v] of this.v_rests) {
-      if (v.rest > 0) --v.rest;
-      else this.del_v_rest(k)
-    }
+    if (this.shaking <= 0 || 0 == this.world_dataset('vrest_after_shaking'))
+      for (const [k, v] of this.v_rests) {
+        if (v.rest > 0) --v.rest;
+        else this.del_v_rest(k)
+      }
     for (const [k, v] of this.victims)
       if (v.rest) this.victims.delete(k)
 
-    if (this.motionless <= 0 && this.shaking <= 0)
+    if (0 == this.world_dataset('arest_after_motionless') || this.motionless <= 0)
       this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
 
     if (this._invisible_duration > 0) {
       this._invisible_duration--;
       if (this._invisible_duration <= 0) {
-        this._blinking_duration = 120;
+        this._blinking_duration = this.world_dataset('invisible_blinking');
       }
     }
     if (this._invulnerable_duration > 0) {
@@ -1397,7 +1398,8 @@ export class Entity {
     if (this.motionless > 0) {
       ++this.wait;
       --this.motionless;
-    } else if (this.shaking > 0) {
+    }
+    if (this.shaking > 0) {
       ++this.wait;
       --this.shaking;
     }
@@ -1597,7 +1599,14 @@ export class Entity {
     };
     return false
   }
-
+  drop_catching(): boolean {
+    if (!this._catching) return false;
+    if (this._catching._catcher === this)
+      this._catching._catcher = null;
+    this._catching = null;
+    this.next_frame = this.get_catching_end_frame();
+    return true;
+  }
   update_catching(): boolean {
     if (!this._catching) return false;
     if (!this._catch_time) {
@@ -2018,6 +2027,12 @@ export class Entity {
         const vx = this.velocity.x
         return vx > 0 ? -1 : vx < 0 ? 1 : this.facing
       }
+      case FacingFlag.Trend: {
+        const { LR } = this.ctrl;
+        if (LR) return LR;
+        const vx = this.velocity.x;
+        return vx > 0 ? 1 : vx < 0 ? -1 : this.facing;
+      }
     }
     return this.facing;
   }
@@ -2025,19 +2040,25 @@ export class Entity {
   get_next_frame(which: TNextFrame): INextFrameResult | undefined {
     if (Array.isArray(which)) {
       const l = which.length;
+      const remains: INextFrame[] = []
       for (let i = 0; i < l; ++i) {
         const nf: INextFrame | undefined = which[i];
         if (!nf) continue;
+        if (!nf.judger) {
+          remains.push(nf)
+          continue;
+        }
         const f = this.get_next_frame(nf);
         if (f) return f;
       }
-      return void 0;
+      const next = this.lf2.mt.pick(remains)
+      if (!next) return;
+      return this.get_next_frame(next);
     }
     const id = which.id;
     const judger = which.judger;
     const use_hp = which.hp;
     const use_mp = which.mp;
-
     if (judger && !judger.run(this)) {
       return void 0;
     }

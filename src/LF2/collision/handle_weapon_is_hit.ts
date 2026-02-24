@@ -21,8 +21,8 @@ export function handle_weapon_is_hit(collision: ICollision): void {
 
   let weight_x = victim.data.base.weight || 1;
   let weight_y = victim.data.base.weight || 1;
-  let vx = round((itr.dvx ? itr.dvx * attacker.facing : 0) / weight_x);
-  let vy = round((itr.dvy ? itr.dvy : Defines.DEFAULT_IVY_D) / weight_y);
+  let vx = round(attacker.facing * (itr.dvx ? itr.dvx : attacker.world.ivx_d) / weight_x);
+  let vy = round((itr.dvy ? itr.dvy : attacker.world.ivy_d) / weight_y);
 
 
   const is_base_ball =

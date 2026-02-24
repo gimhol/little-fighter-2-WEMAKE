@@ -12,6 +12,7 @@ export default class CharacterState_Burning extends CharacterState_Base {
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     super.update(e);
     e.ctrl.reset_key_list();
+    if (e.catcher) e.catcher.drop_catching()
   }
   override update(e: Entity): void {
     super.update(e);

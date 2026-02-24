@@ -50,28 +50,30 @@ export class WorldDataset implements IWorldDataset {
 
   /** 
    * 默认itr.dvy
+   * 默认击飞速度
+   * @link https://lf-empire.de/forum/showthread.php?tid=11204
    */
-  ivy_d: number = Defines.DEFAULT_IVY_D;
+  ivy_d: number = 3.8;
   ivx_d: number = 4;
   cvy_d: number = 3;
   cvx_d: number = 2;
 
   /**
-   * X轴丢人初速度系数
+   * X轴丢人速度系数
    *
    * @type {number}
    */
   tvx_f: number = Defines.DEFAULT_TVX_F;
 
   /**
-   * Y轴丢人初速度系数
+   * Y轴丢人速度系数
    *
    * @type {number}
    */
   tvy_f: number = Defines.DEFAULT_TVY_F;
 
   /**
-   * Z轴丢人初速度系数
+   * Z轴丢人速度系数
    *
    * @type {number}
    */
@@ -100,9 +102,11 @@ export class WorldDataset implements IWorldDataset {
    * @memberof World
    */
   gone_blink_time: number = Defines.DEFAULT_GONE_BLINK_TIME;
-  vrest_offset: number = 0;
+  vrest_offset: number = -6;
   itr_arest: number = Defines.DEFAULT_ITR_A_REST;
-  arest_offset: number = 0;
+  min_arest: number = 2;
+  min_vrest: number = 2;
+  arest_offset: number = -6;
 
   /**
    * “帧等待数”偏移值
@@ -166,7 +170,7 @@ export class WorldDataset implements IWorldDataset {
    * @memberof WorldDataset
    */
   friction_z: number = Defines.FRICTION_Z;
-  
+
   land_friction_factor: number = Defines.FRICTION_FACTOR;
   /**
    * 地面摩擦X 在地面的物体，每帧X速度将±=此值,向0靠近
@@ -185,10 +189,11 @@ export class WorldDataset implements IWorldDataset {
 
   screen_w: number = Defines.MODERN_SCREEN_WIDTH;
   screen_h: number = Defines.MODERN_SCREEN_HEIGHT;
-  gravity: number = Defines.GRAVITY;
+  gravity: number = 0.48;
+  weapon_throwing_gravity: number = 0.216;
   sync_render: number = 0;
   difficulty: Difficulty = Difficulty.Difficult;
-  infinity_mp: boolean = false;
+  infinity_mp: number = 0;
   fall_r_ticks: number = Defines.FALL_R_TICKS;
   fall_r_value: number = Defines.FALL_R_VALUE;
   defend_r_ticks: number = Defines.DEFEND_R_TICKS;
@@ -200,7 +205,15 @@ export class WorldDataset implements IWorldDataset {
   mp_max: number = Defines.DEFAULT_MP_MAX;
   hp_max: number = Defines.DEFAULT_HP_MAX;
   resting_max: number = Defines.DEFAULT_RESTING_MAX;
-
+  vrest_after_shaking: number = 1;
+  arest_after_motionless: number = 1;
+  invisible_blinking: number = 120;
+  jump_x_f: number = 1;
+  jump_z_f: number = 1;
+  jump_h_f: number = 1;
+  dash_x_f: number = 1;
+  dash_z_f: number = 1;
+  dash_h_f: number = 1;
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
     Object.assign(this, wdataset)

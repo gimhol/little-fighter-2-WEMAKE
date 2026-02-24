@@ -22,11 +22,15 @@ export function make_figther_data_louis(data: IEntityData): IEntityData {
   };
   for (const k in data.frames) {
     const ja = data.frames[k].seqs?.["ja"];
-    if (!ja || !("id" in ja) || ja.id !== "300") continue;
-    ja.expression = new CondMaker()
-      .add(EntityVal.HP_P, "<=", 33)
-      .or(EntityVal.LF2_NET_ON, "==", 1)
-      .done();
+    if (!ja) continue;
+    const jas = Array.isArray(ja) ? ja : [ja]
+    for (const ja of jas) {
+      if (!("id" in ja) || ja.id !== "300") continue;
+      ja.expression = new CondMaker()
+        .add(EntityVal.HP_P, "<=", 33)
+        .or(EntityVal.LF2_NET_ON, "==", 1)
+        .done();
+    }
   }
   BotBuilder.make(data).set_actions(
     // d>a

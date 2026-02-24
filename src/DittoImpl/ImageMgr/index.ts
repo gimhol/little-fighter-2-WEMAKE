@@ -16,7 +16,7 @@ import { p_create_picture } from "../renderer/create_picture";
 import { error_texture } from "../renderer/error_texture";
 import { RImageInfo } from "../RImageInfo";
 import { RTextInfo } from "../RTextInfo";
-import { handle_image_operation_mask as handle_image_operation_mask, handle_image_operation_crop, handle_image_operation_flip, handle_image_operation_resize } from "./handle_image_operation";
+import { handle_image_operation_crop, handle_image_operation_flip, handle_image_operation_mask, handle_image_operation_resize } from "./handle_image_operation";
 export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
@@ -194,14 +194,7 @@ export class ImageMgr implements IImageMgr {
 
   async load_by_pic_info(f: ILegacyPictureInfo | IPictureInfo): Promise<RImageInfo> {
     const key = this._gen_key(f);
-    await this.load_img(key + '#white', f.path, [{
-      type: 'mask',
-      packs: [{ operation: 'source-in', color: '#FFFFFF88' }]
-    }])
     return this.load_img(key, f.path);
-  }
-  find_by_white_info(f: IPictureInfo | ILegacyPictureInfo): RImageInfo | undefined {
-    return this.infos.get(this._gen_key(f) + '#white');
   }
   find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): RImageInfo | undefined {
     return this.infos.get(this._gen_key(f));

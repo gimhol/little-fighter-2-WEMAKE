@@ -4,7 +4,7 @@ import WeaponState_Base from "./WeaponState_Base";
 
 export default class WeaponState_Throwing extends WeaponState_Base {
   override get_gravity(e: Entity) {
-    return e.world.gravity * 0.45;
+    return e.world.weapon_throwing_gravity;
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     this._hit_ground_weapons.add(e);

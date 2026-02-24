@@ -3,14 +3,15 @@ import {
   IBdyInfo,
   IBpointInfo,
   ICpointInfo,
+  IDatIndex,
   IFramePictureInfo,
   IItrInfo,
   IOpointInfo,
   ItrKind,
   IWpointInfo,
-  StateEnum,
-  TNextFrame,
+  StateEnum
 } from "../defines";
+import { IDatContext } from "../defines/IDatContext";
 import { IEntityInfo } from "../defines/IEntityInfo";
 import { IFrameInfo } from "../defines/IFrameInfo";
 import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
@@ -29,12 +30,12 @@ import { cook_itr } from "./cook_itr";
 import { cook_opoint } from "./cook_opoint";
 import { cook_wpoint } from "./cook_wpoint";
 import { add_next_frame } from "./edit_next_frame";
-import { FrameEditing } from "./FrameEditing";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_frame_state } from "./make_frame_state";
 import { take } from "./take";
 
-export function cook_frames(text: string, files: IEntityInfo["files"]): Record<string, IFrameInfo> {
+export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
+  const { text, base: { files } } = ctx
   const frames: Record<string, IFrameInfo> = {};
   const frame_regexp = /<frame>\s+(.*?)\s+(.*)((.|\n)+?)<frame_end>/g;
   for (const [, frame_id, frame_name, content] of match_all(
@@ -146,8 +147,6 @@ export function cook_frames(text: string, files: IEntityInfo["files"]): Record<s
     const sound = take(frame, "sound");
     if (sound) frame.sound = sound.replace(/\\/g, '/') + ".mp3";
     frames[frame_id] = frame;
-
-    const editing = new FrameEditing(frame).init(frame);
 
     const dircontrol = take(cpoint_list[0], "dircontrol");
     if (dircontrol) {

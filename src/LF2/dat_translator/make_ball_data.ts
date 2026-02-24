@@ -3,12 +3,10 @@ import { ActionType } from "../defines/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { EntityEnum } from "../defines/EntityEnum";
 import { EntityVal } from "../defines/EntityVal";
-import { IDatIndex } from "../defines/IDatIndex";
+import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
-import { IEntityInfo } from "../defines/IEntityInfo";
-import { IFrameInfo } from "../defines/IFrameInfo";
 import { SpeedMode } from "../defines/SpeedMode";
-import { ceil, ensure, round_float } from "../utils";
+import { ensure, round_float } from "../utils";
 import { foreach } from "../utils/container_help/foreach";
 import { traversal } from "../utils/container_help/traversal";
 import { to_num } from "../utils/type_cast/to_num";
@@ -21,11 +19,8 @@ import { make_frame_behavior } from "./make_frame_behavior";
 import { take, take_str } from "./take";
 
 export const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
-export function make_ball_data(
-  info: IEntityInfo,
-  frames: Record<string, IFrameInfo>,
-  datIndex: IDatIndex,
-): IEntityData {
+export function make_ball_data(ctx: IDatContext): IEntityData {
+  const { base: info, frames, index: datIndex } = ctx
   info.hp = 500;
 
   let weapon_broken_sound = take_str(info, "weapon_broken_sound");
@@ -33,12 +28,6 @@ export function make_ball_data(
     weapon_broken_sound = (weapon_broken_sound + ".mp3").replace(/\\/g, '/');
     info.dead_sounds = [weapon_broken_sound];
   }
-
-  // let weapon_drop_sound = take_str(info, "weapon_drop_sound");
-  // if (weapon_drop_sound) {
-  //   weapon_drop_sound = (weapon_drop_sound + ".mp3").replace(/\\/g, '/');
-  //   info.drop_sounds = [weapon_drop_sound];
-  // }
 
   let weapon_hit_sound = take_str(info, "weapon_hit_sound");
   if (weapon_hit_sound) {

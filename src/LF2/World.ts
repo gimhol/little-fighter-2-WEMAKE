@@ -35,7 +35,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Transform } from "./Transform";
 import { Times } from "./ui";
-import { abs, is_num, min, round, round_float } from "./utils";
+import { abs, is_num, max, min, round, round_float } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -444,7 +444,7 @@ export class World extends WorldDataset {
         case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
           if (stage_limit()) continue;
-          this.infinity_mp = !this.infinity_mp;
+          this.infinity_mp = this.infinity_mp ? 0 : 1;
           continue;
         case CMD.F7:
           if (stage_limit()) continue;
@@ -711,7 +711,7 @@ export class World extends WorldDataset {
       !(bdy.hit_flag & ally_flag)
     ) return;
     if (
-      victim.team === attacker.team &&
+      victim.team === attacker.team && victim.pre_emitter &&
       victim.pre_emitter === attacker.pre_emitter &&
       victim.spawn_time === attacker.spawn_time
     ) return;
@@ -727,10 +727,13 @@ export class World extends WorldDataset {
     const dx = vx - ax;
     const dy = vy - ay;
     const dz = vz - az;
+    let rest = 0;
+    if (!itr.arest && itr.vrest)
+      rest = max(this.min_vrest, itr.vrest + this.vrest_offset)
     const collision: ICollision = {
       lf2: this.lf2,
       world: this,
-      rest: (!itr.arest && itr.vrest) ? (itr.vrest + this.vrest_offset) : 0,
+      rest,
       v_id: victim.id,
       a_id: attacker.id,
       victim,
@@ -753,10 +756,9 @@ export class World extends WorldDataset {
       m_distance: abs(dx) + abs(dy) + abs(dz),
       duration: 0,
     };
-    if (
-      bdy.tester?.run(collision) === false ||
-      itr.tester?.run(collision) === false
-    ) return;
+
+    if (bdy.tester?.run(collision) === false) return void 0;
+    if (itr.tester?.run(collision) === false) return void 0;
 
     return collision
   }

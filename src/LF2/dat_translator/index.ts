@@ -11,7 +11,7 @@ export * from "./cook_cpoint";
 export * from "./cook_file_variants";
 export * from "./cook_frame_indicator_info";
 export * from "./cook_itr";
-export * from "./cook_next_frame_mp_hp";
+export * from "./cook_next_frame_cost";
 export * from "./cook_opoint";
 export * from "./cook_wpoint";
 export * from "./copy_bdy_info";
