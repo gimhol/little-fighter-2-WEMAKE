@@ -51,10 +51,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
         victim.fall_value <= 0 ||
         victim.hp <= 0 ||
         victim.frame.state === StateEnum.Frozen ||
-        (victim.fall_value <= Defines.DEFAULT_FALL_VALUE_DIZZY &&
-          (StateEnum.Caught === victim.frame.state ||
-            victim.velocity.y > 0 ||
-            victim.position.y > victim.ground_y));
+        (victim.fall_value <= Defines.DEFAULT_FALL_VALUE_DIZZY && StateEnum.Caught === victim.frame.state);
       if (is_fall) {
         handle_fall(collision);
       } else {
