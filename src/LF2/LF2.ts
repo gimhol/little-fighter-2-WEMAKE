@@ -246,6 +246,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._cheat_enables.set(name, enable);
     this.callbacks.emit("on_cheat_changed")(name, enable);
     this._keys = "";
+    this._gkeys.clear();
   }
   cmds: (CMD | D.CheatType | string)[] = [];
   events: UI.LF2KeyEvent[] = [];

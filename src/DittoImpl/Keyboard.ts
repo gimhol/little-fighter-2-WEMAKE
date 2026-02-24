@@ -1,11 +1,10 @@
-import { abs } from "@/LF2/utils/math/base";
+import { CMD } from "@/LF2/defines/CMD";
 import Callbacks from "../LF2/base/Callbacks";
 import { NoEmitCallbacks } from "../LF2/base/NoEmitCallbacks";
 import { IKeyboard } from "../LF2/ditto/keyboard/IKeyboard";
 import { IKeyboardCallback } from "../LF2/ditto/keyboard/IKeyboardCallback";
 import { IKeyEvent } from "../LF2/ditto/keyboard/IKeyEvent";
 import { LF2 } from "../LF2/LF2";
-import { CMD } from "@/LF2/defines/CMD";
 
 class __KeyEvent implements IKeyEvent {
   readonly times: number;
@@ -67,7 +66,7 @@ export class __Keyboard implements IKeyboard {
   };
   protected gamepads: (Gamepad | null)[] = [];
   protected gamepad_timer?: ReturnType<typeof setInterval>;
-  protected gamepad_buttons = new Map<string, boolean>();
+  protected gamepad_buttons = new Map<string, 0 | 1>();
   protected gamepad_axes: (readonly number[])[] = []
 
   constructor(lf2: LF2) {
@@ -78,20 +77,17 @@ export class __Keyboard implements IKeyboard {
   }
   protected scan_gamepad_buttons() {
     const gamepads = this.gamepads = navigator.getGamepads()
+    if (!gamepads?.length) return;
+
     for (let i = 0; i < gamepads.length; i++) {
       const gamepad = gamepads[i];
       if (!gamepad) continue;
-      const type = gamepad.mapping
-      if (type !== 'standard') { debugger; continue; }
-
       const { buttons, index } = gamepad;
-      for (let i = 0; i < buttons.length; i++) {
-        if (i < GPBtnCode.__MIN) continue;
-        if (i > GPBtnCode.__MAX) break;
+      if (buttons?.length) for (let i = 0; i < buttons.length; i++) {
         const btn = buttons[i];
         const btn_code = i as GPBtnCode
         const pressed = btn.pressed || btn.touched || btn.value >= 0.3;
-        const changed = this.update_gp_btn(index, btn_code, pressed)
+        const changed = this.update_gp_btn(index, btn_code, pressed ? 1 : 0)
         if (!changed) continue;
         if (!pressed) continue;
         switch (btn_code) {
@@ -99,34 +95,40 @@ export class __Keyboard implements IKeyboard {
           case GPBtnCode.Back: this.lf2.cmds.push(CMD.F4); break;
         }
       }
-      const [ax, ay] = gamepad.axes;
-      const [pax, pay] = this.gamepad_axes[i]
+
+
+      const [ax, ay] = gamepad.axes || [0, 0];
+      const [pax, pay] = this.gamepad_axes.at(i) || [0, 0];
       const alz = this._axe_live_zone;
       const adz = this._axe_dead_zone;
       if (ax >= alz && pax < alz) {
-        this.update_gp_btn(index, GPBtnCode.Right, true)
-      } else if (ax <= -alz && pax > alz) {
-        this.update_gp_btn(index, GPBtnCode.Left, true)
-      } else if (abs(ax) < adz && abs(pax) > adz) {
-        this.update_gp_btn(index, GPBtnCode.Right, false)
-        this.update_gp_btn(index, GPBtnCode.Left, false)
+        this.update_gp_btn(index, GPBtnCode.Right, 1, 1)
+      } else if (ax < alz && pax >= alz) {
+        this.update_gp_btn(index, GPBtnCode.Right, 0, 1)
+      }
+      if (ax <= -alz && pax > -alz) {
+        this.update_gp_btn(index, GPBtnCode.Left, 1, 1)
+      } else if (ax > -alz && pax <= -alz) {
+        this.update_gp_btn(index, GPBtnCode.Left, 0, 1)
       }
       if (ay >= alz && pay < alz) {
-        this.update_gp_btn(index, GPBtnCode.Down, true)
-      } else if (ay <= -alz && pay > alz) {
-        this.update_gp_btn(index, GPBtnCode.Up, true)
-      } else if (abs(ay) < adz && abs(pay) > adz) {
-        this.update_gp_btn(index, GPBtnCode.Down, false)
-        this.update_gp_btn(index, GPBtnCode.Up, false)
+        this.update_gp_btn(index, GPBtnCode.Down, 1, 1)
+      } else if (ay < alz && pay >= alz) {
+        this.update_gp_btn(index, GPBtnCode.Down, 0, 1)
+      }
+      if (ay <= -alz && pay > -alz) {
+        this.update_gp_btn(index, GPBtnCode.Up, 1, 1)
+      } else if (ay > -alz && pay <= -alz) {
+        this.update_gp_btn(index, GPBtnCode.Up, 0, 1)
       }
       this.gamepad_axes[i] = [ax, ay]
     }
   }
-  update_gp_btn(index: number, key: GPBtnCode, pressed: boolean): boolean {
+  update_gp_btn(index: number, key: GPBtnCode, pressed: 0 | 1, dpad: number = 0): boolean {
     const btn_name = GPBtnName[key]
     const key_code = `${index + 1}: ${btn_name}`;
-    if (this.gamepad_buttons.get(key_code) === pressed) return false;
-    this.gamepad_buttons.set(key_code, pressed);
+    if (this.gamepad_buttons.get(key_code + dpad) === pressed) return false;
+    this.gamepad_buttons.set(key_code + dpad, pressed);
     pressed ? this.key_down(key_code) : this.key_up(key_code);
     return true;
   }
