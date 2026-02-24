@@ -296,6 +296,7 @@ export class EntityRender {
     if (this.entity.outline_color != this.outline_color) {
       this.outline_color = this.entity.outline_color;
     }
+    if (this.entity.is_incorporeity) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
       if (this.outline_color) {
