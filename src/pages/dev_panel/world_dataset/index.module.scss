@@ -1,0 +1,12 @@
+.world_dataset {
+  display    : flex;
+  gap        : 10px;
+  word-break : keep-all;
+  white-space: nowrap;
+  align-items: center;
+  flex-wrap  : wrap;
+
+  .num_input {
+    width: 120px;
+  }
+}

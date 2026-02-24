@@ -711,7 +711,7 @@ export class World extends WorldDataset {
       !(bdy.hit_flag & ally_flag)
     ) return;
     if (
-      victim.team === attacker.team &&
+      victim.team === attacker.team && victim.pre_emitter &&
       victim.pre_emitter === attacker.pre_emitter &&
       victim.spawn_time === attacker.spawn_time
     ) return;

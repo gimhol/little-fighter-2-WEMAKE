@@ -22,6 +22,7 @@ import { Stage } from "./LF2/stage/Stage";
 import { is_num } from "./LF2/utils/type_check";
 import { download } from "./Utils/download";
 import { useLocalNumber, useLocalString } from "./useLocalStorage";
+import { WorldDataset } from "./pages/dev_panel/world_dataset";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
   "enemy chaser": (e: Entity) => new BotController("", e),
@@ -296,48 +297,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       <Show.Div
         className={csses.settings_row}
         show={props.show_world_tuning !== false}>
-        {world_dataset_field_map.values()?.map((v, idx) => {
-          const { title, desc = title, type, key, step } = v
-          return (
-            <Titled
-              float_label={title}
-              title={desc}
-              key={v.key}>
-              <Combine>
-                <InputNumber
-                  precision={type === 'float' ? 2 : 0}
-                  min={v.min}
-                  max={v.max}
-                  step={step}
-                  className={csses.world_dataset_input}
-                  value={cwds[v.key]}
-                  onChange={(v) => { set_cwds(d => { d[key] = v }) }} />
-                <Button
-                  title="重置"
-                  onClick={(_) => set_cwds(d => { d[key] = dwds[key] })}>
-                  <Cross />
-                </Button>
-              </Combine>
-            </Titled>
-          );
-        })}
-        <Button onClick={() => {
-          const json_blob = new Blob([
-            JSON.stringify(
-              {
-                __is_world_dataset__: true,
-                ...lf2.world.dump_dataset(),
-              }
-            )], {
-            type: 'application/json;charset=utf-8'
-          })
-          download(URL.createObjectURL(json_blob), 'world.wdataset.json')
-        }}>
-          Dump Dataset
-        </Button>
-        <Button onClick={() => set_cwds(dwds)}>
-          Reset Dataset
-        </Button>
+        <WorldDataset lf2={lf2} />
       </Show.Div>
     </>
   );
