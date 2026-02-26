@@ -2043,6 +2043,10 @@ export class Entity {
         const vx = this.velocity.x;
         return vx > 0 ? 1 : vx < 0 ? -1 : this.facing;
       }
+      case FacingFlag.SameAsBearer:
+        return this._bearer?.facing || this.facing;
+      case FacingFlag.OpposingBearer:
+        return turn_face(this._bearer?.facing) || this.facing;
     }
     return this.facing;
   }
