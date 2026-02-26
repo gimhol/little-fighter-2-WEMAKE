@@ -16,6 +16,7 @@ import {
 import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
 import { IArmorInfo } from "../defines/IArmorInfo";
+import { SpeedCtrl } from "../defines/SpeedCtrl";
 import { Ditto } from "../ditto";
 import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
@@ -1137,14 +1138,23 @@ export class Entity {
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
 
-    if (!ctrl_x && dvx != void 0) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, this.facing);
-    else if (LR && dvx != void 0) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, LR);
+    if (dvx == void 0) { }
+    else if (!ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, this.facing);
+    else if (LR != 0 && SpeedCtrl.Control == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, LR);
+    else if (LR != 0 && SpeedCtrl.Enable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
+    else if (LR == 0 && SpeedCtrl.Disable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
 
-    if (!ctrl_y && dvy != void 0) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
-    else if (jd && dvy != void 0) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, jd);
+    if (dvy == void 0) { }
+    else if (!ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
+    else if (jd != 0 && SpeedCtrl.Control == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, jd);
+    else if (jd != 0 && SpeedCtrl.Enable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
+    else if (jd == 0 && SpeedCtrl.Disable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
 
-    if (!ctrl_z && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
-    else if (UD && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
+    if (dvz == void 0) { }
+    else if (!ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
+    else if (UD != 0 && SpeedCtrl.Control == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
+    else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
+    else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
 
     this.set_velocity_0(vx, vy, vz);
     if (vxm == SpeedMode.Extra && dvx) this.set_velocity_1_x(dvx)

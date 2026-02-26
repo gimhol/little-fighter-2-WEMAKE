@@ -1,5 +1,6 @@
 import { IWorldDataset } from "../IWorldDataset";
 import { ChaseLost } from "./ChaseLost";
+import { SpeedCtrl } from "./SpeedCtrl";
 import { FacingFlag } from "./FacingFlag";
 import { FrameBehavior } from "./FrameBehavior";
 import { HitFlag } from "./HitFlag";
@@ -80,9 +81,9 @@ export interface IFrameInfo extends Partial<IWorldDataset> {
   vym?: number | SpeedMode;
   /** @see {SpeedMode} */
   vzm?: number | SpeedMode;
-  ctrl_x?: number;
-  ctrl_y?: number;
-  ctrl_z?: number;
+  ctrl_x?: number | SpeedCtrl;
+  ctrl_y?: number | SpeedCtrl;
+  ctrl_z?: number | SpeedCtrl;
 
 
   centerx: number;
