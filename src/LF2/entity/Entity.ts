@@ -798,20 +798,22 @@ export class Entity {
     if (is_num(opoint.max_mp)) this.mp = this.mp_max = opoint.max_mp;
     if (is_num(opoint.mp)) this.mp = opoint.mp;
 
-    const { dvy = 0, dvz = 0 } = this.frame
+    const { dvy = 0, dvz = 0, dvx = 0, vxm, vym, vzm } = this.frame
     const z_disabled =
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
 
-    const vx = round_float(ovx + o_dvx * facing)
-    const vy = round_float(ovy + o_dvy + dvy)
-    const vz = z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
+    let vx = round_float(ovx + o_dvx * facing)
+    let vy = round_float(ovy + o_dvy + dvy)
+    let vz = z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
+    if (vxm === SpeedMode.Fixed) vx = dvx
+    if (vym === SpeedMode.Fixed) vy = dvy
+    if (vzm === SpeedMode.Fixed) vz = dvz
     this.set_velocity(vx, vy, vz)
     if (sus_cases.debugging) {
       sus_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
       sus_cases.push('on_spawn::vec1', vx, vy, vz)
     }
-
     switch (opoint.kind) {
       case OpointKind.Pick:
         emitter.drop_holding()
