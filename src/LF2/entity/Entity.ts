@@ -1235,7 +1235,6 @@ export class Entity {
    */
   drop_holding(): void {
     if (!this.holding) return;
-    this.holding.follow_bearer();
     this.lf2.mt.mark = 'dh_1'
     this.holding.enter_frame({ id: this.lf2.mt.pick(this.holding.data.indexes?.in_the_skys) });
     this.holding.bearer = null;
@@ -1398,6 +1397,7 @@ export class Entity {
       const nf = this.get_next_frame(this.frame.next);
       if (nf) this.next_frame = { ...nf.which, judger: void 0 }
       else this.next_frame = this.find_auto_frame()
+      this.enter_frame(this.next_frame)
     }
     this.handle_gravity();
     this.update_velocity();
