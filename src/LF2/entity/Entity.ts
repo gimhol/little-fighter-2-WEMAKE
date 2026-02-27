@@ -784,14 +784,11 @@ export class Entity {
     } = opoint;
 
     const weight = this._data.base.weight || 1
-    o_dvy = round_float(o_dvy / weight);
+    o_dvy = o_dvy / weight;
     const ud = emitter.ctrl?.UD || 0;
     const { x: ovx, y: ovy, z: ovz } = offset_velocity;
-    if (o_dvx > 0) {
-      o_dvx = round_float(o_dvx / weight - abs(ovz / 2));
-    } else {
-      o_dvx = round_float(o_dvx / weight + abs(ovz / 2));
-    }
+    if (o_dvx > 0) o_dvx = o_dvx / weight - abs(ovz / 2);
+    else o_dvx = o_dvx / weight + abs(ovz / 2);
 
     if (is_num(opoint.max_hp)) this.hp = this.hp_r = this.hp_max = opoint.max_hp;
     if (is_num(opoint.hp)) this.hp = this.hp_r = opoint.hp;
@@ -803,12 +800,12 @@ export class Entity {
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
 
-    let vx = round_float(ovx + o_dvx * facing)
-    let vy = round_float(ovy + o_dvy + dvy)
-    let vz = z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
-    if (vxm === SpeedMode.Fixed) vx = dvx
-    if (vym === SpeedMode.Fixed) vy = dvy
-    if (vzm === SpeedMode.Fixed) vz = dvz
+    let vx = ovx + o_dvx * facing;
+    let vy = ovy + o_dvy + dvy;
+    let vz = z_disabled ? 0 : ovz + o_dvz + o_speedz * ud + dvz;
+    if (vxm === SpeedMode.Fixed) vx = dvx;
+    if (vym === SpeedMode.Fixed) vy = dvy;
+    if (vzm === SpeedMode.Fixed) vz = dvz;
     this.set_velocity(vx, vy, vz)
     if (sus_cases.debugging) {
       sus_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
