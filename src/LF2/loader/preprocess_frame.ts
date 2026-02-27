@@ -1,6 +1,6 @@
 import { LF2 } from "../LF2";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
-import { IFrameInfo } from "../defines";
+import { EntityEnum, IFrameInfo } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import read_nums from "../ui/utils/read_nums";
 import { traversal } from "../utils/container_help/traversal";
@@ -37,6 +37,9 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
   frame.bdy?.forEach((n, i, l) => l[i] = preprocess_bdy(lf2, n, data, jobs))
   frame.itr?.forEach((n, i, l) => l[i] = preprocess_itr(lf2, n, data, jobs))
 
+  if (frame.landable === void 0) 
+    frame.landable = data.type === EntityEnum.Ball ? 1 : 0;
+  
   const unchecked_frame = frame as any;
   if (unchecked_frame) {
     if (unchecked_frame.center) {

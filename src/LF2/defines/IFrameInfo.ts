@@ -174,6 +174,8 @@ export interface IFrameInfo extends Partial<IWorldDataset> {
   broadcasts?: string[];
 
   facing?: FacingFlag;
+
+  landable?: number;
 }
 
 export interface IChaseInfo {
@@ -307,4 +309,5 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   dash_x_f: ++order,
   dash_z_f: ++order,
   dash_h_f: ++order,
+  landable: ++order,
 }

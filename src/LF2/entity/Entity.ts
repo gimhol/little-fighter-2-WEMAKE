@@ -1450,36 +1450,38 @@ export class Entity {
         if (result) this.enter_frame(result.which);
       }
 
-      // 落地
-      if (just_land) {
-        if (this.frame.on_landing) {
-          const result = this.get_next_frame(this.frame.on_landing);
-          if (result) this.enter_frame(result.which);
+      if (this.frame.landable) {
+        // 落地
+        if (just_land) {
+          if (this.frame.on_landing) {
+            const result = this.get_next_frame(this.frame.on_landing);
+            if (result) this.enter_frame(result.which);
+          }
+          this._position.y = this._prev_position.y = ground_y;
+          this._landing_velocity.x = this._velocity.x
+          this._landing_velocity.y = this._velocity.y
+          this._landing_velocity.z = this._velocity.z
+          this.velocities[0].y = 0;
+          this._velocity.y = 0;
+          this.state?.on_landing?.(this);
+          this.play_sound(this._data.base.drop_sounds);
+          if (this.throwinjury) {
+            this.hp -= this.throwinjury;
+            this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
+            this.throwinjury = null;
+          }
+          this._landing_frame = this.frame
+        } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
+          this._position.y = ground_y;
+          this._prev_position.y = ground_y;
+        } else if (this._position.y < ground_y) {
+          // TODO: allow spawn under ground?
+          // this._position.y = ground_y;
+          // this._prev_position.y = ground_y;
         }
-        this._position.y = this._prev_position.y = ground_y;
-        this._landing_velocity.x = this._velocity.x
-        this._landing_velocity.y = this._velocity.y
-        this._landing_velocity.z = this._velocity.z
-        this.velocities[0].y = 0;
-        this._velocity.y = 0;
-        this.state?.on_landing?.(this);
-        this.play_sound(this._data.base.drop_sounds);
-        if (this.throwinjury) {
-          this.hp -= this.throwinjury;
-          this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
-          this.throwinjury = null;
-        }
-        this._landing_frame = this.frame
-      } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
-        this._position.y = ground_y;
-        this._prev_position.y = ground_y;
-      } else if (this._position.y < ground_y) {
-        // TODO: allow spawn under ground?
-        // this._position.y = ground_y;
-        // this._prev_position.y = ground_y;
+        if (this._landing_frame !== this.frame) this._landing_frame = null
+        this.old_ground_y = ground_y;
       }
-      if (this._landing_frame !== this.frame) this._landing_frame = null
-      this.old_ground_y = ground_y;
     }
     this._holding?.follow_bearer();
     this.collision_list.length = 0;
