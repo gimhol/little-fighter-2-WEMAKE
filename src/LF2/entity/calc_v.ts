@@ -39,9 +39,9 @@ export function calc_v(
     }
     case SpeedMode.LF2: default:
       const target = (value *= direction);
-      if (target) return target
-      // if (current < target && target > 0) return round_float(target)
-      // if (current > target && target < 0) return round_float(target)
+      // if (target) return target
+      if (current < target && target > 0) return round_float(target)
+      if (current > target && target < 0) return round_float(target)
       return current;
   }
 }
