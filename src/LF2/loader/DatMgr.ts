@@ -94,7 +94,8 @@ class Inner {
 
   private _add_bg(data: IBgData) {
     const list = this.data_list_map[data.type]
-    if (!list.some(v => v === data)) list.push(data);
+    const idx = list.findIndex(v => v.id === data.id)
+    if (idx < 0) list.push(data); else list[idx] = data;
   }
 
   async load(index_files: string[]) {
