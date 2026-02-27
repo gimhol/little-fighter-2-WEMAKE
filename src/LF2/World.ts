@@ -28,14 +28,12 @@ import {
   is_weapon
 } from "./entity";
 import { Ground } from "./Ground";
-import { closer_one } from "./helper/closer_one";
-import { manhattan_xz } from "./helper/manhattan_xz";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Transform } from "./Transform";
 import { Times } from "./ui";
-import { abs, is_num, max, min, round, round_float } from "./utils";
+import { abs, is_num, max, min, round } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -681,15 +679,12 @@ export class World extends WorldDataset {
       if (victim.blinking || victim.invisible || victim.invulnerable) return;
       if (b_catcher && b_catcher.frame.cpoint?.hurtable !== 1) return;
     }
-    switch (aframe.state) {
-      case StateEnum.Weapon_OnHand: {
-        const atk = attacker.bearer?.frame.wpoint?.attacking;
-        if (!atk) return;
-        const itr_prefab = attacker.data.itr_prefabs?.[atk];
-        if (!itr_prefab) return;
-        itr = { ...itr, ...itr_prefab };
-        break;
-      }
+    if (itr.kind === ItrKind.WeaponSwing) {
+      const prefab_id = attacker.bearer?.frame.wpoint?.attacking;
+      if (!prefab_id) return;
+      const itr_prefab = attacker.data.itr_prefabs?.[prefab_id];
+      if (!itr_prefab) return;
+      itr = { ...itr, ...itr_prefab };
     }
 
     const a_cube = this.get_bounding(attacker, aframe, itr);
