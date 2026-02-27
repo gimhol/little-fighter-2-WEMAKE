@@ -20,12 +20,12 @@ export function calc_v(
   switch (mode) {
     case SpeedMode.Fixed: return value;
     case SpeedMode.Extra: return current;
-    case SpeedMode.FixedAcc: return round_float(current + value);
-    case SpeedMode.Acc: return round_float(current + value * direction);
+    case SpeedMode.FixedAcc: return current + value;
+    case SpeedMode.Acc: return current + value * direction;
     case SpeedMode.FixedLf2: {
       const target = value;
-      if (current < target && target > 0) return round_float(target)
-      if (current > target && target < 0) return round_float(target)
+      if (current < target && target > 0) return target
+      if (current > target && target < 0) return target
       return current;
     }
     case SpeedMode.AccTo: {
@@ -35,12 +35,13 @@ export function calc_v(
       if (!acc) return current;
       if (current >= target && acc > 0) return current;
       if (current <= target && acc < 0) return current;
-      return round_float(current + acc);
+      return current + acc;
     }
     case SpeedMode.LF2: default:
       const target = (value *= direction);
-      if (current < target && target > 0) return round_float(target)
-      if (current > target && target < 0) return round_float(target)
+      if (target) return target
+      // if (current < target && target > 0) return round_float(target)
+      // if (current > target && target < 0) return round_float(target)
       return current;
   }
 }
