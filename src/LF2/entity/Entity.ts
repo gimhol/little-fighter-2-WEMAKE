@@ -16,6 +16,7 @@ import {
 import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
 import { IArmorInfo } from "../defines/IArmorInfo";
+import { SpeedCtrl } from "../defines/SpeedCtrl";
 import { Ditto } from "../ditto";
 import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
@@ -783,34 +784,33 @@ export class Entity {
     } = opoint;
 
     const weight = this._data.base.weight || 1
-    o_dvy = round_float(o_dvy / weight);
+    o_dvy = o_dvy / weight;
     const ud = emitter.ctrl?.UD || 0;
     const { x: ovx, y: ovy, z: ovz } = offset_velocity;
-    if (o_dvx > 0) {
-      o_dvx = round_float(o_dvx / weight - abs(ovz / 2));
-    } else {
-      o_dvx = round_float(o_dvx / weight + abs(ovz / 2));
-    }
+    if (o_dvx > 0) o_dvx = o_dvx / weight - abs(ovz / 2);
+    else o_dvx = o_dvx / weight + abs(ovz / 2);
 
     if (is_num(opoint.max_hp)) this.hp = this.hp_r = this.hp_max = opoint.max_hp;
     if (is_num(opoint.hp)) this.hp = this.hp_r = opoint.hp;
     if (is_num(opoint.max_mp)) this.mp = this.mp_max = opoint.max_mp;
     if (is_num(opoint.mp)) this.mp = opoint.mp;
 
-    const { dvy = 0, dvz = 0 } = this.frame
+    const { dvy = 0, dvz = 0, dvx = 0, vxm, vym, vzm } = this.frame
     const z_disabled =
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
 
-    const vx = round_float(ovx + o_dvx * facing)
-    const vy = round_float(ovy + o_dvy + dvy)
-    const vz = z_disabled ? 0 : round_float(ovz + o_dvz + o_speedz * ud + dvz)
+    let vx = ovx + o_dvx * facing;
+    let vy = ovy + o_dvy + dvy;
+    let vz = z_disabled ? 0 : ovz + o_dvz + o_speedz * ud + dvz;
+    if (vxm === SpeedMode.Fixed) vx = dvx;
+    if (vym === SpeedMode.Fixed) vy = dvy;
+    if (vzm === SpeedMode.Fixed) vz = dvz;
     this.set_velocity(vx, vy, vz)
     if (sus_cases.debugging) {
       sus_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
       sus_cases.push('on_spawn::vec1', vx, vy, vz)
     }
-
     switch (opoint.kind) {
       case OpointKind.Pick:
         emitter.drop_holding()
@@ -1137,14 +1137,23 @@ export class Entity {
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
 
-    if (!ctrl_x && dvx != void 0) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, this.facing);
-    else if (LR && dvx != void 0) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, LR);
+    if (dvx == void 0) { }
+    else if (!ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, this.facing);
+    else if (LR != 0 && SpeedCtrl.Control == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, LR);
+    else if (LR != 0 && SpeedCtrl.Enable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
+    else if (LR == 0 && SpeedCtrl.Disable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
 
-    if (!ctrl_y && dvy != void 0) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
-    else if (jd && dvy != void 0) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, jd);
+    if (dvy == void 0) { }
+    else if (!ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
+    else if (jd != 0 && SpeedCtrl.Control == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, jd);
+    else if (jd != 0 && SpeedCtrl.Enable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
+    else if (jd == 0 && SpeedCtrl.Disable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
 
-    if (!ctrl_z && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
-    else if (UD && dvz != void 0) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
+    if (dvz == void 0) { }
+    else if (!ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
+    else if (UD != 0 && SpeedCtrl.Control == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
+    else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
+    else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
 
     this.set_velocity_0(vx, vy, vz);
     if (vxm == SpeedMode.Extra && dvx) this.set_velocity_1_x(dvx)
@@ -1226,7 +1235,6 @@ export class Entity {
    */
   drop_holding(): void {
     if (!this.holding) return;
-    this.holding.follow_bearer();
     this.lf2.mt.mark = 'dh_1'
     this.holding.enter_frame({ id: this.lf2.mt.pick(this.holding.data.indexes?.in_the_skys) });
     this.holding.bearer = null;
@@ -1389,6 +1397,7 @@ export class Entity {
       const nf = this.get_next_frame(this.frame.next);
       if (nf) this.next_frame = { ...nf.which, judger: void 0 }
       else this.next_frame = this.find_auto_frame()
+      this.enter_frame(this.next_frame)
     }
     this.handle_gravity();
     this.update_velocity();
@@ -1441,36 +1450,38 @@ export class Entity {
         if (result) this.enter_frame(result.which);
       }
 
-      // 落地
-      if (just_land) {
-        if (this.frame.on_landing) {
-          const result = this.get_next_frame(this.frame.on_landing);
-          if (result) this.enter_frame(result.which);
+      if (this.frame.landable) {
+        // 落地
+        if (just_land) {
+          if (this.frame.on_landing) {
+            const result = this.get_next_frame(this.frame.on_landing);
+            if (result) this.enter_frame(result.which);
+          }
+          this._position.y = this._prev_position.y = ground_y;
+          this._landing_velocity.x = this._velocity.x
+          this._landing_velocity.y = this._velocity.y
+          this._landing_velocity.z = this._velocity.z
+          this.velocities[0].y = 0;
+          this._velocity.y = 0;
+          this.state?.on_landing?.(this);
+          this.play_sound(this._data.base.drop_sounds);
+          if (this.throwinjury) {
+            this.hp -= this.throwinjury;
+            this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
+            this.throwinjury = null;
+          }
+          this._landing_frame = this.frame
+        } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
+          this._position.y = ground_y;
+          this._prev_position.y = ground_y;
+        } else if (this._position.y < ground_y) {
+          // TODO: allow spawn under ground?
+          // this._position.y = ground_y;
+          // this._prev_position.y = ground_y;
         }
-        this._position.y = this._prev_position.y = ground_y;
-        this._landing_velocity.x = this._velocity.x
-        this._landing_velocity.y = this._velocity.y
-        this._landing_velocity.z = this._velocity.z
-        this.velocities[0].y = 0;
-        this._velocity.y = 0;
-        this.state?.on_landing?.(this);
-        this.play_sound(this._data.base.drop_sounds);
-        if (this.throwinjury) {
-          this.hp -= this.throwinjury;
-          this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
-          this.throwinjury = null;
-        }
-        this._landing_frame = this.frame
-      } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
-        this._position.y = ground_y;
-        this._prev_position.y = ground_y;
-      } else if (this._position.y < ground_y) {
-        // TODO: allow spawn under ground?
-        // this._position.y = ground_y;
-        // this._prev_position.y = ground_y;
+        if (this._landing_frame !== this.frame) this._landing_frame = null
+        this.old_ground_y = ground_y;
       }
-      if (this._landing_frame !== this.frame) this._landing_frame = null
-      this.old_ground_y = ground_y;
     }
     this._holding?.follow_bearer();
     this.collision_list.length = 0;
@@ -2033,6 +2044,10 @@ export class Entity {
         const vx = this.velocity.x;
         return vx > 0 ? 1 : vx < 0 ? -1 : this.facing;
       }
+      case FacingFlag.SameAsBearer:
+        return this._bearer?.facing || this.facing;
+      case FacingFlag.OpposingBearer:
+        return turn_face(this._bearer?.facing) || this.facing;
     }
     return this.facing;
   }

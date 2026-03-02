@@ -29,7 +29,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.15'
+  static readonly VERSION_NAME: string = 'v0.1.16'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -246,6 +246,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._cheat_enables.set(name, enable);
     this.callbacks.emit("on_cheat_changed")(name, enable);
     this._keys = "";
+    this._gkeys.clear();
   }
   cmds: (CMD | D.CheatType | string)[] = [];
   events: UI.LF2KeyEvent[] = [];

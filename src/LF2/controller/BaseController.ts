@@ -83,18 +83,21 @@ export class BaseController {
     const R = !this.keys.R.is_end();
     return L === R ? 0 : R ? 1 : -1;
   }
+  get RL(): 0 | 1 | -1 { return -this.LR as 0 | 1 | -1 }
 
   get UD(): 0 | 1 | -1 {
     const U = !this.keys.U.is_end();
     const D = !this.keys.D.is_end();
     return U === D ? 0 : D ? 1 : -1;
   }
+  get DU(): 0 | 1 | -1 { return -this.UD as 0 | 1 | -1 }
 
   get jd(): 0 | 1 | -1 {
     const d = !this.keys.d.is_end();
     const j = !this.keys.j.is_end();
     return d === j ? 0 : d ? -1 : 1;
   }
+  get dj(): 0 | 1 | -1 { return -this.jd as 0 | 1 | -1 }
 
   private _key_list: string = '';
   reset_key_list() { this._key_list = '' }

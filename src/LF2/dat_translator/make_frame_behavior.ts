@@ -357,12 +357,14 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       const fid = Number(frame.id);
-      if (fid >= 50 && fid <= 59) {
-        frame.key_down = { 'F': { id: '' + (fid - 50), wait: 'i', expression: hp_gt_0 } }; break;
-      } else if (fid >= 1 && fid <= 9) {
-        frame.key_down = { 'B': { id: '' + (fid + 50), wait: 'i', expression: hp_gt_0 } }; break;
-      }
       frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover };
+      if (fid >= 50 && fid <= 59) {
+        frame.key_down = { 'F': { id: '' + (fid - 50), wait: 'i', expression: hp_gt_0 } };
+        break;
+      } else if (fid >= 1 && fid <= 9) {
+        frame.key_down = { 'B': { id: '' + (fid + 50), wait: 'i', expression: hp_gt_0 } };
+        break;
+      }
       break;
     }
   }

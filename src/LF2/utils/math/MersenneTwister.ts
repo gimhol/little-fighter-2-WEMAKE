@@ -4,19 +4,59 @@ import { round_float } from "./round_float";
 
 const _n: number = 624;
 const _m: number = 397;
+export interface IMersenneTwisterInfo {
+  matrix: number,
+  seed: number,
+  times: number,
+  index: number,
+  mt: number[],
+  upper_mask: number,
+  lower_mask: number,
+  mark: string;
+}
 export class MersenneTwister {
+  private _debugging: boolean = false;
   private _matrix: number = 0x9908B0DF;
   private _upper_mask: number = 0x80000000;
   private _lower_mask: number = 0x7FFFFFFF;
   private _mt: number[] = new Array(_n);
   private _index: number = _n + 1;
-  private _debugging: boolean = false;
   private _seed: number = 0;
   private _times: number = 0;
   mark: string = '';
 
+  get matrix(): number { return this._matrix; }
+  get upper_mask(): number { return this._upper_mask; }
+  get lower_mask(): number { return this._lower_mask; }
+  get mt(): number[] { return this._mt; }
+  get index(): number { return this._index; }
   get seed(): number { return this._seed; }
   get times(): number { return this._times; }
+
+  pure(): IMersenneTwisterInfo {
+    return {
+      matrix: this.matrix,
+      upper_mask: this.upper_mask,
+      lower_mask: this.lower_mask,
+      mt: [...this.mt],
+      index: this.index,
+      seed: this.seed,
+      times: this.times,
+      mark: this.mark,
+    }
+  }
+  
+  load(info: IMersenneTwisterInfo): this {
+    this._matrix = info.matrix
+    this._upper_mask = info.upper_mask
+    this._lower_mask = info.lower_mask
+    this._mt = info.mt
+    this._index = info.index
+    this._seed = info.seed
+    this._times = info.times
+    this.mark = info.mark
+    return this;
+  }
 
   constructor(seed: number = Date.now()) {
     this.reset(seed)
