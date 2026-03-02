@@ -168,9 +168,7 @@ export default function GamePad(props: IGamePadProps) {
     };
   }, [lf2, player_id]);
 
-
   const _c = container?.()
-  if (!_c) console.warn(`GamePad container got ${_c}`)
   if (!_c) return <></>
 
   return createPortal(
@@ -178,51 +176,21 @@ export default function GamePad(props: IGamePadProps) {
       <div className={csses.pad_text} ref={ref_pad_text} />
       <div className={csses.left_pad} ref={ref_left_pad} onContextMenu={e => { e.preventDefault(); e.stopPropagation() }} />
       <div className={csses.right_pad} ref={ref_right_pad} onContextMenu={e => { e.preventDefault(); e.stopPropagation() }} />
-      <div
-        className={cns(csses.btn_U, pressings.U ? csses.pressing : void 0)}
-        ref={ref_btn_U}
-        draggable={false}
-      />
-      <div
-        className={cns(csses.btn_D, pressings.D ? csses.pressing : void 0)}
-        ref={ref_btn_D}
-        draggable={false}
-      />
-      <div
-        className={cns(csses.btn_L, pressings.L ? csses.pressing : void 0)}
-        ref={ref_btn_L}
-        draggable={false}
-      />
-      <div
-        className={cns(csses.btn_R, pressings.R ? csses.pressing : void 0)}
-        ref={ref_btn_R}
-        draggable={false}
-      />
-      <div
-        className={cns(csses.btn_a, pressings.a ? csses.pressing : void 0)}
-        ref={ref_btn_a}
-        draggable={false}
-      />
-      <div
-        className={cns(csses.btn_j, pressings.j ? csses.pressing : void 0)}
-        ref={ref_btn_j}
-        draggable={false}
-      />
-      <div
-        className={cns(csses.btn_d, pressings.d ? csses.pressing : void 0)}
-        ref={ref_btn_d}
-        draggable={false}
-      />
-      {touchs?.map(touch => {
-        return (
-          <div
-            key={touch.id}
-            className={csses.touch_circle}
-            style={{ left: touch.x, top: touch.y }}>
-            {touch.id}
-          </div>
-        )
-      })}
+      <div className={cns(csses.btn_U, pressings.U ? csses.pressing : void 0)} ref={ref_btn_U} />
+      <div className={cns(csses.btn_D, pressings.D ? csses.pressing : void 0)} ref={ref_btn_D} />
+      <div className={cns(csses.btn_L, pressings.L ? csses.pressing : void 0)} ref={ref_btn_L} />
+      <div className={cns(csses.btn_R, pressings.R ? csses.pressing : void 0)} ref={ref_btn_R} />
+      <div className={cns(csses.btn_a, pressings.a ? csses.pressing : void 0)} ref={ref_btn_a} />
+      <div className={cns(csses.btn_j, pressings.j ? csses.pressing : void 0)} ref={ref_btn_j} />
+      <div className={cns(csses.btn_d, pressings.d ? csses.pressing : void 0)} ref={ref_btn_d} />
+      {touchs?.map(touch => (
+        <div
+          key={touch.id}
+          className={csses.touch_circle}
+          style={{ left: touch.x, top: touch.y }}>
+          {touch.id}
+        </div>
+      ))}
     </div>
     , _c);
 }
