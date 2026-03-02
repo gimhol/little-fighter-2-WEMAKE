@@ -11,6 +11,7 @@ import { LF2KeyEvent } from "./LF2/ui/LF2KeyEvent";
 export interface IGamePadProps extends React.HTMLAttributes<HTMLDivElement> {
   lf2?: LF2;
   player_id?: string;
+  enabled?: boolean;
   container?: () => Element | DocumentFragment | undefined | null
 }
 type TRect = { l: number; r: number; t: number; b: number };
@@ -46,8 +47,7 @@ function copy_touch(touch: Touch): ITouchInfo {
   };
 }
 export default function GamePad(props: IGamePadProps) {
-  const { player_id, lf2, container, ..._p } = props;
-
+  const { player_id, lf2, enabled, container, ..._p } = props;
   const [pressings, set_pressings] = useImmer<{ [x in GK]?: boolean }>({})
   const ref_btn_U = useRef<HTMLDivElement>(null);
   const ref_btn_D = useRef<HTMLDivElement>(null);
@@ -59,8 +59,10 @@ export default function GamePad(props: IGamePadProps) {
   const ref_left_pad = useRef<HTMLDivElement>(null);
   const ref_right_pad = useRef<HTMLDivElement>(null);
   const ref_pad_text = useRef<HTMLDivElement>(null);
-  const [touchs, set_touchs] = useState<ITouchInfo[]>()
+  const [touchs, set_touchs] = useState<ITouchInfo[]>();
+
   useEffect(() => {
+    if (!enabled) return;
     const l_pad = ref_left_pad.current;
     const r_pad = ref_right_pad.current;
     if (!player_id || !lf2 || !l_pad || !r_pad) return;
@@ -147,10 +149,10 @@ export default function GamePad(props: IGamePadProps) {
       r_pad.removeEventListener("touchend", touchend);
       r_pad.removeEventListener("touchcancel", touchend);
     };
-  }, [lf2, player_id]);
+  }, [lf2, player_id, enabled]);
 
   const _c = container?.()
-  if (!_c) return <></>
+  if (!_c || !enabled) return <></>
 
   return createPortal(
     <div {..._p} className={csses.game_pad}>

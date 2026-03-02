@@ -37,4 +37,7 @@ export interface ILf2Callback {
   on_component_broadcast?(component: UIComponent, message: string): void;
 
   on_extra_zips_changed?(lf2: LF2): void;
+
+  controller_detected?(p: PlayerInfo): void;
+  keyboard_detected?(p: PlayerInfo): void;
 }

@@ -11,13 +11,16 @@ class __KeyEvent implements IKeyEvent {
   readonly key: string;
   readonly native: KeyboardEvent | undefined;
   readonly pressed: boolean;
+  readonly device_type: 'keyboard' | 'controller' | 'touch';
   constructor(
     key: string,
     pressed: boolean,
+    device_type: 'keyboard' | 'controller' | 'touch',
     times: number = 0,
     e: KeyboardEvent | undefined = void 0
   ) {
     this.key = key;
+    this.device_type = device_type;
     this.pressed = pressed;
     this.times = times;
     this.native = e;
@@ -32,37 +35,38 @@ class __KeyEvent implements IKeyEvent {
     this.preventDefault()
   }
 }
-
+export interface __IKeyboardCallback extends IKeyboardCallback {
+}
 export class __Keyboard implements IKeyboard {
   static TAG = '__Keyboard';
   enabled: boolean = true;
-  protected _callback = new Callbacks<IKeyboardCallback>();
+  protected _callback = new Callbacks<__IKeyboardCallback>();
   protected _times_map = new Map<string, number>();
   protected lf2: LF2;
   protected _axe_dead_zone = 0.12;
   protected _axe_live_zone = 0.22;
-  get callback(): NoEmitCallbacks<IKeyboardCallback> {
+  get callback(): NoEmitCallbacks<__IKeyboardCallback> {
     return this._callback;
   }
   protected _on_key_down = (e: KeyboardEvent) => {
     if (!this.enabled) return;
     const key_code = e.key?.toLowerCase() || "";
-    this.key_down(key_code, e)
+    this.key_down(key_code, false, e)
   };
 
   protected _on_key_up = (e: KeyboardEvent) => {
     if (!this.enabled) return;
     const key_code = e.key?.toLowerCase() || "";
-    this.key_up(key_code, e)
+    this.key_up(key_code, false, e)
   };
-  protected key_down = (key_code: string, e?: KeyboardEvent) => {
+  protected key_down = (key_code: string, gamepad: boolean, e?: KeyboardEvent) => {
     const times = this._times_map.get(key_code) ?? -1;
     this._times_map.set(key_code, times + 1);
-    this._callback.emit("on_key_down")(new __KeyEvent(key_code, true, times + 1, e));
+    this._callback.emit("on_key_down")(new __KeyEvent(key_code, true, gamepad ? 'controller' : 'keyboard', times + 1, e));
   };
-  protected key_up = (key_code: string, e?: KeyboardEvent) => {
+  protected key_up = (key_code: string, gamepad: boolean, e?: KeyboardEvent) => {
     this._times_map.delete(key_code);
-    this._callback.emit("on_key_up")(new __KeyEvent(key_code, false, 0, e));
+    this._callback.emit("on_key_up")(new __KeyEvent(key_code, false, gamepad ? 'controller' : 'keyboard', 0, e));
   };
   protected gamepads: (Gamepad | null)[] = [];
   protected gamepad_timer?: ReturnType<typeof setInterval>;
@@ -96,7 +100,6 @@ export class __Keyboard implements IKeyboard {
         }
       }
 
-
       const [ax, ay] = gamepad.axes || [0, 0];
       const [pax, pay] = this.gamepad_axes.at(i) || [0, 0];
       const alz = this._axe_live_zone;
@@ -129,7 +132,7 @@ export class __Keyboard implements IKeyboard {
     const key_code = `${index + 1}: ${btn_name}`;
     if (this.gamepad_buttons.get(key_code + dpad) === pressed) return false;
     this.gamepad_buttons.set(key_code + dpad, pressed);
-    pressed ? this.key_down(key_code) : this.key_up(key_code);
+    pressed ? this.key_down(key_code, true) : this.key_up(key_code, true);
     return true;
   }
   dispose() {
