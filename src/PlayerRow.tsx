@@ -9,7 +9,7 @@ import { Input } from "./Component/Input";
 import Select from "./Component/Select";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
-import { BaseController, Entity, new_team } from "./LF2";
+import { BaseController, Entity, new_team, TeamEnum } from "./LF2";
 import { DummyEnum } from "./LF2/bot/DummyEnum";
 import LocalController from "./LF2/controller/LocalController";
 import { GameKey } from "./LF2/defines/GameKey";
@@ -145,7 +145,7 @@ export function PlayerRow(props: Props) {
           />
           <TeamSelect
             placeholder={t("Team")}
-            value={team}
+            value={(team && team in TeamEnum) ? team : TeamEnum.Independent}
             onChange={(v) => {
               set_team(v)
               if (!puppet) return;

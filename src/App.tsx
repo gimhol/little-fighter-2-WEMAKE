@@ -532,7 +532,7 @@ function App() {
       />
       <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !s.game_overlay })} />
       <DanmuOverlay lf2={lf2} />
-      <GamePad id='game_pad' player_id={s.touchpad} lf2={lf2} />
+      <GamePad id='game_pad' player_id={s.touchpad} lf2={lf2} container={() => ele_game_canvas?.parentElement} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
       <div className={styles.top_bar}>
         <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
@@ -924,9 +924,12 @@ function App() {
             lf2={lf2!}
             info={info}
             touch_pad_on={s.touchpad === info.id}
-            on_click_toggle_touch_pad={() =>
-              set_state(d => { d.touchpad = d.touchpad === info.id ? "" : info.id })
-            }
+            on_click_toggle_touch_pad={() => {
+              const is_me = s.touchpad === info.id
+              set_state(draft => {
+                draft.touchpad = is_me ? "" : info.id
+              })
+            }}
           />
         ))}
       </Show>
