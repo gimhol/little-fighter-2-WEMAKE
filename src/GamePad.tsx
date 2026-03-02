@@ -5,7 +5,6 @@ import { useImmer } from "use-immer";
 import csses from "./GamePad.module.scss";
 import { pow } from "./LF2";
 import { LF2 } from "./LF2/LF2";
-import { BaseController } from "./LF2/controller/BaseController";
 import { GameKey as GK } from "./LF2/defines/GameKey";
 import { LF2KeyEvent } from "./LF2/ui/LF2KeyEvent";
 
@@ -48,9 +47,6 @@ function copy_touch(touch: Touch): ITouchInfo {
 }
 export default function GamePad(props: IGamePadProps) {
   const { player_id, lf2, container, ..._p } = props;
-  const [controller, set_controller] = useState<BaseController | undefined>(
-    void 0,
-  );
 
   const [pressings, set_pressings] = useImmer<{ [x in GK]?: boolean }>({})
   const ref_btn_U = useRef<HTMLDivElement>(null);
@@ -63,22 +59,7 @@ export default function GamePad(props: IGamePadProps) {
   const ref_left_pad = useRef<HTMLDivElement>(null);
   const ref_right_pad = useRef<HTMLDivElement>(null);
   const ref_pad_text = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!lf2 || !player_id) return;
-    return lf2.world.callbacks.add({
-      on_puppet_add(add_player_id) {
-        if (add_player_id !== player_id) return;
-        set_controller(lf2.world.puppets.get(player_id)?.ctrl);
-      },
-      on_puppet_del(del_player_id) {
-        if (del_player_id !== player_id) return;
-        set_controller(void 0);
-      },
-    });
-  }, [lf2, player_id]);
-
   const [touchs, set_touchs] = useState<ITouchInfo[]>()
-
   useEffect(() => {
     const l_pad = ref_left_pad.current;
     const r_pad = ref_right_pad.current;

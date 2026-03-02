@@ -404,8 +404,8 @@ function App() {
 
   const touch_pad_player_items = useMemo(
     () => [
-      { value: "", label: "触控板: 关闭" },
-      ...players.map((v) => ({ value: v.id, label: "触控板: 玩家" + v.id })),
+      { value: "", label: "触控: 关闭" },
+      ...players.map((v) => ({ value: v.id, label: "触控: 玩家" + v.id })),
     ],
     [players],
   );
@@ -896,7 +896,7 @@ function App() {
             value={s.touchpad}
             items={touch_pad_player_items}
             parse={i => [i.value, i.label]}
-            onChange={(v) => set_state(d => d.touchpad = v!)} />
+            onChange={(v) => set_state(d => { d.touchpad = v! })} />
           <ToggleButton
             onChange={() => lf2?.set_cheat(CheatType.LF2_NET)}
             value={s.cheat_1}>
@@ -926,9 +926,7 @@ function App() {
             touch_pad_on={s.touchpad === info.id}
             on_click_toggle_touch_pad={() => {
               const is_me = s.touchpad === info.id
-              set_state(draft => {
-                draft.touchpad = is_me ? "" : info.id
-              })
+              set_state(draft => { draft.touchpad = is_me ? "" : info.id })
             }}
           />
         ))}
