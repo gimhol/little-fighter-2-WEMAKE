@@ -107,9 +107,9 @@ export function PlayerRow(props: Props) {
 
   const on_click_toggle = () => {
     if (puppet) { lf2.del_puppet(info.id) }
-    const oid = random_get(lf2.datas.fighters)?.id;
-    if (!oid) { debugger; return; }
-    lf2.add_puppet(info.id, oid, team);
+    const _oid = oid ?? random_get(lf2.datas.fighters)?.id;
+    if (!_oid) { debugger; return; }
+    lf2.add_puppet(info.id, _oid, team);
   }
   const { t } = useTranslation()
   return (
@@ -136,7 +136,7 @@ export function PlayerRow(props: Props) {
             onChange={(v) => {
               set_oid(v)
               if (!puppet) return;
-              let _oid = oid || random_get(lf2.datas.fighters)?.id
+              let _oid = v || random_get(lf2.datas.fighters)?.id
               if (!_oid) return;
               const data = lf2.datas.find_fighter(_oid)
               if (!data) return;
@@ -149,7 +149,7 @@ export function PlayerRow(props: Props) {
             onChange={(v) => {
               set_team(v)
               if (!puppet) return;
-              puppet.team = team || new_team();
+              puppet.team = v || new_team();
             }}
           />
           <Button onClick={on_click_toggle}>{t(puppet ? "Del" : "Add")}</Button>
