@@ -291,10 +291,11 @@ function App() {
     })
     _set_bg_id(lf2.world.stage.bg.id);
     const on_touchstart = () => set_state(d => {
+
       d.touchpad_enabled = true;
       d.touchpad = d.touchpad || Array.from(lf2.players.keys())[0]
     })
-    window.addEventListener("touchstart", on_touchstart, { once: true });
+    window.addEventListener("touchstart", on_touchstart);
     const del_lf2_callback = lf2.callbacks.add({
       controller_detected: ({ id }) => set_state(draft => {
         if (draft.touchpad === id) draft.touchpad_enabled = false
@@ -303,7 +304,6 @@ function App() {
         if (draft.touchpad === id) draft.touchpad_enabled = false
       }),
     })
-
     _set_is_fullscreen(!!fullscreen.target);
     _set_paused(lf2.world.paused);
     return () => {
@@ -545,7 +545,7 @@ function App() {
       <GamePad
         id='game_pad'
         player_id={s.touchpad}
-        enabled={s.touchpad_enabled}
+        enabled={!!s.touchpad && s.touchpad_enabled}
         lf2={lf2}
         container={() => ele_game_canvas?.parentElement} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
@@ -940,7 +940,7 @@ function App() {
             info={info}
             touch_pad_on={s.touchpad === info.id}
             on_click_toggle_touch_pad={() => {
-              const is_me = s.touchpad === info.id
+              const is_me = s.touchpad === info.id;
               set_state(draft => { draft.touchpad = is_me ? "" : info.id })
             }}
           />
