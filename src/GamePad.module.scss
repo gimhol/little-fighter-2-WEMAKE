@@ -9,15 +9,15 @@
   --l_pad_left  : calc(0.5 * var(--l_pad_size) + 10px);
   --l_pad_bottom: calc(0.5 * var(--l_pad_size) + 10px);
 
-  --r_pad_right : 120px;
-  --r_pad_bottom: 120px;
+  --r_pad_right : 100px;
+  --r_pad_bottom: 80px;
   --r_pad_size  : calc(var(--btn_size) * 3);
 
   --l_btn_base_left  : calc(var(--l_pad_left) - var(--btn_size) / 2);
   --l_btn_base_bottom: calc(var(--l_pad_bottom) - var(--btn_size) / 2);
 
   --r_btn_base_right : calc(var(--r_pad_right) - var(--btn_size) / 2);
-  --r_btn_base_bottom: calc(var(--l_pad_bottom) - var(--btn_size) / 2);
+  --r_btn_base_bottom: calc(var(--r_pad_bottom) - var(--btn_size) / 2);
 }
 
 
@@ -39,7 +39,7 @@
   font-size       : 30px;
 
   &.pressing {
-    filter      : invert(75%);
+    filter      : invert(100%);
     border-style: solid;
   }
 
@@ -80,17 +80,18 @@
 }
 
 .touch_circle {
-  position       : absolute;
-  border-radius  : 50%;
-  border         : 2px dashed black;
-  pointer-events : none;
-  transform      : translate(-50%, -50%);
-  width          : 60px;
-  height         : 60px;
-  color          : black;
-  display        : flex;
-  align-items    : center;
-  justify-content: center;
+  position        : absolute;
+  border-radius   : 50%;
+  border          : 2px dashed rgba(0, 0, 0, 0.521);
+  pointer-events  : none;
+  transform       : translate(-50%, -50%);
+  width           : 60px;
+  height          : 60px;
+  color           : rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.3);
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
 }
 
 .btn_U {
