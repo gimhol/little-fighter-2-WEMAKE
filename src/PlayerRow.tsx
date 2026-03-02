@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./App.module.scss";
 import { Button } from "./Component/Buttons/Button";
 import { ToggleButton } from "./Component/Buttons/ToggleButton";
@@ -19,13 +20,7 @@ import { PlayerInfo } from "./LF2/PlayerInfo";
 import { random_get } from "./LF2/utils/math/random";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 const key_names: Record<GameKey, string> = {
-  U: "上",
-  D: "下",
-  L: "左",
-  R: "右",
-  a: "攻",
-  j: "跳",
-  d: "防",
+  U: "上", D: "下", L: "左", R: "右", a: "攻", j: "跳", d: "防",
 };
 const key_name_arr = Object.keys(key_names) as GameKey[];
 interface Props {
@@ -116,15 +111,16 @@ export function PlayerRow(props: Props) {
     if (!oid) { debugger; return; }
     lf2.add_puppet(info.id, oid, team);
   }
+  const { t } = useTranslation()
   return (
     <div className={styles.settings_row}>
-      <Titled float_label={"玩家" + info.id}>
+      <Titled float_label={t('Player $1').replace('$1', info.id)}>
         <Combine>
           <Input
-            prefix="名称"
+            prefix={t('Player Name')}
             clearable
             maxLength={50}
-            title="enter player name"
+            title={t('Enter Player Name')}
             value={name}
             onChange={(e) => info.set_name(e, true)}
             onBlur={(e) => {
@@ -136,7 +132,7 @@ export function PlayerRow(props: Props) {
           <CharacterSelect
             lf2={lf2}
             value={oid}
-            placeholder="角色"
+            placeholder={t("Character")}
             onChange={(v) => {
               set_oid(v)
               if (!puppet) return;
@@ -148,7 +144,7 @@ export function PlayerRow(props: Props) {
             }}
           />
           <TeamSelect
-            placeholder="队伍"
+            placeholder={t("Team")}
             value={team}
             onChange={(v) => {
               set_team(v)
@@ -156,15 +152,15 @@ export function PlayerRow(props: Props) {
               puppet.team = team || new_team();
             }}
           />
-          <Button onClick={on_click_toggle}>{!!puppet ? "移除" : "加入"}</Button>
+          <Button onClick={on_click_toggle}>{t(puppet ? "Del" : "Add")}</Button>
           <ToggleButton value={touch_pad_on} onClick={on_click_toggle_touch_pad}>
-            <>触摸板</>
-            <>触摸板✓</>
+            <>{t('TouchPad')}</>
+            <>{t('TouchPad')}✓</>
           </ToggleButton>
         </Combine>
       </Titled>
       <Combine>
-        <Button onClick={() => set_key_settings_show((v) => !v)}>键位</Button>
+        <Button onClick={() => set_key_settings_show((v) => !v)}>{t("Keys")}</Button>
         {!key_settings_show
           ? null
           : key_name_arr.map((k) => {
