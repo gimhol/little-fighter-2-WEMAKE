@@ -73,7 +73,7 @@ export class WorldDataset implements IWorldDataset {
    *
    * @type {number}
    */
-  tvy_f: number = 1;
+  tvy_f: number = 1.15;
 
   /**
    * Z轴丢人速度系数
