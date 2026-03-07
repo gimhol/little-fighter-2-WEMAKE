@@ -816,6 +816,7 @@ export class Entity {
         this.bearer.holding = this;
         break;
     }
+    this.motionless = opoint.motionless ?? 2
     return this;
   }
 
