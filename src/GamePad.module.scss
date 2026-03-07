@@ -100,7 +100,7 @@
   bottom: calc(var(--l_btn_base_bottom) + 0.3 * var(--l_pad_size));
 
   &::after {
-    content: "⇑";
+    content: "▲";
   }
 }
 
@@ -110,7 +110,7 @@
   bottom: calc(var(--l_btn_base_bottom) - 0.3 * var(--l_pad_size));
 
   &::after {
-    content: "⇓";
+    content: "▼";
   }
 }
 
@@ -120,7 +120,7 @@
   bottom: var(--l_btn_base_bottom);
 
   &::after {
-    content: "⇐";
+    content: "◀";
   }
 }
 
@@ -130,7 +130,7 @@
   bottom: var(--l_btn_base_bottom);
 
   &::after {
-    content: "⇒";
+    content: "▶";
   }
 }
 

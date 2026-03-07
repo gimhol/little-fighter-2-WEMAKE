@@ -278,9 +278,8 @@ export class EntityStatRender implements IEntityCallbacks {
   render() {
     const {
       invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
-      has_stat_bar, ground
+      has_stat_bar, ground_y
     } = this.entity;
-    const gy = ground.get_y(x, y, z)
     const _is_fighter = is_fighter(this.entity)
     this.name_node.visible = _is_fighter && key_role && !invisible
     this.bars_node.visible = !has_stat_bar && _is_fighter && key_role && !invisible && hp > 0;
@@ -303,7 +302,7 @@ export class EntityStatRender implements IEntityCallbacks {
 
     this.set_bars_position(bar_x, bar_y, bar_z);
 
-    const name_y = floor(gy - z / 2 - this.name_node.scale.y);
+    const name_y = floor(ground_y - z / 2 - this.name_node.scale.y);
     this.set_name_position(_x, name_y, z);
 
     this.ctrl_node.visible = !!(this.entity.lf2.world.indicator_flags & INDICATINGS.ctrl);
