@@ -56,7 +56,7 @@ export class DanmuGameLogic extends SummaryLogic {
       v.name = v.data.base.name;
       v.blinking = 120;
     }
-    const way: number = 5;
+    const way: number = this.lf2.mt.range(0, 6);
     switch (way) {
       case 0: {
         this.lf2.change_bg('?');
@@ -105,7 +105,7 @@ export class DanmuGameLogic extends SummaryLogic {
         break;
       }
       case 3: {  // Justin vs Julian
-        this.lf2.change_bg('bg_4');
+        this.lf2.change_bg('?');
         this.lf2.characters.add(OID.Justin, 4, TE.Team_1).forEach(fighter_enter)
         this.lf2.characters.add(OID.Justin, 4, TE.Team_2).forEach(fighter_enter)
         this.lf2.characters.add(OID.Justin, 4, TE.Team_3).forEach(fighter_enter)
@@ -121,7 +121,7 @@ export class DanmuGameLogic extends SummaryLogic {
         break;
       }
       case 5: {
-        this.lf2.change_bg('bg_4');
+        this.lf2.change_bg('?');
         this.lf2.characters.add(OID.John, 4, TE.Team_1).forEach(fighter_enter)
         this.lf2.characters.add(OID.Sorcerer, 6, TE.Team_2).forEach(fighter_enter)
         break;
