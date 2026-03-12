@@ -17,11 +17,16 @@ export interface IWorldDataset {
 
   /** dvz缩放系数 */
   fvz_f: number;
+
   ivy_f: number;
   ivz_f: number;
   ivx_f: number;
 
-  /** 默认itr.dvy */
+  /** 
+   * 默认itr.dvy
+   * 默认击飞速度
+   * @link https://lf-empire.de/forum/showthread.php?tid=11204
+   */
   ivy_d: number;
   ivx_d: number;
 
@@ -179,6 +184,9 @@ export interface IWorldDataset {
   dash_distancez: number;
   rowing_height: number;
   rowing_distance: number;
+  wvx_f: number;
+  wvy_f: number;
+  wvz_f: number;
 }
 interface IFieldInfo {
   key: keyof IWorldDataset;
@@ -217,11 +225,15 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   ivz_f: { title: "itr.dvz缩放系数", type: 'float' },
   ivy_d: { title: "itr.dvy默认值", desc: "默认的攻击Y轴速度", type: 'float' },
   ivx_d: { title: "itr.dvx默认值", desc: "默认的攻击X轴速度", type: 'float' },
+
   cvy_d: { title: "cvy_d", desc: "cvy_d", type: 'float' },
   cvx_d: { title: "cvx_d", desc: "cvx_d", type: 'float' },
   tvx_f: { title: "X轴丢人速度系数", desc: "tvx_f", type: 'float' },
   tvy_f: { title: "Y轴丢人速度系数", desc: "tvy_f", type: 'float' },
   tvz_f: { title: "Z轴丢人速度系数", desc: "tvz_f", type: 'float' },
+  wvx_f: { title: "X轴丢武器速度系数", desc: "wvx_f", type: 'float' },
+  wvy_f: { title: "Y轴丢武器速度系数", desc: "wvy_f", type: 'float' },
+  wvz_f: { title: "Z轴丢武器速度系数", desc: "wvz_f", type: 'float' },
 
   vrest_offset: { title: "vrest_offset", desc: "vrest_offset", type: 'int' },
   min_vrest: { title: "min_vrest", desc: "min_vrest", type: 'int' },

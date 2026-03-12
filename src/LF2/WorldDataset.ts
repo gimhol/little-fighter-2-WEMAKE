@@ -51,11 +51,6 @@ export class WorldDataset implements IWorldDataset {
   ivy_f: number = 1.18;
   ivz_f: number = 1;
 
-  /** 
-   * 默认itr.dvy
-   * 默认击飞速度
-   * @link https://lf-empire.de/forum/showthread.php?tid=11204
-   */
   ivy_d: number = 3.8;
   ivx_d: number = 4;
   cvy_d: number = 3;
@@ -66,21 +61,21 @@ export class WorldDataset implements IWorldDataset {
    *
    * @type {number}
    */
-  tvx_f: number = 1;
+  tvx_f: number = 0.5;
 
   /**
    * Y轴丢人速度系数
    *
    * @type {number}
    */
-  tvy_f: number = 1.15;
+  tvy_f: number = -0.625;
 
   /**
    * Z轴丢人速度系数
    *
    * @type {number}
    */
-  tvz_f: number = 1;
+  tvz_f: number = 0.5;
 
   /**
    * 角色进入场地时的闪烁无敌时间
@@ -235,6 +230,9 @@ export class WorldDataset implements IWorldDataset {
   rowing_height: number = -2.000000;
   /** 默认受身速度X */
   rowing_distance: number = 5;
+  wvx_f: number = 0.5;
+  wvy_f: number = -0.5;
+  wvz_f: number = 1;
 
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))

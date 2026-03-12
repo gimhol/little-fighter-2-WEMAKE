@@ -1693,9 +1693,9 @@ export class Entity {
     const a_face = a.facing;
     const { x: acx = 0, y: acy = 0, z: acz = 0 } = ac
     if (tx || ty || tz) {
-      const vx = (tx * this.world.tvx_f * a_face)
-      const vy = (ty * this.world.tvy_f)
-      const vz = (tz * this.world.tvz_f) * (a.ctrl.UD || 0)
+      const vx = tx * this.dataset('tvx_f') * a_face
+      const vy = ty * this.dataset('tvy_f')
+      const vz = tz * this.dataset('tvz_f') * (a.ctrl.UD || 0)
       this.set_velocity(vx, vy, vz)
       this.set_position(
         vx + ax - a_face * (afx - acx),
@@ -1937,6 +1937,9 @@ export class Entity {
     }
 
     if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
+      dvx = dvx ? dvx * this.dataset('wvx_f') : 0
+      dvy = dvy ? dvy * this.dataset('wvy_f') : 0
+      dvz = dvz ? dvz * this.dataset('wvz_f') : 0
       const nf = this.find_align_frame(
         this.frame.id,
         this.data.indexes?.on_hands,
@@ -1949,8 +1952,8 @@ export class Entity {
       )
       this.enter_frame(nf);
       const vz = bearer.ctrl ? bearer.ctrl.UD * (dvz || 0) : 0;
-      dvx = strength * (dvx || 0) / weight;
-      dvy = strength * (dvy || 0) / weight;
+      dvx = strength * dvx / weight;
+      dvy = strength * dvy / weight;
       const vx = (dvx - abs(vz / 2)) * this.facing;
       this.set_velocity(vx, dvy, vz);
       bearer.holding = null;
@@ -2316,6 +2319,15 @@ export class Entity {
       (this.data.base as Partial<IWorldDataset>)[name] ??
       this.world[name]
     )
+  }
+
+  itr_dvxyz(itr: Readonly<IItrInfo>): [number, number, number] {
+    const { dvx = 0, dvy = this.dataset('ivy_d'), dvz = 0 } = itr
+    return [
+      dvx * this.dataset('ivx_f'),
+      dvy * this.dataset('ivy_f'),
+      dvz * this.dataset('ivz_f'),
+    ]
   }
 }
 

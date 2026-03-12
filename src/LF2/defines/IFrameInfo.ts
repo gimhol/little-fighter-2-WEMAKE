@@ -1,6 +1,5 @@
 import { IWorldDataset } from "../IWorldDataset";
 import { ChaseLost } from "./ChaseLost";
-import { SpeedCtrl } from "./SpeedCtrl";
 import { FacingFlag } from "./FacingFlag";
 import { FrameBehavior } from "./FrameBehavior";
 import { HitFlag } from "./HitFlag";
@@ -15,6 +14,7 @@ import type { TNextFrame } from "./INextFrame";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IQubePair } from "./IQubePair";
 import type { IWpointInfo } from "./IWpointInfo";
+import { SpeedCtrl } from "./SpeedCtrl";
 import type { SpeedMode } from "./SpeedMode";
 import type { StateEnum } from "./StateEnum";
 
@@ -260,6 +260,9 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   tvx_f: ++order,
   tvy_f: ++order,
   tvz_f: ++order,
+  wvx_f: ++order,
+  wvy_f: ++order,
+  wvz_f: ++order,
   begin_blink_time: ++order,
   lying_blink_time: ++order,
   gone_blink_time: ++order,
