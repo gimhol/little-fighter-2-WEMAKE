@@ -171,7 +171,7 @@ export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
     const vz = take(frame, "dvz");
     const [vxm, dvx, ctrl_x] = cook_dvxyz(vx)
     const [vym, dvy, ctrl_y] = cook_dvxyz(vy)
-    const [vzm, dvz, ctrl_z] = cook_dvxyz(vy)
+    const [vzm, dvz, ctrl_z] = cook_dvxyz(vz)
 
     if (vxm !== void 0) frame.vxm = vxm;
     if (dvx !== void 0) frame.dvx = dvx;
