@@ -17,19 +17,23 @@ export function handle_itr_kind_magic_flute(collision: ICollision): void {
   const bid = `magic_flute_to_${victim.id}`
   let buf = world.buffs.get(bid)
   if (!buf) {
-    const injury = 3;
+    const injury = 2;
+    const injury_r = 1;
     buf = new Buff(bid)
-    buf.tick.max = 4;
+    buf.tick.max = 3;
+    buf.life.max = 16;
+    buf.life.loop(1)
     buf.job = () => {
       if (!is_fighter(victim)) return
       const prev_hp = victim.hp;
+      victim.hp_r -= injury_r
       victim.hp -= injury
       summary_mgr.apply_damage(attacker, injury, victim, prev_hp)
     }
     world.buffs.set(bid, buf)
+    victim.fallinjury = 20
   }
-  buf.life.value -= rest
-
+  buf.life.value = 0
   switch (victim.data.type) {
     case EntityEnum.Fighter:
       if (victim.frame.state !== StateEnum.Falling) {

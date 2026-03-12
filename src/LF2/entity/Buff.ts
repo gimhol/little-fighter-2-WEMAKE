@@ -6,7 +6,7 @@ export class Buff {
   private _id: string;
   private _targets = new Set<Entity>();
   private _tick = new Times();
-  private _life = new Times().loop(1);
+  private _life = new Times(0, 1).loop(1);
   job = () => { }
   get tick() { return this._tick }
   get life() { return this._life }
