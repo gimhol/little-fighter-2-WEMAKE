@@ -1110,7 +1110,6 @@ export class Entity {
    * @see {IItrInfo.shaking}
    * @see {IItrInfo.motionless}
    * @see {State_Base.get_gravity}
-   * @see {World.gravity}
    */
   private handle_gravity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;

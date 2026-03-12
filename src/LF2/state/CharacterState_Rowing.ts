@@ -1,7 +1,6 @@
 import { IFrameInfo, SpeedMode, StateEnum } from "../defines";
 import { calc_v } from "../entity/calc_v";
 import { Entity } from "../entity/Entity";
-import { round, sqrt } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
 export class CharacterState_Rowing extends CharacterState_Base {
@@ -12,17 +11,13 @@ export class CharacterState_Rowing extends CharacterState_Base {
     if (e.position.y <= e.ground_y) return;
     let {
       rowing_distance: dx = e.world_dataset('rowing_distance'),
-      rowing_height: h = e.world_dataset('rowing_height'),
+      rowing_height: vy = e.world_dataset('rowing_height'),
     } = e.data.base;
-
-    h = round(h * h / 3.5)
     dx *= e.world_dataset('bfall_x_f')
-    h *= e.world_dataset('bfall_h_f')
+    vy *= e.world_dataset('bfall_h_f')
     e.merge_velocities();
     const { x: prev_vx, y: prev_vy } = e.velocity;
     const next_vx = prev_vx >= 0 ? dx : -dx;
-    const g_acc = e.world.gravity;
-    const vy = g_acc * sqrt((2 * h) / g_acc);
     const next_vy = calc_v(prev_vy, vy, SpeedMode.LF2, 0)
     e.set_velocity(next_vx, next_vy);
   }
