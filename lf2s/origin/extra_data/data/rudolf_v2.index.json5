@@ -5,5 +5,12 @@
       type: "0",
       file: "data/rudolf_v2.obj.json5",
     },
-  ]
+  ],
+  backgrounds: [
+    {
+      id: "bg_8",
+      type: "bg",
+      file: "bg/sys/bc/bg.bg.json5",
+    }
+  ],
 }
