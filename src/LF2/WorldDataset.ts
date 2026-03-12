@@ -222,6 +222,18 @@ export class WorldDataset implements IWorldDataset {
   dash_x_f: number = 1;
   dash_z_f: number = 1;
   dash_h_f: number = 1;
+  bfall_x_f: number = 0.5;
+  bfall_h_f: number = 1;
+
+  jump_height: number = -16.299999;
+  jump_distance: number = 8;
+  jump_distancez: number = 3;
+  dash_height: number = -11.000000;
+  dash_distance: number = 15;
+  dash_distancez: number = 3;
+  rowing_height: number = -2.000000;
+  rowing_distance: number = 5;
+
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
     Object.assign(this, wdataset)

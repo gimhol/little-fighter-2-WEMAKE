@@ -169,6 +169,16 @@ export interface IWorldDataset {
   dash_x_f: number;
   dash_z_f: number;
   dash_h_f: number;
+  bfall_x_f: number;
+  bfall_h_f: number;
+  jump_height: number;
+  jump_distance: number;
+  jump_distancez: number;
+  dash_height: number;
+  dash_distance: number;
+  dash_distancez: number;
+  rowing_height: number;
+  rowing_distance: number;
 }
 interface IFieldInfo {
   key: keyof IWorldDataset;
@@ -187,6 +197,8 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   dash_x_f: { title: "跑跳X距离系数", desc: "跑跃X距离系数", type: 'float' },
   dash_z_f: { title: "跑跳Z距离系数", desc: "跑跃Z距离系数", type: 'float' },
   dash_h_f: { title: "跑跳高度系数", desc: "跑跃高度系数", type: 'float' },
+  bfall_x_f: { title: "bfall_x_f", desc: "bfall_x_f", type: 'float' },
+  bfall_h_f: { title: "bfall_h_f", desc: "bfall_h_f", type: 'float' },
   weapon_throwing_gravity: { title: "投掷武器重力", desc: "投掷武器重力", type: 'float' },
   begin_blink_time: { title: "入场闪烁时长", desc: "入场闪烁时长", type: 'int' },
   gone_blink_time: { title: "消失闪烁时长", desc: "消失闪烁时长", type: 'int' },
@@ -252,6 +264,14 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   vrest_after_shaking: { title: "vrest是否在shaking后更新", desc: "vrest是否在shaking后更新", type: 'int', min: 0, max: 1, step: 1 },
   arest_after_motionless: { title: "arest是否在motionless后更新", desc: "arest是否在motionless后更新", type: 'int', min: 0, max: 1, step: 1 },
   invisible_blinking: { title: "隐身结束后的闪烁时长", desc: "隐身结束后的闪烁时长", type: 'int', min: 0, max: 9999, step: 1 },
+  jump_height    /* */: { title: "jump_height    ", desc: "", type: 'float' },
+  jump_distance  /* */: { title: "jump_distance  ", desc: "", type: 'float' },
+  jump_distancez /* */: { title: "jump_distancez ", desc: "", type: 'float' },
+  dash_height    /* */: { title: "dash_height    ", desc: "", type: 'float' },
+  dash_distance  /* */: { title: "dash_distance  ", desc: "", type: 'float' },
+  dash_distancez /* */: { title: "dash_distancez ", desc: "", type: 'float' },
+  rowing_height  /* */: { title: "rowing_height  ", desc: "", type: 'float' },
+  rowing_distance/* */: { title: "rowing_distance", desc: "", type: 'float' },
 }
 export const world_dataset_field_map = new Map<keyof IWorldDataset | string, IFieldInfo>()
 for (const k in world_dataset_fields) {
