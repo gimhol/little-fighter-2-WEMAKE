@@ -1,4 +1,4 @@
-import { ItrKind, StateEnum } from "../defines";
+import { FrameBehavior, ItrKind, StateEnum } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { EntityEnum } from "../defines/EntityEnum";
@@ -15,7 +15,6 @@ import { cook_ball_frame_state_3000 } from "./cook_ball_frame_state_3000";
 import { cook_ball_frame_state_3005 } from "./cook_ball_frame_state_3005";
 import { cook_ball_frame_state_3006 } from "./cook_ball_frame_state_3006";
 import { get_next_frame_by_raw_id } from "./get_the_next";
-import { make_frame_behavior } from "./make_frame_behavior";
 import { take, take_str } from "./take";
 
 export const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
@@ -55,9 +54,11 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
     const hit_d = take(frame, "hit_d");
     if (hit_d && hit_d !== frame.id)
       frame.on_dead = get_next_frame_by_raw_id(hit_d);
-
-    make_frame_behavior(frame, datIndex);
-
+    const hit_Fa = take(frame, "hit_Fa");
+    if (hit_Fa) {
+      frame.behavior = hit_Fa;
+      (frame as any).behavior_name = `FrameBehavior.` + FrameBehavior[hit_Fa];
+    }
     if (frame.itr) {
       for (const itr of frame.itr) {
         if (itr.kind === ItrKind.JohnShield) {

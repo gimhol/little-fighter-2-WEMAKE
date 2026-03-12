@@ -7,7 +7,6 @@ import {
   FacingFlag as FF,
   FrameBehavior,
   HitFlag,
-  IDatIndex,
   IFrameInfo,
   ItrKind,
   OpointKind, OpointMultiEnum, OpointSpreading,
@@ -19,16 +18,10 @@ import { CondMaker } from "./CondMaker";
 import { firzen_disater_start } from "./firzen_disater_start";
 import { jan_chase_start } from "./jan_chase_start";
 import { jan_chaseh_start } from "./jan_chaseh_start";
-import { take } from "./take";
 
 const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
-export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
-  const hit_Fa = take(frame, "hit_Fa");
-  if (hit_Fa) {
-    frame.behavior = hit_Fa;
-    (frame as any).behavior_name = `FrameBehavior.` + FrameBehavior[hit_Fa];
-  }
-  switch (hit_Fa as FrameBehavior) {
+export function make_frame_behavior(frame: IFrameInfo, oid: string) {
+  switch (frame.behavior as FrameBehavior) {
     case FrameBehavior.AngelBlessing:
       frame.facing = FF.VX;
       frame.dvx = Defines.ANGEL_BLESSING_MAX_VX;
@@ -78,7 +71,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.vym = SpeedMode.AccTo;
       
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0.5 };
+      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0 };
       break;
     case FrameBehavior.DennisChase: {
       frame.facing = FF.VX;
@@ -140,7 +133,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_z = 1;
       frame.itr?.forEach(itr => {
-        switch (datIndex.id) {
+        switch (oid) {
           case BuiltIn_OID.FirzenChasef:
           case BuiltIn_OID.FirzenChasei:
             itr.on_hit_ground = { id: "60" };
