@@ -216,11 +216,11 @@ export class WorldDataset implements IWorldDataset {
   vrest_after_shaking: number = 1;
   arest_after_motionless: number = 1;
   invisible_blinking: number = 120;
-  jump_x_f: number = 1;
-  jump_z_f: number = 1;
+  jump_x_f: number = 0.5;
+  jump_z_f: number = 0.5;
   jump_h_f: number = 1;
-  dash_x_f: number = 1;
-  dash_z_f: number = 1;
+  dash_x_f: number = 0.5;
+  dash_z_f: number = 0.5;
   dash_h_f: number = 1;
   bfall_x_f: number = 0.5;
   bfall_h_f: number = 1;

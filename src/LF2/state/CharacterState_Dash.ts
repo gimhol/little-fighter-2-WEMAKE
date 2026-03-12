@@ -1,6 +1,6 @@
 import { StateEnum, type IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
-import { sqrt } from "../utils";
+import { round, sqrt } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 export default class CharacterState_Dash extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Dash) {
@@ -14,13 +14,15 @@ export default class CharacterState_Dash extends CharacterState_Base {
     let next_vy = vy;
     let next_vz = vz;
     let {
-      dash_distance: dx = 0,
-      dash_distancez: dz = 0,
-      dash_height: h = 0,
+      dash_distance: dx = e.world_dataset('dash_distance'),
+      dash_distancez: dz = e.world_dataset('dash_distancez'),
+      dash_height: h = e.world_dataset('dash_height'),
     } = e.data.base;
-    dz *= e.world.dash_z_f
-    dx *= e.world.dash_x_f
-    h *= e.world.dash_h_f
+    h = round(h * h / 3.5)
+    dx *= e.world_dataset('dash_x_f')
+    dz *= e.world_dataset('dash_z_f')
+    h *= e.world_dataset('dash_h_f')
+
     next_vy = gravity * sqrt((2 * h) / gravity);
     const { UD: UD1 = 0, LR: LR1 = 0 } = e.ctrl || {};
     if (UD1) next_vz = UD1 * dz;

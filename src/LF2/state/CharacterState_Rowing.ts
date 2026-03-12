@@ -1,7 +1,7 @@
 import { IFrameInfo, SpeedMode, StateEnum } from "../defines";
 import { calc_v } from "../entity/calc_v";
 import { Entity } from "../entity/Entity";
-import { sqrt } from "../utils";
+import { round, sqrt } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
 export class CharacterState_Rowing extends CharacterState_Base {
@@ -10,8 +10,14 @@ export class CharacterState_Rowing extends CharacterState_Base {
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     if (e.position.y <= e.ground_y) return;
-    const { rowing_distance: dx = 0, rowing_height: h = 0 } = e.data.base;
+    let {
+      rowing_distance: dx = e.world_dataset('rowing_distance'),
+      rowing_height: h = e.world_dataset('rowing_height'),
+    } = e.data.base;
 
+    h = round(h * h / 3.5)
+    dx *= e.world_dataset('bfall_x_f')
+    h *= e.world_dataset('bfall_h_f')
     e.merge_velocities();
     const { x: prev_vx, y: prev_vy } = e.velocity;
     const next_vx = prev_vx >= 0 ? dx : -dx;
