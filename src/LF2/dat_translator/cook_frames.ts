@@ -182,10 +182,10 @@ export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
     if (dvy !== void 0) frame.dvy = dvy;
     if (ctrl_y !== void 0) frame.ctrl_y = ctrl_y;
 
-    if (not_zero_num(vz)) frame.ctrl_z = 1;
     if (vzm !== void 0) frame.vzm = vzm;
     if (dvz !== void 0) frame.dvz = dvz;
     if (ctrl_z !== void 0) frame.ctrl_z = ctrl_z;
+    else if (not_zero_num(vz)) frame.ctrl_z = 1;
 
     if (frame.itr) {
       for (const itr of frame.itr) {
@@ -202,12 +202,8 @@ export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
   return frames;
 }
 
-function cook_dvxyz(dvy: any): [SpeedMode?, number?, SpeedCtrl?] {
-  if (dvy === 550)
-    return [SpeedMode.Fixed, 0, SpeedCtrl.None] as const;
-  if (!not_zero_num(dvy))
-    return [void 0, void 0, void 0]
-  if (dvy >= 501 && dvy <= 549 || dvy >= 551)
-    return [SpeedMode.FixedLf2, round_float(dvy - 550)] as const;
-  return [void 0, round_float(dvy)] as const;
+function cook_dvxyz(v: any): [SpeedMode?, number?, SpeedCtrl?] {
+  if (!not_zero_num(v)) return [void 0, void 0]
+  if (v === 550) return [SpeedMode.Fixed, 0, SpeedCtrl.None] as const;
+  return [void 0, round_float(v)] as const;
 }
