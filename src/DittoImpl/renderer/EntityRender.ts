@@ -1,5 +1,5 @@
 import type { IEntityData, IFrameInfo, ITexturePieceInfo, TFace } from "@/LF2/defines";
-import { Builtin_FrameId, Defines, StateEnum } from "@/LF2/defines";
+import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
 import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
 import { clamp, floor, random_in, round } from "@/LF2/utils";
@@ -9,6 +9,8 @@ import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
 import { get_color_material } from "./MaterialKeeper";
 import { vec001, vec2 } from "./Mess";
+import { outline_fragment_shader } from "./shader/fragment/outline";
+import { normal_vertex_shader } from "./shader/vertex/normal";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
@@ -24,63 +26,6 @@ const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
 
-const vertex_shader = `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`
-const fragment_shader = `
-  uniform sampler2D pTexture;
-  uniform float offsetX;
-  uniform float offsetY;
-  uniform float repeatW;
-  uniform float repeatH;
-  uniform float outlineWidth;
-  uniform float outlineAlpha;
-  uniform vec3 outlineColor;
-  
-  varying vec2 vUv;
-  
-  const float gamma = 2.2;
-  vec3 gamma_correct(vec3 color) {
-    return pow(color, vec3(1.0 / gamma));
-  }
-  vec3 gamma_invert(vec3 color) {
-    return pow(color, vec3(gamma));
-  }
-  void main() {
-    vec2 uv = vec2(
-      (vUv.x * repeatW) + offsetX,
-      (vUv.y * repeatH) + offsetY
-    );
-    vec4 color = texture2D(pTexture, uv);
-    color.rgb = gamma_correct(color.rgb);
-    if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
-      gl_FragColor = color;
-      return;
-    }
-
-    float outline = 0.0;
-    vec2 texel = vec2(outlineWidth) / vec2(textureSize(pTexture, 0));
-    float center = texture2D(pTexture, uv).a;
-    float up     = texture2D(pTexture, uv + vec2(0, -texel.y)).a;
-    float down   = texture2D(pTexture, uv + vec2(0,  texel.y)).a;
-    float left   = texture2D(pTexture, uv + vec2(-texel.x, 0)).a;
-    float right  = texture2D(pTexture, uv + vec2( texel.x, 0)).a;
-    outline = max(
-      max(abs(center - up), abs(center - down)),
-      max(abs(center - left), abs(center - right))
-    );
-    if (outline > 0.1 && center < 0.1) {
-      gl_FragColor.rgb = gamma_correct(outlineColor);
-      gl_FragColor.a = outlineAlpha;
-    } else {
-      gl_FragColor = color;
-    }
-  }
-`
 function get_material(texture: T.Texture<unknown> | undefined) {
   return new T.ShaderMaterial({
     uniforms: {
@@ -93,8 +38,8 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       outlineAlpha: { value: 0 },
       outlineWidth: { value: 1 }
     },
-    vertexShader: vertex_shader,
-    fragmentShader: fragment_shader,
+    vertexShader: normal_vertex_shader,
+    fragmentShader: outline_fragment_shader,
     transparent: true
   });
 }
@@ -104,7 +49,7 @@ export class EntityRender {
   protected images!: Map<string, RImageInfo>;
   entity!: Entity;
   protected node!: T.Object3D;
-  protected main_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+  protected main_mesh!: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
 
   protected variants = new Map<string, string[]>();
@@ -193,30 +138,24 @@ export class EntityRender {
 
   apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
     const { images, main_mesh } = this
-    if (info) {
-      const { x, y, w, h, tex, pixel_w, pixel_h } = info;
-      const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
+    if (!info) return;
+    const { x, y, w, h, tex, pixel_w, pixel_h } = info;
+    main_mesh.scale.set(pixel_w, pixel_h, 0);
 
-      const img = images.get(real_tex);
-      if (img?.pic) {
-        const { material: m } = main_mesh;
-        // 检查材质类型并更新纹理
-        if (m instanceof T.ShaderMaterial) {
-          m.uniforms.pTexture.value = img.pic.texture;
-          m.uniforms.offsetX.value = x;
-          m.uniforms.offsetY.value = y;
-          m.uniforms.repeatW.value = w;
-          m.uniforms.repeatH.value = h;
-        } else {
-          img.pic.texture.offset.set(x, y);
-          img.pic.texture.repeat.set(w, h);
-          m.map = img.pic.texture;
-        }
-      }
-      main_mesh.scale.set(pixel_w, pixel_h, 0);
 
-    }
+    const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
+    const img = images.get(real_tex);
+
+    if (!img?.pic) return;
+
+    const { material: m } = main_mesh;
+    m.uniforms.pTexture.value = img.pic.texture;
+    m.uniforms.offsetX.value = x;
+    m.uniforms.offsetY.value = y;
+    m.uniforms.repeatW.value = w;
+    m.uniforms.repeatH.value = h;
   }
+
   update_shaking(dt: number) {
     const { entity: { shaking, facing } } = this;
     if (shaking == this.shaking) return;

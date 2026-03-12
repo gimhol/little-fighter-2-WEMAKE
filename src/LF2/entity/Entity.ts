@@ -241,13 +241,11 @@ export class Entity {
   readonly collided_list: ICollision[] = [];
 
   protected _chasing!: Entity | null;
+  protected _ground_y: number = 0;
+  protected _prev_ground_y: number = 0;
   renderer: any;
-  ground: Ground = Ground.Default;
-  old_ground_y: number | null = null
-  get ground_y(): number {
-    const { x, y, z } = this._position;
-    return this.ground.get_y(x, y, z)
-  }
+  get ground_y(): number { return this._ground_y }
+  get prev_ground_y(): number { return this._prev_ground_y }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
   get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
@@ -617,11 +615,11 @@ export class Entity {
   reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
     this._data = d;
     this.world = world;
-    this.ground = Ground.Default;
     this.id = new_id();
     this.wait = 0;
     this.update_id.reset()
-    this.old_ground_y = null;
+    this._prev_ground_y = 0;
+    this._ground_y = 0;
     this.variant = 0;
     this.transform_datas = null;
     this._reserve = 0
@@ -818,6 +816,7 @@ export class Entity {
         this.bearer.holding = this;
         break;
     }
+    this.motionless = opoint.motionless ?? 2
     return this;
   }
 
@@ -1068,24 +1067,26 @@ export class Entity {
 
   handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
     let { x, z } = this.velocities[0];
-    if (factor != void 0) {
-      x *= factor;
-      z *= factor;
-    }
-    if (x > 0) {
+    if (factor != void 0) { x *= factor; z *= factor; }
+    let { dvx = 0, ctrl_x, dvz = 0, ctrl_z } = this.frame;
+    const { UD, LR } = this.ctrl
+    if (ctrl_x && !LR) dvx = 0;
+    if (ctrl_z && !UD) dvz = 0;
+    if (x > dvx) {
       x -= fx;
-      if (x < 0) x = 0; // 不能因为摩擦力反向加速
-    } else if (x < 0) {
+      if (x < dvx) x = dvx; // 不能因为摩擦力反向加速
+    } else if (x < -dvx) {
       x += fx;
-      if (x > 0) x = 0; // 不能因为摩擦力反向加速
+      if (x > -dvx) x = -dvx; // 不能因为摩擦力反向加速
     }
-    if (z > 0) {
+    if (z > dvz) {
       z -= fz;
-      if (z < 0) z = 0; // 不能因为摩擦力反向加速
-    } else if (z < 0) {
+      if (z < dvz) z = dvz; // 不能因为摩擦力反向加速
+    } else if (z < -dvz) {
       z += fz;
-      if (z > 0) z = 0; // 不能因为摩擦力反向加速
+      if (z > -dvz) z = -dvz; // 不能因为摩擦力反向加速
     }
+
     this.set_velocity_0_x(x)
     this.set_velocity_0_z(z);
   }
@@ -1346,7 +1347,6 @@ export class Entity {
           this.frame = GONE_FRAME_INFO;
         } else if (this._after_blink === Builtin_FrameId.Respawn) {
           this.hp = this.hp_r = this.hp_max;
-          this._position.y = 550;
 
           let max_distance = Number.MAX_SAFE_INTEGER
           let friend: Entity | undefined;
@@ -1361,15 +1361,19 @@ export class Entity {
           }
           if (friend) {
             this.lf2.mt.mark = 'u_1'
-            this._position.x = this.lf2.mt.range(
+            const x = this.lf2.mt.range(
               max(round(friend.position.x - 100), this.world.stage.player_l),
               min(round(friend.position.x + 100), this.world.stage.player_r)
             )
             this.lf2.mt.mark = 'u_2'
-            this._position.z = this.lf2.mt.range(
+            const z = this.lf2.mt.range(
               min(round(friend.position.z - 100), this.world.stage.far),
               max(round(friend.position.z + 100), this.world.stage.near)
             )
+            this.set_position(x, 550, z)
+          } else {
+            this.set_position_y(550)
+
           }
 
           this.next_frame = Defines.NEXT_FRAME_AUTO;
@@ -1430,15 +1434,9 @@ export class Entity {
 
     if (!this.shaking && !this.motionless) {
       const { x, y, z } = this._position;
-      const ground = this.world.get_ground(this._position)
-      const ground_y = ground.get_y(x, y, z)
-      if (ground !== this.ground) {
-        this.ground.del(this);
-        this.ground = ground
-        this.ground.add(this);
-      }
-      const old_ground_y = this.old_ground_y ?? ground_y;
-      const on_ground = this._prev_position.y <= old_ground_y;
+
+      const { prev_ground_y, ground_y } = this;
+      const on_ground = this._prev_position.y <= prev_ground_y;
       const just_land = (this.velocity.y < 0 || !on_ground) && this._position.y <= ground_y
       const itrs = this.itr;
 
@@ -1471,7 +1469,7 @@ export class Entity {
             this.throwinjury = null;
           }
           this._landing_frame = this.frame
-        } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
+        } else if (this.velocity.y == 0 && on_ground && !float_equal(prev_ground_y, ground_y)) {
           this._position.y = ground_y;
           this._prev_position.y = ground_y;
         } else if (this._position.y < ground_y) {
@@ -1480,8 +1478,9 @@ export class Entity {
           // this._prev_position.y = ground_y;
         }
         if (this._landing_frame !== this.frame) this._landing_frame = null
-        this.old_ground_y = ground_y;
+        this._prev_ground_y = ground_y;
       }
+
     }
     this._holding?.follow_bearer();
     this.collision_list.length = 0;
@@ -2230,6 +2229,7 @@ export class Entity {
     if (x !== null && x !== void 0) this._position.x = x ? round_float(x) : x
     if (y !== null && y !== void 0) this._position.y = y ? round_float(y) : y
     if (z !== null && z !== void 0) this._position.z = z ? round_float(z) : z
+    this._ground_y = this.world.get_ground(this._position)
   }
   set_position_x(x: number) {
     if (is_f_num(x)) debugger;
@@ -2238,10 +2238,12 @@ export class Entity {
   set_position_y(y: number) {
     if (is_f_num(y)) debugger;
     this._position.y = y ? round_float(y) : y
+    this._ground_y = this.world.get_ground(this._position)
   }
   set_position_z(z: number) {
     if (is_f_num(z)) debugger;
-    this._position.z = z ? round_float(z) : z
+    this._position.z = z ? round_float(z) : z;
+    this._ground_y = this.world.get_ground(this._position)
   }
   transform(data: IEntityData) {
     if (!is_human_ctrl(this.ctrl))

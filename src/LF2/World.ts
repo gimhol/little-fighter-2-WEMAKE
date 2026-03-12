@@ -853,8 +853,9 @@ export class World extends WorldDataset {
     this.callbacks.clear()
   }
 
-  get_ground(position: IVector3) {
-    return this.ground;
+  get_ground(position: IVector3): number {
+    const { x, y, z } = position;
+    return this.ground.get_y(x, y, z)
   }
   ground = new Ground()
 }
