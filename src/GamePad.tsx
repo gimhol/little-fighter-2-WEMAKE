@@ -7,6 +7,7 @@ import { pow } from "./LF2";
 import { LF2 } from "./LF2/LF2";
 import { GameKey as GK } from "./LF2/defines/GameKey";
 import { LF2KeyEvent } from "./LF2/ui/LF2KeyEvent";
+import { __Keyboard } from "./DittoImpl";
 
 export interface IGamePadProps extends React.HTMLAttributes<HTMLDivElement> {
   lf2?: LF2;
@@ -66,6 +67,8 @@ export default function GamePad(props: IGamePadProps) {
     const l_pad = ref_left_pad.current;
     const r_pad = ref_right_pad.current;
     if (!player_id || !lf2 || !l_pad || !r_pad) return;
+    const player = lf2.players.get(player_id)
+    if (!player) return;
     const btn_infos = [
       { key: GK.U, circ: () => get_circ(ref_btn_U) },
       { key: GK.D, circ: () => get_circ(ref_btn_D) },
@@ -85,6 +88,7 @@ export default function GamePad(props: IGamePadProps) {
     };
     const pad_text = ref_pad_text.current;
     if (!pad_text) return;
+    const kb = (lf2.keyboard as __Keyboard);
     const handle_touchs = () => {
       pressings_1.clear();
       for (const { circ, key } of btn_infos) {
@@ -98,7 +102,11 @@ export default function GamePad(props: IGamePadProps) {
       }
       for (const [key, prev] of pressings_0) {
         if (prev == !!pressings_1.get(key)) continue;
-        lf2.events.push(new LF2KeyEvent(player_id, !prev, key, key));
+        if (prev) {
+          kb.key_down(player.keys[key], 'touch')
+        } else {
+          kb.key_up(player.keys[key], 'touch')
+        }
         if (pad_text.innerText.length > 10)
           pad_text.innerText = pad_text.innerText.substring(3);
         set_pressings(d => { d[key] = !prev })
