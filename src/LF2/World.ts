@@ -875,5 +875,6 @@ export class World extends WorldDataset {
   clear() {
     this.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
     this.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+    this.buffs.forEach(v => v.life.loop(v.life.max = v.life.min = 0))
   }
 }
