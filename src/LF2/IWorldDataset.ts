@@ -153,12 +153,12 @@ export interface IWorldDataset {
   /** 恢复值(每次回多少) */
   defend_r_value: number;
 
-  fall_value_max: number;
+  fall_value: number;
   catch_time_max: number;
   defend_value_max: number;
   defend_ratio: number;
-  mp_max: number;
-  hp_max: number;
+  mp: number;
+  hp: number;
   resting_max: number;
   vrest_after_shaking: number;
   arest_after_motionless: number;
@@ -254,12 +254,12 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   fall_r_value: { title: "fall_r_value", desc: "fall_r_value", type: 'int' },
   defend_r_ticks: { title: "defend_r_ticks", desc: "defend_r_ticks", type: 'int' },
   defend_r_value: { title: "defend_r_value", desc: "defend_r_value", type: 'int' },
-  fall_value_max: { title: "fall_value_max", desc: "fall_value_max", type: 'int' },
+  fall_value: { title: "fall_value", desc: "fall_value", type: 'int' },
   catch_time_max: { title: "catch_time_max", desc: "catch_time_max", type: 'int' },
   defend_value_max: { title: "defend_value_max", desc: "defend_value_max", type: 'int' },
   defend_ratio: { title: "defend_ratio", desc: "defend_ratio", type: 'int' },
-  mp_max: { title: "mp_max", desc: "mp_max", type: 'int' },
-  hp_max: { title: "hp_max", desc: "hp_max", type: 'int' },
+  mp: { title: "MP", desc: "MP", type: 'int' },
+  hp: { title: "HP", desc: "HP", type: 'int' },
   resting_max: { title: "resting_max", desc: "resting_max", type: 'int' },
   vrest_after_shaking: { title: "vrest是否在shaking后更新", desc: "vrest是否在shaking后更新", type: 'int', min: 0, max: 1, step: 1 },
   arest_after_motionless: { title: "arest是否在motionless后更新", desc: "arest是否在motionless后更新", type: 'int', min: 0, max: 1, step: 1 },

@@ -24,11 +24,6 @@ export namespace Defines {
   export const CLASSIC_SCREEN_HEIGHT = 550;
   export const MODERN_SCREEN_WIDTH = 794;
   export const MODERN_SCREEN_HEIGHT = 450;
-
-  export const DEFAULT_HP_MAX = 500;
-  export const DEFAULT_MP_MAX = 500;
-  export const DEFAULT_FALL_VALUE_MAX = 140;
-  export const DEFAULT_DEFEND_VALUE_MAX = 90;
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
   export const DEFAULT_FIREN_FLAME_SPEED_Z = 0.5;
 
@@ -38,7 +33,6 @@ export namespace Defines {
   /** 击中敌人的对象停顿多少帧 */
   export const DEFAULT_ITR_MOTIONLESS = 6;
   export const DEFAULT_ITR_A_REST = 20;
-  export const DEFAULT_CATCH_TIME = 680;
   export const DEFAULT_ITR_FALL = 40;
 
   /**
@@ -51,7 +45,7 @@ export namespace Defines {
   /**
    * 默认值：
    */
-  export const DEFAULT_FALL_VALUE_CRITICAL: number = DEFAULT_FALL_VALUE_MAX - DEFAULT_FALL_VALUE_DIZZY
+  export const DEFAULT_FALL_VALUE_CRITICAL: number = 140 - DEFAULT_FALL_VALUE_DIZZY
 
   export const DAFUALT_QUBE_LENGTH: number = 24;
   export const DAFUALT_QUBE_LENGTH_POW2: number = 576;

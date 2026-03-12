@@ -25,6 +25,15 @@ export class LittleFunnyAutoGame extends UIComponent {
     this.add_fighter();
   }
 
+  override on_pause(): void {
+    super.on_pause?.();
+    this.world.transform.scale_to(1, 1, 1, false)
+    this.world.paused = false;
+    for (const f of this._fighters)
+      f.callbacks.del(this._fighter_cbs);
+    this.world.clear();
+  }
+  
   add_fighter() {
     if (!this._datas.length)
       this._datas.push(...this.lf2.datas.fighters)
@@ -45,16 +54,5 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.attach()
     fighter.enter_frame({ id: "running_0" })
     this._lr = (this._lr + 1) % 2
-  }
-  override on_pause(): void {
-    super.on_pause?.();
-    this.world.transform.scale_to(1, 1, 1, false)
-    this.world.paused = false;
-    for (const f of this._fighters)
-      f.callbacks.del(this._fighter_cbs);
-    for (const f of this.world.entities)
-      this.world.del_entity(f);
-    for (const f of this.world.ghosts)
-      this.world.del_entity(f);
   }
 }

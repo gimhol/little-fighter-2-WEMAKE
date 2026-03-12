@@ -10,11 +10,11 @@ export class CharacterState_Rowing extends CharacterState_Base {
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     if (e.position.y <= e.ground_y) return;
     let {
-      rowing_distance: dx = e.world_dataset('rowing_distance'),
-      rowing_height: vy = e.world_dataset('rowing_height'),
+      rowing_distance: dx = e.dataset('rowing_distance'),
+      rowing_height: vy = e.dataset('rowing_height'),
     } = e.data.base;
-    dx *= e.world_dataset('bfall_x_f')
-    vy *= e.world_dataset('bfall_h_f')
+    dx *= e.dataset('bfall_x_f')
+    vy *= e.dataset('bfall_h_f')
     e.merge_velocities();
     const { x: prev_vx, y: prev_vy } = e.velocity;
     const next_vx = prev_vx >= 0 ? dx : -dx;

@@ -1,4 +1,3 @@
-import { Ground } from "../Ground";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
@@ -26,6 +25,7 @@ import { abs, clamp, find, float_equal, floor, intersection, max, min, round, ro
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
+import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
 import { Factory, ICreator } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
@@ -116,7 +116,8 @@ export class Entity {
   protected _defend_r_value!: number;
   protected _healing!: number;
   protected _defend_ratio?: number; // fallback from world
-  public throwinjury!: number | null;
+  public fallinjury: number = 0;
+  public throwinjury: number = 0;
   public facing!: TFace;
   public frame!: IFrameInfo;
   public next_frame!: Readonly<INextFrame> | null;
@@ -243,6 +244,8 @@ export class Entity {
   protected _chasing!: Entity | null;
   protected _ground_y: number = 0;
   protected _prev_ground_y: number = 0;
+  readonly buff = new Map<string, Buff>()
+
   renderer: any;
   get ground_y(): number { return this._ground_y }
   get prev_ground_y(): number { return this._prev_ground_y }
@@ -327,7 +330,7 @@ export class Entity {
     this._catch_time_max = v;
     this.callbacks.emit("on_catch_time_max_changed")(this, v, o);
   }
-  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value_max; }
+  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value; }
   set fall_value_max(v: number) {
     const o = this.fall_value_max;
     if (o === v) return;
@@ -467,7 +470,7 @@ export class Entity {
     }
   }
   get mp_max(): number {
-    return this._mp_max ?? this.world.mp_max;
+    return this._mp_max ?? this.world.mp;
   }
   set mp_max(v: number) {
     const o = this.mp_max;
@@ -477,7 +480,7 @@ export class Entity {
   }
 
   get hp_max(): number {
-    return this._hp_max ?? this.world.hp_max;
+    return this._hp_max ?? this.world.hp;
   }
   set hp_max(v: number) {
     const o = this.hp_max;
@@ -619,6 +622,7 @@ export class Entity {
     this.wait = 0;
     this.update_id.reset()
     this._prev_ground_y = 0;
+    this.fallinjury = 0;
     this._ground_y = 0;
     this.variant = 0;
     this.transform_datas = null;
@@ -644,7 +648,7 @@ export class Entity {
     this._defend_ratio = d.base.defend_ratio;
     this._healing = 0;
     this._catch_time_max = d.base.catch_time;
-    this.throwinjury = null;
+    this.throwinjury = 0;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
     this.next_frame = null;
@@ -709,6 +713,10 @@ export class Entity {
     this.lastest_collision = null;
     this.lastest_collided = null;
     this._outline_color = void 0;
+
+    let buffs = Array.from(this.buff.values())
+    for (const buf of buffs) buf.del(this)
+    this.buff.clear();
   }
 
   set_bearer(v: Entity | null): this {
@@ -1059,9 +1067,9 @@ export class Entity {
   handle_ground_velocity_decay(factor: number = 1) {
     if (this._position.y > this.ground_y || this.shaking || this.motionless) return;
     const landing = this._landing_frame === this.frame;
-    factor *= landing ? this.world_dataset('land_friction_factor') : this.world_dataset('friction_factor')
-    const fx = landing ? this.world_dataset('land_friction_x') : this.world_dataset('friction_x')
-    const fz = landing ? this.world_dataset('land_friction_z') : this.world_dataset('friction_z')
+    factor *= landing ? this.dataset('land_friction_factor') : this.dataset('friction_factor')
+    const fx = landing ? this.dataset('land_friction_x') : this.dataset('friction_x')
+    const fz = landing ? this.dataset('land_friction_z') : this.dataset('friction_z')
     this.handle_velocity_decay(fx, fz, factor)
   }
 
@@ -1249,16 +1257,14 @@ export class Entity {
   hp_recovering(): void {
     if (this._hp <= 0 || this._hp >= this._hp_r)
       return;
-    const { base } = this._data
     this._hp_r_tick.max = this.healing > 0 ?
-      (base.hp_healing_ticks ?? this.world.hp_healing_ticks) :
-      (base.hp_r_ticks ?? this.world.hp_r_ticks);
-
+      this.dataset('hp_healing_ticks') :
+      this.dataset('hp_r_ticks')
     if (!this._hp_r_tick.add())
       return;
     const value = this.healing > 0 ?
-      (base.hp_healing_value ?? this.world.hp_healing_value) :
-      (base.hp_r_value ?? this.world.hp_r_value);
+      this.dataset('hp_healing_value') :
+      this.dataset('hp_r_value');
     this.hp = min(this._hp_r, this._hp + value);
     if (this._hp === this._hp_r) this.healing = 0;
     else if (this._healing) this.healing = max(0, this._healing - value)
@@ -1272,11 +1278,10 @@ export class Entity {
   mp_recovering(): void {
     if (this._hp <= 0 || this._mp >= this.mp_max || this._blinking_duration || this._invisible_duration)
       return;
-    const { base } = this._data
-    this._mp_r_tick.max = base.mp_r_ticks ?? this.world.mp_r_ticks;
+    this._mp_r_tick.max = this.dataset('mp_r_ticks');
     if (!this._mp_r_tick.add())
       return;
-    const r_ratio = base.mp_r_ratio ?? this.world.mp_r_ratio;
+    const r_ratio = this.dataset('mp_r_ratio');
     const value = 1 + floor(round_float((500 - min(r_ratio * this._hp, 500)) / 100))
     this.mp = min(this.mp_max, this._mp + value);
   }
@@ -1318,7 +1323,7 @@ export class Entity {
 
     if (this.frame.hp) this.hp -= this.frame.hp;
 
-    if (this.shaking <= 0 || 0 == this.world_dataset('vrest_after_shaking'))
+    if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
       for (const [k, v] of this.v_rests) {
         if (v.rest > 0) --v.rest;
         else this.del_v_rest(k)
@@ -1326,13 +1331,13 @@ export class Entity {
     for (const [k, v] of this.victims)
       if (v.rest) this.victims.delete(k)
 
-    if (0 == this.world_dataset('arest_after_motionless') || this.motionless <= 0)
+    if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0)
       this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
 
     if (this._invisible_duration > 0) {
       this._invisible_duration--;
       if (this._invisible_duration <= 0) {
-        this._blinking_duration = this.world_dataset('invisible_blinking');
+        this._blinking_duration = this.dataset('invisible_blinking');
       }
     }
     if (this._invulnerable_duration > 0) {
@@ -1432,8 +1437,6 @@ export class Entity {
     }
 
     if (!this.shaking && !this.motionless) {
-      const { x, y, z } = this._position;
-
       const { prev_ground_y, ground_y } = this;
       const on_ground = this._prev_position.y <= prev_ground_y;
       const just_land = (this.velocity.y < 0 || !on_ground) && this._position.y <= ground_y
@@ -1464,8 +1467,13 @@ export class Entity {
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {
             this.hp -= this.throwinjury;
-            this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
-            this.throwinjury = null;
+            this.hp_r -= round(this.throwinjury * (1 - this.dataset('hp_recoverability')))
+            this.throwinjury = 0;
+          }
+          if (this.fallinjury) {
+            this.hp -= this.fallinjury;
+            this.hp_r -= round(this.fallinjury * (1 - this.dataset('hp_recoverability')))
+            this.fallinjury = 0;
           }
           this._landing_frame = this.frame
         } else if (this.velocity.y == 0 && on_ground && !float_equal(prev_ground_y, ground_y)) {
@@ -1587,7 +1595,7 @@ export class Entity {
       const { injury } = cp_a;
       if (injury) {
         this.hp -= injury;
-        this.hp_r -= round(injury * (1 - this.world.hp_recoverability))
+        this.hp_r -= round(injury * (1 - this.dataset('hp_recoverability')))
       }
       if (cp_a.shaking && cp_a.shaking > 0)
         this.shaking = cp_a.shaking;
@@ -2291,10 +2299,12 @@ export class Entity {
     this.blockers.delete(a_id);
     this.superpunchs.delete(a_id);
   }
-
-  world_dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
-    const v = (this.frame as Partial<IWorldDataset>)[name]
-    return v ?? this.world[name]
+  dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
+    return (
+      (this.frame as Partial<IWorldDataset>)[name] ??
+      (this.data.base as Partial<IWorldDataset>)[name] ??
+      this.world[name]
+    )
   }
 }
 

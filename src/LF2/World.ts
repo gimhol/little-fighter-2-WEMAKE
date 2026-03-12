@@ -8,6 +8,7 @@ import {
   Defines,
   Difficulty,
   EntityGroup,
+  GONE_FRAME_INFO,
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
   IFrameInfo, IItrInfo, ItrKind,
@@ -27,6 +28,7 @@ import {
   is_human_ctrl,
   is_weapon
 } from "./entity";
+import { Buff } from "./entity/Buff";
 import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
@@ -52,7 +54,9 @@ export class World extends WorldDataset {
   private _update_count: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
+  readonly buffs = new Map<string, Buff>();
   private _game_time = new Times();
+  private _ground = new Ground();
 
   get game_time() { return this._game_time }
 
@@ -504,6 +508,16 @@ export class World extends WorldDataset {
     this._temp_entitis_set.clear();
     const update_collisions = game_time.value % 1 === 0
     const update_chasing = game_time.value % 8 === 0;
+    const dead_buff: [string, Buff][] = []
+    for (const [key, buff] of this.buffs) {
+      buff.update()
+      if (buff.dead) dead_buff.push([key, buff])
+    }
+    for (const [key, buff] of dead_buff) {
+      buff.unmount();
+      this.buffs.delete(key);
+    }
+
     for (const e of this.entities) {
       if (update_chasing && this._chasers.size)
         for (const [c] of this._chasers)
@@ -855,7 +869,11 @@ export class World extends WorldDataset {
 
   get_ground(position: IVector3): number {
     const { x, y, z } = position;
-    return this.ground.get_y(x, y, z)
+    return this._ground.get_y(x, y, z)
   }
-  ground = new Ground()
+
+  clear() {
+    this.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+    this.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+  }
 }

@@ -1,11 +1,13 @@
-import type { IPictureInfo } from "./IPictureInfo";
+import { IWorldDataset } from "../IWorldDataset";
 import type { IArmorInfo } from "./IArmorInfo";
-import type { IOpointInfo } from "./IOpointInfo";
-import type { ILegacyPictureInfo } from "./ILegacyPictureInfo";
 import type { IBotData } from "./IBotData";
 import type { IDrinkInfo } from "./IDrinkInfo";
 import type { IFramePictureInfo } from "./IFramePictureInfo";
-export interface IEntityInfo {
+import type { ILegacyPictureInfo } from "./ILegacyPictureInfo";
+import type { IOpointInfo } from "./IOpointInfo";
+import type { IPictureInfo } from "./IPictureInfo";
+
+export interface IEntityInfo extends Partial<IWorldDataset> {
   type?: number;
 
   /**
@@ -58,49 +60,6 @@ export interface IEntityInfo {
   defend_value?: number;
 
   resting?: number;
-
-  /**
-   * 默认血量
-   *
-   * - 默认值：
-   *    - 角色、武器、波：Defines.DAFUALT_HP
-   *
-   * 原版中，武器和波的hp是通过weapon_hp设置的
-   *
-   * @see Defines.DEFAULT_HP 默认值
-   * @type {?number}
-   */
-  hp?: number;
-
-  /**
-   * 默认蓝量
-   *
-   * - 默认值：
-   *    - 啤酒：154
-   *    - 牛奶：249，闯关模式下
-   *    - 角色、武器、波：Defines.DEFAULT_MP
-   *
-   * @see Defines.DEFAULT_MP 默认值
-   * @type {?number}
-   */
-  mp?: number;
-
-  /**
-   * 暗血恢复周期
-   * 每几帧回一次血
-   */
-  hp_r_ticks?: number;
-
-  /**
-   * 暗血恢复量
-   * 每次回血的回血量
-   */
-  hp_r_value?: number;
-
-  hp_healing_ticks?: number;
-  hp_healing_value?: number;
-  mp_r_ticks?: number;
-  mp_r_ratio?: number;
 
   /**
    * 是否为隐藏角色

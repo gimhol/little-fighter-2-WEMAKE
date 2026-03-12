@@ -201,17 +201,17 @@ export class WorldDataset implements IWorldDataset {
   fall_r_value: number = 1;
   defend_r_ticks: number = 1;
   defend_r_value: number = 1;
-  fall_value_max: number = Defines.DEFAULT_FALL_VALUE_MAX;
-  catch_time_max: number = Defines.DEFAULT_CATCH_TIME;
-  defend_value_max: number = Defines.DEFAULT_DEFEND_VALUE_MAX;
+  fall_value: number = 140;
+  catch_time_max: number = 680;
+  defend_value_max: number = 90;
   /**
    * 防御生效时，仍扣除多少比例的血
    *
    * @type {number}
    */
   defend_ratio: number = 0.1;
-  mp_max: number = Defines.DEFAULT_MP_MAX;
-  hp_max: number = Defines.DEFAULT_HP_MAX;
+  mp: number = 500;
+  hp: number = 500;
   resting_max: number = 40;
   vrest_after_shaking: number = 1;
   arest_after_motionless: number = 1;

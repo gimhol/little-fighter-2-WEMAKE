@@ -6,6 +6,9 @@ export class Times {
   max: number = 0;
   private _loop: number = -1;
 
+  get life(): number {
+    return this._loop
+  }
   constructor(_min: number = 0, _max: number = Number.MAX_SAFE_INTEGER) {
     this.min = min(floor(_min), floor(_max));
     this.max = max(floor(_min), floor(_max));
