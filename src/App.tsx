@@ -26,7 +26,7 @@ import EditorView from "./EditorView";
 import { GameOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
 import { LF2 } from "./LF2/LF2";
-import { CheatType } from "./LF2/defines";
+import { CheatType, CtrlDevice } from "./LF2/defines";
 import { CMD } from "./LF2/defines/CMD";
 import { Defines } from "./LF2/defines/defines";
 import { Ditto, IZip } from "./LF2/ditto";
@@ -291,19 +291,37 @@ function App() {
     })
     _set_bg_id(lf2.world.stage.bg.id);
     const on_touchstart = () => set_state(d => {
-
       d.touchpad_enabled = true;
       d.touchpad = d.touchpad || Array.from(lf2.players.keys())[0]
     })
     window.addEventListener("touchstart", on_touchstart);
     const del_lf2_callback = lf2.callbacks.add({
       controller_detected: ({ id }) => set_state(draft => {
-        if (draft.touchpad === id) draft.touchpad_enabled = false
+        if (draft.touchpad === id)
+          draft.touchpad_enabled = false
       }),
       keyboard_detected: ({ id }) => set_state(draft => {
-        if (draft.touchpad === id) draft.touchpad_enabled = false
+        if (draft.touchpad === id)
+          draft.touchpad_enabled = false
       }),
     })
+    for (const [id, player] of lf2.players) {
+      player.callbacks.add({
+        on_ctrl_changed(value, prev) {
+
+          set_state(draft => {
+            if (value === CtrlDevice.TouchScreen && draft.touchpad !== id) {
+              draft.touchpad_enabled = true
+              draft.touchpad = id
+            } else if (value !== CtrlDevice.TouchScreen && draft.touchpad === id) {
+              draft.touchpad_enabled = false
+              draft.touchpad = ''
+            }
+
+          })
+        },
+      })
+    }
     _set_is_fullscreen(!!fullscreen.target);
     _set_paused(lf2.world.paused);
     return () => {
