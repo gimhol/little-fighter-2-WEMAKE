@@ -26,7 +26,7 @@ export class WorldDataset implements IWorldDataset {
    * @type {number}
    * @memberof World
    */
-  fvx_f: number = 1;
+  fvx_f: number = 0.5;
 
   /**
    * dvy缩放系数
@@ -34,7 +34,7 @@ export class WorldDataset implements IWorldDataset {
    * @type {number}
    * @memberof World
    */
-  fvy_f: number = 1;
+  fvy_f: number = -0.5;
 
   /**
    * dvz缩放系数

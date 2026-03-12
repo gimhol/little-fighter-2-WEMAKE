@@ -171,7 +171,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       break;
     case FrameBehavior.JohnBiscuitLeaving:
       frame.facing = FF.VX;
-      frame.dvx = 15;
+      frame.dvx = 30;
       frame.acc_x = 2;
       frame.vxm = SpeedMode.AccTo;
       break;
@@ -346,14 +346,14 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       break;
     case FrameBehavior.JulianBall: {
       frame.facing = FF.VX;
-      frame.dvx = Defines.DENNIS_CHASE_MAX_VX;
-      frame.acc_x = Defines.DENNIS_CHASE_ACC_X;
+      frame.dvx = Defines.JULIAN_CHASE_MAX_VX;
+      frame.acc_x = Defines.JULIAN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
       frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.DENNIS_CHASE_ACC_Z;
+      frame.acc_z = Defines.JULIAN_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      frame.dvy = Defines.DENNIS_CHASE_MAX_VY;
-      frame.acc_y = Defines.DENNIS_CHASE_ACC_Y;
+      frame.dvy = Defines.JULIAN_CHASE_MAX_VY;
+      frame.acc_y = Defines.JULIAN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       const fid = Number(frame.id);

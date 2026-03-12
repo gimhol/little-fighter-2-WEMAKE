@@ -93,7 +93,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
           .hit('j', "210") // jump
           .hit('d', "110") // defend
           .hit('FF', "running_0")
-        frame.dvx = walking_speed / 2;
+        frame.dvx = walking_speed;
         frame.dvz = walking_speedz;
         frame.ctrl_z = 1;
         frame.ctrl_x = 1;
@@ -120,7 +120,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         }).hit('j', "213") // dash
           .hit('d', "102") // rowing
           .keydown('B', "218"); // running_stop
-        frame.dvx = Number((running_speed / 2).toFixed(1));
+        frame.dvx = running_speed;
         frame.dvz = running_speedz;
         frame.ctrl_z = 1;
         break;
@@ -130,7 +130,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         editing
           .hit('FF', 'heavy_obj_run_0')
           .hit('a', { id: "50", facing: FF.Ctrl })
-        frame.dvx = heavy_walking_speed / 2;
+        frame.dvx = heavy_walking_speed;
         frame.dvz = heavy_walking_speedz;
         frame.ctrl_x = frame.ctrl_z = 1;
         break;
@@ -140,7 +140,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         editing
           .hit('a', '50') // throw
           .keydown('B', '19') // running_stop
-        frame.dvx = Number((heavy_running_speed / 2).toFixed(1));
+        frame.dvx = heavy_running_speed;
         frame.dvz = heavy_running_speedz;
         frame.ctrl_z = 1;
         break;
@@ -404,7 +404,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
             .hit('j', ...hit_next_frame.jump())
             .hit('d', ...hit_next_frame.defend())
             .hit('FF', 'running_0')
-          frame.dvx = walking_speed / 2;
+          frame.dvx = walking_speed;
           frame.dvz = walking_speedz;
           frame.ctrl_x = frame.ctrl_z = 1;
           frame.wait = walking_frame_rate * 2 - 1;
@@ -438,7 +438,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
             .hit('j', "213") // dash
             .hit('d', "102") // rowing
             .keydown('B', '218') // running_stop
-          frame.dvx = Number((running_speed / 2).toFixed(1));
+          frame.dvx = running_speed;
           frame.dvz = running_speedz;
           frame.ctrl_z = 1;
           /* 

@@ -3,7 +3,6 @@ import {
   IBdyInfo,
   IBpointInfo,
   ICpointInfo,
-  IDatIndex,
   IFramePictureInfo,
   IItrInfo,
   IOpointInfo,
@@ -12,9 +11,9 @@ import {
   StateEnum
 } from "../defines";
 import { IDatContext } from "../defines/IDatContext";
-import { IEntityInfo } from "../defines/IEntityInfo";
 import { IFrameInfo } from "../defines/IFrameInfo";
 import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
+import { SpeedCtrl } from "../defines/SpeedCtrl";
 import { SpeedMode } from "../defines/SpeedMode";
 import { round_float } from "../utils";
 import { abs, floor } from "../utils/math/base";
@@ -164,58 +163,29 @@ export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
       }
     }
 
-    const dvx = take(frame, "dvx");
-    if (dvx === 550) {
-      frame.dvx = 0;
-      frame.vxm = SpeedMode.Fixed;
-      frame.ctrl_x = 0;
-    } else if (not_zero_num(dvx)) {
-      if (dvx >= 501 && dvx <= 549) {
-        frame.dvx = round_float((dvx - 550) * 0.5);
-        frame.vxm = SpeedMode.FixedLf2;
-      } else if (dvx >= 551) {
-        frame.dvx = round_float((dvx - 550) * 0.5);
-        frame.vxm = SpeedMode.FixedLf2;
-      } else {
-        frame.dvx = round_float(dvx * 0.5);
-      }
-    }
 
-    const dvy = take(frame, "dvy");
-    if (dvy === 550) {
-      frame.dvy = 0;
-      frame.vym = SpeedMode.Fixed;
-      frame.gravity_enabled = false;
-      frame.ctrl_y = 0;
-    } else if (not_zero_num(dvy)) {
-      if (dvy >= 501 && dvy <= 549) {
-        frame.dvy = round_float((dvy - 550) * -0.5);
-        frame.vym = SpeedMode.FixedLf2;
-      } else if (dvy >= 551) {
-        frame.dvy = round_float((dvy - 550) * -0.5);
-        frame.vym = SpeedMode.FixedLf2;
-      } else {
-        frame.dvy = round_float((dvy * -0.5))
-      }
-    }
 
-    const dvz = take(frame, "dvz");
-    if (dvz === 550) {
-      frame.dvz = 0;
-      frame.vzm = SpeedMode.Fixed;
-      frame.ctrl_z = 0;
-    } else if (not_zero_num(dvz)) {
-      if (dvz >= 501 && dvz <= 549) {
-        frame.dvz = (dvz - 550);
-        frame.vzm = SpeedMode.FixedLf2;
-      } else if (dvz >= 551) {
-        frame.dvz = (dvz - 550);
-        frame.vzm = SpeedMode.FixedLf2;
-      } else {
-        frame.dvz = dvz;
-      }
-      frame.ctrl_z = 1;
-    }
+
+    const vx = take(frame, "dvx");
+    const vy = take(frame, "dvy");
+    const vz = take(frame, "dvz");
+    const [vxm, dvx, ctrl_x] = cook_dvxyz(vx)
+    const [vym, dvy, ctrl_y] = cook_dvxyz(vy)
+    const [vzm, dvz, ctrl_z] = cook_dvxyz(vy)
+
+    if (vxm !== void 0) frame.vzm = vxm;
+    if (dvx !== void 0) frame.dvz = dvx;
+    if (ctrl_x !== void 0) frame.ctrl_z = ctrl_x;
+
+    if (vy === 550) frame.gravity_enabled = false;
+    if (vym !== void 0) frame.vym = vym;
+    if (dvy !== void 0) frame.dvy = dvy;
+    if (ctrl_y !== void 0) frame.ctrl_y = ctrl_y;
+
+    if (not_zero_num(vz)) frame.ctrl_z = 1;
+    if (vzm !== void 0) frame.vzm = vzm;
+    if (dvz !== void 0) frame.dvz = dvz;
+    if (ctrl_z !== void 0) frame.ctrl_z = ctrl_z;
 
     if (frame.itr) {
       for (const itr of frame.itr) {
@@ -232,3 +202,12 @@ export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
   return frames;
 }
 
+function cook_dvxyz(dvy: any): [SpeedMode?, number?, SpeedCtrl?] {
+  if (dvy === 550)
+    return [SpeedMode.Fixed, 0, SpeedCtrl.None] as const;
+  if (!not_zero_num(dvy))
+    return [void 0, void 0, void 0]
+  if (dvy >= 501 && dvy <= 549 || dvy >= 551)
+    return [SpeedMode.FixedLf2, round_float(dvy - 550)] as const;
+  return [void 0, round_float(dvy)] as const;
+}

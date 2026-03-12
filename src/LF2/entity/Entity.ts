@@ -801,7 +801,8 @@ export class Entity {
     if (is_num(opoint.max_mp)) this.mp = this.mp_max = opoint.max_mp;
     if (is_num(opoint.mp)) this.mp = opoint.mp;
 
-    const { dvy = 0, dvz = 0, dvx = 0, vxm, vym, vzm } = this.frame
+    const { dvy = 0, dvz = 0, dvx = 0 } = this
+    const { vxm, vym, vzm } = this.frame
     const z_disabled =
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
@@ -1076,7 +1077,8 @@ export class Entity {
   handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
     let { x, z } = this.velocities[0];
     if (factor != void 0) { x *= factor; z *= factor; }
-    let { dvx = 0, ctrl_x, dvz = 0, ctrl_z } = this.frame;
+    const { ctrl_x, ctrl_z } = this.frame;
+    let { dvx = 0, dvz = 0 } = this;
     const { UD, LR } = this.ctrl
     if (ctrl_x && !LR) dvx = 0;
     if (ctrl_z && !UD) dvz = 0;
@@ -1125,13 +1127,22 @@ export class Entity {
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
     this.velocities[0].y -= this.gravity;
   }
-
+  get dvx() {
+    const { dvx: v } = this.frame;
+    return v ? v * this.dataset('fvx_f') : v
+  }
+  get dvy() {
+    const { dvy: v } = this.frame;
+    return v ? v * this.dataset('fvy_f') : v
+  }
+  get dvz() {
+    const { dvz: v } = this.frame;
+    return v ? v * this.dataset('fvz_f') : v
+  }
   private update_velocity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    const { dvx, dvy, dvz } = this;
     const {
-      dvx,
-      dvy,
-      dvz,
       vxm = SpeedMode.LF2,
       vym = SpeedMode.AccTo,
       vzm = SpeedMode.LF2,
@@ -1146,22 +1157,22 @@ export class Entity {
     const { UD, LR, jd } = this._ctrl;
 
     if (dvx == void 0) { }
-    else if (!ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, this.facing);
-    else if (LR != 0 && SpeedCtrl.Control == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, LR);
-    else if (LR != 0 && SpeedCtrl.Enable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
-    else if (LR == 0 && SpeedCtrl.Disable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
+    else if (!ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, this.facing);
+    else if (LR != 0 && SpeedCtrl.Control == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, LR);
+    else if (LR != 0 && SpeedCtrl.Enable == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, 1);
+    else if (LR == 0 && SpeedCtrl.Disable == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, 1);
 
     if (dvy == void 0) { }
-    else if (!ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
-    else if (jd != 0 && SpeedCtrl.Control == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, jd);
-    else if (jd != 0 && SpeedCtrl.Enable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
-    else if (jd == 0 && SpeedCtrl.Disable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
+    else if (!ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, 1);
+    else if (jd != 0 && SpeedCtrl.Control == ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, jd);
+    else if (jd != 0 && SpeedCtrl.Enable == ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, 1);
+    else if (jd == 0 && SpeedCtrl.Disable == ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, 1);
 
     if (dvz == void 0) { }
-    else if (!ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
-    else if (UD != 0 && SpeedCtrl.Control == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
-    else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
-    else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
+    else if (!ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
+    else if (UD != 0 && SpeedCtrl.Control == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, UD);
+    else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
+    else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
 
     this.set_velocity_0(vx, vy, vz);
     if (vxm == SpeedMode.Extra && dvx) this.set_velocity_1_x(dvx)
