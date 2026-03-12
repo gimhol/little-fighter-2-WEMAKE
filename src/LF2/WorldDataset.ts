@@ -217,7 +217,7 @@ export class WorldDataset implements IWorldDataset {
   arest_after_motionless: number = 1;
   invisible_blinking: number = 120;
   jump_x_f: number = 0.5;
-  jump_z_f: number = 2;
+  jump_z_f: number = 1;
   jump_h_f: number = -0.5;
   dash_x_f: number = 0.5;
   dash_z_f: number = 1;
@@ -228,10 +228,12 @@ export class WorldDataset implements IWorldDataset {
   jump_height: number = -16.299999;
   jump_distance: number = 8;
   jump_distancez: number = 3;
-  dash_height: number = -11.000000;
+  dash_height: number = -11;
   dash_distance: number = 15;
-  dash_distancez: number = 3;
+  dash_distancez: number = 3.750000;
+  /** 默认受身速度Y */
   rowing_height: number = -2.000000;
+  /** 默认受身速度X */
   rowing_distance: number = 5;
 
   constructor() {

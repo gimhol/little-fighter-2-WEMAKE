@@ -68,12 +68,15 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.dvx = Defines.JOHN_CHASE_MAX_VX;
       frame.acc_x = Defines.JOHN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
+
       frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
       frame.acc_z = Defines.JOHN_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
+
       frame.dvy = Defines.JOHN_CHASE_MAX_VY;
       frame.acc_y = Defines.JOHN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
+      
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0.5 };
       break;
