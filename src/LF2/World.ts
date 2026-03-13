@@ -687,7 +687,7 @@ export class World extends WorldDataset {
     bdy: IBdyInfo,
   ): ICollision | undefined {
 
-    if (!itr.vrest && attacker.a_rest) return;
+    if (!itr.vrest && attacker.arest) return;
     if (itr.kind !== ItrKind.Heal) {
       const b_catcher = victim.catcher;
       if (victim.blinking || victim.invisible || victim.invulnerable) return;
@@ -725,7 +725,7 @@ export class World extends WorldDataset {
       victim.spawn_time === attacker.spawn_time
     ) return;
 
-    if (!itr.vrest && attacker.a_rest) return;
+    if (!itr.vrest && attacker.arest) return;
     if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
     const ax = attacker.position.x;
     const ay = attacker.position.y;

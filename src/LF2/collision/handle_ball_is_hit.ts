@@ -1,6 +1,5 @@
 import { ICollision } from "../base";
-import { Builtin_FrameId, BuiltIn_OID, Defines, EntityGroup, ItrKind, SparkEnum, StateEnum } from "../defines";
-import { Factory, turn_face } from "../entity";
+import { Defines, SparkEnum, StateEnum } from "../defines";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 

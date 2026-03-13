@@ -1,18 +1,18 @@
 import { BuiltIn_OID, FacingFlag, IFrameInfo, IItrInfo, ItrEffect, ItrKind, StateEnum } from "../defines";
+import { ActionType } from "../defines/ActionType";
 import { BdyKind } from "../defines/BdyKind";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { Defines } from "../defines/defines";
 import { EntityEnum } from "../defines/EntityEnum";
-import { is_num, is_positive, not_zero_num } from "../utils/type_check";
+import { HitFlag } from "../defines/HitFlag";
+import { ensure } from "../utils";
+import { is_num } from "../utils/type_check";
 import { CondMaker } from "./CondMaker";
+import { fixed_float } from "./fixed_float";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { take } from "./take";
 import { take_not_zero_num } from "./take_not_zero_num";
-import { HitFlag } from "../defines/HitFlag";
-import { ensure, max } from "../utils";
-import { fixed_float } from "./fixed_float";
 import { take_positive_num } from "./take_positive_num";
-import { ActionType } from "../defines/ActionType";
 
 export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
 
@@ -23,9 +23,9 @@ export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
   itr.arest = take_positive_num(itr, "arest", n => 2 * n)
 
   const src_dvx = itr.dvx
-  itr.dvx = take_not_zero_num(itr, "dvx", n => fixed_float(n * 0.5, 4));
-  itr.dvz = take_not_zero_num(itr, "dvz", n => fixed_float(n * 0.5, 4));
-  itr.dvy = take_not_zero_num(itr, "dvy", n => fixed_float(n * -0.5, 4));
+  itr.dvx = take_not_zero_num(itr, "dvx", n => fixed_float(n, 4));
+  itr.dvz = take_not_zero_num(itr, "dvz", n => fixed_float(n, 4));
+  itr.dvy = take_not_zero_num(itr, "dvy", n => fixed_float(n, 4));
   itr.fall = take_not_zero_num(itr, "fall", n => n * 2);
   itr.bdefend = take_not_zero_num(itr, "bdefend", n => n * 2);
 

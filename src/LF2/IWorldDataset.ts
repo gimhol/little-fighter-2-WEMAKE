@@ -9,13 +9,13 @@ export interface IWorldDataset {
 
   itr_arest: number;
 
-  /** dvx缩放系数 */
+  /** frame.dvx缩放系数 */
   fvx_f: number;
 
-  /** dvy缩放系数 */
+  /** frame.dvy缩放系数 */
   fvy_f: number;
 
-  /** dvz缩放系数 */
+  /** frame.dvz缩放系数 */
   fvz_f: number;
 
   ivy_f: number;
