@@ -2013,7 +2013,7 @@ export class Entity {
     if (flags.wait !== void 0) {
       this.wait = this.handle_wait_flag(flags.wait, frame);
     } else if (frame) {
-      this.wait = frame.wait + this.world.frame_wait_offset;
+      this.wait = frame.wait + this.world.wait_offset;
     }
     if (flags.sounds?.length) this.play_sound(flags.sounds);
 
@@ -2024,7 +2024,7 @@ export class Entity {
     if (is_positive(wait)) return wait;
     if (wait === "i" || !frame) return this.wait;
     if (wait === "d") return max(0, frame.wait - this.frame.wait + this.wait);
-    return frame.wait + this.world.frame_wait_offset;
+    return frame.wait + this.world.wait_offset;
   }
 
   /**

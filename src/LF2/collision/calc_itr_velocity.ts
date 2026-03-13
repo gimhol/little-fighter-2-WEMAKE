@@ -1,7 +1,7 @@
-import { ICollision } from "..";
-import { ItrEffect as IE, TFace, WeaponType as WT } from "../defines";
+import type { ICollision } from "../base/ICollision";
+import type { TFace } from "../defines";
+import { ItrEffect as IE } from "../defines/ItrEffect";
 import { is_fall } from "./is_fall";
-
 
 export function calc_itr_velocity(collision: ICollision): [number, number, number, TFace] {
   const { itr, attacker, victim } = collision;

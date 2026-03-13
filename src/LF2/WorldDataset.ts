@@ -99,7 +99,7 @@ export class WorldDataset implements IWorldDataset {
    * @type {number}
    * @memberof World
    */
-  frame_wait_offset: number = 0;
+  wait_offset: number = 0;
 
   cha_bc_spd: number = 2;
   cha_bc_tst_spd_x: number = 5;

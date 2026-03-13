@@ -18,8 +18,13 @@ export interface IWorldDataset {
   /** frame.dvz缩放系数 */
   fvz_f: number;
 
+  /** itr.dvx缩放系数 */
   ivy_f: number;
+
+  /** itr.dvy缩放系数 */
   ivz_f: number;
+
+  /** itr.dvz缩放系数 */
   ivx_f: number;
 
   /** 
@@ -76,7 +81,7 @@ export interface IWorldDataset {
    * @type {number}
    * @memberof IWorldDataset
    */
-  frame_wait_offset: number;
+  wait_offset: number;
 
   cha_bc_spd: number;
   /** 
@@ -242,7 +247,7 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   arest_offset: { title: "arest_offset", desc: "arest_offset", type: 'int' },
   min_arest: { title: "min_arest", desc: "min_arest", type: 'int' },
 
-  frame_wait_offset: { title: "frame_wait_offset", desc: "frame_wait_offset", type: 'int' },
+  wait_offset: { title: "wait_offset", desc: "wait_offset", type: 'int' },
   cha_bc_spd: { title: "cha_bc_spd", desc: "cha_bc_spd", type: 'float' },
   cha_bc_tst_spd_x: { title: "cha_bc_tst_spd_x", desc: "cha_bc_tst_spd_x", type: 'float' },
   cha_bc_tst_spd_y: { title: "cha_bc_tst_spd_y", desc: "cha_bc_tst_spd_y", type: 'float' },
