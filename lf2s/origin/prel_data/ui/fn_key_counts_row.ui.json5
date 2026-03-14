@@ -2,16 +2,17 @@
   name: "功能键统计",
   id: "fn_key_counts_row",
   color: "red",
+  size: "754,20",
   items: [
     {
       txt: {
         i18n: "HELLO",
         style: {
           fill_style: "white",
-          font: "9px Arial",
+          font: "16px Arial",
           back_style: {
-            font: "9px Arial",
-            stroke_style: "#005A8E",
+            font: "16px Arial",
+            stroke_style: "#000000",
             line_width: 2,
           },
         },
