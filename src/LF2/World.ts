@@ -57,7 +57,7 @@ export class World extends WorldDataset {
   readonly buffs = new Map<string, Buff>();
   private _game_time = new Times();
   private _ground = new Ground();
-
+  private _counts = new Map<string, number>()
   get game_time() { return this._game_time }
 
   readonly transform: Transform = new Transform()
@@ -446,10 +446,12 @@ export class World extends WorldDataset {
         case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
           if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F6, 1)
           this.infinity_mp = this.infinity_mp ? 0 : 1;
           continue;
         case CMD.F7:
           if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F7, 1)
           for (const e of this.entities) {
             if (!is_fighter(e)) continue;
             e.hp = e.hp_r = e.hp_max;
@@ -458,14 +460,17 @@ export class World extends WorldDataset {
           continue;
         case CMD.F8:
           if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F8, 1)
           this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
           continue;
         case CMD.F9:
           if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F9, 1)
           for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
           continue;
         case CMD.F10:
           if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F10, 1)
           this.stage.kill_all()
           continue;
         case CMD.KILL_ENEMIES:
@@ -881,6 +886,11 @@ export class World extends WorldDataset {
   get_ground(position: IVector3): number {
     const { x, y, z } = position;
     return this._ground.get_y(x, y, z)
+  }
+
+  add_count(key: string, o: number) {
+    const v = this._counts.get(key) || 0
+    this._counts.set(key, v + o)
   }
 
   clear() {
