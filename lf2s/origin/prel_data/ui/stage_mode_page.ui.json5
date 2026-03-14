@@ -5,6 +5,7 @@
   items: [
     "ui/center_pause_label.ui.json5",
     {
+      pos: "0, 10",
       template: "ui/fighter_stat_s_x8.ui.json5",
       component: ["HideWhenDialoging()"],
     },

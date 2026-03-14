@@ -1457,7 +1457,8 @@ export class Entity {
 
       if (itrs?.length && this.velocity.y < 0) for (const itr of itrs) {
         if (!itr.on_hit_ground) continue;
-        if ((this._position.y + this.frame.centery - itr.y - itr.h) > ground_y)
+        const { y = 0, h = 0 } = itr;
+        if ((this._position.y + this.frame.centery - y - h) > ground_y)
           continue;
         const result = this.get_next_frame(itr.on_hit_ground)
         if (result) this.enter_frame(result.which);

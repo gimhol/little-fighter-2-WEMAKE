@@ -79,8 +79,7 @@ export function cook_frame_indicator_info(frame: IFrameInfo) {
     const w = 2;
     const h = 2;
     const rect_1: IQube = {
-      w,
-      h,
+      w, h,
       x: f_qube_1.x + o.x - w / 2,
       y: f_qube_1.y + f_qube_1.h - o.y - h / 2,
       z: o.z || 0,
@@ -93,32 +92,28 @@ export function cook_frame_indicator_info(frame: IFrameInfo) {
     o.indicator_info = { 1: rect_1, [-1]: rect_2 };
   }
   bdy?.forEach((o) => {
+    const { x = 0, y = 0, w = 0, h = 0, z = 0, l = 0 } = o
     const rect_1: IQube = {
-      w: o.w,
-      h: o.h,
-      x: f_qube_1.x + o.x,
-      y: f_qube_1.y + f_qube_1.h - o.y - o.h,
-      z: o.z,
-      l: o.l,
+      w, h, z, l,
+      x: f_qube_1.x + x,
+      y: f_qube_1.y + f_qube_1.h - y - h,
     };
     const rect_2: IQube = {
       ...rect_1,
-      x: f_qube_2.x + f_qube_1.w - o.w - o.x,
+      x: f_qube_2.x + f_qube_1.w - w - x,
     };
     o.indicator_info = { 1: rect_1, [-1]: rect_2 };
   });
   itr?.forEach((o) => {
+    const { x = 0, y = 0, w = 0, h = 0, z = 0, l = 0 } = o
     const rect_1: IQube = {
-      w: o.w,
-      h: o.h,
-      x: f_qube_1.x + o.x,
-      y: f_qube_1.y + f_qube_1.h - o.y - o.h,
-      z: o.z,
-      l: o.l,
+      w, h, z, l,
+      x: f_qube_1.x + x,
+      y: f_qube_1.y + f_qube_1.h - y - h,
     };
     const rect_2: IQube = {
       ...rect_1,
-      x: f_qube_2.x + f_qube_1.w - o.w - o.x,
+      x: f_qube_2.x + f_qube_1.w - w - x,
     };
     o.indicator_info = { 1: rect_1, [-1]: rect_2 };
   });

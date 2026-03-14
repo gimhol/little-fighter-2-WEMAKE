@@ -42,8 +42,6 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         h: 34,
         injury: 100,
         hit_flag: HitFlag.AllyFighter,
-        l: 24,
-        z: -12,
         actions: [
           {
             type: ActionType.A_NextFrame,

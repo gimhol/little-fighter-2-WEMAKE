@@ -824,19 +824,24 @@ export class World extends WorldDataset {
     e.attach(false);
   }
   get_bounding(e: Entity, f: IFrameInfo, i: IItrInfo | IBdyInfo): IBounding {
+    const { 
+      x = 0, y = 0, w = 0, h = 0, 
+      l = Defines.DAFUALT_QUBE_LENGTH, 
+      z = -Defines.DAFUALT_QUBE_LENGTH / 2
+    } = i
     const left =
       e.facing > 0
-        ? e.position.x - f.centerx + i.x
-        : e.position.x + f.centerx - i.x - i.w;
-    const top = e.position.y + f.centery - i.y;
-    const far = e.position.z + i.z;
+        ? e.position.x - f.centerx + x
+        : e.position.x + f.centerx - x - w;
+    const top = e.position.y + f.centery - y;
+    const far = e.position.z + z;
     return {
       left: round(left),
-      right: round(left + i.w),
+      right: round(left + w),
       top: round(top),
-      bottom: round(top - i.h),
+      bottom: round(top - h),
       far: round(far),
-      near: round(far + i.l),
+      near: round(far + l),
     };
   }
 

@@ -6,7 +6,7 @@ import { Defines } from "../defines/defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { HitFlag } from "../defines/HitFlag";
 import { ensure } from "../utils";
-import { is_num } from "../utils/type_check";
+import { is_num, not_zero_num } from "../utils/type_check";
 import { CondMaker } from "./CondMaker";
 import { fixed_float } from "./fixed_float";
 import { get_next_frame_by_raw_id } from "./get_the_next";
@@ -29,9 +29,11 @@ export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
   itr.fall = take_not_zero_num(itr, "fall", n => n * 2);
   itr.bdefend = take_not_zero_num(itr, "bdefend", n => n * 2);
 
-  const zwidth = take_not_zero_num(itr, "zwidth") ?? (Defines.DAFUALT_QUBE_LENGTH / 2)
-  itr.l = 4 * zwidth;
-  itr.z = -2 * zwidth;
+  const zwidth = take_not_zero_num(itr, "zwidth")
+  if (not_zero_num(zwidth)) {
+    itr.l = 4 * zwidth;
+    itr.z = -2 * zwidth;
+  }
 
   const kind_name = (ItrKind as any)[itr.kind!];
   if (kind_name) itr.kind_name = `ItrKind.${kind_name}`;

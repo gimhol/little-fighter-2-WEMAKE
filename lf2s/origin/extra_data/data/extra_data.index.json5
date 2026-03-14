@@ -1,11 +1,4 @@
 {
-  objects: [
-    {
-      id: "rudolf_v2",
-      type: "0",
-      file: "data/rudolf_v2.obj.json5",
-    },
-  ],
   backgrounds: [
     {
       id: "bg_8",
