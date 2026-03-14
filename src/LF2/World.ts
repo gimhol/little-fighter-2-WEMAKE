@@ -884,8 +884,15 @@ export class World extends WorldDataset {
   }
 
   clear() {
+    this.set_fn_locked(0);
+    this.infinity_mp = 0;
+    this.playrate = 1;
     this.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
     this.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
     this.buffs.forEach(v => v.life.loop(v.life.max = v.life.min = 0))
+    this.lf2.change_bg(Defines.VOID_BG)
+    this.lf2.change_stage(Defines.VOID_STAGE)
+    this.transform.scale_to(1, 1, 1, false)
+    this.paused = false;
   }
 }

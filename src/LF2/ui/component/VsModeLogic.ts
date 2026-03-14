@@ -82,8 +82,6 @@ export class VsModeLogic extends UIComponent {
     }
   }
   override on_stop(): void {
-    this.lf2.change_bg(Defines.VOID_BG)
-    this.lf2.change_stage(Defines.VOID_STAGE)
     this.world.clear()
     for (const func of this.cancellers) func()
     this.cancellers.length = 0;

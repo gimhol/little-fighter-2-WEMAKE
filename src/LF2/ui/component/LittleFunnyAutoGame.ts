@@ -27,10 +27,6 @@ export class LittleFunnyAutoGame extends UIComponent {
 
   override on_pause(): void {
     super.on_pause?.();
-    this.world.transform.scale_to(1, 1, 1, false)
-    this.world.paused = false;
-    for (const f of this._fighters)
-      f.callbacks.del(this._fighter_cbs);
     this.world.clear();
   }
   

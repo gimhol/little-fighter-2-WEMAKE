@@ -161,8 +161,6 @@ export class StageModeLogic extends UIComponent {
     this.reset()
   }
   override on_stop(): void {
-    this.lf2.change_bg(Defines.VOID_BG)
-    this.lf2.change_stage(Defines.VOID_STAGE)
     this.world.clear()
   }
   override on_resume(): void {
