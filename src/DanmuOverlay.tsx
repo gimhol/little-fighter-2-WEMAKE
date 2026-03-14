@@ -7,6 +7,7 @@ import { IFighterSumInfo } from "./LF2/ui/component/IFighterSumInfo";
 import { UIComponent } from "./LF2/ui/component/UIComponent";
 import { Times } from "./LF2/utils/Times";
 import { floor } from "./LF2/utils";
+import { TeamEnum } from "./LF2";
 const n = (nn: number) => nn.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
 
 const t = (name: string, color: string = 'white') => {
@@ -62,6 +63,12 @@ export class DanmuOverlayLogic implements ILf2Callback {
     if (team_sum.length) {
       ele.innerHTML += '------------------------------【队伍】------------------------------\n'
       for (const sum of team_sum) {
+        if (
+          sum.team !== TeamEnum.Team_1 &&
+          sum.team !== TeamEnum.Team_2 &&
+          sum.team !== TeamEnum.Team_3 &&
+          sum.team !== TeamEnum.Team_4
+        ) continue;
         if (!sum.spawns) continue;
         ele.innerHTML += `${t('Team ' + sum.team, get_team_text_color(sum.team))} 🏆|😵|🎖️|☠️|🐣|💥 = ${sum.wins} | ${sum.loses} | ${sum.kills} | ${sum.deads} | ${sum.spawns} | ${sum.damages}\n`
       }
