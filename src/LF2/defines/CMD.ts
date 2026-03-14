@@ -2,6 +2,7 @@ import { CheatType } from "./CheatType";
 export enum CMD {
   F1 = 'f1',
   F2 = 'f2',
+  F3 = 'f3',
   F4 = 'f4',
   F5 = 'f5',
   F6 = 'f6',
@@ -28,6 +29,7 @@ export enum CMD {
 export const CMD_NAMES: Record<CMD, string> = {
   [CMD.F1]: "F1",
   [CMD.F2]: "F2",
+  [CMD.F3]: "F3",
   [CMD.F4]: "F4",
   [CMD.F5]: "F5",
   [CMD.F6]: "F6",

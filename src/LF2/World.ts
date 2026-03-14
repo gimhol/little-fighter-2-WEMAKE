@@ -439,17 +439,17 @@ export class World extends WorldDataset {
           const [cheat, state] = cmd.split('#')
           this.lf2.set_cheat(cheat, state !== void 0 ? state === '1' : void 0);
           continue;
-
         case CMD.F1: this.paused = !this.paused; continue;
         case CMD.F2: this.set_paused(2); continue;
+        case CMD.F3: this.set_fn_locked(1); continue;
         case CMD.F4: this.lf2.pop_ui_safe(); continue;
         case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
-          if (stage_limit()) continue;
+          if (this.fn_locked || stage_limit()) continue;
           this.infinity_mp = this.infinity_mp ? 0 : 1;
           continue;
         case CMD.F7:
-          if (stage_limit()) continue;
+          if (this.fn_locked || stage_limit()) continue;
           for (const e of this.entities) {
             if (!is_fighter(e)) continue;
             e.hp = e.hp_r = e.hp_max;
@@ -457,13 +457,16 @@ export class World extends WorldDataset {
           }
           continue;
         case CMD.F8:
-          if (!stage_limit()) this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+          if (this.fn_locked || stage_limit()) continue;
+          this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
           continue;
         case CMD.F9:
-          if (!stage_limit()) this.stage.kill_all()
+          if (this.fn_locked || stage_limit()) continue;
+          for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
           continue;
         case CMD.F10:
-          if (!stage_limit()) for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+          if (this.fn_locked || stage_limit()) continue;
+          this.stage.kill_all()
           continue;
         case CMD.KILL_ENEMIES:
           if (!stage_limit()) this.stage.kill_all()
@@ -480,7 +483,6 @@ export class World extends WorldDataset {
       }
     }
   }
-
   update_once() {
     this.transform.update()
     this.update_ui();
@@ -856,6 +858,15 @@ export class World extends WorldDataset {
     const changed = (!v) !== (!this._paused)
     this._paused = v;
     if (changed) this.callbacks.emit("on_pause_change")(!!v);
+  }
+
+  private _fn_locked: 0 | 1 = 0;
+  get fn_locked(): boolean { return this._fn_locked == 1; }
+  set fn_locked(v: boolean) { this.set_fn_locked(v ? 1 : 0); }
+  set_fn_locked(v: 0 | 1) {
+    if (this._fn_locked === v) return;
+    this._fn_locked = v;
+    this.callbacks.emit("on_fn_locked_change")(v);
   }
 
   dispose() {
