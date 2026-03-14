@@ -1,0 +1,5 @@
+{
+  name: "功能键统计",
+  id: "fn_key_counts_row",
+  component: [ "FnKeyCounts()"],
+}
