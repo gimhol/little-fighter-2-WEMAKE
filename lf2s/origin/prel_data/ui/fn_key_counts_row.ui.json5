@@ -1,5 +1,22 @@
 {
   name: "功能键统计",
   id: "fn_key_counts_row",
-  component: [ "FnKeyCounts()"],
+  color: "red",
+  items: [
+    {
+      txt: {
+        i18n: "HELLO",
+        style: {
+          fill_style: "white",
+          font: "9px Arial",
+          back_style: {
+            font: "9px Arial",
+            stroke_style: "#005A8E",
+            line_width: 2,
+          },
+        },
+      },
+      component: ["Text()"],
+    },
+  ],
 }
