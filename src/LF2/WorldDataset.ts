@@ -20,39 +20,18 @@ export class WorldDataset implements IWorldDataset {
    */
   itr_motionless: number = Defines.DEFAULT_ITR_MOTIONLESS;
 
-  /**
-   * dvx缩放系数
-   *
-   * @type {number}
-   * @memberof World
-   */
+
   fvx_f: number = 0.5;
-
-  /**
-   * dvy缩放系数
-   *
-   * @type {number}
-   * @memberof World
-   */
   fvy_f: number = -0.5;
-
-  /**
-   * dvz缩放系数
-   *
-   * @type {number}
-   * @memberof World
-   */
   fvz_f: number = 1;
 
-  /** 
-   * about freeze 
-   */
-  ivx_f: number = 1;
-  ivy_f: number = 1.18;
+  ivx_f: number = 0.5;
+  ivy_f: number = -0.59;
   ivz_f: number = 1;
 
   ivy_d: number = 3.8;
-  ivx_d: number = 4;
+  ivx_d: number = 0;
+
   cvy_d: number = 3;
   cvx_d: number = 2;
 
@@ -120,7 +99,7 @@ export class WorldDataset implements IWorldDataset {
    * @type {number}
    * @memberof World
    */
-  frame_wait_offset: number = 0;
+  wait_offset: number = 0;
 
   cha_bc_spd: number = 2;
   cha_bc_tst_spd_x: number = 5;

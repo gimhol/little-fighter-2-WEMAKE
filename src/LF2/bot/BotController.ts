@@ -256,7 +256,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
         if (itr.vrest) just_a_rest = false
       }
       if (!has_atk_itr_kind) return 0;
-      if (just_a_rest && e.a_rest) return 0;
+      if (just_a_rest && e.arest) return 0;
     }
     return 1;
   }

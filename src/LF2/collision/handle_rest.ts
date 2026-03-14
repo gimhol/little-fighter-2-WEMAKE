@@ -10,6 +10,6 @@ export function handle_rest(collision: ICollision): void {
     attacker.victims.set(collision.victim.id, collision)
   } else  {
     const arest = (itr.arest || world.itr_arest)
-    attacker.a_rest = max(world.min_arest, arest + world.arest_offset)
+    attacker.arest = max(world.min_arest, arest + world.arest_offset)
   } 
 }

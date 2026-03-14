@@ -268,7 +268,7 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   gone_blink_time: ++order,
   vrest_offset: ++order,
   arest_offset: ++order,
-  frame_wait_offset: ++order,
+  wait_offset: ++order,
   cha_bc_spd: ++order,
   cha_bc_tst_spd_x: ++order,
   cha_bc_tst_spd_y: ++order,

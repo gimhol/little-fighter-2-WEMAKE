@@ -75,7 +75,7 @@ export class Entity {
    * @type {IVector3[]}
    */
   private readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
-  readonly v_rests = new Map<string, ICollision>();
+  readonly vrests = new Map<string, ICollision>();
   readonly blockers = new Map<string, ICollision>();
   readonly superpunchs = new Map<string, ICollision>();
 
@@ -149,9 +149,7 @@ export class Entity {
   protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
   protected _emitter_opoint!: IOpointInfo | null;
-
-  /** 当前角色 */
-  public a_rest!: number;
+  protected _arest!: number;
   public motionless!: number;
   public shaking!: number;
 
@@ -291,7 +289,7 @@ export class Entity {
   set fall_value(v: number) {
     const o = this._fall_value;
     if (o === v) return;
-    this._fall_value = v;
+    this._fall_value = round_float(v);
     if (v < o) {
       this.resting = this.resting_max;
       this.toughness_resting = this.toughness_resting_max;
@@ -341,7 +339,7 @@ export class Entity {
   set defend_value(v: number) {
     const o = this._defend_value;
     if (o === v) return;
-    this._defend_value = v;
+    this._defend_value = round_float(v);
     if (v < o) {
       this.resting = this.resting_max;
       this.toughness_resting = this.toughness_resting_max;
@@ -606,15 +604,19 @@ export class Entity {
   get chasing(): Entity | null { return this._chasing; }
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
-
   get gravity(): number {
     return this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity
   }
-
+  get arest(): number {
+    return this._arest;
+  }
+  set arest(v: number) {
+    if (v == this._arest) return;
+    this._arest = round_float(v);
+  }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }
-
   reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
     this._data = d;
     this.world = world;
@@ -667,9 +669,9 @@ export class Entity {
     this._holding = null;
     this._emitters.length = 0;
     this._emitter_opoint = null;
+    this._arest = 0;
     this.next_frame = null;
-    this.a_rest = 0;
-    this.v_rests.clear()
+    this.vrests.clear()
     this.blockers.clear()
     this.superpunchs.clear()
     this.victims.clear()
@@ -1029,7 +1031,7 @@ export class Entity {
     entity.key_role = false;
     entity.dead_gone = true;
     /* Note: 继承v_rests，避免重复反弹ball... */
-    for (const [, v] of this.v_rests) entity.add_v_rest({ ...v })
+    for (const [, v] of this.vrests) entity.add_v_rest({ ...v })
     return entity;
   }
 
@@ -1335,7 +1337,7 @@ export class Entity {
     if (this.frame.hp) this.hp -= this.frame.hp;
 
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
-      for (const [k, v] of this.v_rests) {
+      for (const [k, v] of this.vrests) {
         if (v.rest > 0) --v.rest;
         else this.del_v_rest(k)
       }
@@ -1343,7 +1345,7 @@ export class Entity {
       if (v.rest) this.victims.delete(k)
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0)
-      this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
+      this.arest > 0 ? this.arest-- : (this.arest = 0);
 
     if (this._invisible_duration > 0) {
       this._invisible_duration--;
@@ -1999,7 +2001,7 @@ export class Entity {
 
     this.next_frame = null;
     if (flags.id === Builtin_FrameId.Auto) {
-      this.a_rest = 0;
+      this.arest = 0;
       for (const [_, v] of this.victims)
         v.rest = 0;
       this.victims.clear()
@@ -2011,7 +2013,7 @@ export class Entity {
     if (flags.wait !== void 0) {
       this.wait = this.handle_wait_flag(flags.wait, frame);
     } else if (frame) {
-      this.wait = frame.wait + this.world.frame_wait_offset;
+      this.wait = frame.wait + this.world.wait_offset;
     }
     if (flags.sounds?.length) this.play_sound(flags.sounds);
 
@@ -2022,7 +2024,7 @@ export class Entity {
     if (is_positive(wait)) return wait;
     if (wait === "i" || !frame) return this.wait;
     if (wait === "d") return max(0, frame.wait - this.frame.wait + this.wait);
-    return frame.wait + this.world.frame_wait_offset;
+    return frame.wait + this.world.wait_offset;
   }
 
   /**
@@ -2301,15 +2303,15 @@ export class Entity {
   }
 
   get_v_rest(a_id: string): number {
-    return this.v_rests.get(a_id)?.rest || 0;
+    return this.vrests.get(a_id)?.rest || 0;
   }
   add_v_rest(c: ICollision) {
-    this.v_rests.set(c.a_id, c);
+    this.vrests.set(c.a_id, c);
     if (c.itr.kind === ItrKind.Block) this.blockers.set(c.a_id, c);
     if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.a_id, c);
   }
   del_v_rest(a_id: string) {
-    this.v_rests.delete(a_id);
+    this.vrests.delete(a_id);
     this.blockers.delete(a_id);
     this.superpunchs.delete(a_id);
   }
@@ -2319,15 +2321,6 @@ export class Entity {
       (this.data.base as Partial<IWorldDataset>)[name] ??
       this.world[name]
     )
-  }
-
-  itr_dvxyz(itr: Readonly<IItrInfo>): [number, number, number] {
-    const { dvx = 0, dvy = this.dataset('ivy_d'), dvz = 0 } = itr
-    return [
-      dvx * this.dataset('ivx_f'),
-      dvy * this.dataset('ivy_f'),
-      dvz * this.dataset('ivz_f'),
-    ]
   }
 }
 
