@@ -9,7 +9,7 @@ export class LittleFunnyAutoGame extends UIComponent {
   private _lr: number = 0;
   private _fighters = new Set<Entity>()
   private _fighter_cbs: IEntityCallbacks = {
-    on_disposed: (e) => {
+    on_dead: (e) => {
       e.callbacks.del(this._fighter_cbs);
       this._fighters.delete(e);
       this.add_fighter()
