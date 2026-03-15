@@ -6,10 +6,10 @@ import { UIComponent } from "./UIComponent";
 export type TFlexDirection = 'row' | 'column'
 export type TFlexAlign = 'start' | 'center' | 'end' | 'stretch'
 
-export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks> extends UIComponent<Callbacks> {
+export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks> extends UIComponent<{}, Callbacks> {
   static override readonly TAG: string = 'Flex';
-  get direction(): TFlexDirection { 
-    return this.props_holder.str('direction', ['row', 'column']) ?? 'row' 
+  get direction(): TFlexDirection {
+    return this.props_holder.str('direction', ['row', 'column']) ?? 'row'
   }
   get gap(): number { return this.props_holder.num('gap') ?? 0; }
   get row_gap(): number { return this.props_holder.num('row_gap') ?? this.gap; }

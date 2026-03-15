@@ -12,7 +12,7 @@ export interface IOpacityFlashProps {
 }
 export class OpacityFlash extends UIComponent implements IPlayable {
   static override readonly TAG: string = "OpacityFlash";
-  static PROPS: ISchema<IOpacityFlashProps> = make_schema({
+  static override readonly PROPS: ISchema<IOpacityFlashProps> = make_schema({
     key: "IOpacityFlashProps",
     type: 'object',
     properties: {
