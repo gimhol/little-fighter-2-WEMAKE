@@ -17,7 +17,7 @@ export class UIProps {
 
   })
   constructor(raw: { [x in string]?: any }, owner: UIComponent<unknown, any>) {
-    this.raw = raw;
+    this.raw = { ...raw };
     this.owner = owner;
   }
   num(name: string): number | null {

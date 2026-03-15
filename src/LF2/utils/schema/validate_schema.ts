@@ -60,6 +60,9 @@ export class SchemaValidator {
               })
               return true;
             }
+
+            if (Array.isArray(prop_value)) value[i] = [...prop_value];
+            else if (prop_value && typeof prop_type === 'object') value[i] = { ...prop_value };
             if (!this.validate(prop_value, schema.items, errors)) {
               return false;
             }
@@ -81,6 +84,8 @@ export class SchemaValidator {
             })
             continue;
           }
+          if (Array.isArray(prop_value)) value[k] = [...prop_value];
+          else if (prop_value && typeof prop_type === 'object') value[k] = { ...prop_value };
           if (!this.validate(prop_value, prop_schema, errors)) {
             return false
           }
