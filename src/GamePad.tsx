@@ -103,9 +103,9 @@ export default function GamePad(props: IGamePadProps) {
       for (const [key, prev] of pressings_0) {
         if (prev == !!pressings_1.get(key)) continue;
         if (prev) {
-          kb.key_down(player.keys[key], 'touch')
-        } else {
           kb.key_up(player.keys[key], 'touch')
+        } else {
+          kb.key_down(player.keys[key], 'touch')
         }
         if (pad_text.innerText.length > 10)
           pad_text.innerText = pad_text.innerText.substring(3);
