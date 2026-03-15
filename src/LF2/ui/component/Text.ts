@@ -9,11 +9,4 @@ export class Text extends UIComponent {
   set text(v: string) { this._txt_loader.set_text([v]) }
   get style(): IStyle { return this.node.txts.value.at(0)?.style ?? {} }
   set style(v: IStyle) { this._txt_loader.set_style(v) }
-
-
-  override on_resume(): void {
-    this.text = "HELLO WORLD"
-    this.style = { ...this.style, fill_style: 'white' }
-  }
 }
-

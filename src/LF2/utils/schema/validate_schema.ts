@@ -50,6 +50,15 @@ export function validate_schema<T>(value: any, schema: ISchema<T>, errors: strin
     case "null":
     case "boolean":
     case "object":
+      return false;
+    default: {
+      if (typeof schema.type === 'function') {
+        if (typeof value !== 'string') {
+          errors.push(`'${schema.path}' must be a id, but got ${value}`);
+          return false;
+        }
+      }
+    }
   }
   if (schema.oneof?.some(v => v === value) === false)
     errors.push(`'${schema.path}' should be one of the options: ${JSON.stringify(schema.oneof)}, but got ${value}`);

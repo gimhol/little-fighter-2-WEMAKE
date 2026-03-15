@@ -3,21 +3,122 @@
   id: "fn_key_counts_row",
   color: "red",
   size: "754,20",
+  values: {
+    txt_style: {
+      fill_style: "white",
+      font: "12px Arial",
+      back_style: {
+        font: "12px Arial",
+        stroke_style: "#000000",
+        line_width: 2,
+      },
+    },
+  },
+  component: [
+    {
+      name: "Flex",
+    }, {
+      name: "FnKeysCounts",
+      properties: {
+        f6: true,
+        f7: true,
+        f8: true,
+        f9: true,
+        f10: true,
+      }
+    }
+  ],
   items: [
     {
+
+      visible: false,
       txt: {
-        i18n: "HELLO",
-        style: {
-          fill_style: "white",
-          font: "16px Arial",
-          back_style: {
-            font: "16px Arial",
-            stroke_style: "#000000",
-            line_width: 2,
-          },
-        },
+        i18n: "Fn Keys Locked",
+        style: "$val:txt_style",
       },
-      component: ["Text()"],
+      component: [ "Text()" ],
     },
+    {
+      component: [
+        {
+          name: "Flex"
+        }
+      ],
+      items: [ {
+          txt: {
+            i18n: "Fn Keys Useds, F6: ",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          id: "f6",
+          txt: {
+            i18n: "0",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          txt: {
+            i18n: " ,F7: ",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          id: "f7",
+          txt: {
+            i18n: "0",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          txt: {
+            i18n: " ,F8: ",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          id: "f8",
+          txt: {
+            i18n: "0",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          txt: {
+            i18n: " ,F9: ",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          id: "f9",
+          txt: {
+            i18n: "0",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          txt: {
+            i18n: " ,F10: ",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        },
+        {
+          id: "f10",
+          txt: {
+            i18n: "0",
+            style: "$val:txt_style",
+          },
+          component: [ "Text()" ],
+        }, ]
+    }
   ],
 }

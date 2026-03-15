@@ -12,6 +12,9 @@
       template: "ui/fighter_stat_s_x8.ui.json5"
     },
     {
+      template: "ui/fn_key_counts_row.ui.json5"
+    },
+    {
       pos: "0,0,5",
       visible: false,
       template: "ui/player_keys_hints.ui.json5",
