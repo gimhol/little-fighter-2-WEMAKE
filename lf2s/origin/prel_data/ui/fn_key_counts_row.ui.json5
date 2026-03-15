@@ -1,7 +1,6 @@
 {
   name: "功能键统计",
   id: "fn_key_counts_row",
-  color: "red",
   size: "754,20",
   values: {
     txt_style: {
@@ -32,6 +31,7 @@
   items: [
     {
       visible: false,
+      id: "fn_key_locked",
       txt: {
         i18n: "Fn Keys Locked",
         style: "$val:txt_style",
@@ -39,6 +39,8 @@
       component: ["Text()"],
     },
     {
+      visible: false,
+      id: "fn_key_counts",
       component: [
         {
           name: "Flex",
@@ -88,7 +90,7 @@
             i18n: "0",
             style: "$val:txt_style",
           },
-          component: ["Text()"],
+          component: [{ id: "f8", name: "Text" }],
         },
         {
           txt: {

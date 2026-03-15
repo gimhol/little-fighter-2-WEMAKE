@@ -58,6 +58,7 @@ export class World extends WorldDataset {
   private _game_time = new Times();
   private _ground = new Ground();
   private _counts = new Map<string, number>()
+  get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time }
 
   readonly transform: Transform = new Transform()
@@ -824,9 +825,9 @@ export class World extends WorldDataset {
     e.attach(false);
   }
   get_bounding(e: Entity, f: IFrameInfo, i: IItrInfo | IBdyInfo): IBounding {
-    const { 
-      x = 0, y = 0, w = 0, h = 0, 
-      l = Defines.DAFUALT_QUBE_LENGTH, 
+    const {
+      x = 0, y = 0, w = 0, h = 0,
+      l = Defines.DAFUALT_QUBE_LENGTH,
       z = -Defines.DAFUALT_QUBE_LENGTH / 2
     } = i
     const left =
@@ -896,7 +897,8 @@ export class World extends WorldDataset {
 
   add_count(key: string, o: number) {
     const v = this._counts.get(key) || 0
-    this._counts.set(key, v + o)
+    this._counts.set(key, v + o);
+    this.callbacks.emit('on_counts')();
   }
 
   clear() {
