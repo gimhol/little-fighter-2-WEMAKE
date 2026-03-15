@@ -1,14 +1,22 @@
-import { validate_schema } from "@/LF2/utils/schema/validate_schema";
+import { SchemaValidator } from "@/LF2/utils/schema/validate_schema";
 import type { ISchema } from "../../defines/ISchema";
 import { is_num, is_str } from "../../utils";
 import read_nums from "../utils/read_nums";
 import type { UIComponent } from "./UIComponent";
-
+import { isUIComponentClass } from "./isUIComponentClass";
 export interface IUIPropsCallback { }
 export class UIProps {
   readonly raw: { [x in string]?: any };
-  readonly owner: UIComponent;
-  constructor(raw: { [x in string]?: any }, owner: UIComponent<any>) {
+  readonly owner: UIComponent<unknown, any>;
+  readonly validator = new SchemaValidator().instance_getter((value, clazz) => {
+    if (isUIComponentClass(clazz)) {
+      return this.owner.node.root.search_component(clazz, v => v.id === value)
+    }
+    return null
+  }).instance_setter((value, clazz) => {
+
+  })
+  constructor(raw: { [x in string]?: any }, owner: UIComponent<unknown, any>) {
     this.raw = raw;
     this.owner = owner;
   }
@@ -73,7 +81,7 @@ export class UIProps {
   validate<P>(Cls: { TAG: string, PROPS: ISchema<P> }): P {
     const { TAG, PROPS } = Cls
     const errors: string[] = [];
-    validate_schema(this.raw, PROPS, errors)
+    this.validator.validate(this.raw, PROPS, errors)
     if (!errors.length) return this.raw as P;
     throw new Error(`[${TAG}] props.error:` + errors.join('\n'))
   }

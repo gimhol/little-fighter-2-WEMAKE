@@ -38,17 +38,17 @@ export class CharMenuLogic extends UIComponent {
   protected _randoming?: Randoming<IEntityData>;
   com_num: number = 0;
 
-  get max_player(): number { return this.props.num('max_player') ?? 8 }
-  set max_player(v: number) { this.props.set_num('max_player', v) }
+  get max_player(): number { return this.props_holder.num('max_player') ?? 8 }
+  set max_player(v: number) { this.props_holder.set_num('max_player', v) }
 
-  get min_player(): number { return this.props.num('min_player') ?? 8 }
-  set min_player(v: number) { this.props.set_num('min_player', v) }
+  get min_player(): number { return this.props_holder.num('min_player') ?? 8 }
+  set min_player(v: number) { this.props_holder.set_num('min_player', v) }
 
   get max_coms(): number { return Math.max(0, this.max_player - this.players.size) }
   get min_coms(): number { return Math.max(0, this.min_player - this.players.size) }
 
-  get teams(): string[] { return this.props.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
-  set teams(v: string[]) { this.props.set_strs("teams", v) }
+  get teams(): string[] { return this.props_holder.strs("teams") ?? Defines.Teams.map(v => v.toString()) }
+  set teams(v: string[]) { this.props_holder.set_strs("teams", v) }
 
   get fighters(): readonly IEntityData[] {
     const cheat_0 = this.lf2.is_cheat(CheatType.LF2_NET);

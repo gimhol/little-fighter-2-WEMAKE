@@ -1,7 +1,7 @@
 import { ISchema } from "@/LF2/defines";
-import { UIComponent } from "./UIComponent";
 import { make_schema } from "@/LF2/utils/schema";
 import { Text } from "./Text";
+import { UIComponent } from "./UIComponent";
 
 export interface IFnKeysCountsProps {
   f6?: Text;
@@ -10,9 +10,9 @@ export interface IFnKeysCountsProps {
   f9?: Text;
   f10?: Text;
 }
-export class FnKeysCounts extends UIComponent {
+export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
   static override readonly TAG: string = 'FnKeysCounts';
-  static PROPS: ISchema<IFnKeysCountsProps> = make_schema({
+  static override PROPS: ISchema<IFnKeysCountsProps> = make_schema({
     key: "IFnKeysCountsProps",
     type: "object",
     properties: {
@@ -44,7 +44,7 @@ export class FnKeysCounts extends UIComponent {
     }
   })
   override on_resume(): void {
-    const props = this.props.validate(FnKeysCounts);
-    console.log(props)
+    const { props } = this
+    console.log(props.f6)
   }
 }

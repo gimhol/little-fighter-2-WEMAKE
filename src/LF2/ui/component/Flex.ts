@@ -9,16 +9,16 @@ export type TFlexAlign = 'start' | 'center' | 'end' | 'stretch'
 export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks> extends UIComponent<Callbacks> {
   static override readonly TAG: string = 'Flex';
   get direction(): TFlexDirection { 
-    return this.props.str('direction', ['row', 'column']) ?? 'row' 
+    return this.props_holder.str('direction', ['row', 'column']) ?? 'row' 
   }
-  get gap(): number { return this.props.num('gap') ?? 0; }
-  get row_gap(): number { return this.props.num('row_gap') ?? this.gap; }
-  get col_gap(): number { return this.props.num('col_gap') ?? this.gap; }
-  get align(): TFlexAlign { return this.props.str('align', ['start', 'center', 'end', 'stretch']) ?? 'start' }
-  get fit(): boolean { return !!this.props.bool('fit') }
-  get fit_w(): boolean { return this.props.bool('fit_w') ?? this.fit }
-  get fit_h(): boolean { return this.props.bool('fit_h') ?? this.fit }
-  get padding(): [number, number, number, number] { return this.props.nums('padding', 4) }
+  get gap(): number { return this.props_holder.num('gap') ?? 0; }
+  get row_gap(): number { return this.props_holder.num('row_gap') ?? this.gap; }
+  get col_gap(): number { return this.props_holder.num('col_gap') ?? this.gap; }
+  get align(): TFlexAlign { return this.props_holder.str('align', ['start', 'center', 'end', 'stretch']) ?? 'start' }
+  get fit(): boolean { return !!this.props_holder.bool('fit') }
+  get fit_w(): boolean { return this.props_holder.bool('fit_w') ?? this.fit }
+  get fit_h(): boolean { return this.props_holder.bool('fit_h') ?? this.fit }
+  get padding(): [number, number, number, number] { return this.props_holder.nums('padding', 4) }
 
   override update(dt: number): void {
     const {

@@ -5,8 +5,8 @@ export class PlayerNameInput extends TextInput {
   static override readonly TAG: string = 'PlayerNameInput';
   protected player: PlayerInfo | undefined;
   get player_id() { return this.node.get_value("player_id", true) }
-  override get maxLength() { return this.props.num('maxLength') ?? 10; }
-  override get defaultValue() { return this.props.str('defaultValue'); }
+  override get maxLength() { return this.props_holder.num('maxLength') ?? 10; }
+  override get defaultValue() { return this.props_holder.str('defaultValue'); }
   override on_resume(): void {
     this.text = this.player?.name ?? ''
   }

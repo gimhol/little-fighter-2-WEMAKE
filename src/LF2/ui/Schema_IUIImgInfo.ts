@@ -5,7 +5,7 @@ export const Schema_IUIImgInfo = make_schema<IUIImgInfo>({
   key: "IUIImgInfo",
   type: "object",
   properties: {
-    nine_patch: { type: 'object' },
+    nine_patch: { type: 'object', nullable: true },
     path: { type: 'string', string: { not_blank: true } },
     x: { type: 'number', number: { int: true, nagetive: false }, nullable: true },
     y: { type: 'number', number: { int: true, nagetive: false }, nullable: true },

@@ -1,3 +1,5 @@
+import { ISchema } from "@/LF2/defines";
+import { make_schema } from "@/LF2/utils/schema/make_schema";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";
@@ -8,21 +10,31 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import type { UINode } from "../UINode";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIProps } from "./UIProps";
-
 /**
  * 组件
  * 
  * @export
  * @class Component
  */
-export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks> implements IDebugging {
+export class UIComponent<
+  P extends unknown = unknown,
+  C extends IUICompnentCallbacks = IUICompnentCallbacks
+> implements IDebugging {
   static readonly TAG: string = "UIComponent"
+  static readonly PROPS: ISchema = make_schema({
+    key: "UIComponentProps",
+    type: "object",
+  })
   readonly node: UINode;
   readonly f_name: string;
-  readonly callbacks = new Callbacks<Callbacks>()
+  readonly callbacks = new Callbacks<C>()
   readonly info: Required<IComponentInfo>;
-  readonly props: UIProps
-
+  readonly props_holder: UIProps;
+  protected _props: any;
+  get props(): P {
+    if (this._props) return this._props;
+    return this._props = this.props_holder.validate(this.constructor as any)
+  }
   __debugging?: boolean | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   debug(func: string, ...args: any[]): void { }
@@ -58,7 +70,7 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
-    this.props = new UIProps(info.properties, this)
+    this.props_holder = new UIProps(info.properties, this)
     this._args = args;
     make_debugging(this);
   }
