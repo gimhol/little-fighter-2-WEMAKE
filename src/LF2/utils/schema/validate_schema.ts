@@ -49,8 +49,16 @@ export function validate_schema<T>(value: any, schema: ISchema<T>, errors: strin
       break;
     case "null":
     case "boolean":
-    case "object":
       return false;
+    case "object":
+      if (typeof value !== 'object') return false;
+      for (const k in schema.properties) {
+        const prop_schema: ISchema<any> = schema.properties[k as keyof T];
+        const prop_value = value[k]
+        if (!validate_schema(prop_value, prop_schema, errors))
+          return false
+      }
+      return true;
     default: {
       if (typeof schema.type === 'function') {
         if (typeof value !== 'string') {

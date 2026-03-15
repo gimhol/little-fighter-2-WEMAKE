@@ -2,11 +2,16 @@ import { validate_schema } from "@/LF2/utils/schema/validate_schema";
 import type { ISchema } from "../../defines/ISchema";
 import { is_num, is_str } from "../../utils";
 import read_nums from "../utils/read_nums";
+import type { UIComponent } from "./UIComponent";
 
 export interface IUIPropsCallback { }
 export class UIProps {
   readonly raw: { [x in string]?: any };
-  constructor(raw: { [x in string]?: any }) { this.raw = raw; }
+  readonly owner: UIComponent;
+  constructor(raw: { [x in string]?: any }, owner: UIComponent<any>) {
+    this.raw = raw;
+    this.owner = owner;
+  }
   num(name: string): number | null {
     if (!(name in this.raw)) return null;
     const v = this.raw[name];
@@ -62,7 +67,9 @@ export class UIProps {
   nums(name: string, len: number, fallbacks?: number[]): number[] {
     return read_nums(this.raw[name], len, fallbacks);
   }
-
+  component() {
+    return this.owner.node.search_component
+  }
   validate<P>(Cls: { TAG: string, PROPS: ISchema<P> }): P {
     const { TAG, PROPS } = Cls
     const errors: string[] = [];

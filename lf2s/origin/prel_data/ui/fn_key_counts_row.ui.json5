@@ -61,7 +61,7 @@
         },
         {
           txt: {
-            i18n: " ,F7: ",
+            i18n: " F7: ",
             style: "$val:txt_style",
           },
           component: [ "Text()" ],
@@ -76,7 +76,7 @@
         },
         {
           txt: {
-            i18n: " ,F8: ",
+            i18n: " F8: ",
             style: "$val:txt_style",
           },
           component: [ "Text()" ],
@@ -91,7 +91,7 @@
         },
         {
           txt: {
-            i18n: " ,F9: ",
+            i18n: " F9: ",
             style: "$val:txt_style",
           },
           component: [ "Text()" ],
@@ -106,7 +106,7 @@
         },
         {
           txt: {
-            i18n: " ,F10: ",
+            i18n: " F10: ",
             style: "$val:txt_style",
           },
           component: [ "Text()" ],

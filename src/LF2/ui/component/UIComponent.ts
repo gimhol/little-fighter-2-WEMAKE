@@ -58,7 +58,7 @@ export class UIComponent<Callbacks extends IUICompnentCallbacks = IUICompnentCal
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
-    this.props = new UIProps(info.properties)
+    this.props = new UIProps(info.properties, this)
     this._args = args;
     make_debugging(this);
   }
