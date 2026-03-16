@@ -12,6 +12,7 @@ import { traversal } from "../utils/container_help/traversal";
 import { to_num } from "../utils/type_cast/to_num";
 import { CondMaker } from "./CondMaker";
 import { cook_ball_frame_state_3000 } from "./cook_ball_frame_state_3000";
+import { cook_ball_frame_state_3001_4 } from "./cook_ball_frame_state_3001_4";
 import { cook_ball_frame_state_3005 } from "./cook_ball_frame_state_3005";
 import { cook_ball_frame_state_3006 } from "./cook_ball_frame_state_3006";
 import { get_next_frame_by_raw_id } from "./get_the_next";
@@ -93,7 +94,7 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
       case StateEnum.Ball_Flying:
         return cook_ball_frame_state_3000(ret, frame);
       case StateEnum.Ball_Hitting:
-        return cook_ball_frame_state_3000(ret, frame);
+        return cook_ball_frame_state_3001_4(ret, frame);
       case StateEnum.Ball_3005:
         return cook_ball_frame_state_3005(ret, frame);
       case StateEnum.Ball_3006:

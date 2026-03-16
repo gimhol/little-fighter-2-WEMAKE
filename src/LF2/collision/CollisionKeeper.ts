@@ -5,7 +5,7 @@ import { is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
 import { handle_ball_frozen } from "./handle_ball_frozen";
 import { handle_ball_hit_other } from "./handle_ball_hit_other";
-import { handle_ball_is_hit } from "./handle_ball_is_hit";
+import { handle_ball_is_hit_a, handle_ball_is_hit_b } from "./handle_ball_is_hit";
 import { handle_body_goto as handle_criminal_hit } from "./handle_body_goto";
 import { handle_healing } from "./handle_healing";
 import { handle_itr_kind_catch } from "./handle_itr_kind_catch";
@@ -114,7 +114,9 @@ export class CollisionKeeper {
     const bdy_tests = bdy.actions?.map(v => v.pretest && v.tester?.run(collision) !== false)
 
     handlers?.forEach(fn => {
-      ball_hit = ball_hit || fn === handle_ball_is_hit;
+      ball_hit = ball_hit ||
+        fn === handle_ball_is_hit_a ||
+        fn === handle_ball_is_hit_b;
       return fn(collision)
     })
 
@@ -287,11 +289,18 @@ collisions_keeper.add(
 )
 
 collisions_keeper.add(
-  ALL_ENTITY_ENUM,
+  [EntityEnum.Fighter],
   [ItrKind.Normal, ItrKind.WeaponSwing, ItrKind.CharacterThrew],
   [EntityEnum.Ball],
   [BdyKind.Normal],
-  handle_ball_is_hit
+  handle_ball_is_hit_a
+)
+collisions_keeper.add(
+  [EntityEnum.Weapon],
+  [ItrKind.WeaponSwing],
+  [EntityEnum.Ball],
+  [BdyKind.Normal],
+  handle_ball_is_hit_a
 )
 collisions_keeper.add(
   ALL_ENTITY_ENUM,
