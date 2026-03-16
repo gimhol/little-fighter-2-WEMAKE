@@ -120,9 +120,11 @@ export class World extends WorldDataset {
     return this.bg.middle || { x: 0, z: 0 };
   }
 
-  cam_speed = 0;
-  lock_cam_x: number | undefined = void 0;
+  private _cam_speed = 0;
+  private _lock_cam_x: number | undefined = void 0;
   public renderer: IWorldRenderer;
+
+  get lock_cam_x() { return this._lock_cam_x }
 
   team_come(_team: string, x: number, y: number, z: number) {
     for (const e of this.entities) {
@@ -486,6 +488,21 @@ export class World extends WorldDataset {
         case CMD.KILL_OTHERS:
           if (!stage_limit()) this.stage.kill_others()
           continue;
+        case CMD.LOCK_CAM: {
+          const value = cmds[i += 1]
+          if (value === '') {
+            this._lock_cam_x = void 0;
+            continue;
+          }
+          const x = Number(value);
+          if (Number.isNaN(x)) {
+            Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
+            continue;
+          }
+          
+          this._lock_cam_x = x
+          continue
+        }
       }
     }
   }
@@ -593,13 +610,13 @@ export class World extends WorldDataset {
     }
 
     const { cam_l, left, cam_r, right } = this.stage;
-    const max_cam_left = is_num(this.lock_cam_x) ? left : cam_l;
-    const max_cam_right = is_num(this.lock_cam_x) ? right : cam_r;
+    const max_cam_left = is_num(this._lock_cam_x) ? left : cam_l;
+    const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
     let new_x = this.renderer.cam_x;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    if (is_num(this.lock_cam_x)) {
-      new_x = this.lock_cam_x;
+    if (is_num(this._lock_cam_x)) {
+      new_x = this._lock_cam_x;
     } else if (this.puppets.size) {
       let l = 0;
       new_x = 0;
@@ -636,16 +653,16 @@ export class World extends WorldDataset {
     const max_speed = max_speed_ratio * acc;
 
     if (cur_x > new_x) {
-      if (this.cam_speed > 0) this.cam_speed = 0;
-      else if (this.cam_speed > -max_speed) this.cam_speed -= acc;
-      else this.cam_speed = -max_speed;
-      this.renderer.cam_x += this.cam_speed;
+      if (this._cam_speed > 0) this._cam_speed = 0;
+      else if (this._cam_speed > -max_speed) this._cam_speed -= acc;
+      else this._cam_speed = -max_speed;
+      this.renderer.cam_x += this._cam_speed;
       if (this.renderer.cam_x < new_x) this.renderer.cam_x = new_x;
     } else if (cur_x < new_x) {
-      if (this.cam_speed < 0) this.cam_speed = 0;
-      else if (this.cam_speed < max_speed) this.cam_speed += acc;
-      else this.cam_speed = max_speed;
-      this.renderer.cam_x += this.cam_speed;
+      if (this._cam_speed < 0) this._cam_speed = 0;
+      else if (this._cam_speed < max_speed) this._cam_speed += acc;
+      else this._cam_speed = max_speed;
+      this.renderer.cam_x += this._cam_speed;
       if (this.renderer.cam_x > new_x) this.renderer.cam_x = new_x;
     }
 
@@ -912,5 +929,6 @@ export class World extends WorldDataset {
     this.lf2.change_stage(Defines.VOID_STAGE)
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
+    this._lock_cam_x = void 0;
   }
 }
