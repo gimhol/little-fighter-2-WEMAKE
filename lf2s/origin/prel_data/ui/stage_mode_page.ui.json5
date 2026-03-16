@@ -9,6 +9,10 @@
       template: "ui/fighter_stat_s_x8.ui.json5",
       component: ["HideWhenDialoging()"],
     },
+    {
+      pos: "0, 20",
+      template: "ui/fn_key_counts_row.ui.json5"
+    },
     "ui/gogogo.ui.json5",
     "ui/gogogo_loop.ui.json5",
     {
