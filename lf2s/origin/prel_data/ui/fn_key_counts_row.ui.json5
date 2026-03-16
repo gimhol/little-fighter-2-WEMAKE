@@ -9,7 +9,7 @@
       back_style: {
         font: "12px Arial",
         stroke_style: "#000000",
-        line_width: 2,
+        line_width: 1,
       },
     },
   },
