@@ -303,6 +303,13 @@ collisions_keeper.add(
   handle_ball_is_hit_a
 )
 collisions_keeper.add(
+  [EntityEnum.Weapon, EntityEnum.Ball],
+  [ItrKind.Normal],
+  [EntityEnum.Ball],
+  [BdyKind.Normal],
+  handle_ball_is_hit_b
+)
+collisions_keeper.add(
   ALL_ENTITY_ENUM,
   [ItrKind.JohnShield],
   [EntityEnum.Ball],
