@@ -12,7 +12,7 @@ export interface IOpacityFlashProps {
 }
 export class OpacityFlash extends UIComponent implements IPlayable {
   static override readonly TAG: string = "OpacityFlash";
-  static PROPS: ISchema<IOpacityFlashProps> = make_schema({
+  static override readonly PROPS: ISchema<IOpacityFlashProps> = make_schema({
     key: "IOpacityFlashProps",
     type: 'object',
     properties: {
@@ -43,7 +43,7 @@ export class OpacityFlash extends UIComponent implements IPlayable {
         0, 350, 1, 100, 1, 350, 0, 350, 1, 100,
         1, 350, 0, 350, 1, 100, 1, 350, 0
       ]
-    } = this.props.validate(OpacityFlash);
+    } = this.props_holder.validate(OpacityFlash);
 
     const anims: Animation[] = [];
     for (let i = 1; i < steps.length; i += 2) {

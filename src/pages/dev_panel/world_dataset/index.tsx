@@ -57,7 +57,7 @@ export function WorldDataset(props: IWorldDatasetProps) {
   }
   return (
     <div className={csses.world_dataset}>
-      {world_dataset_field_map.values()?.map((v) => {
+      {Array.from(world_dataset_field_map.values()).map((v) => {
         const { title, desc = title, type, key, step } = v;
         return (
           <Titled float_label={title} title={desc} key={v.key}>

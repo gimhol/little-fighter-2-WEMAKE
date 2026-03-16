@@ -19,7 +19,7 @@ export function make_fighter_data_julian(data: IEntityData) {
     antifreeze: 1,
     hit_sounds: ["data/002.wav.mp3"],
     type: ArmorEnum.Defend,
-    toughness: Defines.DEFAULT_DEFEND_VALUE_MAX,
+    toughness: 90,
   };
   for (const k in data.frames) {
     data.frames[k].opoint?.forEach((opoint) => {

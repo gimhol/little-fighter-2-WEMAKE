@@ -11,7 +11,7 @@ export interface IComponentsPlayerProps {
 export class ComponentsPlayer extends UIComponent implements IPlayable {
   readonly __is_playable__ = true;
   static override readonly TAG: string = 'ComponentsPlayer';
-  static PROPS: ISchema<IComponentsPlayerProps> = make_schema({
+  static override readonly PROPS: ISchema<IComponentsPlayerProps> = make_schema({
     key: "IComponentsPlayerProps",
     type: "object",
     properties: {
@@ -35,7 +35,7 @@ export class ComponentsPlayer extends UIComponent implements IPlayable {
   })
   protected components: ((UIComponent & IPlayable) | null)[] = [];
   override on_start(): void {
-    const { components, local, recursive } = this.props.validate(ComponentsPlayer);
+    const { components, local, recursive } = this.props_holder.validate(ComponentsPlayer);
     const search_node = local ? this.node : this.node.root;
     if (components?.length) {
       for (let i = 0; i < components.length; i++)

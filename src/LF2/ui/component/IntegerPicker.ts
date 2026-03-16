@@ -12,7 +12,7 @@ export interface IIntegerPickerCallbacks extends IUICompnentCallbacks {
   on_max_changed?(curr: number, prev: number, self: IntegerPicker): void
   on_val_changed?(curr: number, prev: number, self: IntegerPicker): void
 }
-export class IntegerPicker extends UIComponent<IIntegerPickerCallbacks> {
+export class IntegerPicker extends UIComponent<{}, IIntegerPickerCallbacks> {
   static override readonly TAG: string = 'IntegerPicker';
   protected _min: number = MIN;
   protected _max: number = MAX;
@@ -29,13 +29,13 @@ export class IntegerPicker extends UIComponent<IIntegerPickerCallbacks> {
   set max(v: number) { this.set_max(v) }
 
   override init(): void {
-    const v1 = this.props.num('min') ?? MIN;
-    const v2 = this.props.num('max') ?? MAX;
-    const v3 = this.props.num('val')
+    const v1 = this.props_holder.num('min') ?? MIN;
+    const v2 = this.props_holder.num('max') ?? MAX;
+    const v3 = this.props_holder.num('val')
     this.set_min(min(v1, v2));
     this.set_max(max(v1, v2));
     this.set_val(v3 ?? this.min);
-    (this.props.strs('triggers') ?? ['click']).forEach(v => this._triggers.add(v))
+    (this.props_holder.strs('triggers') ?? ['click']).forEach(v => this._triggers.add(v))
   }
   override on_click(e: IUIPointerEvent): void {
     if (!this._triggers.has('click')) return

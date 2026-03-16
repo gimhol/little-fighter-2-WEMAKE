@@ -7,7 +7,6 @@ import {
   FacingFlag as FF,
   FrameBehavior,
   HitFlag,
-  IDatIndex,
   IFrameInfo,
   ItrKind,
   OpointKind, OpointMultiEnum, OpointSpreading,
@@ -19,16 +18,10 @@ import { CondMaker } from "./CondMaker";
 import { firzen_disater_start } from "./firzen_disater_start";
 import { jan_chase_start } from "./jan_chase_start";
 import { jan_chaseh_start } from "./jan_chaseh_start";
-import { take } from "./take";
 
 const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
-export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
-  const hit_Fa = take(frame, "hit_Fa");
-  if (hit_Fa) {
-    frame.behavior = hit_Fa;
-    (frame as any).behavior_name = `FrameBehavior.` + FrameBehavior[hit_Fa];
-  }
-  switch (hit_Fa as FrameBehavior) {
+export function make_frame_behavior(frame: IFrameInfo, oid: string) {
+  switch (frame.behavior as FrameBehavior) {
     case FrameBehavior.AngelBlessing:
       frame.facing = FF.VX;
       frame.dvx = Defines.ANGEL_BLESSING_MAX_VX;
@@ -49,8 +42,6 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
         h: 34,
         injury: 100,
         hit_flag: HitFlag.AllyFighter,
-        l: 24,
-        z: -12,
         actions: [
           {
             type: ActionType.A_NextFrame,
@@ -68,14 +59,17 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.dvx = Defines.JOHN_CHASE_MAX_VX;
       frame.acc_x = Defines.JOHN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
+
       frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
       frame.acc_z = Defines.JOHN_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
+
       frame.dvy = Defines.JOHN_CHASE_MAX_VY;
       frame.acc_y = Defines.JOHN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
+      
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0.5 };
+      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0 };
       break;
     case FrameBehavior.DennisChase: {
       frame.facing = FF.VX;
@@ -137,7 +131,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_z = 1;
       frame.itr?.forEach(itr => {
-        switch (datIndex.id) {
+        switch (oid) {
           case BuiltIn_OID.FirzenChasef:
           case BuiltIn_OID.FirzenChasei:
             itr.on_hit_ground = { id: "60" };
@@ -171,7 +165,7 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       break;
     case FrameBehavior.JohnBiscuitLeaving:
       frame.facing = FF.VX;
-      frame.dvx = 15;
+      frame.dvx = 30;
       frame.acc_x = 2;
       frame.vxm = SpeedMode.AccTo;
       break;
@@ -346,14 +340,14 @@ export function make_frame_behavior(frame: IFrameInfo, datIndex: IDatIndex) {
       break;
     case FrameBehavior.JulianBall: {
       frame.facing = FF.VX;
-      frame.dvx = Defines.DENNIS_CHASE_MAX_VX;
-      frame.acc_x = Defines.DENNIS_CHASE_ACC_X;
+      frame.dvx = Defines.JULIAN_CHASE_MAX_VX;
+      frame.acc_x = Defines.JULIAN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
       frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.DENNIS_CHASE_ACC_Z;
+      frame.acc_z = Defines.JULIAN_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      frame.dvy = Defines.DENNIS_CHASE_MAX_VY;
-      frame.acc_y = Defines.DENNIS_CHASE_ACC_Y;
+      frame.dvy = Defines.JULIAN_CHASE_MAX_VY;
+      frame.acc_y = Defines.JULIAN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       const fid = Number(frame.id);

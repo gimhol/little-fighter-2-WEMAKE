@@ -10,7 +10,7 @@ import type { ItrKind } from "./ItrKind";
 
 export type DEFAULT_ITR_MOTIONLESS = typeof Defines.DEFAULT_ITR_MOTIONLESS
 
-export interface IItrInfo extends IQube {
+export interface IItrInfo extends Partial<IQube> {
   /**
    * 预制信息id
    *
@@ -52,7 +52,6 @@ export interface IItrInfo extends IQube {
 
   /** just for reading */
   kind_name?: string;
-
   dvx?: number;
   dvy?: number;
   dvz?: number;

@@ -1,17 +1,15 @@
 import { new_team } from "@/LF2/base";
 import { Defines, type IEntityData } from "@/LF2/defines";
-import { Entity, Factory, IEntityCallbacks } from "@/LF2/entity";
+import { Factory, IEntityCallbacks } from "@/LF2/entity";
 import { UIComponent } from "./UIComponent";
 
 export class LittleFunnyAutoGame extends UIComponent {
   static override TAG: string = 'LittleFunnyAutoGame'
   private _datas: IEntityData[] = [];
   private _lr: number = 0;
-  private _fighters = new Set<Entity>()
   private _fighter_cbs: IEntityCallbacks = {
-    on_disposed: (e) => {
+    on_dead: (e) => {
       e.callbacks.del(this._fighter_cbs);
-      this._fighters.delete(e);
       this.add_fighter()
     },
   }
@@ -25,6 +23,11 @@ export class LittleFunnyAutoGame extends UIComponent {
     this.add_fighter();
   }
 
+  override on_pause(): void {
+    super.on_pause?.();
+    this.world.clear();
+  }
+  
   add_fighter() {
     if (!this._datas.length)
       this._datas.push(...this.lf2.datas.fighters)
@@ -36,7 +39,6 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.team = new_team();
     fighter.set_position_x(this._lr * this.world.bg.width)
     fighter.facing = this._lr ? -1 : 1;
-    this._fighters.add(fighter)
     fighter.callbacks.add(this._fighter_cbs)
     fighter.hp = fighter.hp_r = fighter.hp_max = 150;
     fighter.has_stat_bar = true;
@@ -45,16 +47,5 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.attach()
     fighter.enter_frame({ id: "running_0" })
     this._lr = (this._lr + 1) % 2
-  }
-  override on_pause(): void {
-    super.on_pause?.();
-    this.world.transform.scale_to(1, 1, 1, false)
-    this.world.paused = false;
-    for (const f of this._fighters)
-      f.callbacks.del(this._fighter_cbs);
-    for (const f of this.world.entities)
-      this.world.del_entity(f);
-    for (const f of this.world.ghosts)
-      this.world.del_entity(f);
   }
 }

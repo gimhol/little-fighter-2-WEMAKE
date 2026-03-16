@@ -1,3 +1,5 @@
+import { BdyKind, Defines, HitFlag, IBdyInfo } from "@/LF2/defines";
+import { floor } from "@/LF2/utils";
 import { useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
 import { Flex } from "../../Component/Flex";
@@ -6,12 +8,9 @@ import { Input } from "../../Component/Input";
 import Select from "../../Component/Select";
 import { TextArea } from "../../Component/TextArea";
 import Titled, { ITitledProps } from "../../Component/Titled";
-import { BdyKind, Defines, HitFlag, IBdyInfo } from "@/LF2/defines";
-import { floor } from "@/LF2/utils";
 import { BDY_KIND_SELECT_PROPS } from "../EntityEditorView";
 import { HitFlagEditor } from "./HitFlagEditor";
 import { make_field_props } from "./make_field_props";
-import { QubeEdit } from "./QubeEdit";
 
 const titled_styles: ITitledProps['styles'] = {
   label: {
@@ -53,10 +52,10 @@ export function BdyEditor(props: IBdyEditorViewProps) {
           <HitFlagEditor {...make_field_props(props, default_value, 'hit_flag')} />
         </Titled>
         <Titled label='包围盒' styles={titled_styles}>
-          <QubeEdit
+          {/* <QubeEdit
             value={value}
             defaultValue={defaultValue}
-            onChange={v => onChange?.({ ...defaultValue, ...value, ...v })} />
+            onChange={v => onChange?.({ ...defaultValue, ...value, ...v })} /> */}
         </Titled>
         <Titled label='条件' styles={titled_styles}>
           <TextArea

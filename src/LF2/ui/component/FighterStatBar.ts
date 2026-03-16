@@ -89,13 +89,13 @@ export class FighterStatBar extends UIComponent {
   }
   override on_start(): void {
     super.on_start?.();
-    this.dark_hp_bar = this.node.find_child(this.props.str('dark_hp_bar')!)
-    this.hp_bar = this.node.find_child(this.props.str('hp_bar')!)
-    this.dark_mp_bar = this.node.find_child(this.props.str('dark_mp_bar')!)
-    this.mp_bar = this.node.find_child(this.props.str('mp_bar')!)
-    this.fall_value_bar = this.node.find_child(this.props.str('fall_value_bar')!)
-    this.defend_value_bar = this.node.find_child(this.props.str('defend_value_bar')!)
-    this.toughness_bar = this.node.find_child(this.props.str('toughness_bar')!)
+    this.dark_hp_bar = this.node.find_child(this.props_holder.str('dark_hp_bar')!)
+    this.hp_bar = this.node.find_child(this.props_holder.str('hp_bar')!)
+    this.dark_mp_bar = this.node.find_child(this.props_holder.str('dark_mp_bar')!)
+    this.mp_bar = this.node.find_child(this.props_holder.str('mp_bar')!)
+    this.fall_value_bar = this.node.find_child(this.props_holder.str('fall_value_bar')!)
+    this.defend_value_bar = this.node.find_child(this.props_holder.str('defend_value_bar')!)
+    this.toughness_bar = this.node.find_child(this.props_holder.str('toughness_bar')!)
 
     if (this.dark_hp_bar) this.dark_hp_bar_w = this.dark_hp_bar.size.value[0]
     if (this.hp_bar) this.hp_bar_w = this.hp_bar.size.value[0]
@@ -104,7 +104,7 @@ export class FighterStatBar extends UIComponent {
     if (this.fall_value_bar) this.fall_value_bar_w = this.fall_value_bar.size.value[0]
     if (this.defend_value_bar) this.defend_value_bar_w = this.defend_value_bar.size.value[0]
     if (this.toughness_bar) this.toughness_bar_w = this.toughness_bar.size.value[0]
-    this.direction = this.props.str('direction') ?? ''
+    this.direction = this.props_holder.str('direction') ?? ''
   }
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
     const node = this.defend_value_bar;

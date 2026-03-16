@@ -140,4 +140,5 @@ export interface IOpointInfo {
   interval_id?: string;
   interval_mode?: 1 | 0;
   indicator_info?: IQubePair;
+  motionless?: number;
 }

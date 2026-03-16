@@ -16,12 +16,12 @@ export class Jalousie extends Flex<IJalousieCallbacks> {
     new Easing(1, 1).set_duration(250),
   )
   get anim(): Animation { return this._anim }
-  get click_test(): boolean { return this.props.bool('click_test') === true; }
+  get click_test(): boolean { return this.props_holder.bool('click_test') === true; }
 
   override on_start() {
     super.on_start?.();
-    const open = this.props.bool('open') ?? this.bool(1);
-    const end = this.props.bool('end') ?? this.bool(2);
+    const open = this.props_holder.bool('open') ?? this.bool(1);
+    const end = this.props_holder.bool('end') ?? this.bool(2);
     if (end) this._anim.end(open)
     else this._anim.start(open)
   }

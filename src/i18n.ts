@@ -99,7 +99,7 @@ const en = {
   "custom_game_load_file_err_1": 'content of "index.json" should be a string array with a length more than 2',
   "custom_game_load_file_err_2": '$1 not found',
   "custom_game_load_file_err_3": 'datas not ',
-  "download_origin_full_zip_here": "Download origin \"Game Data Zip File\""
+  "download_origin_full_zip_here": "Download origin \"Game Data Zip File\"",
 }
 const resources = {
   "zh": { translation: zh_hans },

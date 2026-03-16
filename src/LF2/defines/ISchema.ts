@@ -1,8 +1,11 @@
+export interface IClazz<C = unknown> {
+  new(...args: any): C
+}
 export interface ISchema<T = any> {
   path?: string;
   key?: string;
   description?: string;
-  type: 'array' | 'boolean' | 'null' | 'number' | 'integer' | 'object' | 'string',
+  type: 'array' | 'boolean' | 'null' | 'number' | 'integer' | 'object' | 'string' | IClazz,
   properties?: Record<keyof T, ISchema>
   items?: ISchema;
   string?: {

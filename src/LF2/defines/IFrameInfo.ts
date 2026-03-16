@@ -1,6 +1,5 @@
 import { IWorldDataset } from "../IWorldDataset";
 import { ChaseLost } from "./ChaseLost";
-import { SpeedCtrl } from "./SpeedCtrl";
 import { FacingFlag } from "./FacingFlag";
 import { FrameBehavior } from "./FrameBehavior";
 import { HitFlag } from "./HitFlag";
@@ -15,6 +14,7 @@ import type { TNextFrame } from "./INextFrame";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IQubePair } from "./IQubePair";
 import type { IWpointInfo } from "./IWpointInfo";
+import { SpeedCtrl } from "./SpeedCtrl";
 import type { SpeedMode } from "./SpeedMode";
 import type { StateEnum } from "./StateEnum";
 
@@ -260,12 +260,15 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   tvx_f: ++order,
   tvy_f: ++order,
   tvz_f: ++order,
+  wvx_f: ++order,
+  wvy_f: ++order,
+  wvz_f: ++order,
   begin_blink_time: ++order,
   lying_blink_time: ++order,
   gone_blink_time: ++order,
   vrest_offset: ++order,
   arest_offset: ++order,
-  frame_wait_offset: ++order,
+  wait_offset: ++order,
   cha_bc_spd: ++order,
   cha_bc_tst_spd_x: ++order,
   cha_bc_tst_spd_y: ++order,
@@ -290,12 +293,11 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   fall_r_value: ++order,
   defend_r_ticks: ++order,
   defend_r_value: ++order,
-  fall_value_max: ++order,
+  fall_value: ++order,
   catch_time_max: ++order,
   defend_value_max: ++order,
   defend_ratio: ++order,
-  mp_max: ++order,
-  hp_max: ++order,
+  mp: ++order,
   resting_max: ++order,
   min_vrest: ++order,
   min_arest: ++order,
@@ -310,4 +312,14 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   dash_z_f: ++order,
   dash_h_f: ++order,
   landable: ++order,
+  bfall_x_f: ++order,
+  bfall_h_f: ++order,
+  jump_height: ++order,
+  jump_distance: ++order,
+  jump_distancez: ++order,
+  dash_height: ++order,
+  dash_distance: ++order,
+  dash_distancez: ++order,
+  rowing_height: ++order,
+  rowing_distance: ++order,
 }

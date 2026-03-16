@@ -5,21 +5,35 @@ import { UIComponent } from "./UIComponent";
 export class PlayerCtrlType extends UIComponent {
   static override readonly TAG: string = 'PlayerCtrlType';
   get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
-  get player_info() { return this.lf2.players.get(this.player_id)! }
+  get player() { return this.lf2.players.get(this.player_id)! }
   override on_resume(): void {
     super.on_resume();
-    this.player_info.callbacks.add(this)
-    this.on_ctrl_changed()
+    this.player.callbacks.add(this)
+    this.node.img_idx.value = this.player.ctrl;
+  }
+  override on_pause(): void {
+    this.player.callbacks.del(this)
   }
   override on_click(e: IUIPointerEvent) {
     this.node.focused = true;
     e.stop_immediate_propagation();
-    this.node.next_img();
-    const ctrl: CtrlDevice = (this.node.img_idx.value % 5) as CtrlDevice
-    this.player_info.set_ctrl(ctrl, true).save()
+    const ctrl: CtrlDevice = (
+      e.button === 2 ?
+        (this.player.ctrl + 5) % 6 :
+        (this.player.ctrl + 1) % 6
+    ) as CtrlDevice;
+    const { player: player } = this;
+    if (ctrl === CtrlDevice.TouchScreen) {
+      for (const [, p] of this.lf2.players) {
+        if (p === this.player)
+          continue;
+        p.set_ctrl(CtrlDevice.Keyboard, true).save()
+      }
+    }
+    this.player.set_ctrl(ctrl, true).save()
   }
-  on_ctrl_changed() {
-    this.node.img_idx.value = this.player_info.ctrl % this.node.imgs.value.length;
+  on_ctrl_changed(curr: CtrlDevice) {
+    this.node.img_idx.value = curr;
   }
 }
 

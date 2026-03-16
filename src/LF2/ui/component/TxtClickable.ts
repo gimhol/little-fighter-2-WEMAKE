@@ -31,11 +31,11 @@ export class TxtClickable extends UIComponent {
   };
   override on_start(): void {
     super.on_start?.();
-    this.hover_idx = this.props.num("hover_idx") ?? this.hover_idx;
-    this.normal_idx = this.props.num("normal_idx") ?? this.normal_idx;
-    this.press_idx = this.props.num("press_idx") ?? this.press_idx;
-    this.listening = this.find_node(this.props.str("listening"));
-    this.responser = this.find_node(this.props.str("responser"));
+    this.hover_idx = this.props_holder.num("hover_idx") ?? this.hover_idx;
+    this.normal_idx = this.props_holder.num("normal_idx") ?? this.normal_idx;
+    this.press_idx = this.props_holder.num("press_idx") ?? this.press_idx;
+    this.listening = this.find_node(this.props_holder.str("listening"));
+    this.responser = this.find_node(this.props_holder.str("responser"));
     this.listening?.callbacks.add(this.ui_callbacks);
   }
   override on_stop(): void {

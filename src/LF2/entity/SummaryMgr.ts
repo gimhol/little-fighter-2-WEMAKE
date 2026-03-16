@@ -1,4 +1,7 @@
+import { is_independent } from "../defines/TeamEnum";
+import { Entity } from "./Entity";
 import { Summary } from "./Summary";
+import { is_fighter } from "./type_check";
 
 export class SummaryMgr {
   protected _graves: Summary[] = [];
@@ -24,6 +27,21 @@ export class SummaryMgr {
     if (ret) ret.reset(id);
     else ret = new Summary(id);
     return ret;
+  }
+  add_damage_sum(a: Entity, value: number) {
+    this.get(a.id).damage_sum += value;
+    if (is_independent(a.team)) this.get(a.team).damage_sum += value;
+  }
+  add_kill_sum(a: Entity, value: number = 1) {
+    this.get(a.id).kill_sum += value;
+    if (is_independent(a.team)) this.get(a.team).kill_sum += value;
+  }
+  apply_damage(a: Entity, injury: number, v: Entity, prev_hp: number) {
+    this.add_damage_sum(a, injury);
+    
+    // 分身击杀则不计算
+    if (is_fighter(v) && !v.emitters.length && v.hp <= 0 && prev_hp > 0)
+      summary_mgr.add_kill_sum(a)
   }
 }
 export const summary_mgr: SummaryMgr = new SummaryMgr();

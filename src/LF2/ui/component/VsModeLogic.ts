@@ -82,10 +82,7 @@ export class VsModeLogic extends UIComponent {
     }
   }
   override on_stop(): void {
-    this.lf2.change_bg(Defines.VOID_BG)
-    this.lf2.change_stage(Defines.VOID_STAGE)
-    this.world.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
-    this.world.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+    this.world.clear()
     for (const func of this.cancellers) func()
     this.cancellers.length = 0;
   }

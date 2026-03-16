@@ -1,7 +1,9 @@
 import { LF2 } from "../LF2";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
+import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
 import { EntityEnum, FacingFlag as FF, FrameBehavior, IFrameInfo } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
+import { is_ball_data, is_weapon_data } from "../entity";
 import read_nums from "../ui/utils/read_nums";
 import { traversal } from "../utils/container_help/traversal";
 import { preprocess_bdy } from "./preprocess_bdy";
@@ -12,6 +14,8 @@ import { preprocess_next_frame } from "./preprocess_next_frame";
 export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
 
   cook_frame_indicator_info(frame);
+  if (is_weapon_data(data) || is_ball_data(data))
+    make_frame_behavior(frame, data.id);
 
   if (frame.sound && !lf2.sounds.has(frame.sound))
     jobs.push(lf2.sounds.load(frame.sound, frame.sound))

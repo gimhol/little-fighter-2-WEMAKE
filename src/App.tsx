@@ -26,12 +26,11 @@ import EditorView from "./EditorView";
 import { GameOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
 import { LF2 } from "./LF2/LF2";
-import { CheatType } from "./LF2/defines";
+import { CheatType, CtrlDevice } from "./LF2/defines";
 import { CMD } from "./LF2/defines/CMD";
 import { Defines } from "./LF2/defines/defines";
 import { Ditto, IZip } from "./LF2/ditto";
 import { IUIInfo } from "./LF2/ui/IUIInfo.dat";
-import { fisrt } from "./LF2/utils/container_help";
 import { arithmetic_progression } from "./LF2/utils/math/arithmetic_progression";
 import { Loading } from "./LoadingImg";
 import { Log } from "./Log";
@@ -66,7 +65,7 @@ import { useCallbacks } from "./pages/network_test/useCallbacks";
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
 type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
-type sync_render = 0 | 1 | 2
+type sync_render = 0 | 1 | 2;
 const init_s = () => ({
   game_overlay: false,
   showing_panel: "" as showing_panel,
@@ -83,12 +82,13 @@ const init_s = () => ({
   render_size_mode: 'contain' as render_size_mode,
   render_fixed_scale: 1,
   custom_render_fixed_scale: 1,
-  v_align: document.body.parentElement!.className.indexOf("portrait") >= 0 ? 0.3 : 0.5,
+  v_align: document.firstElementChild?.classList.contains("portrait") ? 0.3 : 0.5,
   h_align: 0.5,
   custom_h_align: 0.5,
   custom_v_align: 0.5,
   dev_ui_pos: 'bottom' as debug_ui_pos,
   touchpad: '',
+  touchpad_enabled: document.firstElementChild?.classList.contains('mobile') || document.firstElementChild?.classList.contains('tablet') || false,
   sync_render: 0 as sync_render
 })
 
@@ -290,15 +290,43 @@ function App() {
       d.cheat_3 = lf2.is_cheat(CheatType.GIM_INK)
     })
     _set_bg_id(lf2.world.stage.bg.id);
-    const on_touchstart = () => set_state(d => { d.touchpad = fisrt(lf2.players.keys())! })
-    const on_keydown = () => set_state(d => { d.touchpad = "" })
-    window.addEventListener("touchstart", on_touchstart, { once: true });
-    window.addEventListener("keydown", on_keydown);
+    const on_touchstart = () => set_state(d => {
+      d.touchpad_enabled = true;
+      d.touchpad = d.touchpad || Array.from(lf2.players.keys())[0]
+    })
+    window.addEventListener("touchstart", on_touchstart);
+    const del_lf2_callback = lf2.callbacks.add({
+      controller_detected: ({ id }) => set_state(draft => {
+        if (draft.touchpad === id)
+          draft.touchpad_enabled = false
+      }),
+      keyboard_detected: ({ id }) => set_state(draft => {
+        if (draft.touchpad === id)
+          draft.touchpad_enabled = false
+      }),
+    })
+    for (const [id, player] of lf2.players) {
+      player.callbacks.add({
+        on_ctrl_changed(value, prev) {
+
+          set_state(draft => {
+            if (value === CtrlDevice.TouchScreen && draft.touchpad !== id) {
+              draft.touchpad_enabled = true
+              draft.touchpad = id
+            } else if (value !== CtrlDevice.TouchScreen && draft.touchpad === id) {
+              draft.touchpad_enabled = false
+              draft.touchpad = ''
+            }
+
+          })
+        },
+      })
+    }
     _set_is_fullscreen(!!fullscreen.target);
     _set_paused(lf2.world.paused);
     return () => {
-      window.removeEventListener("keydown", on_keydown)
       window.removeEventListener("touchstart", on_touchstart)
+      del_lf2_callback();
       lf2.dispose()
     };
   }, [LF2, params, state_ready]);
@@ -404,8 +432,8 @@ function App() {
 
   const touch_pad_player_items = useMemo(
     () => [
-      { value: "", label: "触控板: 关闭" },
-      ...players.map((v) => ({ value: v.id, label: "触控板: 玩家" + v.id })),
+      { value: "", label: "触控: 关闭" },
+      ...players.map((v) => ({ value: v.id, label: "触控: 玩家" + v.id })),
     ],
     [players],
   );
@@ -532,7 +560,12 @@ function App() {
       />
       <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !s.game_overlay })} />
       <DanmuOverlay lf2={lf2} />
-      <GamePad id='game_pad' player_id={s.touchpad} lf2={lf2} />
+      <GamePad
+        id='game_pad'
+        player_id={s.touchpad}
+        enabled={!!s.touchpad && s.touchpad_enabled}
+        lf2={lf2}
+        container={() => ele_game_canvas?.parentElement} />
       <Loading loading={!ui_id} big className={styles.loading_img} />
       <div className={styles.top_bar}>
         <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
@@ -896,7 +929,7 @@ function App() {
             value={s.touchpad}
             items={touch_pad_player_items}
             parse={i => [i.value, i.label]}
-            onChange={(v) => set_state(d => d.touchpad = v!)} />
+            onChange={(v) => set_state(d => { d.touchpad = v! })} />
           <ToggleButton
             onChange={() => lf2?.set_cheat(CheatType.LF2_NET)}
             value={s.cheat_1}>
@@ -924,9 +957,10 @@ function App() {
             lf2={lf2!}
             info={info}
             touch_pad_on={s.touchpad === info.id}
-            on_click_toggle_touch_pad={() =>
-              set_state(d => { d.touchpad = d.touchpad === info.id ? "" : info.id })
-            }
+            on_click_toggle_touch_pad={() => {
+              const is_me = s.touchpad === info.id;
+              set_state(draft => { draft.touchpad = is_me ? "" : info.id })
+            }}
           />
         ))}
       </Show>

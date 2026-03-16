@@ -1,5 +1,4 @@
 import { SpeedMode } from "../defines";
-import { round_float } from "../utils";
 /**
  * 计算新速度
  *
@@ -37,11 +36,11 @@ export function calc_v(
       if (current <= target && acc < 0) return current;
       return current + acc;
     }
-    case SpeedMode.LF2: default:
+    case SpeedMode.LF2: default: {
       const target = (value *= direction);
-      // if (target) return target
-      if (current < target && target > 0) return round_float(target)
-      if (current > target && target < 0) return round_float(target)
+      if (current < target && target > 0) return target
+      if (current > target && target < 0) return target
       return current;
+    }
   }
 }

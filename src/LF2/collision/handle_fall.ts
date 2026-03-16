@@ -3,26 +3,16 @@ import { ICollision } from "../base/ICollision";
 import { Defines, ItrEffect, SparkEnum, TFace } from "../defines";
 import { turn_face } from "../entity";
 import { is_fighter } from "../entity/type_check";
+import { calc_itr_velocity } from "./calc_itr_velocity";
 
 export function handle_fall(collision: ICollision) {
-  const { itr, attacker, victim, a_cube, b_cube } = collision;
-
-  const is_explosion = [ItrEffect.FireExplosion, ItrEffect.Explosion].some(v => v === itr.effect);
-  const diff_x = victim.position.x - attacker.position.x
-  let attacker_facing: TFace = -1;
-  if (!is_explosion) attacker_facing = attacker.facing
-  else if (diff_x > 0) attacker_facing = -1;
-  else attacker_facing = 1;
-
+  const { itr, victim, a_cube, b_cube } = collision;
   victim.toughness = 0;
   victim.fall_value = 0;
   victim.defend_value = 0;
   victim.resting = 0;
-  victim.set_velocity(
-    (itr.dvx || 0) * attacker_facing,
-    (itr.dvy ?? attacker.world.ivy_d) * attacker.world.ivy_f,
-    0,
-  )
+  const [vx, vy, vz, facing] = calc_itr_velocity(collision)
+  victim.set_velocity(vx, vy, vz)
 
   const is_critical = !!(itr.fall && itr.fall >= Defines.DEFAULT_FALL_VALUE_CRITICAL)
 
@@ -49,7 +39,7 @@ export function handle_fall(collision: ICollision) {
       if (fire) {
         victim.enter_frame({
           id: fire[0],
-          facing: turn_face(attacker_facing),
+          facing: turn_face(facing),
         });
       } else {
         normal_fall_act()
@@ -60,7 +50,7 @@ export function handle_fall(collision: ICollision) {
       if (fire) {
         victim.enter_frame({
           id: fire[0],
-          facing: attacker_facing,
+          facing: facing,
         });
       } else {
         normal_fall_act()

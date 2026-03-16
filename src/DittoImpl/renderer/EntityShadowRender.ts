@@ -4,8 +4,8 @@ import type { Entity } from "@/LF2/entity/Entity";
 import { clamp, floor } from "@/LF2/utils";
 import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
-import { WorldRenderer } from "./WorldRenderer";
 import { get_img_material } from "./MaterialKeeper";
+import { WorldRenderer } from "./WorldRenderer";
 
 export class EntityShadowRender {
   readonly mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
@@ -61,16 +61,15 @@ export class EntityShadowRender {
       frame,
       position: { x, z, y },
       invisible,
-      ground
+      ground_y
     } = entity;
-    const gy = ground.get_y(x, z, y)
     this.mesh.position.set(
       floor(x),
-      floor(gy - z / 2),
+      floor(ground_y - z / 2),
       floor(z - 550),
     );
-    const scale = 0.5 + 0.5 * clamp(250 - (y - gy), 0, 250) / 250
-    const opacity = 0.3 + 0.7 * clamp(250 - (y - gy), 0, 250) / 250
+    const scale = 0.5 + 0.5 * clamp(250 - (y - ground_y), 0, 250) / 250
+    const opacity = 0.3 + 0.7 * clamp(250 - (y - ground_y), 0, 250) / 250
     this.mesh.scale.set(scale, scale, 1)
     this.mesh.material.opacity = opacity;
     this.mesh.visible = !invisible && !frame.no_shadow;

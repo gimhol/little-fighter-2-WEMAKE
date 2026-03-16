@@ -369,6 +369,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.world.del_entities(temp);
     this.callbacks.clear()
   }
+
   all_boss_dead(): boolean {
     return !find(this.items, i => i.info.is_boss);
   }

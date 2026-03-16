@@ -1,4 +1,3 @@
-import { Ground } from "../Ground";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
@@ -26,6 +25,7 @@ import { abs, clamp, find, float_equal, floor, intersection, max, min, round, ro
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
+import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
 import { Factory, ICreator } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
@@ -75,7 +75,7 @@ export class Entity {
    * @type {IVector3[]}
    */
   private readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
-  readonly v_rests = new Map<string, ICollision>();
+  readonly vrests = new Map<string, ICollision>();
   readonly blockers = new Map<string, ICollision>();
   readonly superpunchs = new Map<string, ICollision>();
 
@@ -116,7 +116,8 @@ export class Entity {
   protected _defend_r_value!: number;
   protected _healing!: number;
   protected _defend_ratio?: number; // fallback from world
-  public throwinjury!: number | null;
+  public fallinjury: number = 0;
+  public throwinjury: number = 0;
   public facing!: TFace;
   public frame!: IFrameInfo;
   public next_frame!: Readonly<INextFrame> | null;
@@ -148,9 +149,7 @@ export class Entity {
   protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
   protected _emitter_opoint!: IOpointInfo | null;
-
-  /** 当前角色 */
-  public a_rest!: number;
+  protected _arest!: number;
   public motionless!: number;
   public shaking!: number;
 
@@ -241,13 +240,13 @@ export class Entity {
   readonly collided_list: ICollision[] = [];
 
   protected _chasing!: Entity | null;
+  protected _ground_y: number = 0;
+  protected _prev_ground_y: number = 0;
+  readonly buff = new Map<string, Buff>()
+
   renderer: any;
-  ground: Ground = Ground.Default;
-  old_ground_y: number | null = null
-  get ground_y(): number {
-    const { x, y, z } = this._position;
-    return this.ground.get_y(x, y, z)
-  }
+  get ground_y(): number { return this._ground_y }
+  get prev_ground_y(): number { return this._prev_ground_y }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
   get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
@@ -290,7 +289,7 @@ export class Entity {
   set fall_value(v: number) {
     const o = this._fall_value;
     if (o === v) return;
-    this._fall_value = v;
+    this._fall_value = round_float(v);
     if (v < o) {
       this.resting = this.resting_max;
       this.toughness_resting = this.toughness_resting_max;
@@ -329,7 +328,7 @@ export class Entity {
     this._catch_time_max = v;
     this.callbacks.emit("on_catch_time_max_changed")(this, v, o);
   }
-  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value_max; }
+  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value; }
   set fall_value_max(v: number) {
     const o = this.fall_value_max;
     if (o === v) return;
@@ -340,7 +339,7 @@ export class Entity {
   set defend_value(v: number) {
     const o = this._defend_value;
     if (o === v) return;
-    this._defend_value = v;
+    this._defend_value = round_float(v);
     if (v < o) {
       this.resting = this.resting_max;
       this.toughness_resting = this.toughness_resting_max;
@@ -469,7 +468,7 @@ export class Entity {
     }
   }
   get mp_max(): number {
-    return this._mp_max ?? this.world.mp_max;
+    return this._mp_max ?? this.world.mp;
   }
   set mp_max(v: number) {
     const o = this.mp_max;
@@ -479,7 +478,7 @@ export class Entity {
   }
 
   get hp_max(): number {
-    return this._hp_max ?? this.world.hp_max;
+    return this._hp_max ?? this.world.hp;
   }
   set hp_max(v: number) {
     const o = this.hp_max;
@@ -605,23 +604,28 @@ export class Entity {
   get chasing(): Entity | null { return this._chasing; }
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
-
   get gravity(): number {
     return this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity
   }
-
+  get arest(): number {
+    return this._arest;
+  }
+  set arest(v: number) {
+    if (v == this._arest) return;
+    this._arest = round_float(v);
+  }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }
-
   reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
     this._data = d;
     this.world = world;
-    this.ground = Ground.Default;
     this.id = new_id();
     this.wait = 0;
     this.update_id.reset()
-    this.old_ground_y = null;
+    this._prev_ground_y = 0;
+    this.fallinjury = 0;
+    this._ground_y = 0;
     this.variant = 0;
     this.transform_datas = null;
     this._reserve = 0
@@ -646,7 +650,7 @@ export class Entity {
     this._defend_ratio = d.base.defend_ratio;
     this._healing = 0;
     this._catch_time_max = d.base.catch_time;
-    this.throwinjury = null;
+    this.throwinjury = 0;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
     this.next_frame = null;
@@ -665,9 +669,9 @@ export class Entity {
     this._holding = null;
     this._emitters.length = 0;
     this._emitter_opoint = null;
+    this._arest = 0;
     this.next_frame = null;
-    this.a_rest = 0;
-    this.v_rests.clear()
+    this.vrests.clear()
     this.blockers.clear()
     this.superpunchs.clear()
     this.victims.clear()
@@ -711,6 +715,10 @@ export class Entity {
     this.lastest_collision = null;
     this.lastest_collided = null;
     this._outline_color = void 0;
+
+    let buffs = Array.from(this.buff.values())
+    for (const buf of buffs) buf.del(this)
+    this.buff.clear();
   }
 
   set_bearer(v: Entity | null): this {
@@ -795,7 +803,8 @@ export class Entity {
     if (is_num(opoint.max_mp)) this.mp = this.mp_max = opoint.max_mp;
     if (is_num(opoint.mp)) this.mp = opoint.mp;
 
-    const { dvy = 0, dvz = 0, dvx = 0, vxm, vym, vzm } = this.frame
+    const { dvy = 0, dvz = 0, dvx = 0 } = this
+    const { vxm, vym, vzm } = this.frame
     const z_disabled =
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
@@ -818,6 +827,7 @@ export class Entity {
         this.bearer.holding = this;
         break;
     }
+    this.motionless = opoint.motionless ?? 2
     return this;
   }
 
@@ -1021,7 +1031,7 @@ export class Entity {
     entity.key_role = false;
     entity.dead_gone = true;
     /* Note: 继承v_rests，避免重复反弹ball... */
-    for (const [, v] of this.v_rests) entity.add_v_rest({ ...v })
+    for (const [, v] of this.vrests) entity.add_v_rest({ ...v })
     return entity;
   }
 
@@ -1060,32 +1070,35 @@ export class Entity {
   handle_ground_velocity_decay(factor: number = 1) {
     if (this._position.y > this.ground_y || this.shaking || this.motionless) return;
     const landing = this._landing_frame === this.frame;
-    factor *= landing ? this.world_dataset('land_friction_factor') : this.world_dataset('friction_factor')
-    const fx = landing ? this.world_dataset('land_friction_x') : this.world_dataset('friction_x')
-    const fz = landing ? this.world_dataset('land_friction_z') : this.world_dataset('friction_z')
+    factor *= landing ? this.dataset('land_friction_factor') : this.dataset('friction_factor')
+    const fx = landing ? this.dataset('land_friction_x') : this.dataset('friction_x')
+    const fz = landing ? this.dataset('land_friction_z') : this.dataset('friction_z')
     this.handle_velocity_decay(fx, fz, factor)
   }
 
   handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
     let { x, z } = this.velocities[0];
-    if (factor != void 0) {
-      x *= factor;
-      z *= factor;
-    }
-    if (x > 0) {
+    if (factor != void 0) { x *= factor; z *= factor; }
+    const { ctrl_x, ctrl_z } = this.frame;
+    let { dvx = 0, dvz = 0 } = this;
+    const { UD, LR } = this.ctrl
+    if (ctrl_x && !LR) dvx = 0;
+    if (ctrl_z && !UD) dvz = 0;
+    if (x > dvx) {
       x -= fx;
-      if (x < 0) x = 0; // 不能因为摩擦力反向加速
-    } else if (x < 0) {
+      if (x < dvx) x = dvx; // 不能因为摩擦力反向加速
+    } else if (x < -dvx) {
       x += fx;
-      if (x > 0) x = 0; // 不能因为摩擦力反向加速
+      if (x > -dvx) x = -dvx; // 不能因为摩擦力反向加速
     }
-    if (z > 0) {
+    if (z > dvz) {
       z -= fz;
-      if (z < 0) z = 0; // 不能因为摩擦力反向加速
-    } else if (z < 0) {
+      if (z < dvz) z = dvz; // 不能因为摩擦力反向加速
+    } else if (z < -dvz) {
       z += fz;
-      if (z > 0) z = 0; // 不能因为摩擦力反向加速
+      if (z > -dvz) z = -dvz; // 不能因为摩擦力反向加速
     }
+
     this.set_velocity_0_x(x)
     this.set_velocity_0_z(z);
   }
@@ -1109,7 +1122,6 @@ export class Entity {
    * @see {IItrInfo.shaking}
    * @see {IItrInfo.motionless}
    * @see {State_Base.get_gravity}
-   * @see {World.gravity}
    */
   private handle_gravity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
@@ -1117,13 +1129,22 @@ export class Entity {
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
     this.velocities[0].y -= this.gravity;
   }
-
+  get dvx() {
+    const { dvx: v } = this.frame;
+    return v ? v * this.dataset('fvx_f') : v
+  }
+  get dvy() {
+    const { dvy: v } = this.frame;
+    return v ? v * this.dataset('fvy_f') : v
+  }
+  get dvz() {
+    const { dvz: v } = this.frame;
+    return v ? v * this.dataset('fvz_f') : v
+  }
   private update_velocity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    const { dvx, dvy, dvz } = this;
     const {
-      dvx,
-      dvy,
-      dvz,
       vxm = SpeedMode.LF2,
       vym = SpeedMode.AccTo,
       vzm = SpeedMode.LF2,
@@ -1138,22 +1159,22 @@ export class Entity {
     const { UD, LR, jd } = this._ctrl;
 
     if (dvx == void 0) { }
-    else if (!ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, this.facing);
-    else if (LR != 0 && SpeedCtrl.Control == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, LR);
-    else if (LR != 0 && SpeedCtrl.Enable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
-    else if (LR == 0 && SpeedCtrl.Disable == ctrl_x) vx = calc_v(vx, dvx * this.world.fvx_f, vxm, acc_x, 1);
+    else if (!ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, this.facing);
+    else if (LR != 0 && SpeedCtrl.Control == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, LR);
+    else if (LR != 0 && SpeedCtrl.Enable == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, 1);
+    else if (LR == 0 && SpeedCtrl.Disable == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, 1);
 
     if (dvy == void 0) { }
-    else if (!ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
-    else if (jd != 0 && SpeedCtrl.Control == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, jd);
-    else if (jd != 0 && SpeedCtrl.Enable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
-    else if (jd == 0 && SpeedCtrl.Disable == ctrl_y) vy = calc_v(vy, dvy * this.world.fvy_f, vym, acc_y, 1);
+    else if (!ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, 1);
+    else if (jd != 0 && SpeedCtrl.Control == ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, jd);
+    else if (jd != 0 && SpeedCtrl.Enable == ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, 1);
+    else if (jd == 0 && SpeedCtrl.Disable == ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, 1);
 
     if (dvz == void 0) { }
-    else if (!ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
-    else if (UD != 0 && SpeedCtrl.Control == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, UD);
-    else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
-    else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz * this.world.fvz_f, vzm, acc_z, 1);
+    else if (!ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
+    else if (UD != 0 && SpeedCtrl.Control == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, UD);
+    else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
+    else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
 
     this.set_velocity_0(vx, vy, vz);
     if (vxm == SpeedMode.Extra && dvx) this.set_velocity_1_x(dvx)
@@ -1249,16 +1270,14 @@ export class Entity {
   hp_recovering(): void {
     if (this._hp <= 0 || this._hp >= this._hp_r)
       return;
-    const { base } = this._data
     this._hp_r_tick.max = this.healing > 0 ?
-      (base.hp_healing_ticks ?? this.world.hp_healing_ticks) :
-      (base.hp_r_ticks ?? this.world.hp_r_ticks);
-
+      this.dataset('hp_healing_ticks') :
+      this.dataset('hp_r_ticks')
     if (!this._hp_r_tick.add())
       return;
     const value = this.healing > 0 ?
-      (base.hp_healing_value ?? this.world.hp_healing_value) :
-      (base.hp_r_value ?? this.world.hp_r_value);
+      this.dataset('hp_healing_value') :
+      this.dataset('hp_r_value');
     this.hp = min(this._hp_r, this._hp + value);
     if (this._hp === this._hp_r) this.healing = 0;
     else if (this._healing) this.healing = max(0, this._healing - value)
@@ -1272,11 +1291,10 @@ export class Entity {
   mp_recovering(): void {
     if (this._hp <= 0 || this._mp >= this.mp_max || this._blinking_duration || this._invisible_duration)
       return;
-    const { base } = this._data
-    this._mp_r_tick.max = base.mp_r_ticks ?? this.world.mp_r_ticks;
+    this._mp_r_tick.max = this.dataset('mp_r_ticks');
     if (!this._mp_r_tick.add())
       return;
-    const r_ratio = base.mp_r_ratio ?? this.world.mp_r_ratio;
+    const r_ratio = this.dataset('mp_r_ratio');
     const value = 1 + floor(round_float((500 - min(r_ratio * this._hp, 500)) / 100))
     this.mp = min(this.mp_max, this._mp + value);
   }
@@ -1318,21 +1336,21 @@ export class Entity {
 
     if (this.frame.hp) this.hp -= this.frame.hp;
 
-    if (this.shaking <= 0 || 0 == this.world_dataset('vrest_after_shaking'))
-      for (const [k, v] of this.v_rests) {
+    if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
+      for (const [k, v] of this.vrests) {
         if (v.rest > 0) --v.rest;
         else this.del_v_rest(k)
       }
     for (const [k, v] of this.victims)
       if (v.rest) this.victims.delete(k)
 
-    if (0 == this.world_dataset('arest_after_motionless') || this.motionless <= 0)
-      this.a_rest > 0 ? this.a_rest-- : (this.a_rest = 0);
+    if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0)
+      this.arest > 0 ? this.arest-- : (this.arest = 0);
 
     if (this._invisible_duration > 0) {
       this._invisible_duration--;
       if (this._invisible_duration <= 0) {
-        this._blinking_duration = this.world_dataset('invisible_blinking');
+        this._blinking_duration = this.dataset('invisible_blinking');
       }
     }
     if (this._invulnerable_duration > 0) {
@@ -1346,7 +1364,6 @@ export class Entity {
           this.frame = GONE_FRAME_INFO;
         } else if (this._after_blink === Builtin_FrameId.Respawn) {
           this.hp = this.hp_r = this.hp_max;
-          this._position.y = 550;
 
           let max_distance = Number.MAX_SAFE_INTEGER
           let friend: Entity | undefined;
@@ -1361,15 +1378,19 @@ export class Entity {
           }
           if (friend) {
             this.lf2.mt.mark = 'u_1'
-            this._position.x = this.lf2.mt.range(
+            const x = this.lf2.mt.range(
               max(round(friend.position.x - 100), this.world.stage.player_l),
               min(round(friend.position.x + 100), this.world.stage.player_r)
             )
             this.lf2.mt.mark = 'u_2'
-            this._position.z = this.lf2.mt.range(
+            const z = this.lf2.mt.range(
               min(round(friend.position.z - 100), this.world.stage.far),
               max(round(friend.position.z + 100), this.world.stage.near)
             )
+            this.set_position(x, 550, z)
+          } else {
+            this.set_position_y(550)
+
           }
 
           this.next_frame = Defines.NEXT_FRAME_AUTO;
@@ -1429,22 +1450,15 @@ export class Entity {
     }
 
     if (!this.shaking && !this.motionless) {
-      const { x, y, z } = this._position;
-      const ground = this.world.get_ground(this._position)
-      const ground_y = ground.get_y(x, y, z)
-      if (ground !== this.ground) {
-        this.ground.del(this);
-        this.ground = ground
-        this.ground.add(this);
-      }
-      const old_ground_y = this.old_ground_y ?? ground_y;
-      const on_ground = this._prev_position.y <= old_ground_y;
+      const { prev_ground_y, ground_y } = this;
+      const on_ground = this._prev_position.y <= prev_ground_y;
       const just_land = (this.velocity.y < 0 || !on_ground) && this._position.y <= ground_y
       const itrs = this.itr;
 
       if (itrs?.length && this.velocity.y < 0) for (const itr of itrs) {
         if (!itr.on_hit_ground) continue;
-        if ((this._position.y + this.frame.centery - itr.y - itr.h) > ground_y)
+        const { y = 0, h = 0 } = itr;
+        if ((this._position.y + this.frame.centery - y - h) > ground_y)
           continue;
         const result = this.get_next_frame(itr.on_hit_ground)
         if (result) this.enter_frame(result.which);
@@ -1467,11 +1481,16 @@ export class Entity {
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {
             this.hp -= this.throwinjury;
-            this.hp_r -= round(this.throwinjury * (1 - this.world.hp_recoverability))
-            this.throwinjury = null;
+            this.hp_r -= round(this.throwinjury * (1 - this.dataset('hp_recoverability')))
+            this.throwinjury = 0;
+          }
+          if (this.fallinjury) {
+            this.hp -= this.fallinjury;
+            this.hp_r -= round(this.fallinjury * (1 - this.dataset('hp_recoverability')))
+            this.fallinjury = 0;
           }
           this._landing_frame = this.frame
-        } else if (this.velocity.y == 0 && on_ground && !float_equal(old_ground_y, ground_y)) {
+        } else if (this.velocity.y == 0 && on_ground && !float_equal(prev_ground_y, ground_y)) {
           this._position.y = ground_y;
           this._prev_position.y = ground_y;
         } else if (this._position.y < ground_y) {
@@ -1480,8 +1499,9 @@ export class Entity {
           // this._prev_position.y = ground_y;
         }
         if (this._landing_frame !== this.frame) this._landing_frame = null
-        this.old_ground_y = ground_y;
+        this._prev_ground_y = ground_y;
       }
+
     }
     this._holding?.follow_bearer();
     this.collision_list.length = 0;
@@ -1589,7 +1609,7 @@ export class Entity {
       const { injury } = cp_a;
       if (injury) {
         this.hp -= injury;
-        this.hp_r -= round(injury * (1 - this.world.hp_recoverability))
+        this.hp_r -= round(injury * (1 - this.dataset('hp_recoverability')))
       }
       if (cp_a.shaking && cp_a.shaking > 0)
         this.shaking = cp_a.shaking;
@@ -1676,9 +1696,9 @@ export class Entity {
     const a_face = a.facing;
     const { x: acx = 0, y: acy = 0, z: acz = 0 } = ac
     if (tx || ty || tz) {
-      const vx = (tx * this.world.tvx_f * a_face)
-      const vy = (ty * this.world.tvy_f)
-      const vz = (tz * this.world.tvz_f) * (a.ctrl.UD || 0)
+      const vx = tx * this.dataset('tvx_f') * a_face
+      const vy = ty * this.dataset('tvy_f')
+      const vz = tz * this.dataset('tvz_f') * (a.ctrl.UD || 0)
       this.set_velocity(vx, vy, vz)
       this.set_position(
         vx + ax - a_face * (afx - acx),
@@ -1920,6 +1940,9 @@ export class Entity {
     }
 
     if (dvx !== void 0 || dvy !== void 0 || dvz !== void 0) {
+      dvx = dvx ? dvx * this.dataset('wvx_f') : 0
+      dvy = dvy ? dvy * this.dataset('wvy_f') : 0
+      dvz = dvz ? dvz * this.dataset('wvz_f') : 0
       const nf = this.find_align_frame(
         this.frame.id,
         this.data.indexes?.on_hands,
@@ -1932,8 +1955,8 @@ export class Entity {
       )
       this.enter_frame(nf);
       const vz = bearer.ctrl ? bearer.ctrl.UD * (dvz || 0) : 0;
-      dvx = strength * (dvx || 0) / weight;
-      dvy = strength * (dvy || 0) / weight;
+      dvx = strength * dvx / weight;
+      dvy = strength * dvy / weight;
       const vx = (dvx - abs(vz / 2)) * this.facing;
       this.set_velocity(vx, dvy, vz);
       bearer.holding = null;
@@ -1979,7 +2002,7 @@ export class Entity {
 
     this.next_frame = null;
     if (flags.id === Builtin_FrameId.Auto) {
-      this.a_rest = 0;
+      this.arest = 0;
       for (const [_, v] of this.victims)
         v.rest = 0;
       this.victims.clear()
@@ -1991,7 +2014,7 @@ export class Entity {
     if (flags.wait !== void 0) {
       this.wait = this.handle_wait_flag(flags.wait, frame);
     } else if (frame) {
-      this.wait = frame.wait + this.world.frame_wait_offset;
+      this.wait = frame.wait + this.world.wait_offset;
     }
     if (flags.sounds?.length) this.play_sound(flags.sounds);
 
@@ -2002,7 +2025,7 @@ export class Entity {
     if (is_positive(wait)) return wait;
     if (wait === "i" || !frame) return this.wait;
     if (wait === "d") return max(0, frame.wait - this.frame.wait + this.wait);
-    return frame.wait + this.world.frame_wait_offset;
+    return frame.wait + this.world.wait_offset;
   }
 
   /**
@@ -2230,6 +2253,7 @@ export class Entity {
     if (x !== null && x !== void 0) this._position.x = x ? round_float(x) : x
     if (y !== null && y !== void 0) this._position.y = y ? round_float(y) : y
     if (z !== null && z !== void 0) this._position.z = z ? round_float(z) : z
+    this._ground_y = this.world.get_ground(this._position)
   }
   set_position_x(x: number) {
     if (is_f_num(x)) debugger;
@@ -2238,10 +2262,12 @@ export class Entity {
   set_position_y(y: number) {
     if (is_f_num(y)) debugger;
     this._position.y = y ? round_float(y) : y
+    this._ground_y = this.world.get_ground(this._position)
   }
   set_position_z(z: number) {
     if (is_f_num(z)) debugger;
-    this._position.z = z ? round_float(z) : z
+    this._position.z = z ? round_float(z) : z;
+    this._ground_y = this.world.get_ground(this._position)
   }
   transform(data: IEntityData) {
     if (!is_human_ctrl(this.ctrl))
@@ -2278,22 +2304,24 @@ export class Entity {
   }
 
   get_v_rest(a_id: string): number {
-    return this.v_rests.get(a_id)?.rest || 0;
+    return this.vrests.get(a_id)?.rest || 0;
   }
   add_v_rest(c: ICollision) {
-    this.v_rests.set(c.a_id, c);
+    this.vrests.set(c.a_id, c);
     if (c.itr.kind === ItrKind.Block) this.blockers.set(c.a_id, c);
     if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.a_id, c);
   }
   del_v_rest(a_id: string) {
-    this.v_rests.delete(a_id);
+    this.vrests.delete(a_id);
     this.blockers.delete(a_id);
     this.superpunchs.delete(a_id);
   }
-
-  world_dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
-    const v = (this.frame as Partial<IWorldDataset>)[name]
-    return v ?? this.world[name]
+  dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
+    return (
+      (this.frame as Partial<IWorldDataset>)[name] ??
+      (this.data.base as Partial<IWorldDataset>)[name] ??
+      this.world[name]
+    )
   }
 }
 

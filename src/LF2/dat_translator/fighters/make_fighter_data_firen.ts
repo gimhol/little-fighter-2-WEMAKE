@@ -28,8 +28,6 @@ export function make_fighter_data_firen(data: IEntityData) {
       code: 123,
       kind: ItrKind.Normal,
       effect: ItrEffect.Ignore,
-      z: -Defines.DAFUALT_QUBE_LENGTH / 2,
-      l: Defines.DAFUALT_QUBE_LENGTH,
       x: 35,
       y: 19,
       w: 10,

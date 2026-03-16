@@ -1,7 +1,8 @@
 import { ICollision } from "../base";
-import { Defines, IAction_BrokenDefend, IAction_Defend, ItrEffect, SparkEnum } from "../defines";
+import { Defines, ItrEffect, SparkEnum } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
+import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
 import { handle_itr_normal_bdy_normal } from "./handle_itr_normal_bdy_normal";
 import { handle_rest } from "./handle_rest";
@@ -26,9 +27,8 @@ export function handle_itr_normal_bdy_defend(collision: ICollision) {
   handle_rest(collision)
   handle_stiffness(collision)
   const [x, y, z] = victim.spark_point(a_cube, b_cube);
-
-  if (itr.dvx) victim.set_velocity_x((itr.dvx * attacker.facing) / 2);
-
+  const [vx] = calc_itr_velocity(collision);
+  if (vx) victim.set_velocity_x(vx / 2);
   if (victim.defend_value <= 0) {
     // 破防
     victim.defend_value = 0;

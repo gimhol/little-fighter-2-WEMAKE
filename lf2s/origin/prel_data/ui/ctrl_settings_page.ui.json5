@@ -127,6 +127,11 @@
               h: 91,
               path: "sprite/CS5.png",
             },
+            {
+              w: 106,
+              h: 91,
+              path: "sprite/CS7.png",
+            },
           ],
           pos: "0, 26",
         },

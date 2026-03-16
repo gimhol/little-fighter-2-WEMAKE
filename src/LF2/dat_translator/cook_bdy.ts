@@ -3,7 +3,6 @@ import { ActionType } from "../defines/ActionType";
 import { B_K, bdy_kind_full_name, OLD_BDY_KIND_GOTO_MAX, OLD_BDY_KIND_GOTO_MIN } from "../defines/BdyKind";
 import { O_ID } from "../defines/BuiltIn_OID";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
-import { Defines } from "../defines/defines";
 import { E_E } from "../defines/EntityEnum";
 import { HitFlag } from "../defines/HitFlag";
 import { BdyKeyOrders as bdy_key_orders, IBdyInfo } from "../defines/IBdyInfo";
@@ -15,8 +14,7 @@ import { take } from "./take";
 export function cook_bdy(bdy: Partial<IBdyInfo>, frame: IFrameInfo): void {
   if (!bdy) return;
   bdy.hit_flag = HitFlag.AllEnemy;
-  bdy.l = Defines.DAFUALT_QUBE_LENGTH;
-  bdy.z = -Defines.DAFUALT_QUBE_LENGTH / 2;
+  
   const kind = Number(take(bdy, "kind"));
   bdy.kind = kind;
   bdy.kind_name = bdy_kind_full_name(bdy.kind);

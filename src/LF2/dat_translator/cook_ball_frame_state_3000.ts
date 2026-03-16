@@ -119,6 +119,7 @@ export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
   for (const itr of itr_list) {
     switch (itr.kind) {
       case ItrKind.Normal:
+        // 命中跳转至10
         itr.actions = ensure(itr.actions, {
           type: ActionType.A_NextFrame,
           data: { id: "10" }

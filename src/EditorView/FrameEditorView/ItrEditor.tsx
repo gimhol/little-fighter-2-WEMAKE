@@ -1,3 +1,5 @@
+import { Defines, HitFlag, IItrInfo, itr_effect_full_name, itr_kind_full_name, ItrEffect, ItrKind } from "@/LF2/defines";
+import { floor } from "@/LF2/utils";
 import { useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
 import Combine from "../../Component/Combine";
@@ -8,12 +10,9 @@ import Select from "../../Component/Select";
 import Show from "../../Component/Show";
 import { TextArea } from "../../Component/TextArea";
 import Titled, { ITitledProps } from "../../Component/Titled";
-import { Defines, HitFlag, IItrInfo, itr_effect_full_name, itr_kind_full_name, ItrEffect, ItrKind } from "@/LF2/defines";
-import { floor } from "@/LF2/utils";
 import { ITR_EFFECT_SELECT_PROPS, ITR_KIND_SELECT_PROPS } from "../EntityEditorView";
 import { HitFlagEditor } from "./HitFlagEditor";
 import { make_field_props, make_not_blank_field_props } from "./make_field_props";
-import { QubeEdit } from "./QubeEdit";
 
 export interface IItrEditorViewProps extends IFrameProps {
   label?: string;
@@ -127,10 +126,10 @@ export function ItrEditor(props: IItrEditorViewProps) {
           </Titled>
         </Flex>
         <Titled label='包围盒' styles={titled_styles}>
-          <QubeEdit
+          {/* <QubeEdit
             value={value}
             defaultValue={defaultValue}
-            onChange={v => onChange?.({ ...defaultValue, ...value, ...v })} />
+            onChange={v => onChange?.({ ...defaultValue, ...value, ...v })} /> */}
         </Titled>
         <Titled label='条件' styles={titled_styles}>
           <TextArea {...make_not_blank_field_props(props, default_value, 'test')} style={{ resize: 'vertical' }} />

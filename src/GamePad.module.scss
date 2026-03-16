@@ -1,90 +1,165 @@
-.pad_text {
-  position: fixed;
-  color: white;
-  left: 50%;
-  bottom: 10px;
-  transform: translate(-50%);
+.game_pad {
+  position      : absolute;
+  width         : 100%;
+  height        : 100%;
+  pointer-events: none;
+
+  --btn_size    : 60px;
+  --l_pad_size  : calc(var(--btn_size) * 3.5);
+  --l_pad_left  : calc(0.5 * var(--l_pad_size) + 10px);
+  --l_pad_bottom: calc(0.5 * var(--l_pad_size) + 10px);
+
+  --r_pad_right : 100px;
+  --r_pad_bottom: 80px;
+  --r_pad_size  : calc(var(--btn_size) * 3);
+
+  --l_btn_base_left  : calc(var(--l_pad_left) - var(--btn_size) / 2);
+  --l_btn_base_bottom: calc(var(--l_pad_bottom) - var(--btn_size) / 2);
+
+  --r_btn_base_right : calc(var(--r_pad_right) - var(--btn_size) / 2);
+  --r_btn_base_bottom: calc(var(--r_pad_bottom) - var(--btn_size) / 2);
+}
+
+
+._btn {
+  box-sizing      : border-box;
+  position        : absolute;
+  transition      : filter 100ms;
+  border-radius   : 100%;
+  overflow        : hidden;
+  pointer-events  : none;
+  width           : var(--btn_size);
+  height          : var(--btn_size);
+  user-select     : none;
+  border          : 2px dashed rgba(0, 0, 0, 0.432);
+  background-color: rgba(255, 255, 255, 0.39);
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  font-size       : 30px;
+
+  &.pressing {
+    filter      : invert(100%);
+    border-style: solid;
+  }
+
+  &::after {
+    color: black;
+  }
+}
+
+
+.left_pad,
+.right_pad {
+  pointer-events: all;
+  position      : absolute;
+  border-radius : 50%;
 }
 
 .left_pad {
-  position: fixed;
-  pointer-events: all;
+  left  : calc(var(--l_pad_left) - var(--l_pad_size) / 2);
+  bottom: calc(var(--l_pad_bottom) - var(--l_pad_size) / 2);
+  width : var(--l_pad_size);
+  height: var(--l_pad_size);
 }
 
 .right_pad {
-  position: fixed;
-  pointer-events: all;
+  right : calc(var(--r_pad_right) - var(--r_pad_size) / 2);
+  bottom: calc(var(--r_pad_bottom) - var(--r_pad_size) / 2);
+  width : var(--r_pad_size);
+  height: var(--r_pad_size);
 }
 
-.left_pad .btn_up {
-  left: 80px;
-  bottom: 140px;
-  transform: rotate(-90deg);
+.pad_text {
+  position : absolute;
+  color    : white;
+  opacity  : 0.5;
+  left     : 50%;
+  bottom   : 0px;
+  transform: translate(-50%);
 }
 
-.left_pad .btn_down {
-  left: 80px;
-  bottom: 10px;
-  transform: rotate(90deg);
+.touch_circle {
+  position        : absolute;
+  border-radius   : 50%;
+  border          : 2px dashed rgba(0, 0, 0, 0.521);
+  pointer-events  : none;
+  transform       : translate(-50%, -50%);
+  width           : 60px;
+  height          : 60px;
+  color           : rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.3);
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
 }
 
-.left_pad .btn_right {
-  left: 150px;
-  bottom: 75px;
+.btn_U {
+  @extend ._btn;
+  left  : var(--l_btn_base_left);
+  bottom: calc(var(--l_btn_base_bottom) + 0.3 * var(--l_pad_size));
+
+  &::after {
+    content: "▲";
+  }
 }
 
-.left_pad .btn_left {
-  left: 10px;
-  bottom: 75px;
-  transform: rotate(180deg);
+.btn_D {
+  @extend ._btn;
+  left  : var(--l_btn_base_left);
+  bottom: calc(var(--l_btn_base_bottom) - 0.3 * var(--l_pad_size));
+
+  &::after {
+    content: "▼";
+  }
 }
 
-.right_pad .btn_attack {
-  right: 110px;
-  bottom: 20px;
+.btn_L {
+  @extend ._btn;
+  left  : calc(var(--l_btn_base_bottom) - 0.3 * var(--l_pad_size));
+  bottom: var(--l_btn_base_bottom);
+
+  &::after {
+    content: "◀";
+  }
 }
 
-.right_pad .btn_jump {
-  right: 50px;
-  bottom: 100px;
+.btn_R {
+  @extend ._btn;
+  left  : calc(var(--l_btn_base_bottom) + 0.3 * var(--l_pad_size));
+  bottom: var(--l_btn_base_bottom);
+
+  &::after {
+    content: "▶";
+  }
 }
 
-.right_pad .btn_defense {
-  right: 10px;
-  bottom: 10px;
+.btn_a {
+  @extend ._btn;
+  right : calc(var(--r_btn_base_right) + 0.27 * var(--r_pad_size));
+  bottom: calc(var(--r_btn_base_bottom) - 0.09 * var(--r_pad_size));
+
+  &::after {
+    content: "A";
+  }
 }
 
-.right_pad .btn_attack,
-.right_pad .btn_defense,
-.right_pad .btn_jump,
-.left_pad .btn_up,
-.left_pad .btn_down,
-.left_pad .btn_left,
-.left_pad .btn_right {
-  transition: all 100ms;
-  position: fixed;
-  border-radius: 100%;
-  overflow: hidden;
+.btn_j {
+  @extend ._btn;
+  right : var(--r_btn_base_right);
+  bottom: calc(var(--r_btn_base_bottom) + 0.3 * var(--r_pad_size));
+
+  &::after {
+    content: "J";
+  }
 }
 
-.right_pad .btn_defense:active,
-.right_pad .btn_jump:active,
-.right_pad .btn_attack:active,
-.left_pad .btn_up:active,
-.left_pad .btn_down:active,
-.left_pad .btn_left:active,
-.left_pad .btn_right:active {
-  opacity: 0.5;
-}
+.btn_d {
+  @extend ._btn;
+  right : calc(var(--r_btn_base_right) - 0.21 * var(--r_pad_size));
+  bottom: calc(var(--r_btn_base_bottom) - 0.13 * var(--r_pad_size));
 
-.right_pad .btn_defense img,
-.right_pad .btn_jump img,
-.right_pad .btn_attack img,
-.left_pad .btn_up img,
-.left_pad .btn_down img,
-.left_pad .btn_left img,
-.left_pad .btn_right img {
-  width: 80px;
-  width: 80px;
-  user-select: none;
+  &::after {
+    content: "D";
+  }
 }
