@@ -195,104 +195,119 @@ export interface IWorldDataset {
 }
 interface IFieldInfo {
   key: keyof IWorldDataset;
-  title: string;
+  title?: string;
   type: '' | 'int' | 'float' | 'boolean';
   desc?: string;
   min?: number;
   max?: number;
   step?: number;
 }
-const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>> = {
-  gravity: { title: "重力", desc: "重力", type: 'float' },
-  jump_x_f: { title: "跳跃X距离系数", desc: "跳跃X距离系数", type: 'float' },
-  jump_z_f: { title: "跳跃Z距离系数", desc: "跳跃Z距离系数", type: 'float' },
-  jump_h_f: { title: "跳跃高度系数", desc: "跳跃高度系数", type: 'float' },
-  dash_x_f: { title: "跑跳X距离系数", desc: "跑跃X距离系数", type: 'float' },
-  dash_z_f: { title: "跑跳Z距离系数", desc: "跑跃Z距离系数", type: 'float' },
-  dash_h_f: { title: "跑跳高度系数", desc: "跑跃高度系数", type: 'float' },
-  bfall_x_f: { title: "bfall_x_f", desc: "bfall_x_f", type: 'float' },
-  bfall_h_f: { title: "bfall_h_f", desc: "bfall_h_f", type: 'float' },
-  weapon_throwing_gravity: { title: "投掷武器重力", desc: "投掷武器重力", type: 'float' },
-  begin_blink_time: { title: "入场闪烁时长", desc: "入场闪烁时长", type: 'int' },
-  gone_blink_time: { title: "消失闪烁时长", desc: "消失闪烁时长", type: 'int' },
-  lying_blink_time: { title: "起身闪烁时长", desc: "起身闪烁时长", type: 'int' },
-  double_click_interval: { title: "双击判定时长", desc: "双击判定时长", type: 'int' },
-  key_hit_duration: { title: "按键判定时长", desc: "按键判定时长", type: 'int' },
-  itr_shaking: { title: "受伤摇晃时长", desc: "受伤摇晃时长", type: 'int' },
-  itr_motionless: { title: "命中停顿时长", desc: "命中停顿时长", type: 'int' },
-  hp_healing_ticks: { title: "治疗回血周期", desc: "治疗效果下，每几帧回血一次", type: 'int' },
-  hp_healing_value: { title: "治疗回血量", desc: "治疗效果下，每次回血多少", type: 'int' },
-  fvx_f: { title: "frame.dvx缩放系数", type: 'float' },
-  fvy_f: { title: "frame.dvy缩放系数", type: 'float' },
-  fvz_f: { title: "frame.dvz缩放系数", type: 'float' },
-  ivx_f: { title: "itr.dvx缩放系数", type: 'float' },
-  ivy_f: { title: "itr.dvy缩放系数", type: 'float' },
-  ivz_f: { title: "itr.dvz缩放系数", type: 'float' },
-  ivy_d: { title: "itr.dvy默认值", desc: "默认的攻击Y轴速度", type: 'float' },
-  ivx_d: { title: "itr.dvx默认值", desc: "默认的攻击X轴速度", type: 'float' },
 
-  cvy_d: { title: "cvy_d", desc: "cvy_d", type: 'float' },
-  cvx_d: { title: "cvx_d", desc: "cvx_d", type: 'float' },
-  tvx_f: { title: "X轴丢人速度系数", desc: "tvx_f", type: 'float' },
-  tvy_f: { title: "Y轴丢人速度系数", desc: "tvy_f", type: 'float' },
-  tvz_f: { title: "Z轴丢人速度系数", desc: "tvz_f", type: 'float' },
-  wvx_f: { title: "X轴丢武器速度系数", desc: "wvx_f", type: 'float' },
-  wvy_f: { title: "Y轴丢武器速度系数", desc: "wvy_f", type: 'float' },
-  wvz_f: { title: "Z轴丢武器速度系数", desc: "wvz_f", type: 'float' },
-
-  vrest_offset: { title: "vrest_offset", desc: "vrest_offset", type: 'int' },
-  min_vrest: { title: "min_vrest", desc: "min_vrest", type: 'int' },
-
-  itr_arest: { title: "itr_arest", desc: "itr_arest", type: 'int' },
-  arest_offset: { title: "arest_offset", desc: "arest_offset", type: 'int' },
-  min_arest: { title: "min_arest", desc: "min_arest", type: 'int' },
-
-  wait_offset: { title: "wait_offset", desc: "wait_offset", type: 'int' },
-  cha_bc_spd: { title: "cha_bc_spd", desc: "cha_bc_spd", type: 'float' },
-  cha_bc_tst_spd_x: { title: "cha_bc_tst_spd_x", desc: "cha_bc_tst_spd_x", type: 'float' },
-  cha_bc_tst_spd_y: { title: "cha_bc_tst_spd_y", desc: "cha_bc_tst_spd_y", type: 'float' },
-  hp_recoverability: { title: "可回血比例", desc: "可回血比例", type: 'float' },
-  hp_r_ticks: { title: "自动回血周期", desc: "每几帧回血一次", type: 'int' },
-  hp_r_value: { title: "自动回血量", desc: "每次回血多少", type: 'int' },
-  mp_r_ticks: { title: "自动回蓝周期", desc: "每几帧回蓝一次", type: 'int' },
-  mp_r_ratio: { title: "mp_r_ratio", desc: "mp_r_ratio", type: 'int' },
-  friction_factor: { title: "地速衰减系数", desc: "在地面的物体，速度将每帧乘以此值", type: 'float' },
-  friction_x: { title: "地面摩擦X", desc: "在地面的物体，每帧X速度将±=此值,向0靠近", type: 'float' },
-  friction_z: { title: "地面摩擦Z", desc: "在地面的物体，每帧Z速度将±=此值,向0靠近", type: 'float' },
-  land_friction_factor: { title: "落地摩擦X", desc: "在物体着地时，当前动作结束前，速度将每帧乘以此值", type: 'float' },
-  land_friction_x: { title: "落地摩擦X", desc: "在物体着地时，当前动作结束前，每帧X速度将±=此值,向0靠近", type: 'float' },
-  land_friction_z: { title: "落地摩擦Z", desc: "在物体着地时，当前动作结束前，每帧Z速度将±=此值,向0靠近", type: 'float' },
-  screen_w: { title: "screen_w", desc: "screen_w", type: '' },
-  screen_h: { title: "screen_h", desc: "screen_h", type: '' },
-  sync_render: { title: "sync_render", desc: "sync_render", type: 'int', min: 0, max: 2, step: 1 },
-  difficulty: { title: "difficulty", desc: "difficulty", type: '' },
-  infinity_mp: { title: "infinity_mp", desc: "infinity_mp", type: 'int', min: 0, max: 1, step: 1 },
-  fall_r_ticks: { title: "fall_r_ticks", desc: "fall_r_ticks", type: 'int' },
-  fall_r_value: { title: "fall_r_value", desc: "fall_r_value", type: 'int' },
-  defend_r_ticks: { title: "defend_r_ticks", desc: "defend_r_ticks", type: 'int' },
-  defend_r_value: { title: "defend_r_value", desc: "defend_r_value", type: 'int' },
-  fall_value: { title: "fall_value", desc: "fall_value", type: 'int' },
-  catch_time_max: { title: "catch_time_max", desc: "catch_time_max", type: 'int' },
-  defend_value_max: { title: "defend_value_max", desc: "defend_value_max", type: 'int' },
-  defend_ratio: { title: "defend_ratio", desc: "defend_ratio", type: 'int' },
-  mp: { title: "MP", desc: "MP", type: 'int' },
-  hp: { title: "HP", desc: "HP", type: 'int' },
-  resting_max: { title: "resting_max", desc: "resting_max", type: 'int' },
-  vrest_after_shaking: { title: "vrest是否在shaking后更新", desc: "vrest是否在shaking后更新", type: 'int', min: 0, max: 1, step: 1 },
-  arest_after_motionless: { title: "arest是否在motionless后更新", desc: "arest是否在motionless后更新", type: 'int', min: 0, max: 1, step: 1 },
-  invisible_blinking: { title: "隐身结束后的闪烁时长", desc: "隐身结束后的闪烁时长", type: 'int', min: 0, max: 9999, step: 1 },
-  jump_height    /* */: { title: "jump_height    ", desc: "", type: 'float' },
-  jump_distance  /* */: { title: "jump_distance  ", desc: "", type: 'float' },
-  jump_distancez /* */: { title: "jump_distancez ", desc: "", type: 'float' },
-  dash_height    /* */: { title: "dash_height    ", desc: "", type: 'float' },
-  dash_distance  /* */: { title: "dash_distance  ", desc: "", type: 'float' },
-  dash_distancez /* */: { title: "dash_distancez ", desc: "", type: 'float' },
-  rowing_height  /* */: { title: "rowing_height  ", desc: "", type: 'float' },
-  rowing_distance/* */: { title: "rowing_distance", desc: "", type: 'float' },
+type IRet = Omit<IFieldInfo, 'key'>
+type IArg = string | Omit<IFieldInfo, 'key' | 'type'>
+const { assign } = Object
+function w(type: IFieldInfo['type'], ...args: IArg[]): IRet {
+  const ret: IRet = { type }
+  for (let i = 0; i < args.length; i++) {
+    const v = args[i];
+    if (i == 0 && v === 'string') ret.title = v
+    if (i == 0 && v === 'object') assign(ret, v)
+    if (i == 1 && v === 'string') ret.desc = v
+    if (i == 1 && v === 'object') assign(ret, v)
+    if (i > 1 && v === 'object') assign(ret, v)
+  }
+  return ret
 }
-export const world_dataset_field_map = new Map<keyof IWorldDataset | string, IFieldInfo>()
-for (const k in world_dataset_fields) {
+const float = assign((...p: IArg[]): IRet => w('float', ...p), w('float'))
+const int = assign((...p: IArg[]): IRet => w('int', ...p), w('int'))
+const invalid = assign((...p: IArg[]): IRet => w('', ...p), w(''))
+const fields: Record<keyof IWorldDataset, IRet> = {
+  gravity: float("重力"),
+  jump_x_f: float("跳跃X速度系数"),
+  jump_h_f: float("跳跃Y速度系数"),
+  jump_z_f: float("跳跃Z速度系数"),
+  dash_x_f: float("跑跳X速度系数"),
+  dash_h_f: float("跑跳Y速度系数"),
+  dash_z_f: float("跑跳Z速度系数"),
+  bfall_x_f: float("受身速度系数X"),
+  bfall_h_f: float("受身速度系数Y"),
+  weapon_throwing_gravity: float("投掷武器重力"),
+  begin_blink_time: int("入场闪烁时长"),
+  gone_blink_time: int("消失闪烁时长"),
+  lying_blink_time: int("起身闪烁时长"),
+  double_click_interval: int("双击判定时长"),
+  key_hit_duration: int("按键判定时长"),
+  itr_shaking: int("受伤摇晃时长"),
+  itr_motionless: int("命中停顿时长"),
+  hp_healing_ticks: int("治疗回血周期", "治疗效果下，每几帧回血一次"),
+  hp_healing_value: int("治疗回血量", "治疗效果下，每次回血多少"),
+  fvx_f: float("frame.dvx缩放系数"),
+  fvy_f: float("frame.dvy缩放系数"),
+  fvz_f: float("frame.dvz缩放系数"),
+  ivx_f: float("itr.dvx缩放系数"),
+  ivy_f: float("itr.dvy缩放系数"),
+  ivz_f: float("itr.dvz缩放系数"),
+  ivy_d: float("itr.dvy默认值", "默认的攻击Y轴速度"),
+  ivx_d: float("itr.dvx默认值", "默认的攻击X轴速度"),
+  cvx_d: float("停抓vx", "抓人结束时，被抓者的速度X"),
+  cvy_d: float("停抓vy", "抓人结束时，被抓者的速度Y"),
+  tvx_f: float("丢人速度系数X"),
+  tvy_f: float("丢人速度系数Y"),
+  tvz_f: float("丢人速度系数Z"),
+  wvx_f: float("丢武器速度系数X"),
+  wvy_f: float("丢武器速度系数Y"),
+  wvz_f: float("丢武器速度系数Z"),
+  vrest_offset: int,
+  min_vrest: int,
+  itr_arest: int,
+  arest_offset: int,
+  min_arest: int,
+  wait_offset: int,
+  cha_bc_spd: float,
+  cha_bc_tst_spd_x: float,
+  cha_bc_tst_spd_y: float,
+  hp_recoverability: float("可回血比例", "可回血比例"),
+  hp_r_ticks: int("回血周期", "每几帧回血一次"),
+  hp_r_value: int("回血量", "每次回血多少"),
+  mp_r_ticks: int("回蓝周期", "每几帧回蓝一次"),
+  mp_r_ratio: int("回蓝速率系数"),
+  friction_factor: float("地速衰减系数", "在地面的物体，速度将每帧乘以此值"),
+  friction_x: float("地面摩擦X", "在地面的物体，每帧X速度将±=此值,向0靠近"),
+  friction_z: float("地面摩擦Z", "在地面的物体，每帧Z速度将±=此值,向0靠近"),
+  land_friction_factor: float("落地摩擦X", "在物体着地时，当前动作结束前，速度将每帧乘以此值"),
+  land_friction_x: float("落地摩擦X", "在物体着地时，当前动作结束前，每帧X速度将±=此值,向0靠近"),
+  land_friction_z: float("落地摩擦Z", "在物体着地时，当前动作结束前，每帧Z速度将±=此值,向0靠近"),
+  screen_w: invalid,
+  screen_h: invalid,
+  sync_render: invalid,
+  difficulty: int,
+  infinity_mp: int("无限MP", "无限MP, 1=无限, 0=有限(默认)", { min: 0, max: 1 }),
+  fall_r_ticks: int("摔落值恢复周期", "每几帧恢复一次摔落值"),
+  fall_r_value: int("摔落值恢复量", "每次恢复多少摔落值"),
+  defend_r_ticks: int("防御值恢复周期", "每几帧恢复一次防御值"),
+  defend_r_value: int("防御值恢复量", "每次恢复多少防御值"),
+  fall_value: int("摔落值", "默认摔落值"),
+  catch_time_max: int,
+  defend_value_max: int,
+  defend_ratio: int,
+  mp: int,
+  hp: int,
+  resting_max: int,
+  vrest_after_shaking: int("vrest是否在shaking后更新", "vrest是否在shaking后更新", { min: 0, max: 1 }),
+  arest_after_motionless: int("arest是否在motionless后更新", "arest是否在motionless后更新", { min: 0, max: 1 }),
+  invisible_blinking: int("隐身结束后的闪烁时长", "隐身结束后的闪烁时长", { min: 0, max: 9999 }),
+  jump_height: float,
+  jump_distance: float,
+  jump_distancez: float,
+  dash_height: float,
+  dash_distance: float,
+  dash_distancez: float,
+  rowing_height: float,
+  rowing_distance: float,
+}
+export const world_dataset_field_map = new Map<string, IFieldInfo>()
+for (const k in fields) {
   const key = k as keyof IWorldDataset
-  const value = Object.assign(world_dataset_fields[key], { key })
+  const value = assign(fields[key], { key })
   world_dataset_field_map.set(key, value)
 }
