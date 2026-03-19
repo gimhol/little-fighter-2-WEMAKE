@@ -102,7 +102,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
 
     me.lf2.mt.mark = 'hba_2'
     const keys = me.lf2.mt.pick(keys_list)
-    if (keys) this.ctrl.start(...keys).end(...keys)
+    if (keys) this.ctrl.key_up(...keys).start(...keys).end(...keys)
     if (bot_cases && keys) bot_cases.push(keys.join())
     return true
   }
