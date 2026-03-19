@@ -72,7 +72,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
       const sm = attacker.facing === victim.facing
       let id: string | string[] | undefined;
       if (ic) id = sm ? backhurtact : fronthurtact;
-      else if (fv < d) id = dizzy;
+      else if (fv <= d) id = dizzy;
       else id = i?.[a(r)];
       if (id && id.length > 0) victim.enter_frame({ id });
       break;
@@ -82,6 +82,6 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
 
 
 function a(r: number): TFace {
-  const a = Math.floor((r - 1) / 40) % 2
-  return a > 0 ? -1 : 1
+  const a = Math.floor(r / 50) % 2
+  return a > 0 ? 1 : -1
 }
