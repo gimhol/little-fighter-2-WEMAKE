@@ -7,7 +7,7 @@ import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhase
 import { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
-import { is_fighter, is_fighter_data, is_weapon } from "../entity/type_check";
+import { is_fighter, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
@@ -375,8 +375,8 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   all_boss_dead(): boolean {
     for (const item of this.items) {
+      if (!item.is_fighter) continue;
       if (!item.info.is_boss) continue;
-      if (!is_fighter_data(item.data)) continue;
       if (item.objects.size) return false
       if (!item.released) return false
     }
@@ -384,7 +384,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   }
   all_fighter_dead(): boolean {
     for (const item of this.items) {
-      if (!is_fighter_data(item.data)) continue;
+      if (!item.is_fighter) continue;
       if (item.objects.size) return false
       if (!item.released) return false
     }
