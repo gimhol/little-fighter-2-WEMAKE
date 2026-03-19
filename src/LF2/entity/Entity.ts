@@ -12,6 +12,7 @@ import {
   is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
+import { ChaseStratedy } from "../defines/ChaseStratedy";
 import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
 import { IArmorInfo } from "../defines/IArmorInfo";
@@ -811,7 +812,7 @@ export class Entity {
 
     let vx = ovx + o_dvx * facing;
     let vy = ovy + o_dvy + dvy;
-    let vz = z_disabled ? 0 : ovz + o_dvz + o_speedz * ud + dvz;
+    let vz = z_disabled ? 0 : ovz + o_dvz + o_speedz * ud;
     if (vxm === SpeedMode.Fixed) vx = dvx;
     if (vym === SpeedMode.Fixed) vy = dvy;
     if (vzm === SpeedMode.Fixed) vz = dvz;
@@ -896,7 +897,7 @@ export class Entity {
         if (pre_chase && !cur_chase)
           this.world.del_chaser(this)
         else if (cur_chase && pre_chase != cur_chase)
-          this.world.add_chaser(this, cur_chase)
+          this.world.add_chaser(this)
       }
     }
     if (v.invisible) this.invisibility(v.invisible);
@@ -1855,6 +1856,14 @@ export class Entity {
   update_chasing(lookup: Entity) {
     const a = this.chasing;
     const b = this.should_chase(a) ? a : this.chasing = null;
+    if (a && this.frame.chase?.stratedy === ChaseStratedy.TillLost) {
+      this.ctrl.set_chase_pos(
+        a.position.x,
+        a.position.y,
+        a.position.z
+      )
+      return
+    }
     const c = this.should_chase(lookup) ? lookup : null;
     const d = this.chasing = closer_one(this, b, c);
     // lost

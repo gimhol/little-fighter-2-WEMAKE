@@ -68,6 +68,7 @@ import * as b3 from "./ExtraZipText"
 import * as b4 from "./BGMSwitcher";
 import * as b5 from "./Text";
 import * as b6 from "./FnKeysCounts";
+import * as b7 from "./Tests";
 
 /*** COMPONENTS IMPORT END ***/
 
@@ -87,6 +88,6 @@ export const ALL_COMPONENTS = [
   b0.VsModeLogic, z.Jalousie, a6.PlayerKeyEdit, g.DanmuGameLogic, a9.PlayerNameInput, p.FighterStatBar,
   f.ComponentsPlayer, d.CharMenuLogic, y.IntegerPicker, ad.PlayerScorePlayerName,
   i.Dialogs, b1.HideWhenDialoging, b2.LittleFunnyAutoGame, b3.ExtraZipText, b5.Text,
-  b4.BGMSwitcher, b6.FnKeysCounts
+  b4.BGMSwitcher, b6.FnKeysCounts, b7.Tests,
   /*** COMPONENTS MAP END ***/
 ].map(v => [v.TAG, v] as const);

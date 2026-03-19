@@ -1,5 +1,6 @@
 import { IWorldDataset } from "../IWorldDataset";
 import { ChaseLost } from "./ChaseLost";
+import { ChaseStratedy } from "./ChaseStratedy";
 import { FacingFlag } from "./FacingFlag";
 import { FrameBehavior } from "./FrameBehavior";
 import { HitFlag } from "./HitFlag";
@@ -179,6 +180,11 @@ export interface IFrameInfo extends Partial<IWorldDataset> {
 }
 
 export interface IChaseInfo {
+  /**
+   * 切换跟踪对象的策略
+   */
+  stratedy?: number | ChaseStratedy;
+
   /**
    * 跟踪对象的标志
    */

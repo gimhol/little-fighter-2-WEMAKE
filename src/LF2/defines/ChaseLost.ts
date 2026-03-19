@@ -6,3 +6,4 @@ export enum ChaseLost {
   /* 放弃寻找 */
   End           /**/ = 0b00000100,
 }
+
