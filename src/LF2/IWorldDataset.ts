@@ -210,11 +210,11 @@ function w(type: IFieldInfo['type'], ...args: IArg[]): IRet {
   const ret: IRet = { type }
   for (let i = 0; i < args.length; i++) {
     const v = args[i];
-    if (i == 0 && v === 'string') ret.title = v
-    if (i == 0 && v === 'object') assign(ret, v)
-    if (i == 1 && v === 'string') ret.desc = v
-    if (i == 1 && v === 'object') assign(ret, v)
-    if (i > 1 && v === 'object') assign(ret, v)
+    if (i == 0 && typeof v === 'string') ret.title = v
+    if (i == 0 && typeof v === 'object') assign(ret, v)
+    if (i == 1 && typeof v === 'string') ret.desc = v
+    if (i == 1 && typeof v === 'object') assign(ret, v)
+    if (i > 1 && typeof v === 'object') assign(ret, v)
   }
   return ret
 }
