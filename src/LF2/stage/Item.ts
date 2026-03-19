@@ -3,7 +3,7 @@ import { TeamEnum } from "../defines/TeamEnum";
 import { Entity } from "../entity/Entity";
 import { Factory } from "../entity/Factory";
 import IEntityCallbacks from "../entity/IEntityCallbacks";
-import { is_fighter, is_weapon } from "../entity/type_check";
+import { is_fighter, is_fighter_data, is_weapon } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
 import { round, Times } from "../utils";
 import { is_num, is_str } from "../utils/type_check";
@@ -14,10 +14,12 @@ export default class Item {
   data?: IEntityData | undefined;
   randoming?: Randoming<Randoming<IEntityData>>;
   private _released: boolean = false;
+  private _is_fighter: boolean = false;
 
   get lf2() { return this.stage.lf2; }
   get world() { return this.stage.world; }
   get released() { return this._released }
+  get is_fighter() { return this._is_fighter }
   readonly info: Readonly<IStageObjectInfo>;
   readonly objects = new Set<Entity>();
   readonly stage: Stage;
@@ -32,6 +34,7 @@ export default class Item {
       e.callbacks.del(this.entity_callback);
     }
   };
+
   constructor(stage: Stage, info: IStageObjectInfo) {
     this.stage = stage;
     this.info = info;
@@ -40,6 +43,8 @@ export default class Item {
     const randoming_list: Randoming<IEntityData>[] = []
     for (const oid of this.info.id) {
       const data = this.lf2.datas.find(oid);
+      if (is_fighter_data(data))
+        this._is_fighter = true;
       if (data) {
         data_list.push(data);
         continue;
@@ -143,7 +148,7 @@ export default class Item {
     if (is_str(act)) e.enter_frame({ id: act });
     else if (is_fighter(e)) e.enter_frame({ id: "running_0" })
     else e.enter_frame(Defines.NEXT_FRAME_AUTO);
-  
+
     e.callbacks.add(this.entity_callback);
     this.objects.add(e);
     return true;

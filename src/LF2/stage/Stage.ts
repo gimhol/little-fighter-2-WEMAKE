@@ -181,6 +181,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   private set_phase(phase: IStagePhaseInfo | undefined) {
     if (phase === this.phase) return;
+    Ditto.debug('set_phase', phase)
     this.phase_time = 0;
     this.phase_end_tester.reset(phase?.end_testers ?? [])
 
@@ -216,8 +217,9 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       }
     }
     this.play_phase_sounds();
+    const { ce } = this;
     if (objects?.length) for (const object of objects) {
-      this.spawn_object(object);
+      this.spawn_object(object, ce);
     }
     if (is_num(phase.cam_jump_to_x)) {
       this.world.renderer.cam_x = phase.cam_jump_to_x;
@@ -292,14 +294,11 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this._is_chapter_finish = this._is_stage_finish && this.next_stage?.chapter !== this.data.chapter
     return
   }
-
-  async spawn_object(obj_info: IStageObjectInfo) {
-    if (this.world.stage !== this) return;
+  get ce() {
     let count = 0;
     for (const [, c] of this.world.puppets)
       count += c.data.base.ce ?? 1;
     if (!count) count = 1;
-
     switch (this.world.difficulty) {
       case Difficulty.Crazy:
         count *= 2
@@ -309,8 +308,11 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       case Difficulty.Difficult:
         break;
     }
+    return count;
+  }
+  async spawn_object(obj_info: IStageObjectInfo, count: number) {
+    if (this.world.stage !== this) return;
     const { ratio, times = 1 } = obj_info;
-
     let spawn_count = ratio === void 0 ? 1 : floor(round_float(count * ratio, 10));
     if (spawn_count <= 0 || !times) return;
 
@@ -429,6 +431,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     return !!this.phase?.weapon_rain_disabled
   }
   update() {
+    if (this.id == Defines.VOID_STAGE.id) return;
     if (this.phase) this.phase_time++
     if (this.dialog) this.dialog_time++
     this.fsm.update(1);

@@ -57,7 +57,7 @@ export class GamePrepareLogic extends UIComponent {
       BackgroundSwitcher,
       (v) => v.node.visible && !v.node.disabled,
     );
-    if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
+    if (stage_name_text) this.lf2.change_bg(stage_name_text.stage.bg);
     else if (background_name_text) this.lf2.change_bg(background_name_text.background);
     const { far, near, left, right } = this.lf2.world.bg;
 
@@ -104,8 +104,12 @@ export class GamePrepareLogic extends UIComponent {
       fighter.blinking = this.world.begin_blink_time;
       fighter.attach();
     }
+    if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
+    
     if (stage_name_text) this.lf2.push_ui("stage_mode_page");
     else this.lf2.push_ui("vs_mode_page");
+
+
   }
 }
 
