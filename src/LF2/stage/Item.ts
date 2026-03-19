@@ -5,7 +5,7 @@ import { Factory } from "../entity/Factory";
 import IEntityCallbacks from "../entity/IEntityCallbacks";
 import { is_fighter, is_weapon } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
-import { round } from "../utils";
+import { round, Times } from "../utils";
 import { is_num, is_str } from "../utils/type_check";
 import { Stage } from "./Stage";
 
@@ -13,39 +13,24 @@ export default class Item {
   times: number | undefined;
   data?: IEntityData | undefined;
   randoming?: Randoming<Randoming<IEntityData>>;
+  private _released: boolean = false;
 
-  get lf2() {
-    return this.stage.lf2;
-  }
-  get world() {
-    return this.stage.world;
-  }
+  get lf2() { return this.stage.lf2; }
+  get world() { return this.stage.world; }
+  get released() { return this._released }
   readonly info: Readonly<IStageObjectInfo>;
-  readonly fighters = new Set<Entity>();
+  readonly objects = new Set<Entity>();
   readonly stage: Stage;
-  readonly entity_cb: IEntityCallbacks = {
+  readonly end_delay = new Times(0, 120)
+  readonly entity_callback: IEntityCallbacks = {
     on_team_changed: (e) => {
-      this.fighters.delete(e); // 被移除
-      if (e.team !== this.stage.team) {
-        this.entity_cb.on_disposed?.(e)
-      }
+      this.objects.delete(e);
+      e.callbacks.del(this.entity_callback);
     },
-    on_disposed: (e: Entity): void => {
-      e.callbacks.del(this.entity_cb);
-      if (this.info.is_soldier) {
-        if (this.stage.all_boss_dead()) {
-          this.dispose();
-        } else if (this.times === void 0 || this.times >= 1) {
-          this.spawn();
-        } else {
-          this.dispose();
-        }
-      } else if (this.times && this.times >= 1) {
-        this.spawn();
-      } else {
-        this.dispose();
-      }
-    },
+    on_dead: (e) => {
+      this.objects.delete(e);
+      e.callbacks.del(this.entity_callback);
+    }
   };
   constructor(stage: Stage, info: IStageObjectInfo) {
     this.stage = stage;
@@ -73,6 +58,28 @@ export default class Item {
       this.randoming = new Randoming(randoming_list, stage.lf2)
     } else {
       debugger;
+    }
+  }
+  update() {
+    if (this._released) return;
+
+    if (this.objects.size > 0) {
+      this.end_delay.reset()
+      return;
+    }
+    if (!this.end_delay.add())
+      return;
+    const { times = -1 } = this
+    if (this.info.is_soldier) {
+      if (this.stage.all_boss_dead() || times == 0) {
+        this.release();
+        return
+      }
+      this.spawn();
+    } else if (times >= 1) {
+      this.spawn();
+    } else {
+      this.release();
     }
   }
 
@@ -132,20 +139,17 @@ export default class Item {
     }
     e.team = this.stage.team;
     e.attach();
-    e.callbacks.add(this.entity_cb);
     if (facing) e.facing = facing;
     if (is_str(act)) e.enter_frame({ id: act });
     else if (is_fighter(e)) e.enter_frame({ id: "running_0" })
     else e.enter_frame(Defines.NEXT_FRAME_AUTO);
-
-    if (is_fighter(e)) this.fighters.add(e);
+  
+    e.callbacks.add(this.entity_callback);
+    this.objects.add(e);
     return true;
   }
 
-  dispose(): void {
-    this.stage.items.delete(this);
-    for (const e of this.fighters) {
-      e.callbacks.del(this.entity_cb);
-    }
+  release(): void {
+    this._released = true;
   }
 }

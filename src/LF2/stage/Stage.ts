@@ -7,7 +7,7 @@ import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhase
 import { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
-import { is_fighter, is_weapon } from "../entity/type_check";
+import { is_fighter, is_fighter_data, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
 import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
@@ -30,6 +30,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   readonly items = new Set<Item>();
   private _is_stage_finish: boolean = false;
   private _is_chapter_finish: boolean = false;
+  private _released_items: Item[] = []
   private _dialogs: IDialogState = {
     index: -1,
     list: []
@@ -314,15 +315,15 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     if (spawn_count <= 0 || !times) return;
 
     while (spawn_count > 0) {
-      const stage_object = new Item(this, obj_info);
-      stage_object.spawn();
-      this.items.add(stage_object);
+      const item = new Item(this, obj_info);
+      item.spawn();
+      this.items.add(item);
       --spawn_count;
     }
   }
   kill_all() {
     for (const o of this.items) {
-      for (const e of o.fighters) {
+      for (const e of o.objects) {
         if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
@@ -330,7 +331,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   kill_soliders() {
     for (const o of this.items) {
       if (!o.info.is_soldier) continue;
-      for (const e of o.fighters) {
+      for (const e of o.objects) {
         if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
@@ -338,7 +339,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   kill_boss() {
     for (const o of this.items) {
       if (!o.info.is_boss) continue;
-      for (const e of o.fighters) {
+      for (const e of o.objects) {
         if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
@@ -346,14 +347,14 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   kill_others() {
     for (const o of this.items) {
       if (o.info.is_boss || o.info.is_soldier) continue;
-      for (const e of o.fighters) {
+      for (const e of o.objects) {
         if (is_fighter(e) && e.team === this.team) e.hp = 0;
       }
     }
   }
   dispose() {
     for (const f of this._disposers) f();
-    for (const item of this.items) item.dispose();
+    for (const item of this.items) item.release();
 
     const temp: Entity[] = [];
     const player_teams = new Set<string>();
@@ -371,10 +372,21 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   }
 
   all_boss_dead(): boolean {
-    return !find(this.items, i => i.info.is_boss);
+    for (const item of this.items) {
+      if (!item.info.is_boss) continue;
+      if (!is_fighter_data(item.data)) continue;
+      if (item.objects.size) return false
+      if (!item.released) return false
+    }
+    return true;
   }
   all_fighter_dead(): boolean {
-    return !find(this.items, i => i.fighters.size)
+    for (const item of this.items) {
+      if (!is_fighter_data(item.data)) continue;
+      if (item.objects.size) return false
+      if (!item.released) return false
+    }
+    return true;
   }
   /** 对话框已完毕 */
   dialog_cleared(): boolean {
@@ -420,6 +432,15 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     if (this.phase) this.phase_time++
     if (this.dialog) this.dialog_time++
     this.fsm.update(1);
+    this._released_items.length = 0
+    for (const item of this.items) {
+      if (item.released)
+        this._released_items.push(item)
+      else
+        item.update()
+    }
+    this._released_items.forEach(v => this.items.delete(v))
+
     this.check_phase_end();
     this.check_dialog_end();
   }
