@@ -43,13 +43,15 @@ export default class Item {
     const randoming_list: Randoming<IEntityData>[] = []
     for (const oid of this.info.id) {
       const data = this.lf2.datas.find(oid);
-      if (is_fighter_data(data))
-        this._is_fighter = true;
       if (data) {
+        if (is_fighter_data(data))
+          this._is_fighter = true;
         data_list.push(data);
         continue;
       }
       const randoming = this.lf2.datas.get_randoming_by_group(oid)
+      if (randoming.src.some(data => is_fighter_data(data)))
+        this._is_fighter = true;
       if (randoming.src.length) randoming_list.push(randoming);
     }
     if (data_list.length === 1 && !randoming_list.length) {
