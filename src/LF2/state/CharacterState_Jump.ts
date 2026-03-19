@@ -1,10 +1,12 @@
-import { StateEnum } from "../defines";
+import { GK, StateEnum } from "../defines";
+import { is_bot_ctrl } from "../entity";
 import type { Entity } from "../entity/Entity";
-import { abs, round, sqrt } from "../utils";
+import { abs } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
 export default class CharacterState_Jump extends CharacterState_Base {
   private _jumpings = new Set<Entity>();
+  private _forces = new Map<Entity, { x: number, y: number, z: number, t: number }>();
   constructor(state: StateEnum = StateEnum.Jump) {
     super(state)
   }
@@ -13,7 +15,21 @@ export default class CharacterState_Jump extends CharacterState_Base {
 
     const { jump_flag } = e.get_prev_frame();
     if (!jump_flag) {
-      this._jumpings.delete(e);
+      if (this._jumpings.delete(e)) {
+        this._forces.delete(e)
+      } else if (!is_bot_ctrl(e.ctrl)) {
+        const force = this._forces.get(e)
+        if (!force) {
+          this._forces.set(e, { x: 1, y: 1, z: 1, t: 1 })
+        } else {
+          force.t += 1;
+          if (!e.ctrl.is_end(GK.R)) force.x += 1;
+          if (!e.ctrl.is_end(GK.L)) force.x -= 1;
+          if (!e.ctrl.is_end(GK.U)) force.z -= 1;
+          if (!e.ctrl.is_end(GK.D)) force.z += 1;
+          if (!e.ctrl.is_end(GK.j)) force.y += 1;
+        }
+      }
       return;
     }
     if (this._jumpings.has(e)) {
@@ -29,7 +45,8 @@ export default class CharacterState_Jump extends CharacterState_Base {
     vz *= UD1 * e.dataset('jump_z_f')
     vx = LR1 * (vx * e.dataset('jump_x_f') - abs(vz / 4))
     vy *= e.dataset('jump_h_f')
-
+    const force = this._forces.get(e);
+    if (force?.t) vy *= force.y / force.t
     e.set_velocity(vx, vy, vz);
     this._jumpings.add(e);
   }
