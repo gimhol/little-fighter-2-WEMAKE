@@ -1,6 +1,6 @@
 import { ICollision } from "../base";
-import { Defines, ItrEffect, SparkEnum, StateEnum } from "../defines";
-import { is_fighter, same_face } from "../entity";
+import { Defines, ItrEffect, SparkEnum, StateEnum, TFace } from "../defines";
+import { is_fighter } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_armor } from "./handle_armor";
 import { handle_fall } from "./handle_fall";
@@ -50,38 +50,38 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
       victim.defend_value = 0;
       if (is_fall(collision)) {
         handle_fall(collision);
-      } else {
-        const [vx, vy, vz] = calc_itr_velocity(collision)
-        victim.set_velocity(vx, vy, vz)
-        const [x, y, z] = victim.spark_point(a_cube, b_cube)
-        if (itr.effect === ItrEffect.Sharp && is_fighter(victim)) {
-          victim.world.spark(x, y, z, SparkEnum.Bleed);
-        } else {
-          victim.world.spark(x, y, z, SparkEnum.Hit);
-        }
-        if (StateEnum.Caught === victim.frame.state) {
-          if (victim.frame.cpoint) {
-            const { backhurtact, fronthurtact } = victim.frame.cpoint;
-            if (attacker.facing === victim.facing && backhurtact) {
-              victim.next_frame = { id: backhurtact };
-            } else if (attacker.facing !== victim.facing && fronthurtact) {
-              victim.next_frame = { id: fronthurtact };
-            }
-          }
-        } else {
-          /* 击晕 */
-          if (victim.fall_value <= Defines.DEFAULT_FALL_VALUE_DIZZY) {
-            victim.next_frame = { id: victim.data.indexes?.dizzy };
-          } else if (victim.data.indexes?.grand_injured) {
-            /* 击中 */
-            victim.next_frame = {
-              id: victim.data.indexes.grand_injured[same_face(victim, attacker)][0],
-            };
-          }
-        }
+        return;
       }
+      const [vx, vy, vz] = calc_itr_velocity(collision)
+      victim.set_velocity(vx, vy, vz)
+      const [x, y, z] = victim.spark_point(a_cube, b_cube)
+      if (itr.effect === ItrEffect.Sharp && is_fighter(victim)) {
+        victim.world.spark(x, y, z, SparkEnum.Bleed);
+      } else {
+        victim.world.spark(x, y, z, SparkEnum.Hit);
+      }
+
+      const ic = StateEnum.Caught === victim.frame.state;
+      const { backhurtact, fronthurtact } = victim.frame.cpoint || {};
+      const { fall_value_max: fvm, fall_value: fv } = victim;
+      const { dizzy, grand_injured, injured } = victim.data.indexes || {}
+      const g = victim.position.y <= victim.ground_y
+      const i = g ? grand_injured : injured;
+      const r = fvm - fv;
+      const d = Defines.DEFAULT_FALL_VALUE_DIZZY
+      const sm = attacker.facing === victim.facing
+      let id: string | string[] | undefined;
+      if (ic) id = sm ? backhurtact : fronthurtact;
+      else if (fv <= d) id = dizzy;
+      else id = i?.[a(r)];
+      if (id && id.length > 0) victim.enter_frame({ id });
       break;
     }
   }
 }
 
+
+function a(r: number): TFace {
+  const a = Math.floor(r / 50) % 2
+  return a > 0 ? 1 : -1
+}

@@ -3,6 +3,7 @@ import { ActionType } from "../../defines/ActionType";
 import { C_Val } from "../../defines/CollisionVal";
 import { ensure } from "../../utils";
 import { CondMaker } from "../CondMaker";
+import { set_hit_flag } from "../set_hit_flag";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
@@ -25,7 +26,7 @@ export function make_fighter_data_freeze(data: IEntityData): IEntityData {
     data.frames["running_3"]
   ].filter(Boolean).map(frame => {
     frame.bdy = ensure(frame.bdy, {
-      hit_flag: HitFlag.Fighter | HitFlag.Ally,
+      ...set_hit_flag({}, HitFlag.AllyFighter),
       code: 123,
       kind: BdyKind.Normal,
       x: 35,

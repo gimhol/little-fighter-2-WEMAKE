@@ -31,6 +31,7 @@ export default class FSM<
   protected _state?: S;
   protected _time: number = 0;
   protected _state_time: number = 0;
+  get states(): ReadonlyMap<K, S> { return this._state_map }
   get callbacks(): NoEmitCallbacks<IFSMCallback<K, S>> {
     return this._callbacks;
   }

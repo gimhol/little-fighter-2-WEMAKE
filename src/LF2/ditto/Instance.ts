@@ -29,6 +29,7 @@ export interface IDittoPack {
   Zip: {
     read_file(file: File): Promise<IZip>;
     read_buf(name: string, buf: Uint8Array): Promise<IZip>;
+    read_blob(name: string, buf: Blob): Promise<IZip>;
     download(
       url: string,
       on_progress: (progress: number, size: number) => void

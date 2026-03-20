@@ -13,11 +13,13 @@ import {
   SpeedMode
 } from "../defines";
 import { ChaseLost } from "../defines/ChaseLost";
+import { ChaseStratedy } from "../defines/ChaseStratedy";
 import { ensure } from "../utils";
 import { CondMaker } from "./CondMaker";
 import { firzen_disater_start } from "./firzen_disater_start";
 import { jan_chase_start } from "./jan_chase_start";
 import { jan_chaseh_start } from "./jan_chaseh_start";
+import { set_hit_flag } from "./set_hit_flag";
 
 const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
 export function make_frame_behavior(frame: IFrameInfo, oid: string) {
@@ -41,7 +43,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         w: 32,
         h: 34,
         injury: 100,
-        hit_flag: HitFlag.AllyFighter,
+        ...set_hit_flag({}, HitFlag.AllyFighter),
         actions: [
           {
             type: ActionType.A_NextFrame,
@@ -52,7 +54,11 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         ],
         test: new CondMaker().and(C_Val.VictimIsChasing, "==", 1).done()
       });
-      frame.chase = { flag: HitFlag.AllyFighter, lost: ChaseLost.Leave | ChaseLost.End };
+      frame.chase = {
+        stratedy: ChaseStratedy.TillLost,
+        flag: HitFlag.AllyFighter,
+        lost: ChaseLost.Leave | ChaseLost.End
+      };
       break;
     case FrameBehavior.JohnChase:
       frame.facing = FF.VX;
@@ -67,7 +73,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       frame.dvy = Defines.JOHN_CHASE_MAX_VY;
       frame.acc_y = Defines.JOHN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
-      
+
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0 };
       break;
@@ -142,6 +148,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         }
       })
       frame.chase = {
+        stratedy: ChaseStratedy.TillLost,
         flag: HitFlag.EnemyFighter,
         lost: ChaseLost.Hover | ChaseLost.End
       };

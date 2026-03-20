@@ -7,13 +7,13 @@ import { foreach } from "../utils/container_help/foreach";
 import { ActionType } from "../defines/ActionType";
 import { CondMaker } from "./CondMaker";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
-
+import { set_hit_flag } from "./set_hit_flag";
 export function make_ball_special(data: IEntityData) {
   switch (data.id as BuiltIn_OID) {
     case BuiltIn_OID.FirenFlame:
       traversal(data.frames, (_, frame) => {
         if (frame.itr) for (const itr of frame.itr)
-          itr.hit_flag = HitFlag.AllEnemy;
+          set_hit_flag(itr, HitFlag.AllEnemy)
       });
       break;
     case BuiltIn_OID.FirzenBall:

@@ -1,6 +1,5 @@
-import { clamp, is_num } from "../utils";
+import { is_num } from "../utils";
 import { Animation } from "./Animation";
-
 
 export abstract class Periodic extends Animation {
   offset: number = 0;

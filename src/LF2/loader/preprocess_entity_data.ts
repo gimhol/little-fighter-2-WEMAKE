@@ -1,5 +1,5 @@
 import { Expression } from "../base/Expression";
-import { Defines, IEntityData } from "../defines";
+import { IEntityData } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { is_non_blank_str } from "../utils";

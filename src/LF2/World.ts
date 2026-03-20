@@ -372,12 +372,9 @@ export class World extends WorldDataset {
   }
 
   private gone_entities: Entity[] = [];
-  private _chasers = new Map<Entity, number>();
-  get_chaser_flag(entity: Entity): number | undefined {
-    return this._chasers.get(entity)
-  }
-  add_chaser(entity: Entity, flag: HitFlag | number) {
-    this._chasers.set(entity, flag);
+  private _chasers = new Set<Entity>();
+  add_chaser(entity: Entity) {
+    this._chasers.add(entity);
   }
   del_chaser(entity: Entity) {
     this._chasers.delete(entity);
@@ -499,7 +496,7 @@ export class World extends WorldDataset {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-          
+
           this._lock_cam_x = x
           continue
         }
@@ -545,7 +542,7 @@ export class World extends WorldDataset {
 
     for (const e of this.entities) {
       if (update_chasing && this._chasers.size)
-        for (const [c] of this._chasers)
+        for (const c of this._chasers)
           c.update_chasing(e)
       if (update_collisions) {
         const a_ctrl = e.ctrl
@@ -739,11 +736,13 @@ export class World extends WorldDataset {
     )) return;
 
     const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
+    const bdy_flag = bdy.hit_flag ?? HitFlag.AllEnemy;
+    const itr_flag = itr.hit_flag ?? HitFlag.AllEnemy;
     if (
-      !(itr.hit_flag & victim.data.type) ||
-      !(bdy.hit_flag & attacker.data.type) ||
-      !(itr.hit_flag & ally_flag) &&
-      !(bdy.hit_flag & ally_flag)
+      !(itr_flag & victim.data.type) ||
+      !(bdy_flag & attacker.data.type) ||
+      !(itr_flag & ally_flag) &&
+      !(bdy_flag & ally_flag)
     ) return;
     if (
       victim.team === attacker.team && victim.pre_emitter &&
@@ -925,8 +924,8 @@ export class World extends WorldDataset {
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
     this.ghosts.forEach(v => v.set_frame(GONE_FRAME_INFO))
     this.buffs.forEach(v => v.life.loop(v.life.max = v.life.min = 0))
-    this.lf2.change_bg(Defines.VOID_BG)
     this.lf2.change_stage(Defines.VOID_STAGE)
+    this.lf2.change_bg(Defines.VOID_BG)
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;

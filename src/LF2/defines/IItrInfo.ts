@@ -22,7 +22,7 @@ export interface IItrInfo extends Partial<IQube> {
    *
    * @type {HitFlag}
    */
-  hit_flag: HitFlag | number;
+  hit_flag?: HitFlag | number;
   hit_flag_name?: string;
 
   /**

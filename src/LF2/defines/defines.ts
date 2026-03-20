@@ -17,7 +17,7 @@ export type TFace = -1 | 1;
 export type TTrend = -1 | 0 | 1;
 export type BOOL = 1 | 0;
 export namespace Defines {
-  export const DATA_VERSION: number = 11;
+  export const DATA_VERSION: number = 12;
   export const TeamEnum = _TeamEnum;
   export type TeamEnum = _TeamEnum;
   export const CLASSIC_SCREEN_WIDTH = 794;
@@ -286,7 +286,7 @@ export namespace Defines {
   export const DEVIL_JUDGEMENT_SPREADING_VY = arithmetic_progression(2, 8, 0.5)
   export const DISATER_CHASE_MAX_VX = 14
   export const DISATER_CHASE_ACC_X = 0.25
-  export const DISATER_CHASE_ACC_Z = 0.125
+  export const DISATER_CHASE_ACC_Z = 0.25
   export const DISATER_CHASE_MAX_VY = 8
   export const DISATER_CHASE_ACC_Y = -0.25
 

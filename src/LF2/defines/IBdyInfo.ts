@@ -1,9 +1,10 @@
-import type { TAction } from "./TAction";
 import { BdyKind } from "./BdyKind";
 import { HitFlag } from "./HitFlag";
 import type { IExpression } from "./IExpression";
 import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
+import { make_field_orders } from "./make_field_orders";
+import type { TAction } from "./TAction";
 
 export interface IBdyInfo extends Partial<IQube> {
   /**
@@ -19,7 +20,8 @@ export interface IBdyInfo extends Partial<IQube> {
    * @see {HitFlag}
    * @type {HitFlag}
    */
-  hit_flag: HitFlag | number;
+  hit_flag?: HitFlag | number;
+  hit_flag_name?: string;
 
   /**
    * [LF2][WEMAKE]
@@ -64,21 +66,15 @@ export interface IBdyInfo extends Partial<IQube> {
   code?: string | number,
 }
 
-let order = -1;
-export const BdyKeyOrders: Record<keyof IBdyInfo, number> = {
-  code: ++order,
-  kind: ++order,
-  kind_name: ++order,
-  x: ++order,
-  y: ++order,
-  w: ++order,
-  h: ++order,
-  z: ++order,
-  l: ++order,
-  hit_flag: ++order,
-  prefab_id: ++order,
-  actions: ++order,
-  test: ++order,
-  tester: ++order,
-  indicator_info: ++order,
-}
+export const BdyKeyOrders = make_field_orders({
+  kind: 0, kind_name: 0,
+  x: 0, y: 0, w: 0, h: 0, z: 0, l: 0,
+  hit_flag: 0,
+  hit_flag_name: 0,
+  prefab_id: 0,
+  actions: 0,
+  test: 0,
+  code: 0,
+  tester: 0,
+  indicator_info: 0,
+})

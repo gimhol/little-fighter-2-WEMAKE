@@ -29,7 +29,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.18'
+  static readonly VERSION_NAME: string = 'v0.1.19'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -315,7 +315,13 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load_zip_from_info_url')
     let ret: I.IZip | null = null;
     if (exists) {
-      ret = await I.Ditto.Zip.read_buf(exists.name, exists.data);
+      const { name, blob, data } = exists
+      if (blob)
+        ret = await I.Ditto.Zip.read_blob(name, blob);
+      else if (data)
+        ret = await I.Ditto.Zip.read_buf(name, data);
+      else
+        throw new Error('load_zip_from_info_url failed!')
       this._dispose_check('load_zip_from_info_url')
     } else {
       ret = await I.Ditto.Zip.download(zip_url, (progress, full_size) =>
@@ -324,11 +330,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       this._dispose_check('load_zip_from_info_url')
       await I.Ditto.Cache.del(info_url, "");
       this._dispose_check('load_zip_from_info_url')
+
       await I.Ditto.Cache.put({
         name: md5,
         version: LF2.DATA_VERSION,
         type: LF2.DATA_TYPE,
-        data: ret.buf,
+        blob: await ret.blob()
       });
     }
     this.on_loading_content(`${url}`, 100);

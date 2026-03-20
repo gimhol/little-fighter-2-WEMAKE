@@ -1,9 +1,9 @@
 import { KEY_NAME_LIST } from "../../controller/BaseController";
-import { Defines, GK, ItrKind, StateEnum } from "../../defines";
-import { manhattan_xz } from "../../helper/manhattan_xz";
-import { abs, between, find, round_float } from "../../utils";
-import { BotState_Base } from "./BotState";
+import { Defines, GK, StateEnum } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
+import { manhattan_xz } from "../../helper/manhattan_xz";
+import { abs, between, round_float } from "../../utils";
+import { BotState_Base } from "./BotState";
 
 export class BotState_Chasing extends BotState_Base {
   readonly key = BotStateEnum.Chasing;
@@ -70,7 +70,6 @@ export class BotState_Chasing extends BotState_Base {
       case StateEnum.Running: {
         if (this.defend_test()) return;
         this.handle_block()
-
         if (a_facing > 0 && (abs_dx < c.w_atk_x || out_of_range)) { // 避免跑过头停下
           c.key_down(GK.L).key_up(GK.R)
         } else if (a_facing < 0 && (abs_dx < c.w_atk_x || out_of_range)) { // 避免跑过头停下
@@ -89,13 +88,18 @@ export class BotState_Chasing extends BotState_Base {
         return
       }
       case StateEnum.Injured:
-        if (c.action_desire("chasing_3") < c.d_desire)
-          c.click(GK.d)
+        if (this.defend_test()) return;
         break;
       case StateEnum.Catching:
         // shit, louisEx air-push frame's state is StateEnum.Catching...
         if (me.catching) c.click(GK.a)
         break;
+      case StateEnum.Defend:
+        if (dist_en_x < 0) {
+          c.key_down(me.facing == 1 ? GK.L : GK.R)
+            .key_up(GK.L, GK.R)
+        }
+        return;
       case StateEnum.Attacking:
       case StateEnum.BurnRun:
       case StateEnum.Z_Moveable:
