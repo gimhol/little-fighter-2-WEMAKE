@@ -1,6 +1,6 @@
 import { mt_cases } from "../../cases_instances";
 import { floor } from "./base";
-import { round_float } from "./round_float";
+import { floor_float } from "./floor_float";
 
 const _n: number = 624;
 const _m: number = 397;
@@ -111,7 +111,7 @@ export class MersenneTwister {
 
   /** 生成[0,1)范围内的浮点数 */
   public float(debugging = mt_cases.debugging): number {
-    const ret = round_float(this.int(false) / (0xFFFFFFFF + 1));
+    const ret = floor_float(this.int(false) / (0xFFFFFFFF + 1));
     if (debugging) mt_cases.push(this.mark, 'float', ret)
     return ret;
   }
