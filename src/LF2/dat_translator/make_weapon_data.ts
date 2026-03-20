@@ -114,7 +114,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
     switch (frame.state) {
       case StateEnum.Weapon_InTheSky:
         in_the_skys.push(k)
-        frame.bdy?.forEach((v) => { v.hit_flag = v.hit_flag | HitFlag.AllAlly })
+        frame.bdy?.forEach((v) => { v.hit_flag = HitFlag.AllBoth })
         break;
       case StateEnum.Weapon_Rebounding:
       case StateEnum.HeavyWeapon_JustOnGround:
@@ -122,12 +122,12 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
         break;
       case StateEnum.Weapon_Throwing:
         throwings.push(k)
-        frame.bdy?.forEach((v) => { v.hit_flag = v.hit_flag | HitFlag.AllAlly })
+        frame.bdy?.forEach((v) => { v.hit_flag = HitFlag.AllBoth })
         break;
       case StateEnum.HeavyWeapon_InTheSky:
         in_the_skys.push(k)
         throwings.push(k)
-        frame.bdy?.forEach((v) => { v.hit_flag = v.hit_flag | HitFlag.AllAlly })
+        frame.bdy?.forEach((v) => { v.hit_flag = HitFlag.AllBoth })
         break;
       case StateEnum.Weapon_OnHand:
       case StateEnum.HeavyWeapon_OnHand:
