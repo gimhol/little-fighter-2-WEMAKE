@@ -28,8 +28,6 @@ export function make_fighter_data_freeze(data: IEntityData): IEntityData {
       hit_flag: HitFlag.Fighter | HitFlag.Ally,
       code: 123,
       kind: BdyKind.Normal,
-      z: -Defines.DAFUALT_QUBE_LENGTH / 2,
-      l: Defines.DAFUALT_QUBE_LENGTH,
       x: 35,
       y: 19,
       w: 10,

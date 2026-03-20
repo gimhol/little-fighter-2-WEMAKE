@@ -7,7 +7,7 @@ import { UIComponent } from "./UIComponent";
 class ComponentFactory {
   static inst = new ComponentFactory();
   static readonly TAG = `ComponentFactory`;
-  private _component_map = new Map<string, typeof UIComponent<IUICompnentCallbacks>>(ALL_COMPONENTS);
+  private _component_map = new Map<string, typeof UIComponent<unknown, IUICompnentCallbacks>>(ALL_COMPONENTS);
 
   register(key: string, Cls: typeof UIComponent) {
     if (this._component_map.has(key))

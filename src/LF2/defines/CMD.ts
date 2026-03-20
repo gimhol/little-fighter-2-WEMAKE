@@ -2,6 +2,7 @@ import { CheatType } from "./CheatType";
 export enum CMD {
   F1 = 'f1',
   F2 = 'f2',
+  F3 = 'f3',
   F4 = 'f4',
   F5 = 'f5',
   F6 = 'f6',
@@ -24,10 +25,12 @@ export enum CMD {
   KILL_OTHERS = 'KILL_OTHERS',
   DEL_PUPPET = 'DEL_PUPPET',
   SET_DIFFICULTY = "SET_DIFFICULTY",
+  LOCK_CAM = "LOCK_CAM",
 }
 export const CMD_NAMES: Record<CMD, string> = {
   [CMD.F1]: "F1",
   [CMD.F2]: "F2",
+  [CMD.F3]: "F3",
   [CMD.F4]: "F4",
   [CMD.F5]: "F5",
   [CMD.F6]: "F6",
@@ -49,5 +52,6 @@ export const CMD_NAMES: Record<CMD, string> = {
   [CMD.GIM_INK_ON]: "GIM_INK#",
   [CMD.LF2_NET_OFF]: "LF2_NET#1",
   [CMD.HERO_FT_OFF]: "HERO_FT#1",
-  [CMD.GIM_INK_OFF]: "GIM_INK#1"
+  [CMD.GIM_INK_OFF]: "GIM_INK#1",
+  [CMD.LOCK_CAM]: ""
 }

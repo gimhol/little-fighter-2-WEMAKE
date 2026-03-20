@@ -1,4 +1,4 @@
-import { Builtin_FrameId, HitFlag, SpeedMode, StateEnum, WeaponType } from "../defines";
+import { Builtin_FrameId, FrameBehavior, HitFlag, SpeedMode, StateEnum, WeaponType } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
@@ -7,7 +7,6 @@ import { traversal } from "../utils/container_help/traversal";
 import { round_float } from "../utils/math/round_float";
 import { to_num } from "../utils/type_cast/to_num";
 import { get_next_frame_by_raw_id } from "./get_the_next";
-import { make_frame_behavior } from "./make_frame_behavior";
 import { make_itr_prefabs } from "./make_itr_prefabs";
 import { take } from "./take";
 
@@ -107,7 +106,11 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
     if (hit_d && hit_d !== frame.id)
       frame.on_dead = get_next_frame_by_raw_id(hit_d);
 
-    make_frame_behavior(frame, datIndex)
+    const hit_Fa = take(frame, "hit_Fa");
+    if (hit_Fa) {
+      frame.behavior = hit_Fa;
+      (frame as any).behavior_name = `FrameBehavior.` + FrameBehavior[hit_Fa];
+    }
     switch (frame.state) {
       case StateEnum.Weapon_InTheSky:
         in_the_skys.push(k)

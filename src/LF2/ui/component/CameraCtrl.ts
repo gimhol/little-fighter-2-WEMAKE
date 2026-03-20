@@ -1,3 +1,4 @@
+import { CMD } from "@/LF2/defines/CMD";
 import { KeyStatus } from "../../controller/KeyStatus";
 import { GameKey } from "../../defines";
 import { Entity } from "../../entity";
@@ -42,13 +43,13 @@ export class CameraCtrl extends UIComponent {
     if (lr) {
       this.free = false
       const cam_x = this.world.renderer.cam_x;
-      this.world.lock_cam_x = cam_x + 10 * dt * lr;
+      this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x + 10 * dt * lr}`)
     } else if (!this.keys.j.is_end()) {
       this.free = false
       const cam_x = this.world.renderer.cam_x;
-      this.world.lock_cam_x = cam_x;
+      this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)
     } else if (!this.keys.d.is_end()) {
-      this.world.lock_cam_x = void 0;
+      this.lf2.cmds.push(CMD.LOCK_CAM, ``)
       this.free = true
     } else if (this.keys.U.is_start()) {
       this.keys.U.use()
@@ -67,8 +68,10 @@ export class CameraCtrl extends UIComponent {
     }
     if (this.staring?.is_attach === false)
       this._staring = void 0;
-    if (this.free && this.staring)
-      this.world.lock_cam_x = this.staring.position.x - this.world.screen_w / 2
+    if (this.free && this.staring) {
+      const cam_x = this.staring.position.x - this.world.screen_w / 2
+      this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)
+    }
     this.time += dt;
   }
 }

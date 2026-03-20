@@ -54,6 +54,6 @@ export function handle_armor(collision: ICollision): boolean {
   victim.shaking = round(shaking_ratio * shaking);
   victim.set_velocity(0, 0, 0)
   handle_rest(collision)
-  handle_injury(collision, injury_ratio, false)
+  handle_injury(collision, injury_ratio, true)
   return true;
 }

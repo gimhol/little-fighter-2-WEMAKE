@@ -1,4 +1,4 @@
-import { Defines, EntityGroup, GameKey, GONE_FRAME_INFO, StageActions, type IStagePhaseInfo } from "../../defines";
+import { Defines, EntityGroup, GameKey, StageActions, type IStagePhaseInfo } from "../../defines";
 import type { Entity } from "../../entity";
 import type IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
@@ -161,10 +161,7 @@ export class StageModeLogic extends UIComponent {
     this.reset()
   }
   override on_stop(): void {
-    this.lf2.change_bg(Defines.VOID_BG)
-    this.lf2.change_stage(Defines.VOID_STAGE)
-    this.world.entities.forEach(v => v.enter_frame(GONE_FRAME_INFO))
-    this.world.ghosts.forEach(v => v.enter_frame(GONE_FRAME_INFO))
+    this.world.clear()
   }
   override on_resume(): void {
     this.lf2.world.stage.callbacks.add(this.stage_callbacks);

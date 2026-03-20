@@ -1,10 +1,11 @@
-import { Defines } from "./LF2/defines/defines";
-import { is_num } from "./LF2/utils/type_check";
+import { Button } from "./Component/Buttons/Button";
 import { ILf2Callback } from "./LF2/ILf2Callback";
 import type { IWorldCallbacks } from "./LF2/IWorldCallbacks";
 import type { World } from "./LF2/World";
+import { CMD } from "./LF2/defines/CMD";
+import { Defines } from "./LF2/defines/defines";
+import { is_num } from "./LF2/utils/type_check";
 import styles from "./game_overlay.module.scss";
-import { Button } from "./Component/Buttons/Button";
 const ele = document.createElement.bind(document);
 export class GameOverlay {
   release(): void {
@@ -84,9 +85,10 @@ export class GameOverlay {
 
     this.ele_btn_free_cam.addEventListener("click", () => {
       this.cam_locked = false;
-      if (is_num(this.world.lock_cam_x)) {
-        this.draw_cam_bar(this.world.lock_cam_x);
-        this.world.lock_cam_x = void 0;
+      const { lock_cam_x } = this.world;
+      if (is_num(lock_cam_x)) {
+        this.draw_cam_bar(lock_cam_x);
+        this.world.lf2.cmds.push(CMD.LOCK_CAM, '')
       }
     });
   }
@@ -111,7 +113,7 @@ export class GameOverlay {
       width - w - 3,
       Math.max(0, Math.floor(e.pageX - left - w / 2)),
     );
-    this.world.lock_cam_x = (s_width * x) / width;
+    this.world.lf2.cmds.push(CMD.LOCK_CAM, `${(s_width * x) / width}`)
   }
 
   draw_cam_bar(x: number) {

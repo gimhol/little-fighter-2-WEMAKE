@@ -1,3 +1,4 @@
+import { CMD } from "@/LF2/defines/CMD";
 import { Builtin_FrameId, Defines, BuiltIn_OID as OID } from "../../defines";
 import { TeamEnum as TE } from "../../defines/TeamEnum";
 import { Entity } from "../../entity/Entity";
@@ -43,9 +44,8 @@ export class DanmuGameLogic extends SummaryLogic {
   }
   override on_stop(): void {
     super.on_stop?.();
-    this.world.lock_cam_x = void 0;
     this.lf2.on_component_broadcast(this, DanmuGameLogic.BROADCAST_ON_STOP);
-    this.lf2.change_bg(Defines.VOID_BG)
+    this.world.clear()
   }
 
   update_bg() {
@@ -56,7 +56,7 @@ export class DanmuGameLogic extends SummaryLogic {
       v.name = v.data.base.name;
       v.blinking = 120;
     }
-    const way: number = 5;
+    const way: number = this.lf2.mt.range(0, 6);
     switch (way) {
       case 0: {
         this.lf2.change_bg('?');
@@ -105,7 +105,7 @@ export class DanmuGameLogic extends SummaryLogic {
         break;
       }
       case 3: {  // Justin vs Julian
-        this.lf2.change_bg('bg_4');
+        this.lf2.change_bg('?');
         this.lf2.characters.add(OID.Justin, 4, TE.Team_1).forEach(fighter_enter)
         this.lf2.characters.add(OID.Justin, 4, TE.Team_2).forEach(fighter_enter)
         this.lf2.characters.add(OID.Justin, 4, TE.Team_3).forEach(fighter_enter)
@@ -121,7 +121,7 @@ export class DanmuGameLogic extends SummaryLogic {
         break;
       }
       case 5: {
-        this.lf2.change_bg('bg_4');
+        this.lf2.change_bg('?');
         this.lf2.characters.add(OID.John, 4, TE.Team_1).forEach(fighter_enter)
         this.lf2.characters.add(OID.Sorcerer, 6, TE.Team_2).forEach(fighter_enter)
         break;
@@ -139,7 +139,7 @@ export class DanmuGameLogic extends SummaryLogic {
       const max_cam_right = right;
       if (cam_x < max_cam_left) cam_x = max_cam_left;
       if (cam_x > max_cam_right - this.world.screen_w) cam_x = max_cam_right - this.world.screen_w;
-      this.world.lock_cam_x = cam_x
+      this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)
       this.world.renderer.cam_x = cam_x;
     }
   }
@@ -155,8 +155,9 @@ export class DanmuGameLogic extends SummaryLogic {
     if (this._staring_countdown.end()) this.update_staring()
 
     const staring = this._cam_ctrl?.staring;
-    if (staring && this._cam_ctrl?.free != false)
-      this.world.lock_cam_x = staring.position.x - this.world.screen_w / 2
+    if (staring && this._cam_ctrl?.free != false) {
+      this.lf2.cmds.push(CMD.LOCK_CAM, `${staring.position.x - this.world.screen_w / 2}`)
+    }
     else if (!staring)
       this.update_staring()
 

@@ -34,17 +34,17 @@ export class Alignment extends UIComponent {
   readonly offset: Offsets = new Offsets
   protected once: boolean = false;
   override on_start(): void {
-    const { followed, offset } = this.props.raw;
+    const { followed, offset } = this.props_holder.raw;
     this.followed.l = this.find_node((typeof followed === 'string' ? followed : followed?.l) ?? "parent")
     this.followed.r = this.find_node((typeof followed === 'string' ? followed : followed?.r) ?? "parent")
     this.followed.t = this.find_node((typeof followed === 'string' ? followed : followed?.t) ?? "parent")
     this.followed.b = this.find_node((typeof followed === 'string' ? followed : followed?.b) ?? "parent")
-    this.follower = this.find_node(this.props.str("follower"))
-    this.align.l = this.props.str("left")
-    this.align.r = this.props.str("right")
-    this.align.t = this.props.str("top")
-    this.align.b = this.props.str("bottom")
-    this.once = !!this.props.bool("once");
+    this.follower = this.find_node(this.props_holder.str("follower"))
+    this.align.l = this.props_holder.str("left")
+    this.align.r = this.props_holder.str("right")
+    this.align.t = this.props_holder.str("top")
+    this.align.b = this.props_holder.str("bottom")
+    this.once = !!this.props_holder.bool("once");
 
     this.offset.l = Number(offset?.l) || 0
     this.offset.r = Number(offset?.r) || 0

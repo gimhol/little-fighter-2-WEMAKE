@@ -5,7 +5,7 @@ import type { IExpression } from "./IExpression";
 import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
 
-export interface IBdyInfo extends IQube {
+export interface IBdyInfo extends Partial<IQube> {
   /**
    * 预制信息id
    *

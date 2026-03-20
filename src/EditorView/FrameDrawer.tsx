@@ -57,8 +57,8 @@ export class FrameDrawer extends Shape<FrameDrawerData> {
     };
 
     check_vec2({ x: f.centerx, y: f.centery })
-    if (f.bdy) loop_arr(f.bdy, bdy => check_rect(bdy))
-    if (f.itr) loop_arr(f.itr, itr => check_rect(itr))
+    // if (f.bdy) loop_arr(f.bdy, bdy => check_rect(bdy))
+    // if (f.itr) loop_arr(f.itr, itr => check_rect(itr))
     if (f.opoint) loop_arr(f.opoint, opoint => check_vec2(opoint))
     if (f.cpoint) check_vec2(f.cpoint);
     if (f.bpoint) check_vec2(f.bpoint)
@@ -92,7 +92,8 @@ export class FrameDrawer extends Shape<FrameDrawerData> {
     ctx.lineWidth = 1;
     ctx.setLineDash([2, 2]);
     ctx.beginPath();
-    ctx.rect(bdy.x + 0.5, bdy.y + 0.5, bdy.w - 1, bdy.h - 1);
+    const { x = 0, y = 0, w = 0, h = 0 } = bdy
+    ctx.rect(x + 0.5, y + 0.5, w - 1, h - 1);
     ctx.closePath();
     ctx.stroke();
   }
@@ -102,7 +103,8 @@ export class FrameDrawer extends Shape<FrameDrawerData> {
     ctx.setLineDash([2, 2]);
     ctx.beginPath();
     ctx.lineDashOffset = 2;
-    ctx.rect(itr.x + 0.5, itr.y + 0.5, itr.w - 1, itr.h - 1);
+    const { x = 0, y = 0, w = 0, h = 0 } = itr
+    ctx.rect(x + 0.5, y + 0.5, w - 1, h - 1);
     ctx.closePath();
     ctx.stroke();
   }

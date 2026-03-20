@@ -20,44 +20,18 @@ export class WorldDataset implements IWorldDataset {
    */
   itr_motionless: number = Defines.DEFAULT_ITR_MOTIONLESS;
 
-  /**
-   * dvx缩放系数
-   *
-   * @type {number}
-   * @memberof World
-   */
-  fvx_f: number = 1;
 
-  /**
-   * dvy缩放系数
-   *
-   * @type {number}
-   * @memberof World
-   */
-  fvy_f: number = 1;
-
-  /**
-   * dvz缩放系数
-   *
-   * @type {number}
-   * @memberof World
-   */
+  fvx_f: number = 0.5;
+  fvy_f: number = -0.5;
   fvz_f: number = 1;
 
-  /** 
-   * about freeze 
-   */
-  ivx_f: number = 1;
-  ivy_f: number = 1.18;
+  ivx_f: number = 0.5;
+  ivy_f: number = -0.5;
   ivz_f: number = 1;
 
-  /** 
-   * 默认itr.dvy
-   * 默认击飞速度
-   * @link https://lf-empire.de/forum/showthread.php?tid=11204
-   */
-  ivy_d: number = 3.8;
-  ivx_d: number = 4;
+  ivy_d: number = -7;
+  ivx_d: number = 0;
+
   cvy_d: number = 3;
   cvx_d: number = 2;
 
@@ -66,21 +40,21 @@ export class WorldDataset implements IWorldDataset {
    *
    * @type {number}
    */
-  tvx_f: number = 1;
+  tvx_f: number = 0.5;
 
   /**
    * Y轴丢人速度系数
    *
    * @type {number}
    */
-  tvy_f: number = 1.15;
+  tvy_f: number = -0.625;
 
   /**
    * Z轴丢人速度系数
    *
    * @type {number}
    */
-  tvz_f: number = 1;
+  tvz_f: number = 0.5;
 
   /**
    * 角色进入场地时的闪烁无敌时间
@@ -125,7 +99,7 @@ export class WorldDataset implements IWorldDataset {
    * @type {number}
    * @memberof World
    */
-  frame_wait_offset: number = 0;
+  wait_offset: number = 0;
 
   cha_bc_spd: number = 2;
   cha_bc_tst_spd_x: number = 5;
@@ -201,27 +175,44 @@ export class WorldDataset implements IWorldDataset {
   fall_r_value: number = 1;
   defend_r_ticks: number = 1;
   defend_r_value: number = 1;
-  fall_value_max: number = Defines.DEFAULT_FALL_VALUE_MAX;
-  catch_time_max: number = Defines.DEFAULT_CATCH_TIME;
-  defend_value_max: number = Defines.DEFAULT_DEFEND_VALUE_MAX;
+  fall_value: number = 140;
+  catch_time_max: number = 680;
+  defend_value_max: number = 90;
   /**
    * 防御生效时，仍扣除多少比例的血
    *
    * @type {number}
    */
   defend_ratio: number = 0.1;
-  mp_max: number = Defines.DEFAULT_MP_MAX;
-  hp_max: number = Defines.DEFAULT_HP_MAX;
+  mp: number = 500;
+  hp: number = 500;
   resting_max: number = 40;
   vrest_after_shaking: number = 1;
   arest_after_motionless: number = 1;
   invisible_blinking: number = 120;
-  jump_x_f: number = 1;
+  jump_x_f: number = 0.5;
   jump_z_f: number = 1;
-  jump_h_f: number = 1;
-  dash_x_f: number = 1;
+  jump_h_f: number = -0.5;
+  dash_x_f: number = 0.5;
   dash_z_f: number = 1;
-  dash_h_f: number = 1;
+  dash_h_f: number = -0.5;
+  bfall_x_f: number = 0.5;
+  bfall_h_f: number = -0.5;
+
+  jump_height: number = -16.299999;
+  jump_distance: number = 8;
+  jump_distancez: number = 3;
+  dash_height: number = -11;
+  dash_distance: number = 15;
+  dash_distancez: number = 3.750000;
+  /** 默认受身速度Y */
+  rowing_height: number = -2.000000;
+  /** 默认受身速度X */
+  rowing_distance: number = 5;
+  wvx_f: number = 0.5;
+  wvy_f: number = -0.5;
+  wvz_f: number = 1;
+
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
     Object.assign(this, wdataset)

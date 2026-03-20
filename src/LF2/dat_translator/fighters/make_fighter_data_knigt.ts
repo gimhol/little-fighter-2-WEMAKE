@@ -1,4 +1,4 @@
-import { IEntityData, ArmorEnum, Defines } from "../../defines";
+import { ArmorEnum, Defines, IEntityData } from "../../defines";
 import { BotBuilder } from "./BotBuilder";
 /**
  *
@@ -12,7 +12,7 @@ export function make_fighter_data_knigt(data: IEntityData): IEntityData {
   data.base.armor = {
     hit_sounds: ["data/085.wav.mp3"],
     type: ArmorEnum.Defend,
-    toughness: Defines.DEFAULT_DEFEND_VALUE_MAX,
+    toughness: 90,
   };
   BotBuilder.make(data).set_dataset({
     w_atk_f_x: 90,

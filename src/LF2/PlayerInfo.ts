@@ -75,7 +75,7 @@ export class PlayerInfo {
     const prev = this._info.ctrl;
     if (prev === ctrl) return this;
     this.ctrl = ctrl;
-    if (emit) this.callbacks.emit("on_ctrl_changed")(ctrl, prev);
+    if (emit) this.callbacks.emit("on_ctrl_changed")(ctrl, prev, this);
     return this;
   }
   set_name(name: string, emit: boolean): this {

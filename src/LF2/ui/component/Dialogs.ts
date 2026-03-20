@@ -17,9 +17,9 @@ export class Dialogs extends UIComponent {
 
   override on_start(): void {
     super.on_start?.();
-    const head_node_id = this.props.str('head_node_id')
-    const text_node_id = this.props.str('text_node_id')
-    const talker_node_id = this.props.str('talker_node_id')
+    const head_node_id = this.props_holder.str('head_node_id')
+    const text_node_id = this.props_holder.str('text_node_id')
+    const talker_node_id = this.props_holder.str('talker_node_id')
     if (head_node_id) this._head_node = this.node.search_child(head_node_id)
     if (text_node_id) this._text_node = this.node.search_child(text_node_id)
     if (talker_node_id) this._talker_node = this.node.search_child(talker_node_id)

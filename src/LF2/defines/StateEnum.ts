@@ -104,10 +104,26 @@ export enum StateEnum {
   HeavyWeapon_JustOnGround = 2002,//= 重型武器在地上
   HeavyWeapon_OnGround = 2004,//= 与itr kind2作用
 
+  /**
+   * 能被反弹
+   * 击中人会爆裂
+   */
   Ball_Flying = 3000,
+  /**
+   * 能被反弹
+   */
   Ball_Hitting = 3001,
+  /**
+   * 能被反弹
+   */
   Ball_Hit = 3002,
+  /**
+   * 能被反弹
+   */
   Ball_Rebounding = 3003,
+  /**
+   * 能被反弹
+   */
   Ball_Disappear = 3004,
   Ball_3005 = 3005,
   Ball_3006 = 3006,

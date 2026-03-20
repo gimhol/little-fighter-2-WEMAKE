@@ -7,7 +7,7 @@ import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameIndexes } from "../defines/IFrameIndexes";
 import { INextFrame } from "../defines/INextFrame";
-import { ensure, round } from "../utils";
+import { ensure } from "../utils";
 import { take_number } from "../utils/container_help/take_number";
 import { traversal } from "../utils/container_help/traversal";
 import { is_num, is_str } from "../utils/type_check";
@@ -36,20 +36,6 @@ export function make_character_data(ctx: IDatContext): IEntityData {
   const heavy_walking_speedz = take_number(info, "heavy_walking_speedz", 0);
   const heavy_running_speed = take_number(info, "heavy_running_speed", 0);
   const heavy_running_speedz = take_number(info, "heavy_running_speedz", 0);
-  const rowing_height = take_number(info, "rowing_height", 0);
-
-  if (info.jump_height)
-    info.jump_height = round((info.jump_height * info.jump_height) / 3.5);
-  if (info.dash_height)
-    info.dash_height = round((info.dash_height * info.dash_height) / 3.5);
-  if (info.rowing_height)
-    info.rowing_height = round(info.rowing_height * info.rowing_height / 3.5);
-  // if (info.rowing_height) info.rowing_height = -info.rowing_height;
-
-  if (info.dash_distance) info.dash_distance /= 2;
-  if (info.jump_distance) info.jump_distance /= 2;
-  if (info.rowing_distance) info.rowing_distance /= 2;
-
   const round_trip_frames_map: any = {};
   const frame_mp_hp_map = new Map<string, { mp: number, hp: number }>();
 
@@ -107,7 +93,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
           .hit('j', "210") // jump
           .hit('d', "110") // defend
           .hit('FF', "running_0")
-        frame.dvx = walking_speed / 2;
+        frame.dvx = walking_speed;
         frame.dvz = walking_speedz;
         frame.ctrl_z = 1;
         frame.ctrl_x = 1;
@@ -134,7 +120,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         }).hit('j', "213") // dash
           .hit('d', "102") // rowing
           .keydown('B', "218"); // running_stop
-        frame.dvx = Number((running_speed / 2).toFixed(1));
+        frame.dvx = running_speed;
         frame.dvz = running_speedz;
         frame.ctrl_z = 1;
         break;
@@ -144,7 +130,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         editing
           .hit('FF', 'heavy_obj_run_0')
           .hit('a', { id: "50", facing: FF.Ctrl })
-        frame.dvx = heavy_walking_speed / 2;
+        frame.dvx = heavy_walking_speed;
         frame.dvz = heavy_walking_speedz;
         frame.ctrl_x = frame.ctrl_z = 1;
         break;
@@ -154,7 +140,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         editing
           .hit('a', '50') // throw
           .keydown('B', '19') // running_stop
-        frame.dvx = Number((heavy_running_speed / 2).toFixed(1));
+        frame.dvx = heavy_running_speed;
         frame.dvz = heavy_running_speedz;
         frame.ctrl_z = 1;
         break;
@@ -418,7 +404,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
             .hit('j', ...hit_next_frame.jump())
             .hit('d', ...hit_next_frame.defend())
             .hit('FF', 'running_0')
-          frame.dvx = walking_speed / 2;
+          frame.dvx = walking_speed;
           frame.dvz = walking_speedz;
           frame.ctrl_x = frame.ctrl_z = 1;
           frame.wait = walking_frame_rate * 2 - 1;
@@ -452,7 +438,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
             .hit('j', "213") // dash
             .hit('d', "102") // rowing
             .keydown('B', '218') // running_stop
-          frame.dvx = Number((running_speed / 2).toFixed(1));
+          frame.dvx = running_speed;
           frame.dvz = running_speedz;
           frame.ctrl_z = 1;
           /* 

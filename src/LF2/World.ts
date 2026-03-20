@@ -8,6 +8,7 @@ import {
   Defines,
   Difficulty,
   EntityGroup,
+  GONE_FRAME_INFO,
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
   IFrameInfo, IItrInfo, ItrKind,
@@ -27,6 +28,7 @@ import {
   is_human_ctrl,
   is_weapon
 } from "./entity";
+import { Buff } from "./entity/Buff";
 import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
@@ -52,8 +54,11 @@ export class World extends WorldDataset {
   private _update_count: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
+  readonly buffs = new Map<string, Buff>();
   private _game_time = new Times();
-
+  private _ground = new Ground();
+  private _counts = new Map<string, number>()
+  get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time }
 
   readonly transform: Transform = new Transform()
@@ -115,9 +120,11 @@ export class World extends WorldDataset {
     return this.bg.middle || { x: 0, z: 0 };
   }
 
-  cam_speed = 0;
-  lock_cam_x: number | undefined = void 0;
+  private _cam_speed = 0;
+  private _lock_cam_x: number | undefined = void 0;
   public renderer: IWorldRenderer;
+
+  get lock_cam_x() { return this._lock_cam_x }
 
   team_come(_team: string, x: number, y: number, z: number) {
     for (const e of this.entities) {
@@ -435,17 +442,19 @@ export class World extends WorldDataset {
           const [cheat, state] = cmd.split('#')
           this.lf2.set_cheat(cheat, state !== void 0 ? state === '1' : void 0);
           continue;
-
         case CMD.F1: this.paused = !this.paused; continue;
         case CMD.F2: this.set_paused(2); continue;
+        case CMD.F3: this.set_fn_locked(1); continue;
         case CMD.F4: this.lf2.pop_ui_safe(); continue;
         case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
-          if (stage_limit()) continue;
+          if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F6, 1)
           this.infinity_mp = this.infinity_mp ? 0 : 1;
           continue;
         case CMD.F7:
-          if (stage_limit()) continue;
+          if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F7, 1)
           for (const e of this.entities) {
             if (!is_fighter(e)) continue;
             e.hp = e.hp_r = e.hp_max;
@@ -453,13 +462,19 @@ export class World extends WorldDataset {
           }
           continue;
         case CMD.F8:
-          if (!stage_limit()) this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+          if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F8, 1)
+          this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
           continue;
         case CMD.F9:
-          if (!stage_limit()) this.stage.kill_all()
+          if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F9, 1)
+          for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
           continue;
         case CMD.F10:
-          if (!stage_limit()) for (const e of this.entities) if (is_weapon(e)) e.hp = 0;
+          if (this.fn_locked || stage_limit()) continue;
+          this.add_count(CMD.F10, 1)
+          this.stage.kill_all()
           continue;
         case CMD.KILL_ENEMIES:
           if (!stage_limit()) this.stage.kill_all()
@@ -473,10 +488,24 @@ export class World extends WorldDataset {
         case CMD.KILL_OTHERS:
           if (!stage_limit()) this.stage.kill_others()
           continue;
+        case CMD.LOCK_CAM: {
+          const value = cmds[i += 1]
+          if (value === '') {
+            this._lock_cam_x = void 0;
+            continue;
+          }
+          const x = Number(value);
+          if (Number.isNaN(x)) {
+            Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
+            continue;
+          }
+          
+          this._lock_cam_x = x
+          continue
+        }
       }
     }
   }
-
   update_once() {
     this.transform.update()
     this.update_ui();
@@ -504,6 +533,16 @@ export class World extends WorldDataset {
     this._temp_entitis_set.clear();
     const update_collisions = game_time.value % 1 === 0
     const update_chasing = game_time.value % 8 === 0;
+    const dead_buff: [string, Buff][] = []
+    for (const [key, buff] of this.buffs) {
+      buff.update()
+      if (buff.dead) dead_buff.push([key, buff])
+    }
+    for (const [key, buff] of dead_buff) {
+      buff.unmount();
+      this.buffs.delete(key);
+    }
+
     for (const e of this.entities) {
       if (update_chasing && this._chasers.size)
         for (const [c] of this._chasers)
@@ -533,6 +572,7 @@ export class World extends WorldDataset {
         e.frame.state === StateEnum.Gone
       ) {
         this.gone_entities.push(e);
+        continue;
       }
       this._temp_entitis_set.add(e);
     }
@@ -570,13 +610,13 @@ export class World extends WorldDataset {
     }
 
     const { cam_l, left, cam_r, right } = this.stage;
-    const max_cam_left = is_num(this.lock_cam_x) ? left : cam_l;
-    const max_cam_right = is_num(this.lock_cam_x) ? right : cam_r;
+    const max_cam_left = is_num(this._lock_cam_x) ? left : cam_l;
+    const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
     let new_x = this.renderer.cam_x;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    if (is_num(this.lock_cam_x)) {
-      new_x = this.lock_cam_x;
+    if (is_num(this._lock_cam_x)) {
+      new_x = this._lock_cam_x;
     } else if (this.puppets.size) {
       let l = 0;
       new_x = 0;
@@ -613,16 +653,16 @@ export class World extends WorldDataset {
     const max_speed = max_speed_ratio * acc;
 
     if (cur_x > new_x) {
-      if (this.cam_speed > 0) this.cam_speed = 0;
-      else if (this.cam_speed > -max_speed) this.cam_speed -= acc;
-      else this.cam_speed = -max_speed;
-      this.renderer.cam_x += this.cam_speed;
+      if (this._cam_speed > 0) this._cam_speed = 0;
+      else if (this._cam_speed > -max_speed) this._cam_speed -= acc;
+      else this._cam_speed = -max_speed;
+      this.renderer.cam_x += this._cam_speed;
       if (this.renderer.cam_x < new_x) this.renderer.cam_x = new_x;
     } else if (cur_x < new_x) {
-      if (this.cam_speed < 0) this.cam_speed = 0;
-      else if (this.cam_speed < max_speed) this.cam_speed += acc;
-      else this.cam_speed = max_speed;
-      this.renderer.cam_x += this.cam_speed;
+      if (this._cam_speed < 0) this._cam_speed = 0;
+      else if (this._cam_speed < max_speed) this._cam_speed += acc;
+      else this._cam_speed = max_speed;
+      this.renderer.cam_x += this._cam_speed;
       if (this.renderer.cam_x > new_x) this.renderer.cam_x = new_x;
     }
 
@@ -673,7 +713,7 @@ export class World extends WorldDataset {
     bdy: IBdyInfo,
   ): ICollision | undefined {
 
-    if (!itr.vrest && attacker.a_rest) return;
+    if (!itr.vrest && attacker.arest) return;
     if (itr.kind !== ItrKind.Heal) {
       const b_catcher = victim.catcher;
       if (victim.blinking || victim.invisible || victim.invulnerable) return;
@@ -711,7 +751,7 @@ export class World extends WorldDataset {
       victim.spawn_time === attacker.spawn_time
     ) return;
 
-    if (!itr.vrest && attacker.a_rest) return;
+    if (!itr.vrest && attacker.arest) return;
     if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
     const ax = attacker.position.x;
     const ay = attacker.position.y;
@@ -802,19 +842,24 @@ export class World extends WorldDataset {
     e.attach(false);
   }
   get_bounding(e: Entity, f: IFrameInfo, i: IItrInfo | IBdyInfo): IBounding {
+    const {
+      x = 0, y = 0, w = 0, h = 0,
+      l = Defines.DAFUALT_QUBE_LENGTH,
+      z = -Defines.DAFUALT_QUBE_LENGTH / 2
+    } = i
     const left =
       e.facing > 0
-        ? e.position.x - f.centerx + i.x
-        : e.position.x + f.centerx - i.x - i.w;
-    const top = e.position.y + f.centery - i.y;
-    const far = e.position.z + i.z;
+        ? e.position.x - f.centerx + x
+        : e.position.x + f.centerx - x - w;
+    const top = e.position.y + f.centery - y;
+    const far = e.position.z + z;
     return {
       left: round(left),
-      right: round(left + i.w),
+      right: round(left + w),
       top: round(top),
-      bottom: round(top - i.h),
+      bottom: round(top - h),
       far: round(far),
-      near: round(far + i.l),
+      near: round(far + l),
     };
   }
 
@@ -844,6 +889,15 @@ export class World extends WorldDataset {
     if (changed) this.callbacks.emit("on_pause_change")(!!v);
   }
 
+  private _fn_locked: 0 | 1 = 0;
+  get fn_locked(): boolean { return this._fn_locked == 1; }
+  set fn_locked(v: boolean) { this.set_fn_locked(v ? 1 : 0); }
+  set_fn_locked(v: 0 | 1) {
+    if (this._fn_locked === v) return;
+    this._fn_locked = v;
+    this.callbacks.emit("on_fn_locked_change")(v);
+  }
+
   dispose() {
     this.callbacks.emit("on_disposed")();
     this.stop_update();
@@ -855,7 +909,26 @@ export class World extends WorldDataset {
 
   get_ground(position: IVector3): number {
     const { x, y, z } = position;
-    return this.ground.get_y(x, y, z)
+    return this._ground.get_y(x, y, z)
   }
-  ground = new Ground()
+
+  add_count(key: string, o: number) {
+    const v = this._counts.get(key) || 0
+    this._counts.set(key, v + o);
+    this.callbacks.emit('on_counts')();
+  }
+
+  clear() {
+    this.set_fn_locked(0);
+    this.infinity_mp = 0;
+    this.playrate = 1;
+    this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
+    this.ghosts.forEach(v => v.set_frame(GONE_FRAME_INFO))
+    this.buffs.forEach(v => v.life.loop(v.life.max = v.life.min = 0))
+    this.lf2.change_bg(Defines.VOID_BG)
+    this.lf2.change_stage(Defines.VOID_STAGE)
+    this.transform.scale_to(1, 1, 1, false)
+    this.paused = false;
+    this._lock_cam_x = void 0;
+  }
 }

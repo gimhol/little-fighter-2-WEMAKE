@@ -130,9 +130,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   }
   override on_stop(): void {
     super.on_stop?.();
-    for (const [, v] of this.world.puppets) {
-      v.callbacks.del(this);
-    }
+    this.world.clear();
   }
 
   on_dead() {

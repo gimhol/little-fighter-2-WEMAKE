@@ -50,4 +50,6 @@ export interface IWorldCallbacks {
 
   on_fighter_add?(entity: Entity): void;
   on_fighter_del?(entity: Entity): void;
+  on_fn_locked_change?(locked: 0 | 1): void;
+  on_counts?(): void;
 }

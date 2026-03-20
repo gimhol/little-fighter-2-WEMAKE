@@ -9,19 +9,29 @@ export interface IWorldDataset {
 
   itr_arest: number;
 
-  /** dvx缩放系数 */
+  /** frame.dvx缩放系数 */
   fvx_f: number;
 
-  /** dvy缩放系数 */
+  /** frame.dvy缩放系数 */
   fvy_f: number;
 
-  /** dvz缩放系数 */
+  /** frame.dvz缩放系数 */
   fvz_f: number;
+
+  /** itr.dvx缩放系数 */
   ivy_f: number;
+
+  /** itr.dvy缩放系数 */
   ivz_f: number;
+
+  /** itr.dvz缩放系数 */
   ivx_f: number;
 
-  /** 默认itr.dvy */
+  /** 
+   * 默认itr.dvy
+   * 默认击飞速度
+   * @link https://lf-empire.de/forum/showthread.php?tid=11204
+   */
   ivy_d: number;
   ivx_d: number;
 
@@ -71,7 +81,7 @@ export interface IWorldDataset {
    * @type {number}
    * @memberof IWorldDataset
    */
-  frame_wait_offset: number;
+  wait_offset: number;
 
   cha_bc_spd: number;
   /** 
@@ -153,12 +163,12 @@ export interface IWorldDataset {
   /** 恢复值(每次回多少) */
   defend_r_value: number;
 
-  fall_value_max: number;
+  fall_value: number;
   catch_time_max: number;
   defend_value_max: number;
   defend_ratio: number;
-  mp_max: number;
-  hp_max: number;
+  mp: number;
+  hp: number;
   resting_max: number;
   vrest_after_shaking: number;
   arest_after_motionless: number;
@@ -169,6 +179,19 @@ export interface IWorldDataset {
   dash_x_f: number;
   dash_z_f: number;
   dash_h_f: number;
+  bfall_x_f: number;
+  bfall_h_f: number;
+  jump_height: number;
+  jump_distance: number;
+  jump_distancez: number;
+  dash_height: number;
+  dash_distance: number;
+  dash_distancez: number;
+  rowing_height: number;
+  rowing_distance: number;
+  wvx_f: number;
+  wvy_f: number;
+  wvz_f: number;
 }
 interface IFieldInfo {
   key: keyof IWorldDataset;
@@ -187,6 +210,8 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   dash_x_f: { title: "跑跳X距离系数", desc: "跑跃X距离系数", type: 'float' },
   dash_z_f: { title: "跑跳Z距离系数", desc: "跑跃Z距离系数", type: 'float' },
   dash_h_f: { title: "跑跳高度系数", desc: "跑跃高度系数", type: 'float' },
+  bfall_x_f: { title: "bfall_x_f", desc: "bfall_x_f", type: 'float' },
+  bfall_h_f: { title: "bfall_h_f", desc: "bfall_h_f", type: 'float' },
   weapon_throwing_gravity: { title: "投掷武器重力", desc: "投掷武器重力", type: 'float' },
   begin_blink_time: { title: "入场闪烁时长", desc: "入场闪烁时长", type: 'int' },
   gone_blink_time: { title: "消失闪烁时长", desc: "消失闪烁时长", type: 'int' },
@@ -205,11 +230,15 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   ivz_f: { title: "itr.dvz缩放系数", type: 'float' },
   ivy_d: { title: "itr.dvy默认值", desc: "默认的攻击Y轴速度", type: 'float' },
   ivx_d: { title: "itr.dvx默认值", desc: "默认的攻击X轴速度", type: 'float' },
+
   cvy_d: { title: "cvy_d", desc: "cvy_d", type: 'float' },
   cvx_d: { title: "cvx_d", desc: "cvx_d", type: 'float' },
   tvx_f: { title: "X轴丢人速度系数", desc: "tvx_f", type: 'float' },
   tvy_f: { title: "Y轴丢人速度系数", desc: "tvy_f", type: 'float' },
   tvz_f: { title: "Z轴丢人速度系数", desc: "tvz_f", type: 'float' },
+  wvx_f: { title: "X轴丢武器速度系数", desc: "wvx_f", type: 'float' },
+  wvy_f: { title: "Y轴丢武器速度系数", desc: "wvy_f", type: 'float' },
+  wvz_f: { title: "Z轴丢武器速度系数", desc: "wvz_f", type: 'float' },
 
   vrest_offset: { title: "vrest_offset", desc: "vrest_offset", type: 'int' },
   min_vrest: { title: "min_vrest", desc: "min_vrest", type: 'int' },
@@ -218,7 +247,7 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   arest_offset: { title: "arest_offset", desc: "arest_offset", type: 'int' },
   min_arest: { title: "min_arest", desc: "min_arest", type: 'int' },
 
-  frame_wait_offset: { title: "frame_wait_offset", desc: "frame_wait_offset", type: 'int' },
+  wait_offset: { title: "wait_offset", desc: "wait_offset", type: 'int' },
   cha_bc_spd: { title: "cha_bc_spd", desc: "cha_bc_spd", type: 'float' },
   cha_bc_tst_spd_x: { title: "cha_bc_tst_spd_x", desc: "cha_bc_tst_spd_x", type: 'float' },
   cha_bc_tst_spd_y: { title: "cha_bc_tst_spd_y", desc: "cha_bc_tst_spd_y", type: 'float' },
@@ -242,16 +271,24 @@ const world_dataset_fields: Record<keyof IWorldDataset, Omit<IFieldInfo, 'key'>>
   fall_r_value: { title: "fall_r_value", desc: "fall_r_value", type: 'int' },
   defend_r_ticks: { title: "defend_r_ticks", desc: "defend_r_ticks", type: 'int' },
   defend_r_value: { title: "defend_r_value", desc: "defend_r_value", type: 'int' },
-  fall_value_max: { title: "fall_value_max", desc: "fall_value_max", type: 'int' },
+  fall_value: { title: "fall_value", desc: "fall_value", type: 'int' },
   catch_time_max: { title: "catch_time_max", desc: "catch_time_max", type: 'int' },
   defend_value_max: { title: "defend_value_max", desc: "defend_value_max", type: 'int' },
   defend_ratio: { title: "defend_ratio", desc: "defend_ratio", type: 'int' },
-  mp_max: { title: "mp_max", desc: "mp_max", type: 'int' },
-  hp_max: { title: "hp_max", desc: "hp_max", type: 'int' },
+  mp: { title: "MP", desc: "MP", type: 'int' },
+  hp: { title: "HP", desc: "HP", type: 'int' },
   resting_max: { title: "resting_max", desc: "resting_max", type: 'int' },
   vrest_after_shaking: { title: "vrest是否在shaking后更新", desc: "vrest是否在shaking后更新", type: 'int', min: 0, max: 1, step: 1 },
   arest_after_motionless: { title: "arest是否在motionless后更新", desc: "arest是否在motionless后更新", type: 'int', min: 0, max: 1, step: 1 },
   invisible_blinking: { title: "隐身结束后的闪烁时长", desc: "隐身结束后的闪烁时长", type: 'int', min: 0, max: 9999, step: 1 },
+  jump_height    /* */: { title: "jump_height    ", desc: "", type: 'float' },
+  jump_distance  /* */: { title: "jump_distance  ", desc: "", type: 'float' },
+  jump_distancez /* */: { title: "jump_distancez ", desc: "", type: 'float' },
+  dash_height    /* */: { title: "dash_height    ", desc: "", type: 'float' },
+  dash_distance  /* */: { title: "dash_distance  ", desc: "", type: 'float' },
+  dash_distancez /* */: { title: "dash_distancez ", desc: "", type: 'float' },
+  rowing_height  /* */: { title: "rowing_height  ", desc: "", type: 'float' },
+  rowing_distance/* */: { title: "rowing_distance", desc: "", type: 'float' },
 }
 export const world_dataset_field_map = new Map<keyof IWorldDataset | string, IFieldInfo>()
 for (const k in world_dataset_fields) {
