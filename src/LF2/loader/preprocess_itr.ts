@@ -1,6 +1,7 @@
 import { Expression } from "../base/Expression";
 import { CondMaker } from "../dat_translator/CondMaker";
 import { get_next_frame_by_raw_id } from "../dat_translator/get_the_next";
+import { set_hit_flag } from "../dat_translator/set_hit_flag";
 import { ActionType, BdyKind, BuiltIn_OID, CollisionVal as C_Val, EntityEnum, type IEntityData, type IItrInfo, ItrEffect, ItrKind, StateEnum } from "../defines";
 import { HitFlag } from "../defines/HitFlag";
 import type { LF2 } from "../LF2";
@@ -60,7 +61,7 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       break;
     }
     case ItrKind.Pick: {
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       itr.motionless = itr.motionless ?? 0;
       itr.shaking = itr.shaking ?? 0;
       itr.test = itr.test ?? new CondMaker<C_Val>()
@@ -76,7 +77,7 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       break;
     }
     case ItrKind.PickSecretly: {
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       itr.motionless = itr.motionless ?? 0;
       itr.shaking = itr.shaking ?? 0;
       itr.test = itr.test ?? new CondMaker<C_Val>()
@@ -135,7 +136,7 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       break;
     }
     case ItrKind.Block:
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       itr.motionless = itr.motionless ?? 0;
       itr.shaking = itr.shaking ?? 0;
       itr.test = itr.test ?? new CondMaker<C_Val>()
@@ -143,14 +144,14 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
         .done();
       break;
     case ItrKind.JohnShield:
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       itr.test = itr.test ?? new CondMaker<C_Val>()
         .and(C_Val.VictimType, "!=", EntityEnum.Fighter)
         .or(C_Val.SameTeam, "!=", 1)
         .done();
       break;
     case ItrKind.Heal: {
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       if (itr.dvx) {
         itr.actions = ensure(itr.actions, {
           type: ActionType.A_NextFrame,
@@ -163,7 +164,7 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       break;
     }
     case ItrKind.Freeze: {
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       itr.shaking = itr.shaking ?? 0;
       itr.motionless = itr.motionless ?? 0;
       itr.dvx = itr.dvx ?? 0;
@@ -179,7 +180,7 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       break;
     }
     case ItrKind.Whirlwind: {
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       itr.shaking = itr.shaking ?? 0;
       itr.motionless = itr.motionless ?? 0;
       itr.vrest = itr.vrest ?? 1;
@@ -204,7 +205,7 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       break;
     }
     case ItrKind.CharacterThrew: {
-      itr.hit_flag = itr.hit_flag ?? HitFlag.AllBoth;
+      set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       itr.test = itr.test ?? new CondMaker<C_Val>()
         .add(C_Val.AttackerThrew, "==", 1)
         .and(C_Val.AttackerType, "==", EntityEnum.Fighter)
@@ -212,7 +213,6 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       break;
     }
   }
-  itr.hit_flag = itr.hit_flag ?? HitFlag.AllEnemy;
   if (itr.test)
     itr.tester = new Expression(itr.test, get_val_geter_from_collision);
   return itr;

@@ -11,6 +11,8 @@ import Titled, { ITitledProps } from "../../Component/Titled";
 import { BDY_KIND_SELECT_PROPS } from "../EntityEditorView";
 import { HitFlagEditor } from "./HitFlagEditor";
 import { make_field_props } from "./make_field_props";
+import { set_hit_flag } from "@/LF2/dat_translator/set_hit_flag";
+import { set_bdy_kind } from "@/LF2/dat_translator/set_bdy_kind";
 
 const titled_styles: ITitledProps['styles'] = {
   label: {
@@ -18,14 +20,11 @@ const titled_styles: ITitledProps['styles'] = {
   }
 }
 const default_value: IBdyInfo = {
-  hit_flag: HitFlag.AllEnemy,
-  kind: BdyKind.Normal,
+  ...set_hit_flag({}, HitFlag.AllEnemy),
+  ...set_bdy_kind({}, BdyKind.Normal),
   z: floor(-Defines.DAFUALT_QUBE_LENGTH / 2),
   l: floor(Defines.DAFUALT_QUBE_LENGTH),
-  x: 0,
-  y: 0,
-  w: 0,
-  h: 0
+  x: 0, y: 0, w: 0, h: 0,
 }
 export interface IBdyEditorViewProps {
   label?: string;

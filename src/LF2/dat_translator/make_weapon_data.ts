@@ -8,6 +8,7 @@ import { round_float } from "../utils/math/round_float";
 import { to_num } from "../utils/type_cast/to_num";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_itr_prefabs } from "./make_itr_prefabs";
+import { set_hit_flag } from "./set_hit_flag";
 import { take } from "./take";
 
 const indexes_map: Record<WeaponType, IFrameIndexes> = {
@@ -114,7 +115,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
     switch (frame.state) {
       case StateEnum.Weapon_InTheSky:
         in_the_skys.push(k)
-        frame.bdy?.forEach((v) => { v.hit_flag = HitFlag.AllBoth })
+        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
         break;
       case StateEnum.Weapon_Rebounding:
       case StateEnum.HeavyWeapon_JustOnGround:
@@ -122,12 +123,12 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
         break;
       case StateEnum.Weapon_Throwing:
         throwings.push(k)
-        frame.bdy?.forEach((v) => { v.hit_flag = HitFlag.AllBoth })
+        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
         break;
       case StateEnum.HeavyWeapon_InTheSky:
         in_the_skys.push(k)
         throwings.push(k)
-        frame.bdy?.forEach((v) => { v.hit_flag = HitFlag.AllBoth })
+        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
         break;
       case StateEnum.Weapon_OnHand:
       case StateEnum.HeavyWeapon_OnHand:

@@ -19,6 +19,7 @@ import { CondMaker } from "./CondMaker";
 import { firzen_disater_start } from "./firzen_disater_start";
 import { jan_chase_start } from "./jan_chase_start";
 import { jan_chaseh_start } from "./jan_chaseh_start";
+import { set_hit_flag } from "./set_hit_flag";
 
 const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
 export function make_frame_behavior(frame: IFrameInfo, oid: string) {
@@ -42,7 +43,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         w: 32,
         h: 34,
         injury: 100,
-        hit_flag: HitFlag.AllyFighter,
+        ...set_hit_flag({}, HitFlag.AllyFighter),
         actions: [
           {
             type: ActionType.A_NextFrame,

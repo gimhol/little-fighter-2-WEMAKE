@@ -1,8 +1,8 @@
 import { BuiltIn_OID } from "../defines";
 import { ActionType } from "../defines/ActionType";
-import { HitFlag } from "../defines/HitFlag";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { EntityEnum } from "../defines/EntityEnum";
+import { HitFlag } from "../defines/HitFlag";
 import { IBdyInfo } from "../defines/IBdyInfo";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameInfo } from "../defines/IFrameInfo";
@@ -11,14 +11,12 @@ import { ItrEffect } from "../defines/ItrEffect";
 import { ItrKind } from "../defines/ItrKind";
 import { ensure } from "../utils";
 import { CondMaker } from "./CondMaker";
-import { copy_bdy_info } from "./copy_bdy_info";
-import { edit_bdy_info } from "./edit_bdy_info";
-
+import { EditBdy } from "./EditBdy";
+import { set_hit_flag } from "./set_hit_flag";
 export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) {
   const bdy_list = frame.bdy ? frame.bdy : (frame.bdy = []);
   const new_bdy: IBdyInfo[] = [];
   for (const bdy of bdy_list) {
-
     const cond = new CondMaker<C_Val>()
       .add(C_Val.ItrKind, "!=", ItrKind.JohnShield)
       .and(C_Val.ItrKind, "!=", ItrKind.Block)
@@ -43,8 +41,7 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
       )
     if (e.id === BuiltIn_OID.FreezeBall)
       cond.and(C_Val.AttackerIsFreezableBall, '!=', 1)
-
-    edit_bdy_info(bdy, {
+    EditBdy.edit(bdy, {
       /* 受攻击判定 */
       test: cond.done(),
       actions: [{
@@ -53,10 +50,10 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
           id: "20"
         }
       }]
-    });
+    })
 
     new_bdy.push(
-      copy_bdy_info(bdy, {
+      EditBdy.clone(bdy, {
         /* 反弹判定 */
         hit_flag: HitFlag.AllBoth,
         test: new CondMaker<C_Val>()
@@ -108,7 +105,7 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
             id: "30"
           }
         }]
-      }),
+      }).confirm(),
     );
 
   }
@@ -131,7 +128,7 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
         bdy_list.length = 0;
         bdy_list.push({
           kind: 0,
-          hit_flag: HitFlag.AllBoth,
+          ...set_hit_flag({}, HitFlag.AllBoth),
           test: new CondMaker<C_Val>()
             .not_in(
               C_Val.ItrKind,

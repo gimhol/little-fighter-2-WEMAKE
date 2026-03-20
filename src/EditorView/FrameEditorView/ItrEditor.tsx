@@ -1,3 +1,4 @@
+import { set_hit_flag } from "@/LF2/dat_translator/set_hit_flag";
 import { Defines, HitFlag, IItrInfo, itr_effect_full_name, itr_kind_full_name, ItrEffect, ItrKind } from "@/LF2/defines";
 import { floor } from "@/LF2/utils";
 import { useState } from "react";
@@ -28,7 +29,7 @@ const titled_styles: ITitledProps['styles'] = {
   }
 }
 const default_value: IItrInfo = {
-  hit_flag: HitFlag.AllEnemy,
+  ...set_hit_flag({}, HitFlag.AllEnemy),
   kind: ItrKind.Normal,
   effect: ItrEffect.Normal,
   z: floor(-Defines.DAFUALT_QUBE_LENGTH / 2),

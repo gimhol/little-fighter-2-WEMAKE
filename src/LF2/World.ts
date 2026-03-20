@@ -496,7 +496,7 @@ export class World extends WorldDataset {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-          
+
           this._lock_cam_x = x
           continue
         }
@@ -736,11 +736,13 @@ export class World extends WorldDataset {
     )) return;
 
     const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
+    const bdy_flag = bdy.hit_flag ?? HitFlag.AllEnemy;
+    const itr_flag = itr.hit_flag ?? HitFlag.AllEnemy;
     if (
-      !(itr.hit_flag & victim.data.type) ||
-      !(bdy.hit_flag & attacker.data.type) ||
-      !(itr.hit_flag & ally_flag) &&
-      !(bdy.hit_flag & ally_flag)
+      !(itr_flag & victim.data.type) ||
+      !(bdy_flag & attacker.data.type) ||
+      !(itr_flag & ally_flag) &&
+      !(bdy_flag & ally_flag)
     ) return;
     if (
       victim.team === attacker.team && victim.pre_emitter &&

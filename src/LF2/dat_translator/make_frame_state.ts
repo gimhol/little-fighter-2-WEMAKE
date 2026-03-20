@@ -1,9 +1,10 @@
 import { BdyKind, BuiltIn_OID, Defines, FacingFlag, IFrameInfo, ItrKind, OpointKind, StateEnum } from "../defines";
-import { HitFlag } from "../defines/HitFlag";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
+import { HitFlag } from "../defines/HitFlag";
 import { ensure } from "../utils";
 import { foreach } from "../utils/container_help/foreach";
 import { CondMaker } from "./CondMaker";
+import { set_hit_flag } from "./set_hit_flag";
 
 export function make_frame_state(frame: IFrameInfo) {
   switch (frame.state) {
@@ -19,9 +20,7 @@ export function make_frame_state(frame: IFrameInfo) {
       frame.gravity_enabled = false;
       break;
     case StateEnum.Burning: {
-      foreach(frame.itr, itr => {
-        itr.hit_flag = HitFlag.AllBoth;
-      })
+      frame.itr?.forEach(v => set_hit_flag(v, HitFlag.AllBoth))
       break;
     }
     case StateEnum.OLD_LouisCastOff: {
@@ -98,7 +97,7 @@ export function make_frame_state(frame: IFrameInfo) {
       break;
     }
     case StateEnum.Frozen:
-      foreach(frame.bdy, bdy => bdy.hit_flag = HitFlag.AllBoth)
+      frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
       break;
     case StateEnum.Message:
       frame.no_shadow = 1;
