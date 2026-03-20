@@ -24,7 +24,7 @@ export function make_fighter_data_firen(data: IEntityData) {
     data.frames["running_3"]
   ].filter(Boolean).map(frame => {
     frame.itr = ensure(frame.itr, {
-      hit_flag: HitFlag.Fighter | HitFlag.Ally,
+      hit_flag: HitFlag.AllyFighter,
       code: 123,
       kind: ItrKind.Normal,
       effect: ItrEffect.Ignore,
@@ -35,7 +35,7 @@ export function make_fighter_data_firen(data: IEntityData) {
       test: new CondMaker<C_Val>()
         .add(C_Val.BdyCode, '==', 123)
         .and(C_Val.VictimOID, '==', BuiltIn_OID.Freeze)
-        .and(C_Val.BdyHitFlag, '==', HitFlag.Fighter | HitFlag.Ally)
+        .and(C_Val.BdyHitFlag, '==', HitFlag.AllyFighter)
         .and(C_Val.SameFacing, '==', 0)
         .done()
     })
