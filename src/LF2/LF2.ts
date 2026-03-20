@@ -1,4 +1,5 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
+import { Background } from "./bg";
 import { KEY_NAME_LIST, LocalController } from "./controller";
 import * as D from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
@@ -39,8 +40,16 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
   private static _PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
   private static _DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
-  static get instance(): LF2 | undefined { return LF2.instances[0] }
-  static get world(): World | undefined { return this.instance?.world }
+  static get instance() { return LF2.instances[0] }
+  static get world() { return this.instance?.world }
+  static get objects() { return this.instance?.entities }
+  static get fighters() { return this.instance?.characters }
+  static get weapons() { return this.instance?.weapons }
+  static get balls() { return this.instance?.balls }
+  static get bg() { return this.world?.bg }
+  static get stage() { return this.world?.stage }
+  static get phase() { return this.stage?.phase }
+
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
 
