@@ -25,7 +25,7 @@ export function make_fighter_data_freeze(data: IEntityData): IEntityData {
     data.frames["running_3"]
   ].filter(Boolean).map(frame => {
     frame.bdy = ensure(frame.bdy, {
-      hit_flag: HitFlag.Fighter | HitFlag.Ally,
+      hit_flag: HitFlag.AllyFighter,
       code: 123,
       kind: BdyKind.Normal,
       x: 35,
