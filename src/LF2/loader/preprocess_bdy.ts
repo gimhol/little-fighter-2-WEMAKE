@@ -1,6 +1,5 @@
 import { Expression } from "../base/Expression";
 import { IBdyInfo, IEntityData } from "../defines";
-import { HitFlag } from "../defines/HitFlag";
 import type { LF2 } from "../LF2";
 import { get_val_geter_from_collision } from "./get_val_from_collision";
 import { preprocess_action } from "./preprocess_action";
@@ -8,7 +7,6 @@ import { preprocess_action } from "./preprocess_action";
 export function preprocess_bdy(lf2: LF2, bdy: IBdyInfo, data: IEntityData, jobs: Promise<void>[]): IBdyInfo {
   const prefab = bdy.prefab_id ? data.bdy_prefabs?.[bdy.prefab_id] : void 0;
   if (prefab) bdy = { ...prefab, ...bdy };
-  bdy.hit_flag = bdy.hit_flag ?? HitFlag.AllEnemy
   bdy.tester = bdy.test ? new Expression(
     bdy.test,
     get_val_geter_from_collision
