@@ -5,6 +5,7 @@ import { UIComponent } from "../UIComponent";
 import { FIRZEN_DUA_TEST } from "./FIRZEN_DUA_TEST";
 import { JAN_DUA_TEST } from "./JAN_DUA_TEST";
 import { JAN_DUJ_TEST } from "./JAN_DUJ_TEST";
+import { LOUIS_JUMP_ATTACK_TEST } from "./LOUIS_JUMP_ATTACK_TEST";
 import { TestsState } from "./TestsState";
 
 export class Tests extends UIComponent {
@@ -16,8 +17,8 @@ export class Tests extends UIComponent {
       new FIRZEN_DUA_TEST(this),
       new JAN_DUA_TEST(this),
       new JAN_DUJ_TEST(this),
+      new LOUIS_JUMP_ATTACK_TEST(this),
     )
-
   }
   override on_key_down(e: IUIKeyEvent): void {
     const len = this.fsm.states.size;

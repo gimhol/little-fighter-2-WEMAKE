@@ -1,7 +1,6 @@
-import { O_ID, TeamEnum, GK } from "@/LF2/defines";
+import { GK, O_ID, TeamEnum } from "@/LF2/defines";
 import { Factory } from "@/LF2/entity";
 import { TestsState } from "./TestsState";
-
 
 export class JAN_DUJ_TEST extends TestsState {
   override readonly key: number = ++TestsState.KEY;

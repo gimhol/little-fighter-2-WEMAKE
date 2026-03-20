@@ -20,6 +20,9 @@ export class TestsState implements IState<number> {
   constructor(owner: Tests) {
     this.owner = owner;
   }
+  update(dt: number): number | void | undefined {
+    
+  }
   enter?(): void {
 
   }

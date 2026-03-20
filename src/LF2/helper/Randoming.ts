@@ -28,6 +28,7 @@ export class Randoming<T> {
     } else {
       this.taken = this.random_take(this.cur)!
     }
+    if (this.src.length && this.taken == void 0) debugger;
     return this.taken;
   }
   protected random_get<T>(a: T | T[] | undefined): T | undefined {
@@ -35,8 +36,10 @@ export class Randoming<T> {
     return a[this.random_in(0, a.length)]
   }
   protected random_take<T>(a: T | T[] | undefined): T | undefined {
-    if (!a || !Array.isArray(a)) return a
-    return a.splice(this.random_in(0, a.length), 1)[0]
+    if (!a || !Array.isArray(a)) return a;
+    const idx = this.random_in(0, a.length)
+    if (idx < 0 || idx >= a.length) debugger;
+    return a.splice(idx, 1)[0]
   }
   protected random_in(l: number, r: number) {
     if (this.lf2) return this.lf2.mt.range(l, r)
