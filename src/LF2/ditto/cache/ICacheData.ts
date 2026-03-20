@@ -44,7 +44,9 @@ export interface ICacheData {
    * @type {Uint8Array}
    * @memberof ICacheData
    */
-  data: Uint8Array;
+  data?: Uint8Array | null;
+
+  blob?: Blob | null;
 
   /**
    * 缓存日期
