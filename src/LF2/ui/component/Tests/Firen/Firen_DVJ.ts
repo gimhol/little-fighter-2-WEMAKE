@@ -3,7 +3,6 @@ import { Entity } from "@/LF2/entity";
 import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
 
-
 export class Firen_DVJ extends TestCase {
   override readonly key: number = ++TestCase.KEY;
   override name: string = 'Firen DvJ';

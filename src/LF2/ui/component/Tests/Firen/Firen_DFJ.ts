@@ -55,5 +55,3 @@ export class Firen_DFJ extends TestCase {
     } while (0);
   }
 }
-
-

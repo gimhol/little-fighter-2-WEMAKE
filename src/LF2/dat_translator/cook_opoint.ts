@@ -41,8 +41,9 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
         action &&
         !Array.isArray(action) &&
         typeof action.id === 'string' &&
-        ['50', '54'].includes(action.id)
+        ['50', '54', '109'].includes(action.id)
       ) {
+        // for hardcoded
         opoint.speedz = 0;
       }
       break;
