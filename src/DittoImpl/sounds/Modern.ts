@@ -240,8 +240,7 @@ export class __Modern extends BaseSounds {
     const sound_x = x ?? viewer_x;
     const playings = this._playings.size + 1;
 
-    let attenuation = 1.0;
-    if (playings > 1) attenuation = 1 / sqrt(min(playings, 4))
+    const attenuation = 1 / Math.sqrt(playings);
 
     const baseVol = this._volume * this._sound_volume;
     const muted = this._muted || this._sound_muted;
