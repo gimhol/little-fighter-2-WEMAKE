@@ -5,7 +5,7 @@ import { ActionDirector } from "../ActionDirector";
 
 export class Firen_DFJ extends TestCase {
   override readonly key: number = ++TestCase.KEY;
-  override readonly name: string = 'Firen D>J'
+  override name: string = 'Firen D>J'
   firen?: Entity | null;
   director = new ActionDirector()
     .add(0, () => this.firen?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump))

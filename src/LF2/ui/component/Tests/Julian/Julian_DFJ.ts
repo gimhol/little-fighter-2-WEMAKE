@@ -5,7 +5,7 @@ import { TestCase } from "../TestCase";
 
 export class Julian_DFJ extends TestCase {
   override readonly key: number = ++TestCase.KEY;
-  override readonly name: string = 'Julian D>J'
+  override name: string = 'Julian D>J'
   julian?: Entity | null;
   director = new ActionDirector()
     .offset(700,

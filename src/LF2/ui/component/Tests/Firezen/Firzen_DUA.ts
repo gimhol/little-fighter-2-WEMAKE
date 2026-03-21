@@ -4,7 +4,7 @@ import { TestCase } from "../TestCase";
 
 export class Firzen_DUA extends TestCase {
   override readonly key: number = ++TestCase.KEY;
-  override readonly name: string = 'Firezen D^A'
+  override name: string = 'Firezen D^A'
   firzen?: Entity | null;
 
   override update(dt: number): number | void | undefined {

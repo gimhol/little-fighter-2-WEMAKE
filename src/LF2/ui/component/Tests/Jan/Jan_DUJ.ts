@@ -3,7 +3,7 @@ import { TestCase } from "../TestCase";
 
 export class Jan_DUJ extends TestCase {
   override readonly key: number = ++TestCase.KEY;
-  override readonly name: string = 'Jan D^J'
+  override name: string = 'Jan D^J'
   override enter(): void {
     do {
       const jan = this.spawn(O_ID.Jan)

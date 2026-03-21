@@ -37,8 +37,9 @@ export class Tests extends UIComponent {
   groups: TestCase[][] = []
   override init(): void { }
   override on_start(): void {
-    this.groups = CASE_GROUPS.map(cases => cases.map(C => {
+    this.groups = CASE_GROUPS.map((cases, x) => cases.map((C, y) => {
       const r = new C(this)
+      r.name = `${x}-${y} ${r.name}`
       this.fsm.add(r)
       return r;
     }))

@@ -4,7 +4,7 @@ import { TestCase } from "../TestCase";
 
 export class Firzen_FUSION extends TestCase {
   override readonly key: number = ++TestCase.KEY;
-  override readonly name: string = 'Firzen = Freeze + Firen'
+  override name: string = 'Firzen = Freeze + Firen'
   firen?: Entity | null;
   freze?: Entity | null;
 
