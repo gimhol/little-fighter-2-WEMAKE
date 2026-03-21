@@ -8,6 +8,7 @@ import { Firzen_DUA } from "./Firezen/Firzen_DUA";
 import { Firzen_FUSION } from "./Firezen/Firzen_FUSION";
 import { Jan_DUA } from "./Jan/Jan_DUA";
 import { Jan_DUJ } from "./Jan/Jan_DUJ";
+import { Julian_DFA } from "./Julian/Julian_DFA";
 import { Julian_DFJ } from "./Julian/Julian_DFJ";
 import { Julian_DUJ } from "./Julian/Julian_DUJ";
 import { LOUIS_JUMP_ATTACK } from "./Louis/LOUIS_JUMP_ATTACK";
@@ -17,6 +18,7 @@ const Cases: IClazz<TestCase, [Tests]>[] = [
   TestCase,
   Julian_DUJ,
   Julian_DFJ,
+  Julian_DFA,
   Firzen_DUA,
   Firzen_FUSION,
   Jan_DUA,
