@@ -23,6 +23,7 @@ export class Firen_DUJ extends TestCase {
         this.firen3?.ctrl.key_up(...AGK).key_down(GK.Up);
       }
     )
+    .wait(500)
     .sort();
 
   override update(dt: number): number | void | undefined {

@@ -45,6 +45,10 @@ export class ActionDirector {
     this._actions.push({ time, work });
     return this;
   }
+  wait(time: number) {
+    this._actions.push({ time: this.end_time + time, work() { } });
+    return this;
+  }
   sort(): this {
     this._actions.sort((a, b) => a.time > b.time ? 1 : -1);
     return this;

@@ -18,10 +18,11 @@ export class Firen_DVJ extends TestCase {
         this.firen3?.ctrl.key_up(...AGK).click(GK.Defend, GK.Down, GK.Jump)
       },
       () => {
-        this.firen1?.ctrl.key_up(...AGK).key_down(GK.Down);
-        this.firen3?.ctrl.key_up(...AGK).key_down(GK.Up);
+        this.firen1?.ctrl.key_down(GK.Down);
+        this.firen3?.ctrl.key_down(GK.Up);
       }
     )
+    .wait(500)
     .sort();
 
   override update(dt: number): number | void | undefined {
