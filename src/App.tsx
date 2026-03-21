@@ -325,10 +325,17 @@ function App() {
     _set_paused(lf2.world.paused);
 
     const visibilitychange = () => lf2.sounds.set_muted(document.hidden)
+    const blur = () => lf2.sounds.set_muted(true)
+    const focus = () => lf2.sounds.set_muted(false)
+
     document.addEventListener('visibilitychange', visibilitychange);
+    window.addEventListener('blur', blur);
+    window.addEventListener('focus', focus);
     return () => {
       window.removeEventListener("touchstart", on_touchstart)
       document.removeEventListener('visibilitychange', visibilitychange);
+      window.removeEventListener('blur', blur);
+      window.removeEventListener('focus', focus);
       del_lf2_callback();
       lf2.dispose()
     };
