@@ -28,7 +28,7 @@ export class Firen_DFA extends TestCase {
   }
   override enter(): void {
     this.director.reset();
-    const firens = this.hori_3(O_ID.Firen);
+    const firens = this.verti_3(O_ID.Firen, 50);
     firens.forEach(o => {
       o.team = TeamEnum.Team_1;
       o.key_role = false;
@@ -37,5 +37,6 @@ export class Firen_DFA extends TestCase {
     this.firen1 = firens[0];
     this.firen2 = firens[1];
     this.firen3 = firens[2];
+    this.bandits_mid_8();
   }
 }
