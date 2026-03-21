@@ -1,4 +1,4 @@
-export interface IClazz<C = unknown, A extends unknown[] = unknown[]> {
+export interface IClazz<C = unknown, A extends any[] = any[]> {
   new(...args: A): C
 }
 export interface ISchema<T = any> {
