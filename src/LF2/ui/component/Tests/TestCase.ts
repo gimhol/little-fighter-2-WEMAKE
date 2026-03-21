@@ -82,4 +82,15 @@ export class TestCase implements IState<number> {
     }
     return bandits;
   }
+  hori_3(oid: string): Entity[] {
+    const ret: Entity[] = [];
+    [this.midX - 250, this.midX, this.midX + 250].forEach(x => {
+      const o = this.spawn(oid);
+      if (!o) return;
+      o.set_position(x, 0, this.midZ);
+      o.attach();
+      ret.push(o)
+    })
+    return ret;
+  }
 }

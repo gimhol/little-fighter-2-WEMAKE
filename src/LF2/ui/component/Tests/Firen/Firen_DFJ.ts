@@ -8,10 +8,15 @@ export class Firen_DFJ extends TestCase {
   override name: string = 'Firen D>J'
   firen?: Entity | null;
   director = new ActionDirector()
-    .add(0, () => this.firen?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump))
-    .add(500, () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Up))
-    .add(1000, () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Down))
-    .add(2000, () => this.firen?.ctrl.key_up(...AGK))
+    .offset(500,
+      () => this.firen?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump),
+      () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Up),
+      () => this.firen?.ctrl.key_up(...AGK),
+      () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Down),
+      () => this.firen?.ctrl.key_up(...AGK),
+      () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Defend),
+      () => this.firen?.ctrl.key_up(...AGK)
+    )
     .sort()
 
   override update(dt: number): number | void | undefined {
@@ -50,3 +55,5 @@ export class Firen_DFJ extends TestCase {
     } while (0);
   }
 }
+
+

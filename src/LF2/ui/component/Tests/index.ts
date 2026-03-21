@@ -4,6 +4,8 @@ import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { Text } from "../Text";
 import { UIComponent } from "../UIComponent";
 import { Firen_DFJ } from "./Firen/Firen_DFJ";
+import { Firen_DUJ } from "./Firen/Firen_DUJ";
+import { Firen_DVJ } from "./Firen/Firen_DVJ";
 import { Firzen_DUA } from "./Firezen/Firzen_DUA";
 import { Firzen_FUSION } from "./Firezen/Firzen_FUSION";
 import { Jan_DUA } from "./Jan/Jan_DUA";
@@ -26,7 +28,9 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
     Jan_DUA,
     Jan_DUJ
   ], [
-    Firen_DFJ
+    Firen_DFJ,
+    Firen_DUJ,
+    Firen_DVJ,
   ], [
     LOUIS_JUMP_ATTACK
   ],
