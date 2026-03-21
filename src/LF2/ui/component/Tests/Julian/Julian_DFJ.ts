@@ -1,30 +1,28 @@
-import { GK, StateEnum, AGK, O_ID, TeamEnum } from "@/LF2/defines";
+import { AGK, GK, O_ID, TeamEnum } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity";
+import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
 
 export class Julian_DFJ extends TestCase {
   override readonly key: number = ++TestCase.KEY;
   override readonly name: string = 'Julian D>J'
   julian?: Entity | null;
-  action_idx = 0;
-  actions = [
-    () => this.julian?.ctrl.click(GK.Defend, GK.Right, GK.Jump),
-    () => this.julian?.ctrl.click(GK.Defend, GK.Right, GK.Jump).key_down(GK.Down),
-    () => this.julian?.ctrl.click(GK.Defend, GK.Right, GK.Jump).key_down(GK.Up),
-    () => this.julian?.ctrl.click(GK.Defend, GK.Left, GK.Jump),
-    () => this.julian?.ctrl.click(GK.Defend, GK.Left, GK.Jump).key_down(GK.Down),
-    () => this.julian?.ctrl.click(GK.Defend, GK.Left, GK.Jump).key_down(GK.Up),
-  ].filter(Boolean);
+  director = new ActionDirector()
+    .offset(700,
+      () => this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump),
+      () => this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump).key_down(GK.Down),
+      () => this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump).key_down(GK.Up),
+      () => this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Left, GK.Jump),
+      () => this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Left, GK.Jump).key_down(GK.Down),
+      () => this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Left, GK.Jump).key_down(GK.Up),
+      () => this.julian?.ctrl.key_up(...AGK)
+    ).sort()
+
   override update(dt: number): number | void | undefined {
-    const { julian } = this;
-    if (!julian) return;
-    if ([StateEnum.Standing, StateEnum.Walking].includes(julian.frame.state)) {
-      julian.ctrl.key_up(...AGK);
-      this.actions.at(this.action_idx)?.();
-      this.action_idx = (this.action_idx + 1) % this.actions.length;
-    }
+    this.director.update(dt)
   }
   override enter(): void {
+    this.director.reset()
     do {
       const julian = this.julian = this.spawn(O_ID.Julian);
       if (!julian) return;

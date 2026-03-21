@@ -3,6 +3,7 @@ import { GK, IClazz } from "@/LF2/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { Text } from "../Text";
 import { UIComponent } from "../UIComponent";
+import { Firen_DFJ } from "./Firen/Firen_DFJ";
 import { Firzen_DUA } from "./Firezen/Firzen_DUA";
 import { Firzen_FUSION } from "./Firezen/Firzen_FUSION";
 import { Jan_DUA } from "./Jan/Jan_DUA";
@@ -20,6 +21,7 @@ const Cases: IClazz<TestCase, [Tests]>[] = [
   Firzen_FUSION,
   Jan_DUA,
   Jan_DUJ,
+  Firen_DFJ,
   LOUIS_JUMP_ATTACK,
 ]
 export class Tests extends UIComponent {
