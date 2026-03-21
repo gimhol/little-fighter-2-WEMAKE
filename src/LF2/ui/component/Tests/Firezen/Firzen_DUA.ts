@@ -10,7 +10,12 @@ export class Firzen_DUA extends TestsState {
     const { firzen } = this;
     if (!firzen) return;
     if (firzen.mp > 100 && firzen.frame.state === StateEnum.Standing)
-      firzen.ctrl.click(GK.a)
+      firzen.ctrl.click(GK.d, GK.U, GK.a)
+    else if (
+      firzen.mp > 100 &&
+      firzen.frame.state !== StateEnum.Standing &&
+      firzen.frame.hit?.a
+    ) firzen.ctrl.click(GK.a)
   }
   override enter(): void {
 
