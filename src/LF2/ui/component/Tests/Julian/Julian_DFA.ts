@@ -1,4 +1,4 @@
-import { AGK, GK, O_ID, TeamEnum } from "@/LF2/defines";
+import { AGK, GK, O_ID, StateEnum, TeamEnum } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity";
 import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
@@ -8,7 +8,14 @@ export class Julian_DFA extends TestCase {
   override readonly name: string = 'Julian D>A'
   julian?: Entity | null;
   director = new ActionDirector()
-    .repeat(1000, 50, () => this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Attack))
+    .repeat(1000, 50, () => {
+      const { julian } = this;
+      if (!julian) return;
+      if (StateEnum.Standing === julian.frame.state)
+        this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Attack)
+      else
+        this.julian?.ctrl.key_up(...AGK).click(GK.Attack)
+    })
     .times(9999)
     .sort()
 
