@@ -1,0 +1,28 @@
+{
+  type: "background",
+  id: "bg_moon",
+  base: {
+    name: "Moon",
+    shadow: "bg/sys/bc/s.png",
+    shadowsize: [
+      37,
+      9,
+    ],
+    left: 0,
+    right: 1300,
+    far: -450,
+    near: -40,
+    group: [
+      "regular",
+    ],
+  },
+  layers: [
+    {
+      width: 1356,
+      x: 0,
+      file: "!bg/moon/ground.png",
+      y: 288,
+      z: -1,
+    },
+  ],
+}
