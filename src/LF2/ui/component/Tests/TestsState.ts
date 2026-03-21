@@ -13,7 +13,7 @@ export class TestsState implements IState<number> {
   get lf2() { return this.owner.lf2 }
   get world() { return this.owner.world }
   get bg() { return this.owner.world.bg }
-
+  get fsm() { return this.owner.fsm }
   get left() { return this.world.bg.left; }
   get right() { return this.world.bg.right; }
   get far() { return this.world.bg.far; }
@@ -64,10 +64,10 @@ export class TestsState implements IState<number> {
   bandits_mid_8(x = 100, z = 50): Entity[] {
     const bandits: Entity[] = []
     const x1 = this.midX + x;
-    const x2 = this.midX - x;
-    const x3 = this.midX;
-    const z1 = this.midZ;
-    const z2 = this.midZ - z;
+    const x2 = this.midX;
+    const x3 = this.midX - x;
+    const z1 = this.midZ - z;
+    const z2 = this.midZ;
     const z3 = this.midZ + z;
     const pos = [
       [x1, z1], [x2, z1], [x3, z1], [x3, z2],

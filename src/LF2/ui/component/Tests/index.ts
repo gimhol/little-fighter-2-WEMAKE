@@ -3,10 +3,11 @@ import { GK, IClazz } from "@/LF2/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { UIComponent } from "../UIComponent";
 import { Firzen_DUA } from "./Firezen/Firzen_DUA";
+import { Firzen_FUSION } from "./Firezen/Firzen_FUSION";
 import { Jan_DUA } from "./Jan/Jan_DUA";
 import { Jan_DUJ } from "./Jan/Jan_DUJ";
-import { Julian_DUJ } from "./Julian/Julian_DUJ";
 import { Julian_DFJ } from "./Julian/Julian_DFJ";
+import { Julian_DUJ } from "./Julian/Julian_DUJ";
 import { LOUIS_JUMP_ATTACK } from "./Louis/LOUIS_JUMP_ATTACK";
 import { TestsState } from "./TestsState";
 
@@ -15,6 +16,7 @@ const Cases: IClazz<TestsState, [Tests]>[] = [
   Julian_DUJ,
   Julian_DFJ,
   Firzen_DUA,
+  Firzen_FUSION,
   Jan_DUA,
   Jan_DUJ,
   LOUIS_JUMP_ATTACK,
