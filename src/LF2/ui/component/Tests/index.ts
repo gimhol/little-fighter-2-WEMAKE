@@ -14,25 +14,35 @@ import { Julian_DUJ } from "./Julian/Julian_DUJ";
 import { LOUIS_JUMP_ATTACK } from "./Louis/LOUIS_JUMP_ATTACK";
 import { TestCase } from "./TestCase";
 
-const Cases: IClazz<TestCase, [Tests]>[] = [
-  TestCase,
-  Julian_DUJ,
-  Julian_DFJ,
-  Julian_DFA,
-  Firzen_DUA,
-  Firzen_FUSION,
-  Jan_DUA,
-  Jan_DUJ,
-  Firen_DFJ,
-  LOUIS_JUMP_ATTACK,
+const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
+  [TestCase], [
+    Julian_DUJ,
+    Julian_DFJ,
+    Julian_DFA
+  ], [
+    Firzen_DUA,
+    Firzen_FUSION
+  ], [
+    Jan_DUA,
+    Jan_DUJ
+  ], [
+    Firen_DFJ
+  ], [
+    LOUIS_JUMP_ATTACK
+  ],
 ]
 export class Tests extends UIComponent {
   static override readonly TAG = 'Tests';
   readonly fsm = new FSM<number, TestCase>();
-  override init(): void {
-  }
+  groups: TestCase[][] = []
+  override init(): void { }
   override on_start(): void {
-    this.fsm.add(...Cases.map(v => new v(this))).use(0)
+    this.groups = CASE_GROUPS.map(cases => cases.map(C => {
+      const r = new C(this)
+      this.fsm.add(r)
+      return r;
+    }))
+    this.fsm.use(0)
     this.fsm.callbacks.add({
       on_state_changed: (f) => {
         const n = f.state?.name ?? 'None'
@@ -41,17 +51,32 @@ export class Tests extends UIComponent {
       }
     })
   }
+
   override on_stop(): void {
     this.world.clear()
   }
   override on_key_down(e: IUIKeyEvent): void {
     const len = this.fsm.states.size;
     if (!len) return;
-    const state = this.fsm.state?.key;
+    const state = this.fsm.state;
     if (state == void 0) this.fsm.use(0)
-    else if (GK.R === e.game_key) this.fsm.use((state + 1) % len)
-    else if (GK.U === e.game_key) this.fsm.use(state)
-    else if (GK.L === e.game_key) this.fsm.use((state + len - 1) % len)
+    else if (GK.R === e.game_key) this.fsm.use((state.key + 1) % len)
+    else if (GK.a === e.game_key) this.fsm.use(state.key)
+    else if (GK.L === e.game_key) this.fsm.use((state.key + len - 1) % len)
+    else if (GK.U === e.game_key) {
+      const len = this.groups.length;
+      const gid = this.groups.findIndex(v => v.indexOf(state) >= 0)
+      const next_gid = (gid + len - 1) % len;
+      const cases = this.groups[next_gid]
+      this.fsm.use(cases[cases.length - 1].key)
+    }
+    else if (GK.D === e.game_key) {
+      const len = this.groups.length;
+      const gid = this.groups.findIndex(v => v.indexOf(state) >= 0)
+      const next_gid = (gid + 1) % len;
+      const cases = this.groups[next_gid]
+      this.fsm.use(cases[0].key)
+    }
   }
   override update(dt: number): void {
     this.fsm.update(dt)

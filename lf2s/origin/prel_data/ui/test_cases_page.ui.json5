@@ -16,7 +16,7 @@
   items: [
     {
       txt: {
-        i18n: "Left | Right: Switch Test Cases; Up : Replay; F4: Exit",
+        i18n: "[Left | Right]: Switch Test Case   [Up | Down]: Switch Test Group   [Attack]: Replay   [F4]: Exit",
         style: "$val:txt_style",
       },
       center: "0,1",
