@@ -1,24 +1,29 @@
 import FSM from "@/LF2/base/FSM";
-import { GK } from "@/LF2/defines";
+import { GK, IClazz } from "@/LF2/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { UIComponent } from "../UIComponent";
-import { FIRZEN_DUA_TEST } from "./FIRZEN_DUA_TEST";
-import { JAN_DUA_TEST } from "./JAN_DUA_TEST";
-import { JAN_DUJ_TEST } from "./JAN_DUJ_TEST";
-import { LOUIS_JUMP_ATTACK_TEST } from "./LOUIS_JUMP_ATTACK_TEST";
+import { Firzen_DUA } from "./Firezen/Firzen_DUA";
+import { Jan_DUA } from "./Jan/Jan_DUA";
+import { Jan_DUJ } from "./Jan/Jan_DUJ";
+import { Julian_DUJ } from "./Julian/Julian_DUJ";
+import { Julian_DFJ } from "./Julian/Julian_DFJ";
+import { LOUIS_JUMP_ATTACK } from "./Louis/LOUIS_JUMP_ATTACK";
 import { TestsState } from "./TestsState";
 
+const Cases: IClazz<TestsState, [Tests]>[] = [
+  TestsState,
+  Julian_DUJ,
+  Julian_DFJ,
+  Firzen_DUA,
+  Jan_DUA,
+  Jan_DUJ,
+  LOUIS_JUMP_ATTACK,
+]
 export class Tests extends UIComponent {
   static override readonly TAG = 'Tests';
   readonly fsm = new FSM<number>();
   override init(): void {
-    this.fsm.add(
-      new TestsState(this),
-      new FIRZEN_DUA_TEST(this),
-      new JAN_DUA_TEST(this),
-      new JAN_DUJ_TEST(this),
-      new LOUIS_JUMP_ATTACK_TEST(this),
-    )
+    this.fsm.add(...Cases.map(v => new v(this)))
   }
   override on_key_down(e: IUIKeyEvent): void {
     const len = this.fsm.states.size;
@@ -31,5 +36,8 @@ export class Tests extends UIComponent {
   }
   override update(dt: number): void {
     this.fsm.update(dt)
+  }
+  override on_pause(): void {
+    this.world.clear()
   }
 }

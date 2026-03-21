@@ -1,5 +1,5 @@
-export interface IClazz<C = unknown> {
-  new(...args: any): C
+export interface IClazz<C = unknown, A extends unknown[] = unknown[]> {
+  new(...args: A): C
 }
 export interface ISchema<T = any> {
   path?: string;

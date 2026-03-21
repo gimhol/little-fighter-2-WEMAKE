@@ -39,5 +39,5 @@ export const Labels: Record<LGK, string> = {
   [GK.j]: "J",
   [GK.d]: "D"
 }
-
-
+export const ALL_GAME_KEYS: GK[] = [GK.L, GK.R, GK.U, GK.D, GK.a, GK.j, GK.d]
+export const AGK = ALL_GAME_KEYS;

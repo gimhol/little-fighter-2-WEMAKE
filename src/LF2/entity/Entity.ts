@@ -775,7 +775,7 @@ export class Entity {
     this.set_position(
       pos_x,
       pos_y,
-      pos_z + (opoint.z ?? 0)
+      pos_z + (opoint.z ?? 1)
     );
 
     const result = this.get_next_frame(opoint.action);
