@@ -1,9 +1,10 @@
 import { GK, StateEnum, AGK, O_ID, TeamEnum } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity";
-import { TestsState } from "../TestsState";
+import { TestCase } from "../TestCase";
 
-export class Julian_DFJ extends TestsState {
-  override readonly key: number = ++TestsState.KEY;
+export class Julian_DFJ extends TestCase {
+  override readonly key: number = ++TestCase.KEY;
+  override readonly name: string = 'Julian D>J'
   julian?: Entity | null;
   action_idx = 0;
   actions = [

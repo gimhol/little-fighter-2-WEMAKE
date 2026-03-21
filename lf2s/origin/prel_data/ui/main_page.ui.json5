@@ -136,6 +136,19 @@
           },
         },
         {
+          id: "btn_test_cases",
+          center: "0.5, 0.5",
+          size: "200,22",
+          template: "builtin_data/launch/main_text_button.ui.json5",
+          values: {
+            text: "main_page.test_cases",
+          },
+          component: ["Reachable(main)"],
+          actions: {
+            click: ["push_ui(test_cases_page)", "sound(ok)"],
+          },
+        },
+        {
           id: "btn_quit",
           size: "200,22",
           center: "0.5, 0.5",

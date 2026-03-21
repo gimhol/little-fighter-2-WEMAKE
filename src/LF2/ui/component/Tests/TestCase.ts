@@ -5,11 +5,11 @@ import { Factory } from "@/LF2/entity/Factory";
 import { round_float } from "@/LF2/utils/math/round_float";
 import { Tests } from ".";
 
-export class TestsState implements IState<number> {
+export class TestCase implements IState<number> {
   static KEY: number = 0;
   readonly key: number = 0;
   readonly owner: Tests;
-
+  readonly name: string = 'None';
   get lf2() { return this.owner.lf2 }
   get world() { return this.owner.world }
   get bg() { return this.owner.world.bg }

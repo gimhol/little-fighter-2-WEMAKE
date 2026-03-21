@@ -1,8 +1,9 @@
 import { GK, O_ID, TeamEnum } from "@/LF2/defines";
-import { TestsState } from "../TestsState";
+import { TestCase } from "../TestCase";
 
-export class Julian_DUJ extends TestsState {
-  override readonly key: number = ++TestsState.KEY;
+export class Julian_DUJ extends TestCase {
+  override readonly key: number = ++TestCase.KEY;
+  override readonly name: string = 'Julian D^J'
   override enter(): void {
 
     const julian = this.spawn(O_ID.Julian);

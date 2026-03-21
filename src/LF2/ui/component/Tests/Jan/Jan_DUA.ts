@@ -1,10 +1,11 @@
 import { O_ID, TeamEnum, GK } from "@/LF2/defines";
 import { Factory } from "@/LF2/entity";
-import { TestsState } from "../TestsState";
+import { TestCase } from "../TestCase";
 
 
-export class Jan_DUA extends TestsState {
-  override readonly key: number = ++TestsState.KEY;
+export class Jan_DUA extends TestCase {
+  override readonly key: number = ++TestCase.KEY;
+  override readonly name: string = 'Jan D^A'
   override enter(): void {
 
     const jan = this.spawn(O_ID.Jan)

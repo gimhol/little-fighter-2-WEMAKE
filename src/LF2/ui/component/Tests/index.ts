@@ -1,6 +1,7 @@
 import FSM from "@/LF2/base/FSM";
 import { GK, IClazz } from "@/LF2/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
+import { Text } from "../Text";
 import { UIComponent } from "../UIComponent";
 import { Firzen_DUA } from "./Firezen/Firzen_DUA";
 import { Firzen_FUSION } from "./Firezen/Firzen_FUSION";
@@ -9,10 +10,10 @@ import { Jan_DUJ } from "./Jan/Jan_DUJ";
 import { Julian_DFJ } from "./Julian/Julian_DFJ";
 import { Julian_DUJ } from "./Julian/Julian_DUJ";
 import { LOUIS_JUMP_ATTACK } from "./Louis/LOUIS_JUMP_ATTACK";
-import { TestsState } from "./TestsState";
+import { TestCase } from "./TestCase";
 
-const Cases: IClazz<TestsState, [Tests]>[] = [
-  TestsState,
+const Cases: IClazz<TestCase, [Tests]>[] = [
+  TestCase,
   Julian_DUJ,
   Julian_DFJ,
   Firzen_DUA,
@@ -23,9 +24,21 @@ const Cases: IClazz<TestsState, [Tests]>[] = [
 ]
 export class Tests extends UIComponent {
   static override readonly TAG = 'Tests';
-  readonly fsm = new FSM<number>();
+  readonly fsm = new FSM<number, TestCase>();
   override init(): void {
-    this.fsm.add(...Cases.map(v => new v(this)))
+  }
+  override on_start(): void {
+    this.fsm.add(...Cases.map(v => new v(this))).use(0)
+    this.fsm.callbacks.add({
+      on_state_changed: (f) => {
+        const n = f.state?.name ?? 'None'
+        const nn = this.node.search_component(Text, v => v.id === 'test_case_name')
+        nn?.set_text(`Case: ${n}`)
+      }
+    })
+  }
+  override on_stop(): void {
+    this.world.clear()
   }
   override on_key_down(e: IUIKeyEvent): void {
     const len = this.fsm.states.size;
@@ -38,8 +51,5 @@ export class Tests extends UIComponent {
   }
   override update(dt: number): void {
     this.fsm.update(dt)
-  }
-  override on_pause(): void {
-    this.world.clear()
   }
 }

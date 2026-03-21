@@ -1,9 +1,10 @@
 import { GK, O_ID, StateEnum, TeamEnum } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity/Entity";
-import { TestsState } from "../TestsState";
+import { TestCase } from "../TestCase";
 
-export class Firzen_DUA extends TestsState {
-  override readonly key: number = ++TestsState.KEY;
+export class Firzen_DUA extends TestCase {
+  override readonly key: number = ++TestCase.KEY;
+  override readonly name: string = 'Firezen D^A'
   firzen?: Entity | null;
 
   override update(dt: number): number | void | undefined {

@@ -1,0 +1,36 @@
+{
+  id: "test_cases_page",
+  name: "页面：测试用例",
+  component: ["Tests"],
+  values: {
+    txt_style: {
+      fill_style: "white",
+      font: "12px Arial",
+      back_style: {
+        font: "12px Arial",
+        stroke_style: "#000000",
+        line_width: 1,
+      },
+    },
+  },
+  items: [
+    {
+      txt: {
+        i18n: "Left | Right: Switch Test Cases; Up : Replay; F4: Exit",
+        style: "$val:txt_style",
+      },
+      center: "0,1",
+      pos: "0, 450",
+      component: ["Text()"],
+    },
+    {
+      txt: {
+        i18n: "None",
+        style: "$val:txt_style",
+      },
+      center: "0,0",
+      pos: "0",
+      component: [{ id: "test_case_name", name: "Text" }],
+    },
+  ],
+}

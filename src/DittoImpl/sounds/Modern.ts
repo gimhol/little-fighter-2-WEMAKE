@@ -238,12 +238,10 @@ export class __Modern extends BaseSounds {
     const half_w = full_w / 2;
     const viewer_x = this.lf2.world.renderer.cam_x + half_w;
     const sound_x = x ?? viewer_x;
-    const playingCount = this._playings.size + 1;
+    const playings = this._playings.size + 1;
 
     let attenuation = 1.0;
-    if (playingCount > 1) {
-      attenuation = 1 / sqrt(min(playingCount, 4))
-    }
+    if (playings > 1) attenuation = 1 / sqrt(min(playings, 4))
 
     const baseVol = this._volume * this._sound_volume;
     const muted = this._muted || this._sound_muted;
