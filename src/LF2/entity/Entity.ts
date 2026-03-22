@@ -2327,8 +2327,9 @@ export class Entity {
   }
   dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
     return (
-      (this.frame as Partial<IWorldDataset>)[name] ??
-      (this.data.base as Partial<IWorldDataset>)[name] ??
+      this.frame?.[name] ??
+      this.data.base?.[name] ??
+      this.world.bg.data.dataset?.[name] ??
       this.world[name]
     )
   }
