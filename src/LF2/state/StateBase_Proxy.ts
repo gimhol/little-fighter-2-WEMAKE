@@ -25,6 +25,9 @@ export class StateBase_Proxy extends State_Base implements Required<State_Base> 
     this.ball_proxy = ball_proxy
     this.proxy = proxy
   }
+  override get_gravity(e: Entity): number | undefined | null {
+    return this.get_proxy(e).get_gravity?.(e);
+  }
   get_proxy(e: Entity) {
     if (is_fighter(e)) return this.character_proxy;
     if (is_weapon(e)) return this.weapon_proxy;
