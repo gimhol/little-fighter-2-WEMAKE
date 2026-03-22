@@ -16,6 +16,11 @@
       "regular",
     ],
   },
+  dataset: {
+    gravity: 0.21875,
+    gravity_d: 0.65625,
+    weapon_throwing_gravity: 0.109325,
+  },
   layers: [
     {
       width: 1356,

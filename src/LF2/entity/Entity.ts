@@ -7,7 +7,7 @@ import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
-  FrameBehavior, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
@@ -606,7 +606,10 @@ export class Entity {
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
   get gravity(): number {
-    return this.state?.get_gravity?.(this) ?? this.dataset('gravity')
+    return this.state?.get_gravity?.(this) ??
+      this.ctrl.is_end(GK.Defend) ?
+      this.dataset('gravity') :
+      this.dataset('gravity_d')
   }
   get arest(): number {
     return this._arest;

@@ -4,6 +4,7 @@ import { Entity } from "@/LF2/entity";
 import { Factory } from "@/LF2/entity/Factory";
 import { round_float } from "@/LF2/utils/math/round_float";
 import type { Tests } from "./index";
+import { CMD } from "@/LF2/defines/CMD";
 
 export class TestCase implements IState<number> {
   static KEY: number = 0;
@@ -32,6 +33,7 @@ export class TestCase implements IState<number> {
     this.owner.lf2.change_bg('bg_4');
   }
   leave?(): void {
+    this.lf2.cmds.push(CMD.LOCK_CAM, '')
     this.owner.world.clear();
     this.owner.lf2.change_bg('bg_4');
   }

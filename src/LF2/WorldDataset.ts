@@ -167,6 +167,7 @@ export class WorldDataset implements IWorldDataset {
   screen_w: number = Defines.MODERN_SCREEN_WIDTH;
   screen_h: number = Defines.MODERN_SCREEN_HEIGHT;
   gravity: number = 0.4375;
+  gravity_d: number = 0.4375;
   weapon_throwing_gravity: number = 0.21875;
   sync_render: number = 0;
   difficulty: Difficulty = Difficulty.Difficult;

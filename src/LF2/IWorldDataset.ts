@@ -139,6 +139,7 @@ export interface IWorldDataset {
   screen_w: number;
   screen_h: number;
   gravity: number;
+  gravity_d: number;
   weapon_throwing_gravity: number;
   sync_render: number;
 
@@ -223,6 +224,7 @@ const int = assign((...p: IArg[]): IRet => w('int', ...p), w('int'))
 const invalid = assign((...p: IArg[]): IRet => w('', ...p), w(''))
 const fields: Record<keyof IWorldDataset, IRet> = {
   gravity: float("重力"),
+  gravity_d: float("重力D"),
   jump_x_f: float("跳跃X速度系数"),
   jump_h_f: float("跳跃Y速度系数"),
   jump_z_f: float("跳跃Z速度系数"),
