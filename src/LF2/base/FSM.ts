@@ -61,9 +61,9 @@ export default class FSM<
     const next_state = this._state_map.get(key);
     this._state?.leave?.();
     this._state = next_state;
+    this._state_time = 0;
     next_state?.enter?.();
     this._callbacks.emit("on_state_changed")(this);
-    this._state_time = 0;
     return this;
   }
   update(dt: number) {
