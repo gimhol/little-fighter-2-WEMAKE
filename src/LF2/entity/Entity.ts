@@ -606,10 +606,11 @@ export class Entity {
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
   get gravity(): number {
-    return this.state?.get_gravity?.(this) ??
-      this.ctrl.is_end(GK.Defend) ?
+    const g1 = this.state?.get_gravity?.(this);
+    const g2 = this.ctrl.is_end(GK.Defend) ?
       this.dataset('gravity') :
       this.dataset('gravity_d')
+    return g1 ?? g2
   }
   get arest(): number {
     return this._arest;
@@ -1125,13 +1126,12 @@ export class Entity {
    *
    * @see {IItrInfo.shaking}
    * @see {IItrInfo.motionless}
-   * @see {State_Base.get_gravity}
    */
   private handle_gravity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
-    this.velocities[0].y -= this.gravity;
+    this.velocities[0].y -= this.gravity;     
   }
   get dvx() {
     const { dvx: v } = this.frame;
