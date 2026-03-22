@@ -43,6 +43,7 @@ export default class FSM<
   protected set state(s: S | undefined) {
     this._prev_state = this._state;
     this._state?.leave?.();
+    this._state_time = 0;
     this._state = s;
     s?.enter?.();
     this._callbacks.emit("on_state_changed")(this);
@@ -58,12 +59,7 @@ export default class FSM<
     return this;
   }
   use(key: K): this {
-    const next_state = this._state_map.get(key);
-    this._state?.leave?.();
-    this._state = next_state;
-    this._state_time = 0;
-    next_state?.enter?.();
-    this._callbacks.emit("on_state_changed")(this);
+    this.state = this._state_map.get(key);
     return this;
   }
   update(dt: number) {
