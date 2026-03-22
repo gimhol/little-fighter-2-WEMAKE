@@ -606,7 +606,7 @@ export class Entity {
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
   get gravity(): number {
-    return this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity
+    return this.state?.get_gravity?.(this) ?? this.dataset('gravity')
   }
   get arest(): number {
     return this._arest;

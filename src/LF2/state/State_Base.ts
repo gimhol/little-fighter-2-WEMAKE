@@ -29,10 +29,7 @@ export class State_Base {
   }
   on_dead?(e: Entity): void;
   on_landing?(e: Entity): void;
-  get_gravity(e: Entity): number {
-    return e.world.gravity;
-  }
-
+  get_gravity?(e: Entity): number | undefined | null;
   on_be_collided?(collision: ICollision): void;
 
   get_auto_frame?(e: Entity): IFrameInfo | undefined;
