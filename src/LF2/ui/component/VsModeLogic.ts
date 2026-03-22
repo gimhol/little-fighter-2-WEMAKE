@@ -9,18 +9,18 @@ import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
 
-class VsModeState extends ComponentFSMState<number, VsModeLogic> {
+class FSMState extends ComponentFSMState<number, VsModeLogic> {
   override readonly key: number = 0
   get fsm() { return this.owner.fsm }
 }
-class VsModeState1 extends VsModeState {
+class FSMState_BeforeEnd extends FSMState {
   override readonly key: number = 1;
   override update() {
     if (this.fsm.state_time > 3000)
       return 2;
   }
 }
-class VsModeState2 extends VsModeState {
+class FSMState_End extends FSMState {
   override readonly key: number = 2;
   override enter(): void {
     this.lf2.sounds.play_preset("end");
@@ -32,12 +32,14 @@ class VsModeState2 extends VsModeState {
     score_board?.set_visible(false);
   }
 }
+
 export class VsModeLogic extends UIComponent {
   static override readonly TAG = 'VsModeLogic'
-  readonly fsm = new FSM<number, VsModeState>().add(
-    new VsModeState(this),
-    new VsModeState1(this),
-    new VsModeState2(this))
+  readonly fsm = new FSM<number, FSMState>().add(
+    new FSMState(this),
+    new FSMState_BeforeEnd(this),
+    new FSMState_End(this)
+  )
 
   protected weapon_drop_timer = new Times(0, 1200);
   protected fighter_callbacks: IEntityCallbacks = {
