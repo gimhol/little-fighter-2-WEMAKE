@@ -431,10 +431,10 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     return !!this.phase?.weapon_rain_disabled
   }
   update() {
-    if (this.id == Defines.VOID_STAGE.id) return;
     if (this.phase) this.phase_time++
     if (this.dialog) this.dialog_time++
     this.fsm.update(1);
+    if (this.id == Defines.VOID_STAGE.id) return;
     this._released_items.length = 0
     for (const item of this.items) {
       if (item.released)
@@ -443,7 +443,6 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
         item.update()
     }
     this._released_items.forEach(v => this.items.delete(v))
-
     this.check_phase_end();
     this.check_dialog_end();
   }

@@ -516,7 +516,7 @@ export class World extends WorldDataset {
     this._game_time.add();
 
     if (this.stage.world_pause) {
-      this.stage.update();
+      this.bg.update();
       return;
     }
 
