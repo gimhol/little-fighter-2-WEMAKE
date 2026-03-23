@@ -27,7 +27,7 @@
     "deploy:docs": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR docs --LOCAL_PATH docs",
     "___flow___": "___flow___",
     "flow": "npm run build && npm run deploy",
-    "flow:full": "npm run build:tool && npm run build_data && npm run flow:oss",
+    "flow:rn": "npm run build && npm run deploy:rn",
     "json2": "ts-json-schema-generator --path src/LF2/defines/IBgData.ts > .vscode/schema/bg.schema.json5",
     "json3": "ts-json-schema-generator --path src/LF2/defines/IDataLists.ts > .vscode/schema/idx.schema.json5",
     "json4": "ts-json-schema-generator --path src/LF2/defines/IEntityData.ts --type IEntityData > .vscode/schema/obj.schema.json5",
