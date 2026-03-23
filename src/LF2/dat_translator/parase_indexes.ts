@@ -23,6 +23,7 @@ export function parase_indexes(
         switch (name) {
           case "id":
           case "alias":
+          case "skipped":
             item[name] = value;
             break;
           case "type":
@@ -61,6 +62,10 @@ export function parase_indexes(
           case "id":
             item[name] = "bg_" + value;
             break;
+          case "alias":
+          case "skipped":
+            item[name] = value;
+            break;
           case "file":
             item.src = value.replace(/\\/g, "/");
             item[name] = value.replace(/\\/g, "/").replace(/.dat$/, `.bg.${suffix}`);
@@ -78,6 +83,8 @@ export function parase_indexes(
       for (const [name, value] of match_colon_value(line)) {
         switch (name) {
           case "id":
+          case "alias":
+          case "skipped":
             item[name] = value;
             break;
           case "file": {

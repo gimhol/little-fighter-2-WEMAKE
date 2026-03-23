@@ -32,6 +32,7 @@ export interface IDatIndex {
   hash?: string;
   alias?: string;
   groups?: string[];
+  skipped?: string;
 }
 export interface ITempDatIndex extends IDatIndex {
   src: string

@@ -80,7 +80,7 @@ id: 3    file: bg\sys\sp\bg.dat
 id: 5    file: bg\sys\gw\bg.dat
 id: 6    file: bg\sys\qi\bg.dat
 id: 7    file: bg\sys\ft\bg.dat
-id: 8    file: bg\sys\bc\bg.dat
+id: 8    file: bg\sys\bc\bg.dat skipped: 1
 id: 1    file: bg\sys\cuhk\bg.dat
 id: 0    file: bg\sys\thv\bg.dat
 id: 10    file: bg\template\1\bg.dat

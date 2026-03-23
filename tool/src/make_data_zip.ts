@@ -70,8 +70,9 @@ export async function make_data_zip() {
   ]
 
   for (const item of all) {
-    const { type, src } = item;
+    const { type, src, skipped } = item;
     const suffix = suffix_map[type]
+    if (skipped == '1') continue;
     if (!suffix) continue;
     if (suffix === 'bot') continue;
     const src_path = IN_LF2_DIR + '/' + src
@@ -81,7 +82,12 @@ export async function make_data_zip() {
       src_path,
       suffix
     );
-    const cache_info = await cache_infos.get_info(src_path, dst_path, "dat_v1");
+    const cache_info = await cache_infos.get_info(src_path, [dst_path]);
+    const is_changed = await cache_info.changed();
+    if (!is_changed) {
+      log("Not changed:", src_path, "=>\n    " + dst_path);
+      continue;
+    }
     const ctx: IConvertDatContext = {
       out_dir: TMP_DAT_DIR,
       src_path,
@@ -126,8 +132,8 @@ export async function make_data_zip() {
         log("Mirror image ignored:", src_path);
         continue;
       }
-      const cache_info = await cache_infos.get_info(src_path, dst_path);
-      const is_changed = await cache_info.is_changed();
+      const cache_info = await cache_infos.get_info(src_path, [dst_path]);
+      const is_changed = await cache_info.changed();
       if (!is_changed) {
         log("Not changed:", src_path, "=>\n    " + dst_path);
         continue;
@@ -142,8 +148,8 @@ export async function make_data_zip() {
           log("Mirror image ignored:", src_path);
           continue;
         }
-        const cache_info = await cache_infos.get_info(src_path, dst_path);
-        const is_changed = await cache_info.is_changed();
+        const cache_info = await cache_infos.get_info(src_path, [dst_path]);
+        const is_changed = await cache_info.changed();
         if (!is_changed) {
           log("Not changed:", src_path, "=>\n    " + dst_path);
           continue;
@@ -161,8 +167,8 @@ export async function make_data_zip() {
       IN_LF2_DIR,
       src_path
     );
-    const cache_info = await cache_infos.get_info(src_path, dst_path);
-    const is_changed = await cache_info.is_changed();
+    const cache_info = await cache_infos.get_info(src_path, [dst_path]);
+    const is_changed = await cache_info.changed();
     if (!is_changed) {
       log("Not changed:", src_path, "=>\n    " + dst_path);
       continue;
@@ -173,8 +179,8 @@ export async function make_data_zip() {
 
   for (const src_path of ress.get_files(...COPYS_SUFFIX.split(','))) {
     const dst_path = src_path.replace(IN_LF2_DIR, TMP_DAT_DIR);
-    const cache_info = await cache_infos.get_info(src_path, dst_path);
-    const is_changed = await cache_info.is_changed();
+    const cache_info = await cache_infos.get_info(src_path, [dst_path]);
+    const is_changed = await cache_info.changed();
     if (!is_changed) {
       log("Not changed:", src_path, "=>\n    " + dst_path);
       continue;

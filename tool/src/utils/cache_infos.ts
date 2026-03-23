@@ -1,68 +1,95 @@
 import fs from "fs/promises";
+import JSON5 from "json5";
 import { file_md5_str } from "./file_md5_str";
+import { md5 } from "./md5";
 import { write_file } from "./write_file";
-import JSON5 from "json5"
-
+interface ICacheInfo {
+  src: string,
+  dst: string[],
+  src_md5: string,
+  dst_md5: string[],
+}
+function is_cache_info(v: any): v is ICacheInfo {
+  if (!v) return false;
+  const { src, dst, src_md5, dst_md5 } = v;
+  if (typeof src !== 'string') return false;
+  if (typeof src_md5 !== 'string') return false;
+  if (!Array.isArray(dst)) return false;
+  if (!Array.isArray(dst_md5)) return false;
+  if (dst.length !== dst_md5.length) return false;
+  if (dst.some(v => typeof v !== 'string')) return false;
+  if (dst_md5.some(v => typeof v !== 'string')) return false;
+  return true;
+}
 class CacheInfo {
-  cache_infos: CacheInfos;
-  dst_path: string;
-  src_path: string;
-  salt: string;
-  constructor(
-    cache_infos: CacheInfos,
-    src_path: string,
-    dst_path: string,
-    salt: string,
-  ) {
-    this.cache_infos = cache_infos;
-    this.src_path = src_path;
-    this.dst_path = dst_path;
-    this.salt = salt;
+
+  mgr: CacheInfos;
+  src: string;
+  dst: string[];
+
+  get salt() { return this.mgr.salt }
+
+  constructor(cache_infos: CacheInfos, raw: Pick<ICacheInfo, 'dst' | 'src'>) {
+    this.mgr = cache_infos;
+    this.src = raw.src
+    this.dst = [...raw.dst]
   }
-  async is_changed() {
-    const [, , cache_src_md5, cache_dst_md5] = this.cache_infos.get_raw_info(
-      this.src_path,
-      this.dst_path,
-    );
-    const src_md5 = await file_md5_str(this.src_path, this.salt).catch(
-      () => "",
-    );
-    const dst_md5 = await file_md5_str(this.dst_path, this.salt).catch(
-      () => "",
-    );
-    return cache_src_md5 !== src_md5 || cache_dst_md5 !== dst_md5 || !dst_md5;
+
+  toJSON(): ICacheInfo {
+    return {
+      src: this.src,
+      dst: this.dst,
+      src_md5: "",
+      dst_md5: []
+    }
+  }
+  async changed(): Promise<boolean> {
+    const prev = this.mgr.get_raw_info(this.src, this.dst);
+    const src_md5 = await this.src_md5();
+    if (prev.src !== this.src) return true;
+    if (prev.src_md5 != src_md5) return true;
+    const dst_md5 = await this.dst_md5();
+    if (prev.dst.length !== this.dst.length) return true;
+    for (let i = 0; i < dst_md5.length; i++) {
+      if (prev.dst_md5[i] !== dst_md5[i]) return true;
+    }
+    return false;
+  }
+  async src_md5(): Promise<string> {
+    return await file_md5_str(this.src, this.salt).catch(() => "");
+  }
+  async dst_md5(): Promise<string[]> {
+    const ret: string[] = []
+    for (const dst of this.dst) {
+      const md5 = await file_md5_str(dst, this.salt).catch(() => "");
+      ret.push(md5)
+    }
+    return ret;
   }
   async update() {
-    const src_md5 = await file_md5_str(this.src_path, this.salt).catch(
-      () => "",
-    );
-    const dst_md5 = await file_md5_str(this.dst_path, this.salt).catch(
-      () => "",
-    );
-    this.cache_infos.set_raw_info(
-      this.src_path,
-      this.dst_path,
-      src_md5,
-      dst_md5,
-    );
+    const { src, dst } = this;
+    const src_md5 = await file_md5_str(this.src, this.salt).catch(() => "");
+    const dst_md5 = await this.dst_md5()
+    this.mgr.set_raw_info({
+      src, dst, src_md5, dst_md5,
+    });
   }
   static async create(
-    cache_infos: CacheInfos,
-    src_path: string,
-    dst_path: string,
-    salt: string,
+    mgr: CacheInfos,
+    raw: Pick<ICacheInfo, "dst" | "src">,
   ) {
-    return new CacheInfo(cache_infos, src_path, dst_path, salt);
+    return new CacheInfo(mgr, raw);
   }
 }
 export class CacheInfos {
   protected cache_info_map = new Map<string, CacheInfo>();
-  protected unused_keys = new Set<string>();
-  protected raw_obj: any;
+  protected unuseds = new Set<string>();
+  protected raw: { [x in string]?: ICacheInfo } = {};
   protected cache_infos_path: string;
-  static async create(cache_infos_path: string) {
+  readonly salt = ""
+  static async create(path: string) {
     const raw_obj: any = await fs
-      .readFile(cache_infos_path)
+      .readFile(path)
       .then((r) => {
         return r.toString();
       })
@@ -72,47 +99,47 @@ export class CacheInfos {
       .catch((e) => {
         return {};
       });
-    return new CacheInfos(cache_infos_path, raw_obj);
+    return new CacheInfos(path, raw_obj);
   }
-  protected constructor(cache_infos_path: string, raw_obj: any) {
+  protected constructor(cache_infos_path: string, raw: any) {
     this.cache_infos_path = cache_infos_path;
-    this.raw_obj = raw_obj;
+    this.raw = raw;
+    for (const key in raw) this.unuseds.add(key)
   }
-  key(src_path: string, dst_path: string) {
-    return src_path + "#" + dst_path;
+  key(src: string, dst: string[]): string {
+    return md5(src + '#' + dst.join('#'));
   }
-  async get_info(
-    src_path: string,
-    dst_path: string,
-    salt: string = "",
-  ): Promise<CacheInfo> {
-    const key = this.key(src_path, dst_path);
+  async get_info(src: string, dst: string[]): Promise<CacheInfo> {
+    const key = this.key(src, dst);
     let ret = this.cache_info_map.get(key);
     if (!ret) {
       this.cache_info_map.set(
         key,
-        (ret = await CacheInfo.create(this, src_path, dst_path, salt)),
+        (ret = await CacheInfo.create(this, { src, dst })),
       );
     }
+    this.unuseds.delete(key)
     return ret;
   }
-  get_raw_info(src_path: string, dst_path: string) {
-    const key = this.key(src_path, dst_path);
-    return this.raw_obj[key] || [src_path, dst_path, "", ""];
+  get_raw_info(src: string, dst: string[]): ICacheInfo {
+    const key = this.key(src, dst);
+    const value = this.raw[key];
+    if (is_cache_info(value)) return value
+    return {
+      src,
+      dst,
+      src_md5: "",
+      dst_md5: dst.map(v => "")
+    }
   }
-  set_raw_info(
-    src_path: string,
-    dst_path: string,
-    src_md5: string,
-    dst_md5: string,
-  ) {
-    const key = this.key(src_path, dst_path);
-    return (this.raw_obj[key] = [src_path, dst_path, src_md5, dst_md5]);
+  set_raw_info(info: ICacheInfo): ICacheInfo {
+    const key = this.key(info.src, info.dst);
+    return this.raw[key] = info;
   }
   async save() {
     await write_file(
       this.cache_infos_path,
-      JSON5.stringify(this.raw_obj, { space: 2, quote: '"' }),
+      JSON5.stringify(this.raw, { space: 2, quote: '"' }),
     );
   }
 }
