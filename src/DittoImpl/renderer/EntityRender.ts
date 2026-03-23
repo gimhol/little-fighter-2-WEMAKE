@@ -30,10 +30,13 @@ function get_material(texture: T.Texture<unknown> | undefined) {
   return new T.ShaderMaterial({
     uniforms: {
       pTexture: { value: texture },
-      offsetX: { value: 0 },
-      offsetY: { value: 0 },
-      repeatW: { value: 0 },
-      repeatH: { value: 0 },
+      x: { value: 0 },
+      y: { value: 0 },
+      w: { value: 0 },
+      h: { value: 0 },
+      tw: { value: 0 },
+      th: { value: 0 },
+      ts: { value: 0 },
       outlineColor: { value: new T.Color("#000000") },
       outlineAlpha: { value: 0 },
       outlineWidth: { value: 1 },
@@ -144,17 +147,17 @@ export class EntityRender {
 
     const img = images.get(real_tex);
     if (!img?.pic) return;
-
-    const tw = img.w / img.scale
-    const th = img.h / img.scale
     const { x, y, w, h } = info;
     main_mesh.scale.set(w, h, 0);
     const { material: m } = main_mesh;
     m.uniforms.pTexture.value = img.pic.texture;
-    m.uniforms.offsetX.value = x / tw;
-    m.uniforms.offsetY.value = 1 - (y + h) / th;
-    m.uniforms.repeatW.value = w / tw;
-    m.uniforms.repeatH.value = h / th;
+    m.uniforms.tw.value = img.w;
+    m.uniforms.th.value = img.h;
+    m.uniforms.ts.value = img.scale;
+    m.uniforms.x.value = x;
+    m.uniforms.y.value = y;
+    m.uniforms.w.value = w;
+    m.uniforms.h.value = h;
     m.uniforms.facing.value = entity.facing
   }
 
