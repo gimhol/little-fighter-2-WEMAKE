@@ -83,11 +83,12 @@ export async function make_data_zip() {
       suffix
     );
     const cache_info = await cache_infos.get_info(src_path, [dst_path]);
-    const is_changed = await cache_info.changed();
-    if (!is_changed) {
-      log("Not changed:", src_path, "=>\n    " + dst_path);
-      continue;
-    }
+    // TODO: 日后将bot文件另外生成吧……
+    // const is_changed = await cache_info.changed();
+    // if (!is_changed) {
+    //   log("Not changed:", src_path, "=>\n    " + dst_path);
+    //   continue;
+    // }
     const ctx: IConvertDatContext = {
       out_dir: TMP_DAT_DIR,
       src_path,
