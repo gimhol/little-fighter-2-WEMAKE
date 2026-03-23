@@ -1,4 +1,5 @@
 import dat_to_json from "../../../src/LF2/dat_translator/dat_2_json";
+import { DatTypeEnum } from "../../../src/LF2/defines";
 import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
 import type { IEntityData } from "../../../src/LF2/defines/IEntityData";
 import { debug, error, info } from "./log";
@@ -38,20 +39,16 @@ export async function convert_dat_file(
   }
   if (dst_path.endsWith('.obj.json5')) {
     let dirty = ret as Partial<IEntityData>;
-    // NOTE: 很奇怪hunter 的frame3有个opoint
-    if (dirty?.frames?.[3]?.opoint && index_info?.type === "0") {
-      delete dirty.frames[3].opoint;
-    }
     if (typeof dirty.base?.bot_id === 'string' && dirty.base.bot) {
       const { bot } = dirty.base;
       delete dirty.base.bot;
       const bot_dst_path = dst_path.replace(/(.*)\/(.*?)\.obj\.json5$/, '$1/bots/$2.bot.json5')
-      indexes.bots.push({ id: dirty.base.bot_id, type: 'bot', file: bot_dst_path.replace(out_dir + "/", "") });
+      indexes.bots.push({ id: dirty.base.bot_id, type: DatTypeEnum.Bot, file: bot_dst_path.replace(out_dir + "/", "") });
       await write_obj_file(bot_dst_path, bot);
     }
   }
 
-  info(src_path, "=>\n    "+ dst_path);
+  info(src_path, "=>\n    " + dst_path);
   await write_obj_file(dst_path, ret);
   return ret;
 }
@@ -59,7 +56,7 @@ convert_dat_file.get_dst_path = function (
   out_dir: string,
   src_dir: string,
   src_path: string,
-  type: 'bg' | 'obj' | 'index' | 'stage',
+  type: 'bg' | 'obj' | 'stage',
   suffix: string = 'json5',
 ): string {
 

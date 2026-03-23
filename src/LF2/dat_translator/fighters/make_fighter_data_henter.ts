@@ -9,5 +9,8 @@ export function make_fighter_data_henter(data: IEntityData): IEntityData {
     w_atk_b_x: 200,
     w_atk_f_x: 200
   });
+
+  // NOTE: 很奇怪hunter 的frame3有个opoint
+  data.frames[3].opoint = void 0;
   return data;
 }

@@ -1,3 +1,4 @@
+import { DatTypeEnum, BuiltIn_OID as OID } from "../defines";
 import type { ITempDataLists } from "../defines/IDataLists";
 import type { ITempDatIndex } from "../defines/IDatIndex";
 import { match_block_once } from "../utils/string_parser/match_block";
@@ -17,13 +18,15 @@ export function parase_indexes(
     ?.split(/\n|\r/)
     .filter((v) => v)
     .map<ITempDatIndex>((line) => {
-      const item: ITempDatIndex = { id: "", type: "", file: "", src: "" };
+      const item: ITempDatIndex = { id: "", type: DatTypeEnum.Invalid, file: "", src: "" };
       for (const [name, value] of match_colon_value(line)) {
         switch (name) {
           case "id":
           case "alias":
-          case "type":
             item[name] = value;
+            break;
+          case "type":
+            if (value in DatTypeEnum) item[name] = value as DatTypeEnum;
             break;
           case "groups":
             item[name] = value.split(',');
@@ -41,11 +44,10 @@ export function parase_indexes(
       }
       const hash = match_hash_end(line);
       if (hash) item.hash = hash;
-      if (item.id === "217") item.hash = "louis_limbs_armour";
-      if (item.id === "216") item.hash = "louis_body_armour";
-      if (item.id === "124") item.hash = "boomerang";
-      if (item.id === "201") item.hash = "henry_arrow";
-      if (item.id === "202") item.hash = "rudolf_weapon";
+      if (item.id === OID.Weapon_LouisArmourA) item.hash = "louis_limbs_armour";
+      if (item.id === OID.Weapon_Boomerang) item.hash = "boomerang";
+      if (item.id === OID.HenryArrow1) item.hash = "henry_arrow";
+      if (item.id === OID.RudolfWeapon) item.hash = "rudolf_weapon";
       return item;
     }) || [];
 
@@ -53,7 +55,7 @@ export function parase_indexes(
     ?.split(/\n|\r/)
     .filter((v) => v)
     .map<ITempDatIndex>((line) => {
-      const item: ITempDatIndex = { id: "", type: "bg", file: "", src: "" };
+      const item: ITempDatIndex = { id: "", type: DatTypeEnum.Background, file: "", src: "" };
       for (const [name, value] of match_colon_value(line)) {
         switch (name) {
           case "id":
@@ -72,7 +74,7 @@ export function parase_indexes(
     ?.split(/\n|\r/)
     .filter((v) => v)
     .map<ITempDatIndex>((line) => {
-      const item: ITempDatIndex = { id: "", type: "bg", file: "", src: "" };
+      const item: ITempDatIndex = { id: "", type: DatTypeEnum.Stage, file: "", src: "" };
       for (const [name, value] of match_colon_value(line)) {
         switch (name) {
           case "id":

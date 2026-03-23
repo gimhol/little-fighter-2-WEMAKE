@@ -4,8 +4,6 @@
   IN_PREL_DIR: "./lf2s/origin/prel_data",
   IN_EXTRA_DIR: "./lf2s/origin/extra_data",
   TMP_DIR: "./temp/origin",
-  __TMP_TXT_DIR: "./temp/origin/lf2_txt",
-  __TMP_DAT_DIR: "./temp/origin/lf2_data",
   OUT_DIR: "./public",
   OUT_DATA_NAME: "data.zip",
   OUT_PREL_NAME: "prel.zip",

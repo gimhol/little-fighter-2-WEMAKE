@@ -1,7 +1,7 @@
 import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
-import path from "path";
-import type { IDataLists, ILegacyPictureInfo, ITempDataLists } from "../../src/LF2/defines";
+import path, { join } from "path";
+import { DatTypeEnum, suffix_map, type IDataLists, type ILegacyPictureInfo, type ITempDataLists } from "../../src/LF2/defines";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { classify } from "./utils/classify";
@@ -63,53 +63,51 @@ export async function make_data_zip() {
 
   const pic_list_map = new Map<string, ILegacyPictureInfo[]>();
   if (IN_EXTRA_DIR) await copy_dir(IN_EXTRA_DIR, TMP_DAT_DIR);
-  if (indexes) {
-    for (const src_path of ress.get_files('dat')) {
-      let type: 'bg' | 'obj' | 'index' | 'stage' = 'obj';
-      const a = src_path.replace(IN_LF2_DIR, '');
-      if (a.startsWith('/bg/') || a.startsWith('bg/')) type = 'bg';
-      else if (src_path.endsWith('/stage.dat')) type = 'stage';
-      else if (src_path.endsWith('/data.idx.dat')) type = 'index';
-      else type = 'obj';
-
-      const dst_path = convert_dat_file.get_dst_path(
-        TMP_DAT_DIR,
-        IN_LF2_DIR,
-        src_path,
-        type
-      );
-      const cache_info = await cache_infos.get_info(
-        src_path,
-        dst_path,
-        "dat_v1"
-      );
-      const json = await convert_dat_file(
-        TMP_DAT_DIR,
-        src_path,
-        dst_path,
-        indexes
-      );
-      if (!Array.isArray(json) && json) {
-        let edited = false;
-        for (const pic_name in json.base.files) {
-          const file = json.base.files[pic_name];
-          const key = file.path;
-          const arr = pic_list_map.get(key);
-          if (arr) {
-            file.path = file.path.replace(/.png$/, `_${arr.length}.png`);
-            edited = true;
-            arr.push(file);
-          } else {
-            pic_list_map.set(key, [file]);
-          }
-        }
-        if (edited) {
-          await write_file(dst_path, JSON5.stringify(json, null, 2));
+  const all = [
+    ...indexes.objects,
+    ...indexes.stages,
+    ...indexes.backgrounds,
+  ]
+  for (const item of all) {
+    const { type, src } = item;
+    const suffix = suffix_map[type]
+    if (!suffix) continue;
+    if (suffix === 'bot') continue;
+    const src_path = IN_LF2_DIR + '/' + src
+    const dst_path = convert_dat_file.get_dst_path(
+      TMP_DAT_DIR,
+      IN_LF2_DIR,
+      src_path,
+      suffix
+    );
+    const cache_info = await cache_infos.get_info(src_path, dst_path, "dat_v1");
+    const json = await convert_dat_file(
+      TMP_DAT_DIR,
+      src_path,
+      dst_path,
+      indexes
+    );
+    if (!Array.isArray(json) && json) {
+      let edited = false;
+      for (const pic_name in json.base.files) {
+        const file = json.base.files[pic_name];
+        const key = file.path;
+        const arr = pic_list_map.get(key);
+        if (arr) {
+          file.path = file.path.replace(/.png$/, `_${arr.length}.png`);
+          edited = true;
+          arr.push(file);
+        } else {
+          pic_list_map.set(key, [file]);
         }
       }
-      await cache_info.update();
+      if (edited) {
+        await write_file(dst_path, JSON5.stringify(json, null, 2));
+      }
     }
+    await cache_info.update();
   }
+
   const bmps = ress.get_files(...IMAGE_SUFFIX.split(','))
   for (const src_path of bmps) {
     const dst_path = convert_whole_image.get_dst_path(

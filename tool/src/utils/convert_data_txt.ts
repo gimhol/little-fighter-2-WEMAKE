@@ -3,6 +3,7 @@ import { X_OK } from "constants";
 import { accessSync, mkdirSync, writeFileSync } from "fs";
 import { parase_indexes } from "../../../src/LF2/dat_translator/parase_indexes";
 import type { IDataLists, ITempDataLists } from "../../../src/LF2/defines/IDataLists";
+import { DatTypeEnum } from "../../../src/LF2/defines/IDatIndex";
 import { is_file } from "./is_file";
 import { debug, info } from "./log";
 import { read_text_file } from "./read_text_file";
@@ -44,7 +45,7 @@ export async function convert_data_txt(src_dir: string, out_dir: string): Promis
   if (!indexes.stages.length && await is_file(stage_path)) {
     indexes.stages = [{
       id: "default_stages",
-      type: "stage",
+      type: DatTypeEnum.Stage,
       file: "data/stage.stage.json5",
       src: "data/stage.dat"
     }]
