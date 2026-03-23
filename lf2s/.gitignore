@@ -3,3 +3,4 @@
 !origin/**/*
 *.7z
 *.zip
+!README.md
