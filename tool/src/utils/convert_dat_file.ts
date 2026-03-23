@@ -37,7 +37,7 @@ export async function convert_dat_file(
     if (typeof dirty.base?.bot_id === 'string' && dirty.base.bot) {
       const { bot } = dirty.base;
       delete dirty.base.bot;
-      const bot_dst_path = dst_path.replace(/(.*)\/(.*?)\.obj\.json5$/, '$1/bots/$2.bot.json5')
+      const bot_dst_path = dst_path.replace(/(.*)\/(.*?)\.obj\.json5$/, `$1/bots/${ret.id}.bot.json5`)
       indexes.bots.push({ id: dirty.base.bot_id, type: DatTypeEnum.Bot, file: bot_dst_path.replace(out_dir + "/", "") });
       await write_obj_file(bot_dst_path, bot);
     }

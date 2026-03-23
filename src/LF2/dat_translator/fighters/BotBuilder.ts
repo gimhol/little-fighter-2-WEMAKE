@@ -8,7 +8,7 @@ export class BotBuilder {
   static builders: BotBuilder[] = []
   static make(data: IEntityData) {
     const ret = new BotBuilder(data)
-    data.base.bot_id = 'bot_' + (data.base.name ?? data.id);
+    data.base.bot_id = 'bot_' + data.id;
     this.builders.push(ret);
     return ret;
   }
