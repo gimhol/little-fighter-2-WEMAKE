@@ -1,5 +1,5 @@
 import type { LF2 } from "../LF2";
-import type { IEntityData, IFramePictureInfo, ITexturePieceInfo } from "../defines";
+import type { IEntityData, IFramePictureInfo } from "../defines";
 import { Ditto } from "../ditto/Instance";
 import type { ImageInfo } from "../ditto/image/ImageInfo";
 import { find } from "../utils/container_help/find";
@@ -25,22 +25,22 @@ export function preprocess_pic(lf2: LF2, data: IEntityData, pic: IFramePictureIn
   const ck = cache_key(pic, p)
   let ret = cache_map.get(ck);
   if (ret) return ret;
-  const scale_img_w = p.w / p.scale;
-  const scale_img_h = p.h / p.scale;
-  const f_i_1: ITexturePieceInfo = {
-    tex: pic.tex!,
-    x: pic.x / scale_img_w,
-    y: 1 - (pic.y + pic.h) / scale_img_h,
-    w: pic.w / scale_img_w,
-    h: pic.h / scale_img_h,
-    pixel_w: pic.w,
-    pixel_h: pic.h,
-  };
-  const f_i_2: ITexturePieceInfo = {
-    ...f_i_1, x: -f_i_1.x - f_i_1.w,
-  };
-  ret = { ...pic, 1: f_i_1, [-1]: f_i_2 };
-  cache_map.set(ck, ret)
-  return ret;
+  // const scale_img_w = p.w / p.scale;
+  // const scale_img_h = p.h / p.scale;
+  // const f_i_1: ITexturePieceInfo = {
+  //   tex: pic.tex!,
+  //   x: pic.x / scale_img_w,
+  //   y: 1 - (pic.y + pic.h) / scale_img_h,
+  //   w: pic.w / scale_img_w,
+  //   h: pic.h / scale_img_h,
+  //   pixel_w: pic.w,
+  //   pixel_h: pic.h,
+  // };
+  // const f_i_2: ITexturePieceInfo = {
+  //   ...f_i_1, x: -f_i_1.x - f_i_1.w,
+  // };
+  // ret = { ...pic, 1: f_i_1, [-1]: f_i_2 };
+  cache_map.set(ck, pic)
+  return pic;
 }
 preprocess_pic.TAG = "preprocess_pic"

@@ -13,7 +13,6 @@ import { copy_dir } from "./utils/copy_dir";
 import { debug, error, log } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
-import { rmSync } from "fs";
 
 export async function make_data_zip() {
   debug(`make_data_zip()`)
@@ -96,18 +95,25 @@ export async function make_data_zip() {
       indexes,
     }
     const json = await convert_dat_file(ctx);
-    if (!Array.isArray(json) && json) {
+    if (!Array.isArray(json) && json.type !== 'background') {
       let edited = false;
       for (const pic_name in json.base.files) {
         const file = json.base.files[pic_name];
-        const key = file.path;
-        const arr = pic_list_map.get(key);
-        if (arr) {
-          file.path = file.path.replace(/.png$/, `_${arr.length}.png`);
-          edited = true;
-          arr.push(file);
-        } else {
-          pic_list_map.set(key, [file]);
+        if (
+          'row' in file &&
+          'col' in file &&
+          'cell_w' in file &&
+          'cell_h' in file
+        ) {
+          const key = file.path;
+          const arr = pic_list_map.get(key);
+          if (arr) {
+            file.path = file.path.replace(/.png$/, `_${arr.length}.png`);
+            edited = true;
+            arr.push(file);
+          } else {
+            pic_list_map.set(key, [file]);
+          }
         }
       }
       if (edited) {

@@ -1,4 +1,4 @@
-import { DatTypeEnum, BuiltIn_OID as OID } from "../defines";
+import { DatTypeEnum, BuiltIn_OID as OID, suffix_map } from "../defines";
 import type { ITempDataLists } from "../defines/IDataLists";
 import type { ITempDatIndex } from "../defines/IDatIndex";
 import { match_block_once } from "../utils/string_parser/match_block";
@@ -29,7 +29,7 @@ export function parase_indexes(
             item[name] = value;
             break;
           case "type":
-            if (value in DatTypeEnum) item[name] = value as DatTypeEnum;
+            item[name] = value as DatTypeEnum;
             break;
           case "groups":
             item[name] = value.split(',');

@@ -26,7 +26,7 @@ import { take_raw_frame_mp } from "./take_raw_frame_mp";
 const k_9 = ["Fa", "Fj", "Da", "Dj", "Ua", "Uj", "ja"] as const;
 
 export function make_fighter_data(ctx: IDatContext): IEntityData {
-  const { base: base, frames, index: datIndex } = ctx
+  const { base, frames, index: datIndex } = ctx
   const walking_frame_rate = take_number(base, "walking_frame_rate", 3);
   const running_frame_rate = take_number(base, "running_frame_rate", 3);
   const walking_speed = take_number(base, "walking_speed", 0);
