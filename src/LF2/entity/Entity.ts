@@ -612,6 +612,12 @@ export class Entity {
       this.dataset('gravity_d')
     return g1 ?? g2
   }
+  get itr_motionless(): number {
+    if (this.type === EntityEnum.Ball) {
+      return this.dataset('ball_itr_motionless')
+    }
+    return this.dataset('itr_motionless')
+  }
   get arest(): number {
     return this._arest;
   }
@@ -1131,7 +1137,7 @@ export class Entity {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
-    this.velocities[0].y -= this.gravity;     
+    this.velocities[0].y -= this.gravity;
   }
   get dvx() {
     const { dvx: v } = this.frame;
