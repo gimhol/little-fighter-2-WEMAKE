@@ -32,6 +32,7 @@ export namespace Defines {
 
   /** 击中敌人的对象停顿多少帧 */
   export const DEFAULT_ITR_MOTIONLESS = 6;
+  export const DEFAULT_BALL_ITR_MOTIONLESS = 2;
   export const DEFAULT_ITR_A_REST = 20;
   export const DEFAULT_ITR_FALL = 40;
 

@@ -20,6 +20,7 @@ export class WorldDataset implements IWorldDataset {
    */
   itr_motionless: number = Defines.DEFAULT_ITR_MOTIONLESS;
 
+  ball_itr_motionless: number = Defines.DEFAULT_BALL_ITR_MOTIONLESS;
 
   fvx_f: number = 0.5;
   fvy_f: number = -0.5;

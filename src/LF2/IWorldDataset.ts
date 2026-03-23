@@ -4,9 +4,11 @@ export interface IWorldDataset {
   /** 被击中的对象晃动多少帧 */
   itr_shaking: number;
 
-  /** 击中敌人的对象停顿多少帧 */
+  /** 角色 击中敌人的对象停顿多少帧 */
   itr_motionless: number;
-
+  /** 波 击中敌人的对象停顿多少帧 */
+  ball_itr_motionless: number;
+  
   itr_arest: number;
 
   /** frame.dvx缩放系数 */
@@ -240,7 +242,8 @@ const fields: Record<keyof IWorldDataset, IRet> = {
   double_click_interval: int("双击判定时长"),
   key_hit_duration: int("按键判定时长"),
   itr_shaking: int("受伤摇晃时长"),
-  itr_motionless: int("命中停顿时长"),
+  itr_motionless: int("角色命中停顿时长"),
+  ball_itr_motionless: int("波命中停顿时长"),
   hp_healing_ticks: int("治疗回血周期", "治疗效果下，每几帧回血一次"),
   hp_healing_value: int("治疗回血量", "治疗效果下，每次回血多少"),
   fvx_f: float("frame.dvx缩放系数"),
