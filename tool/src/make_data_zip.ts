@@ -13,6 +13,7 @@ import { copy_dir } from "./utils/copy_dir";
 import { debug, error, log } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
+import { rmSync } from "fs";
 
 export async function make_data_zip() {
   debug(`make_data_zip()`)
@@ -189,10 +190,19 @@ export async function make_data_zip() {
     await fs.copyFile(src_path, dst_path);
     await cache_info.update();
   }
+
+  for (const [key, value] of cache_infos.unuseds) {
+    for (const dst of value.dst) {
+      log("Remove Unused", dst);
+      await rm(dst).catch(e => { })
+    }
+  }
   await cache_infos.save();
   await write_index_file(indexes, TMP_DAT_DIR);
   await make_zip_and_json(TMP_DAT_DIR, OUT_DIR, OUT_DATA_NAME, (inf) => {
     inf.type = 'data';
     return inf;
   });
+
+
 }

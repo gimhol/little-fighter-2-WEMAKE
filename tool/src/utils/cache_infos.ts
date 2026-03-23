@@ -83,9 +83,12 @@ class CacheInfo {
 }
 export class CacheInfos {
   protected cache_info_map = new Map<string, CacheInfo>();
-  protected unuseds = new Set<string>();
+  protected _unuseds = new Map<string, ICacheInfo>();
   protected raw: { [x in string]?: ICacheInfo } = {};
   protected cache_infos_path: string;
+  get unuseds(): Map<string, ICacheInfo> {
+    return this._unuseds
+  }
   readonly salt = ""
   static async create(path: string) {
     const raw_obj: any = await fs
@@ -104,7 +107,7 @@ export class CacheInfos {
   protected constructor(cache_infos_path: string, raw: any) {
     this.cache_infos_path = cache_infos_path;
     this.raw = raw;
-    for (const key in raw) this.unuseds.add(key)
+    for (const key in raw) this._unuseds.set(key, raw[key])
   }
   key(src: string, dst: string[]): string {
     return md5(src + '#' + dst.join('#'));
@@ -118,7 +121,7 @@ export class CacheInfos {
         (ret = await CacheInfo.create(this, { src, dst })),
       );
     }
-    this.unuseds.delete(key)
+    this._unuseds.delete(key)
     return ret;
   }
   get_raw_info(src: string, dst: string[]): ICacheInfo {
@@ -137,6 +140,8 @@ export class CacheInfos {
     return this.raw[key] = info;
   }
   async save() {
+    for (const [key] of this.unuseds) 
+      delete this.raw[key]
     await write_file(
       this.cache_infos_path,
       JSON5.stringify(this.raw, { space: 2, quote: '"' }),

@@ -17,7 +17,9 @@ export function parase_indexes(
   const objects = match_block_once(text, "<object>", "<object_end>")
     ?.split(/\n|\r/)
     .filter((v) => v)
-    .map<ITempDatIndex>((line) => {
+    .map<ITempDatIndex | null>((line) => {
+      line = line.trim()
+      if (line.startsWith('#')) return null
       const item: ITempDatIndex = { id: "", type: DatTypeEnum.Invalid, file: "", src: "" };
       for (const [name, value] of match_colon_value(line)) {
         switch (name) {
@@ -55,7 +57,9 @@ export function parase_indexes(
   const backgrounds = match_block_once(text, "<background>", "<background_end>")
     ?.split(/\n|\r/)
     .filter((v) => v)
-    .map<ITempDatIndex>((line) => {
+    .map<ITempDatIndex | null>((line) => {
+      line = line.trim()
+      if (line.startsWith('#')) return null
       const item: ITempDatIndex = { id: "", type: DatTypeEnum.Background, file: "", src: "" };
       for (const [name, value] of match_colon_value(line)) {
         switch (name) {
@@ -78,7 +82,9 @@ export function parase_indexes(
   const stages = match_block_once(text, "<stage>", "<stage_end>")
     ?.split(/\n|\r/)
     .filter((v) => v)
-    .map<ITempDatIndex>((line) => {
+    .map<ITempDatIndex | null>((line) => {
+      line = line.trim()
+      if (line.startsWith('#')) return null
       const item: ITempDatIndex = { id: "", type: DatTypeEnum.Stage, file: "", src: "" };
       for (const [name, value] of match_colon_value(line)) {
         switch (name) {
@@ -103,11 +109,11 @@ export function parase_indexes(
       return item;
     }) || [];
 
-
-  return {
-    objects,
-    backgrounds,
-    stages,
+  const ret: ITempDataLists = {
+    objects: objects.filter(Boolean) as ITempDatIndex[],
+    backgrounds: backgrounds.filter(Boolean) as ITempDatIndex[],
+    stages: stages.filter(Boolean) as ITempDatIndex[],
     bots: []
-  };
+  }
+  return ret;
 }
