@@ -44,6 +44,7 @@ class Inner {
   }
   data_list_map = create_data_list_map();
   data_map = new Map<string, IEntityData>();
+  alias_map = new Map<string, IEntityData>();
   stages: IStageInfo[] = [Defines.VOID_STAGE];
   bot_map = new Map<string, IBotData>();
 
@@ -73,10 +74,20 @@ class Inner {
     }
     return data;
   }
-
-  private _add_obj(index_id: string | number, data: IEntityData) {
-    const _index_id = "" + index_id;
-    const prev = this.data_map.get(_index_id)
+  private _add_alias(alias: string, data: IEntityData) {
+    const prev = this.alias_map.get(alias)
+    if (prev) {
+      Ditto.warn(
+        DatMgr.TAG + "::_add_obj",
+        "alias duplicated, old data will be overwritten!",
+        "old data:", prev,
+        "new data:", data,
+      );
+    }
+    this.alias_map.set(alias, data);
+  }
+  private _add_obj(id: string, data: IEntityData) {
+    const prev = this.data_map.get(id)
     if (prev) {
       Ditto.warn(
         DatMgr.TAG + "::_add_obj",
@@ -85,7 +96,7 @@ class Inner {
         "new data:", data,
       );
     }
-    this.data_map.set(_index_id, data);
+    this.data_map.set(id, data);
     const list = this.data_list_map[data.type]
     const idx = list.findIndex(v => v.id === data.id)
     if (idx < 0) list.push(data); else list[idx] = data;
@@ -140,16 +151,16 @@ class Inner {
       }
     }
 
-    for (const { id, file } of data.objects) {
+    for (const { id, file, alias } of data.objects) {
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.on_loading_content(`${file}`, 0);
         const raw = await this.lf2.import_json<IEntityData>(file, true).then(r => r[0])
         const cooked = await this._cook_data(raw) as IEntityData;
-
         this._add_obj(id, cooked);
         if (id != file) this._add_obj(file, cooked);
         if (id != cooked.id) this._add_obj(cooked.id, cooked);
+        if (alias) this._add_alias(alias, cooked)
       } catch (e) {
         throw new Error(`fail to load obj: ${file}, reason: ${e}`)
       }
@@ -242,8 +253,8 @@ export default class DatMgr {
     return this._inner.stages;
   }
 
-  find(id: number | string): IEntityData | undefined {
-    return this._inner.data_map.get("" + id);
+  find(id: string): IEntityData | undefined {
+    return this._inner.alias_map.get(id) ?? this._inner.data_map.get(id);
   }
 
   private randomings = new Map<string, Randoming<IEntityData>>();

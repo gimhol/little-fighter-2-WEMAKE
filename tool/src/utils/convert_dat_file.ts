@@ -79,7 +79,6 @@ convert_dat_file.get_dst_path = function (
   type: 'bg' | 'obj' | 'stage',
   suffix: string = 'json5',
 ): string {
-
   const s_type = type ? `.${type}` : ''
   return src_path.replace(src_dir, out_dir).replace(/\\/g, '/').replace(/\.dat$/, `${s_type}.${suffix}`);
 }
