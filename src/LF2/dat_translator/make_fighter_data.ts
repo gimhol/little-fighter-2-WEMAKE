@@ -461,8 +461,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         delete frames[frame_id];
         break;
       }
-      case StateEnum.NextAsLanding: {
-        frame.next = { id: "94" };
+      case StateEnum.LandGoto94: {
+        frame.on_landing = { id: "94" };
         break;
       }
     }

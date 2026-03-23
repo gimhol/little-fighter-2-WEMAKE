@@ -82,9 +82,5 @@ ENTITY_STATES.add(
   new CharacterState_Rowing(),
   new CharacterState_Drink(),
   new State_15(),
-  new (class extends CharacterState_Base {
-    override on_landing(e: Entity): void {
-      e.enter_frame(e.frame.next);
-    }
-  })(StateEnum.NextAsLanding)
+  new StateBase_Proxy(StateEnum.LandGoto94)
 );
