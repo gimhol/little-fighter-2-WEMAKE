@@ -140,8 +140,8 @@ export class CacheInfos {
     return this.raw[key] = info;
   }
   async save() {
-    for (const [key] of this.unuseds) 
-      delete this.raw[key]
+    // for (const [key] of this.unuseds) 
+    //   delete this.raw[key]
     await write_file(
       this.cache_infos_path,
       JSON5.stringify(this.raw, { space: 2, quote: '"' }),

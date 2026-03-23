@@ -22,6 +22,9 @@ export const outline_fragment_shader = `
       (vUv.x * repeatW) + offsetX,
       (vUv.y * repeatH) + offsetY
     );
+    if (vUv.x < 0.0 || vUv.x > 1.0 || vUv.y < 0.0 || vUv.y > 1.0) {
+      discard;
+    }
     vec4 color = texture2D(pTexture, uv);
     color.rgb = gamma_correct(color.rgb);
     if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {

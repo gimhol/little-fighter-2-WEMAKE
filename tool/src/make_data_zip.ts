@@ -197,12 +197,12 @@ export async function make_data_zip() {
     await cache_info.update();
   }
 
-  for (const [key, value] of cache_infos.unuseds) {
-    for (const dst of value.dst) {
-      log("Remove Unused", dst);
-      await rm(dst).catch(e => { })
-    }
-  }
+  // for (const [key, value] of cache_infos.unuseds) {
+  //   for (const dst of value.dst) {
+  //     log("Remove Unused", dst);
+  //     await rm(dst).catch(e => { })
+  //   }
+  // }
   await cache_infos.save();
   await write_index_file(indexes, TMP_DAT_DIR);
   await make_zip_and_json(TMP_DAT_DIR, OUT_DIR, OUT_DATA_NAME, (inf) => {
