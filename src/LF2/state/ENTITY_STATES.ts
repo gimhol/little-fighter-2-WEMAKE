@@ -29,6 +29,7 @@ import WeaponState_InTheSky from "./WeaponState_InTheSky";
 import WeaponState_OnGround from "./WeaponState_OnGround";
 import WeaponState_OnHand from "./WeaponState_OnHand";
 import WeaponState_Throwing from "./WeaponState_Throwing";
+import { StateBase_Proxy } from "./StateBase_Proxy";
 export const ENTITY_STATES = new States();
 ENTITY_STATES.set_in_range(
   StateEnum.TransformTo_Min,
@@ -45,7 +46,7 @@ ENTITY_STATES.set_all_of(
     StateEnum.Ball_Hit,
     StateEnum.Ball_Hitting,
   ],
-  k => new BallState_Base(k),
+  k => new StateBase_Proxy(k),
 );
 ENTITY_STATES.add(
   new State_WeaponBroken(),
