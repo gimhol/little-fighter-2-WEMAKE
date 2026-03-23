@@ -28,6 +28,7 @@ export async function make_data_zip() {
     COPYS_SUFFIX,
     AUDIO_SUFFIX,
     IMAGE_SUFFIX,
+    INDEX_FILE,
   } = conf();
   if (!OUT_DATA_NAME)
     return log(`'data zip' will not be created, because 'OUT_DATA_NAME' is not set in '${CONF_FILE}'.`)
@@ -45,6 +46,8 @@ export async function make_data_zip() {
     return log(`'${OUT_DATA_NAME}' will not be created, because 'AUDIO_SUFFIX' is not set in '${CONF_FILE}'.`)
   if (!IMAGE_SUFFIX)
     return log(`'${OUT_DATA_NAME}' will not be created, because 'IMAGE_SUFFIX' is not set in '${CONF_FILE}'.`)
+  if (!INDEX_FILE)
+    return log(`'${OUT_DATA_NAME}' will not be created, because 'IMAGE_SUFFIX' is not set in '${INDEX_FILE}'.`)
 
   const cache_infos = await CacheInfos.create(
     path.join(TMP_DIR, "cache_infos.json5")
@@ -52,7 +55,7 @@ export async function make_data_zip() {
   const ress = classify(IN_LF2_DIR);
   let indexes: ITempDataLists | undefined;
   try {
-    indexes = await convert_data_txt(IN_LF2_DIR, TMP_DAT_DIR);
+    indexes = await convert_data_txt(IN_LF2_DIR, TMP_DAT_DIR, INDEX_FILE);
   } catch (e) {
     return error(`'${OUT_DATA_NAME}' will not be created, reason: ${e}\n`, e)
   }

@@ -9,24 +9,23 @@ import { debug, info } from "./log";
 import { read_text_file } from "./read_text_file";
 import { write_obj_file } from "./write_obj_file";
 
-export async function convert_data_txt(src_dir: string, out_dir: string): Promise<ITempDataLists> {
+export async function convert_data_txt(src_dir: string, out_dir: string, index_file: string): Promise<ITempDataLists> {
   debug(`convert_data_txt(
   src_dir = ${JSON.stringify(src_dir)},
   out_dir = ${JSON.stringify(out_dir)}, 
 )`)
   const suffix = 'json5'
-  const src_path = `${src_dir}/data/data.txt`;
   try {
-    accessSync(src_path, X_OK)
+    accessSync(index_file, X_OK)
   } catch (e) {
     const message = [
       `data.txt not found, path:`,
-      `"${src_path}"\n`,
+      `"${index_file}"\n`,
       "Will try to create it for you, please edit it and retry again."
     ].join('\n    ')
     warn(message)
     try { mkdirSync(`${src_dir}/data`, { recursive: true }) } catch (e) { }
-    writeFileSync(src_path, `
+    writeFileSync(index_file, `
 [NOT_READY] Please remove this line after the editing or LF2W-TOOL will not use this file.
 <object>
 <object_end>
@@ -37,9 +36,9 @@ export async function convert_data_txt(src_dir: string, out_dir: string): Promis
   }
   const stage_path = `${src_dir}/data/stage.dat`;
   const dst_path = `${out_dir}/data/data.index.${suffix}`;
-  info("Convert", src_path, "=>\n    " + dst_path);
+  info("Convert", index_file, "=>\n    " + dst_path);
 
-  const text = await read_text_file(src_path);
+  const text = await read_text_file(index_file);
   debug(`[parse_indexes] text:\n`, text)
   const indexes = parase_indexes(text, suffix);
   if (!indexes.stages.length && await is_file(stage_path)) {

@@ -83,6 +83,7 @@ export interface IConf {
   COPYS_SUFFIX?: string;
   AUDIO_SUFFIX?: string;
   IMAGE_SUFFIX?: string;
+  INDEX_FILE?: string;
 }
 interface IArgInfo {
   key: keyof IConf;
@@ -100,6 +101,7 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
     alias: ['-i', '--input'], type: 'path',
     description: "A path that points to an LF2 directory (or a directory similar to LF2), and it doesn't need to be a complete LF2 directory."
   },
+  INDEX_FILE: { alias: [], type: 'path' },
   IN_PREL_DIR: { alias: [], type: 'path' },
   IN_EXTRA_DIR: { alias: [], type: 'path' },
 
@@ -250,6 +252,8 @@ function read_conf(file?: string, handle_new_conf?: (conf: IConf) => void): ICon
   }
   if (conf.TMP_DIR && !conf.TMP_TXT_DIR) conf.TMP_TXT_DIR = join(conf.TMP_DIR, 'lf2_txt').replace(/\\/g, '/')
   if (conf.TMP_DIR && !conf.TMP_DAT_DIR) conf.TMP_DAT_DIR = join(conf.TMP_DIR, 'lf2_data').replace(/\\/g, '/')
+  if (conf.IN_LF2_DIR && !conf.INDEX_FILE) conf.INDEX_FILE = join(conf.IN_LF2_DIR, 'data/data.txt').replace(/\\/g, '/')
+
   i_hate_backslash(conf)
   return conf
 }
