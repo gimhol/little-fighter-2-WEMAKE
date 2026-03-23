@@ -76,14 +76,13 @@ class Inner {
 
   private _add_obj(index_id: string | number, data: IEntityData) {
     const _index_id = "" + index_id;
-    if (this.data_map.has(_index_id)) {
+    const prev = this.data_map.get(_index_id)
+    if (prev) {
       Ditto.warn(
         DatMgr.TAG + "::_add_obj",
         "id duplicated, old data will be overwritten!",
-        "old data:",
-        this.data_map.get(_index_id),
-        "new data:",
-        data,
+        "old data:", prev,
+        "new data:", data,
       );
     }
     this.data_map.set(_index_id, data);

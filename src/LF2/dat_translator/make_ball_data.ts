@@ -16,11 +16,13 @@ import { cook_ball_frame_state_3001_4 } from "./cook_ball_frame_state_3001_4";
 import { cook_ball_frame_state_3005 } from "./cook_ball_frame_state_3005";
 import { cook_ball_frame_state_3006 } from "./cook_ball_frame_state_3006";
 import { get_next_frame_by_raw_id } from "./get_the_next";
+import { make_ball_special } from "./make_ball_special";
 import { take, take_str } from "./take";
 
 export const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
 export function make_ball_data(ctx: IDatContext): IEntityData {
   const { base: info, frames, index: datIndex } = ctx
+  info.name = datIndex.hash ?? datIndex.file.replace(/[^a-z|A-Z|0-9|_]/g, "");
   info.hp = 500;
 
   let weapon_broken_sound = take_str(info, "weapon_broken_sound");
@@ -127,9 +129,9 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
         case ItrKind.Freeze:
       }
     })
-
-
   });
+
+  make_ball_special(ret);
   return ret;
 }
 

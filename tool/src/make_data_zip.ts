@@ -1,14 +1,14 @@
 import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
 import path from "path";
-import type { IDataLists, ILegacyPictureInfo } from "../../src/LF2/defines";
+import type { IDataLists, ILegacyPictureInfo, ITempDataLists } from "../../src/LF2/defines";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { classify } from "./utils/classify";
+import { convert_audio } from "./utils/convert_audio";
 import { convert_dat_file } from "./utils/convert_dat_file";
 import { convert_data_txt, write_index_file } from "./utils/convert_data_txt";
-import { convert_whole_image, convert_grid_image } from "./utils/convert_image";
-import { convert_audio } from "./utils/convert_audio";
+import { convert_grid_image, convert_whole_image } from "./utils/convert_image";
 import { copy_dir } from "./utils/copy_dir";
 import { debug, error, log } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
@@ -50,10 +50,9 @@ export async function make_data_zip() {
     path.join(TMP_DIR, "cache_infos.json5")
   );
   const ress = classify(IN_LF2_DIR);
-  let indexes: IDataLists | undefined;
+  let indexes: ITempDataLists | undefined;
   try {
     indexes = await convert_data_txt(IN_LF2_DIR, TMP_DAT_DIR);
-    if (!indexes) return error(`'${OUT_DATA_NAME}' will not be created, because 'data.txt' is not found!`)
   } catch (e) {
     return error(`'${OUT_DATA_NAME}' will not be created, reason: ${e}\n`, e)
   }
@@ -68,14 +67,10 @@ export async function make_data_zip() {
     for (const src_path of ress.get_files('dat')) {
       let type: 'bg' | 'obj' | 'index' | 'stage' = 'obj';
       const a = src_path.replace(IN_LF2_DIR, '');
-      if (a.startsWith('/bg/') || a.startsWith('bg/'))
-        type = 'bg';
-      else if (src_path.endsWith('/stage.dat'))
-        type = 'stage';
-      else if (src_path.endsWith('/data.idx.dat'))
-        type = 'index';
-      else
-        type = 'obj';
+      if (a.startsWith('/bg/') || a.startsWith('bg/')) type = 'bg';
+      else if (src_path.endsWith('/stage.dat')) type = 'stage';
+      else if (src_path.endsWith('/data.idx.dat')) type = 'index';
+      else type = 'obj';
 
       const dst_path = convert_dat_file.get_dst_path(
         TMP_DAT_DIR,

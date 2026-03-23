@@ -39,7 +39,7 @@ export * from "./make_itr_prefabs";
 export * from "./make_stage_info_list";
 export * from "./make_weapon_data";
 export * from "./make_weapon_special";
-export * from "./read_indexes";
+export * from "./parase_indexes";
 export * from "./take";
 export * from "./take_not_zero_num";
 export * from "./take_num";

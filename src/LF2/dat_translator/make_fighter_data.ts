@@ -20,22 +20,23 @@ import {
   get_next_frame_by_raw_id,
 } from "./get_the_next";
 import { hit_next_frame } from "./hit_next_frame";
+import { make_fighter_special } from "./make_fighter_special";
 import { take } from "./take";
 import { take_raw_frame_mp } from "./take_raw_frame_mp";
 const k_9 = ["Fa", "Fj", "Da", "Dj", "Ua", "Uj", "ja"] as const;
 
-export function make_character_data(ctx: IDatContext): IEntityData {
-  const { base: info, frames } = ctx
-  const walking_frame_rate = take_number(info, "walking_frame_rate", 3);
-  const running_frame_rate = take_number(info, "running_frame_rate", 3);
-  const walking_speed = take_number(info, "walking_speed", 0);
-  const walking_speedz = take_number(info, "walking_speedz", 0);
-  const running_speed = take_number(info, "running_speed", 0);
-  const running_speedz = take_number(info, "running_speedz", 0);
-  const heavy_walking_speed = take_number(info, "heavy_walking_speed", 0);
-  const heavy_walking_speedz = take_number(info, "heavy_walking_speedz", 0);
-  const heavy_running_speed = take_number(info, "heavy_running_speed", 0);
-  const heavy_running_speedz = take_number(info, "heavy_running_speedz", 0);
+export function make_fighter_data(ctx: IDatContext): IEntityData {
+  const { base: base, frames, index: datIndex } = ctx
+  const walking_frame_rate = take_number(base, "walking_frame_rate", 3);
+  const running_frame_rate = take_number(base, "running_frame_rate", 3);
+  const walking_speed = take_number(base, "walking_speed", 0);
+  const walking_speedz = take_number(base, "walking_speedz", 0);
+  const running_speed = take_number(base, "running_speed", 0);
+  const running_speedz = take_number(base, "running_speedz", 0);
+  const heavy_walking_speed = take_number(base, "heavy_walking_speed", 0);
+  const heavy_walking_speedz = take_number(base, "heavy_walking_speedz", 0);
+  const heavy_running_speed = take_number(base, "heavy_running_speed", 0);
+  const heavy_running_speedz = take_number(base, "heavy_running_speedz", 0);
   const round_trip_frames_map: any = {};
   const frame_mp_hp_map = new Map<string, { mp: number, hp: number }>();
 
@@ -526,17 +527,17 @@ export function make_character_data(ctx: IDatContext): IEntityData {
   };
 
   const ret: IEntityData = {
-    id: "",
+    id: datIndex.id,
     type: EntityEnum.Fighter,
-    base: info,
+    base,
     indexes,
     frames,
   };
   cook_transform_begin_expression_to_hit(ret.frames);
   cook_file_variants(ret);
+  make_fighter_special(ret);
   return ret;
 }
-
 function add_key_down_jump_atk(frame: IFrameInfo) {
   frame.key_down = frame.key_down || {}
   frame.key_down.a = add_next_frame(

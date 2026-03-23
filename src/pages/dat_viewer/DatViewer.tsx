@@ -7,7 +7,7 @@ import Frame from "../../Component/Frame";
 import { ITextAreaRef, TextArea } from "../../Component/TextArea";
 import dat_to_json from "@/LF2/dat_translator/dat_2_json";
 import decode_lf2_dat from "@/LF2/dat_translator/decode_lf2_dat";
-import { read_indexes } from "@/LF2/dat_translator/read_indexes";
+import { parase_indexes } from "@/LF2/dat_translator/parase_indexes";
 import { IDataLists } from "@/LF2/defines";
 import { open_dir, read_file } from "../../Utils/open_file";
 import { FilesView } from "./FilesView";
@@ -35,7 +35,7 @@ export function DatViewer(props: IDatViewerProps) {
   const on_click_file = async (file: File) => {
     if (file.name.endsWith(".txt")) {
       const txt = await read_file(file, { as: "Text" }).then(v => v.replace(/\r/g, ""));
-      const data_indexes = read_indexes(txt, 'json5')
+      const data_indexes = parase_indexes(txt, 'json5')
       if (typeof data_indexes == 'string')
         console.error(data_indexes)
       else
