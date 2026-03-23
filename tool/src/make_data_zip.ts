@@ -1,12 +1,12 @@
 import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
-import path, { join } from "path";
-import { DatTypeEnum, suffix_map, type IDataLists, type ILegacyPictureInfo, type ITempDataLists } from "../../src/LF2/defines";
+import path from "path";
+import { suffix_map, type ILegacyPictureInfo, type ITempDataLists } from "../../src/LF2/defines";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { classify } from "./utils/classify";
 import { convert_audio } from "./utils/convert_audio";
-import { convert_dat_file } from "./utils/convert_dat_file";
+import { convert_dat_file, IConvertDatContext } from "./utils/convert_dat_file";
 import { convert_data_txt, write_index_file } from "./utils/convert_data_txt";
 import { convert_grid_image, convert_whole_image } from "./utils/convert_image";
 import { copy_dir } from "./utils/copy_dir";
@@ -68,6 +68,7 @@ export async function make_data_zip() {
     ...indexes.stages,
     ...indexes.backgrounds,
   ]
+
   for (const item of all) {
     const { type, src } = item;
     const suffix = suffix_map[type]
@@ -81,12 +82,13 @@ export async function make_data_zip() {
       suffix
     );
     const cache_info = await cache_infos.get_info(src_path, dst_path, "dat_v1");
-    const json = await convert_dat_file(
-      TMP_DAT_DIR,
+    const ctx: IConvertDatContext = {
+      out_dir: TMP_DAT_DIR,
       src_path,
       dst_path,
-      indexes
-    );
+      indexes,
+    }
+    const json = await convert_dat_file(ctx);
     if (!Array.isArray(json) && json) {
       let edited = false;
       for (const pic_name in json.base.files) {

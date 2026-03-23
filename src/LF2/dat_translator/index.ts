@@ -16,7 +16,7 @@ export * from "./cook_opoint";
 export * from "./cook_wpoint";
 export * from "./copy_bdy_info";
 export * from "./copy_itr_info";
-export * from "./dat_2_json";
+export * from "./obj_dat_to_json";
 export * from "./decode_lf2_dat";
 export * from "./edit_bdy_info";
 export * from "./edit_itr_info";

@@ -50,8 +50,9 @@ const bg_color_translate = function (rect: number | string) {
 };
 export function make_bg_data(
   full_str: string,
-  datIndex?: IDatIndex,
-): IBgData | void {
+  datIndex: IDatIndex,
+): IBgData {
+  full_str = full_str.replace(/\\\\/g, "/");
   const [fields] = new ColonValueReader()
     .str("name")
     .int("width")
@@ -69,7 +70,7 @@ export function make_bg_data(
 
   const ret: IBgData = {
     type: "background",
-    id: datIndex?.id ?? fields.name,
+    id: datIndex.id ?? fields.name,
     base: fields,
     layers: [],
   };

@@ -9,22 +9,15 @@ import { match_colon_value } from "../utils/string_parser/match_colon_value";
 import { cook_frames } from "./cook_frames";
 import { BotBuilder } from "./fighters/BotBuilder";
 import { make_ball_data } from "./make_ball_data";
-import { make_bg_data } from "./make_bg_data";
 import { make_entity_data } from "./make_entity_data";
 import { make_fighter_data } from "./make_fighter_data";
-import { make_stage_info_list as make_stage_infos } from "./make_stage_info_list";
 import { make_weapon_data } from "./make_weapon_data";
 import { post_process_obj_data } from "./post_process_obj_data";
 
-export default function dat_to_json(text: string, datIndex?: IDatIndex | null): void | IStageInfo[] | IBgData | IBaseData {
+export default function obj_dat_to_json(text: string, datIndex: IDatIndex): IStageInfo[] | IBgData | IBaseData {
   text = text.replace(/\\\\/g, "/");
-  if (text.startsWith("<stage>")) return make_stage_infos(text);
-  if (!datIndex) return;
-  if (text.startsWith("name:")) return make_bg_data(text, datIndex);
   const infos_str = match_block_once(text, "<bmp_begin>", "<bmp_end>");
-  if (!infos_str) {
-    return;
-  }
+  if (!infos_str) throw new Error('[dat_to_json] failed, 3')
   const ctx: IDatContext = {
     index: datIndex,
     base: {
@@ -104,7 +97,6 @@ export default function dat_to_json(text: string, datIndex?: IDatIndex | null): 
       continue;
     }
   }
-
   ctx.frames = cook_frames(ctx)
   switch (datIndex.type) {
     case "0":
