@@ -329,4 +329,5 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   rowing_height: ++order,
   rowing_distance: ++order,
   gravity_d: ++order,
+  ball_itr_motionless: ++order,
 }
