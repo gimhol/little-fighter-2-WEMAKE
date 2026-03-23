@@ -536,6 +536,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
   cook_transform_begin_expression_to_hit(ret.frames);
   cook_file_variants(ret);
   make_fighter_special(ret);
+  if (datIndex.bot) ret.base.bot_id = datIndex.bot
   return ret;
 }
 function add_key_down_jump_atk(frame: IFrameInfo) {

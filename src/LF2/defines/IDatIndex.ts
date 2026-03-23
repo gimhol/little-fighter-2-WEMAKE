@@ -33,6 +33,7 @@ export interface IDatIndex {
   alias?: string;
   groups?: string[];
   skipped?: string;
+  bot?: string;
 }
 export interface ITempDatIndex extends IDatIndex {
   src: string

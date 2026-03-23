@@ -26,6 +26,7 @@ export function parase_indexes(
           case "id":
           case "alias":
           case "skipped":
+          case "bot":
             item[name] = value;
             break;
           case "type":
