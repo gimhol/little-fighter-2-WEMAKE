@@ -150,8 +150,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         defend 110
         defend_hit 111
        */
-      case 110:
-      case 111: {
+      case 110: case 111: {
         if (frame.bdy?.length)
           for (const bdy of frame.bdy) {
             bdy.actions = ensure(bdy.actions,
@@ -162,9 +161,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         break;
       }
       /** broken_defend */
-      case 112: {
-        break;
-      }
+      case 112: { break; }
       /** jump */
       case 210: case 211: case 212: {
         if (frame_id === "211") frame.jump_flag = 1;
@@ -264,7 +261,6 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         }
 
         break;
-
       /** throw_lying_man */
       case 232: case 233: case 234:
         if (frame.cpoint?.vaction)
@@ -330,6 +326,17 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
               .done(),
             facing: FF.Trend,
           })
+        break;
+      /** injured */
+      case 220:
+      case 221:
+      case 222:
+      case 223:
+      case 224:
+      case 225:
+        frame.state = StateEnum.Injured;
+        const state_name = StateEnum[frame.state!]
+        if (state_name) (frame as any).state_name = `StateEnum.${state_name}`
         break;
     }
 

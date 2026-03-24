@@ -30,7 +30,7 @@ function children<K extends string, V>(obj?: { [x in K]?: V; }): V[] {
 }
 
 export async function make_pick_zip() {
-  const { IN_LFW_DIR, IN_LFW_INDEX, LFW_PICKS, CONF_FILE, OUT_DATA_NAME, TMP_DIR, OUT_DIR } = conf()
+  const { IN_LFW_DIR, IN_LFW_INDEX, LFW_PICKS,LFW_PICKS_FILE CONF_FILE, OUT_DATA_NAME, TMP_DIR, OUT_DIR } = conf()
   if (OUT_DATA_NAME) log({ OUT_DATA_NAME })
   else return error(`'data zip' will not be created, because 'OUT_DATA_NAME' is not set in '${CONF_FILE}'.`)
   if (IN_LFW_DIR) log({ IN_LFW_DIR })
