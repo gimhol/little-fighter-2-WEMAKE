@@ -613,9 +613,8 @@ export class Entity {
     return g1 ?? g2
   }
   get itr_motionless(): number {
-    if (this.type === EntityEnum.Ball) {
+    if (this.type === EntityEnum.Ball)
       return this.dataset('ball_itr_motionless')
-    }
     return this.dataset('itr_motionless')
   }
   get arest(): number {

@@ -21,6 +21,7 @@ import {
 } from "./get_the_next";
 import { hit_next_frame } from "./hit_next_frame";
 import { make_fighter_special } from "./make_fighter_special";
+import { make_frame_state } from "./make_frame_state";
 import { take } from "./take";
 import { take_raw_frame_mp } from "./take_raw_frame_mp";
 const k_9 = ["Fa", "Fj", "Da", "Dj", "Ua", "Uj", "ja"] as const;
@@ -290,10 +291,10 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
       case 184:
       case 185:
         break;
-
       /** （186~191）falling 向后 */
       case 186: break;
-      case 187: case 188:
+      case 187:
+      case 188:
         editing.hit('j', {
           id: "108",
           expression: new CondMaker<EV>()
@@ -304,9 +305,6 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
       case 189:
       case 190:
       case 191:
-        break;
-      case 200:
-        frame.state = StateEnum.Frozen;
         break;
       /** crouch */
       case 215:
@@ -327,17 +325,30 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
             facing: FF.Trend,
           })
         break;
+      case 200:
+        frame.state = StateEnum.Frozen;
+        break;
       /** injured */
       case 220:
       case 221:
       case 222:
       case 223:
       case 224:
-      case 225:
+      case 225: {
         frame.state = StateEnum.Injured;
         const state_name = StateEnum[frame.state!]
         if (state_name) (frame as any).state_name = `StateEnum.${state_name}`
+        make_frame_state(frame)
         break;
+      }
+      /** dizzy */
+      case 226: case 227: case 228: case 229: {
+        frame.state = StateEnum.Tired;
+        const state_name = StateEnum[frame.state!]
+        if (state_name) (frame as any).state_name = `StateEnum.${state_name}`
+        make_frame_state(frame)
+        break;
+      }
     }
 
     switch (frame.state) {
