@@ -34,7 +34,7 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
     if (errors.length) Ditto.warn(errors)
   });
   if (data.base.bot)
-    preprocess_bot_data(data.base.bot)
+    data.base.bot = preprocess_bot_data(data.base.bot)
   return data;
 }
 

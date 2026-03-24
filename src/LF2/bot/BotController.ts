@@ -3,11 +3,12 @@ import { BaseController, KEY_NAME_LIST } from "../controller/BaseController";
 import {
   ATTCKING_ITR_KINDS,
   ATTCKING_STATES,
+  BotDataSet,
   BotStateEnum,
   Defines,
   Difficulty,
   GK,
-  IBotAction, IBotDataSet,
+  IBotAction, IBotData, IBotDataSet,
   LGK, StateEnum
 } from "../defines";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
@@ -34,11 +35,10 @@ export class BotController extends BaseController implements Required<IBotDataSe
 
   readonly __is_bot_ctrl__ = true;
 
-  data_set: IBotDataSet | undefined;
   behavior?: 'stay' | 'move';
   following?: [number, number, number];
   en_out_of_range: boolean = false;
-  
+
   /** 走攻触发范围X */
   get w_atk_x() {
     const chasing = this.chasings.get()?.entity;
@@ -66,56 +66,30 @@ export class BotController extends BaseController implements Required<IBotDataSe
     return this.entity.facing === chasing.facing ? this.j_atk_b_x : this.j_atk_f_x;
   }
 
-  /** 走攻触发范围X(敌人正对) */
-  w_atk_f_x = Defines.AI_W_ATK_F_X;
-  /** 走攻触发范围X(敌人背对) */
-  w_atk_b_x = Defines.AI_W_ATK_B_X;
-  /** 走攻盲区 */
-  w_atk_m_x = Defines.AI_W_ATK_M_X;
-  /** 走攻触发范围Z */
-  w_atk_z = Defines.AI_W_ATK_Z;
-  /** 跑攻欲望值 */
-  r_atk_desire = Defines.AI_R_ATK_DESIRE;
-  /** 跑攻触发范围X(敌人正对) */
-  r_atk_f_x = Defines.AI_R_ATK_F_X;
-  /** 跑攻触发范围X(敌人背对) */
-  r_atk_b_x = Defines.AI_R_ATK_F_X;
-  /** 跑攻触发范围Z */
-  r_atk_z = Defines.AI_R_ATK_Z;
-  /** 冲跳攻触发范围X(敌人正对) */
-  d_atk_f_x = Defines.AI_D_ATK_F_X;
-  /** 冲跳攻触发范围X(敌人正对) */
-  d_atk_b_x = Defines.AI_D_ATK_B_X;
-  /** 冲跳攻触发范围Z */
-  d_atk_z = Defines.AI_D_ATK_Z;
-  /** 跳攻触发范围X(敌人正对) */
-  j_atk_f_x = Defines.AI_J_ATK_F_X;
-  /** 跳攻触发范围X(敌人正对) */
-  j_atk_b_x = Defines.AI_J_ATK_B_X;
-  /** 跳攻触发范围Z */
-  j_atk_z = Defines.AI_J_ATK_Z;
-  /** 跳攻触发范围Y */
-  j_atk_y_min = Defines.AI_J_ATK_Y_MIN;
-  j_atk_y_max = Defines.AI_J_ATK_Y_MAX;
-  /** 跳越欲望 */
-  jump_desire = Defines.AI_J_DESIRE;
-  /** 冲刺欲望 */
-  dash_desire = Defines.AI_D_DESIRE;
-  /** 最小欲望值：跑步 */
-  r_desire_min = Defines.AI_R_DESIRE_MIN;
-  /** 最大欲望值：跑步 */
-  r_desire_max = Defines.AI_R_DESIRE_MAX;
-  /** 
-   * 最小起跑范围X 
-   * 距离敌人小于于等于此距离时，此时奔跑欲望值最小
-   */
-  r_x_min = Defines.AI_R_X_MIN;
-
-  /** 
-   * 最大起跑范围X 
-   * 距离敌人大于等于此距离时，此时奔跑欲望值最大
-   */
-  r_x_max = Defines.AI_R_X_MAX;
+  w_atk_f_x     /**/ = 0;
+  w_atk_b_x     /**/ = 0;
+  w_atk_m_x     /**/ = 0;
+  w_atk_z       /**/ = 0;
+  r_atk_desire  /**/ = 0;
+  r_atk_f_x     /**/ = 0;
+  r_atk_b_x     /**/ = 0;
+  r_atk_z       /**/ = 0;
+  d_atk_f_x     /**/ = 0;
+  d_atk_b_x     /**/ = 0;
+  d_atk_z       /**/ = 0;
+  j_atk_f_x     /**/ = 0;
+  j_atk_b_x     /**/ = 0;
+  j_atk_z       /**/ = 0;
+  j_atk_y_min   /**/ = 0;
+  j_atk_y_max   /**/ = 0;
+  jump_desire   /**/ = 0;
+  dash_desire   /**/ = 0;
+  r_desire_min  /**/ = 0;
+  r_desire_max  /**/ = 0;
+  r_x_min       /**/ = 0;
+  r_x_max       /**/ = 0;
+  r_stop_desire /**/ = 0;
+  d_desire      /**/ = 0;
 
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.chasings.get()?.entity;
@@ -137,11 +111,6 @@ export class BotController extends BaseController implements Required<IBotDataSe
     return this.entity.position.x > chasing.position.x ? -1 : 1
   }
 
-  /** 欲望值：停止跑步 */
-  r_stop_desire = Defines.AI_R_STOP_DESIRE;
-
-  /** 欲望值: 防御 */
-  d_desire = Defines.AI_DEF_DESIRE;
 
   /** 追击对象 */
   readonly chasings = new NearestTargets(Defines.AI_MAX_CHASINGS_ENEMIES);
@@ -162,7 +131,8 @@ export class BotController extends BaseController implements Required<IBotDataSe
   }
   constructor(player_id: string, entity: Entity) {
     super(player_id, entity);
-    this.player = this.lf2.players.get(player_id)
+    this.player = this.lf2.players.get(player_id);
+    Object.assign(this, BotDataSet.Default);
   }
 
   /**
@@ -350,12 +320,27 @@ export class BotController extends BaseController implements Required<IBotDataSe
     }
     return ret;
   }
-
-  override update() {
-    if (this.data_set !== this.entity.data.base.bot?.dataset) {
-      this.data_set = this.entity.data.base.bot?.dataset
-      Object.assign(this, this.entity.data.base.bot?.dataset)
+  private _bot_id: string | undefined;
+  private _bot: IBotData | undefined;
+  get bot(): IBotData | undefined { return this._bot; }
+  check_bot(): void {
+    const { bot, bot_id } = this.entity.data.base;
+    if (bot && bot === this._bot) return
+    if (bot && bot !== this._bot) {
+      Object.assign(this, BotDataSet.Default, bot.dataset)
+      this._bot = bot;
+      this._bot_id = void 0;
+      return;
     }
+    if (this._bot_id === bot_id) return
+    this._bot_id = bot_id;
+    Object.assign(this, BotDataSet.Default)
+    if (!bot_id) return this._bot = void 0;
+    this._bot = this.lf2.datas.find_bot(bot_id)
+    Object.assign(this, this._bot?.dataset)
+  }
+  override update() {
+    this.check_bot();
     if (this.dummy) {
       dummy_updaters[this.dummy]?.update(this);
     } else if (this.world.stage.is_chapter_finish) {

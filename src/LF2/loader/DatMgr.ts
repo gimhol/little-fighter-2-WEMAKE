@@ -259,7 +259,9 @@ export default class DatMgr {
   find(id: string): IEntityData | undefined {
     return this._inner.alias_map.get(id) ?? this._inner.data_map.get(id);
   }
-
+  find_bot(id: string): IBotData | undefined {
+    return this._inner.bot_map.get(id)
+  }
   private randomings = new Map<string, Randoming<IEntityData>>();
   get_randoming_by_group(group: string) {
     let ret = this.randomings.get(group);

@@ -4,13 +4,12 @@ import csses from "./App.module.scss";
 import { Button } from "./Component/Buttons/Button";
 import CharacterSelect from "./Component/CharacterSelect";
 import Combine from "./Component/Combine";
-import { Cross } from "./Component/Icons/Cross";
 import { InputNumber } from "./Component/Input";
 import Select from "./Component/Select";
 import Show from "./Component/Show";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
-import { IWorldDataset, world_dataset_field_map } from "./LF2/IWorldDataset";
+import { IWorldDataset, world_dataset_fields } from "./LF2/IWorldDataset";
 import { LF2 } from "./LF2/LF2";
 import { BotController } from "./LF2/bot/BotController";
 import { BaseController } from "./LF2/controller/BaseController";
@@ -20,9 +19,8 @@ import { CMD } from "./LF2/defines/CMD";
 import { Entity } from "./LF2/entity/Entity";
 import { Stage } from "./LF2/stage/Stage";
 import { is_num } from "./LF2/utils/type_check";
-import { download } from "./Utils/download";
-import { useLocalNumber, useLocalString } from "./useLocalStorage";
 import { WorldDataset } from "./pages/dev_panel/world_dataset";
+import { useLocalNumber, useLocalString } from "./useLocalStorage";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
   "enemy chaser": (e: Entity) => new BotController("", e),
@@ -141,13 +139,13 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   useEffect(() => {
     if (!lf2.world) return;
     set_dwds(d => {
-      for (const [k] of world_dataset_field_map) {
+      for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
         d[key] = lf2.world[key]
       }
     })
     set_cwds(d => {
-      for (const [k] of world_dataset_field_map) {
+      for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
         d[key] = lf2.world[key]
       }

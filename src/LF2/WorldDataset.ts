@@ -1,5 +1,5 @@
 import { Defines, Difficulty } from "./defines";
-import { IWorldDataset, world_dataset_field_map as world_dataset_fields } from "./IWorldDataset";
+import { IWorldDataset, world_dataset_fields as world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {
