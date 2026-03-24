@@ -84,6 +84,9 @@ export interface IConf {
   AUDIO_SUFFIX?: string;
   IMAGE_SUFFIX?: string;
   INDEX_FILE?: string;
+  IN_LFW_DIR?: string;
+  IN_LFW_INDEX?: string;
+  LFW_PICKS?: string;
 }
 interface IArgInfo {
   key: keyof IConf;
@@ -143,6 +146,10 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   COPYS_SUFFIX: { alias: [], default: 'txt,md,png,mp3,jpg,jpeg' },
   AUDIO_SUFFIX: { alias: [], default: 'wav,wave,aiff,aif,aifc,flac,m4a,alac,mpga,mp2,aac,ogg,oga,wma,opus,amr,dsf,dff,3gp' },
   IMAGE_SUFFIX: { alias: [], default: 'bmp' },
+
+  IN_LFW_DIR: { alias: [] },
+  IN_LFW_INDEX: { alias: [] },
+  LFW_PICKS: { alias: [] }
 }
 const alias_arg_map = new Map<string, IArgInfo>();
 

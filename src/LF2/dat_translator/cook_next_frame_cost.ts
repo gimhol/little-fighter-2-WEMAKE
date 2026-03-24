@@ -1,7 +1,6 @@
 import { INextFrame } from "../defines";
 import { random_get } from "../utils";
 
-
 export function cook_next_frame_cost(
   ret: INextFrame,
   type?: "next" | "hit",

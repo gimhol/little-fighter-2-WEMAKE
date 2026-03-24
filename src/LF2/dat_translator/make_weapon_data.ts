@@ -47,7 +47,7 @@ const indexes_map: Record<WeaponType, IFrameIndexes> = {
 
 export function make_weapon_data(ctx: IDatContext): IEntityData {
   const { base: info, frames, text: full_str, index: datIndex } = ctx
-  info.name = datIndex.hash ?? datIndex.file.replace(/[^a-z|A-Z|0-9|_]/g, "");
+  info.name = datIndex.hash ?? datIndex.file.split('/').slice(-1)[0].replace(/[^a-z|A-Z|0-9|_]/g, "-").replace(/-obj-json5$/, '');
   switch ('' + datIndex.type) {
     case "1":
       info.bounce = 0.2;
