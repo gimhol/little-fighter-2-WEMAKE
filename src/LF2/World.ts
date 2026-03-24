@@ -204,20 +204,8 @@ export class World extends WorldDataset {
     return ret;
   }
 
-  del_entity(entity: Entity) {
-    if (!(this.entities.delete(entity) || this.ghosts.delete(entity)))
-      return false;
-    this.entity_map.delete(entity.id)
-    if (is_fighter(entity))
-      this.callbacks.emit("on_fighter_del")(entity);
-    const player = this.lf2.players.get(entity.ctrl.player_id)
-    if (player) player.fighter = void 0
-    const ok = this.puppets.delete(entity.ctrl.player_id);
-    if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
-    this.renderer.del_entity(entity);
-    entity.dispose();
-    Factory.inst.release(entity)
-    return true;
+  del_entity(entity: Entity): boolean {
+    return this.gones.has(entity)
   }
 
   del_entities(entities: Entity[]) {
@@ -371,7 +359,7 @@ export class World extends WorldDataset {
     }
   }
 
-  private gone_entities: Entity[] = [];
+  private gones = new Set<Entity>();
   private _chasers = new Set<Entity>();
   add_chaser(entity: Entity) {
     this._chasers.add(entity);
@@ -523,7 +511,6 @@ export class World extends WorldDataset {
     const { game_time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
-    this.gone_entities.length = 0;
     this.v_collisions.length = 0;
     this.a_collisions.clear();
     this._used_itrs.clear()
@@ -568,7 +555,8 @@ export class World extends WorldDataset {
         e.frame.id === Builtin_FrameId.Gone ||
         e.frame.state === StateEnum.Gone
       ) {
-        this.gone_entities.push(e);
+        e.hp = e.hp_r = 0;
+        this.gones.add(e);
         continue;
       }
       this._temp_entitis_set.add(e);
@@ -585,10 +573,28 @@ export class World extends WorldDataset {
         e.frame.id === Builtin_FrameId.Gone ||
         e.frame.state === StateEnum.Gone
       ) {
-        this.gone_entities.push(e);
+        e.hp = e.hp_r = 0;
+        this.gones.add(e);
       }
     }
-    this.del_entities(this.gone_entities);
+
+    for (const entity of this.gones) {
+      const attached =
+        this.entities.delete(entity) ||
+        this.ghosts.delete(entity);
+      if (!attached) continue;
+      this.entity_map.delete(entity.id)
+      if (is_fighter(entity))
+        this.callbacks.emit("on_fighter_del")(entity);
+      const player = this.lf2.players.get(entity.ctrl.player_id)
+      if (player) player.fighter = void 0
+      const ok = this.puppets.delete(entity.ctrl.player_id);
+      if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
+      this.renderer.del_entity(entity);
+      entity.release();
+      Factory.inst.release(entity)
+    }
+    this.gones.clear()
     this.stage.update();
   }
 

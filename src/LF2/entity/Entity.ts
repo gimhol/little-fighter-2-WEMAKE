@@ -1829,7 +1829,8 @@ export class Entity {
     );
   }
 
-  dispose(): void {
+  release(): void {
+    if (!this._is_attach) return;
     this._is_attach = false;
     this.world.del_entity(this);
     this.ctrl.dispose();

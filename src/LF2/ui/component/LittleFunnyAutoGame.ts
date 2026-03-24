@@ -10,8 +10,9 @@ export class LittleFunnyAutoGame extends UIComponent {
   private _fighter_cbs: IEntityCallbacks = {
     on_dead: (e) => {
       e.callbacks.del(this._fighter_cbs);
+      if (this.stopped) return;
       this.add_fighter()
-    },
+    }
   }
   override on_resume(): void {
     super.on_resume?.()
@@ -27,7 +28,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     super.on_pause?.();
     this.world.clear();
   }
-  
+
   add_fighter() {
     if (!this._datas.length)
       this._datas.push(...this.lf2.datas.fighters)
