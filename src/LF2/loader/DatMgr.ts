@@ -17,6 +17,7 @@ import { Randoming } from "../helper/Randoming";
 import { is_non_blank_str, is_str } from "../utils/type_check";
 import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
+import { preprocess_bot_data } from "./preprocess_bot_data";
 import { preprocess_entity_data } from "./preprocess_entity_data";
 import { preprocess_stage } from "./preprocess_stage";
 
@@ -67,6 +68,7 @@ class Inner {
     else if (is_fighter_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
     if (is_entity_data(data)) {
+      data.base.bot
       if (data.base.bot_id) {
         data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id)
       };
@@ -127,7 +129,6 @@ class Inner {
     for (const file of index_files) {
       const { objects = [], backgrounds = [], stages = [], bots = [] } = await this.lf2.import_json<Partial<IDataLists>>(file, true)
         .then(r => r[0]).catch(e => { Ditto.warn(`FAIL TO LOAD DAT INDEX ${file}, ` + e); return {} as Partial<IDataLists> });
-
       data.objects.push(...objects)
       data.backgrounds.push(...backgrounds)
       data.stages.push(...stages)
@@ -137,18 +138,20 @@ class Inner {
     if (this.cancelled) throw new Error("cancelled");
     for (const { id, file } of data.bots) {
       this.lf2.on_loading_content(`${file}`, 0);
-      const bot_data = await this.lf2.import_json<IBotData>(file, true)
+      const raw = await this.lf2.import_json<IBotData>(file, true)
         .then(r => {
           return r[0]
         }).catch(e => {
           Ditto.warn(`FAILED TO LOAD BOT DATA: ${file}`);
           return undefined
         });
-      if (bot_data) {
-        this.bot_map.set(id, bot_data);
-        if (id != file) this.bot_map.set(file, bot_data);
-        if (id != bot_data.id) this.bot_map.set(bot_data.id, bot_data);
-      }
+      if (this.cancelled) throw new Error("cancelled");
+
+      if (!raw) continue;
+      const bot_data = preprocess_bot_data(raw);
+      this.bot_map.set(id, bot_data);
+      if (id != file) this.bot_map.set(file, bot_data);
+      if (id != bot_data.id) this.bot_map.set(bot_data.id, bot_data);
     }
 
     for (const { id, file, alias } of data.objects) {

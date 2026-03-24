@@ -1,11 +1,10 @@
-import { Expression } from "../base/Expression";
 import { IEntityData } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { is_non_blank_str } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
 import { check_frame } from "./check_frame";
-import { get_val_from_bot_ctrl } from "./get_val_from_bot_ctrl";
+import { preprocess_bot_data } from "./preprocess_bot_data";
 import { preprocess_frame } from "./preprocess_frame";
 import { preprocess_next_frame } from "./preprocess_next_frame";
 import { preprocess_pic } from "./preprocess_pic";
@@ -26,7 +25,7 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
 
   traversal(files, (_, v) => jobs.push(images.load_by_pic_info(v)));
   if (jobs.length) await Promise.all(jobs);
-  
+
   traversal(portraits, (k, v, o) => o[k] = preprocess_pic(lf2, data, v));
   traversal(frames, (k, v, o) => o[k] = preprocess_frame(lf2, data, v, jobs));
   traversal(frames, (_, v) => {
@@ -34,29 +33,8 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
     check_frame(data, v, errors)
     if (errors.length) Ditto.warn(errors)
   });
-  traversal(data.base.bot?.actions, (_, a) => {
-    if (!a) return;
-    if (a.expression) a.judger = new Expression(a.expression, get_val_from_bot_ctrl)
-  })
-  traversal(data.base.bot?.frames, (k, v, o) => {
-    if (!v) return;
-    const ks = k.split(',')
-    if (ks.length <= 1) return;
-    delete o[k];
-    for (const k of ks)
-      o[k] = [...v];
-  })
-  traversal(data.base.bot?.states, (k, v, o) => {
-    if (!v) return;
-    const ks = ("" + k).split(',')
-    if (ks.length <= 1) return;
-    delete o[k];
-    for (const k of ks)
-      o[k as any] = [...v];
-  })
-
-
-
+  if (data.base.bot)
+    preprocess_bot_data(data.base.bot)
   return data;
 }
 
