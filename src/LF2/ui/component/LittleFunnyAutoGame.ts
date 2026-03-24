@@ -10,7 +10,7 @@ export class LittleFunnyAutoGame extends UIComponent {
   private _fighter_cbs: IEntityCallbacks = {
     on_dead: (e) => {
       e.callbacks.del(this._fighter_cbs);
-      if (this.stopped) return;
+      if (this.stopped || this.paused) return;
       this.add_fighter()
     }
   }
