@@ -18,5 +18,7 @@ export function cook_next_frame_cost(
     if (mp < 0) ret.mp = -mp;
     if (hp < 0) ret.hp = -hp;
   }
+  if (!ret.mp) delete ret.mp;
+  if (!ret.hp) delete ret.hp
   return ret;
 }
