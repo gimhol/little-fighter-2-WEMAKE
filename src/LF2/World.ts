@@ -591,6 +591,7 @@ export class World extends WorldDataset {
       const ok = this.puppets.delete(entity.ctrl.player_id);
       if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
       this.renderer.del_entity(entity);
+      
       entity.release();
       Factory.inst.release(entity)
     }
