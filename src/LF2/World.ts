@@ -33,6 +33,7 @@ import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
+import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
 import { Times } from "./ui";
 import { abs, is_num, max, min, round } from "./utils";
@@ -60,6 +61,9 @@ export class World extends WorldDataset {
   private _counts = new Map<string, number>()
   get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time }
+  private _released_tickers = new Set<Ticker>();
+  readonly tickers = new Set<Ticker>();
+  readonly ticker_pool: Ticker[] = [];
 
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
@@ -591,12 +595,25 @@ export class World extends WorldDataset {
       const ok = this.puppets.delete(entity.ctrl.player_id);
       if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
       this.renderer.del_entity(entity);
-      
+
       entity.release();
       Factory.inst.release(entity)
     }
     this.gones.clear()
     this.stage.update();
+
+    this._released_tickers.clear()
+    for (const ticker of this.tickers) {
+      if (ticker.released)
+        this._released_tickers.add(ticker)
+      else
+        ticker.add()
+    }
+    for (const ticker of this._released_tickers) {
+      this.tickers.delete(ticker);
+      this.ticker_pool.push(ticker)
+    }
+    this._released_tickers.clear()
   }
 
   render_once(dt: number) {
@@ -930,11 +947,18 @@ export class World extends WorldDataset {
     this.playrate = 1;
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
     this.ghosts.forEach(v => v.set_frame(GONE_FRAME_INFO))
-    this.buffs.forEach(v => v.life.loop(v.life.max = v.life.min = 0))
+    this.buffs.forEach(v => v.life.set_lifes(v.life.max = v.life.min = 0))
     this.lf2.change_stage(Defines.VOID_STAGE)
     this.lf2.change_bg(Defines.VOID_BG)
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;
+  }
+
+  ticker(): Ticker {
+    let ret = this.ticker_pool.pop();
+    if (!ret) this.tickers.add(ret = new Ticker(this.lf2));
+    else ret.reborn()
+    return ret;
   }
 }

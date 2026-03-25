@@ -6,11 +6,11 @@ export class Buff {
   private _id: string;
   private _targets = new Set<Entity>();
   private _tick = new Times();
-  private _life = new Times(0, 1).loop(1);
+  private _life = new Times(0, 1).set_lifes(1);
   job = () => { }
   get tick() { return this._tick }
   get life() { return this._life }
-  get dead() { return this._life.life == 0 }
+  get dead() { return this._life.remains == 0 }
   get targets(): ReadonlySet<Entity> { return this._targets }
   get id(): string { return this._id }
   constructor(id: string = new_id()) {

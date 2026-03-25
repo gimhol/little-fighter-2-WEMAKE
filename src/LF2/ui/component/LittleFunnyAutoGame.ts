@@ -1,6 +1,7 @@
 import { new_team } from "@/LF2/base";
 import { Defines, type IEntityData } from "@/LF2/defines";
 import { Factory, IEntityCallbacks } from "@/LF2/entity";
+import { Ticker } from "@/LF2/Ticker";
 import { UIComponent } from "./UIComponent";
 
 export class LittleFunnyAutoGame extends UIComponent {
@@ -14,19 +15,27 @@ export class LittleFunnyAutoGame extends UIComponent {
       this.add_fighter()
     }
   }
+  private _ticker: Ticker | null = null;
+
   override on_resume(): void {
     super.on_resume?.()
     this._lr = 0;
     this.world.transform.scale_to(0.5, 0.5, 0.5)
     this.world.paused = false;
     this.lf2.change_bg(Defines.VOID_BG)
-    this.add_fighter();
-    this.add_fighter();
+    this._ticker = this.world.ticker().set_range(0, 180)
+    this._ticker.callbacks.add({
+      end: () => {
+        this.add_fighter();
+        this.add_fighter();
+      }
+    })
   }
 
   override on_pause(): void {
     super.on_pause?.();
     this.world.clear();
+    this._ticker?.release();
   }
 
   add_fighter() {

@@ -1,5 +1,4 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
-import { Background } from "./bg";
 import { KEY_NAME_LIST, LocalController } from "./controller";
 import * as D from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
@@ -13,6 +12,7 @@ import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
+import { Ticker } from "./Ticker";
 import * as UI from "./ui";
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
@@ -674,4 +674,3 @@ function full_zip_url(info_url: string, zip_url: string) {
   const ttt = part_a.lastIndexOf('/')
   return part_a.substring(0, ttt) + '/' + zip_url + part_b;
 }
-
