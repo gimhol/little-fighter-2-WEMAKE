@@ -83,6 +83,7 @@ export interface IConf {
   INDEX_FILE?: string;
   IN_LFW_DIR?: string;
   IN_LFW_INDEX?: string;
+  OUT_LFW_INDEX?: string;
   LFW_PICKS?: string;
 }
 interface IClazz<C extends Object = {}, V extends Object = {}> {
@@ -96,8 +97,8 @@ interface IArgInfo<C extends Object = {}, T extends IClazz<C> = IClazz<C>> {
   default?: string | (() => string);
   description?: string;
 }
-class Path { 
-  
+class Path {
+
 }
 
 const txt_a = `If it doesn't exist, it will be created.`
@@ -159,6 +160,7 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
 
   IN_LFW_DIR: { type: String, },
   IN_LFW_INDEX: { type: String, },
+  OUT_LFW_INDEX: { type: String, },
   LFW_PICKS: { type: String, }
 }
 const alias_arg_map = new Map<string, IArgInfo>();

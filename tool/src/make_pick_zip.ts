@@ -3,7 +3,7 @@ import JSON5 from "json5";
 import { dirname, join } from "path";
 import { ActionType, IBgData, IEntityData, IStageInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LF2/defines";
 import { conf } from "./conf";
-import { error, log, warn } from "./utils/log";
+import { error, info, log, warn } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 
 
@@ -15,6 +15,7 @@ async function read_json<T>(src: string) {
 }
 
 async function write_json<T>(dst: string, outputs: any) {
+  info('write_json: ' + dst)
   await mkdir(dirname(dst), { recursive: true })
   await writeFile(dst, JSON5.stringify(outputs, { space: 2, quote: '"' }))
 }
@@ -30,13 +31,15 @@ function children<K extends string, V>(obj?: { [x in K]?: V; }): V[] {
 }
 
 export async function make_pick_zip() {
-  const { IN_LFW_DIR, IN_LFW_INDEX, LFW_PICKS, CONF_FILE, OUT_DATA_NAME, TMP_DIR, OUT_DIR } = conf()
+  const { IN_LFW_DIR, IN_LFW_INDEX, OUT_LFW_INDEX, LFW_PICKS, CONF_FILE, OUT_DATA_NAME, TMP_DIR, OUT_DIR } = conf()
   if (OUT_DATA_NAME) log({ OUT_DATA_NAME })
   else return error(`'data zip' will not be created, because 'OUT_DATA_NAME' is not set in '${CONF_FILE}'.`)
   if (IN_LFW_DIR) log({ IN_LFW_DIR })
   else return error(`'${OUT_DATA_NAME}' will not be created, because 'IN_LFW_DIR' is not set in '${CONF_FILE}'.`)
   if (IN_LFW_INDEX) log({ IN_LFW_INDEX })
   else return error(`'${OUT_DATA_NAME}' will not be created, because 'IN_LFW_INDEX' is not set in '${CONF_FILE}'.`)
+  if (OUT_LFW_INDEX) log({ OUT_LFW_INDEX })
+  else return error(`'${OUT_DATA_NAME}' will not be created, because 'OUT_LFW_INDEX' is not set in '${CONF_FILE}'.`)
   if (LFW_PICKS) log({ LFW_PICKS })
   else return error(`'${OUT_DATA_NAME}' will not be created, because 'LFW_PICKS' is not set in '${CONF_FILE}'.`)
   if (TMP_DIR) log({ TMP_DIR })
@@ -54,7 +57,7 @@ export async function make_pick_zip() {
   const picks = await read_json<Partial<ITempDataLists>>(LFW_PICKS)
   picks.objects?.forEach(picked => {
     const oid = picked.id;
-    const item = outputs.objects.find(v => v.id === oid)
+    const item = inputs.objects.find(v => v.id === oid)
     if (!item) {
       warn(`oid ${JSON.stringify(oid)} not found in objects`);
       return;
@@ -170,14 +173,13 @@ export async function make_pick_zip() {
       Array.from(actions).join(',\n  ') +
       '\n]'
     warn(msg)
-
   }
 
   for (const a of file_pairs) {
     const [src, dst] = a.split('===>')
     await cp(src, dst, { recursive: true }).catch(e => error(e))
   }
-  await write_json(join(TMP_DIR, IN_LFW_INDEX), outputs)
+  await write_json(join(TMP_DIR, OUT_LFW_INDEX), outputs)
   await make_zip_and_json(TMP_DIR, OUT_DIR, OUT_DATA_NAME, (inf) => {
     inf.type = 'data';
     return inf;
