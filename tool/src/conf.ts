@@ -262,6 +262,13 @@ function read_conf(file?: string, handle_new_conf?: (conf: IConf) => void): ICon
   if (conf.IN_LF2_DIR && !conf.INDEX_FILE) conf.INDEX_FILE = join(conf.IN_LF2_DIR, 'data/data.txt').replace(/\\/g, '/')
 
   i_hate_backslash(conf)
+  for (const key in conf) {
+    const value = conf[key as keyof typeof conf];
+    if (!value) continue;
+    if (typeof value === 'string')
+      conf[key as keyof typeof conf] = value.replace(/\$datenow/g, '' + Date.now())
+  }
+
   return conf
 }
 

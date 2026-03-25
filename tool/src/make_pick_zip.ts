@@ -102,7 +102,7 @@ export async function make_pick_zip() {
           arraying(opoint.action).reduce<string[]>((r, v) => {
             r.push(...arraying(v.id))
             return r;
-          }, []).forEach(v => set.add(`oid:${data.id}(${data.base.name}).frames[${frame.id}] => oid:${v}`))
+          }, []).forEach(v => set.add(`by oid:${data.id}(${data.base.name}).frames[${frame.id}] => action:${v}`))
         })
       })
     })
@@ -167,7 +167,12 @@ export async function make_pick_zip() {
     await cp(src, dst, { recursive: true }).catch(e => error(e))
   }
   for (const [obj, actions] of depend_opoints) {
-    warn('depended:', obj, `actions:`, actions)
+    const msg = `not include object dependency found: ` +
+      JSON5.stringify(obj, null, 2) +
+      ` is a dependency of [\n  ` +
+      Array.from(actions).join(',\n  ') +
+      '\n]'
+    warn(msg)
 
   }
 

@@ -23,7 +23,7 @@
     "build:prel:rn": "node ./tool make-prel -c ./lf2s/rn/conf.json5 -d",
     "build:tool:data:rn": "npm run build:tool && npm run build:data:rn",
     "build:tool:prel:rn": "npm run build:tool && npm run build:prel:rn",
-    "pick:rn": "npm run build:tool && node ./tool pick -c ./lf2s/rn/pick-conf.json5",
+    "pick:rn": "npm run build:tool && node ./tool pick -c ./lf2s/rn/pick-conf.json5 -d",
     "txt:rn": "node ./tool dat-2-txt -c ./lf2s/rn/conf.json5 -d",
     "___deploy___": "___deploy___",
     "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.20 --LOCAL_PATH ./dist",
