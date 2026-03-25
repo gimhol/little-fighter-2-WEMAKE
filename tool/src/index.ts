@@ -32,15 +32,13 @@ async function main(): Promise<any> {
   const argv_2 = process.argv[2]
   switch (argv_2) {
     case CMDEnum.VERSION:
-      console.log(package_json.version)
+      log(package_json.version)
       return 'DONT_WAIT'
     case CMDEnum.MAKE_DATA:
       await make_data_zip();
-      await make_full_zip();
       return
     case CMDEnum.MAKE_PREL:
       await make_prel_zip();
-      await make_full_zip();
       return;
     case CMDEnum.ZIP_FULL:
       await make_full_zip();

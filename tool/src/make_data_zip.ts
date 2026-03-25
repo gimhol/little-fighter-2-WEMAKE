@@ -14,14 +14,13 @@ import { debug, error, log } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 import { write_file } from "./utils/write_file";
 
-export async function make_data_zip() {
-  debug(`make_data_zip()`)
+export async function make_data() {
+  debug(`make_data()`)
   const {
     IN_LF2_DIR,
     CONF_FILE,
     IN_EXTRA_DIR,
     OUT_DIR,
-    OUT_DATA_NAME,
     TMP_DIR,
     TMP_DAT_DIR,
     KEEP_MIRROR,
@@ -30,24 +29,22 @@ export async function make_data_zip() {
     IMAGE_SUFFIX,
     INDEX_FILE,
   } = conf();
-  if (!OUT_DATA_NAME)
-    return log(`'data zip' will not be created, because 'OUT_DATA_NAME' is not set in '${CONF_FILE}'.`)
   if (!IN_LF2_DIR)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'IN_LF2_DIR' is not set in '${CONF_FILE}'.`)
+    return log(`'data' will not be created, because 'IN_LF2_DIR' is not set in '${CONF_FILE}'.`)
   if (!OUT_DIR)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'OUT_DIR' is not set in '${CONF_FILE}'.`)
+    return log(`'data' will not be created, because 'OUT_DIR' is not set in '${CONF_FILE}'.`)
   if (!TMP_DIR)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'TMP_DIR' is not set in '${CONF_FILE}'.`)
+    return log(`'data' will not be created, because 'TMP_DIR' is not set in '${CONF_FILE}'.`)
   if (!TMP_DAT_DIR)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'TMP_DAT_DIR' is not set in '${CONF_FILE}'.`)
+    return log(`'data' will not be created, because 'TMP_DAT_DIR' is not set in '${CONF_FILE}'.`)
   if (!COPYS_SUFFIX)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'COPYS_SUFFIX' is not set in '${CONF_FILE}'.`)
+    return log(`'data' will not be created, because 'COPYS_SUFFIX' is not set in '${CONF_FILE}'.`)
   if (!AUDIO_SUFFIX)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'AUDIO_SUFFIX' is not set in '${CONF_FILE}'.`)
+    return log(`'data' will not be created, because 'AUDIO_SUFFIX' is not set in '${CONF_FILE}'.`)
   if (!IMAGE_SUFFIX)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'IMAGE_SUFFIX' is not set in '${CONF_FILE}'.`)
+    return log(`'data' will not be created, because 'IMAGE_SUFFIX' is not set in '${CONF_FILE}'.`)
   if (!INDEX_FILE)
-    return log(`'${OUT_DATA_NAME}' will not be created, because 'IMAGE_SUFFIX' is not set in '${INDEX_FILE}'.`)
+    return log(`'data' will not be created, because 'IMAGE_SUFFIX' is not set in '${INDEX_FILE}'.`)
 
   const cache_infos = await CacheInfos.create(
     path.join(TMP_DIR, "cache_infos.json5")
@@ -57,7 +54,7 @@ export async function make_data_zip() {
   try {
     indexes = await convert_data_txt(IN_LF2_DIR, TMP_DAT_DIR, INDEX_FILE);
   } catch (e) {
-    return error(`'${OUT_DATA_NAME}' will not be created, reason: ${e}\n`, e)
+    return error(`'data' will not be created, reason: ${e}\n`, e)
   }
   for (const src_path of ress.directories) {
     const dst_path = src_path.replace(IN_LF2_DIR, TMP_DAT_DIR);
@@ -200,19 +197,21 @@ export async function make_data_zip() {
     await fs.copyFile(src_path, dst_path);
     await cache_info.update();
   }
-
-  // for (const [key, value] of cache_infos.unuseds) {
-  //   for (const dst of value.dst) {
-  //     log("Remove Unused", dst);
-  //     await rm(dst).catch(e => { })
-  //   }
-  // }
   await cache_infos.save();
   await write_index_file(indexes, TMP_DAT_DIR);
+}
+export async function make_data_zip() {
+  debug(`make_data_zip()`)
+  const { TMP_DAT_DIR, OUT_DIR, OUT_DATA_NAME, CONF_FILE } = conf();
+  if (OUT_DATA_NAME) debug({ OUT_DATA_NAME })
+  else return log(`'data zip' will not be created, because 'OUT_DATA_NAME' is not set in '${CONF_FILE}'.`)
+  if (OUT_DIR) debug({ OUT_DIR })
+  else return log(`'${OUT_DATA_NAME}' will not be created, because 'OUT_DIR' is not set in '${CONF_FILE}'.`)
+  if (TMP_DAT_DIR) debug({ TMP_DAT_DIR })
+  else return log(`'${OUT_DATA_NAME}' will not be created, because 'TMP_DAT_DIR' is not set in '${CONF_FILE}'.`)
+  await make_data();
   await make_zip_and_json(TMP_DAT_DIR, OUT_DIR, OUT_DATA_NAME, (inf) => {
     inf.type = 'data';
     return inf;
   });
-
-
 }

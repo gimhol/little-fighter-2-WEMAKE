@@ -66,7 +66,7 @@ export async function make_pick_zip() {
     for (const oid of oids) {
       const item = input.find(v => v.id === oid)
       if (!item) {
-        warn(`oid ${oid} not found in ${type}`);
+        warn(`oid ${JSON.stringify(oid)} not found in ${type}`);
         continue;
       }
       output.push(item)
@@ -102,7 +102,7 @@ export async function make_pick_zip() {
           arraying(opoint.action).reduce<string[]>((r, v) => {
             r.push(...arraying(v.id))
             return r;
-          }, []).forEach(v => set.add(`${data.id}(${data.base.name})->${frame.id}===>${v}`))
+          }, []).forEach(v => set.add(`oid:${data.id}(${data.base.name}).frames[${frame.id}] => oid:${v}`))
         })
       })
     })
@@ -167,7 +167,7 @@ export async function make_pick_zip() {
     await cp(src, dst, { recursive: true }).catch(e => error(e))
   }
   for (const [obj, actions] of depend_opoints) {
-    warn(' depend object: ', obj, ` actions:`, actions)
+    warn('depended:', obj, `actions:`, actions)
 
   }
 
