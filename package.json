@@ -26,10 +26,9 @@
     "pick:rn": "npm run build:tool && node ./tool pick -c ./lf2s/rn/pick-conf.json5",
     "txt:rn": "node ./tool dat-2-txt -c ./lf2s/rn/conf.json5 -d",
     "___deploy___": "___deploy___",
-    "deploy": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR 0.1.20 --LOCAL_PATH ./dist",
-    "deploy:rn": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR rn/0.1.20 --LOCAL_PATH ./dist",
-    "deploy:rn-temp": "fdeploy -s oss -i deployer.private.json5 -p ./lf2s/rn/upload-zip-file.config.json5",
-    "deploy:docs": "fdeploy -s oss -i deployer.private.json5 -p deployer.config.json5 --REMOTE_DIR docs --LOCAL_PATH docs",
+    "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.20 --LOCAL_PATH ./dist",
+    "deploy:rn": "fdeploy -s oss --REMOTE_DIR rn/0.1.20 --LOCAL_PATH ./dist",
+    "deploy:docs": "fdeploy -s oss --REMOTE_DIR docs --LOCAL_PATH docs",
     "___flow___": "___flow___",
     "flow": "npm run build && npm run deploy",
     "flow:rn": "npm run build && npm run deploy:rn",
@@ -37,7 +36,10 @@
     "json3": "ts-json-schema-generator --path src/LF2/defines/IDataLists.ts > .vscode/schema/idx.schema.json5",
     "json4": "ts-json-schema-generator --path src/LF2/defines/IEntityData.ts --type IEntityData > .vscode/schema/obj.schema.json5",
     "json5": "ts-json-schema-generator --path src/LF2/ui/IUIInfo.dat.ts --type IUIInfo > .vscode/schema/ui.schema.json5",
-    "json6": "ts-json-schema-generator --path src/LF2/defines/IItrInfo.ts --type IItrInfo > .vscode/schema/itr.schema.json5"
+    "json6": "ts-json-schema-generator --path src/LF2/defines/IItrInfo.ts --type IItrInfo > .vscode/schema/itr.schema.json5",
+    "__OTHERS___": "__OTHERS___",
+    "save:rn": "node ./script/save-rn.mjs",
+    "load:rn": "node ./script/load-rn.mjs"
   },
   "dependencies": {
     "@fimagine/dom-hooks": "^1.0.6",
