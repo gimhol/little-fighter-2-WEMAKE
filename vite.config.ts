@@ -23,5 +23,11 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    watch: {
+      ignored: [
+        './.vscode/**', './temp/**', './art/**', './docs/**', './lf2s/**',
+        './server/**', './script/**', './release/**'
+      ]
+    }
   }
 })
