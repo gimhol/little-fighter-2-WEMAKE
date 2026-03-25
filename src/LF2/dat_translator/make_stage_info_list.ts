@@ -1,14 +1,15 @@
 import { Difficulty } from "../defines/Difficulty";
-import { StageActions } from "../defines/StageActions"
 import { IStageInfo } from "../defines/IStageInfo";
 import { IStageObjectInfo } from "../defines/IStageObjectInfo";
 import { IStagePhaseInfo } from "../defines/IStagePhaseInfo";
+import { StageActions } from "../defines/StageActions";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";
 import { match_hash_end } from "../utils/string_parser/match_hash_end";
 import { take_blocks } from "../utils/string_parser/take_blocks";
 import { to_num } from "../utils/type_cast/to_num";
 
-export function make_stage_info_list(full_str: string): IStageInfo[] | void {
+export function make_stage_info_list(full_str: string): IStageInfo[] {
+  full_str = full_str.replace(/\\\\/g, "/");
   full_str = full_str.replace(
     /<phase_end>[\n|\s|\r]*<stage>/g,
     "<phase_end><stage_end><stage>",
@@ -159,7 +160,6 @@ export function make_stage_info_list(full_str: string): IStageInfo[] | void {
 
   for (const stage_info of stage_infos) {
     const first_phase = stage_info.phases[0];
-    if (!first_phase) return;
     first_phase.cam_jump_to_x = 0;
     first_phase.player_jump_to_x = 0;
     first_phase.player_facing = 1;

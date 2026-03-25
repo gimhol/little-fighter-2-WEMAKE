@@ -70,7 +70,7 @@ export const hit_flag_name_map: Record<HitFlag, string> = {
   [HitFlag.AllType]: "AllType",
   [HitFlag.AllEnemy]: "AllEnemy",
   [HitFlag.AllAlly]: "AllAlly",
-  [HitFlag.AllBoth]: "AllBoth     ",
+  [HitFlag.AllBoth]: "AllBoth",
   [HitFlag.EnemyFighter]: "EnemyFighter",
   [HitFlag.EnemyWeapon]: "EnemyWeapon",
   [HitFlag.AllyFighter]: "AllyFighter",

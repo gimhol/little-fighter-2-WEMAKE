@@ -17,6 +17,7 @@ import { Randoming } from "../helper/Randoming";
 import { is_non_blank_str, is_str } from "../utils/type_check";
 import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
+import { preprocess_bot_data } from "./preprocess_bot_data";
 import { preprocess_entity_data } from "./preprocess_entity_data";
 import { preprocess_stage } from "./preprocess_stage";
 
@@ -44,6 +45,7 @@ class Inner {
   }
   data_list_map = create_data_list_map();
   data_map = new Map<string, IEntityData>();
+  alias_map = new Map<string, IEntityData>();
   stages: IStageInfo[] = [Defines.VOID_STAGE];
   bot_map = new Map<string, IBotData>();
 
@@ -66,6 +68,7 @@ class Inner {
     else if (is_fighter_data(data))
       Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
     if (is_entity_data(data)) {
+      data.base.bot
       if (data.base.bot_id) {
         data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id)
       };
@@ -73,20 +76,29 @@ class Inner {
     }
     return data;
   }
-
-  private _add_obj(index_id: string | number, data: IEntityData) {
-    const _index_id = "" + index_id;
-    if (this.data_map.has(_index_id)) {
+  private _add_alias(alias: string, data: IEntityData) {
+    const prev = this.alias_map.get(alias)
+    if (prev) {
+      Ditto.warn(
+        DatMgr.TAG + "::_add_obj",
+        "alias duplicated, old data will be overwritten!",
+        "old data:", prev,
+        "new data:", data,
+      );
+    }
+    this.alias_map.set(alias, data);
+  }
+  private _add_obj(id: string, data: IEntityData) {
+    const prev = this.data_map.get(id)
+    if (prev) {
       Ditto.warn(
         DatMgr.TAG + "::_add_obj",
         "id duplicated, old data will be overwritten!",
-        "old data:",
-        this.data_map.get(_index_id),
-        "new data:",
-        data,
+        "old data:", prev,
+        "new data:", data,
       );
     }
-    this.data_map.set(_index_id, data);
+    this.data_map.set(id, data);
     const list = this.data_list_map[data.type]
     const idx = list.findIndex(v => v.id === data.id)
     if (idx < 0) list.push(data); else list[idx] = data;
@@ -117,7 +129,6 @@ class Inner {
     for (const file of index_files) {
       const { objects = [], backgrounds = [], stages = [], bots = [] } = await this.lf2.import_json<Partial<IDataLists>>(file, true)
         .then(r => r[0]).catch(e => { Ditto.warn(`FAIL TO LOAD DAT INDEX ${file}, ` + e); return {} as Partial<IDataLists> });
-
       data.objects.push(...objects)
       data.backgrounds.push(...backgrounds)
       data.stages.push(...stages)
@@ -127,30 +138,32 @@ class Inner {
     if (this.cancelled) throw new Error("cancelled");
     for (const { id, file } of data.bots) {
       this.lf2.on_loading_content(`${file}`, 0);
-      const bot_data = await this.lf2.import_json<IBotData>(file, true)
+      const raw = await this.lf2.import_json<IBotData>(file, true)
         .then(r => {
           return r[0]
         }).catch(e => {
           Ditto.warn(`FAILED TO LOAD BOT DATA: ${file}`);
           return undefined
         });
-      if (bot_data) {
-        this.bot_map.set(id, bot_data);
-        if (id != file) this.bot_map.set(file, bot_data);
-        if (id != bot_data.id) this.bot_map.set(bot_data.id, bot_data);
-      }
+      if (this.cancelled) throw new Error("cancelled");
+
+      if (!raw) continue;
+      const bot_data = preprocess_bot_data(raw);
+      this.bot_map.set(id, bot_data);
+      if (id != file) this.bot_map.set(file, bot_data);
+      if (id != bot_data.id) this.bot_map.set(bot_data.id, bot_data);
     }
 
-    for (const { id, file } of data.objects) {
+    for (const { id, file, alias } of data.objects) {
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.on_loading_content(`${file}`, 0);
         const raw = await this.lf2.import_json<IEntityData>(file, true).then(r => r[0])
         const cooked = await this._cook_data(raw) as IEntityData;
-
         this._add_obj(id, cooked);
         if (id != file) this._add_obj(file, cooked);
         if (id != cooked.id) this._add_obj(cooked.id, cooked);
+        if (alias) this._add_alias(alias, cooked)
       } catch (e) {
         throw new Error(`fail to load obj: ${file}, reason: ${e}`)
       }
@@ -243,10 +256,12 @@ export default class DatMgr {
     return this._inner.stages;
   }
 
-  find(id: number | string): IEntityData | undefined {
-    return this._inner.data_map.get("" + id);
+  find(id: string): IEntityData | undefined {
+    return this._inner.alias_map.get(id) ?? this._inner.data_map.get(id);
   }
-
+  find_bot(id: string): IBotData | undefined {
+    return this._inner.bot_map.get(id)
+  }
   private randomings = new Map<string, Randoming<IEntityData>>();
   get_randoming_by_group(group: string) {
     let ret = this.randomings.get(group);

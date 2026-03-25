@@ -33,6 +33,7 @@ import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
+import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
 import { Times } from "./ui";
 import { abs, is_num, max, min, round } from "./utils";
@@ -60,11 +61,13 @@ export class World extends WorldDataset {
   private _counts = new Map<string, number>()
   get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time }
+  private _released_tickers = new Set<Ticker>();
+  readonly tickers = new Set<Ticker>();
+  readonly ticker_pool: Ticker[] = [];
 
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
-  readonly ghosts = new Set<Entity>();
   /** 
    * 被玩家操作的角色 
    * 键: 玩家ID
@@ -157,12 +160,6 @@ export class World extends WorldDataset {
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
   }
-  add_ghosts(...entities: Entity[]) {
-    for (const entity of entities) {
-      this.ghosts.add(entity);
-      this.renderer.add_entity(entity);
-    }
-  }
   add_entities(...entities: Entity[]) {
     for (const entity of entities) {
       if (is_fighter(entity)) {
@@ -204,20 +201,8 @@ export class World extends WorldDataset {
     return ret;
   }
 
-  del_entity(entity: Entity) {
-    if (!(this.entities.delete(entity) || this.ghosts.delete(entity)))
-      return false;
-    this.entity_map.delete(entity.id)
-    if (is_fighter(entity))
-      this.callbacks.emit("on_fighter_del")(entity);
-    const player = this.lf2.players.get(entity.ctrl.player_id)
-    if (player) player.fighter = void 0
-    const ok = this.puppets.delete(entity.ctrl.player_id);
-    if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
-    this.renderer.del_entity(entity);
-    entity.dispose();
-    Factory.inst.release(entity)
-    return true;
+  del_entity(entity: Entity): boolean {
+    return this.gones.has(entity)
   }
 
   del_entities(entities: Entity[]) {
@@ -371,7 +356,7 @@ export class World extends WorldDataset {
     }
   }
 
-  private gone_entities: Entity[] = [];
+  private gones = new Set<Entity>();
   private _chasers = new Set<Entity>();
   add_chaser(entity: Entity) {
     this._chasers.add(entity);
@@ -516,14 +501,13 @@ export class World extends WorldDataset {
     this._game_time.add();
 
     if (this.stage.world_pause) {
-      this.stage.update();
+      this.bg.update();
       return;
     }
 
     const { game_time } = this;
     const { size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
-    this.gone_entities.length = 0;
     this.v_collisions.length = 0;
     this.a_collisions.clear();
     this._used_itrs.clear()
@@ -541,10 +525,11 @@ export class World extends WorldDataset {
     }
 
     for (const e of this.entities) {
-      if (update_chasing && this._chasers.size)
+      const { is_ghost } = e;
+      if (!is_ghost && update_chasing && this._chasers.size)
         for (const c of this._chasers)
           c.update_chasing(e)
-      if (update_collisions) {
+      if (!is_ghost && update_collisions) {
         const a_ctrl = e.ctrl
         for (const b of this._temp_entitis_set) {
           const b_ctrl = b.ctrl;
@@ -568,10 +553,11 @@ export class World extends WorldDataset {
         e.frame.id === Builtin_FrameId.Gone ||
         e.frame.state === StateEnum.Gone
       ) {
-        this.gone_entities.push(e);
+        e.hp = e.hp_r = 0;
+        this.gones.add(e);
         continue;
       }
-      this._temp_entitis_set.add(e);
+      if (!is_ghost) this._temp_entitis_set.add(e);
     }
     if (update_collisions) {
       for (const c of this.v_collisions)
@@ -579,17 +565,37 @@ export class World extends WorldDataset {
       for (const [, c] of this.a_collisions)
         collisions_keeper.handle(c)
     }
-    for (const e of this.ghosts) {
-      e.update();
-      if (
-        e.frame.id === Builtin_FrameId.Gone ||
-        e.frame.state === StateEnum.Gone
-      ) {
-        this.gone_entities.push(e);
-      }
+
+    for (const entity of this.gones) {
+      const attached = this.entities.delete(entity)
+      if (!attached) continue;
+      this.entity_map.delete(entity.id)
+      if (is_fighter(entity))
+        this.callbacks.emit("on_fighter_del")(entity);
+      const player = this.lf2.players.get(entity.ctrl.player_id)
+      if (player) player.fighter = void 0
+      const ok = this.puppets.delete(entity.ctrl.player_id);
+      if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
+      this.renderer.del_entity(entity);
+
+      entity.release();
+      Factory.inst.release(entity)
     }
-    this.del_entities(this.gone_entities);
+    this.gones.clear()
     this.stage.update();
+
+    this._released_tickers.clear()
+    for (const ticker of this.tickers) {
+      if (ticker.released)
+        this._released_tickers.add(ticker)
+      else
+        ticker.add()
+    }
+    for (const ticker of this._released_tickers) {
+      this.tickers.delete(ticker);
+      this.ticker_pool.push(ticker)
+    }
+    this._released_tickers.clear()
   }
 
   render_once(dt: number) {
@@ -922,12 +928,18 @@ export class World extends WorldDataset {
     this.infinity_mp = 0;
     this.playrate = 1;
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
-    this.ghosts.forEach(v => v.set_frame(GONE_FRAME_INFO))
-    this.buffs.forEach(v => v.life.loop(v.life.max = v.life.min = 0))
+    this.buffs.forEach(v => v.life.set_lifes(v.life.max = v.life.min = 0))
     this.lf2.change_stage(Defines.VOID_STAGE)
     this.lf2.change_bg(Defines.VOID_BG)
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;
+  }
+
+  ticker(): Ticker {
+    let ret = this.ticker_pool.pop();
+    if (!ret) this.tickers.add(ret = new Ticker(this.lf2));
+    else ret.reborn()
+    return ret;
   }
 }

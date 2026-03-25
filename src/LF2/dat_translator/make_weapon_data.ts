@@ -8,6 +8,7 @@ import { round_float } from "../utils/math/round_float";
 import { to_num } from "../utils/type_cast/to_num";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_itr_prefabs } from "./make_itr_prefabs";
+import { make_weapon_special } from "./make_weapon_special";
 import { set_hit_flag } from "./set_hit_flag";
 import { take } from "./take";
 
@@ -46,7 +47,7 @@ const indexes_map: Record<WeaponType, IFrameIndexes> = {
 
 export function make_weapon_data(ctx: IDatContext): IEntityData {
   const { base: info, frames, text: full_str, index: datIndex } = ctx
-  info.name = datIndex.hash ?? datIndex.file.replace(/[^a-z|A-Z|0-9|_]/g, "");
+  info.name = datIndex.hash ?? datIndex.file.split('/').slice(-1)[0].replace(/[^a-z|A-Z|0-9|_]/g, "-").replace(/-obj-json5$/, '');
   switch ('' + datIndex.type) {
     case "1":
       info.bounce = 0.2;
@@ -140,8 +141,8 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
   indexes.in_the_skys = in_the_skys.length ? in_the_skys : void 0
   indexes.throwings = in_the_skys.length ? throwings : void 0;
   indexes.on_hands = on_hands.length ? on_hands : void 0;
-  return {
-    id: "",
+  const ret = {
+    id: datIndex.id,
     on_dead: { id: Builtin_FrameId.Gone },
     type: EntityEnum.Weapon,
     base: info,
@@ -149,4 +150,6 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
     frames,
     indexes,
   };
+  make_weapon_special(ret);
+  return ret;
 }

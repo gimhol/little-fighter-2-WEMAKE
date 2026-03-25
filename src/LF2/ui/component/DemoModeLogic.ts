@@ -1,26 +1,56 @@
+import FSM from "@/LF2/base/FSM";
 import { Entity } from "@/LF2/entity";
 import { new_team } from "../../base";
-import { Defines, EntityGroup } from "../../defines";
+import { Defines, EntityGroup, GameKey } from "../../defines";
 import { Factory } from "../../entity/Factory";
 import IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
 import { traversal } from "../../utils/container_help/traversal";
 import { floor } from "../../utils/math/base";
-import { UINode } from "../UINode";
 import { UITextLoader } from "../UITextLoader";
 import { CameraCtrl } from "./CameraCtrl";
+import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
+import { IUIKeyEvent } from "../IUIKeyEvent";
+import { Times } from "@/LF2/utils/Times";
+class FSMState extends ComponentFSMState<number, DemoModeLogic> {
+  override readonly key: number = 0
+  get fsm() { return this.owner.fsm }
+}
+class FSMState_BeforeEnd extends FSMState {
+  override readonly key: number = 1;
+  override update() {
+    if (this.fsm.state_time > 3000)
+      return 2;
+  }
+}
+class FSMState_End extends FSMState {
+  override readonly key: number = 2;
+  override enter(): void {
+    this.lf2.sounds.play_preset("end");
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(true);
+  }
+  override leave(): void {
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(false);
+  }
+}
 
 export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   static override readonly TAG = 'DemoModeLogic'
-  score_board!: UINode
-  time: number = 0;
+  readonly fsm = new FSM<number, FSMState>().add(
+    new FSMState(this),
+    new FSMState_BeforeEnd(this),
+    new FSMState_End(this)
+  )
+  protected weapon_drop_timer = new Times(0, 1200);
   override on_start(): void {
     super.on_start?.();
+    this.fsm.use(0)
 
     this.node.search_child("curr_focus")!.visible = false
-    this.score_board = this.node.find_child("score_board")!
 
     const bg_data = this.lf2.mt.pick(this.lf2.datas.backgrounds);
     if (bg_data) this.lf2.change_bg(bg_data);
@@ -153,11 +183,8 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
 
     // 大于一队，继续打
     if (team_remains > 1) return;
-
-    this.lf2.sounds.play_preset("end");
-    this.score_board.visible = true;
+    this.fsm.use(1)
   }
-  override on_show(): void { }
 
   protected _cam_ctrl?: CameraCtrl;
   protected _staring?: Entity | undefined;
@@ -170,6 +197,10 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   protected txt_loader = new UITextLoader(() => this.node.search_child("curr_focus"))
 
   override update(dt: number): void {
+    this.fsm.update(dt)
+    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) <= 2) {
+      this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+    }
     const staring = this.cam_ctrl?.staring
     // TODO
     if (this._staring !== staring || this._free != !!this.cam_ctrl?.free) {
@@ -183,6 +214,21 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
         this.node.search_child("curr_focus")!.visible = false
       }
       this._staring = staring
+    }
+  }
+  override on_key_down(e: IUIKeyEvent): void {
+    switch (e.game_key) {
+      case GameKey.a:
+      case GameKey.j: {
+        if (
+          this.fsm.state?.key == 2 &&
+          this.fsm.state_time > 1000
+        ) {
+          e.stop_immediate_propagation();
+          this.lf2.pop_ui()
+        }
+        break;
+      }
     }
   }
 }

@@ -256,7 +256,6 @@ function App() {
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
     const lf2 = ref_lf2.current = new LF2(dev == '1');
     lf2.lang = lang;
-
     (window as any).LF2 = LF2;
 
     function print_ui_tree(node = LF2.ui) {
@@ -324,8 +323,19 @@ function App() {
     }
     _set_is_fullscreen(!!fullscreen.target);
     _set_paused(lf2.world.paused);
+
+    const visibilitychange = () => lf2.sounds.set_muted(document.hidden)
+    const blur = () => lf2.sounds.set_muted(true)
+    const focus = () => lf2.sounds.set_muted(false)
+
+    document.addEventListener('visibilitychange', visibilitychange);
+    window.addEventListener('blur', blur);
+    window.addEventListener('focus', focus);
     return () => {
       window.removeEventListener("touchstart", on_touchstart)
+      document.removeEventListener('visibilitychange', visibilitychange);
+      window.removeEventListener('blur', blur);
+      window.removeEventListener('focus', focus);
       del_lf2_callback();
       lf2.dispose()
     };
@@ -666,8 +676,7 @@ function App() {
         <Combine>
           <ToggleButton
             onChange={(v) => lf2?.sounds.set_muted(v)}
-            value={s.muted}
-          >
+            value={s.muted} >
             <>音量</>
             <>静音</>
           </ToggleButton>

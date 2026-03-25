@@ -4,9 +4,6 @@ import type { Entity } from "../entity/Entity";
 import WeaponState_Base from "./WeaponState_Base";
 
 export default class WeaponState_InTheSky extends WeaponState_Base {
-  override get_gravity(e: Entity) {
-    return e.world.gravity;
-  }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     this._hit_ground_weapons.add(e);
   }

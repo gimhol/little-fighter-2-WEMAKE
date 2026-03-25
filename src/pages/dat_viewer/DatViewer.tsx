@@ -5,9 +5,9 @@ import { Button } from "../../Component/Buttons/Button";
 import { Flex } from "../../Component/Flex";
 import Frame from "../../Component/Frame";
 import { ITextAreaRef, TextArea } from "../../Component/TextArea";
-import dat_to_json from "@/LF2/dat_translator/dat_2_json";
+import obj_dat_to_json from "@/LF2/dat_translator/obj_dat_to_json";
 import decode_lf2_dat from "@/LF2/dat_translator/decode_lf2_dat";
-import { read_indexes } from "@/LF2/dat_translator/read_indexes";
+import { parase_indexes } from "@/LF2/dat_translator/parase_indexes";
 import { IDataLists } from "@/LF2/defines";
 import { open_dir, read_file } from "../../Utils/open_file";
 import { FilesView } from "./FilesView";
@@ -35,7 +35,7 @@ export function DatViewer(props: IDatViewerProps) {
   const on_click_file = async (file: File) => {
     if (file.name.endsWith(".txt")) {
       const txt = await read_file(file, { as: "Text" }).then(v => v.replace(/\r/g, ""));
-      const data_indexes = read_indexes(txt, 'json5')
+      const data_indexes = parase_indexes(txt, 'json5')
       if (typeof data_indexes == 'string')
         console.error(data_indexes)
       else
@@ -52,9 +52,10 @@ export function DatViewer(props: IDatViewerProps) {
       const json5_file_name = 'data/' + file.name.replace(/\.dat$/, ".json5").replace(/\\/g, "/");
       const index_info =
         ref_data_indexes.current?.objects.find((v) => json5_file_name === v.file) ||
-        ref_data_indexes.current?.backgrounds.find((v) => json5_file_name === v.file);
+        ref_data_indexes.current?.backgrounds.find((v) => json5_file_name === v.file) ||
+        ref_data_indexes.current?.stages.find((v) => json5_file_name === v.file);
       if (!index_info) debugger
-      const data = dat_to_json(str_dat, index_info!);
+      const data = obj_dat_to_json(str_dat, index_info!); // TODO!!
       _ref_txt_dat.current = str_dat;
       _ref_txt_json.current = json5.stringify(data, null, 2);
       if (_ref_textarea_dat.current)

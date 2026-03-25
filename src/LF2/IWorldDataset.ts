@@ -1,11 +1,14 @@
 import { Difficulty } from "./defines/Difficulty";
+import { fields, float, int, invalid } from "./fields";
 
 export interface IWorldDataset {
   /** 被击中的对象晃动多少帧 */
   itr_shaking: number;
 
-  /** 击中敌人的对象停顿多少帧 */
+  /** 角色 击中敌人的对象停顿多少帧 */
   itr_motionless: number;
+  /** 波 击中敌人的对象停顿多少帧 */
+  ball_itr_motionless: number;
 
   itr_arest: number;
 
@@ -139,6 +142,7 @@ export interface IWorldDataset {
   screen_w: number;
   screen_h: number;
   gravity: number;
+  gravity_d: number;
   weapon_throwing_gravity: number;
   sync_render: number;
 
@@ -193,36 +197,10 @@ export interface IWorldDataset {
   wvy_f: number;
   wvz_f: number;
 }
-interface IFieldInfo {
-  key: keyof IWorldDataset;
-  title?: string;
-  type: '' | 'int' | 'float' | 'boolean';
-  desc?: string;
-  min?: number;
-  max?: number;
-  step?: number;
-}
 
-type IRet = Omit<IFieldInfo, 'key'>
-type IArg = string | Omit<IFieldInfo, 'key' | 'type'>
-const { assign } = Object
-function w(type: IFieldInfo['type'], ...args: IArg[]): IRet {
-  const ret: IRet = { type }
-  for (let i = 0; i < args.length; i++) {
-    const v = args[i];
-    if (i == 0 && typeof v === 'string') ret.title = v
-    if (i == 0 && typeof v === 'object') assign(ret, v)
-    if (i == 1 && typeof v === 'string') ret.desc = v
-    if (i == 1 && typeof v === 'object') assign(ret, v)
-    if (i > 1 && typeof v === 'object') assign(ret, v)
-  }
-  return ret
-}
-const float = assign((...p: IArg[]): IRet => w('float', ...p), w('float'))
-const int = assign((...p: IArg[]): IRet => w('int', ...p), w('int'))
-const invalid = assign((...p: IArg[]): IRet => w('', ...p), w(''))
-const fields: Record<keyof IWorldDataset, IRet> = {
+export const world_dataset_fields = fields<IWorldDataset>({
   gravity: float("重力"),
+  gravity_d: float("重力D"),
   jump_x_f: float("跳跃X速度系数"),
   jump_h_f: float("跳跃Y速度系数"),
   jump_z_f: float("跳跃Z速度系数"),
@@ -238,7 +216,8 @@ const fields: Record<keyof IWorldDataset, IRet> = {
   double_click_interval: int("双击判定时长"),
   key_hit_duration: int("按键判定时长"),
   itr_shaking: int("受伤摇晃时长"),
-  itr_motionless: int("命中停顿时长"),
+  itr_motionless: int("角色命中停顿时长"),
+  ball_itr_motionless: int("波命中停顿时长"),
   hp_healing_ticks: int("治疗回血周期", "治疗效果下，每几帧回血一次"),
   hp_healing_value: int("治疗回血量", "治疗效果下，每次回血多少"),
   fvx_f: float("frame.dvx缩放系数"),
@@ -304,10 +283,4 @@ const fields: Record<keyof IWorldDataset, IRet> = {
   dash_distancez: float,
   rowing_height: float,
   rowing_distance: float,
-}
-export const world_dataset_field_map = new Map<string, IFieldInfo>()
-for (const k in fields) {
-  const key = k as keyof IWorldDataset
-  const value = assign(fields[key], { key })
-  world_dataset_field_map.set(key, value)
-}
+})

@@ -14,6 +14,7 @@ import { is_json } from "./utils/is_file";
 import { log } from "./utils/log";
 import { read_dir_info_json } from "./utils/read_dir_info_json";
 import { waitForKeyPress } from "./waitForKeyPress";
+import { make_pick_zip } from "./make_pick_zip";
 
 enum CMDEnum {
   MAIN = "main",
@@ -24,21 +25,20 @@ enum CMDEnum {
   ZIP_FULL = 'zip-full',
   PRINT_CONF = 'print-conf',
   VERSION = 'version',
+  PICK = 'pick'
 }
 
 async function main(): Promise<any> {
   const argv_2 = process.argv[2]
   switch (argv_2) {
     case CMDEnum.VERSION:
-      console.log(package_json.version)
+      log(package_json.version)
       return 'DONT_WAIT'
     case CMDEnum.MAKE_DATA:
       await make_data_zip();
-      await make_full_zip();
       return
     case CMDEnum.MAKE_PREL:
       await make_prel_zip();
-      await make_full_zip();
       return;
     case CMDEnum.ZIP_FULL:
       await make_full_zip();
@@ -61,6 +61,8 @@ async function main(): Promise<any> {
       delete json.CONF_FILE;
       log(JSON.stringify(json, null, 2))
       return;
+    case CMDEnum.PICK:
+      return await make_pick_zip();
     case CMDEnum.HELP:
       return show_main_usage();
     default:
@@ -116,3 +118,4 @@ main().then((r) => {
   log(e)
   if (!dont_wait()) waitForKeyPress();
 })
+

@@ -1,10 +1,11 @@
 import { GK, O_ID, TeamEnum } from "@/LF2/defines";
-import { Entity, Factory } from "@/LF2/entity";
-import { TestsState } from "./TestsState";
+import { Entity } from "@/LF2/entity";
+import { TestCase } from "../TestCase";
 
 
-export class LOUIS_JUMP_ATTACK_TEST extends TestsState {
-  override readonly key: number = ++TestsState.KEY;
+export class LOUIS_JUMP_ATTACK extends TestCase {
+  override readonly key: number = ++TestCase.KEY;
+  override name: string = 'Normal Jump / Small Jump'
   louis1: Entity | null = null;
   louis2: Entity | null = null;
   bandit1: Entity | null = null;
@@ -22,12 +23,9 @@ export class LOUIS_JUMP_ATTACK_TEST extends TestsState {
     }
   }
   override enter(): void {
-    const louis_data = this.lf2.datas.find_fighter(O_ID.Louis);
-    const bandit_data = this.lf2.datas.find_fighter(O_ID.Bandit);
-    if (!louis_data || !bandit_data) return;
     do {
-      const louis = this.louis1 = Factory.inst.create_entity(louis_data.type, this.world, louis_data) || null;
-      const bandit = this.bandit1 = Factory.inst.create_entity(bandit_data.type, this.world, bandit_data) || null;;
+      const louis = this.louis1 = this.spawn(O_ID.Louis);
+      const bandit = this.bandit1 = this.spawn(O_ID.Bandit);
       if (!louis || !bandit) return;
       louis.set_position(this.midX - 125, 0, this.midZ);
       louis.team = TeamEnum.Team_1;
@@ -42,8 +40,8 @@ export class LOUIS_JUMP_ATTACK_TEST extends TestsState {
     } while (0);
 
     do {
-      const louis = this.louis2 = Factory.inst.create_entity(louis_data.type, this.world, louis_data) || null;
-      const bandit = this.bandit2 = Factory.inst.create_entity(bandit_data.type, this.world, bandit_data) || null;;
+      const louis = this.louis2 = this.spawn(O_ID.Louis);
+      const bandit = this.bandit2 = this.spawn(O_ID.Bandit);
       if (!louis || !bandit) return;
       louis.set_position(this.midX + 75, 0, this.midZ);
       louis.team = TeamEnum.Team_1;

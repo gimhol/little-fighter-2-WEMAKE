@@ -1,4 +1,5 @@
-import { Defines, EntityGroup, GameKey, StageActions, type IStagePhaseInfo } from "../../defines";
+import FSM from "@/LF2/base/FSM";
+import { EntityGroup, GameKey, StageActions, type IStagePhaseInfo } from "../../defines";
 import type { Entity } from "../../entity";
 import type IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
@@ -8,21 +9,66 @@ import type IStageCallbacks from "../../stage/IStageCallbacks";
 import { traversal } from "../../utils/container_help/traversal";
 import { Times } from "../../utils/Times";
 import { IUIKeyEvent } from "../IUIKeyEvent";
-import { UINode } from "../UINode";
+import { ComponentFSMState } from "./ComponentFSMState";
 import { ComponentsPlayer } from "./ComponentsPlayer";
 import { FighterStatBar } from "./FighterStatBar";
 import { Jalousie } from "./Jalousie";
 import { UIComponent } from "./UIComponent";
-
+class FSMState extends ComponentFSMState<number, StageModeLogic> {
+  override readonly key: number = 0
+  get fsm() { return this.owner.fsm }
+}
+class FSMState_BeforeEnd extends FSMState {
+  override readonly key: number = 1;
+  override update() {
+    if (this.fsm.state_time > 3000)
+      return 2;
+  }
+}
+class FSMState_End extends FSMState {
+  override readonly key: number = 2;
+  override enter(): void {
+    this.lf2.sounds.play_preset("end");
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(true);
+  }
+  override leave(): void {
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(false);
+  }
+}
+class FSMState_BeforeWin extends FSMState {
+  override readonly key: number = 3;
+  override update() {
+    if (this.fsm.state_time > 3000)
+      return 4;
+  }
+}
+class FSMState_Win extends FSMState {
+  override readonly key: number = 4;
+  override enter(): void {
+    this.lf2.sounds.play_preset("pass");
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(true);
+  }
+  override leave(): void {
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(false);
+  }
+}
 export class StageModeLogic extends UIComponent {
   static override readonly TAG = 'StageModeLogic'
+  readonly fsm = new FSM<number, FSMState>().add(
+    new FSMState(this),
+    new FSMState_BeforeEnd(this),
+    new FSMState_End(this),
+    new FSMState_BeforeWin(this),
+    new FSMState_Win(this)
+  )
   jalousie?: Jalousie;
   gogogo?: ComponentsPlayer;
   gogogo_loop?: ComponentsPlayer;
-  score_board!: UINode;
-  protected state: 0 | 1 | 2 = 0;
   protected weapon_drop_timer = new Times(0, 1200);
-  protected gameover_timer = new Times(0, 180);
   protected entity_callbacks: IEntityCallbacks = {
     on_dead: () => {
       // 队伍存活计数
@@ -44,13 +90,11 @@ export class StageModeLogic extends UIComponent {
 
       // 大于0队，继续打
       if (team_remains > 0) {
-        this.state = 0;
-        this.gameover_timer.reset()
+        this.fsm.use(0);
       } else {
-        this.state = 1;
+        this.fsm.use(1);
       }
     }
-
   }
   protected world_callbacks: IWorldCallbacks = {
     on_fighter_add: (entity: Entity): void => {
@@ -68,13 +112,7 @@ export class StageModeLogic extends UIComponent {
       if (this.jalousie) this.jalousie.open = true;
     }
   }
-  protected reset() {
-    this.gameover_timer.reset()
-    this.state = 0;
-    this.world.paused = false;
-    this.world.playrate = 1;
-    this.world.infinity_mp = 0;
-  }
+
   protected stage_callbacks: IStageCallbacks = {
     on_phase_changed: (
       stage: Stage,
@@ -83,7 +121,6 @@ export class StageModeLogic extends UIComponent {
     ) => {
       this.debug('on_phase_changed', stage, curr, prev)
       if (stage.is_chapter_finish) return;
-      this.score_board.visible = false;
       if (!prev) {
         this.gogogo?.stop();
         this.gogogo?.node.set_visible(false)
@@ -99,8 +136,7 @@ export class StageModeLogic extends UIComponent {
     },
     on_chapter_finish: (stage: Stage) => {
       this.debug('on_chapter_finish', stage)
-      this.lf2.sounds.play_preset("pass");
-      this.score_board.visible = true;
+      this.fsm.use(3)
     },
     on_requrie_goto_next_stage: (stage: Stage) => {
       this.debug('on_requrie_goto_next_stage', stage)
@@ -124,7 +160,6 @@ export class StageModeLogic extends UIComponent {
   override on_start(): void {
     super.on_start?.();
     if (this.world.paused) this.world.paused = false;
-    this.score_board = this.node.find_child("score_board")!
     this.jalousie = this.node.search_component(Jalousie)
     this.gogogo = this.node.search_component(ComponentsPlayer, "play_gogogo")
     this.gogogo_loop = this.node.search_component(ComponentsPlayer, "play_gogogo_loop")
@@ -158,19 +193,19 @@ export class StageModeLogic extends UIComponent {
       if (!stat_bar) break;
       stat_bar.set_entity(fighter)
     }
-    this.reset()
-  }
-  override on_stop(): void {
-    this.world.clear()
-  }
-  override on_resume(): void {
+    this.fsm.use(0);
+    this.world.paused = false;
+    this.world.playrate = 1;
+    this.world.infinity_mp = 0;
     this.lf2.world.stage.callbacks.add(this.stage_callbacks);
     this.lf2.world.callbacks.add(this.world_callbacks);
   }
-  override on_pause(): void {
+  override on_stop(): void {
+    this.world.clear()
     this.lf2.world.stage.callbacks.del(this.stage_callbacks)
     this.lf2.world.callbacks.del(this.world_callbacks);
   }
+
   override update(dt: number): void {
     if (
       !this.world.paused &&
@@ -182,22 +217,25 @@ export class StageModeLogic extends UIComponent {
     }
     if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
       this.lf2.goto_next_stage()
+      this.fsm.use(0)
       this.jalousie.open = true;
     }
-    if (this.state === 1 && this.gameover_timer.add()) {
-      this.state = 2
-      this.lf2.sounds.play_preset("end");
-      this.score_board.visible = true;
-    }
+    this.fsm.update(dt)
   }
   override on_key_down(e: IUIKeyEvent): void {
     switch (e.game_key) {
       case GameKey.a:
       case GameKey.j: {
-        if (this.world.stage.is_chapter_finish) {
-          e.stop_immediate_propagation();
+        if (
+          this.fsm.state?.key === 4 &&
+          this.fsm.state_time > 1000
+        ) {
           this.lf2.goto_next_stage();
-        } else if (this.state == 2) {
+          this.fsm.use(0)
+        } else if (
+          this.fsm.state?.key === 2 &&
+          this.fsm.state_time > 1000
+        ) {
           this.lf2.pop_ui_safe()
         }
         break;

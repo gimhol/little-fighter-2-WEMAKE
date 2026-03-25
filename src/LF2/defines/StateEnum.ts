@@ -69,15 +69,13 @@ export enum StateEnum {
   BurnRun = 19,
 
   /**
-   * 此状态下，在空中时(position.y > ground_y)，wait结束不会进入到next中.
-   *
-   * 但会在落地(position.y == 0)时进入next
+   * 原版中:   此状态下，落地(position.y == 0)时进入94帧
    * 
-   * 原版中：落地将进入94帧
+   * WEMAKE中: 通过on_landing实现
+   *           on_landing可用于任意帧中
    * @link https://www.lf-empire.de/lf2-empire/data-changing/reference-pages/182-states?start=21
-   * 
    */
-  NextAsLanding = 100,
+  LandGoto94 = 100,
 
   /**
    * 原版中：此state，用于支持根据上下键与dvz控制角色Z轴移动，比如Deep的D>J。

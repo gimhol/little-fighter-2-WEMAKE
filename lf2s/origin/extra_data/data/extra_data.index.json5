@@ -4,6 +4,11 @@
       id: "bg_8",
       type: "bg",
       file: "bg/sys/bc/bg.bg.json5",
-    }
+    },
+    {
+      id: "bg_moon",
+      type: "bg",
+      file: "bg/moon/bg.bg.json5",
+    },
   ],
 }

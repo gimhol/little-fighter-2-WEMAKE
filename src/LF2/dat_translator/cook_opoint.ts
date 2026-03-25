@@ -1,14 +1,14 @@
-import { FacingFlag, IFrameInfo, IOpointInfo } from "../defines";
+import { FacingFlag, IFrameInfo, IOpointInfo, BuiltIn_OID as OID } from "../defines";
 import { round } from "../utils/math/base";
 import { is_num, not_zero_num } from "../utils/type_check";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { take } from "./take";
 export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
-  const action = take(opoint, "action");
+  const raw_action = take(opoint, "action");
   opoint.oid = "" + take(opoint, "oid");
 
-  if (is_num(action)) {
-    const act = get_next_frame_by_raw_id(action);
+  if (is_num(raw_action)) {
+    const act = get_next_frame_by_raw_id(raw_action);
     const facing = take(opoint, "facing");
     if (is_num(facing)) {
       act.facing =
@@ -33,4 +33,20 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
 
   const dvy = take(opoint, "dvy");
   if (not_zero_num(dvy)) opoint.dvy = dvy * -0.5;
+
+  const { action, oid } = opoint
+  switch (oid) {
+    case OID.FirenFlame:
+      if (
+        action &&
+        !Array.isArray(action) &&
+        typeof action.id === 'string' &&
+        ['50', '54', '109'].includes(action.id)
+      ) {
+        // for hardcoded
+        opoint.speedz = 0;
+      }
+      break;
+
+  }
 }

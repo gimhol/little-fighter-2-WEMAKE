@@ -17,7 +17,7 @@ export type TFace = -1 | 1;
 export type TTrend = -1 | 0 | 1;
 export type BOOL = 1 | 0;
 export namespace Defines {
-  export const DATA_VERSION: number = 12;
+  export const DATA_VERSION: number = 13;
   export const TeamEnum = _TeamEnum;
   export type TeamEnum = _TeamEnum;
   export const CLASSIC_SCREEN_WIDTH = 794;
@@ -32,6 +32,7 @@ export namespace Defines {
 
   /** 击中敌人的对象停顿多少帧 */
   export const DEFAULT_ITR_MOTIONLESS = 6;
+  export const DEFAULT_BALL_ITR_MOTIONLESS = 2;
   export const DEFAULT_ITR_A_REST = 20;
   export const DEFAULT_ITR_FALL = 40;
 

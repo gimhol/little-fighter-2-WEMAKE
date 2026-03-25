@@ -31,6 +31,8 @@ export class UIComponent<
   readonly info: Required<IComponentInfo>;
   readonly props_holder: UIProps;
   protected _props: any;
+  stopped: boolean = true;
+  paused: boolean = true;
   get props(): P {
     if (this._props) return this._props;
     return this._props = this.props_holder.validate(this.constructor as any)
@@ -42,7 +44,7 @@ export class UIComponent<
   log(func: string, ...args: any[]): void { }
   id: string = '';
   get lf2() { return this.node.lf2; }
-  get world() { return this.node.lf2.world; } 
+  get world() { return this.node.lf2.world; }
   private _mounted: boolean = false;
   private _args: readonly any[] = [];
   private _enabled: boolean = true;

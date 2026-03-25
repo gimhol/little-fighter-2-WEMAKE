@@ -12,6 +12,7 @@ import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
+import { Ticker } from "./Ticker";
 import * as UI from "./ui";
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
@@ -29,7 +30,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.19'
+  static readonly VERSION_NAME: string = 'v0.1.20'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -39,8 +40,16 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
   private static _PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
   private static _DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
-  static get instance(): LF2 | undefined { return LF2.instances[0] }
-  static get world(): World | undefined { return this.instance?.world }
+  static get instance() { return LF2.instances[0] }
+  static get world() { return this.instance?.world }
+  static get objects() { return this.instance?.entities }
+  static get fighters() { return this.instance?.characters }
+  static get weapons() { return this.instance?.weapons }
+  static get balls() { return this.instance?.balls }
+  static get bg() { return this.world?.bg }
+  static get stage() { return this.world?.stage }
+  static get phase() { return this.stage?.phase }
+
   static get ui() { return LF2.instances[0].ui }
   static get ditto() { return I.Ditto }
 
@@ -665,4 +674,3 @@ function full_zip_url(info_url: string, zip_url: string) {
   const ttt = part_a.lastIndexOf('/')
   return part_a.substring(0, ttt) + '/' + zip_url + part_b;
 }
-

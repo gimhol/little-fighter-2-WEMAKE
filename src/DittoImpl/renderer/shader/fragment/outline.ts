@@ -1,9 +1,13 @@
 export const outline_fragment_shader = `
   uniform sampler2D pTexture;
-  uniform float offsetX;
-  uniform float offsetY;
-  uniform float repeatW;
-  uniform float repeatH;
+  uniform float tw;
+  uniform float th;
+  uniform float ts;
+  uniform float x;
+  uniform float y;
+  uniform float w;
+  uniform float h;
+
   uniform float outlineWidth;
   uniform float outlineAlpha;
   uniform vec3 outlineColor;
@@ -18,10 +22,15 @@ export const outline_fragment_shader = `
     return pow(color, vec3(gamma));
   }
   void main() {
+    float ow = tw / ts;
+    float oh = th / ts;
     vec2 uv = vec2(
-      (vUv.x * repeatW) + offsetX,
-      (vUv.y * repeatH) + offsetY
+      (vUv.x * w / ow) + x / ow,
+      (vUv.y * h / oh) + 1.0 - (y + h) / oh
     );
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+      discard;
+    }
     vec4 color = texture2D(pTexture, uv);
     color.rgb = gamma_correct(color.rgb);
     if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {

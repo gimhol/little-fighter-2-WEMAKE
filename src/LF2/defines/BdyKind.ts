@@ -5,7 +5,7 @@ import { between } from "../utils";
  *
  * - 原版lf2中
  *    - 用于实现被攻击后跳转的逻辑。
- *    - kind: 10xx是id为300的“人质”专用的，被攻击时跳至xx帧。
+ *    - kind: 1xxx是id为300的“人质”专用的，被攻击时跳至xx帧。
  *    - 只有如下的itr能击中此bdy。
  *      - 角色的kind0的itr
  *      - id为210 kind0的itr

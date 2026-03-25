@@ -3,7 +3,7 @@ import Combine from "@/Component/Combine";
 import { Cross } from "@/Component/Icons/Cross";
 import { InputNumber } from "@/Component/Input";
 import Titled from "@/Component/Titled";
-import { IWorldDataset, LF2, round, world_dataset_field_map } from "@/LF2";
+import { IWorldDataset, LF2, round, world_dataset_fields } from "@/LF2";
 import { download } from "@/Utils/download";
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
@@ -28,13 +28,13 @@ export function WorldDataset(props: IWorldDatasetProps) {
   useEffect(() => {
     if (!lf2?.world) return;
     set_dwds(d => {
-      for (const [k] of world_dataset_field_map) {
+      for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
         d[key] = lf2.world[key]
       }
     })
     set_cwds(d => {
-      for (const [k] of world_dataset_field_map) {
+      for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
         d[key] = lf2.world[key]
       }
@@ -57,7 +57,7 @@ export function WorldDataset(props: IWorldDatasetProps) {
   }
   return (
     <div className={csses.world_dataset}>
-      {Array.from(world_dataset_field_map.values()).map((v) => {
+      {Array.from(world_dataset_fields.values()).map((v) => {
         const { key, title = key, desc = title, type, step } = v;
         return (
           <Titled float_label={title} title={`[${key}]${desc}`} key={v.key}>

@@ -48,7 +48,7 @@ export function handle_armor(collision: ICollision): boolean {
   if (sounds) for (const s of sounds) victim.lf2.sounds.play(s, x, y, z);
   const {
     shaking = victim.world.itr_shaking,
-    motionless = victim.world.itr_motionless
+    motionless = victim.itr_motionless
   } = itr
   attacker.motionless = round(motionless_ratio * motionless);
   victim.shaking = round(shaking_ratio * shaking);

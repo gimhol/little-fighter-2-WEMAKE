@@ -20,6 +20,11 @@ export default class WeaponState_Base extends State_Base {
     return indexes?.on_ground ? frames[indexes.on_ground] : void 0;
   }
 
+  override on_landing(e: Entity): void {
+    const { indexes } = e.data;
+    e.enter_frame({ id: indexes?.on_ground });
+  }
+
   override update(e: Entity): void {
     e.handle_ground_velocity_decay();
   }

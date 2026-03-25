@@ -1,62 +1,52 @@
 import { warn } from "console";
 import { X_OK } from "constants";
 import { accessSync, mkdirSync, writeFileSync } from "fs";
-import { read_indexes } from "../../../src/LF2/dat_translator/read_indexes";
-import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
+import { parase_indexes } from "../../../src/LF2/dat_translator/parase_indexes";
+import type { IDataLists, ITempDataLists } from "../../../src/LF2/defines/IDataLists";
+import { DatTypeEnum } from "../../../src/LF2/defines/IDatIndex";
 import { is_file } from "./is_file";
 import { debug, info } from "./log";
 import { read_text_file } from "./read_text_file";
 import { write_obj_file } from "./write_obj_file";
-async function parse_indexes(
-  src_path: string,
-  suffix: 'json5' | 'json'
-): Promise<IDataLists> {
-  const text = await read_text_file(src_path);
-  debug(`[parse_indexes] text:\n`, text)
-  const ret = read_indexes(text, suffix);
-  if (typeof ret === 'string') throw new Error(ret);
-  return ret;
-}
-export async function convert_data_txt(
-  src_dir: string,
-  out_dir: string,
-): Promise<IDataLists | undefined> {
-  debug(
-    `convert_data_txt(
+
+export async function convert_data_txt(src_dir: string, out_dir: string, index_file: string): Promise<ITempDataLists> {
+  debug(`convert_data_txt(
   src_dir = ${JSON.stringify(src_dir)},
   out_dir = ${JSON.stringify(out_dir)}, 
 )`)
   const suffix = 'json5'
-  const src_path = `${src_dir}/data/data.txt`;
   try {
-    accessSync(src_path, X_OK)
+    accessSync(index_file, X_OK)
   } catch (e) {
-    warn([
+    const message = [
       `data.txt not found, path:`,
-      `"${src_path}"\n`,
-      "Will create it for you, please edit it and retry again."
-    ].join('\n    '))
-    try {
-      mkdirSync(`${src_dir}/data`, { recursive: true })
-    } catch (e) { }
-    writeFileSync(src_path, `
+      `"${index_file}"\n`,
+      "Will try to create it for you, please edit it and retry again."
+    ].join('\n    ')
+    warn(message)
+    try { mkdirSync(`${src_dir}/data`, { recursive: true }) } catch (e) { }
+    writeFileSync(index_file, `
 [NOT_READY] Please remove this line after the editing or LF2W-TOOL will not use this file.
 <object>
 <object_end>
 <background>
 <background_end>
 `.trim())
-    return void 0;
+    throw new Error(message);
   }
   const stage_path = `${src_dir}/data/stage.dat`;
   const dst_path = `${out_dir}/data/data.index.${suffix}`;
-  info("Convert", src_path, "=>\n    " + dst_path);
-  const indexes = await parse_indexes(src_path, suffix)
-  if (await is_file(stage_path)) {
+  info("Convert", index_file, "=>\n    " + dst_path);
+
+  const text = await read_text_file(index_file);
+  debug(`[parse_indexes] text:\n`, text)
+  const indexes = parase_indexes(text, suffix);
+  if (!indexes.stages.length && await is_file(stage_path)) {
     indexes.stages = [{
       id: "default_stages",
-      type: "stage",
+      type: DatTypeEnum.Stage,
       file: "data/stage.stage.json5",
+      src: "data/stage.dat"
     }]
   }
   await write_obj_file(dst_path, indexes);

@@ -7,7 +7,7 @@ import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
-  FrameBehavior, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
@@ -92,7 +92,7 @@ export class Entity {
   protected _data!: IEntityData;
   protected _reserve!: number;
   protected _is_attach!: boolean;
-  protected _is_incorporeity!: boolean;
+  protected _is_ghost!: boolean;
   protected _landing_frame!: IFrameInfo | null;
   protected _hp_r_tick!: Times;
   protected _mp_r_tick!: Times;
@@ -254,7 +254,7 @@ export class Entity {
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get is_attach() { return this._is_attach }
-  get is_incorporeity() { return this._is_incorporeity }
+  get is_ghost() { return this._is_ghost }
   get reserve(): number { return this._reserve; }
   set reserve(v: number) {
     const o = this._reserve;
@@ -606,7 +606,16 @@ export class Entity {
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
   get gravity(): number {
-    return this.frame.gravity ?? this.state?.get_gravity(this) ?? this.world.gravity
+    const g1 = this.state?.get_gravity?.(this);
+    const g2 = this.ctrl.is_end(GK.Defend) ?
+      this.dataset('gravity') :
+      this.dataset('gravity_d')
+    return g1 ?? g2
+  }
+  get itr_motionless(): number {
+    if (this.type === EntityEnum.Ball)
+      return this.dataset('ball_itr_motionless')
+    return this.dataset('itr_motionless')
   }
   get arest(): number {
     return this._arest;
@@ -631,7 +640,7 @@ export class Entity {
     this.transform_datas = null;
     this._reserve = 0
     this._is_attach = false;
-    this._is_incorporeity = false;
+    this._is_ghost = false;
     this._position.set(0, 0, 0)
     this._prev_position.set(0, 0, 0)
     this.fuse_bys = null;
@@ -775,7 +784,7 @@ export class Entity {
     this.set_position(
       pos_x,
       pos_y,
-      pos_z + (opoint.z ?? 0)
+      pos_z + (opoint.z ?? 2)
     );
 
     const result = this.get_next_frame(opoint.action);
@@ -1039,11 +1048,8 @@ export class Entity {
   attach(is_entity = true): this {
     this._spawn_time = this.world.game_time.value;
     this._is_attach = true
-    this._is_incorporeity = !is_entity
-    if (is_entity)
-      this.world.add_entities(this);
-    else
-      this.world.add_ghosts(this);
+    this._is_ghost = !is_entity
+    this.world.add_entities(this);
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
     return this;
@@ -1122,7 +1128,6 @@ export class Entity {
    *
    * @see {IItrInfo.shaking}
    * @see {IItrInfo.motionless}
-   * @see {State_Base.get_gravity}
    */
   private handle_gravity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
@@ -1821,7 +1826,8 @@ export class Entity {
     );
   }
 
-  dispose(): void {
+  release(): void {
+    if (!this._is_attach) return;
     this._is_attach = false;
     this.world.del_entity(this);
     this.ctrl.dispose();
@@ -2327,8 +2333,9 @@ export class Entity {
   }
   dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
     return (
-      (this.frame as Partial<IWorldDataset>)[name] ??
-      (this.data.base as Partial<IWorldDataset>)[name] ??
+      this.frame?.[name] ??
+      this.data.base?.[name] ??
+      this.world.bg.data.dataset?.[name] ??
       this.world[name]
     )
   }

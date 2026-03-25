@@ -33,7 +33,7 @@ export function make_fighter_special(data: IEntityData): IEntityData {
   if (num_id >= 1 && num_id <= 29) {
     data.base.group = ensure(data.base.group, EntityGroup.Regular);
   }
-  switch (data.id as BuiltIn_OID) {
+  switch ((data.alias_id ?? data.id) as BuiltIn_OID) {
     case BuiltIn_OID.Julian: return make_fighter_data_julian(data)
     case BuiltIn_OID.Firzen: return make_fighter_data_firzen(data);
     case BuiltIn_OID.LouisEX: return make_figther_data_louisex(data);

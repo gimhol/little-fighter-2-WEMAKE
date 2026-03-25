@@ -20,22 +20,24 @@ import {
   get_next_frame_by_raw_id,
 } from "./get_the_next";
 import { hit_next_frame } from "./hit_next_frame";
+import { make_fighter_special } from "./make_fighter_special";
+import { make_frame_state } from "./make_frame_state";
 import { take } from "./take";
 import { take_raw_frame_mp } from "./take_raw_frame_mp";
 const k_9 = ["Fa", "Fj", "Da", "Dj", "Ua", "Uj", "ja"] as const;
 
-export function make_character_data(ctx: IDatContext): IEntityData {
-  const { base: info, frames } = ctx
-  const walking_frame_rate = take_number(info, "walking_frame_rate", 3);
-  const running_frame_rate = take_number(info, "running_frame_rate", 3);
-  const walking_speed = take_number(info, "walking_speed", 0);
-  const walking_speedz = take_number(info, "walking_speedz", 0);
-  const running_speed = take_number(info, "running_speed", 0);
-  const running_speedz = take_number(info, "running_speedz", 0);
-  const heavy_walking_speed = take_number(info, "heavy_walking_speed", 0);
-  const heavy_walking_speedz = take_number(info, "heavy_walking_speedz", 0);
-  const heavy_running_speed = take_number(info, "heavy_running_speed", 0);
-  const heavy_running_speedz = take_number(info, "heavy_running_speedz", 0);
+export function make_fighter_data(ctx: IDatContext): IEntityData {
+  const { base, frames, index: datIndex } = ctx
+  const walking_frame_rate = take_number(base, "walking_frame_rate", 3);
+  const running_frame_rate = take_number(base, "running_frame_rate", 3);
+  const walking_speed = take_number(base, "walking_speed", 0);
+  const walking_speedz = take_number(base, "walking_speedz", 0);
+  const running_speed = take_number(base, "running_speed", 0);
+  const running_speedz = take_number(base, "running_speedz", 0);
+  const heavy_walking_speed = take_number(base, "heavy_walking_speed", 0);
+  const heavy_walking_speedz = take_number(base, "heavy_walking_speedz", 0);
+  const heavy_running_speed = take_number(base, "heavy_running_speed", 0);
+  const heavy_running_speedz = take_number(base, "heavy_running_speedz", 0);
   const round_trip_frames_map: any = {};
   const frame_mp_hp_map = new Map<string, { mp: number, hp: number }>();
 
@@ -149,8 +151,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         defend 110
         defend_hit 111
        */
-      case 110:
-      case 111: {
+      case 110: case 111: {
         if (frame.bdy?.length)
           for (const bdy of frame.bdy) {
             bdy.actions = ensure(bdy.actions,
@@ -161,9 +162,7 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         break;
       }
       /** broken_defend */
-      case 112: {
-        break;
-      }
+      case 112: { break; }
       /** jump */
       case 210: case 211: case 212: {
         if (frame_id === "211") frame.jump_flag = 1;
@@ -263,7 +262,6 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         }
 
         break;
-
       /** throw_lying_man */
       case 232: case 233: case 234:
         if (frame.cpoint?.vaction)
@@ -293,10 +291,10 @@ export function make_character_data(ctx: IDatContext): IEntityData {
       case 184:
       case 185:
         break;
-
       /** （186~191）falling 向后 */
       case 186: break;
-      case 187: case 188:
+      case 187:
+      case 188:
         editing.hit('j', {
           id: "108",
           expression: new CondMaker<EV>()
@@ -307,9 +305,6 @@ export function make_character_data(ctx: IDatContext): IEntityData {
       case 189:
       case 190:
       case 191:
-        break;
-      case 200:
-        frame.state = StateEnum.Frozen;
         break;
       /** crouch */
       case 215:
@@ -330,6 +325,30 @@ export function make_character_data(ctx: IDatContext): IEntityData {
             facing: FF.Trend,
           })
         break;
+      case 200:
+        frame.state = StateEnum.Frozen;
+        break;
+      /** injured */
+      case 220:
+      case 221:
+      case 222:
+      case 223:
+      case 224:
+      case 225: {
+        frame.state = StateEnum.Injured;
+        const state_name = StateEnum[frame.state!]
+        if (state_name) (frame as any).state_name = `StateEnum.${state_name}`
+        make_frame_state(frame)
+        break;
+      }
+      /** dizzy */
+      case 226: case 227: case 228: case 229: {
+        frame.state = StateEnum.Tired;
+        const state_name = StateEnum[frame.state!]
+        if (state_name) (frame as any).state_name = `StateEnum.${state_name}`
+        make_frame_state(frame)
+        break;
+      }
     }
 
     switch (frame.state) {
@@ -460,8 +479,8 @@ export function make_character_data(ctx: IDatContext): IEntityData {
         delete frames[frame_id];
         break;
       }
-      case StateEnum.NextAsLanding: {
-        frame.next = { id: "94" };
+      case StateEnum.LandGoto94: {
+        frame.on_landing = { id: "94" };
         break;
       }
     }
@@ -526,17 +545,18 @@ export function make_character_data(ctx: IDatContext): IEntityData {
   };
 
   const ret: IEntityData = {
-    id: "",
+    id: datIndex.id,
     type: EntityEnum.Fighter,
-    base: info,
+    base,
     indexes,
     frames,
   };
   cook_transform_begin_expression_to_hit(ret.frames);
   cook_file_variants(ret);
+  make_fighter_special(ret);
+  if (datIndex.bot) ret.base.bot_id = datIndex.bot
   return ret;
 }
-
 function add_key_down_jump_atk(frame: IFrameInfo) {
   frame.key_down = frame.key_down || {}
   frame.key_down.a = add_next_frame(

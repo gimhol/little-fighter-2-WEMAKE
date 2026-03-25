@@ -152,7 +152,7 @@ export class DanmuGameLogic extends SummaryLogic {
     this.time += dt;
     super.update?.(dt)
     this._staring_countdown.add();
-    if (this._staring_countdown.end()) this.update_staring()
+    if (this._staring_countdown.is_max) this.update_staring()
 
     const staring = this._cam_ctrl?.staring;
     if (staring && this._cam_ctrl?.free != false) {
@@ -162,7 +162,7 @@ export class DanmuGameLogic extends SummaryLogic {
       this.update_staring()
 
     if (this._teams.size <= 1) {
-      if (this._gameover_countdown.end()) {
+      if (this._gameover_countdown.is_max) {
         if (this._teams.size) {
           for (const [k, v] of this.teams) {
             if (this._teams.has(k)) v.wins += 1

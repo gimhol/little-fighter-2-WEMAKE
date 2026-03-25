@@ -1,4 +1,4 @@
-import type { IEntityData, IFrameInfo, ITexturePieceInfo, TFace } from "@/LF2/defines";
+import type { IEntityData, IFrameInfo, IFramePictureInfo, TFace } from "@/LF2/defines";
 import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
 import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
@@ -30,13 +30,17 @@ function get_material(texture: T.Texture<unknown> | undefined) {
   return new T.ShaderMaterial({
     uniforms: {
       pTexture: { value: texture },
-      offsetX: { value: 0 },
-      offsetY: { value: 0 },
-      repeatW: { value: 0 },
-      repeatH: { value: 0 },
+      x: { value: 0 },
+      y: { value: 0 },
+      w: { value: 0 },
+      h: { value: 0 },
+      tw: { value: 0 },
+      th: { value: 0 },
+      ts: { value: 0 },
       outlineColor: { value: new T.Color("#000000") },
       outlineAlpha: { value: 0 },
-      outlineWidth: { value: 1 }
+      outlineWidth: { value: 1 },
+      facing: { value: 1 }
     },
     vertexShader: normal_vertex_shader,
     fragmentShader: outline_fragment_shader,
@@ -57,7 +61,6 @@ export class EntityRender {
   protected shaking_x: number = 0;
   protected _data?: IEntityData;
 
-  protected _tex?: ITexturePieceInfo
   protected _frame?: IFrameInfo;
   protected _facing?: TFace;
   protected _x?: number;
@@ -78,7 +81,6 @@ export class EntityRender {
 
   reset(entity: Entity) {
     this.entity = entity
-    this._tex = void 0;
     this._frame = void 0;
     this._facing = void 0;
     this._x = void 0;
@@ -136,24 +138,27 @@ export class EntityRender {
     this.node.removeFromParent();
   }
 
-  apply_tex(entity: Entity, info: ITexturePieceInfo | undefined) {
+  apply_tex(entity: Entity, info: IFramePictureInfo | undefined) {
     const { images, main_mesh } = this
     if (!info) return;
-    const { x, y, w, h, tex, pixel_w, pixel_h } = info;
-    main_mesh.scale.set(pixel_w, pixel_h, 0);
 
-
+    const { tex } = info;
     const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
+
     const img = images.get(real_tex);
-
     if (!img?.pic) return;
-
+    const { x, y, w, h } = info;
+    main_mesh.scale.set(w, h, 0);
     const { material: m } = main_mesh;
     m.uniforms.pTexture.value = img.pic.texture;
-    m.uniforms.offsetX.value = x;
-    m.uniforms.offsetY.value = y;
-    m.uniforms.repeatW.value = w;
-    m.uniforms.repeatH.value = h;
+    m.uniforms.tw.value = img.w;
+    m.uniforms.th.value = img.h;
+    m.uniforms.ts.value = img.scale;
+    m.uniforms.x.value = x;
+    m.uniforms.y.value = y;
+    m.uniforms.w.value = w;
+    m.uniforms.h.value = h;
+    m.uniforms.facing.value = entity.facing
   }
 
   update_shaking(dt: number) {
@@ -165,7 +170,6 @@ export class EntityRender {
     } else {
       this.shaking_x = 0;
     }
-
   }
   render(dt: number) {
     const { entity, main_mesh } = this;
@@ -188,9 +192,7 @@ export class EntityRender {
       this._frame = frame;
       this._facing = facing;
       const pic = frame.pic
-      const tex = pic?.[facing]
-      if (this._tex !== tex)
-        this.apply_tex(entity, this._tex = tex)
+      this.apply_tex(entity, pic)
       const { centerx, centery, state } = frame;
       const offset_x = entity.facing === 1 ? centerx : main_mesh.scale.x - centerx;
       if (state === StateEnum.Message) {
@@ -203,7 +205,6 @@ export class EntityRender {
       this.offset_x = -offset_x;
       this.offset_y = centery;
       if (pic?.r) {
-
         const c1x = vec2.x = pic.ox ?? (pic.w / 2)
         const c1y = vec2.y = -(pic.oy ?? (pic.h / 2))
         const cc = vec2.rotateAround(vec001, pic.r)
@@ -235,7 +236,7 @@ export class EntityRender {
     if (this.entity.outline_color != this.outline_color) {
       this.outline_color = this.entity.outline_color;
     }
-    if (this.entity.is_incorporeity) return;
+    if (this.entity.is_ghost) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
       if (this.outline_color) {

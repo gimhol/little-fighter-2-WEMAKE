@@ -22,7 +22,7 @@ export function handle_itr_kind_magic_flute(collision: ICollision): void {
     buf = new Buff(bid)
     buf.tick.max = 3;
     buf.life.max = 16;
-    buf.life.loop(1)
+    buf.life.set_lifes(1)
     buf.job = () => {
       if (!is_fighter(victim)) return
       const prev_hp = victim.hp;

@@ -314,7 +314,10 @@ export class UINode implements IDebugging {
 
   on_start() {
     this._state = {};
-    for (const c of this._components) c.on_start?.();
+    for (const c of this._components) {
+      c.stopped = false;
+      c.on_start?.();
+    }
     for (const i of this.children) i.on_start();
     const { start } = this.data.actions || {};
     if (start) actor.act(this, start);
@@ -322,7 +325,10 @@ export class UINode implements IDebugging {
   }
 
   on_stop(): void {
-    for (const c of this.components) c.on_stop?.();
+    for (const c of this.components) {
+      c.stopped = true;
+      c.on_stop?.();
+    }
     for (const l of this.children) l.on_stop();
     const { stop } = this.data.actions || {};
     if (stop) actor.act(this, stop);
@@ -334,7 +340,10 @@ export class UINode implements IDebugging {
       this.focused_node = this._state.focused_node;
       if (this._visible) this.invoke_all_visible();
     }
-    for (const c of this._components) c.on_resume?.();
+    for (const c of this._components) {
+      c.paused = false;
+      c.on_resume?.();
+    }
     for (const i of this.children) i.on_resume();
     const { resume } = this.data.actions || {};
     if (resume) actor.act(this, resume);
@@ -350,7 +359,10 @@ export class UINode implements IDebugging {
     if (this.root === this) this.renderer.del_self();
     const { pause } = this.data.actions || {};
     if (pause) actor.act(this, pause);
-    for (const c of this._components) c.on_pause?.();
+    for (const c of this._components) {
+      c.paused = true;
+      c.on_pause?.();
+    }
     for (const item of this.children) item.on_pause();
     this.renderer.on_pause?.();
   }

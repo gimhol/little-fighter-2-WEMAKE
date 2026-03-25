@@ -1,4 +1,4 @@
-import { BuiltIn_OID, EntityGroup, FrameBehavior, ItrKind, OpointKind, StateEnum } from "../defines";
+import { BuiltIn_OID, EntityGroup, FrameBehavior, ItrKind, OpointKind, SpeedMode, StateEnum } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { traversal } from "../utils/container_help/traversal";
 import { HitFlag } from "../defines/HitFlag";
@@ -19,11 +19,15 @@ export function make_ball_special(data: IEntityData) {
     case BuiltIn_OID.FirzenBall:
       traversal(data.frames, (_, frame) => {
         frame.no_shadow = 1;
+        frame.dvz = 0;
+        frame.vzm = SpeedMode.Fixed;
       });
       break;
     case BuiltIn_OID.BatBall:
       traversal(data.frames, (_, frame) => {
         frame.no_shadow = 1;
+        frame.dvz = 0;
+        frame.vzm = SpeedMode.Fixed;
       });
       break;
     case BuiltIn_OID.JanChase:

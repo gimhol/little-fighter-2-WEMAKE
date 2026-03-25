@@ -1,5 +1,0 @@
-{
-  id: "tests",
-  name: "UI: Tests",
-  component: ["Tests"]
-}

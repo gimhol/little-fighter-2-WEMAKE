@@ -1,5 +1,5 @@
 import { Defines, Difficulty } from "./defines";
-import { IWorldDataset, world_dataset_field_map as world_dataset_fields } from "./IWorldDataset";
+import { IWorldDataset, world_dataset_fields as world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {
@@ -20,6 +20,7 @@ export class WorldDataset implements IWorldDataset {
    */
   itr_motionless: number = Defines.DEFAULT_ITR_MOTIONLESS;
 
+  ball_itr_motionless: number = Defines.DEFAULT_BALL_ITR_MOTIONLESS;
 
   fvx_f: number = 0.5;
   fvy_f: number = -0.5;
@@ -167,6 +168,7 @@ export class WorldDataset implements IWorldDataset {
   screen_w: number = Defines.MODERN_SCREEN_WIDTH;
   screen_h: number = Defines.MODERN_SCREEN_HEIGHT;
   gravity: number = 0.4375;
+  gravity_d: number = 0.4375;
   weapon_throwing_gravity: number = 0.21875;
   sync_render: number = 0;
   difficulty: Difficulty = Difficulty.Difficult;

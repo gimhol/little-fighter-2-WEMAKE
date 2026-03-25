@@ -80,7 +80,6 @@ export * from "./IStageInfo";
 export * from "./IStageObjectInfo";
 export * from "./IStagePhaseInfo";
 export * from "./IStyle";
-export * from "./ITexturePieceInfo";
 export * from "./ItrEffect";
 export * from "./ItrKind";
 export * from "./IVector2";
