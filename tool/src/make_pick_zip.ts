@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, writeFile } from "fs/promises";
 import JSON5 from "json5";
 import { dirname, join } from "path";
-import { ActionType, IEntityData, IOpointInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LF2/defines";
+import { ActionType, IBgData, IEntityData, IStageInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LF2/defines";
 import { conf } from "./conf";
 import { error, log, warn } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
@@ -51,27 +51,19 @@ export async function make_pick_zip() {
     stages: [],
     bots: []
   }
-  LFW_PICKS.split(';').forEach(v => {
-    const txt = v.trim();
-    if (!txt) return;
-    const [type, remains] = v.split(':');
-    if (typeof remains !== 'string')
-      return warn(`type not correct`);
-    if (!type || !(type in outputs))
-      return warn(`type not supported, got ${type}, must be one of "objects, backgrounds, stages, bots"`);
-    const oids = remains.split(',');
-    if (!oids.length) return;
-    const input = inputs[type as keyof ITempDataLists];
-    const output = outputs[type as keyof ITempDataLists];
-    for (const oid of oids) {
-      const item = input.find(v => v.id === oid)
-      if (!item) {
-        warn(`oid ${JSON.stringify(oid)} not found in ${type}`);
-        continue;
-      }
-      output.push(item)
+  const picks = await read_json<Partial<ITempDataLists>>(LFW_PICKS)
+  picks.objects?.forEach(picked => {
+    const oid = picked.id;
+    const item = outputs.objects.find(v => v.id === oid)
+    if (!item) {
+      warn(`oid ${JSON.stringify(oid)} not found in objects`);
+      return;
     }
+    const n = { ...item }
+    if (picked.groups) n.groups = picked.groups
+    outputs.objects.push(n)
   })
+
   // console.log(outputs)
   const file_pairs = new Set<string>();
   function add_file_pairs(...files: (string | undefined)[]) {
@@ -96,7 +88,6 @@ export async function make_pick_zip() {
           if (duplicated) return;
           const item = inputs.objects.find(v => v.id === oid || v.alias === oid)
           if (!item) return;
-
           let set = depend_opoints.get(item)
           if (!set) depend_opoints.set(item, set = new Set())
           arraying(opoint.action).reduce<string[]>((r, v) => {
@@ -164,7 +155,13 @@ export async function make_pick_zip() {
       }, []),
     )
     const dst = join(TMP_DIR, item.file).replace(/\\\\/g, '/');
-    await cp(src, dst, { recursive: true }).catch(e => error(e))
+    const src_content = await read_json<IEntityData | IBgData | IStageInfo[]>(src)
+    if (src_content && !Array.isArray(src_content)) {
+      if (item.groups) {
+        src_content.base.group = item.groups.length ? item.groups : void 0;
+      }
+    }
+    await write_json(dst, src_content)
   }
   for (const [obj, actions] of depend_opoints) {
     const msg = `not include object dependency found: ` +

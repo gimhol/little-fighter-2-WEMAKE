@@ -3,7 +3,7 @@ import path, { join } from "path";
 import package_json from "../package.json";
 import { conf, dont_wait, make_conf } from "./conf";
 import { data_2_txt } from "./data_2_txt";
-import { make_data_zip } from "./make_data_zip";
+import { make_data, make_data_zip } from "./make_data_zip";
 import { make_full_zip } from "./make_full_zip";
 import { make_prel_zip } from "./make_prel_zip";
 import { show_main_usage } from "./show_main_usage";
@@ -21,6 +21,7 @@ enum CMDEnum {
   HELP = 'help',
   DAT_2_TXT = 'dat-2-txt',
   MAKE_DATA = 'make-data',
+  MAKE_DATA_ZIP = 'make-data-zip',
   MAKE_PREL = 'make-prel',
   ZIP_FULL = 'zip-full',
   PRINT_CONF = 'print-conf',
@@ -35,6 +36,9 @@ async function main(): Promise<any> {
       log(package_json.version)
       return 'DONT_WAIT'
     case CMDEnum.MAKE_DATA:
+      await make_data();
+      return
+    case CMDEnum.MAKE_DATA_ZIP:
       await make_data_zip();
       return
     case CMDEnum.MAKE_PREL:
