@@ -23,11 +23,12 @@ export class LittleFunnyAutoGame extends UIComponent {
     this.world.transform.scale_to(0.5, 0.5, 0.5)
     this.world.paused = false;
     this.lf2.change_bg(Defines.VOID_BG)
-    this._ticker = this.world.ticker().set_range(0, 180)
+    this._ticker = this.world.ticker().set_range(0, 180).set_lifes(1)
     this._ticker.callbacks.add({
-      end: () => {
+      end: (t) => {
         this.add_fighter();
         this.add_fighter();
+        t.release();
       }
     })
   }
