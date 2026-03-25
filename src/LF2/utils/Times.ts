@@ -19,7 +19,7 @@ export class Times {
   get remains(): number { return this._remains }
   get is_max(): boolean { return this._value >= this._max; }
   get is_min(): boolean { return this._value <= this._min; }
-  constructor(_min: number = this.min, _max: number = this.max) {
+  constructor(_min: number = Times.MIN, _max: number = Times.MAX) {
     this.set_range(_min, _max)
   }
   reborn(): this {

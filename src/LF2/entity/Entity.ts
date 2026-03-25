@@ -92,7 +92,7 @@ export class Entity {
   protected _data!: IEntityData;
   protected _reserve!: number;
   protected _is_attach!: boolean;
-  protected _is_incorporeity!: boolean;
+  protected _is_ghost!: boolean;
   protected _landing_frame!: IFrameInfo | null;
   protected _hp_r_tick!: Times;
   protected _mp_r_tick!: Times;
@@ -254,7 +254,7 @@ export class Entity {
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get is_attach() { return this._is_attach }
-  get is_incorporeity() { return this._is_incorporeity }
+  get is_ghost() { return this._is_ghost }
   get reserve(): number { return this._reserve; }
   set reserve(v: number) {
     const o = this._reserve;
@@ -640,7 +640,7 @@ export class Entity {
     this.transform_datas = null;
     this._reserve = 0
     this._is_attach = false;
-    this._is_incorporeity = false;
+    this._is_ghost = false;
     this._position.set(0, 0, 0)
     this._prev_position.set(0, 0, 0)
     this.fuse_bys = null;
@@ -1048,11 +1048,8 @@ export class Entity {
   attach(is_entity = true): this {
     this._spawn_time = this.world.game_time.value;
     this._is_attach = true
-    this._is_incorporeity = !is_entity
-    if (is_entity)
-      this.world.add_entities(this);
-    else
-      this.world.add_ghosts(this);
+    this._is_ghost = !is_entity
+    this.world.add_entities(this);
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
     return this;

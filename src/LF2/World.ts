@@ -68,7 +68,6 @@ export class World extends WorldDataset {
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
   readonly entities = new Set<Entity>();
-  readonly ghosts = new Set<Entity>();
   /** 
    * 被玩家操作的角色 
    * 键: 玩家ID
@@ -160,12 +159,6 @@ export class World extends WorldDataset {
     this._bg = new Background(this, Defines.VOID_BG);
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
-  }
-  add_ghosts(...entities: Entity[]) {
-    for (const entity of entities) {
-      this.ghosts.add(entity);
-      this.renderer.add_entity(entity);
-    }
   }
   add_entities(...entities: Entity[]) {
     for (const entity of entities) {
@@ -532,10 +525,11 @@ export class World extends WorldDataset {
     }
 
     for (const e of this.entities) {
-      if (update_chasing && this._chasers.size)
+      const { is_ghost } = e;
+      if (!is_ghost && update_chasing && this._chasers.size)
         for (const c of this._chasers)
           c.update_chasing(e)
-      if (update_collisions) {
+      if (!is_ghost && update_collisions) {
         const a_ctrl = e.ctrl
         for (const b of this._temp_entitis_set) {
           const b_ctrl = b.ctrl;
@@ -563,7 +557,7 @@ export class World extends WorldDataset {
         this.gones.add(e);
         continue;
       }
-      this._temp_entitis_set.add(e);
+      if (!is_ghost) this._temp_entitis_set.add(e);
     }
     if (update_collisions) {
       for (const c of this.v_collisions)
@@ -571,21 +565,9 @@ export class World extends WorldDataset {
       for (const [, c] of this.a_collisions)
         collisions_keeper.handle(c)
     }
-    for (const e of this.ghosts) {
-      e.update();
-      if (
-        e.frame.id === Builtin_FrameId.Gone ||
-        e.frame.state === StateEnum.Gone
-      ) {
-        e.hp = e.hp_r = 0;
-        this.gones.add(e);
-      }
-    }
 
     for (const entity of this.gones) {
-      const attached =
-        this.entities.delete(entity) ||
-        this.ghosts.delete(entity);
+      const attached = this.entities.delete(entity)
       if (!attached) continue;
       this.entity_map.delete(entity.id)
       if (is_fighter(entity))
@@ -946,7 +928,6 @@ export class World extends WorldDataset {
     this.infinity_mp = 0;
     this.playrate = 1;
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
-    this.ghosts.forEach(v => v.set_frame(GONE_FRAME_INFO))
     this.buffs.forEach(v => v.life.set_lifes(v.life.max = v.life.min = 0))
     this.lf2.change_stage(Defines.VOID_STAGE)
     this.lf2.change_bg(Defines.VOID_BG)
