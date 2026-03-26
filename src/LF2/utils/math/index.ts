@@ -1,5 +1,4 @@
 /*** AUTO EXPORT START ***/
-export * from "./MersenneTwister.test";
 export * from "./MersenneTwister";
 export * from "./arithmetic_progression";
 export * from "./base";

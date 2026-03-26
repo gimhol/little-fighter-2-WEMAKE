@@ -2,7 +2,6 @@
 export * from "./Cases";
 export * from "./Factory";
 export * from "./Ground";
-export * from "./I18N.test";
 export * from "./I18N";
 export * from "./ILf2Callback";
 export * from "./IPlayerInfoCallback";

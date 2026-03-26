@@ -1,9 +1,6 @@
 /*** AUTO EXPORT START ***/
-export * from "./check_field.test";
 export * from "./check_field";
-export * from "./get_alpha_from_color.test";
 export * from "./get_alpha_from_color";
-export * from "./parse_call_func_expression.test";
 export * from "./parse_call_func_expression";
 export * from "./read_func_args";
 export * from "./read_nums";
