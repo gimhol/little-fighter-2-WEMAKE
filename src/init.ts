@@ -2,10 +2,8 @@ import "current-device";
 import * as dom from "./DittoImpl";
 import { UINodeRenderer } from "./DittoImpl/renderer/UINodeRenderer";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
-import { Ditto } from "./LF2/ditto";
+import { actor, Ditto, UIActionEnum } from "./LF2";
 import { Debug, Log, Warn } from "./Log";
-import actor from "./LF2/ui/action/Actor";
-import { UIActionEnum } from "./LF2/ui/UIActionEnum";
 import './i18n';
 actor
   .add(UIActionEnum.Alert, (_, msg) => window.alert(msg))

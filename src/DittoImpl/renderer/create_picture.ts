@@ -3,7 +3,7 @@ import { MagnificationTextureFilter } from "@/LF2/defines/MagnificationTextureFi
 import { MinificationTextureFilter } from "@/LF2/defines/MinificationTextureFilter";
 import { TextureWrapping } from "@/LF2/defines/TextureWrapping";
 import { IImageInfo } from "@/LF2/ditto/image/IImageInfo";
-import { err_pic_info, texture_loader } from "@/DittoImpl/ImageMgr";
+import { err_pic_info, texture_loader } from "@/DittoImpl/ImageMgr/ImageMgr";
 import { IPicture } from "@/LF2/defines";
 
 export function create_picture(

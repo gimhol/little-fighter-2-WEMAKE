@@ -4,7 +4,7 @@ import { is_fighter, type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
 import { Camera, Object3D, OrthographicCamera } from "../_t";
-import { Scene } from "../Scene";
+import { __Scene } from "../Scene";
 import { BgRender } from "./BgRender";
 import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
@@ -16,7 +16,7 @@ export class WorldRenderer implements IWorldRenderer {
   lf2: LF2;
   world: World;
   bg_render: BgRender;
-  scene: Scene;
+  scene: __Scene;
   camera: Camera;
   readonly entity_renderers = new Set<EntityRenderer>();
   readonly world_node = new Object3D();
@@ -60,7 +60,7 @@ export class WorldRenderer implements IWorldRenderer {
     const w = world.screen_w;
     const h = world.screen_h;
     this.bg_render = new BgRender(this);
-    this.scene = new Scene(world.lf2).set_size(w * 4, h * 4);
+    this.scene = new __Scene(world.lf2).set_size(w * 4, h * 4);
     this.scene.inner.add(this.world_node);
     {
       const camera = this.camera = new OrthographicCamera()

@@ -1,15 +1,6 @@
 import { BufferGeometry, PlaneGeometry } from "../_t";
-// import { Keeper } from "./Keeper";
+import { Keeper } from "./Keeper";
 import { INinePatchGeometryParams, NinePatchGeometry } from "./NinePatchGeometry";
-
-export class Keeper<K, V> {
-  protected pool = new Map<K, V>();
-  get(key: K, f: () => V): V {
-    let ret = this.pool.get(key);
-    if (!ret) this.pool.set(key, ret = f());
-    return ret;
-  }
-}
 
 export const GeometryKeeper = new Keeper<string, BufferGeometry>();
 export interface IGeoOpts {

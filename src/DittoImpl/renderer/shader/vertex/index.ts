@@ -1,3 +1,3 @@
 /*** AUTO EXPORT START ***/
-export * from "./Cache";
+export * from "./normal";
 /*** AUTO EXPORT END ***/

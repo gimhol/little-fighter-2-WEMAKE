@@ -4,7 +4,7 @@ import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
 import { clamp, floor, random_in, round } from "@/LF2/utils";
 import * as T from "../_t";
-import type { ImageMgr } from "../ImageMgr";
+import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
 import { get_color_material } from "./MaterialKeeper";

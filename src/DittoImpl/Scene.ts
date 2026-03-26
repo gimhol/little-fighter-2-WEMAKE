@@ -1,11 +1,11 @@
+import { Defines } from "@/LF2";
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { LF2 } from "../LF2/LF2";
 import { floor } from "../LF2/utils";
 import * as T from "./_t";
 import styles from "./styles.module.scss";
-import { Defines } from "@/LF2";
 
-export class Scene {
+export class __Scene {
   readonly is_scene_node = true;
   protected _cameras = new Set<T.Camera>();
   protected _renderer?: T.WebGLRenderer;
