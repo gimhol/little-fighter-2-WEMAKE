@@ -21,8 +21,11 @@ import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
 import { BotState_Following } from "./state/BotState_Following";
 import { is_ray_hit } from "./utils/is_ray_hit";
 
+export enum BotBehavior {
+  Stay = 'stay',
+  Move = 'move',
+}
 export class BotController extends BaseController implements Required<IBotDataSet> {
-
   readonly player: PlayerInfo | undefined;
   readonly fsm = new FSM<BotStateEnum>()
     .add(
@@ -35,10 +38,13 @@ export class BotController extends BaseController implements Required<IBotDataSe
 
   readonly __is_bot_ctrl__ = true;
 
-  behavior?: 'stay' | 'move';
+  protected _behavior: BotBehavior = BotBehavior.Move;
   following?: [number, number, number];
   en_out_of_range: boolean = false;
-
+  protected _bot_id: string | undefined;
+  protected _bot: IBotData | undefined;
+  get bot(): IBotData | undefined { return this._bot; }
+  get behavior(): BotBehavior { return this._behavior }
   /** 走攻触发范围X */
   get w_atk_x() {
     const chasing = this.chasings.get()?.entity;
@@ -121,12 +127,13 @@ export class BotController extends BaseController implements Required<IBotDataSe
   /** 防御对象  */
   readonly defends = new NearestTargets(Defines.AI_MAX_DEFENDS_ENEMIES);
 
-  private _dummy?: DummyEnum;
-  get dummy(): DummyEnum | undefined {
+  protected _dummy: DummyEnum = DummyEnum.None;
+
+  get dummy(): DummyEnum {
     return this._dummy;
   }
   set dummy(v) {
-    this.end(...Object.values(GK));
+    this.key_up(...Object.values(GK));
     this._dummy = v;
   }
   constructor(player_id: string, entity: Entity) {
@@ -320,9 +327,6 @@ export class BotController extends BaseController implements Required<IBotDataSe
     }
     return ret;
   }
-  private _bot_id: string | undefined;
-  private _bot: IBotData | undefined;
-  get bot(): IBotData | undefined { return this._bot; }
   check_bot(): void {
     const { bot, bot_id } = this.entity.data.base;
     if (bot && bot === this._bot) return
@@ -406,11 +410,11 @@ export class BotController extends BaseController implements Required<IBotDataSe
     return ks;
   }
 
-  move() {
-    this.behavior = 'move'
+  move(): void {
+    this._behavior = BotBehavior.Move
   }
-  stay() {
-    this.behavior = 'stay'
+  stay(): void {
+    this._behavior = BotBehavior.Stay
   }
   goto(x: number, y: number, z: number) {
     this.following = [x, y, z]

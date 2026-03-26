@@ -12,7 +12,7 @@ export default function SelectDemo() {
     <Frame label='Select'>
       <Space>
         <Select
-          items={items}
+          options={items}
           parse={v => [v, v]}
           placeholder="dropdown"
           clearable />
@@ -20,14 +20,14 @@ export default function SelectDemo() {
       <Combine style={{ overflow: 'visible' }}>
         <Titled >
           <Select
-            items={items}
+            options={items}
             parse={v => [v, v]}
             placeholder="dropdown"
             clearable />
         </Titled>
         <Titled >
           <Select
-            items={items}
+            options={items}
             parse={v => [v, v]}
             placeholder="dropdown"
             clearable />

@@ -43,7 +43,7 @@ export function PlayerRow(props: Props) {
   const [puppet, set_puppet] = useState<Entity>()
   const [ctrl, set_ctrl] = useState<BaseController>()
   const [key_settings_show, set_key_settings_show] = useState(false);
-  const [dummy, set_dummy] = useState<DummyEnum | undefined | "">("")
+  const [dummy, set_dummy] = useState<DummyEnum>(DummyEnum.None)
 
   useCallbacks(lf2.world.callbacks, {
     on_puppet_add: (pid) => {
@@ -74,7 +74,7 @@ export function PlayerRow(props: Props) {
     if (!puppet) return;
     const ctrl = puppet?.ctrl;
     if (!is_bot_ctrl(ctrl)) return;
-    ctrl.dummy = dummy ? dummy : void 0;
+    ctrl.dummy = dummy;
   }, [dummy, puppet])
 
   useCallbacks(info.callbacks, {
@@ -195,10 +195,10 @@ export function PlayerRow(props: Props) {
               {is_bot_ctrl(ctrl) ? <>Bot√</> : <>Bot</>}
             </Button>
             <Select
-              items={["", ...Object.keys(DummyEnum)]}
+              options={Object.keys(DummyEnum)}
               parse={(k) => k ? [(DummyEnum as any)[k], k] : ["", "not dummy"]}
               value={dummy}
-              onChange={set_dummy}
+              onChange={v => set_dummy(v)}
             />
           </Combine>
       }

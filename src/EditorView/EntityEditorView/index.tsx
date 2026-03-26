@@ -6,7 +6,7 @@ import { SpeedMode } from "@/LF2/defines/SpeedMode";
 import './style.scss';
 function make_num_enum_select_props<T extends number = number>(enum_obj: any, value_title_map?: any): IBaseSelectProps<string, T> {
   return ({
-    items: Object.keys(enum_obj).filter(key => {
+    options: Object.keys(enum_obj).filter(key => {
       if (key.startsWith('_')) return false;
       if (!Number.isNaN(Number(key))) return false;
       return true;
@@ -20,7 +20,7 @@ function make_num_enum_select_props<T extends number = number>(enum_obj: any, va
   });
 }
 const make_str_enum_select_props = (enum_obj: any, value_desc_map?: any): IBaseSelectProps<string, string> => ({
-  items: Object.keys(enum_obj).filter(key => {
+  options: Object.keys(enum_obj).filter(key => {
     if (key.startsWith('_')) return false;
     return true;
   }),

@@ -64,7 +64,7 @@ export function useEditor<O extends {}>(value: O, label_style: React.CSSProperti
         return (
           <Titled {...t_props(name ?? field)}>
             <Select
-              items={img_list}
+              options={img_list}
               parse={v => [v.name, v.name]}
               defaultValue={get_value(field)}
               onChange={v => set_value(field, v)}

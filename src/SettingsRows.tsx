@@ -164,7 +164,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
             <Select
               value={stage_id}
               onChange={v => lf2.change_stage(v!)}
-              items={stage_list}
+              options={stage_list}
               parse={(i) => [i.id, i.name]}
             />
             {!stage_phase_list.length ? null : (
@@ -172,7 +172,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
                 title={phase_desc}
                 onChange={v => set_stage_phase_idx(v!)}
                 value={stage_phase_idx}
-                items={stage_phase_list}
+                options={stage_phase_list}
                 parse={(i, idx) => [
                   idx,
                   [`No.${1 + idx}, bound: ${i.bound}`].filter(Boolean).join(" "),
@@ -202,7 +202,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           <Select
             value={bg_id}
             onChange={v => lf2.change_bg(v!)}
-            items={lf2.datas.backgrounds}
+            options={lf2.datas.backgrounds}
             parse={(i) => [i.id, i.base.name]}
           />
         </Titled>
@@ -210,7 +210,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           <Select
             value={difficulty}
             onChange={v => set_difficulty(v!)}
-            items={[
+            options={[
               Difficulty.Easy,
               Difficulty.Normal,
               Difficulty.Difficult,
@@ -246,7 +246,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
             <Select
               value={weapon_id}
               onChange={v => set_weapon_id(v!)}
-              items={[0, ...lf2.datas.weapons]}
+              options={[0, ...lf2.datas.weapons]}
               parse={i => is_num(i) ? ["", "Random"] : [i.id, i.base.name]} >
             </Select>
             <Button onClick={on_click_add_weapon}>
@@ -284,7 +284,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
             <Select
               value={bot_ctrl}
               onChange={v => set_bot_ctrl(v!)}
-              items={Object.keys(bot_controllers)}
+              options={Object.keys(bot_controllers)}
               parse={(i) => [i, i]}
             />
             <Button onClick={on_click_add_bot}>添加</Button>
