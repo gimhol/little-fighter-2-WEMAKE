@@ -1,4 +1,5 @@
 /*** AUTO EXPORT START ***/
+export * from "./_";
 export * from "./Alignment";
 export * from "./BackgroundSwitcher";
 export * from "./CameraCtrl";
@@ -7,7 +8,6 @@ export * from "./DanmuGameLogic";
 export * from "./DemoModeLogic";
 export * from "./DifficultyText";
 export * from "./EndingPageLogic";
-export * from "./Factory";
 export * from "./FadeInOpacity";
 export * from "./FadeOutOpacity";
 export * from "./FighterHead";
@@ -31,8 +31,8 @@ export * from "./make_fighter_sum";
 export * from "./make_player_sum";
 export * from "./make_sum_info";
 export * from "./make_team_sum_info";
-export * from "./OpacityFlash";
 export * from "./OpacityAnimation";
+export * from "./OpacityFlash";
 export * from "./OpacityHover";
 export * from "./PlayerCtrlType";
 export * from "./PlayerKeyEdit";
@@ -68,5 +68,4 @@ export * from "./UIComponentExpressionBuilder";
 export * from "./UIProps";
 export * from "./VerticalLayout";
 export * from "./VsModeLogic";
-export * from "./_";
 /*** AUTO EXPORT END ***/
