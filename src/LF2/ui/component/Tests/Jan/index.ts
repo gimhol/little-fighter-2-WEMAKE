@@ -1,5 +1,4 @@
-/************ [START] auto-exports ************/
+/*** AUTO EXPORT START ***/
 export * from "./Jan_DUA";
 export * from "./Jan_DUJ";
-export * from "./index";
-/************ [END] auto-exports ************/
+/*** AUTO EXPORT END ***/

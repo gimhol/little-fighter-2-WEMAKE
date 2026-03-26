@@ -1,8 +1,9 @@
-/************ [START] auto-exports ************/
+/*** AUTO EXPORT START ***/
 export * from "./Alignment";
 export * from "./BGMSwitcher";
 export * from "./BackgroundSwitcher";
 export * from "./CameraCtrl";
+export * from "./CharMenu";
 export * from "./CharMenuHead";
 export * from "./ComponentFSMState";
 export * from "./ComponentsPlayer";
@@ -70,6 +71,7 @@ export * from "./StageTitleText";
 export * from "./StageTransitions";
 export * from "./SummaryLogic";
 export * from "./TeamSituationText";
+export * from "./Tests";
 export * from "./Text";
 export * from "./TextInput";
 export * from "./TxtClickable";
@@ -85,4 +87,4 @@ export * from "./make_fighter_sum";
 export * from "./make_player_sum";
 export * from "./make_sum_info";
 export * from "./make_team_sum_info";
-/************ [END] auto-exports ************/
+/*** AUTO EXPORT END ***/

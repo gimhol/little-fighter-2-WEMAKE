@@ -1,4 +1,4 @@
-/************ [START] auto-exports ************/
+/*** AUTO EXPORT START ***/
 export * from "./CharMenuLogic";
 export * from "./CharMenuState";
 export * from "./CharMenuState_Base";
@@ -11,5 +11,4 @@ export * from "./ICharMenuState";
 export * from "./ISlotPack";
 export * from "./SlotState";
 export * from "./SlotStep";
-export * from "./index";
-/************ [END] auto-exports ************/
+/*** AUTO EXPORT END ***/

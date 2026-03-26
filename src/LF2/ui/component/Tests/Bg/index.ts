@@ -1,4 +1,3 @@
-/************ [START] auto-exports ************/
+/*** AUTO EXPORT START ***/
 export * from "./Moon";
-export * from "./index";
-/************ [END] auto-exports ************/
+/*** AUTO EXPORT END ***/

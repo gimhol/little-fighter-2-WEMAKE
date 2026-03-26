@@ -1,5 +1,6 @@
 /*** AUTO EXPORT START ***/
 export * from "./BotBuilder";
+export * from "./IEditBotAction";
 export * from "./bot_ball_cancelling";
 export * from "./bot_ball_continuation";
 export * from "./bot_ball_dfa";
@@ -15,7 +16,6 @@ export * from "./bot_uppercut_duj";
 export * from "./bot_uppercut_dva";
 export * from "./constants";
 export * from "./frames";
-export * from "./IEditBotAction";
 export * from "./make_fighter_data_bat";
 export * from "./make_fighter_data_davis";
 export * from "./make_fighter_data_deep";

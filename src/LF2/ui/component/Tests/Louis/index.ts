@@ -1,4 +1,3 @@
-/************ [START] auto-exports ************/
+/*** AUTO EXPORT START ***/
 export * from "./LOUIS_JUMP_ATTACK";
-export * from "./index";
-/************ [END] auto-exports ************/
+/*** AUTO EXPORT END ***/

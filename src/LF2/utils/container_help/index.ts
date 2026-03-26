@@ -1,4 +1,5 @@
 /*** AUTO EXPORT START ***/
+export * from "./assign";
 export * from "./ensure";
 export * from "./filter";
 export * from "./find";

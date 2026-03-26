@@ -1,3 +1,4 @@
+import { Factory } from "../Factory";
 import { LF2 } from "../LF2";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
@@ -5,7 +6,6 @@ import { IBaseData, IBgData, IBotData, IDataLists, IEntityData, IStageInfo } fro
 import { EntityEnum } from "../defines/EntityEnum";
 import { Defines } from "../defines/defines";
 import { Ditto } from "../ditto";
-import { Factory } from "../entity";
 import {
   is_ball_data,
   is_bg_data,

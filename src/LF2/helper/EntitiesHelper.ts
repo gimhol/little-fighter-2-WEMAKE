@@ -1,7 +1,6 @@
 import { new_team } from "../base";
 import { IEntityData } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
-import { Factory } from "../entity";
 import { Entity } from "../entity/Entity";
 import { LF2 } from "../LF2";
 import { Randoming } from "./Randoming";
