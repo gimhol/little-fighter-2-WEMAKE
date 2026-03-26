@@ -2,9 +2,7 @@ import { Ditto } from "@/LF2/ditto";
 import { ILf2Callback } from "@/LF2/ILf2Callback";
 import { new_team } from "../../base";
 import LocalController from "../../controller/LocalController";
-import { FacingFlag, TeamEnum } from "../../defines";
-import { Defines } from "../../defines/defines";
-import { Factory } from "../../entity/Factory";
+import { Defines, FacingFlag, TeamEnum } from "../../defines";
 import { BackgroundSwitcher } from "./BackgroundSwitcher";
 import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
 import { StageSwitcher } from "./StageSwitcher";
@@ -74,7 +72,7 @@ export class GamePrepareLogic extends UIComponent {
         continue;
       }
 
-      const fighter = Factory.inst.create_entity(fighter_data.type, this.world, fighter_data)
+      const fighter = this.lf2.factory.create_entity(this.world, fighter_data)
       if (!fighter) {
         Ditto.warn(`[${GamePrepareLogic.TAG}::start_game] failed to create fighter. figher data: ${fighter_data}`);
         debugger;
@@ -88,7 +86,7 @@ export class GamePrepareLogic extends UIComponent {
         this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
 
       if (player.is_com) {
-        fighter.ctrl = Factory.inst.create_ctrl(fighter_data.id, player.id, fighter);
+        fighter.ctrl = this.lf2.factory.create_ctrl(fighter_data.id, player.id, fighter);
       } else {
         fighter.ctrl = new LocalController(player.id, fighter);
       }
@@ -105,7 +103,7 @@ export class GamePrepareLogic extends UIComponent {
       fighter.attach();
     }
     if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);
-    
+
     if (stage_name_text) this.lf2.push_ui("stage_mode_page");
     else this.lf2.push_ui("vs_mode_page");
 

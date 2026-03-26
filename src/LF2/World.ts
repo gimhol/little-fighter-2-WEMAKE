@@ -21,7 +21,7 @@ import { CMD } from "./defines/CMD";
 import { Ditto } from "./ditto";
 import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
-  Entity, Factory,
+  Entity,
   is_ball,
   is_bot_ctrl,
   is_fighter,
@@ -579,7 +579,7 @@ export class World extends WorldDataset {
       this.renderer.del_entity(entity);
 
       entity.release();
-      Factory.inst.release(entity)
+      this.lf2.factory.recycle_entity(entity)
     }
     this.gones.clear()
     this.stage.update();
@@ -821,7 +821,7 @@ export class World extends WorldDataset {
       Ditto.warn(`[${World.TAG}::spark] "${Defines.BuiltIn_Dats.Spark}" data not found!`);
       return;
     }
-    const e = Factory.inst.create_entity(data.type, this, data);
+    const e = this.lf2.factory.create_entity(this, data);
     if (!e) {
       Ditto.warn(`[${World.TAG}::spark] failed`);
       return;
@@ -837,7 +837,7 @@ export class World extends WorldDataset {
       Ditto.warn(`[${World.TAG}::etc] oid "${O_ID.Etc}" data not found!`);
       return;
     }
-    const e = Factory.inst.create_entity(data.type, this, data)
+    const e = this.lf2.factory.create_entity(this, data)
     if (!e) {
       Ditto.warn(`[${World.TAG}::etc] failed`);
       return;

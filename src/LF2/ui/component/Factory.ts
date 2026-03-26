@@ -37,4 +37,4 @@ class ComponentFactory {
   }
 
 }
-export default ComponentFactory.inst;
+export default Componentthis.lf2.factory;

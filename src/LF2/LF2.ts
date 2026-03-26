@@ -12,7 +12,6 @@ import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
-import { Ticker } from "./Ticker";
 import * as UI from "./ui";
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
@@ -73,7 +72,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   readonly disater_spreading_y = new Helper.Randoming(D.Defines.DISATER_SPREADING_VY, this)
   readonly jan_devil_judgement_spreading_x = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VX, this)
   readonly jan_devil_judgement_spreading_y = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VY, this)
-
+  readonly factory: Factory = new Factory();
   get loading() {
     return this._loading;
   }
@@ -463,7 +462,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!data) { debugger; return; }
     let fighter = this.world.puppets.get(player_id);
     if (!fighter) {
-      fighter = Factory.inst.create_entity(data.type, this.world, data)
+      fighter = this.factory.create_entity(this.world, data)
       if (!fighter) return void 0;
       fighter.name = player_info.name;
       fighter.team = team || new_team();

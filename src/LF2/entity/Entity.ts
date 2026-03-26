@@ -1,3 +1,4 @@
+import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
@@ -28,7 +29,6 @@ import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
 import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
-import { Factory, ICreator } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
@@ -1029,13 +1029,13 @@ export class Entity {
       debugger
       return;
     }
-    const entity = Factory.inst.create_entity(data.type, this.world, data);
+    const entity = this.lf2.factory.create_entity(this.world, data);
     if (!entity) {
       Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, data: `, data, ` opoint: `, opoint);
       debugger
       return;
     }
-    entity.ctrl = Factory.inst.create_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
+    entity.ctrl = this.lf2.factory.create_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
     entity.on_spawn(this, opoint, offset_velocity, facing).attach(opoint.is_entity);
     if (entity.data.id === this.data.id) this.copies.add(entity)
     entity.key_role = false;
@@ -2286,7 +2286,7 @@ export class Entity {
   }
   transform(data: IEntityData) {
     if (!is_human_ctrl(this.ctrl))
-      this.ctrl = Factory.inst.create_ctrl(data.id, this.ctrl.player_id, this);
+      this.ctrl = this.lf2.factory.create_ctrl(data.id, this.ctrl.player_id, this);
     const prev = this._data;
     this._data = data;
     const { armor } = this._data.base
@@ -2341,14 +2341,13 @@ export class Entity {
   }
 }
 
-const common_creator: ICreator<Entity, typeof Entity> = (...args) => {
-  const type = args[1].type;
-  let ret = Factory.inst.acquire(type)
-  if (!ret) ret = new Entity(...args)
-  else ret.reset(...args)
+const common_creator = (world: World, data: IEntityData, states?: States) => {
+  let ret = world.lf2.factory.acquire_entity(data.type)
+  if (!ret) ret = new Entity(world, data, states)
+  else ret.reset(world, data, states)
   return ret
 }
-Factory.inst.set_entity_creator(EntityEnum.Ball, common_creator);
-Factory.inst.set_entity_creator(EntityEnum.Weapon, common_creator);
-Factory.inst.set_entity_creator(EntityEnum.Entity, common_creator);
-Factory.inst.set_entity_creator(EntityEnum.Fighter, common_creator);
+Factory.regist_entity(EntityEnum.Ball, common_creator);
+Factory.regist_entity(EntityEnum.Weapon, common_creator);
+Factory.regist_entity(EntityEnum.Entity, common_creator);
+Factory.regist_entity(EntityEnum.Fighter, common_creator);

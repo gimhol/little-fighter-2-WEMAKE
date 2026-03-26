@@ -13,7 +13,6 @@ import { BaseController, Entity, new_team, TeamEnum } from "./LF2";
 import { DummyEnum } from "./LF2/bot/DummyEnum";
 import LocalController from "./LF2/controller/LocalController";
 import { GameKey } from "./LF2/defines/GameKey";
-import { Factory } from "./LF2/entity/Factory";
 import { is_bot_ctrl } from "./LF2/entity/type_check";
 import { LF2 } from "./LF2/LF2";
 import { PlayerInfo } from "./LF2/PlayerInfo";
@@ -190,7 +189,7 @@ export function PlayerRow(props: Props) {
             <Button
               onClick={() => {
                 if (is_bot_ctrl(ctrl)) puppet.ctrl = new LocalController(info.id, puppet);
-                else puppet.ctrl = Factory.inst.create_ctrl(puppet.data.id, info.id, puppet);
+                else puppet.ctrl = puppet.lf2.factory.create_ctrl(puppet.data.id, info.id, puppet);
               }}>
               {is_bot_ctrl(ctrl) ? <>Bot√</> : <>Bot</>}
             </Button>

@@ -25,18 +25,17 @@ export class EntitiesHelper {
     this.lf2.world.entities.forEach((v) => ret.push(v));
     return ret;
   }
-  
+
   at(idx: number): Entity | undefined {
     return this.list()[idx];
   }
 
   add(data: IEntityData, num: number = 1, team?: string): Entity[] {
-    const creator = Factory.inst.get_entity_creator(data.type);
-    if (!creator) return [];
     const ret: Entity[] = [];
     while (--num >= 0) {
-      const entity = creator(this.lf2.world, data);
-      entity.ctrl = Factory.inst.create_ctrl(entity.data.id, "", entity)
+      const entity = this.lf2.factory.create_entity(this.lf2.world, data);
+      if (!entity) continue;
+      entity.ctrl = this.lf2.factory.create_ctrl(entity.data.id, "", entity)
       entity.team = team === '?' ? this.team_randoming.take() : (team || new_team())
       this.lf2.random_entity_info(entity).attach();
       ret.push(entity);

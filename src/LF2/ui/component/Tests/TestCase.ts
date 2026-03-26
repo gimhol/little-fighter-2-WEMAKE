@@ -1,10 +1,9 @@
 import { IState } from "@/LF2/base";
 import { O_ID } from "@/LF2/defines";
+import { CMD } from "@/LF2/defines/CMD";
 import { Entity } from "@/LF2/entity";
-import { Factory } from "@/LF2/entity/Factory";
 import { round_float } from "@/LF2/utils/math/round_float";
 import type { Tests } from "./index";
-import { CMD } from "@/LF2/defines/CMD";
 
 export class TestCase implements IState<number> {
   static KEY: number = 0;
@@ -40,7 +39,7 @@ export class TestCase implements IState<number> {
   spawn(oid: string) {
     const data = this.lf2.datas.find_fighter(oid);
     if (!data) return null;
-    return Factory.inst.create_entity(data.type, this.world, data) || null;
+    return this.lf2.factory.create_entity(this.world, data) || null;
   }
   bandits_8(px: number = 50, pz: number = 20): Entity[] {
     const bandits: Entity[] = []

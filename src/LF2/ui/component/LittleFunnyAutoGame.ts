@@ -44,9 +44,9 @@ export class LittleFunnyAutoGame extends UIComponent {
       this._datas.push(...this.lf2.datas.fighters)
     const data = this.lf2.mt.take(this._datas)
     if (!data) return;
-    const fighter = Factory.inst.create_entity(data.type, this.world, data)
+    const fighter = this.lf2.factory.create_entity(this.world, data)
     if (!fighter) return;
-    fighter.ctrl = Factory.inst.create_ctrl(data.id, '', fighter);
+    fighter.ctrl = this.lf2.factory.create_ctrl(data.id, '', fighter);
     fighter.team = new_team();
     fighter.set_position_x(this._lr * this.world.bg.width)
     fighter.facing = this._lr ? -1 : 1;
