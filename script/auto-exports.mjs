@@ -13,6 +13,7 @@ export async function auto_exports(dir) {
   for (const file of files) {
     if (file === `index.ts`) continue;
     if (file === `_.ts`) continue;
+    if (file.endsWith(`.test.ts`)) continue;
     const sub = `${dir}/${file}`
     const s = await fs.stat(sub)
     if (s.isFile() && file.endsWith('.ts')) {
