@@ -68,7 +68,7 @@ import * as b3 from "./ExtraZipText"
 import * as b4 from "./BGMSwitcher";
 import * as b5 from "./Text";
 import * as b6 from "./FnKeysCounts";
-import * as b7 from "./Tests";
+import * as b7 from "./Tests/Tests";
 import { Factory } from "@/LF2";
 
 /*** COMPONENTS IMPORT END ***/

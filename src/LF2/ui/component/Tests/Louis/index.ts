@@ -1,6 +1,4 @@
 /************ [START] auto-exports ************/
-export * from "./ActionDirector";
-export * from "./TestCase";
-export * from "./Tests";
+export * from "./LOUIS_JUMP_ATTACK";
 export * from "./index";
 /************ [END] auto-exports ************/

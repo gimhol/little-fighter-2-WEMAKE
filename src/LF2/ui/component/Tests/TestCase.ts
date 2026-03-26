@@ -3,7 +3,7 @@ import { O_ID } from "@/LF2/defines";
 import { CMD } from "@/LF2/defines/CMD";
 import { Entity } from "@/LF2/entity";
 import { round_float } from "@/LF2/utils/math/round_float";
-import type { Tests } from "./index";
+import type { Tests } from "./Tests";
 
 export class TestCase implements IState<number> {
   static KEY: number = 0;

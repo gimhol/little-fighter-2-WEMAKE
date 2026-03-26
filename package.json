@@ -39,7 +39,8 @@
     "json6": "ts-json-schema-generator --path src/LF2/defines/IItrInfo.ts --type IItrInfo > .vscode/schema/itr.schema.json5",
     "__OTHERS___": "__OTHERS___",
     "save:rn": "node ./script/save-rn.mjs",
-    "load:rn": "node ./script/load-rn.mjs"
+    "load:rn": "node ./script/load-rn.mjs",
+    "exports": "node ./script/auto-exports.mjs ./src/LF2"
   },
   "dependencies": {
     "@fimagine/dom-hooks": "^1.0.6",
