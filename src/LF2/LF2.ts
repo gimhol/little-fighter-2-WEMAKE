@@ -5,6 +5,7 @@ import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
 import { Entity } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
+import { Factory } from "./Factory";
 import * as Helper from "./helper";
 import { I18N } from "./I18N";
 import { ILf2Callback } from "./ILf2Callback";

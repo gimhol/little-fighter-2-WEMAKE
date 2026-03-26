@@ -35,8 +35,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { Times } from "./ui";
-import { abs, is_num, max, min, round } from "./utils";
+import { abs, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";

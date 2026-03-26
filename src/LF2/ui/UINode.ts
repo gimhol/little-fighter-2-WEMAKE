@@ -1,26 +1,17 @@
 import { LF2 } from "../LF2";
-import Callbacks from "../base/Callbacks";
-import { Expression } from "../base/Expression";
-import StateDelegate from "../base/StateDelegate";
-import { IValGetter } from "../defines/IExpression";
-import { IStyle } from "../defines/IStyle";
-import { Ditto } from "../ditto";
-import { ImageInfo } from "../ditto/image/ImageInfo";
-import { TextInfo } from "../ditto/image/TextInfo";
-import { IUINodeRenderer } from "../ditto/render/IUINodeRenderer";
-import { IDebugging, make_debugging } from "../entity/make_debugging";
-import { round } from "../utils";
-import { filter, find } from "../utils/container_help";
-import { is_bool, is_num, is_str } from "../utils/type_check";
+import { Callbacks, Expression, StateDelegate } from "../base";
+import { IStyle, IValGetter } from "../defines";
+import { Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
+import { IDebugging, make_debugging } from "../entity";
+import { filter, find, is_bool, is_num, is_str, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
 import { IUIPointerEvent } from "./IUIPointerEvent";
-import actor from "./action/Actor";
-import { UIComponent } from "./component/UIComponent";
+import { actor } from "./action";
+import { UIComponent } from "./component";
 import { parse_ui_value } from "./read_info_value";
-import { Times } from "./utils";
 export class UINode implements IDebugging {
 
   static readonly TAG: string = 'UINode';

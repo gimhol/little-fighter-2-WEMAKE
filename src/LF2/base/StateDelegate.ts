@@ -152,4 +152,3 @@ export class StateDelegate<T> {
     this.value = v;
   }
 }
-export default StateDelegate

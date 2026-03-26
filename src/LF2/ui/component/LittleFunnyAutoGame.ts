@@ -1,6 +1,6 @@
 import { new_team } from "@/LF2/base";
 import { Defines, type IEntityData } from "@/LF2/defines";
-import { Factory, IEntityCallbacks } from "@/LF2/entity";
+import { IEntityCallbacks } from "@/LF2/entity";
 import { Ticker } from "@/LF2/Ticker";
 import { UIComponent } from "./UIComponent";
 
