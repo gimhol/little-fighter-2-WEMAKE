@@ -2347,7 +2347,7 @@ const common_creator = (world: World, data: IEntityData, states?: States) => {
   else ret.reset(world, data, states)
   return ret
 }
-Factory.regist_entity(EntityEnum.Ball, common_creator);
-Factory.regist_entity(EntityEnum.Weapon, common_creator);
-Factory.regist_entity(EntityEnum.Entity, common_creator);
-Factory.regist_entity(EntityEnum.Fighter, common_creator);
+Factory.register_entity(EntityEnum.Ball, common_creator);
+Factory.register_entity(EntityEnum.Weapon, common_creator);
+Factory.register_entity(EntityEnum.Entity, common_creator);
+Factory.register_entity(EntityEnum.Fighter, common_creator);

@@ -40,7 +40,10 @@
     "__OTHERS___": "__OTHERS___",
     "save:rn": "node ./script/save-rn.mjs",
     "load:rn": "node ./script/load-rn.mjs",
-    "exports": "node ./script/auto-exports.mjs ./src/LF2 && node ./script/auto-exports.mjs ./src/DittoImpl"
+    "exports:lf2": "node ./script/auto-exports.mjs ./src/LF2",
+    "exports:ditto": "node ./script/auto-exports.mjs ./src/DittoImpl",
+    "register:components": "node ./script/auto-components.mjs",
+    "auto": "npm run exports:lf2 && npm run exports:ditto && npm run register:components"
   },
   "dependencies": {
     "@fimagine/dom-hooks": "^1.0.6",

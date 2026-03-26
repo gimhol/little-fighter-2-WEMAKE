@@ -1,15 +1,60 @@
-import { auto_exports } from './auto-exports.mjs';
-const a = `
-export class A extends UIComponent{}
-export class B extends UIComponent {}
-export class C extends UIComponent\n{}
-export class D<> extends UIComponent<>{}
-`
-const regexp1 = new RegExp('export\\s*class\\s*(.*?)\\s*extends\\s*UIComponent[\\s|<|{]', 'g')
-const regexp2 = new RegExp(regexp1, '')
-console.log(
-  a.match(regexp1).map(v => v.match(regexp2).at(1).split('<').at(0).trim())
-)
+import fs from "fs/promises";
 
-auto_exports('./src/LF2/ui/component');
-// TODO
+async function find_components(file, clazz_list, out) {
+  const buf = await fs.readFile(file);
+  const str = buf.toString();
+  for (const clazz of clazz_list) {
+    const regexp1 = new RegExp(`export\\s*class\\s*(.*?)\\s*extends\\s*${clazz}[\\s|<|{]`, 'g')
+    const regexp2 = new RegExp(regexp1, '')
+    const clazz_names = str.match(regexp1)?.map(v => v.match(regexp2).at(1).split('<').at(0).trim())
+    if (clazz_names?.length) out.push(...clazz_names.map(v => [v, clazz]))
+  }
+  return out;
+}
+export async function auto_components(dir, clazz_list, out) {
+  const files = await fs.readdir(dir);
+  for (const file of files) {
+    if (file === `index.ts`) continue;
+    if (file === `_.ts`) continue;
+    const sub = `${dir}/${file}`
+    const s = await fs.stat(sub)
+    if (s.isDirectory()) {
+      await auto_components(sub, clazz_list, out)
+      continue;
+    }
+    if (s.isFile() && file.endsWith('.ts')) {
+      await find_components(sub, clazz_list, out)
+    }
+  }
+  return out.length
+}
+async function main() {
+  const outs = []
+  let names = ['UIComponent'];
+  const useds = new Set(names)
+  while (names.length) {
+    const pairs = []
+    await auto_components(`./src/LF2/ui/component`, names, pairs)
+    if (!pairs.length) break;
+    names.length = 0;
+    for (const pair of pairs) {
+      const [n] = pair;
+      if (useds.has(n)) continue;
+      useds.add(n)
+      names.push(n)
+      outs.push(pair)
+    }
+  }
+  let str = `
+/*** AUTO REGISTER COMPONENTS START ***/
+import { Factory } from "@/LF2/Factory";
+import * as _ from "./index";
+[
+${outs.map(v => `  _.${v[0]}`).sort().join(',\n')}
+].map(v => Factory.register_component(v));
+/*** AUTO REGISTER COMPONENTS END ***/
+`.trim();
+
+  await fs.writeFile(`./src/LF2/ui/component/_.ts`, str)
+}
+main();

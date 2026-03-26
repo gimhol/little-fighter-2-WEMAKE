@@ -3,7 +3,6 @@ import type { IEntityData } from "./defines/IEntityData";
 import { Ditto } from "./ditto/Instance";
 import type { Entity } from "./entity/Entity";
 import type { States } from "./state/States";
-import type { IUICompnentCallbacks } from "./ui/component/IUICompnentCallbacks";
 import type { UIComponent } from "./ui/component/UIComponent";
 import type { IComponentInfo } from "./ui/IComponentInfo";
 import type { UINode } from "./ui/UINode";
@@ -24,20 +23,20 @@ export class Factory {
   static readonly ctrl_creators = new Map<Key, ICtrlCreator>();
   static readonly components = new Map<string, typeof UIComponent>();
 
-  static register_component(Cls: (typeof UIComponent<any, any>) & { TAG: string }) {
+  static register_component(Cls: typeof UIComponent<any, any>) {
     const { TAG: type } = Cls;
     if (this.components.has(type))
       Ditto.warn(`[${Factory.TAG}::register_component] type already exists, ${type}`)
     this.components.set(type, Cls);
   }
-  static regist_entity(type: Key, creator: IEntityCreators): void {
+  static register_entity(type: Key, creator: IEntityCreators): void {
     if (Factory.entity_creators.has(type))
-      Ditto.warn(`[${Factory.TAG}::regist_entity] type already exists, ${type.toString()}`)
+      Ditto.warn(`[${Factory.TAG}::register_entity] type already exists, ${type.toString()}`)
     Factory.entity_creators.set(type, creator);
   }
-  static regist_ctrl(oid: Key, creator: ICtrlCreator): void {
+  static register_ctrl(oid: Key, creator: ICtrlCreator): void {
     if (Factory.ctrl_creators.has(oid))
-      Ditto.warn(`[${Factory.TAG}::regist_ctrl] oid already exists, ${oid.toString()}`)
+      Ditto.warn(`[${Factory.TAG}::register_ctrl] oid already exists, ${oid.toString()}`)
     Factory.ctrl_creators.set(oid, creator);
   }
   recycle_entity(e: Entity): this {

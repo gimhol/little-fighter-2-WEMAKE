@@ -62,11 +62,11 @@ class Inner {
     const jobs: Promise<any>[] = [];
     if (is_bg_data(data)) data = preprocess_bg_data(this.lf2, data, jobs)
     if (is_ball_data(data))
-      Factory.regist_ctrl(data.id, (a, b) => new BallController(a, b));
+      Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
     else if (is_weapon_data(data))
-      Factory.regist_ctrl(data.id, (a, b) => new BallController(a, b));
+      Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
     else if (is_fighter_data(data))
-      Factory.regist_ctrl(data.id, (a, b) => new BotController(a, b));
+      Factory.register_ctrl(data.id, (a, b) => new BotController(a, b));
     if (is_entity_data(data)) {
       data.base.bot
       if (data.base.bot_id) {

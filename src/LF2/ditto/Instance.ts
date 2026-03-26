@@ -6,7 +6,6 @@ import type { ICache } from "./cache";
 import type { IFullScreen } from "./fullscreen";
 import type { IImageMgr } from "./image/IImageMgr";
 import type { IImporter } from "./importer";
-import { BaseImporter } from "./importer";
 import type { IRender } from "./IRender";
 import type { ITimeout } from "./ITimeout";
 import type { IKeyboard } from "./keyboard";
@@ -14,7 +13,6 @@ import type { IPointings } from "./pointings";
 import type { IUINodeRenderer } from "./render/IUINodeRenderer";
 import type { IWorldRenderer } from "./render/IWorldRenderer";
 import type { ISounds } from "./sounds";
-import { BaseSounds } from "./sounds";
 import type { IUIInputHandle } from "./ui/IEventHandle";
 import type { IZip } from "./zip";
 export interface IDitto extends IDittoPack {
@@ -54,8 +52,6 @@ export interface IDittoPack {
 }
 
 const _Ditto: Partial<IDitto> = {
-  Importer: new BaseImporter(),
-  Sounds: BaseSounds,
   setup(pack: IDittoPack) {
     Object.assign(this, pack);
   },

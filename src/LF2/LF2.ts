@@ -16,7 +16,7 @@ import { Stage } from "./stage";
 import * as UI from "./ui";
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
-
+import './ui/component/_';
 const cheat_info_pair = (n: D.CheatType) =>
   [
     n,
