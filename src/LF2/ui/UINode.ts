@@ -18,7 +18,6 @@ import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
 import { IUIPointerEvent } from "./IUIPointerEvent";
 import actor from "./action/Actor";
-import inst from "./component/Factory";
 import { UIComponent } from "./component/UIComponent";
 import { parse_ui_value } from "./read_info_value";
 import { Times } from "./utils";
@@ -403,7 +402,7 @@ export class UINode implements IDebugging {
 
     const { component } = ret.data;
     if (component)
-      for (const c of inst.create(ret, component))
+      for (const c of lf2.factory.create_components(ret, component))
         ret._components.add(c);
 
     if (info.items) {

@@ -69,6 +69,7 @@ import * as b4 from "./BGMSwitcher";
 import * as b5 from "./Text";
 import * as b6 from "./FnKeysCounts";
 import * as b7 from "./Tests";
+import { Factory } from "@/LF2";
 
 /*** COMPONENTS IMPORT END ***/
 
@@ -90,4 +91,4 @@ export const ALL_COMPONENTS = [
   i.Dialogs, b1.HideWhenDialoging, b2.LittleFunnyAutoGame, b3.ExtraZipText, b5.Text,
   b4.BGMSwitcher, b6.FnKeysCounts, b7.Tests,
   /*** COMPONENTS MAP END ***/
-].map(v => [v.TAG, v] as const);
+].map(v => Factory.register_component(v));
