@@ -72,8 +72,6 @@ export class EntityRender {
   protected x = 0;
   protected y = 0;
   protected z = 0;
-  protected outline_width: number = 2;
-  outline_color: string | undefined = void 0;
   protected offset_x: number = 0;
   protected offset_y: number = 0;
 
@@ -236,14 +234,11 @@ export class EntityRender {
   }
   private render_outline() {
     const { main_mesh } = this;
-    if (this.entity.outline_color != this.outline_color) {
-      this.outline_color = this.entity.outline_color;
-    }
     if (this.entity.is_ghost) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
-      if (this.outline_color) {
-        m.uniforms.outlineColor.value = new T.Color(this.outline_color);
+      if (this.entity.outline_color) {
+        m.uniforms.outlineColor.value = new T.Color(this.entity.outline_color);
         m.uniforms.outlineAlpha.value = 0.7
       } else {
         m.uniforms.outlineAlpha.value = 0
