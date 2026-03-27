@@ -10,8 +10,11 @@ uniform float h;
 uniform float outlineWidth;
 uniform float outlineAlpha;
 uniform vec3 outlineColor;
-
+uniform float gray;
 varying vec2 vUv;
+
+// 你之前的灰度权重（扩展成 vec4）
+const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
 
 const float gamma = 2.2;
 vec3 gamma_correct(vec3 color) {
@@ -19,6 +22,10 @@ vec3 gamma_correct(vec3 color) {
 }
 vec3 gamma_invert(vec3 color) {
   return pow(color, vec3(gamma));
+}
+vec3 toGray(vec3 color, float strength) {
+  float gray = dot(color, GRAY_WEIGHT);
+  return mix(color, vec3(gray), strength);
 }
 void main() {
   float ow = tw / ts;
@@ -30,6 +37,8 @@ void main() {
   vec4 color = texture2D(pTexture, uv);
   color.rgb = gamma_correct(color.rgb);
   if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
+    if(gray > 0.0)
+      color.rgb = toGray(color.rgb, gray);
     gl_FragColor = color;
     return;
   }
@@ -46,6 +55,8 @@ void main() {
     gl_FragColor.rgb = gamma_correct(outlineColor);
     gl_FragColor.a = outlineAlpha;
   } else {
+    if(gray > 0.0)
+      color.rgb = toGray(color.rgb, gray);
     gl_FragColor = color;
   }
 }

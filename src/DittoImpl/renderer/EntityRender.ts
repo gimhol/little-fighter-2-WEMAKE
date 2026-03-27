@@ -40,7 +40,8 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       outlineAlpha: { value: 0 },
       outlineWidth: { value: 1 },
       flipX: { value: 1 },
-      flipY: { value: 1 }
+      flipY: { value: 1 },
+      gray: { value: 0 }
     },
     vertexShader: Shaders.Vertex.Normal,
     fragmentShader: Shaders.Fragment.Outline,
