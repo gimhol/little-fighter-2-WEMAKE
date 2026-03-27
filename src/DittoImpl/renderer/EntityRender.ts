@@ -41,6 +41,8 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       outlineWidth: { value: 1 },
       flipX: { value: 1 },
       flipY: { value: 1 },
+      scaleX: { value: 1 },
+      scaleY: { value: 1 },
       gray: { value: 0 }
     },
     vertexShader: Shaders.Vertex.Normal,
