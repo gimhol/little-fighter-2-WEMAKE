@@ -9,8 +9,7 @@ import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
 import { get_color_material } from "./MaterialKeeper";
 import { vec001, vec2 } from "./Mess";
-import { outline_fragment_shader } from "./shader/fragment/outline";
-import { normal_vertex_shader } from "./shader/vertex/normal";
+import { Shaders } from "./shader";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
@@ -40,10 +39,10 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       outlineColor: { value: new T.Color("#000000") },
       outlineAlpha: { value: 0 },
       outlineWidth: { value: 1 },
-      facing: { value: 1 }
+      flipX: { value: 1 }
     },
-    vertexShader: normal_vertex_shader,
-    fragmentShader: outline_fragment_shader,
+    vertexShader: Shaders.Vertex.Normal,
+    fragmentShader: Shaders.Fragment.Outline,
     transparent: true
   });
 }

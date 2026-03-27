@@ -1,4 +1,3 @@
 /*** AUTO EXPORT START ***/
-export * from "./fragment";
-export * from "./vertex";
+export * from "./Shaders";
 /*** AUTO EXPORT END ***/
