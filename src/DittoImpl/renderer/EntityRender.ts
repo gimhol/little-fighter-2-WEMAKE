@@ -157,7 +157,7 @@ export class EntityRender {
     m.uniforms.y.value = y;
     m.uniforms.w.value = w;
     m.uniforms.h.value = h;
-    m.uniforms.facing.value = entity.facing
+    m.uniforms.flipX.value = entity.facing
   }
 
   update_shaking(dt: number) {
