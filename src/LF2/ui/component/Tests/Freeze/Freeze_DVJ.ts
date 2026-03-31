@@ -23,8 +23,8 @@ export class Freeze_DVJ extends TestCase {
   }
   override enter(): void {
     this.director.reset();
-    const freezes = this.hori_3(O_ID.Freeze)
-    freezes.forEach(o => {
+    this.freezes = this.hori_3(O_ID.Freeze)
+    this.freezes.forEach(o => {
       o.team = TeamEnum.Team_1;
       o.key_role = false;
       o.mp = 1000000;
