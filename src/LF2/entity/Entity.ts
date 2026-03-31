@@ -1923,9 +1923,9 @@ export class Entity {
     if (wp_a.kind === WpointKind.Drop) {
       bearer.drop_holding();
       this.lf2.mt.mark = 'dh_v'
-      const vy = 4
-      const vx = this.lf2.mt.range(-3, 3)
-      const vz = this.lf2.mt.range(-1, 1)
+      const vy = 3
+      const vx = this.lf2.mt.range(-10, 10) / 10
+      const vz = this.lf2.mt.range(-10, 10) / 20;
       this.set_velocity(vx, vy, vz)
       return;
     }
