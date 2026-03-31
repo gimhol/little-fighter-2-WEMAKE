@@ -102,6 +102,12 @@ class Inner {
     const list = this.data_list_map[data.type]
     const idx = list.findIndex(v => v.id === data.id)
     if (idx < 0) list.push(data); else list[idx] = data;
+
+    {
+      const list = this.data_list_map[EntityEnum.Entity]
+      const idx = list.findIndex(v => v.id === data.id)
+      if (idx < 0) list.push(data); else list[idx] = data;
+    }
   }
 
   private _add_bg(data: IBgData) {
@@ -285,6 +291,16 @@ export default class DatMgr {
     return is_str(arg_0)
       ? this.weapons.find((v) => v.id === arg_0)
       : this.weapons.find(arg_0);
+  }
+
+  find_entity(id: string): IEntityData | undefined;
+  find_entity(predicate: IFindPredicate<IEntityData>): IEntityData | undefined;
+  find_entity(
+    arg_0: string | IFindPredicate<IEntityData>,
+  ): IEntityData | undefined {
+    return is_str(arg_0)
+      ? this.entity.find((v) => v.id === arg_0)
+      : this.entity.find(arg_0);
   }
 
   find_fighter(id: string): IEntityData | undefined;
