@@ -3,20 +3,14 @@ import { GK, IClazz } from "@/LF2/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { Text } from "../Text";
 import { UIComponent } from "../UIComponent";
-import { Firen_DFA } from "./Firen/Firen_DFA";
-import { Firen_DFJ } from "./Firen/Firen_DFJ";
-import { Firen_DUJ } from "./Firen/Firen_DUJ";
-import { Firen_DVJ } from "./Firen/Firen_DVJ";
-import { Firzen_DUA } from "./Firezen/Firzen_DUA";
-import { Firzen_FUSION } from "./Firezen/Firzen_FUSION";
-import { Jan_DUA } from "./Jan/Jan_DUA";
-import { Jan_DUJ } from "./Jan/Jan_DUJ";
-import { Julian_DFA } from "./Julian/Julian_DFA";
-import { Julian_DFJ } from "./Julian/Julian_DFJ";
-import { Julian_DUJ } from "./Julian/Julian_DUJ";
-import { LOUIS_JUMP_ATTACK } from "./Louis/LOUIS_JUMP_ATTACK";
-import { TestCase } from "./TestCase";
 import { MoonTest } from "./Bg/Moon";
+import { Firen_DFA, Firen_DFJ, Firen_DUJ, Firen_DVJ } from "./Firen";
+import { Firzen_DUA, Firzen_FUSION } from "./Firezen";
+import { Freeze_DFA, Freeze_DFJ, Freeze_DUJ, Freeze_DVJ } from "./Freeze";
+import { Jan_DUA, Jan_DUJ } from "./Jan";
+import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
+import { LOUIS_JUMP_ATTACK } from "./Louis";
+import { TestCase } from "./TestCase";
 
 const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   [TestCase], [
@@ -34,6 +28,11 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
     Firen_DFA,
     Firen_DFJ,
     Firen_DVJ,
+  ], [
+    Freeze_DUJ,
+    Freeze_DFA,
+    Freeze_DFJ,
+    Freeze_DVJ,
   ], [
     LOUIS_JUMP_ATTACK
   ], [
