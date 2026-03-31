@@ -214,6 +214,10 @@ export class WorldDataset implements IWorldDataset {
   wvx_f: number = 0.5;
   wvy_f: number = -0.5;
   wvz_f: number = 1;
+  whirlwind_vy_max: number = 4;
+  whirlwind_acc_y: number = 1;
+  whirlwind_acc_x: number = 0.5;
+  whirlwind_acc_z: number = 0.5;
 
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
