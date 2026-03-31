@@ -3,6 +3,7 @@ export * from "./ActionDirector";
 export * from "./Bg";
 export * from "./Firen";
 export * from "./Firezen";
+export * from "./Freeze";
 export * from "./Jan";
 export * from "./Julian";
 export * from "./Louis";

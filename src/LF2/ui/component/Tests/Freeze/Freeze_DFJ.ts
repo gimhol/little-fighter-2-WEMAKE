@@ -1,0 +1,46 @@
+import { AGK, GK, O_ID, TeamEnum } from "@/LF2/defines";
+import { Entity } from "@/LF2/entity";
+import { TestCase } from "../TestCase";
+import { ActionDirector } from "../ActionDirector";
+
+export class Freeze_DFJ extends TestCase {
+  override readonly key: number = ++TestCase.KEY;
+  override name: string = 'Freeze D>J'
+  freeze1?: Entity | null;
+  freeze2?: Entity | null;
+  freeze3?: Entity | null;
+  director = new ActionDirector()
+    .offset(500,
+      () => {
+        this.freeze1?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump)
+        this.freeze2?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump)
+        this.freeze3?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump)
+      },
+      () => {
+        this.freeze1?.ctrl.click(GK.Down);
+        this.freeze3?.ctrl.click(GK.Up);
+      }
+    )
+    .wait(1000)
+    .times(100)
+    .sort()
+
+  override update(dt: number): number | void | undefined {
+    this.director.update(dt)
+  }
+  override enter(): void {
+    this.director.reset();
+    const figters = this.hori_3(O_ID.Freeze)
+    figters.forEach(o => {
+      o.team = TeamEnum.Team_1;
+      o.key_role = false;
+      o.mp = 1000000;
+    })
+    this.freeze1 = figters[0]
+    this.freeze2 = figters[1]
+    this.freeze3 = figters[2]
+
+    this.bandits_mid_8()
+    this.bandits_8()
+  }
+}
