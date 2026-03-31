@@ -1,6 +1,6 @@
 {
   "name": "little-fighter-2-wemake",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "type": "module",
   "private": true,
   "homepage": ".",
@@ -26,8 +26,8 @@
     "pick:rn": "npm run build:tool && node ./tool make-data -c ./lf2s/rn/conf.json5 -d && node ./tool pick -c ./lf2s/rn/pick-conf.json5 -d",
     "txt:rn": "node ./tool dat-2-txt -c ./lf2s/rn/conf.json5 -d",
     "___deploy___": "___deploy___",
-    "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.20 --LOCAL_PATH ./dist",
-    "deploy:rn": "fdeploy -s oss --REMOTE_DIR rn/0.1.20 --LOCAL_PATH ./dist",
+    "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.21 --LOCAL_PATH ./dist",
+    "deploy:rn": "fdeploy -s oss --REMOTE_DIR rn/0.1.21 --LOCAL_PATH ./dist",
     "deploy:docs": "fdeploy -s oss --REMOTE_DIR docs --LOCAL_PATH docs",
     "___flow___": "___flow___",
     "flow": "npm run build && npm run deploy",
