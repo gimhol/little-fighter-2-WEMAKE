@@ -1921,8 +1921,12 @@ export class Entity {
     } = bearer.frame;
 
     if (wp_a.kind === WpointKind.Drop) {
-      // TODO: cal v needed.
       bearer.drop_holding();
+      this.lf2.mt.mark = 'dh_v'
+      const vy = 4
+      const vx = this.lf2.mt.range(-3, 3)
+      const vz = this.lf2.mt.range(-1, 1)
+      this.set_velocity(vx, vy, vz)
       return;
     }
 
