@@ -18,6 +18,7 @@ import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
 import { IArmorInfo } from "../defines/IArmorInfo";
 import { SpeedCtrl } from "../defines/SpeedCtrl";
+import { WpointKind } from "../defines/WpointKind";
 import { Ditto } from "../ditto";
 import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
@@ -1919,6 +1920,12 @@ export class Entity {
       centerx: cx_a, centery: cy_a,
     } = bearer.frame;
 
+    if (wp_a.kind === WpointKind.Drop) {
+      // TODO: cal v needed.
+      bearer.drop_holding();
+      return;
+    }
+
     if (wp_a.weaponact !== this.frame.id) {
       // 还原wpoint丢失的情况
       if (wp_a.weaponact)
@@ -1940,7 +1947,7 @@ export class Entity {
     const { x: wa_x = 0, y: wa_y = 0, z: wa_z = 0 } = wp_a;
     const { x: wb_x = 0, y: wb_y = 0, z: wb_z = 0 } = wp_b
 
-    if (wp_a) {
+    if (wp_a.kind) {
       this.set_position(
         x + this.facing * (wa_x - cx_a + cx_b - wb_x),
         y + cy_a - wa_y - cy_b + wb_y,
