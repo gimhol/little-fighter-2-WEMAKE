@@ -5,7 +5,7 @@ import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_armor } from "./handle_armor";
 import { handle_fall } from "./handle_fall";
 import { handle_injury } from "./handle_injury";
-import { handle_itr_kind_freeze } from "./handle_itr_kind_freeze";
+import { handle_itr_effect_freeze, handle_itr_kind_freeze } from "./handle_itr_kind_freeze";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 import { is_fall } from "./is_fall";
@@ -25,7 +25,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
       break;
     }
     case ItrEffect.Ice2:
-      handle_itr_kind_freeze(collision)
+      handle_itr_effect_freeze(collision)
       break;
     case ItrEffect.Ice: {
       if (victim.frame.state === StateEnum.Frozen) {
@@ -34,7 +34,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
         handle_rest(collision)
         handle_fall(collision);
       } else {
-        handle_itr_kind_freeze(collision)
+        handle_itr_effect_freeze(collision)
       }
       break;
     }
