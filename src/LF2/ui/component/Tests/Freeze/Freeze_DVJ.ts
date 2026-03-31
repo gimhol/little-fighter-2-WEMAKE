@@ -6,17 +6,15 @@ import { TestCase } from "../TestCase";
 export class Freeze_DVJ extends TestCase {
   override readonly key: number = ++TestCase.KEY;
   override name: string = 'Freeze DvJ';
-  freeze1?: Entity | null;
+  freezes: Entity[] = [];
   director = new ActionDirector()
     .offset(500,
       () => {
-        this.freeze1?.ctrl.key_up(...AGK).click(GK.Defend, GK.Down, GK.Jump)
-      },
-      () => {
-        this.freeze1?.ctrl.key_down(GK.Down);
+        this.freezes[0]?.ctrl.key_up(...AGK).click(GK.Defend, GK.Down, GK.Jump)
+        this.freezes[1]?.ctrl.key_up(...AGK).click(GK.Defend, GK.Down, GK.Jump)
+        this.freezes[2]?.ctrl.key_up(...AGK).click(GK.Defend, GK.Down, GK.Jump)
       }
     )
-    .wait(500)
     .times(1000)
     .sort();
 
@@ -31,6 +29,5 @@ export class Freeze_DVJ extends TestCase {
       o.key_role = false;
       o.mp = 1000000;
     })
-    this.freeze1 = freezes[0]
   }
 }
