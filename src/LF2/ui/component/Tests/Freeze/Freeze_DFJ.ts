@@ -12,16 +12,12 @@ export class Freeze_DFJ extends TestCase {
   director = new ActionDirector()
     .offset(500,
       () => {
-        this.freeze1?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump)
+        this.freeze1?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump).key_down(GK.Down)
         this.freeze2?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump)
-        this.freeze3?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump)
-      },
-      () => {
-        this.freeze1?.ctrl.click(GK.Down);
-        this.freeze3?.ctrl.click(GK.Up);
+        this.freeze3?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump).key_down(GK.Up)
       }
     )
-    .wait(1000)
+    .wait(200)
     .times(100)
     .sort()
 
