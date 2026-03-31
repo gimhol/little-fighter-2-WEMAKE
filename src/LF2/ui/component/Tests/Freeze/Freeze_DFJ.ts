@@ -17,7 +17,7 @@ export class Freeze_DFJ extends TestCase {
         this.freeze3?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump).key_down(GK.Up)
       }
     )
-    .wait(200)
+    .wait(500)
     .times(100)
     .sort()
 
