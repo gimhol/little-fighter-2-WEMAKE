@@ -109,6 +109,7 @@ export * from "./TeamEnum";
 export * from "./TextureWrapping";
 export * from "./WeaponType";
 export * from "./WorldVal";
+export * from "./WpointKind";
 export * from "./defines";
 export * from "./make_field_orders";
 /*** AUTO EXPORT END ***/

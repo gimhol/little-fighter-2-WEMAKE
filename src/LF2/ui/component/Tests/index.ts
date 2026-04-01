@@ -7,6 +7,7 @@ export * from "./Freeze";
 export * from "./Jan";
 export * from "./Julian";
 export * from "./Louis";
+export * from "./Others";
 export * from "./TestCase";
 export * from "./Tests";
 /*** AUTO EXPORT END ***/

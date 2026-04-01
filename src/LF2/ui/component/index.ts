@@ -80,8 +80,6 @@ export * from "./UIComponentExpressionBuilder";
 export * from "./UIProps";
 export * from "./VerticalLayout";
 export * from "./VsModeLogic";
-export * from "../utils/isClass";
-export * from "../utils/isUIComponentClass";
 export * from "./make_fighter_sum";
 export * from "./make_player_sum";
 export * from "./make_sum_info";
