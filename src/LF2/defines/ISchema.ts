@@ -7,7 +7,7 @@ export interface ISchema<T = any> {
   path?: string;
   key?: string;
   description?: string;
-  type: 'array' | 'boolean' | 'null' | 'number' | 'integer' | 'object' | 'string' | IClazz<UIComponent | UINode>,
+  type: 'array' | 'boolean' | 'null' | 'number' | 'integer' | 'object' | 'string' | IClazz<UIComponent | UINode | Boolean | String | Number | Array<any>>,
   properties?: Record<keyof T, ISchema>
   items?: ISchema;
   string?: {
