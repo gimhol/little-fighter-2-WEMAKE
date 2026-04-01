@@ -4,7 +4,8 @@ uniform float tw;
 /** 一倍纹理图的高度（像素）*/
 uniform float th;
 /** 当前纹理图的倍数 */
-uniform float ts;
+uniform float tsw;
+uniform float tsh;
 /** 一倍纹理图下，纹理图中截取坐标X（像素）*/
 uniform float x;
 /** 一倍纹理图下，纹理图中截取坐标Y（像素）*/
@@ -27,26 +28,33 @@ uniform float mixStreath;
 uniform vec3 mixColor;
 /** opacity */
 uniform float opacity;
+uniform bool keepout;
 
 // 你之前的灰度权重（扩展成 vec4）
 const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
 
 const float gamma = 2.2;
+
+varying vec2 vUv;
+
 vec3 gamma_correct(vec3 color) {
   return pow(color, vec3(1.0 / gamma));
 }
+
 vec3 gamma_invert(vec3 color) {
   return pow(color, vec3(gamma));
 }
+
 vec3 toGray(vec3 color, float strength) {
   float gray = dot(color, GRAY_WEIGHT);
   return mix(color, vec3(gray), strength);
 }
+
 void main() {
-  float ow = tw / ts;
-  float oh = th / ts;
+  float ow = tw / tsw;
+  float oh = th / tsh;
   vec2 uv = vec2((vUv.x * w / ow) + x / ow, (vUv.y * h / oh) + 1.0 - (y + h) / oh);
-  if(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+  if(!keepout && (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)) {
     // 超出纹理图的部分将不显示
     discard;
   }

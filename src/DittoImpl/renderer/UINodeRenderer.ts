@@ -33,7 +33,8 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       h: { value: 1 },
       tw: { value: 1 },
       th: { value: 1 },
-      ts: { value: 1 },
+      tsw: { value: 1 },
+      tsh: { value: 1 },
       outlineColor: { value: new T.Color("#000000") },
       outlineAlpha: { value: 0 },
       outlineWidth: { value: 0 },
@@ -45,6 +46,7 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       opacity: { value: 1 },
       mixColor: { value: new T.Color("#000000") },
       gray: { value: 0 },
+      keepout: { value: true }
     },
     vertexShader: Shaders.Vertex.Normal,
     fragmentShader: Shaders.Fragment.Outline,
@@ -177,11 +179,18 @@ export class UINodeRenderer implements IUINodeRenderer {
       _img
     } = this;
     const { w = 1, h = 1, scale = 1 } = _img || {}
-    sp.material.uniforms.w.value = w / scale;
-    sp.material.uniforms.h.value = h / scale;
+
+    const sw = w / scale
+    const sh = h / scale
+    // look stupid.
+    sp.material.uniforms.x.value = _texture.offset.x * sw / _texture.repeat.x;
+    sp.material.uniforms.y.value = _texture.offset.y * sh / _texture.repeat.y;
+    sp.material.uniforms.w.value = sw;
+    sp.material.uniforms.h.value = sh;
     sp.material.uniforms.tw.value = w;
     sp.material.uniforms.th.value = h;
-    sp.material.uniforms.ts.value = scale;
+    sp.material.uniforms.tsw.value = (scale * _texture.repeat.x);
+    sp.material.uniforms.tsh.value = (scale * _texture.repeat.y);
 
     if (sp.material.uniforms.pTexture.value !== _texture) {
       sp.material.uniforms.pTexture.value?.dispose();

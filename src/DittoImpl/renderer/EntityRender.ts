@@ -35,7 +35,8 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       h: { value: 0 },
       tw: { value: 0 },
       th: { value: 0 },
-      ts: { value: 0 },
+      tsw: { value: 0 },
+      tsh: { value: 0 },
       outlineColor: { value: new T.Color("#000000") },
       outlineAlpha: { value: 0 },
       outlineWidth: { value: 1 },
@@ -157,7 +158,8 @@ export class EntityRender {
     m.uniforms.pTexture.value = img.pic.texture;
     m.uniforms.tw.value = img.w;
     m.uniforms.th.value = img.h;
-    m.uniforms.ts.value = img.scale;
+    m.uniforms.tsw.value = img.scale;
+    m.uniforms.tsh.value = img.scale;
     m.uniforms.x.value = x;
     m.uniforms.y.value = y;
     m.uniforms.w.value = w;
