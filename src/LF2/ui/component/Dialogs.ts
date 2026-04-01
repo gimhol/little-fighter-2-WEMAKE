@@ -1,11 +1,19 @@
-import { Ditto, UIImgLoader, UINode, UITextLoader } from "@/LF2";
+import { Ditto, ISchema, make_schema, UIImgLoader, UINode, UITextLoader } from "@/LF2";
 import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
 import { StageDialogListener } from "./StageDialogListener";
 import { UIComponent } from "./UIComponent";
 import { Transform } from "@/LF2/Transform";
 
+export interface IDialogsProps {
+  steps?: number[];
+  times?: number;
+}
 export class Dialogs extends UIComponent {
   static override readonly TAG: string = 'Dialogs';
+  static override readonly PROPS: ISchema<IDialogsProps> = make_schema({
+    key: "IDialogsProps",
+    type: "object"
+  })
   protected _listner = new StageDialogListener(this, (d) => this.set_dialog(d));
   protected _text_node?: UINode;
   protected _text_loader = new UITextLoader(() => this._text_node)

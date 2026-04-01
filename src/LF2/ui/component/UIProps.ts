@@ -3,7 +3,7 @@ import type { ISchema } from "../../defines/ISchema";
 import { is_num, is_str } from "../../utils";
 import read_nums from "../utils/read_nums";
 import type { UIComponent } from "./UIComponent";
-import { isUIComponentClass } from "./isUIComponentClass";
+import { isUIComponentClass } from "../utils/isUIComponentClass";
 export interface IUIPropsCallback { }
 export class UIProps {
   readonly raw: { [x in string]?: any };
