@@ -1,16 +1,31 @@
 uniform sampler2D pTexture;
+/** 一倍纹理图的宽度（像素）*/
 uniform float tw;
+/** 一倍纹理图的高度（像素）*/
 uniform float th;
+/** 当前纹理图的倍数 */
 uniform float ts;
+/** 一倍纹理图下，纹理图中截取坐标X（像素）*/
 uniform float x;
+/** 一倍纹理图下，纹理图中截取坐标Y（像素）*/
 uniform float y;
+/** 一倍纹理图下，纹理图中截取宽度（像素）*/
 uniform float w;
+/** 一倍纹理图下，纹理图中截取高度（像素）*/
 uniform float h;
-
+/** 描边宽度（像素）*/
 uniform float outlineWidth;
+/** 描边透明度（0~1）*/
 uniform float outlineAlpha;
+/** 描边颜色 */
 uniform vec3 outlineColor;
+/** 灰度 */
 uniform float gray;
+/** 混色强度 */
+uniform float mixStreath;
+/** 混色 */
+uniform vec3 mixColor;
+
 varying vec2 vUv;
 
 // 你之前的灰度权重（扩展成 vec4）
@@ -32,17 +47,23 @@ void main() {
   float oh = th / ts;
   vec2 uv = vec2((vUv.x * w / ow) + x / ow, (vUv.y * h / oh) + 1.0 - (y + h) / oh);
   if(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+    // 超出纹理图的部分将不显示
     discard;
   }
   vec4 color = texture2D(pTexture, uv);
   color.rgb = gamma_correct(color.rgb);
+
+  /* 无需描边时，仅处理颜色 */
   if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
+    if(mixStreath > 0.0)
+      color.rgb = mix(color.rgb, mixColor, mixStreath);
     if(gray > 0.0)
       color.rgb = toGray(color.rgb, gray);
     gl_FragColor = color;
     return;
   }
 
+  /* 检查中心与四周颜色 */
   float outline = 0.0;
   vec2 texel = vec2(outlineWidth) / vec2(textureSize(pTexture, 0));
   float center = texture2D(pTexture, uv).a;
@@ -55,6 +76,8 @@ void main() {
     gl_FragColor.rgb = gamma_correct(outlineColor);
     gl_FragColor.a = outlineAlpha;
   } else {
+    if(mixStreath > 0.0)
+      color.rgb = mix(color.rgb, mixColor, mixStreath);
     if(gray > 0.0)
       color.rgb = toGray(color.rgb, gray);
     gl_FragColor = color;
