@@ -43,6 +43,7 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       flipY: { value: 1 },
       scaleX: { value: 1 },
       scaleY: { value: 1 },
+      opacity: { value: 1 },
       mixStreath: { value: 0 },
       mixColor: { value: new T.Color("#000000") },
       gray: { value: 0 }

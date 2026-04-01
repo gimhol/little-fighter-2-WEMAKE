@@ -9,6 +9,7 @@ import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
+import { Shaders } from "./shader";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -22,8 +23,36 @@ interface IUserData {
   img?: ImageInfo<T.Texture>,
   nine_patch?: INinePatch,
 }
+function get_material(texture: T.Texture<unknown> | undefined) {
+  return new T.ShaderMaterial({
+    uniforms: {
+      pTexture: { value: texture },
+      x: { value: 0 },
+      y: { value: 0 },
+      w: { value: 1 },
+      h: { value: 1 },
+      tw: { value: 1 },
+      th: { value: 1 },
+      ts: { value: 1 },
+      outlineColor: { value: new T.Color("#000000") },
+      outlineAlpha: { value: 0 },
+      outlineWidth: { value: 0 },
+      flipX: { value: 1 },
+      flipY: { value: 1 },
+      scaleX: { value: 1 },
+      scaleY: { value: 1 },
+      mixStreath: { value: 0 },
+      opacity: { value: 1 },
+      mixColor: { value: new T.Color("#000000") },
+      gray: { value: 0 },
+    },
+    vertexShader: Shaders.Vertex.Normal,
+    fragmentShader: Shaders.Fragment.Outline,
+    transparent: true
+  });
+}
 export class UINodeRenderer implements IUINodeRenderer {
-  mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+  mesh: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
   ui: UINode;
 
   protected _css_obj: CSS2DObject | undefined;
@@ -84,7 +113,8 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.ui = ui;
     this.mesh = new T.Mesh(
       this.next_geometry(),
-      new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
+      get_material(void 0)
+      // new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
     )
     this.mesh.userData.owner = ui;
   }
@@ -143,19 +173,29 @@ export class UINodeRenderer implements IUINodeRenderer {
     sp.geometry = this.next_geometry();
     const {
       _texture,
-      _rgba: [_r, _g, _b],
+      _rgba: [_r, _g, _b, _a],
+      _img
     } = this;
-    if (sp.material.map !== _texture) {
-      sp.material.map?.dispose();
-      sp.material.map = _texture;
+    const { w = 1, h = 1, scale = 1 } = _img || {}
+    sp.material.uniforms.w.value = w / scale;
+    sp.material.uniforms.h.value = h / scale;
+    sp.material.uniforms.tw.value = w;
+    sp.material.uniforms.th.value = h;
+    sp.material.uniforms.ts.value = scale;
+
+    if (sp.material.uniforms.pTexture.value !== _texture) {
+      sp.material.uniforms.pTexture.value?.dispose();
+      sp.material.uniforms.pTexture.value = _texture;
       sp.material.needsUpdate = true;
     }
-    const { r, g, b } = sp.material.userData;
-    if (r !== _r || g !== _g || b !== _b) {
-      sp.material.color = new T.Color(_r / 255, _g / 255, _b / 255);
+    const { r, g, b, a } = sp.material.userData;
+    if (r !== _r || g !== _g || b !== _b || _a !== a) {
+      sp.material.uniforms.mixColor.value = new T.Color(_r / 255, _g / 255, _b / 255);
+      sp.material.uniforms.mixStreath.value = 0
       sp.material.userData.r = _r;
       sp.material.userData.g = _g;
       sp.material.userData.b = _b;
+      sp.material.userData.a = _a;
       sp.material.needsUpdate = true;
     }
     return this;
@@ -175,7 +215,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.ui.txts.value[this.ui.txt_idx.value];
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
     this._img = img;
-    const color = this.ui.color.value;
+    const color = this.ui.color.value.trim();
     const texture: T.Texture = img ? img.pic?.texture : color ? white_texture() : empty_texture();
     const a = get_alpha_from_color(color) || 1
     const { r, g, b } = new T.Color(color);
@@ -250,7 +290,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._css_obj.center.set(this.ui.center.value[0], this.ui.center.value[1])
   }
   update_texture_attributes(dt: number) {
-    const t = this.mesh.material.map;
+    const t: T.Texture = this.mesh.material.uniforms.pTexture.value;
     if (!t || !this._ui_img) return;
     const { offsetAnimX, offsetAnimY } = this._ui_img
     if (!offsetAnimX && !offsetAnimY && this.user_data.ui_img == this._ui_img)
@@ -282,7 +322,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     const opacity = this.ui.global_opacity
 
     const { material: m } = sp;
-    m.opacity = this.ui.global_opacity * this._rgba[3];
+    m.uniforms.opacity.value = this.ui.global_opacity * this._rgba[3];
     m.needsUpdate = true;
     if (this._dom) this._dom.style.opacity = '' + opacity
 

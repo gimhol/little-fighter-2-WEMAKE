@@ -25,8 +25,8 @@ uniform float gray;
 uniform float mixStreath;
 /** 混色 */
 uniform vec3 mixColor;
-
-varying vec2 vUv;
+/** opacity */
+uniform float opacity;
 
 // 你之前的灰度权重（扩展成 vec4）
 const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
@@ -59,6 +59,7 @@ void main() {
       color.rgb = mix(color.rgb, mixColor, mixStreath);
     if(gray > 0.0)
       color.rgb = toGray(color.rgb, gray);
+    color.a *= opacity;
     gl_FragColor = color;
     return;
   }
@@ -80,6 +81,7 @@ void main() {
       color.rgb = mix(color.rgb, mixColor, mixStreath);
     if(gray > 0.0)
       color.rgb = toGray(color.rgb, gray);
+    color.a *= opacity;
     gl_FragColor = color;
   }
 }
