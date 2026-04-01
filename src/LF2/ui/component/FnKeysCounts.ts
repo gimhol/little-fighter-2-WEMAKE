@@ -17,31 +17,11 @@ export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
     key: "IFnKeysCountsProps",
     type: "object",
     properties: {
-      f6: {
-        key: "f6",
-        type: Text,
-        nullable: true,
-      },
-      f7: {
-        key: "f7",
-        type: Text,
-        nullable: true,
-      },
-      f8: {
-        key: "f8",
-        type: Text,
-        nullable: true,
-      },
-      f9: {
-        key: "f9",
-        type: Text,
-        nullable: true,
-      },
-      f10: {
-        key: "f10",
-        type: Text,
-        nullable: true,
-      }
+      f6: Text,
+      f7: Text,
+      f8: Text,
+      f9: Text,
+      f10: Text
     }
   })
   readonly world_cbs: IWorldCallbacks = {
@@ -55,7 +35,7 @@ export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
       }
     },
     on_counts: () => {
-        this.node.find_child('fn_key_counts')?.set_visible(true)
+      this.node.find_child('fn_key_counts')?.set_visible(true)
       const { f6, f7, f8, f9, f10 } = this.props;
       f6?.set_text(this.world.counts.get('f6') ?? 0)
       f7?.set_text(this.world.counts.get('f7') ?? 0)

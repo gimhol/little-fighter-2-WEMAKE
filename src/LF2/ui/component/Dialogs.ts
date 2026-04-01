@@ -1,36 +1,31 @@
-import { Ditto, ISchema, make_schema, UIImgLoader, UINode, UITextLoader } from "@/LF2";
+import { Ditto, ISchema, make_schema, Text, UIImgLoader, UINode } from "@/LF2";
 import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
+import { Transform } from "@/LF2/Transform";
 import { StageDialogListener } from "./StageDialogListener";
 import { UIComponent } from "./UIComponent";
-import { Transform } from "@/LF2/Transform";
 
 export interface IDialogsProps {
-  steps?: number[];
-  times?: number;
+  head_node?: UINode | null;
+  text?: Text | null;
+  talker?: Text | null;
 }
-export class Dialogs extends UIComponent {
+export class Dialogs extends UIComponent<IDialogsProps> {
   static override readonly TAG: string = 'Dialogs';
   static override readonly PROPS: ISchema<IDialogsProps> = make_schema({
     key: "IDialogsProps",
-    type: "object"
+    type: "object",
+    properties: {
+      head_node: UINode,
+      text: Text,
+      talker: Text
+    }
   })
   protected _listner = new StageDialogListener(this, (d) => this.set_dialog(d));
-  protected _text_node?: UINode;
-  protected _text_loader = new UITextLoader(() => this._text_node)
-  protected _talker_node?: UINode;
-  protected _talker_loader = new UITextLoader(() => this._talker_node)
-  protected _head_node?: UINode;
-  protected _head_loader = new UIImgLoader(() => this._head_node)
+  protected _head_loader = new UIImgLoader(() => this.props.head_node)
   protected _transform = new Transform()
 
   override on_start(): void {
     super.on_start?.();
-    const head_node_id = this.props_holder.str('head_node_id')
-    const text_node_id = this.props_holder.str('text_node_id')
-    const talker_node_id = this.props_holder.str('talker_node_id')
-    if (head_node_id) this._head_node = this.node.search_child(head_node_id)
-    if (text_node_id) this._text_node = this.node.search_child(text_node_id)
-    if (talker_node_id) this._talker_node = this.node.search_child(talker_node_id)
     this._listner.start();
   }
 
@@ -40,22 +35,22 @@ export class Dialogs extends UIComponent {
   hide_dialog() {
     this._transform.scale_to(0, 0, 1, true)
     this.node.visible = false;
-    this._text_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
-    this._talker_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
+    this.props.text?.set_text('');
+    this.props.talker?.set_text('');
     this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
   }
   show_dialog(dialog: IDialogInfo) {
     this._transform.scale_to(1, 1, 1, true)
     this.node.visible = true;
     const text = this.lf2.string(dialog.i18n)
-    this._text_loader.set_text([text]).catch(e => Ditto.warn('' + e))
+    this.props.text?.set_text(text);
 
     const fighter = dialog.fighter ? this.lf2.datas.find_fighter(dialog.fighter) : void 0
     if (fighter) {
       const fighter_name = this.lf2.string(fighter.base.name)
-      this._talker_loader.set_text([fighter_name]).catch(e => Ditto.warn('' + e))
+      this.props.talker?.set_text(fighter_name)
     } else {
-      this._talker_loader.set_text([' ']).catch(e => Ditto.warn('' + e))
+      this.props.talker?.set_text('')
     }
     if (fighter?.base.head) {
       this._head_loader.set_img([fighter.base.head]).catch(e => Ditto.warn('' + e))

@@ -1,3 +1,4 @@
+import { Ditto } from "@/LF2";
 import { IStyle } from "@/LF2/defines";
 import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
@@ -11,6 +12,6 @@ export class Text extends UIComponent {
   set style(v: IStyle) { this._txt_loader.set_style(v) }
 
   set_text(v: string | number | boolean) {
-    this._txt_loader.set_text(['' + v])
+    this._txt_loader.set_text(['' + v]).catch(e => Ditto.warn('' + e))
   }
 }

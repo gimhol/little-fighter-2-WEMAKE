@@ -4,6 +4,7 @@ import { is_num, is_str } from "../../utils";
 import read_nums from "../utils/read_nums";
 import type { UIComponent } from "./UIComponent";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
+import { isUINodeClass } from "../utils/isUINodeClass";
 export interface IUIPropsCallback { }
 export class UIProps {
   readonly raw: { [x in string]?: any };
@@ -11,6 +12,8 @@ export class UIProps {
   readonly validator = new SchemaValidator().instance_getter((value, clazz) => {
     if (isUIComponentClass(clazz)) {
       return this.owner.node.root.search_component(clazz, v => v.id === value)
+    } else if (isUINodeClass(clazz)) {
+      return this.owner.node.root.search_child(value)
     }
     return null
   }).instance_setter((value, clazz) => {
