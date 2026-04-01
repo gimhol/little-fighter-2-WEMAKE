@@ -1,8 +1,13 @@
-import { Ditto, ISchema, make_schema, Text, UIImgLoader, UINode } from "@/LF2";
 import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
+import { ISchema } from "@/LF2/defines/ISchema";
 import { Transform } from "@/LF2/Transform";
+import { make_schema } from "@/LF2/utils/schema/make_schema";
+import { UIImgLoader } from "../UIImgLoader";
+import { UINode } from "../UINode";
 import { StageDialogListener } from "./StageDialogListener";
+import { Text } from "./Text";
 import { UIComponent } from "./UIComponent";
+import { Ditto } from "@/LF2/ditto/Instance";
 
 export interface IDialogsProps {
   head_node?: UINode | null;
