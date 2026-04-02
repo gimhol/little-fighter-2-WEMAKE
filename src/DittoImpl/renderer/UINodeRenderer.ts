@@ -4,7 +4,7 @@ import { TextInput } from "@/LF2/ui/component/TextInput";
 import { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
-import { ceil, is_num, is_str, round } from "@/LF2/utils";
+import { is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
@@ -23,6 +23,9 @@ interface IUserData {
   img?: ImageInfo<T.Texture>,
   nine_patch?: INinePatch,
 }
+const BLACK = new T.Color("#000000");
+const WHITE = new T.Color("#FFFFFF");
+
 function get_material(texture: T.Texture<unknown> | undefined) {
   return new T.ShaderMaterial({
     uniforms: {
@@ -35,16 +38,22 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       th: { value: 1 },
       tsw: { value: 1 },
       tsh: { value: 1 },
-      outlineColor: { value: new T.Color("#000000") },
+      outlineColor: { value: BLACK },
       outlineAlpha: { value: 0 },
       outlineWidth: { value: 0 },
+      repeatX: { value: 1 },
+      repeatY: { value: 1 },
+      offsetX: { value: 0 },
+      offsetY: { value: 0 },
       flipX: { value: 1 },
       flipY: { value: 1 },
       scaleX: { value: 1 },
       scaleY: { value: 1 },
+      mixColor: { value: BLACK },
       mixStreath: { value: 0 },
+      coverColor: { value: BLACK },
+      coverStreath: { value: 0 },
       opacity: { value: 1 },
-      mixColor: { value: new T.Color("#000000") },
       gray: { value: 0 },
       keepout: { value: true }
     },
@@ -61,7 +70,10 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
   protected _geo = get_geometry(0, 0, 0, 0, 0);
-  protected _rgba: [number, number, number, number] = [255, 255, 255, 1];
+  protected _mixColor: T.Color = new T.Color(0, 0, 0);
+  protected _mixStength: number = 1;
+  protected _coverColor: T.Color = new T.Color(0, 0, 0);
+  protected _coverStength: number = 1;
   protected _texture: T.Texture = empty_texture();
   protected img_idx_version: number | null = null;
   protected imgs_version: number | null = null;
@@ -175,38 +187,36 @@ export class UINodeRenderer implements IUINodeRenderer {
     sp.geometry = this.next_geometry();
     const {
       _texture,
-      _rgba: [_r, _g, _b, _a],
       _img
     } = this;
-    const { w = 1, h = 1, scale = 1 } = _img || {}
 
+    const { material: m } = sp;
+    const { uniforms: u } = m;
+    m.uniforms.opacity.value = this.ui.global_opacity;
+
+    const { w = 1, h = 1, scale = 1 } = _img || {}
     const sw = w / scale
     const sh = h / scale
     // look stupid.
-    sp.material.uniforms.x.value = _texture.offset.x * sw / _texture.repeat.x;
-    sp.material.uniforms.y.value = _texture.offset.y * sh / _texture.repeat.y;
-    sp.material.uniforms.w.value = sw;
-    sp.material.uniforms.h.value = sh;
-    sp.material.uniforms.tw.value = w;
-    sp.material.uniforms.th.value = h;
-    sp.material.uniforms.tsw.value = (scale * _texture.repeat.x);
-    sp.material.uniforms.tsh.value = (scale * _texture.repeat.y);
+    u.x.value = _texture.offset.x * sw / _texture.repeat.x;
+    u.y.value = _texture.offset.y * sh / _texture.repeat.y;
+    u.w.value = sw;
+    u.h.value = sh;
+    u.tw.value = w;
+    u.th.value = h;
+    u.tsw.value = (scale * _texture.repeat.x);
+    u.tsh.value = (scale * _texture.repeat.y);
 
-    if (sp.material.uniforms.pTexture.value !== _texture) {
-      sp.material.uniforms.pTexture.value?.dispose();
-      sp.material.uniforms.pTexture.value = _texture;
-      sp.material.needsUpdate = true;
+    if (u.pTexture.value !== _texture) {
+      u.pTexture.value?.dispose();
+      u.pTexture.value = _texture;
     }
-    const { r, g, b, a } = sp.material.userData;
-    if (r !== _r || g !== _g || b !== _b || _a !== a) {
-      sp.material.uniforms.mixColor.value = new T.Color(_r / 255, _g / 255, _b / 255);
-      sp.material.uniforms.mixStreath.value = 0
-      sp.material.userData.r = _r;
-      sp.material.userData.g = _g;
-      sp.material.userData.b = _b;
-      sp.material.userData.a = _a;
-      sp.material.needsUpdate = true;
-    }
+    u.mixColor.value = this._mixColor;
+    u.mixStreath.value = this._mixStength;
+    u.coverColor.value = this._coverColor;
+    u.coverStreath.value = this._coverStength;
+
+    m.needsUpdate = true;
     return this;
   }
 
@@ -219,17 +229,33 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.txts_version === this.ui.txts.version &&
       this.color_version === this.ui.color.version
     ) return;
+
     const img: ImageInfo | undefined =
       this.ui.imgs.value[this.ui.img_idx.value] ||
       this.ui.txts.value[this.ui.txt_idx.value];
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
     this._img = img;
     const color = this.ui.color.value.trim();
-    const texture: T.Texture = img ? img.pic?.texture : color ? white_texture() : empty_texture();
-    const a = get_alpha_from_color(color) || 1
-    const { r, g, b } = new T.Color(color);
-    this._rgba = [ceil(r * 255), ceil(g * 255), ceil(b * 255), a];
-    this._texture = texture;
+    if (img) {
+      const texture: T.Texture = img.pic?.texture;
+      this._coverColor = BLACK;
+      this._coverStength = 0;
+      this._mixColor = color ? new T.Color(color) : BLACK
+      this._mixStength = color ? (get_alpha_from_color(color) || 1) : 0;
+      this._texture = texture;
+    } else if (color) {
+      const texture: T.Texture = white_texture();
+      this._coverColor = new T.Color(color);
+      this._coverStength = get_alpha_from_color(color) || 1;
+      this._mixColor = BLACK;
+      this._mixStength = 0;
+      this._texture = texture;
+    } else {
+      this._coverColor = BLACK;
+      this._coverStength = 0;
+      this._mixColor = BLACK;
+      this._mixStength = 0;
+    }
   }
 
 
@@ -330,9 +356,6 @@ export class UINodeRenderer implements IUINodeRenderer {
     sp.visible = this.ui.visible
     const opacity = this.ui.global_opacity
 
-    const { material: m } = sp;
-    m.uniforms.opacity.value = this.ui.global_opacity * this._rgba[3];
-    m.needsUpdate = true;
     if (this._dom) this._dom.style.opacity = '' + opacity
 
     this.apply()

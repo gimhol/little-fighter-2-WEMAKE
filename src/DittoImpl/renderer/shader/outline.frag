@@ -6,6 +6,12 @@ uniform float th;
 /** 当前纹理图的倍数 */
 uniform float tsw;
 uniform float tsh;
+
+uniform float repeatX;
+uniform float repeatY;
+uniform float offsetX;
+uniform float offsetY;
+
 /** 一倍纹理图下，纹理图中截取坐标X（像素）*/
 uniform float x;
 /** 一倍纹理图下，纹理图中截取坐标Y（像素）*/
@@ -30,6 +36,11 @@ uniform vec3 mixColor;
 uniform float opacity;
 uniform bool keepout;
 
+/** 色强度 */
+uniform float coverStreath;
+/** 色 */
+uniform vec3 coverColor;
+
 // 你之前的灰度权重（扩展成 vec4）
 const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
 
@@ -50,6 +61,22 @@ vec3 toGray(vec3 color, float strength) {
   return mix(color, vec3(gray), strength);
 }
 
+void apply(vec4 color) {
+  if(mixStreath > 0.0) {
+    color.rgb = mix(color.rgb, mixColor, mixStreath);
+  }
+  if(coverStreath > 0.0) {
+    color.rgb = coverColor;
+    color.a = coverStreath;
+  }
+  if(gray > 0.0) {
+    color.rgb = toGray(color.rgb, gray);
+  }
+  color.a *= opacity;
+  gl_FragColor = color;
+
+}
+
 void main() {
   float ow = tw / tsw;
   float oh = th / tsh;
@@ -63,12 +90,7 @@ void main() {
 
   /* 无需描边时，仅处理颜色 */
   if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
-    if(mixStreath > 0.0)
-      color.rgb = mix(color.rgb, mixColor, mixStreath);
-    if(gray > 0.0)
-      color.rgb = toGray(color.rgb, gray);
-    color.a *= opacity;
-    gl_FragColor = color;
+    apply(color);
     return;
   }
 
@@ -85,11 +107,6 @@ void main() {
     gl_FragColor.rgb = gamma_correct(outlineColor);
     gl_FragColor.a = outlineAlpha;
   } else {
-    if(mixStreath > 0.0)
-      color.rgb = mix(color.rgb, mixColor, mixStreath);
-    if(gray > 0.0)
-      color.rgb = toGray(color.rgb, gray);
-    color.a *= opacity;
-    gl_FragColor = color;
+    apply(color);
   }
 }
