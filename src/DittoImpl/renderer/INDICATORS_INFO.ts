@@ -21,7 +21,7 @@ export const INDICATORS_INFO: {
   },
   ft_l: {
     color: 0x2288FF, // #2288FF
-    linewidth: 1,
+    linewidth: 5,
   },
   opoint: {
     color: 0xFF2288, // #8822FF

@@ -64,11 +64,11 @@ vec3 toGray(vec3 color, float strength) {
 
 void apply(vec4 color) {
   if(cover) {
-    color.rgb = coverColor;
+    color.rgb = gamma_correct(coverColor);
     color.a = coverStreath;
   }
   if(mixStreath > 0.0) {
-    color.rgb = mix(color.rgb, mixColor, mixStreath);
+    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStreath);
   }
   if(gray > 0.0) {
     color.rgb = toGray(color.rgb, gray);

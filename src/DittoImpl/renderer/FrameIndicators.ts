@@ -146,9 +146,11 @@ export class FrameIndicators {
       let { w, h } = info;
       if (name == 'ft' && i == 1) {
         y = -this._z / 2;
+        w *= 3;
       } else if (name === 'ft' && i == 2) {
-        y = this._y / 2 - this._z / 2
-        h = this._y + this._z / 2
+        y = -this._z / 2;
+        h = this._y + this._z / 2;
+        w /= 2
       }
       indicator.userData.info = info;
       indicator.position.set(x, y, this._z);
@@ -180,10 +182,11 @@ export class FrameIndicators {
         let { w, h } = info;
         if (name == 'ft' && i == 1) {
           y = -this._z / 2;
-          x *= 2;
+          w *= 3;
         } else if (name === 'ft' && i == 2) {
           y = -this._z / 2;
-          h = (this._y + this._z / 2) / h
+          h = this._y + this._z / 2;
+          w /= 2
         }
         indicator.userData.info = info;
         indicator.position.set(x, y, this._z);
