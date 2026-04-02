@@ -172,14 +172,22 @@ export class FrameIndicators {
     });
   }
   update_indicators() {
-    foreach(this._indicators_map, (indicators) => {
-      foreach(indicators, indicator => {
+    foreach(this._indicators_map, (indicators, name) => {
+      foreach(indicators, (indicator, i) => {
         const info = indicator.userData.info as IQube
-        const y = this._y + info.y;
-        const x = this._x + info.x;
+        let y = this._y + info.y;
+        let x = this._x + info.x;
+        let { w, h } = info;
+        if (name == 'ft' && i == 1) {
+          y = -this._z / 2;
+          w *= 2;
+        } else if (name === 'ft' && i == 2) {
+          y = -this._z / 2;
+          h = this._y + this._z / 2
+        }
         indicator.userData.info = info;
         indicator.position.set(x, y, this._z);
-        indicator.scale.set(info.w, info.h, 1);
+        indicator.scale.set(w, h, 1);
       })
     })
   }
