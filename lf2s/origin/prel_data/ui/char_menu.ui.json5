@@ -16,7 +16,7 @@
           id: "CharMenuHead",
           size: "120, 120",
           pos: "0, 0",
-          component: ["CharMenuHead()"],
+          component: [{ name: "CharMenuHead" }],
           items: [
             {
               id: "hints",

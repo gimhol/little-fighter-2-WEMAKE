@@ -51,6 +51,7 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       scaleY: { value: 1 },
       mixColor: { value: BLACK },
       mixStreath: { value: 0 },
+      cover: { value: false },
       coverColor: { value: BLACK },
       coverStreath: { value: 0 },
       opacity: { value: 1 },
@@ -74,6 +75,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _mixStength: number = 1;
   protected _coverColor: T.Color = new T.Color(0, 0, 0);
   protected _coverStength: number = 1;
+  protected _cover: boolean = false;
   protected _texture: T.Texture = empty_texture();
   protected img_idx_version: number | null = null;
   protected imgs_version: number | null = null;
@@ -215,7 +217,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     u.mixStreath.value = this._mixStength;
     u.coverColor.value = this._coverColor;
     u.coverStreath.value = this._coverStength;
-
+    u.cover.value = this._cover;
     m.needsUpdate = true;
     return this;
   }
@@ -240,6 +242,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       const texture: T.Texture = img.pic?.texture;
       this._coverColor = BLACK;
       this._coverStength = 0;
+      this._cover = false
       this._mixColor = color ? new T.Color(color) : BLACK
       this._mixStength = color ? (get_alpha_from_color(color) || 1) : 0;
       this._texture = texture;
@@ -247,12 +250,14 @@ export class UINodeRenderer implements IUINodeRenderer {
       const texture: T.Texture = white_texture();
       this._coverColor = new T.Color(color);
       this._coverStength = get_alpha_from_color(color) || 1;
+      this._cover = true
       this._mixColor = BLACK;
       this._mixStength = 0;
       this._texture = texture;
     } else {
       this._coverColor = BLACK;
       this._coverStength = 0;
+      this._cover = true
       this._mixColor = BLACK;
       this._mixStength = 0;
     }

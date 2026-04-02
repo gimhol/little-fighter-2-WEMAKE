@@ -4,13 +4,13 @@ import { SlotStep } from "./SlotStep";
 export interface ISlotState {
   fighter: IEntityData | null;
   random: boolean;
-  step: number;
+  step: SlotStep;
   team: string;
 }
 export class SlotState {
   fighter: IEntityData | null = null;
   random: boolean = true;
-  step: number = SlotStep.FighterSel;
+  step: SlotStep = SlotStep.FighterSel;
   team: string = TeamEnum.Independent;
   constructor(o: Partial<ISlotState>) {
     Object.assign(this, o)

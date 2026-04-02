@@ -2,7 +2,7 @@
   name: "页面：对战模式准备页",
   id: "vs_mode_prepare_page",
   color: "rgba(0, 0, 0, 0.5)",
-  component: ["GamePrepareLogic(vs_mode)"],
+  component: [{ name: "GamePrepareLogic", args: ["vs_mode"] }],
   items: [
     {
       id: "frame",

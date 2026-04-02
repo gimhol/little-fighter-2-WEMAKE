@@ -123,43 +123,42 @@ export class CharMenuLogic extends UIComponent {
     this.update_slots()
   }
   update_slots() {
-    const { slots: slots } = this;
+    const { slots } = this;
     const players = Array.from(this.players.entries())
     for (let i = 0; i < slots.length; i++) {
       const { head, player_name, fighter_name, team_name } = slots[i];
       const ps = players.at(i)
-      if (ps) {
-        const [player, state] = ps
-        const { is_com } = player;
-        const random_confirm = this.fsm.state?.key === CharMenuState.GameSetting
-        if (head) {
-          if (state.random && !random_confirm) head.set_head(Defines.BuiltIn_Imgs.RFACE)
-          else if (state.fighter) head.set_head(state.fighter.base.head ?? Defines.BuiltIn_Imgs.RFACE)
-        }
-        if (player_name) {
-          player_name.join(player.name, is_com, true)
-        }
-        if (fighter_name) {
-          const decided = state.step > SlotStep.FighterSel
-          if (state.random && !random_confirm) fighter_name.join(this.lf2.string('Random'), is_com, decided)
-          else if (state.fighter) fighter_name.join(this.lf2.string(state.fighter.base.name) || "noname", is_com, decided)
-        }
-        if (team_name) {
-          if (state.step >= SlotStep.TeamSel) {
-            const team_info = Defines.TeamInfoMap[state.team]
-            const team_txt = this.lf2.string(team_info?.i18n ?? state.team)
-            team_name.join(team_txt, is_com, state.step > SlotStep.TeamSel)
-          } else {
-            team_name.quit()
-          }
-        }
-      } else {
+      if (!ps) {
         if (head) head.quit();
         if (player_name) player_name.quit();
         if (fighter_name) fighter_name.quit();
         if (team_name) team_name.quit();
+        continue;
       }
-
+      const [player, state] = ps
+      const { is_com } = player;
+      const random_confirm = this.fsm.state?.key === CharMenuState.GameSetting
+      if (head) {
+        if (state.random && !random_confirm) head.join(Defines.BuiltIn_Imgs.RFACE)
+        else if (state.fighter) head.join(state.fighter.base.head ?? Defines.BuiltIn_Imgs.RFACE)
+      }
+      if (player_name) {
+        player_name.join(player.name, is_com, true)
+      }
+      if (fighter_name) {
+        const decided = state.step > SlotStep.FighterSel
+        if (state.random && !random_confirm) fighter_name.join(this.lf2.string('Random'), is_com, decided)
+        else if (state.fighter) fighter_name.join(this.lf2.string(state.fighter.base.name) || "noname", is_com, decided)
+      }
+      if (team_name) {
+        if (state.step >= SlotStep.TeamSel) {
+          const team_info = Defines.TeamInfoMap[state.team]
+          const team_txt = this.lf2.string(team_info?.i18n ?? state.team)
+          team_name.join(team_txt, is_com, state.step > SlotStep.TeamSel)
+        } else {
+          team_name.quit()
+        }
+      }
     }
   }
   press_a(player: PlayerInfo) {

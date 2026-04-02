@@ -51,7 +51,11 @@ function get_material(texture: T.Texture<unknown> | undefined) {
       opacity: { value: 1 },
       mixStreath: { value: 0 },
       mixColor: { value: new T.Color("#000000") },
-      gray: { value: 0 }
+      cover: { value: false },
+      coverColor: { value: new T.Color("#000000") },
+      coverStreath: { value: 0 },
+      gray: { value: 0 },
+      keepout: { value: false }
     },
     vertexShader: Shaders.Vertex.Normal,
     fragmentShader: Shaders.Fragment.Outline,
