@@ -11,7 +11,7 @@ import { Jan_DUA, Jan_DUJ } from "./Jan";
 import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
 import { LOUIS_JUMP_ATTACK } from "./Louis";
 import { TestCase } from "./TestCase";
-import { BottleUpDrop } from "./Others/BottleUp";
+import { BottomsUp } from "./Others/BottomsUp";
 
 const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   [TestCase], [
@@ -39,7 +39,7 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     MoonTest
   ], [
-    BottleUpDrop
+    BottomsUp
   ],
 ]
 export class Tests extends UIComponent {

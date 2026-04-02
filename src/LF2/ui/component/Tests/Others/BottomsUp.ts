@@ -3,9 +3,9 @@ import { Entity } from "@/LF2/entity";
 import { TestCase } from "../TestCase";
 import { ActionDirector } from "../ActionDirector";
 
-export class BottleUpDrop extends TestCase {
+export class BottomsUp extends TestCase {
   override readonly key: number = ++TestCase.KEY;
-  override name: string = 'Bottle-Up drop test (Alcohol abuse results in harm to your health)'
+  override name: string = 'Bottoms Up Drop Test (Alcohol Abuse Results in Harm to Your Health)'
   figters: Entity[] = []
   director = new ActionDirector()
     .offset(1000,
