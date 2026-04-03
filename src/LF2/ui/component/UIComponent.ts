@@ -1,4 +1,4 @@
-import { ISchema } from "@/LF2/defines";
+import { ISchema, IVector3 } from "@/LF2/defines";
 import { make_schema } from "@/LF2/utils/schema/make_schema";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
@@ -31,6 +31,7 @@ export class UIComponent<
   readonly info: Required<IComponentInfo>;
   readonly props_holder: UIProps;
   protected _props: any;
+  private _args_caches = new Map<any, any>()
   stopped: boolean = true;
   paused: boolean = true;
   get props(): P {
@@ -100,11 +101,17 @@ export class UIComponent<
   nums(idx: number, length: number): number[] | null;
   nums(idx: number, length: number): number[] | null {
     if (idx >= this._args.length) return null;
+
+    const key = `nums_${idx}_${length}`
+    const cache = this._args_caches.get(key)
+    if (cache) return cache;
+
     let raw = this._args[idx];
     raw = typeof raw === 'string' ? raw.split(',') : raw
     if (Array.isArray(raw)) {
       if (raw.length < length) {
-        this.warn(`num2`, `args[${idx}].length < 2!`)
+        this.warn(`nums`, `args[${idx}].length < ${length}!`)
+        this._args_caches.set(key, null)
         return null
       }
       const unsafe_nums = raw.map(v => Number(v));
@@ -112,16 +119,33 @@ export class UIComponent<
       for (let i = 0; i < length; i++) {
         const unsafe_num = unsafe_nums[i];
         if (!is_num(unsafe_num)) {
-          this.warn(`num2`, `args[${idx}][${i}] is not a number, but got ${raw[i]}`)
+          this.warn(`nums`, `args[${idx}][${i}] is not a number, but got ${raw[i]}`)
+          this._args_caches.set(key, null)
           return null
         }
         ret.push(unsafe_num)
+        this._args_caches.set(key, ret)
       }
       return ret
     } else {
-      this.warn(`num2`, `args[${idx}] got ${raw}, can not parse to num2`)
+      this.warn(`nums`, `args[${idx}] got ${raw}, can not parse to num2`)
+      this._args_caches.set(key, null)
       return null
     }
+  }
+  vec3(idx: number): IVector3 | null {
+    const key = `vec3_${idx}`
+    const cache = this._args_caches.get(key)
+    if (cache) return cache;
+    const nums = this.nums(idx, 3)
+    if (nums == null) {
+      this._args_caches.set(key, null)
+      return null
+    }
+    const [x, y, z] = nums;
+    const ret = new Ditto.Vector3(x, y, z);
+    this._args_caches.set(key, ret)
+    return ret;
   }
 
   get node_name() {

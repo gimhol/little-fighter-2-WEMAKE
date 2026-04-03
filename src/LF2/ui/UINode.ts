@@ -1,6 +1,6 @@
 import { LF2 } from "../LF2";
 import { Callbacks, Expression, StateDelegate } from "../base";
-import { IStyle, IValGetter, IVector2, IVector2Like } from "../defines";
+import { IStyle, IValGetter, IVector2, IVector2Like, IVector3 } from "../defines";
 import { Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
 import { filter, find, is_bool, is_num, is_str, round, Times } from "../utils";
@@ -58,7 +58,7 @@ export class UINode implements IDebugging {
   protected readonly _disabled: StateDelegate<boolean> = new StateDelegate(() => this.data.disabled === true);
   protected readonly _opacity: StateDelegate<number> = new StateDelegate(1);
 
-  readonly pos: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.pos).comparer(StateDelegate.CompareArray);
+  readonly pos: StateDelegate<IVector3> = new StateDelegate(() => new Ditto.Vector3(...this.data.pos)).comparer(StateDelegate.CompareVec3);
   readonly scale: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.scale).comparer(StateDelegate.CompareArray);
   readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
@@ -93,7 +93,7 @@ export class UINode implements IDebugging {
   }
   get rect() {
     const c = this.cross
-    const [x, y] = this.pos.value
+    const { x, y } = this.pos.value
     return {
       left: x + c.left,
       top: y + c.top,
@@ -203,23 +203,32 @@ export class UINode implements IDebugging {
 
   get parent(): UINode | undefined { return this._parent; }
   get children(): Readonly<UINode[]> { return this._children; }
-
-  set_size(v: IVector2Like): this {
-    this.size.set(0, new Ditto.Vector2(v.x, v.y));
-    return this;
-  }
+  set_size(v: IVector2Like): this { return this.resize(v.x, v.y); }
   resize(w: number, h: number): this {
-    this.size.set(0, new Ditto.Vector2(w, h));
+    this.size.value = new Ditto.Vector2(w, h);
     return this;
   }
-
+  move(x: number = this.x, y: number = this.y, z: number = this.z): this {
+    this.pos.value = new Ditto.Vector3(x, y, z);
+    return this;
+  }
   get w(): number { return this.size.value.x; }
   set w(v: number) { this.set_w(v); }
-
   get h(): number { return this.size.value.y; }
   set h(v: number) { this.set_h(v); }
   set_w(v: number): this { return this.resize(v, this.h); }
   set_h(v: number): this { return this.resize(this.w, v); }
+
+  get x(): number { return this.pos.value.x; }
+  set x(v: number) { this.set_x(v); }
+  get y(): number { return this.pos.value.y; }
+  set y(v: number) { this.set_y(v); }
+  get z(): number { return this.pos.value.z; }
+  set z(v: number) { this.set_z(v); }
+  set_x(v: number): this { return this.move(v, this.y, this.z); }
+  set_y(v: number): this { return this.move(this.x, v, this.z); }
+  set_z(v: number): this { return this.move(this.x, this.y, v); }
+
 
   get components(): ReadonlySet<UIComponent> {
     return this._components;
@@ -247,7 +256,7 @@ export class UINode implements IDebugging {
     make_debugging(this)
   }
   get global_pos(): [number, number, number] {
-    const [x, y, z] = this.pos.value;
+    const { x, y, z } = this;
     if (this.parent) {
       const [gx, gy, gz] = this.parent.global_pos;
       return [x + gx, y + gy, z + gz];
@@ -256,16 +265,16 @@ export class UINode implements IDebugging {
   }
   set global_pos(v: [number, number, number]) {
     if (!this.parent) {
-      this.pos.value = v;
+      this.move(...v);
       return;
     }
     const [px, py, pz] = this.parent.global_pos
     const [gx, gy, gz] = v;
-    this.pos.value = [gx - px, gy - py, gz - pz];
+    this.move(gx - px, gy - py, gz - pz);
   }
   hit(x: number, y: number): boolean {
     const [cx, cy] = this.center.value;
-    const [px, py] = this.pos.value;
+    const { x: px, y: py } = this.pos.value;
     const { x: dw, y: dh } = this.size.value;
     const l = px - round(cx * dw);
     const t = py - round(cy * dh);
@@ -482,9 +491,9 @@ export class UINode implements IDebugging {
         Number(get_val(this, opacity, "==")) || 0;
     }
     this.pos.default_value = () => {
-      if (this.parent) return this.data.pos;
       const [x, y, z] = this.data.pos;
-      return [x, y - this.lf2.world.screen_h, z]
+      if (this.parent) return new Ditto.Vector3(x, y, z);
+      return new Ditto.Vector3(x, y - this.lf2.world.screen_h, z)
     }
   }
 

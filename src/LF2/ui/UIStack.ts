@@ -1,5 +1,5 @@
-import { debug } from "console";
 import { Callbacks } from "../base";
+import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { is_str } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
@@ -41,8 +41,8 @@ export class UIStack {
       : arg;
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
-      const [x, y, z] = curr.pos.value
-      curr.pos.push([x, y, z + this.index])
+      const { x, y, z } = curr.pos.value
+      curr.pos.push(new Ditto.Vector3(x, y, z + this.index))
       this.uis.push(curr);
       curr.on_start();
       curr.on_resume();
@@ -58,8 +58,8 @@ export class UIStack {
       : arg;
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
-      const [x, y, z] = curr.pos.value
-      curr.pos.push([x, y, z + this.index])
+      const { x, y, z } = curr.pos.value
+      curr.pos.push(new Ditto.Vector3(x, y, z + this.index))
       this.uis.push(curr);
       curr.on_start();
       curr.on_resume();

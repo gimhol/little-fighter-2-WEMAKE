@@ -61,26 +61,24 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
     const { x: my_w, y: my_h } = this.node.size.value;
     for (const child of this.node.children) {
       if (!child.self_visible) continue;
-      const { x: child_w, y: child_h } = child.size.value
+      const { x, y, z, w: child_w, h: child_h } = child
       const { cross } = child;
-      const [x, y, z] = child.pos.value;
-
       const item = child.find_component(FlexItem, v => v.enabled)
       const item_align = item?.align || align
       if (direction === 'row') {
         const item_x = padding_left + my_cross.left + (temp_x - cross.left)
         switch (item_align) {
           case "start":
-            child.pos.value = [item_x, padding_top + my_cross.top - cross.top, z]
+            child.move(item_x, padding_top + my_cross.top - cross.top, z)
             break;
           case "center":
-            child.pos.value = [item_x, my_cross.mid_y - cross.mid_y, z]
+            child.move(item_x, my_cross.mid_y - cross.mid_y, z)
             break;
           case "end":
-            child.pos.value = [item_x, my_cross.bottom - cross.bottom - padding_bottom, z]
+            child.move(item_x, my_cross.bottom - cross.bottom - padding_bottom, z)
             break;
           case "stretch":
-            child.pos.value = [item_x, my_cross.top - cross.top, z]
+            child.move(item_x, my_cross.top - cross.top, z)
             child.resize(child_w, my_h)
             break;
         }
@@ -89,16 +87,16 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
         const item_y = padding_top + my_cross.top + (temp_y - cross.top)
         switch (item_align) {
           case "start":
-            child.pos.value = [padding_left + my_cross.left - cross.left, item_y, z]
+            child.move(padding_left + my_cross.left - cross.left, item_y, z)
             break;
           case "center":
-            child.pos.value = [my_cross.mid_x - cross.mid_x, item_y, z]
+            child.move(my_cross.mid_x - cross.mid_x, item_y, z)
             break;
           case "end":
-            child.pos.value = [my_cross.right - cross.right - padding_right, item_y, z]
+            child.move(my_cross.right - cross.right - padding_right, item_y, z)
             break;
           case "stretch":
-            child.pos.value = [padding_left + my_cross.left - cross.left, item_y, z]
+            child.move(padding_left + my_cross.left - cross.left, item_y, z)
             child.resize(my_w, child_h)
             break;
         }

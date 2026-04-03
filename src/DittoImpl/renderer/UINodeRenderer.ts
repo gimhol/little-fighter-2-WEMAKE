@@ -172,7 +172,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   on_hide(): void { }
   on_start() {
     this.update_center_and_size()
-    const [x, y, z] = this.ui.pos.value;
+    const { x, y, z } = this.ui;
     this.mesh.position.set(x, -y, z)
     this.mesh.visible = this.ui.visible;
     this.mesh.name = `layout(name= ${this.ui.name}, id=${this.ui.id})`
@@ -355,7 +355,7 @@ export class UINodeRenderer implements IUINodeRenderer {
 
     const sp = this.mesh;
     if (this.ui.pos.version !== this.pos_version) {
-      const [x, y, z] = this.ui.pos.value
+      const {x, y, z} = this.ui
       sp.position.set(x, -y, z);
     }
     sp.visible = this.ui.visible

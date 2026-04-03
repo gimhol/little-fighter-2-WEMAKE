@@ -43,9 +43,10 @@ export class WorldRenderer implements IWorldRenderer {
     this.camera.position.y = y;
     for (const stack of this.lf2.ui_stacks) {
       for (const ui of stack.uis) {
-        const [a, b] = ui.pos.default_value;
-        const [, , c] = ui.pos.value;
-        ui.pos.value = [a + x, b + y, c];
+        // TODO: ...stupid
+        const { x: a, y: b } = ui.pos.default_value;
+        const { z: c } = ui.pos.value;
+        ui.move(a + x, b + y, c);
         ui.renderer.x = a + x;
         ui.renderer.y = -(b + y);
       }
