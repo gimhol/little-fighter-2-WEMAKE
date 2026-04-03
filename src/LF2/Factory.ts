@@ -24,10 +24,15 @@ export class Factory {
   static readonly components = new Map<string, typeof UIComponent>();
 
   static register_component(Cls: typeof UIComponent<any, any>) {
-    const { TAG: type } = Cls;
+    const { TAG: type, ALIAS } = Cls;
     if (this.components.has(type))
       Ditto.warn(`[${Factory.TAG}::register_component] type already exists, ${type}`)
     this.components.set(type, Cls);
+    ALIAS?.forEach((alias) => {
+      if (this.components.has(alias)) {
+        Ditto.warn(`[${Factory.TAG}::register_component] alias already exists, ${alias}`)
+      }
+    })
   }
   static register_entity(type: Key, creator: IEntityCreators): void {
     if (Factory.entity_creators.has(type))

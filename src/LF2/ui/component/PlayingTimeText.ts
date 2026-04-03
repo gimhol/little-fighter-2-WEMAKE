@@ -1,7 +1,7 @@
 import { floor } from "../../utils";
-import { Text } from "./Text";
+import { Label } from "./Label";
 
-export class PlayingTimeText extends Text {
+export class PlayingTimeText extends Label {
   static override readonly TAG = 'PlayingTimeText'
 
   override on_show(): void {

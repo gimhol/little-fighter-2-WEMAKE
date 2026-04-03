@@ -67,7 +67,7 @@ import * as _ from "./index";
   _.SummaryLogic,
   _.TeamSituationText,
   _.Tests,
-  _.Text,
+  _.Label,
   _.TextInput,
   _.TxtClickable,
   _.VerticalLayout,

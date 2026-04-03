@@ -1,15 +1,15 @@
 import { ISchema } from "@/LF2/defines";
 import { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
 import { make_schema } from "@/LF2/utils/schema";
-import { Text } from "./Text";
+import { Label } from "./Label";
 import { UIComponent } from "./UIComponent";
 
 export interface IFnKeysCountsProps {
-  f6?: Text;
-  f7?: Text;
-  f8?: Text;
-  f9?: Text;
-  f10?: Text;
+  f6?: Label;
+  f7?: Label;
+  f8?: Label;
+  f9?: Label;
+  f10?: Label;
 }
 export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
   static override readonly TAG: string = 'FnKeysCounts';
@@ -17,11 +17,11 @@ export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
     key: "IFnKeysCountsProps",
     type: "object",
     properties: {
-      f6: Text,
-      f7: Text,
-      f8: Text,
-      f9: Text,
-      f10: Text
+      f6: Label,
+      f7: Label,
+      f8: Label,
+      f9: Label,
+      f10: Label
     }
   })
   readonly world_cbs: IWorldCallbacks = {

@@ -1,7 +1,7 @@
 import FSM from "@/LF2/base/FSM";
 import { GK, IClazz } from "@/LF2/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
-import { Text } from "../Text";
+import { Label } from "../Label";
 import { UIComponent } from "../UIComponent";
 import { MoonTest } from "./Bg/Moon";
 import { Firen_DFA, Firen_DFJ, Firen_DUJ, Firen_DVJ } from "./Firen";
@@ -58,7 +58,7 @@ export class Tests extends UIComponent {
     this.fsm.callbacks.add({
       on_state_changed: (f) => {
         const n = f.state?.name ?? 'None'
-        const nn = this.node.search_component(Text, v => v.id === 'test_case_name')
+        const nn = this.node.search_component(Label, v => v.id === 'test_case_name')
         nn?.set_text(`Case: ${n}`)
       }
     })

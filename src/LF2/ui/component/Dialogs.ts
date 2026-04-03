@@ -6,13 +6,13 @@ import { make_schema } from "@/LF2/utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
 import { StageDialogListener } from "./StageDialogListener";
-import { Text } from "./Text";
+import { Label } from "./Label";
 import { UIComponent } from "./UIComponent";
 
 export interface IDialogsProps {
   head_node?: UINode | null;
-  text?: Text | null;
-  talker?: Text | null;
+  text?: Label | null;
+  talker?: Label | null;
 }
 export class Dialogs extends UIComponent<IDialogsProps> {
   static override readonly TAG: string = 'Dialogs';
@@ -21,8 +21,8 @@ export class Dialogs extends UIComponent<IDialogsProps> {
     type: "object",
     properties: {
       head_node: UINode,
-      text: Text,
-      talker: Text
+      text: Label,
+      talker: Label
     }
   })
   protected _listner = new StageDialogListener(this, (d) => this.set_dialog(d));

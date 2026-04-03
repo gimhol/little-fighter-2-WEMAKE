@@ -3,7 +3,7 @@ import { make_schema } from "@/LF2/utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
 import { SmoothNumber } from "./SmoothNumber";
-import { Text } from "./Text";
+import { Label } from "./Label";
 import { UIComponent } from "./UIComponent";
 
 interface IFighterStatBarProps {
@@ -15,7 +15,7 @@ interface IFighterStatBarProps {
   defend_value_bar?: UINode;
   toughness_bar?: UINode;
   head_img?: UINode;
-  name_txt?: Text;
+  name_txt?: Label;
 }
 export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   static override readonly TAG: string = 'FighterStatBar'
@@ -31,7 +31,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
       defend_value_bar: UINode,
       toughness_bar: UINode,
       head_img: UINode,
-      name_txt: Text,
+      name_txt: Label,
     }
   });
   protected entity?: Entity;

@@ -72,7 +72,7 @@ export * from "./StageTransitions";
 export * from "./SummaryLogic";
 export * from "./TeamSituationText";
 export * from "./Tests";
-export * from "./Text";
+export * from "./Label";
 export * from "./TextInput";
 export * from "./TxtClickable";
 export * from "./UIComponent";
