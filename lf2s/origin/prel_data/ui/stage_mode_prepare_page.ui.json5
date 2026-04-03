@@ -6,7 +6,7 @@
   items: [
     {
       id: "frame",
-      template: "ui/char_menu_2.ui.json5",
+      template: "ui/char_menu.ui.json5",
     },
     {
       id: "how_many_computer",
