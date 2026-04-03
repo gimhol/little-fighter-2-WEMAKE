@@ -69,16 +69,16 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
         const item_x = padding_left + my_cross.left + (temp_x - cross.left)
         switch (item_align) {
           case "start":
-            child.move(item_x, padding_top + my_cross.top - cross.top, z)
+            child.move_to(item_x, padding_top + my_cross.top - cross.top, z)
             break;
           case "center":
-            child.move(item_x, my_cross.mid_y - cross.mid_y, z)
+            child.move_to(item_x, my_cross.mid_y - cross.mid_y, z)
             break;
           case "end":
-            child.move(item_x, my_cross.bottom - cross.bottom - padding_bottom, z)
+            child.move_to(item_x, my_cross.bottom - cross.bottom - padding_bottom, z)
             break;
           case "stretch":
-            child.move(item_x, my_cross.top - cross.top, z)
+            child.move_to(item_x, my_cross.top - cross.top, z)
             child.resize(child_w, my_h)
             break;
         }
@@ -87,16 +87,16 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
         const item_y = padding_top + my_cross.top + (temp_y - cross.top)
         switch (item_align) {
           case "start":
-            child.move(padding_left + my_cross.left - cross.left, item_y, z)
+            child.move_to(padding_left + my_cross.left - cross.left, item_y, z)
             break;
           case "center":
-            child.move(my_cross.mid_x - cross.mid_x, item_y, z)
+            child.move_to(my_cross.mid_x - cross.mid_x, item_y, z)
             break;
           case "end":
-            child.move(my_cross.right - cross.right - padding_right, item_y, z)
+            child.move_to(my_cross.right - cross.right - padding_right, item_y, z)
             break;
           case "stretch":
-            child.move(padding_left + my_cross.left - cross.left, item_y, z)
+            child.move_to(padding_left + my_cross.left - cross.left, item_y, z)
             child.resize(my_w, child_h)
             break;
         }

@@ -27,7 +27,7 @@ export class VerticalLayout extends UIComponent {
       const [x, y, z] = pos_list.pop()!
       const yy = y - cy * max_h - h
       const xx = cx * max_w - x
-      item.move(xx, yy, z);
+      item.move_to(xx, yy, z);
     }
     this.node.resize(max_w, max_h);
   }

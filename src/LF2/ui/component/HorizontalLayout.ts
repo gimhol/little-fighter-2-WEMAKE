@@ -9,14 +9,14 @@ export class HorizontalLayout extends UIComponent {
     for (const l of this.node.children) {
       if (!l.visible) continue;
       const { y, z } = l
-      l.move(w, y, z);
+      l.move_to(w, y, z);
       w += l.w;
       h = max(h, l.h);
     }
     this.node.resize(w, h);
     const p = this.node.parent;
     if (p) {
-      this.node.move((p.w - w) / 2, (p.h - h) / 2);
+      this.node.move_to((p.w - w) / 2, (p.h - h) / 2);
     }
   }
 }

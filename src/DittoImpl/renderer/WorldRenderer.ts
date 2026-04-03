@@ -46,7 +46,7 @@ export class WorldRenderer implements IWorldRenderer {
         // TODO: ...stupid
         const { x: a, y: b } = ui.pos.default_value;
         const { z: c } = ui.pos.value;
-        ui.move(a + x, b + y, c);
+        ui.move_to(a + x, b + y, c);
         ui.renderer.x = a + x;
         ui.renderer.y = -(b + y);
       }

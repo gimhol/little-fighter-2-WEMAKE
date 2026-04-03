@@ -62,10 +62,10 @@ export class Alignment extends UIComponent {
 
     const { x: cx, y: cy } = follower.center.value;
     // eslint-disable-next-line prefer-const
-    let [x, y, z] = follower.global_pos;
+    let { x, y, z } = follower.global_pos;
     let { w, h } = follower;
     if (this.align.r && followed.r && followed.r !== follower) {
-      const [x] = followed.r.global_pos;
+      const { x } = followed.r.global_pos;
       const c = followed.r.cross;
       switch (this.align.r) {
         case "left": _r = x + c.left; break;
@@ -74,7 +74,7 @@ export class Alignment extends UIComponent {
     }
 
     if (this.align.l && followed.l && followed.l !== follower) {
-      const [x] = followed.l.global_pos;
+      const { x } = followed.l.global_pos;
       const c = followed.l.cross;
       switch (this.align.l) {
         case "left": _l = x + c.left; break;
@@ -87,7 +87,7 @@ export class Alignment extends UIComponent {
     }
 
     if (this.align.b && followed.b && followed.b !== follower) {
-      const [, y] = followed.b.global_pos;
+      const { y } = followed.b.global_pos;
       const c = followed.b.cross;
       switch (this.align.b) {
         case "top": _b = y + c.top; break;
@@ -95,7 +95,7 @@ export class Alignment extends UIComponent {
       }
     }
     if (this.align.t && followed.t && followed.t !== follower) {
-      const [, y] = followed.t.global_pos;
+      const { y } = followed.t.global_pos;
       const c = followed.t.cross;
       switch (this.align.t) {
         case "top": _t = y + c.top; break;
@@ -122,7 +122,7 @@ export class Alignment extends UIComponent {
     } else if (_b !== null) {
       y = _b - (1 - cy) * h + offset.b
     }
-    follower.global_pos = [x, y, z];
+    follower.move_to_global(x, y, z);
     follower.resize(w, h);
     if (this.once) this.node.del_components(this);
   }

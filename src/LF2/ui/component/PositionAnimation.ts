@@ -53,7 +53,7 @@ export class PositionAnimation extends UIComponent {
       const x = a.x + b.x * value
       const y = a.y + b.y * value
       const z = a.z + b.z * value
-      this.node.move(x, y, z)
+      this.node.move_to(x, y, z)
     } else {
       this.set_enabled(false)
     }

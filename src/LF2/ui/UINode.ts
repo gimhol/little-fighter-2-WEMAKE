@@ -211,8 +211,7 @@ export class UINode implements IDebugging {
   set_w(v: number): this { return this.resize(v, this.h); }
   set_h(v: number): this { return this.resize(this.w, v); }
   resize(w: number, h: number): this {
-    this.size.value = new D.Vector2(w, h);
-    return this;
+    this.size.value = new D.Vector2(w, h); return this;
   }
 
   get x(): number { return this.pos.value.x; }
@@ -221,10 +220,10 @@ export class UINode implements IDebugging {
   set y(v: number) { this.set_y(v); }
   get z(): number { return this.pos.value.z; }
   set z(v: number) { this.set_z(v); }
-  set_x(v: number): this { return this.move(v); }
-  set_y(v: number): this { return this.move(void 0, v); }
-  set_z(v: number): this { return this.move(void 0, void 0, v); }
-  move(x: number = this.x, y: number = this.y, z: number = this.z): this {
+  set_x(v: number): this { return this.move_to(v); }
+  set_y(v: number): this { return this.move_to(void 0, v); }
+  set_z(v: number): this { return this.move_to(void 0, void 0, v); }
+  move_to(x: number = this.x, y: number = this.y, z: number = this.z): this {
     this.pos.value = new D.Vector3(x, y, z);
     return this;
   }
@@ -268,22 +267,22 @@ export class UINode implements IDebugging {
     this.renderer = new D.UINodeRenderer(this);
     make_debugging(this)
   }
-  get global_pos(): [number, number, number] {
-    const { x, y, z } = this;
-    if (this.parent) {
-      const [gx, gy, gz] = this.parent.global_pos;
-      return [x + gx, y + gy, z + gz];
-    }
-    return [x, y, z];
+  get global_pos(): IVector3 {
+    const ret = this.pos.value.clone()
+    if (!this.parent) return ret;
+    ret.add(this.parent.global_pos)
+    return ret;
   }
-  set global_pos(v: [number, number, number]) {
-    if (!this.parent) {
-      this.move(...v);
-      return;
-    }
-    const [px, py, pz] = this.parent.global_pos
-    const [gx, gy, gz] = v;
-    this.move(gx - px, gy - py, gz - pz);
+  set global_pos(v: IVector3) {
+    if (!this.parent) { this.move_to(v.x, v.y, v.z); return; }
+    const { x, y, z } = this.parent.global_pos
+    this.move_to(v.x - x, v.y - y, v.z - z);
+  }
+  move_to_global(x: number, y: number, z: number): this {
+    if (!this.parent) { this.move_to(x, y, z); return this; }
+    const g = this.parent.global_pos
+    this.move_to(x - g.x, y - g.y, z - g.z);
+    return this;
   }
   hit(x: number, y: number): boolean {
     const { x: cx, y: cy } = this.center.value;
