@@ -71,13 +71,6 @@ export class UINode implements IDebugging {
   protected _parent?: UINode;
   protected _children: UINode[] = [];
 
-
-  set_scale(x?: number, y?: number, z?: number): this {
-    const { x: a, y: b, z: c } = this.scale.value;
-    this.scale.value = new D.Vector3(x ?? a, y ?? b, z ?? c);
-    return this;
-  }
-
   get cross(): ICrossInfo {
     const { x: w, y: h } = this.size.value
     const { x: a, y: b } = this.center.value
@@ -239,6 +232,20 @@ export class UINode implements IDebugging {
   set_cz(v: number): this { return this.set_center(void 0, void 0, v); }
   set_center(cx: number = this.cx, cy: number = this.cy, cz: number = this.cz): this {
     this.center.value = new Ditto.Vector3(cx, cy, cz)
+    return this;
+  }
+
+  get sx(): number { return this.scale.value.x; }
+  set sx(v: number) { this.set_sx(v); }
+  get sy(): number { return this.scale.value.y; }
+  set sy(v: number) { this.set_sy(v); }
+  get sz(): number { return this.scale.value.z; }
+  set sz(v: number) { this.set_sz(v); }
+  set_sx(v: number): this { return this.set_scale(v); }
+  set_sy(v: number): this { return this.set_scale(void 0, v); }
+  set_sz(v: number): this { return this.set_scale(void 0, void 0, v); }
+  set_scale(x: number = this.sx, y: number = this.sy, z: number = this.sz): this {
+    this.scale.value = new D.Vector3(x, y, z);
     return this;
   }
 
