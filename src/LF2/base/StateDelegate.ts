@@ -9,12 +9,12 @@ export type Value<T> = T | (() => T)
 
 export class StateDelegate<T> {
   static CompareVec2(a: Unsafe<IVector2>, b: Unsafe<IVector2>): boolean {
-    if (a && b) return a.equals(b)
-    return !a && !b
+    if (a && b) return !a.equals(b)
+    return !!(a || b)
   }
   static CompareVec3(a: Unsafe<IVector3>, b: Unsafe<IVector3>): boolean {
-    if (a && b) return a.equals(b)
-    return !a && !b
+    if (a && b) return !a.equals(b)
+    return !!(a || b)
   }
 
   private _allow_null: boolean = false;

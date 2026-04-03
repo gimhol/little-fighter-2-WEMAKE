@@ -2,6 +2,7 @@ import { IVector3 } from "@/LF2";
 import { Animation, Delay, Easing, Sequence } from "../../animation";
 import ease_linearity from "../../utils/ease_method/ease_linearity";
 import { UIComponent } from "./UIComponent";
+import ease_in_out_sine from "@/LF2/utils/ease_method/ease_in_out_sine";
 
 
 export class PositionAnimation extends UIComponent {
@@ -29,11 +30,7 @@ export class PositionAnimation extends UIComponent {
           .set_duration(duration) :
         new Easing(0, 1)
           .set_duration(duration)
-          .set_ease_method(ease_linearity)
-      // new Sine(0, 1)
-      //   .set_offset(-250)
-      //   .set_scale(duration / 500)
-      //   .set_duration(duration)
+          .set_ease_method(ease_in_out_sine)
 
       this.values.set(a, [prev_value, value.clone().sub(prev_value)])
       anims.push(a)
@@ -53,11 +50,10 @@ export class PositionAnimation extends UIComponent {
       if (!pair) return;
       const { value } = this.seq_anim
       const [a, b] = pair;
-      this.node.move(
-        a.x + b.x * value,
-        a.y + b.y * value,
-        a.z + b.z * value,
-      )
+      const x = a.x + b.x * value
+      const y = a.y + b.y * value
+      const z = a.z + b.z * value
+      this.node.move(x, y, z)
     } else {
       this.set_enabled(false)
     }
