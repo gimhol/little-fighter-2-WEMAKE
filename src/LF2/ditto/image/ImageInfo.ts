@@ -7,6 +7,7 @@ import { IImageInfo } from "./IImageInfo";
 export class ImageInfo<T = any> implements IImageInfo {
   key: string = '';
   url: string = '';
+  src: string = '';
   src_url: string = '';
   scale: number = 0;
   w: number = 0;

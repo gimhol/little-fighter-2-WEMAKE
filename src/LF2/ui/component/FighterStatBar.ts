@@ -1,9 +1,9 @@
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
 import { make_schema } from "@/LF2/utils/schema/make_schema";
-import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
-import { SmoothNumber } from "./SmoothNumber";
 import { Label } from "./Label";
+import { Picture } from "./Picture";
+import { SmoothNumber } from "./SmoothNumber";
 import { UIComponent } from "./UIComponent";
 
 interface IFighterStatBarProps {
@@ -14,7 +14,7 @@ interface IFighterStatBarProps {
   fall_value_bar?: UINode;
   defend_value_bar?: UINode;
   toughness_bar?: UINode;
-  head_img?: UINode;
+  head_img?: Picture;
   name_txt?: Label;
 }
 export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
@@ -30,7 +30,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
       fall_value_bar: UINode,
       defend_value_bar: UINode,
       toughness_bar: UINode,
-      head_img: UINode,
+      head_img: Picture,
       name_txt: Label,
     }
   });
@@ -46,7 +46,6 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   protected hp = new SmoothNumber().on_change(() => this.update_hp())
   protected mp_max = new SmoothNumber().on_change(() => this.update_mp())
   protected mp = new SmoothNumber().on_change(() => this.update_mp())
-  protected head_img_loader = new UIImgLoader(() => this.props.head_img)
   protected dark_hp_bar_w: number = 200;
   protected hp_bar_w: number = 200;
   protected dark_mp_bar_w: number = 200;
@@ -160,19 +159,11 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
         else
           name = `${name} (${player_name})`.trim();
 
-      if (typeof head === 'string') {
-        this.head_img_loader.load([{ path: head, dw: 26, dh: 26 }], 0).catch(_ => _)
-      } else {
-        this.head_img_loader.node()?.img_idx.write(-1);
-      }
-      if (typeof name === 'string' && name) {
-        this.props.name_txt?.set_text(name)
-      } else {
-        this.props.name_txt?.set_text(' ')
-      }
+      this.props.head_img?.set_src(typeof head === 'string' ? head : '')
+      this.props.name_txt?.set_text(typeof name === 'string' ? name : '')
     } else {
-      this.head_img_loader.node()?.img_idx.write(-1);
-      this.props.name_txt?.set_text(' ')
+      this.props.head_img?.set_src('')
+      this.props.name_txt?.set_text('')
     }
 
   }

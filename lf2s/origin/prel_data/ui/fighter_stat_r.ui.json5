@@ -14,7 +14,7 @@
         defend_value_bar: "defend_value",
         toughness_bar: "toughness",
         direction: "right",
-        head_img: "head",
+        head_img: "head_img",
         name_txt: "name_txt",
       },
     },
@@ -67,7 +67,13 @@
         {
           id: "head",
           size: "26,26",
-          pos: "2,2"
+          pos: "2,2",
+          component: [
+            {
+              id: "head_img",
+              name: "Picture",
+            },
+          ],
         },
       ],
     },

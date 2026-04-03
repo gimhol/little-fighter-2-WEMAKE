@@ -60,6 +60,7 @@ export class ImageMgr implements IImageMgr {
     if (!vaild_operations?.length) {
       const ret = new RImageInfo({
         key,
+        src,
         url: blob_url,
         src_url,
         scale,

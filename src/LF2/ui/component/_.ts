@@ -32,12 +32,14 @@ import * as _ from "./index";
   _.ImgLoop,
   _.IntegerPicker,
   _.Jalousie,
+  _.Label,
   _.LaunchPage,
   _.LittleFunnyAutoGame,
   _.LoadingContentText,
   _.OpacityAnimation,
   _.OpacityFlash,
   _.OpacityHover,
+  _.Picture,
   _.PlayerCtrlType,
   _.PlayerKeyEdit,
   _.PlayerKeyText,
@@ -67,10 +69,10 @@ import * as _ from "./index";
   _.SummaryLogic,
   _.TeamSituationText,
   _.Tests,
-  _.Label,
   _.TextInput,
   _.TxtClickable,
   _.VerticalLayout,
-  _.VsModeLogic
+  _.VsModeLogic,
+  _.WrapContent
 ].map(v => Factory.register_component(v));
 /*** AUTO REGISTER COMPONENTS END ***/
