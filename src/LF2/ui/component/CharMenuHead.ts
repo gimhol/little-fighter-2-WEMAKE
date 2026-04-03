@@ -45,7 +45,7 @@ export class CharMenuHead extends UIComponent {
     this.hints_node?.set_visible(hints_visible);
     this.hints_node?.set_opacity(this._opacity.value);
 
-    const head_visible = !hints_visible && !!this._path
+    const head_visible = !hints_visible && !this.countdown_node?.visible && !!this._path
     this.node.img_idx.value = head_visible ? 0 : -1;
   }
   count_down(num: number): void {
