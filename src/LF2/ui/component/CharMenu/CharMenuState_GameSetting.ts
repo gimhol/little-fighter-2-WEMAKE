@@ -15,5 +15,6 @@ export class CharMenuState_GameSetting extends CharMenuState_Base {
   }
   override leave(): void {
     this.game_settings_menu?.set_visible(false);
+    this.owner.update_random()
   }
 }
