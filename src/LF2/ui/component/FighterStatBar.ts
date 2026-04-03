@@ -1,19 +1,36 @@
 
+import { make_schema } from "@/LF2";
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
 import { UITextLoader } from "../UITextLoader";
 import { SmoothNumber } from "./SmoothNumber";
 import { UIComponent } from "./UIComponent";
-export class FighterStatBar extends UIComponent {
+
+interface IFighterStatBarProps {
+  dark_hp_bar?: UINode
+  hp_bar?: UINode;
+  dark_mp_bar?: UINode;
+  mp_bar?: UINode;
+  fall_value_bar?: UINode;
+  defend_value_bar?: UINode;
+  toughness_bar?: UINode;
+}
+export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   static override readonly TAG: string = 'FighterStatBar'
-  protected dark_hp_bar?: UINode
-  protected hp_bar?: UINode;
-  protected dark_mp_bar?: UINode;
-  protected mp_bar?: UINode;
-  protected fall_value_bar?: UINode;
-  protected defend_value_bar?: UINode;
-  protected toughness_bar?: UINode;
+  static override readonly PROPS = make_schema<IFighterStatBarProps>({
+    type: "object",
+    key: "IFighterStatBarProps",
+    properties: {
+      dark_hp_bar: UINode,
+      hp_bar: UINode,
+      dark_mp_bar: UINode,
+      mp_bar: UINode,
+      fall_value_bar: UINode,
+      defend_value_bar: UINode,
+      toughness_bar: UINode,
+    }
+  });
   protected entity?: Entity;
   protected defend_value_max = new SmoothNumber().on_change(() => this.update_defend_value())
   protected defend_value = new SmoothNumber().on_change(() => this.update_defend_value())
@@ -39,7 +56,7 @@ export class FighterStatBar extends UIComponent {
     on_hp_changed: (_, v) => {
       this.hp.target = v;
       if (v > 0) {
-        this.dark_mp_bar?.set_scale(1, 1, 1)
+        this.props.dark_mp_bar?.set_scale(1, 1, 1)
         return;
       }
       this.hp_r.target = 0;
@@ -47,7 +64,7 @@ export class FighterStatBar extends UIComponent {
       this.defend_value.target = 0;
       this.fall_value.target = 0;
       this.toughness.target = 0;
-      this.dark_mp_bar?.set_scale(0, 1, 1)
+      this.props.dark_mp_bar?.set_scale(0, 1, 1)
     },
     on_hp_max_changed: (_, v) => { this.hp_max.target = v; },
     on_hp_r_changed: (_, v) => { this.hp_r.target = this.hp.target > 0 ? v : 0; },
@@ -89,50 +106,42 @@ export class FighterStatBar extends UIComponent {
   }
   override on_start(): void {
     super.on_start?.();
-    this.dark_hp_bar = this.node.find_child(this.props_holder.str('dark_hp_bar')!)
-    this.hp_bar = this.node.find_child(this.props_holder.str('hp_bar')!)
-    this.dark_mp_bar = this.node.find_child(this.props_holder.str('dark_mp_bar')!)
-    this.mp_bar = this.node.find_child(this.props_holder.str('mp_bar')!)
-    this.fall_value_bar = this.node.find_child(this.props_holder.str('fall_value_bar')!)
-    this.defend_value_bar = this.node.find_child(this.props_holder.str('defend_value_bar')!)
-    this.toughness_bar = this.node.find_child(this.props_holder.str('toughness_bar')!)
-
-    if (this.dark_hp_bar) this.dark_hp_bar_w = this.dark_hp_bar.w
-    if (this.hp_bar) this.hp_bar_w = this.hp_bar.w
-    if (this.dark_mp_bar) this.dark_mp_bar_w = this.dark_mp_bar.w
-    if (this.mp_bar) this.mp_bar_w = this.mp_bar.w
-    if (this.fall_value_bar) this.fall_value_bar_w = this.fall_value_bar.w
-    if (this.defend_value_bar) this.defend_value_bar_w = this.defend_value_bar.w
-    if (this.toughness_bar) this.toughness_bar_w = this.toughness_bar.w
+    if (this.props.dark_hp_bar) this.dark_hp_bar_w = this.props.dark_hp_bar.w
+    if (this.props.hp_bar) this.hp_bar_w = this.props.hp_bar.w
+    if (this.props.dark_mp_bar) this.dark_mp_bar_w = this.props.dark_mp_bar.w
+    if (this.props.mp_bar) this.mp_bar_w = this.props.mp_bar.w
+    if (this.props.fall_value_bar) this.fall_value_bar_w = this.props.fall_value_bar.w
+    if (this.props.defend_value_bar) this.defend_value_bar_w = this.props.defend_value_bar.w
+    if (this.props.toughness_bar) this.toughness_bar_w = this.props.toughness_bar.w
     this.direction = this.props_holder.str('direction') ?? ''
   }
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
-    const node = this.defend_value_bar;
+    const node = this.props.defend_value_bar;
     if (!node || max === 0) return;
     node.scale.value = [val / max, 1, 1]
   }
   update_fall_value(val = this.fall_value.value, max = this.fall_value_max.value) {
-    const node = this.fall_value_bar;
+    const node = this.props.fall_value_bar;
     if (!node || max === 0) return;
     node.scale.value = [val / max, 1, 1]
   }
   update_toughness(val = this.toughness.value, max = this.toughness_max.value) {
-    const node = this.toughness_bar;
+    const node = this.props.toughness_bar;
     if (!node || max === 0) return;
     node.scale.value = [val / max, 1, 1]
   }
   update_hp(val = this.hp.value, max = this.hp_max.value) {
-    const node = this.hp_bar;
+    const node = this.props.hp_bar;
     if (!node || max === 0) return;
     node.scale.value = [val / max, 1, 1]
   }
   update_hp_r(val = this.hp_r.value, max = this.hp_max.value) {
-    const node = this.dark_hp_bar;
+    const node = this.props.dark_hp_bar;
     if (!node || max === 0) return;
     node.scale.value = [val / max, 1, 1]
   }
   update_mp(val = this.mp.value, max = this.mp_max.value) {
-    const node = this.mp_bar;
+    const node = this.props.mp_bar;
     if (!node || max === 0) return;
     node.scale.value = [val / max, 1, 1]
   }
