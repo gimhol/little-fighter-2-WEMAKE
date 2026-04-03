@@ -1,3 +1,4 @@
+import { IVector3 } from "@/LF2";
 import { Animation, Delay, Easing, Sequence } from "../../animation";
 import ease_linearity from "../../utils/ease_method/ease_linearity";
 import { UIComponent } from "./UIComponent";
@@ -5,7 +6,7 @@ import { UIComponent } from "./UIComponent";
 export class ScaleAnimation extends UIComponent {
   static override readonly TAG: string = "ScaleAnimation";
   protected seq_anim: Sequence = new Sequence();
-  protected values = new Map<any, [[number, number, number], [number, number, number]]>()
+  protected values = new Map<any, [IVector3, IVector3]>()
   start(v?: boolean) {
     this.seq_anim.start(v)
     this.enabled = true;
@@ -18,10 +19,10 @@ export class ScaleAnimation extends UIComponent {
     const len = this.args.length;
     const anims: Animation[] = [];
     for (let i = 0; i < len - 2; i += 2) {
-      const scale = this.nums(i + 2, 3) || this.node.scale.value;
+      const scale = this.vec3(i + 2) || this.node.scale.value;
       const duration = this.num(i + 3) || 0;
-      const prev_scale = i == 0 ? scale : (this.nums(i, 3) || scale);
-      const a = scale.join() === prev_scale.join() ?
+      const prev_scale = i == 0 ? scale : (this.vec3(i) || scale);
+      const a = scale.equals(prev_scale) ?
         new Delay(0).set_duration(duration) :
         new Easing(0, 1)
           .set_duration(duration)
@@ -29,11 +30,7 @@ export class ScaleAnimation extends UIComponent {
 
       this.values.set(a,
         [
-          prev_scale, [
-            scale[0] - prev_scale[0],
-            scale[1] - prev_scale[1],
-            scale[2] - prev_scale[2]
-          ]
+          prev_scale, scale.clone().sub(prev_scale)
         ])
       anims.push(a)
     }
@@ -51,10 +48,11 @@ export class ScaleAnimation extends UIComponent {
       const pair = this.values.get(this.seq_anim.curr_anim)
       if (!pair) return;
       const { value } = this.seq_anim
+      const [a, b] = pair;
       this.node.set_scale(
-        pair[0][0] + pair[1][0] * value,
-        pair[0][1] + pair[1][1] * value,
-        pair[0][2] + pair[1][2] * value,
+        a.x + b.x * value,
+        a.y + b.y * value,
+        a.z + b.z * value,
       )
     } else {
       this.set_enabled(false)

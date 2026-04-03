@@ -1,5 +1,6 @@
 import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
 import { ISchema } from "@/LF2/defines/ISchema";
+import { Ditto } from "@/LF2/ditto/Instance";
 import { Transform } from "@/LF2/Transform";
 import { make_schema } from "@/LF2/utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
@@ -7,7 +8,6 @@ import { UINode } from "../UINode";
 import { StageDialogListener } from "./StageDialogListener";
 import { Text } from "./Text";
 import { UIComponent } from "./UIComponent";
-import { Ditto } from "@/LF2/ditto/Instance";
 
 export interface IDialogsProps {
   head_node?: UINode | null;
@@ -65,11 +65,11 @@ export class Dialogs extends UIComponent<IDialogsProps> {
   }
   override update(dt: number): void {
     this._transform.update();
-    this.node.scale.value = [
+    this.node.set_scale(
       this._transform.scale_x,
       this._transform.scale_y,
       this._transform.scale_z,
-    ]
+    )
   }
   set_dialog(dialog: IDialogInfo | undefined) {
     if (dialog) {

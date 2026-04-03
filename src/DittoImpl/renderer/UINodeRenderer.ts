@@ -314,7 +314,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   update_center_and_size() {
     if (!this.is_size_dirty && !this.is_center_dirty) return;
     const { w, h } = this.ui;
-    const [x, y, z] = this.ui.center.value
+    const { x, y, z } = this.ui.center.value
     this._w = w;
     this._h = h;
     this._tran_x = round(w * (0.5 - x));
@@ -327,7 +327,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._dom.style.height = `${this._h}px`
     }
     if (this._css_obj && this.is_center_dirty)
-      this._css_obj.center.set(this.ui.center.value[0], this.ui.center.value[1])
+      this._css_obj.center.set(this.ui.center.value.x, this.ui.center.value.y)
   }
   update_texture_attributes(dt: number) {
     const t: T.Texture = this.mesh.material.uniforms.pTexture.value;
@@ -349,8 +349,10 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.update_center_and_size()
     this.update_dom();
     this.update_texture();
-    if (this.ui.scale.version !== this.scale_version)
-      this.mesh.scale.set(...this.ui.scale.value);
+    if (this.ui.scale.version !== this.scale_version) {
+      const { x, y, z } = this.ui.scale.value
+      this.mesh.scale.set(x, y, z);
+    }
     this.update_texture_attributes(dt)
 
     const sp = this.mesh;

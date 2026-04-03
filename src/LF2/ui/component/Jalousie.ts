@@ -66,9 +66,9 @@ export class Jalousie extends Flex<IJalousieCallbacks> {
       const child = children[i];
       if (!child) continue;
       if (this.direction === 'column') {
-        child.scale.value = [1, value, 1];
+        child.set_scale(1, value, 1);
       } else {
-        child.scale.value = [value, 1, 1];
+        child.set_scale(value, 1, 1);
       }
     }
   }

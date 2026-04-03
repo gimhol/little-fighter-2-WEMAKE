@@ -120,32 +120,32 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   update_defend_value(val = this.defend_value.value, max = this.defend_value_max.value) {
     const node = this.props.defend_value_bar;
     if (!node || max === 0) return;
-    node.scale.value = [val / max, 1, 1]
+    node.set_scale(val / max, 1, 1);
   }
   update_fall_value(val = this.fall_value.value, max = this.fall_value_max.value) {
     const node = this.props.fall_value_bar;
     if (!node || max === 0) return;
-    node.scale.value = [val / max, 1, 1]
+    node.set_scale(val / max, 1, 1)
   }
   update_toughness(val = this.toughness.value, max = this.toughness_max.value) {
     const node = this.props.toughness_bar;
     if (!node || max === 0) return;
-    node.scale.value = [val / max, 1, 1]
+    node.set_scale(val / max, 1, 1);
   }
   update_hp(val = this.hp.value, max = this.hp_max.value) {
     const node = this.props.hp_bar;
     if (!node || max === 0) return;
-    node.scale.value = [val / max, 1, 1]
+    node.set_scale(val / max, 1, 1);
   }
   update_hp_r(val = this.hp_r.value, max = this.hp_max.value) {
     const node = this.props.dark_hp_bar;
     if (!node || max === 0) return;
-    node.scale.value = [val / max, 1, 1]
+    node.set_scale(val / max, 1, 1);
   }
   update_mp(val = this.mp.value, max = this.mp_max.value) {
     const node = this.props.mp_bar;
     if (!node || max === 0) return;
-    node.scale.value = [val / max, 1, 1]
+    node.set_scale(val / max, 1, 1);
   }
   update_head(): void {
     const { entity } = this;

@@ -34,10 +34,9 @@ export class WrapContent<P extends IWrapContentProps, C extends IUICompnentCallb
     }
     const w = max_right - min_left;
     const h = max_bottom - min_top;
-    const [, , cz] = this.node.center.value;
     const cx = w ? -min_left / w : 0;
     const cy = h ? -min_top / h : 0;
     this.node.resize(w, h)
-    this.node.center.value = [cx, cy, cz];
+    this.node.set_center(cx, cy);
   }
 }
