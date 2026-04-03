@@ -1,3 +1,4 @@
+import { random_in } from "@/LF2";
 import { BuiltIn_OID } from "@/LF2/defines";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { is_fighter, type Entity } from "@/LF2/entity";
@@ -9,7 +10,6 @@ import { BgRender } from "./BgRender";
 import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
-import { floor, random_in } from "@/LF2";
 import { INDICATINGS } from "./INDICATINGS";
 
 export class WorldRenderer implements IWorldRenderer {

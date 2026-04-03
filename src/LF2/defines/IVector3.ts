@@ -9,4 +9,5 @@ export interface IVector3 extends IVector3Like {
   copy(o: IVector3Like): void;
   clone(): IVector3;
   normalize(): this;
+  equals(o: IVector3Like): boolean;
 }

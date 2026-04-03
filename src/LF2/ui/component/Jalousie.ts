@@ -27,8 +27,8 @@ export class Jalousie extends Flex<IJalousieCallbacks> {
   }
   get open(): boolean { return this._anim.reverse; }
   set open(v: boolean) { this._anim.start(v); }
-  get w(): number { return this.node.root.size.value[0] }
-  get h(): number { return this.node.root.size.value[1] }
+  get w(): number { return this.node.root.w }
+  get h(): number { return this.node.root.h }
 
   override on_click(e: IUIPointerEvent): void {
     super.on_click?.(e)

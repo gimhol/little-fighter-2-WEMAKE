@@ -14,7 +14,7 @@ export class VerticalLayout extends UIComponent {
     const pos_list: [number, number, number][] = []
     for (const item of this.node.children) {
       if (!item.visible) continue;
-      const [w, h] = item.size.value
+      const { x: w, y: h } = item.size.value
       const [cx, cy] = item.center.value
       const [, , z] = item.pos.value;
       pos_list.unshift([(1 - cx) * w, max_h + (1 - cy) * h, z] as const)
@@ -24,13 +24,13 @@ export class VerticalLayout extends UIComponent {
 
     for (const item of this.node.children) {
       if (!item.visible) continue;
-      const [, h] = item.size.value
+      const { y: h } = item.size.value
       const [x, y, z] = pos_list.pop()!
       const yy = y - cy * max_h - h
       const xx = cx * max_w - x
       item.pos.value = [xx, yy, z];
     }
-    this.node.size.value = [max_w, max_h];
+    this.node.resize(max_w, max_h);
   }
 }
 

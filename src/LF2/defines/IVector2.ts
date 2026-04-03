@@ -1,25 +1,16 @@
 
+export interface IVector2Like {
+  x: number;
+  y: number;
+}
+
 /**
  * 接口: 二维向量
  *
  * @export
  * @interface IVector2
  */
-export interface IVector2 {
-  /**
-   * x
-   *
-   * @type {number}
-   */
-  x: number;
-
-  /**
-   * y
-   *
-   * @type {number}
-   */
-  y: number;
-
+export interface IVector2 extends IVector2Like {
   /**
    * 设置
    *
@@ -43,7 +34,7 @@ export interface IVector2 {
    * @returns {this} 返回自身  
    */
   sub(o: IVector2): this;
-  
+
   /**
    * 向量的大小
    *
@@ -64,4 +55,6 @@ export interface IVector2 {
    * @returns {this} 返回自身
    */
   normalize(): this;
+
+  equals(o: IVector2Like): boolean;
 }

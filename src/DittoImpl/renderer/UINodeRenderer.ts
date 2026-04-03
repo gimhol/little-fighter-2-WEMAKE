@@ -313,7 +313,7 @@ export class UINodeRenderer implements IUINodeRenderer {
 
   update_center_and_size() {
     if (!this.is_size_dirty && !this.is_center_dirty) return;
-    const [w, h] = this.ui.size.value;
+    const { w, h } = this.ui;
     const [x, y, z] = this.ui.center.value
     this._w = w;
     this._h = h;

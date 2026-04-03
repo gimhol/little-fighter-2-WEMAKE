@@ -63,7 +63,7 @@ export class Alignment extends UIComponent {
     const [cx, cy] = follower.center.value;
     // eslint-disable-next-line prefer-const
     let [x, y, z] = follower.global_pos;
-    let [w, h] = follower.size.value;
+    let { w, h } = follower;
     if (this.align.r && followed.r && followed.r !== follower) {
       const [x] = followed.r.global_pos;
       const c = followed.r.cross;
@@ -123,7 +123,7 @@ export class Alignment extends UIComponent {
       y = _b - (1 - cy) * h + offset.b
     }
     follower.global_pos = [x, y, z];
-    follower.size.value = [w, h];
+    follower.resize(w, h);
     if (this.once) this.node.del_components(this);
   }
 }

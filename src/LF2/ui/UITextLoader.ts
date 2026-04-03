@@ -58,7 +58,7 @@ export class UITextLoader {
           const { w, h, scale } = textures[idx]
           node.txts.value = textures;
           node.txt_idx.value = 0;
-          node.size.value = [w / scale, h / scale];
+          node.resize(w / scale, h / scale);
           resolve(textures);
         } else {
           node.txts.value = textures;

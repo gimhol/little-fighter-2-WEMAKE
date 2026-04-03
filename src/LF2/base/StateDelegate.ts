@@ -1,4 +1,5 @@
-import { max, floor, Unsafe, Times } from "../utils";
+import { IVector2 } from "../defines/IVector2";
+import { floor, max, Times, Unsafe } from "../utils";
 
 export type TValueInfo<T> =
   | { is_func: true; v: () => T }
@@ -7,6 +8,10 @@ export type TValueInfo<T> =
 export type Value<T> = T | (() => T)
 
 export class StateDelegate<T> {
+  static CompareVec2(a: Unsafe<IVector2>, b: Unsafe<IVector2>): boolean {
+    if (a && b) return a.equals(b)
+    return !a && !b
+  }
   private _allow_null: boolean = false;
   private _allow_undefined: boolean = false;
   static CompareArray<T extends {}>(a: Unsafe<T[]>, b: Unsafe<T[]>): boolean {

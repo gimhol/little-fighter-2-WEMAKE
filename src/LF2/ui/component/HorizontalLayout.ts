@@ -13,7 +13,7 @@ export class HorizontalLayout extends UIComponent {
       w += l.w;
       h = max(h, l.h);
     }
-    this.node.size.value = [w, h];
+    this.node.resize(w, h);
     const p = this.node.parent;
     if (p) {
       this.node.pos.value = [

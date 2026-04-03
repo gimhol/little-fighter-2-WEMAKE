@@ -54,7 +54,7 @@ export class PlayerKeyEdit extends PlayerKeyText {
       this.node.txts.value = v;
       this.node.txt_idx.value = 0;
       const { w, h, scale } = v[0]!
-      this.node.size.value = [w / scale, h / scale];
+      this.node.resize(w / scale, h / scale);
     })
   }
 }
