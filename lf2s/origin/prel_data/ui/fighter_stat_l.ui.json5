@@ -13,6 +13,8 @@
         fall_value_bar: "fall_value",
         defend_value_bar: "defend_value",
         toughness_bar: "toughness",
+        head_img: "head",
+        name_txt: "name",
       },
     },
   ],

@@ -15,6 +15,8 @@ interface IFighterStatBarProps {
   fall_value_bar?: UINode;
   defend_value_bar?: UINode;
   toughness_bar?: UINode;
+  head_img?: UINode;
+  name_txt?: UINode;
 }
 export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   static override readonly TAG: string = 'FighterStatBar'
@@ -29,6 +31,8 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
       fall_value_bar: UINode,
       defend_value_bar: UINode,
       toughness_bar: UINode,
+      head_img: UINode,
+      name_txt: UINode,
     }
   });
   protected entity?: Entity;
@@ -43,8 +47,8 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   protected hp = new SmoothNumber().on_change(() => this.update_hp())
   protected mp_max = new SmoothNumber().on_change(() => this.update_mp())
   protected mp = new SmoothNumber().on_change(() => this.update_mp())
-  protected name_txt_loader = new UITextLoader(() => this.node.search_child('name'))
-  protected head_img_loader = new UIImgLoader(() => this.node.search_child('head'))
+  protected name_txt_loader = new UITextLoader(() => this.props.name_txt)
+  protected head_img_loader = new UIImgLoader(() => this.props.head_img)
   protected dark_hp_bar_w: number = 200;
   protected hp_bar_w: number = 200;
   protected dark_mp_bar_w: number = 200;
