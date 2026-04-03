@@ -355,7 +355,7 @@ export class UINodeRenderer implements IUINodeRenderer {
 
     const sp = this.mesh;
     if (this.ui.pos.version !== this.pos_version) {
-      const {x, y, z} = this.ui
+      const { x, y, z } = this.ui
       sp.position.set(x, -y, z);
     }
     sp.visible = this.ui.visible

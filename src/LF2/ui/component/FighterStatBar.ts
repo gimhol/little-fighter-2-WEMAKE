@@ -1,10 +1,9 @@
-
-import { make_schema } from "@/LF2";
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
+import { make_schema } from "@/LF2/utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
-import { UITextLoader } from "../UITextLoader";
 import { SmoothNumber } from "./SmoothNumber";
+import { Text } from "./Text";
 import { UIComponent } from "./UIComponent";
 
 interface IFighterStatBarProps {
@@ -16,7 +15,7 @@ interface IFighterStatBarProps {
   defend_value_bar?: UINode;
   toughness_bar?: UINode;
   head_img?: UINode;
-  name_txt?: UINode;
+  name_txt?: Text;
 }
 export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   static override readonly TAG: string = 'FighterStatBar'
@@ -32,7 +31,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
       defend_value_bar: UINode,
       toughness_bar: UINode,
       head_img: UINode,
-      name_txt: UINode,
+      name_txt: Text,
     }
   });
   protected entity?: Entity;
@@ -47,7 +46,6 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   protected hp = new SmoothNumber().on_change(() => this.update_hp())
   protected mp_max = new SmoothNumber().on_change(() => this.update_mp())
   protected mp = new SmoothNumber().on_change(() => this.update_mp())
-  protected name_txt_loader = new UITextLoader(() => this.props.name_txt)
   protected head_img_loader = new UIImgLoader(() => this.props.head_img)
   protected dark_hp_bar_w: number = 200;
   protected hp_bar_w: number = 200;
@@ -168,13 +166,13 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
         this.head_img_loader.node()?.img_idx.write(-1);
       }
       if (typeof name === 'string' && name) {
-        this.name_txt_loader.set_text([name], 0).catch(_ => _)
+        this.props.name_txt?.set_text(name)
       } else {
-        this.name_txt_loader.node()?.txt_idx.write(-1);
+        this.props.name_txt?.set_text(' ')
       }
     } else {
       this.head_img_loader.node()?.img_idx.write(-1);
-      this.name_txt_loader.node()?.txt_idx.write(-1);
+      this.props.name_txt?.set_text(' ')
     }
 
   }

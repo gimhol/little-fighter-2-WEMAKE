@@ -15,7 +15,7 @@
         toughness_bar: "toughness",
         direction: "right",
         head_img: "head",
-        name_txt: "name",
+        name_txt: "name_txt",
       },
     },
   ],
@@ -67,8 +67,7 @@
         {
           id: "head",
           size: "26,26",
-          pos: "2,2",
-          color: "white",
+          pos: "2,2"
         },
       ],
     },
@@ -189,7 +188,6 @@
       items: [{ color: "rgb(0, 204, 255)", template: "bar_inner" }],
     },
     {
-      id: "name",
       txt: {
         i18n: "Template(com)",
         style: {
@@ -203,6 +201,10 @@
         },
       },
       component: [
+        {
+          id: "name_txt",
+          name: "Text",
+        },
         {
           name: "Alignment",
           properties: {
