@@ -3,7 +3,7 @@ import { Label } from "./Label";
 
 export class PlayingTimeText extends Label {
   static override readonly TAG = 'PlayingTimeText'
-
+  
   override on_show(): void {
     this.text = this.get_txt();
   }

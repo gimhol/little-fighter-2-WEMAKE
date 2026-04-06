@@ -22,10 +22,15 @@ export class Factory {
   static readonly entity_creators = new Map<Key, IEntityCreators>();
   static readonly ctrl_creators = new Map<Key, ICtrlCreator>();
   static readonly components = new Map<string, typeof UIComponent>();
-
+  protected static readonly _usedALIAS = new Set<string[]>()
   static register_component(Cls: typeof UIComponent<any, any>): void {
     const names = [Cls.TAG].concat()
-    if (Cls.ALIAS) names.push(...Cls.ALIAS)
+    if (Cls.ALIAS && !this._usedALIAS.has(Cls.ALIAS)) {
+      // so stupid
+      this._usedALIAS.add(Cls.ALIAS)
+      names.push(...Cls.ALIAS)
+    }
+
     for (let i = 0; i < names.length; i++) {
       const name = names[i];
       if (this.components.has(name)) {
