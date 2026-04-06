@@ -12,6 +12,7 @@ import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
 import { LOUIS_JUMP_ATTACK } from "./Louis";
 import { TestCase } from "./TestCase";
 import { BottomsUp } from "./Others/BottomsUp";
+import { Rudolf_DFJ } from "@/LF2";
 
 const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   [TestCase], [
@@ -24,6 +25,8 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     Jan_DUA,
     Jan_DUJ
+  ], [
+    Rudolf_DFJ
   ], [
     Firen_DUJ,
     Firen_DFA,
