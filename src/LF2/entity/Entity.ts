@@ -1136,21 +1136,12 @@ export class Entity {
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
     this.velocities[0].y -= this.gravity;
   }
-  get dvx() {
-    const { dvx: v } = this.frame;
-    return v ? v * this.dataset('fvx_f') : v
-  }
-  get dvy() {
-    const { dvy: v } = this.frame;
-    return v ? v * this.dataset('fvy_f') : v
-  }
-  get dvz() {
-    const { dvz: v } = this.frame;
-    return v ? v * this.dataset('fvz_f') : v
-  }
-  update_velocity(frame: IVelocityInfo = this.frame): void {
+  update_velocity(vinfo: IVelocityInfo = this.frame): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
-    const { dvx, dvy, dvz } = this;
+    let { dvx, dvy, dvz } = vinfo;
+    if (dvx) dvx *= this.dataset('fvx_f')
+    if (dvy) dvy *= this.dataset('fvy_f')
+    if (dvz) dvz *= this.dataset('fvz_f')
     const {
       vxm = SpeedMode.LF2,
       vym = SpeedMode.AccTo,
@@ -1161,7 +1152,7 @@ export class Entity {
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
-    } = frame;
+    } = vinfo;
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
 
