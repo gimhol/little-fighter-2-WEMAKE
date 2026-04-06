@@ -420,6 +420,7 @@ export class Entity {
   set mp(v: number) {
     const o = this._mp;
     v = max(0, v)
+    v = round_float(v)
     if (o === v) return;
     this._mp = v
     if (v < o) summary_mgr.get(this.id).mp_usage += o - v;
@@ -437,6 +438,7 @@ export class Entity {
   set hp_r(v: number) {
     const o = this._hp_r;
     v = max(0, v)
+    v = round_float(v)
     if (o === v) return;
     this.callbacks.emit("on_hp_r_changed")(this, (this._hp_r = v), o);
   }
@@ -447,6 +449,7 @@ export class Entity {
   set hp(v: number) {
     const o = this._hp;
     v = max(0, v)
+    v = round_float(v)
     if (o === v) return;
     this._hp = v;
     if (v < o) summary_mgr.get(this.id).hp_lost += o - v;
@@ -475,6 +478,7 @@ export class Entity {
   set mp_max(v: number) {
     const o = this.mp_max;
     v = max(0, v)
+    v = round_float(v)
     if (v === o) return;
     this.callbacks.emit("on_mp_max_changed")(this, (this._mp_max = v), o);
   }
@@ -485,6 +489,7 @@ export class Entity {
   set hp_max(v: number) {
     const o = this.hp_max;
     v = max(0, v)
+    v = round_float(v)
     if (v === o) return;
     this.callbacks.emit("on_hp_max_changed")(this, (this._hp_max = v), o);
   }
