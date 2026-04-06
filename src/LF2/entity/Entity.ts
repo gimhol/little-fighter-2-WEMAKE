@@ -2002,7 +2002,6 @@ export class Entity {
       return;
     }
     const { frame, which: flags } = result;
-    this.update_velocity(flags)
     if (!this.world.infinity_mp) {
       const { mp, hp } = flags;
       if (mp) this.mp -= mp;
