@@ -1148,7 +1148,7 @@ export class Entity {
     const { dvz: v } = this.frame;
     return v ? v * this.dataset('fvz_f') : v
   }
-  private update_velocity(frame: IVelocityInfo = this.frame) {
+  update_velocity(frame: IVelocityInfo = this.frame): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { dvx, dvy, dvz } = this;
     const {

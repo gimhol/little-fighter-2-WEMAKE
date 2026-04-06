@@ -1,4 +1,4 @@
-import { GK, IFrameInfo, StateEnum } from "../defines";
+import { GK, IFrameInfo, SpeedCtrl, StateEnum } from "../defines";
 import { is_bot_ctrl } from "../entity";
 import type { Entity } from "../entity/Entity";
 import { abs } from "../utils";
@@ -60,6 +60,7 @@ export default class CharacterState_Jump extends CharacterState_Base {
     this._jumpings.add(e);
   }
   override on_landing(e: Entity): void {
+    e.update_velocity({ dvz: 0.5, ctrl_z: SpeedCtrl.Control })
     e.enter_frame({ id: e.data.indexes?.landing_1 });
   }
 }
