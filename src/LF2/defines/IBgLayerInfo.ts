@@ -1,4 +1,9 @@
 export interface IBgLayerInfo {
+  /** 预留的 */
+  id?: string;
+  /** 预留的 */
+  name?: string;
+
   file?: string;
   absolute?: number;
   color?: number | string;

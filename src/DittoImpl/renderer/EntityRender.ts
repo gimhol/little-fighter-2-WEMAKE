@@ -7,9 +7,9 @@ import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
+import { get_outline_material } from "./get_outline_material";
 import { get_color_material } from "./MaterialKeeper";
 import { vec001, vec2 } from "./Mess";
-import { Shaders } from "./shader";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
@@ -25,43 +25,7 @@ const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
 
-function get_material(texture: T.Texture<unknown> | undefined) {
-  return new T.ShaderMaterial({
-    uniforms: {
-      pTexture: { value: texture },
-      x: { value: 0 },
-      y: { value: 0 },
-      w: { value: 0 },
-      h: { value: 0 },
-      tw: { value: 0 },
-      th: { value: 0 },
-      tsw: { value: 0 },
-      tsh: { value: 0 },
-      outlineColor: { value: new T.Color("#000000") },
-      outlineAlpha: { value: 0 },
-      outlineWidth: { value: 1 },
-      repeatX: { value: 1 },
-      repeatY: { value: 1 },
-      offsetX: { value: 0 },
-      offsetY: { value: 0 },
-      flipX: { value: 1 },
-      flipY: { value: 1 },
-      scaleX: { value: 1 },
-      scaleY: { value: 1 },
-      opacity: { value: 1 },
-      mixStreath: { value: 0 },
-      mixColor: { value: new T.Color("#000000") },
-      cover: { value: false },
-      coverColor: { value: new T.Color("#000000") },
-      coverStreath: { value: 0 },
-      gray: { value: 0 },
-      keepout: { value: false }
-    },
-    vertexShader: Shaders.Vertex.Normal,
-    fragmentShader: Shaders.Fragment.Outline,
-    transparent: true
-  });
-}
+
 export class EntityRender {
   readonly world_renderer: WorldRenderer;
 
@@ -115,7 +79,7 @@ export class EntityRender {
     this.images = get_img_map(lf2, entity.data);
 
     const texture = this.images.get("0")?.pic?.texture;
-    const material = get_material(texture);
+    const material = get_outline_material(texture);
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY, material
     )

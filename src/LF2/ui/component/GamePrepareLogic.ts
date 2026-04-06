@@ -84,7 +84,6 @@ export class GamePrepareLogic extends UIComponent {
       fighter.facing = is_stage_mode ?
         FacingFlag.Right :
         this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
-
       if (player.is_com) {
         fighter.ctrl = this.lf2.factory.create_ctrl(fighter_data.id, player.id, fighter);
       } else {
@@ -100,6 +99,8 @@ export class GamePrepareLogic extends UIComponent {
         )
       fighter.set_position(x, void 0, this.lf2.mt.range(far, near))
       fighter.blinking = this.world.begin_blink_time;
+      if (this.game_mode === "vs_mode")
+        fighter.mp = (fighter.mp_max * 2 / 5)
       fighter.attach();
     }
     if (stage_name_text) this.lf2.change_stage(stage_name_text.stage);

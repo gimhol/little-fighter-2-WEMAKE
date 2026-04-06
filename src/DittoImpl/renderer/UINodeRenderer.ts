@@ -9,7 +9,7 @@ import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
-import { Shaders } from "./shader";
+import { BLACK, get_outline_material } from "./get_outline_material";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -23,46 +23,7 @@ interface IUserData {
   img?: ImageInfo<T.Texture>,
   nine_patch?: INinePatch,
 }
-const BLACK = new T.Color("#000000");
-const WHITE = new T.Color("#FFFFFF");
 
-function get_material(texture: T.Texture<unknown> | undefined) {
-  return new T.ShaderMaterial({
-    uniforms: {
-      pTexture: { value: texture },
-      x: { value: 0 },
-      y: { value: 0 },
-      w: { value: 1 },
-      h: { value: 1 },
-      tw: { value: 1 },
-      th: { value: 1 },
-      tsw: { value: 1 },
-      tsh: { value: 1 },
-      outlineColor: { value: BLACK },
-      outlineAlpha: { value: 0 },
-      outlineWidth: { value: 0 },
-      repeatX: { value: 1 },
-      repeatY: { value: 1 },
-      offsetX: { value: 0 },
-      offsetY: { value: 0 },
-      flipX: { value: 1 },
-      flipY: { value: 1 },
-      scaleX: { value: 1 },
-      scaleY: { value: 1 },
-      mixColor: { value: BLACK },
-      mixStreath: { value: 0 },
-      cover: { value: false },
-      coverColor: { value: BLACK },
-      coverStreath: { value: 0 },
-      opacity: { value: 1 },
-      gray: { value: 0 },
-      keepout: { value: true }
-    },
-    vertexShader: Shaders.Vertex.Normal,
-    fragmentShader: Shaders.Fragment.Outline,
-    transparent: true
-  });
-}
 export class UINodeRenderer implements IUINodeRenderer {
   mesh: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
   ui: UINode;
@@ -129,7 +90,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.ui = ui;
     this.mesh = new T.Mesh(
       this.next_geometry(),
-      get_material(void 0)
+      get_outline_material(void 0)
       // new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
     )
     this.mesh.userData.owner = ui;
