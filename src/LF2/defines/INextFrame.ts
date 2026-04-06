@@ -1,11 +1,12 @@
 import type { FacingFlag } from "./FacingFlag";
 import type { IExpression } from "./IExpression";
 import type { IFrameInfo } from "./IFrameInfo";
+import type { IVelocityInfo } from "./IVelocityInfo";
 export interface INextFrameResult {
   frame?: IFrameInfo;
   which: INextFrame;
 }
-export interface INextFrame {
+export interface INextFrame extends IVelocityInfo {
   id?: string | string[];
 
   desc?: string;

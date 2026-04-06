@@ -1,7 +1,5 @@
 import { O_ID, TeamEnum, GK } from "@/LF2/defines";
-import { Factory } from "@/LF2/entity";
 import { TestCase } from "../TestCase";
-
 
 export class Jan_DUA extends TestCase {
   override readonly key: number = ++TestCase.KEY;

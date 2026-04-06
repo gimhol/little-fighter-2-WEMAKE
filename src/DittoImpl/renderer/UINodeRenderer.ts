@@ -4,11 +4,12 @@ import { TextInput } from "@/LF2/ui/component/TextInput";
 import { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
-import { ceil, is_num, is_str, round } from "@/LF2/utils";
+import { is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
+import { BLACK, get_outline_material } from "./get_outline_material";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -22,15 +23,20 @@ interface IUserData {
   img?: ImageInfo<T.Texture>,
   nine_patch?: INinePatch,
 }
+
 export class UINodeRenderer implements IUINodeRenderer {
-  mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+  mesh: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
   ui: UINode;
 
   protected _css_obj: CSS2DObject | undefined;
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
   protected _geo = get_geometry(0, 0, 0, 0, 0);
-  protected _rgba: [number, number, number, number] = [255, 255, 255, 1];
+  protected _mixColor: T.Color = new T.Color(0, 0, 0);
+  protected _mixStength: number = 1;
+  protected _coverColor: T.Color = new T.Color(0, 0, 0);
+  protected _coverStength: number = 1;
+  protected _cover: boolean = false;
   protected _texture: T.Texture = empty_texture();
   protected img_idx_version: number | null = null;
   protected imgs_version: number | null = null;
@@ -84,7 +90,8 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.ui = ui;
     this.mesh = new T.Mesh(
       this.next_geometry(),
-      new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
+      get_outline_material(void 0)
+      // new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
     )
     this.mesh.userData.owner = ui;
   }
@@ -126,7 +133,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   on_hide(): void { }
   on_start() {
     this.update_center_and_size()
-    const [x, y, z] = this.ui.pos.value;
+    const { x, y, z } = this.ui;
     this.mesh.position.set(x, -y, z)
     this.mesh.visible = this.ui.visible;
     this.mesh.name = `layout(name= ${this.ui.name}, id=${this.ui.id})`
@@ -143,21 +150,36 @@ export class UINodeRenderer implements IUINodeRenderer {
     sp.geometry = this.next_geometry();
     const {
       _texture,
-      _rgba: [_r, _g, _b],
+      _img
     } = this;
-    if (sp.material.map !== _texture) {
-      sp.material.map?.dispose();
-      sp.material.map = _texture;
-      sp.material.needsUpdate = true;
+
+    const { material: m } = sp;
+    const { uniforms: u } = m;
+    m.uniforms.opacity.value = this.ui.global_opacity;
+
+    const { w = 1, h = 1, scale = 1 } = _img || {}
+    const sw = w / scale
+    const sh = h / scale
+    // look stupid.
+    u.x.value = _texture.offset.x * sw / _texture.repeat.x;
+    u.y.value = _texture.offset.y * sh / _texture.repeat.y;
+    u.w.value = sw;
+    u.h.value = sh;
+    u.tw.value = w;
+    u.th.value = h;
+    u.tsw.value = (scale * _texture.repeat.x);
+    u.tsh.value = (scale * _texture.repeat.y);
+
+    if (u.pTexture.value !== _texture) {
+      u.pTexture.value?.dispose();
+      u.pTexture.value = _texture;
     }
-    const { r, g, b } = sp.material.userData;
-    if (r !== _r || g !== _g || b !== _b) {
-      sp.material.color = new T.Color(_r / 255, _g / 255, _b / 255);
-      sp.material.userData.r = _r;
-      sp.material.userData.g = _g;
-      sp.material.userData.b = _b;
-      sp.material.needsUpdate = true;
-    }
+    u.mixColor.value = this._mixColor;
+    u.mixStreath.value = this._mixStength;
+    u.coverColor.value = this._coverColor;
+    u.coverStreath.value = this._coverStength;
+    u.cover.value = this._cover;
+    m.needsUpdate = true;
     return this;
   }
 
@@ -170,17 +192,36 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.txts_version === this.ui.txts.version &&
       this.color_version === this.ui.color.version
     ) return;
+
     const img: ImageInfo | undefined =
       this.ui.imgs.value[this.ui.img_idx.value] ||
       this.ui.txts.value[this.ui.txt_idx.value];
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
     this._img = img;
-    const color = this.ui.color.value;
-    const texture: T.Texture = img ? img.pic?.texture : color ? white_texture() : empty_texture();
-    const a = get_alpha_from_color(color) || 1
-    const { r, g, b } = new T.Color(color);
-    this._rgba = [ceil(r * 255), ceil(g * 255), ceil(b * 255), a];
-    this._texture = texture;
+    const color = this.ui.color.value.trim();
+    if (img) {
+      const texture: T.Texture = img.pic?.texture;
+      this._coverColor = BLACK;
+      this._coverStength = 0;
+      this._cover = false
+      this._mixColor = color ? new T.Color(color) : BLACK
+      this._mixStength = color ? (get_alpha_from_color(color) || 1) : 0;
+      this._texture = texture;
+    } else if (color) {
+      const texture: T.Texture = white_texture();
+      this._coverColor = new T.Color(color);
+      this._coverStength = get_alpha_from_color(color) || 1;
+      this._cover = true
+      this._mixColor = BLACK;
+      this._mixStength = 0;
+      this._texture = texture;
+    } else {
+      this._coverColor = BLACK;
+      this._coverStength = 0;
+      this._cover = true
+      this._mixColor = BLACK;
+      this._mixStength = 0;
+    }
   }
 
 
@@ -233,8 +274,8 @@ export class UINodeRenderer implements IUINodeRenderer {
 
   update_center_and_size() {
     if (!this.is_size_dirty && !this.is_center_dirty) return;
-    const [w, h] = this.ui.size.value;
-    const [x, y, z] = this.ui.center.value
+    const { w, h } = this.ui;
+    const { x, y, z } = this.ui.center.value
     this._w = w;
     this._h = h;
     this._tran_x = round(w * (0.5 - x));
@@ -247,10 +288,10 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._dom.style.height = `${this._h}px`
     }
     if (this._css_obj && this.is_center_dirty)
-      this._css_obj.center.set(this.ui.center.value[0], this.ui.center.value[1])
+      this._css_obj.center.set(this.ui.center.value.x, this.ui.center.value.y)
   }
   update_texture_attributes(dt: number) {
-    const t = this.mesh.material.map;
+    const t: T.Texture = this.mesh.material.uniforms.pTexture.value;
     if (!t || !this._ui_img) return;
     const { offsetAnimX, offsetAnimY } = this._ui_img
     if (!offsetAnimX && !offsetAnimY && this.user_data.ui_img == this._ui_img)
@@ -269,21 +310,20 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.update_center_and_size()
     this.update_dom();
     this.update_texture();
-    if (this.ui.scale.version !== this.scale_version)
-      this.mesh.scale.set(...this.ui.scale.value);
+    if (this.ui.scale.version !== this.scale_version) {
+      const { x, y, z } = this.ui.scale.value
+      this.mesh.scale.set(x, y, z);
+    }
     this.update_texture_attributes(dt)
 
     const sp = this.mesh;
     if (this.ui.pos.version !== this.pos_version) {
-      const [x, y, z] = this.ui.pos.value
+      const { x, y, z } = this.ui
       sp.position.set(x, -y, z);
     }
     sp.visible = this.ui.visible
     const opacity = this.ui.global_opacity
 
-    const { material: m } = sp;
-    m.opacity = this.ui.global_opacity * this._rgba[3];
-    m.needsUpdate = true;
     if (this._dom) this._dom.style.opacity = '' + opacity
 
     this.apply()

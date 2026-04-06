@@ -8,10 +8,15 @@ export interface IStageObjectInfo {
   z?: number;
   act?: string;
   facing?: -1 | 1;
+  /** 血量 */
   hp?: number;
+  /** 蓝量 */
   mp?: number;
+  /** 不同难度下的血量 */
   hp_map?: { [x in Difficulty]?: number }
+  /** 不同难度下的蓝量 */
   mp_map?: { [x in Difficulty]?: number }
+  
 
   /**
    * 出现次数

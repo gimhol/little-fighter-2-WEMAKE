@@ -17,8 +17,8 @@ export function handle_itr_kind_magic_flute(collision: ICollision): void {
   const bid = `magic_flute_to_${victim.id}`
   let buf = world.buffs.get(bid)
   if (!buf) {
-    const injury = 2;
-    const injury_r = 1;
+    const injury = 1;
+    const injury_r = 0.5;
     buf = new Buff(bid)
     buf.tick.max = 3;
     buf.life.max = 16;

@@ -27,8 +27,8 @@ export class Jalousie extends Flex<IJalousieCallbacks> {
   }
   get open(): boolean { return this._anim.reverse; }
   set open(v: boolean) { this._anim.start(v); }
-  get w(): number { return this.node.root.size.value[0] }
-  get h(): number { return this.node.root.size.value[1] }
+  get w(): number { return this.node.root.w }
+  get h(): number { return this.node.root.h }
 
   override on_click(e: IUIPointerEvent): void {
     super.on_click?.(e)
@@ -66,9 +66,9 @@ export class Jalousie extends Flex<IJalousieCallbacks> {
       const child = children[i];
       if (!child) continue;
       if (this.direction === 'column') {
-        child.scale.value = [1, value, 1];
+        child.set_scale(1, value, 1);
       } else {
-        child.scale.value = [value, 1, 1];
+        child.set_scale(value, 1, 1);
       }
     }
   }

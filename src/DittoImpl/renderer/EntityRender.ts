@@ -4,13 +4,12 @@ import type { Entity } from "@/LF2/entity/Entity";
 import { LF2 } from "@/LF2/LF2";
 import { clamp, floor, random_in, round } from "@/LF2/utils";
 import * as T from "../_t";
-import type { ImageMgr } from "../ImageMgr";
+import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
+import { get_outline_material } from "./get_outline_material";
 import { get_color_material } from "./MaterialKeeper";
 import { vec001, vec2 } from "./Mess";
-import { outline_fragment_shader } from "./shader/fragment/outline";
-import { normal_vertex_shader } from "./shader/vertex/normal";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
@@ -26,27 +25,7 @@ const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
 
-function get_material(texture: T.Texture<unknown> | undefined) {
-  return new T.ShaderMaterial({
-    uniforms: {
-      pTexture: { value: texture },
-      x: { value: 0 },
-      y: { value: 0 },
-      w: { value: 0 },
-      h: { value: 0 },
-      tw: { value: 0 },
-      th: { value: 0 },
-      ts: { value: 0 },
-      outlineColor: { value: new T.Color("#000000") },
-      outlineAlpha: { value: 0 },
-      outlineWidth: { value: 1 },
-      facing: { value: 1 }
-    },
-    vertexShader: normal_vertex_shader,
-    fragmentShader: outline_fragment_shader,
-    transparent: true
-  });
-}
+
 export class EntityRender {
   readonly world_renderer: WorldRenderer;
 
@@ -69,8 +48,6 @@ export class EntityRender {
   protected x = 0;
   protected y = 0;
   protected z = 0;
-  protected outline_width: number = 2;
-  outline_color: string | undefined = void 0;
   protected offset_x: number = 0;
   protected offset_y: number = 0;
 
@@ -102,7 +79,7 @@ export class EntityRender {
     this.images = get_img_map(lf2, entity.data);
 
     const texture = this.images.get("0")?.pic?.texture;
-    const material = get_material(texture);
+    const material = get_outline_material(texture);
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY, material
     )
@@ -153,12 +130,13 @@ export class EntityRender {
     m.uniforms.pTexture.value = img.pic.texture;
     m.uniforms.tw.value = img.w;
     m.uniforms.th.value = img.h;
-    m.uniforms.ts.value = img.scale;
+    m.uniforms.tsw.value = img.scale;
+    m.uniforms.tsh.value = img.scale;
     m.uniforms.x.value = x;
     m.uniforms.y.value = y;
     m.uniforms.w.value = w;
     m.uniforms.h.value = h;
-    m.uniforms.facing.value = entity.facing
+    m.uniforms.flipX.value = entity.facing
   }
 
   update_shaking(dt: number) {
@@ -233,14 +211,11 @@ export class EntityRender {
   }
   private render_outline() {
     const { main_mesh } = this;
-    if (this.entity.outline_color != this.outline_color) {
-      this.outline_color = this.entity.outline_color;
-    }
     if (this.entity.is_ghost) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
-      if (this.outline_color) {
-        m.uniforms.outlineColor.value = new T.Color(this.outline_color);
+      if (this.entity.outline_color) {
+        m.uniforms.outlineColor.value = new T.Color(this.entity.outline_color);
         m.uniforms.outlineAlpha.value = 0.7
       } else {
         m.uniforms.outlineAlpha.value = 0

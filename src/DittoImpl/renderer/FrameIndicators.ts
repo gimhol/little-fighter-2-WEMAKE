@@ -4,9 +4,9 @@ import { IQubePair } from "@/LF2/defines/IQubePair";
 import type { Entity } from "@/LF2/entity/Entity";
 import { foreach } from "@/LF2/utils/container_help/foreach";
 import * as T from "../_t";
-import type { WorldRenderer } from "./WorldRenderer";
 import { INDICATINGS } from "./INDICATINGS";
 import { INDICATORS_INFO } from "./INDICATORS_INFO";
+import type { WorldRenderer } from "./WorldRenderer";
 const line_geometry = new T.LineGeometry();
 const line_vertices = new Float32Array([
   0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1,
@@ -90,10 +90,15 @@ export class FrameIndicators {
   }
 
   protected _new_indicator(k: keyof typeof this._indicators_map, idx: number) {
-    const ret = (this._indicators_map[k][idx] = new T.Line2(
+    let mp = INDICATORS_INFO[k]
+    if (idx == 2 && k == 'ft') {
+      mp = INDICATORS_INFO.ft_l
+    }
+    const ret = new T.Line2(
       line_geometry,
-      new T.LineMaterial(INDICATORS_INFO[k]),
-    ));
+      new T.LineMaterial(mp),
+    )
+    this._indicators_map[k][idx] = ret;
     this.world_node.add(ret);
     return ret;
   }
@@ -107,7 +112,7 @@ export class FrameIndicators {
 
     switch (name) {
       case "frame": data = [this.frame]; break;
-      case "ft": data = [DOT]; break;
+      case "ft": data = [DOT, DOT, DOT]; break;
       case "opoint":
       case "bdy":
       case "itr":
@@ -136,11 +141,20 @@ export class FrameIndicators {
       }
       const indicator =
         this._indicators_map[name][i] ?? this._new_indicator(name, i);
-      const y = this._y + info.y;
-      const x = this._x + info.x;
+      let y = this._y + info.y;
+      let x = this._x + info.x;
+      let { w, h } = info;
+      if (name == 'ft' && i == 1) {
+        y = -this._z / 2;
+        w *= 3;
+      } else if (name === 'ft' && i == 2) {
+        y = -this._z / 2;
+        h = this._y + this._z / 2;
+        w /= 2
+      }
       indicator.userData.info = info;
       indicator.position.set(x, y, this._z);
-      indicator.scale.set(info.w, info.h, 1);
+      indicator.scale.set(w, h, 1);
     }
   }
 
@@ -160,14 +174,23 @@ export class FrameIndicators {
     });
   }
   update_indicators() {
-    foreach(this._indicators_map, (indicators) => {
-      foreach(indicators, indicator => {
+    foreach(this._indicators_map, (indicators, name) => {
+      foreach(indicators, (indicator, i) => {
         const info = indicator.userData.info as IQube
-        const y = this._y + info.y;
-        const x = this._x + info.x;
+        let y = this._y + info.y;
+        let x = this._x + info.x;
+        let { w, h } = info;
+        if (name == 'ft' && i == 1) {
+          y = -this._z / 2;
+          w *= 3;
+        } else if (name === 'ft' && i == 2) {
+          y = -this._z / 2;
+          h = this._y + this._z / 2;
+          w /= 2
+        }
         indicator.userData.info = info;
         indicator.position.set(x, y, this._z);
-        indicator.scale.set(info.w, info.h, 1);
+        indicator.scale.set(w, h, 1);
       })
     })
   }

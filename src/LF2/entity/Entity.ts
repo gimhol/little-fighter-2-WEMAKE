@@ -1,3 +1,4 @@
+import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
@@ -9,7 +10,7 @@ import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
   FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
-  is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
+  is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
 import { ChaseStratedy } from "../defines/ChaseStratedy";
@@ -17,6 +18,7 @@ import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
 import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
 import { IArmorInfo } from "../defines/IArmorInfo";
 import { SpeedCtrl } from "../defines/SpeedCtrl";
+import { WpointKind } from "../defines/WpointKind";
 import { Ditto } from "../ditto";
 import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
@@ -28,7 +30,6 @@ import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
 import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
-import { Factory, ICreator } from "./Factory";
 import type IEntityCallbacks from "./IEntityCallbacks";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
@@ -419,6 +420,7 @@ export class Entity {
   set mp(v: number) {
     const o = this._mp;
     v = max(0, v)
+    v = round_float(v)
     if (o === v) return;
     this._mp = v
     if (v < o) summary_mgr.get(this.id).mp_usage += o - v;
@@ -436,6 +438,7 @@ export class Entity {
   set hp_r(v: number) {
     const o = this._hp_r;
     v = max(0, v)
+    v = round_float(v)
     if (o === v) return;
     this.callbacks.emit("on_hp_r_changed")(this, (this._hp_r = v), o);
   }
@@ -446,6 +449,7 @@ export class Entity {
   set hp(v: number) {
     const o = this._hp;
     v = max(0, v)
+    v = round_float(v)
     if (o === v) return;
     this._hp = v;
     if (v < o) summary_mgr.get(this.id).hp_lost += o - v;
@@ -474,6 +478,7 @@ export class Entity {
   set mp_max(v: number) {
     const o = this.mp_max;
     v = max(0, v)
+    v = round_float(v)
     if (v === o) return;
     this.callbacks.emit("on_mp_max_changed")(this, (this._mp_max = v), o);
   }
@@ -484,6 +489,7 @@ export class Entity {
   set hp_max(v: number) {
     const o = this.hp_max;
     v = max(0, v)
+    v = round_float(v)
     if (v === o) return;
     this.callbacks.emit("on_hp_max_changed")(this, (this._hp_max = v), o);
   }
@@ -1029,13 +1035,13 @@ export class Entity {
       debugger
       return;
     }
-    const entity = Factory.inst.create_entity(data.type, this.world, data);
+    const entity = this.lf2.factory.create_entity(this.world, data);
     if (!entity) {
       Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, data: `, data, ` opoint: `, opoint);
       debugger
       return;
     }
-    entity.ctrl = Factory.inst.create_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
+    entity.ctrl = this.lf2.factory.create_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
     entity.on_spawn(this, opoint, offset_velocity, facing).attach(opoint.is_entity);
     if (entity.data.id === this.data.id) this.copies.add(entity)
     entity.key_role = false;
@@ -1147,9 +1153,12 @@ export class Entity {
     const { dvz: v } = this.frame;
     return v ? v * this.dataset('fvz_f') : v
   }
-  private update_velocity() {
+  update_velocity(vinfo: IVelocityInfo = this.frame): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
-    const { dvx, dvy, dvz } = this;
+    let { dvx, dvy, dvz } = vinfo;
+    if (dvx) dvx *= this.dataset('fvx_f')
+    if (dvy) dvy *= this.dataset('fvy_f')
+    if (dvz) dvz *= this.dataset('fvz_f')
     const {
       vxm = SpeedMode.LF2,
       vym = SpeedMode.AccTo,
@@ -1160,7 +1169,7 @@ export class Entity {
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
-    } = this.frame;
+    } = vinfo;
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
 
@@ -1919,6 +1928,16 @@ export class Entity {
       centerx: cx_a, centery: cy_a,
     } = bearer.frame;
 
+    if (wp_a.kind === WpointKind.Drop) {
+      bearer.drop_holding();
+      this.lf2.mt.mark = 'dh_v'
+      const vy = 3
+      const vx = this.lf2.mt.range(-10, 10) / 10
+      const vz = this.lf2.mt.range(-10, 10) / 20;
+      this.set_velocity(vx, vy, vz)
+      return;
+    }
+
     if (wp_a.weaponact !== this.frame.id) {
       // 还原wpoint丢失的情况
       if (wp_a.weaponact)
@@ -1940,7 +1959,7 @@ export class Entity {
     const { x: wa_x = 0, y: wa_y = 0, z: wa_z = 0 } = wp_a;
     const { x: wb_x = 0, y: wb_y = 0, z: wb_z = 0 } = wp_b
 
-    if (wp_a) {
+    if (wp_a.kind) {
       this.set_position(
         x + this.facing * (wa_x - cx_a + cx_b - wb_x),
         y + cy_a - wa_y - cy_b + wb_y,
@@ -2286,7 +2305,7 @@ export class Entity {
   }
   transform(data: IEntityData) {
     if (!is_human_ctrl(this.ctrl))
-      this.ctrl = Factory.inst.create_ctrl(data.id, this.ctrl.player_id, this);
+      this.ctrl = this.lf2.factory.create_ctrl(data.id, this.ctrl.player_id, this);
     const prev = this._data;
     this._data = data;
     const { armor } = this._data.base
@@ -2341,14 +2360,13 @@ export class Entity {
   }
 }
 
-const common_creator: ICreator<Entity, typeof Entity> = (...args) => {
-  const type = args[1].type;
-  let ret = Factory.inst.acquire(type)
-  if (!ret) ret = new Entity(...args)
-  else ret.reset(...args)
+const common_creator = (world: World, data: IEntityData, states?: States) => {
+  let ret = world.lf2.factory.acquire_entity(data.type)
+  if (!ret) ret = new Entity(world, data, states)
+  else ret.reset(world, data, states)
   return ret
 }
-Factory.inst.set_entity_creator(EntityEnum.Ball, common_creator);
-Factory.inst.set_entity_creator(EntityEnum.Weapon, common_creator);
-Factory.inst.set_entity_creator(EntityEnum.Entity, common_creator);
-Factory.inst.set_entity_creator(EntityEnum.Fighter, common_creator);
+Factory.register_entity(EntityEnum.Ball, common_creator);
+Factory.register_entity(EntityEnum.Weapon, common_creator);
+Factory.register_entity(EntityEnum.Entity, common_creator);
+Factory.register_entity(EntityEnum.Fighter, common_creator);

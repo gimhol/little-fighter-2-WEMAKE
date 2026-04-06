@@ -577,7 +577,7 @@ export default function EditorView(props: IEditorViewProps) {
           </Button>
           <Show show={!!zips?.length}>
             <Select
-              items={zips}
+              options={zips}
               parse={i => [zips?.indexOf(i), i.name]}
               value={zip ? zips?.indexOf(zip) : void 0}
               onChange={(i) => {

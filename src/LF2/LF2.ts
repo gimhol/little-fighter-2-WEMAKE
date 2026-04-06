@@ -3,8 +3,9 @@ import { KEY_NAME_LIST, LocalController } from "./controller";
 import * as D from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
-import { Entity, Factory } from "./entity";
+import { Entity } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
+import { Factory } from "./Factory";
 import * as Helper from "./helper";
 import { I18N } from "./I18N";
 import { ILf2Callback } from "./ILf2Callback";
@@ -12,11 +13,10 @@ import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
-import { Ticker } from "./Ticker";
 import * as UI from "./ui";
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
-
+import { regist_components } from './ui/component/_';
 const cheat_info_pair = (n: D.CheatType) =>
   [
     n,
@@ -30,7 +30,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.20'
+  static readonly VERSION_NAME: string = 'v0.1.21'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -73,7 +73,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   readonly disater_spreading_y = new Helper.Randoming(D.Defines.DISATER_SPREADING_VY, this)
   readonly jan_devil_judgement_spreading_x = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VX, this)
   readonly jan_devil_judgement_spreading_y = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VY, this)
-
+  readonly factory: Factory = new Factory();
   get loading() {
     return this._loading;
   }
@@ -192,6 +192,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   constructor(dev = false) {
+    regist_components()
     this.dev = dev;
     make_debugging(this)
     this.debug(`constructor`)
@@ -463,7 +464,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!data) { debugger; return; }
     let fighter = this.world.puppets.get(player_id);
     if (!fighter) {
-      fighter = Factory.inst.create_entity(data.type, this.world, data)
+      fighter = this.factory.create_entity(this.world, data)
       if (!fighter) return void 0;
       fighter.name = player_info.name;
       fighter.team = team || new_team();

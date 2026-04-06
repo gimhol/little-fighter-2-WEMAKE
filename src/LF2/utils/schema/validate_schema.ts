@@ -114,16 +114,15 @@ export function validate_schema<T>(value: unknown, schema: ISchema<T>, errors: s
     return ret;
   }
   switch (type) {
-    case "boolean":
+    case Boolean: case "boolean":
       if (typeof value !== 'boolean') return r();
       break;
-    case "string":
+    case String: case "string":
       if (typeof value !== 'string') return r();
       if (schema.string?.not_blank && !value.trim()) return r();
       if (schema.string?.not_empty && !value) return r();
       break;
-    case "number":
-    case "integer":
+    case Number: case "number": case "integer":
       if (typeof value !== 'number') return r();
       if (!schema.number?.nan && Number.isNaN(value)) return r();
       if (schema.number?.int && !Number.isInteger(value)) return r();
@@ -132,7 +131,7 @@ export function validate_schema<T>(value: unknown, schema: ISchema<T>, errors: s
       if (schema.number?.nagetive == !1 && value < 0) return r();
       if (schema.number?.positive == !1 && value > 0) return r();
       break;
-    case "array":
+    case Array: case "array":
       if (!Array.isArray(value)) return r();
       if (schema.items) {
         for (const item of value) {

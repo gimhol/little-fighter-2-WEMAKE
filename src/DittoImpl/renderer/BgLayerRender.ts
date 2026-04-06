@@ -1,7 +1,7 @@
-import type Layer from "@/LF2/bg/Layer";
+import type { Layer } from "@/LF2/bg/Layer";
 import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
-import { get_bg_layer_material, MaterialKeeper } from "./MaterialKeeper";
+import { get_bg_layer_material } from "./MaterialKeeper";
 
 
 export class BgLayerRender {
@@ -11,7 +11,7 @@ export class BgLayerRender {
   constructor(layer: Layer) {
     this.layer = layer;
     const { info } = layer;
-    const { x, y, z, file } = info;
+    const { x, y, z, file, id, name } = info;
     const pic = file ? this.layer.bg.world.lf2.images.find(file)?.pic : null
     const w = pic?.w ?? info.width;
     const h = pic?.h ?? info.height;
@@ -19,7 +19,7 @@ export class BgLayerRender {
       get_geometry(w, h, w / 2, -h / 2),
       get_bg_layer_material(info, layer.bg.world.lf2)
     );
-    this.mesh.name = "bg layer";
+    this.mesh.name = `bg layer ${name ?? id ?? 'unnamed'}`;
     this.mesh.position.set(x, y, z);
   }
 

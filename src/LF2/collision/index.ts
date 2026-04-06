@@ -1,5 +1,6 @@
 /*** AUTO EXPORT START ***/
 export * from "./CollisionKeeper";
+export * from "./calc_itr_velocity";
 export * from "./handle_armor";
 export * from "./handle_ball_frozen";
 export * from "./handle_ball_hit_other";
@@ -24,4 +25,5 @@ export * from "./handle_weapon_is_hit";
 export * from "./handle_weapon_is_picked";
 export * from "./handle_weapon_is_picked_secretly";
 export * from "./is_armor_work";
+export * from "./is_fall";
 /*** AUTO EXPORT END ***/

@@ -1,3 +1,4 @@
+import { Factory } from "../Factory";
 import { LF2 } from "../LF2";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
@@ -5,7 +6,6 @@ import { IBaseData, IBgData, IBotData, IDataLists, IEntityData, IStageInfo } fro
 import { EntityEnum } from "../defines/EntityEnum";
 import { Defines } from "../defines/defines";
 import { Ditto } from "../ditto";
-import { Factory } from "../entity";
 import {
   is_ball_data,
   is_bg_data,
@@ -62,11 +62,11 @@ class Inner {
     const jobs: Promise<any>[] = [];
     if (is_bg_data(data)) data = preprocess_bg_data(this.lf2, data, jobs)
     if (is_ball_data(data))
-      Factory.inst.set_ctrl_creator(data.id, (a, b) => new BallController(a, b));
+      Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
     else if (is_weapon_data(data))
-      Factory.inst.set_ctrl_creator(data.id, (a, b) => new BallController(a, b));
+      Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
     else if (is_fighter_data(data))
-      Factory.inst.set_ctrl_creator(data.id, (a, b) => new BotController(a, b));
+      Factory.register_ctrl(data.id, (a, b) => new BotController(a, b));
     if (is_entity_data(data)) {
       data.base.bot
       if (data.base.bot_id) {
@@ -102,6 +102,12 @@ class Inner {
     const list = this.data_list_map[data.type]
     const idx = list.findIndex(v => v.id === data.id)
     if (idx < 0) list.push(data); else list[idx] = data;
+
+    {
+      const list = this.data_list_map[EntityEnum.Entity]
+      const idx = list.findIndex(v => v.id === data.id)
+      if (idx < 0) list.push(data); else list[idx] = data;
+    }
   }
 
   private _add_bg(data: IBgData) {
@@ -285,6 +291,16 @@ export default class DatMgr {
     return is_str(arg_0)
       ? this.weapons.find((v) => v.id === arg_0)
       : this.weapons.find(arg_0);
+  }
+
+  find_entity(id: string): IEntityData | undefined;
+  find_entity(predicate: IFindPredicate<IEntityData>): IEntityData | undefined;
+  find_entity(
+    arg_0: string | IFindPredicate<IEntityData>,
+  ): IEntityData | undefined {
+    return is_str(arg_0)
+      ? this.entity.find((v) => v.id === arg_0)
+      : this.entity.find(arg_0);
   }
 
   find_fighter(id: string): IEntityData | undefined;

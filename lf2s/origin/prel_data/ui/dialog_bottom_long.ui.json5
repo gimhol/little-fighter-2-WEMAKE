@@ -28,11 +28,10 @@
               t: -10,
               b: 10,
               r: 10,
-            }
-
-          }
-        }
-      ]
+            },
+          },
+        },
+      ],
     },
     name_frame: {
       img: {
@@ -60,12 +59,11 @@
               t: -5,
               b: 2,
               r: 5,
-            }
-
-          }
-        }
-      ]
-    }
+            },
+          },
+        },
+      ],
+    },
   },
   items: [
     {
@@ -90,9 +88,9 @@
         {
           name: "Dialogs",
           properties: {
-            head_node_id: "head_pos",
-            text_node_id: "txt_pos",
-            talker_node_id: "talker_pos",
+            head_node: "head_pos",
+            text: "dialog_text",
+            talker: "talker_name",
           },
         },
       ],
@@ -127,14 +125,18 @@
           ],
           component: [
             {
+              id: "dialog_text",
+              name: "Text",
+            },
+            {
               name: "Alignment",
               properties: {
                 followed: "id:head_pos",
                 left: "right",
                 bottom: "bottom",
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         "name_frame",
         {
@@ -152,6 +154,10 @@
           ],
           component: [
             {
+              id: "talker_name",
+              name: "Text",
+            },
+            {
               name: "Alignment",
               properties: {
                 followed: "id:head_pos",
@@ -160,10 +166,10 @@
                 offset: {
                   l: -5,
                   b: 8,
-                }
-              }
-            }
-          ]
+                },
+              },
+            },
+          ],
         },
       ],
     },

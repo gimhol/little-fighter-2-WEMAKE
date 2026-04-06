@@ -660,7 +660,7 @@ function App() {
         <Button onClick={() => set_dat_viewer_open(true)}>查看dat文件</Button>
         <Button onClick={() => set_editor_open(true)}>查看数据包</Button>
         <Select
-          items={["top", "bottom", "left", "right"] as const}
+          options={["top", "bottom", "left", "right"] as const}
           parse={(v) => [v, "位置：" + v]}
           value={s.dev_ui_pos}
           onChange={v => set_state(d => { d.dev_ui_pos = v! })}
@@ -735,7 +735,7 @@ function App() {
           placeholder="页面"
           value={ui_id}
           onChange={v => lf2?.set_ui(v!)}
-          items={uis}
+          options={uis}
           parse={(o) => [o.id!, o.name]}
         />
         <Titled float_label="显示模式">
@@ -744,7 +744,7 @@ function App() {
             onChange={(e) => set_state(d => { d.render_size_mode = e! })}
             placeholder="显示模式"
             parse={i => [i, i]}
-            items={["fixed", "fill", "cover", "contain"] as const}
+            options={["fixed", "fill", "cover", "contain"] as const}
           />
         </Titled>
         <Show show={s.render_size_mode === "fixed"}>
@@ -753,7 +753,7 @@ function App() {
               <Select
                 value={s.render_fixed_scale}
                 onChange={(e) => set_state(d => { d.render_fixed_scale = e! })}
-                items={arithmetic_progression(0, 4, 0.5)}
+                options={arithmetic_progression(0, 4, 0.5)}
                 parse={(i) => [i, "✕" + (i || "?")]}
               />
               <Show show={!s.render_fixed_scale}>
@@ -774,7 +774,7 @@ function App() {
               <Select
                 value={s.v_align}
                 onChange={(e) => set_state(d => { d.v_align = e! })}
-                items={[-2, 0, 0.5, 1]}
+                options={[-2, 0, 0.5, 1]}
                 parse={(v, idx) => [
                   v, v <= -1 ? "?" : ["上", "中", "下"][idx - 1],
                 ]}
@@ -792,7 +792,7 @@ function App() {
               <Select
                 value={s.h_align}
                 onChange={(e) => set_state(d => { d.h_align = e! })}
-                items={[-2, 0, 0.5, 1]}
+                options={[-2, 0, 0.5, 1]}
                 parse={(v, idx) => [
                   v,
                   v <= -1 ? "?" : ["左", "中", "右"][idx - 1],

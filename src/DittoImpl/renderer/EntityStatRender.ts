@@ -1,6 +1,6 @@
 import { get_team_shadow_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
-import { GameKey, IVector3, Labels } from "@/LF2/defines";
+import { GameKey, IVector3, GameKeyLabels } from "@/LF2/defines";
 import { is_bot_ctrl, is_fighter, is_human_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
@@ -123,7 +123,7 @@ export class EntityStatRender implements IEntityCallbacks {
       sprite.name = `key ${k}`;
       sprite.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
       lf2.images
-        .load_text(Labels[k], {
+        .load_text(GameKeyLabels[k], {
           fill_style: 'white',
           line_width: 0,
           smoothing: false,

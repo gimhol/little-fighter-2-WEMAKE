@@ -1,10 +1,9 @@
 import { IState } from "@/LF2/base";
 import { O_ID } from "@/LF2/defines";
-import { Entity } from "@/LF2/entity";
-import { Factory } from "@/LF2/entity/Factory";
-import { round_float } from "@/LF2/utils/math/round_float";
-import type { Tests } from "./index";
 import { CMD } from "@/LF2/defines/CMD";
+import { Entity } from "@/LF2/entity";
+import { round_float } from "@/LF2/utils/math/round_float";
+import type { Tests } from "./Tests";
 
 export class TestCase implements IState<number> {
   static KEY: number = 0;
@@ -38,12 +37,15 @@ export class TestCase implements IState<number> {
     this.owner.lf2.change_bg('bg_4');
   }
   spawn(oid: string) {
-    const data = this.lf2.datas.find_fighter(oid);
+    const data = this.lf2.datas.find_entity(oid);
     if (!data) return null;
-    return Factory.inst.create_entity(data.type, this.world, data) || null;
+    return this.lf2.factory.create_entity(this.world, data) || null;
   }
   bandits_8(px: number = 50, pz: number = 20): Entity[] {
-    const bandits: Entity[] = []
+    return this.around_8(O_ID.Bandit, px, pz)
+  }
+  around_8(oid: string, px: number = 50, pz: number = 20): Entity[] {
+    const ret: Entity[] = []
     const x1 = this.left + px;
     const x2 = this.midX;
     const x3 = this.right - px;
@@ -55,16 +57,19 @@ export class TestCase implements IState<number> {
       [x3, z3], [x2, z3], [x1, z3], [x1, z2],
     ];
     for (const [x, z] of pos) {
-      const bandit = this.spawn(O_ID.Bandit)
-      if (!bandit) break;
-      bandits.push(bandit)
-      bandit.set_position(x, 0, z);
-      bandit.attach();
+      const e = this.spawn(oid)
+      if (!e) break;
+      ret.push(e)
+      e.set_position(x, 0, z);
+      e.attach();
     }
-    return bandits;
+    return ret;
   }
   bandits_mid_8(x = 100, z = 50): Entity[] {
-    const bandits: Entity[] = []
+    return this.mid_8(O_ID.Bandit, x, z)
+  }
+  mid_8(oid: string, x = 100, z = 50): Entity[] {
+    const ret: Entity[] = []
     const x1 = this.midX + x;
     const x2 = this.midX;
     const x3 = this.midX - x;
@@ -76,17 +81,28 @@ export class TestCase implements IState<number> {
       [x3, z3], [x2, z3], [x1, z3], [x1, z2],
     ];
     for (const [x, z] of pos) {
-      const bandit = this.spawn(O_ID.Bandit)
-      if (!bandit) break;
-      bandits.push(bandit)
-      bandit.set_position(x, 0, z);
-      bandit.attach();
+      const e = this.spawn(oid)
+      if (!e) break;
+      ret.push(e)
+      e.set_position(x, 0, z);
+      e.attach();
     }
-    return bandits;
+    return ret;
   }
   hori_3(oid: string, x = 250, z = this.midZ): Entity[] {
     const ret: Entity[] = [];
     [this.midX - x, this.midX, this.midX + x].forEach(x => {
+      const o = this.spawn(oid);
+      if (!o) return;
+      o.set_position(x, 0, z);
+      o.attach();
+      ret.push(o)
+    })
+    return ret;
+  }
+  hori_2(oid: string, x = 250, z = this.midZ): Entity[] {
+    const ret: Entity[] = [];
+    [this.midX - x, this.midX + x].forEach(x => {
       const o = this.spawn(oid);
       if (!o) return;
       o.set_position(x, 0, z);

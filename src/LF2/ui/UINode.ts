@@ -1,27 +1,17 @@
 import { LF2 } from "../LF2";
-import Callbacks from "../base/Callbacks";
-import { Expression } from "../base/Expression";
-import StateDelegate from "../base/StateDelegate";
-import { IValGetter } from "../defines/IExpression";
-import { IStyle } from "../defines/IStyle";
-import { Ditto } from "../ditto";
-import { ImageInfo } from "../ditto/image/ImageInfo";
-import { TextInfo } from "../ditto/image/TextInfo";
-import { IUINodeRenderer } from "../ditto/render/IUINodeRenderer";
-import { IDebugging, make_debugging } from "../entity/make_debugging";
-import { round } from "../utils";
-import { filter, find } from "../utils/container_help";
-import { is_bool, is_num, is_str } from "../utils/type_check";
+import { Callbacks, Expression, StateDelegate } from "../base";
+import { IStyle, IValGetter, IVector2, IVector3 } from "../defines";
+import { Ditto as D, Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
+import { IDebugging, make_debugging } from "../entity";
+import { filter, is_bool, is_num, is_str, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
 import { IUIPointerEvent } from "./IUIPointerEvent";
-import actor from "./action/Actor";
-import inst from "./component/Factory";
-import { UIComponent } from "./component/UIComponent";
+import { actor } from "./action";
+import { UIComponent } from "./component";
 import { parse_ui_value } from "./read_info_value";
-import { Times } from "./utils";
 export class UINode implements IDebugging {
 
   static readonly TAG: string = 'UINode';
@@ -68,26 +58,22 @@ export class UINode implements IDebugging {
   protected readonly _disabled: StateDelegate<boolean> = new StateDelegate(() => this.data.disabled === true);
   protected readonly _opacity: StateDelegate<number> = new StateDelegate(1);
 
-  readonly pos: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.pos).comparer(StateDelegate.CompareArray);
-  readonly scale: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.scale).comparer(StateDelegate.CompareArray);
+  readonly pos: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.pos)).comparer(StateDelegate.CompareVec3);
+  readonly scale: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.scale)).comparer(StateDelegate.CompareVec3);
   readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
-  readonly size: StateDelegate<[number, number]> = new StateDelegate(() => this.data.size).comparer(StateDelegate.CompareArray);
-  readonly center: StateDelegate<[number, number, number]> = new StateDelegate(() => this.data.center).comparer(StateDelegate.CompareArray);
+  readonly size: StateDelegate<IVector2> = new StateDelegate(() => new D.Vector2(...this.data.size)).comparer(StateDelegate.CompareVec2);
+  readonly center: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.center)).comparer(StateDelegate.CompareVec3);
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
   readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
 
   protected _parent?: UINode;
   protected _children: UINode[] = [];
-  set_scale(x?: number, y?: number, z?: number): this {
-    const [a, b, c] = this.scale.value;
-    this.scale.value = [x ?? a, y ?? b, z ?? c];
-    return this;
-  }
+
   get cross(): ICrossInfo {
-    const [w, h] = this.size.value
-    const [a, b] = this.center.value
+    const { x: w, y: h } = this.size.value
+    const { x: a, y: b } = this.center.value
     const left = -a * w
     const top = -b * h
     const right = (1 - a) * w
@@ -103,7 +89,7 @@ export class UINode implements IDebugging {
   }
   get rect() {
     const c = this.cross
-    const [x, y] = this.pos.value
+    const { x, y } = this.pos.value
     return {
       left: x + c.left,
       top: y + c.top,
@@ -192,10 +178,7 @@ export class UINode implements IDebugging {
     return this;
   }
 
-  set_center(v: [number, number, number]): this {
-    this.center.set(0, v);
-    return this;
-  }
+
   get global_opacity(): number {
     if (!this.parent) return this._opacity.value
     return this._opacity.value * this.parent._opacity.value;
@@ -214,15 +197,57 @@ export class UINode implements IDebugging {
   get parent(): UINode | undefined { return this._parent; }
   get children(): Readonly<UINode[]> { return this._children; }
 
-  set_size(v: [number, number]): this { this.size.set(0, v); return this; }
-
-  get w(): number { return this.size.value[0]; }
+  get w(): number { return this.size.value.x; }
   set w(v: number) { this.set_w(v); }
-
-  get h(): number { return this.size.value[1]; }
+  get h(): number { return this.size.value.y; }
   set h(v: number) { this.set_h(v); }
-  set_w(v: number): this { return this.set_size([v, this.h]); }
-  set_h(v: number): this { return this.set_size([this.w, v]); }
+  set_w(v: number): this { return this.resize(v, this.h); }
+  set_h(v: number): this { return this.resize(this.w, v); }
+  resize(w: number, h: number): this {
+    this.size.value = new D.Vector2(w, h); return this;
+  }
+
+  get x(): number { return this.pos.value.x; }
+  set x(v: number) { this.set_x(v); }
+  get y(): number { return this.pos.value.y; }
+  set y(v: number) { this.set_y(v); }
+  get z(): number { return this.pos.value.z; }
+  set z(v: number) { this.set_z(v); }
+  set_x(v: number): this { return this.move_to(v); }
+  set_y(v: number): this { return this.move_to(void 0, v); }
+  set_z(v: number): this { return this.move_to(void 0, void 0, v); }
+  move_to(x: number = this.x, y: number = this.y, z: number = this.z): this {
+    this.pos.value = new D.Vector3(x, y, z);
+    return this;
+  }
+
+  get cx(): number { return this.center.value.x; }
+  set cx(v: number) { this.set_cx(v); }
+  get cy(): number { return this.center.value.y; }
+  set cy(v: number) { this.set_cy(v); }
+  get cz(): number { return this.center.value.z; }
+  set cz(v: number) { this.set_cz(v); }
+  set_cx(v: number): this { return this.set_center(v); }
+  set_cy(v: number): this { return this.set_center(void 0, v); }
+  set_cz(v: number): this { return this.set_center(void 0, void 0, v); }
+  set_center(cx: number = this.cx, cy: number = this.cy, cz: number = this.cz): this {
+    this.center.value = new Ditto.Vector3(cx, cy, cz)
+    return this;
+  }
+
+  get sx(): number { return this.scale.value.x; }
+  set sx(v: number) { this.set_sx(v); }
+  get sy(): number { return this.scale.value.y; }
+  set sy(v: number) { this.set_sy(v); }
+  get sz(): number { return this.scale.value.z; }
+  set sz(v: number) { this.set_sz(v); }
+  set_sx(v: number): this { return this.set_scale(v); }
+  set_sy(v: number): this { return this.set_scale(void 0, v); }
+  set_sz(v: number): this { return this.set_scale(void 0, void 0, v); }
+  set_scale(x: number = this.sx, y: number = this.sy, z: number = this.sz): this {
+    this.scale.value = new D.Vector3(x, y, z);
+    return this;
+  }
 
   get components(): ReadonlySet<UIComponent> {
     return this._components;
@@ -246,30 +271,30 @@ export class UINode implements IDebugging {
     this.id_ui_map = new Map();
     this.name_ui_map = new Map();
 
-    this.renderer = new Ditto.UINodeRenderer(this);
+    this.renderer = new D.UINodeRenderer(this);
     make_debugging(this)
   }
-  get global_pos(): [number, number, number] {
-    const [x, y, z] = this.pos.value;
-    if (this.parent) {
-      const [gx, gy, gz] = this.parent.global_pos;
-      return [x + gx, y + gy, z + gz];
-    }
-    return [x, y, z];
+  get global_pos(): IVector3 {
+    const ret = this.pos.value.clone()
+    if (!this.parent) return ret;
+    ret.add(this.parent.global_pos)
+    return ret;
   }
-  set global_pos(v: [number, number, number]) {
-    if (!this.parent) {
-      this.pos.value = v;
-      return;
-    }
-    const [px, py, pz] = this.parent.global_pos
-    const [gx, gy, gz] = v;
-    this.pos.value = [gx - px, gy - py, gz - pz];
+  set global_pos(v: IVector3) {
+    if (!this.parent) { this.move_to(v.x, v.y, v.z); return; }
+    const { x, y, z } = this.parent.global_pos
+    this.move_to(v.x - x, v.y - y, v.z - z);
+  }
+  move_to_global(x: number, y: number, z: number): this {
+    if (!this.parent) { this.move_to(x, y, z); return this; }
+    const g = this.parent.global_pos
+    this.move_to(x - g.x, y - g.y, z - g.z);
+    return this;
   }
   hit(x: number, y: number): boolean {
-    const [cx, cy] = this.center.value;
-    const [px, py] = this.pos.value;
-    const [dw, dh] = this.size.value;
+    const { x: cx, y: cy } = this.center.value;
+    const { x: px, y: py } = this.pos.value;
+    const { x: dw, y: dh } = this.size.value;
     const l = px - round(cx * dw);
     const t = py - round(cy * dh);
     const [w, h] = this.data.size;
@@ -403,7 +428,7 @@ export class UINode implements IDebugging {
 
     const { component } = ret.data;
     if (component)
-      for (const c of inst.create(ret, component))
+      for (const c of lf2.factory.create_components(ret, component))
         ret._components.add(c);
 
     if (info.items) {
@@ -485,9 +510,9 @@ export class UINode implements IDebugging {
         Number(get_val(this, opacity, "==")) || 0;
     }
     this.pos.default_value = () => {
-      if (this.parent) return this.data.pos;
       const [x, y, z] = this.data.pos;
-      return [x, y - this.lf2.world.screen_h, z]
+      if (this.parent) return new D.Vector3(x, y, z);
+      return new D.Vector3(x, y - this.lf2.world.screen_h, z)
     }
   }
 
@@ -671,15 +696,17 @@ export class UINode implements IDebugging {
     type: T,
     condition: TCond<T> | string = () => 1
   ): InstanceType<T> | undefined {
-    const ret = find(
-      this.components,
-      (v) => {
-        if (!(v instanceof type)) return 0;
-        if (is_str(condition)) return condition === v.id;
-        return condition(v as any);
-      },
-    ) as InstanceType<T> | undefined;
-    return ret
+    for (const v of this._components) {
+      if (!(v instanceof type))
+        continue;
+      if (!condition)
+        continue
+      if (condition === v.id)
+        return v as InstanceType<T>;
+      if (typeof condition === 'function' && condition(v as any))
+        return v as InstanceType<T>;
+    }
+    return void 0;
   }
 
   /**
@@ -776,5 +803,5 @@ export class UINode implements IDebugging {
   }
 }
 type TCls<R = any> = abstract new (...args: any) => R;
-type TCond<T extends TCls> = (c: InstanceType<T>) => unknown;
+type TCond<T extends TCls,> = (c: InstanceType<T>) => unknown;
 

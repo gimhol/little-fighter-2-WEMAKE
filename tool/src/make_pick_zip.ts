@@ -1,9 +1,9 @@
 import { cp, mkdir, readFile, writeFile } from "fs/promises";
 import JSON5 from "json5";
 import { dirname, join } from "path";
-import { ActionType, IEntityData, IOpointInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LF2/defines";
+import { ActionType, IBgData, IEntityData, IStageInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LF2/defines";
 import { conf } from "./conf";
-import { error, log, warn } from "./utils/log";
+import { error, info, log, warn } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
 
 
@@ -15,6 +15,7 @@ async function read_json<T>(src: string) {
 }
 
 async function write_json<T>(dst: string, outputs: any) {
+  info('write_json: ' + dst)
   await mkdir(dirname(dst), { recursive: true })
   await writeFile(dst, JSON5.stringify(outputs, { space: 2, quote: '"' }))
 }
@@ -30,13 +31,15 @@ function children<K extends string, V>(obj?: { [x in K]?: V; }): V[] {
 }
 
 export async function make_pick_zip() {
-  const { IN_LFW_DIR, IN_LFW_INDEX, LFW_PICKS, CONF_FILE, OUT_DATA_NAME, TMP_DIR, OUT_DIR } = conf()
+  const { IN_LFW_DIR, IN_LFW_INDEX, OUT_LFW_INDEX, LFW_PICKS, CONF_FILE, OUT_DATA_NAME, TMP_DIR, OUT_DIR } = conf()
   if (OUT_DATA_NAME) log({ OUT_DATA_NAME })
   else return error(`'data zip' will not be created, because 'OUT_DATA_NAME' is not set in '${CONF_FILE}'.`)
   if (IN_LFW_DIR) log({ IN_LFW_DIR })
   else return error(`'${OUT_DATA_NAME}' will not be created, because 'IN_LFW_DIR' is not set in '${CONF_FILE}'.`)
   if (IN_LFW_INDEX) log({ IN_LFW_INDEX })
   else return error(`'${OUT_DATA_NAME}' will not be created, because 'IN_LFW_INDEX' is not set in '${CONF_FILE}'.`)
+  if (OUT_LFW_INDEX) log({ OUT_LFW_INDEX })
+  else return error(`'${OUT_DATA_NAME}' will not be created, because 'OUT_LFW_INDEX' is not set in '${CONF_FILE}'.`)
   if (LFW_PICKS) log({ LFW_PICKS })
   else return error(`'${OUT_DATA_NAME}' will not be created, because 'LFW_PICKS' is not set in '${CONF_FILE}'.`)
   if (TMP_DIR) log({ TMP_DIR })
@@ -51,27 +54,19 @@ export async function make_pick_zip() {
     stages: [],
     bots: []
   }
-  LFW_PICKS.split(';').forEach(v => {
-    const txt = v.trim();
-    if (!txt) return;
-    const [type, remains] = v.split(':');
-    if (typeof remains !== 'string')
-      return warn(`type not correct`);
-    if (!type || !(type in outputs))
-      return warn(`type not supported, got ${type}, must be one of "objects, backgrounds, stages, bots"`);
-    const oids = remains.split(',');
-    if (!oids.length) return;
-    const input = inputs[type as keyof ITempDataLists];
-    const output = outputs[type as keyof ITempDataLists];
-    for (const oid of oids) {
-      const item = input.find(v => v.id === oid)
-      if (!item) {
-        warn(`oid ${JSON.stringify(oid)} not found in ${type}`);
-        continue;
-      }
-      output.push(item)
+  const picks = await read_json<Partial<ITempDataLists>>(LFW_PICKS)
+  picks.objects?.forEach(picked => {
+    const oid = picked.id;
+    const item = inputs.objects.find(v => v.id === oid)
+    if (!item) {
+      warn(`oid ${JSON.stringify(oid)} not found in objects`);
+      return;
     }
+    const n = { ...item }
+    if (picked.groups) n.groups = picked.groups
+    outputs.objects.push(n)
   })
+
   // console.log(outputs)
   const file_pairs = new Set<string>();
   function add_file_pairs(...files: (string | undefined)[]) {
@@ -96,7 +91,6 @@ export async function make_pick_zip() {
           if (duplicated) return;
           const item = inputs.objects.find(v => v.id === oid || v.alias === oid)
           if (!item) return;
-
           let set = depend_opoints.get(item)
           if (!set) depend_opoints.set(item, set = new Set())
           arraying(opoint.action).reduce<string[]>((r, v) => {
@@ -164,7 +158,13 @@ export async function make_pick_zip() {
       }, []),
     )
     const dst = join(TMP_DIR, item.file).replace(/\\\\/g, '/');
-    await cp(src, dst, { recursive: true }).catch(e => error(e))
+    const src_content = await read_json<IEntityData | IBgData | IStageInfo[]>(src)
+    if (src_content && !Array.isArray(src_content)) {
+      if (item.groups) {
+        src_content.base.group = item.groups.length ? item.groups : void 0;
+      }
+    }
+    await write_json(dst, src_content)
   }
   for (const [obj, actions] of depend_opoints) {
     const msg = `not include object dependency found: ` +
@@ -173,14 +173,13 @@ export async function make_pick_zip() {
       Array.from(actions).join(',\n  ') +
       '\n]'
     warn(msg)
-
   }
 
   for (const a of file_pairs) {
     const [src, dst] = a.split('===>')
     await cp(src, dst, { recursive: true }).catch(e => error(e))
   }
-  await write_json(join(TMP_DIR, IN_LFW_INDEX), outputs)
+  await write_json(join(TMP_DIR, OUT_LFW_INDEX), outputs)
   await make_zip_and_json(TMP_DIR, OUT_DIR, OUT_DATA_NAME, (inf) => {
     inf.type = 'data';
     return inf;

@@ -1,6 +1,6 @@
 {
   "name": "little-fighter-2-wemake",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "type": "module",
   "private": true,
   "homepage": ".",
@@ -13,21 +13,21 @@
     "test": "jest",
     "___build___": "___build___",
     "build:tool": "cd ./tool && npm i && npm run build",
-    "build:data": "node ./tool make-data -c ./lf2s/origin/conf.json5 -d",
+    "build:data": "node ./tool make-data-zip -c ./lf2s/origin/conf.json5 -d",
     "build:prel": "node ./tool make-prel -c ./lf2s/origin/conf.json5 -d",
     "build:tool:data": "npm run build:tool && npm run build:data",
     "build:tool:prel": "npm run build:tool && npm run build:prel",
     "zip": " node ./tool zip-full -c ./lf2s/origin/conf.json5 -d",
     "txt": "node ./tool dat-2-txt -c ./lf2s/origin/conf.json5 -d",
-    "build:data:rn": "node ./tool make-data -c ./lf2s/rn/conf.json5 -d",
+    "build:data:rn": "node ./tool make-data-zip -c ./lf2s/rn/conf.json5 -d",
     "build:prel:rn": "node ./tool make-prel -c ./lf2s/rn/conf.json5 -d",
     "build:tool:data:rn": "npm run build:tool && npm run build:data:rn",
     "build:tool:prel:rn": "npm run build:tool && npm run build:prel:rn",
-    "pick:rn": "npm run build:tool && node ./tool pick -c ./lf2s/rn/pick-conf.json5 -d",
+    "pick:rn": "npm run build:tool && node ./tool make-data -c ./lf2s/rn/conf.json5 -d && node ./tool pick -c ./lf2s/rn/pick-conf.json5 -d",
     "txt:rn": "node ./tool dat-2-txt -c ./lf2s/rn/conf.json5 -d",
     "___deploy___": "___deploy___",
-    "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.20 --LOCAL_PATH ./dist",
-    "deploy:rn": "fdeploy -s oss --REMOTE_DIR rn/0.1.20 --LOCAL_PATH ./dist",
+    "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.21 --LOCAL_PATH ./dist",
+    "deploy:rn": "fdeploy -s oss --REMOTE_DIR rn/0.1.21 --LOCAL_PATH ./dist",
     "deploy:docs": "fdeploy -s oss --REMOTE_DIR docs --LOCAL_PATH docs",
     "___flow___": "___flow___",
     "flow": "npm run build && npm run deploy",
@@ -39,7 +39,11 @@
     "json6": "ts-json-schema-generator --path src/LF2/defines/IItrInfo.ts --type IItrInfo > .vscode/schema/itr.schema.json5",
     "__OTHERS___": "__OTHERS___",
     "save:rn": "node ./script/save-rn.mjs",
-    "load:rn": "node ./script/load-rn.mjs"
+    "load:rn": "node ./script/load-rn.mjs",
+    "exports:lf2": "node ./script/auto-exports.mjs ./src/LF2",
+    "exports:ditto": "node ./script/auto-exports.mjs ./src/DittoImpl",
+    "register:components": "node ./script/auto-components.mjs",
+    "auto": "npm run exports:lf2 && npm run exports:ditto && npm run register:components"
   },
   "dependencies": {
     "@fimagine/dom-hooks": "^1.0.6",
@@ -90,6 +94,7 @@
     "typescript-eslint": "^8.48.0",
     "vite": "^7.2.4",
     "vite-plugin-devtools-json": "^1.0.0",
+    "vite-plugin-glsl": "^1.5.6",
     "vite-plugin-html": "^3.2.2"
   }
 }

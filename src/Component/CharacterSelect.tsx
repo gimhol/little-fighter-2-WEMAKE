@@ -24,7 +24,7 @@ export default function CharacterSelect(props: CharacterSelectProps) {
 
   return (
     <Select
-      items={["", ...characters]}
+      options={["", ...characters]}
       disabled={!characters?.length || disabled}
       parse={(i) => is_str(i) ? ["", "Random"] : [i.id, i.base.name]}
       placeholder={characters.length ? placeholder : "未加载"}

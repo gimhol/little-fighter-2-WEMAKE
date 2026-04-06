@@ -96,7 +96,7 @@ export function ItrEditor(props: IItrEditorViewProps) {
         <Titled label='rest' styles={titled_styles}>
           <Combine>
             <Select
-              items={['arest', 'vrest'] as const}
+              options={['arest', 'vrest'] as const}
               parse={v => [v, v]}
               value={is_vrest ? 'vrest' : 'arest'}
               onChange={(v: 'arest' | 'vrest' | undefined) => {

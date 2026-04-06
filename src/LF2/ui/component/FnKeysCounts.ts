@@ -1,15 +1,18 @@
 import { ISchema } from "@/LF2/defines";
 import { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
+import { UINode } from "@/LF2/ui/UINode";
 import { make_schema } from "@/LF2/utils/schema";
-import { Text } from "./Text";
+import { Label } from "./Label";
 import { UIComponent } from "./UIComponent";
 
 export interface IFnKeysCountsProps {
-  f6?: Text;
-  f7?: Text;
-  f8?: Text;
-  f9?: Text;
-  f10?: Text;
+  f6?: Label;
+  f7?: Label;
+  f8?: Label;
+  f9?: Label;
+  f10?: Label;
+  fn_key_counts?: UINode;
+  fn_key_locked?: UINode;
 }
 export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
   static override readonly TAG: string = 'FnKeysCounts';
@@ -17,45 +20,27 @@ export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
     key: "IFnKeysCountsProps",
     type: "object",
     properties: {
-      f6: {
-        key: "f6",
-        type: Text,
-        nullable: true,
-      },
-      f7: {
-        key: "f7",
-        type: Text,
-        nullable: true,
-      },
-      f8: {
-        key: "f8",
-        type: Text,
-        nullable: true,
-      },
-      f9: {
-        key: "f9",
-        type: Text,
-        nullable: true,
-      },
-      f10: {
-        key: "f10",
-        type: Text,
-        nullable: true,
-      }
+      f6: Label,
+      f7: Label,
+      f8: Label,
+      f9: Label,
+      f10: Label,
+      fn_key_counts: UINode,
+      fn_key_locked: UINode
     }
   })
   readonly world_cbs: IWorldCallbacks = {
     on_fn_locked_change: (locked) => {
       if (locked) {
-        this.node.find_child('fn_key_locked')?.set_visible(true)
-        this.node.find_child('fn_key_counts')?.set_visible(false)
+        this.props.fn_key_locked?.set_visible(true)
+        this.props.fn_key_counts?.set_visible(false)
       } else {
-        this.node.find_child('fn_key_locked')?.set_visible(false)
-        this.node.find_child('fn_key_counts')?.set_visible(true)
+        this.props.fn_key_locked?.set_visible(false)
+        this.props.fn_key_counts?.set_visible(true)
       }
     },
     on_counts: () => {
-        this.node.find_child('fn_key_counts')?.set_visible(true)
+      this.props.fn_key_counts?.set_visible(true)
       const { f6, f7, f8, f9, f10 } = this.props;
       f6?.set_text(this.world.counts.get('f6') ?? 0)
       f7?.set_text(this.world.counts.get('f7') ?? 0)

@@ -1,4 +1,5 @@
 export enum StageVal {
+  /** 关卡中敌对角色全部阵亡 */
   EnemiesCleared = "enemies_cleared",
   DialogCleared = "dialog_cleared",
 

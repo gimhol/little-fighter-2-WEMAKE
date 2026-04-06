@@ -34,7 +34,6 @@
       items: [
         {
           id: "btn_fight",
-          auto_focus: true,
           template: "builtin_data/launch/menu_text_button.ui.json5",
           values: {
             text: "game_prepare_menu.fight",
@@ -57,6 +56,7 @@
         },
         {
           id: "btn_update_random",
+          auto_focus: true,
           template: "builtin_data/launch/menu_text_button.ui.json5",
           values: {
             text: "game_prepare_menu.reset_random",

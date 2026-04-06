@@ -196,6 +196,10 @@ export interface IWorldDataset {
   wvx_f: number;
   wvy_f: number;
   wvz_f: number;
+  whirlwind_vy_max: number;
+  whirlwind_acc_y: number;
+  whirlwind_acc_x: number;
+  whirlwind_acc_z: number;
 }
 
 export const world_dataset_fields = fields<IWorldDataset>({
@@ -283,4 +287,8 @@ export const world_dataset_fields = fields<IWorldDataset>({
   dash_distancez: float,
   rowing_height: float,
   rowing_distance: float,
+  whirlwind_vy_max: float('旋风最大Y速度'),
+  whirlwind_acc_y: float('旋风Y加速度'),
+  whirlwind_acc_x: float('旋风X加速度'),
+  whirlwind_acc_z: float('旋风Z加速度'),
 })

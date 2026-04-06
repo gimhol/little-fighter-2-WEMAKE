@@ -18,9 +18,9 @@ export class ReachableGroup extends UIComponent {
   override on_start(): void {
     this.reachables = this.node.root.search_components(Reachable, (v) => v.group_name === this.name)
     if (this.direction === "lr") {
-      this.reachables.sort((a, b) => a.node.global_pos[0] - b.node.global_pos[0]);
+      this.reachables.sort((a, b) => a.node.global_pos.x - b.node.global_pos.x);
     } else if (this.direction === "ud") {
-      this.reachables.sort((a, b) => a.node.global_pos[1] - b.node.global_pos[1]);
+      this.reachables.sort((a, b) => a.node.global_pos.y - b.node.global_pos.y);
     }
 
   }

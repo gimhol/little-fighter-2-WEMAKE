@@ -32,7 +32,11 @@
       "@/*": [
         "src/*"
       ]
-    }
+    },
+    "types": [
+      "jest",
+      "vite-plugin-glsl/ext"
+    ]
   },
   "include": [
     "src",

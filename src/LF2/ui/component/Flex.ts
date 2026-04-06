@@ -38,7 +38,7 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
       for (let i = 0; i < len; ++i) {
         const child = children[i]
         if (!child.self_visible) continue;
-        const [child_w, child_h] = child.size.value
+        const { x: child_w, y: child_h } = child.size.value
         if (fit_w && direction === 'row')
           w += child_w + (i < len - 1 ? row_gap : 0);
         else if (fit_w && direction === 'column')
@@ -50,38 +50,36 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
       }
       if (fit_w) {
         w += padding_left + padding_right;
-        this.node.size.value = [w, this.node.size.value[1]];
+        this.node.resize(w, this.node.h);
       }
       if (fit_h) {
         h += padding_top + padding_bottom;
-        this.node.size.value = [this.node.size.value[0], h];
+        this.node.resize(this.node.w, h);
       }
     }
 
-    const [my_w, my_h] = this.node.size.value;
+    const { x: my_w, y: my_h } = this.node.size.value;
     for (const child of this.node.children) {
       if (!child.self_visible) continue;
-      const [child_w, child_h] = child.size.value
+      const { x, y, z, w: child_w, h: child_h } = child
       const { cross } = child;
-      const [x, y, z] = child.pos.value;
-
       const item = child.find_component(FlexItem, v => v.enabled)
       const item_align = item?.align || align
       if (direction === 'row') {
         const item_x = padding_left + my_cross.left + (temp_x - cross.left)
         switch (item_align) {
           case "start":
-            child.pos.value = [item_x, padding_top + my_cross.top - cross.top, z]
+            child.move_to(item_x, padding_top + my_cross.top - cross.top, z)
             break;
           case "center":
-            child.pos.value = [item_x, my_cross.mid_y - cross.mid_y, z]
+            child.move_to(item_x, my_cross.mid_y - cross.mid_y, z)
             break;
           case "end":
-            child.pos.value = [item_x, my_cross.bottom - cross.bottom - padding_bottom, z]
+            child.move_to(item_x, my_cross.bottom - cross.bottom - padding_bottom, z)
             break;
           case "stretch":
-            child.pos.value = [item_x, my_cross.top - cross.top, z]
-            child.size.value = [child_w, my_h]
+            child.move_to(item_x, my_cross.top - cross.top, z)
+            child.resize(child_w, my_h)
             break;
         }
         temp_x += child_w + row_gap;
@@ -89,17 +87,17 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
         const item_y = padding_top + my_cross.top + (temp_y - cross.top)
         switch (item_align) {
           case "start":
-            child.pos.value = [padding_left + my_cross.left - cross.left, item_y, z]
+            child.move_to(padding_left + my_cross.left - cross.left, item_y, z)
             break;
           case "center":
-            child.pos.value = [my_cross.mid_x - cross.mid_x, item_y, z]
+            child.move_to(my_cross.mid_x - cross.mid_x, item_y, z)
             break;
           case "end":
-            child.pos.value = [my_cross.right - cross.right - padding_right, item_y, z]
+            child.move_to(my_cross.right - cross.right - padding_right, item_y, z)
             break;
           case "stretch":
-            child.pos.value = [padding_left + my_cross.left - cross.left, item_y, z]
-            child.size.value = [my_w, child_h]
+            child.move_to(padding_left + my_cross.left - cross.left, item_y, z)
+            child.resize(my_w, child_h)
             break;
         }
         temp_y += child_h + col_gap;

@@ -1,19 +1,17 @@
 import FSM from "@/LF2/base/FSM";
 import { Entity } from "@/LF2/entity";
+import { Times } from "@/LF2/utils/Times";
 import { new_team } from "../../base";
 import { Defines, EntityGroup, GameKey } from "../../defines";
-import { Factory } from "../../entity/Factory";
 import IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
-import { traversal } from "../../utils/container_help/traversal";
-import { floor } from "../../utils/math/base";
+import { floor, traversal } from "../../utils";
+import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UITextLoader } from "../UITextLoader";
 import { CameraCtrl } from "./CameraCtrl";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
-import { IUIKeyEvent } from "../IUIKeyEvent";
-import { Times } from "@/LF2/utils/Times";
 class FSMState extends ComponentFSMState<number, DemoModeLogic> {
   override readonly key: number = 0
   get fsm() { return this.owner.fsm }
@@ -115,7 +113,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       const character_data = this.lf2.mt.take(character_datas);
       if (!character_data) continue;
 
-      const fighter = Factory.inst.create_entity(character_data.type, this.world, character_data);
+      const fighter = this.lf2.factory.create_entity(this.world, character_data);
       if (!fighter) return;
 
       fighter.name = "com";
@@ -126,7 +124,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
 
       const { far, near, left, right } = this.lf2.world.bg;
 
-      fighter.ctrl = Factory.inst.create_ctrl(
+      fighter.ctrl = this.lf2.factory.create_ctrl(
         character_data.id,
         player.id,
         fighter,

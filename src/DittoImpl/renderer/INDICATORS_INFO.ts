@@ -19,6 +19,10 @@ export const INDICATORS_INFO: {
     color: 0x2288FF, // #2288FF
     linewidth: 10,
   },
+  ft_l: {
+    color: 0x2288FF, // #2288FF
+    linewidth: 5,
+  },
   opoint: {
     color: 0xFF2288, // #8822FF
     linewidth: 10,

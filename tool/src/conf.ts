@@ -75,87 +75,100 @@ export interface IConf {
   MAGICK_CMD?: string;
 
   KEEP_MIRROR?: string;
-
   DONT_WAIT?: string;
-
   DEBUG?: string;
-
   COPYS_SUFFIX?: string;
   AUDIO_SUFFIX?: string;
   IMAGE_SUFFIX?: string;
   INDEX_FILE?: string;
   IN_LFW_DIR?: string;
   IN_LFW_INDEX?: string;
+  OUT_LFW_INDEX?: string;
   LFW_PICKS?: string;
 }
-interface IArgInfo {
+interface IClazz<C extends Object = {}, V extends Object = {}> {
+  new(...args: any): C;
+  valueOf(): V
+}
+interface IArgInfo<C extends Object = {}, T extends IClazz<C> = IClazz<C>> {
   key: keyof IConf;
-  alias: string[];
+  alias?: string[];
+  type: T,
   default?: string | (() => string);
-  type?: 'boolean' | 'path',
   description?: string;
+}
+class Path {
+
 }
 
 const txt_a = `If it doesn't exist, it will be created.`
 const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
-  CONF_FILE: { alias: ['-c', '--conf'], type: 'path' },
-
+  CONF_FILE: { alias: ['-c', '--conf'], type: Path },
   IN_LF2_DIR: {
-    alias: ['-i', '--input'], type: 'path',
+    alias: ['-i', '--input'], type: Path,
     description: "A path that points to an LF2 directory (or a directory similar to LF2), and it doesn't need to be a complete LF2 directory."
   },
-  INDEX_FILE: { alias: [], type: 'path' },
-  IN_PREL_DIR: { alias: [], type: 'path' },
-  IN_EXTRA_DIR: { alias: [], type: 'path' },
+  INDEX_FILE: { type: Path },
+  IN_PREL_DIR: { type: Path },
+  IN_EXTRA_DIR: { type: Path },
 
   TMP_DIR: {
-    alias: ['-t', '--temp'], type: 'path', default: './temp',
+    alias: ['-t', '--temp'], type: Path, default: './temp',
     description: `A path that points to a directory used for storing some temporary files. ${txt_a}`
   },
-  TMP_TXT_DIR: { alias: [], type: 'path' },
-  TMP_DAT_DIR: { alias: [], type: 'path' },
+  TMP_TXT_DIR: { type: Path },
+  TMP_DAT_DIR: { type: Path },
 
   OUT_DIR: {
-    alias: ['-o', '--output'], type: 'path', default: './public',
+    alias: ['-o', '--output'], type: Path, default: './public',
     description: `A path that points to a directory for storing final output files. ${txt_a}`
   },
-  OUT_DATA_NAME: { alias: [], default: 'data.zip' },
-  OUT_PREL_NAME: { alias: [], default: 'prel.zip' },
-  OUT_FULL_NAME: { alias: [], default: 'lfw.full.zip' },
+  OUT_DATA_NAME: { type: String, default: 'data.zip' },
+  OUT_PREL_NAME: { type: String, default: 'prel.zip' },
+  OUT_FULL_NAME: { type: String, default: 'lfw.full.zip' },
 
   FFMPEG_CMD: {
-    alias: ['--ffmpeg'], default: () => {
+    type: String,
+    alias: ['--ffmpeg'],
+    default: () => {
       const subpaths = ['tools/ffmpeg.exe', 'ffmpeg.exe']
       const fallback = 'ffmpeg'
       const dir = dirname(process.execPath)
       return subpaths.find(v => find_real_cmd(join(dir, v))) || fallback;
     }
   },
-  FFMPEG_OPTS: { alias: [], default: '-codec:a libmp3lame -b:a 128k -ar 44100' },
+  FFMPEG_OPTS: {
+    type: String,
+    default: '-codec:a libmp3lame -b:a 128k -ar 44100'
+  },
   MAGICK_CMD: {
-    alias: ['--magick'], default: () => {
+    type: String,
+    alias: ['--magick'],
+    default: () => {
       const subpaths = ['tools/magick.exe', 'magick.exe']
       const fallback = 'magick'
       const dir = dirname(process.execPath)
       return subpaths.find(v => find_real_cmd(join(dir, v))) || fallback;
     }
   },
-  KEEP_MIRROR: { alias: [], type: 'boolean' },
-  DONT_WAIT: { alias: ['-d', '--dont-wait'], type: 'boolean' },
-  DEBUG: { alias: [], type: 'boolean' },
-  COPYS_SUFFIX: { alias: [], default: 'txt,md,png,mp3,jpg,jpeg' },
-  AUDIO_SUFFIX: { alias: [], default: 'wav,wave,aiff,aif,aifc,flac,m4a,alac,mpga,mp2,aac,ogg,oga,wma,opus,amr,dsf,dff,3gp' },
-  IMAGE_SUFFIX: { alias: [], default: 'bmp' },
+  KEEP_MIRROR: { type: Boolean },
+  DONT_WAIT: { alias: ['-d', '--dont-wait'], type: Boolean },
+  DEBUG: { type: Boolean },
+  COPYS_SUFFIX: { type: String, default: 'txt,md,png,mp3,jpg,jpeg' },
+  AUDIO_SUFFIX: { type: String, default: 'wav,wave,aiff,aif,aifc,flac,m4a,alac,mpga,mp2,aac,ogg,oga,wma,opus,amr,dsf,dff,3gp' },
+  IMAGE_SUFFIX: { type: String, default: 'bmp' },
 
-  IN_LFW_DIR: { alias: [] },
-  IN_LFW_INDEX: { alias: [] },
-  LFW_PICKS: { alias: [] }
+  IN_LFW_DIR: { type: String, },
+  IN_LFW_INDEX: { type: String, },
+  OUT_LFW_INDEX: { type: String, },
+  LFW_PICKS: { type: String, }
 }
 const alias_arg_map = new Map<string, IArgInfo>();
 
 Object.keys(key_arg_records).map(k => {
   const key = k as keyof IConf;
   const arg: IArgInfo = { key, ...key_arg_records[key] }
+  if (!arg.alias) arg.alias = [];
   arg.alias.unshift(`--${k}`);
   for (const a of arg.alias) alias_arg_map.set(a, arg)
 })
@@ -167,7 +180,7 @@ function read_argv_conf() {
     const key = process.argv[i];
     const info = alias_arg_map.get(key);
     if (!info) continue;
-    if (info.type === 'boolean') {
+    if (info.type === Boolean) {
       argv_conf[info.key] = '1'
     } else {
       const value = process.argv[i + 1];
@@ -275,7 +288,7 @@ function read_conf(file?: string, handle_new_conf?: (conf: IConf) => void): ICon
 const i_hate_backslash = (conf: IConf) => {
   for (const k in conf) {
     const info = key_arg_records[k as keyof IConf]
-    if (info?.type !== 'path') continue;
+    if (info?.type !== Path) continue;
     const v = conf[k as keyof IConf];
     if (!v) continue;
     conf[k as keyof IConf] = v.replace(/\\/g, '/')

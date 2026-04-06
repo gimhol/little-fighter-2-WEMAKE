@@ -1,3 +1,5 @@
+import { min } from "@/LF2/utils";
+
 export interface IWork {
   (): unknown;
 }
@@ -55,22 +57,25 @@ export class ActionDirector {
   }
   update(dt: number) {
     const { end_time = 0 } = this;
-    const time = end_time ? this._time % end_time : this._time;
 
     if (this._action_idx === this._actions.length && this._curr < this._times) {
       this._action_idx = 0;
       ++this._curr;
-    } else {
+    }
+
+    const time = this._time + dt;
+    if (this._curr < this._times && this._times > 0) {
       const actions: IAction[] = [];
+      const t = end_time ? min(end_time, time) : time
       for (; this._action_idx < this._actions.length; ++this._action_idx) {
         const action = this._actions[this._action_idx];
-        if (action.time > time) break;
+        if (action.time > t) break;
         actions.push(action);
       }
       actions.forEach(v => v.work());
     }
 
-    this._time += dt;
+    this._time = end_time ? time % end_time : time;
   }
   times(times: number) {
     this._times = times

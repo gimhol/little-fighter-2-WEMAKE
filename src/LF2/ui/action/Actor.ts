@@ -53,5 +53,4 @@ class UIActor {
     }
   }
 }
-const actor = new UIActor();
-export default actor;
+export const actor = new UIActor();

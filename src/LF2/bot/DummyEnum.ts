@@ -1,6 +1,7 @@
 import { GK, StateEnum } from "../defines";
 import { BotController } from "./BotController";
 export enum DummyEnum {
+  None = '',
   LockAtMid_Stand = "1",
   LockAtMid_Defend = "2",
   LockAtMid_RowingWhenFalling = "3",
@@ -26,6 +27,9 @@ export enum DummyEnum {
   LockAtMid_dja_auto = "22"
 }
 export const dummy_updaters: Record<DummyEnum, IDummyUpdater | undefined> = {
+  [DummyEnum.None]: {
+    update: () => { }
+  },
   [DummyEnum.LockAtMid_Stand]: {
     update: (self) => {
       self.lock_when_stand_and_rest();

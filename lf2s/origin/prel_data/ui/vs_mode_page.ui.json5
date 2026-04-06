@@ -31,18 +31,6 @@
       component: [ "PrefixAndDifficultyText(VS mode)" ],
     },
     {
-      id: "left_info_frame_1",
-      visible: false,
-      pos: "0,0",
-      template: "ui/left_info_frame.ui.json5",
-    },
-    {
-      id: "left_info_frame_5",
-      visible: false,
-      pos: "0,45",
-      template: "ui/left_info_frame.ui.json5",
-    },
-    {
       template: "ui/score_board.ui.json5",
       visible: false,
     },

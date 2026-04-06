@@ -13,7 +13,6 @@ import { BaseController, Entity, new_team, TeamEnum } from "./LF2";
 import { DummyEnum } from "./LF2/bot/DummyEnum";
 import LocalController from "./LF2/controller/LocalController";
 import { GameKey } from "./LF2/defines/GameKey";
-import { Factory } from "./LF2/entity/Factory";
 import { is_bot_ctrl } from "./LF2/entity/type_check";
 import { LF2 } from "./LF2/LF2";
 import { PlayerInfo } from "./LF2/PlayerInfo";
@@ -43,7 +42,7 @@ export function PlayerRow(props: Props) {
   const [puppet, set_puppet] = useState<Entity>()
   const [ctrl, set_ctrl] = useState<BaseController>()
   const [key_settings_show, set_key_settings_show] = useState(false);
-  const [dummy, set_dummy] = useState<DummyEnum | undefined | "">("")
+  const [dummy, set_dummy] = useState<DummyEnum>(DummyEnum.None)
 
   useCallbacks(lf2.world.callbacks, {
     on_puppet_add: (pid) => {
@@ -74,7 +73,7 @@ export function PlayerRow(props: Props) {
     if (!puppet) return;
     const ctrl = puppet?.ctrl;
     if (!is_bot_ctrl(ctrl)) return;
-    ctrl.dummy = dummy ? dummy : void 0;
+    ctrl.dummy = dummy;
   }, [dummy, puppet])
 
   useCallbacks(info.callbacks, {
@@ -190,15 +189,15 @@ export function PlayerRow(props: Props) {
             <Button
               onClick={() => {
                 if (is_bot_ctrl(ctrl)) puppet.ctrl = new LocalController(info.id, puppet);
-                else puppet.ctrl = Factory.inst.create_ctrl(puppet.data.id, info.id, puppet);
+                else puppet.ctrl = puppet.lf2.factory.create_ctrl(puppet.data.id, info.id, puppet);
               }}>
               {is_bot_ctrl(ctrl) ? <>Bot√</> : <>Bot</>}
             </Button>
             <Select
-              items={["", ...Object.keys(DummyEnum)]}
+              options={Object.keys(DummyEnum)}
               parse={(k) => k ? [(DummyEnum as any)[k], k] : ["", "not dummy"]}
               value={dummy}
-              onChange={set_dummy}
+              onChange={v => set_dummy(v)}
             />
           </Combine>
       }

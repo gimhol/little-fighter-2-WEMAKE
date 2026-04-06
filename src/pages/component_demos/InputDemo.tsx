@@ -22,7 +22,7 @@ export default function InputDemo() {
           <Select
             multi
             value={variants}
-            items={Object.values(Variant)}
+            options={Object.values(Variant)}
             parse={i => [i, '' + i]}
             onChange={set_variants} />
         </Titled>

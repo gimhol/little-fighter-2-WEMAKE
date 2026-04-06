@@ -46,7 +46,7 @@ export class UIImgLoader {
           const { w, h, scale } = imgs[idx];
           node.imgs.value = imgs;
           node.img_idx.value = 0;
-          node.size.value = [w / scale, h / scale];
+          node.resize(w / scale, h / scale);
           resolve(imgs);
         } else {
           node.imgs.value = imgs;

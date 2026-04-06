@@ -1,7 +1,6 @@
 {
   name: "ui: fighter_stat_l",
   id: "fighter_stat_l",
-  // color: "gray",
   component: [
     {
       name: "FighterStatBar",
@@ -13,6 +12,8 @@
         fall_value_bar: "fall_value",
         defend_value_bar: "defend_value",
         toughness_bar: "toughness",
+        head_img: "head_img",
+        name_txt: "name_txt",
       },
     },
   ],
@@ -55,7 +56,12 @@
           id: "head",
           size: "26,26",
           pos: "2,2",
-          color: "white",
+          component: [
+            {
+              id: "head_img",
+              name: "Picture",
+            },
+          ],
         },
       ],
     },
@@ -176,7 +182,6 @@
       items: [{ color: "rgb(0, 204, 255)", template: "bar_inner" }],
     },
     {
-      id: "name",
       txt: {
         i18n: "Template(com)",
         style: {
@@ -190,6 +195,10 @@
         },
       },
       component: [
+        {
+          id: "name_txt",
+          name: "Text",
+        },
         {
           name: "Alignment",
           properties: {
