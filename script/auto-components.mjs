@@ -49,9 +49,14 @@ async function main() {
 /*** AUTO REGISTER COMPONENTS START ***/
 import { Factory } from "@/LF2/Factory";
 import * as _ from "./index";
-[
-${outs.map(v => `  _.${v[0]}`).sort().join(',\n')}
-].map(v => Factory.register_component(v));
+let _registed = false
+export const regist_components = () => {
+  if (_registed) return;
+  _registed = true;
+  [
+${outs.map(v => `    _.${v[0]}`).sort().join(',\n')}
+  ].map(v => Factory.register_component(v));
+}
 /*** AUTO REGISTER COMPONENTS END ***/
 `.trim();
 

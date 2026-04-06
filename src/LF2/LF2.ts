@@ -16,7 +16,7 @@ import { Stage } from "./stage";
 import * as UI from "./ui";
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
-import './ui/component/_';
+import { regist_components } from './ui/component/_';
 const cheat_info_pair = (n: D.CheatType) =>
   [
     n,
@@ -192,6 +192,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   constructor(dev = false) {
+    regist_components()
     this.dev = dev;
     make_debugging(this)
     this.debug(`constructor`)
