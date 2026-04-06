@@ -14,18 +14,16 @@ import type { IItrInfo } from "./IItrInfo";
 import type { TNextFrame } from "./INextFrame";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IQubePair } from "./IQubePair";
+import type { IVelocityInfo } from "./IVelocityInfo";
 import type { IWpointInfo } from "./IWpointInfo";
-import { SpeedCtrl } from "./SpeedCtrl";
-import type { SpeedMode } from "./SpeedMode";
 import type { StateEnum } from "./StateEnum";
-
 /**
  * 实体的帧信息
  *
  * @export
  * @interface IFrameInfo
  */
-export interface IFrameInfo extends Partial<IWorldDataset> {
+export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   /**
    * 帧ID
    * 
@@ -70,21 +68,7 @@ export interface IFrameInfo extends Partial<IWorldDataset> {
    * @type {TNextFrame}
    */
   next: TNextFrame;
-  dvx?: number;
-  dvy?: number;
-  dvz?: number;
-  acc_x?: number;
-  acc_y?: number;
-  acc_z?: number;
-  /** @see {SpeedMode} */
-  vxm?: number | SpeedMode;
-  /** @see {SpeedMode} */
-  vym?: number | SpeedMode;
-  /** @see {SpeedMode} */
-  vzm?: number | SpeedMode;
-  ctrl_x?: number | SpeedCtrl;
-  ctrl_y?: number | SpeedCtrl;
-  ctrl_z?: number | SpeedCtrl;
+
 
 
   centerx: number;

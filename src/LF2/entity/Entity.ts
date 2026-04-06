@@ -10,7 +10,7 @@ import {
   Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
   FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
-  is_independent, ItrKind, IVector3, IWpointInfo, OpointKind, OpointMultiEnum,
+  is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
 import { ChaseStratedy } from "../defines/ChaseStratedy";
@@ -1148,7 +1148,7 @@ export class Entity {
     const { dvz: v } = this.frame;
     return v ? v * this.dataset('fvz_f') : v
   }
-  private update_velocity() {
+  private update_velocity(frame: IVelocityInfo = this.frame) {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { dvx, dvy, dvz } = this;
     const {
@@ -1161,7 +1161,7 @@ export class Entity {
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
-    } = this.frame;
+    } = frame;
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
 
@@ -2002,6 +2002,7 @@ export class Entity {
       return;
     }
     const { frame, which: flags } = result;
+    this.update_velocity(flags)
     if (!this.world.infinity_mp) {
       const { mp, hp } = flags;
       if (mp) this.mp -= mp;

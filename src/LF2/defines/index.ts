@@ -88,6 +88,7 @@ export * from "./IStagePhaseInfo";
 export * from "./IStyle";
 export * from "./IVector2";
 export * from "./IVector3";
+export * from "./IVelocityInfo";
 export * from "./IWpointInfo";
 export * from "./ItrEffect";
 export * from "./ItrKind";
