@@ -3,7 +3,7 @@ import { Callbacks, Expression, StateDelegate } from "../base";
 import { IStyle, IValGetter, IVector2, IVector3 } from "../defines";
 import { Ditto as D, Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
-import { filter, find, is_bool, is_num, is_str, round, Times } from "../utils";
+import { filter, is_bool, is_num, is_str, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
@@ -696,15 +696,17 @@ export class UINode implements IDebugging {
     type: T,
     condition: TCond<T> | string = () => 1
   ): InstanceType<T> | undefined {
-    const ret = find(
-      this.components,
-      (v) => {
-        if (!(v instanceof type)) return 0;
-        if (is_str(condition)) return condition === v.id;
-        return condition(v as any);
-      },
-    ) as InstanceType<T> | undefined;
-    return ret
+    for (const v of this._components) {
+      if (!(v instanceof type))
+        continue;
+      if (!condition)
+        continue
+      if (condition === v.id)
+        return v as InstanceType<T>;
+      if (typeof condition === 'function' && condition(v as any))
+        return v as InstanceType<T>;
+    }
+    return void 0;
   }
 
   /**
@@ -801,5 +803,5 @@ export class UINode implements IDebugging {
   }
 }
 type TCls<R = any> = abstract new (...args: any) => R;
-type TCond<T extends TCls> = (c: InstanceType<T>) => unknown;
+type TCond<T extends TCls,> = (c: InstanceType<T>) => unknown;
 

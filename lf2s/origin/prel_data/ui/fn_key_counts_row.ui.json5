@@ -25,6 +25,8 @@
         f8: "f8",
         f9: "f9",
         f10: "f10",
+        fn_key_counts: "fn_key_counts",
+        fn_key_locked: "fn_key_locked",
       },
     },
   ],
@@ -36,7 +38,7 @@
         i18n: "Fn Keys Locked",
         style: "$val:txt_style",
       },
-      component: ["Text()"],
+      component: [ { name: "Label" } ],
     },
     {
       visible: false,
@@ -52,7 +54,7 @@
             i18n: "Fn Keys Useds, F6: ",
             style: "$val:txt_style",
           },
-          component: ["Text()"],
+          component: [ "Text()" ],
         },
         {
           id: "f6",
@@ -60,14 +62,14 @@
             i18n: "0",
             style: "$val:txt_style",
           },
-          component: [{ id: "f6", name: "Text" }],
+          component: [ { id: "f6", name: "Text" } ],
         },
         {
           txt: {
             i18n: " F7: ",
             style: "$val:txt_style",
           },
-          component: ["Text()"],
+          component: [ "Text()" ],
         },
         {
           id: "f7",
@@ -75,14 +77,14 @@
             i18n: "0",
             style: "$val:txt_style",
           },
-          component: [{ id: "f7", name: "Text" }],
+          component: [ { id: "f7", name: "Text" } ],
         },
         {
           txt: {
             i18n: " F8: ",
             style: "$val:txt_style",
           },
-          component: ["Text()"],
+          component: [ "Text()" ],
         },
         {
           id: "f8",
@@ -90,14 +92,14 @@
             i18n: "0",
             style: "$val:txt_style",
           },
-          component: [{ id: "f8", name: "Text" }],
+          component: [ { id: "f8", name: "Text" } ],
         },
         {
           txt: {
             i18n: " F9: ",
             style: "$val:txt_style",
           },
-          component: ["Text()"],
+          component: [ "Text()" ],
         },
         {
           id: "f9",
@@ -105,14 +107,14 @@
             i18n: "0",
             style: "$val:txt_style",
           },
-          component: [{ id: "f9", name: "Text" }],
+          component: [ { id: "f9", name: "Text" } ],
         },
         {
           txt: {
             i18n: " F10: ",
             style: "$val:txt_style",
           },
-          component: ["Text()"],
+          component: [ "Text()" ],
         },
         {
           id: "f10",
@@ -120,7 +122,7 @@
             i18n: "0",
             style: "$val:txt_style",
           },
-          component: [{ id: "f10", name: "Text" }],
+          component: [ { id: "f10", name: "Text" } ],
         },
       ],
     },

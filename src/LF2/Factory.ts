@@ -23,16 +23,17 @@ export class Factory {
   static readonly ctrl_creators = new Map<Key, ICtrlCreator>();
   static readonly components = new Map<string, typeof UIComponent>();
 
-  static register_component(Cls: typeof UIComponent<any, any>) {
-    const { TAG: type, ALIAS } = Cls;
-    if (this.components.has(type))
-      Ditto.warn(`[${Factory.TAG}::register_component] type already exists, ${type}`)
-    this.components.set(type, Cls);
-    ALIAS?.forEach((alias) => {
-      if (this.components.has(alias)) {
-        Ditto.warn(`[${Factory.TAG}::register_component] alias already exists, ${alias}`)
+  static register_component(Cls: typeof UIComponent<any, any>): void {
+    const names = [Cls.TAG].concat()
+    if (Cls.ALIAS) names.push(...Cls.ALIAS)
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i];
+      if (this.components.has(name)) {
+        Ditto.warn(`[${Factory.TAG}::register_component] name already exists, ${name}`)
+        debugger;
       }
-    })
+      this.components.set(name, Cls);
+    }
   }
   static register_entity(type: Key, creator: IEntityCreators): void {
     if (Factory.entity_creators.has(type))
