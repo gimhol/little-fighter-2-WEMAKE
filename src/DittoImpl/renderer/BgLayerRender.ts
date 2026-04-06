@@ -1,7 +1,7 @@
-import type Layer from "@/LF2/bg/Layer";
+import type { Layer } from "@/LF2/bg/Layer";
 import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
-import { get_bg_layer_material, MaterialKeeper } from "./MaterialKeeper";
+import { get_bg_layer_material } from "./MaterialKeeper";
 
 
 export class BgLayerRender {

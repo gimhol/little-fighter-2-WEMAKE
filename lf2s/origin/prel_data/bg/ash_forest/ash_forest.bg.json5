@@ -88,5 +88,13 @@
       y: 130,
       z: -1,
     },
+    {
+      width: 794,
+      height: 450,
+      file: "bg/ash_forest/ash_drop.png",
+      x: 0,
+      y: 422,
+      z: 0,
+    },
   ],
 }

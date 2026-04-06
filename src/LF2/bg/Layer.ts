@@ -20,5 +20,3 @@ export class Layer {
   dispose() {
   }
 }
-
-export default Layer;

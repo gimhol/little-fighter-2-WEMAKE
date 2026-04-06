@@ -1,6 +1,6 @@
 import type { World } from "../World";
-import { type IBgData, type IBgLayerInfo } from "../defines";
-import Layer from "./Layer";
+import type { IBgData, IBgLayerInfo } from "../defines";
+import { Layer } from "./Layer";
 
 export class Background {
   readonly data: Readonly<IBgData>;
