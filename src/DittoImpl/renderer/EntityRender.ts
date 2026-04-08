@@ -80,6 +80,7 @@ export class EntityRender {
 
     const texture = this.images.get("0")?.pic?.texture;
     const material = get_outline_material(texture);
+    material.uniforms.outlineWidth.value = 1;
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY, material
     )
