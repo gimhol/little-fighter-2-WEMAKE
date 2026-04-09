@@ -1,10 +1,10 @@
-import { SchemaValidator } from "@/LF2/utils/schema/validate_schema";
 import type { ISchema } from "../../defines/ISchema";
 import { is_num, is_str } from "../../utils";
-import read_nums from "../utils/read_nums";
-import type { UIComponent } from "./UIComponent";
+import { SchemaValidator } from "../../utils/schema/validate_schema";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
 import { isUINodeClass } from "../utils/isUINodeClass";
+import read_nums from "../utils/read_nums";
+import type { UIComponent } from "./UIComponent";
 export interface IUIPropsCallback { }
 export class UIProps {
   readonly raw: { [x in string]?: any };

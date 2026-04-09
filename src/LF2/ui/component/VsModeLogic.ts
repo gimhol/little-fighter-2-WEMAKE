@@ -1,4 +1,4 @@
-import FSM from "@/LF2/base/FSM";
+import { FSM } from "../../base/FSM";
 import { EntityGroup, GameKey } from "../../defines";
 import type IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";

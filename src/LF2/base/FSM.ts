@@ -21,7 +21,7 @@ export interface IReadonlyFSM<
   get state(): S | undefined;
   get prev_state(): S | undefined;
 }
-export default class FSM<
+export class FSM<
   K extends string | number = string | number,
   S extends IState<K> = IState<K>,
 > implements IReadonlyFSM<K, S> {
@@ -77,3 +77,4 @@ export default class FSM<
     this.state = next_state;
   }
 }
+export default FSM;
