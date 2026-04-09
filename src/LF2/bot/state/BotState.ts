@@ -1,5 +1,5 @@
-import { bot_cases } from "@/LF2/cases_instances";
 import type { IState } from "../../base/FSM";
+import { bot_cases } from "../../cases_instances";
 import { KEY_NAME_LIST } from "../../controller";
 import { GK, LGK, StateEnum } from "../../defines";
 import type { BotStateEnum } from "../../defines/BotStateEnum";
