@@ -318,4 +318,5 @@ export const FrameFieldOrders: Record<keyof IFrameInfo, number> = {
   whirlwind_acc_y: ++order,
   whirlwind_acc_x: ++order,
   whirlwind_acc_z: ++order,
+  itr_fall: ++order,
 }

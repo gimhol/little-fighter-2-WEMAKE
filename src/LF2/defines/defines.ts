@@ -27,14 +27,6 @@ export namespace Defines {
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
   export const DEFAULT_FIREN_FLAME_SPEED_Z = 0.5;
 
-  /** 被击中的对象晃动多少帧 */
-  export const DEFAULT_ITR_SHAKING = 6;
-
-  /** 击中敌人的对象停顿多少帧 */
-  export const DEFAULT_ITR_MOTIONLESS = 6;
-  export const DEFAULT_ITR_A_REST = 20;
-  export const DEFAULT_ITR_FALL = 40;
-
   /**
    * 默认值：当角色fall_value低于DEFAULT_FALL_VALUE_DIZZY时，角色应当进入眩晕状态
    *

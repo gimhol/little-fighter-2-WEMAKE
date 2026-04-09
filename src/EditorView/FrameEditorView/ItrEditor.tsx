@@ -114,7 +114,7 @@ export function ItrEditor(props: IItrEditorViewProps) {
         </Titled>
         <Flex direction='row'>
           <Titled label='击倒值' styles={titled_styles} style={{ flex: 1 }}>
-            <Input.Number {...make_not_blank_field_props(props, default_value, 'fall')} placeholder={'' + Defines.DEFAULT_ITR_FALL} clearable step={1} />
+            <Input.Number {...make_not_blank_field_props(props, default_value, 'fall')} clearable step={1} />
           </Titled>
           <Titled label='破防值' style={{ flex: 1 }}>
             <Input.Number {...make_not_blank_field_props(props, default_value, 'bdefend')} clearable step={1} />

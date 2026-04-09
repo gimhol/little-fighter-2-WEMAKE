@@ -2,6 +2,7 @@ import { Difficulty } from "./defines/Difficulty";
 import { fields, float, int, invalid } from "./fields";
 
 export interface IWorldDataset {
+  itr_fall: number;
   /** 被击中的对象晃动多少帧 */
   itr_shaking: number;
 
@@ -131,7 +132,7 @@ export interface IWorldDataset {
   friction_x: number;
   /** 地面摩擦Z 在地面的物体，每帧Z速度将±=此值,向0靠近 */
   friction_z: number;
-  
+
   land_friction_factor: number,
   /** 落地帧摩擦X，每帧X速度将±=此值,向0靠近 */
   land_friction_x: number;
@@ -293,4 +294,5 @@ export const world_dataset_fields = fields<IWorldDataset>({
   whirlwind_acc_y: float('旋风Y加速度'),
   whirlwind_acc_x: float('旋风X加速度'),
   whirlwind_acc_z: float('旋风Z加速度'),
+  itr_fall: int
 })

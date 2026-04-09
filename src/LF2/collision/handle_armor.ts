@@ -30,7 +30,8 @@ export function handle_armor(collision: ICollision): boolean {
     shaking_ratio = Defines.DEFAULT_ARMOR_SHAKING_RATIO,
     dead_sounds = hit_sounds
   } = armor;
-  const { fall = Defines.DEFAULT_ITR_FALL, injury = 0 } = itr;
+  const { injury = 0 } = itr;
+  const fall = attacker.itr_fall(itr)
   let decrease_value = 0;
   switch (type) {
     case ArmorEnum.Fall: decrease_value = fall; break;

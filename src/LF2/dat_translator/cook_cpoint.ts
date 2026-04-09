@@ -25,10 +25,7 @@ export function cook_cpoint(unsure_cpoint: ICpointInfo, frame: IFrameInfo): void
 
   const vaction = take(unsure_cpoint, "vaction");
   const raw_injury = take(unsure_cpoint, "injury");
-  if (is_num(raw_injury)) {
-    unsure_cpoint.injury = abs(raw_injury);
-    if (raw_injury > 0) unsure_cpoint.shaking = Defines.DEFAULT_ITR_SHAKING;
-  }
+  if (is_num(raw_injury)) unsure_cpoint.injury = abs(raw_injury);
 
   if (is_str(vaction) || is_num(vaction)) {
     unsure_cpoint.vaction = get_next_frame_by_raw_id(vaction);

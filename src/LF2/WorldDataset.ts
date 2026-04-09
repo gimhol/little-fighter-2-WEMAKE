@@ -4,6 +4,7 @@ import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {
   static readonly TAG: string = 'WorldDataset';
+  itr_fall: number = 40
   itr_shaking: number = 6;
   itr_motionless: number = 6;
   ball_itr_motionless: number = 2;
@@ -28,7 +29,7 @@ export class WorldDataset implements IWorldDataset {
   lying_blink_time: number = 32;
   gone_blink_time: number = 56;
   vrest_offset: number = -6;
-  itr_arest: number = Defines.DEFAULT_ITR_A_REST;
+  itr_arest: number = 20;
   min_arest: number = 2;
   min_vrest: number = 2;
   arest_offset: number = -6;

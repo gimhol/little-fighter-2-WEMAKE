@@ -45,8 +45,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
       handle_injury(collision);
       handle_rest(collision)
       handle_stiffness(collision)
-      const { fall = Defines.DEFAULT_ITR_FALL } = itr;
-      victim.fall_value -= fall;
+      victim.fall_value -= attacker.itr_fall(itr);
       victim.defend_value = 0;
       if (is_fall(collision)) {
         handle_fall(collision);
