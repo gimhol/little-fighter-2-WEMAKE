@@ -1,4 +1,4 @@
-import { IClazz, ISchema } from "@/LF2/defines";
+import type { IClazz, ISchema } from "../../defines/ISchema";
 
 interface InstanceGetter<T> {
   (raw_value: any, clazz: IClazz<T>, schema: ISchema): T | undefined | null;
