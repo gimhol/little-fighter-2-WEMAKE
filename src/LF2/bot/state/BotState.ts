@@ -70,10 +70,11 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     }
     return true
   }
-  handle_block() {
+  handle_block(): boolean {
     const { ctrl: c } = this;
     const { entity: me } = c
     if (me.blockers.size) c.start(GK.a).end(GK.a)
+    return !!me.blockers.size
   }
 
 

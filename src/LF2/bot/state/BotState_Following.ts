@@ -12,8 +12,8 @@ export class BotState_Following extends BotState_Base {
   }
   override update(dt: number) {
     super.update(dt);
-
     if (this.handle_defends()) return;
+    if (this.handle_block()) return;
     this.random_jumping();
 
     const { ctrl: c } = this;
@@ -28,38 +28,37 @@ export class BotState_Following extends BotState_Base {
       const bound_r = round_float(en_x + offset_x);
       const bound_t = round_float(en_z - offset_z);
       const bound_b = round_float(en_z + offset_z);
+      // shit.
+      if (me.frame.state !== StateEnum.Running) {
+        if (my_x < bound_l)
+          c.key_up(GK.R).key_down(GK.R).key_up(GK.L);
+        else if (my_x > bound_r)
+          c.key_up(GK.L).key_down(GK.L).key_up(GK.R);
+        else
+          c.key_up(GK.R, GK.L);
+      } else {
+        if (my_x < bound_l)
+          c.key_down(GK.R).key_up(GK.L);
+        else if (my_x > bound_r)
+          c.key_down(GK.L).key_up(GK.R);
+        else
+          c.key_up(GK.R, GK.L);
+      }
 
-      this.handle_block()
-      if (my_x < bound_l) c.click(GK.R).key_up(GK.L);
-      else if (my_x > bound_r) c.click(GK.L).key_up(GK.R);
-      else c.key_up(GK.R, GK.L);
-      
+
       if (my_z < bound_t) c.key_down(GK.D).key_up(GK.U);
       else if (my_z > bound_b) c.key_down(GK.U).key_up(GK.D);
-      else c.key_up(GK.U, GK.D); 
+      else c.key_up(GK.U, GK.D);
 
-      // switch (me.frame.state) {
-      //   case StateEnum.Standing:
-      //   case StateEnum.Walking:
-      //   case StateEnum.Dash:
-      //   case StateEnum.Jump:
-      //   case StateEnum.Running:
-      //     this.handle_block()
-      //     if (my_x > bound_r) c.key_down(GK.L).key_up(GK.R);
-      //     else if (my_x < bound_l) c.key_down(GK.R).key_up(GK.L);
-      //     else if (me.facing < 0) c.key_down(GK.R).key_up(GK.L);
-      //     else c.key_down(GK.L).key_up(GK.R);
-      //     if (my_z < bound_t) c.key_down(GK.D).key_up(GK.U);
-      //     else if (my_z > bound_b) c.key_down(GK.U).key_up(GK.D);
-      //     else c.key_up(GK.U, GK.D);
-      //     break;
-      // }
       if (
         !between(my_x, bound_l, bound_r) ||
         !between(my_z, bound_t, bound_b)
       ) return
     }
-
+    if (me.frame.state == StateEnum.Running) { // 别跑了
+      this.ctrl.key_down(me.facing < 0 ? GK.R : GK.L)
+    }
+    // TODO: 是不是该想个办法让持续位移招式（dennis d>j）停下来？
 
     delete c.goingto;
     this.ctrl.key_up(...KEY_NAME_LIST);
