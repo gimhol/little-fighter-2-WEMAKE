@@ -1,4 +1,4 @@
-import { is_positive_int as is_non_nagative_int } from "../../utils";
+import { is_positive_int as is_non_nagative_int } from "../../utils/type_check/is_num";
 
 abstract class _Checker {
   abstract check(value: any): boolean
