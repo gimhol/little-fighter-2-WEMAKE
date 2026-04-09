@@ -1,4 +1,4 @@
-import type { LF2 } from "@/LF2/LF2";
+import type { LF2 } from "../../../LF2";
 import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import type { CharMenuLogic } from "./CharMenuLogic";
 import type { CharMenuState } from "./CharMenuState";

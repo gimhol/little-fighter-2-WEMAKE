@@ -1,8 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json'
+import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
-import alias from "@rollup/plugin-alias";
 export default {
   input: './node_modules/.tool_tmp/tool/src/index.js',
   external: [
@@ -30,12 +29,6 @@ export default {
     json(),
     resolve({ preferBuiltins: false }),
     commonjs(),
-    alias({
-      entries: [{
-        find: "@",
-        replacement: "../src/"
-      }]
-    }),
     terser({
       compress: true,
       output: {
