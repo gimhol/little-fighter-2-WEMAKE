@@ -1,4 +1,4 @@
-import { UIComponent, UINode } from "../ui";
+import type { UIComponent, UINode } from "../ui";
 
 export interface IClazz<C = unknown, A extends any[] = any[]> {
   new(...args: A): C

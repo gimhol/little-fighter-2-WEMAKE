@@ -1,4 +1,4 @@
-import { IWorldDataset } from "../IWorldDataset";
+import type { IWorldDataset } from "../IWorldDataset";
 import { ChaseLost } from "./ChaseLost";
 import { ChaseStratedy } from "./ChaseStratedy";
 import { FacingFlag } from "./FacingFlag";
