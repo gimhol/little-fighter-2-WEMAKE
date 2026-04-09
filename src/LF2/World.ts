@@ -89,9 +89,24 @@ export class World extends WorldDataset {
     if (v === this._stage) return;
     const o = this._stage;
 
-    for (const e of this.entities) {
-      is_ball(e) e.enter_frame
-    }
+    // const player_teams = new Set<string>()
+    // for (const puppet of this.puppets.values()) {
+    //   player_teams.add(puppet.team)
+    // }
+    // for (const e of this.entities) {
+    //   if (this.puppets.has(e.ctrl.player_id)) {
+    //     // 这大概是玩家角色
+    //     continue;
+    //   }
+    //   if (e.bearer && e.team) {
+    //     // 这大概是玩家手上的武器
+    //     continue;
+    //   }
+    //   if (is_fighter(e) && e.hp > 0 && player_teams.has(e.team)) {
+    //     // 没挂的队友
+    //     continue;
+    //   }
+    // }
 
     this._stage = v;
     this.callbacks.emit("on_stage_change")(v, o);
@@ -215,7 +230,7 @@ export class World extends WorldDataset {
   }
 
   del_entities(entities: Entity[]): this {
-    for (const e of entities) 
+    for (const e of entities)
       this.del_entity(e);
     return this;
   }
