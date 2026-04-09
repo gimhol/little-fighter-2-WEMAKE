@@ -1,4 +1,4 @@
-import { Rudolf_DFJ } from "@/LF2";
+import { Come, Rudolf_DFJ } from "@/LF2";
 import FSM from "@/LF2/base/FSM";
 import { GK, IClazz } from "@/LF2/defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
@@ -44,6 +44,7 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     BottomsUp,
     MoveStayCome,
+    Come
   ],
 ]
 export class Tests extends UIComponent {
