@@ -255,9 +255,9 @@ export class BaseController {
   }
 
   protected seqKeyMap = new Map<string, SeqKeys>([
-    ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join())],
-    ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join())],
-    ['dada', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join())],
+    ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join(''))],
+    ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join(''))],
+    ['dada', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''))],
   ])
 
   protected result = new ControllerUpdateResult();
