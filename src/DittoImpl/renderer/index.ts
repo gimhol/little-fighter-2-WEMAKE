@@ -19,6 +19,7 @@ export * from "./WorldRenderer";
 export * from "./create_picture";
 export * from "./empty_texture";
 export * from "./error_texture";
+export * from "./get_outline_material";
 export * from "./shader";
 export * from "./white_texture";
 /*** AUTO EXPORT END ***/

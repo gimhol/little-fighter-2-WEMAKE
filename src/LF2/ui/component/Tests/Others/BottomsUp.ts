@@ -11,7 +11,7 @@ export class BottomsUp extends TestCase {
     .offset(1000,
       () => {
         this.figters.forEach(v => v.ctrl.click(GK.Attack))
-      }, 
+      },
       () => {
         this.figters.forEach(v => v.ctrl.click(GK.Attack))
       }
