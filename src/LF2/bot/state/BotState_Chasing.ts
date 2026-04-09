@@ -14,7 +14,7 @@ export class BotState_Chasing extends BotState_Base {
     this.random_jumping()
 
     const { ctrl: c } = this;
-    if (c.following) return BotStateEnum.Following;
+    if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity

@@ -33,7 +33,7 @@ export class Background {
   readonly world: World;
   private _update_times = 0;
 
-  constructor(world: World, data: IBgData) {
+  constructor(world: World, data: Readonly<IBgData>) {
     this.data = data;
     this.world = world;
 

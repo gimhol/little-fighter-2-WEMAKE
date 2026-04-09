@@ -20,7 +20,7 @@ import { Status } from "./Status";
 export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   static readonly TAG: string = "Stage";
   readonly world: World;
-  readonly data: IStageInfo;
+  readonly data: Readonly<IStageInfo>;
   readonly next_stage?: IStageInfo;
   readonly team: string;
   readonly callbacks = new Callbacks<IStageCallbacks>();
@@ -85,7 +85,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   /** 饮料右边界 */
   drink_r: number;
 
-  change_bg(data: IBgData): Background {
+  change_bg(data: Readonly<IBgData>): Background {
     // FIXME: so messed up here...
     const prev_bg = this.world.bg;
     if (prev_bg) {
@@ -109,7 +109,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     return this.world.bg = bg;
   }
 
-  constructor(world: World, data: IStageInfo) {
+  constructor(world: World, data: Readonly<IStageInfo>) {
     this.world = world;
     this.data = data;
     const bid = this.data.bg;

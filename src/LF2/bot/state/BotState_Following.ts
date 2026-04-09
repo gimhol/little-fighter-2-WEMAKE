@@ -19,8 +19,8 @@ export class BotState_Following extends BotState_Base {
     const { ctrl: c } = this;
     const me = c.entity;
 
-    if (c.following) {
-      const [en_x, , en_z] = c.following
+    if (c.goingto) {
+      const [en_x, , en_z] = c.goingto
       const { x: my_x, z: my_z } = me.position;
       const offset_x = Defines.AI_FOLLOWING_RANGE_X
       const offset_z = Defines.AI_FOLLOWING_RANGE_Z
@@ -61,7 +61,7 @@ export class BotState_Following extends BotState_Base {
     }
 
 
-    delete c.following;
+    delete c.goingto;
     this.ctrl.key_up(...KEY_NAME_LIST);
     const en = c.chasings.get()?.entity;
     const av = c.avoidings.get()?.entity;

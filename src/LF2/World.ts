@@ -92,6 +92,11 @@ export class World extends WorldDataset {
     this.callbacks.emit("on_stage_change")(v, o);
     o.dispose();
     v.enter_phase(0);
+
+    for (const e of this.entities) {
+      const { ctrl } = e;
+      if (is_bot_ctrl(ctrl)) ctrl.stop()
+    }
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
     this.callbacks.emit('on_dataset_change')(k as any, curr, prev, this)
@@ -928,8 +933,10 @@ export class World extends WorldDataset {
     this.playrate = 1;
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
     this.buffs.forEach(v => v.life.set_lifes(v.life.max = v.life.min = 0))
-    this.lf2.change_stage(Defines.VOID_STAGE)
-    this.lf2.change_bg(Defines.VOID_BG)
+    if (this.stage.id !== Defines.VOID_STAGE.id)
+      this.stage = new Stage(this, Defines.VOID_STAGE)
+    if (this.stage.bg.id !== Defines.VOID_BG.id)
+      this.stage.change_bg(Defines.VOID_BG)
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;

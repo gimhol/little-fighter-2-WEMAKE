@@ -1,13 +1,15 @@
-export class SeqKeys {
+export class SeqKeys<D> {
   private _idx = 0;
   private _hit: 0 | 1 = 0;
+  readonly data: D;
   private readonly keys: string;
   get idx() { return this._idx }
   get hit(): 0 | 1 {
     return this._hit;
   }
-  constructor(keys: string) {
+  constructor(keys: string, data: D) {
     this.keys = keys;
+    this.data = data;
   }
   press(keys: string): this {
     const len = this.keys.length;
@@ -34,20 +36,3 @@ export class SeqKeys {
     return this._hit = 0;
   }
 }
-
-// function test() {
-//   const sk = new SeqKeys('dada')
-
-//   const press = (...presses: string[]) => {
-//     presses.map(v => sk.press(v))
-//     console.log(`input = ${presses} result = ${sk.hit}`)
-//   }
-//   press('d', 'a', 'd', 'a') // 1
-//   press('dada') // 1
-//   press('jdada') // 1
-//   press('dadaj') // 1
-//   press('da', 'da') // 1
-//   press('da', 'jda') // 1
-//   press('da', 'j', 'da') // 0
-// }
-// test()

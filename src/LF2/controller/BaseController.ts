@@ -252,33 +252,29 @@ export class BaseController {
     else return this.keys[key].is_hld();
   }
 
-  protected seqKeyMap = new Map<string, SeqKeys>([
-    ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join(''))],
-    ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join(''))],
-    ['dada', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''))],
+  protected seqKeyMap = new Map<string, SeqKeys<{ etc: string }>>([
+    ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join(''), { etc: "2" })],
+    ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join(''), { etc: "4" })],
+    ['djdj', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''), { etc: "0" })],
   ])
 
   protected result = new ControllerUpdateResult();
   readonly queue: (readonly [Status, LGK])[] = []
-  private _key_downs: string = ''
-  private _key_ups: string = ''
+
   update(): ControllerUpdateResult {
     this._time.add()
-    if (
-      !this.entity.shaking &&
-      !this.entity.motionless &&
-      this.queue.length
-    ) {
+    const e = this.entity;
+    if (!e.shaking && !e.motionless && this.queue.length) {
+      let key_downs = '';
       for (const [status, k] of this.queue) {
         switch (status) {
           case Status.UP:
             if (this.is_end(k)) break
             this.keys[k].end();
-            this._key_ups += k
             break;
           case Status.DOWN:
             if (!this.is_end(k)) break;
-            this._key_downs += k
+            key_downs += k
             if (k === GK.d) {
               this._key_list = k;
             } else if (this._key_list[0] === GK.d) {
@@ -287,40 +283,25 @@ export class BaseController {
             this.keys[k].hit(this.time);
             const ck = CONFLICTS_KEY_MAP[k];
             if (ck) this.dbc[ck].reset();
-            this.dbc[k].press(this.time, this.entity.frame);
+            this.dbc[k].press(this.time, e.frame);
             break;
           case Status.HOLD:
-            this.keys[k].hit(this.time - this.entity.world.key_hit_duration);
+            this.keys[k].hit(this.time - e.world.key_hit_duration);
             break;
         }
       }
-
-      if (is_human_ctrl(this) && this._key_downs.length) {
-        this.seqKeyMap.forEach(v => v.press(this._key_downs))
+      if (is_human_ctrl(this) && key_downs.length && e.hp) {
+        for (const [k, v] of this.seqKeyMap) {
+          v.press(key_downs)
+          if (!v.hit) continue;
+          const { x, y, z } = e.position;
+          this.world.etc(x, y, z, v.data.etc)
+          if (v.data.etc === '2') this.world.team_stay(e.team)
+          if (v.data.etc === '4') this.world.team_move(e.team)
+          if (v.data.etc === '0') this.world.team_come(e.team, x, y, z)
+        }
       }
       this.queue.length = 0;
-      this._key_downs = '';
-      this._key_ups = '';
-    }
-    if (is_human_ctrl(this)) {
-      const dddd = this.seqKeyMap.get('dddd');
-      const dada = this.seqKeyMap.get('dada');
-      const djdj = this.seqKeyMap.get('djdj');
-      if (dddd?.hit) {
-        this.world.etc(this.entity.position.x, this.entity.position.y, this.entity.position.z, "2")
-        this.world.team_stay(this.entity.team)
-        dddd.reset()
-      }
-      if (dada?.hit) {
-        this.world.etc(this.entity.position.x, this.entity.position.y, this.entity.position.z, "4")
-        this.world.team_move(this.entity.team)
-        dada.reset()
-      }
-      if (djdj?.hit) {
-        this.world.etc(this.entity.position.x, this.entity.position.y, this.entity.position.z, "0")
-        this.world.team_come(this.entity.team, this.entity.position.x, this.entity.position.y, this.entity.position.z)
-        djdj.reset()
-      }
     }
     const entity = this.entity;
     const frame = entity.frame;
