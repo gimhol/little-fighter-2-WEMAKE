@@ -113,7 +113,6 @@ export class BaseController {
    */
   start(...keys: LGK[]): this {
     this.queue.push(...keys.map(k => [1, k] as const))
-    for (const key of keys) if (this.keys[key].is_end()) this._key_downs += key
     return this;
   }
 
@@ -134,7 +133,6 @@ export class BaseController {
    */
   end(...keys: LGK[]): this {
     this.queue.push(...keys.map(k => [0, k] as const))
-    for (const key of keys) if (!this.keys[key].is_end()) this._key_ups += key
     return this;
   }
 
@@ -274,11 +272,13 @@ export class BaseController {
       for (const [status, k] of this.queue) {
         switch (status) {
           case Status.UP:
-            if (!this.is_end(k))
-              this.keys[k].end();
+            if (this.is_end(k)) break
+            this.keys[k].end();
+            this._key_ups += k
             break;
           case Status.DOWN:
             if (!this.is_end(k)) break;
+            this._key_downs += k
             if (k === GK.d) {
               this._key_list = k;
             } else if (this._key_list[0] === GK.d) {
