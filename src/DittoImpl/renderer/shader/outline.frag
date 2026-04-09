@@ -3,9 +3,9 @@ uniform sampler2D pTexture;
 uniform float tw;
 /** 一倍纹理图的高度（像素）*/
 uniform float th;
-/** 当前纹理图的宽度倍数X */
+/** 当前纹理图的宽度倍数 */
 uniform float tsw;
-/** 当前纹理图的高度倍数Y */
+/** 当前纹理图的高度倍数 */
 uniform float tsh;
 
 uniform float repeatX;
@@ -80,10 +80,6 @@ void apply(vec4 color) {
 }
 
 void main() {
-  if(tsw <= 0)
-    tsw = 1;
-  if(tsh <= 0)
-    tsh = 1;
   float ow = tw / tsw;
   float oh = th / tsh;
   vec2 uv = vec2((vUv.x * w / ow) + x / ow, (vUv.y * h / oh) + 1.0 - (y + h) / oh);
