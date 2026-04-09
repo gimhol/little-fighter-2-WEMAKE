@@ -1,7 +1,9 @@
 import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
 import path from "path";
-import { suffix_map, type ILegacyPictureInfo, type ITempDataLists } from "../../src/LF2/defines";
+import type { ITempDataLists } from "../../src/LF2/defines/IDataLists";
+import { suffix_map } from "../../src/LF2/defines/IDatIndex";
+import type { ILegacyPictureInfo } from "../../src/LF2/defines/ILegacyPictureInfo";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { classify } from "./utils/classify";

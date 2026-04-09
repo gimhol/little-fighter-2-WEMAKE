@@ -1,9 +1,11 @@
-import obj_dat_to_json from "../../../src/LF2/dat_translator/obj_dat_to_json";
 import { make_bg_data } from "../../../src/LF2/dat_translator/make_bg_data";
 import { make_stage_info_list } from "../../../src/LF2/dat_translator/make_stage_info_list";
-import { DatTypeEnum, IBgData, IDatIndex, IStageInfo } from "../../../src/LF2/defines";
+import { obj_dat_to_json } from "../../../src/LF2/dat_translator/obj_dat_to_json";
+import type { IBgData } from "../../../src/LF2/defines/IBgData";
 import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
+import { DatTypeEnum, } from "../../../src/LF2/defines/IDatIndex";
 import type { IEntityData } from "../../../src/LF2/defines/IEntityData";
+import type { IStageInfo } from "../../../src/LF2/defines/IStageInfo";
 import { debug, error, info } from "./log";
 import { read_lf2_dat_file } from "./read_lf2_dat_file";
 import { write_obj_file } from "./write_obj_file";
