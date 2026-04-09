@@ -7,6 +7,10 @@ uniform float th;
 uniform float tsw;
 /** 当前纹理图的高度倍数 */
 uniform float tsh;
+/*
+实际图片宽（像素） = tsh * tw
+实际图片高（像素） = tsh * th
+*/
 
 uniform float repeatX;
 uniform float repeatY;

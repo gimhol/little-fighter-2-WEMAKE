@@ -24,6 +24,7 @@ export function get_outline_material(texture: T.Texture<unknown> | undefined) {
       flipY: { value: 1 },
       scaleX: { value: 1 },
       scaleY: { value: 1 },
+      scaleZ: { value: 1 },
       opacity: { value: 1 },
       mixColor: { value: BLACK },
       mixStreath: { value: 0 },
