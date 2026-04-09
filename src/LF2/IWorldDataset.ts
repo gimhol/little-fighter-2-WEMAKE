@@ -47,11 +47,7 @@ export interface IWorldDataset {
   /** X轴丢人初速度缩放系数 */
   tvx_f: number;
 
-  /**
-   * Y轴丢人初速度缩放系数
-   *
-   * @type {number}
-   */
+  /** Y轴丢人初速度缩放系数 */
   tvy_f: number;
 
   /** Z轴丢人初速度缩放系数 */
@@ -80,9 +76,6 @@ export interface IWorldDataset {
    * 有：“帧等待数” = “帧本身的帧等待数” + “帧等待数”偏移值
    *
    * @see {IFrameInfo.wait} 帧本身的“帧等待数”
-   *
-   * @type {number}
-   * @memberof IWorldDataset
    */
   wait_offset: number;
 
@@ -134,21 +127,27 @@ export interface IWorldDataset {
    */
   key_hit_duration: number;
   friction_factor: number;
+  /** 地面摩擦X 在地面的物体，每帧X速度将±=此值,向0靠近 */
   friction_x: number;
+  /** 地面摩擦Z 在地面的物体，每帧Z速度将±=此值,向0靠近 */
   friction_z: number;
+  
   land_friction_factor: number,
+  /** 落地帧摩擦X，每帧X速度将±=此值,向0靠近 */
   land_friction_x: number;
+  /** 落地帧摩擦Z，每帧Z速度将±=此值,向0靠近 */
   land_friction_z: number;
+
   screen_w: number;
   screen_h: number;
+  /** 重力加速度 */
   gravity: number;
+  /** 重力加速度（按着防御时） */
   gravity_d: number;
   weapon_throwing_gravity: number;
   sync_render: number;
 
-  /**
-   * 难度
-   */
+  /** 难度 */
   difficulty: Difficulty;
 
   /** 是否无限蓝 */
@@ -170,6 +169,7 @@ export interface IWorldDataset {
   fall_value: number;
   catch_time_max: number;
   defend_value_max: number;
+  /** 防御生效时，仍扣除多少比例的血(0~1) */
   defend_ratio: number;
   mp: number;
   hp: number;
@@ -191,7 +191,9 @@ export interface IWorldDataset {
   dash_height: number;
   dash_distance: number;
   dash_distancez: number;
+  /** 默认受身速度Y */
   rowing_height: number;
+  /** 默认受身速度X */
   rowing_distance: number;
   wvx_f: number;
   wvy_f: number;

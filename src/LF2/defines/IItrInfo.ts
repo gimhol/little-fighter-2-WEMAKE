@@ -1,5 +1,3 @@
-import type { TAction } from "./TAction";
-import type { Defines } from "./defines";
 import type { HitFlag } from "./HitFlag";
 import type { IExpression } from "./IExpression";
 import type { TNextFrame } from "./INextFrame";
@@ -7,8 +5,7 @@ import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
 import type { ItrEffect } from "./ItrEffect";
 import type { ItrKind } from "./ItrKind";
-
-export type DEFAULT_ITR_MOTIONLESS = typeof Defines.DEFAULT_ITR_MOTIONLESS
+import type { TAction } from "./TAction";
 
 export interface IItrInfo extends Partial<IQube> {
   /**
@@ -28,18 +25,14 @@ export interface IItrInfo extends Partial<IQube> {
   /**
    * 自身停顿值
    * - 命中后，自己停顿多少帧
-   * - 不设置时存在默认值，见Defines.DEFAULT_ITR_MOTIONLESS
-   *
-   * @see {Defines.DEFAULT_ITR_MOTIONLESS}
+   * - 不设置时存在默认值
    */
   motionless?: number;
 
   /**
    * 目标停顿值
    * - 命中后，目标停顿多少帧（伴随震动）
-   * - 不设置时存在默认值，见Defines.DEFAULT_ITR_MOTIONLESS
-   *
-   * @see {Defines.DEFAULT_ITR_SHAKING}
+   * - 不设置时存在默认值
    */
   shaking?: number;
 

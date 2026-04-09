@@ -1624,10 +1624,13 @@ export class Entity {
       const { injury } = cp_a;
       if (injury) {
         this.hp -= injury;
-        this.hp_r -= round(injury * (1 - this.dataset('hp_recoverability')))
+        this.hp_r -= injury * (1 - this.dataset('hp_recoverability'))
       }
-      if (cp_a.shaking && cp_a.shaking > 0)
-        this.shaking = cp_a.shaking;
+      const shaking = cp_a.shaking
+      if (typeof shaking === 'number')
+        this.shaking = shaking;
+      else if (injury)
+        this.shaking = this.dataset('itr_shaking')
     }
     this.prev_cpoint_a = cp_a;
 

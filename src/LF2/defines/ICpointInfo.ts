@@ -22,8 +22,9 @@ export interface ICpointInfo {
   throwinjury?: number;
   fronthurtact?: string;
   backhurtact?: string;
+  /**  */
   shaking?: number;
-
+  
   /*dircontrol*/
   indicator_info?: IQubePair;
 }

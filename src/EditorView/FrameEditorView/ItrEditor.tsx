@@ -82,14 +82,12 @@ export function ItrEditor(props: IItrEditorViewProps) {
             <Input.Number
               {...make_not_blank_field_props(props, default_value, 'motionless')}
               clearable
-              placeholder={'' + Defines.DEFAULT_ITR_MOTIONLESS}
               step={1} />
           </Titled>
           <Titled label='目标停顿' style={{ flex: 1 }}>
             <Input.Number
               {...make_not_blank_field_props(props, default_value, 'shaking')}
               clearable
-              placeholder={'' + Defines.DEFAULT_ITR_SHAKING}
               step={1} />
           </Titled>
         </Flex>
@@ -110,7 +108,6 @@ export function ItrEditor(props: IItrEditorViewProps) {
             <Input.Number
               data-flex={1}
               {...make_not_blank_field_props(props, default_value, is_vrest ? 'vrest' : 'arest')}
-              placeholder={'' + Defines.DEFAULT_ITR_MOTIONLESS}
               clearable
               step={1} />
           </Combine>
