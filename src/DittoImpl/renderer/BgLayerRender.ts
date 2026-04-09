@@ -7,7 +7,8 @@ import { get_bg_layer_material } from "./MaterialKeeper";
 export class BgLayerRender {
   readonly mesh: T.Mesh;
   readonly layer: Layer;
-
+  offsetX: number;
+  offsetY: number;
   constructor(layer: Layer) {
     this.layer = layer;
     const { info } = layer;
@@ -21,10 +22,12 @@ export class BgLayerRender {
     );
     this.mesh.name = `bg layer ${name ?? id ?? 'unnamed'}`;
     this.mesh.position.set(x, y, z);
+    this.offsetX = 0;
+    this.offsetY = 0;
   }
 
-  render() {
-    const { visible, info: { x, absolute, width }, bg } = this.layer;
+  render(dt: number) {
+    const { visible, info: { x, absolute, width, offsetAnimX, offsetAnimY }, bg } = this.layer;
     this.mesh.visible = visible;
     const cam_x = bg.world.renderer.cam_x;
     const _x = absolute ?
@@ -32,8 +35,10 @@ export class BgLayerRender {
       bg.width > bg.world.screen_w ?
         x + (bg.width - width) * cam_x / (bg.width - bg.world.screen_w) :
         x + (bg.width - width) * cam_x
-
     this.mesh.position.x = _x;
+    
+    if (offsetAnimX !== void 0) this.offsetX += (dt / 1000) * offsetAnimX;
+    if (offsetAnimY !== void 0) this.offsetY += (dt / 1000) * offsetAnimY;
   }
 
   release(): void {

@@ -19,4 +19,9 @@ export interface IBgLayerInfo {
   cc?: number;
   c1?: number;
   c2?: number;
+
+  /** UV偏移动画，横轴(像素/秒) */
+  offsetAnimX?: number;
+  /** UV偏移动画，纵轴(像素/秒) */
+  offsetAnimY?: number;
 }

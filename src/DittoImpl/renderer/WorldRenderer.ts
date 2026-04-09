@@ -137,7 +137,7 @@ export class WorldRenderer implements IWorldRenderer {
     this.world_node.scale.set(scale_x, scale_y, scale_z);
     if (indicator_flags != this.indicator_flags)
       this.indicator_flags = indicator_flags;
-    this.bg_render.render();
+    this.bg_render.render(dt);
     for (const renderer of this.entity_renderers)
       renderer.render(dt)
     for (const ui_stack of this.lf2.ui_stacks)
