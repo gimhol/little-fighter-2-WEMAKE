@@ -1,5 +1,7 @@
-import { ISchema, IUICompnentCallbacks, UIComponent } from "@/LF2";
-import { max, min } from "@/LF2/utils";
+import type { ISchema } from "../../defines/ISchema";
+import { max, min } from "../../utils/math";
+import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
+import { UIComponent } from "./UIComponent";
 
 export interface IWrapContentProps {
   wrapWidth?: boolean;
