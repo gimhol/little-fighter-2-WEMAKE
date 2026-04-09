@@ -88,11 +88,15 @@ export class World extends WorldDataset {
   set stage(v) {
     if (v === this._stage) return;
     const o = this._stage;
+
+    for (const e of this.entities) {
+      is_ball(e) e.enter_frame
+    }
+
     this._stage = v;
     this.callbacks.emit("on_stage_change")(v, o);
     o.dispose();
     v.enter_phase(0);
-
     for (const e of this.entities) {
       const { ctrl } = e;
       if (is_bot_ctrl(ctrl)) ctrl.stop()
@@ -205,14 +209,15 @@ export class World extends WorldDataset {
     return ret;
   }
 
-  del_entity(entity: Entity): boolean {
-    return this.gones.has(entity)
+  del_entity(entity: Entity): this {
+    this.gones.add(entity)
+    return this
   }
 
-  del_entities(entities: Entity[]) {
-    for (const e of entities) {
+  del_entities(entities: Entity[]): this {
+    for (const e of entities) 
       this.del_entity(e);
-    }
+    return this;
   }
 
   stop_render() {
