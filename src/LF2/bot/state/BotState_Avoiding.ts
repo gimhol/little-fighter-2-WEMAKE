@@ -36,7 +36,8 @@ export class BotState_Avoiding extends BotState_Base {
     }
 
     const { left, right, near, far } = c.lf2.world;
-    let x_d: 0 | -1 | 1 = 0;
+    /** next x direction */
+    let x_d: -1 | 1;
     if (en_x <= me_x) {
       // 敌人在左边
       x_d = en_x < round_float(right - 100) ? 1 : -1;
@@ -44,29 +45,26 @@ export class BotState_Avoiding extends BotState_Base {
       // 敌人在右边
       x_d = en_x > round_float(left + 100) ? -1 : 1;
     }
-    switch (x_d) {
-      case 1:
-        c.key_down(GK.R).key_up(GK.L);
-        break;
-      case -1:
-        c.key_down(GK.L).key_up(GK.R);
-        break;
-    }
 
-    let z_d: 0 | -1 | 1 = 0;
+    // 若与前进方向相背，则回头，然后才前进（目前db_hit无法进行回头）
+    const XF = x_d > 0 ? GK.R : GK.L;
+    // 回头
+    if (me.facing != x_d) c.key_down(XF)
+    // 奔跑（TODO: 调整奔跑的概率）
+    else c.db_hit(XF).key_up(GK.L, GK.R)
+
+
+    let z_d: -1 | 1;
     if (me_z <= en_z) {
       z_d = en_z > round_float(far + 50) ? 1 : -1;
     } else {
       z_d = en_z < round_float(near - 50) ? -1 : 1;
     }
-    switch (z_d) {
-      case 1:
-        c.key_down(GK.U).key_up(GK.D);
-        break;
-      case -1:
-        c.key_down(GK.D).key_up(GK.U);
-        break;
-    }
+
+    const ZF = z_d > 0 ? GK.U : GK.D;
+    const ZB = z_d > 0 ? GK.D : GK.U;
+    c.key_down(ZF).key_up(ZB);
+
 
   }
 }

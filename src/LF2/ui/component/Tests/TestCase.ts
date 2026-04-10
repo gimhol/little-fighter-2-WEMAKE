@@ -42,6 +42,13 @@ export class TestCase implements IState<number> {
     if (!data) return null;
     return this.lf2.factory.create_entity(this.world, data) || null;
   }
+  spawns(...oids: string[]): Entity[] {
+    const ret = [];
+    for (const oid of oids) {
+      ret.push(this.spawn(oid)!)
+    }
+    return ret;
+  }
   bandits_8(px: number = 50, pz: number = 20): Entity[] {
     return this.around_8(O_ID.Bandit, px, pz)
   }
