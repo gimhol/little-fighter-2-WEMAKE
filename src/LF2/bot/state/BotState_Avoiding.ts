@@ -10,6 +10,8 @@ export class BotState_Avoiding extends BotState_Base {
     super.update(dt)
     if (this.handle_defends()) return;
     if (this.handle_bot_actions()) return;
+    if (this.handle_block()) return;
+    if (this.defend_test()) return;
     this.random_jumping()
 
     const { ctrl: c } = this;
@@ -17,8 +19,6 @@ export class BotState_Avoiding extends BotState_Base {
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
-    const { state } = me.frame;
-
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
       return BotStateEnum.Avoiding;
     else if (en)
@@ -26,31 +26,22 @@ export class BotState_Avoiding extends BotState_Base {
     else if (!av)
       return BotStateEnum.Idle
 
-    switch (state) {
-      case StateEnum.Normal:
-      case StateEnum.Standing:
-      case StateEnum.Walking:
-      case StateEnum.Running:
-        if (this.defend_test())
-          return;
-    }
-    if (me.blockers.size) c.start(GK.a).end(GK.a)
-    
+
     const { x, z } = me.position;
     const { x: enemy_x, z: enemy_z } = av.position;
 
     const distance = manhattan_xz(me, av);
-    if (distance > 200) {
+    if (distance > 300) {
       c.end(GK.L, GK.R, GK.U, GK.D);
       return;
     }
 
-    const { left, right, near, far } = c.lf2.world.bg;
+    const { left, right, near, far } = c.lf2.world;
     let x_d: 0 | -1 | 1 = 0;
     if (enemy_x <= x) {
-      x_d = enemy_x < round_float(right - 200) ? 1 : -1;
+      x_d = enemy_x < round_float(right - 100) ? 1 : -1;
     } else {
-      x_d = enemy_x > round_float(left + 200) ? -1 : 1;
+      x_d = enemy_x > round_float(left + 100) ? -1 : 1;
     }
     switch (x_d) {
       case 1:

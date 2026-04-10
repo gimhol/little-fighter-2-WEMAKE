@@ -5,9 +5,9 @@ import { Entity } from "../../../entity";
 import { round_float } from "../../../utils/math/round_float";
 import type { Tests } from "./Tests";
 
+let KEY: number = -1;
 export class TestCase implements IState<number> {
-  static KEY: number = 0;
-  readonly key: number = ++TestCase.KEY;
+  readonly key: number = ++KEY;
   readonly owner: Tests;
   entities: Entity[] = [];
   name: string = 'None';

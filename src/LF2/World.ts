@@ -104,27 +104,13 @@ export class World extends WorldDataset {
       this.start_update();
     }
   };
-  get left() {
-    return this.bg.left || 0;
-  }
-  get right() {
-    return this.bg.right || 0;
-  }
-  get near() {
-    return this.bg.near || 0;
-  }
-  get far() {
-    return this.bg.far || 0;
-  }
-  get width() {
-    return this.bg.width || 0;
-  }
-  get depth() {
-    return this.bg.depth || 0;
-  }
-  get middle() {
-    return this.bg.middle || { x: 0, z: 0 };
-  }
+  get left() { return this.stage.left; }
+  get right() { return this.stage.right; }
+  get near() { return this.stage.near; }
+  get far() { return this.stage.far; }
+  get width() { return this.stage.width; }
+  get depth() { return this.stage.depth; }
+  get middle() { return this.stage.middle; }
 
   private _cam_speed = 0;
   private _lock_cam_x: number | undefined = void 0;
