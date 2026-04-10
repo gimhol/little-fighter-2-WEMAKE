@@ -1,3 +1,4 @@
+import { BotAvoiding } from "@/LF2";
 import { FSM } from "../../../base/FSM";
 import { GK, IClazz } from "../../../defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
@@ -45,7 +46,9 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
     BottomsUp,
     MoveStayCome,
     Come
-  ],
+  ], [
+    BotAvoiding
+  ]
 ]
 export class Tests extends UIComponent {
   static override readonly TAG = 'Tests';

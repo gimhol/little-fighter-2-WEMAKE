@@ -1,6 +1,7 @@
 /*** AUTO EXPORT START ***/
 export * from "./ActionDirector";
 export * from "./Bg";
+export * from "./Bot";
 export * from "./Firen";
 export * from "./Firezen";
 export * from "./Freeze";
