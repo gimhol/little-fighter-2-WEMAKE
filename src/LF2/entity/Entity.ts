@@ -102,7 +102,7 @@ export class Entity {
   public fuse_bys!: Entity[] | null;
   public dismiss_time!: number | null;
   public dismiss_data!: IEntityData | null;
-  protected _stat_bar_type!: number | null;
+  protected _stat_bar_type!: StatBarType | null;
   protected _resting!: number;
   protected _resting_max?: number; // fallback from world
   protected _toughness!: number;
@@ -379,7 +379,7 @@ export class Entity {
     if (r !== null) return r;
     return this.key_role ? StatBarType.Float : StatBarType.None
   }
-
+  
   set stat_bar_type(v: number) {
     this._stat_bar_type = v;
   }
@@ -1333,7 +1333,7 @@ export class Entity {
     if (!this._mp_r_tick.add())
       return;
     const r_ratio = this.dataset('mp_r_ratio');
-    const value = 1 + floor(round_float((500 - min(r_ratio * this._hp, 500)) / 100))
+    const value = 1 + floor(round_float((this.hp_max - min(r_ratio * this._hp, this.hp_max)) / 100))
     this.mp = min(this.mp_max, this._mp + value);
   }
 

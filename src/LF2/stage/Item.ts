@@ -113,7 +113,6 @@ export default class Item {
 
     e.ctrl = this.lf2.factory.create_ctrl(e.data.id, "", e);
     e.dead_gone = true;
-    e.wakeup_invuln = true;
     e.reserve = reserve ?? 0;
     e.set_position(
       this.lf2.mt.range(x, x + range_x),
