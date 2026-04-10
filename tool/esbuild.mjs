@@ -6,4 +6,5 @@ await esbuild.build({
   platform: 'node',
   target: 'node22',
   outfile: './dist/tool.cjs',
+  minify: true,
 })
