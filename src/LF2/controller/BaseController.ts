@@ -299,6 +299,7 @@ export class BaseController {
           if (v.data.etc === '2') this.world.team_stay(e.team)
           if (v.data.etc === '4') this.world.team_move(e.team)
           if (v.data.etc === '0') this.world.team_come(e.team, x, y, z)
+          v.reset()
         }
       }
       this.queue.length = 0;
