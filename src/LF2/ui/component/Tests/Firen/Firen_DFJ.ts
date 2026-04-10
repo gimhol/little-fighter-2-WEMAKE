@@ -5,16 +5,15 @@ import { ActionDirector } from "../ActionDirector";
 
 export class Firen_DFJ extends TestCase {
   override name: string = 'Firen D>J'
-  firen?: Entity | null;
   director = new ActionDirector()
     .offset(500,
-      () => this.firen?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump),
-      () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Up),
-      () => this.firen?.ctrl.key_up(...AGK),
-      () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Down),
-      () => this.firen?.ctrl.key_up(...AGK),
-      () => this.firen?.ctrl.key_up(...AGK).key_down(GK.Defend),
-      () => this.firen?.ctrl.key_up(...AGK)
+      () => this.entities[0]?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Jump),
+      () => this.entities[0]?.ctrl.key_up(...AGK).key_down(GK.Up),
+      () => this.entities[0]?.ctrl.key_up(...AGK),
+      () => this.entities[0]?.ctrl.key_up(...AGK).key_down(GK.Down),
+      () => this.entities[0]?.ctrl.key_up(...AGK),
+      () => this.entities[0]?.ctrl.key_up(...AGK).key_down(GK.Defend),
+      () => this.entities[0]?.ctrl.key_up(...AGK)
     )
     .sort()
 
@@ -24,7 +23,7 @@ export class Firen_DFJ extends TestCase {
   override enter(): void {
     this.director.reset();
     do {
-      const firen = this.firen = this.spawn(O_ID.Firen);
+      const firen = this.entities[0] = this.spawn(O_ID.Firen)!;
       if (!firen) return;
       firen.set_position(0, 0, this.midZ);
       firen.team = TeamEnum.Team_1;

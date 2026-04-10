@@ -9,6 +9,7 @@ export class TestCase implements IState<number> {
   static KEY: number = 0;
   readonly key: number = ++TestCase.KEY;
   readonly owner: Tests;
+  entities: Entity[] = [];
   name: string = 'None';
   get lf2() { return this.owner.lf2 }
   get world() { return this.owner.world }
