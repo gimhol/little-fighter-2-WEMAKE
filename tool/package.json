@@ -5,7 +5,7 @@
   "main": "dist/tool.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build":"esbuild ./src/index.ts --bundle --platform=node --outfile=dist/tool.cjs",
+    "build":"node ./esbuild.mjs",
     "start": "npm run build & node ./",
     "help": "npm run build & ./node ./ -- help",
     "dat-2-txt": "npm run build & node ./ -- dat-2-txt",
