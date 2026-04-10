@@ -1,8 +1,8 @@
 
-import { GK, ItrKind, StateEnum } from "../../defines";
+import { GK } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
-import { find, round_float } from "../../utils";
+import { round_float } from "../../utils";
 import { BotState_Base } from "./BotState";
 export class BotState_Avoiding extends BotState_Base {
   readonly key = BotStateEnum.Avoiding;
@@ -13,7 +13,6 @@ export class BotState_Avoiding extends BotState_Base {
     if (this.handle_block()) return;
     if (this.defend_test()) return;
     this.random_jumping()
-
     const { ctrl: c } = this;
     if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;
@@ -27,45 +26,45 @@ export class BotState_Avoiding extends BotState_Base {
       return BotStateEnum.Idle
 
 
-    const { x, z } = me.position;
-    const { x: enemy_x, z: enemy_z } = av.position;
+    const { x: me_x, z: me_z } = me.position;
+    const { x: en_x, z: en_z } = av.position;
 
     const distance = manhattan_xz(me, av);
     if (distance > 300) {
-      c.end(GK.L, GK.R, GK.U, GK.D);
-      return;
+      c.key_up(GK.L, GK.R, GK.U, GK.D);
+      return BotStateEnum.Idle;
     }
 
     const { left, right, near, far } = c.lf2.world;
     let x_d: 0 | -1 | 1 = 0;
-    if (enemy_x <= x) {
-      x_d = enemy_x < round_float(right - 100) ? 1 : -1;
+    if (en_x <= me_x) {
+      // 敌人在左边
+      x_d = en_x < round_float(right - 100) ? 1 : -1;
     } else {
-      x_d = enemy_x > round_float(left + 100) ? -1 : 1;
+      // 敌人在右边
+      x_d = en_x > round_float(left + 100) ? -1 : 1;
     }
     switch (x_d) {
       case 1:
-        if (distance < 25) c.db_hit(GK.R).end(GK.L);
-        else c.is_end(GK.R) && c.start(GK.R).end(GK.L);
+        c.key_down(GK.R).key_up(GK.L);
         break;
       case -1:
-        if (distance < 25) c.db_hit(GK.L).end(GK.R);
-        else c.is_end(GK.L) && c.start(GK.L).end(GK.R);
+        c.key_down(GK.L).key_up(GK.R);
         break;
     }
 
     let z_d: 0 | -1 | 1 = 0;
-    if (z <= enemy_z) {
-      z_d = enemy_z > round_float(far + 50) ? 1 : -1;
+    if (me_z <= en_z) {
+      z_d = en_z > round_float(far + 50) ? 1 : -1;
     } else {
-      z_d = enemy_z < round_float(near - 50) ? -1 : 1;
+      z_d = en_z < round_float(near - 50) ? -1 : 1;
     }
     switch (z_d) {
       case 1:
-        c.is_end(GK.U) && c.start(GK.U).end(GK.D);
+        c.key_down(GK.U).key_up(GK.D);
         break;
       case -1:
-        c.is_end(GK.D) && c.start(GK.D).end(GK.U);
+        c.key_down(GK.D).key_up(GK.U);
         break;
     }
 

@@ -294,42 +294,7 @@ export namespace Defines {
   export const BOOMERANG_CHASE_ACC_Z = 0.1
   export const BOOMERANG_CHASE_MAX_VY = -0.4
   export const BOOMERANG_CHASE_ACC_Y = 0.125
-
   export const MAX_AI_DESIRE = 10000 as const;
-
-  export const AI_W_ATK_F_X = 50;
-  export const AI_W_ATK_B_X = 40;
-  export const AI_W_ATK_M_X = -1;
-  export const AI_W_ATK_Z = 15;
-
-  export const AI_R_ATK_F_X = 100;
-  export const AI_R_ATK_B_X = 80;
-  export const AI_R_ATK_Z = 15;
-  export const AI_R_ATK_DESIRE = 10000;
-
-  export const AI_J_DESIRE = 50;
-  export const AI_J_ATK_F_X = 80;
-  export const AI_J_ATK_B_X = 90;
-  export const AI_J_ATK_Z = 60;
-  export const AI_J_ATK_Y_MIN = -60;
-  export const AI_J_ATK_Y_MAX = 60;
-
-  export const AI_D_DESIRE = 100;
-  export const AI_D_ATK_F_X = 200;
-  export const AI_D_ATK_B_X = 200;
-  export const AI_D_ATK_Z = 60;
-  export const AI_D_ATK_Y_MIN = -60;
-  export const AI_D_ATK_Y_MAX = 60;
-  export const AI_D_ATK_DESIRE = 10000;
-
-
-  export const AI_R_DESIRE_MIN = 0;
-  export const AI_R_DESIRE_MAX = 500;
-  export const AI_R_STOP_DESIRE = 10;
-  export const AI_R_X_MIN = 100;
-  export const AI_R_X_MAX = 2000;
-
-  export const AI_DEF_DESIRE = 100;
 
   export function desire(ratio: number): number {
     return round(Defines.MAX_AI_DESIRE * ratio)
