@@ -44,7 +44,7 @@ export class WorldDataset implements IWorldDataset {
   hp_healing_ticks: number = 16;
   hp_healing_value: number = 8;
 
-  mp_r_ticks: number = 6;
+  mp_r_ticks: number = 24;
   mp_r_ratio: number = 1;
   double_click_interval: number = 30;
   key_hit_duration: number = 10;
