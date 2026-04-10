@@ -7,8 +7,10 @@ export class BotAvoiding extends TestCase {
   override enter(): void {
     this.entities = this.hori_2(O_ID.Bandit)
     this.entities.forEach((e, i) => {
-      e.team = '' + (i + 1)
-      e.blinking = i ? Number.MAX_SAFE_INTEGER : 0
+      e.team = '' + (i + 1);
+      e.blinking = i ? Number.MAX_SAFE_INTEGER : 0;
+      e.key_role = true;
+      e.name = i ? 'Attacker' : 'Victim'
       this.lf2.factory.create_ctrl(e.data.id, new_id(), e)
     })
   }
