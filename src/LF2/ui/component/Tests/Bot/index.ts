@@ -1,3 +1,3 @@
 /*** AUTO EXPORT START ***/
-export * from "./Moon";
+export * from "./BotAvoiding";
 /*** AUTO EXPORT END ***/

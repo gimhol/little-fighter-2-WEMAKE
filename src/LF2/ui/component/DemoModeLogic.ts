@@ -12,6 +12,7 @@ import { CameraCtrl } from "./CameraCtrl";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 class FSMState extends ComponentFSMState<number, DemoModeLogic> {
   override readonly key: number = 0
   get fsm() { return this.owner.fsm }
@@ -121,7 +122,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       fighter.facing = this.lf2.mt.pick([1, -1] as const)!;
       fighter.callbacks.add(this);
       fighter.key_role = true;
-
+      fighter.stat_bar_type = StatBarType.UI;
       const { far, near, left, right } = this.lf2.world.bg;
 
       fighter.ctrl = this.lf2.factory.create_ctrl(

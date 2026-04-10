@@ -1,11 +1,11 @@
-import { ILf2Callback } from "@/LF2/ILf2Callback";
-import { new_id } from "@/LF2/base";
-import FSM from "@/LF2/base/FSM";
-import { Randoming } from "@/LF2/helper";
-import { between, max, min } from "@/LF2/utils";
+import { ILf2Callback } from "../../../ILf2Callback";
 import { PlayerInfo } from "../../../PlayerInfo";
+import { new_id } from "../../../base";
+import { FSM } from "../../../base/FSM";
 import { CheatType, EntityGroup as EG, IEntityData, TeamEnum } from "../../../defines";
 import { Defines } from "../../../defines/defines";
+import { Randoming } from "../../../helper";
+import { between, max, min } from "../../../utils/math";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { CharMenuHead } from "../CharMenuHead";
 import { FighterName as CharMenuFighterName } from "../FighterName";

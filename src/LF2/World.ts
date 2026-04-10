@@ -92,6 +92,10 @@ export class World extends WorldDataset {
     this.callbacks.emit("on_stage_change")(v, o);
     o.dispose();
     v.enter_phase(0);
+    for (const e of this.entities) {
+      const { ctrl } = e;
+      if (is_bot_ctrl(ctrl)) ctrl.stop()
+    }
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
     this.callbacks.emit('on_dataset_change')(k as any, curr, prev, this)
@@ -100,27 +104,13 @@ export class World extends WorldDataset {
       this.start_update();
     }
   };
-  get left() {
-    return this.bg.left || 0;
-  }
-  get right() {
-    return this.bg.right || 0;
-  }
-  get near() {
-    return this.bg.near || 0;
-  }
-  get far() {
-    return this.bg.far || 0;
-  }
-  get width() {
-    return this.bg.width || 0;
-  }
-  get depth() {
-    return this.bg.depth || 0;
-  }
-  get middle() {
-    return this.bg.middle || { x: 0, z: 0 };
-  }
+  get left() { return this.stage.left; }
+  get right() { return this.stage.right; }
+  get near() { return this.stage.near; }
+  get far() { return this.stage.far; }
+  get width() { return this.stage.width; }
+  get depth() { return this.stage.depth; }
+  get middle() { return this.stage.middle; }
 
   private _cam_speed = 0;
   private _lock_cam_x: number | undefined = void 0;
@@ -200,14 +190,15 @@ export class World extends WorldDataset {
     return ret;
   }
 
-  del_entity(entity: Entity): boolean {
-    return this.gones.has(entity)
+  del_entity(entity: Entity): this {
+    this.gones.add(entity)
+    return this
   }
 
-  del_entities(entities: Entity[]) {
-    for (const e of entities) {
+  del_entities(entities: Entity[]): this {
+    for (const e of entities)
       this.del_entity(e);
-    }
+    return this;
   }
 
   stop_render() {
@@ -928,8 +919,10 @@ export class World extends WorldDataset {
     this.playrate = 1;
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
     this.buffs.forEach(v => v.life.set_lifes(v.life.max = v.life.min = 0))
-    this.lf2.change_stage(Defines.VOID_STAGE)
-    this.lf2.change_bg(Defines.VOID_BG)
+    if (this.stage.id !== Defines.VOID_STAGE.id)
+      this.stage = new Stage(this, Defines.VOID_STAGE)
+    if (this.stage.bg.id !== Defines.VOID_BG.id)
+      this.stage.change_bg(Defines.VOID_BG)
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;

@@ -4,7 +4,6 @@ import { TestCase } from "../TestCase";
 
 
 export class LOUIS_JUMP_ATTACK extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Normal Jump / Small Jump'
   louis1: Entity | null = null;
   louis2: Entity | null = null;

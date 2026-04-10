@@ -6,7 +6,6 @@ import { TestCase } from "../TestCase";
 
 
 export class Freeze_DUJ extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Freeze D^J';
   freeze1?: Entity | null;
   freeze2?: Entity | null;

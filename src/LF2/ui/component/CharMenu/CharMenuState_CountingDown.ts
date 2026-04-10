@@ -1,5 +1,5 @@
-import { GameKey } from "@/LF2/defines";
-import { ceil, max } from "@/LF2/utils";
+import { GameKey } from "../../../defines/GameKey";
+import { ceil, max } from "../../../utils/math";
 import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import type { CharMenuLogic } from "./CharMenuLogic";
 import { CharMenuState } from "./CharMenuState";

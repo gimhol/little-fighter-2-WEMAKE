@@ -2,6 +2,7 @@ import { Defines, Difficulty, IEntityData, IStageObjectInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import { Entity } from "../entity/Entity";
 import IEntityCallbacks from "../entity/IEntityCallbacks";
+import { StatBarType } from "../entity/StatBarType";
 import { is_fighter, is_fighter_data, is_weapon } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
 import { round, Times } from "../utils";
@@ -104,7 +105,11 @@ export default class Item {
     } = this.info;
     if (this.times) this.times--;
     e.outline_color = outline_color
-    if (is_fighter(e)) e.outline_color = outline_color ?? '#FF0000'
+    if (is_fighter(e)) {
+      e.outline_color = outline_color ?? '#FF0000'
+      e.stat_bar_type = StatBarType.None;
+      e.wakeup_invuln = false;
+    }
 
     e.ctrl = this.lf2.factory.create_ctrl(e.data.id, "", e);
     e.dead_gone = true;

@@ -1,6 +1,6 @@
-import type { UIComponent } from "@/LF2/ui/component/UIComponent";
+import type { UIComponent } from "../../ui/component/UIComponent";
 import type { IClazz, ISchema } from "../../defines/ISchema";
-import type { UINode } from "@/LF2/ui/UINode";
+import type { UINode } from "../../ui/UINode";
 export interface ISchemaMeta<T = any> extends Omit<ISchema<T>, 'properties'> {
   properties?: Record<keyof T, ISchema | IClazz<UIComponent | UINode>>
 }

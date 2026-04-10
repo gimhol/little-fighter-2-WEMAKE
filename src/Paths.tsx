@@ -4,7 +4,6 @@ export namespace Paths {
   export enum All {
     _ = '',
     game = '/',
-    quad_tree_test = '/quad_tree_test',
     bebavior_net_test = '/bebavior_net_test',
     editor = '/editor',
     bdy_editor = '/bdy_editor',
@@ -27,7 +26,6 @@ export namespace Paths {
   export const Components: Record<All, React.ComponentType | null> = {
     [All._]: null,
     [All.game]: React.lazy(() => import("./App")),
-    [All.quad_tree_test]: React.lazy(() => import("./Laboratory/QuadTree")),
     [All.bebavior_net_test]: React.lazy(() => import("./Laboratory/BehaviorNet")),
     [All.editor]: React.lazy(() => import("./Editor")),
     [All.component_demos]: React.lazy(() => import("./pages/component_demos")),
@@ -50,7 +48,6 @@ export namespace Paths {
   export const Relations: { [x in All]?: All[] } = {
     [All._]: [
       All.game,
-      All.quad_tree_test,
       All.bebavior_net_test,
       All.component_demos,
       All.editor,

@@ -5,6 +5,7 @@ import { Entity } from "../../entity/Entity";
 import { Times } from "../../utils/Times";
 import { CameraCtrl } from "./CameraCtrl";
 import { SummaryLogic } from "./SummaryLogic";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 
 export class DanmuGameLogic extends SummaryLogic {
   static override readonly TAG: string = 'DanmuGameLogic';
@@ -52,6 +53,7 @@ export class DanmuGameLogic extends SummaryLogic {
     for (const e of this.world.entities)
       e.enter_frame({ id: Builtin_FrameId.Gone })
     const fighter_enter = (v: Entity) => {
+      v.stat_bar_type = StatBarType.Float;
       v.key_role = v.dead_gone = true;
       v.name = v.data.base.name;
       v.blinking = 120;

@@ -14,7 +14,7 @@ export class BotState_Chasing extends BotState_Base {
     this.random_jumping()
 
     const { ctrl: c } = this;
-    if (c.following) return BotStateEnum.Following;
+    if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
@@ -23,7 +23,7 @@ export class BotState_Chasing extends BotState_Base {
     else if (!en)
       return BotStateEnum.Idle;
 
-    const { facing: a_facing } = me
+    const { facing: me_facing } = me
     const { x: my_x, z: my_z, y: my_y } = me.position;
     const { next_x: en_x, next_z: en_z, next_y: en_y } = c.guess_entity_pos(en);
     const { state } = me.frame;
@@ -33,7 +33,7 @@ export class BotState_Chasing extends BotState_Base {
      * 敌人在背后时为负数
      * 敌人在正面时为正数
      */
-    const dist_en_x = round_float(a_facing * (en_x - my_x))
+    const dist_en_x = round_float(me_facing * (en_x - my_x))
     /** 
      * 敌人与自己的距离y
      * 敌人在上方时为正数
@@ -62,7 +62,12 @@ export class BotState_Chasing extends BotState_Base {
           en_x > c.world.stage.player_r + 80
         )
       )
-
+    // 过了头
+    const x_to_much = (
+      my_x > en_x && me_facing > 0 ||
+      my_x < en_x && me_facing < 0 ||
+      out_of_range
+    )
     switch (state) {
       case StateEnum.Normal:
         if (this.defend_test()) return;
@@ -70,10 +75,8 @@ export class BotState_Chasing extends BotState_Base {
       case StateEnum.Running: {
         if (this.defend_test()) return;
         this.handle_block()
-        if (a_facing > 0 && (abs_dx < c.w_atk_x || out_of_range)) { // 避免跑过头停下
-          c.key_down(GK.L).key_up(GK.R)
-        } else if (a_facing < 0 && (abs_dx < c.w_atk_x || out_of_range)) { // 避免跑过头停下
-          c.key_down(GK.R).key_up(GK.L)
+        if (x_to_much) { // 避免跑过头,停下
+          c.key_down(me_facing > 0 ? GK.L : GK.R).key_up(GK.L, GK.R)
         } else if (
           c.desire("chasing_1") < c.r_atk_desire &&
           between(dist_en_x, 0, c.r_atk_x) &&
@@ -83,7 +86,7 @@ export class BotState_Chasing extends BotState_Base {
           c.click(GK.a).key_up(GK.R, GK.L)
         } else if (c.desire("chasing_2") < c.r_stop_desire) {
           // 概率刹车
-          c.click(a_facing < 0 ? GK.R : GK.L)
+          c.click(me_facing < 0 ? GK.R : GK.L)
         } else break;
         return
       }

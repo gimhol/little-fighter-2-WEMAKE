@@ -7,6 +7,7 @@ import * as T from "../_t";
 import { Bar } from "./Bar";
 import { WorldRenderer } from "./WorldRenderer";
 import { INDICATINGS } from "./INDICATINGS";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 
 const BAR_W = 40;
 const BAR_H = 3;
@@ -278,11 +279,11 @@ export class EntityStatRender implements IEntityCallbacks {
   render() {
     const {
       invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
-      has_stat_bar, ground_y
+      stat_bar_type, ground_y
     } = this.entity;
     const _is_fighter = is_fighter(this.entity)
     this.name_node.visible = _is_fighter && key_role && !invisible
-    this.bars_node.visible = !has_stat_bar && _is_fighter && key_role && !invisible && hp > 0;
+    this.bars_node.visible = !!(stat_bar_type & StatBarType.Float) && _is_fighter && key_role && !invisible && hp > 0;
 
     if (this.entity.healing) {
       const heading = (this.entity.update_id.value % 8) < 4;

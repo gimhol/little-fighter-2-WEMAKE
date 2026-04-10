@@ -1,4 +1,5 @@
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 import { make_schema } from "@/LF2/utils/schema/make_schema";
 import { UINode } from "../UINode";
 import { Label } from "./Label";
@@ -85,7 +86,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     if (this.entity === entity) return;
     if (this.entity) {
       this.entity.callbacks.del(this.cbs)
-      this.entity.has_stat_bar = false;
+      this.entity.stat_bar_type = this.entity.stat_bar_type ^ StatBarType.UI;
     }
     this.entity = entity
     if (entity) {
@@ -101,7 +102,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
       this.toughness_max.target = entity.toughness_max || 1
       this.toughness.target = entity.toughness;
       entity.callbacks.add(this.cbs)
-      entity.has_stat_bar = true;
+      entity.stat_bar_type = entity.stat_bar_type | StatBarType.UI;
     }
     this.update_head();
   }

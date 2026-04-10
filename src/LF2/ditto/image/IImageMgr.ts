@@ -1,5 +1,5 @@
-import { IPictureInfo } from "@/LF2/defines/IPictureInfo";
 import type { ILegacyPictureInfo } from "../../defines/ILegacyPictureInfo";
+import type { IPictureInfo } from "../../defines/IPictureInfo";
 import type { IStyle } from "../../defines/IStyle";
 import type { IImageOp_Color } from "./IImageOp_Color";
 import type { IImageOp_Crop } from "./IImageOp_Crop";

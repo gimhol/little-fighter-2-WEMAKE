@@ -4,14 +4,13 @@ import { TestCase } from "../TestCase";
 import { ActionDirector } from "../ActionDirector";
 
 export class BottomsUp extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Bottoms Up Drop Test (Alcohol Abuse Results in Harm to Your Health)'
   figters: Entity[] = []
   director = new ActionDirector()
     .offset(1000,
       () => {
         this.figters.forEach(v => v.ctrl.click(GK.Attack))
-      }, 
+      },
       () => {
         this.figters.forEach(v => v.ctrl.click(GK.Attack))
       }

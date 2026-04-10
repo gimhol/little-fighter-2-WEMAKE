@@ -1,9 +1,8 @@
-import { bot_cases } from "@/LF2/cases_instances";
 import type { IState } from "../../base/FSM";
+import { bot_cases } from "../../cases_instances";
 import { KEY_NAME_LIST } from "../../controller";
-import { GK, ItrKind, LGK, StateEnum } from "../../defines";
+import { GK, LGK, StateEnum } from "../../defines";
 import type { BotStateEnum } from "../../defines/BotStateEnum";
-import { find } from "../../utils";
 import type { BotController } from "../BotController";
 
 export abstract class BotState_Base implements IState<BotStateEnum> {
@@ -70,10 +69,11 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     }
     return true
   }
-  handle_block() {
+  handle_block(): boolean {
     const { ctrl: c } = this;
     const { entity: me } = c
     if (me.blockers.size) c.start(GK.a).end(GK.a)
+    return !!me.blockers.size
   }
 
 

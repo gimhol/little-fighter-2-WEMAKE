@@ -13,7 +13,7 @@ import { make_fighter_data } from "./make_fighter_data";
 import { make_weapon_data } from "./make_weapon_data";
 import { post_process_obj_data } from "./post_process_obj_data";
 
-export default function obj_dat_to_json(text: string, datIndex: IDatIndex): IEntityData {
+export function obj_dat_to_json(text: string, datIndex: IDatIndex): IEntityData {
   text = text.replace(/\\\\/g, "/");
   const infos_str = match_block_once(text, "<bmp_begin>", "<bmp_end>");
   if (!infos_str) throw new Error('[dat_to_json] failed, 3')
@@ -101,9 +101,9 @@ export default function obj_dat_to_json(text: string, datIndex: IDatIndex): IEnt
     case "0":
       ctx.data = make_fighter_data(ctx);
       break;
-    case "1": 
-    case "2": 
-    case "4": 
+    case "1":
+    case "2":
+    case "4":
     case "6":
       ctx.data = make_weapon_data(ctx);
       break;
@@ -126,3 +126,4 @@ export default function obj_dat_to_json(text: string, datIndex: IDatIndex): IEnt
   BotBuilder.builders.length = 0
   return ctx.data;
 }
+export default obj_dat_to_json;

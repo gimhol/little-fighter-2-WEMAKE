@@ -1,4 +1,4 @@
-import { CMD } from "@/LF2/defines/CMD";
+import { CMD } from "../../defines/CMD";
 import { KeyStatus } from "../../controller/KeyStatus";
 import { GameKey } from "../../defines";
 import { Entity } from "../../entity";

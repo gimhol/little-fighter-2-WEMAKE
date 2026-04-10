@@ -5,7 +5,7 @@
   "main": "dist/tool.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc & rollup -c rollup.config.mjs",
+    "build":"node ./esbuild.mjs",
     "start": "npm run build & node ./",
     "help": "npm run build & ./node ./ -- help",
     "dat-2-txt": "npm run build & node ./ -- dat-2-txt",
@@ -24,6 +24,7 @@
     "json5": "^2.2.3"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^6.0.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
@@ -31,6 +32,7 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/command-exists": "^1.2.3",
     "@types/node": "^20.11.19",
+    "esbuild": "0.28.0",
     "rcedit": "^5.0.2",
     "rollup": "^4.55.1",
     "tslib": "^2.6.2",

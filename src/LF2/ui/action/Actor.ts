@@ -1,4 +1,4 @@
-import { LF2 } from "@/LF2/LF2";
+import { LF2 } from "../../../LF2";
 import { Ditto } from "../../ditto";
 import { is_str } from "../../utils/type_check";
 import type { TUIAction } from "../IUIInfo.dat";

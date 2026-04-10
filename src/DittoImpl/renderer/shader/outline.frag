@@ -3,9 +3,14 @@ uniform sampler2D pTexture;
 uniform float tw;
 /** 一倍纹理图的高度（像素）*/
 uniform float th;
-/** 当前纹理图的倍数 */
+/** 当前纹理图的宽度倍数 */
 uniform float tsw;
+/** 当前纹理图的高度倍数 */
 uniform float tsh;
+/*
+实际图片宽（像素） = tsh * tw
+实际图片高（像素） = tsh * th
+*/
 
 uniform float repeatX;
 uniform float repeatY;

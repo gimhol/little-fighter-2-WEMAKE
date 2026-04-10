@@ -1,4 +1,5 @@
 import { Ditto } from "@/LF2/ditto";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 import { ILf2Callback } from "@/LF2/ILf2Callback";
 import { new_team } from "../../base";
 import LocalController from "../../controller/LocalController";
@@ -80,7 +81,7 @@ export class GamePrepareLogic extends UIComponent {
       }
       fighter.name = player.name;
       fighter.team = slot_info.team || new_team();
-
+      fighter.stat_bar_type = StatBarType.UI
       fighter.facing = is_stage_mode ?
         FacingFlag.Right :
         this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;

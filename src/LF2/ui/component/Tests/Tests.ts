@@ -1,5 +1,6 @@
-import FSM from "@/LF2/base/FSM";
-import { GK, IClazz } from "@/LF2/defines";
+import { BotAvoiding } from "@/LF2";
+import { FSM } from "../../../base/FSM";
+import { GK, IClazz } from "../../../defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
 import { Label } from "../Label";
 import { UIComponent } from "../UIComponent";
@@ -10,9 +11,9 @@ import { Freeze_DFA, Freeze_DFJ, Freeze_DUJ, Freeze_DVJ } from "./Freeze";
 import { Jan_DUA, Jan_DUJ } from "./Jan";
 import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
 import { LOUIS_JUMP_ATTACK } from "./Louis";
+import { BottomsUp, Come, MoveStayCome } from "./Others";
+import { Rudolf_DFJ } from "./Rudolf";
 import { TestCase } from "./TestCase";
-import { BottomsUp } from "./Others/BottomsUp";
-import { Rudolf_DFJ } from "@/LF2";
 
 const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   [TestCase], [
@@ -42,8 +43,12 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     MoonTest
   ], [
-    BottomsUp
-  ],
+    BottomsUp,
+    MoveStayCome,
+    Come
+  ], [
+    BotAvoiding
+  ]
 ]
 export class Tests extends UIComponent {
   static override readonly TAG = 'Tests';

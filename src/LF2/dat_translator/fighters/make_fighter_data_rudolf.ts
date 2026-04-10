@@ -1,4 +1,4 @@
-import { BuiltIn_OID, Defines, IEntityData } from "../../defines";
+import { BuiltIn_OID, IEntityData } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { BotBuilder } from "./BotBuilder";
@@ -24,8 +24,8 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
     w_atk_m_x: 50,
     w_atk_b_x: 300,
     w_atk_f_x: 300,
-    r_desire_max: Defines.AI_R_DESIRE_MAX * 2,
-    r_desire_min: Defines.AI_R_DESIRE_MIN * 2
+    r_desire_max: 1000,
+    r_desire_min: 0
   }).set_actions(
     // d>a_1
     bot_ball_dfa(100, void 0, 120, 300)((a, c) => {

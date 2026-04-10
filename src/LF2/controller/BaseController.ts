@@ -27,7 +27,11 @@ export const CONFLICTS_KEY_MAP: Record<GK, GK | undefined> = {
   [GK.U]: GK.D,
   [GK.D]: GK.U,
 };
-
+enum Status {
+  UP = 0,
+  DOWN = 1,
+  HOLD = 2,
+}
 /**
  * @link https://www.processon.com/view/link/6765125f16640e2a68b21418?cid=6764eb96c3e02b46ac818e40
  */
@@ -109,7 +113,6 @@ export class BaseController {
    */
   start(...keys: LGK[]): this {
     this.queue.push(...keys.map(k => [1, k] as const))
-    for (const key of keys) if (this.keys[key].is_end()) this._key_downs += key
     return this;
   }
 
@@ -130,7 +133,6 @@ export class BaseController {
    */
   end(...keys: LGK[]): this {
     this.queue.push(...keys.map(k => [0, k] as const))
-    for (const key of keys) if (!this.keys[key].is_end()) this._key_ups += key
     return this;
   }
 
@@ -250,31 +252,29 @@ export class BaseController {
     else return this.keys[key].is_hld();
   }
 
-  // too stupid.
-  protected dddd = new SeqKeys([GK.d, GK.d, GK.d, GK.d])
-  protected dada = new SeqKeys([GK.d, GK.a, GK.d, GK.a])
-  protected djdj = new SeqKeys([GK.d, GK.j, GK.d, GK.j])
+  protected seqKeyMap = new Map<string, SeqKeys<{ etc: string }>>([
+    ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join(''), { etc: "2" })],
+    ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join(''), { etc: "4" })],
+    ['djdj', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''), { etc: "0" })],
+  ])
 
   protected result = new ControllerUpdateResult();
-  readonly queue: (readonly [0 | 1 | 2, LGK])[] = []
-  private _key_downs: string = ''
-  private _key_ups: string = ''
+  readonly queue: (readonly [Status, LGK])[] = []
+
   update(): ControllerUpdateResult {
     this._time.add()
-    if (
-      !this.entity.shaking &&
-      !this.entity.motionless &&
-      this.queue.length
-    ) {
+    const e = this.entity;
+    if (!e.shaking && !e.motionless && this.queue.length) {
+      let key_downs = '';
       for (const [status, k] of this.queue) {
         switch (status) {
-          case 0:
-            if (!this.is_end(k))
-              this.keys[k].end();
+          case Status.UP:
+            if (this.is_end(k)) break
+            this.keys[k].end();
             break;
-          case 1:
+          case Status.DOWN:
             if (!this.is_end(k)) break;
-
+            key_downs += k
             if (k === GK.d) {
               this._key_list = k;
             } else if (this._key_list[0] === GK.d) {
@@ -283,75 +283,26 @@ export class BaseController {
             this.keys[k].hit(this.time);
             const ck = CONFLICTS_KEY_MAP[k];
             if (ck) this.dbc[ck].reset();
-            this.dbc[k].press(this.time, this.entity.frame);
+            this.dbc[k].press(this.time, e.frame);
             break;
-          case 2:
-            this.keys[k].hit(this.time - this.entity.world.key_hit_duration);
+          case Status.HOLD:
+            this.keys[k].hit(this.time - e.world.key_hit_duration);
             break;
         }
       }
-
-      if (is_human_ctrl(this)) {
-        switch (this._key_downs) {
-          case '': break;
-          case GK.Defend:
-            this.dddd.test(GK.Defend, this.time)
-            this.dada.test(GK.Defend, this.time)
-            this.djdj.test(GK.Defend, this.time)
-            break;
-          case GK.Attack:
-            this.dada.test(GK.Attack, this.time)
-            break;
-          case GK.Jump:
-            this.dada.test(GK.Jump, this.time)
-            break;
-          case 'dj':
-          case 'jd':
-            if (this.djdj.idx % 2) {
-              this.djdj.test(GK.Jump, this.time)
-              this.djdj.test(GK.Defend, this.time)
-            } else {
-              this.djdj.test(GK.Defend, this.time)
-              this.djdj.test(GK.Jump, this.time)
-            }
-            break;
-          case 'da':
-          case 'ad':
-            if (this.dada.idx % 2) {
-              this.dada.test(GK.Attack, this.time)
-              this.dada.test(GK.Defend, this.time)
-            } else {
-              this.dada.test(GK.Attack, this.time)
-              this.dada.test(GK.Jump, this.time)
-            }
-            break;
-          default:
-            this.dddd.hit || this.dddd.reset()
-            this.dada.hit || this.dada.reset()
-            this.djdj.hit || this.djdj.reset()
-            break;
+      if (is_human_ctrl(this) && key_downs.length && e.hp) {
+        for (const [k, v] of this.seqKeyMap) {
+          v.press(key_downs)
+          if (!v.hit) continue;
+          const { x, y, z } = e.position;
+          this.world.etc(x, y, z, v.data.etc)
+          if (v.data.etc === '2') this.world.team_stay(e.team)
+          if (v.data.etc === '4') this.world.team_move(e.team)
+          if (v.data.etc === '0') this.world.team_come(e.team, x, y, z)
+          v.reset()
         }
       }
       this.queue.length = 0;
-      this._key_downs = '';
-      this._key_downs = '';
-    }
-    if (is_human_ctrl(this)) {
-      if (this.dddd.hit) {
-        this.world.etc(this.entity.position.x, this.entity.position.y, this.entity.position.z, "2")
-        this.world.team_stay(this.entity.team)
-        this.dddd.reset()
-      }
-      if (this.dada.hit) {
-        this.world.etc(this.entity.position.x, this.entity.position.y, this.entity.position.z, "4")
-        this.world.team_move(this.entity.team)
-        this.dada.reset()
-      }
-      if (this.djdj.hit) {
-        this.world.etc(this.entity.position.x, this.entity.position.y, this.entity.position.z, "0")
-        this.world.team_come(this.entity.team, this.entity.position.x, this.entity.position.y, this.entity.position.z)
-        this.djdj.reset()
-      }
     }
     const entity = this.entity;
     const frame = entity.frame;

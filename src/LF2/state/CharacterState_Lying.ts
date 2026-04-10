@@ -26,9 +26,10 @@ export default class CharacterState_Lying extends CharacterState_Base {
       e.lf2.world.etc(e.position.x, e.position.y, e.position.z, '6')
       e.outline_color = void 0
       e.dead_join = null;
-      e.chasing = null
+      e.chasing = null;
+      e.wakeup_invuln = true;// 是否全部加入的都要这个？
     }
-    if (e.key_role) { // 关键角色起身的闪烁无敌时间
+    if (e.wakeup_invuln) { // 关键角色起身的闪烁无敌时间
       e.blinking = e.world.lying_blink_time;
     }
   }

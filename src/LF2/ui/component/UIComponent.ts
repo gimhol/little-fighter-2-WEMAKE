@@ -1,5 +1,5 @@
-import { ISchema, IVector3 } from "@/LF2/defines";
-import { make_schema } from "@/LF2/utils/schema/make_schema";
+import { ISchema, IVector3 } from "../../defines";
+import { make_schema } from "../../utils/schema/make_schema";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";

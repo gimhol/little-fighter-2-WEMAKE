@@ -1,6 +1,6 @@
-import { validate_schema } from "@/LF2/utils/schema";
-import { is_positive_int } from "../../utils";
-import { IUIImgInfo } from "../IUIImgInfo.dat";
+import { validate_schema } from "../../utils/schema/validate_schema";
+import { is_positive_int } from "../../utils/type_check/is_num";
+import type { IUIImgInfo } from "../IUIImgInfo.dat";
 import { Schema_IUIImgInfo } from "../Schema_IUIImgInfo";
 
 export function validate_ui_img_info(any: any, errors: string[] = [], warnings: string[] = []): any is IUIImgInfo {

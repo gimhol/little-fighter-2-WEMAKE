@@ -4,7 +4,6 @@ import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
 
 export class Julian_DFA extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Julian D>A'
   julian?: Entity | null;
   director = new ActionDirector()

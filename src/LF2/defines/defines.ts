@@ -27,15 +27,6 @@ export namespace Defines {
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
   export const DEFAULT_FIREN_FLAME_SPEED_Z = 0.5;
 
-  /** 被击中的对象晃动多少帧 */
-  export const DEFAULT_ITR_SHAKING = 6;
-
-  /** 击中敌人的对象停顿多少帧 */
-  export const DEFAULT_ITR_MOTIONLESS = 6;
-  export const DEFAULT_BALL_ITR_MOTIONLESS = 2;
-  export const DEFAULT_ITR_A_REST = 20;
-  export const DEFAULT_ITR_FALL = 40;
-
   /**
    * 默认值：当角色fall_value低于DEFAULT_FALL_VALUE_DIZZY时，角色应当进入眩晕状态
    *
@@ -303,42 +294,7 @@ export namespace Defines {
   export const BOOMERANG_CHASE_ACC_Z = 0.1
   export const BOOMERANG_CHASE_MAX_VY = -0.4
   export const BOOMERANG_CHASE_ACC_Y = 0.125
-
   export const MAX_AI_DESIRE = 10000 as const;
-
-  export const AI_W_ATK_F_X = 50;
-  export const AI_W_ATK_B_X = 40;
-  export const AI_W_ATK_M_X = -1;
-  export const AI_W_ATK_Z = 15;
-
-  export const AI_R_ATK_F_X = 100;
-  export const AI_R_ATK_B_X = 80;
-  export const AI_R_ATK_Z = 15;
-  export const AI_R_ATK_DESIRE = 10000;
-
-  export const AI_J_DESIRE = 50;
-  export const AI_J_ATK_F_X = 80;
-  export const AI_J_ATK_B_X = 90;
-  export const AI_J_ATK_Z = 60;
-  export const AI_J_ATK_Y_MIN = -60;
-  export const AI_J_ATK_Y_MAX = 60;
-
-  export const AI_D_DESIRE = 100;
-  export const AI_D_ATK_F_X = 200;
-  export const AI_D_ATK_B_X = 200;
-  export const AI_D_ATK_Z = 60;
-  export const AI_D_ATK_Y_MIN = -60;
-  export const AI_D_ATK_Y_MAX = 60;
-  export const AI_D_ATK_DESIRE = 10000;
-
-
-  export const AI_R_DESIRE_MIN = 0;
-  export const AI_R_DESIRE_MAX = 500;
-  export const AI_R_STOP_DESIRE = 10;
-  export const AI_R_X_MIN = 100;
-  export const AI_R_X_MAX = 2000;
-
-  export const AI_DEF_DESIRE = 100;
 
   export function desire(ratio: number): number {
     return round(Defines.MAX_AI_DESIRE * ratio)
@@ -379,8 +335,8 @@ export namespace Defines {
    * stay下敌人距离多近才追击
    */
   export const AI_STAY_CHASING_RANGE = 200;
-  export const AI_FOLLOWING_RANGE_X = 100;
-  export const AI_FOLLOWING_RANGE_Z = 100;
+  export const AI_FOLLOWING_RANGE_X = 50;
+  export const AI_FOLLOWING_RANGE_Z = 25;
 
   export const AI_MAX_CHASINGS_ENEMIES = 1;
   export const AI_MAX_AVOIDING_ENEMIES = 1;

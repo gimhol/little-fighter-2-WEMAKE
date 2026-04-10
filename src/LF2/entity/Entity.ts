@@ -31,6 +31,7 @@ import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
 import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
 import type IEntityCallbacks from "./IEntityCallbacks";
+import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
@@ -101,7 +102,7 @@ export class Entity {
   public fuse_bys!: Entity[] | null;
   public dismiss_time!: number | null;
   public dismiss_data!: IEntityData | null;
-  public has_stat_bar!: boolean;
+  protected _stat_bar_type!: StatBarType | null;
   protected _resting!: number;
   protected _resting_max?: number; // fallback from world
   protected _toughness!: number;
@@ -197,6 +198,7 @@ export class Entity {
 
   protected _state!: State_Base | null;
   protected _key_role!: boolean | null;
+  protected _wakeup_invuln!: boolean | null;
   protected _dead_gone!: boolean | null;
   protected _dead_join!: IDeadJoin | null;
   protected _ctrl!: BaseController;
@@ -369,6 +371,17 @@ export class Entity {
     const o = this.defend_ratio;
     if (o === v) return;
     this._defend_ratio = v;
+  }
+
+
+  get stat_bar_type(): number {
+    let r = this._stat_bar_type;
+    if (r !== null) return r;
+    return this.key_role ? StatBarType.Float : StatBarType.None
+  }
+  
+  set stat_bar_type(v: number) {
+    this._stat_bar_type = v;
   }
 
   get catching() {
@@ -593,6 +606,15 @@ export class Entity {
     this._key_role = v;
     this.callbacks.emit("on_name_changed")(this, this._name, this._name);
   }
+  /** 是否有起身无敌 */
+  get wakeup_invuln(): boolean {
+    return this._wakeup_invuln ?? this.key_role
+  }
+  set wakeup_invuln(v: boolean) {
+    if (this._wakeup_invuln === v) return;
+    this._wakeup_invuln = v;
+  }
+
   get dead_gone(): boolean {
     if (this._dead_gone !== null) return this._dead_gone;
     return !this.key_role;
@@ -653,7 +675,7 @@ export class Entity {
     this.dismiss_time = null;
     this.dismiss_data = null;
     this.copies.clear()
-    this.has_stat_bar = false;
+    this._stat_bar_type = null;
     this._game_time = -1;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
     this._resting_max = d.base.resting;
@@ -673,6 +695,7 @@ export class Entity {
     this._prev_frame = EMPTY_FRAME_INFO;
     this._catching = null
     this._catcher = null
+    this._wakeup_invuln = null;
     this._velocity.set(0, 0, 0)
     this._landing_velocity.set(0, 0, 0)
     this.velocities.length = 0;
@@ -1310,7 +1333,7 @@ export class Entity {
     if (!this._mp_r_tick.add())
       return;
     const r_ratio = this.dataset('mp_r_ratio');
-    const value = 1 + floor(round_float((500 - min(r_ratio * this._hp, 500)) / 100))
+    const value = 1 + floor(round_float((this.hp_max - min(r_ratio * this._hp, this.hp_max)) / 100))
     this.mp = min(this.mp_max, this._mp + value);
   }
 
@@ -1624,10 +1647,13 @@ export class Entity {
       const { injury } = cp_a;
       if (injury) {
         this.hp -= injury;
-        this.hp_r -= round(injury * (1 - this.dataset('hp_recoverability')))
+        this.hp_r -= injury * (1 - this.dataset('hp_recoverability'))
       }
-      if (cp_a.shaking && cp_a.shaking > 0)
-        this.shaking = cp_a.shaking;
+      const shaking = cp_a.shaking
+      if (typeof shaking === 'number')
+        this.shaking = shaking;
+      else if (injury)
+        this.shaking = this.dataset('itr_shaking')
     }
     this.prev_cpoint_a = cp_a;
 
@@ -2357,6 +2383,9 @@ export class Entity {
       this.world.bg.data.dataset?.[name] ??
       this.world[name]
     )
+  }
+  itr_fall(itr: IItrInfo): number {
+    return itr.fall ?? this.dataset('itr_fall')
   }
 }
 

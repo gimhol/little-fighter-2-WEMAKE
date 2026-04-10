@@ -1,5 +1,5 @@
 import { ICollision, ICollisionHandler } from "../base";
-import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, BuiltIn_OID, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
+import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
 import { is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";

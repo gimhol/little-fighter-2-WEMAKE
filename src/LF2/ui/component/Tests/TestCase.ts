@@ -1,14 +1,15 @@
-import { IState } from "@/LF2/base";
-import { O_ID } from "@/LF2/defines";
-import { CMD } from "@/LF2/defines/CMD";
-import { Entity } from "@/LF2/entity";
-import { round_float } from "@/LF2/utils/math/round_float";
+import { IState } from "../../../base";
+import { O_ID } from "../../../defines/BuiltIn_OID";
+import { CMD } from "../../../defines/CMD";
+import { Entity } from "../../../entity";
+import { round_float } from "../../../utils/math/round_float";
 import type { Tests } from "./Tests";
 
+let KEY: number = -1;
 export class TestCase implements IState<number> {
-  static KEY: number = 0;
-  readonly key: number = 0;
+  readonly key: number = ++KEY;
   readonly owner: Tests;
+  entities: Entity[] = [];
   name: string = 'None';
   get lf2() { return this.owner.lf2 }
   get world() { return this.owner.world }
@@ -40,6 +41,13 @@ export class TestCase implements IState<number> {
     const data = this.lf2.datas.find_entity(oid);
     if (!data) return null;
     return this.lf2.factory.create_entity(this.world, data) || null;
+  }
+  spawns(...oids: string[]): Entity[] {
+    const ret = [];
+    for (const oid of oids) {
+      ret.push(this.spawn(oid)!)
+    }
+    return ret;
   }
   bandits_8(px: number = 50, pz: number = 20): Entity[] {
     return this.around_8(O_ID.Bandit, px, pz)

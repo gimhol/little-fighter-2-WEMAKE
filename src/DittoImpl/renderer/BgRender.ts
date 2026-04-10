@@ -39,7 +39,7 @@ export class BgRender {
     }
   }
 
-  render() {
+  render(dt: number) {
     if (this.bg !== this.world.bg)
       this.set_bg(this.world.bg)
 
@@ -47,7 +47,7 @@ export class BgRender {
     this.world_renderer.camera.getWorldQuaternion(this.quaternion);
 
     obj_3d?.setRotationFromQuaternion(this.quaternion);
-    for (const layer of layers) layer.render();
+    for (const layer of layers) layer.render(dt);
   }
 
   release() {

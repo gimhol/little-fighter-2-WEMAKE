@@ -39,7 +39,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   readonly __is_bot_ctrl__ = true;
 
   protected _behavior: BotBehavior = BotBehavior.Move;
-  following?: [number, number, number];
+  goingto?: [number, number, number];
   en_out_of_range: boolean = false;
   protected _bot_id: string | undefined;
   protected _bot: IBotData | undefined;
@@ -96,7 +96,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   r_x_max       /**/ = 0;
   r_stop_desire /**/ = 0;
   d_desire      /**/ = 0;
-
+  
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.chasings.get()?.entity;
     this.desire(`${chasing?.id ?? 'no chasing'}`)
@@ -416,7 +416,10 @@ export class BotController extends BaseController implements Required<IBotDataSe
   stay(): void {
     this._behavior = BotBehavior.Stay
   }
-  goto(x: number, y: number, z: number) {
-    this.following = [x, y, z]
+  goto(x: number, y: number, z: number): void {
+    this.goingto = [x, y, z]
+  }
+  stop(): void {
+    this.goingto = void 0;
   }
 }

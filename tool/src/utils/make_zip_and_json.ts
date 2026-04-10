@@ -1,7 +1,7 @@
 import { zip } from "compressing";
 import fs from "fs/promises";
 import { join } from "path";
-import { Defines } from "../../../src/LF2/defines";
+import { Defines } from "../../../src/LF2/defines/defines";
 import { file_md5_str } from "./file_md5_str";
 import { is_dir } from "./is_dir";
 import { log } from "./log";

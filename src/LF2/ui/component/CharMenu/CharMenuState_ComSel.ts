@@ -1,4 +1,4 @@
-import { GameKey } from "@/LF2/defines";
+import { GameKey } from "../../../defines";
 import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import type { CharMenuLogic } from "./CharMenuLogic";
 import { CharMenuState } from "./CharMenuState";

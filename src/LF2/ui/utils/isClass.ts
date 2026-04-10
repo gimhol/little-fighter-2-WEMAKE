@@ -1,5 +1,4 @@
-import { IClazz } from "@/LF2/defines";
-// export interface IClazz<C = unknown> { new(...args: any): C }
+import type { IClazz } from "../../defines/ISchema";
 export function isClass<C>(cls: unknown, clazz: IClazz<C>): cls is IClazz<C> {
   if (!cls) return false;
   if (cls == clazz) return true;

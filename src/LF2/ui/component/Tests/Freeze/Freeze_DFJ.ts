@@ -4,7 +4,6 @@ import { TestCase } from "../TestCase";
 import { ActionDirector } from "../ActionDirector";
 
 export class Freeze_DFJ extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Freeze D>J'
   freeze1?: Entity | null;
   freeze2?: Entity | null;

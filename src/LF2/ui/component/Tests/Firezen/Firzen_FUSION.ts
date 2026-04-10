@@ -1,46 +1,39 @@
+import { ActionDirector } from "@/LF2";
 import { GK, O_ID, TeamEnum } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity/Entity";
 import { TestCase } from "../TestCase";
 
 export class Firzen_FUSION extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Firzen = Freeze + Firen'
   firen?: Entity | null;
   freze?: Entity | null;
+  director = new ActionDirector().offset(1000, () => {
+    this.firen?.ctrl.db_hit(GK.R).key_up(GK.R)
+    this.freze?.ctrl.db_hit(GK.L).key_up(GK.L)
+  }).offset(6000, () => {
+    this.firen?.ctrl.click(GK.d, GK.j, GK.a)
+    this.freze?.ctrl.click(GK.d, GK.j, GK.a)
+  }).times(1)
 
   override update(dt: number): number | void | undefined {
-    const { firen, freze } = this;
-    if (!firen || !freze) return;
-
-    if (this.fsm.state_time > 6000) {
-      firen.ctrl.click(GK.d, GK.j, GK.a)
-      freze.ctrl.click(GK.d, GK.j, GK.a)
-    } else if (this.fsm.state_time > 1200) {
-
-    } else if (this.fsm.state_time > 1000) {
-      firen.ctrl.db_hit(GK.R).key_up(GK.R)
-      freze.ctrl.db_hit(GK.L).key_up(GK.L)
-    }
+    this.director.update(dt);
   }
   override enter(): void {
-    {
-      const firen = this.firen = this.spawn(O_ID.Firen);
-      if (!firen) return;
-      firen.set_position(this.midX - 300, 0, this.midZ);
-      firen.team = TeamEnum.Team_1
-      firen.facing = 1;
-      firen.hp = 100;
-      firen.attach();
-    }
-    {
-      const freze = this.freze = this.spawn(O_ID.Freeze);
-      if (!freze) return;
-      freze.set_position(this.midX + 300, 0, this.midZ);
-      freze.team = TeamEnum.Team_1
-      freze.facing = -1;
-      freze.hp = 100;
-      freze.attach();
-    }
+    this.director.reset();
+    const [firen, freze] = this.spawns(O_ID.Firen, O_ID.Freeze);
+    if (!firen || !freze) return;
+    firen.set_position(this.midX - 300, 0, this.midZ);
+    firen.team = TeamEnum.Team_1
+    firen.facing = 1;
+    firen.hp = 100;
+    firen.attach();
+    freze.set_position(this.midX + 300, 0, this.midZ);
+    freze.team = TeamEnum.Team_1
+    freze.facing = -1;
+    freze.hp = 100;
+    freze.attach();
+    this.freze = freze;
+    this.firen = firen;
     this.bandits_8().forEach(v => {
       v.team = TeamEnum.Team_2
     })

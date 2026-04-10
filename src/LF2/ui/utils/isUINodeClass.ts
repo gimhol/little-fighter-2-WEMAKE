@@ -1,4 +1,4 @@
-import { IClazz } from "@/LF2/defines";
+import type { IClazz } from "../../defines/ISchema";
 import { UINode } from "../UINode";
 import { isClass } from "./isClass";
 
