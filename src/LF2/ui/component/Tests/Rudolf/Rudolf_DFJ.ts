@@ -4,7 +4,6 @@ import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
 
 export class Rudolf_DFJ extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Rudolf J + ^|v + D + D>J';
   fighters: Entity[] = [];
   director = new ActionDirector()

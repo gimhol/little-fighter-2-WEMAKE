@@ -2,7 +2,6 @@ import { GK, O_ID, TeamEnum } from "@/LF2/defines";
 import { TestCase } from "../TestCase";
 
 export class Julian_DUJ extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Julian D^J'
   override enter(): void {
 

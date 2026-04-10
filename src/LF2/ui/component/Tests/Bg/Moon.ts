@@ -5,7 +5,6 @@ import { TestCase } from "../TestCase";
 import { CMD } from "@/LF2/defines/CMD";
 
 export class MoonTest extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Bg Override Gravity Test, Normal Jump / Jump + Defend / Small Jump';
   louis1?: Entity | null;
   louis2?: Entity | null;

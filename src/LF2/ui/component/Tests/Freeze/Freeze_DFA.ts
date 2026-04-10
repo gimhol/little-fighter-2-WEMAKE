@@ -5,7 +5,6 @@ import { TestCase } from "../TestCase";
 
 
 export class Freeze_DFA extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Freeze D>A+A+A';
   freeze1?: Entity | null;
   freeze2?: Entity | null;

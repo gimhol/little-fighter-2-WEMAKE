@@ -3,7 +3,6 @@ import { Entity } from "@/LF2/entity/Entity";
 import { TestCase } from "../TestCase";
 
 export class Firzen_FUSION extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Firzen = Freeze + Firen'
   firen?: Entity | null;
   freze?: Entity | null;

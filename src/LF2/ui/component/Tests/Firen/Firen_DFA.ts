@@ -5,7 +5,6 @@ import { TestCase } from "../TestCase";
 
 
 export class Firen_DFA extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Firen D>A+A+A';
   firen1?: Entity | null;
   firen2?: Entity | null;

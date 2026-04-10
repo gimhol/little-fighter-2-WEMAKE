@@ -4,7 +4,6 @@ import { TestCase } from "../TestCase";
 import { ActionDirector } from "../ActionDirector";
 
 export class Firen_DFJ extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'Firen D>J'
   firen?: Entity | null;
   director = new ActionDirector()

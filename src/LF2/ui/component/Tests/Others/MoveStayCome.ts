@@ -2,7 +2,6 @@ import { ActionDirector, GK, LocalController, O_ID, TestCase } from "@/LF2";
 import { Entity } from "@/LF2/entity";
 
 export class MoveStayCome extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'MOVE(DADA) / STAY(DDDD) / COME(DJDJ)';
   figters: Entity[] = [];
   director = new ActionDirector()

@@ -7,7 +7,7 @@ import type { Tests } from "./Tests";
 
 export class TestCase implements IState<number> {
   static KEY: number = 0;
-  readonly key: number = 0;
+  readonly key: number = ++TestCase.KEY;
   readonly owner: Tests;
   name: string = 'None';
   get lf2() { return this.owner.lf2 }

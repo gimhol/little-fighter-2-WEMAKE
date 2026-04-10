@@ -5,7 +5,6 @@ import { Entity } from "@/LF2/entity";
 
 
 export class Come extends TestCase {
-  override readonly key: number = ++TestCase.KEY;
   override name: string = 'MOVE(DADA) / STAY(DDDD) / COME(DJDJ)';
   figters: Entity[] = [];
   director = new ActionDirector()
