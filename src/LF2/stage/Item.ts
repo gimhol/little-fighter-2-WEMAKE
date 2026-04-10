@@ -108,6 +108,7 @@ export default class Item {
     if (is_fighter(e)) {
       e.outline_color = outline_color ?? '#FF0000'
       e.stat_bar_type = StatBarType.None;
+      e.wakeup_invuln = false;
     }
 
     e.ctrl = this.lf2.factory.create_ctrl(e.data.id, "", e);
