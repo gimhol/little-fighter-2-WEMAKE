@@ -28,7 +28,7 @@ export default class CharacterState_Lying extends CharacterState_Base {
       e.dead_join = null;
       e.chasing = null
     }
-    if (e.key_role) { // 关键角色起身的闪烁无敌时间
+    if (e.wakeup_invuln) { // 关键角色起身的闪烁无敌时间
       e.blinking = e.world.lying_blink_time;
     }
   }

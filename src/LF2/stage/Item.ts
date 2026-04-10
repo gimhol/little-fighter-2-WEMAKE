@@ -104,10 +104,13 @@ export default class Item {
     } = this.info;
     if (this.times) this.times--;
     e.outline_color = outline_color
-    if (is_fighter(e)) e.outline_color = outline_color ?? '#FF0000'
+    if (is_fighter(e)) {
+      e.outline_color = outline_color ?? '#FF0000'
+    }
 
     e.ctrl = this.lf2.factory.create_ctrl(e.data.id, "", e);
     e.dead_gone = true;
+    e.wakeup_invuln = true;
     e.reserve = reserve ?? 0;
     e.set_position(
       this.lf2.mt.range(x, x + range_x),

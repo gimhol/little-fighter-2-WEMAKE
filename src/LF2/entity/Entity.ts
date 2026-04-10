@@ -197,6 +197,7 @@ export class Entity {
 
   protected _state!: State_Base | null;
   protected _key_role!: boolean | null;
+  protected _wakeup_invuln!: boolean | null;
   protected _dead_gone!: boolean | null;
   protected _dead_join!: IDeadJoin | null;
   protected _ctrl!: BaseController;
@@ -593,6 +594,14 @@ export class Entity {
     this._key_role = v;
     this.callbacks.emit("on_name_changed")(this, this._name, this._name);
   }
+  /** 是否有起身无敌 */
+  get wakeup_invuln(): boolean {
+    return this._wakeup_invuln ?? this.key_role
+  }
+  set wakeup_invuln(v: boolean) {
+    if (this._wakeup_invuln === v) return;
+    this._wakeup_invuln = v;
+  }
   get dead_gone(): boolean {
     if (this._dead_gone !== null) return this._dead_gone;
     return !this.key_role;
@@ -673,6 +682,7 @@ export class Entity {
     this._prev_frame = EMPTY_FRAME_INFO;
     this._catching = null
     this._catcher = null
+    this._wakeup_invuln = null;
     this._velocity.set(0, 0, 0)
     this._landing_velocity.set(0, 0, 0)
     this.velocities.length = 0;
