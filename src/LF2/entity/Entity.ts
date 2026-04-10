@@ -31,6 +31,7 @@ import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
 import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
 import type IEntityCallbacks from "./IEntityCallbacks";
+import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
@@ -101,7 +102,7 @@ export class Entity {
   public fuse_bys!: Entity[] | null;
   public dismiss_time!: number | null;
   public dismiss_data!: IEntityData | null;
-  public has_stat_bar!: boolean;
+  protected _stat_bar_type!: number | null;
   protected _resting!: number;
   protected _resting_max?: number; // fallback from world
   protected _toughness!: number;
@@ -372,6 +373,17 @@ export class Entity {
     this._defend_ratio = v;
   }
 
+
+  get stat_bar_type(): number {
+    let r = this._stat_bar_type;
+    if (r !== null) return r;
+    return this.key_role ? StatBarType.Float : StatBarType.None
+  }
+
+  set stat_bar_type(v: number) {
+    this._stat_bar_type = v;
+  }
+
   get catching() {
     return this._catching;
   }
@@ -602,6 +614,7 @@ export class Entity {
     if (this._wakeup_invuln === v) return;
     this._wakeup_invuln = v;
   }
+
   get dead_gone(): boolean {
     if (this._dead_gone !== null) return this._dead_gone;
     return !this.key_role;
@@ -662,7 +675,7 @@ export class Entity {
     this.dismiss_time = null;
     this.dismiss_data = null;
     this.copies.clear()
-    this.has_stat_bar = false;
+    this._stat_bar_type = null;
     this._game_time = -1;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
     this._resting_max = d.base.resting;

@@ -1,6 +1,7 @@
 import { new_team } from "@/LF2/base";
 import { Defines, type IEntityData } from "@/LF2/defines";
 import { IEntityCallbacks } from "@/LF2/entity";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 import { Ticker } from "@/LF2/Ticker";
 import { UIComponent } from "./UIComponent";
 
@@ -52,8 +53,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.facing = this._lr ? -1 : 1;
     fighter.callbacks.add(this._fighter_cbs)
     fighter.hp = fighter.hp_r = fighter.hp_max = 150;
-    fighter.has_stat_bar = true;
-    fighter.key_role = true;
+    fighter.stat_bar_type = StatBarType.None;
     fighter.dead_gone = true;
     fighter.attach()
     fighter.enter_frame({ id: "running_0" })
