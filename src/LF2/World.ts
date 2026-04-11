@@ -73,6 +73,8 @@ export class World extends WorldDataset {
    * 值: 角色
    */
   readonly puppets = new Map<string, Entity>();
+  readonly puppet_teams = new Set<string>();
+
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();
   get bg() { return this._bg; }
@@ -155,7 +157,7 @@ export class World extends WorldDataset {
         this.callbacks.emit("on_fighter_add")(entity);
         const player = this.lf2.players.get(entity.ctrl.player_id)
         if (player) {
-          player.fighter = entity
+          player.fighter = entity;
           this.puppets.set(entity.ctrl.player_id, entity);
           this.callbacks.emit("on_puppet_add")(entity.ctrl.player_id);
         }
@@ -513,7 +515,6 @@ export class World extends WorldDataset {
       buff.unmount();
       this.buffs.delete(key);
     }
-
     for (const e of this.entities) {
       const { is_ghost } = e;
       if (!is_ghost && update_chasing && this._chasers.size)
@@ -567,7 +568,6 @@ export class World extends WorldDataset {
       const ok = this.puppets.delete(entity.ctrl.player_id);
       if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
       this.renderer.del_entity(entity);
-
       entity.release();
       this.lf2.factory.recycle_entity(entity)
     }
