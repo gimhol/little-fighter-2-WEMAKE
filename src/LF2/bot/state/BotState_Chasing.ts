@@ -216,7 +216,7 @@ export class BotState_Chasing extends BotState_Base {
       c.key_up(GK.L, GK.R, GK.U, GK.D);
     }
     if (
-      between(dist_en_x, 0, c.w_atk_x) &&
+      between(dist_en_x, -5, c.w_atk_x) &&
       between(abs_dz, 0, c.w_atk_z)
     ) {
       if (

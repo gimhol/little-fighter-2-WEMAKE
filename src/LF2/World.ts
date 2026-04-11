@@ -438,7 +438,9 @@ export class World extends WorldDataset {
         case CMD.F8:
           if (this.fn_locked || stage_limit()) continue;
           this.add_count(CMD.F8, 1)
-          this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+          const is_stage = this.stage.id !== Defines.VOID_STAGE.id
+          const weapon_datas = this.lf2.datas.get_weapons_of_group(is_stage ? EntityGroup.StageWeapon : EntityGroup.VsWeapon)
+          for (const wd of weapon_datas) this.lf2.entities.add(wd, 1);
           continue;
         case CMD.F9:
           if (this.fn_locked || stage_limit()) continue;

@@ -330,6 +330,11 @@ export default class DatMgr {
       (v) => v.base.group && v.base.group.indexOf(group) >= 0,
     );
   }
+  get_weapons_of_group(group: string): IEntityData[] {
+    return this.weapons.filter(
+      (v) => v.base.group && v.base.group.indexOf(group) >= 0,
+    );
+  }
   get_fighters_not_in_group(group: string): IEntityData[] {
     return this.fighters.filter(
       (v) => !v.base.group || v.base.group.indexOf(group) < 0,

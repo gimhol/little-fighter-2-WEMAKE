@@ -46,6 +46,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   protected _bot: IBotData | undefined;
   get bot(): IBotData | undefined { return this._bot; }
   get behavior(): BotBehavior { return this._behavior }
+
   /** 走攻触发范围X */
   get w_atk_x() {
     const en = this.chasings.get()?.entity;
@@ -227,8 +228,8 @@ export class BotController extends BaseController implements Required<IBotDataSe
       if (me.holding)
         return false;
       // TODO: 队友Bot尽量不喝
-      if (e.data.base.type === WeaponType.Drink){
-        
+      if (e.data.base.type === WeaponType.Drink) {
+
       }
 
       if (e_state == StateEnum.Weapon_OnGround)
