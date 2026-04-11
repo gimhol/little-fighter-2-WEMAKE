@@ -129,7 +129,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
     if (
       wt === WeaponType.Baseball ||
       wt === WeaponType.Drink
-    ) return 300;
+    ) return 100;
     if (
       wt === WeaponType.Stick ||
       wt === WeaponType.Knife ||
