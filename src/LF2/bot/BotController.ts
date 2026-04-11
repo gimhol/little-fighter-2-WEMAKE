@@ -96,7 +96,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   r_x_max       /**/ = 0;
   r_stop_desire /**/ = 0;
   d_desire      /**/ = 0;
-  
+
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.chasings.get()?.entity;
     this.desire(`${chasing?.id ?? 'no chasing'}`)
@@ -208,13 +208,38 @@ export class BotController extends BaseController implements Required<IBotDataSe
       this.entity.invulnerable) return 0
 
     const { itr: itrs } = e
-    if (!ATTCKING_STATES.some(v => v === e.frame.state))
-      return 0
+    do {
+      if (is_ball(e))
+        break;
+
+      const { state } = e.frame
+      if (is_weapon(e)) {
+        if (StateEnum.HeavyWeapon_InTheSky == state)
+          break;
+        if (StateEnum.Weapon_Throwing == state)
+          break;
+        if (StateEnum.Weapon_OnHand == state && e.bearer?.frame.wpoint?.attacking)
+          break;
+        return 0;
+      }
+
+      if (is_fighter(e)) {
+        if (!ATTCKING_STATES.some(v => v === state))
+          return 0
+        if (e.fall_value < e.fall_value_max)
+          break;
+        if (e.defend_value < e.defend_value_max)
+          break;
+      }
+
+      return 0;
+    } while (0);
+
 
     const hit = is_ray_hit(e, this.entity, {
       x: max(e.velocity.x, 1),
       z: e.velocity.z,
-      min_x: -80,
+      min_x: -20,
       max_x: max(abs(10 * e.velocity.x), 60),
       min_z: -2 * Defines.DAFUALT_QUBE_LENGTH,
       max_z: max(abs(10 * e.velocity.z), 2 * Defines.DAFUALT_QUBE_LENGTH)
