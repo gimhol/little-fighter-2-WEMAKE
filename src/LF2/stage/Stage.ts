@@ -370,7 +370,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       temp.push(e);
     }
     this.world.del_entities(temp);
-    this.callbacks.clear()
+    this.callbacks.clear();
   }
 
   all_boss_dead(): boolean {

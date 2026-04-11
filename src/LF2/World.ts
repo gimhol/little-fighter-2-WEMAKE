@@ -641,7 +641,7 @@ export class World extends WorldDataset {
     let cur_x = this.renderer.cam_x;
     const acc = min(
       acc_ratio,
-      0.5 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
+      0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
     );
     const max_speed = max_speed_ratio * acc;
 

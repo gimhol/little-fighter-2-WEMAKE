@@ -1,3 +1,4 @@
+import { GameKey, StateEnum, WeaponType } from "@/LF2/defines";
 import { KEY_NAME_LIST } from "../../controller/BaseController";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
@@ -19,14 +20,24 @@ export class BotState_Idle extends BotState_Base {
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
-
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
       return BotStateEnum.Avoiding;
     else if (en)
       return BotStateEnum.Chasing;
     else if (av)
       return BotStateEnum.Avoiding;
-    this.ctrl.key_up(...KEY_NAME_LIST)
+
+    c.key_up(...KEY_NAME_LIST)
+    if (
+      me.holding?.data.base.type === WeaponType.Drink &&
+      me.frame.state !== StateEnum.Drink
+    ) c.key_down(GameKey.a)
+  }
+  override leave(): void {
+    const { ctrl: c } = this;
+    const me = c.entity;
+    if (me.frame.state === StateEnum.Drink)
+      c.click(GameKey.d)
   }
 }
 

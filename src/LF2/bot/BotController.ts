@@ -9,7 +9,8 @@ import {
   Difficulty,
   GK,
   IBotAction, IBotData, IBotDataSet,
-  LGK, StateEnum
+  LGK, StateEnum,
+  WeaponType
 } from "../defines";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
@@ -153,6 +154,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
     const { entity: me } = this;
     return !!(
       me.hp > 0 &&
+      me.holding?.data.base.type !== WeaponType.Drink &&
       e?.is_attach &&
       e.hp > 0 &&
       e.frame.state !== StateEnum.Lying &&
@@ -192,6 +194,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
       e.blinking ||
       e.invulnerable ||
       !e.frame.bdy?.length ||
+      me.holding?.data.base.type === WeaponType.Drink ||
       (
         this.w_atk_m_x > abs(me.position.x - e.position.x) &&
         e.frame.state !== StateEnum.Defend &&
