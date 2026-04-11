@@ -150,14 +150,22 @@ export class BotController extends BaseController implements Required<IBotDataSe
    * @memberof BotController
    */
   should_chase(e?: Entity | null): boolean {
+    const { entity: me } = this;
     return !!(
-      this.entity.hp > 0 &&
+      me.hp > 0 &&
       e?.is_attach &&
       e.hp > 0 &&
       e.frame.state !== StateEnum.Lying &&
       !e.invisible &&
       !e.blinking &&
-      !e.invulnerable
+      !e.invulnerable &&
+      (
+        this.w_atk_m_x <= abs(me.position.x - e.position.x) ||
+        e.frame.state == StateEnum.Defend ||
+        e.frame.state == StateEnum.BrokenDefend ||
+        e.frame.state == StateEnum.Caught ||
+        e.frame.state == StateEnum.Injured
+      )
     )
   }
 
@@ -169,20 +177,27 @@ export class BotController extends BaseController implements Required<IBotDataSe
    * @memberof BotController
    */
   should_avoid(e?: Entity | null): boolean {
+    const { entity: me } = this;
     if (
-      this.entity.hp <= 0 ||
+      me.hp <= 0 ||
       !e?.is_attach ||
       e.hp <= 0
     ) return false;
 
     const dxz = manhattan_xz(this.entity, e)
+    if (dxz > 300) return false;
     return !!(
-      dxz < 300 && (
-        e.frame.state === StateEnum.Lying ||
-        e.invisible ||
-        e.blinking ||
-        e.invulnerable ||
-        !e.frame.bdy?.length
+      e.frame.state === StateEnum.Lying ||
+      e.invisible ||
+      e.blinking ||
+      e.invulnerable ||
+      !e.frame.bdy?.length ||
+      (
+        this.w_atk_m_x > abs(me.position.x - e.position.x) &&
+        e.frame.state !== StateEnum.Defend &&
+        e.frame.state !== StateEnum.BrokenDefend &&
+        e.frame.state !== StateEnum.Caught &&
+        e.frame.state !== StateEnum.Injured
       )
     )
   }
@@ -231,7 +246,6 @@ export class BotController extends BaseController implements Required<IBotDataSe
         if (e.defend_value < e.defend_value_max)
           break;
       }
-
       return 0;
     } while (0);
 

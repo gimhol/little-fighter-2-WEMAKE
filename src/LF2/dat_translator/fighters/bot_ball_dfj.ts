@@ -9,7 +9,7 @@ const ID = 'd>j' as const
  *
  * @export
  * @param {number} min_mp 至少需要多少mp
- * @param {number} [desire=0.05] 欲望值
+ * @param {number} [desire=0.0666] 欲望值
  * @param {number} [min_x=120] 最小x，与敌人x距离小于此值将不会触发
  * @param {number} [max_x] 最大x，与敌人x距离大于此值将不会触发
  * @param {number} [zable] 

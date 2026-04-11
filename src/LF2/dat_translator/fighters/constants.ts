@@ -1,1 +1,1 @@
-export const DESIRE_RATIO = 0.033333 as const;
+export const DESIRE_RATIO = 0.0666 as const;

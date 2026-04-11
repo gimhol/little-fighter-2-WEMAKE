@@ -18,9 +18,7 @@ export class BotState_Avoiding extends BotState_Base {
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
-    if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
-      return BotStateEnum.Avoiding;
-    else if (en)
+    if (en && av && manhattan_xz(me, av) > manhattan_xz(me, en))
       return BotStateEnum.Chasing;
     else if (!av)
       return BotStateEnum.Idle

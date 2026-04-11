@@ -7,7 +7,7 @@ import { frames } from "./frames";
 export function make_fighter_data_monk(data: IEntityData) {
   BotBuilder.make(data).set_actions(
     // d>a
-    bot_ball_dfa(100, 1 / 15, 0, 400),
+    bot_ball_dfa(100, void 0, 0, 400),
     // d>a+d>a
     bot_ball_dfa(100, 0.5, 0, 400)(a => {
       a.keys = [GK.Defend, 'F', GK.Attack]
