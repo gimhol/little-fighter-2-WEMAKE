@@ -48,31 +48,94 @@ export class BotController extends BaseController implements Required<IBotDataSe
   get behavior(): BotBehavior { return this._behavior }
   /** 走攻触发范围X */
   get w_atk_x() {
-    const chasing = this.chasings.get()?.entity;
-    if (!chasing) return 0;
-    return this.entity.facing === chasing.facing ?
+    const en = this.chasings.get()?.entity;
+    if (!en) return 0;
+    if (is_weapon(en)) return 40;
+
+    const wt = this.entity.holding?.data.base.type
+    if (
+      wt === WeaponType.Baseball ||
+      wt === WeaponType.Drink
+    ) return 800 * (this.entity.data.base.strength ?? 1);
+    if (
+      wt === WeaponType.Stick ||
+      wt === WeaponType.Knife
+    ) return 90;
+    if (
+      wt === WeaponType.Heavy
+    ) return 200 * (this.entity.data.base.strength ?? 1);
+    return this.entity.facing === en.facing ?
       this.w_atk_f_x :
       this.w_atk_b_x;
   }
   /** 跑攻触发范围X */
   get r_atk_x() {
-    const chasing = this.chasings.get()?.entity;
-    if (!chasing) return 0;
-    return this.entity.facing === chasing.facing ? this.r_atk_b_x : this.r_atk_f_x;
+    const en = this.chasings.get()?.entity;
+    if (!en) return 0;
+    const wt = this.entity.holding?.data.base.type
+    if (
+      wt === WeaponType.Baseball ||
+      wt === WeaponType.Drink
+    ) return 800 * (this.entity.data.base.strength ?? 1);
+    if (
+      wt === WeaponType.Stick ||
+      wt === WeaponType.Knife
+    ) return 100;
+    if (
+      wt === WeaponType.Heavy
+    ) return 200 * (this.entity.data.base.strength ?? 1);
+    return this.entity.facing === en.facing ? this.r_atk_b_x : this.r_atk_f_x;
   }
   /** 冲跳攻触发范围X */
   get d_atk_x() {
     const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
+    const wt = this.entity.holding?.data.base.type
+    if (
+      wt === WeaponType.Baseball ||
+      wt === WeaponType.Drink
+    ) return 800 * (this.entity.data.base.strength ?? 1);
+    if (
+      wt === WeaponType.Stick ||
+      wt === WeaponType.Knife
+    ) return 150;
+    if (
+      wt === WeaponType.Heavy
+    ) return 200 * (this.entity.data.base.strength ?? 1);
     return this.entity.facing === chasing.facing ? this.d_atk_b_x : this.d_atk_f_x;
   }
   /** 跳攻触发范围X */
   get j_atk_x() {
     const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
+    const wt = this.entity.holding?.data.base.type
+    if (
+      wt === WeaponType.Baseball ||
+      wt === WeaponType.Drink
+    ) return 500 * (this.entity.data.base.strength ?? 1);
+    if (
+      wt === WeaponType.Stick ||
+      wt === WeaponType.Knife
+    ) return 110;
+    if (
+      wt === WeaponType.Heavy
+    ) return 200 * (this.entity.data.base.strength ?? 1);
     return this.entity.facing === chasing.facing ? this.j_atk_b_x : this.j_atk_f_x;
   }
-
+  /** 最近站立攻击距离 */
+  get atk_m_x() {
+    const wt = this.entity.holding?.data.base.type
+    if (
+      wt === WeaponType.Baseball ||
+      wt === WeaponType.Drink
+    ) return 300;
+    if (
+      wt === WeaponType.Stick ||
+      wt === WeaponType.Knife ||
+      wt === WeaponType.Heavy
+    ) return 20;
+    return this.w_atk_m_x
+  }
   w_atk_f_x     /**/ = 0;
   w_atk_b_x     /**/ = 0;
   w_atk_m_x     /**/ = 0;
@@ -152,21 +215,36 @@ export class BotController extends BaseController implements Required<IBotDataSe
    */
   should_chase(e?: Entity | null): boolean {
     const { entity: me } = this;
+    const e_state = e?.frame.state;
+
+    if (me.hp <= 0)
+      return false;
+    if (me.holding?.data.base.type == WeaponType.Drink)
+      return false;
+    if (!e?.is_attach || e.hp <= 0)
+      return false;
+    if (is_weapon(e)) {
+      if (me.holding)
+        return false;
+      if (e_state == StateEnum.Weapon_OnGround)
+        return true;
+      if (e_state == StateEnum.HeavyWeapon_OnGround)
+        return true
+      return false;
+    }
+    if (e_state == StateEnum.Lying)
+      return false;
     return !!(
-      me.hp > 0 &&
-      me.holding?.data.base.type !== WeaponType.Drink &&
-      e?.is_attach &&
-      e.hp > 0 &&
-      e.frame.state !== StateEnum.Lying &&
       !e.invisible &&
       !e.blinking &&
       !e.invulnerable &&
       (
-        this.w_atk_m_x <= abs(me.position.x - e.position.x) ||
-        e.frame.state == StateEnum.Defend ||
-        e.frame.state == StateEnum.BrokenDefend ||
-        e.frame.state == StateEnum.Caught ||
-        e.frame.state == StateEnum.Injured
+        me.ground_y != me.position.y ||
+        this.atk_m_x <= abs(me.position.x - e.position.x) ||
+        e_state == StateEnum.Defend ||
+        e_state == StateEnum.BrokenDefend ||
+        e_state == StateEnum.Caught ||
+        e_state == StateEnum.Injured
       )
     )
   }
@@ -196,7 +274,8 @@ export class BotController extends BaseController implements Required<IBotDataSe
       !e.frame.bdy?.length ||
       me.holding?.data.base.type === WeaponType.Drink ||
       (
-        this.w_atk_m_x > abs(me.position.x - e.position.x) &&
+        me.ground_y == me.position.y &&
+        this.atk_m_x > abs(me.position.x - e.position.x) &&
         e.frame.state !== StateEnum.Defend &&
         e.frame.state !== StateEnum.BrokenDefend &&
         e.frame.state !== StateEnum.Caught &&
@@ -298,8 +377,25 @@ export class BotController extends BaseController implements Required<IBotDataSe
         this.chasings.look(this.entity, other)
         return;
       }
-
-    } else if (is_ball(other) || is_weapon(other)) {
+    } else if (is_weapon(other)) {
+      if (
+        !this.entity.holding && (
+          other.frame.state === StateEnum.Weapon_OnGround ||
+          other.frame.state === StateEnum.HeavyWeapon_OnGround
+        )
+      ) {
+        this.chasings.look(this.entity, other)
+        return;
+      }
+      if (this.entity.is_ally(other)) {
+        return;
+      }
+      const dd = this.should_defend(other)
+      if (dd) {
+        this.defends.look(this.entity, other, dd)
+        return;
+      }
+    } else if (is_ball(other)) {
       if (this.entity.is_ally(other)) {
         return;
       }

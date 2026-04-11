@@ -78,7 +78,7 @@ export class BotDataSet implements Required<IBotDataSet> {
   /** 欲望值：停止跑步 */
   r_stop_desire = 10;
   /** 欲望值: 防御 */
-  d_desire = 100;
+  d_desire = 150;
   /** 走攻触发范围X(敌人正对) */
   w_atk_f_x = 50;
   /** 走攻触发范围X(敌人背对) */
