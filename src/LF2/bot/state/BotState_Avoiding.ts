@@ -16,7 +16,6 @@ export class BotState_Avoiding extends BotState_Base {
     const av = c.avoidings.get()?.entity
     if (this.handle_defends()) return;
     if (is_fighter(en) && this.handle_bot_actions()) return;
-    if (this.handle_block()) return;
     if (this.defend_test()) return;
     this.random_jumping()
     if (en && av && manhattan_xz(me, av) > manhattan_xz(me, en))
@@ -64,6 +63,7 @@ export class BotState_Avoiding extends BotState_Base {
     const ZB = z_d > 0 ? GK.D : GK.U;
     c.key_down(ZF).key_up(ZB);
 
+    if (this.handle_block()) return;
 
   }
 }

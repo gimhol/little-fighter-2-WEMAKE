@@ -215,6 +215,8 @@ export class BotState_Chasing extends BotState_Base {
     } else {
       c.key_up(GK.L, GK.R, GK.U, GK.D);
     }
+
+    this.handle_block()
     if (
       between(dist_en_x, -5, c.w_atk_x) &&
       between(abs_dz, 0, c.w_atk_z)
@@ -231,14 +233,14 @@ export class BotState_Chasing extends BotState_Base {
     } else {
       c.key_up(GK.a)
     }
-    if (x_reach && z_reach) {
+    if (x_reach) {
       /** 回头 */
-      if (abs_dx <= 5) {
-        c.key_up(GK.L, GK.R)
-      } else if (my_x > en_x && me.facing > 0) {
+      if (my_x > en_x && me.facing > 0) {
         c.key_down(GK.L).key_up(GK.R);
       } else if (my_x < en_x && me.facing < 0) {
         c.key_down(GK.R).key_up(GK.L);
+      } else {
+        c.key_up(GK.L, GK.R)
       }
     }
   }
