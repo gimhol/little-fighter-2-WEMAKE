@@ -225,13 +225,13 @@ export class BotController extends BaseController implements Required<IBotDataSe
     if (!e?.is_attach || e.hp <= 0)
       return false;
     if (is_weapon(e)) {
+      if (e.position.x < 0 || e.position.x > this.world.stage.right)
+        return false;
       if (me.holding)
         return false;
-      // TODO: 队友Bot尽量不喝
       if (e.data.base.type === WeaponType.Drink) {
-
+        // TODO: 队友Bot尽量不喝
       }
-
       if (e_state == StateEnum.Weapon_OnGround)
         return true;
       if (e_state == StateEnum.HeavyWeapon_OnGround)
