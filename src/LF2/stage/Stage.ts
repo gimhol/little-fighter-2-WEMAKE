@@ -7,7 +7,7 @@ import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhase
 import { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
-import { is_fighter, is_weapon } from "../entity/type_check";
+import { is_bot_ctrl, is_fighter, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
 import { is_num } from "../utils/type_check";
 import { Expressions } from "./Expressions";
@@ -420,12 +420,12 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       return false;
 
     for (const e of this.world.entities) {
-      if (
-        is_fighter(e) &&
-        e.hp >= 0 &&
-        this.lf2.players.has(e.ctrl.player_id) &&
-        e.position.x < this.cam_r
-      ) return false;
+      if (!is_fighter(e)) continue; // 非角色不判断
+      if (e.hp <= 0) continue; // 无血，不判断
+      if (e.position.x >= this.cam_r) continue; // 已达右侧，不判断
+      if (is_bot_ctrl(e.ctrl)) continue; // Bot不判断
+      if (this.lf2.players.has(e.ctrl.player_id))
+        return false;
     }
     return true;
   }
