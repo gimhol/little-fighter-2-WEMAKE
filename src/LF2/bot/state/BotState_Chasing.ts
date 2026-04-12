@@ -235,7 +235,9 @@ export class BotState_Chasing extends BotState_Base {
     }
     if (x_reach) {
       /** 回头 */
-      if (my_x > en_x && me.facing > 0) {
+      if (abs_dx < 3) {
+        c.key_up(GK.L, GK.R)
+      } else if (my_x > en_x && me.facing > 0) {
         c.key_down(GK.L).key_up(GK.R);
       } else if (my_x < en_x && me.facing < 0) {
         c.key_down(GK.R).key_up(GK.L);

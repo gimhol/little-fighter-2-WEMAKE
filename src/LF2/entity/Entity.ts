@@ -379,7 +379,7 @@ export class Entity {
     if (r !== null) return r;
     return this.key_role ? StatBarType.Float : StatBarType.None
   }
-  
+
   set stat_bar_type(v: number) {
     this._stat_bar_type = v;
   }
@@ -473,7 +473,11 @@ export class Entity {
       this.world.del_chaser(this);
       this.callbacks.emit("on_dead")(this);
       this.state?.on_dead?.(this);
-      if (this._data.base.brokens?.length) {
+      if (
+        this.frame.state !== StateEnum.Gone &&
+        this.frame.id !== Builtin_FrameId.Gone &&
+        this._data.base.brokens?.length
+      ) {
         this.apply_opoints(this._data.base.brokens);
         this.play_sound(this._data.base.dead_sounds);
       }

@@ -517,13 +517,10 @@ export class BotController extends BaseController implements Required<IBotDataSe
     } else {
       this.chasings.del(({ entity }) => !this.should_chase(entity))
       this.chasings.sort(this.entity)
-
       this.avoidings.del(({ entity }) => !this.should_avoid(entity))
       this.avoidings.sort(this.entity)
-
       this.defends.del(({ entity }) => 1 != this.should_defend(entity))
       this.defends.sort(this.entity)
-
       this.fsm.update(1)
     }
     return super.update();
