@@ -1650,8 +1650,10 @@ export class Entity {
     if (this.prev_cpoint_a !== cp_a) {
       const { injury } = cp_a;
       if (injury) {
+        const prev_hp = this.hp;
         this.hp -= injury;
         this.hp_r -= injury * (1 - this.dataset('hp_recoverability'))
+        summary_mgr.apply_damage(cer, injury, this, prev_hp);
       }
       const shaking = cp_a.shaking
       if (typeof shaking === 'number')
