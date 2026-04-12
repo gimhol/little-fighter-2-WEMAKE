@@ -384,12 +384,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
         return;
       }
     } else if (is_weapon(other)) {
-      if (
-        !this.entity.holding && (
-          other.frame.state === StateEnum.Weapon_OnGround ||
-          other.frame.state === StateEnum.HeavyWeapon_OnGround
-        )
-      ) {
+      if (this.should_chase(other)) {
         this.chasings.look(this.entity, other)
         return;
       }
