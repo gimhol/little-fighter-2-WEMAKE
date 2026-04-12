@@ -427,7 +427,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
         e.position.x < this.cam_r
       ) return false;
     }
-    return false;
+    return true;
   }
   get world_pause() {
     return !!this.phase?.world_pause
