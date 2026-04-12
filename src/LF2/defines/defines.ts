@@ -319,7 +319,7 @@ export namespace Defines {
    *
    * @type {number}
    */
-  export const DEFAULT_ARMOR_SHAKING_RATIO: number = 3
+  export const DEFAULT_ARMOR_SHAKING_RATIO: number = 2
 
   export const WEAPON_WEIGHT_HEAVY = 1.1;
   export const WEAPON_WEIGHT_ARROW = 0.74;

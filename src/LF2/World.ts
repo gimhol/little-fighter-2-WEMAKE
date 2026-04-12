@@ -77,6 +77,7 @@ export class World extends WorldDataset {
 
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();
+  has_players_alive: boolean = false
   get bg() { return this._bg; }
   set bg(v: Background) {
     if (v === this._bg) return;
@@ -490,8 +491,9 @@ export class World extends WorldDataset {
       }
     }
   }
+
   update_once() {
-    this.transform.update()
+    this.transform.update();
     this.update_ui();
     this.handle_keys();
     this.handle_cmds();
@@ -525,6 +527,8 @@ export class World extends WorldDataset {
       buff.unmount();
       this.buffs.delete(key);
     }
+
+    this.has_players_alive = false
     for (const e of this.entities) {
       const { is_ghost } = e;
       if (!is_ghost && update_chasing && this._chasers.size)
@@ -558,6 +562,8 @@ export class World extends WorldDataset {
         this.gones.add(e);
         continue;
       }
+      if (!this.has_players_alive && e.hp > 0 && is_human_ctrl(e.ctrl))
+        this.has_players_alive = true;
       if (!is_ghost) this._temp_entitis_set.add(e);
     }
     if (update_collisions) {
@@ -566,7 +572,6 @@ export class World extends WorldDataset {
       for (const [, c] of this.a_collisions)
         collisions_keeper.handle(c)
     }
-
     for (const entity of this.gones) {
       const attached = this.entities.delete(entity)
       if (!attached) continue;

@@ -5,7 +5,7 @@ import {
   ATTCKING_STATES,
   BotDataSet,
   BotStateEnum,
-  Defines,
+  Defines as D,
   Difficulty,
   GK,
   IBotAction, IBotData, IBotDataSet,
@@ -163,7 +163,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   r_x_max       /**/ = 0;
   r_stop_desire /**/ = 0;
   d_desire      /**/ = 0;
-
+  get stage() { return this.world.stage }
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.chasings.get()?.entity;
     this.desire(`${chasing?.id ?? 'no chasing'}`)
@@ -186,13 +186,13 @@ export class BotController extends BaseController implements Required<IBotDataSe
 
 
   /** 追击对象 */
-  readonly chasings = new NearestTargets(Defines.AI_MAX_CHASINGS_ENEMIES);
+  readonly chasings = new NearestTargets(D.AI_MAX_CHASINGS_ENEMIES);
 
   /** 躲避对象 */
-  readonly avoidings = new NearestTargets(Defines.AI_MAX_AVOIDING_ENEMIES);
+  readonly avoidings = new NearestTargets(D.AI_MAX_AVOIDING_ENEMIES);
 
   /** 防御对象  */
-  readonly defends = new NearestTargets(Defines.AI_MAX_DEFENDS_ENEMIES);
+  readonly defends = new NearestTargets(D.AI_MAX_DEFENDS_ENEMIES);
 
   protected _dummy: DummyEnum = DummyEnum.None;
 
@@ -226,15 +226,36 @@ export class BotController extends BaseController implements Required<IBotDataSe
       return false;
     if (!e?.is_attach || e.hp <= 0)
       return false;
+
+    const [l, r] = this.world.fighter_bound(me)
+    if (!between(e.position.x, l, r))
+      return false;
+
+    const abs_dx = abs(me.position.x - e.position.x)
     if (is_weapon(e)) {
-      const [l, r] = this.world.fighter_bound(me)
-      if (!between(e.position.x, l, r))
-        return false;
       if (me.holding)
         return false;
-      if (e.data.base.type === WeaponType.Drink) {
-        // TODO: 队友Bot尽量不喝
-      }
+
+      do {
+        // 队友Bot尽量不喝
+        if (this.stage.id === D.VOID_STAGE.id)
+          break; // 非闯关
+        if (e.data.base.type !== WeaponType.Drink)
+          break; // 非饮料
+        if (me.team == this.stage.team)
+          break; // 敌人角色
+        if (!e.data.base.drink?.hp_h_total)
+          return false; // 不补血的不喝
+        if (me.hp >= round_float(2 * me.hp_max / 3))
+          return false; // 血多的不喝
+        if (!this.world.has_players_alive)
+          break; // “大将”已死，挣扎之
+        if (this.behavior != BotBehavior.Stay)
+          return false; // 仅在Stay喝
+        if (abs_dx > 100)
+          return false; // 不喝太远的
+      } while (0);
+
       if (e_state == StateEnum.Weapon_OnGround)
         return true;
       if (e_state == StateEnum.HeavyWeapon_OnGround)
@@ -249,7 +270,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
       !e.invulnerable &&
       (
         me.ground_y != me.position.y ||
-        this.atk_m_x <= abs(me.position.x - e.position.x) ||
+        this.atk_m_x <= abs_dx ||
         e_state == StateEnum.Defend ||
         e_state == StateEnum.BrokenDefend ||
         e_state == StateEnum.Caught ||
@@ -346,8 +367,8 @@ export class BotController extends BaseController implements Required<IBotDataSe
       z: e.velocity.z,
       min_x: -20,
       max_x: max(abs(10 * e.velocity.x), 60),
-      min_z: -2 * Defines.DAFUALT_QUBE_LENGTH,
-      max_z: max(abs(10 * e.velocity.z), 2 * Defines.DAFUALT_QUBE_LENGTH)
+      min_z: -2 * D.DAFUALT_QUBE_LENGTH,
+      max_z: max(abs(10 * e.velocity.z), 2 * D.DAFUALT_QUBE_LENGTH)
     })
     if (!hit) return 0;
 
@@ -357,7 +378,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
       for (const itr of itrs) {
         if (!ATTCKING_ITR_KINDS.some(v => itr.kind === v)) continue;
         has_atk_itr_kind = true;
-        if (Defines.DEFAULT_FORCE_BREAK_DEFEND_VALUE === itr.bdefend) {
+        if (D.DEFAULT_FORCE_BREAK_DEFEND_VALUE === itr.bdefend) {
           return 2;
         }
         if (itr.vrest) just_a_rest = false
@@ -458,7 +479,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
    */
   desire(mark: string) {
     this.lf2.mt.mark = mark
-    return this.lf2.mt.range(0, Defines.MAX_AI_DESIRE)
+    return this.lf2.mt.range(0, D.MAX_AI_DESIRE)
   }
 
   action_desire(mark: string): number {
