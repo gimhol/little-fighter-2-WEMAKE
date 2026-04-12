@@ -941,6 +941,8 @@ export class World extends WorldDataset {
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;
+    this.callbacks.emit('on_counts')();
+    this._counts.clear()
   }
 
   ticker(): Ticker {
