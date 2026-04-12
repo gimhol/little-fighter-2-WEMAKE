@@ -9,7 +9,6 @@ import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
 import { is_fighter, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
-import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
 import { Expressions } from "./Expressions";
 import type IStageCallbacks from "./IStageCallbacks";
@@ -419,7 +418,16 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   get should_goto_next_stage(): boolean {
     if (this.is_chapter_finish || !this.is_stage_finish)
       return false;
-    return !find(this.world.entities, e => is_fighter(e) && e.hp > 0 && e.position.x < this.cam_r)
+
+    for (const e of this.world.entities) {
+      if (
+        is_fighter(e) &&
+        e.hp >= 0 &&
+        this.lf2.players.has(e.ctrl.player_id) &&
+        e.position.x < this.cam_r
+      ) return false;
+    }
+    return false;
   }
   get world_pause() {
     return !!this.phase?.world_pause
