@@ -15,7 +15,7 @@ import {
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { PlayerInfo } from "../PlayerInfo";
-import { abs, clamp, max, round, round_float } from "../utils";
+import { abs, between, clamp, max, round, round_float } from "../utils";
 import { DummyEnum, dummy_updaters } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
 import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
@@ -225,7 +225,8 @@ export class BotController extends BaseController implements Required<IBotDataSe
     if (!e?.is_attach || e.hp <= 0)
       return false;
     if (is_weapon(e)) {
-      if (e.position.x < 0 || e.position.x > this.world.stage.right)
+      const [l, r] = this.world.fighter_bound(me)
+      if (!between(e.position.x, l, r))
         return false;
       if (me.holding)
         return false;

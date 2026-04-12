@@ -266,6 +266,14 @@ export class World extends WorldDataset {
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
   }
 
+  fighter_bound(e: Entity): [number, number] {
+    const { player_l, player_r, enemy_l, enemy_r, team } = this.stage;
+    const is_player = e.team !== team;
+    const l = is_player ? player_l : enemy_l;
+    const r = is_player ? player_r : enemy_r;
+    return [l, r]
+  }
+
   /**
    * 限制角色位置
    * 
