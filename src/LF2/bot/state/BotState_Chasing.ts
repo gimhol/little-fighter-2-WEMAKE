@@ -10,7 +10,7 @@ export class BotState_Chasing extends BotState_Base {
   readonly key = BotStateEnum.Chasing;
   override update(dt: number) {
     super.update(dt)
-
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     const { ctrl: c } = this;
     if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;

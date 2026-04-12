@@ -1,13 +1,14 @@
 import type { IState } from "../../base/FSM";
 import { bot_cases } from "../../cases_instances";
-import { KEY_NAME_LIST } from "../../controller";
 import { GK, LGK, StateEnum } from "../../defines";
-import type { BotStateEnum } from "../../defines/BotStateEnum";
+import { BotStateEnum } from "../../defines/BotStateEnum";
 import type { BotController } from "../BotController";
 
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
   readonly ctrl: BotController
+  get world() { return this.ctrl.world }
+  get stage() { return this.world.stage }
   constructor(ctrl: BotController) {
     this.ctrl = ctrl;
   }
@@ -41,12 +42,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     }
   }
   update(dt: number): BotStateEnum | undefined | void {
-    const c = this.ctrl
-    const me = c.entity;
-    if (c.world.stage.is_stage_finish) {
-      c.key_down(GK.R).key_up(...KEY_NAME_LIST);
-      if (me.blockers.size) c.start(GK.a).end(GK.a)
-    }
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
   }
   enter?(): void;
   leave?(): void;
@@ -107,3 +103,4 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     return true
   }
 }
+

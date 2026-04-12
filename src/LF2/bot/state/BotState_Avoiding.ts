@@ -9,6 +9,7 @@ export class BotState_Avoiding extends BotState_Base {
   readonly key = BotStateEnum.Avoiding;
   override update(dt: number) {
     super.update(dt)
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     const { ctrl: c } = this;
     if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;

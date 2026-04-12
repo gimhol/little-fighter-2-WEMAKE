@@ -20,6 +20,7 @@ import { DummyEnum, dummy_updaters } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
 import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
 import { BotState_Following } from "./state/BotState_Following";
+import { BotState_StageEnd } from "./state/BotState_StageEnd";
 import { is_ray_hit } from "./utils/is_ray_hit";
 
 export enum BotBehavior {
@@ -33,7 +34,8 @@ export class BotController extends BaseController implements Required<IBotDataSe
       new BotState_Idle(this),
       new BotState_Chasing(this),
       new BotState_Avoiding(this),
-      new BotState_Following(this)
+      new BotState_Following(this),
+      new BotState_StageEnd(this)
     )
     .use(BotStateEnum.Idle)
 

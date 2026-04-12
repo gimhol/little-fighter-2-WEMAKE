@@ -11,6 +11,7 @@ export class BotState_Following extends BotState_Base {
     this.ctrl.key_up(...KEY_NAME_LIST);
   }
   override update(dt: number) {
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     super.update(dt);
     if (this.handle_defends()) return;
     if (this.handle_block()) return;

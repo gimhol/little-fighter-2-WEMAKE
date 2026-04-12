@@ -11,6 +11,7 @@ export class BotState_Idle extends BotState_Base {
   }
   override update(dt: number) {
     super.update(dt)
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     if (this.handle_defends()) return;
     if (this.handle_bot_actions()) return;
     this.random_jumping()
