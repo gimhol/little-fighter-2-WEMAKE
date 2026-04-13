@@ -19,15 +19,15 @@ export const bot_val_getters: Record<BotVal, (e: BotController) => any> = {
     if (!chasing) return NaN;
     return e.entity.facing * (chasing.position.x - e.entity.position.x);
   },
-  [BotVal.EnemyState]: e => e.chasings.get()?.entity?.frame.state,
+  [BotVal.EnemyState]: e => e.chasings.get()?.entity?.state,
   [BotVal.Safe]: e => {
     if (e.defends.entities.size) return 0;
     const chasing = e.chasings.get()?.entity;
     const avoiding = e.avoidings.get()?.entity;
     if (chasing && abs(chasing.position.x - e.entity.position.x) < 200 && abs(chasing.position.z - e.entity.position.z) < 150) return 0;
-    if (chasing && ATTCKING_STATES.some(v => chasing.frame.state === v)) return 0;
+    if (chasing && ATTCKING_STATES.some(v => chasing.state === v)) return 0;
     if (avoiding && abs(avoiding.position.x - e.entity.position.x) < 200 && abs(avoiding.position.z - e.entity.position.z) < 150) return 0;
-    if (avoiding && ATTCKING_STATES.some(v => avoiding.frame.state === v)) return 0;
+    if (avoiding && ATTCKING_STATES.some(v => avoiding.state === v)) return 0;
     return 1;
   },
   [BotVal.EnemyOutOfRange]: e => e.en_out_of_range ? 1 : 0

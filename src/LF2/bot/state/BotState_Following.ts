@@ -30,7 +30,7 @@ export class BotState_Following extends BotState_Base {
       const bound_t = round_float(en_z - offset_z);
       const bound_b = round_float(en_z + offset_z);
       // shit.
-      if (me.frame.state !== StateEnum.Running) {
+      if (me.state !== StateEnum.Running) {
         if (my_x < bound_l)
           c.key_up(GK.R).key_down(GK.R).key_up(GK.L);
         else if (my_x > bound_r)
@@ -56,7 +56,7 @@ export class BotState_Following extends BotState_Base {
         !between(my_z, bound_t, bound_b)
       ) return
     }
-    if (me.frame.state == StateEnum.Running) { // 别跑了
+    if (me.state == StateEnum.Running) { // 别跑了
       this.ctrl.key_down(me.facing < 0 ? GK.R : GK.L)
     }
     // TODO: 是不是该想个办法让持续位移招式（dennis d>j）停下来？

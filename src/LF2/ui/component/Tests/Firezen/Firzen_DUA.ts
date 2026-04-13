@@ -9,11 +9,11 @@ export class Firzen_DUA extends TestCase {
   override update(dt: number): number | void | undefined {
     const { firzen } = this;
     if (!firzen) return;
-    if (firzen.mp > 100 && firzen.frame.state === StateEnum.Standing)
+    if (firzen.mp > 100 && firzen.state === StateEnum.Standing)
       firzen.ctrl.click(GK.d, GK.U, GK.a)
     else if (
       firzen.mp > 100 &&
-      firzen.frame.state !== StateEnum.Standing &&
+      firzen.state !== StateEnum.Standing &&
       firzen.frame.hit?.a
     ) firzen.ctrl.click(GK.a)
   }

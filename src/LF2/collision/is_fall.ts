@@ -8,8 +8,8 @@ export function is_fall(collision: ICollision) {
     !is_fighter(victim) ||
     victim.fall_value <= 0 ||
     victim.hp <= 0 ||
-    victim.frame.state === SE.Frozen ||
-    (victim.fall_value < D.DEFAULT_FALL_VALUE_DIZZY && SE.Caught === victim.frame.state) ||
+    victim.state === SE.Frozen ||
+    (victim.fall_value < D.DEFAULT_FALL_VALUE_DIZZY && SE.Caught === victim.state) ||
     (victim.fall_value <= D.DEFAULT_FALL_VALUE_DIZZY && victim.position.y > victim.ground_y)
   );
 }

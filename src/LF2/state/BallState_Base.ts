@@ -4,7 +4,7 @@ import State_Base from "./State_Base";
 
 export default class BallState_Base extends State_Base {
   override enter(e: Entity, _prev_frame: IFrameInfo): void {
-    switch (e.frame.state) {
+    switch (e.state) {
       case StateEnum.Ball_Hitting:
       case StateEnum.Ball_Hit:
       case StateEnum.Ball_Rebounding:

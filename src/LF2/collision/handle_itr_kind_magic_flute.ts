@@ -36,12 +36,12 @@ export function handle_itr_kind_magic_flute(collision: ICollision): void {
   buf.life.value = 0
   switch (victim.data.type) {
     case EntityEnum.Fighter:
-      if (victim.frame.state !== StateEnum.Falling) {
+      if (victim.state !== StateEnum.Falling) {
         victim.next_frame = { id: victim.data.indexes?.falling?.[-1][0] };
       }
       break;
     case EntityEnum.Weapon:
-      switch (victim.frame.state) {
+      switch (victim.state) {
         case StateEnum.Weapon_InTheSky:
         case StateEnum.HeavyWeapon_InTheSky:
           break;

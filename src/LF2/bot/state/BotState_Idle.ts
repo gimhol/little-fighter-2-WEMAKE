@@ -32,13 +32,13 @@ export class BotState_Idle extends BotState_Base {
     c.key_up(...KEY_NAME_LIST)
     if (
       me.holding?.base_type === WeaponType.Drink &&
-      me.frame.state !== StateEnum.Drink
+      me.state !== StateEnum.Drink
     ) c.key_down(GameKey.a)
   }
   override leave(): void {
     const { ctrl: c } = this;
     const me = c.entity;
-    if (me.frame.state === StateEnum.Drink)
+    if (me.state === StateEnum.Drink)
       c.click(GameKey.d)
   }
 }

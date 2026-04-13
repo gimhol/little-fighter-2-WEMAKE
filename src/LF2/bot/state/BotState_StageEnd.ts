@@ -19,7 +19,7 @@ export class BotState_StageEnd extends BotState_Base {
       c.key_down(me.facing > 0 ? GK.L : GK.R)
       return BotStateEnum.Idle;
     }
-    if (me.frame.state !== StateEnum.Running)
+    if (me.state !== StateEnum.Running)
       c.key_down(GK.R).key_up(...KEY_NAME_LIST);
     if (me.blockers.size)
       c.start(GK.a).end(GK.a)

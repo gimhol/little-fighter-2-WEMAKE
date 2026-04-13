@@ -31,6 +31,12 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
   }
   enter?(): void;
   leave?(): void;
+
+  /**
+   * 防御
+   * 
+   * @returns 当防御时返回true，否则返回false 
+   */
   handle_defends(): boolean {
     const { ctrl: c } = this;
     const me = c.entity;
@@ -38,20 +44,19 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const target = c.defends.get();
     if (!target) return false;
 
-    // 概率防
-    if (c.action_desire('handle_defends_1') < c.dataset.d_desire) 
-      return me.frame.state === StateEnum.Defend;
+    // TODO: 不可防御的攻击
+    if (!target.defendable) return false
 
-    if (target.defendable) {
-      const dx = target.x - me.position.x;
-      const en_facing = target.facing;
-      if (dx > 0 && en_facing < 0) c.key_down(GK.R).key_up(GK.L)
-      if (dx < 0 && en_facing > 0) c.key_down(GK.L).key_up(GK.R)
+    const dx = target.x - me.position.x;
+    const en_facing = target.facing;
+    if (dx > 0 && en_facing < 0) c.key_down(GK.R).key_up(GK.L)
+    if (dx < 0 && en_facing > 0) c.key_down(GK.L).key_up(GK.R)
+
+    if (c.action_desire('handle_defends') >= c.dataset.d_desire) {
       c.click(GK.d).key_up(GK.L, GK.R)
-    } else {
-      // 不可防御的攻击
+      return true
     }
-    return true
+    return me.state == StateEnum.Defend;
   }
 
   handle_block(): boolean {
@@ -75,7 +80,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
       if (keys) keys_list.push(keys)
     }
 
-    action_ids = bot.states?.[me.frame.state]
+    action_ids = bot.states?.[me.state]
     if (action_ids) for (const aid of action_ids) {
       const action = bot.actions[aid];
       const keys = this.ctrl.handle_action(action)

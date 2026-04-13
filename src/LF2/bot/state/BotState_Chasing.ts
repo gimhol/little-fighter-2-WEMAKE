@@ -116,10 +116,7 @@ export class BotState_Chasing extends BotState_Base {
         if (me.catching) c.click(GK.a)
         break;
       case StateEnum.Defend:
-        if (dist_en_x < 0) {
-          c.key_down(me.facing == 1 ? GK.L : GK.R)
-            .key_up(GK.L, GK.R)
-        }
+        this.handle_defends()
         return;
       case StateEnum.Attacking:
       case StateEnum.BurnRun:

@@ -3,14 +3,14 @@ import { StateEnum, W_T } from "../defines";
 
 export function handle_weapon_hit_other(collision: ICollision): void {
   const { attacker } = collision;
-  if (attacker.frame.state === StateEnum.Weapon_OnHand) {
+  if (attacker.state === StateEnum.Weapon_OnHand) {
     return;
   }
   const is_base_ball =
     attacker.base_type === W_T.Baseball ||
     attacker.base_type === W_T.Drink;
 
-  switch (attacker.frame.state) {
+  switch (attacker.state) {
     case StateEnum.Weapon_Throwing:
       // TODO: 这里是击中的反弹，如何更合适？ -Gim
       if (is_base_ball) {

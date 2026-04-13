@@ -19,7 +19,7 @@ export function handle_itr_kind_whirlwind(c: ICollision) {
   victim.set_velocity(x, y, z);
   switch (victim.type) {
     case EntityEnum.Weapon:
-      switch (victim.frame.state) {
+      switch (victim.state) {
         case StateEnum.Weapon_InTheSky:
         case StateEnum.HeavyWeapon_InTheSky:
           break;

@@ -50,7 +50,7 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.VX]: e => e.velocity.x,
   [E_Val.VY]: e => e.velocity.y,
   [E_Val.VZ]: e => e.velocity.z,
-  [E_Val.FrameState]: e => e.frame.state,
+  [E_Val.FrameState]: e => e.state,
   [E_Val.Shaking]: e => e.shaking,
   [E_Val.Holding]: e => e.holding ? 1 : 0,
   [E_Val.HpRecoverable]: e => e.hp_r - e.hp,

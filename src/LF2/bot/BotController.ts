@@ -190,7 +190,7 @@ export class BotController extends BaseController {
    */
   should_chase(e?: Entity | null): boolean {
     const { entity: me } = this;
-    const e_state = e?.frame.state;
+    const e_state = e?.state;
 
     if (me.hp <= 0)
       return false;
@@ -269,7 +269,7 @@ export class BotController extends BaseController {
     const dxz = manhattan_xz(this.entity, e)
     if (dxz > 300) return false;
     return !!(
-      e.frame.state === StateEnum.Lying ||
+      e.state === StateEnum.Lying ||
       e.invisible ||
       e.blinking ||
       e.invulnerable ||
@@ -278,10 +278,10 @@ export class BotController extends BaseController {
       (
         me.ground_y == me.position.y &&
         this.atk_m_x > abs(me.position.x - e.position.x) &&
-        e.frame.state !== StateEnum.Defend &&
-        e.frame.state !== StateEnum.BrokenDefend &&
-        e.frame.state !== StateEnum.Caught &&
-        e.frame.state !== StateEnum.Injured
+        e.state !== StateEnum.Defend &&
+        e.state !== StateEnum.BrokenDefend &&
+        e.state !== StateEnum.Caught &&
+        e.state !== StateEnum.Injured
       )
     )
   }
@@ -413,7 +413,7 @@ export class BotController extends BaseController {
     let x = 0;
     let z = 0;
     let y = 0;
-    switch (entity.frame.state) {
+    switch (entity.state) {
       case StateEnum.Jump:
         x = round_float(px + 3 * vx);
         z = round_float(pz + 2 * vz);
@@ -499,7 +499,7 @@ export class BotController extends BaseController {
   }
   lock_when_stand_and_rest() {
     if (
-      this.entity.frame.state === StateEnum.Standing &&
+      this.entity.state === StateEnum.Standing &&
       this.entity.resting <= 0
     ) {
       this.entity.set_position(

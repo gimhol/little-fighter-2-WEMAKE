@@ -28,7 +28,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
       handle_itr_effect_freeze(collision)
       break;
     case ItrEffect.Ice: {
-      if (victim.frame.state === StateEnum.Frozen) {
+      if (victim.state === StateEnum.Frozen) {
         handle_injury(collision);
         handle_stiffness(collision)
         handle_rest(collision)
@@ -60,7 +60,7 @@ export function handle_itr_normal_bdy_normal(collision: ICollision) {
         victim.world.spark(x, y, z, SparkEnum.Hit);
       }
 
-      const ic = StateEnum.Caught === victim.frame.state;
+      const ic = StateEnum.Caught === victim.state;
       const { backhurtact, fronthurtact } = victim.frame.cpoint || {};
       const { fall_value_max: fvm, fall_value: fv } = victim;
       const { dizzy, grand_injured, injured } = victim.data.indexes || {}

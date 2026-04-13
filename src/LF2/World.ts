@@ -556,7 +556,7 @@ export class World extends WorldDataset {
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
-        e.frame.state === StateEnum.Gone
+        e.state === StateEnum.Gone
       ) {
         e.hp = e.hp_r = 0;
         this.gones.add(e);

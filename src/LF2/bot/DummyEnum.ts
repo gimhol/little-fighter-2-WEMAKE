@@ -45,7 +45,7 @@ export const dummy_updaters: Record<DummyEnum, IDummyUpdater | undefined> = {
   [DummyEnum.LockAtMid_RowingWhenFalling]: {
     update: (self) => {
       self.lock_when_stand_and_rest();
-      if (self.entity.frame.state === StateEnum.Falling) {
+      if (self.entity.state === StateEnum.Falling) {
         self.key_down(GK.j).key_up(GK.j);
       }
     }
@@ -53,7 +53,7 @@ export const dummy_updaters: Record<DummyEnum, IDummyUpdater | undefined> = {
   [DummyEnum.LockAtMid_JumpAndRowingWhenFalling]: {
     update: (self) => {
       const h = self.lock_when_stand_and_rest();
-      if (h || self.entity.frame.state === StateEnum.Falling) {
+      if (h || self.entity.state === StateEnum.Falling) {
         self.key_down(GK.j).key_up(GK.j);
       } else {
         self.end(GK.j);

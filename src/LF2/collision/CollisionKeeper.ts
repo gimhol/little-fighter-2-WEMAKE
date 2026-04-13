@@ -95,8 +95,8 @@ export class CollisionKeeper {
       collision.itr.kind,
       collision.victim.data.type,
       collision.bdy.kind,
-      collision.attacker.frame.state,
-      collision.victim.frame.state,
+      collision.attacker.state,
+      collision.victim.state,
     )
   }
   handle(collision: ICollision) {
