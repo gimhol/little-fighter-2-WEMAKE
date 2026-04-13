@@ -7,10 +7,11 @@ import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
-import { get_outline_material } from "./get_outline_material";
+import { get_outline_material } from "./materials/OutlineMaterial";
 import { get_color_material } from "./MaterialKeeper";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
+import { MaterialFactory, MaterialKind } from "./MaterialFactory";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
@@ -79,7 +80,9 @@ export class EntityRender {
     this.images = get_img_map(lf2, entity.data);
 
     const texture = this.images.get("0")?.pic?.texture;
-    const material = get_outline_material(texture);
+    const material = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial, m => {
+      m.uniforms.texture = { value: texture }
+    });
     material.uniforms.outlineWidth.value = 1;
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY, material
@@ -128,7 +131,7 @@ export class EntityRender {
     const { x, y, w, h } = info;
     main_mesh.scale.set(w, h, 0);
     const { material: m } = main_mesh;
-    m.uniforms.pTexture.value = img.pic.texture;
+    m.uniforms.texture.value = img.pic.texture;
     m.uniforms.tw.value = img.w;
     m.uniforms.th.value = img.h;
     m.uniforms.tsw.value = img.scale;
