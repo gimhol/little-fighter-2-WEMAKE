@@ -3,7 +3,10 @@ import type { Material } from "../_t";
 type Key = string | number | symbol;
 export enum MaterialKind {
   Invalid = 0,
-  Outline,
+  Outline = 'Outline',
+  Color = 'Color',
+  Image = 'Image',
+  BgLayer = 'BgLayer'
 }
 export interface IMaterialCreator<C extends Material = Material> {
   cls: new (...args: any) => C,

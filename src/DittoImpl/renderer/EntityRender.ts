@@ -8,7 +8,6 @@ import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
 import { MaterialFactory, MaterialKind } from "./MaterialFactory";
-import { get_color_material } from "./MaterialKeeper";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
@@ -23,7 +22,6 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
 }
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
-const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
 
 
 export class EntityRender {
@@ -96,7 +94,10 @@ export class EntityRender {
     if (typeof data.base.render_order === "number")
       mesh.renderOrder = data.base.render_order;
 
-    this.blood_mesh = this.blood_mesh || new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
+    this.blood_mesh = this.blood_mesh || new T.Mesh(
+      BLOOD_GEOMETRY,
+      MaterialFactory.get(MaterialKind.Color, T.MeshBasicMaterial, m => m.color = new T.Color(1, 0, 0))
+    )
     this.blood_mesh.visible = false;
     this.node = this.node || new T.Object3D();
   }

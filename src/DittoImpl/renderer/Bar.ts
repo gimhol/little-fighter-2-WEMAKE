@@ -1,7 +1,7 @@
 import type { LF2 } from "@/LF2/LF2";
 import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
-import { get_color_material } from "./MaterialKeeper";
+import { MaterialFactory, MaterialKind } from "./MaterialFactory";
 
 export class Bar {
   readonly mesh: T.Mesh;
@@ -17,9 +17,10 @@ export class Bar {
     this.mesh.scale.x = (this._max ? this._val / this._max : 0);
   }
   set color(color: string) {
-    const m = get_color_material(color);
-    this.mesh.material = m;
-    m.needsUpdate = true;
+    this.mesh.material = MaterialFactory.get(
+      MaterialKind.Color, T.MeshBasicMaterial,
+      m => m.color = new T.Color(color)
+    )
   }
   constructor(
     lf2: LF2,
@@ -31,7 +32,10 @@ export class Bar {
   ) {
     this.mesh = new T.Mesh(
       get_geometry(w, h, ax * w, ay * h),
-      get_color_material(color),
+      MaterialFactory.get(
+        MaterialKind.Color, T.MeshBasicMaterial,
+        m => m.color = new T.Color(color)
+      )
     );
   }
 
