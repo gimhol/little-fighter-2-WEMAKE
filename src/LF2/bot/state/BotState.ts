@@ -12,21 +12,6 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
   constructor(ctrl: BotController) {
     this.ctrl = ctrl;
   }
-  defend_test(): boolean {
-    const { ctrl: c } = this;
-    const en = c.defends.get()?.entity;
-    if (!en || c.desire('dt') > c.dataset.d_desire)
-      return false
-    const me = c.entity;
-    const m_facing = me.facing
-    const e_facing = en.facing
-    if (e_facing == m_facing) { // 回头防御。
-      if (e_facing < 0) c.key_down(GK.R).key_up(GK.L)
-      else c.key_down(GK.L).key_up(GK.R)
-    }
-    c.start(GK.d).end(GK.d)
-    return true;
-  }
   random_jumping() {
     const c = this.ctrl;
     const { state } = c.entity.frame;

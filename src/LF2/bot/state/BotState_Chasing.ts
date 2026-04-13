@@ -77,10 +77,11 @@ export class BotState_Chasing extends BotState_Base {
 
     switch (state) {
       case StateEnum.Normal:
-        if (this.defend_test()) return;
+        if (this.handle_defends())
+          return;
         break;
       case StateEnum.Running: {
-        if (this.defend_test()) return;
+        if (this.handle_defends()) return;
         if (wt && between(abs_dz, 0, 30)) {
           if (wt == WeaponType.Knife) {
             if (this.ctrl.desire('rtwd') < 100) c.key_down(GK_F).click(GK.a)
@@ -108,7 +109,7 @@ export class BotState_Chasing extends BotState_Base {
         return
       }
       case StateEnum.Injured:
-        if (this.defend_test()) return;
+        if (this.handle_defends()) return;
         break;
       case StateEnum.Catching:
         // shit, louisEx air-push frame's state is StateEnum.Catching...
@@ -133,7 +134,7 @@ export class BotState_Chasing extends BotState_Base {
         break;
       case StateEnum.Standing:
       case StateEnum.Walking: {
-        if (this.defend_test()) return;
+        if (this.handle_defends()) return;
         if (me.blockers.size) c.start(GK.a).end(GK.a)
         if (wt && between(abs_dz, 0, 30)) {
           if (wt == WeaponType.Knife) {
