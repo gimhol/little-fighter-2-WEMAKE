@@ -7,8 +7,8 @@ export function handle_weapon_hit_other(collision: ICollision): void {
     return;
   }
   const is_base_ball =
-    attacker.data.base.type === W_T.Baseball ||
-    attacker.data.base.type === W_T.Drink;
+    attacker.base_type === W_T.Baseball ||
+    attacker.base_type === W_T.Drink;
 
   switch (attacker.frame.state) {
     case StateEnum.Weapon_Throwing:

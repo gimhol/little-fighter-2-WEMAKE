@@ -15,12 +15,10 @@ export function make_fighter_data_knigt(data: IEntityData): IEntityData {
     toughness: 90,
   };
   BotBuilder.make(data).set_dataset({
-    w_atk_f_x: 90,
-    w_atk_b_x: 90,
-    j_atk_f_x: 90,
-    j_atk_b_x: 90,
-    d_atk_f_x: 200,
-    r_atk_f_x: 150,
+    w_atk_x: 90,
+    j_atk_x: 90,
+    d_atk_x: 200,
+    r_atk_x: 150,
   })
   return data;
 }

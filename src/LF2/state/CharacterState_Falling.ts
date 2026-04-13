@@ -24,7 +24,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
     const holding = e.holding
     // TODO: calc v here.
     if (holding) e.drop_holding();
-    if (holding?.data.base.type === WeaponType.Heavy)
+    if (holding?.base_type === WeaponType.Heavy)
       holding.team = e.team;
     if (e.hp <= 0 && e.fuse_bys?.length) {
       const { x: vx, y: vy, z: vz } = e.velocity;

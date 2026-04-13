@@ -37,7 +37,7 @@ export function handle_fall(collision: ICollision) {
     case ItrEffect.Fire:
     case ItrEffect.MFire2:
       if (fire) {
-        if (victim.holding?.data.base.type === WeaponType.Heavy)
+        if (victim.holding?.base_type === WeaponType.Heavy)
           victim.drop_holding()
         victim.enter_frame({
           id: fire[0],
@@ -50,7 +50,7 @@ export function handle_fall(collision: ICollision) {
     case ItrEffect.MFire1:
     case ItrEffect.FireExplosion:
       if (fire) {
-        if (victim.holding?.data.base.type === WeaponType.Heavy)
+        if (victim.holding?.base_type === WeaponType.Heavy)
           victim.drop_holding()
         victim.enter_frame({
           id: fire[0],

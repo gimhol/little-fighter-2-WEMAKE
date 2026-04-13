@@ -16,7 +16,7 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.PressFB]: e => e.ctrl.LR * e.facing,
   [E_Val.PressUD]: e => e.ctrl.UD,
   [E_Val.PressLR]: e => e.ctrl.LR,
-  [E_Val.Holding_W_Type]: e => e.holding?.data.base.type ?? 0,
+  [E_Val.Holding_W_Type]: e => e.holding?.base_type ?? 0,
   [E_Val.HP_P]: e => clamp(round((100 * e.hp) / e.hp_max), 0, 100),
   [E_Val.LF2_NET_ON]: e => e.lf2.is_cheat(CheatType.LF2_NET) ? 1 : 0,
   [E_Val.HERO_FT_ON]: e => e.lf2.is_cheat(CheatType.HERO_FT) ? 1 : 0,

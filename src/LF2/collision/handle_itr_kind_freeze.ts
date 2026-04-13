@@ -11,7 +11,7 @@ export function handle_itr_kind_freeze(collision: ICollision) {
   victim.fall_value -= attacker.itr_fall(itr)
   // const [vx, vy, vz] = calc_itr_velocity(collision)
   // victim.set_velocity(vx, vy, vz)
-  if (victim.holding?.data.base.type === WeaponType.Heavy)
+  if (victim.holding?.base_type === WeaponType.Heavy)
     victim.drop_holding()
   victim.next_frame = { id: victim.data.indexes?.ice };
   handle_injury(collision);
@@ -25,7 +25,7 @@ export function handle_itr_effect_freeze(collision: ICollision) {
   victim.fall_value -= attacker.itr_fall(itr)
   const [vx, vy, vz] = calc_itr_velocity(collision)
   victim.set_velocity(vx, vy, vz)
-  if (victim.holding?.data.base.type === WeaponType.Heavy)
+  if (victim.holding?.base_type === WeaponType.Heavy)
     victim.drop_holding()
   victim.next_frame = { id: victim.data.indexes?.ice };
   handle_injury(collision);

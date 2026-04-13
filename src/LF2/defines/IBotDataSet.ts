@@ -2,10 +2,7 @@ import { fields, int } from "../fields";
 
 export interface IBotDataSet {
   /** 走攻触发范围X(敌人正对) */
-  w_atk_f_x?: number;
-
-  /** 走攻触发范围X(敌人背对) */
-  w_atk_b_x?: number;
+  w_atk_x?: number;
 
   /** 走攻触发最小范围X */
   w_atk_m_x?: number;
@@ -17,28 +14,20 @@ export interface IBotDataSet {
   r_atk_desire?: number;
 
   /** 跑攻触发范围X(敌人正对) */
-  r_atk_f_x?: number;
+  r_atk_x?: number;
 
-  /** 跑攻触发范围X(敌人背对) */
-  r_atk_b_x?: number;
 
   /** 跑攻触发范围Z */
   r_atk_z?: number;
 
-  /** 冲跳攻触发范围X(敌人正对) */
-  d_atk_f_x?: number;
-
-  /** 冲跳攻触发范围X(敌人正对) */
-  d_atk_b_x?: number;
+  /** 冲跳攻触发范围X */
+  d_atk_x?: number;
 
   /** 冲跳攻触发范围Z */
   d_atk_z?: number;
 
   /** 跳攻触发范围X(敌人正对) */
-  j_atk_f_x?: number;
-
-  /** 跳攻触发范围X(敌人正对) */
-  j_atk_b_x?: number;
+  j_atk_x?: number;
 
   /** 跳攻触发范围Z */
   j_atk_z?: number;
@@ -80,7 +69,7 @@ export class BotDataSet implements Required<IBotDataSet> {
   /** 欲望值: 防御 */
   d_desire = 150;
   /** 走攻触发范围X(敌人正对) */
-  w_atk_f_x = 50;
+  w_atk_x = 50;
   /** 走攻触发范围X(敌人背对) */
   w_atk_b_x = 40;
   /** 走攻盲区 */
@@ -90,21 +79,15 @@ export class BotDataSet implements Required<IBotDataSet> {
   /** 跑攻欲望值 */
   r_atk_desire = 10000;
   /** 跑攻触发范围X(敌人正对) */
-  r_atk_f_x = 100;
-  /** 跑攻触发范围X(敌人背对) */
-  r_atk_b_x = 100;
+  r_atk_x = 100;
   /** 跑攻触发范围Z */
   r_atk_z = 15;
   /** 冲跳攻触发范围X(敌人正对) */
-  d_atk_f_x = 200;
-  /** 冲跳攻触发范围X(敌人正对) */
-  d_atk_b_x = 200;
+  d_atk_x = 200;
   /** 冲跳攻触发范围Z */
   d_atk_z = 60;
   /** 跳攻触发范围X(敌人正对) */
-  j_atk_f_x = 80;
-  /** 跳攻触发范围X(敌人正对) */
-  j_atk_b_x = 90;
+  j_atk_x = 80;
   /** 跳攻触发范围Z */
   j_atk_z = 60;
   /** 跳攻触发范围Y */
@@ -133,19 +116,15 @@ export class BotDataSet implements Required<IBotDataSet> {
 }
 
 export const bot_dataset_fields = fields<IBotDataSet>({
-  w_atk_f_x: int,
-  w_atk_b_x: int,
+  w_atk_x: int,
   w_atk_m_x: int,
   w_atk_z: int,
   r_atk_desire: int,
-  r_atk_f_x: int,
-  r_atk_b_x: int,
+  r_atk_x: int,
   r_atk_z: int,
-  d_atk_f_x: int,
-  d_atk_b_x: int,
+  d_atk_x: int,
   d_atk_z: int,
-  j_atk_f_x: int,
-  j_atk_b_x: int,
+  j_atk_x: int,
   j_atk_z: int,
   j_atk_y_min: int,
   j_atk_y_max: int,

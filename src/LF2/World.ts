@@ -328,7 +328,7 @@ export class World extends WorldDataset {
     const { left, right, near, far, drink_l, drink_r } = this.stage;
     let { x, z } = e.position;
 
-    if (e.data.base.type === WeaponType.Drink) {
+    if (e.base_type === WeaponType.Drink) {
       const l = drink_l;
       const r = drink_r;
       if (x < l) e.set_position_x(x = l);

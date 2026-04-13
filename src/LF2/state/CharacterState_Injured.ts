@@ -10,7 +10,7 @@ export class CharacterState_Injured extends CharacterState_Base {
     super.enter?.(e, prev_frame);
     e.ctrl.reset_key_list();
     const holding = e.holding
-    if (holding?.data.base.type === WeaponType.Heavy) {
+    if (holding?.base_type === WeaponType.Heavy) {
       e.drop_holding()
       holding.team = e.team;
     }

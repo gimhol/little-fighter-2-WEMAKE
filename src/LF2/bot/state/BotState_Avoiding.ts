@@ -16,7 +16,7 @@ export class BotState_Avoiding extends BotState_Base {
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
     if (this.handle_defends()) return;
-    if (is_fighter(en) && this.handle_bot_actions()) return;
+    if (this.handle_bot_actions()) return;
     if (this.defend_test()) return;
     this.random_jumping()
     if (en && av && manhattan_xz(me, av) > manhattan_xz(me, en))

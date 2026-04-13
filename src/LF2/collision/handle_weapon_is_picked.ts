@@ -9,7 +9,7 @@ export function handle_weapon_is_picked(collision: ICollision): void {
   victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;
-  if (victim.data.base.type === WeaponType.Heavy) {
+  if (victim.base_type === WeaponType.Heavy) {
     attacker.enter_frame({ id: attacker.data.indexes?.picking_heavy })
   } else {
     attacker.enter_frame({ id: attacker.data.indexes?.picking_light })

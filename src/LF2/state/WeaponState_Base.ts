@@ -33,8 +33,8 @@ export default class WeaponState_Base extends State_Base {
     const { y: vy, x: vx, z: vz } = e.landing_velocity;
     const { base, indexes } = e.data;
     const is_base_ball =
-      e.data.base.type === W_T.Baseball ||
-      e.data.base.type === W_T.Drink;
+      e.base_type === W_T.Baseball ||
+      e.base_type === W_T.Drink;
     const dvy = round_float(-vy * (base.bounce ?? 0));
     const dvx = round_float(vx * (is_base_ball ? 0.6 : 0.5));
     const dvz = round_float(vz * 0.5);

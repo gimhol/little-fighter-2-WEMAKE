@@ -656,6 +656,15 @@ export class Entity {
     if (v == this._arest) return;
     this._arest = round_float(v);
   }
+  get strength(): number {
+    return this.data.base.strength ?? 1;
+  }
+  get weight(): number {
+    return this.data.base.weight ?? 1;
+  }
+  get base_type(): number {
+    return this.base_type ?? 0
+  }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }

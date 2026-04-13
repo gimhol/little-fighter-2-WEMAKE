@@ -21,7 +21,7 @@ export class BotState_Following extends BotState_Base {
     const me = c.entity;
 
     if (c.goingto) {
-      const [en_x, , en_z] = c.goingto
+      const { x: en_x, z: en_z } = c.goingto
       const { x: my_x, z: my_z } = me.position;
       const offset_x = Defines.AI_FOLLOWING_RANGE_X
       const offset_z = Defines.AI_FOLLOWING_RANGE_Z
@@ -61,7 +61,7 @@ export class BotState_Following extends BotState_Base {
     }
     // TODO: 是不是该想个办法让持续位移招式（dennis d>j）停下来？
 
-    delete c.goingto;
+    c.stop();
     this.ctrl.key_up(...KEY_NAME_LIST);
     const en = c.chasings.get()?.entity;
     const av = c.avoidings.get()?.entity;

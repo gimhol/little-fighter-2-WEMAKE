@@ -7,7 +7,7 @@ export function handle_weapon_is_picked_secretly(collision: ICollision): void {
   if (!attacker.ctrl.is_hit(GK.Attack)) return;
   if (victim.bearer) return;
   if (attacker.holding) return;
-  if (victim.data.base.type === WeaponType.Heavy) return;
+  if (victim.base_type === WeaponType.Heavy) return;
   victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;

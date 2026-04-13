@@ -11,16 +11,17 @@ export class BotState_Idle extends BotState_Base {
   }
   override update(dt: number) {
     super.update(dt)
-    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
-    if (this.handle_defends()) return;
-    if (this.handle_bot_actions()) return;
-    this.random_jumping()
-
     const { ctrl: c } = this;
     if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
+
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
+    if (this.handle_defends()) return;
+    if (this.handle_bot_actions()) return;
+    this.random_jumping()
+
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
       return BotStateEnum.Avoiding;
     else if (en)
@@ -30,7 +31,7 @@ export class BotState_Idle extends BotState_Base {
 
     c.key_up(...KEY_NAME_LIST)
     if (
-      me.holding?.data.base.type === WeaponType.Drink &&
+      me.holding?.base_type === WeaponType.Drink &&
       me.frame.state !== StateEnum.Drink
     ) c.key_down(GameKey.a)
   }

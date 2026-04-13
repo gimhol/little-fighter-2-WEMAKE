@@ -19,7 +19,7 @@ export class BotState_Chasing extends BotState_Base {
 
 
     if (this.handle_defends()) return;
-    if (is_fighter(en) && this.handle_bot_actions()) return;
+    if (this.handle_bot_actions()) return;
     this.random_jumping()
 
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
@@ -55,8 +55,8 @@ export class BotState_Chasing extends BotState_Base {
     const abs_dz = round_float(abs(my_z - en_z))
 
     const x_reach = abs_dx <= c.w_atk_x;
-    const z_reach = abs_dz <= c.w_atk_z;
-    const wt = me.holding?.data.base.type;
+    const z_reach = abs_dz <= c.dataset.w_atk_z;
+    const wt = me.holding?.base_type;
     const out_of_range = c.en_out_of_range = (
       abs_dx > Defines.AI_STAY_CHASING_RANGE &&
       c.behavior === 'stay'
@@ -94,14 +94,14 @@ export class BotState_Chasing extends BotState_Base {
         if (x_to_much) { // 避免跑过头,停下
           c.key_down(GK_B).key_up(GK.L, GK.R)
         } else if (
-          c.desire("chasing_1") < c.r_atk_desire &&
+          c.desire("chasing_1") < c.dataset.r_atk_desire &&
           between(dist_en_x, 0, c.r_atk_x) &&
-          between(abs_dz, 0, c.r_atk_z) &&
+          between(abs_dz, 0, c.dataset.r_atk_z) &&
           is_fighter(en)
         ) {
           // 概率跑攻
           c.click(GK.a).key_up(GK.R, GK.L)
-        } else if (c.desire("chasing_2") < c.r_stop_desire) {
+        } else if (c.desire("chasing_2") < c.dataset.r_stop_desire) {
           // 概率刹车
           c.click(GK_B)
         } else break;
@@ -123,9 +123,9 @@ export class BotState_Chasing extends BotState_Base {
       case StateEnum.Attacking:
       case StateEnum.BurnRun:
       case StateEnum.Z_Moveable:
-        if (my_z < round_float(en_z - c.w_atk_z)) {
+        if (my_z < round_float(en_z - c.dataset.w_atk_z)) {
           c.key_down(GK.D).key_up(GK.U);
-        } else if (my_z > round_float(en_z + c.w_atk_z)) {
+        } else if (my_z > round_float(en_z + c.dataset.w_atk_z)) {
           c.key_down(GK.U).key_up(GK.D);
         } else {
           c.key_up(GK.D, GK.U);
@@ -156,7 +156,7 @@ export class BotState_Chasing extends BotState_Base {
         this.handle_block()
         if (
           between(dist_en_x, 0, c.d_atk_x) &&
-          between(abs_dz, 0, c.d_atk_z) &&
+          between(abs_dz, 0, c.dataset.d_atk_z) &&
           is_fighter(en)
         ) {
           c.click(GK.a)
@@ -177,8 +177,8 @@ export class BotState_Chasing extends BotState_Base {
         if (
           my_y > 10 &&
           between(dist_en_x, 0, c.j_atk_x) &&
-          between(abs_dz, 0, c.j_atk_z) &&
-          between(dist_en_y, c.j_atk_y_min, c.j_atk_y_max) &&
+          between(abs_dz, 0, c.dataset.j_atk_z) &&
+          between(dist_en_y, c.dataset.j_atk_y_min, c.dataset.j_atk_y_max) &&
           is_fighter(en)
         ) {
           // 跳攻
@@ -205,8 +205,8 @@ export class BotState_Chasing extends BotState_Base {
       if (my_x < round_float(en_x - c.w_atk_x)) c.key_down(GK.R).key_up(GK.L);
       else if (my_x > round_float(en_x + c.w_atk_x)) c.key_down(GK.L).key_up(GK.R);
       else c.key_up(GK.L, GK.R);
-      if (my_z < round_float(en_z - c.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
-      else if (my_z > round_float(en_z + c.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
+      if (my_z < round_float(en_z - c.dataset.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
+      else if (my_z > round_float(en_z + c.dataset.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
       else c.key_up(GK.U, GK.D);
     } else if (me.facing > 0 && my_x > en_x) {
       c.click(GK.L)
@@ -219,7 +219,7 @@ export class BotState_Chasing extends BotState_Base {
     this.handle_block()
     if (
       between(dist_en_x, -5, c.w_atk_x) &&
-      between(abs_dz, 0, c.w_atk_z)
+      between(abs_dz, 0, c.dataset.w_atk_z)
     ) {
       if (
         is_fighter(en) || (

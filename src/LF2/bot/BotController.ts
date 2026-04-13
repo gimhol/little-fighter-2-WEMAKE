@@ -9,9 +9,11 @@ import {
   Difficulty,
   GK,
   IBotAction, IBotData, IBotDataSet,
+  IVector3,
   LGK, StateEnum,
-  WeaponType
+  W_T
 } from "../defines";
+import { Ditto } from "../ditto";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { PlayerInfo } from "../PlayerInfo";
@@ -27,7 +29,7 @@ export enum BotBehavior {
   Stay = 'stay',
   Move = 'move',
 }
-export class BotController extends BaseController implements Required<IBotDataSet> {
+export class BotController extends BaseController {
   readonly player: PlayerInfo | undefined;
   readonly fsm = new FSM<BotStateEnum>()
     .add(
@@ -42,12 +44,15 @@ export class BotController extends BaseController implements Required<IBotDataSe
   readonly __is_bot_ctrl__ = true;
 
   protected _behavior: BotBehavior = BotBehavior.Move;
-  goingto?: [number, number, number];
+  protected _goingto?: IVector3;
   en_out_of_range: boolean = false;
   protected _bot_id: string | undefined;
   protected _bot: IBotData | undefined;
-  get bot(): IBotData | undefined { return this._bot; }
+  protected _dataset: Required<IBotDataSet>;
+
+  get dataset() { return this._dataset }
   get behavior(): BotBehavior { return this._behavior }
+  get goingto(): IVector3 | undefined { return this._goingto }
 
   /** 走攻触发范围X */
   get w_atk_x() {
@@ -55,129 +60,96 @@ export class BotController extends BaseController implements Required<IBotDataSe
     if (!en) return 0;
     if (is_weapon(en)) return 40;
 
-    const wt = this.entity.holding?.data.base.type
+    const wt = this.entity.holding?.base_type
     if (
-      wt === WeaponType.Baseball ||
-      wt === WeaponType.Drink
-    ) return 800 * (this.entity.data.base.strength ?? 1);
+      wt === W_T.Baseball ||
+      wt === W_T.Drink
+    ) return 800 * this.entity.strength;
     if (
-      wt === WeaponType.Stick ||
-      wt === WeaponType.Knife
+      wt === W_T.Stick ||
+      wt === W_T.Knife
     ) return 90;
     if (
-      wt === WeaponType.Heavy
-    ) return 200 * (this.entity.data.base.strength ?? 1);
-    return this.entity.facing === en.facing ?
-      this.w_atk_f_x :
-      this.w_atk_b_x;
+      wt === W_T.Heavy
+    ) return 200 * this.entity.strength;
+    return this.dataset.w_atk_x
   }
   /** 跑攻触发范围X */
   get r_atk_x() {
     const en = this.chasings.get()?.entity;
     if (!en) return 0;
-    const wt = this.entity.holding?.data.base.type
+    const wt = this.entity.holding?.base_type
     if (
-      wt === WeaponType.Baseball ||
-      wt === WeaponType.Drink
-    ) return 800 * (this.entity.data.base.strength ?? 1);
+      wt === W_T.Baseball ||
+      wt === W_T.Drink
+    ) return 800 * this.entity.strength;
     if (
-      wt === WeaponType.Stick ||
-      wt === WeaponType.Knife
+      wt === W_T.Heavy
+    ) return 200 * this.entity.strength;
+
+    if (
+      wt === W_T.Stick ||
+      wt === W_T.Knife
     ) return 100;
-    if (
-      wt === WeaponType.Heavy
-    ) return 200 * (this.entity.data.base.strength ?? 1);
-    return this.entity.facing === en.facing ? this.r_atk_b_x : this.r_atk_f_x;
+    return this.dataset.r_atk_x;
   }
   /** 冲跳攻触发范围X */
   get d_atk_x() {
     const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
-    const wt = this.entity.holding?.data.base.type
+    const wt = this.entity.holding?.base_type;
+    const sp = this.entity.facing * this.entity.velocity.x * 8
     if (
-      wt === WeaponType.Baseball ||
-      wt === WeaponType.Drink
-    ) return 800 * (this.entity.data.base.strength ?? 1);
+      wt === W_T.Baseball ||
+      wt === W_T.Drink
+    ) return sp + 100 * this.entity.strength;
     if (
-      wt === WeaponType.Stick ||
-      wt === WeaponType.Knife
-    ) return 150;
-    if (
-      wt === WeaponType.Heavy
-    ) return 200 * (this.entity.data.base.strength ?? 1);
-    return this.entity.facing === chasing.facing ? this.d_atk_b_x : this.d_atk_f_x;
+      wt === W_T.Stick ||
+      wt === W_T.Knife
+    ) return 100;
+    return sp + this.dataset.d_atk_x;
   }
   /** 跳攻触发范围X */
   get j_atk_x() {
     const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
-    const wt = this.entity.holding?.data.base.type
+    const wt = this.entity.holding?.base_type;
+    const sp = this.entity.facing * this.entity.velocity.x * 8
     if (
-      wt === WeaponType.Baseball ||
-      wt === WeaponType.Drink
-    ) return 500 * (this.entity.data.base.strength ?? 1);
+      wt === W_T.Baseball ||
+      wt === W_T.Drink
+    ) return sp * 200 * this.entity.strength;
     if (
-      wt === WeaponType.Stick ||
-      wt === WeaponType.Knife
-    ) return 110;
-    if (
-      wt === WeaponType.Heavy
-    ) return 200 * (this.entity.data.base.strength ?? 1);
-    return this.entity.facing === chasing.facing ? this.j_atk_b_x : this.j_atk_f_x;
+      wt === W_T.Stick ||
+      wt === W_T.Knife
+    ) return sp * 110;
+    return sp * this.dataset.j_atk_x;
   }
   /** 最近站立攻击距离 */
   get atk_m_x() {
-    const wt = this.entity.holding?.data.base.type
+    const wt = this.entity.holding?.base_type
     if (
-      wt === WeaponType.Baseball ||
-      wt === WeaponType.Drink
+      wt === W_T.Baseball ||
+      wt === W_T.Drink
     ) return 100;
-    if (
-      wt === WeaponType.Stick ||
-      wt === WeaponType.Knife ||
-      wt === WeaponType.Heavy
-    ) return 20;
-    return this.w_atk_m_x
+    return this.dataset.w_atk_m_x
   }
-  w_atk_f_x     /**/ = 0;
-  w_atk_b_x     /**/ = 0;
-  w_atk_m_x     /**/ = 0;
-  w_atk_z       /**/ = 0;
-  r_atk_desire  /**/ = 0;
-  r_atk_f_x     /**/ = 0;
-  r_atk_b_x     /**/ = 0;
-  r_atk_z       /**/ = 0;
-  d_atk_f_x     /**/ = 0;
-  d_atk_b_x     /**/ = 0;
-  d_atk_z       /**/ = 0;
-  j_atk_f_x     /**/ = 0;
-  j_atk_b_x     /**/ = 0;
-  j_atk_z       /**/ = 0;
-  j_atk_y_min   /**/ = 0;
-  j_atk_y_max   /**/ = 0;
-  jump_desire   /**/ = 0;
-  dash_desire   /**/ = 0;
-  r_desire_min  /**/ = 0;
-  r_desire_max  /**/ = 0;
-  r_x_min       /**/ = 0;
-  r_x_max       /**/ = 0;
-  r_stop_desire /**/ = 0;
-  d_desire      /**/ = 0;
+
   get stage() { return this.world.stage }
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.chasings.get()?.entity;
     this.desire(`${chasing?.id ?? 'no chasing'}`)
     if (!chasing) return 0;
-    let dx = abs(this.entity.position.x - chasing.position.x) - this.r_x_min
+    let dx = abs(this.entity.position.x - chasing.position.x) - this.dataset.r_x_min
     // if (dx < 0) return 0;
     let should_run = false
-    const r_x_r = this.r_x_max - this.r_x_min
+    const r_x_r = this.dataset.r_x_max - this.dataset.r_x_min
     if (r_x_r === 0) {
       dx = round(clamp(dx, 0, r_x_r) / r_x_r)
-      const min = this.r_desire_min + (this.r_desire_max - this.r_desire_min) * dx
+      const min = this.dataset.r_desire_min + (this.dataset.r_desire_max - this.dataset.r_desire_min) * dx
       should_run = this.desire(`rr1`) < min;
     } else {
-      should_run = this.desire(`rr2 ${dx}`) < this.r_x_min;
+      should_run = this.desire(`rr2 ${dx}`) < this.dataset.r_x_min;
     }
     if (dx < 0) should_run = false
     if (!should_run) return 0;
@@ -206,7 +178,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
   constructor(player_id: string, entity: Entity) {
     super(player_id, entity);
     this.player = this.lf2.players.get(player_id);
-    Object.assign(this, BotDataSet.Default);
+    this._dataset = new BotDataSet();
   }
 
   /**
@@ -222,7 +194,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
 
     if (me.hp <= 0)
       return false;
-    if (me.holding?.data.base.type == WeaponType.Drink)
+    if (me.holding?.base_type == W_T.Drink)
       return false;
     if (!e?.is_attach || e.hp <= 0)
       return false;
@@ -240,7 +212,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
         // 队友Bot尽量不喝
         if (this.stage.id === D.VOID_STAGE.id)
           break; // 非闯关
-        if (e.data.base.type !== WeaponType.Drink)
+        if (e.base_type !== W_T.Drink)
           break; // 非饮料
         if (me.team == this.stage.team)
           break; // 敌人角色
@@ -302,7 +274,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
       e.blinking ||
       e.invulnerable ||
       !e.frame.bdy?.length ||
-      me.holding?.data.base.type === WeaponType.Drink ||
+      me.holding?.base_type === W_T.Drink ||
       (
         me.ground_y == me.position.y &&
         this.atk_m_x > abs(me.position.x - e.position.x) &&
@@ -494,17 +466,17 @@ export class BotController extends BaseController implements Required<IBotDataSe
     const { bot, bot_id } = this.entity.data.base;
     if (bot && bot === this._bot) return
     if (bot && bot !== this._bot) {
-      Object.assign(this, BotDataSet.Default, bot.dataset)
+      Object.assign(this.dataset, BotDataSet.Default, bot.dataset)
       this._bot = bot;
       this._bot_id = void 0;
       return;
     }
     if (this._bot_id === bot_id) return
     this._bot_id = bot_id;
-    Object.assign(this, BotDataSet.Default)
+    Object.assign(this.dataset, BotDataSet.Default)
     if (!bot_id) return this._bot = void 0;
     this._bot = this.lf2.datas.find_bot(bot_id)
-    Object.assign(this, this._bot?.dataset)
+    Object.assign(this.dataset, this._bot?.dataset)
   }
   override update() {
     this.check_bot();
@@ -551,7 +523,7 @@ export class BotController extends BaseController implements Required<IBotDataSe
       return false;
     if (e_ray) {
       const chasing = this.chasings.get()?.entity;
-      if (!chasing) return false;
+      if (!chasing || !is_fighter(chasing)) return false;
       let ray_hit = false
       for (const r of e_ray) {
         ray_hit = is_ray_hit(this.entity, chasing, r);
@@ -577,9 +549,9 @@ export class BotController extends BaseController implements Required<IBotDataSe
     this._behavior = BotBehavior.Stay
   }
   goto(x: number, y: number, z: number): void {
-    this.goingto = [x, y, z]
+    this._goingto = new Ditto.Vector3(x, y, z)
   }
   stop(): void {
-    this.goingto = void 0;
+    this._goingto = void 0;
   }
 }
