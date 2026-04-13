@@ -1,4 +1,4 @@
-uniform sampler2D texture;
+uniform sampler2D pTexture;
 /** 一倍纹理图的宽度（像素）*/
 uniform float tw;
 /** 一倍纹理图的高度（像素）*/
@@ -91,7 +91,7 @@ void main() {
     // 超出纹理图的部分将不显示
     discard;
   }
-  vec4 color = texture2D(texture, uv);
+  vec4 color = texture2D(pTexture, uv);
   color.rgb = gamma_correct(color.rgb);
 
   /* 无需描边时，仅处理颜色 */
@@ -102,12 +102,12 @@ void main() {
 
   /* 检查中心与四周颜色 */
   float outline = 0.0;
-  vec2 texel = vec2(outlineWidth) / vec2(textureSize(texture, 0));
-  float center = texture2D(texture, uv).a;
-  float up = texture2D(texture, uv + vec2(0, -texel.y)).a;
-  float down = texture2D(texture, uv + vec2(0, texel.y)).a;
-  float left = texture2D(texture, uv + vec2(-texel.x, 0)).a;
-  float right = texture2D(texture, uv + vec2(texel.x, 0)).a;
+  vec2 texel = vec2(outlineWidth) / vec2(textureSize(pTexture, 0));
+  float center = texture2D(pTexture, uv).a;
+  float up = texture2D(pTexture, uv + vec2(0, -texel.y)).a;
+  float down = texture2D(pTexture, uv + vec2(0, texel.y)).a;
+  float left = texture2D(pTexture, uv + vec2(-texel.x, 0)).a;
+  float right = texture2D(pTexture, uv + vec2(texel.x, 0)).a;
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
   if(outline > 0.1 && center < 0.1) {
     gl_FragColor.rgb = gamma_correct(outlineColor);

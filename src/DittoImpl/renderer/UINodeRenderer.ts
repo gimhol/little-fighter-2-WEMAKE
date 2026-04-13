@@ -170,9 +170,9 @@ export class UINodeRenderer implements IUINodeRenderer {
     u.tsw.value = (scale * _texture.repeat.x);
     u.tsh.value = (scale * _texture.repeat.y);
 
-    if (u.texture.value !== _texture) {
-      u.texture.value?.dispose();
-      u.texture.value = _texture;
+    if (u.pTexture.value !== _texture) {
+      u.pTexture.value?.dispose();
+      u.pTexture.value = _texture;
     }
     u.mixColor.value = this._mixColor;
     u.mixStreath.value = this._mixStength;
@@ -291,7 +291,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._css_obj.center.set(this.ui.center.value.x, this.ui.center.value.y)
   }
   update_texture_attributes(dt: number) {
-    const t: T.Texture = this.mesh.material.uniforms.texture.value;
+    const t: T.Texture = this.mesh.material.uniforms.pTexture.value;
     if (!t || !this._ui_img) return;
     const { offsetAnimX, offsetAnimY } = this._ui_img
     if (!offsetAnimX && !offsetAnimY && this.user_data.ui_img == this._ui_img)
