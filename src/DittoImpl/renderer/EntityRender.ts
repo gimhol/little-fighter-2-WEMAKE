@@ -80,7 +80,7 @@ export class EntityRender {
 
     const texture = this.images.get("0")?.pic?.texture;
     const material = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial, m => {
-      m.uniforms.pTexture = { value: texture }
+      m.uniforms.tex = { value: texture }
     });
     material.uniforms.outlineWidth.value = 1;
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
@@ -130,7 +130,7 @@ export class EntityRender {
     const { x, y, w, h } = info;
     main_mesh.scale.set(w, h, 0);
     const { material: m } = main_mesh;
-    m.uniforms.pTexture.value = img.pic.texture;
+    m.uniforms.tex.value = img.pic.texture;
     m.uniforms.tw.value = img.w;
     m.uniforms.th.value = img.h;
     m.uniforms.tsw.value = img.scale;

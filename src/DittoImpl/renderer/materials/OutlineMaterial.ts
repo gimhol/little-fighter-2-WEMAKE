@@ -14,7 +14,7 @@ MaterialFactory.register(MaterialKind.Outline, {
   },
   reset: (c: ShaderMaterial) => {
     c.uniforms = {
-      pTexture: { value: void 0 },
+      tex: { value: void 0 },
       x: { value: 0 },
       y: { value: 0 },
       w: { value: 1 },
