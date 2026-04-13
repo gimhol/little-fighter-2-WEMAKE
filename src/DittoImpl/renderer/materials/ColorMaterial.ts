@@ -7,7 +7,6 @@ MaterialFactory.register(MaterialKind.Color, {
     return new MeshBasicMaterial({ visible: true, color: 0 })
   },
   reset: (c: MeshBasicMaterial): void => {
-    c.visible = true;
     c.setValues({ visible: true, color: 0 })
   }
 })
