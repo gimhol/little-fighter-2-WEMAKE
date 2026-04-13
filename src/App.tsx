@@ -614,36 +614,35 @@ function App() {
             src={[img_btn_1_1, img_btn_1_1]}
           />
         </Show>
-        <ToggleImgButton
-          checked={is_fullscreen}
-          onClick={() => toggle_fullscreen()}
-          src={[img_btn_3_1, img_btn_3_2]} />
-        {
-          is_fullscreen || !window.runtime?.WindowMinimise ? null :
-            <ToggleImgButton
-              onClick={() => window.runtime?.WindowMinimise?.()}
-              src={[img_btn_0_4, img_btn_0_4]} />
-        }
-        {
-          is_fullscreen || !window.runtime?.WindowToggleMaximise ? null :
-            <ToggleImgButton
-              checked={is_maximised}
-              onClick={async () => {
-                const f = await window.runtime?.WindowIsFullscreen?.()
-                if (f) return fullscreen.exit();
-                const m = await window.runtime?.WindowIsMaximised?.()
-                set_is_maximised(!m)
-                window.runtime?.WindowToggleMaximise?.()
-              }}
-              src={[img_btn_1_4, img_btn_2_4]} />
-        }
-        {
-          is_fullscreen || !window.runtime?.Quit ? null :
-            <ToggleImgButton
-              checked={is_fullscreen}
-              onClick={() => window.runtime?.Quit?.()}
-              src={[img_btn_3_3, img_btn_3_3]} />
-        }
+        <Show show={!navigator.userAgent.includes('lfw-mobile-container')}>
+          <ToggleImgButton
+            checked={is_fullscreen}
+            onClick={() => toggle_fullscreen()}
+            src={[img_btn_3_1, img_btn_3_2]} />
+        </Show>
+        <Show show={!is_fullscreen && window.runtime?.WindowMinimise}>
+          <ToggleImgButton
+            onClick={() => window.runtime?.WindowMinimise?.()}
+            src={[img_btn_0_4, img_btn_0_4]} />
+        </Show>
+        <Show show={!is_fullscreen && window.runtime?.WindowToggleMaximise}>
+          <ToggleImgButton
+            checked={is_maximised}
+            onClick={async () => {
+              const f = await window.runtime?.WindowIsFullscreen?.()
+              if (f) return fullscreen.exit();
+              const m = await window.runtime?.WindowIsMaximised?.()
+              set_is_maximised(!m)
+              window.runtime?.WindowToggleMaximise?.()
+            }}
+            src={[img_btn_1_4, img_btn_2_4]} />
+        </Show>
+        <Show show={!is_fullscreen && window.runtime?.Quit}>
+          <ToggleImgButton
+            checked={is_fullscreen}
+            onClick={() => window.runtime?.Quit?.()}
+            src={[img_btn_3_3, img_btn_3_3]} />
+        </Show>
       </div>
     </div>, game_cell, null) : null
 
