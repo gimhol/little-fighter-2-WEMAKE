@@ -27,16 +27,15 @@ export class SchemaValidator {
       return ret;
     }
     switch (type) {
-      case "boolean":
+      case Boolean: case "boolean":
         if (typeof value !== 'boolean') return r();
         break;
-      case "string":
+      case String: case "string":
         if (typeof value !== 'string') return r();
         if (schema.string?.not_blank && !value.trim()) return r();
         if (schema.string?.not_empty && !value) return r();
         break;
-      case "number":
-      case "integer":
+      case Number: case "number": case "integer":
         if (typeof value !== 'number') return r();
         if (!schema.number?.nan && Number.isNaN(value)) return r();
         if (schema.number?.int && !Number.isInteger(value)) return r();
