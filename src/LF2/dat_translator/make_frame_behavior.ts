@@ -1,378 +1,66 @@
 import {
-  ActionType,
-  CollisionVal as C_Val,
-  Defines as D,
-  EntityVal,
-  FacingFlag as FF,
   FrameBehavior,
-  HitFlag,
-  IFrameInfo,
-  ItrKind,
-  BuiltIn_OID as OID,
-  OpointKind, OpointMultiEnum, OpointSpreading,
-  SpeedMode
+  IFrameInfo
 } from "../defines";
-import { ChaseLost } from "../defines/ChaseLost";
-import { ChaseStratedy } from "../defines/ChaseStratedy";
-import { ensure } from "../utils";
-import { CondMaker } from "./CondMaker";
-import { firzen_disater_start } from "./firzen_disater_start";
-import { jan_chase_start } from "./jan_chase_start";
-import { jan_chaseh_start } from "./jan_chaseh_start";
-import { set_hit_flag } from "./set_hit_flag";
+import { make_fb_bat_chase } from "./frame_behavior/make_fb_bat_chase";
+import { make_fb_bat_chase_start } from "./frame_behavior/make_fb_bat_chase_start";
+import { make_fb_boomerang } from "./frame_behavior/make_fb_boomerang";
+import { make_fb_chasing_same_enemy } from "./frame_behavior/make_fb_chasing_same_enemy";
+import { make_fb_dennis_chase } from "./frame_behavior/make_fb_dennis_chase";
+import { make_fb_firzen_disater_start } from "./frame_behavior/make_fb_firzen_disater_start";
+import { make_fb_jan_angle_blessing } from "./frame_behavior/make_fb_jan_angle_blessing";
+import { make_fb_jan_chase_start } from "./frame_behavior/make_fb_jan_chase_start";
+import { make_fb_jan_chaseh_start } from "./frame_behavior/make_fb_jan_chaseh_start";
+import { make_fb_john_chase } from "./frame_behavior/make_fb_john_chase";
+import { make_fb_john_chase_leaving } from "./frame_behavior/make_fb_john_chase_leaving";
+import { make_fb_julian_ball } from "./frame_behavior/make_fb_julian_ball";
+import { make_fb_julian_ball_start } from "./frame_behavior/make_fb_julian_ball_start";
 
-const hp_gt_0 = new CondMaker<EntityVal>().and(EntityVal.HP, '>', 0).done()
 export function make_frame_behavior(frame: IFrameInfo, oid: string) {
   switch (frame.behavior as FrameBehavior) {
     case FrameBehavior.AngelBlessing:
-      frame.facing = FF.VX;
-      frame.dvx = D.ANGEL_BLESSING_MAX_VX;
-      frame.acc_x = D.ANGEL_BLESSING_ACC_X;
-      frame.vxm = SpeedMode.AccTo;
-      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = D.ANGEL_BLESSING_ACC_Z;
-      frame.vzm = SpeedMode.AccTo;
-      frame.dvy = D.ANGEL_BLESSING_MAX_VY;
-      frame.acc_y = D.ANGEL_BLESSING_ACC_Y;
-      frame.vym = SpeedMode.AccTo;
-      frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.itr = ensure(frame.itr, {
-        kind: ItrKind.Heal,
-        x: 25,
-        y: 13,
-        w: 32,
-        h: 34,
-        injury: 100,
-        ...set_hit_flag({}, HitFlag.AllyFighter),
-        actions: [
-          {
-            type: ActionType.A_NextFrame,
-            data: {
-              id: "60"
-            }
-          }
-        ],
-        test: new CondMaker().and(C_Val.VictimIsChasing, "==", 1).done()
-      });
-      frame.chase = {
-        stratedy: ChaseStratedy.TillLost,
-        flag: HitFlag.AllyFighter,
-        lost: ChaseLost.Leave | ChaseLost.End
-      };
+      make_fb_jan_angle_blessing(frame);
       break;
     case FrameBehavior.JohnChase:
-      frame.facing = FF.VX;
-      frame.dvx = D.JOHN_CHASE_MAX_VX;
-      frame.acc_x = D.JOHN_CHASE_ACC_X;
-      frame.vxm = SpeedMode.AccTo;
-
-      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = D.JOHN_CHASE_ACC_Z;
-      frame.vzm = SpeedMode.AccTo;
-
-      frame.dvy = D.JOHN_CHASE_MAX_VY;
-      frame.acc_y = D.JOHN_CHASE_ACC_Y;
-      frame.vym = SpeedMode.AccTo;
-
-      frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0 };
+      make_fb_john_chase(frame);
       break;
-    case FrameBehavior.DennisChase: {
-      frame.facing = FF.VX;
-      frame.dvx = D.DENNIS_CHASE_MAX_VX;
-      frame.acc_x = D.DENNIS_CHASE_ACC_X;
-      frame.vxm = SpeedMode.AccTo;
-
-      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = D.DENNIS_CHASE_ACC_Z;
-      frame.vzm = SpeedMode.AccTo;
-
-      frame.dvy = D.DENNIS_CHASE_MAX_VY;
-      frame.acc_y = D.DENNIS_CHASE_ACC_Y;
-      frame.vym = SpeedMode.AccTo;
-
-      frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.on_dead = { id: '5' };
-      switch (frame.id) {
-        case '1': frame.key_down = { 'F': { id: '3', wait: 'i', expression: hp_gt_0 } }; break;
-        case '2': frame.key_down = { 'F': { id: '4', wait: 'i', expression: hp_gt_0 } }; break;
-        case '3': frame.key_down = { 'B': { id: '1', wait: 'i', expression: hp_gt_0 } }; break;
-        case '4': frame.key_down = { 'B': { id: '2', wait: 'i', expression: hp_gt_0 } }; break;
-      }
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover, oy: 0.5 };
+    case FrameBehavior.DennisChase:
+      make_fb_dennis_chase(frame);
       break;
-    }
     case FrameBehavior.Boomerang:
-      frame.dvx = D.BOOMERANG_CHASE_MAX_VX;
-      frame.acc_x = D.BOOMERANG_CHASE_ACC_X;
-      frame.vxm = SpeedMode.AccTo;
-
-      frame.dvz = D.BOOMERANG_CHASE_MAX_VZ;
-      frame.acc_z = D.BOOMERANG_CHASE_ACC_Z;
-      frame.vzm = SpeedMode.AccTo;
-
-      frame.dvy = D.BOOMERANG_CHASE_MAX_VY;
-      frame.acc_y = D.BOOMERANG_CHASE_ACC_Y;
-      frame.vym = SpeedMode.AccTo;
-
-      frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Leave };
+      make_fb_boomerang(frame);
       break;
     case FrameBehavior.AngelBlessingStart:
-      jan_chaseh_start(frame);
+      make_fb_jan_chaseh_start(frame);
       break;
     case FrameBehavior.DevilJudgementStart:
-      jan_chase_start(frame);
+      make_fb_jan_chase_start(frame);
       break;
     case FrameBehavior.ChasingSameEnemy:
-      frame.facing = FF.VX;
-      frame.dvx = D.DISATER_CHASE_MAX_VX;
-      frame.acc_x = D.DISATER_CHASE_ACC_X;
-      frame.vxm = SpeedMode.AccTo;
-      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = D.DISATER_CHASE_ACC_Z;
-      frame.vzm = SpeedMode.AccTo;
-      frame.dvy = D.DISATER_CHASE_MAX_VY;
-      frame.acc_y = D.DISATER_CHASE_ACC_Y;
-      frame.vym = SpeedMode.AccTo;
-      frame.ctrl_x = frame.ctrl_z = 1;
-      frame.itr?.forEach(itr => {
-        switch (oid) {
-          case OID.FirzenChasef:
-          case OID.FirzenChasei:
-            itr.on_hit_ground = { id: "60" };
-            break;
-          default:
-            itr.on_hit_ground = { id: "10" };
-            break;
-        }
-      })
-      frame.chase = {
-        stratedy: ChaseStratedy.TillLost,
-        flag: HitFlag.EnemyFighter,
-        lost: ChaseLost.Hover | ChaseLost.End
-      };
+      make_fb_chasing_same_enemy(frame, oid);
       break;
     case FrameBehavior.BatStart:
-      frame.opoint = ensure(frame.opoint, {
-        kind: OpointKind.Normal,
-        oid: OID.BatChase,
-        x: frame.centerx,
-        y: frame.centery,
-        action: { id: "0" },
-        multi: {
-          type: OpointMultiEnum.AccordingEnemies,
-          min: 3,
-          skip_zero: false,
-        },
-        spreading: OpointSpreading.Spreading,
-        spreading_x: [...D.BAT_CHASE_SPREADING_VX],
-        spreading_z: [...D.BAT_CHASE_SPREADING_VZ],
-      });
+      make_fb_bat_chase_start(frame);
       break;
     case FrameBehavior.FirzenDisasterStart:
-      firzen_disater_start(frame);
+      make_fb_firzen_disater_start(frame);
       break;
     case FrameBehavior.JohnBiscuitLeaving:
-      frame.facing = FF.VX;
-      frame.dvx = 30;
-      frame.acc_x = 2;
-      frame.vxm = SpeedMode.AccTo;
+      make_fb_john_chase_leaving(frame);
       break;
     case FrameBehavior.FirzenVolcanoStart:
-      firzen_disater_start(frame, frame.centerx, -79);
-      frame.opoint = ensure(frame.opoint, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx,
-        y: 24,
-        action: { id: "109" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FreezeColumn,
-        x: 135,
-        y: 24,
-        action: { id: "100" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FreezeColumn,
-        x: 135,
-        y: 24,
-        z: -60,
-        dvz: -4,
-        action: { id: "100" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FreezeColumn,
-        x: 135,
-        y: 24,
-        z: 60,
-        dvz: 4,
-        action: { id: "100" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FreezeColumn,
-        x: -45,
-        y: 24,
-        action: { id: "100", facing: FF.Backward },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FreezeColumn,
-        x: -45,
-        y: 24,
-        z: -60,
-        dvz: -4,
-        action: { id: "100", facing: FF.Backward },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FreezeColumn,
-        x: -45,
-        y: 24,
-        z: 60,
-        dvz: 4,
-        action: { id: "100", facing: FF.Backward },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx,
-        y: 26,
-        z: 0,
-        action: { id: "54" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx - 25,
-        y: 26,
-        z: 0,
-        action: { id: "54" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx + 25,
-        y: 26,
-        z: 0,
-        action: { id: "54", facing: 2 },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx - 50,
-        y: 26,
-        z: 0,
-        action: { id: "54" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx + 50,
-        y: 26,
-        z: 0,
-        action: { id: "54", facing: 2 },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx - 38,
-        y: 26,
-        z: -15,
-        action: { id: "54" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx + 38,
-        y: 26,
-        z: -15,
-        action: { id: "54", facing: 2 },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx - 38,
-        y: 26,
-        z: 15,
-        action: { id: "54" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx + 38,
-        y: 26,
-        z: 15,
-        action: { id: "54", facing: 2 },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx + 10,
-        y: 26,
-        z: 25,
-        action: { id: "54" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx - 10,
-        y: 26,
-        z: 25,
-        action: { id: "54", facing: 2 },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx + 10,
-        y: 26,
-        z: -25,
-        action: { id: "54" },
-      }, {
-        kind: OpointKind.Normal,
-        oid: OID.FirenFlame,
-        x: frame.centerx - 10,
-        y: 26,
-        z: -25,
-        action: { id: "54", facing: 2 },
-      });
+      make_fb_firzen_disater_start(frame, frame.centerx, -79);
       break;
     case FrameBehavior.Bat:
-      frame.facing = FF.VX;
-      frame.dvx = D.BAT_CHASE_MAX_VX;
-      frame.acc_x = D.BAT_CHASE_ACC_X;
-      frame.vxm = SpeedMode.AccTo;
-      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = D.BAT_CHASE_ACC_Z;
-      frame.vzm = SpeedMode.AccTo;
-      frame.dvy = D.BAT_CHASE_MAX_VY;
-      frame.acc_y = D.BAT_CHASE_ACC_Y;
-      frame.vym = SpeedMode.AccTo;
-      frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover };
+      make_fb_bat_chase(frame);
       break;
     case FrameBehavior.JulianBallStart:
-      frame.opoint = ensure(frame.opoint, {
-        kind: OpointKind.Normal,
-        oid: OID.JulianBall,
-        x: frame.centerx,
-        y: frame.centery,
-        dvx: 8,
-        action: { id: "50" },
-        spreading: OpointSpreading.FloatRange,
-        spreading_x: [-5, 5, 5],
-        spreading_y: [-5, 5, 10],
-      });
+      make_fb_julian_ball_start(frame);
       break;
     case FrameBehavior.JulianBall: {
-      frame.facing = FF.VX;
-      frame.dvx = D.JULIAN_CHASE_MAX_VX;
-      frame.acc_x = D.JULIAN_CHASE_ACC_X;
-      frame.vxm = SpeedMode.AccTo;
-      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = D.JULIAN_CHASE_ACC_Z;
-      frame.vzm = SpeedMode.AccTo;
-      frame.dvy = D.JULIAN_CHASE_MAX_VY;
-      frame.acc_y = D.JULIAN_CHASE_ACC_Y;
-      frame.vym = SpeedMode.AccTo;
-      frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-      const fid = Number(frame.id);
-      frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover };
-      if (fid >= 50 && fid <= 59) {
-        frame.key_down = { 'F': { id: '' + (fid - 50), wait: 'i', expression: hp_gt_0 } };
-        break;
-      } else if (fid >= 1 && fid <= 9) {
-        frame.key_down = { 'B': { id: '' + (fid + 50), wait: 'i', expression: hp_gt_0 } };
-        break;
-      }
+      make_fb_julian_ball(frame);
       break;
     }
   }
 }
+

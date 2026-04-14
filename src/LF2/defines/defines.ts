@@ -248,52 +248,11 @@ export namespace Defines {
   export const DEFAULT_BREAK_DEFEND_VALUE = 32;
   export const BAT_CHASE_SPREADING_VX = arithmetic_progression(-6, 6, 1)
   export const BAT_CHASE_SPREADING_VZ = arithmetic_progression(-2, 2, 1)
-  export const BAT_CHASE_MAX_VX = 14
-  export const BAT_CHASE_ACC_X = 0.25
-  export const BAT_CHASE_ACC_Z = 0.125
-  export const BAT_CHASE_MAX_VY = -0.5
-  export const BAT_CHASE_ACC_Y = 0.125
-
-  export const DENNIS_CHASE_MAX_VX = 14
-  export const DENNIS_CHASE_ACC_X = 0.25
-  export const DENNIS_CHASE_ACC_Z = 0.125
-  export const DENNIS_CHASE_MAX_VY = -0.5
-  export const DENNIS_CHASE_ACC_Y = 0.125
-
-  export const JULIAN_CHASE_MAX_VX = 14
-  export const JULIAN_CHASE_ACC_X = 0.25
-  export const JULIAN_CHASE_ACC_Z = 0.125
-  export const JULIAN_CHASE_MAX_VY = -0.5
-  export const JULIAN_CHASE_ACC_Y = 0.125
-
-  export const ANGEL_BLESSING_MAX_VX = 14
-  export const ANGEL_BLESSING_ACC_X = 0.25
-  export const ANGEL_BLESSING_ACC_Z = 0.125
-  export const ANGEL_BLESSING_MAX_VY = -0.5
-  export const ANGEL_BLESSING_ACC_Y = 0.125
-
   export const DISATER_SPREADING_VX = arithmetic_progression(-5, 5, 1)
   export const DISATER_SPREADING_VY = arithmetic_progression(2, 8, 0.5)
   export const DEVIL_JUDGEMENT_SPREADING_VX = arithmetic_progression(-5, 5, 1)
   export const DEVIL_JUDGEMENT_SPREADING_VY = arithmetic_progression(2, 8, 0.5)
-  export const DISATER_CHASE_MAX_VX = 14
-  export const DISATER_CHASE_ACC_X = 0.25
-  export const DISATER_CHASE_ACC_Z = 0.25
-  export const DISATER_CHASE_MAX_VY = 8
-  export const DISATER_CHASE_ACC_Y = -0.25
 
-  export const JOHN_CHASE_MAX_VX = 13
-  export const JOHN_CHASE_ACC_X = 0.25
-  export const JOHN_CHASE_ACC_Z = 0.125
-  export const JOHN_CHASE_MAX_VY = -0.5
-  export const JOHN_CHASE_ACC_Y = 0.125
-
-  export const BOOMERANG_CHASE_MAX_VX = 20
-  export const BOOMERANG_CHASE_ACC_X = 0.25
-  export const BOOMERANG_CHASE_MAX_VZ = 1.8
-  export const BOOMERANG_CHASE_ACC_Z = 0.1
-  export const BOOMERANG_CHASE_MAX_VY = -0.4
-  export const BOOMERANG_CHASE_ACC_Y = 0.125
   export const MAX_AI_DESIRE = 10000 as const;
 
   export function desire(ratio: number): number {
