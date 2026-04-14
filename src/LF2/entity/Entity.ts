@@ -878,7 +878,6 @@ export class Entity {
     if (!is_fighter(emitter)) return 0;
     // shit
     switch (this.state) {
-      case StateEnum.Standing:
       case StateEnum.Ball_Flying:
       case StateEnum.Ball_3006:
       case StateEnum.Weapon_Throwing:
