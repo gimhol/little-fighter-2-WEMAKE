@@ -975,7 +975,7 @@ export class Entity {
         const {
           type, min = 0, max = 355,
           // TODO: 改用skip_zero来表达
-          skip_zero = opoint.spreading === OpointSpreading.FirzenDisater
+          skip_zero = opoint.spreading === OpointSpreading.Spreading
         } = multi
         switch (multi_type = type) {
           case OpointMultiEnum.AccordingEnemies:
@@ -998,19 +998,13 @@ export class Entity {
           case OpointSpreading.Normal:
             v.z = (i - (count - 1) / 2) * 2.5;
             break;
-          case OpointSpreading.Bat:
-            v.x = this.lf2.bat_spreading_x.take()
-            v.z = this.lf2.bat_spreading_z.take()
-            facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
-            break;
-          case OpointSpreading.FirzenDisater:
-            v.x = this.lf2.disater_spreading_x.take()
-            v.y = this.lf2.disater_spreading_y.take()
-            facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
-            break;
-          case OpointSpreading.JanDevilJudgement:
-            v.x = this.lf2.jan_devil_judgement_spreading_x.take()
-            v.y = this.lf2.jan_devil_judgement_spreading_y.take()
+          case OpointSpreading.Spreading:
+            if (opoint.__spreading_random_x)
+              v.x = opoint.__spreading_random_x.take();
+            if (opoint.__spreading_random_y)
+              v.z = opoint.__spreading_random_y.take();
+            if (opoint.__spreading_random_z)
+              v.z = opoint.__spreading_random_z.take();
             facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
             break;
         }

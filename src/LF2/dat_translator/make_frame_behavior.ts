@@ -1,14 +1,14 @@
 import {
   ActionType,
-  BuiltIn_OID,
   CollisionVal as C_Val,
-  Defines,
+  Defines as D,
   EntityVal,
   FacingFlag as FF,
   FrameBehavior,
   HitFlag,
   IFrameInfo,
   ItrKind,
+  BuiltIn_OID as OID,
   OpointKind, OpointMultiEnum, OpointSpreading,
   SpeedMode
 } from "../defines";
@@ -26,14 +26,14 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
   switch (frame.behavior as FrameBehavior) {
     case FrameBehavior.AngelBlessing:
       frame.facing = FF.VX;
-      frame.dvx = Defines.ANGEL_BLESSING_MAX_VX;
-      frame.acc_x = Defines.ANGEL_BLESSING_ACC_X;
+      frame.dvx = D.ANGEL_BLESSING_MAX_VX;
+      frame.acc_x = D.ANGEL_BLESSING_ACC_X;
       frame.vxm = SpeedMode.AccTo;
-      frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.ANGEL_BLESSING_ACC_Z;
+      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
+      frame.acc_z = D.ANGEL_BLESSING_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      frame.dvy = Defines.ANGEL_BLESSING_MAX_VY;
-      frame.acc_y = Defines.ANGEL_BLESSING_ACC_Y;
+      frame.dvy = D.ANGEL_BLESSING_MAX_VY;
+      frame.acc_y = D.ANGEL_BLESSING_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       frame.itr = ensure(frame.itr, {
@@ -62,16 +62,16 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       break;
     case FrameBehavior.JohnChase:
       frame.facing = FF.VX;
-      frame.dvx = Defines.JOHN_CHASE_MAX_VX;
-      frame.acc_x = Defines.JOHN_CHASE_ACC_X;
+      frame.dvx = D.JOHN_CHASE_MAX_VX;
+      frame.acc_x = D.JOHN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
 
-      frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.JOHN_CHASE_ACC_Z;
+      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
+      frame.acc_z = D.JOHN_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
 
-      frame.dvy = Defines.JOHN_CHASE_MAX_VY;
-      frame.acc_y = Defines.JOHN_CHASE_ACC_Y;
+      frame.dvy = D.JOHN_CHASE_MAX_VY;
+      frame.acc_y = D.JOHN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
 
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
@@ -79,16 +79,16 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       break;
     case FrameBehavior.DennisChase: {
       frame.facing = FF.VX;
-      frame.dvx = Defines.DENNIS_CHASE_MAX_VX;
-      frame.acc_x = Defines.DENNIS_CHASE_ACC_X;
+      frame.dvx = D.DENNIS_CHASE_MAX_VX;
+      frame.acc_x = D.DENNIS_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
 
-      frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.DENNIS_CHASE_ACC_Z;
+      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
+      frame.acc_z = D.DENNIS_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
 
-      frame.dvy = Defines.DENNIS_CHASE_MAX_VY;
-      frame.acc_y = Defines.DENNIS_CHASE_ACC_Y;
+      frame.dvy = D.DENNIS_CHASE_MAX_VY;
+      frame.acc_y = D.DENNIS_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
 
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
@@ -103,16 +103,16 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       break;
     }
     case FrameBehavior.Boomerang:
-      frame.dvx = Defines.BOOMERANG_CHASE_MAX_VX;
-      frame.acc_x = Defines.BOOMERANG_CHASE_ACC_X;
+      frame.dvx = D.BOOMERANG_CHASE_MAX_VX;
+      frame.acc_x = D.BOOMERANG_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
 
-      frame.dvz = Defines.BOOMERANG_CHASE_MAX_VZ;
-      frame.acc_z = Defines.BOOMERANG_CHASE_ACC_Z;
+      frame.dvz = D.BOOMERANG_CHASE_MAX_VZ;
+      frame.acc_z = D.BOOMERANG_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
 
-      frame.dvy = Defines.BOOMERANG_CHASE_MAX_VY;
-      frame.acc_y = Defines.BOOMERANG_CHASE_ACC_Y;
+      frame.dvy = D.BOOMERANG_CHASE_MAX_VY;
+      frame.acc_y = D.BOOMERANG_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
 
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
@@ -126,20 +126,20 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       break;
     case FrameBehavior.ChasingSameEnemy:
       frame.facing = FF.VX;
-      frame.dvx = Defines.DISATER_CHASE_MAX_VX;
-      frame.acc_x = Defines.DISATER_CHASE_ACC_X;
+      frame.dvx = D.DISATER_CHASE_MAX_VX;
+      frame.acc_x = D.DISATER_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
-      frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.DISATER_CHASE_ACC_Z;
+      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
+      frame.acc_z = D.DISATER_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      frame.dvy = Defines.DISATER_CHASE_MAX_VY;
-      frame.acc_y = Defines.DISATER_CHASE_ACC_Y;
+      frame.dvy = D.DISATER_CHASE_MAX_VY;
+      frame.acc_y = D.DISATER_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_z = 1;
       frame.itr?.forEach(itr => {
         switch (oid) {
-          case BuiltIn_OID.FirzenChasef:
-          case BuiltIn_OID.FirzenChasei:
+          case OID.FirzenChasef:
+          case OID.FirzenChasei:
             itr.on_hit_ground = { id: "60" };
             break;
           default:
@@ -156,7 +156,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
     case FrameBehavior.BatStart:
       frame.opoint = ensure(frame.opoint, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.BatChase,
+        oid: OID.BatChase,
         x: frame.centerx,
         y: frame.centery,
         action: { id: "0" },
@@ -164,7 +164,9 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
           type: OpointMultiEnum.AccordingEnemies,
           min: 3,
         },
-        spreading: OpointSpreading.Bat,
+        spreading: OpointSpreading.Spreading,
+        spreading_x: [...D.BAT_CHASE_SPREADING_VX],
+        spreading_z: [...D.BAT_CHASE_SPREADING_VZ],
       });
       break;
     case FrameBehavior.FirzenDisasterStart:
@@ -180,19 +182,19 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       firzen_disater_start(frame, frame.centerx, -79);
       frame.opoint = ensure(frame.opoint, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx,
         y: 24,
         action: { id: "109" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FreezeColumn,
+        oid: OID.FreezeColumn,
         x: 135,
         y: 24,
         action: { id: "100" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FreezeColumn,
+        oid: OID.FreezeColumn,
         x: 135,
         y: 24,
         z: -60,
@@ -200,7 +202,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         action: { id: "100" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FreezeColumn,
+        oid: OID.FreezeColumn,
         x: 135,
         y: 24,
         z: 60,
@@ -208,13 +210,13 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         action: { id: "100" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FreezeColumn,
+        oid: OID.FreezeColumn,
         x: -45,
         y: 24,
         action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FreezeColumn,
+        oid: OID.FreezeColumn,
         x: -45,
         y: 24,
         z: -60,
@@ -222,7 +224,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FreezeColumn,
+        oid: OID.FreezeColumn,
         x: -45,
         y: 24,
         z: 60,
@@ -230,91 +232,91 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         action: { id: "100", facing: FF.Backward },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx,
         y: 26,
         z: 0,
         action: { id: "54" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx - 25,
         y: 26,
         z: 0,
         action: { id: "54" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx + 25,
         y: 26,
         z: 0,
         action: { id: "54", facing: 2 },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx - 50,
         y: 26,
         z: 0,
         action: { id: "54" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx + 50,
         y: 26,
         z: 0,
         action: { id: "54", facing: 2 },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx - 38,
         y: 26,
         z: -15,
         action: { id: "54" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx + 38,
         y: 26,
         z: -15,
         action: { id: "54", facing: 2 },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx - 38,
         y: 26,
         z: 15,
         action: { id: "54" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx + 38,
         y: 26,
         z: 15,
         action: { id: "54", facing: 2 },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx + 10,
         y: 26,
         z: 25,
         action: { id: "54" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx - 10,
         y: 26,
         z: 25,
         action: { id: "54", facing: 2 },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx + 10,
         y: 26,
         z: -25,
         action: { id: "54" },
       }, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.FirenFlame,
+        oid: OID.FirenFlame,
         x: frame.centerx - 10,
         y: 26,
         z: -25,
@@ -323,14 +325,14 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       break;
     case FrameBehavior.Bat:
       frame.facing = FF.VX;
-      frame.dvx = Defines.BAT_CHASE_MAX_VX;
-      frame.acc_x = Defines.BAT_CHASE_ACC_X;
+      frame.dvx = D.BAT_CHASE_MAX_VX;
+      frame.acc_x = D.BAT_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
-      frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.BAT_CHASE_ACC_Z;
+      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
+      frame.acc_z = D.BAT_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      frame.dvy = Defines.BAT_CHASE_MAX_VY;
-      frame.acc_y = Defines.BAT_CHASE_ACC_Y;
+      frame.dvy = D.BAT_CHASE_MAX_VY;
+      frame.acc_y = D.BAT_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover };
@@ -338,7 +340,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
     case FrameBehavior.JulianBallStart:
       frame.opoint = ensure(frame.opoint, {
         kind: OpointKind.Normal,
-        oid: BuiltIn_OID.JulianBall,
+        oid: OID.JulianBall,
         x: frame.centerx,
         y: frame.centery,
         dvx: 8,
@@ -347,14 +349,14 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       break;
     case FrameBehavior.JulianBall: {
       frame.facing = FF.VX;
-      frame.dvx = Defines.JULIAN_CHASE_MAX_VX;
-      frame.acc_x = Defines.JULIAN_CHASE_ACC_X;
+      frame.dvx = D.JULIAN_CHASE_MAX_VX;
+      frame.acc_x = D.JULIAN_CHASE_ACC_X;
       frame.vxm = SpeedMode.AccTo;
-      frame.dvz = Defines.DEFAULT_OPOINT_SPEED_Z;
-      frame.acc_z = Defines.JULIAN_CHASE_ACC_Z;
+      frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
+      frame.acc_z = D.JULIAN_CHASE_ACC_Z;
       frame.vzm = SpeedMode.AccTo;
-      frame.dvy = Defines.JULIAN_CHASE_MAX_VY;
-      frame.acc_y = Defines.JULIAN_CHASE_ACC_Y;
+      frame.dvy = D.JULIAN_CHASE_MAX_VY;
+      frame.acc_y = D.JULIAN_CHASE_ACC_Y;
       frame.vym = SpeedMode.AccTo;
       frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
       const fid = Number(frame.id);

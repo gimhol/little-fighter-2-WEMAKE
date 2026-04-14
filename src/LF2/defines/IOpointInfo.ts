@@ -141,4 +141,15 @@ export interface IOpointInfo {
   interval_mode?: 1 | 0;
   indicator_info?: IQubePair;
   motionless?: number;
+
+  spreading_x?: number[];
+  spreading_y?: number[];
+  spreading_z?: number[];
+
+  /** 运行时生成 */
+  __spreading_random_x?: { take(): number };
+  /** 运行时生成 */
+  __spreading_random_y?: { take(): number };
+  /** 运行时生成 */
+  __spreading_random_z?: { take(): number };
 }

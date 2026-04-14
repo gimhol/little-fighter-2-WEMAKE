@@ -1,4 +1,4 @@
-import { IFrameInfo, OpointKind, BuiltIn_OID, OpointMultiEnum, OpointSpreading } from "../defines";
+import { IFrameInfo, OpointKind, BuiltIn_OID, OpointMultiEnum, OpointSpreading, Defines as D } from "../defines";
 import { ensure } from "../utils";
 
 
@@ -14,6 +14,8 @@ export function firzen_disater_start(frame: IFrameInfo, x: number = frame.center
     dvy: 6,
     action: { id: "0" },
     multi: { type: OpointMultiEnum.AccordingEnemies, min: 4 },
-    spreading: OpointSpreading.FirzenDisater,
+    spreading: OpointSpreading.Spreading,
+    spreading_x: [...D.DISATER_SPREADING_VX],
+    spreading_y: [...D.DISATER_SPREADING_VY],
   });
 }

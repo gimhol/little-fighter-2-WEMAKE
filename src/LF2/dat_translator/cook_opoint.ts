@@ -1,4 +1,7 @@
-import { FacingFlag, IFrameInfo, IOpointInfo, BuiltIn_OID as OID } from "../defines";
+import {
+  Defines as D, FacingFlag, IFrameInfo, IOpointInfo,
+  BuiltIn_OID as OID, OpointSpreading
+} from "../defines";
 import { round } from "../utils/math/base";
 import { is_num, not_zero_num } from "../utils/type_check";
 import { get_next_frame_by_raw_id } from "./get_the_next";
@@ -47,6 +50,12 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
         opoint.speedz = 0;
       }
       break;
+  }
 
+  switch (opoint.spreading) {
+    case OpointSpreading.Spreading:
+      opoint.spreading_x = [...D.BAT_CHASE_SPREADING_VX];
+      opoint.spreading_z = [...D.BAT_CHASE_SPREADING_VZ];
+      break;
   }
 }

@@ -4,6 +4,7 @@ import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
 import { EntityEnum, FacingFlag as FF, FrameBehavior, IFrameInfo } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
+import { Randoming } from "../helper/Randoming";
 import read_nums from "../ui/utils/read_nums";
 import { traversal } from "../utils/container_help/traversal";
 import { preprocess_bdy } from "./preprocess_bdy";
@@ -40,7 +41,11 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
 
   frame.bdy?.forEach((n, i, l) => l[i] = preprocess_bdy(lf2, n, data, jobs))
   frame.itr?.forEach((n, i, l) => l[i] = preprocess_itr(lf2, n, data, jobs))
-
+  frame.opoint?.forEach((n, i, j) => {
+    if (n.spreading_x?.length) n.__spreading_random_x = new Randoming(n.spreading_x, lf2);
+    if (n.spreading_y?.length) n.__spreading_random_y = new Randoming(n.spreading_y, lf2);
+    if (n.spreading_z?.length) n.__spreading_random_z = new Randoming(n.spreading_z, lf2);
+  })
 
   const unchecked_frame = frame as any;
   if (unchecked_frame) {

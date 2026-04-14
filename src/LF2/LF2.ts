@@ -67,12 +67,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _playable: boolean = false;
   private _mt = new MersenneTwister(Date.now())
   get mt() { return this._mt }
-  readonly bat_spreading_x = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VX, this)
-  readonly bat_spreading_z = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VZ, this)
-  readonly disater_spreading_x = new Helper.Randoming(D.Defines.DISATER_SPREADING_VX, this)
-  readonly disater_spreading_y = new Helper.Randoming(D.Defines.DISATER_SPREADING_VY, this)
-  readonly jan_devil_judgement_spreading_x = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VX, this)
-  readonly jan_devil_judgement_spreading_y = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VY, this)
   readonly factory: Factory = new Factory();
   get loading() {
     return this._loading;
