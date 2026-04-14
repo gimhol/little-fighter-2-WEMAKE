@@ -1,5 +1,7 @@
 import { floor, max, min } from "./math/base";
-
+/**
+ * 次数
+ */
 export class Times {
   static MIN: number = 0
   static MAX: number = Number.MAX_SAFE_INTEGER
@@ -9,6 +11,12 @@ export class Times {
   private _max: number = Times.MAX;
   private _lifes: number = Times.LIFES;
   private _remains: number = Times.LIFES;
+  /**
+   * 当前值
+   * 通过add被修改，始终有min <= value <= max 
+   *
+   * @type {number}
+   */
   get value(): number { return this._value }
   get min(): number { return this._min }
   get max(): number { return this._max }
