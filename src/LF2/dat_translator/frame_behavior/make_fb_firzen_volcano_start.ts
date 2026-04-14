@@ -3,6 +3,7 @@ import { FacingFlag as FF } from "../../defines/FacingFlag";
 import { IFrameInfo } from "../../defines/IFrameInfo";
 import { OpointKind } from "../../defines/OpointKind";
 import { ensure } from "../../utils/container_help/ensure";
+import { make_fb_firzen_disater_start } from "./make_fb_firzen_disater_start";
 
 export function make_fb_firzen_volcano_start(frame: IFrameInfo, x: number = frame.centerx, y: number = frame.centery) {
   make_fb_firzen_disater_start(frame, x, y)
@@ -149,7 +150,3 @@ export function make_fb_firzen_volcano_start(frame: IFrameInfo, x: number = fram
     action: { id: "54", facing: 2 },
   });
 }
-function make_fb_firzen_disater_start(frame: IFrameInfo, x: number, y: number) {
-  throw new Error("Function not implemented.");
-}
-
