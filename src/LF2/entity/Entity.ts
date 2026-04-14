@@ -831,10 +831,9 @@ export class Entity {
       dvx: o_dvx = 0,
       dvy: o_dvy = 0,
       dvz: o_dvz = 0,
-      speedz: o_speedz = Defines.DEFAULT_OPOINT_SPEED_Z
+      speedz: o_speedz = this.get_opoint_speed_z(emitter, opoint)
     } = opoint;
-    if (!is_fighter(emitter))
-      o_speedz = 0;
+
     const { weight } = this
     o_dvy = o_dvy / weight;
     const ud = emitter.ctrl?.UD || 0;
@@ -874,7 +873,20 @@ export class Entity {
     this.motionless = opoint.motionless ?? 2
     return this;
   }
-
+  get_opoint_speed_z(emitter: Entity, opoint: IOpointInfo): number {
+    if (opoint.speedz !== void 0) return opoint.speedz;
+    if (!is_fighter(emitter)) return 0;
+    // shit
+    switch (this.state) {
+      case StateEnum.Standing:
+      case StateEnum.Ball_Flying:
+      case StateEnum.Ball_3006:
+      case StateEnum.Weapon_Throwing:
+      case StateEnum.HeavyWeapon_InTheSky:
+        return Defines.DEFAULT_OPOINT_SPEED_Z;
+    }
+    return 0;
+  }
   set_state(state_code: number) {
     const v = this.states.get(state_code) || this.states.fallback(this._data.type, state_code);
     if (this._state === v) return;
