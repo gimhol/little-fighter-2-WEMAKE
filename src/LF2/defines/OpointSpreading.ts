@@ -16,6 +16,7 @@ export enum OpointSpreading {
    */
   Spreading = 1,
 
+  FloatRange = 2,
 
   AngelBlessing = 4,
 }

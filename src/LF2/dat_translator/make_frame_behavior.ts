@@ -346,6 +346,9 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         y: frame.centery,
         dvx: 8,
         action: { id: "50" },
+        spreading: OpointSpreading.FloatRange,
+        spreading_x: [-5, 5, 5],
+        spreading_y: [-5, 5, 10],
       });
       break;
     case FrameBehavior.JulianBall: {

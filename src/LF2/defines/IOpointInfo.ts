@@ -54,17 +54,17 @@ export interface IOpointInfo {
   action: TNextFrame;
 
   /**
-   * 发射初速度
+   * 发射初速度X
    */
   dvx?: number;
 
   /**
-   * 发射初速度
+   * 发射初速度Y
    */
   dvy?: number;
 
   /**
-   * 发射初速度
+   * 发射初速度Z
    */
   dvz?: number;
 
@@ -121,13 +121,20 @@ export interface IOpointInfo {
   hp?: number;
 
   /**
-   * 生成后的最大血量
-   * 将覆盖原实体的最大血量
+   * 生成后的最大蓝量
+   * 将覆盖原实体的最大蓝量
    */
   max_mp?: number;
 
+  /**
+   * 生成后的蓝量
+   * 将覆盖原实体的蓝量
+   */
   mp?: number;
 
+  /**
+   * 按着上或下时，生成物被额外赋予的初速度Z
+   */
   speedz?: number;
 
   /**
@@ -152,6 +159,7 @@ export interface IOpointInfo {
   interval_mode?: 1 | 0;
   indicator_info?: IQubePair;
   motionless?: number;
+
 
   spreading_x?: number[];
   spreading_y?: number[];

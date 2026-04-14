@@ -7,7 +7,8 @@ import { sus_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
-  Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
+  Builtin_FrameId,
+  Defines, EntityEnum, EntityGroup, FacingFlag,
   FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
@@ -830,9 +831,10 @@ export class Entity {
       dvx: o_dvx = 0,
       dvy: o_dvy = 0,
       dvz: o_dvz = 0,
-      speedz: o_speedz = this.get_opoint_speed_z(emitter, opoint)
+      speedz: o_speedz = 0
     } = opoint;
-
+    if (!is_fighter(emitter))
+      o_speedz = 0;
     const weight = this._data.base.weight || 1
     o_dvy = o_dvy / weight;
     const ud = emitter.ctrl?.UD || 0;
@@ -871,32 +873,6 @@ export class Entity {
     }
     this.motionless = opoint.motionless ?? 2
     return this;
-  }
-
-  get_opoint_speed_z(emitter: Entity, opoint: IOpointInfo): number {
-    if (opoint.speedz !== void 0) return opoint.speedz;
-    if (!is_fighter(emitter)) return 0;
-    switch (this._data.id) {
-      case BuiltIn_OID.FirenFlame:
-        return Defines.DEFAULT_FIREN_FLAME_SPEED_Z;
-      case BuiltIn_OID.HenryWind:
-      case BuiltIn_OID.FirzenBall:
-      case BuiltIn_OID.Bat:
-      case BuiltIn_OID.BatChase:
-      case BuiltIn_OID.BatBall:
-      case BuiltIn_OID.JanChase:
-      case BuiltIn_OID.JanChaseh:
-        opoint.speedz = 0;
-        break;
-    }
-    switch (this.state) {
-      case StateEnum.Ball_Flying:
-      case StateEnum.Ball_3006:
-      case StateEnum.Weapon_Throwing:
-      case StateEnum.HeavyWeapon_InTheSky:
-        return Defines.DEFAULT_OPOINT_SPEED_Z;
-    }
-    return 0;
   }
 
   set_state(state_code: number) {
@@ -1005,16 +981,22 @@ export class Entity {
             break;
         }
         const e = this.spawn_entity(opoint, v, facing);
-        if (e) switch (this.frame.behavior) {
-          case FrameBehavior.JulianBallStart:
-            e.merge_velocities();
-            const { x } = e.velocity;
-            this.lf2.mt.mark = 'ao_1'
-            const zz = round_float(this.lf2.mt.range(-5, 5) / 5)
-            this.lf2.mt.mark = 'ao_2'
-            const yy = round_float(this.lf2.mt.range(-5, 5) / 10)
-            e.set_velocity(x, yy, zz)
+        if (!e) return;
+
+        switch (opoint.spreading) {
+          case OpointSpreading.FloatRange:
+            const { x, y, z } = e.velocity;
+            this.lf2.mt.mark = 'ao_x'
+            const xx = opoint.__spreading_random_x?.take() ?? x;
+            this.lf2.mt.mark = 'ao_y'
+            const yy = opoint.__spreading_random_y?.take() ?? y;
+            this.lf2.mt.mark = 'ao_z'
+            const zz = opoint.__spreading_random_z?.take() ?? z;
+            e.set_velocity(xx, yy, zz)
             break;
+        }
+
+        switch (this.frame.behavior) {
           case FrameBehavior.FirzenDisasterStart:
           case FrameBehavior.FirzenVolcanoStart:
           case FrameBehavior.BatStart:
