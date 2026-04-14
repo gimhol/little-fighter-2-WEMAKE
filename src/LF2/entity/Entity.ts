@@ -831,7 +831,7 @@ export class Entity {
       dvx: o_dvx = 0,
       dvy: o_dvy = 0,
       dvz: o_dvz = 0,
-      speedz: o_speedz = 0
+      speedz: o_speedz = Defines.DEFAULT_OPOINT_SPEED_Z
     } = opoint;
     if (!is_fighter(emitter))
       o_speedz = 0;
