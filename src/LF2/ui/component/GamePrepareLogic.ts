@@ -10,9 +10,9 @@ import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
 import { StageSwitcher } from "./StageSwitcher";
 import { UIComponent } from "./UIComponent";
 export interface IGamePrepareLogicProps {
-  stage_switcher?: StageSwitcher,
-  bg_switcher?: BackgroundSwitcher,
-  game_mode?: string,
+  stage_switcher: StageSwitcher | null,
+  bg_switcher: BackgroundSwitcher | null,
+  game_mode: string | null,
 }
 export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
   static override readonly TAG = 'GamePrepareLogic'
@@ -31,6 +31,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     const background_row = this.node.search_child("background_row")!;
     const stage_row = this.node.search_child("stage_row")!;
     const char_menu_logic = this.node.search_component(CharMenuLogic)
+
     if (this.props.game_mode === "stage_mode") {
       stage_row.set_visible(true).set_disabled(false);
       background_row.set_visible(false).set_disabled(true);
