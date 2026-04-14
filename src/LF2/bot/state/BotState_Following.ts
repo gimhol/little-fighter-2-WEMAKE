@@ -11,6 +11,7 @@ export class BotState_Following extends BotState_Base {
     this.ctrl.key_up(...KEY_NAME_LIST);
   }
   override update(dt: number) {
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     super.update(dt);
     if (this.handle_defends()) return;
     if (this.handle_block()) return;
@@ -20,7 +21,7 @@ export class BotState_Following extends BotState_Base {
     const me = c.entity;
 
     if (c.goingto) {
-      const [en_x, , en_z] = c.goingto
+      const { x: en_x, z: en_z } = c.goingto
       const { x: my_x, z: my_z } = me.position;
       const offset_x = Defines.AI_FOLLOWING_RANGE_X
       const offset_z = Defines.AI_FOLLOWING_RANGE_Z
@@ -29,7 +30,7 @@ export class BotState_Following extends BotState_Base {
       const bound_t = round_float(en_z - offset_z);
       const bound_b = round_float(en_z + offset_z);
       // shit.
-      if (me.frame.state !== StateEnum.Running) {
+      if (me.state !== StateEnum.Running) {
         if (my_x < bound_l)
           c.key_up(GK.R).key_down(GK.R).key_up(GK.L);
         else if (my_x > bound_r)
@@ -55,12 +56,12 @@ export class BotState_Following extends BotState_Base {
         !between(my_z, bound_t, bound_b)
       ) return
     }
-    if (me.frame.state == StateEnum.Running) { // 别跑了
+    if (me.state == StateEnum.Running) { // 别跑了
       this.ctrl.key_down(me.facing < 0 ? GK.R : GK.L)
     }
     // TODO: 是不是该想个办法让持续位移招式（dennis d>j）停下来？
 
-    delete c.goingto;
+    c.stop();
     this.ctrl.key_up(...KEY_NAME_LIST);
     const en = c.chasings.get()?.entity;
     const av = c.avoidings.get()?.entity;

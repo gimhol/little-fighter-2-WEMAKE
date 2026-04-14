@@ -73,8 +73,11 @@ export class World extends WorldDataset {
    * 值: 角色
    */
   readonly puppets = new Map<string, Entity>();
+  readonly puppet_teams = new Set<string>();
+
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();
+  has_players_alive: boolean = false
   get bg() { return this._bg; }
   set bg(v: Background) {
     if (v === this._bg) return;
@@ -155,7 +158,7 @@ export class World extends WorldDataset {
         this.callbacks.emit("on_fighter_add")(entity);
         const player = this.lf2.players.get(entity.ctrl.player_id)
         if (player) {
-          player.fighter = entity
+          player.fighter = entity;
           this.puppets.set(entity.ctrl.player_id, entity);
           this.callbacks.emit("on_puppet_add")(entity.ctrl.player_id);
         }
@@ -264,6 +267,14 @@ export class World extends WorldDataset {
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
   }
 
+  fighter_bound(e: Entity): [number, number] {
+    const { player_l, player_r, enemy_l, enemy_r, team } = this.stage;
+    const is_player = e.team !== team;
+    const l = is_player ? player_l : enemy_l;
+    const r = is_player ? player_r : enemy_r;
+    return [l, r]
+  }
+
   /**
    * 限制角色位置
    * 
@@ -298,8 +309,8 @@ export class World extends WorldDataset {
   restrict_ball(e: Entity): void {
     const { left, right, near, far } = this.stage;
     const { x, z } = e.position;
-    if (x < left - 800) e.enter_frame(Defines.NEXT_FRAME_GONE);
-    else if (x > right + 800) e.enter_frame(Defines.NEXT_FRAME_GONE);
+    if (x < left - 200) e.enter_frame(Defines.NEXT_FRAME_GONE);
+    else if (x > right + 200) e.enter_frame(Defines.NEXT_FRAME_GONE);
     if (z < far) e.set_position_z(far);
     else if (z > near) e.set_position_z(near);
   }
@@ -317,7 +328,7 @@ export class World extends WorldDataset {
     const { left, right, near, far, drink_l, drink_r } = this.stage;
     let { x, z } = e.position;
 
-    if (e.data.base.type === WeaponType.Drink) {
+    if (e.base_type === WeaponType.Drink) {
       const l = drink_l;
       const r = drink_r;
       if (x < l) e.set_position_x(x = l);
@@ -436,7 +447,9 @@ export class World extends WorldDataset {
         case CMD.F8:
           if (this.fn_locked || stage_limit()) continue;
           this.add_count(CMD.F8, 1)
-          this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+          const is_stage = this.stage.id !== Defines.VOID_STAGE.id
+          const weapon_datas = this.lf2.datas.get_weapons_of_group(is_stage ? EntityGroup.StageWeapon : EntityGroup.VsWeapon)
+          for (const wd of weapon_datas) this.lf2.entities.add(wd, 1);
           continue;
         case CMD.F9:
           if (this.fn_locked || stage_limit()) continue;
@@ -478,8 +491,9 @@ export class World extends WorldDataset {
       }
     }
   }
+
   update_once() {
-    this.transform.update()
+    this.transform.update();
     this.update_ui();
     this.handle_keys();
     this.handle_cmds();
@@ -514,6 +528,7 @@ export class World extends WorldDataset {
       this.buffs.delete(key);
     }
 
+    this.has_players_alive = false
     for (const e of this.entities) {
       const { is_ghost } = e;
       if (!is_ghost && update_chasing && this._chasers.size)
@@ -541,12 +556,14 @@ export class World extends WorldDataset {
       e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
-        e.frame.state === StateEnum.Gone
+        e.state === StateEnum.Gone
       ) {
         e.hp = e.hp_r = 0;
         this.gones.add(e);
         continue;
       }
+      if (!this.has_players_alive && e.hp > 0 && is_human_ctrl(e.ctrl))
+        this.has_players_alive = true;
       if (!is_ghost) this._temp_entitis_set.add(e);
     }
     if (update_collisions) {
@@ -555,7 +572,6 @@ export class World extends WorldDataset {
       for (const [, c] of this.a_collisions)
         collisions_keeper.handle(c)
     }
-
     for (const entity of this.gones) {
       const attached = this.entities.delete(entity)
       if (!attached) continue;
@@ -567,7 +583,6 @@ export class World extends WorldDataset {
       const ok = this.puppets.delete(entity.ctrl.player_id);
       if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
       this.renderer.del_entity(entity);
-
       entity.release();
       this.lf2.factory.recycle_entity(entity)
     }
@@ -641,7 +656,7 @@ export class World extends WorldDataset {
     let cur_x = this.renderer.cam_x;
     const acc = min(
       acc_ratio,
-      0.5 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
+      0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
     );
     const max_speed = max_speed_ratio * acc;
 
@@ -926,6 +941,8 @@ export class World extends WorldDataset {
     this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;
+    this.callbacks.emit('on_counts')();
+    this._counts.clear()
   }
 
   ticker(): Ticker {

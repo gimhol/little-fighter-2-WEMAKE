@@ -7,9 +7,9 @@ export function calc_itr_velocity(collision: ICollision): [number, number, numbe
   const { itr, attacker, victim } = collision;
   const { dvx = 0, dvy = attacker.dataset('ivy_d'), dvz = 0 } = itr;
   const diff_x = victim.position.x - attacker.position.x;
-  const weight_x = victim.data.base.weight || 1;
-  const weight_y = victim.data.base.weight || 1;
-  const weight_z = victim.data.base.weight || 1;
+  const weight_x = victim.weight;
+  const weight_y = victim.weight;
+  const weight_z = victim.weight;
 
   const explosion = (
     itr.effect == IE.FireExplosion ||

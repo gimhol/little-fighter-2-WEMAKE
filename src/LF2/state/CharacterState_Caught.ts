@@ -13,7 +13,7 @@ export class CharacterState_Caught extends CharacterState_Base {
     const holding = e.holding
     // TODO: the drop position is not the same as LF2, should I figure it out?
     if (holding) e.drop_holding();
-    if (holding?.data.base.type === WeaponType.Heavy)
+    if (holding?.base_type === WeaponType.Heavy)
       holding.team = e.team;
   }
   override update(e: Entity): void {

@@ -7,9 +7,8 @@ import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhase
 import { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
 import { Entity } from "../entity/Entity";
-import { is_fighter, is_weapon } from "../entity/type_check";
+import { is_bot_ctrl, is_fighter, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
-import { find } from "../utils/container_help/find";
 import { is_num } from "../utils/type_check";
 import { Expressions } from "./Expressions";
 import type IStageCallbacks from "./IStageCallbacks";
@@ -370,7 +369,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
       temp.push(e);
     }
     this.world.del_entities(temp);
-    this.callbacks.clear()
+    this.callbacks.clear();
   }
 
   all_boss_dead(): boolean {
@@ -419,7 +418,16 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   get should_goto_next_stage(): boolean {
     if (this.is_chapter_finish || !this.is_stage_finish)
       return false;
-    return !find(this.world.entities, e => is_fighter(e) && e.hp > 0 && e.position.x < this.cam_r)
+
+    for (const e of this.world.entities) {
+      if (!is_fighter(e)) continue; // 非角色不判断
+      if (e.hp <= 0) continue; // 无血，不判断
+      if (e.position.x >= this.cam_r) continue; // 已达右侧，不判断
+      if (is_bot_ctrl(e.ctrl)) continue; // Bot不判断
+      if (this.lf2.players.has(e.ctrl.player_id))
+        return false;
+    }
+    return true;
   }
   get world_pause() {
     return !!this.phase?.world_pause

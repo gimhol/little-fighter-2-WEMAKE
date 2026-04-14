@@ -1,4 +1,8 @@
-import { FacingFlag, IFrameInfo, IOpointInfo, BuiltIn_OID as OID } from "../defines";
+import {
+  Defines as D, FacingFlag, IFrameInfo, IOpointInfo,
+  BuiltIn_OID as OID,
+  StateEnum as S_E
+} from "../defines";
 import { round } from "../utils/math/base";
 import { is_num, not_zero_num } from "../utils/type_check";
 import { get_next_frame_by_raw_id } from "./get_the_next";
@@ -35,6 +39,15 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
   if (not_zero_num(dvy)) opoint.dvy = dvy * -0.5;
 
   const { action, oid } = opoint
+
+  switch (frame.state) {
+    case S_E.Ball_Flying:
+    case S_E.Ball_3006:
+    case S_E.Weapon_Throwing:
+    case S_E.HeavyWeapon_InTheSky:
+      opoint.speedz = D.DEFAULT_OPOINT_SPEED_Z;
+      break;
+  }
   switch (oid) {
     case OID.FirenFlame:
       if (
@@ -45,8 +58,18 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
       ) {
         // for hardcoded
         opoint.speedz = 0;
+      } else {
+        opoint.speedz = D.DEFAULT_FIREN_FLAME_SPEED_Z
       }
       break;
-
+    case OID.HenryWind:
+    case OID.FirzenBall:
+    case OID.Bat:
+    case OID.BatChase:
+    case OID.BatBall:
+    case OID.JanChase:
+    case OID.JanChaseh:
+      opoint.speedz = 0;
+      break;
   }
 }

@@ -29,7 +29,7 @@ export function fields<T extends object>(fields: Record<keyof T, IRet<T>>) {
   const ret = new Map<keyof T, IFieldInfo<T>>();
   for (const k in fields) {
     const key = k as keyof T;
-    const value = assign(fields[key], { key });
+    const value = assign({}, fields[key], { key });
     ret.set(key, value);
   }
   return ret;

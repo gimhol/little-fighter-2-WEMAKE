@@ -81,7 +81,6 @@ export class BaseController {
   };
 
   readonly dbc: Record<LGK, DoubleClick<IFrameInfo>>;
-
   get LR(): 0 | 1 | -1 {
     const L = !this.keys.L.is_end();
     const R = !this.keys.R.is_end();

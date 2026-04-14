@@ -31,17 +31,16 @@
   }
 
   .top_bar {
-    --wails-draggable   : drag;
-    position            : absolute;
-    right               : 0px;
-    top                 : 0px;
-    left                : 0px;
-    // pointer-events   : none;
-    user-select         : none;
-    display             : flex;
-    justify-content     : flex-end;
-    align-items         : flex-start;
-    gap                 : 0px;
+    --wails-draggable: drag;
+    position         : absolute;
+    right            : 0px;
+    top              : 0px;
+    left             : 0px;
+    user-select      : none;
+    display          : flex;
+    justify-content  : flex-end;
+    align-items      : flex-start;
+    gap              : 0px;
 
     button {
       --wails-draggable: no-drag;
@@ -150,32 +149,44 @@
   box-sizing      : border-box;
 }
 
-.mobile.landscape .debug_ui_top,
-.mobile.landscape .debug_ui_bottom {
-  padding-left : 20px;
-  padding-right: 20px;
+:global(.mobile.landscape) {
+
+  .debug_ui_top,
+  .debug_ui_bottom {
+    padding-left : 10px;
+    padding-right: 10px;
+  }
+
+  .debug_ui_left {
+    padding-left: 10px;
+  }
+
+  .debug_ui_right {
+    padding-right: 10px;
+  }
 }
 
-.mobile.landscape .debug_ui_left {
-  padding-left: 20px;
+:global(.mobile.portrait) {
+  .debug_ui_top {
+    padding-top: 10px;
+  }
+
+  .debug_ui_bottom {
+    padding-bottom: 10px;
+  }
+
+  .debug_ui_left,
+  .debug_ui_right {
+    padding-top   : 10px;
+    padding-bottom: 10px;
+  }
 }
 
-.mobile.landscape .debug_ui_right {
-  padding-right: 20px;
-}
-
-.mobile.portrait .debug_ui_top {
-  padding-top: 20px;
-}
-
-.mobile.portrait .debug_ui_bottom {
-  padding-bottom: 20px;
-}
-
-.mobile.portrait .debug_ui_left,
-.mobile.portrait .debug_ui_right {
-  padding-top   : 20px;
-  padding-bottom: 20px;
+:global(.mobile) {
+  .top_bar {
+    padding   : 0px 10px;
+    box-sizing: border-box;
+  }
 }
 
 .settings_row {

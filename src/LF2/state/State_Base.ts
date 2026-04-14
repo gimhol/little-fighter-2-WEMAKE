@@ -10,7 +10,7 @@ export class State_Base {
   on_frame_changed?(e: Entity, frame: IFrameInfo, prev_frame: IFrameInfo): void;
   pre_update?(e: Entity): void;
   update(e: Entity): void {
-    switch (e.frame.state) {
+    switch (e.state) {
       case StateEnum.Burning:
         if (e.update_id.value % 2) e.apply_opoints([spawn_buring_smoke(e, 1)]);
         break;

@@ -1,4 +1,5 @@
 import "current-device";
+import './DittoImpl';
 import * as dom from "./DittoImpl";
 import { UINodeRenderer } from "./DittoImpl/renderer/UINodeRenderer";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";

@@ -1,6 +1,6 @@
 
 import { ICollision } from "../base/ICollision";
-import { Defines, ItrEffect, SparkEnum, TFace } from "../defines";
+import { Defines, ItrEffect, SparkEnum, TFace, WeaponType } from "../defines";
 import { turn_face } from "../entity";
 import { is_fighter } from "../entity/type_check";
 import { calc_itr_velocity } from "./calc_itr_velocity";
@@ -37,6 +37,8 @@ export function handle_fall(collision: ICollision) {
     case ItrEffect.Fire:
     case ItrEffect.MFire2:
       if (fire) {
+        if (victim.holding?.base_type === WeaponType.Heavy)
+          victim.drop_holding()
         victim.enter_frame({
           id: fire[0],
           facing: turn_face(facing),
@@ -48,6 +50,8 @@ export function handle_fall(collision: ICollision) {
     case ItrEffect.MFire1:
     case ItrEffect.FireExplosion:
       if (fire) {
+        if (victim.holding?.base_type === WeaponType.Heavy)
+          victim.drop_holding()
         victim.enter_frame({
           id: fire[0],
           facing: facing,

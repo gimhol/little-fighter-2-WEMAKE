@@ -12,7 +12,7 @@ export function handle_ball_is_hit_a(collision: ICollision): void {
     victim.hp = victim.hp_r = 0;
   }
   victim.set_velocity(0, 0, 0)
-  switch (victim.frame.state) {
+  switch (victim.state) {
     case StateEnum.Ball_Flying:
     case StateEnum.Ball_Rebounding:
       victim.team = attacker.team;

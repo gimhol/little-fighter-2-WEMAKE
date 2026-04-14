@@ -3,7 +3,7 @@ import { KEY_NAME_LIST, LocalController } from "./controller";
 import * as D from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
-import { Entity } from "./entity";
+import { Entity, is_fighter } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
 import { Factory } from "./Factory";
 import * as Helper from "./helper";
@@ -14,9 +14,9 @@ import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import { Stage } from "./stage";
 import * as UI from "./ui";
+import { regist_components } from './ui/component/_';
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
-import { regist_components } from './ui/component/_';
 const cheat_info_pair = (n: D.CheatType) =>
   [
     n,
@@ -30,7 +30,7 @@ const cheat_info_pair = (n: D.CheatType) =>
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.22'
+  static readonly VERSION_NAME: string = 'v0.1.23'
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -67,12 +67,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _playable: boolean = false;
   private _mt = new MersenneTwister(Date.now())
   get mt() { return this._mt }
-  readonly bat_spreading_x = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VX, this)
-  readonly bat_spreading_z = new Helper.Randoming(D.Defines.BAT_CHASE_SPREADING_VZ, this)
-  readonly disater_spreading_x = new Helper.Randoming(D.Defines.DISATER_SPREADING_VX, this)
-  readonly disater_spreading_y = new Helper.Randoming(D.Defines.DISATER_SPREADING_VY, this)
-  readonly jan_devil_judgement_spreading_x = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VX, this)
-  readonly jan_devil_judgement_spreading_y = new Helper.Randoming(D.Defines.DEVIL_JUDGEMENT_SPREADING_VY, this)
   readonly factory: Factory = new Factory();
   get loading() {
     return this._loading;
@@ -517,6 +511,13 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       this.sounds.play_with_load(D.Defines.Sounds.StagePass);
       this.callbacks.emit("on_stage_pass")();
     }
+    if (next_stage?.is_starting) {
+      for (const e of this.world.entities) {
+        if (is_fighter(e) && this.players.has(e.ctrl.player_id)) continue;
+        e.release();
+      }
+    }
+
     this.change_stage(next_stage || D.Defines.VOID_STAGE);
     this.callbacks.emit("on_enter_next_stage")();
   }

@@ -27,16 +27,15 @@ export class SchemaValidator {
       return ret;
     }
     switch (type) {
-      case "boolean":
+      case Boolean: case "boolean":
         if (typeof value !== 'boolean') return r();
         break;
-      case "string":
+      case String: case "string":
         if (typeof value !== 'string') return r();
         if (schema.string?.not_blank && !value.trim()) return r();
         if (schema.string?.not_empty && !value) return r();
         break;
-      case "number":
-      case "integer":
+      case Number: case "number": case "integer":
         if (typeof value !== 'number') return r();
         if (!schema.number?.nan && Number.isNaN(value)) return r();
         if (schema.number?.int && !Number.isInteger(value)) return r();
@@ -52,7 +51,12 @@ export class SchemaValidator {
             const prop_value = value[i];
             const prop_schema = schema.items;
             const prop_type = prop_schema?.type
-            if (typeof prop_type === 'function') {
+            if (
+              typeof prop_type === 'function' &&
+              prop_type !== Boolean &&
+              prop_type !== String &&
+              prop_type !== Number
+            ) {
               Object.defineProperty(value, i, {
                 configurable: true,
                 get: () => this._get_instance?.(prop_value, prop_type, prop_schema),
@@ -75,7 +79,12 @@ export class SchemaValidator {
           const prop_schema: ISchema<any> = schema.properties[k];
           const prop_value = value[k];
           const prop_type = prop_schema.type
-          if (typeof prop_type === 'function') {
+          if (
+            typeof prop_type === 'function' &&
+            prop_type !== Boolean &&
+            prop_type !== String &&
+            prop_type !== Number
+          ) {
             delete value[k]
             Object.defineProperty(value, k, {
               configurable: true,
@@ -84,8 +93,11 @@ export class SchemaValidator {
             })
             continue;
           }
-          if (Array.isArray(prop_value)) value[k] = [...prop_value];
-          else if (prop_value && typeof prop_type === 'object') value[k] = { ...prop_value };
+          if (Array.isArray(prop_value)) {
+            value[k] = [...prop_value];
+          } else if (prop_value && typeof prop_type === 'object') {
+            value[k] = { ...prop_value };
+          }
           if (!this.validate(prop_value, prop_schema, errors)) {
             return false
           }

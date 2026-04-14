@@ -1,15 +1,15 @@
 import { Entity } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
-import { IBotTarget } from "./IBotTarget";
+import { BotTarget } from "./IBotTarget";
 
 export class NearestTargets {
   max: number;
-  targets: IBotTarget[] = [];
+  targets: BotTarget[] = [];
   entities = new Set<Entity>();
 
   constructor(max: number) { this.max = max; }
 
-  get(): IBotTarget | undefined { return this.targets[0]; }
+  get(): BotTarget | undefined { return this.targets[0]; }
 
   look(self: Entity, other: Entity, defendable: number = 0) {
     const { targets } = this;
@@ -18,7 +18,7 @@ export class NearestTargets {
     const distance = manhattan_xz(self, other);
     const len = targets.length;
     if (len < this.max) {
-      targets.push({ entity: other, distance, defendable });
+      targets.push(new BotTarget({ entity: other, distance, defendable }));
       this.entities.add(other);
       return;
     } else {
@@ -26,7 +26,7 @@ export class NearestTargets {
         const target = targets[i];
         if (distance > target.distance)
           continue;
-        this.targets.splice(i, 0, { entity: other, distance, defendable });
+        this.targets.splice(i, 0, new BotTarget({ entity: other, distance, defendable }));
         this.entities.add(other);
         const { entity } = this.targets[this.max];
         this.entities.delete(entity);
@@ -36,7 +36,7 @@ export class NearestTargets {
     }
   }
 
-  del(condition: (target: IBotTarget) => boolean) {
+  del(condition: (target: BotTarget) => boolean) {
     this.targets = this.targets.filter((target) => {
       const ret = !condition(target);
       if (!ret) this.entities.delete(target.entity);

@@ -12,7 +12,7 @@ const ID = 'd^j' as const
  *
  * @export
  * @param {number} min_mp 至少需要多少mp
- * @param {number} [desire=0.05] 欲望值
+ * @param {number} [desire=0.0666] 欲望值
  * @param {number} [min_x=-120] 后方距离 
  * @param {number} [max_x=120] 前方距离
  * @param {number} [z_len=120] Z轴范围

@@ -1,10 +1,20 @@
-import * as T from "../_t";
-import { Shaders } from "./shader";
-export const BLACK = new T.Color("#000000");
-export function get_outline_material(texture: T.Texture<unknown> | undefined) {
-  return new T.ShaderMaterial({
-    uniforms: {
-      pTexture: { value: texture },
+import { Color, ShaderMaterial } from "../../_t";
+import { MaterialFactory, MaterialKind } from "../MaterialFactory";
+import { Shaders } from "../shader";
+export const BLACK = new Color("#000000");
+MaterialFactory.register(MaterialKind.Outline, {
+  cls: ShaderMaterial,
+  create: () => {
+    const ret = new ShaderMaterial({
+      vertexShader: Shaders.Vertex.Normal,
+      fragmentShader: Shaders.Fragment.Outline,
+      transparent: true
+    });
+    return ret;
+  },
+  reset: (c: ShaderMaterial) => {
+    c.uniforms = {
+      tex: { value: void 0 },
       x: { value: 0 },
       y: { value: 0 },
       w: { value: 1 },
@@ -33,9 +43,6 @@ export function get_outline_material(texture: T.Texture<unknown> | undefined) {
       coverStreath: { value: 0 },
       gray: { value: 0 },
       keepout: { value: true }
-    },
-    vertexShader: Shaders.Vertex.Normal,
-    fragmentShader: Shaders.Fragment.Outline,
-    transparent: true
-  });
-}
+    }
+  }
+})

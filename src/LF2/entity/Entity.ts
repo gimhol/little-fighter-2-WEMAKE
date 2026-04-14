@@ -7,7 +7,8 @@ import { sus_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
-  Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, FacingFlag,
+  Builtin_FrameId,
+  Defines, EntityEnum, EntityGroup, FacingFlag,
   FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
@@ -379,7 +380,7 @@ export class Entity {
     if (r !== null) return r;
     return this.key_role ? StatBarType.Float : StatBarType.None
   }
-  
+
   set stat_bar_type(v: number) {
     this._stat_bar_type = v;
   }
@@ -472,8 +473,12 @@ export class Entity {
     if (o > 0 && v <= 0) {
       this.world.del_chaser(this);
       this.callbacks.emit("on_dead")(this);
-      this.state?.on_dead?.(this);
-      if (this._data.base.brokens?.length) {
+      this._state?.on_dead?.(this);
+      if (
+        this.state !== StateEnum.Gone &&
+        this.frame.id !== Builtin_FrameId.Gone &&
+        this._data.base.brokens?.length
+      ) {
         this.apply_opoints(this._data.base.brokens);
         this.play_sound(this._data.base.dead_sounds);
       }
@@ -533,17 +538,6 @@ export class Entity {
   get src_emitter(): Entity | undefined { return this.get_emitter(0) }
   get pre_emitter(): Entity | undefined { return this.get_emitter(this.emitters.length - 1) }
   get emitters(): string[] { return this._emitters; }
-
-  set state(v: State_Base | null | undefined) {
-    if (this._state === v) return;
-    this._state?.leave?.(this, this.frame);
-    this._state = v || null;
-    this._state?.enter?.(this, this.get_prev_frame());
-  }
-
-  get state(): State_Base | null {
-    return this._state;
-  }
 
   /**
    * 闪烁计数
@@ -634,7 +628,7 @@ export class Entity {
   set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
   get gravity(): number {
-    const g1 = this.state?.get_gravity?.(this);
+    const g1 = this._state?.get_gravity?.(this);
     const g2 = this.ctrl.is_end(GK.Defend) ?
       this.dataset('gravity') :
       this.dataset('gravity_d')
@@ -652,6 +646,16 @@ export class Entity {
     if (v == this._arest) return;
     this._arest = round_float(v);
   }
+  get strength(): number {
+    return this.data.base.strength ?? 1;
+  }
+  get weight(): number {
+    return this.data.base.weight ?? 1;
+  }
+  get base_type(): number {
+    return this.data.base.type ?? 0
+  }
+  get state() { return this.frame.state }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
   }
@@ -778,7 +782,7 @@ export class Entity {
 
   find_auto_frame(): IFrameInfo {
     return (
-      this.state?.get_auto_frame?.(this) ?? this._data.frames["0"] ?? this.frame
+      this._state?.get_auto_frame?.(this) ?? this._data.frames["0"] ?? this.frame
     ); // FIXME: fix this 'as'.
   }
 
@@ -790,7 +794,7 @@ export class Entity {
   ) {
     this._emitter_opoint = opoint;
     const emitter_frame = emitter.frame;
-    if (emitter.frame.state === StateEnum.Ball_Rebounding) {
+    if (emitter.state === StateEnum.Ball_Rebounding) {
       const attacker = emitter.lastest_collided?.attacker ?? emitter;
       this._emitters[0] = attacker.id;
       this._emitters.length = 1
@@ -827,10 +831,11 @@ export class Entity {
       dvx: o_dvx = 0,
       dvy: o_dvy = 0,
       dvz: o_dvz = 0,
-      speedz: o_speedz = this.get_opoint_speed_z(emitter, opoint)
+      speedz: o_speedz = 0
     } = opoint;
-
-    const weight = this._data.base.weight || 1
+    if (!is_fighter(emitter))
+      o_speedz = 0;
+    const { weight } = this
     o_dvy = o_dvy / weight;
     const ud = emitter.ctrl?.UD || 0;
     const { x: ovx, y: ovy, z: ovz } = offset_velocity;
@@ -870,35 +875,12 @@ export class Entity {
     return this;
   }
 
-  get_opoint_speed_z(emitter: Entity, opoint: IOpointInfo): number {
-    if (opoint.speedz !== void 0) return opoint.speedz;
-    if (!is_fighter(emitter)) return 0;
-    switch (this._data.id) {
-      case BuiltIn_OID.FirenFlame:
-        return Defines.DEFAULT_FIREN_FLAME_SPEED_Z;
-      case BuiltIn_OID.HenryWind:
-      case BuiltIn_OID.FirzenBall:
-      case BuiltIn_OID.Bat:
-      case BuiltIn_OID.BatChase:
-      case BuiltIn_OID.BatBall:
-      case BuiltIn_OID.JanChase:
-      case BuiltIn_OID.JanChaseh:
-        opoint.speedz = 0;
-        break;
-    }
-    switch (this.frame.state) {
-      case StateEnum.Ball_Flying:
-      case StateEnum.Ball_3006:
-      case StateEnum.Weapon_Throwing:
-      case StateEnum.HeavyWeapon_InTheSky:
-        return Defines.DEFAULT_OPOINT_SPEED_Z;
-    }
-    return 0;
-  }
-
   set_state(state_code: number) {
-    const next_state = this.states.get(state_code) || this.states.fallback(this._data.type, state_code);
-    this.state = next_state;
+    const v = this.states.get(state_code) || this.states.fallback(this._data.type, state_code);
+    if (this._state === v) return;
+    this._state?.leave?.(this, this.frame);
+    this._state = v || null;
+    this._state?.enter?.(this, this.get_prev_frame());
   }
 
   set_frame(v: IFrameInfo) {
@@ -922,12 +904,12 @@ export class Entity {
     this._prev_frame = this.frame;
     this.frame = v;
     const prev_state_code = this._prev_frame.state;
-    const next_state_code = this.frame.state;
+    const next_state_code = this.state;
     if (prev_state_code !== next_state_code) {
       this.set_state(next_state_code)
     }
     if (this._prev_frame !== this.frame) {
-      this.state?.on_frame_changed?.(this, this.frame, this._prev_frame);
+      this._state?.on_frame_changed?.(this, this.frame, this._prev_frame);
 
       if (this.hp > 0) {
         const pre_chase = this._prev_frame.chase?.flag;
@@ -966,11 +948,7 @@ export class Entity {
       if (is_num(multi)) {
         count = multi;
       } else if (multi) {
-        const {
-          type, min = 0, max = 355,
-          // TODO: 改用skip_zero来表达
-          skip_zero = opoint.spreading === OpointSpreading.FirzenDisater
-        } = multi
+        const { type, min = 0, max = 355, skip_zero } = multi
         switch (multi_type = type) {
           case OpointMultiEnum.AccordingEnemies:
             enemies = this.world.list_enemy_fighters(this, o => o.hp > 0)
@@ -992,48 +970,49 @@ export class Entity {
           case OpointSpreading.Normal:
             v.z = (i - (count - 1) / 2) * 2.5;
             break;
-          case OpointSpreading.Bat:
-            v.x = this.lf2.bat_spreading_x.take()
-            v.z = this.lf2.bat_spreading_z.take()
-            facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
-            break;
-          case OpointSpreading.FirzenDisater:
-            v.x = this.lf2.disater_spreading_x.take()
-            v.y = this.lf2.disater_spreading_y.take()
-            facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
-            break;
-          case OpointSpreading.JanDevilJudgement:
-            v.x = this.lf2.jan_devil_judgement_spreading_x.take()
-            v.y = this.lf2.jan_devil_judgement_spreading_y.take()
+          case OpointSpreading.Spreading:
+            if (opoint.__spreading_random_x)
+              v.x = opoint.__spreading_random_x.take();
+            if (opoint.__spreading_random_y)
+              v.y = opoint.__spreading_random_y.take();
+            if (opoint.__spreading_random_z)
+              v.z = opoint.__spreading_random_z.take();
             facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
             break;
         }
         const e = this.spawn_entity(opoint, v, facing);
-        if (e) switch (this.frame.behavior) {
-          case FrameBehavior.JulianBallStart:
-            e.merge_velocities();
-            const { x } = e.velocity;
-            this.lf2.mt.mark = 'ao_1'
-            const zz = round_float(this.lf2.mt.range(-5, 5) / 5)
-            this.lf2.mt.mark = 'ao_2'
-            const yy = round_float(this.lf2.mt.range(-5, 5) / 10)
-            e.set_velocity(x, yy, zz)
+        if (!e) return;
+
+        switch (opoint.spreading) {
+          case OpointSpreading.FloatRange:
+            const { x, y, z } = e.velocity;
+            this.lf2.mt.mark = 'ao_x'
+            const xx = opoint.__spreading_random_x?.take() ?? x;
+            this.lf2.mt.mark = 'ao_y'
+            const yy = opoint.__spreading_random_y?.take() ?? y;
+            this.lf2.mt.mark = 'ao_z'
+            const zz = opoint.__spreading_random_z?.take() ?? z;
+            e.set_velocity(xx, yy, zz)
             break;
+        }
+
+        switch (this.frame.behavior) {
           case FrameBehavior.FirzenDisasterStart:
           case FrameBehavior.FirzenVolcanoStart:
           case FrameBehavior.BatStart:
           case FrameBehavior.DevilJudgementStart:
-            if (multi_type === OpointMultiEnum.AccordingEnemies) {
-              e.chasing = enemies[i % enemies.length]
-              if (e.chasing) {
-                e.facing = (e.chasing.position.x > e.position.x) ? 1 : -1
-                e.set_velocity_x(e.facing * abs(e.velocity.x))
-              }
+            e.chasing = enemies[i % enemies.length]
+            if (e.chasing) {
+              const vx = e.velocity.x
+              if (vx == 0) e.facing = this.facing
+              else if (vx > 0) e.facing = 1
+              else e.facing = -1
             }
             break;
           case FrameBehavior.AngelBlessingStart:
-            if (multi_type === OpointMultiEnum.AccordingAllies)
+            if (this.frame.chase && multi_type === OpointMultiEnum.AccordingAllies) {
               e.chasing = allies[i % allies.length]
+            }
             break;
         }
       }
@@ -1446,7 +1425,7 @@ export class Entity {
         pair[1] = time + 1;
       }
     }
-    this.state?.pre_update?.(this);
+    this._state?.pre_update?.(this);
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
       if (!this._catcher && !this._bearer) {
@@ -1460,7 +1439,7 @@ export class Entity {
     }
     this.handle_gravity();
     this.update_velocity();
-    this.state?.update(this);
+    this._state?.update(this);
     this.update_position();
 
     if (this.motionless > 0) {
@@ -1515,7 +1494,7 @@ export class Entity {
           this._landing_velocity.z = this._velocity.z
           this.velocities[0].y = 0;
           this._velocity.y = 0;
-          this.state?.on_landing?.(this);
+          this._state?.on_landing?.(this);
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {
             this.hp -= this.throwinjury;
@@ -1592,7 +1571,7 @@ export class Entity {
    * @returns
    */
   get_sudden_death_frame(): TNextFrame {
-    return this.state?.get_sudden_death_frame?.(this) || Defines.NEXT_FRAME_AUTO
+    return this._state?.get_sudden_death_frame?.(this) || Defines.NEXT_FRAME_AUTO
   }
 
   /**
@@ -1605,7 +1584,7 @@ export class Entity {
    */
   get_caught_end_frame(): INextFrame {
     if (this._position.y < this.ground_y) this._position.y = this.ground_y + 1;
-    return this.state?.get_caught_end_frame?.(this) || Defines.NEXT_FRAME_AUTO
+    return this._state?.get_caught_end_frame?.(this) || Defines.NEXT_FRAME_AUTO
   }
 
   /**
@@ -1646,8 +1625,10 @@ export class Entity {
     if (this.prev_cpoint_a !== cp_a) {
       const { injury } = cp_a;
       if (injury) {
+        const prev_hp = this.hp;
         this.hp -= injury;
         this.hp_r -= injury * (1 - this.dataset('hp_recoverability'))
+        summary_mgr.apply_damage(cer, injury, this, prev_hp);
       }
       const shaking = cp_a.shaking
       if (typeof shaking === 'number')
@@ -1855,7 +1836,7 @@ export class Entity {
   dizzy_catch_test(target: Entity): boolean {
     return (
       is_fighter(this) &&
-      is_fighter(target) && target.frame.state === StateEnum.Tired &&
+      is_fighter(target) && target.state === StateEnum.Tired &&
       ((this.velocity.x > 0 && target.position.x > this._position.x) ||
         (this.velocity.x < 0 && target.position.x < this._position.x))
     );
@@ -2190,7 +2171,7 @@ export class Entity {
   }
 
   find_frame_by_id(id: string | undefined): IFrameInfo | undefined {
-    const r = this.state?.find_frame_by_id?.(this, id);
+    const r = this._state?.find_frame_by_id?.(this, id);
     if (r) return r;
 
     switch (id) {

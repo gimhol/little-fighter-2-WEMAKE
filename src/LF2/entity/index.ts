@@ -3,6 +3,7 @@ export * from "./Buff";
 export * from "./DrinkInfo";
 export * from "./Entity";
 export * from "./IEntityCallbacks";
+export * from "./StatBarType";
 export * from "./Summary";
 export * from "./SummaryMgr";
 export * from "./calc_v";

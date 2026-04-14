@@ -195,7 +195,15 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
 
   armor?: IArmorInfo;
 
+  /**
+   * 武器重量
+   * （也许角色也可以考虑用这个属性？）
+   */
   weight?: number
+
+  /**
+   * 角色力气，决定能丢多远
+   */
   strength?: number
 
   /**

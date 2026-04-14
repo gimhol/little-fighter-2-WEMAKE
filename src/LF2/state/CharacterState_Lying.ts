@@ -11,7 +11,7 @@ export default class CharacterState_Lying extends CharacterState_Base {
     e.ctrl.reset_key_list();
     const holding = e.holding
     if (holding) e.drop_holding();
-    if (holding?.data.base.type === WeaponType.Heavy)
+    if (holding?.base_type === WeaponType.Heavy)
       holding.team = e.team;
     e.toughness = e.toughness_max;
     e.toughness_resting = 0;
@@ -53,7 +53,7 @@ export default class CharacterState_Lying extends CharacterState_Base {
     if (
       e.hp <= 0 &&
       e.position.y <= e.ground_y &&
-      e.frame.state === StateEnum.Lying &&
+      e.state === StateEnum.Lying &&
       !e.dead_join
     ) {
       return e.frame;

@@ -7,8 +7,7 @@ import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
-import { get_outline_material } from "./get_outline_material";
-import { get_color_material } from "./MaterialKeeper";
+import { MaterialFactory, MaterialKind } from "./MaterialFactory";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
@@ -23,7 +22,6 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
 }
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
-const BLOOD_MESH_MATERIAL = get_color_material(new T.Color(1, 0, 0))
 
 
 export class EntityRender {
@@ -79,7 +77,9 @@ export class EntityRender {
     this.images = get_img_map(lf2, entity.data);
 
     const texture = this.images.get("0")?.pic?.texture;
-    const material = get_outline_material(texture);
+    const material = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial, m => {
+      m.uniforms.tex = { value: texture }
+    });
     material.uniforms.outlineWidth.value = 1;
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY, material
@@ -94,7 +94,10 @@ export class EntityRender {
     if (typeof data.base.render_order === "number")
       mesh.renderOrder = data.base.render_order;
 
-    this.blood_mesh = this.blood_mesh || new T.Mesh(BLOOD_GEOMETRY, BLOOD_MESH_MATERIAL)
+    this.blood_mesh = this.blood_mesh || new T.Mesh(
+      BLOOD_GEOMETRY,
+      MaterialFactory.get(MaterialKind.Color, T.MeshBasicMaterial, m => m.color = new T.Color(1, 0, 0))
+    )
     this.blood_mesh.visible = false;
     this.node = this.node || new T.Object3D();
   }
@@ -128,7 +131,7 @@ export class EntityRender {
     const { x, y, w, h } = info;
     main_mesh.scale.set(w, h, 0);
     const { material: m } = main_mesh;
-    m.uniforms.pTexture.value = img.pic.texture;
+    m.uniforms.tex.value = img.pic.texture;
     m.uniforms.tw.value = img.w;
     m.uniforms.th.value = img.h;
     m.uniforms.tsw.value = img.scale;

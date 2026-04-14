@@ -9,7 +9,8 @@ import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
-import { BLACK, get_outline_material } from "./get_outline_material";
+import { BLACK } from "./materials/OutlineMaterial";
+import { MaterialFactory, MaterialKind } from "./MaterialFactory";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -90,8 +91,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.ui = ui;
     this.mesh = new T.Mesh(
       this.next_geometry(),
-      get_outline_material(void 0)
-      // new T.MeshBasicMaterial({ transparent: true, opacity: 1 }),
+      MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial)
     )
     this.mesh.userData.owner = ui;
   }
@@ -170,9 +170,9 @@ export class UINodeRenderer implements IUINodeRenderer {
     u.tsw.value = (scale * _texture.repeat.x);
     u.tsh.value = (scale * _texture.repeat.y);
 
-    if (u.pTexture.value !== _texture) {
-      u.pTexture.value?.dispose();
-      u.pTexture.value = _texture;
+    if (u.tex.value !== _texture) {
+      u.tex.value?.dispose();
+      u.tex.value = _texture;
     }
     u.mixColor.value = this._mixColor;
     u.mixStreath.value = this._mixStength;
@@ -291,7 +291,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._css_obj.center.set(this.ui.center.value.x, this.ui.center.value.y)
   }
   update_texture_attributes(dt: number) {
-    const t: T.Texture = this.mesh.material.uniforms.pTexture.value;
+    const t: T.Texture = this.mesh.material.uniforms.tex.value;
     if (!t || !this._ui_img) return;
     const { offsetAnimX, offsetAnimY } = this._ui_img
     if (!offsetAnimX && !offsetAnimY && this.user_data.ui_img == this._ui_img)

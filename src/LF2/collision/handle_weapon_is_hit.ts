@@ -21,9 +21,9 @@ export function handle_weapon_is_hit(collision: ICollision): void {
 
   let [vx, vy, vz] = calc_itr_velocity(collision)
   const is_base_ball =
-    victim.data.base.type === W_T.Baseball ||
-    victim.data.base.type === W_T.Drink;
-  if (victim.data.base.type !== W_T.Heavy || is_fly) {
+    victim.base_type === W_T.Baseball ||
+    victim.base_type === W_T.Drink;
+  if (victim.base_type !== W_T.Heavy || is_fly) {
     victim.set_velocity(vx, vy, vz)
     victim.team = attacker.team;
     victim.lf2.mt.mark = 'hwih_1'
@@ -39,8 +39,8 @@ export function handle_weapon_is_hit(collision: ICollision): void {
     attacker.data.id === BuiltIn_OID.Weapon_Stick &&
     is_base_ball
   ) {
-    const s = attacker.data.base.strength || 1
-    vx = attacker.facing * s * 20 // super fast!
+    const s = attacker.strength
+    vx = attacker.facing * s * 10 // super fast!
     victim.lf2.mt.mark = 'hwih_2'
     victim.next_frame = { id: victim.data.indexes?.throwings?.[0] }
     victim.set_velocity(vx)

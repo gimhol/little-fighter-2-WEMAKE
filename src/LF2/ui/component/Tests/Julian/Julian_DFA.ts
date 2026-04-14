@@ -10,7 +10,7 @@ export class Julian_DFA extends TestCase {
     .repeat(1000, 50, () => {
       const { julian } = this;
       if (!julian) return;
-      if (StateEnum.Standing === julian.frame.state)
+      if (StateEnum.Standing === julian.state)
         this.julian?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Attack)
       else
         this.julian?.ctrl.key_up(...AGK).click(GK.Attack)

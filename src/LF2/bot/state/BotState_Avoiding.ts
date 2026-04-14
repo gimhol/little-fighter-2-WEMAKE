@@ -1,4 +1,5 @@
 
+import { is_fighter } from "@/LF2/entity";
 import { GK } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
@@ -8,19 +9,17 @@ export class BotState_Avoiding extends BotState_Base {
   readonly key = BotStateEnum.Avoiding;
   override update(dt: number) {
     super.update(dt)
-    if (this.handle_defends()) return;
-    if (this.handle_bot_actions()) return;
-    if (this.handle_block()) return;
-    if (this.defend_test()) return;
-    this.random_jumping()
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     const { ctrl: c } = this;
     if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
-    if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
-      return BotStateEnum.Avoiding;
-    else if (en)
+    if (this.handle_defends()) return;
+    if (this.handle_bot_actions()) return;
+    if (this.handle_defends()) return;
+    this.random_jumping()
+    if (en && av && manhattan_xz(me, av) > manhattan_xz(me, en))
       return BotStateEnum.Chasing;
     else if (!av)
       return BotStateEnum.Idle
@@ -65,6 +64,7 @@ export class BotState_Avoiding extends BotState_Base {
     const ZB = z_d > 0 ? GK.D : GK.U;
     c.key_down(ZF).key_up(ZB);
 
+    if (this.handle_block()) return;
 
   }
 }

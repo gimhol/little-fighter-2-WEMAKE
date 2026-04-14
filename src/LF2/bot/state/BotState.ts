@@ -1,30 +1,16 @@
 import type { IState } from "../../base/FSM";
 import { bot_cases } from "../../cases_instances";
-import { KEY_NAME_LIST } from "../../controller";
 import { GK, LGK, StateEnum } from "../../defines";
-import type { BotStateEnum } from "../../defines/BotStateEnum";
+import { BotStateEnum } from "../../defines/BotStateEnum";
 import type { BotController } from "../BotController";
 
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
   readonly ctrl: BotController
+  get world() { return this.ctrl.world }
+  get stage() { return this.world.stage }
   constructor(ctrl: BotController) {
     this.ctrl = ctrl;
-  }
-  defend_test(): boolean {
-    const { ctrl: c } = this;
-    const en = c.defends.get()?.entity;
-    if (!en || c.desire('dt') > c.d_desire)
-      return false
-    const me = c.entity;
-    const m_facing = me.facing
-    const e_facing = en.facing
-    if (e_facing == m_facing) { // 回头防御。
-      if (e_facing < 0) c.key_down(GK.R).key_up(GK.L)
-      else c.key_down(GK.L).key_up(GK.R)
-    }
-    c.start(GK.d).end(GK.d)
-    return true;
   }
   random_jumping() {
     const c = this.ctrl;
@@ -32,50 +18,54 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const desire = c.desire('rj_1')
     switch (state) {
       case StateEnum.Running:
-        if (desire < c.dash_desire) c.key_down(GK.j).key_up(GK.j)
+        if (desire < c.dataset.dash_desire) c.key_down(GK.j).key_up(GK.j)
         break;
       case StateEnum.Standing:
       case StateEnum.Walking:
-        if (desire < c.jump_desire) c.key_down(GK.j).key_up(GK.j)
+        if (desire < c.dataset.jump_desire) c.key_down(GK.j).key_up(GK.j)
         break;
     }
   }
   update(dt: number): BotStateEnum | undefined | void {
-    const c = this.ctrl
-    const me = c.entity;
-    if (c.world.stage.is_stage_finish) {
-      c.key_down(GK.R).key_up(...KEY_NAME_LIST);
-      if (me.blockers.size) c.start(GK.a).end(GK.a)
-    }
+    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
   }
   enter?(): void;
   leave?(): void;
+
+  /**
+   * 防御
+   * 
+   * @returns 当防御时返回true，否则返回false 
+   */
   handle_defends(): boolean {
     const { ctrl: c } = this;
     const me = c.entity;
-    if (
-      c.defends.targets.length <= 0 ||
-      c.action_desire('handle_defends_1') < c.d_desire
-    ) return me.frame.state === StateEnum.Defend;
 
-    if (c.defends.targets[0].defendable === 1) {
-      const dx = c.defends.targets[0].entity.position.x - me.position.x
-      const t_facing = c.defends.targets[0].entity.facing
-      if (dx > 0 && t_facing < 0) c.key_down(GK.R).key_up(GK.L)
-      if (dx < 0 && t_facing > 0) c.key_down(GK.L).key_up(GK.R)
+    const target = c.defends.get();
+    if (!target) return false;
+
+    // TODO: 不可防御的攻击
+    if (!target.defendable) return false
+
+    const dx = target.x - me.position.x;
+    const en_facing = target.facing;
+    if (dx > 0 && en_facing < 0) c.key_down(GK.R).key_up(GK.L)
+    if (dx < 0 && en_facing > 0) c.key_down(GK.L).key_up(GK.R)
+
+    if (c.action_desire('handle_defends') >= c.dataset.d_desire) {
       c.click(GK.d).key_up(GK.L, GK.R)
-    } else {
-      // 不可防御的攻击
+      return true
     }
-    return true
+    return me.state == StateEnum.Defend;
   }
+
   handle_block(): boolean {
     const { ctrl: c } = this;
     const { entity: me } = c
-    if (me.blockers.size) c.start(GK.a).end(GK.a)
+    if (me.blockers.size)
+      c.key_down(GK.a).key_up(GK.a)
     return !!me.blockers.size
   }
-
 
   handle_bot_actions(): boolean {
     const { ctrl: c } = this;
@@ -91,7 +81,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
       if (keys) keys_list.push(keys)
     }
 
-    action_ids = bot.states?.[me.frame.state]
+    action_ids = bot.states?.[me.state]
     if (action_ids) for (const aid of action_ids) {
       const action = bot.actions[aid];
       const keys = this.ctrl.handle_action(action)
@@ -107,3 +97,4 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     return true
   }
 }
+
