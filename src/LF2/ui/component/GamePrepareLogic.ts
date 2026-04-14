@@ -14,8 +14,10 @@ export interface IGamePrepareLogicProps {
   bg_switcher: BackgroundSwitcher | null,
   game_mode: string | null,
 }
+const GAME_MODE_VS = "vs_mode"
+const GAME_MODE_STAGE = "stage_mode"
 export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
-  static override readonly TAG = 'GamePrepareLogic'
+  static override readonly TAG = 'GamePrepareLogic';
   static override  readonly PROPS = make_schema<IGamePrepareLogicProps>({
     key: 'GamePrepareLogic',
     type: 'object',
@@ -32,7 +34,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     const stage_row = this.node.search_child("stage_row")!;
     const char_menu_logic = this.node.search_component(CharMenuLogic)
 
-    if (this.props.game_mode === "stage_mode") {
+    if (this.props.game_mode === GAME_MODE_STAGE) {
       stage_row.set_visible(true).set_disabled(false);
       background_row.set_visible(false).set_disabled(true);
       if (char_menu_logic) char_menu_logic.teams = [TeamEnum.Team_1]
@@ -70,7 +72,8 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
 
 
     const { far, near, left, right } = this.lf2.world.bg;
-    const is_stage_mode = this.props.game_mode === "stage_mode"
+    const is_stage_mode = this.props.game_mode === GAME_MODE_STAGE
+    const is_vs_mode = this.props.game_mode === GAME_MODE_VS
     let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
 
     this.world.renderer.cam_x = cam_x
@@ -110,16 +113,17 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
         )
       fighter.set_position(x, void 0, this.lf2.mt.range(far, near))
       fighter.blinking = this.world.begin_blink_time;
-      if (this.props.game_mode === "vs_mode")
-        fighter.mp = (fighter.mp_max * 2 / 5)
+      if (is_vs_mode) fighter.mp = (fighter.mp_max * 2 / 5)
       fighter.attach();
     }
-    if (stage_switcher) this.lf2.change_stage(stage_switcher.stage);
 
-    if (stage_switcher) this.lf2.push_ui("stage_mode_page");
-    else this.lf2.push_ui("vs_mode_page");
-
-
+    if (is_stage_mode) {
+      if (stage_switcher)
+        this.lf2.change_stage(stage_switcher?.stage);
+      this.lf2.push_ui("stage_mode_page");
+    } else {
+      this.lf2.push_ui("vs_mode_page");
+    }
   }
 }
 
