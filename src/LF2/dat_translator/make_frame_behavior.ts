@@ -163,6 +163,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
         multi: {
           type: OpointMultiEnum.AccordingEnemies,
           min: 3,
+          skip_zero: false,
         },
         spreading: OpointSpreading.Spreading,
         spreading_x: [...D.BAT_CHASE_SPREADING_VX],

@@ -972,11 +972,7 @@ export class Entity {
       if (is_num(multi)) {
         count = multi;
       } else if (multi) {
-        const {
-          type, min = 0, max = 355,
-          // TODO: 改用skip_zero来表达
-          skip_zero = opoint.spreading === OpointSpreading.Spreading
-        } = multi
+        const { type, min = 0, max = 355, skip_zero } = multi
         switch (multi_type = type) {
           case OpointMultiEnum.AccordingEnemies:
             enemies = this.world.list_enemy_fighters(this, o => o.hp > 0)

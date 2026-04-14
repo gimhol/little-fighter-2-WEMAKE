@@ -8,7 +8,11 @@ export function jan_chase_start(frame: IFrameInfo, x: number = frame.centerx, y:
     oid: OID.JanChase,
     x, y, dvy: 6,
     action: { id: "0" },
-    multi: { type: OpointMultiEnum.AccordingEnemies, min: 1 },
+    multi: {
+      type: OpointMultiEnum.AccordingEnemies,
+      min: 1,
+      skip_zero: true,
+    },
     spreading: OpointSpreading.Spreading,
     spreading_x: [...D.DEVIL_JUDGEMENT_SPREADING_VX],
     spreading_y: [...D.DEVIL_JUDGEMENT_SPREADING_VY],

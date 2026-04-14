@@ -13,7 +13,11 @@ export function firzen_disater_start(frame: IFrameInfo, x: number = frame.center
     y,
     dvy: 6,
     action: { id: "0" },
-    multi: { type: OpointMultiEnum.AccordingEnemies, min: 4 },
+    multi: {
+      type: OpointMultiEnum.AccordingEnemies, 
+      min: 4,
+      skip_zero: true,
+    },
     spreading: OpointSpreading.Spreading,
     spreading_x: [...D.DISATER_SPREADING_VX],
     spreading_y: [...D.DISATER_SPREADING_VY],

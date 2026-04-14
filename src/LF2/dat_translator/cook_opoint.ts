@@ -51,11 +51,4 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
       }
       break;
   }
-
-  switch (opoint.spreading) {
-    case OpointSpreading.Spreading:
-      opoint.spreading_x = [...D.BAT_CHASE_SPREADING_VX];
-      opoint.spreading_z = [...D.BAT_CHASE_SPREADING_VZ];
-      break;
-  }
 }
