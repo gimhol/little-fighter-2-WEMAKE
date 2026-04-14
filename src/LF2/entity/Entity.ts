@@ -980,7 +980,6 @@ export class Entity {
             facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
             break;
         }
-        if (v.x !== 0) debugger;
         const e = this.spawn_entity(opoint, v, facing);
         if (!e) return;
 
