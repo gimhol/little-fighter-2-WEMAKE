@@ -1,8 +1,6 @@
-import type { UIComponent } from "../../ui/component/UIComponent";
-import type { IClazz, ISchema } from "../../defines/ISchema";
-import type { UINode } from "../../ui/UINode";
+import type { ISchema, ISchemaPropertyTypes } from "../../defines/ISchema";
 export interface ISchemaMeta<T = any> extends Omit<ISchema<T>, 'properties'> {
-  properties?: Record<keyof T, ISchema | IClazz<UIComponent | UINode>>
+  properties?: Record<keyof T, ISchema | ISchemaPropertyTypes>
 }
 export function make_schema<T = any>(meta: ISchemaMeta<T>, parent?: ISchema): ISchema<T> {
   if (!parent && !meta.key) throw new Error('[make_schema] root scheme key not set!')

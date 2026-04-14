@@ -3,11 +3,19 @@ import type { UIComponent, UINode } from "../ui";
 export interface IClazz<C = unknown, A extends any[] = any[]> {
   new(...args: A): C
 }
+export type ISchemaPropertyTypes =
+  'array' | 'boolean' | 'null' | 'number' |
+  'integer' | 'object' | 'string' |
+  IClazz<UIComponent> |
+  IClazz<UINode> |
+  BooleanConstructor |
+  StringConstructor |
+  NumberConstructor;
 export interface ISchema<T = any> {
   path?: string;
   key?: string;
   description?: string;
-  type: 'array' | 'boolean' | 'null' | 'number' | 'integer' | 'object' | 'string' | IClazz<UIComponent | UINode | Boolean | String | Number | Array<any>>,
+  type: ISchemaPropertyTypes,
   properties?: Record<keyof T, ISchema>
   items?: ISchema;
   string?: {

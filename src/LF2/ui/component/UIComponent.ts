@@ -48,17 +48,22 @@ export class UIComponent<
   get lf2() { return this.node.lf2; }
   get world() { return this.node.lf2.world; }
   private _mounted: boolean = false;
+
+  /** @deprecated */
   private _args: readonly any[] = [];
   private _enabled: boolean = true;
 
   get enabled() { return this._enabled; }
   set enabled(v: boolean) { this.set_enabled(v); }
   set_enabled(v: boolean): this { this._enabled = v; return this; }
+
+  get disabled() { return !this.enabled }
+  set disabled(v: boolean) { this.set_enabled(!v); }
+
   get mounted() { return this._mounted; }
 
-  get args(): readonly string[] {
-    return this._args;
-  }
+  /** @deprecated */
+  get args(): readonly string[] { return this._args; }
 
 
   /**
@@ -79,15 +84,18 @@ export class UIComponent<
     make_debugging(this);
   }
   init?(): void;
+  /** @deprecated */
   num(idx: number): number | null {
     if (idx >= this._args.length) return null;
     const num = Number(this._args[idx]);
     return is_num(num) ? num : null;
   }
+  /** @deprecated */
   str(idx: number): string | null {
     if (idx >= this._args.length) return null;
     return '' + this._args[idx]
   }
+  /** @deprecated */
   bool(idx: number): boolean {
     const str = this.str(idx)?.toLowerCase();
     if (!str) return false;
@@ -96,9 +104,13 @@ export class UIComponent<
   warn(func: string, msg: string) {
     Ditto.warn(`[${this.node_name}][<${this.id}>${this.f_name}::${func}] ${msg}`)
   }
+  /** @deprecated */
   nums(idx: number, length: 1): [number] | null
+  /** @deprecated */
   nums(idx: number, length: 2): [number, number] | null
+  /** @deprecated */
   nums(idx: number, length: 3): [number, number, number] | null
+  /** @deprecated */
   nums(idx: number, length: number): number[] | null;
   nums(idx: number, length: number): number[] | null {
     if (idx >= this._args.length) return null;
@@ -134,6 +146,7 @@ export class UIComponent<
       return null
     }
   }
+  /** @deprecated */
   vec3(idx: number): IVector3 | null {
     const key = `vec3_${idx}`
     const cache = this._args_caches.get(key)

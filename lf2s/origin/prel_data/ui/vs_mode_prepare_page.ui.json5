@@ -5,8 +5,8 @@
   component: [
     {
       name: "GamePrepareLogic",
-      args: ["vs_mode"],
       properties: {
+        game_mode: "vs_mode",
         stage_switcher: "StageSwitcher",
         bg_switcher: "BackgroundSwitcher",
       },
