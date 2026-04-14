@@ -835,7 +835,7 @@ export class Entity {
     } = opoint;
     if (!is_fighter(emitter))
       o_speedz = 0;
-    const weight = this._data.base.weight || 1
+    const { weight } = this
     o_dvy = o_dvy / weight;
     const ud = emitter.ctrl?.UD || 0;
     const { x: ovx, y: ovy, z: ovz } = offset_velocity;
@@ -980,6 +980,7 @@ export class Entity {
             facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
             break;
         }
+        if (v.x !== 0) debugger;
         const e = this.spawn_entity(opoint, v, facing);
         if (!e) return;
 
@@ -1001,17 +1002,18 @@ export class Entity {
           case FrameBehavior.FirzenVolcanoStart:
           case FrameBehavior.BatStart:
           case FrameBehavior.DevilJudgementStart:
-            if (multi_type === OpointMultiEnum.AccordingEnemies) {
-              e.chasing = enemies[i % enemies.length]
-              if (e.chasing) {
-                e.facing = (e.chasing.position.x > e.position.x) ? 1 : -1
-                e.set_velocity_x(e.facing * abs(e.velocity.x))
-              }
+            e.chasing = enemies[i % enemies.length]
+            if (e.chasing) {
+              const vx = e.velocity.x
+              if (vx == 0) e.facing = this.facing
+              else if (vx > 0) e.facing = 1
+              else e.facing = -1
             }
             break;
           case FrameBehavior.AngelBlessingStart:
-            if (multi_type === OpointMultiEnum.AccordingAllies)
+            if (this.frame.chase && multi_type === OpointMultiEnum.AccordingAllies) {
               e.chasing = allies[i % allies.length]
+            }
             break;
         }
       }
