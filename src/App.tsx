@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router";
 import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
 import "splittings-dom/dist/es/splittings-dom.css";
 import { Workspaces } from "splittings/dist/es/splittings";
-import styles from "./App.module.scss";
+import csses from "./App.module.scss";
 import { Button } from "./Component/Buttons/Button";
 import { StatusButton } from "./Component/Buttons/StatusButton";
 import { ToggleButton } from "./Component/Buttons/ToggleButton";
@@ -91,7 +91,7 @@ const init_s = () => ({
   touchpad_enabled: document.firstElementChild?.classList.contains('mobile') || document.firstElementChild?.classList.contains('tablet') || false,
   sync_render: 0 as sync_render
 })
-
+const is_mobile_container = navigator.userAgent.includes('lfw-mobile-container')
 function App() {
   const l = useLocation()
   const nav = useNavigate()
@@ -555,11 +555,11 @@ function App() {
     }
   }
   const game_cell_view = game_cell ? createPortal(
-    <div className={styles.game_contiainer}>
+    <div className={csses.game_contiainer}>
       <canvas
         ref={set_ele_game_canvas}
         tabIndex={-1}
-        className={styles.game_canvas}
+        className={csses.game_canvas}
         width={794}
         height={450}
         draggable={false}
@@ -568,7 +568,7 @@ function App() {
         onDragOver={e => { if (lf2?.ui?.id === 'entry') e.preventDefault() }}
         onDrop={on_drop}
       />
-      <div ref={set_ele_game_overlay} className={classNames(styles.game_overlay, { [styles.gone]: !s.game_overlay })} />
+      <div ref={set_ele_game_overlay} className={classNames(csses.game_overlay, { [csses.gone]: !s.game_overlay })} />
       <DanmuOverlay lf2={lf2} />
       <GamePad
         id='game_pad'
@@ -576,8 +576,8 @@ function App() {
         enabled={!!s.touchpad && s.touchpad_enabled}
         lf2={lf2}
         container={() => ele_game_canvas?.parentElement} />
-      <Loading loading={!ui_id} big className={styles.loading_img} />
-      <div className={styles.top_bar}>
+      <Loading loading={!ui_id} big className={csses.loading_img} />
+      <div className={csses.top_bar}>
         <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
           <ToggleImgButton
             checked={s.dev_ui_open}
@@ -614,7 +614,7 @@ function App() {
             src={[img_btn_1_1, img_btn_1_1]}
           />
         </Show>
-        <Show show={!navigator.userAgent.includes('lfw-mobile-container')}>
+        <Show show={!is_mobile_container}>
           <ToggleImgButton
             checked={is_fullscreen}
             onClick={() => toggle_fullscreen()}
@@ -647,8 +647,8 @@ function App() {
     </div>, game_cell, null) : null
 
   const pannel_cell_view = pannel_cell ? createPortal(
-    <div className={classNames(styles.debug_ui, styles["debug_ui_" + s.dev_ui_pos])}>
-      <div className={styles.settings_row}>
+    <div className={classNames(csses.debug_ui, csses["debug_ui_" + s.dev_ui_pos])}>
+      <div className={csses.settings_row}>
         <Button onClick={on_click_download_zip}>下载数据包</Button>
         <Button onClick={on_click_load_local_zip} disabled={loading}>
           加载数据包
@@ -671,7 +671,7 @@ function App() {
           ✕
         </Button>
       </div>
-      <div className={styles.settings_row}>
+      <div className={csses.settings_row}>
         <Combine>
           <ToggleButton
             onChange={(v) => lf2?.sounds.set_muted(v)}
@@ -729,7 +729,7 @@ function App() {
           </Show>
         </Combine>
       </div>
-      <div className={styles.settings_row}>
+      <div className={csses.settings_row}>
         <Select
           placeholder="页面"
           value={ui_id}
@@ -811,7 +811,7 @@ function App() {
           </Titled>
         </Show>
       </div>
-      <div className={styles.settings_row}>
+      <div className={csses.settings_row}>
         <Combine>
           <ToggleButton
             value={paused}
@@ -876,7 +876,7 @@ function App() {
 
         </Combine>
       </div>
-      <div className={styles.settings_row}>
+      <div className={csses.settings_row}>
         <Combine>
           <ToggleButton
             onChange={() =>
@@ -984,7 +984,7 @@ function App() {
 
   return (
     <>
-      <div className={styles.app} ref={set_ele_root} />
+      <div className={csses.app} ref={set_ele_root} />
       {game_cell_view}
       {pannel_cell_view}
       {dat_viewer_open ? <DatViewer open={dat_viewer_open} onClose={() => set_dat_viewer_open(false)} /> : void 0}
