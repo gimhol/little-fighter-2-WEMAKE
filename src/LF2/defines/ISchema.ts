@@ -8,6 +8,7 @@ export type ISchemaPropertyTypes =
   'integer' | 'object' | 'string' |
   IClazz<UIComponent> |
   IClazz<UINode> |
+  ArrayConstructor |
   BooleanConstructor |
   StringConstructor |
   NumberConstructor;
