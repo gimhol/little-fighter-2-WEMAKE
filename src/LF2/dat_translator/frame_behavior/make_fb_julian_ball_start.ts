@@ -13,7 +13,7 @@ export function make_fb_julian_ball_start(frame: IFrameInfo) {
     dvx: 8,
     action: { id: "50" },
     spreading: OpointSpreading.FloatRange,
-    spreading_x: [-5, 5, 5],
+    spreading_z: [-5, 5, 5],
     spreading_y: [-5, 5, 10],
   });
 }

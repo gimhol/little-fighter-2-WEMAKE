@@ -8,6 +8,7 @@ import { make_fb_boomerang } from "./frame_behavior/make_fb_boomerang";
 import { make_fb_chasing_same_enemy } from "./frame_behavior/make_fb_chasing_same_enemy";
 import { make_fb_dennis_chase } from "./frame_behavior/make_fb_dennis_chase";
 import { make_fb_firzen_disater_start } from "./frame_behavior/make_fb_firzen_disater_start";
+import { make_fb_firzen_volcano_start } from "./frame_behavior/make_fb_firzen_volcano_start";
 import { make_fb_jan_angle_blessing } from "./frame_behavior/make_fb_jan_angle_blessing";
 import { make_fb_jan_chase_start } from "./frame_behavior/make_fb_jan_chase_start";
 import { make_fb_jan_chaseh_start } from "./frame_behavior/make_fb_jan_chaseh_start";
@@ -49,7 +50,7 @@ export function make_frame_behavior(frame: IFrameInfo, oid: string) {
       make_fb_john_chase_leaving(frame);
       break;
     case FrameBehavior.FirzenVolcanoStart:
-      make_fb_firzen_disater_start(frame, frame.centerx, -79);
+      make_fb_firzen_volcano_start(frame, frame.centerx, -79);
       break;
     case FrameBehavior.Bat:
       make_fb_bat_chase(frame);
