@@ -974,7 +974,7 @@ export class Entity {
             if (opoint.__spreading_random_x)
               v.x = opoint.__spreading_random_x.take();
             if (opoint.__spreading_random_y)
-              v.z = opoint.__spreading_random_y.take();
+              v.y = opoint.__spreading_random_y.take();
             if (opoint.__spreading_random_z)
               v.z = opoint.__spreading_random_z.take();
             facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing
