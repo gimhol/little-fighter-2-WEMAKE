@@ -1,11 +1,11 @@
 import { CMD } from "@/LF2/defines/CMD";
-import { Builtin_FrameId, Defines, BuiltIn_OID as OID } from "../../defines";
+import { StatBarType } from "@/LF2/entity/StatBarType";
+import { Builtin_FrameId, BuiltIn_OID as OID } from "../../defines";
 import { TeamEnum as TE } from "../../defines/TeamEnum";
 import { Entity } from "../../entity/Entity";
 import { Times } from "../../utils/Times";
 import { CameraCtrl } from "./CameraCtrl";
 import { SummaryLogic } from "./SummaryLogic";
-import { StatBarType } from "@/LF2/entity/StatBarType";
 
 export class DanmuGameLogic extends SummaryLogic {
   static override readonly TAG: string = 'DanmuGameLogic';
@@ -54,8 +54,9 @@ export class DanmuGameLogic extends SummaryLogic {
       e.enter_frame({ id: Builtin_FrameId.Gone })
     const fighter_enter = (v: Entity) => {
       v.stat_bar_type = StatBarType.Float;
-      v.key_role = v.dead_gone = true;
-      v.name = v.data.base.name;
+      v.key_role = true;
+      v.dead_gone = true;
+      v.name_visible = true;
       v.blinking = 120;
     }
     const way: number = this.lf2.mt.range(0, 6);

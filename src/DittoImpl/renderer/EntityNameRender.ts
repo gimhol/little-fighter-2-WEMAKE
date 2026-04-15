@@ -1,4 +1,4 @@
-import { Entity, get_team_shadow_color, get_team_text_color, IEntityCallbacks, is_bot_ctrl, is_fighter, is_human_ctrl, round } from "@/LF2";
+import { Entity, get_team_shadow_color, get_team_text_color, IEntityCallbacks, round } from "@/LF2";
 import * as T from "../_t";
 import { WorldRenderer } from "./WorldRenderer";
 
@@ -19,7 +19,7 @@ export class EntityNameRender {
   on_mount() {
     const { entity: e } = this;
     e.callbacks.add(this.cbs);
-    this.name_node.visible = e.key_role;
+    this.name_node.visible = e.name_visible;
     this.world_renderer.world_node.add(this.name_node);
     this.update_name_sprite()
   }
@@ -29,8 +29,8 @@ export class EntityNameRender {
     e.callbacks.del(this.cbs);
   }
   render() {
-    const { invisible, position, key_role, ground_y } = this.entity;
-    this.name_node.visible = is_fighter(this.entity) && key_role && !invisible
+    const { invisible, position, name_visible, ground_y } = this.entity;
+    this.name_node.visible = name_visible && !invisible
 
     let x = position.x
     const z = position.z
@@ -45,30 +45,20 @@ export class EntityNameRender {
   private update_name_sprite() {
     const { entity: e } = this;
     const sprite = this.name_node
-    const { key_role, ctrl, team } = e;
-    let text = ' ';
-    if (is_human_ctrl(ctrl)) {
-      text = ctrl.player.name || ' '
-    } else if (is_bot_ctrl(ctrl) && ctrl.player) {
-      text = "com"
-    } else if (key_role) {
-      text = this.world_renderer.lf2.string(e.data.base.name)
-    } else {
-      text = 'com'
-    }
+    const { team, name } = e;
     const fillStyle = get_team_text_color(team);
     const strokeStyle = get_team_shadow_color(team);
     const world = e.world;
     const lf2 = world.lf2;
-    if (!text) {
+    if (!name) {
       sprite.visible = false;
       sprite.material.map?.dispose();
       sprite.material.map = null;
       sprite.material.needsUpdate = true
       return;
     }
-    sprite.userData.text = text
-    lf2.images.load_text(text, {
+    sprite.userData.text = name
+    lf2.images.load_text(name, {
       fill_style: fillStyle,
       back_style: {
         stroke_style: strokeStyle,
@@ -77,7 +67,7 @@ export class EntityNameRender {
       disposable: true,
       smoothing: false,
     }).then((p) => {
-      if (sprite.userData.text !== text) return;
+      if (sprite.userData.text !== name) return;
       sprite.visible = true;
       sprite.material.map?.dispose();
       sprite.material.dispose();

@@ -2,6 +2,7 @@ import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TNextFrame } from ".
 import { GK, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
+import type { PlayerInfo } from "../PlayerInfo";
 import { is_f_num, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
@@ -39,6 +40,7 @@ export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
   readonly player_id: string;
+  readonly player: PlayerInfo | undefined;
   private _chase_pos: IVector3 | null = null;
   private _time = new Times(10, Number.MAX_SAFE_INTEGER);
   private _disposers = new Set<() => void>();
@@ -227,15 +229,17 @@ export class BaseController {
 
   constructor(player_id: string, entity: Entity) {
     this.player_id = player_id;
+    const { lf2, world } = entity
+    this.player = lf2.players.get(player_id);
     this.entity = entity;
     this.dbc = {
-      d: new DoubleClick("d", entity.world.double_click_interval),
-      a: new DoubleClick("a", entity.world.double_click_interval),
-      j: new DoubleClick("j", entity.world.double_click_interval),
-      L: new DoubleClick("L", entity.world.double_click_interval),
-      R: new DoubleClick("R", entity.world.double_click_interval),
-      U: new DoubleClick("U", entity.world.double_click_interval),
-      D: new DoubleClick("D", entity.world.double_click_interval),
+      d: new DoubleClick("d", world.double_click_interval),
+      a: new DoubleClick("a", world.double_click_interval),
+      j: new DoubleClick("j", world.double_click_interval),
+      L: new DoubleClick("L", world.double_click_interval),
+      R: new DoubleClick("R", world.double_click_interval),
+      U: new DoubleClick("U", world.double_click_interval),
+      D: new DoubleClick("D", world.double_click_interval),
     };
   }
   dispose(): void {

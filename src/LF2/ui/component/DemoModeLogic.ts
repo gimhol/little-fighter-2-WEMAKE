@@ -122,6 +122,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       fighter.facing = this.lf2.mt.pick([1, -1] as const)!;
       fighter.callbacks.add(this);
       fighter.key_role = true;
+      fighter.name_visible = true;
       fighter.stat_bar_type = StatBarType.UI;
       const { far, near, left, right } = this.lf2.world.bg;
 

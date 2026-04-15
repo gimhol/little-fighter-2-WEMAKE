@@ -36,7 +36,7 @@ import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_fighter, is_human_ctrl } from "./type_check";
+import { is_bot_ctrl, is_fighter, is_human_ctrl } from "./type_check";
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
@@ -135,9 +135,9 @@ export class Entity {
    * 实体名称
    *
    * @protected
-   * @type {string}
+   * @type {string|null}
    */
-  protected _name!: string;
+  protected _name: string | null = null;
 
   /**
    * 所属队伍
@@ -200,6 +200,7 @@ export class Entity {
 
   protected _state!: State_Base | null;
   protected _key_role!: boolean | null;
+  protected _name_visible!: boolean | null;
   protected _wakeup_invuln!: boolean | null;
   protected _dead_gone!: boolean | null;
   protected _dead_join!: IDeadJoin | null;
@@ -421,7 +422,12 @@ export class Entity {
   }
 
   get name(): string {
-    return this._name;
+    if (this._name !== null)
+      return this._name;
+    const { ctrl } = this;
+    if (is_human_ctrl(ctrl))
+      return ctrl.player.name || `Player ${ctrl.player.id}`
+    return this.data.base.name
   }
 
   set name(v: string) {
@@ -593,21 +599,29 @@ export class Entity {
   }
   get key_role(): boolean {
     if (this._key_role !== null) return this._key_role;
-    const is_player = !!this.ctrl?.player_id;
-    const is_key = !!intersection(this._data.base.group, [EntityGroup.Regular, EntityGroup.Boss]).length
-    return this._key_role = is_player || is_key;
+    const is_key = [
+      EntityGroup.Regular, 
+      EntityGroup.Boss
+    ].some(a => {
+      return this._data.base.group?.some(b => a == b)
+    })
+    return this._key_role = !!this.ctrl.player || is_key;
   }
   set key_role(v: boolean | null) {
     if (this._key_role === v) return;
     this._key_role = v;
-    this.callbacks.emit("on_name_changed")(this, this._name, this._name);
+  }
+  get name_visible(): boolean {
+    return this._name_visible ?? this.key_role;
+  }
+  set name_visible(v: boolean | null) {
+    this._name_visible = v;
   }
   /** 是否有起身无敌 */
   get wakeup_invuln(): boolean {
     return this._wakeup_invuln ?? this.key_role
   }
   set wakeup_invuln(v: boolean) {
-    if (this._wakeup_invuln === v) return;
     this._wakeup_invuln = v;
   }
 
@@ -701,12 +715,13 @@ export class Entity {
     this._catching = null
     this._catcher = null
     this._wakeup_invuln = null;
+    this._name_visible = null;
     this._velocity.set(0, 0, 0)
     this._landing_velocity.set(0, 0, 0)
     this.velocities.length = 0;
     this.velocities[0] = new Ditto.Vector3(0, 0, 0)
     this.callbacks.clear();
-    this._name = ""
+    this._name = null
     this._team = new_team();
     this._landing_frame = null;
     this._bearer = null;

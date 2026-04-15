@@ -30,7 +30,6 @@ export enum BotBehavior {
   Move = 'move',
 }
 export class BotController extends BaseController {
-  readonly player: PlayerInfo | undefined;
   readonly fsm = new FSM<BotStateEnum>()
     .add(
       new BotState_Idle(this),
@@ -177,7 +176,6 @@ export class BotController extends BaseController {
   }
   constructor(player_id: string, entity: Entity) {
     super(player_id, entity);
-    this.player = this.lf2.players.get(player_id);
     this._dataset = new BotDataSet();
   }
 
