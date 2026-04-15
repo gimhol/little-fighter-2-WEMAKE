@@ -489,13 +489,26 @@ export class World extends WorldDataset {
           continue;
         }
         case CMD.CHANGE_BG: {
-          const value = cmds[i += 1]
-          const bg = (
-            value && value == Defines.RANDOM_BG.id ?
+          const bg_id = cmds[i += 1];
+          if (this.stage.bg.id == bg_id)
+            continue;
+          const bg_data = (
+            bg_id && bg_id == Defines.RANDOM_BG.id ?
               this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
-              this.lf2.datas.find_background(value)
+              this.lf2.datas.find_background(bg_id)
           ) || Defines.VOID_BG;
-          this.stage.change_bg(bg);
+          this.stage.change_bg(bg_data);
+          continue;
+        }
+        case CMD.CHANGE_STAGE: {
+          const stage_id = cmds[i += 1];
+          const stage_data = (
+            stage_id ?
+              this.lf2.stages.find((v) => v.id === stage_id) :
+              Defines.VOID_STAGE
+          ) || Defines.VOID_STAGE;
+          if (stage_data == this.stage.data) continue;
+          this.stage = new Stage(this, stage_data);
           continue;
         }
       }

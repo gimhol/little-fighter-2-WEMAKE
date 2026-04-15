@@ -163,7 +163,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           <Combine>
             <Select
               value={stage_id}
-              onChange={v => lf2.change_stage(v!)}
+              onChange={v => lf2.change_stage(v || '')}
               options={stage_list}
               parse={(i) => [i.id, i.name]}
             />

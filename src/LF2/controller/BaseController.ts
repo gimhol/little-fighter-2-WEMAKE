@@ -40,7 +40,7 @@ export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
   readonly player_id: string;
-  readonly player: PlayerInfo | undefined;
+  player: PlayerInfo | undefined;
   private _chase_pos: IVector3 | null = null;
   private _time = new Times(10, Number.MAX_SAFE_INTEGER);
   private _disposers = new Set<() => void>();

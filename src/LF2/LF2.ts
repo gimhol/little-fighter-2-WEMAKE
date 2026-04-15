@@ -12,7 +12,6 @@ import { ILf2Callback } from "./ILf2Callback";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
-import { Stage } from "./stage";
 import * as UI from "./ui";
 import { regist_components } from './ui/component/_';
 import { is_str, loop_offset, MersenneTwister } from "./utils";
@@ -477,19 +476,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   change_bg(bg: string): void {
     this.cmds.push(CMD.CHANGE_BG, bg)
   }
-
-  change_stage(stage_info: D.IStageInfo): void;
-  change_stage(stage_id: string): void;
-  change_stage(arg: D.IStageInfo | string | undefined): void {
-    if (arg === this.world.stage.data) return;
-    if (is_str(arg)) arg = this.stages?.find((v) => v.id === arg);
-    if (!arg) return;
-    this.world.stage = new Stage(this.world, arg);
+  change_stage(stage: string): void {
+    this.cmds.push(CMD.CHANGE_STAGE, stage)
   }
-  remove_stage() {
-    this.world.stage = new Stage(this.world, D.Defines.VOID_STAGE);
-  }
-
   goto_next_stage() {
     const next = this.world.stage.data.next;
     if (!next) return;
@@ -510,7 +499,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       }
     }
 
-    this.change_stage(next_stage || D.Defines.VOID_STAGE);
+    this.change_stage(next_stage?.id || '');
     this.callbacks.emit("on_enter_next_stage")();
   }
 

@@ -22,7 +22,7 @@ class UIActor {
     [UIActionEnum.Broadcast, ({ lf2 }, msg) => lf2.broadcast(msg)],
     [UIActionEnum.Sound, ({ lf2 }, name) => lf2.sounds.play_preset(name)],
     [UIActionEnum.SwitchDifficulty, ({ lf2 }, v) => lf2.switch_difficulty(v ? Number(v) : void 0)],
-    [UIActionEnum.DestoryStage, ({ lf2 }) => lf2.remove_stage()],
+    [UIActionEnum.DestoryStage, ({ lf2 }) => lf2.change_stage('')],
     [UIActionEnum.RemoveAllEntities, ({ lf2 }) => lf2.entities.del_all()]
   ]);
 

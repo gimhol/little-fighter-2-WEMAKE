@@ -56,7 +56,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     this.lf2.callbacks.add(this._lf2_callbacks)
   }
   override on_stop(): void {
-    this.lf2.change_stage(Defines.VOID_STAGE)
+    this.lf2.change_stage('')
     this.lf2.change_bg('')
     this.lf2.callbacks.del(this._lf2_callbacks)
   }
@@ -119,7 +119,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
 
     if (is_stage_mode) {
       if (stage_switcher)
-        this.lf2.change_stage(stage_switcher?.stage);
+        this.lf2.change_stage(stage_switcher.stage.id);
       this.lf2.push_ui("stage_mode_page");
     } else {
       this.lf2.push_ui("vs_mode_page");
