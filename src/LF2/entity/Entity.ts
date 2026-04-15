@@ -716,6 +716,7 @@ export class Entity {
     this._catcher = null
     this._wakeup_invuln = null;
     this._name_visible = null;
+    this._outline_alpha = void 0;
     this._velocity.set(0, 0, 0)
     this._landing_velocity.set(0, 0, 0)
     this.velocities.length = 0;
