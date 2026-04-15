@@ -1,4 +1,4 @@
-import { StateEnum, WeaponType, type IFrameInfo } from "../defines";
+import { GK, StateEnum, WeaponType, type IFrameInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import type { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";
@@ -7,7 +7,11 @@ export default class CharacterState_Lying extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Lying) {
     super(state)
   }
+  private a_map = new Map<string, number>()
+  private d_map = new Map<string, number>()
   override enter(e: Entity, prev_frame: IFrameInfo): void {
+    this.a_map.delete(e.id)
+    this.d_map.delete(e.id)
     e.ctrl.reset_key_list();
     const holding = e.holding
     if (holding) e.drop_holding();
@@ -17,7 +21,25 @@ export default class CharacterState_Lying extends CharacterState_Base {
     e.toughness_resting = 0;
     if (e.hp <= 0) this.on_dead(e)
   }
+
+  override update(e: Entity): void {
+    const c = e.ctrl
+    const a = this.a_map.get(e.id)
+    if (a) this.a_map.set(e.id, a + 1)
+    if (!a && c.is_start(GK.Attack))
+      this.a_map.set(e.id, 1)
+    if (a && a % 2 && !c.is_end(GK.Attack) && e.wait > 0)
+      e.wait - 1;
+    const d = this.d_map.get(e.id)
+    if (!d && c.is_start(GK.Attack))
+      this.d_map.set(e.id, 1)
+    if (d && d % 2 && !c.is_end(GK.Defend))
+      e.wait += 1;
+  }
+
   override leave(e: Entity, next_frame: IFrameInfo): void {
+    this.a_map.delete(e.id)
+    this.d_map.delete(e.id)
     if (e.dead_join && e.hp <= 0) {
       e.motionless = 30
       e.invulnerable = 30
