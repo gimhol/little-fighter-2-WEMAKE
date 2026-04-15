@@ -92,9 +92,9 @@ export class ImageMgr implements IImageMgr {
     const {
       padding_l = 2,
       padding_t = 2,
+      scale = 2,
     } = style;
     apply_text_style(style, ctx);
-    const scale = 2;
     const [lines, w, h] = split_text_to_lines(text, ctx, style);
     cvs.style.width = (cvs.width = scale * w) + "px";
     cvs.style.height = (cvs.height = scale * h) + "px";

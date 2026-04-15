@@ -8,6 +8,7 @@ const STYLE: IStyle = {
   fill_style: 'white',
   disposable: true,
   smoothing: false,
+  scale: 1,
 }
 export class EntityNameRender {
   protected readonly mesh: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;

@@ -105,7 +105,6 @@ export class EntityMainRender {
   on_mount() {
     this.reset(this.entity);
     this.node.add(
-      // this.outline_mesh, 
       this.main_mesh,
       this.blood_mesh
     )
