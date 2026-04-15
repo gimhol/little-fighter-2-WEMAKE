@@ -109,7 +109,7 @@ void main() {
   float left = texture2D(tex, uv + vec2(-texel.x, 0)).a;
   float right = texture2D(tex, uv + vec2(texel.x, 0)).a;
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
-  if(outline > 0.1 && center < 0.1) {
+  if(outline > 0.1 && center < 0.5) {
     gl_FragColor.rgb = gamma_correct(outlineColor);
     gl_FragColor.a = outlineAlpha;
   } else {

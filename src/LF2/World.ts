@@ -854,6 +854,7 @@ export class World extends WorldDataset {
       Ditto.warn(`[${World.TAG}::spark] failed`);
       return;
     }
+    e.outline_alpha = 0;
     e.position.set(round(x), round(y), round(z));
     e.enter_frame({ id: f });
     e.attach(false);
