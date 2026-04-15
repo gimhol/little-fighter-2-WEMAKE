@@ -363,7 +363,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         await this.load_ui(zip);
       }
       if (is_first) {
-        this.set_ui(this.uiinfos[0]!)
+        this.set_ui(this.uiinfos?.[0].id)
         this.callbacks.emit("on_prel_loaded")(this);
       }
       this._playable = true;
@@ -568,7 +568,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return word;
   };
 
-  set_ui(arg: string | UI.ICookedUIInfo | undefined, index: number = 0): void {
+  set_ui(arg: string | undefined, index: number = 0): void {
     if (index < 0) return;
     if (index >= this._ui_stacks.length)
       index = this._ui_stacks.length
