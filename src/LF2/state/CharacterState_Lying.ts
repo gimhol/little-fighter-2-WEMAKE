@@ -9,9 +9,11 @@ export default class CharacterState_Lying extends CharacterState_Base {
   }
   private a_map = new Map<string, number>()
   private d_map = new Map<string, number>()
+  private c_map = new Map<string, number>()
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     this.a_map.delete(e.id)
     this.d_map.delete(e.id)
+    this.c_map.delete(e.id)
     e.ctrl.reset_key_list();
     const holding = e.holding
     if (holding) e.drop_holding();
@@ -24,29 +26,27 @@ export default class CharacterState_Lying extends CharacterState_Base {
 
   override update(e: Entity): void {
     super.update(e);
-    const c = e.ctrl
-    const count_a = this.a_map.get(e.id)
-    const pressing_a = !c.is_end(GK.a)
-    if (count_a)
+    do {
+      const count_c = this.c_map.get(e.id) ?? 0;
+      const count_a = this.a_map.get(e.id) ?? 0
+      const pressing_a = !e.ctrl.is_end(GK.a)
       this.a_map.set(e.id, count_a + 1)
-    else if (pressing_a)
-      this.a_map.set(e.id, 1)
-    if (count_a && count_a % 2 && pressing_a && e.wait > 0)
-      e.wait -= 1;
-
-    const count_d = this.d_map.get(e.id)
-    const pressing_d = !c.is_end(GK.d)
-    if (count_d)
+      if (count_a && count_a % 2 && pressing_a && e.wait > 0) {
+        this.c_map.set(e.id, count_c + 1);
+        e.wait -= 1;
+        break;
+      }
+      const count_d = this.d_map.get(e.id) ?? 0
+      const pressing_d = !e.ctrl.is_end(GK.d)
       this.d_map.set(e.id, count_d + 1)
-    else if (pressing_d)
-      this.d_map.set(e.id, 1)
-    if (count_d && count_d % 2 && pressing_d)
-      e.wait += 1;
+      if (count_d && count_d % 2 && pressing_d) {
+        this.c_map.set(e.id, count_c + 1);
+        e.wait += 1;
+      }
+    } while (0)
   }
 
   override leave(e: Entity, next_frame: IFrameInfo): void {
-    this.a_map.delete(e.id)
-    this.d_map.delete(e.id)
     if (e.dead_join && e.hp <= 0) {
       e.motionless = 30
       e.invulnerable = 30
@@ -59,7 +59,9 @@ export default class CharacterState_Lying extends CharacterState_Base {
       e.wakeup_invuln = true;// 是否全部加入的都要这个？
     }
     if (e.wakeup_invuln) { // 关键角色起身的闪烁无敌时间
-      e.blinking = e.world.lying_blink_time;
+      // 提前或延迟起身都会降低无敌闪烁时间
+      const count_c = this.c_map.get(e.id) ?? 0;
+      e.blinking = (e.world.lying_blink_time - count_c);
     }
   }
   override on_dead(e: Entity): void {
