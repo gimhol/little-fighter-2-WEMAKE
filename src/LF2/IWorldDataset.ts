@@ -203,6 +203,7 @@ export interface IWorldDataset {
   whirlwind_acc_y: number;
   whirlwind_acc_x: number;
   whirlwind_acc_z: number;
+  teamoutline_enabled: number;
 }
 
 export const world_dataset_fields = fields<IWorldDataset>({
@@ -294,5 +295,6 @@ export const world_dataset_fields = fields<IWorldDataset>({
   whirlwind_acc_y: float('旋风Y加速度'),
   whirlwind_acc_x: float('旋风X加速度'),
   whirlwind_acc_z: float('旋风Z加速度'),
-  itr_fall: int
+  itr_fall: int,
+  teamoutline_enabled: int({ min: 0, max: 1 }),
 })

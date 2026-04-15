@@ -218,7 +218,8 @@ export class EntityMainRender {
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
       const { outline_color, outline_alpha } = this.entity;
-      if (outline_color) {
+      const enabled = this.entity.dataset('teamoutline_enabled')
+      if (outline_color && enabled) {
         m.uniforms.outlineColor.value = new T.Color(outline_color);
         m.uniforms.outlineAlpha.value = outline_alpha ?? 0.7
       } else {
