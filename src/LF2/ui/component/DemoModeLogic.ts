@@ -117,7 +117,6 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       const fighter = this.lf2.factory.create_entity(this.world, character_data);
       if (!fighter) return;
 
-      fighter.name = "com";
       fighter.team = player_teams.shift() ?? new_team();
       fighter.facing = this.lf2.mt.pick([1, -1] as const)!;
       fighter.callbacks.add(this);
