@@ -1,4 +1,4 @@
-import { get_team_shadow_color } from "@/LF2/base/get_team_shadow_color";
+import { get_team_outline_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
 import { GameKey, GameKeyLabels, IVector3 } from "@/LF2/defines";
 import { is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
@@ -193,7 +193,7 @@ export class EntityStatRender implements IEntityCallbacks {
     const sprite = this.reserve_node
     const { team, reserve } = e;
     const fillStyle = get_team_text_color(team);
-    const strokeStyle = get_team_shadow_color(team);
+    const strokeStyle = get_team_outline_color(team);
     const world = e.world;
     const lf2 = world.lf2;
     const text = reserve ? 'x' + reserve : void 0;

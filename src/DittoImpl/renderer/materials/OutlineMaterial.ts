@@ -36,7 +36,9 @@ MaterialFactory.register(MaterialKind.Outline, {
       scaleY: { value: 1 },
       scaleZ: { value: 1 },
       opacity: { value: 1 },
+      /** 混色 */
       mixColor: { value: BLACK },
+      /** 混色强度,一般范围:[0,1], 当为0，不混色 */
       mixStreath: { value: 0 },
       cover: { value: false },
       coverColor: { value: BLACK },

@@ -17,7 +17,7 @@ export class PlayerScorePlayerName extends UIComponent {
       fill_style: team_info.txt_color,
       back_style: {
         font: "12px Arial",
-        stroke_style: team_info.txt_shadow_color,
+        stroke_style: team_info.txt_outline_color,
         line_width: 2
       }
     }
