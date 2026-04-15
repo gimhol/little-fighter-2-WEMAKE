@@ -9,13 +9,15 @@ export class CharactersHelper {
   constructor(lf2: LF2) {
     this.lf2 = lf2;
   }
-  list(): Entity[] {
+  get list(): Entity[] {
     const ret: Entity[] = [];
     this.lf2.world.entities.forEach((v) => is_fighter(v) && ret.push(v));
     return ret;
   }
+  get a(): Entity | undefined { return this.at(0) }
+  get b(): Entity | undefined { return this.at(1) }
   at(idx: number): Entity | undefined {
-    return this.list()[idx];
+    return this.list[idx];
   }
   add(
     data: IEntityData | string | undefined,

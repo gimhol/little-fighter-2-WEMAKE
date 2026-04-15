@@ -12,13 +12,15 @@ export class WeaponsHelper {
   constructor(lf2: LF2) {
     this.lf2 = lf2;
   }
-  list(): Entity[] {
+  get list(): Entity[] {
     const ret: Entity[] = [];
     this.lf2.world.entities.forEach((v) => is_weapon(v) && ret.push(v));
     return ret;
   }
+  get a(): Entity | undefined { return this.at(0) }
+  get b(): Entity | undefined { return this.at(1) }
   at(idx: number): Entity | undefined {
-    return this.list()[idx];
+    return this.list[idx];
   }
 
   add(
@@ -30,7 +32,7 @@ export class WeaponsHelper {
     if (!data) return [];
     return this.lf2.entities.add(data, num, team);
   }
-  
+
   randoms(group: string, duplicate: boolean) {
     const map = duplicate ? this.random_d_map : this.random_map
     let ret = map.get(group);

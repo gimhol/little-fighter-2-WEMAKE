@@ -14,13 +14,14 @@ export class BallsHelper {
    * @return {Entity[]}
    * @memberof BallsHelper
    */
-  list(): Entity[] {
+  get list(): Entity[] {
     const ret: Entity[] = [];
     this.lf2.world.entities.forEach((v) => is_ball(v) && ret.push(v));
     return ret;
   }
-  
+  get a(): Entity | undefined { return this.at(0) }
+  get b(): Entity | undefined { return this.at(1) }
   at(idx: number): Entity | undefined {
-    return this.list()[idx];
+    return this.list[idx];
   }
 }
