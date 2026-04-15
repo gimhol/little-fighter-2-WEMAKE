@@ -49,6 +49,7 @@
     "@fimagine/dom-hooks": "^1.0.6",
     "@fimagine/logger": "^1.2.1",
     "@fimagine/writeboard": "^0.2.0",
+    "@fingerprintjs/fingerprintjs": "^5.2.0",
     "axios": "^1.10.0",
     "compressing": "^2.0.0",
     "current-device": "0.10.2",
