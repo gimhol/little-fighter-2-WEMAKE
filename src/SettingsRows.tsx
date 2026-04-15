@@ -113,7 +113,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     weapon_id ? lf2.weapons.add(weapon_id, rwn) : lf2.weapons.add_random(rwn);
   };
   const on_click_del_weapon = () => {
-    lf2.weapons.list().forEach(v => v.hp = v.hp_r = 0)
+    lf2.weapons.all().forEach(v => v.hp = v.hp_r = 0)
   };
   const on_click_add_bot = () => {
     (c_id

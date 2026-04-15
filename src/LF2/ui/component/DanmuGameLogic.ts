@@ -19,7 +19,7 @@ export class DanmuGameLogic extends SummaryLogic {
 
   time: number = 0;
   update_teams() {
-    const fighters = this.lf2.characters.list();
+    const fighters = this.lf2.characters.all();
     this._teams.clear()
     for (const fighter of fighters)
       this._teams.add(fighter.team);
@@ -34,7 +34,7 @@ export class DanmuGameLogic extends SummaryLogic {
     if (!this._cam_ctrl || this._cam_ctrl?.staring !== e) return
     // 聚焦角色被移除后，聚焦下一个角色
     this._staring_countdown.reset();
-    this._cam_ctrl.staring = this.lf2.mt.pick(this.lf2.characters.list())
+    this._cam_ctrl.staring = this.lf2.mt.pick(this.lf2.characters.all())
   }
   override on_start(): void {
     super.on_start?.();
@@ -148,7 +148,7 @@ export class DanmuGameLogic extends SummaryLogic {
   }
   update_staring() {
     if (!this._cam_ctrl) return;
-    const fighters = this.lf2.characters.list();
+    const fighters = this.lf2.characters.all();
     this._cam_ctrl.staring = this.lf2.mt.pick(fighters)
   }
   override update(dt: number): void {

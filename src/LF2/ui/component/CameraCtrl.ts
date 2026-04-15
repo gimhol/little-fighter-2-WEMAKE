@@ -53,14 +53,14 @@ export class CameraCtrl extends UIComponent {
       this.free = true
     } else if (this.keys.U.is_start()) {
       this.keys.U.use()
-      const fighters = this.lf2.characters.list()
+      const fighters = this.lf2.characters.all()
       const idx = fighters.indexOf(this.staring!)
       const len = fighters.length
       this.staring = fighters[(idx + len - 1) % len]
       this.free = !!this.staring;
     } else if (this.keys.D.is_start()) {
       this.keys.D.use()
-      const fighters = this.lf2.characters.list()
+      const fighters = this.lf2.characters.all()
       const idx = fighters.indexOf(this.staring!)
       const len = fighters.length
       this.staring = fighters[(idx + 1) % len]
