@@ -25,20 +25,22 @@ export default class CharacterState_Lying extends CharacterState_Base {
   override update(e: Entity): void {
     super.update(e);
     const c = e.ctrl
-    const a = this.a_map.get(e.id)
-    if (a)
-      this.a_map.set(e.id, a + 1)
-    else if (c.is_start(GK.Attack))
+    const count_a = this.a_map.get(e.id)
+    const pressing_a = !c.is_end(GK.a)
+    if (count_a)
+      this.a_map.set(e.id, count_a + 1)
+    else if (pressing_a)
       this.a_map.set(e.id, 1)
-    if (a && a % 2 && !c.is_end(GK.Attack) && e.wait > 0)
-      e.wait - 1;
-    
-    const d = this.d_map.get(e.id)
-    if (d)
-      this.d_map.set(e.id, d + 1)
-    else if (c.is_start(GK.Defend))
+    if (count_a && count_a % 2 && pressing_a && e.wait > 0)
+      e.wait -= 1;
+
+    const count_d = this.d_map.get(e.id)
+    const pressing_d = !c.is_end(GK.d)
+    if (count_d)
+      this.d_map.set(e.id, count_d + 1)
+    else if (pressing_d)
       this.d_map.set(e.id, 1)
-    if (d && d % 2 && !c.is_end(GK.Defend))
+    if (count_d && count_d % 2 && pressing_d)
       e.wait += 1;
   }
 
