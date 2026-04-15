@@ -75,5 +75,3 @@ export class EntityShadowRender {
     this.mesh.visible = !invisible && !frame.no_shadow;
   }
 }
-
-export default EntityShadowRender

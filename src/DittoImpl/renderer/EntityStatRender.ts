@@ -1,21 +1,21 @@
 import { get_team_shadow_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
-import { GameKey, IVector3, GameKeyLabels } from "@/LF2/defines";
-import { is_bot_ctrl, is_fighter, is_human_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
-import { floor, round } from "@/LF2/utils";
+import { GameKey, GameKeyLabels, IVector3 } from "@/LF2/defines";
+import { is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { StatBarType } from "@/LF2/entity/StatBarType";
+import { floor } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
-import { WorldRenderer } from "./WorldRenderer";
 import { INDICATINGS } from "./INDICATINGS";
-import { StatBarType } from "@/LF2/entity/StatBarType";
+import { WorldRenderer } from "./WorldRenderer";
 
 const BAR_W = 40;
 const BAR_H = 3;
 const BAR_BG_W = BAR_W + 2;
 const BAR_BG_H = 1 + (BAR_H + 1) * 2 + 4;
+
 export class EntityStatRender implements IEntityCallbacks {
   protected reserve_node: T.Sprite;
-  protected name_node: T.Sprite;
   protected bars_node = new T.Object3D();
   protected ctrl_node = new T.Object3D();
   protected bars_bg: Bar;
@@ -51,9 +51,7 @@ export class EntityStatRender implements IEntityCallbacks {
       [GameKey.d, { node: new T.Sprite(), pos: new T.Vector3(f * (3 - 0.5), f * 2, 0) }],
     ])
 
-    this.name_node = new T.Sprite();
-    this.name_node.name = EntityStatRender.name;
-    this.name_node.renderOrder = 0;
+
     this.reserve_node = new T.Sprite();
 
     this.bars_bg = new Bar(lf2, "rgb(0,0,0)", BAR_BG_W, BAR_BG_H, 0.5, 0);
@@ -153,11 +151,9 @@ export class EntityStatRender implements IEntityCallbacks {
   on_mount() {
     const { entity: e } = this;
     e.callbacks.add(this);
-    this.world_renderer.world_node.add(this.bars_node, this.name_node, this.ctrl_node, this.reserve_node);
+    this.world_renderer.world_node.add(this.bars_node, this.ctrl_node, this.reserve_node);
     this.bars_node.visible = e.key_role
-    this.name_node.visible = e.key_role
     this.ctrl_node.visible = false
-    this.on_name_changed(e)
     this.on_reserve_changed(e)
     this.on_hp_changed(e)
     this.on_hp_max_changed(e)
@@ -175,14 +171,12 @@ export class EntityStatRender implements IEntityCallbacks {
   on_unmount() {
     const { entity: e } = this;
     this.bars_node.removeFromParent();
-    this.name_node.removeFromParent();
     this.ctrl_node.removeFromParent();
     this.reserve_node.removeFromParent();
     e.callbacks.del(this);
   }
 
-  on_name_changed(e: Entity): void { this.update_name_sprite(e) }
-  on_team_changed(e: Entity): void { this.update_name_sprite(e); this.update_reverse_sprite(e); }
+  on_team_changed(e: Entity): void { this.update_reverse_sprite(e); }
   on_reserve_changed(e: Entity): void { this.update_reverse_sprite(e) }
   on_hp_changed(e: Entity): void { this.hp_bar.val = e.hp; }
   on_hp_max_changed(e: Entity): void { this.self_healing_hp_bar.max = e.hp_max; this.hp_bar.max = e.hp_max; }
@@ -231,58 +225,12 @@ export class EntityStatRender implements IEntityCallbacks {
       sprite.scale.y = p.h / p.scale;
     });
   }
-  private update_name_sprite(e: Entity) {
-    const sprite = this.name_node
-    const { key_role, ctrl, team } = e;
-    let text = ' ';
-    if (is_human_ctrl(ctrl)) {
-      text = ctrl.player.name || ' '
-    } else if (is_bot_ctrl(ctrl) && ctrl.player) {
-      text = "com"
-    } else if (key_role) {
-      text = this.world_renderer.lf2.string(e.data.base.name)
-    } else {
-      text = 'com'
-    }
-    const fillStyle = get_team_text_color(team);
-    const strokeStyle = get_team_shadow_color(team);
-    const world = e.world;
-    const lf2 = world.lf2;
-    if (!text) {
-      sprite.visible = false;
-      sprite.material.map?.dispose();
-      sprite.material.map = null;
-      sprite.material.needsUpdate = true
-      return;
-    }
-    sprite.userData.text = text
-    lf2.images.load_text(text, {
-      fill_style: fillStyle,
-      back_style: {
-        stroke_style: strokeStyle,
-        line_width: 2
-      },
-      disposable: true,
-      smoothing: false,
-    }).then((p) => {
-      if (sprite.userData.text !== text) return;
-      sprite.visible = true;
-      sprite.material.map?.dispose();
-      sprite.material.dispose();
-      sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
-      sprite.material.needsUpdate = true;
-      sprite.scale.x = p.w / p.scale;
-      sprite.scale.y = p.h / p.scale;
-      sprite.name = "name sprite";
-    });
-  }
   render() {
     const {
       invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
       stat_bar_type, ground_y
     } = this.entity;
     const _is_fighter = is_fighter(this.entity)
-    this.name_node.visible = _is_fighter && key_role && !invisible
     this.bars_node.visible = !!(stat_bar_type & StatBarType.Float) && _is_fighter && key_role && !invisible && hp > 0;
 
     if (this.entity.healing) {
@@ -302,23 +250,10 @@ export class EntityStatRender implements IEntityCallbacks {
     const bar_z = floor(z);
 
     this.set_bars_position(bar_x, bar_y, bar_z);
-
-    const name_y = floor(ground_y - z / 2 - this.name_node.scale.y);
-    this.set_name_position(_x, name_y, z);
-
     this.ctrl_node.visible = !!(this.entity.lf2.world.indicator_flags & INDICATINGS.ctrl);
     if (this.ctrl_node.visible) for (const [k, { node }] of this.key_nodes) {
       node.visible = !this.entity.ctrl.is_end(k)
     }
-  }
-
-  set_name_position(x: number, y: number, z: number) {
-    const hw = (this.name_node.scale.x + 10) / 2;
-    const { cam_x: cam_l } = this.entity.world.renderer;
-    const cam_r = cam_l + this.entity.world.screen_w;
-    if (x + hw > cam_r) x = cam_r - hw;
-    else if (x - hw < cam_l) x = cam_l + hw;
-    this.name_node.position.set(round(x), round(y), round(z));
   }
 
   set_bars_position(x: number, y: number, z: number) {

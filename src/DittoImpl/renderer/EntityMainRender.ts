@@ -24,7 +24,7 @@ const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 
 
-export class EntityRender {
+export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
 
   protected images!: Map<string, RImageInfo>;
@@ -218,9 +218,10 @@ export class EntityRender {
     if (this.entity.is_ghost) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
-      if (this.entity.outline_color) {
-        m.uniforms.outlineColor.value = new T.Color(this.entity.outline_color);
-        m.uniforms.outlineAlpha.value = 0.7
+      const { outline_color, outline_alpha } = this.entity;
+      if (outline_color) {
+        m.uniforms.outlineColor.value = new T.Color(outline_color);
+        m.uniforms.outlineAlpha.value = outline_alpha ?? 0.7
       } else {
         m.uniforms.outlineAlpha.value = 0
       }

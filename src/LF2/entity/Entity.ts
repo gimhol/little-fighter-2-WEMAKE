@@ -45,13 +45,14 @@ export class Entity {
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected _spawn_time: number = 0;
   protected _outline_color: string | undefined = void 0;
-  protected _game_time: number = -1; // 每次update前与world对齐
+  protected _outline_alpha: number | undefined = void 0;
   get outline_color(): string | undefined {
     return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
   };
-  set outline_color(v: string | undefined) {
-    this._outline_color = v;
-  }
+  set outline_color(v: string | undefined) { this._outline_color = v; }
+  get outline_alpha(): number | undefined { return this._outline_alpha };
+  set outline_alpha(v: number | undefined) { this._outline_alpha = v; }
+
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 
@@ -254,6 +255,7 @@ export class Entity {
   get prev_ground_y(): number { return this._prev_ground_y }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
+  /** 落地一刻的速度 */
   get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
@@ -680,7 +682,6 @@ export class Entity {
     this.dismiss_data = null;
     this.copies.clear()
     this._stat_bar_type = null;
-    this._game_time = -1;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
     this._resting_max = d.base.resting;
     this._resting = 0;
@@ -1354,7 +1355,6 @@ export class Entity {
   }
 
   update(): void {
-    this._game_time = this.world.game_time.value;
     this.update_id.add()
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
