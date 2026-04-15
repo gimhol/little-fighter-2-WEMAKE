@@ -51,8 +51,8 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
 
     this.node.search_child("curr_focus")!.visible = false
 
-    const bg_data = this.lf2.mt.pick(this.lf2.datas.backgrounds);
-    if (bg_data) this.lf2.change_bg(bg_data);
+    const bg = this.lf2.mt.pick(this.lf2.datas.backgrounds);
+    if (bg) this.lf2.change_bg(bg.id);
 
     const character_datas = this.lf2.datas.get_characters_of_group(
       EntityGroup.Regular,

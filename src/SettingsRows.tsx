@@ -201,7 +201,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
         <Titled float_label="背景">
           <Select
             value={bg_id}
-            onChange={v => lf2.change_bg(v!)}
+            onChange={v => lf2.change_bg(v ?? '')}
             options={lf2.datas.backgrounds}
             parse={(i) => [i.id, i.base.name]}
           />

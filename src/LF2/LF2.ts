@@ -474,17 +474,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   del_puppet(player_id: string) {
     this.cmds.push(CMD.DEL_PUPPET, player_id)
   }
-  change_bg(bg_info: D.IBgData): void;
-  change_bg(bg_id: string): void;
-  change_bg(arg: D.IBgData | string | undefined) {
-    if (!arg) return;
-    if (arg === D.Defines.RANDOM_BG || arg === D.Defines.RANDOM_BG.id || arg === '?')
-      arg = this.mt.pick(this.datas.backgrounds.filter(v => v.base.group.some(a => a === D.BackgroundGroup.Regular)))
-    if (is_str(arg)) arg = this.datas.find_background(arg);
-    if (!arg) return;
-    this.world.stage.change_bg(arg);
+  change_bg(bg: string): void {
+    this.cmds.push(CMD.CHANGE_BG, bg)
   }
-  remove_bg = () => this.remove_stage();
 
   change_stage(stage_info: D.IStageInfo): void;
   change_stage(stage_id: string): void;

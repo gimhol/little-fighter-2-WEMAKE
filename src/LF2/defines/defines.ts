@@ -67,7 +67,7 @@ export namespace Defines {
   export const RANDOM_BG: IBgData = {
     type: "background",
     layers: [],
-    id: "RANDOM_BG",
+    id: "?",
     base: {
       name: "Random",
       shadow: "",

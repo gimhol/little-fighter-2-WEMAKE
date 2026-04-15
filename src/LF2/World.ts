@@ -3,6 +3,7 @@ import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   ALL_ENTITY_ENUM,
+  BackgroundGroup,
   Builtin_FrameId,
   CheatType,
   Defines,
@@ -484,9 +485,18 @@ export class World extends WorldDataset {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-
           this._lock_cam_x = x
-          continue
+          continue;
+        }
+        case CMD.CHANGE_BG: {
+          const value = cmds[i += 1]
+          const bg = (
+            value && value == Defines.RANDOM_BG.id ?
+              this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
+              this.lf2.datas.find_background(value)
+          ) || Defines.VOID_BG;
+          this.stage.change_bg(bg);
+          continue;
         }
       }
     }

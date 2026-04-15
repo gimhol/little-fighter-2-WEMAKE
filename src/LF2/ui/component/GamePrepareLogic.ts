@@ -57,7 +57,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
   }
   override on_stop(): void {
     this.lf2.change_stage(Defines.VOID_STAGE)
-    this.lf2.change_bg(Defines.VOID_BG)
+    this.lf2.change_bg('')
     this.lf2.callbacks.del(this._lf2_callbacks)
   }
   start_game() {
@@ -68,7 +68,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     if (stage_switcher?.node.visible && !stage_switcher.node.disabled)
       this.lf2.change_bg(stage_switcher.stage.bg);
     else if (bg_switcher?.node.visible && !bg_switcher.node.disabled)
-      this.lf2.change_bg(bg_switcher.background);
+      this.lf2.change_bg(bg_switcher.background.id);
 
 
     const { far, near, left, right } = this.lf2.world.bg;

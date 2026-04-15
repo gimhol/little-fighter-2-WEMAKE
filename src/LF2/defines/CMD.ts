@@ -26,6 +26,7 @@ export enum CMD {
   DEL_PUPPET = 'DEL_PUPPET',
   SET_DIFFICULTY = "SET_DIFFICULTY",
   LOCK_CAM = "LOCK_CAM",
+  CHANGE_BG = "CHANGE_BG",
 }
 export const CMD_NAMES: Record<CMD, string> = {
   [CMD.F1]: "F1",
@@ -53,5 +54,6 @@ export const CMD_NAMES: Record<CMD, string> = {
   [CMD.LF2_NET_OFF]: "LF2_NET#1",
   [CMD.HERO_FT_OFF]: "HERO_FT#1",
   [CMD.GIM_INK_OFF]: "GIM_INK#1",
-  [CMD.LOCK_CAM]: ""
+  [CMD.LOCK_CAM]: "",
+  [CMD.CHANGE_BG]: "CHANGE_BG"
 }
