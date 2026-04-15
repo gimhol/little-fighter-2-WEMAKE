@@ -427,7 +427,7 @@ export class Entity {
     const { ctrl } = this;
     if (is_human_ctrl(ctrl))
       return ctrl.player.name || `Player ${ctrl.player.id}`
-    return this.data.base.name
+    return this.data.base.name ?? ''
   }
 
   set name(v: string) {
@@ -600,7 +600,7 @@ export class Entity {
   get key_role(): boolean {
     if (this._key_role !== null) return this._key_role;
     const is_key = [
-      EntityGroup.Regular, 
+      EntityGroup.Regular,
       EntityGroup.Boss
     ].some(a => {
       return this._data.base.group?.some(b => a == b)
