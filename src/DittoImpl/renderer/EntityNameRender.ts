@@ -61,6 +61,8 @@ export class EntityNameRender {
       return;
     mesh.userData.what = what
     mesh.userData.text = name
+    if (!name.length)
+      return;
     lf2.images.load_text(name, STYLE).then((p) => {
       if (mesh.userData.what !== what) return;
       mesh.visible = true;
