@@ -24,7 +24,7 @@ export class EntityNameRender {
     const m = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial);
     m.uniforms.mixStreath.value = 1;
     m.uniforms.outlineAlpha.value = 1;
-    m.uniforms.outlineWidth.value = 2;
+    m.uniforms.outlineWidth.value = 1;
     this.mesh = new T.Mesh(GEOMETRY, m)
     this.mesh.name = `EntityNameRender_${entity.data.base.name}_${entity.id}`;
   }
