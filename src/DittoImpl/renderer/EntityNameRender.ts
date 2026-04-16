@@ -1,17 +1,11 @@
 import { clamp, Entity, get_team_outline_color, get_team_text_color, IEntityCallbacks, IStyle, round } from "@/LF2";
 import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
-import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { WorldRenderer } from "./WorldRenderer";
-const TEXT_GEOMETRY = get_geometry(1, 1);
-const TEXT_STYLE: IStyle = {
-  fill_style: 'white',
-  disposable: true,
-  smoothing: false,
-  scale: 1,
-}
+import { SmallTextMesh } from "./meshs/SmallTextMesh";
+
 export class EntityNameRender {
-  protected readonly mesh: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
+  protected readonly mesh: SmallTextMesh;
   protected readonly world_renderer: WorldRenderer;
   protected readonly cbs: IEntityCallbacks = {
     on_name_changed: () => this.update_name_texture(),
@@ -21,11 +15,7 @@ export class EntityNameRender {
   constructor(entity: Entity, world_renderer: WorldRenderer) {
     this.world_renderer = world_renderer;
     this.entity = entity;
-    const m = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial);
-    m.uniforms.mixStreath.value = 1;
-    m.uniforms.outlineAlpha.value = 1;
-    m.uniforms.outlineWidth.value = 1;
-    this.mesh = new T.Mesh(TEXT_GEOMETRY, m)
+    this.mesh = SmallTextMesh.get()
     this.mesh.name = `EntityNameRender_${entity.data.base.name}_${entity.id}`;
   }
   on_mount() {
@@ -61,18 +51,11 @@ export class EntityNameRender {
     mesh.userData.text = name
     if (!name.length)
       return;
-    lf2.images.load_text(name, TEXT_STYLE).then((p) => {
+    mesh.set_text(lf2, name).then(() => {
       if (mesh.userData.what !== what) return;
       mesh.visible = true;
-      const fillStyle = get_team_text_color(team);
-      const strokeStyle = get_team_outline_color(team);
-      const { uniforms } = mesh.material
-      uniforms.tex.value = p.pic?.texture
-      uniforms.mixColor.value = new T.Color(fillStyle);
-      uniforms.outlineColor.value = new T.Color(strokeStyle);
-      mesh.material.needsUpdate = true;
-      mesh.scale.x = p.w / p.scale;
-      mesh.scale.y = p.h / p.scale;
+      mesh.fillStyle = get_team_text_color(team);
+      mesh.strokeStyle = get_team_outline_color(team);
     }).catch(e => console.warn(e));
   }
 

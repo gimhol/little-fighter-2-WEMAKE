@@ -6,16 +6,14 @@ import { StatBarType } from "@/LF2/entity/StatBarType";
 import { floor } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
-import { get_geometry } from "./GeometryKeeper";
 import { INDICATINGS } from "./INDICATINGS";
-import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { WorldRenderer } from "./WorldRenderer";
+import { SmallTextMesh } from "./meshs/SmallTextMesh";
 
 const BAR_W = 40;
 const BAR_H = 3;
 const BAR_BG_W = BAR_W + 2;
 const BAR_BG_H = 1 + (BAR_H + 1) * 2 + 4;
-const TEXT_GEOMETRY = get_geometry(1, 1);
 const TEXT_STYLE: IStyle = {
   fill_style: 'white',
   disposable: true,
@@ -23,7 +21,7 @@ const TEXT_STYLE: IStyle = {
   scale: 1,
 }
 export class EntityStatRender implements IEntityCallbacks {
-  protected _reserve_mesh: T.Mesh<T.BufferGeometry, T.ShaderMaterial> | null = null;
+  protected _reserve_mesh: SmallTextMesh | null = null;
   protected bars_node = new T.Object3D();
   protected ctrl_node = new T.Object3D();
   protected bars_bg: Bar;
@@ -40,17 +38,13 @@ export class EntityStatRender implements IEntityCallbacks {
 
   entity: Entity;
 
-  protected key_nodes: Map<GameKey, { node: T.Sprite, pos: IVector3 }>
+  protected key_nodes: Map<GameKey, { node: SmallTextMesh, pos: IVector3 }>
   world_renderer: WorldRenderer;
   protected _heading: boolean = false;
 
-  private get reserve_mesh(): T.Mesh<T.BufferGeometry, T.ShaderMaterial> {
+  private get reserve_mesh(): SmallTextMesh {
     if (this._reserve_mesh) return this._reserve_mesh;
-    const m = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial);
-    m.uniforms.mixStreath.value = 1;
-    m.uniforms.outlineAlpha.value = 1;
-    m.uniforms.outlineWidth.value = 1;
-    const ret = this._reserve_mesh = new T.Mesh(TEXT_GEOMETRY, m)
+    const ret = this._reserve_mesh = SmallTextMesh.get()
     ret.name = `reserve_mesh_${this.entity.name}_${this.entity.id}`;
     this.world_renderer.world_node.add(ret)
     return ret
@@ -60,13 +54,13 @@ export class EntityStatRender implements IEntityCallbacks {
     const { lf2 } = entity.world;
     const f = 7;
     this.key_nodes = new Map([
-      [GameKey.U, { node: new T.Sprite(), pos: new T.Vector3(f * (-2 + 0.5), f * 2, 0) }],
-      [GameKey.D, { node: new T.Sprite(), pos: new T.Vector3(f * (-2 + 0.5), f * 0, 0) }],
-      [GameKey.L, { node: new T.Sprite(), pos: new T.Vector3(f * (-3 + 0.5), f * 1, 0) }],
-      [GameKey.R, { node: new T.Sprite(), pos: new T.Vector3(f * (-1 + 0.5), f * 1, 0) }],
-      [GameKey.a, { node: new T.Sprite(), pos: new T.Vector3(f * (1 - 0.5), f * 0, 0) }],
-      [GameKey.j, { node: new T.Sprite(), pos: new T.Vector3(f * (2 - 0.5), f * 1, 0) }],
-      [GameKey.d, { node: new T.Sprite(), pos: new T.Vector3(f * (3 - 0.5), f * 2, 0) }],
+      [GameKey.U, { node: SmallTextMesh.get(), pos: new T.Vector3(f * (-2 + 0.5), f * 2, 0) }],
+      [GameKey.D, { node: SmallTextMesh.get(), pos: new T.Vector3(f * (-2 + 0.5), f * 0, 0) }],
+      [GameKey.L, { node: SmallTextMesh.get(), pos: new T.Vector3(f * (-3 + 0.5), f * 1, 0) }],
+      [GameKey.R, { node: SmallTextMesh.get(), pos: new T.Vector3(f * (-1 + 0.5), f * 1, 0) }],
+      [GameKey.a, { node: SmallTextMesh.get(), pos: new T.Vector3(f * (1 - 0.5), f * 0, 0) }],
+      [GameKey.j, { node: SmallTextMesh.get(), pos: new T.Vector3(f * (2 - 0.5), f * 1, 0) }],
+      [GameKey.d, { node: SmallTextMesh.get(), pos: new T.Vector3(f * (3 - 0.5), f * 2, 0) }],
     ])
 
     this.bars_bg = new Bar(lf2, "rgb(0,0,0)", BAR_BG_W, BAR_BG_H, 0.5, 0);
@@ -131,32 +125,12 @@ export class EntityStatRender implements IEntityCallbacks {
     this.toughness_value_bar.set(entity.toughness, entity.toughness_max);
     this.bars_node.add(this.toughness_value_bar.mesh);
 
-    for (const [k, { node: sprite, pos }] of this.key_nodes) {
-      sprite.name = `key ${k}`;
-      sprite.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
-      lf2.images
-        .load_text(GameKeyLabels[k], {
-          fill_style: 'white',
-          line_width: 0,
-          smoothing: false,
-          font: "bold 12px Arial",
-          back_style: {
-            fill_style: '',
-            stroke_style: 'black',
-            line_width: 2,
-            smoothing: false,
-            font: "bold 12px Arial",
-          },
-        })
-        .then((p) => {
-          sprite.material.map?.dispose();
-          sprite.material.dispose();
-          sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
-          sprite.material.needsUpdate = true;
-          sprite.scale.x = p.w / p.scale;
-          sprite.scale.y = p.h / p.scale;
-        });
-      this.ctrl_node.add(sprite)
+    for (const [k, { node: mesh, pos }] of this.key_nodes) {
+      mesh.name = `key ${k}`;
+      mesh.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
+      mesh.set_text(lf2, GameKeyLabels[k]).catch(e => console.warn(e));
+      mesh.strokeStyle = 'black'
+      this.ctrl_node.add(mesh)
     }
 
   }
@@ -220,21 +194,16 @@ export class EntityStatRender implements IEntityCallbacks {
     const what = `${reserve}_${team}`
     if (mesh.userData.what != what) {
       mesh.userData.what = what
-      lf2.images.load_text(`x${reserve}`, TEXT_STYLE).then((p) => {
-        if (mesh.userData.what !== what) return;
-        const { uniforms } = mesh.material
+      mesh.set_text(lf2, `x${reserve}`).then(() => {
+        if (mesh.userData.what !== what)
+          return;
         const fillStyle = get_team_text_color(team);
         const strokeStyle = get_team_outline_color(team);
-        uniforms.tex.value = p.pic?.texture
-        uniforms.mixColor.value = new T.Color(fillStyle);
-        uniforms.outlineColor.value = new T.Color(strokeStyle);
-        mesh.material.needsUpdate = true;
-        mesh.scale.x = p.w / p.scale;
-        mesh.scale.y = p.h / p.scale;
         mesh.visible = true;
+        mesh.fillStyle = fillStyle
+        mesh.strokeStyle = strokeStyle
       }).catch(e => console.warn(e));
     }
-
     const {
       position: { x, y, z },
       frame: { centery }
