@@ -252,8 +252,8 @@ export class EntityStatRender implements IEntityCallbacks {
   }
   render() {
     const {
-      invisible, position: { x, z, y }, ctrl_visible, frame: { centery }, hp, key_role,
-      stat_bar_type, world
+      invisible, position: { x, z, y },  frame: { centery }, hp, key_role,
+      stat_bar_type
     } = this.entity;
     const _is_fighter = is_fighter(this.entity)
     this.bars_node.visible = !!(stat_bar_type & StatBarType.Float) && _is_fighter && key_role && !invisible && hp > 0;
