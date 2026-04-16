@@ -16,8 +16,6 @@ export class EntityNameRender {
   constructor(entity: Entity, world_renderer: WorldRenderer) {
     this.world_renderer = world_renderer;
     this.entity = entity;
-    this._mesh = SmallTextMesh.get()
-    this._mesh.name = ``;
   }
   on_mount() { }
   on_unmount() {
