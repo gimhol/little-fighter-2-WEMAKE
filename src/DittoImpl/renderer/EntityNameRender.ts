@@ -3,8 +3,8 @@ import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
 import { MaterialFactory, MaterialKind } from "./MaterialFactory";
 import { WorldRenderer } from "./WorldRenderer";
-const GEOMETRY = get_geometry(1, 1);
-const STYLE: IStyle = {
+const TEXT_GEOMETRY = get_geometry(1, 1);
+const TEXT_STYLE: IStyle = {
   fill_style: 'white',
   disposable: true,
   smoothing: false,
@@ -25,7 +25,7 @@ export class EntityNameRender {
     m.uniforms.mixStreath.value = 1;
     m.uniforms.outlineAlpha.value = 1;
     m.uniforms.outlineWidth.value = 1;
-    this.mesh = new T.Mesh(GEOMETRY, m)
+    this.mesh = new T.Mesh(TEXT_GEOMETRY, m)
     this.mesh.name = `EntityNameRender_${entity.data.base.name}_${entity.id}`;
   }
   on_mount() {
@@ -54,18 +54,18 @@ export class EntityNameRender {
   }
   private update_name_texture() {
     const { entity: { team, name, lf2 }, mesh } = this;
-    const fillStyle = get_team_text_color(team);
-    const strokeStyle = get_team_outline_color(team);
-    const what = `${name}_${fillStyle}_${strokeStyle}`
+    const what = `${name}_${team}`
     if (mesh.userData.what == what)
       return;
     mesh.userData.what = what
     mesh.userData.text = name
     if (!name.length)
       return;
-    lf2.images.load_text(name, STYLE).then((p) => {
+    lf2.images.load_text(name, TEXT_STYLE).then((p) => {
       if (mesh.userData.what !== what) return;
       mesh.visible = true;
+      const fillStyle = get_team_text_color(team);
+      const strokeStyle = get_team_outline_color(team);
       const { uniforms } = mesh.material
       uniforms.tex.value = p.pic?.texture
       uniforms.mixColor.value = new T.Color(fillStyle);
@@ -73,7 +73,7 @@ export class EntityNameRender {
       mesh.material.needsUpdate = true;
       mesh.scale.x = p.w / p.scale;
       mesh.scale.y = p.h / p.scale;
-    });
+    }).catch(e => console.warn(e));
   }
 
 }
