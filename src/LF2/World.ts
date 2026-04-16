@@ -497,7 +497,9 @@ export class World extends WorldDataset {
               this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
               this.lf2.datas.find_background(bg_id)
           ) || Defines.VOID_BG;
-          this.stage.change_bg(bg_data);
+          const stage = new Stage(this, Defines.VOID_STAGE);
+          stage.change_bg(bg_data);
+          this.stage = stage
           continue;
         }
         case CMD.CHANGE_STAGE: {
