@@ -3,7 +3,7 @@ import { get_team_text_color } from "@/LF2/base/get_team_text_color";
 import { GameKey, GameKeyLabels, IStyle, IVector3 } from "@/LF2/defines";
 import { is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
-import { floor } from "@/LF2/utils";
+import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
 import { INDICATINGS } from "./INDICATINGS";
@@ -161,6 +161,7 @@ export class EntityStatRender implements IEntityCallbacks {
     this.bars_node.removeFromParent();
     this.ctrl_node.removeFromParent();
     this._reserve_mesh?.removeFromParent();
+    this._reserve_mesh = null
     e.callbacks.del(this);
   }
   on_hp_changed(e: Entity): void { this.hp_bar.val = e.hp; }
@@ -176,17 +177,17 @@ export class EntityStatRender implements IEntityCallbacks {
   on_toughness_max_changed(e: Entity): void { this.toughness_value_bar.max = e.toughness_max; }
 
   private update_reverse(e: Entity) {
+    const { reserve } = e;
+    if (!reserve) {
+      this._reserve_mesh?.removeFromParent()
+      this._reserve_mesh = null;
+      return;
+    }
     const { invisible } = e;
     if (invisible) {
       if (this._reserve_mesh) {
         this._reserve_mesh.visible = false;
       }
-      return;
-    }
-    const { reserve } = e;
-    if (!reserve) {
-      this._reserve_mesh?.removeFromParent()
-      this._reserve_mesh = null;
       return;
     }
     const { lf2, team } = e;
@@ -208,9 +209,9 @@ export class EntityStatRender implements IEntityCallbacks {
       position: { x, y, z },
       frame: { centery }
     } = e
-    const _x = floor(x)
-    const _y = floor(y - z / 2 + centery + mesh.scale.y / 2)
-    const _z = floor(z)
+    const _x = round(x)
+    const _y = round(y - z / 2 + centery + mesh.scale.y / 2)
+    const _z = round(z)
     mesh.position.set(_x, _y, _z)
   }
   render() {

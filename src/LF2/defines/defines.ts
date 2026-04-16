@@ -59,7 +59,7 @@ export namespace Defines {
       shadowsize: [0, 0],
       left: 0,
       right: MODERN_SCREEN_WIDTH * 2,
-      far: -0,
+      far: -40,
       near: -0,
       group: []
     },

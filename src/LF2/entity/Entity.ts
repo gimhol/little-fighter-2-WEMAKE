@@ -25,7 +25,7 @@ import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, find, float_equal, floor, intersection, max, min, round, round_float } from "../utils";
+import { abs, clamp, find, float_equal, floor, max, min, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
@@ -36,7 +36,7 @@ import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_bot_ctrl, is_fighter, is_human_ctrl } from "./type_check";
+import { is_fighter, is_human_ctrl } from "./type_check";
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
@@ -431,10 +431,11 @@ export class Entity {
     return this.data.base.name ?? ''
   }
 
-  set name(v: string) {
-    if (v === this._name) return;
+  set name(v: string | null) {
+    if (v === this.name) return;
     const o = this._name;
-    this.callbacks.emit("on_name_changed")(this, (this._name = v), o);
+    this._name = v;
+    this.callbacks.emit("on_name_changed")(this, v || '', o);
   }
 
   get mp(): number {
