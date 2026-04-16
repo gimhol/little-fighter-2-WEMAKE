@@ -30,7 +30,7 @@ export enum GameKey {
 export type GK = GameKey;
 export const GK = GameKey;
 export type LGK = GK | "L" | "R" | "U" | "D" | "a" | "j" | "d";
-export const GameKeyLabels: Record<LGK, string> = {
+export const GKLabels: Record<LGK, string> = {
   [GK.L]: "<",
   [GK.R]: ">",
   [GK.U]: "^",
