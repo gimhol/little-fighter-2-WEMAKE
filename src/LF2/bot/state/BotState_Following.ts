@@ -1,5 +1,4 @@
-import { AGK } from "../../controller";
-import { BotStateEnum, Defines, GK, StateEnum } from "../../defines";
+import { BotStateEnum, Defines, GK, StateEnum, AGK } from "../../defines";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { between, round_float } from "../../utils";
 import { BotState_Base } from "./BotState";

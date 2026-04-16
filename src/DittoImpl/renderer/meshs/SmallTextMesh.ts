@@ -34,6 +34,7 @@ export class SmallTextMesh extends Mesh<BufferGeometry, ShaderMaterial> {
   set strokeStyle(v: string) {
     this._strokeStyle = v
     this.material.uniforms.outlineAlpha.value = v ? 1 : 0;
+    this.material.uniforms.outlineWidth.value = v ? 1 : 0;
     this.material.uniforms.outlineColor.value = new T.Color(v ? v : void 0);
   }
   async set_text(lf2: LF2, text: string): Promise<this> {
