@@ -192,18 +192,12 @@ export class EntityStatRender implements IEntityCallbacks {
     }
     const { lf2, team } = e;
     const mesh = this.reserve_mesh;
-    const what = `${reserve}_${team}`
-    if (mesh.userData.what != what) {
-      mesh.userData.what = what
-      mesh.set_text(lf2, `x${reserve}`).then(() => {
-        if (mesh.userData.what !== what)
-          return;
-        const fillStyle = get_team_text_color(team);
-        const strokeStyle = get_team_outline_color(team);
-        mesh.visible = true;
-        mesh.fillStyle = fillStyle
-        mesh.strokeStyle = strokeStyle
-      }).catch(e => console.warn(e));
+    mesh.set_text(lf2, `x${reserve}`)
+    mesh.visible = true;
+    if (mesh.userData.team != team) {
+      mesh.userData.team = team;
+      mesh.fillStyle = get_team_text_color(team);
+      mesh.strokeStyle = get_team_outline_color(team);
     }
     const {
       position: { x, y, z },

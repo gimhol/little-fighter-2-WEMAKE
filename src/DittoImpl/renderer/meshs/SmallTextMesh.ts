@@ -37,9 +37,10 @@ export class SmallTextMesh extends Mesh<BufferGeometry, ShaderMaterial> {
     this.material.uniforms.outlineColor.value = new T.Color(v ? v : void 0);
   }
   async set_text(lf2: LF2, text: string): Promise<this> {
+    if (this.text == text) return this;
     this.text = text
     const p = await lf2.images.load_text(text, TEXT_STYLE);
-    if (this.text !== text) return this;
+    if (this.text != text) return this;
     const { uniforms } = this.material;
     uniforms.tex.value = p.pic?.texture;
     this.material.needsUpdate = true;

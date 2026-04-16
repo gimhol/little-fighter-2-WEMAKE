@@ -37,21 +37,15 @@ export class EntityNameRender {
       if (this._mesh) this._mesh.visible = false;
       return;
     }
-
-    const { team, position, ground_y, world } = e;
+    const { lf2, team, position, ground_y, world } = e;
     const { mesh } = this;
-    const what = `${name}_${team}`
-    if (mesh.userData.what != what) {
-      const { lf2 } = e
-      mesh.userData.what = what
-      mesh.set_text(lf2, name).then(() => {
-        if (mesh.userData.what !== what) return;
-        mesh.visible = true;
-        mesh.fillStyle = get_team_text_color(team);
-        mesh.strokeStyle = get_team_outline_color(team);
-      }).catch(e => console.warn(e));
+    mesh.set_text(lf2, name)
+    mesh.visible = true;
+    if (mesh.userData.team != team) {
+      mesh.userData.team = team;
+      mesh.fillStyle = get_team_text_color(team);
+      mesh.strokeStyle = get_team_outline_color(team);
     }
-
     const hw = (mesh.scale.x + 10) / 2;
     const min_x = this.world_renderer.cam_x + hw;
     const max_x = min_x + world.screen_w - 2 * hw;
