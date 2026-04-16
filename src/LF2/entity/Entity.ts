@@ -204,6 +204,7 @@ export class Entity {
   protected _wakeup_invuln!: boolean | null;
   protected _dead_gone!: boolean | null;
   protected _dead_join!: IDeadJoin | null;
+  protected _ctrl_visible!: boolean | null;
   protected _ctrl!: BaseController;
   armor!: Readonly<IArmorInfo> | null;
   protected _opoints!: [IOpointInfo, number][];
@@ -671,6 +672,12 @@ export class Entity {
   get base_type(): number {
     return this.data.base.type ?? 0
   }
+  get ctrl_visible(): boolean | null {
+    return this._ctrl_visible
+  }
+  set ctrl_visible(v: boolean | null) {
+    this._ctrl_visible = v;
+  }
   get state() { return this.frame.state }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
@@ -765,7 +772,7 @@ export class Entity {
     this._key_role = null;
     this._dead_gone = null;
     this._dead_join = null;
-
+    this._ctrl_visible = null;
     this.drink = d.base.drink ? new DrinkInfo(d.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;

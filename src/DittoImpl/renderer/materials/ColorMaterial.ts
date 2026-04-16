@@ -1,7 +1,8 @@
 import { MeshBasicMaterial } from "../../_t";
-import { MaterialFactory, MaterialKind } from "../MaterialFactory";
+import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 
-MaterialFactory.register(MaterialKind.Color, {
+MaterialFactory.register({
+  kind: MaterialKind.Color,
   cls: MeshBasicMaterial,
   create: (): MeshBasicMaterial => {
     return new MeshBasicMaterial({ visible: true, color: 0 })

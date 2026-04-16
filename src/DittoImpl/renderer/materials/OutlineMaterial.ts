@@ -1,8 +1,9 @@
 import { Color, ShaderMaterial } from "../../_t";
-import { MaterialFactory, MaterialKind } from "../MaterialFactory";
+import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 import { Shaders } from "../shader";
 export const BLACK = new Color("#000000");
-MaterialFactory.register(MaterialKind.Outline, {
+MaterialFactory.register({
+  kind: MaterialKind.Outline,
   cls: ShaderMaterial,
   create: () => {
     const ret = new ShaderMaterial({

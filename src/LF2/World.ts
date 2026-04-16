@@ -914,7 +914,6 @@ export class World extends WorldDataset {
   private _paused: 0 | 1 | 2 = 0;
   get paused() { return this._paused == 1; }
   set paused(v: boolean) { this.set_paused(v ? 1 : 0); }
-  indicator_flags: number = 0;
 
   protected set_paused(v: 0 | 1 | 2) {
     if (this._paused === v) return;

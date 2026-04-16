@@ -10,7 +10,7 @@ import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
 import { BLACK } from "./materials/OutlineMaterial";
-import { MaterialFactory, MaterialKind } from "./MaterialFactory";
+import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";

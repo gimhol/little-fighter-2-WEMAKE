@@ -7,7 +7,7 @@ import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { get_geometry } from "./GeometryKeeper";
-import { MaterialFactory, MaterialKind } from "./MaterialFactory";
+import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {

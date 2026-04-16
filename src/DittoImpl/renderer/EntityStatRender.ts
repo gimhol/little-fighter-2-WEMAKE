@@ -8,7 +8,7 @@ import * as T from "../_t";
 import { Bar } from "./Bar";
 import { get_geometry } from "./GeometryKeeper";
 import { INDICATINGS } from "./INDICATINGS";
-import { MaterialFactory, MaterialKind } from "./MaterialFactory";
+import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { WorldRenderer } from "./WorldRenderer";
 
 const BAR_W = 40;
@@ -246,8 +246,8 @@ export class EntityStatRender implements IEntityCallbacks {
   }
   render() {
     const {
-      invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
-      stat_bar_type
+      invisible, position: { x, z, y }, ctrl_visible, frame: { centery }, hp, key_role,
+      stat_bar_type, world
     } = this.entity;
     const _is_fighter = is_fighter(this.entity)
     this.bars_node.visible = !!(stat_bar_type & StatBarType.Float) && _is_fighter && key_role && !invisible && hp > 0;
@@ -270,7 +270,7 @@ export class EntityStatRender implements IEntityCallbacks {
     const bar_z = floor(z);
 
     this.set_bars_position(bar_x, bar_y, bar_z);
-    this.ctrl_node.visible = !!(this.entity.lf2.world.indicator_flags & INDICATINGS.ctrl);
+    this.ctrl_node.visible = ctrl_visible || !!(world.indicator_flags & INDICATINGS.ctrl);
     if (this.ctrl_node.visible) for (const [k, { node }] of this.key_nodes) {
       node.visible = !this.entity.ctrl.is_end(k)
     }

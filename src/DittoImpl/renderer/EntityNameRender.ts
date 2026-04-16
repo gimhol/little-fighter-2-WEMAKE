@@ -1,7 +1,7 @@
 import { clamp, Entity, get_team_outline_color, get_team_text_color, IEntityCallbacks, IStyle, round } from "@/LF2";
 import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
-import { MaterialFactory, MaterialKind } from "./MaterialFactory";
+import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { WorldRenderer } from "./WorldRenderer";
 const TEXT_GEOMETRY = get_geometry(1, 1);
 const TEXT_STYLE: IStyle = {
