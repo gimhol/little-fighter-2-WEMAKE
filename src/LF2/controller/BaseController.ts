@@ -1,5 +1,5 @@
 import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TNextFrame } from "../defines";
-import { GK, StateEnum } from "../defines";
+import { AGK, CONFLICTS_KEY_MAP, GK, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
 import type { PlayerInfo } from "../PlayerInfo";
@@ -10,24 +10,6 @@ import DoubleClick from "./DoubleClick";
 import { KeyStatus } from "./KeyStatus";
 import { SeqKeys } from "./SeqKeys";
 export type TKeys = Record<GK, string>;
-export const KEY_NAME_LIST = [
-  GK.d,
-  GK.L,
-  GK.R,
-  GK.U,
-  GK.D,
-  GK.j,
-  GK.a,
-] as const;
-export const CONFLICTS_KEY_MAP: Record<GK, GK | undefined> = {
-  a: void 0,
-  j: void 0,
-  d: void 0,
-  [GK.L]: GK.R,
-  [GK.R]: GK.L,
-  [GK.U]: GK.D,
-  [GK.D]: GK.U,
-};
 enum Status {
   UP = 0,
   DOWN = 1,
@@ -350,7 +332,7 @@ export class BaseController {
       if (hld.B && this.tst("hld", B)) ret.set(hld.B, this.keys[B].time, B);
     }
 
-    for (const name of KEY_NAME_LIST) {
+    for (const name of AGK) {
       const key = this.keys[name];
 
       if (kd_map) {

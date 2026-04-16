@@ -1,4 +1,4 @@
-import { KEY_NAME_LIST } from "../../controller";
+import { AGK } from "../../controller";
 import { BotStateEnum, Defines, GK, StateEnum } from "../../defines";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { between, round_float } from "../../utils";
@@ -8,7 +8,7 @@ import { BotState_Base } from "./BotState";
 export class BotState_Following extends BotState_Base {
   readonly key = BotStateEnum.Following;
   override enter(): void {
-    this.ctrl.key_up(...KEY_NAME_LIST);
+    this.ctrl.key_up(...AGK);
   }
   override update(dt: number) {
     if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
@@ -62,7 +62,7 @@ export class BotState_Following extends BotState_Base {
     // TODO: 是不是该想个办法让持续位移招式（dennis d>j）停下来？
 
     c.stop();
-    this.ctrl.key_up(...KEY_NAME_LIST);
+    this.ctrl.key_up(...AGK);
     const en = c.chasings.get()?.entity;
     const av = c.avoidings.get()?.entity;
 

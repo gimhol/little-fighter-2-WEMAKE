@@ -1,16 +1,15 @@
 
-import { GK, StateEnum } from "@/LF2/defines";
-import { KEY_NAME_LIST } from "../../controller";
+import { GK, StateEnum, AGK } from "@/LF2/defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { BotState_Base } from "./BotState";
 
 export class BotState_StageEnd extends BotState_Base {
   override key = BotStateEnum.StageEnd;
   override enter(): void {
-    this.ctrl.key_up(...KEY_NAME_LIST);
+    this.ctrl.key_up(...AGK);
   }
   override leave(): void {
-    this.ctrl.key_up(...KEY_NAME_LIST);
+    this.ctrl.key_up(...AGK);
   }
   override update(dt: number): BotStateEnum | undefined | void {
     const c = this.ctrl;
@@ -20,7 +19,7 @@ export class BotState_StageEnd extends BotState_Base {
       return BotStateEnum.Idle;
     }
     if (me.state !== StateEnum.Running)
-      c.key_down(GK.R).key_up(...KEY_NAME_LIST);
+      c.key_down(GK.R).key_up(...AGK);
     if (me.blockers.size)
       c.start(GK.a).end(GK.a)
   }

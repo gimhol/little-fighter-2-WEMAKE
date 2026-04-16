@@ -1,6 +1,7 @@
 import FSM from "../base/FSM";
-import { BaseController, KEY_NAME_LIST } from "../controller/BaseController";
+import { BaseController } from "../controller/BaseController";
 import {
+  AGK,
   ATTCKING_ITR_KINDS,
   ATTCKING_STATES,
   BotDataSet,
@@ -481,9 +482,9 @@ export class BotController extends BaseController {
     if (this.dummy) {
       dummy_updaters[this.dummy]?.update(this);
     } else if (this.world.stage.is_chapter_finish) {
-      this.key_up(...KEY_NAME_LIST)
+      this.key_up(...AGK)
     } else if (this.entity.hp <= 0) {
-      this.key_up(...KEY_NAME_LIST)
+      this.key_up(...AGK)
     } else {
       this.chasings.del(({ entity }) => !this.should_chase(entity))
       this.chasings.sort(this.entity)

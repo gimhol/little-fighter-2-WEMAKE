@@ -1,6 +1,7 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
-import { KEY_NAME_LIST, LocalController } from "./controller";
+import { LocalController } from "./controller";
 import * as D from "./defines";
+import { AGK } from "./defines"
 import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
 import { Entity, is_fighter } from "./entity";
@@ -263,7 +264,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     }
 
     if (e.times === 0) {
-      for (const key_name of KEY_NAME_LIST) {
+      for (const key_name of AGK) {
         for (const [pid, player] of this.players) {
           if (!player.local) continue;
           if (player.keys[key_name] !== key_code) continue;
@@ -294,7 +295,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   on_key_up(e: I.IKeyEvent) {
     const key_code = e.key?.toLowerCase() ?? "";
-    for (const key_name of KEY_NAME_LIST) {
+    for (const key_name of AGK) {
       for (const [pid, player] of this.players) {
         if (!player.local) continue;
         if (player.keys[key_name] !== key_code) continue

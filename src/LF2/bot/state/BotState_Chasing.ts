@@ -1,6 +1,5 @@
 import { is_fighter, is_weapon } from "@/LF2/entity";
-import { KEY_NAME_LIST } from "../../controller/BaseController";
-import { Defines, GK, StateEnum, WeaponType } from "../../defines";
+import { Defines, GK, StateEnum, WeaponType, AGK } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { abs, between, round_float } from "../../utils";
@@ -196,7 +195,7 @@ export class BotState_Chasing extends BotState_Base {
         return
       }
       default:
-        c.key_up(...KEY_NAME_LIST);
+        c.key_up(...AGK);
 
     }
     if (!out_of_range) {
