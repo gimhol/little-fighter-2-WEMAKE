@@ -33,7 +33,7 @@ export class EntityNameRender {
       return;
     }
     const { name_visible, invisible } = e;
-    if (!name_visible || !invisible) { // 不可见
+    if (!name_visible || invisible) { // 不可见
       if (this._mesh) this._mesh.visible = false;
       return;
     }
