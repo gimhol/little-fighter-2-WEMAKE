@@ -36,7 +36,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, is_num, max, min, round, Times } from "./utils";
+import { abs, clamp, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -261,7 +261,7 @@ export class World extends WorldDataset {
       if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
       this.after_update?.();
       this._UPS.update(real_dt);
-      this._fix_radio = 1 - (this._ups - this._UPS.value) / this._ups;
+      this._fix_radio = 1 - clamp(6 * (this._ups - this._UPS.value) / this._ups, 0, 1);
       this._prev_time = time;
 
     };
