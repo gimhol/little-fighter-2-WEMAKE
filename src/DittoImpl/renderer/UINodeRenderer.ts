@@ -297,6 +297,12 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.update_center_and_size()
     this.update_dom();
     this.update_texture();
+    const { background, backgroundAlpha, foreground, foregroundAlpha } = this.ui
+    this.mesh.material.bgColor = background;
+    this.mesh.material.bgAlpha = backgroundAlpha;
+    this.mesh.material.fgColor = foreground;
+    this.mesh.material.fgAlpha = foregroundAlpha;
+
     if (this.ui.scale.version !== this.scale_version) {
       const { x, y, z } = this.ui.scale.value
       this.mesh.scale.set(x, y, z);

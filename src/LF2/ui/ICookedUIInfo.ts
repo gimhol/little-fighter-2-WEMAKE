@@ -20,4 +20,6 @@ export interface ICookedUIInfo extends IUIInfo {
   txt: ICookedUITxtInfo[];
   values: { [x in string]?: any };
   component: IComponentInfo[];
+  background?: string;
+  foreground?: string;
 }

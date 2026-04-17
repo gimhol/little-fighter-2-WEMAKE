@@ -1,4 +1,4 @@
-import { Color, ShaderMaterial, Texture } from "../../_t";
+import { Color, ColorRepresentation, ShaderMaterial, Texture } from "../../_t";
 import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 import { Shaders } from "../shader";
 export const BLACK = new Color("#000000");
@@ -54,24 +54,24 @@ export class OutlineMaterial extends ShaderMaterial {
   }
   get texture(): Texture | undefined { return this.uniforms.tex.value }
   set texture(v: Texture | undefined) { this.uniforms.tex.value = v }
-
   get coverColor(): Color { return this.uniforms.coverColor.value }
-  set coverColor(v: Color) { this.uniforms.coverColor.value = v }
+  set coverColor(v: ColorRepresentation) { this.uniforms.coverColor.value = new Color(v) }
   get coverStength(): number { return this.uniforms.coverStength.value }
   set coverStength(v: number) { this.uniforms.coverStength.value = v }
   get cover(): boolean { return this.uniforms.cover.value }
   set cover(v: boolean) { this.uniforms.cover.value = v }
-
-
   get mixColor(): Color { return this.uniforms.mixColor.value }
-  set mixColor(v: Color) { this.uniforms.mixColor.value = v }
+  set mixColor(v: ColorRepresentation) { this.uniforms.mixColor.value = new Color(v) }
   get mixStength(): number { return this.uniforms.mixStength.value }
   set mixStength(v: number) { this.uniforms.mixStength.value = v }
-
   get bgColor(): Color { return this.uniforms.bgColor.value }
-  set bgColor(v: Color) { this.uniforms.bgColor.value = v }
+  set bgColor(v: ColorRepresentation) { this.uniforms.bgColor.value = new Color(v) }
   get bgAlpha(): number { return this.uniforms.bgAlpha.value }
   set bgAlpha(v: number) { this.uniforms.bgAlpha.value = v }
+  get fgColor(): Color { return this.uniforms.fgColor.value }
+  set fgColor(v: ColorRepresentation) { this.uniforms.fgColor.value = new Color(v) }
+  get fgAlpha(): number { return this.uniforms.fgAlpha.value }
+  set fgAlpha(v: number) { this.uniforms.fgAlpha.value = v }
 }
 
 MaterialFactory.register({

@@ -156,7 +156,18 @@ export class UINode implements IDebugging {
   set visible(v: boolean) {
     this.set_visible(v);
   }
-
+  private _background: string | null = null;
+  private _backgroundAlpha: number | null = null;
+  private _foreground: string | null = null;
+  private _foregroundAlpha: number | null = null;
+  get background(): string { return this._background ?? this.data.background ?? '#000000' }
+  set background(v: string) { this._background = v; }
+  get foreground(): string { return this._foreground ?? this.data.foreground ?? '#000000' }
+  set foreground(v: string) { this._foreground = v; }
+  get backgroundAlpha(): number { return this._backgroundAlpha ?? this.data.backgroundAlpha ?? 0 }
+  set backgroundAlpha(v: number) { this._backgroundAlpha = v; }
+  get foregroundAlpha(): number { return this._foregroundAlpha ?? this.data.foregroundAlpha ?? 0 }
+  set foregroundAlpha(v: number) { this._foregroundAlpha = v; }
   set_visible(v: boolean): this {
     const prev = this.visible;
     this._visible.value = v;

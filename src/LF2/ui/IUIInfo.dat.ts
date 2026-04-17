@@ -34,6 +34,10 @@ export interface IUIInfo {
   visible?: boolean | string;
   disabled?: boolean | string;
   color?: string;
+  background?: string;
+  backgroundAlpha?: number;
+  foreground?: string;
+  foregroundAlpha?: number;
   img?: TUIImgInfo | TUIImgInfo[];
   txt?: TUITxtInfo | TUITxtInfo[];
   which?: number | string;
