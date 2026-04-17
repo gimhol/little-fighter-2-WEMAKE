@@ -1,7 +1,7 @@
 import { ICollision, ICollisionHandler } from "../base";
 import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
-import { is_ball, is_fighter, is_weapon } from "../entity";
+import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
 import { handle_ball_frozen } from "./handle_ball_frozen";
 import { handle_ball_hit_other } from "./handle_ball_hit_other";
@@ -99,6 +99,7 @@ export class CollisionKeeper {
       collision.victim.state,
     )
   }
+
   handle(collision: ICollision) {
     const { handlers } = collision;
     if (Ditto.DEV && handlers) {
@@ -119,25 +120,7 @@ export class CollisionKeeper {
         fn === handle_ball_is_hit_b;
       return fn(collision)
     })
-
-    if (
-      is_ball(attacker) &&
-      is_ball(victim) &&
-      attacker.group?.some(v => v === EntityGroup.FreezableBall) &&
-      victim.group?.some(v => v === EntityGroup.Freezer)
-    ) {
-      handle_ball_frozen(victim, attacker);
-    } else if (
-      is_ball(victim) &&
-      victim.group?.some(v => v === EntityGroup.FreezableBall) &&
-      attacker.group?.some(v => v === EntityGroup.Freezer) && (
-        is_fighter(attacker) ||
-        is_ball(victim) ||
-        (is_weapon(attacker) && attacker.bearer)
-      )
-    ) {
-      handle_ball_frozen(attacker, victim);
-    } else {
+    if (!handle_ball_frozen(victim, attacker, itr)) {
       itr.actions?.forEach((action, idx) => {
         const test_result = action.pretest ? itr_tests?.[idx] : action.tester?.run(collision);
         if (test_result === false) return;
