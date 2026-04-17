@@ -173,11 +173,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     const { entity, props: { hp_bar } } = this
     if (hp_bar) {
       this.healing = !!entity?.healing && (entity.update_id.value % 8) < 4;
-      if (this.healing) {
-        hp_bar.color.value = 'rgb(255,130,130)'
-      } else {
-        hp_bar.color.value = 'rgb(255,0,0)'
-      }
+      hp_bar.color.value = this.healing ? 'rgb(255,130,130)' : 'rgb(255,0,0)'
     }
     this.defend_value_max.update()
     this.defend_value.update()
