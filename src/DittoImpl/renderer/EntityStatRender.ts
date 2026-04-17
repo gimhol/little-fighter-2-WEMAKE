@@ -15,12 +15,6 @@ const BAR_W = 40;
 const BAR_H = 3;
 const BAR_BG_W = BAR_W + 2;
 const BAR_BG_H = 1 + (BAR_H + 1) * 2 + 4;
-const TEXT_STYLE: IStyle = {
-  fill_style: 'white',
-  disposable: true,
-  smoothing: false,
-  scale: 1,
-}
 export class EntityStatRender implements IEntityCallbacks {
   protected _reserve_mesh: SmallTextMesh | null = null;
   protected bars_node = new T.Object3D();

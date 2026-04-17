@@ -17,7 +17,7 @@ export class SmallTextMesh extends Mesh<BufferGeometry, ShaderMaterial> {
   protected _strokeStyle: string = '';
   protected _text: string = ''
   constructor() {
-    const m = MaterialFactory.get(MaterialKind.Outline, ShaderMaterial);
+    const m = MaterialFactory.get(MaterialKind.Text, ShaderMaterial);
     super(TEXT_GEOMETRY, m)
   }
   reset(): void {

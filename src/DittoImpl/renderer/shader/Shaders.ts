@@ -1,8 +1,10 @@
 import Outline from './outline.frag'
 import Normal from './normal.vert'
+import Text from './text.frag'
 export const Shaders = {
   Fragment: {
-    Outline
+    Outline,
+    Text
   },
   Vertex: {
     Normal
