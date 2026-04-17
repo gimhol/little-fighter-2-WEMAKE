@@ -1,6 +1,6 @@
 
 import path, { join } from "path";
-import package_json from "../package.json";
+import package_json from "../../package.json";
 import { conf, dont_wait, make_conf } from "./conf";
 import { data_2_txt } from "./data_2_txt";
 import { make_data, make_data_zip } from "./make_data_zip";
