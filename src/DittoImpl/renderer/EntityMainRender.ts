@@ -1,16 +1,13 @@
-import type { IEntityData, IFrameInfo, IFramePictureInfo, TFace } from "@/LF2/defines";
-import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
-import type { Entity } from "@/LF2/entity/Entity";
-import { LF2 } from "@/LF2/LF2";
-import { clamp, floor, random_in, round } from "@/LF2/utils";
+import type { Entity, IEntityData, IFrameInfo, IFramePictureInfo, TFace } from "@/LF2";
+import { Builtin_FrameId, clamp, floor, LF2, random_in, round, StateEnum, World } from "@/LF2";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
-import { get_geometry } from "./GeometryKeeper";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
+import { get_geometry } from "./GeometryKeeper";
+import { OutlineMaterial } from "./materials/OutlineMaterial";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
-import { OutlineMaterial } from "./materials/OutlineMaterial";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
@@ -28,6 +25,8 @@ const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
 export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
 
+  protected _game_time: number = -1;
+  protected _time: number = 0;
   protected images!: Map<string, RImageInfo>;
   entity!: Entity;
   protected node!: T.Object3D;
@@ -49,6 +48,8 @@ export class EntityMainRender {
   protected z = 0;
   protected offset_x: number = 0;
   protected offset_y: number = 0;
+  protected world!: World;
+  protected lf2!: LF2;
 
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
@@ -57,6 +58,8 @@ export class EntityMainRender {
 
   reset(entity: Entity) {
     this.entity = entity
+    this.world = entity.world
+    this.lf2 = entity.lf2;
     this._frame = void 0;
     this._facing = void 0;
     this._x = void 0;
@@ -154,6 +157,13 @@ export class EntityMainRender {
     }
   }
   render(dt: number) {
+    const game_time = this.world.game_time.value
+    if (this._game_time != game_time) {
+      this._game_time = game_time;
+      this._time = 0;
+    } else {
+      this._time += dt;
+    }
     const { entity, main_mesh } = this;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     this.update_shaking(dt)
@@ -161,6 +171,12 @@ export class EntityMainRender {
     if (entity.data !== this._data)
       this.reset(entity);
     let { x, y, z } = entity.position
+    if (this._time) {
+      const { x: vx, y: vy, z: vz } = entity.position
+      x += (vx * this._time / 16.6666);
+      y += (vy * this._time / 16.6666);
+      z += (vz * this._time / 16.6666);
+    }
     if (
       this._x !== x ||
       this._y !== y ||
