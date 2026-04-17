@@ -1,14 +1,9 @@
-import { UITextLoader } from "../UITextLoader";
 import { parse_call_func_expression } from "../utils";
 import { FadeOutOpacity } from "./FadeOutOpacity";
-import { UIComponent } from "./UIComponent";
+import { Label } from "./Label";
 
-export class LoadingContentText extends UIComponent {
+export class LoadingContentText extends Label {
   static override readonly TAG = "LoadingContentText"
-  private _text_loader = new UITextLoader(() => this.node)
-    .set_style(() => this.node.style)
-    .ignore_out_of_date();
-
   get fade_out_duration() { return this.num(1) ?? 0 };
   get fade_out_delay() { return this.num(2) ?? 0 }
   protected fadeout?: FadeOutOpacity;
@@ -48,6 +43,6 @@ export class LoadingContentText extends UIComponent {
   on_loading_content(text: string, progress: number) {
     this.fadeout?.start();
     const str = progress ? `loading: ${text}(${progress}%)` : ` loading: ${text}`;
-    this._text_loader.set_text([str])
+    this.set_text(str)
   }
 }

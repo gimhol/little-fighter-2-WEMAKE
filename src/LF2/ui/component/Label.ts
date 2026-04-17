@@ -6,7 +6,7 @@ import { UIComponent } from "./UIComponent";
 export class Label extends UIComponent {
   static override readonly TAG: string = 'Label';
   static override readonly ALIAS: string[] = ['Text'];
-  protected _txt_loader = new UITextLoader(() => this.node);
+  protected _txt_loader = new UITextLoader(() => this.node).ignore_out_of_date();
   get text(): string { return this.node.txts.value.at(0)?.text ?? '' }
   set text(v: string) { this.set_text(v) }
   get style(): IStyle { return this.node.txts.value.at(0)?.style ?? {} }
