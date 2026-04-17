@@ -1,25 +1,26 @@
 import { BuiltIn_OID, Builtin_FrameId, EntityGroup, IItrInfo, ItrKind, StateEnum } from "../defines";
-import { Entity, is_ball, is_fighter, is_weapon, turn_face } from "../entity";
+import { Entity, is_ball, is_fighter, turn_face } from "../entity";
 import { round } from "../utils";
 
 
 export function handle_ball_frozen(attacker: Entity, victim: Entity, itr: IItrInfo): boolean {
+  if (!attacker.group?.length) return false;
+  if (!victim.group?.length) return false;
   const ok = [ItrKind.Normal, ItrKind.CharacterThrew, ItrKind.WeaponSwing].some(v => v == itr.kind)
   if (!ok) return false;
   if (
-    victim.group?.some(v => v == EntityGroup.Freezer) &&
-    attacker.group?.some(v => v == EntityGroup.FreezableBall)
+    victim.group.some(v => v == EntityGroup.Freezer) &&
+    attacker.group.some(v => v == EntityGroup.FreezableBall)
   ) {
     const temp = attacker;
     attacker = victim;
     victim = temp;
   } else if (
-    attacker.group?.some(v => v != EntityGroup.Freezer) ||
-    victim.group?.some(v => v != EntityGroup.FreezableBall)
+    attacker.group.some(v => v != EntityGroup.Freezer) ||
+    victim.group.some(v => v != EntityGroup.FreezableBall)
   ) {
     return false;
   }
-
   do {
     if (victim.state != StateEnum.Ball_Flying)
       return false
