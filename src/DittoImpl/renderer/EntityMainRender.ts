@@ -156,27 +156,32 @@ export class EntityMainRender {
       this.shaking_x = 0;
     }
   }
+  prev_x: number = 0;
+  prev_y: number = 0;
+  prev_z: number = 0;
   render(dt: number) {
     const game_time = this.world.game_time.value
+    const { entity, main_mesh } = this;
+    let { x, y, z } = entity.position
     if (this._game_time != game_time) {
       this._game_time = game_time;
       this._time = 0;
+      this.prev_x = x;
+      this.prev_y = y;
+      this.prev_z = z;
     } else {
       this._time += dt;
+      x = this.prev_x + (x - this.prev_x) * this._time / 16.6666;
+      y = this.prev_y + (y - this.prev_y) * this._time / 16.6666;
+      z = this.prev_z + (z - this.prev_z) * this._time / 16.6666;
     }
-    const { entity, main_mesh } = this;
+
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     this.update_shaking(dt)
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
-    let { x, y, z } = entity.position
-    if (this._time) {
-      const { x: vx, y: vy, z: vz } = entity.position
-      x += (vx * this._time / 16.6666);
-      y += (vy * this._time / 16.6666);
-      z += (vz * this._time / 16.6666);
-    }
+
     if (
       this._x !== x ||
       this._y !== y ||
