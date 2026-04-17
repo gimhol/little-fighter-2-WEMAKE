@@ -201,6 +201,15 @@
                   pos: "0,0",
                   center: "0.5,0.5",
                   id: "difficulty_text",
+                  txt: [
+                    {
+                      i18n: "",
+                      style: {
+                        fill_style: "#9b9bff",
+                        font: "15px Arial",
+                      },
+                    },
+                  ],
                   component: ["difficulty_text()"],
                 },
               ],
