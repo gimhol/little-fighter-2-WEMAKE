@@ -10,7 +10,7 @@ export class UITextLoader {
   protected _style: (i: number) => IStyle = (i: number) => {
     const node = this.node()
     if (!node) return {};
-    return { ...node.txts.value[i].style }
+    return { ...node.txts.value[i]?.style }
   };
   constructor(node: () => UINode | null | undefined) {
     this.node = node;
