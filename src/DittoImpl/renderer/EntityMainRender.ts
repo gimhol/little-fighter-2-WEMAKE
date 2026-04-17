@@ -171,11 +171,11 @@ export class EntityMainRender {
       this.prev_z = z;
     } else {
       this._time += dt;
-      x = this.prev_x + (x - this.prev_x) * this._time / 16.6666;
-      y = this.prev_y + (y - this.prev_y) * this._time / 16.6666;
-      z = this.prev_z + (z - this.prev_z) * this._time / 16.6666;
     }
-
+    x = this.prev_x + (x - this.prev_x) * this._time / 16.6666;
+    y = this.prev_y + (y - this.prev_y) * this._time / 16.6666;
+    z = this.prev_z + (z - this.prev_z) * this._time / 16.6666;
+    
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     this.update_shaking(dt)
     const { frame, facing } = entity;
