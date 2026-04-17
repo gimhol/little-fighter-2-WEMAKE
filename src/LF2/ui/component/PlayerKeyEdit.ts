@@ -1,3 +1,4 @@
+import { IUICallback } from "@/LF2";
 import { IKeyboardCallback } from "../../ditto";
 import { IPointingsCallback } from "../../ditto/pointings/IPointingsCallback";
 import { IUIPointerEvent } from "../IUIPointerEvent";
@@ -5,15 +6,19 @@ import { PlayerKeyText } from "./PlayerKeyText";
 
 export class PlayerKeyEdit extends PlayerKeyText {
   static override readonly TAG: string = 'PlayerKeyEdit'
-  override on_click(e: IUIPointerEvent) {
-    this.node.focused = !this.node.focused;
-    e.stop_immediate_propagation();
+
+  override on_start(): void {
+    this.node.parent?.callbacks.add(this.p)
+  }
+  override on_stop(): void {
+    this.node.parent?.callbacks.del(this.p)
   }
   override on_foucs(): void {
     super.on_foucs?.();
     this.on_key_changed();
     this.lf2.pointings.callback.add(this.r);
     this.lf2.keyboard.callback.add(this.l);
+
   }
   override on_blur(): void {
     super.on_blur?.();
@@ -21,7 +26,15 @@ export class PlayerKeyEdit extends PlayerKeyText {
     this.lf2.pointings.callback.del(this.r);
     this.lf2.keyboard.callback.del(this.l);
   }
-
+  private _click_me = false;
+  private p: IUICallback = {
+    on_click: (e) => {
+      this._click_me = true
+      console.log('on_click_1', e)
+      this.node.focused = !this.node.focused;
+      e.stop_immediate_propagation();
+    },
+  }
   private l: IKeyboardCallback = {
     on_key_down: (e) => {
       if (!this.node.focused) return;
@@ -36,7 +49,13 @@ export class PlayerKeyEdit extends PlayerKeyText {
     }
   }
   private r: IPointingsCallback = {
-    on_pointer_down: () => this.node.focused = false
+    on_click: (e) => {
+      if (this._click_me) {
+        this._click_me = false;
+        return
+      }
+      this.node.focused = false
+    }
   };
 
   override on_key_changed() {

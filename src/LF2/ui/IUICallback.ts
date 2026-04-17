@@ -2,7 +2,7 @@ import { UIComponent } from "./component/UIComponent";
 import { IUIPointerEvent } from "./IUIPointerEvent";
 import type { UINode } from "./UINode";
 export interface IUICallback {
-  on_click?(): void;
+  on_click?(e: IUIPointerEvent): void;
   on_show?(node: UINode): void;
   on_hide?(node: UINode): void;
   on_foucs_changed?(node: UINode): void;

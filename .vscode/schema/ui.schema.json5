@@ -342,6 +342,22 @@
           "description": "循环创建次数，默认为1",
           "type": "number"
         },
+        "background": {
+          "description": "background",
+          "type": "string"
+        },
+        "backgroundAlpha": {
+          "description": "backgroundAlpha",
+          "type": "number"
+        },
+        "foreground": {
+          "description": "foreground",
+          "type": "string"
+        },
+        "foregroundAlpha": {
+          "description": "foregroundAlpha",
+          "type": "number"
+        },
         "dev_component": {
           "anyOf": [
             {

@@ -554,6 +554,7 @@ export class UINode implements IDebugging {
       c.on_click?.(e);
       if (e.stopped === 2) break;
     }
+    this.callbacks.emit('on_click')(e);
   }
 
   /** 
