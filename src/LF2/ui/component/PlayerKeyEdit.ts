@@ -30,7 +30,6 @@ export class PlayerKeyEdit extends PlayerKeyText {
   private p: IUICallback = {
     on_click: (e) => {
       this._click_me = true
-      console.log('on_click_1', e)
       this.node.focused = !this.node.focused;
       e.stop_immediate_propagation();
     },
