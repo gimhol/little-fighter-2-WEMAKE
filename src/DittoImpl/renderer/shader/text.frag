@@ -34,7 +34,7 @@ uniform vec3 outlineColor;
 /** 灰度 */
 uniform float gray;
 /** 混色强度 */
-uniform float mixStreath;
+uniform float mixStength;
 /** 混色 */
 uniform vec3 mixColor;
 /** opacity */
@@ -43,7 +43,7 @@ uniform bool keepout;
 
 uniform bool cover;
 /** 色强度 */
-uniform float coverStreath;
+uniform float coverStength;
 /** 色 */
 uniform vec3 coverColor;
 
@@ -70,10 +70,10 @@ vec3 toGray(vec3 color, float strength) {
 void apply(vec4 color) {
   if(cover) {
     color.rgb = gamma_correct(coverColor);
-    color.a = coverStreath;
+    color.a = coverStength;
   }
-  if(mixStreath > 0.0) {
-    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStreath);
+  if(mixStength > 0.0) {
+    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStength);
   }
   if(gray > 0.0) {
     color.rgb = toGray(color.rgb, gray);

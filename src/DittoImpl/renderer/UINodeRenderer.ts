@@ -8,9 +8,9 @@ import { is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { empty_texture } from "./empty_texture";
-import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
-import { BLACK } from "./materials/OutlineMaterial";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
+import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
+import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -24,21 +24,13 @@ interface IUserData {
   img?: ImageInfo<T.Texture>,
   nine_patch?: INinePatch,
 }
-
 export class UINodeRenderer implements IUINodeRenderer {
-  mesh: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
+  mesh: T.Mesh<T.BufferGeometry, OutlineMaterial>;
   ui: UINode;
-
   protected _css_obj: CSS2DObject | undefined;
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
   protected _geo = get_geometry(0, 0, 0, 0, 0);
-  protected _mixColor: T.Color = new T.Color(0, 0, 0);
-  protected _mixStength: number = 1;
-  protected _coverColor: T.Color = new T.Color(0, 0, 0);
-  protected _coverStength: number = 1;
-  protected _cover: boolean = false;
-  protected _texture: T.Texture = empty_texture();
   protected img_idx_version: number | null = null;
   protected imgs_version: number | null = null;
   protected txt_idx_version: number | null = null;
@@ -91,8 +83,9 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.ui = ui;
     this.mesh = new T.Mesh(
       this.next_geometry(),
-      MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial)
+      MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
     )
+    this.mesh.material.texture = empty_texture()
     this.mesh.userData.owner = ui;
   }
   del(child: UINodeRenderer) {
@@ -148,10 +141,8 @@ export class UINodeRenderer implements IUINodeRenderer {
   apply() {
     const { mesh: sp } = this;
     sp.geometry = this.next_geometry();
-    const {
-      _texture,
-      _img
-    } = this;
+    const _texture = sp.material.texture!
+    const { _img } = this;
 
     const { material: m } = sp;
     const { uniforms: u } = m;
@@ -174,11 +165,6 @@ export class UINodeRenderer implements IUINodeRenderer {
       u.tex.value?.dispose();
       u.tex.value = _texture;
     }
-    u.mixColor.value = this._mixColor;
-    u.mixStreath.value = this._mixStength;
-    u.coverColor.value = this._coverColor;
-    u.coverStreath.value = this._coverStength;
-    u.cover.value = this._cover;
     m.needsUpdate = true;
     return this;
   }
@@ -201,26 +187,27 @@ export class UINodeRenderer implements IUINodeRenderer {
     const color = this.ui.color.value.trim();
     if (img) {
       const texture: T.Texture = img.pic?.texture;
-      this._coverColor = BLACK;
-      this._coverStength = 0;
-      this._cover = false
-      this._mixColor = color ? new T.Color(color) : BLACK
-      this._mixStength = color ? (get_alpha_from_color(color) || 1) : 0;
-      this._texture = texture;
+      this.mesh.material.coverColor = BLACK;
+      this.mesh.material.coverStength = 0;
+      this.mesh.material.cover = false
+      this.mesh.material.mixColor = color ? new T.Color(color) : BLACK
+      this.mesh.material.mixStength = color ? (get_alpha_from_color(color) || 1) : 0;
+      this.mesh.material.texture = texture;
     } else if (color) {
       const texture: T.Texture = white_texture();
-      this._coverColor = new T.Color(color);
-      this._coverStength = get_alpha_from_color(color) || 1;
-      this._cover = true
-      this._mixColor = BLACK;
-      this._mixStength = 0;
-      this._texture = texture;
+      this.mesh.material.coverColor = new T.Color(color);
+      this.mesh.material.coverStength = get_alpha_from_color(color) || 1;
+      this.mesh.material.cover = true
+      this.mesh.material.mixColor = BLACK;
+      this.mesh.material.mixStength = 0;
+      this.mesh.material.texture = texture;
     } else {
-      this._coverColor = BLACK;
-      this._coverStength = 0;
-      this._cover = true
-      this._mixColor = BLACK;
-      this._mixStength = 0;
+      this.mesh.material.texture = empty_texture()
+      this.mesh.material.coverColor = BLACK;
+      this.mesh.material.coverStength = 0;
+      this.mesh.material.cover = true
+      this.mesh.material.mixColor = BLACK;
+      this.mesh.material.mixStength = 0;
     }
   }
 

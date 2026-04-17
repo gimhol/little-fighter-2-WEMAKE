@@ -10,6 +10,7 @@ import { get_geometry } from "./GeometryKeeper";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
+import { OutlineMaterial } from "./materials/OutlineMaterial";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files } } = data;
@@ -77,7 +78,7 @@ export class EntityMainRender {
     this.images = get_img_map(lf2, entity.data);
 
     const texture = this.images.get("0")?.pic?.texture;
-    const material = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial, m => {
+    const material = MaterialFactory.get(MaterialKind.Outline, OutlineMaterial, m => {
       m.uniforms.tex = { value: texture }
     });
     material.uniforms.outlineWidth.value = 1;

@@ -1,7 +1,6 @@
 import { IKeyboardCallback } from "../../ditto";
 import { IPointingsCallback } from "../../ditto/pointings/IPointingsCallback";
 import { IUIPointerEvent } from "../IUIPointerEvent";
-import { ui_load_txt } from "../ui_load_txt";
 import { PlayerKeyText } from "./PlayerKeyText";
 
 export class PlayerKeyEdit extends PlayerKeyText {
@@ -41,21 +40,15 @@ export class PlayerKeyEdit extends PlayerKeyText {
   };
 
   override on_key_changed() {
-    ui_load_txt(this.lf2, {
-      i18n: this.key_code, style: {
-        fill_style: this.node.focused ? "blue" : 'white',
-        font: "14px Arial",
-        padding_l: 20,
-        padding_r: 20,
-        padding_t: 3,
-        padding_b: 3,
-      }
-    }).then(v => {
-      this.node.txts.value = v;
-      this.node.txt_idx.value = 0;
-      const { w, h, scale } = v[0]!
-      this.node.resize(w / scale, h / scale);
-    })
+    this.style = {
+      fill_style: this.node.focused ? "blue" : 'white',
+      font: "14px Arial",
+      padding_l: 20,
+      padding_r: 20,
+      padding_t: 3,
+      padding_b: 3,
+    }
+    this.set_text(this.key_code)
   }
 }
 

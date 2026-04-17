@@ -29,7 +29,7 @@ export class SmallTextMesh extends Mesh<BufferGeometry, ShaderMaterial> {
   get fillStyle() { return this._fillStyle }
   set fillStyle(v: string) {
     this._fillStyle = v
-    this.material.uniforms.mixStreath.value = v ? 1 : 0;
+    this.material.uniforms.mixStength.value = v ? 1 : 0;
     this.material.uniforms.mixColor.value = new T.Color(v ? v : void 0);
   }
   get strokeStyle() { return this._strokeStyle }

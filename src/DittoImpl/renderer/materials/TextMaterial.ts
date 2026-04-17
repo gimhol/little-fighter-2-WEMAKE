@@ -40,10 +40,10 @@ MaterialFactory.register({
       /** 混色 */
       mixColor: { value: BLACK },
       /** 混色强度,一般范围:[0,1], 当为0，不混色 */
-      mixStreath: { value: 0 },
+      mixStength: { value: 0 },
       cover: { value: false },
       coverColor: { value: BLACK },
-      coverStreath: { value: 0 },
+      coverStength: { value: 0 },
       gray: { value: 0 },
       keepout: { value: true }
     }

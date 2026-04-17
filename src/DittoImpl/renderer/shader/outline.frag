@@ -34,7 +34,7 @@ uniform vec3 outlineColor;
 /** 灰度 */
 uniform float gray;
 /** 混色强度 */
-uniform float mixStreath;
+uniform float mixStength;
 /** 混色 */
 uniform vec3 mixColor;
 /** opacity */
@@ -43,11 +43,21 @@ uniform bool keepout;
 
 uniform bool cover;
 /** 色强度 */
-uniform float coverStreath;
+uniform float coverStength;
 /** 色 */
 uniform vec3 coverColor;
 
-// 你之前的灰度权重（扩展成 vec4）
+/** 背景色 */
+uniform vec3 bgColor;
+/** 背景色透明度 */
+uniform float bgAlpha;
+
+/** 前景色 */
+uniform vec3 fgColor;
+/** 前景色透明度 */
+uniform float fgAlpha;
+
+// 灰度权重
 const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
 
 const float gamma = 2.2;
@@ -62,25 +72,38 @@ vec3 gamma_invert(vec3 color) {
   return pow(color, vec3(gamma));
 }
 
-vec3 toGray(vec3 color, float strength) {
+vec3 to_gray(vec3 color, float strength) {
   float gray = dot(color, GRAY_WEIGHT);
   return mix(color, vec3(gray), strength);
+}
+
+vec4 bgfg(vec3 c0, float a0, vec3 c1, float a1) {
+  if(a0 <= 0.0)
+    return vec4(c1, a1);
+  if(a1 <= 0.0)
+    return vec4(c0, a0);
+  vec4 ret = vec4(0, 0, 0, 0);
+  ret.a = a0 * (1.0 - a1) + a1;
+  ret.rgb = (c0 * a0 * (1.0 - a1) + c1 * a1) / ret.a;
+  return ret;
 }
 
 void apply(vec4 color) {
   if(cover) {
     color.rgb = gamma_correct(coverColor);
-    color.a = coverStreath;
+    color.a = coverStength;
   }
-  if(mixStreath > 0.0) {
-    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStreath);
-  }
-  if(gray > 0.0) {
-    color.rgb = toGray(color.rgb, gray);
-  }
+  if(mixStength > 0.0)
+    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStength);
+  if(gray > 0.0)
+    color.rgb = to_gray(color.rgb, gray);
+
+  if(bgAlpha > 0.0)
+    color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
+  if(fgAlpha > 0.0)
+    color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
   color.a *= opacity;
   gl_FragColor = color;
-
 }
 
 void main() {
@@ -109,10 +132,18 @@ void main() {
   float left = texture2D(tex, uv + vec2(-texel.x, 0)).a;
   float right = texture2D(tex, uv + vec2(texel.x, 0)).a;
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
-  if(outline > 0.1 && center < 0.5) {
-    gl_FragColor.rgb = gamma_correct(outlineColor);
-    gl_FragColor.a = outlineAlpha;
-  } else {
+  if(outline <= 0.1 || center >= 0.5) {
     apply(color);
+    return;
   }
+
+  // 描边
+  color = vec4(gamma_correct(outlineColor), outlineAlpha);
+  if(bgAlpha > 0.0)
+    color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
+  if(fgAlpha > 0.0)
+    color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
+  color.a *= opacity;
+  gl_FragColor = color;
+
 }

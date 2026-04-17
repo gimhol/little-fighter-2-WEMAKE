@@ -1,20 +1,18 @@
-import { Color, ShaderMaterial } from "../../_t";
+import { Color, ShaderMaterial, Texture } from "../../_t";
 import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 import { Shaders } from "../shader";
 export const BLACK = new Color("#000000");
-MaterialFactory.register({
-  kind: MaterialKind.Outline,
-  cls: ShaderMaterial,
-  create: () => {
-    const ret = new ShaderMaterial({
+
+export class OutlineMaterial extends ShaderMaterial {
+  constructor() {
+    super({
       vertexShader: Shaders.Vertex.Normal,
       fragmentShader: Shaders.Fragment.Outline,
       transparent: true
-    });
-    return ret;
-  },
-  reset: (c: ShaderMaterial) => {
-    c.uniforms = {
+    })
+  }
+  reset(): void {
+    this.uniforms = {
       tex: { value: void 0 },
       x: { value: 0 },
       y: { value: 0 },
@@ -40,12 +38,45 @@ MaterialFactory.register({
       /** 混色 */
       mixColor: { value: BLACK },
       /** 混色强度,一般范围:[0,1], 当为0，不混色 */
-      mixStreath: { value: 0 },
+      mixStength: { value: 0 },
       cover: { value: false },
       coverColor: { value: BLACK },
-      coverStreath: { value: 0 },
+      coverStength: { value: 0 },
       gray: { value: 0 },
-      keepout: { value: true }
+      keepout: { value: true },
+
+      bgColor: { value: BLACK },
+      bgAlpha: { value: 0 },
+
+      fgColor: { value: BLACK },
+      fgAlpha: { value: 0 },
     }
   }
+  get texture(): Texture | undefined { return this.uniforms.tex.value }
+  set texture(v: Texture | undefined) { this.uniforms.tex.value = v }
+
+  get coverColor(): Color { return this.uniforms.coverColor.value }
+  set coverColor(v: Color) { this.uniforms.coverColor.value = v }
+  get coverStength(): number { return this.uniforms.coverStength.value }
+  set coverStength(v: number) { this.uniforms.coverStength.value = v }
+  get cover(): boolean { return this.uniforms.cover.value }
+  set cover(v: boolean) { this.uniforms.cover.value = v }
+
+
+  get mixColor(): Color { return this.uniforms.mixColor.value }
+  set mixColor(v: Color) { this.uniforms.mixColor.value = v }
+  get mixStength(): number { return this.uniforms.mixStength.value }
+  set mixStength(v: number) { this.uniforms.mixStength.value = v }
+
+  get bgColor(): Color { return this.uniforms.bgColor.value }
+  set bgColor(v: Color) { this.uniforms.bgColor.value = v }
+  get bgAlpha(): number { return this.uniforms.bgAlpha.value }
+  set bgAlpha(v: number) { this.uniforms.bgAlpha.value = v }
+}
+
+MaterialFactory.register({
+  kind: MaterialKind.Outline,
+  cls: OutlineMaterial,
+  create: () => new OutlineMaterial(),
+  reset: (c: OutlineMaterial) => c.reset(),
 })
