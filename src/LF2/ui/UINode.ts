@@ -161,13 +161,13 @@ export class UINode implements IDebugging {
   private _foreground: string | null = null;
   private _foregroundAlpha: number | null = null;
   get background(): string { return this._background ?? this.data.background ?? '#000000' }
-  set background(v: string) { this._background = v; }
+  set background(v: string | null) { this._background = v; }
   get foreground(): string { return this._foreground ?? this.data.foreground ?? '#000000' }
-  set foreground(v: string) { this._foreground = v; }
+  set foreground(v: string | null) { this._foreground = v; }
   get backgroundAlpha(): number { return this._backgroundAlpha ?? this.data.backgroundAlpha ?? 0 }
-  set backgroundAlpha(v: number) { this._backgroundAlpha = v; }
+  set backgroundAlpha(v: number | null) { this._backgroundAlpha = v; }
   get foregroundAlpha(): number { return this._foregroundAlpha ?? this.data.foregroundAlpha ?? 0 }
-  set foregroundAlpha(v: number) { this._foregroundAlpha = v; }
+  set foregroundAlpha(v: number | null) { this._foregroundAlpha = v; }
   set_visible(v: boolean): this {
     const prev = this.visible;
     this._visible.value = v;
