@@ -261,7 +261,7 @@ export class World extends WorldDataset {
       if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
       this.after_update?.();
       this._UPS.update(real_dt);
-      this._fix_radio = this._UPS.value / 70;
+      this._fix_radio = 1 - (this._ups - this._UPS.value) / this._ups;
       this._prev_time = time;
 
     };
@@ -898,8 +898,8 @@ export class World extends WorldDataset {
       near: round(far + l),
     };
   }
-
-  private _ideally_dt: number = round(1000 / 15);
+  private _ups: number = 30
+  private _ideally_dt: number = round(1000 / this._ups);
   private _playrate: number = 1;
   get ideally_dt() {
     return this._ideally_dt;
@@ -911,7 +911,7 @@ export class World extends WorldDataset {
     if (v <= 0) throw new Error("playrate must be larger than 0");
     if (v === this._playrate) return;
     this._playrate = v;
-    this._ideally_dt = round(1000 / 15) / this._playrate;
+    this._ideally_dt = round(1000 / this._ups) / this._playrate;
     this.start_update();
   }
 
