@@ -276,7 +276,6 @@ function App() {
 
     lf2.load(...LF2.PREL_ZIPS).catch(LF2.IgnoreDisposed);
     set_lf2(lf2)
-    lf2.sounds.set_muted(s.muted);
     lf2.sounds.set_volume(s.volume);
     lf2.sounds.set_bgm_muted(s.bgm_muted);
     lf2.sounds.set_bgm_volume(s.bgm_volume);
@@ -327,10 +326,11 @@ function App() {
     const visibilitychange = () => lf2.sounds.set_muted(document.hidden)
     const blur = () => lf2.sounds.set_muted(true)
     const focus = () => lf2.sounds.set_muted(false)
-
     document.addEventListener('visibilitychange', visibilitychange);
     window.addEventListener('blur', blur);
     window.addEventListener('focus', focus);
+
+    lf2.sounds.set_muted(document.hasFocus() && !document.hidden);
     return () => {
       window.removeEventListener("touchstart", on_touchstart)
       document.removeEventListener('visibilitychange', visibilitychange);
