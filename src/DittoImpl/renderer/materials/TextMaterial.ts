@@ -1,7 +1,7 @@
-import { Color, ShaderMaterial } from "../../_t";
+import { ShaderMaterial } from "../../_t";
 import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 import { Shaders } from "../shader";
-export const BLACK = new Color("#000000");
+import { BLACK } from "./OutlineMaterial";
 MaterialFactory.register({
   kind: MaterialKind.Text,
   cls: ShaderMaterial,
