@@ -1,15 +1,9 @@
-import { StageGroup as SG } from "@/LF2/defines/StageGroup";
-import { CheatType, IStageInfo } from "../../defines";
-import { Defines } from "../../defines/defines";
-import { UITextLoader } from "../UITextLoader";
-import { UIComponent } from "./UIComponent";
+import { CheatType, Defines, IStageInfo, StageGroup as SG } from "../../defines";
+import { Label } from "./Label";
 
-export class StageSwitcher extends UIComponent {
+export class StageSwitcher extends Label {
   static override readonly TAG = 'StageSwitcher'
-
   private _stage: IStageInfo = Defines.VOID_STAGE;
-  private _text_loader = new UITextLoader(() => this.node)
-    .ignore_out_of_date();
   get show_all(): boolean {
     return this.lf2.is_cheat(CheatType.GIM_INK);
   }
@@ -32,7 +26,7 @@ export class StageSwitcher extends UIComponent {
   get stage(): IStageInfo {
     return this._stage;
   }
-  get text(): string {
+  get stage_text(): string {
     if (this.show_all) return this._stage.name;
     return this._stage.starting_name ?? this._stage.name;
   }
@@ -61,6 +55,6 @@ export class StageSwitcher extends UIComponent {
       const bdt = this.world.lf2.datas.backgrounds.find(v => v.id === this._stage.bg);
       this.world.stage.change_bg(bdt ?? Defines.VOID_BG)
     }
-    this._text_loader.set_text([this.text])
+    this.set_text(this.stage_text)
   }
 }
