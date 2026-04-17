@@ -898,7 +898,7 @@ export class World extends WorldDataset {
       near: round(far + l),
     };
   }
-  private _ups: number = 30
+  private _ups: number = 60
   private _ideally_dt: number = round(1000 / this._ups);
   private _playrate: number = 1;
   get ideally_dt() {
