@@ -1,8 +1,9 @@
 import { IStyle } from "../defines/IStyle";
 import type { TextInfo } from "../ditto/image/TextInfo";
+import { Ditto } from "../ditto/Instance";
+import { Times } from "../utils/Times";
 import type { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 import { UINode } from "./UINode";
-import { Times } from "../utils/Times";
 
 export class UITextLoader {
   readonly node: () => UINode | null | undefined;
@@ -28,6 +29,11 @@ export class UITextLoader {
       textures
     });
   }
+  get style(): IStyle { return this._style(0) }
+  set style(style: IStyle | (() => IStyle)) { this.set_style(style); }
+  get text(): string { return this.node()?.txts.value.at(0)?.text ?? '' }
+  set text(v: string) { this.set_text([v]).catch(e => Ditto.warn('' + e)); }
+
   set_style(style: IStyle | (() => IStyle)): this {
     this._style = typeof style === 'function' ? style : () => style
     return this;

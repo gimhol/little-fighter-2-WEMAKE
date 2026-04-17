@@ -17,7 +17,6 @@ export class DifficultyText extends Label implements IWorldCallbacks {
   }
   on_dataset_change<K extends keyof IWorldDataset>(key: K): void {
     if (key !== 'difficulty') return;
-    const text = this.lf2.string(Defines.DifficultyLabels[this.world.difficulty]);
-    this.set_text(text)
+    this.text = this.lf2.string(Defines.DifficultyLabels[this.world.difficulty]);
   }
 }
