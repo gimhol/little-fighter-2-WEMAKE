@@ -1,4 +1,4 @@
-import type { Entity, IEntityData, IFrameInfo, IFramePictureInfo, IVector3Like, TFace } from "@/LF2";
+import type { Entity, IEntityData, IFrameInfo, IFramePictureInfo, IVector3, TFace } from "@/LF2";
 import { Builtin_FrameId, clamp, floor, LF2, random_in, round, StateEnum, World } from "@/LF2";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
@@ -50,7 +50,8 @@ export class EntityMainRender {
   protected offset_y: number = 0;
   protected world!: World;
   protected lf2!: LF2;
-
+  protected prev_position!: IVector3;
+  protected position!: IVector3;
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
     this.reset(entity)
@@ -104,6 +105,8 @@ export class EntityMainRender {
     )
     this.blood_mesh.visible = false;
     this.node = this.node || new T.Object3D();
+    this.prev_position = this.entity.position.clone()
+    this.position = this.entity.position.clone()
   }
 
   on_mount() {
@@ -156,35 +159,21 @@ export class EntityMainRender {
       this.shaking_x = 0;
     }
   }
-
-  prev_position: IVector3Like | null = null;
-  position: IVector3Like | null = null;
   render(dt: number) {
     const game_time = this.world.game_time.value
     const { entity, main_mesh } = this;
 
-
-    if (!this.position) {
-      const { x, y, z } = entity.position;
-      this.position = { x, y, z };
-    }
-    if (!this.prev_position) {
-      const { x, y, z } = entity.position;
-      this.prev_position = { x, y, z };
-    }
-    let { x, y, z } = this.position
     if (this._game_time != game_time) {
       this._game_time = game_time;
       this._time = 0;
-      this.prev_position = this.position;
-      const { x, y, z } = entity.position;
-      this.position = { x, y, z };
+      this.prev_position = this.position.clone();
+      this.position = entity.position.clone()
     } else {
       this._time += dt;
     }
-    x = this.prev_position.x + (x - this.prev_position.x) * this._time / 16.6666;
-    y = this.prev_position.y + (y - this.prev_position.y) * this._time / 16.6666;
-    z = this.prev_position.z + (z - this.prev_position.z) * this._time / 16.6666;
+    const x = this.prev_position.x + (this.position.x - this.prev_position.x) * (this._time / this.world.ideally_dt);
+    const y = this.prev_position.y + (this.position.y - this.prev_position.y) * (this._time / this.world.ideally_dt);
+    const z = this.prev_position.z + (this.position.z - this.prev_position.z) * (this._time / this.world.ideally_dt);
 
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     this.update_shaking(dt)

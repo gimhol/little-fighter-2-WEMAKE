@@ -899,9 +899,11 @@ export class World extends WorldDataset {
     };
   }
 
-  private _ideally_dt: number = round(1000 / 60);
+  private _ideally_dt: number = round(1000 / 15);
   private _playrate: number = 1;
-
+  get ideally_dt() {
+    return this._ideally_dt;
+  }
   get playrate() {
     return this._playrate;
   }
@@ -909,7 +911,7 @@ export class World extends WorldDataset {
     if (v <= 0) throw new Error("playrate must be larger than 0");
     if (v === this._playrate) return;
     this._playrate = v;
-    this._ideally_dt = round(1000 / 60) / this._playrate;
+    this._ideally_dt = round(1000 / 15) / this._playrate;
     this.start_update();
   }
 
