@@ -102,7 +102,7 @@ export class LaunchPage extends UIComponent {
       },
       update: (dt) => {
         if (this.long_text.find_component(OpacityAnimation)!.done) {
-          this.lf2.set_ui(this.entry_name);
+          this.lf2.set_ui({ id: this.entry_name });
           return Status.End
         }
       }

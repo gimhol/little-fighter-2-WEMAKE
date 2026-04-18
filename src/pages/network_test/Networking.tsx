@@ -76,7 +76,7 @@ class Lf2NetworkDriver {
     this._r.debugging = debugging
     this._s.debugging = debugging
     lf2.load(...LF2.DATA_ZIPS)
-    lf2.set_ui("network_loading")
+    lf2.set_ui({ id: "network_loading" })
     lf2.pointings.enabled = false
     lf2.keyboard.enabled = false
     lf2.mt.reset(resp.seed ?? 0, debugging)
@@ -103,7 +103,7 @@ class Lf2NetworkDriver {
       lf2.keyboard.enabled = true
       lf2.world.after_update = this.after_update
       lf2.world.before_update = this.before_update
-      lf2.set_ui("main_page");
+      lf2.set_ui({ id: "main_page" });
       lf2.world.game_time.reset()
     }
     this.resp = resp;

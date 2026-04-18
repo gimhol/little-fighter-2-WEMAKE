@@ -2,7 +2,6 @@ import { Callbacks } from "../base";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { is_str } from "../utils";
-import { ICookedUIInfo } from "./ICookedUIInfo";
 import { UINode } from "./UINode";
 
 export interface IUIStacksCallback {
@@ -10,18 +9,40 @@ export interface IUIStacksCallback {
   on_push?(pushed: UINode | undefined, prev: UINode | undefined, stack: UIStack): void;
   on_pop?(curr: UINode | undefined, poppeds: UINode[], stack: UIStack): void;
 }
+export interface IPopUIOpts {
+  /**
+   * 是否包含用于判定的节点
+   *
+   * @type {?boolean}
+   */
+  inclusive?: boolean;
+
+
+  /**
+   * 判断节点是否应该抛出
+   *
+   * @param {UINode} ui 
+   * @param {number} index 
+   * @param {UINode[]} stack 
+   * @returns {boolean} 
+   */
+  until?(ui: UINode, index: number, stack: UINode[]): boolean
+}
+export interface IPushUIOpts {
+  id?: string
+}
 export class UIStack {
   readonly lf2: LF2;
   readonly uis: UINode[] = [];
   readonly callback = new Callbacks<IUIStacksCallback>;
-  index: number
+  protected _index: number
 
   get ui(): UINode | undefined {
     return this.uis[this.uis.length - 1];
   }
   constructor(lf2: LF2, index: number) {
     this.lf2 = lf2;
-    this.index = index;
+    this._index = index;
   }
   dispose(): void {
     this.uis.forEach(ui => {
@@ -30,19 +51,17 @@ export class UIStack {
     });
   }
 
-  set(arg: string | ICookedUIInfo | undefined): void {
-    if (is_str(arg) && this.ui?.id === arg) return;
-    if (!is_str(arg) && this.ui?.id === arg?.id) return;
+  set(opts: IPushUIOpts = {}): void {
+    const { id } = opts
+    if (is_str(id) && this.ui?.id === id) return;
     const prev = this.uis.pop();
     prev?.on_pause();
     prev?.on_stop();
-    const info = is_str(arg)
-      ? this.lf2.uiinfos?.find((v) => v.id === arg)
-      : arg;
+    const info = this.lf2.uiinfos?.find((v) => v.id === id)
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
       const { x, y, z } = curr.pos.value
-      curr.pos.push(new Ditto.Vector3(x, y, z + this.index))
+      curr.pos.push(new Ditto.Vector3(x, y, z + this._index))
       this.uis.push(curr);
       curr.on_start();
       curr.on_resume();
@@ -50,16 +69,15 @@ export class UIStack {
     if (curr || prev) this.callback.emit('on_set')(curr, prev, this)
   }
 
-  push(arg: string | ICookedUIInfo | undefined): void {
+  push(opts: IPushUIOpts = {}): void {
+    const { id } = opts
     const prev = this.ui;
     prev?.on_pause();
-    const info = is_str(arg)
-      ? this.lf2.uiinfos?.find((v) => v.id === arg)
-      : arg;
+    const info = this.lf2.uiinfos?.find((v) => v.id === id)
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
       const { x, y, z } = curr.pos.value
-      curr.pos.push(new Ditto.Vector3(x, y, z + this.index))
+      curr.pos.push(new Ditto.Vector3(x, y, z + this._index))
       this.uis.push(curr);
       curr.on_start();
       curr.on_resume();
@@ -67,23 +85,21 @@ export class UIStack {
     this.callback.emit('on_push')(curr, prev, this)
   }
 
-  pop(inclusive?: boolean, until?: (ui: UINode, index: number, stack: UINode[]) => boolean): void {
+  pop(opts: IPopUIOpts = {}): void {
+    const { inclusive, until } = opts;
     const poppeds: UINode[] = []
     const len = this.uis.length
     for (let i = len - 1; i >= 0; --i) {
       const ui = this.uis[i]
-      if (until) {
-        if (until(ui, i, this.uis)) {
-          if (inclusive) {
-            poppeds.push(ui)
-          }
-          break;
-        }
-        poppeds.push(ui)
-      } else {
+      if (!until) {
         poppeds.push(ui);
         break;
       }
+      if (until(ui, i, this.uis)) {
+        if (inclusive) poppeds.push(ui)
+        break;
+      }
+      poppeds.push(ui)
     }
     for (let i = 0; i < poppeds.length; i++) {
       const popped = poppeds[i];

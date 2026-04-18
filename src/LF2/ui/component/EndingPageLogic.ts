@@ -50,9 +50,9 @@ export class EndingPageLogic extends UIComponent {
         this.txt_node.resize(w / scale, h / scale)
       } else {
         if (this.lf2.ui_stacks[0].uis.length > 1) {
-          this.lf2.pop_ui(false, (_, i) => i === 0)
+          this.lf2.pop_ui({ until: (_, i) => i === 0 })
         } else {
-          this.lf2.set_ui("main_page")
+          this.lf2.set_ui({ id: "main_page" })
           this.lf2.sounds.play_bgm("bgm/main.wma.mp3")
         }
       }

@@ -120,9 +120,9 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     if (is_stage_mode) {
       if (stage_switcher)
         this.lf2.change_stage(stage_switcher.stage.id);
-      this.lf2.push_ui("stage_mode_page");
+      this.lf2.push_ui({ id: "stage_mode_page" });
     } else {
-      this.lf2.push_ui("vs_mode_page");
+      this.lf2.push_ui({ id: "vs_mode_page" });
     }
   }
 }

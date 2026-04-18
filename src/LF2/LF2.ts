@@ -1,7 +1,7 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
 import { LocalController } from "./controller";
 import * as D from "./defines";
-import { AGK } from "./defines"
+import { AGK } from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
 import { Entity, is_fighter } from "./entity";
@@ -351,7 +351,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load')
     this._loading = true;
     this.callbacks.emit("on_loading_start")();
-    this.set_ui("loading");
+    this.set_ui({ id: "loading" });
     if (is_first) {
       const [obj] = await this.import_json("builtin_data/launch/strings.json5")
       this._i18n.add(obj)
@@ -364,7 +364,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         await this.load_ui(zip);
       }
       if (is_first) {
-        this.set_ui(this.uiinfos?.[0].id)
+        this.set_ui({ id: this.uiinfos?.[0].id })
         this.callbacks.emit("on_prel_loaded")(this);
       }
       this._playable = true;
@@ -484,7 +484,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const next = this.world.stage.data.next;
     if (!next) return;
     if (next === 'end') {
-      this.set_ui("ending_page")
+      this.set_ui({ id: "ending_page" })
       return;
     }
     const next_stage = this.stages?.find((v) => v.id === next);
@@ -569,17 +569,17 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return word;
   };
 
-  set_ui(arg: string | undefined, index: number = 0): void {
+  set_ui(opts: UI.IPushUIOpts, index: number = 0): void {
     if (index < 0) return;
     if (index >= this._ui_stacks.length)
       index = this._ui_stacks.length
     if (!this._ui_stacks[index])
       this._ui_stacks[index] = new UI.UIStack(this, index)
-    this._ui_stacks[index].set(arg)
+    this._ui_stacks[index].set(opts)
   }
 
-  pop_ui(inclusive?: boolean, until?: (ui: UI.UINode, index: number, stack: UI.UINode[]) => boolean): void {
-    this._ui_stacks[0].pop(inclusive, until)
+  pop_ui(opts?: UI.IPopUIOpts): void {
+    this._ui_stacks[0].pop(opts)
   }
 
   pop_ui_safe() {
@@ -593,13 +593,13 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   }
 
-  push_ui(arg: string | UI.ICookedUIInfo | undefined, index: number = 0): void {
+  push_ui(opts: UI.IPushUIOpts, index: number = 0): void {
     if (index < 0) return;
     if (index >= this._ui_stacks.length)
       index = this._ui_stacks.length
     if (!this._ui_stacks[index])
       this._ui_stacks[index] = new UI.UIStack(this, index)
-    this._ui_stacks[index].push(arg)
+    this._ui_stacks[index].push(opts)
   }
 
   on_loading_content(content: string, progress: number) {
