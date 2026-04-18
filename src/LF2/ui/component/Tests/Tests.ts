@@ -1,4 +1,4 @@
-import { BotAvoiding } from "@/LF2";
+import { BotAvoiding, FasterSlowerStandUp } from "@/LF2";
 import { FSM } from "../../../base/FSM";
 import { GK, IClazz } from "../../../defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
@@ -45,7 +45,8 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     BottomsUp,
     MoveStayCome,
-    Come
+    Come,
+    FasterSlowerStandUp,
   ], [
     BotAvoiding
   ]

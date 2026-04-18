@@ -475,10 +475,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.cmds.push(CMD.DEL_PUPPET, player_id)
   }
   change_bg(bg: string): void {
-    this.cmds.push(CMD.CHANGE_BG, bg)
+    this.world.change_bg(bg)
+    // this.cmds.push(CMD.CHANGE_BG, bg)
   }
   change_stage(stage: string): void {
-    this.cmds.push(CMD.CHANGE_STAGE, stage)
+    this.world.change_stage(stage)
+    // this.cmds.push(CMD.CHANGE_STAGE, stage)
   }
   goto_next_stage() {
     const next = this.world.stage.data.next;

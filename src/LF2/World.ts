@@ -154,19 +154,20 @@ export class World extends WorldDataset {
     this.renderer = new Ditto.WorldRender(this);
   }
   add_entities(...entities: Entity[]) {
-    for (const entity of entities) {
-      if (is_fighter(entity)) {
-        this.callbacks.emit("on_fighter_add")(entity);
-        const player = this.lf2.players.get(entity.ctrl.player_id)
+    for (const e of entities) {
+      // this.freshs.add(entity)
+      if (is_fighter(e)) {
+        this.callbacks.emit("on_fighter_add")(e);
+        const player = this.lf2.players.get(e.ctrl.player_id)
         if (player) {
-          player.fighter = entity;
-          this.puppets.set(entity.ctrl.player_id, entity);
-          this.callbacks.emit("on_puppet_add")(entity.ctrl.player_id);
+          player.fighter = e;
+          this.puppets.set(e.ctrl.player_id, e);
+          this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
         }
       }
-      this.entities.add(entity);
-      this.entity_map.set(entity.id, entity)
-      this.renderer.add_entity(entity);
+      this.entities.add(e);
+      this.entity_map.set(e.id, e)
+      this.renderer.add_entity(e);
     }
   }
 
@@ -196,6 +197,7 @@ export class World extends WorldDataset {
 
   del_entity(entity: Entity): this {
     this.gones.add(entity)
+    this.freshs.delete(entity)
     return this
   }
 
@@ -359,6 +361,7 @@ export class World extends WorldDataset {
   }
 
   private gones = new Set<Entity>();
+  private freshs = new Set<Entity>();
   private _chasers = new Set<Entity>();
   add_chaser(entity: Entity) {
     this._chasers.add(entity);
@@ -400,6 +403,25 @@ export class World extends WorldDataset {
     }
   }
 
+  change_bg(bg_id: string | undefined): void {
+    if (this.stage.bg.id == bg_id)
+      return;
+    const bg_data = (
+      bg_id == Defines.RANDOM_BG.id ?
+        this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
+        bg_id ?
+          this.lf2.datas.find_background(bg_id) :
+          Defines.VOID_BG
+    ) || Defines.VOID_BG;
+    const stage = new Stage(this, Defines.VOID_STAGE);
+    stage.change_bg(bg_data);
+    this.stage = stage
+  }
+  change_stage(stage_id: string | undefined) {
+    const stage_data = this.lf2.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
+    if (stage_data == this.stage.data) return;
+    this.stage = new Stage(this, stage_data);
+  }
   protected handle_cmds() {
     const { cmds } = this.lf2;
     if (!cmds.length) return;
@@ -488,31 +510,13 @@ export class World extends WorldDataset {
           this._lock_cam_x = x
           continue;
         }
-        case CMD.CHANGE_BG: {
-          const bg_id = cmds[i += 1];
-          if (this.stage.bg.id == bg_id)
-            continue;
-          const bg_data = (
-            bg_id && bg_id == Defines.RANDOM_BG.id ?
-              this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
-              this.lf2.datas.find_background(bg_id)
-          ) || Defines.VOID_BG;
-          const stage = new Stage(this, Defines.VOID_STAGE);
-          stage.change_bg(bg_data);
-          this.stage = stage
+        case CMD.CHANGE_BG:
+          this.change_bg(cmds.at(i += 1))
           continue;
-        }
-        case CMD.CHANGE_STAGE: {
-          const stage_id = cmds[i += 1];
-          const stage_data = (
-            stage_id ?
-              this.lf2.stages.find((v) => v.id === stage_id) :
-              Defines.VOID_STAGE
-          ) || Defines.VOID_STAGE;
-          if (stage_data == this.stage.data) continue;
-          this.stage = new Stage(this, stage_data);
+
+        case CMD.CHANGE_STAGE:
+          this.change_stage(cmds.at(i += 1))
           continue;
-        }
       }
     }
   }
@@ -554,6 +558,21 @@ export class World extends WorldDataset {
     }
 
     this.has_players_alive = false
+    for (const e of this.freshs) {
+      if (is_fighter(e)) {
+        this.callbacks.emit("on_fighter_add")(e);
+        const player = this.lf2.players.get(e.ctrl.player_id)
+        if (player) {
+          player.fighter = e;
+          this.puppets.set(e.ctrl.player_id, e);
+          this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
+        }
+      }
+      this.entities.add(e);
+      this.entity_map.set(e.id, e)
+      this.renderer.add_entity(e);
+    }
+    this.freshs.clear()
     for (const e of this.entities) {
       const { is_ghost } = e;
       if (!is_ghost && update_chasing && this._chasers.size)

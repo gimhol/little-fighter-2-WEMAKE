@@ -28,11 +28,11 @@ export class TestCase implements IState<number> {
   update(dt: number): number | void | undefined {
 
   }
-  enter?(): void {
+  enter(): void {
     this.owner.world.clear();
     this.owner.lf2.change_bg('bg_4');
   }
-  leave?(): void {
+  leave(): void {
     this.lf2.cmds.push(CMD.LOCK_CAM, '')
     this.owner.world.clear();
     this.owner.lf2.change_bg('bg_4');
@@ -40,7 +40,7 @@ export class TestCase implements IState<number> {
   spawn(oid: string) {
     const data = this.lf2.datas.find_entity(oid);
     if (!data) return null;
-    return this.lf2.factory.create_entity(this.world, data) || null;
+    return this.lf2.factory.create_entity(this.world, data)!;
   }
   spawns(...oids: string[]): Entity[] {
     const ret = [];
