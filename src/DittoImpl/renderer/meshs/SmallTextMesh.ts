@@ -6,6 +6,7 @@ import { get_geometry } from "../GeometryKeeper";
 const TEXT_GEOMETRY = get_geometry(1, 1);
 const TEXT_STYLE: IStyle = {
   fill_style: 'white',
+  font: "9px Arial",
   smoothing: false,
   scale: 1,
 }

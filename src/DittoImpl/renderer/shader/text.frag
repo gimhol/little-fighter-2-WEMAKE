@@ -66,8 +66,17 @@ vec3 toGray(vec3 color, float strength) {
   float gray = dot(color, GRAY_WEIGHT);
   return mix(color, vec3(gray), strength);
 }
-
-void apply(vec4 color) {
+vec4 bgfg(vec3 c0, float a0, vec3 c1, float a1) {
+  if(a0 <= 0.0)
+    return vec4(c1, a1);
+  if(a1 <= 0.0)
+    return vec4(c0, a0);
+  vec4 ret = vec4(0, 0, 0, 0);
+  ret.a = a0 * (1.0 - a1) + a1;
+  ret.rgb = (c0 * a0 * (1.0 - a1) + c1 * a1) / ret.a;
+  return ret;
+}
+vec4 apply(vec4 color) {
   if(cover) {
     color.rgb = gamma_correct(coverColor);
     color.a = coverStength;
@@ -79,8 +88,7 @@ void apply(vec4 color) {
     color.rgb = toGray(color.rgb, gray);
   }
   color.a *= opacity;
-  gl_FragColor = color;
-
+  return color;
 }
 
 void main() {
@@ -96,7 +104,7 @@ void main() {
 
   /* 无需描边时，仅处理颜色 */
   if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
-    apply(color);
+    gl_FragColor = apply(color);
     return;
   }
 
@@ -109,10 +117,10 @@ void main() {
   float left = texture2D(tex, uv + vec2(-texel.x, 0)).a;
   float right = texture2D(tex, uv + vec2(texel.x, 0)).a;
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
-  if(outline > 0.1 && center < 0.5) {
-    gl_FragColor.rgb = gamma_correct(outlineColor);
-    gl_FragColor.a = outlineAlpha;
+  color = apply(color);
+  if((outline > 0.1 && center < 0.5) || center > 0.0) {
+    gl_FragColor = bgfg(gamma_correct(outlineColor), outlineAlpha, color.rgb, color.a);
   } else {
-    apply(color);
+    gl_FragColor = apply(color);
   }
 }
