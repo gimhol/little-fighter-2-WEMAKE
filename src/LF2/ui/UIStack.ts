@@ -9,6 +9,13 @@ export interface IUIStacksCallback {
   on_push?(pushed: UINode | undefined, prev: UINode | undefined, stack: UIStack): void;
   on_pop?(curr: UINode | undefined, poppeds: UINode[], stack: UIStack): void;
 }
+export interface IUITransition {
+  run?(
+    prev: UINode | undefined,
+    curr: UINode | undefined,
+    end: () => void,
+  ): void;
+}
 export interface IPopUIOpts {
   /**
    * 是否包含用于判定的节点
@@ -27,9 +34,12 @@ export interface IPopUIOpts {
    * @returns {boolean} 
    */
   until?(ui: UINode, index: number, stack: UINode[]): boolean
+
+  transition?: string;
 }
 export interface IPushUIOpts {
-  id?: string
+  id?: string;
+  transition?: string;
 }
 export class UIStack {
   readonly lf2: LF2;
