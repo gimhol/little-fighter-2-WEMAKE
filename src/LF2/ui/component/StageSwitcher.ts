@@ -3,6 +3,7 @@ import { Label } from "./Label";
 
 export class StageSwitcher extends Label {
   static override readonly TAG = 'StageSwitcher'
+  static override readonly ALIAS: string[] = [];
   private _stage: IStageInfo = Defines.VOID_STAGE;
   get show_all(): boolean {
     return this.lf2.is_cheat(CheatType.GIM_INK);

@@ -22,7 +22,7 @@ export class PlayerScorePlayerName extends UIComponent {
       }
     }
     return ret;
-  }).ignore_out_of_date();
+  })
 
   override on_show(): void {
     super.on_show?.()
@@ -35,7 +35,7 @@ export class PlayerScorePlayerName extends UIComponent {
         name = ctrl.player?.name || '-';
       }
     }
-    this.txt_loader.set_text([name])
+    this.txt_loader.set_text(name)
 
   }
 }

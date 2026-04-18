@@ -4,6 +4,7 @@ import { Label } from "./Label";
 
 export class LoadingContentText extends Label {
   static override readonly TAG = "LoadingContentText"
+  static override readonly ALIAS: string[] = [];
   get fade_out_duration() { return this.num(1) ?? 0 };
   get fade_out_delay() { return this.num(2) ?? 0 }
   protected fadeout?: FadeOutOpacity;

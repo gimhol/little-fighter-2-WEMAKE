@@ -4,11 +4,15 @@ import { Label } from "./Label";
 
 export class BGMSwitcher extends Label {
   static override readonly TAG: string = "BGMSwitcher";
+  static override readonly ALIAS: string[] = [];
   private _which: 'Silent' | 'Random' | '' = '';
   get which(): string { return this._which || this.lf2.sounds.bgm() || "Silent"; }
   get offset(): number { return this.num(0) ?? 0; }
   private _sounds_cbs = {
-    on_bgm_changed: () => this.set_text('BGM: ' + this.which)
+    on_bgm_changed: () => {
+      debugger;
+      this.set_text('BGM: ' + this.which)
+    }
   }
   override on_resume(): void {
     super.on_resume();

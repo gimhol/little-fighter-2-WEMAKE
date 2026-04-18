@@ -21,11 +21,11 @@ export class StageTitleShow extends UIComponent {
       stroke_style: "#005A8E",
       line_width: 5
     }
-  }).ignore_out_of_date();
+  })
 
   set_text(text: string) {
     this.node.visible = false;
-    this._txt_loader.set_text([text]).then(() => {
+    this._txt_loader.set_text(text).then(() => {
       this.node.visible = true;
     })
     this._opactiy.start(false);

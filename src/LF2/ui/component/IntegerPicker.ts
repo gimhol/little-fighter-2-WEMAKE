@@ -19,7 +19,6 @@ export class IntegerPicker extends UIComponent<{}, IIntegerPickerCallbacks> {
   protected _val: number = this._min;
   protected _txt = new UITextLoader(() => this.node)
     .set_style(() => this.node.txts.value[0]?.style ?? {})
-    .ignore_out_of_date();
   protected _triggers: Set<String> = new Set();
   get val(): number { return this._val }
   set val(v: number) { this.set_val(v) }
@@ -90,6 +89,6 @@ export class IntegerPicker extends UIComponent<{}, IIntegerPickerCallbacks> {
     else v = clamp(round(v), this._min, this._max)
     const p = this._val; if (p === v) return;
     this.callbacks.emit('on_val_changed')(this._val = v, p, this)
-    this._txt.set_text(['' + v])
+    this._txt.set_text('' + v)
   }
 }

@@ -17,19 +17,19 @@ export class PlayerTeamName extends UIComponent {
   private readonly txt_loader = new UITextLoader(() => this.node).set_style(() => ({
     fill_style: this._com ? "pink" : "white",
     font: "14px Arial",
-  })).ignore_out_of_date()
+  }))
 
   join(text: string, com: boolean, decided: boolean) {
     this._decided = decided;
     this._com = com;
-    this.txt_loader.set_text([text])
+    this.txt_loader.set_text(text)
     this.node.visible = true
   }
   quit() {
     this._decided = void 0;
     this._com = void 0;
     const text = this.lf2.string(" ")
-    this.txt_loader.set_text([text])
+    this.txt_loader.set_text(text)
     this.node.visible = false;
   }
   protected _opacity: Sine = new Sine(0.65, 1, 3);

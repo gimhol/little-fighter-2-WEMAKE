@@ -3,7 +3,8 @@ import { Label } from "./Label";
 
 
 export class ExtraZipText extends Label {
-  static override TAG: string = 'ExtraZipText';
+  static override readonly TAG: string = 'ExtraZipText';
+  static override readonly ALIAS: string[] = [];
   private _lf2_cbs: ILf2Callback = {
     on_extra_zips_changed: (lf2) => {
       const extra_zips = lf2.string('DATA_LIST')

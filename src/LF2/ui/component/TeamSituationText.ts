@@ -13,7 +13,6 @@ export class TeamSituationText extends UIComponent {
 
   private _text_loader = new UITextLoader(() => this.node)
     .set_style(() => this._style)
-    .ignore_out_of_date();
 
   private _team: string | null = null;
   private _style: IStyle = {
@@ -67,6 +66,6 @@ export class TeamSituationText extends UIComponent {
     let text = `Man: ${this._sum.lives}　HP: ${max(0, floor(this._sum.hp))}`;
     if (this._sum.reserve) text += `　Reserve: ${this._sum.reserve}`;
     if (this._text == text) return;
-    this._text_loader.set_text([text])
+    this._text_loader.set_text(text)
   }
 }

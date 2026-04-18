@@ -11,7 +11,7 @@ export class PrefixAndDifficultyText extends UIComponent implements IWorldCallba
     font: "12px Arial",
     line_width: 1,
     disposable: true
-  }).ignore_out_of_date();
+  })
   private _prefix: string = '';
 
   override on_start(): void {
@@ -31,6 +31,6 @@ export class PrefixAndDifficultyText extends UIComponent implements IWorldCallba
     this.world.callbacks.del(this)
   }
   on_dataset_change<K extends keyof IWorldDataset>(key: K): void {
-    if (key === 'difficulty') this._text_loader.set_text([this.text])
+    if (key === 'difficulty') this._text_loader.set_text(this.text)
   }
 }

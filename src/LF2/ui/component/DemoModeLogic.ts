@@ -205,7 +205,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
     if (this._staring !== staring || this._free != !!this.cam_ctrl?.free) {
       if (staring) {
         const txt = `[${staring.team}] ${staring.data.base.name} (${staring.name})`
-        this.txt_loader.set_text([txt])
+        this.txt_loader.set_text(txt)
         this.node.search_child("curr_focus_prefix")!.txt_idx.value = 0
         this.node.search_child("curr_focus")!.visible = true
       } else {

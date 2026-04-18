@@ -7,7 +7,8 @@ import { UINode } from "./UINode";
 
 export class UITextLoader {
   readonly node: () => UINode | null | undefined;
-  protected _jid = new Times();
+  protected _jid = new Times(0);
+  protected _cid: number = 0;
   protected _style: (i: number) => IStyle = (i: number) => {
     const node = this.node()
     if (!node) return {};
@@ -23,55 +24,38 @@ export class UITextLoader {
     const job = node.lf2.images.load_text(value, info.style);
     return job;
   }
-  private _out_of_date(textures?: TextInfo[]) {
+  private _out_of_date(texture?: TextInfo) {
     return Object.assign(new Error('out_of_date'), {
       __is_out_of_date_error: true,
-      textures
+      texture
     });
   }
   get style(): IStyle { return this._style(0) }
   set style(style: IStyle | (() => IStyle)) { this.set_style(style); }
   get text(): string { return this.node()?.txts.value.at(0)?.text ?? '' }
-  set text(v: string) { this.set_text([v]).catch(e => Ditto.warn('' + e)); }
+  set text(v: string) { this.set_text(v).catch(e => Ditto.warn('' + e)); }
 
   set_style(style: IStyle | (() => IStyle)): this {
     this._style = typeof style === 'function' ? style : () => style
     return this;
   }
-  ignore_out_of_date(): this {
-    this._jid.max = this._jid.min = this._jid.value = 0;
-    return this;
+  set_text(txt: string): Promise<void> {
+    return this.load({ i18n: txt, style: this._style(0) })
   }
-  set_text(txts: string[], idx: number = 0): Promise<TextInfo[]> {
-    const _txts = txts.map(i18n => ({ i18n, style: this._style(idx) }))
-    return this.load(_txts, idx)
-  }
-  load(txts: ICookedUITxtInfo[], idx: number | undefined = 0): Promise<TextInfo[]> {
-    this._jid.add();
-    const jid = this._jid.value;
+
+  async load(txt: ICookedUITxtInfo): Promise<void> {
     const node = this.node()
     if (!node) return Promise.reject(new Error(`[UITextLoader::load] node got ${node}`));
-    return new Promise((resolve, reject) => {
-      if (jid !== this._jid.value) {
-        reject(this._out_of_date());
-        return;
-      }
-      const jobs = txts.map(txt => this._load_txt(txt))
-      Promise.all(jobs).then(textures => {
-        if (jid !== this._jid.value) {
-          throw this._out_of_date(textures);
-        } else if (typeof idx === 'number') {
-          const { w, h, scale } = textures[idx]
-          node.txts.value = textures;
-          node.txt_idx.value = 0;
-          node.resize(w / scale, h / scale);
-          resolve(textures);
-        } else {
-          node.txts.value = textures;
-          resolve(textures);
-        }
-      }).catch(reject)
-    });
+    this._jid.add();
+    const jid = this._jid.value;
+    if (this._cid > jid) return;
+    const tex = await this._load_txt(txt)
+    if (this._cid > jid) return;
+    const { w, h, scale } = tex
+    node.txts.value = [tex];
+    node.txt_idx.value = 0;
+    node.resize(w / scale, h / scale);
+    this._cid = jid;
   }
 }
 
