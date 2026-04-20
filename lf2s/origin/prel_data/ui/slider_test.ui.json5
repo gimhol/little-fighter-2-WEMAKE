@@ -14,10 +14,9 @@
     },
   ],
   templates: {
-    slider_row: {
+    percentage_slider_row: {
       size: "700,36",
       center: "0.5,0.5",
-      color: "red",
       component: [
         {
           name: "Flex",
@@ -45,11 +44,23 @@
               size: "46,36",
               color: "white",
               center: "0.5,0.5",
-              component: [{ name: "SliderHandle", properties: { min: 0, max: 100, step: 1, precision: 1, handle_label: "handle_label" } }],
+              component: [
+                {
+                  name: "SliderHandle",
+                  properties: {
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    precision: 1,
+                    handle_label: "handle_label",
+                  },
+                },
+              ],
               items: [
                 {
                   center: "0.5,0.5",
-                  txt: { i18n: "50%", style: { font: "20px Arial", fill_style: "black" } },
+                  color: "black",
+                  txt: { i18n: "0", style: { font: "20px Arial" } },
                   component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
@@ -58,10 +69,9 @@
         },
       ],
     },
-    toggle_row: {
+    toggle_slider_row: {
       size: "700,36",
       center: "0.5,0.5",
-      color: "red",
       component: [
         {
           name: "Flex",
@@ -102,13 +112,75 @@
                     step: 1,
                     precision: 1,
                     handle_label: "handle_label",
+                    items: "disabled,enabled",
                   },
                 },
               ],
               items: [
                 {
                   center: "0.5,0.5",
-                  txt: { i18n: "enabled", style: { font: "20px Arial", fill_style: "black" } },
+                  color: "black",
+                  txt: { i18n: "disabled", style: { font: "20px Arial" } },
+                  component: [{ name: "Label", id: "handle_label" }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    triple_switcher_row: {
+      size: "700,36",
+      center: "0.5,0.5",
+      component: [
+        {
+          name: "Flex",
+          properties: { direction: "row", align: "center" },
+        },
+      ],
+      items: [
+        {
+          size: "200,36",
+          center: "0.5,0.5",
+          items: [
+            {
+              center: "0.5,0.5",
+              txt: {
+                i18n: "render_fps",
+                style: { font: "20px Arial" },
+              },
+              component: [{ name: "Label", id: "prefix_label" }],
+            },
+          ],
+          component: [{ name: "Label", id: "handle_label" }],
+        },
+        {
+          size: "500,36",
+          color: "black",
+          center: "0.5,0.5",
+          items: [
+            {
+              size: "166,36",
+              color: "white",
+              center: "0.5,0.5",
+              component: [
+                {
+                  name: "SliderHandle",
+                  properties: {
+                    min: 0,
+                    max: 2,
+                    step: 1,
+                    precision: 1,
+                    handle_label: "handle_label",
+                    items: "sync_0,sync_1,sync_2",
+                  },
+                },
+              ],
+              items: [
+                {
+                  center: "0.5,0.5",
+                  color: "black",
+                  txt: { i18n: "disabled", style: { font: "20px Arial" } },
                   component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
@@ -120,13 +192,22 @@
   },
   items: [
     {
-      template: "slider_row",
+      template: "toggle_slider_row",
     },
     {
-      template: "slider_row",
+      template: "percentage_slider_row",
     },
     {
-      template: "toggle_row",
+      template: "toggle_slider_row",
+    },
+    {
+      template: "percentage_slider_row",
+    },
+    {
+      template: "toggle_slider_row",
+    },
+    {
+      template: "triple_switcher_row",
     },
   ],
 }

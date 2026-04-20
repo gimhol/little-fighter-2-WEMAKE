@@ -7,6 +7,7 @@ export interface ISliderHandleProps {
   container?: UINode;
   responser?: UINode;
   handle_label?: Label;
+  items?: string
 }
 export interface ISliderHandleCallbacks extends IUICompnentCallbacks {
   on_value_changed?(value: number, component: SliderHandle): void
@@ -22,6 +23,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       container: UINode,
       responser: UINode,
       handle_label: Label,
+      items: String
     }
   });
   private _on_me = false;
@@ -31,7 +33,14 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       const { container } = this;
       if (!container) return;
       container.focused = true
-      this._on_me = true
+
+
+      const { min_value, max_value, precision, step } = this;
+      if (min_value == 0 && max_value == 1 && precision == 1 && step == 1) {
+        this.factor = this._factor ? 0 : 1;
+      } else {
+        this._on_me = true
+      }
     }
   }
   private b: IPointingsCallback = {
@@ -69,10 +78,14 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   get factor(): number { return clamp(this._factor, 0, 1) }
   set factor(v: number) {
     this._factor = clamp(v, 0, 1);
-    // if (this._on_me) return;
-    const { min_value, max_value, precision, step } = this;
-    if (min_value == 0 && max_value == 1 && precision == 1 && step == 1) {
-      this.props.handle_label?.set_text(this._factor ? 'enabled' : 'disabled')
+    const { min_value, precision, step } = this;
+    if (min_value == 0 && precision == 1 && step == 1) {
+      const items = this.props.items?.split(',')
+      if (items?.length) {
+        this.props.handle_label?.set_text(items.at(this.value) ?? this.value)
+      } else {
+        this.props.handle_label?.set_text('' + this.value)
+      }
     } else {
       this.props.handle_label?.set_text('' + this.value)
     }
