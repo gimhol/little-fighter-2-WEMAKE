@@ -1,18 +1,7 @@
 {
   id: "slider_test_page",
   name: "slider_test_page",
-  color: "blue",
-  component: [
-    {
-      name: "Flex",
-      properties: {
-        direction: "column",
-        align: "center",
-        gap: 5,
-        padding: "0,0,0,0",
-      },
-    },
-  ],
+
   templates: {
     percentage_slider_row: {
       size: "700,36",
@@ -172,7 +161,7 @@
                     step: 1,
                     precision: 1,
                     handle_label: "handle_label",
-                    items: "sync_0,sync_1,sync_2",
+                    items: "sync_2,sync_1,sync_0",
                   },
                 },
               ],
@@ -191,23 +180,47 @@
     },
   },
   items: [
+    "builtin_data/launch/bg.ui.json5",
     {
-      template: "toggle_slider_row",
-    },
-    {
-      template: "percentage_slider_row",
-    },
-    {
-      template: "toggle_slider_row",
-    },
-    {
-      template: "percentage_slider_row",
-    },
-    {
-      template: "toggle_slider_row",
-    },
-    {
-      template: "triple_switcher_row",
+      component: [
+        {
+          name: "Flex",
+          properties: {
+            direction: "column",
+            align: "center",
+            gap: 5,
+            padding: "0,0,0,0",
+          },
+        },
+      ],
+      center: "0.5, 0.5",
+      pos: "397, 100",
+      items: [
+        {
+          id: "bgm_toggle_row",
+          template: "toggle_slider_row",
+        },
+        {
+          id: "bgm_volume_row",
+          template: "percentage_slider_row",
+        },
+        {
+          id: "sfx_toggle_row",
+          template: "toggle_slider_row",
+        },
+        {
+          id: "sfx_volume_row",
+          template: "percentage_slider_row",
+        },
+        {
+          id: "team_outline_row",
+          template: "toggle_slider_row",
+        },
+        {
+          id: "render_rate_row",
+          template: "triple_switcher_row",
+        },
+      ],
     },
   ],
 }
