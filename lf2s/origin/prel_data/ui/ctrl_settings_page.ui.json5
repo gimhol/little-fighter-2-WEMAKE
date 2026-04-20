@@ -96,11 +96,11 @@
       center: "0.5, 0.5",
       pos: "53, 134",
       size: "106, 19",
-      color: "#110030",
+      color: "#000000",
       items: [
         {
           center: "0.5,0.5",
-          component: [{ name: "PlayerKeyEdit" }],
+          component: [ { name: "PlayerKeyEdit" } ],
         },
       ],
     },
@@ -108,12 +108,13 @@
       items: [
         {
           id: "btn_player_name",
-          component: ["PlayerNameInput()"],
+          color: "#000000",
+          component: [ "PlayerNameInput()" ],
           size: "106, 19",
         },
         {
           id: "btn_ctrl_type",
-          component: ["PlayerCtrlType()"],
+          component: [ "PlayerCtrlType()" ],
           img: [
             {
               w: 106,
@@ -259,9 +260,9 @@
         h: 26,
       },
       pos: "368, 359",
-      component: ["OpacityHover(0,1)"],
+      component: [ "OpacityHover(0,1)" ],
       actions: {
-        click: ["sound(ok)", "pop_ui(entry)"],
+        click: [ "sound(ok)", "pop_ui(entry)" ],
       },
     },
     {
@@ -274,9 +275,9 @@
         h: 26,
       },
       pos: "525, 359",
-      component: ["OpacityHover(0,1)"],
+      component: [ "OpacityHover(0,1)" ],
       actions: {
-        click: ["sound(cancel)", "pop_ui(entry)"],
+        click: [ "sound(cancel)", "pop_ui(entry)" ],
       },
     },
     {
@@ -306,9 +307,9 @@
       },
       center: "0, 1",
       pos: "5, 445",
-      component: ["OpacityHover(0,1)"],
+      component: [ "OpacityHover(0,1)" ],
       actions: {
-        click: ["sound(ok)", "link_to(https://lf2.net/control.html)"],
+        click: [ "sound(ok)", "link_to(https://lf2.net/control.html)" ],
       },
     },
     {
@@ -336,9 +337,9 @@
       },
       center: "1, 1",
       pos: "789, 445",
-      component: ["OpacityHover(0,1)"],
+      component: [ "OpacityHover(0,1)" ],
       actions: {
-        click: ["sound(ok)", "link_to(https://github.com/gimhol/little-fighter-2-WEMAKE)"],
+        click: [ "sound(ok)", "link_to(https://github.com/gimhol/little-fighter-2-WEMAKE)" ],
       },
     },
   ],

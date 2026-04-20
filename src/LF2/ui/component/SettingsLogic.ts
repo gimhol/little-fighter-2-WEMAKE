@@ -14,8 +14,8 @@ export class SettingsLogic extends UIComponent {
     this.main_volume = this.node.search_child("main_volume_row")?.search_component(SliderHandle)
     if (this.main_volume) this.main_volume.factor = this.lf2.sounds.volume()
     this.main_volume?.callbacks.add({
-      on_value_changed: (v) => {
-        this.lf2.sounds.set_volume(v)
+      on_value_changed: (_, s) => {
+        this.lf2.sounds.set_volume(s.factor)
         this.lf2.sounds.play_preset('cancel')
       }
     })
