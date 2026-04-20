@@ -5,7 +5,7 @@ import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 export class PrefixAndDifficultyText extends UIComponent implements IWorldCallbacks {
-  static override readonly TAG: string = "PrefixAndDifficultyText"
+  static override readonly TAGS: string[] = ["PrefixAndDifficultyText"]
   private _text_loader = new UITextLoader(() => this.node).set_style({
     fill_style: "white",
     font: "12px Arial",

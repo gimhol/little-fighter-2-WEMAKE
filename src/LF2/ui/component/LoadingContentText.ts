@@ -3,7 +3,7 @@ import { FadeOutOpacity } from "./FadeOutOpacity";
 import { Label } from "./Label";
 
 export class LoadingContentText extends Label {
-  static override readonly TAG: string = "LoadingContentText"
+  static override readonly TAGS: string[] = ["LoadingContentText"]
   get fade_out_duration() { return this.num(1) ?? 0 };
   get fade_out_delay() { return this.num(2) ?? 0 }
   protected fadeout?: FadeOutOpacity;

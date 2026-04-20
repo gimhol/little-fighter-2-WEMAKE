@@ -6,7 +6,7 @@ import { Ticker } from "@/LF2/Ticker";
 import { UIComponent } from "./UIComponent";
 
 export class LittleFunnyAutoGame extends UIComponent {
-  static override TAG: string = 'LittleFunnyAutoGame'
+  static override TAGS: string[] = ["LittleFunnyAutoGame"];
   private _datas: IEntityData[] = [];
   private _lr: number = 0;
   private _fighter_cbs: IEntityCallbacks = {
