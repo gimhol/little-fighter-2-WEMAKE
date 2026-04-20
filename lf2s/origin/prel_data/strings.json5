@@ -2,7 +2,7 @@
   "": {
     bgm: "BGM",
     sfx: "SFX",
-    bgm_volume: "BGM",
+    bgm_volume: "BGM Volume",
     sfx_volume: "SFX Volume",
     team_outline: "Team Outline",
     sync_0: "Unlimited",
