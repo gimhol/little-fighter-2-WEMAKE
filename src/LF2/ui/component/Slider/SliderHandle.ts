@@ -1,4 +1,4 @@
-import { clamp, Defines, GK, IPointingEvent, IPointingsCallback, ISchema, IUICallback, IUICompnentCallbacks, IUIKeyEvent, LF2PointerEvent, make_schema, round_float, UIComponent, UINode } from "@/LF2";
+import { clamp, Defines, GK, IPointingEvent, IPointingsCallback, ISchema, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, make_schema, round_float, UIComponent, UINode } from "@/LF2";
 export interface ISliderHandleProps {
   min?: number;
   max?: number;
@@ -6,6 +6,7 @@ export interface ISliderHandleProps {
   precision?: number;
   container?: UINode;
   responser?: UINode;
+  handle_label?: Label;
 }
 export interface ISliderHandleCallbacks extends IUICompnentCallbacks {
   on_value_changed?(value: number, component: SliderHandle): void
@@ -20,6 +21,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       step: Number,
       container: UINode,
       responser: UINode,
+      handle_label: Label,
     }
   });
   private _on_me = false;
@@ -71,7 +73,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   set value(v: number) {
     const { min_value, max_value } = this;
     v = clamp(v, min_value, max_value);
-    this._factor = (v - min_value) / (max_value - min_value)
+    this._factor = (v - min_value) / (max_value - min_value);
   }
   handle_pointing_event(e: IPointingEvent): void {
     const { container } = this;
@@ -84,6 +86,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     const x = clamp(fx - geo.pos.x, min_x, max_x);
     this.factor = (x - min_x) / (max_x - min_x);
     this.value = this.value
+    this.props.handle_label?.set_text('' + this.value)
     this.callbacks.emit('on_value_changed')(this.value, this)
   }
   override on_start(): void {
@@ -108,9 +111,11 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     if (!this.responser?.focused) return;
     if (e.game_key === GK.Left) {
       this.value -= this.step;
+      this.props.handle_label?.set_text('' + this.value)
     }
     if (e.game_key === GK.R) {
       this.value += this.step;
+      this.props.handle_label?.set_text('' + this.value)
     }
   }
 }

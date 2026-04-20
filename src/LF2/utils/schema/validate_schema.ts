@@ -99,6 +99,7 @@ export class SchemaValidator {
             value[k] = { ...prop_value };
           }
           if (!this.validate(prop_value, prop_schema, errors)) {
+            debugger
             return false
           }
         }
@@ -114,7 +115,7 @@ export class SchemaValidator {
     }
     if (schema.oneof?.some(v => v === value) === false)
       errors.push(`'${schema.path}' should be one of the options: ${JSON.stringify(schema.oneof)}, but got ${value}`);
-    return !!errors.length;
+    return !errors.length;
   }
 }
 export function validate_schema<T>(value: unknown, schema: ISchema<T>, errors: string[] = []): value is T {
