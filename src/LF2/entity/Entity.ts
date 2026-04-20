@@ -9,7 +9,7 @@ import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId,
   Defines, EntityEnum, EntityGroup, FacingFlag,
-  FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
@@ -1018,7 +1018,6 @@ export class Entity {
         }
         const e = this.spawn_entity(opoint, v, facing);
         if (!e) return;
-
         switch (opoint.spreading) {
           case OpointSpreading.FloatRange:
             const { x, y, z } = e.velocity;
@@ -1031,28 +1030,15 @@ export class Entity {
             e.set_velocity(xx, yy, zz)
             break;
         }
-
-        switch (this.frame.behavior) {
-          case FrameBehavior.FirzenDisasterStart:
-          case FrameBehavior.FirzenVolcanoStart:
-          case FrameBehavior.BatStart:
-          case FrameBehavior.DevilJudgementStart:
-            e.chasing = enemies[i % enemies.length]
-            if (e.chasing) {
-              const vx = e.velocity.x
-              if (vx == 0) e.facing = this.facing
-              else if (vx > 0) e.facing = 1
-              else e.facing = -1
-            }
+        switch (multi_type) {
+          case OpointMultiEnum.AccordingEnemies:
+          if (e.frame.chase) e.chasing = enemies[i % enemies.length]
             break;
-          case FrameBehavior.AngelBlessingStart:
-            if (multi_type === OpointMultiEnum.AccordingAllies) {
-              e.chasing = allies[i % allies.length]
-            }
+          case OpointMultiEnum.AccordingAllies:
+            if (e.frame.chase) e.chasing = allies[i % allies.length];
             break;
         }
       }
-
     }
   }
 
