@@ -62,6 +62,7 @@ export * from "./Reachable";
 export * from "./ReachableGroup";
 export * from "./ScaleAnimation";
 export * from "./ScaleClickable";
+export * from "./SettingsLogic";
 export * from "./SineOpacity";
 export * from "./Slider";
 export * from "./SmoothNumber";

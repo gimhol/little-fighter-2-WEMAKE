@@ -34,10 +34,10 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       if (!container) return;
       container.focused = true
 
-
       const { min_value, max_value, precision, step } = this;
       if (min_value == 0 && max_value == 1 && precision == 1 && step == 1) {
         this.factor = this._factor ? 0 : 1;
+        this.callbacks.emit('on_value_changed')(this.value, this)
       } else {
         this._on_me = true
       }
@@ -76,7 +76,8 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   get min_value(): number { return this.props.min ?? 0 }
   get max_value(): number { return this.props.max ?? 100 }
   get factor(): number { return clamp(this._factor, 0, 1) }
-  set factor(v: number) {
+  set factor(v: number) { this.set_factor(v) }
+  set_factor(v: number): this {
     this._factor = clamp(v, 0, 1);
     const { min_value, precision, step } = this;
     if (min_value == 0 && precision == 1 && step == 1) {
@@ -89,15 +90,18 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     } else {
       this.props.handle_label?.set_text('' + this.value)
     }
+    return this;
   }
   get value(): number {
     const { min_value, max_value, precision } = this;
     return round_float(min_value + (max_value - min_value) * this._factor, precision)
   }
-  set value(v: number) {
+  set value(v: number) { this.set_value(v) }
+  set_value(v: number): this {
     const { min_value, max_value, precision } = this;
     v = round_float(clamp(v, min_value, max_value), precision);
     this.factor = (v - min_value) / (max_value - min_value);
+    return this;
   }
   handle_pointing_event(e: IPointingEvent): void {
     const { container } = this;

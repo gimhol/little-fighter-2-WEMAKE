@@ -203,6 +203,7 @@ export class UIComponent<
 
   on_del?(): void;
 
+  /** stupid. */
   find_node(which: string | null | undefined): UINode | null {
     if (typeof which !== 'string')
       return this.node
@@ -213,27 +214,25 @@ export class UIComponent<
         return this.node;
     }
     const parent = this.node.parent
-    if (parent) {
-      if (which.startsWith('bro:')) {
-        const v = which.substring(4).trim();
-        const brothers = parent.children
-        switch (v) {
-          case 'prev': case '-1':
-            return brothers[brothers.indexOf(this.node) - 1] || null;
-          case 'next': case '+1':
-            return brothers[brothers.indexOf(this.node) + 1] || null;
-          default:
-            return brothers[v as any] || null
-        }
+    if (parent && which.startsWith('bro:')) {
+      const v = which.substring(4).trim();
+      const brothers = parent.children
+      switch (v) {
+        case 'prev': case '-1':
+          return brothers[brothers.indexOf(this.node) - 1] || null;
+        case 'next': case '+1':
+          return brothers[brothers.indexOf(this.node) + 1] || null;
+        default:
+          return brothers[v as any] || null
       }
-      if (which.startsWith('id:')) {
-        const v = which.substring(3).trim();
-        return this.node.parent?.find_child(v) || null
-      }
-      if (which.startsWith('name:')) {
-        const v = which.substring(5).trim();
-        return this.node.parent?.find_child_by_name(v) || null
-      }
+    }
+    if (which.startsWith('id:')) {
+      const v = which.substring(3).trim();
+      return this.node.root?.find_child(v) || null
+    }
+    if (which.startsWith('name:')) {
+      const v = which.substring(5).trim();
+      return this.node.root?.find_child_by_name(v) || null
     }
     return null
   }

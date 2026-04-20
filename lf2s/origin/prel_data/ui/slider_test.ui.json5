@@ -1,7 +1,7 @@
 {
   id: "slider_test_page",
   name: "slider_test_page",
-
+  component: [ { name: "SettingsLogic" } ],
   templates: {
     percentage_slider_row: {
       size: "700,36",
@@ -20,7 +20,7 @@
             {
               center: "0.5,0.5",
               txt: { i18n: "$val:prefix", style: { font: "20px Arial" } },
-              component: [{ name: "Label", id: "prefix_label" }],
+              component: [ { name: "Label", id: "prefix_label" } ],
             },
           ],
         },
@@ -50,7 +50,7 @@
                   center: "0.5,0.5",
                   color: "black",
                   txt: { i18n: "0", style: { font: "20px Arial" } },
-                  component: [{ name: "Label", id: "handle_label" }],
+                  component: [ { name: "Label", id: "handle_label" } ],
                 },
               ],
             },
@@ -78,16 +78,28 @@
                 i18n: "$val:prefix",
                 style: { font: "20px Arial" },
               },
-              component: [{ name: "Label", id: "prefix_label" }],
+              component: [ { name: "Label", id: "prefix_label" } ],
             },
           ],
-          component: [{ name: "Label", id: "handle_label" }],
+          component: [ { name: "Label", id: "handle_label" } ],
         },
         {
           size: "500,36",
           color: "black",
           center: "0.5,0.5",
           items: [
+            {
+              pos: "-125,0",
+              center: "0.5,0.5",
+              color: "#333333",
+              txt: { i18n: "disable", style: { font: "20px Arial" } }
+            },
+            {
+              pos: "125,0",
+              center: "0.5,0.5",
+              color: "#333333",
+              txt: { i18n: "enable", style: { font: "20px Arial" } }
+            },
             {
               size: "250,36",
               color: "white",
@@ -110,7 +122,7 @@
                   center: "0.5,0.5",
                   color: "black",
                   txt: { i18n: "disabled", style: { font: "20px Arial" } },
-                  component: [{ name: "Label", id: "handle_label" }],
+                  component: [ { name: "Label", id: "handle_label" } ],
                 },
               ],
             },
@@ -138,16 +150,33 @@
                 i18n: "$val:prefix",
                 style: { font: "20px Arial" },
               },
-              component: [{ name: "Label", id: "prefix_label" }],
+              component: [ { name: "Label", id: "prefix_label" } ],
             },
           ],
-          component: [{ name: "Label", id: "handle_label" }],
+          component: [ { name: "Label", id: "handle_label" } ],
         },
         {
           size: "500,36",
           color: "black",
           center: "0.5,0.5",
           items: [
+            {
+              center: "0.5,0.5",
+              color: "#333333",
+              pos: "-166,0",
+              txt: { i18n: "sync_2", style: { font: "20px Arial" } },
+            },
+            {
+              center: "0.5,0.5",
+              color: "#333333",
+              txt: { i18n: "sync_1", style: { font: "20px Arial" } },
+            },
+            {
+              center: "0.5,0.5",
+              pos: "166,0",
+              color: "#333333",
+              txt: { i18n: "sync_0", style: { font: "20px Arial" } },
+            },
             {
               size: "166,36",
               color: "white",
@@ -170,7 +199,7 @@
                   center: "0.5,0.5",
                   color: "black",
                   txt: { i18n: "disabled", style: { font: "20px Arial" } },
-                  component: [{ name: "Label", id: "handle_label" }],
+                  component: [ { name: "Label", id: "handle_label" } ],
                 },
               ],
             },
@@ -196,6 +225,11 @@
       center: "0.5, 0.5",
       pos: "397, 100",
       items: [
+        {
+          id: "main_volume_row",
+          values: { prefix: "main_volume" },
+          template: "percentage_slider_row",
+        },
         {
           id: "bgm_toggle_row",
           values: { prefix: "bgm" },

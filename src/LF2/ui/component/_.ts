@@ -63,6 +63,7 @@ export const regist_components = () => {
     _.ReachableGroup,
     _.ScaleAnimation,
     _.ScaleClickable,
+    _.SettingsLogic,
     _.SineOpacity,
     _.SliderHandle,
     _.Sounds,
