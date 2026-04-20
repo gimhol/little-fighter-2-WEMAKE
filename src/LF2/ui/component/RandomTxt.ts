@@ -4,7 +4,7 @@ import { UIComponent } from "./UIComponent";
 
 
 export class RandomTxt extends UIComponent {
-  static override readonly TAG = 'RandomTxt';
+  static override readonly TAGS: string[] = ["RandomTxt"];
   static randomings = new Map<string | RandomTxt, Randoming<number>>();
   get group() { return this.str(0); };
   get randoming() {

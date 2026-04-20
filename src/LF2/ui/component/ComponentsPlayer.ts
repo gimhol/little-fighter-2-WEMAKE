@@ -10,7 +10,7 @@ export interface IComponentsPlayerProps {
 }
 export class ComponentsPlayer extends UIComponent implements IPlayable {
   readonly __is_playable__ = true;
-  static override readonly TAG: string = 'ComponentsPlayer';
+  static override readonly TAGS: string[] = ["ComponentsPlayer"];
   static override readonly PROPS: ISchema<IComponentsPlayerProps> = make_schema({
     key: "IComponentsPlayerProps",
     type: "object",

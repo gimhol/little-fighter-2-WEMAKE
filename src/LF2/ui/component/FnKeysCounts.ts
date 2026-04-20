@@ -15,7 +15,7 @@ export interface IFnKeysCountsProps {
   fn_key_locked?: UINode;
 }
 export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
-  static override readonly TAG: string = 'FnKeysCounts';
+  static override readonly TAGS: string[] = ["FnKeysCounts"];
   static override PROPS: ISchema<IFnKeysCountsProps> = make_schema({
     key: "IFnKeysCountsProps",
     type: "object",

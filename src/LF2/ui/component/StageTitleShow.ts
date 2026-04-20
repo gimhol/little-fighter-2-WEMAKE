@@ -6,7 +6,7 @@ import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 export class StageTitleShow extends UIComponent {
-  static override readonly TAG = 'StageTitleShow';
+  static override readonly TAGS: string[] = ["StageTitleShow"];
   private _opactiy: Sequence = new Sequence(
     new Easing(0, 1).set_duration(500),
     new Delay(1)

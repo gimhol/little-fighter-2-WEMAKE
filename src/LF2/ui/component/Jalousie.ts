@@ -9,7 +9,7 @@ export interface IJalousieCallbacks extends IUICompnentCallbacks {
   on_anim_end?(v: Jalousie): void;
 }
 export class Jalousie extends Flex<IJalousieCallbacks> {
-  static override readonly TAG = 'Jalousie'
+  static override readonly TAGS: string[] = ["Jalousie"];
   protected _anim: Animation = new Sequence(
     new Easing(0, 0).set_duration(250),
     new Sine(-1, 2, 0.5).set_duration(250),

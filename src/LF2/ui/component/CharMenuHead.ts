@@ -12,7 +12,7 @@ import { UIComponent } from "./UIComponent";
  * @extends {UIComponent}
  */
 export class CharMenuHead extends UIComponent {
-  static override readonly TAG = 'CharMenuHead'
+  static override readonly TAGS: string[] = ["CharMenuHead"];
   readonly img_loader = new UIImgLoader(() => this.node);
   protected _joined: boolean = false;
   protected _opacity: Sine = new Sine(0.65, 1, 6);

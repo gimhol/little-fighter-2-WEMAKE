@@ -10,7 +10,7 @@ import { UIComponent } from "./UIComponent";
  * @extends {UIComponent}
  */
 export class FighterName extends UIComponent {
-  static override readonly TAG = 'FighterName'
+  static override readonly TAGS: string[] = ["FighterName"];
   private _decided?: boolean;
   private _com?: boolean;
   private readonly txt_loader = new UITextLoader(() => this.node).set_style(() => ({

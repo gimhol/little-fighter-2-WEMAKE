@@ -31,7 +31,7 @@ import { SlotStep } from "./SlotStep";
  * @extends {UIComponent}
  */
 export class CharMenuLogic extends UIComponent {
-  static override readonly TAG = "CharMenuLogic";
+  static override readonly TAGS: string[] = ["CharMenuLogic"];
   readonly prev_players = new Map<PlayerInfo, SlotState>()
   readonly players = new Map<PlayerInfo, SlotState>()
   protected _count_down: number = 5000;

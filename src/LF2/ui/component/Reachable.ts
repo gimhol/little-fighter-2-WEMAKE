@@ -3,7 +3,7 @@ import { UIComponent } from "./UIComponent";
 
 
 export class Reachable extends UIComponent {
-  static override readonly TAG = 'Reachable'
+  static override readonly TAGS: string[] = ["Reachable"];
   get group_name(): string {
     return this.args[0] || '';
   }

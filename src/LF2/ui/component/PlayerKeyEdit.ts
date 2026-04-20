@@ -5,7 +5,7 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import { PlayerKeyText } from "./PlayerKeyText";
 
 export class PlayerKeyEdit extends PlayerKeyText {
-  static override readonly TAG: string = 'PlayerKeyEdit'
+  static override readonly TAGS: string[] = ["PlayerKeyEdit"];
 
   override on_start(): void {
     this.node.parent?.callbacks.add(this.p)

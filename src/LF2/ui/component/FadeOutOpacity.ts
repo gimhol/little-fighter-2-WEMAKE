@@ -3,7 +3,7 @@ import { Unsafe } from "../../utils";
 import { UIComponent } from "./UIComponent";
 import { UIComponentExpressionBuilder } from "./UIComponentExpressionBuilder";
 export class FadeOutOpacity extends UIComponent {
-  static override readonly TAG: string = 'FadeOutOpacity';
+  static override readonly TAGS: string[] = ["FadeOutOpacity"];
   static expression(duration: Unsafe<number> = 1000, delay: Unsafe<number> = 0) {
     return new UIComponentExpressionBuilder(this, duration ?? '', delay ?? '')
   }

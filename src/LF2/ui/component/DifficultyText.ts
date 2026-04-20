@@ -4,8 +4,7 @@ import { IWorldDataset } from "../../IWorldDataset";
 import { Label } from "./Label";
 
 export class DifficultyText extends Label implements IWorldCallbacks {
-  static override readonly TAG: string = "DifficultyText";
-  static override readonly ALIAS: string[] = ['difficulty_text'];
+  static override readonly TAGS: string[] = ["DifficultyText", "difficulty_text"];
   override on_resume(): void {
     super.on_resume();
     this.world.callbacks.add(this);

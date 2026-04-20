@@ -17,7 +17,7 @@ export interface IGamePrepareLogicProps {
 const GAME_MODE_VS = "vs_mode"
 const GAME_MODE_STAGE = "stage_mode"
 export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
-  static override readonly TAG = 'GamePrepareLogic';
+  static override readonly TAGS: string[] = ["GamePrepareLogic"];
   static override  readonly PROPS = make_schema<IGamePrepareLogicProps>({
     key: 'GamePrepareLogic',
     type: 'object',

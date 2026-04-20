@@ -5,7 +5,7 @@ import { UIComponent } from "./UIComponent";
 
 
 export class TxtClickable extends UIComponent {
-  static override readonly TAG = 'TxtClickable';
+  static override readonly TAGS: string[] = ["TxtClickable"];
   press_idx: number = 0;
   hover_idx: number = 1;
   normal_idx: number = 2;

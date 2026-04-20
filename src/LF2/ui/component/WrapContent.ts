@@ -8,7 +8,7 @@ export interface IWrapContentProps {
   wrapHeight?: boolean;
 }
 export class WrapContent<P extends IWrapContentProps, C extends IUICompnentCallbacks> extends UIComponent<P, C> {
-  static override readonly TAG: string = 'WrapContent';
+  static override readonly TAGS: string[] = ["WrapContent"];
   static override readonly PROPS: ISchema<IWrapContentProps> = {
     key: "IWrapContentProps",
     type: "object",

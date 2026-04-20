@@ -9,7 +9,7 @@ import { SummaryLogic } from "./SummaryLogic";
 import { UIComponent } from "./UIComponent";
 
 export class TeamSituationText extends UIComponent {
-  static override readonly TAG = "TeamSituationText"
+  static override readonly TAG: string = "TeamSituationText"
 
   private _text_loader = new UITextLoader(() => this.node)
     .set_style(() => this._style)

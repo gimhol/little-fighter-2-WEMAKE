@@ -4,7 +4,7 @@ import type { UINode } from "../UINode";
 import { UIComponent } from "./UIComponent";
 
 export class ImgClickable extends UIComponent {
-  static override readonly TAG = 'ImgClickable';
+  static override readonly TAGS: string[] = ["ImgClickable"];
   press_idx: number = 0;
   hover_idx: number = 1;
   normal_idx: number = 2;

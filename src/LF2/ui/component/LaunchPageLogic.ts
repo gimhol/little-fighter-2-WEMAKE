@@ -21,7 +21,7 @@ enum Status {
 }
 
 export class LaunchPage extends UIComponent {
-  static override readonly TAG = 'LaunchPage'
+  static override readonly TAGS: string[] = ["LaunchPage"];
   protected fsm: FSM<Status, IState<Status>>;
   get entry_name(): string {
     return this.args[0] || "";

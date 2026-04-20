@@ -3,8 +3,7 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import { Label } from "./Label";
 
 export class BGMSwitcher extends Label {
-  static override readonly TAG: string = "BGMSwitcher";
-  static override readonly ALIAS: string[] = [];
+  static override readonly TAGS: string[] = ["BGMSwitcher"];
   private _which: 'Silent' | 'Random' | '' = '';
   get which(): string { return this._which || this.lf2.sounds.bgm() || "Silent"; }
   get offset(): number { return this.num(0) ?? 0; }

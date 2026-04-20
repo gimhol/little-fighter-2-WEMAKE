@@ -2,8 +2,7 @@ import { IBgData, Defines } from "../../defines";
 import { Label } from "./Label";
 
 export class BackgroundSwitcher extends Label {
-  static override readonly TAG = 'BackgroundSwitcher'
-  static override readonly ALIAS: string[] = [];
+  static override readonly TAGS: string[] = ["BackgroundSwitcher"];
   private _background: IBgData = Defines.RANDOM_BG;
   get backgrounds(): IBgData[] {
     const ret = this.lf2.datas.backgrounds?.filter((v) => v.id !== Defines.VOID_BG.id) || []

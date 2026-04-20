@@ -13,7 +13,7 @@ export interface IIntegerPickerCallbacks extends IUICompnentCallbacks {
   on_val_changed?(curr: number, prev: number, self: IntegerPicker): void
 }
 export class IntegerPicker extends UIComponent<{}, IIntegerPickerCallbacks> {
-  static override readonly TAG: string = 'IntegerPicker';
+  static override readonly TAGS: string[] = ["IntegerPicker"];
   protected _min: number = MIN;
   protected _max: number = MAX;
   protected _val: number = this._min;

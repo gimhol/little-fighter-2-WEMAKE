@@ -2,7 +2,7 @@ import Easing from "../../animation/Easing";
 import { UIComponent } from "./UIComponent";
 
 export class OpacityHover extends UIComponent {
-  static override readonly TAG = 'OpacityHover'
+  static override readonly TAGS: string[] = ["OpacityHover"];
   protected anim = new Easing(0, 1).set_duration(150);
   private _p: number | null = null;
 

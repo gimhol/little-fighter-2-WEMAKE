@@ -3,7 +3,7 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import { UIComponent } from "./UIComponent";
 
 export class PlayerCtrlType extends UIComponent {
-  static override readonly TAG: string = 'PlayerCtrlType';
+  static override readonly TAGS: string[] = ["PlayerCtrlType"];
   get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
   get player() { return this.lf2.players.get(this.player_id)! }
   override on_resume(): void {

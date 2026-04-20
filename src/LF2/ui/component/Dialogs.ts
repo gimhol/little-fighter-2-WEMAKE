@@ -15,7 +15,7 @@ export interface IDialogsProps {
   talker?: Label | null;
 }
 export class Dialogs extends UIComponent<IDialogsProps> {
-  static override readonly TAG: string = 'Dialogs';
+  static override readonly TAGS: string[] = ["Dialogs"];
   static override readonly PROPS: ISchema<IDialogsProps> = make_schema({
     key: "IDialogsProps",
     type: "object",

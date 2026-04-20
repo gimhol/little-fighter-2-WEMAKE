@@ -20,8 +20,8 @@ export class UIComponent<
   P extends unknown = unknown,
   C extends IUICompnentCallbacks = IUICompnentCallbacks
 > implements IDebugging {
-  static readonly TAG: string = "UIComponent"
-  static readonly ALIAS?: string[] = [];
+  static get TAG(): string { return this.TAGS[0]; }
+  static readonly TAGS: string[] = ["UIComponent"]
   static readonly PROPS: ISchema = make_schema({
     key: "UIComponentProps",
     type: "object",

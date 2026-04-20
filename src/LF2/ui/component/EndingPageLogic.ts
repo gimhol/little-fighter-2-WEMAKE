@@ -6,7 +6,7 @@ import { IJalousieCallbacks, Jalousie } from "./Jalousie";
 import { UIComponent } from "./UIComponent";
 
 export class EndingPageLogic extends UIComponent {
-  static override readonly TAG: string = `EndingPageLogic`;
+  static override readonly TAGS: string[] = [`EndingPageLogic`];
   jalousie: Jalousie | undefined;
   txt_node: UINode | undefined;
   jalousie_cbs: IJalousieCallbacks = {

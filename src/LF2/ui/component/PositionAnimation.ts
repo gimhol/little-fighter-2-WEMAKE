@@ -6,7 +6,7 @@ import ease_in_out_sine from "@/LF2/utils/ease_method/ease_in_out_sine";
 
 
 export class PositionAnimation extends UIComponent {
-  static override readonly TAG: string = "PositionAnimation";
+  static override readonly TAGS: string[] = ["PositionAnimation"];
   protected seq_anim: Sequence = new Sequence();
   protected values = new Map<any, [IVector3, IVector3]>()
   start(v?: boolean) {

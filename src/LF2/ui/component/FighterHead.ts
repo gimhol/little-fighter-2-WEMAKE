@@ -13,7 +13,7 @@ import { UIComponent } from "./UIComponent";
  * @extends {UIComponent}
  */
 export class FighterHead extends UIComponent {
-  static override readonly TAG = 'FighterHead'
+  static override readonly TAGS: string[] = ["FighterHead"];
   get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
   get player(): PlayerInfo { return this.lf2.players.get(this.player_id)!; }
   img_loader = new UIImgLoader(() => this.node);

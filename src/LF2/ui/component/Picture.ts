@@ -8,8 +8,7 @@ export interface IPictureProps {
   height?: number;
 }
 export class Picture extends UIComponent<IPictureProps> {
-  static override readonly TAG: string = 'Picture';
-  static override readonly ALIAS: string[] = ['Image'];
+  static override readonly TAGS: string[] = ["Picture", "Image"];
   static override readonly PROPS = make_schema<IPictureProps>({
     key: 'IPictureProps',
     type: 'object',

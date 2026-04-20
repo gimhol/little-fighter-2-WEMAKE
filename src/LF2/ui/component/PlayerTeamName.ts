@@ -11,7 +11,7 @@ import { UIComponent } from "./UIComponent";
  * @extends {UIComponent}
  */
 export class PlayerTeamName extends UIComponent {
-  static override readonly TAG: string = 'PlayerTeamName';
+  static override readonly TAGS: string[] = ["PlayerTeamName"];
   private _decided?: boolean;
   private _com?: boolean;
   private readonly txt_loader = new UITextLoader(() => this.node).set_style(() => ({

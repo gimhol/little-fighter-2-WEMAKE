@@ -34,7 +34,7 @@ class FSMState_End extends FSMState {
 }
 
 export class VsModeLogic extends UIComponent {
-  static override readonly TAG = 'VsModeLogic'
+  static override readonly TAGS: string[] = ["VsModeLogic"];
   readonly fsm = new FSM<number, FSMState>().add(
     new FSMState(this),
     new FSMState_BeforeEnd(this),

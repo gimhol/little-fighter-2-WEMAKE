@@ -53,7 +53,7 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ]
 ]
 export class Tests extends UIComponent {
-  static override readonly TAG = 'Tests';
+  static override readonly TAGS: string[] = ["Tests"];
   readonly fsm = new FSM<number, TestCase>();
   groups: TestCase[][] = []
   override init(): void { }

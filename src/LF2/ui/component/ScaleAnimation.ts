@@ -4,7 +4,7 @@ import ease_linearity from "../../utils/ease_method/ease_linearity";
 import { UIComponent } from "./UIComponent";
 
 export class ScaleAnimation extends UIComponent {
-  static override readonly TAG: string = "ScaleAnimation";
+  static override readonly TAGS: string[] = ["ScaleAnimation"];
   protected seq_anim: Sequence = new Sequence();
   protected values = new Map<any, [IVector3, IVector3]>()
   start(v?: boolean) {

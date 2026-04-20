@@ -8,7 +8,7 @@ import { CameraCtrl } from "./CameraCtrl";
 import { SummaryLogic } from "./SummaryLogic";
 
 export class DanmuGameLogic extends SummaryLogic {
-  static override readonly TAG: string = 'DanmuGameLogic';
+  static override readonly TAGS: string[] = ["DanmuGameLogic"];
   static readonly BROADCAST_ON_START = 'DanmuGameLogic_ON_START';
   static readonly BROADCAST_ON_STOP = 'DanmuGameLogic_ON_STOP';
 

@@ -4,7 +4,7 @@ import { floor } from "../../utils/math/base";
 import { UIComponent } from "./UIComponent";
 
 export class ImgLoop extends UIComponent {
-  static override readonly TAG: string = 'ImgLoop';
+  static override readonly TAGS: string[] = ["ImgLoop"];
   readonly anim = new Easing(0, 1).set_duration(1000)
     .set_ease_method(ease_linearity)
     .set_times(0)

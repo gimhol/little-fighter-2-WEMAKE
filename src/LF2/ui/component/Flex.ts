@@ -7,7 +7,7 @@ export type TFlexDirection = 'row' | 'column'
 export type TFlexAlign = 'start' | 'center' | 'end' | 'stretch'
 
 export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks> extends UIComponent<{}, Callbacks> {
-  static override readonly TAG: string = 'Flex';
+  static override readonly TAGS: string[] = ["Flex"];
   get direction(): TFlexDirection {
     return this.props_holder.str('direction', ['row', 'column']) ?? 'row'
   }

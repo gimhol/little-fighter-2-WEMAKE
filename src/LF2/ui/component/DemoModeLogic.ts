@@ -38,7 +38,7 @@ class FSMState_End extends FSMState {
 }
 
 export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
-  static override readonly TAG = 'DemoModeLogic'
+  static override readonly TAGS: string[] = ["DemoModeLogic"];
   readonly fsm = new FSM<number, FSMState>().add(
     new FSMState(this),
     new FSMState_BeforeEnd(this),

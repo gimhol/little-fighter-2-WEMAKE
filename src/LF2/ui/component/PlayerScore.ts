@@ -4,7 +4,7 @@ import { Entity } from "../../entity/Entity";
 import { UIComponent } from "./UIComponent";
 
 export class PlayerScore extends UIComponent {
-  static override readonly TAG: string = 'PlayerScore'
+  static override readonly TAGS: string[] = ["PlayerScore"];
   get index(): number { return this.num(0) ?? -1 }
   get lose(): boolean | undefined {
     const { fighter } = this;

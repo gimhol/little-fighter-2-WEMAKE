@@ -2,7 +2,7 @@ import { max } from "../../utils";
 import { UIComponent } from "./UIComponent";
 
 export class HorizontalLayout extends UIComponent {
-  static override readonly TAG = 'HorizontalLayout'
+  static override readonly TAGS: string[] = ["HorizontalLayout"];
   override update(dt: number): void {
     let w = 0;
     let h = 0;

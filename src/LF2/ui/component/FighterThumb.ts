@@ -15,7 +15,7 @@ import { UIComponent } from "./UIComponent";
  * @extends {UIComponent}
  */
 export class FighterThumb extends UIComponent {
-  static override readonly TAG = 'FighterThumb'
+  static override readonly TAGS: string[] = ["FighterThumb"];
   private fighter?: Entity;
   private img_loader = new UIImgLoader(() => this.node).ignore_out_of_date();
   get thumb_url(): string {

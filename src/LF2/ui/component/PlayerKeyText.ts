@@ -3,8 +3,7 @@ import { Defines } from "../../defines";
 import { GameKey } from "../../defines/GameKey";
 
 export class PlayerKeyText extends Label {
-  static override readonly TAG: string = 'PlayerKeyText';
-  static override readonly ALIAS: string[] = [];
+  static override readonly TAGS: string[] = ["PlayerKeyText"];
   get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
   get key_name() { return this.args[1] || this.node.find_parent(v => v.data.values?.key_name)?.data.values?.key_name || ''; }
   get player() { return this.lf2.players.get(this.player_id); }

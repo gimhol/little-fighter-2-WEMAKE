@@ -6,7 +6,7 @@ import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 export class StageTitleText extends UIComponent {
-  static override readonly TAG = "StageTitleText";
+  static override readonly TAGS: string[] = ["StageTitleText"];
   private _title: string = '';
   private _stage: Stage | null = null;
   private _text_loader = new UITextLoader(() => this.node).set_style({

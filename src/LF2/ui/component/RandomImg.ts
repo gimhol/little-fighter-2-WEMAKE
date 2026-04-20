@@ -3,7 +3,7 @@ import { UIComponent } from "./UIComponent";
 import { arithmetic_progression } from "@/LF2/utils";
 
 export class RandomImg extends UIComponent {
-  static override readonly TAG = 'RandomImg'
+  static override readonly TAGS: string[] = ["RandomImg"];
   static randomings = new Map<string | RandomImg, Randoming<number>>();
   get group() { return this.str(0) };
   get randoming() {

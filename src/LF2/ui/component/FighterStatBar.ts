@@ -19,7 +19,7 @@ interface IFighterStatBarProps {
   name_txt?: Label;
 }
 export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
-  static override readonly TAG: string = 'FighterStatBar'
+  static override readonly TAGS: string[] = ["FighterStatBar"];
   static override readonly PROPS = make_schema<IFighterStatBarProps>({
     type: "object",
     key: "IFighterStatBarProps",

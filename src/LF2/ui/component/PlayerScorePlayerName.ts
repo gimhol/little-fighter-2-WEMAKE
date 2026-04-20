@@ -6,7 +6,7 @@ import { Defines, Entity, is_bot_ctrl, is_human_ctrl, IStyle, TeamEnum } from "@
 
 
 export class PlayerScorePlayerName extends UIComponent {
-  static override readonly TAG = 'PlayerScorePlayerName';
+  static override readonly TAGS: string[] = ["PlayerScorePlayerName"];
   private fighter?: Entity;
 
   private readonly txt_loader = new UITextLoader(() => this.node).set_style(() => {

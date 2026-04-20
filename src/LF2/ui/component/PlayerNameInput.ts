@@ -2,7 +2,7 @@ import { PlayerInfo } from "../../PlayerInfo";
 import { TextInput } from "./TextInput";
 
 export class PlayerNameInput extends TextInput {
-  static override readonly TAG: string = 'PlayerNameInput';
+  static override readonly TAGS: string[] = ["PlayerNameInput"];
   protected player: PlayerInfo | undefined;
   get player_id() { return this.node.get_value("player_id", true) }
   override get maxLength() { return this.props_holder.num('maxLength') ?? 10; }

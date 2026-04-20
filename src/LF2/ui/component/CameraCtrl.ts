@@ -12,7 +12,7 @@ import { UIComponent } from "./UIComponent";
  * @extends {UIComponent}
  */
 export class CameraCtrl extends UIComponent {
-  static override readonly TAG = 'CameraCtrl';
+  static override readonly TAGS: string[] = ["CameraCtrl"];
   time: number = 0;
   free: boolean = true;
   _staring?: Entity;
