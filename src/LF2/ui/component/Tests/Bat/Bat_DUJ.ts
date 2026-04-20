@@ -16,6 +16,7 @@ export class Bat_DUJ extends TestCase {
 
     this.bandits_8().forEach(v => {
       v.team = TeamEnum.Team_2;
+      v.hp = 1
     })
   }
 }
