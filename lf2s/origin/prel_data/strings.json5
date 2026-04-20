@@ -2,6 +2,10 @@
   "": {
     bgm_volume: "BGM Volume",
     sfx_volume: "SFX Volume",
+    team_outline: "Team Outline",
+    TEA: "SFX Volume",
+    enabled: "Enabled",
+    disabled: "Disabled",
     "tutorial.key_hints": ["If you haven't set up the key bindings,", "please click the gear button in the upper-right corner", " to view and configure the key bindings."],
     "tutorial.dialog_0": ["Stop! You don't seem to be a local...", "Before everything starts, you should get familiar with how to play.", "Otherwise, the battle situation will be really bad."],
     "tutorial.dialog_1": ["You can keep pressing 'Up/Down/Left/Right', ", "and you'll be able to 【Walk】 in a specific direction."],
@@ -99,6 +103,9 @@
   "zh-hans": {
     bgm_volume: "BGM 音量",
     sfx_volume: "SFX 音量",
+    team_outline: "队伍描边",
+    enabled: "已启用",
+    disabled: "已禁用",
     KK: "ⒶⒿⒹ",
     "tutorial.key_hints": "如果你未进行按键设置，请点击右上角齿轮按钮，查看并设置键位",
     "tutorial.dialog_0": ["停！看起来你不像是本地人……\n", "在一切开始前你应该熟悉如何操作\n", "否则战况将非常惨烈"],
@@ -193,6 +200,9 @@
   "zh-hant": {
     bgm_volume: "BGM 音量",
     sfx_volume: "SFX 音量",
+    team_outline: "隊伍輪廓",
+    enabled: "已啟用",
+    disabled: "已禁用",
     KK: "ⒶⒿⒹ",
     "tutorial.key_hints": "如果你未進行按鍵設置，請點擊右上角齒輪按鈕，查看並設置鍵位",
     "tutorial.dialog_0": ["停！看起來你不像是本地人……\n", "在一切開始前你應該熟悉如何操作\n", "否則戰況將非常慘烈"],

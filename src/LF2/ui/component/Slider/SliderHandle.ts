@@ -83,6 +83,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     const max_x = geo.right - geo.pos.x - cross.right;
     const x = clamp(fx - geo.pos.x, min_x, max_x);
     this.factor = (x - min_x) / (max_x - min_x);
+    this.value = this.value
     this.callbacks.emit('on_value_changed')(this.value, this)
   }
   override on_start(): void {
