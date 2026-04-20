@@ -1,6 +1,7 @@
 import { GK, O_ID, StateEnum, TeamEnum } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity/Entity";
 import { TestCase } from "../TestCase";
+import { V } from "react-router/dist/development/index-react-server-client-Da3kmxNd";
 
 export class Firzen_DUA extends TestCase {
   override name: string = 'Firezen D^A'
@@ -28,6 +29,7 @@ export class Firzen_DUA extends TestCase {
 
     this.bandits_8().forEach(v => {
       v.team = TeamEnum.Team_2;
+      v.hp = 100
     })
   }
 }

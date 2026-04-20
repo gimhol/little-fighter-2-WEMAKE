@@ -10,7 +10,7 @@ import { Firzen_DUA, Firzen_FUSION } from "./Firezen";
 import { Freeze_DFA, Freeze_DFJ, Freeze_DUJ, Freeze_DVJ } from "./Freeze";
 import { Jan_DUA, Jan_DUJ } from "./Jan";
 import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
-import { Bat_DUJ } from "./Bat";
+import { Bat_DUJ_0, Bat_DUJ_1, Bat_DUJ_2 } from "./Bat";
 import { LOUIS_JUMP_ATTACK } from "./Louis";
 import { BottomsUp, Come, MoveStayCome } from "./Others";
 import { Rudolf_DFJ } from "./Rudolf";
@@ -24,7 +24,7 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     Firzen_DUA,
     Firzen_FUSION
-  ], [Bat_DUJ], [
+  ], [Bat_DUJ_0, Bat_DUJ_1, Bat_DUJ_2], [
     Jan_DUA,
     Jan_DUJ
   ], [
