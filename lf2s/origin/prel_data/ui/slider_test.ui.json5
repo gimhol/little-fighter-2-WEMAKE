@@ -96,7 +96,13 @@
               component: [
                 {
                   name: "SliderHandle",
-                  properties: { min: 0, max: 1, step: 1, precision: 1, properties: { handle_label: "handle_label" } },
+                  properties: {
+                    min: 0,
+                    max: 1,
+                    step: 1,
+                    precision: 1,
+                    handle_label: "handle_label",
+                  },
                 },
               ],
               items: [

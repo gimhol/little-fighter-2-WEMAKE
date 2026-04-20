@@ -48,10 +48,12 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       this.handle_pointing_event(e);
       this.callbacks.emit('on_value_changed')(this.value, this)
       this._on_me = false;
+      // this.props.handle_label?.set_text('' + this.value)
     },
     on_pointer_cancel: (e) => {
       if (!this._on_me) return;
       this._on_me = false
+      // this.props.handle_label?.set_text('' + this.value)
     },
   }
   get container(): UINode | undefined {
@@ -65,15 +67,24 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   get min_value(): number { return this.props.min ?? 0 }
   get max_value(): number { return this.props.max ?? 100 }
   get factor(): number { return clamp(this._factor, 0, 1) }
-  set factor(v: number) { this._factor = clamp(v, 0, 1) }
+  set factor(v: number) {
+    this._factor = clamp(v, 0, 1);
+    // if (this._on_me) return;
+    const { min_value, max_value, precision, step } = this;
+    if (min_value == 0 && max_value == 1 && precision == 1 && step == 1) {
+      this.props.handle_label?.set_text(this._factor ? 'enabled' : 'disabled')
+    } else {
+      this.props.handle_label?.set_text('' + this.value)
+    }
+  }
   get value(): number {
     const { min_value, max_value, precision } = this;
-    return round_float(min_value + (max_value - min_value) * this.factor, precision)
+    return round_float(min_value + (max_value - min_value) * this._factor, precision)
   }
   set value(v: number) {
-    const { min_value, max_value } = this;
-    v = clamp(v, min_value, max_value);
-    this._factor = (v - min_value) / (max_value - min_value);
+    const { min_value, max_value, precision } = this;
+    v = round_float(clamp(v, min_value, max_value), precision);
+    this.factor = (v - min_value) / (max_value - min_value);
   }
   handle_pointing_event(e: IPointingEvent): void {
     const { container } = this;
@@ -86,7 +97,6 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     const x = clamp(fx - geo.pos.x, min_x, max_x);
     this.factor = (x - min_x) / (max_x - min_x);
     this.value = this.value
-    this.props.handle_label?.set_text('' + this.value)
     this.callbacks.emit('on_value_changed')(this.value, this)
   }
   override on_start(): void {
@@ -111,11 +121,9 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     if (!this.responser?.focused) return;
     if (e.game_key === GK.Left) {
       this.value -= this.step;
-      this.props.handle_label?.set_text('' + this.value)
     }
     if (e.game_key === GK.R) {
       this.value += this.step;
-      this.props.handle_label?.set_text('' + this.value)
     }
   }
 }
