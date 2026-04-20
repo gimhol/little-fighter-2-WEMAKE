@@ -19,7 +19,7 @@ export class DanmuGameLogic extends SummaryLogic {
 
   time: number = 0;
   update_teams() {
-    const fighters = this.lf2.characters.all;
+    const fighters = this.lf2.fighters.all;
     this._teams.clear()
     for (const fighter of fighters)
       this._teams.add(fighter.team);
@@ -34,7 +34,7 @@ export class DanmuGameLogic extends SummaryLogic {
     if (!this._cam_ctrl || this._cam_ctrl?.staring !== e) return
     // 聚焦角色被移除后，聚焦下一个角色
     this._staring_countdown.reset();
-    this._cam_ctrl.staring = this.lf2.mt.pick(this.lf2.characters.all)
+    this._cam_ctrl.staring = this.lf2.mt.pick(this.lf2.fighters.all)
   }
   override on_start(): void {
     super.on_start?.();
@@ -63,70 +63,70 @@ export class DanmuGameLogic extends SummaryLogic {
     switch (way) {
       case 0: {
         this.lf2.change_bg('?');
-        this.lf2.characters.add(OID.Julian, 2, TE.Team_1).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jan, 1, TE.Team_1).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Julian, 2, TE.Team_1).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jan, 1, TE.Team_1).forEach(fighter_enter)
 
-        this.lf2.characters.add(OID.Firzen, 3, TE.Team_2).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jan, 1, TE.Team_2).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Firzen, 3, TE.Team_2).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jan, 1, TE.Team_2).forEach(fighter_enter)
 
-        this.lf2.characters.add(OID.LouisEX, 2, TE.Team_3).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Bat, 3, TE.Team_3).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jan, 1, TE.Team_3).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.LouisEX, 2, TE.Team_3).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Bat, 3, TE.Team_3).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jan, 1, TE.Team_3).forEach(fighter_enter)
 
-        this.lf2.characters.add(OID.Deep, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Davis, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Dennis, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Woody, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Firen, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Freeze, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jack, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jan, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Mark, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Monk, 1, TE.Team_4).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Knight, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Deep, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Davis, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Dennis, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Woody, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Firen, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Freeze, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jack, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jan, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Mark, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Monk, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Knight, 1, TE.Team_4).forEach(fighter_enter)
         break
       }
       case 1: { // 1v1v1v1v1v1
         this.lf2.change_bg('?');
-        this.lf2.characters.add(OID.Deep, 1, '').forEach(fighter_enter)
-        this.lf2.characters.add(OID.Davis, 1, '').forEach(fighter_enter)
-        this.lf2.characters.add(OID.Dennis, 1, '').forEach(fighter_enter)
-        this.lf2.characters.add(OID.Woody, 1, '').forEach(fighter_enter)
-        this.lf2.characters.add(OID.Firen, 1, '').forEach(fighter_enter)
-        this.lf2.characters.add(OID.Freeze, 1, '').forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jack, 1, '').forEach(fighter_enter)
-        this.lf2.characters.add(OID.Louis, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Deep, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Davis, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Dennis, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Woody, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Firen, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Freeze, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jack, 1, '').forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Louis, 1, '').forEach(fighter_enter)
         break;
       }
       case 2: { // mark vs monk
         this.lf2.change_bg('?');
-        this.lf2.characters.add(OID.Monk, 8, TE.Team_1).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jan, 2, TE.Team_1).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Monk, 8, TE.Team_1).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jan, 2, TE.Team_1).forEach(fighter_enter)
 
-        this.lf2.characters.add(OID.Mark, 8, TE.Team_2).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Jan, 2, TE.Team_2).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Mark, 8, TE.Team_2).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Jan, 2, TE.Team_2).forEach(fighter_enter)
         break;
       }
       case 3: {  // Justin vs Julian
         this.lf2.change_bg('?');
-        this.lf2.characters.add(OID.Justin, 4, TE.Team_1).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Justin, 4, TE.Team_2).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Justin, 4, TE.Team_3).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Julian, 1, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Justin, 4, TE.Team_1).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Justin, 4, TE.Team_2).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Justin, 4, TE.Team_3).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Julian, 1, TE.Team_4).forEach(fighter_enter)
         break;
       }
       case 4: {
         this.lf2.change_bg('?');
-        this.lf2.characters.add(OID.Henry, 4, TE.Team_1).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Hunter, 4, TE.Team_2).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Rudolf, 4, TE.Team_3).forEach(fighter_enter)
-        this.lf2.characters.add(OID.John, 4, TE.Team_4).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Henry, 4, TE.Team_1).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Hunter, 4, TE.Team_2).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Rudolf, 4, TE.Team_3).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.John, 4, TE.Team_4).forEach(fighter_enter)
         break;
       }
       case 5: {
         this.lf2.change_bg('?');
-        this.lf2.characters.add(OID.John, 4, TE.Team_1).forEach(fighter_enter)
-        this.lf2.characters.add(OID.Sorcerer, 6, TE.Team_2).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.John, 4, TE.Team_1).forEach(fighter_enter)
+        this.lf2.fighters.add(OID.Sorcerer, 6, TE.Team_2).forEach(fighter_enter)
         break;
       }
     }
@@ -148,7 +148,7 @@ export class DanmuGameLogic extends SummaryLogic {
   }
   update_staring() {
     if (!this._cam_ctrl) return;
-    const fighters = this.lf2.characters.all;
+    const fighters = this.lf2.fighters.all;
     this._cam_ctrl.staring = this.lf2.mt.pick(fighters)
   }
   override update(dt: number): void {
