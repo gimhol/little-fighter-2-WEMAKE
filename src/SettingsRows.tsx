@@ -117,8 +117,8 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   };
   const on_click_add_bot = () => {
     (c_id
-      ? lf2.characters.add(c_id, rcn, team)
-      : lf2.characters.add_random(rcn, team)
+      ? lf2.fighters.add(c_id, rcn, team)
+      : lf2.fighters.add_random(rcn, team)
     ).forEach((e) => {
       e.name = "bot";
       const controller_creator = bot_controllers[bot_ctrl];

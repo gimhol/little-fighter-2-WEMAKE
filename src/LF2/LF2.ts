@@ -43,15 +43,16 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static get instance() { return LF2.instances[0] }
   static get world() { return this.instance?.world }
   static get objects() { return this.instance?.entities }
-  static get fighters() { return this.instance?.characters }
+  static get fighters() { return this.instance?.fighters }
   static get weapons() { return this.instance?.weapons }
   static get balls() { return this.instance?.balls }
   static get bg() { return this.world?.bg }
   static get stage() { return this.world?.stage }
   static get phase() { return this.stage?.phase }
 
-  static get ui() { return LF2.instances[0].ui }
+  static get ui() { return this.instance.ui }
   static get ditto() { return I.Ditto }
+  static get uis() { return this.instance.uis }
 
   get lang(): string { return this._i18n.lang }
   set lang(v: string) { this._i18n.lang = v }
@@ -110,10 +111,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!ret) this.players.set(player_id, ret = new PlayerInfo(player_id))
     return ret
   }
-  readonly characters = new Helper.CharactersHelper(this);
+  readonly fighters = new Helper.CharactersHelper(this);
   readonly weapons = new Helper.WeaponsHelper(this);
   readonly entities = new Helper.EntitiesHelper(this);
   readonly balls = new Helper.BallsHelper(this);
+  readonly uis = new Helper.UIHelper(this)
   readonly datas: DatMgr;
   readonly sounds: I.ISounds;
   readonly images: I.IImageMgr;
@@ -364,7 +366,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         await this.load_ui(zip);
       }
       if (is_first) {
-        this.set_ui({ id: this.uiinfos?.[0].id })
+        this.set_ui({ id: this.uis.all?.[0].id })
         this.callbacks.emit("on_prel_loaded")(this);
       }
       this._playable = true;
@@ -406,10 +408,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load_data')
     for (const d of this.datas.fighters) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.characters as any)[`add_${name}`] = (num = 1, team = void 0) =>
-        this.characters.add(d, num, team);
+      (this.fighters as any)[`add_${name}`] = (num = 1, team = void 0) =>
+        this.fighters.add(d, num, team);
       (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.characters.add(d, num, team_1);
+        this.fighters.add(d, num, team_1);
     }
     for (const d of this.datas.weapons) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
@@ -507,10 +509,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   private _uiinfos_loaded = false;
-  private _uiinfos: Readonly<UI.ICookedUIInfo>[] = [];
-  get uiinfos(): readonly UI.ICookedUIInfo[] {
-    return this._uiinfos;
-  }
   get uiinfos_loaded() {
     return this._uiinfos_loaded;
   }
@@ -534,14 +532,14 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return ret
   }
 
-  async load_ui(zip: I.IZip): Promise<UI.ICookedUIInfo[]> {
+  async load_ui(zip: I.IZip): Promise<ReadonlyArray<UI.ICookedUIInfo>> {
     this._dispose_check('load_ui')
-    if (this._uiinfos.length) return this._uiinfos;
+    if (this.uis.all.length) return this.uis.all;
 
     this._uiinfos_loaded = false;
     const files = zip.file(/^ui\/.*?\.ui\.json5?$/)
     const ret: UI.ICookedUIInfo[] = []
-    if (!this._uiinfos.length) {
+    if (!this.uis.all.length) {
       ret.unshift(...await this.load_builtin_ui())
       this._dispose_check('load_ui')
     }
@@ -554,11 +552,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       ret.push(cooked_ui_info);
     }
     if (this._disposed) {
-      this._uiinfos.length = 0;
-      return this._uiinfos = [];
+      this.uis.clear()
+      return this.uis.all;
     } else {
       this._uiinfos_loaded = true;
-      this._uiinfos.push(...ret)
+      this.uis.add(...ret)
       this.callbacks.emit("on_ui_loaded")(ret);
       return ret;
     }

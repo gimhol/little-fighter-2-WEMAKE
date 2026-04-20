@@ -227,8 +227,8 @@ function App() {
       }
     },
     on_prel_loaded: (lf2) => {
-      const { test_ui } = params
-      if (typeof test_ui === 'string') lf2.set_ui(test_ui)
+      const { page } = params
+      if (typeof page === 'string') lf2.set_ui({ id: page })
     },
   })
 
@@ -551,7 +551,7 @@ function App() {
       if (!zips.length) return
       LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
       lf2.load(...zips)
-      lf2.set_ui('loading')
+      lf2.set_ui({ id: 'loading' })
     }
   }
   const game_cell_view = game_cell ? createPortal(
@@ -609,7 +609,7 @@ function App() {
               if (!lf2) return;
               lf2.cmds.push(CMD.F2)
               if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings') lf2.pop_ui_safe()
-              else lf2.set_ui("ctrl_settings", 1);
+              else lf2.set_ui({ id: "ctrl_settings" }, 1);
             }}
             src={[img_btn_1_1, img_btn_1_1]}
           />
@@ -733,7 +733,7 @@ function App() {
         <Select
           placeholder="页面"
           value={ui_id}
-          onChange={v => lf2?.set_ui(v!)}
+          onChange={v => lf2?.set_ui({ id: v })}
           options={uis}
           parse={(o) => [o.id!, o.name]}
         />

@@ -67,7 +67,7 @@ export class UIStack {
     const prev = this.uis.pop();
     prev?.on_pause();
     prev?.on_stop();
-    const info = this.lf2.uiinfos?.find((v) => v.id === id)
+    const info = this.lf2.uis.all?.find((v) => v.id === id)
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
       const { x, y, z } = curr.pos.value
@@ -83,7 +83,7 @@ export class UIStack {
     const { id } = opts
     const prev = this.ui;
     prev?.on_pause();
-    const info = this.lf2.uiinfos?.find((v) => v.id === id)
+    const info = this.lf2.uis.all?.find((v) => v.id === id)
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
       const { x, y, z } = curr.pos.value
