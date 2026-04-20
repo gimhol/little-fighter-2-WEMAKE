@@ -1046,7 +1046,7 @@ export class Entity {
             }
             break;
           case FrameBehavior.AngelBlessingStart:
-            if (this.frame.chase && multi_type === OpointMultiEnum.AccordingAllies) {
+            if (multi_type === OpointMultiEnum.AccordingAllies) {
               e.chasing = allies[i % allies.length]
             }
             break;
