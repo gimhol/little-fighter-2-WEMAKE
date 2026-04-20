@@ -33,7 +33,6 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       const { container } = this;
       if (!container) return;
       container.focused = true
-
       const { min_value, max_value, precision, step } = this;
       if (min_value == 0 && max_value == 1 && precision == 1 && step == 1) {
         this.factor = this._factor ? 0 : 1;
@@ -57,12 +56,12 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       this.handle_pointing_event(e);
       this.callbacks.emit('on_value_changed')(this.value, this)
       this._on_me = false;
-      // this.props.handle_label?.set_text('' + this.value)
     },
     on_pointer_cancel: (e) => {
       if (!this._on_me) return;
-      this._on_me = false
-      // this.props.handle_label?.set_text('' + this.value)
+      this.handle_pointing_event(e);
+      this.callbacks.emit('on_value_changed')(this.value, this)
+      this._on_me = false;
     },
   }
   get container(): UINode | undefined {
@@ -114,7 +113,6 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     const x = clamp(fx - geo.pos.x, min_x, max_x);
     this.factor = (x - min_x) / (max_x - min_x);
     this.value = this.value
-    this.callbacks.emit('on_value_changed')(this.value, this)
   }
   override on_start(): void {
     this.container?.callbacks.add(this.p)

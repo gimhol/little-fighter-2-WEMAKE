@@ -1,4 +1,4 @@
-import { SliderHandle, UIComponent } from "@/LF2";
+import { floor, SliderHandle, UIComponent } from "@/LF2";
 
 export class SettingsLogic extends UIComponent {
   static override readonly TAGS: string[] = ["SettingsLogic"];
@@ -16,6 +16,7 @@ export class SettingsLogic extends UIComponent {
     this.main_volume?.callbacks.add({
       on_value_changed: (v) => {
         this.lf2.sounds.set_volume(v)
+        this.lf2.sounds.play_preset('cancel')
       }
     })
 
@@ -25,6 +26,7 @@ export class SettingsLogic extends UIComponent {
     this.bgm_toggle?.callbacks.add({
       on_value_changed: (v) => {
         this.lf2.sounds.set_bgm_muted(!v)
+        this.lf2.sounds.play_preset(!v ? 'cancel' : 'ok')
       }
     })
 
@@ -33,6 +35,7 @@ export class SettingsLogic extends UIComponent {
     this.bgm_volume?.callbacks.add({
       on_value_changed: (_, s) => {
         this.lf2.sounds.set_bgm_volume(s.factor)
+        this.lf2.sounds.play_preset('cancel')
       }
     })
 
@@ -41,6 +44,7 @@ export class SettingsLogic extends UIComponent {
     this.sfx_toggle?.callbacks.add({
       on_value_changed: (v) => {
         this.lf2.sounds.set_sound_muted(!v)
+        this.lf2.sounds.play_preset(!v ? 'cancel' : 'ok')
       }
     })
 
@@ -49,13 +53,26 @@ export class SettingsLogic extends UIComponent {
     this.sfx_volume?.callbacks.add({
       on_value_changed: (_, s) => {
         this.lf2.sounds.set_sound_volume(s.factor)
+        this.lf2.sounds.play_preset('cancel')
       }
     })
 
     this.team_outline = this.node.search_child("team_outline_row")?.search_component(SliderHandle)
     if (this.team_outline) this.team_outline.factor = this.world.teamoutline_enabled
+    this.team_outline?.callbacks.add({
+      on_value_changed: (v) => {
+        this.world.teamoutline_enabled = v;
+        this.lf2.sounds.play_preset(v ? 'ok' : 'cancel')
+      }
+    })
 
     this.render_rate = this.node.search_child("render_rate_row")?.search_component(SliderHandle)
-    if (this.render_rate) this.render_rate.value = 2 - this.world.sync_render;
+    if (this.render_rate) this.render_rate.set_value(2 - this.world.sync_render);
+    this.render_rate?.callbacks.add({
+      on_value_changed: (v) => {
+        this.world.sync_render = floor(2 - v);
+        this.lf2.sounds.play_preset('ok')
+      }
+    })
   }
 }
