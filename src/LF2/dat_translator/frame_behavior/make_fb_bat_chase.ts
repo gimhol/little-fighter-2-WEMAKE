@@ -4,6 +4,7 @@ import { FacingFlag as FF } from "../../defines/FacingFlag";
 import { HitFlag } from "../../defines/HitFlag";
 import { IFrameInfo } from "../../defines/IFrameInfo";
 import { SpeedMode } from "../../defines/SpeedMode";
+import { ChaseStratedy } from "../../defines/ChaseStratedy";
 export function make_fb_bat_chase(frame: IFrameInfo) {
   frame.facing = FF.VX;
   frame.dvx = 14;
@@ -16,5 +17,5 @@ export function make_fb_bat_chase(frame: IFrameInfo) {
   frame.acc_y = 0.125;
   frame.vym = SpeedMode.AccTo;
   frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
-  frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Hover };
+  frame.chase = { flag: HitFlag.EnemyFighter, stratedy: ChaseStratedy.TillLost, lost: ChaseLost.Hover };
 }
