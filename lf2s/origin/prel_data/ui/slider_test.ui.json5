@@ -19,7 +19,7 @@
           items: [
             {
               center: "0.5,0.5",
-              txt: { i18n: "bgm_volume", style: { font: "20px Arial" } },
+              txt: { i18n: "$val:prefix", style: { font: "20px Arial" } },
               component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
@@ -75,7 +75,7 @@
             {
               center: "0.5,0.5",
               txt: {
-                i18n: "team_outline",
+                i18n: "$val:prefix",
                 style: { font: "20px Arial" },
               },
               component: [{ name: "Label", id: "prefix_label" }],
@@ -135,7 +135,7 @@
             {
               center: "0.5,0.5",
               txt: {
-                i18n: "render_fps",
+                i18n: "$val:prefix",
                 style: { font: "20px Arial" },
               },
               component: [{ name: "Label", id: "prefix_label" }],
@@ -198,26 +198,32 @@
       items: [
         {
           id: "bgm_toggle_row",
+          values: { prefix: "bgm" },
           template: "toggle_slider_row",
         },
         {
           id: "bgm_volume_row",
+          values: { prefix: "bgm_volume" },
           template: "percentage_slider_row",
         },
         {
           id: "sfx_toggle_row",
+          values: { prefix: "sfx" },
           template: "toggle_slider_row",
         },
         {
           id: "sfx_volume_row",
+          values: { prefix: "sfx_volume" },
           template: "percentage_slider_row",
         },
         {
           id: "team_outline_row",
+          values: { prefix: "team_outline" },
           template: "toggle_slider_row",
         },
         {
           id: "render_rate_row",
+          values: { prefix: "render_fps" },
           template: "triple_switcher_row",
         },
       ],

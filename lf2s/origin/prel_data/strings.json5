@@ -1,6 +1,8 @@
 {
   "": {
-    bgm_volume: "BGM Volume",
+    bgm: "BGM",
+    sfx: "SFX",
+    bgm_volume: "BGM",
     sfx_volume: "SFX Volume",
     team_outline: "Team Outline",
     sync_0: "Unlimited",
@@ -105,8 +107,10 @@
     "": "",
   },
   "zh-hans": {
-    bgm_volume: "BGM 音量",
-    sfx_volume: "SFX 音量",
+    bgm: "音乐",
+    sfx: "音效",
+    bgm_volume: "音乐-音量",
+    sfx_volume: "音效-音量",
     team_outline: "队伍描边",
     enabled: "已启用",
     disabled: "已禁用",
@@ -206,8 +210,10 @@
     "": "",
   },
   "zh-hant": {
-    bgm_volume: "BGM 音量",
-    sfx_volume: "SFX 音量",
+    bgm: "音乐",
+    sfx: "音效",
+    bgm_volume: "音乐-音量",
+    sfx_volume: "音效-音量",
     team_outline: "隊伍輪廓",
     render_fps: "渲染幀率",
     enabled: "已啟用",
