@@ -10,6 +10,7 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import type { UINode } from "../UINode";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIProps } from "./UIProps";
+import { LF2PointerEvent } from "../LF2PointerEvent";
 /**
  * 组件
  * 
@@ -166,13 +167,13 @@ export class UIComponent<
     return this.node.name ?? this.node.id ?? 'no_name'
   }
 
-  on_pointer_down?(e: IUIPointerEvent): void;
-  on_pointer_move?(e: IUIPointerEvent): void;
-  on_pointer_up?(e: IUIPointerEvent): void;
-  on_pointer_cancel?(e: IUIPointerEvent): void;
+  on_pointer_down?(e: LF2PointerEvent): void;
+  on_pointer_move?(e: LF2PointerEvent): void;
+  on_pointer_up?(e: LF2PointerEvent): void;
+  on_pointer_cancel?(e: LF2PointerEvent): void;
   on_pointer_leave?(): void;
   on_pointer_enter?(): void;
-  on_click?(e: IUIPointerEvent): void;
+  on_click?(e: LF2PointerEvent): void;
 
   on_start?(): void;
 

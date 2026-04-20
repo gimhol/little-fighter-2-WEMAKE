@@ -30,7 +30,15 @@ const zh_hans = {
   "pls_enter_pwd": "输入房间密码",
   "custom_game": "自定义游戏",
   "pls_drag_game_zip_in_here": "点击此处选择“游戏数据包”\n或\n将“游戏数据包”拖拽至此以加载自定义游戏",
-  "download_origin_full_zip_here": "下载原始“「游戏数据包」"
+  "download_origin_full_zip_here": "下载原始“「游戏数据包」",
+  "bgm_volume": "BGM 音量",
+  "sfx_volume": "SFX 音量",
+  "sync_0": "無限制",
+  "sync_1": "同步 x1",
+  "sync_2": "同步 x0.5",
+  "team_outline": "队伍描边",
+  "enabled": "已启用",
+  "disabled": "已禁用",
 }
 const zh_hant = {
   "game_running": "已開始",
@@ -61,7 +69,15 @@ const zh_hant = {
   "pls_enter_pwd": "輸入房間密碼",
   "custom_game": "自訂遊戲",
   "pls_drag_game_zip_in_here": "點擊此處選擇「遊戲數據包」\n或\n將「遊戲數據包」拖曳至此以加載自定義遊戲",
-  "download_origin_full_zip_here": "下载原始「遊戲數據包」"
+  "download_origin_full_zip_here": "下载原始「遊戲數據包」",
+  "bgm_volume": "BGM 音量",
+  "sfx_volume": "SFX 音量",
+  "sync_0": "无限制",
+  "sync_1": "同步 x1",
+  "sync_2": "同步 x0.5",
+  "team_outline": "隊伍輪廓",
+  "enabled": "已啟用",
+  "disabled": "已禁用",
 }
 const en = {
   "game_running": "Started",
@@ -100,6 +116,14 @@ const en = {
   "custom_game_load_file_err_2": '$1 not found',
   "custom_game_load_file_err_3": 'datas not ',
   "download_origin_full_zip_here": "Download origin \"Game Data Zip File\"",
+  "bgm_volume": "BGM Volume",
+  "sfx_volume": "SFX Volume",
+  "sync_0": "Unlimited",
+  "sync_1": "Sync x1",
+  "sync_2": "Sync x0.5",
+  "team_outline": "Team Outline",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
 }
 const resources = {
   "zh": { translation: zh_hans },

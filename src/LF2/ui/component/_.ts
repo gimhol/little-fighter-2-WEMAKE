@@ -64,6 +64,7 @@ export const regist_components = () => {
     _.ScaleAnimation,
     _.ScaleClickable,
     _.SineOpacity,
+    _.SliderHandle,
     _.Sounds,
     _.StageModeLogic,
     _.StageSwitcher,

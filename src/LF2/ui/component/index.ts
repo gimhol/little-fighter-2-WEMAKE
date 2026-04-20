@@ -63,6 +63,7 @@ export * from "./ReachableGroup";
 export * from "./ScaleAnimation";
 export * from "./ScaleClickable";
 export * from "./SineOpacity";
+export * from "./Slider";
 export * from "./SmoothNumber";
 export * from "./Sounds";
 export * from "./StageDialogListener";

@@ -9,6 +9,7 @@ import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
 import { IUIPointerEvent } from "./IUIPointerEvent";
+import { LF2PointerEvent } from "./LF2PointerEvent";
 import { actor } from "./action";
 import { UIComponent } from "./component";
 import { parse_ui_value } from "./read_info_value";
@@ -91,6 +92,17 @@ export class UINode implements IDebugging {
     const c = this.cross
     const { x, y } = this.pos.value
     return {
+      left: x + c.left,
+      top: y + c.top,
+      right: x + c.right,
+      bottom: y + c.bottom
+    }
+  }
+  get geo() {
+    const c = this.cross
+    const { x, y } = this.global_pos
+    return {
+      pos: { x, y },
       left: x + c.left,
       top: y + c.top,
       right: x + c.right,
@@ -311,22 +323,27 @@ export class UINode implements IDebugging {
     const [w, h] = this.data.size;
     return l <= x && t <= y && l + w >= x && t + h >= y;
   }
-  on_pointer_down(e: IUIPointerEvent) {
+  on_pointer_down(e: LF2PointerEvent) {
     this._pointer_down = 1;
     this._click_flag = 1;
     for (const c of this.components)
       c.on_pointer_down?.(e);
     this.callbacks.emit('on_pointer_down')(e, this);
   }
+  on_pointer_move(e: LF2PointerEvent) {
+    for (const c of this.components)
+      c.on_pointer_move?.(e);
+    this.callbacks.emit('on_pointer_move')(e, this);
+  }
 
-  on_pointer_up(e: IUIPointerEvent) {
+  on_pointer_up(e: LF2PointerEvent) {
     this._pointer_down = 0
     for (const c of this.components)
       c.on_pointer_up?.(e);
     this.callbacks.emit('on_pointer_up')(e, this);
   }
 
-  on_pointer_cancel(e: IUIPointerEvent) {
+  on_pointer_cancel(e: LF2PointerEvent) {
     this._pointer_down = 0
     for (const c of this.components)
       c.on_pointer_cancel?.(e);
@@ -544,7 +561,7 @@ export class UINode implements IDebugging {
     }
   }
 
-  on_click(e: IUIPointerEvent) {
+  on_click(e: LF2PointerEvent) {
     const { click } = this.data.actions ?? {};
     if (click) {
       actor.act(this, click);

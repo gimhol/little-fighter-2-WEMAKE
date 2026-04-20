@@ -1,0 +1,62 @@
+{
+  id: "slider_test_page",
+  name: "slider_test_page",
+  color: "blue",
+  component: [
+    {
+      name: "Flex",
+      properties: {
+        direction: "column",
+        align: "center",
+        gap: 5,
+        padding: "0,0,0,0"
+      },
+    },
+  ],
+  templates: {
+    volume_row: {
+      size: "700,36",
+      center: "0.5,0.5",
+      color: "red",
+      component: [
+        {
+          name: "Flex",
+          properties: { direction: "row", align: "center" },
+        },
+      ],
+      items: [
+        {
+          size: "200,36",
+          center: "0.5,0.5",
+          items: [
+            {
+              center: "0.5,0.5",
+              txt: { i18n: "bgm_volume", style: { font: "20px Arial" } },
+            },
+          ],
+        },
+        {
+          size: "500,36",
+          color: "black",
+          center: "0.5,0.5",
+          items: [
+            {
+              size: "18,36",
+              color: "white",
+              center: "0.5,0.5",
+              component: [{ name: "SliderHandle" }],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  items: [
+    {
+      template: "volume_row",
+    },
+    {
+      template: "volume_row",
+    },
+  ],
+}
