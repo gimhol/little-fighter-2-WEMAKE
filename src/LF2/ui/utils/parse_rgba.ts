@@ -6,7 +6,6 @@ const rgba_regexp = /^rgba\((.*),(.*),(.*),(.*)\)$/;
 const argb_regexp = /^argb\((.*),(.*),(.*),(.*)\)$/;
 const rgb_regexp = /^rgb\((.*),(.*),(.*)\)$/;
 export function parse_rgba(raw: number | string | undefined | null): IRGBA | null {
-
   if (raw == null || raw == void 0) return null;
   if (typeof raw === 'number') {
     const known = RGBA_MAP.get(raw);

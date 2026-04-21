@@ -178,9 +178,8 @@
   items: [
     {
       template: "builtin_data/launch/bg.ui.json5",
-      color: "#000000ff",
-      opacity: 0.5,
-      
+      color: "#00000033",
+      opacity: 0.8
     },
     // "ui/slider_test.ui.json5",
     {

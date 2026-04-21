@@ -1,4 +1,4 @@
-import { int_to_rgba } from "./int_to_rgba";
+import { hex_to_rgba } from "@/LF2";
 import { IRGBA } from "./IRGBA";
 
 const COLOR_HEX_MAP = new Map([
@@ -154,8 +154,6 @@ for (const name of names) {
 }
 
 export const RGBA_MAP = new Map<string | number, IRGBA | null>();
-for (const [name, hex] of COLOR_HEX_MAP) {
-  const num = Number('0x' + hex.substring(1))
-  RGBA_MAP.set(name, int_to_rgba(num)!)
-}
+for (const [name, hex] of COLOR_HEX_MAP) RGBA_MAP.set(name, hex_to_rgba(hex.substring(1)))
+
 

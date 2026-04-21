@@ -171,39 +171,6 @@ export class UINodeRenderer implements IUINodeRenderer {
     return this;
   }
 
-  update_color() {
-    if (
-      this.color_version == this.ui.color.version &&
-      this.img_idx_version === this.ui.img_idx.version &&
-      this.imgs_version === this.ui.imgs.version
-    ) return;
-    const color = this.ui.color.value.trim();
-    const img = this._img;
-
-    const rgba = parse_rgba(color)
-    const rgb = rgba ? new T.Color(rgba.r, rgba.g, rgba.b) : BLACK
-    const a = rgba?.a ?? 0;
-    if (img) {
-      this.mesh.material.coverColor = BLACK;
-      this.mesh.material.coverStength = 0;
-      this.mesh.material.cover = false
-      this.mesh.material.mixColor = rgb;
-      this.mesh.material.mixStength = a;
-    } else if (rgba) {
-      this.mesh.material.coverColor = rgb;
-      this.mesh.material.coverStength = a;
-      this.mesh.material.cover = true
-      this.mesh.material.mixColor = BLACK;
-      this.mesh.material.mixStength = 0;
-    } else {
-      this.mesh.material.coverColor = BLACK;
-      this.mesh.material.coverStength = 0;
-      this.mesh.material.cover = true
-      this.mesh.material.mixColor = BLACK;
-      this.mesh.material.mixStength = 0;
-    }
-  }
-
   update_texture() {
     if (
       this.img_idx_version === this.ui.img_idx.version &&
@@ -218,17 +185,30 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.ui.txts.value[this.ui.txt_idx.value];
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
     this._img = img;
-    const color = this.ui.color.value.trim();
+    const rgba = parse_rgba(this.ui.color.value)
     if (img) {
       this.mesh.material.texture = img.pic?.texture;
-    } else if (color) {
+      this.mesh.material.coverColor = BLACK;
+      this.mesh.material.coverStength = 0;
+      this.mesh.material.cover = false
+      this.mesh.material.mixColor = rgba ? new T.Color(rgba.r, rgba.g, rgba.b) : BLACK;
+      this.mesh.material.mixStength = rgba?.a ?? 0;
+    } else if (rgba) {
       this.mesh.material.texture = white_texture();
+      this.mesh.material.coverColor = new T.Color(rgba.r, rgba.g, rgba.b);
+      this.mesh.material.coverStength = rgba.a;
+      this.mesh.material.cover = true
+      this.mesh.material.mixColor = BLACK;
+      this.mesh.material.mixStength = 0;
     } else {
       this.mesh.material.texture = empty_texture()
+      this.mesh.material.coverColor = BLACK;
+      this.mesh.material.coverStength = 0;
+      this.mesh.material.cover = true
+      this.mesh.material.mixColor = BLACK;
+      this.mesh.material.mixStength = 0;
     }
   }
-
-
   get x(): number { return this.mesh.position.x }
   set x(v: number) { this.mesh.position.x = v; }
   get y(): number { return this.mesh.position.y }
@@ -307,21 +287,19 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (wrapT !== void 0) t.wrapT = (wrapT as any);
     if (repeatX !== void 0) t.repeat.setX(repeatX);
     if (repeatY !== void 0) t.repeat.setY(repeatY);
-    t.needsUpdate = true;
   }
 
   render(dt: number) {
+    this.mesh.visible = this.ui.visible
     this.update_center_and_size()
     this.update_dom();
     this.update_texture();
-    this.update_color();
     this.update_texture_attributes(dt)
     const { background, backgroundAlpha, foreground, foregroundAlpha } = this.ui
     this.mesh.material.bgColor = background;
     this.mesh.material.bgAlpha = backgroundAlpha;
     this.mesh.material.fgColor = foreground;
     this.mesh.material.fgAlpha = foregroundAlpha;
-
     if (this.ui.scale.version !== this.scale_version) {
       const { x, y, z } = this.ui.scale.value
       this.mesh.scale.set(x, y, z);
@@ -330,7 +308,6 @@ export class UINodeRenderer implements IUINodeRenderer {
       const { x, y, z } = this.ui
       this.mesh.position.set(x, -y, z);
     }
-    this.mesh.visible = this.ui.visible
     if (this._dom) {
       this._dom.style.opacity = '' + this.ui.global_opacity
       if (this._input) {
@@ -339,13 +316,10 @@ export class UINodeRenderer implements IUINodeRenderer {
       }
     }
     this.apply()
-
     for (const child of this.ui.children) {
-      if (child.renderer.visible) {
+      if (child.visible || (child.visible != child.renderer.visible))
         child.renderer.render(dt)
-      }
     }
-
     this.center_version = this.ui.center.version
     this.scale_version = this.ui.scale.version;
     this.pos_version = this.ui.pos.version;
