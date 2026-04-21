@@ -51,7 +51,7 @@
     {
       id: "_",
       size: "30,30",
-      color: "red",
+      // color: "red",
       center: "0,0",
       items: [
         {
