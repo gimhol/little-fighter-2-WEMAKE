@@ -179,7 +179,7 @@
     {
       template: "builtin_data/launch/bg.ui.json5",
       color: "#00000033",
-      opacity: 0.8
+      opacity: 0.9
     },
     // "ui/slider_test.ui.json5",
     {
