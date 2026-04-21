@@ -289,7 +289,7 @@ function apply_text_style(style: IStyle, ctx: CanvasRenderingContext2D) {
 function need_stroke(style: IStyle): boolean {
   if (!style.stroke_style) return false;
   if (!style.line_width || style.line_width < 0) return false;
-  return !!parse_rgba(style.fill_style)?.a;
+  return !!parse_rgba(style.stroke_style)?.a;
 }
 function need_fiil(style: IStyle): boolean {
   if (!style.fill_style) return true;

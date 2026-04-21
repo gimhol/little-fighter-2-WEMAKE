@@ -216,15 +216,24 @@ export class UIComponent<
     const parent = this.node.parent
     if (parent && which.startsWith('bro:')) {
       const v = which.substring(4).trim();
-      const brothers = parent.children
+      const brothers = parent.children;
+      const len = brothers.length;
+      if (len < 1) return null;
+      let bro: UINode | null = null
       switch (v) {
         case 'prev': case '-1':
-          return brothers[brothers.indexOf(this.node) - 1] || null;
+          bro = brothers[brothers.indexOf(this.node) - 1] || null;
+          break;
         case 'next': case '+1':
-          return brothers[brothers.indexOf(this.node) + 1] || null;
+          bro = brothers[brothers.indexOf(this.node) + 1] || null;
+          break;
         default:
-          return brothers[v as any] || null
+          bro = brothers[v as any] || null
+          break;
       }
+      if (bro === this.node)
+        return null
+      return bro
     }
     if (which.startsWith('id:')) {
       const v = which.substring(3).trim();

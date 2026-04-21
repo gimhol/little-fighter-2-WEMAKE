@@ -51,7 +51,7 @@
     {
       id: "_",
       size: "30,30",
-      color: "black",
+      color: "red",
       center: "0,0",
       items: [
         {
@@ -206,7 +206,7 @@
           properties: {
             left: "left",
             bottom: "top",
-            followed: "id:dark_hp",
+            followed: "bro:1",
             offset: { l: 2, b: 1 },
             once: true,
           },

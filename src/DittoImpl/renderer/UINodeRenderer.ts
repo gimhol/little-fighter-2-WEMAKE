@@ -14,6 +14,7 @@ import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
+import { SRGBColorSpace } from "../_t";
 interface IUserData {
   w?: number;
   h?: number;
@@ -191,11 +192,11 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.mesh.material.coverColor = BLACK;
       this.mesh.material.coverStength = 0;
       this.mesh.material.cover = false
-      this.mesh.material.mixColor = rgba ? new T.Color(rgba.r, rgba.g, rgba.b) : BLACK;
+      this.mesh.material.mixColor = rgba ? new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace) : BLACK;
       this.mesh.material.mixStength = rgba?.a ?? 0;
     } else if (rgba) {
       this.mesh.material.texture = white_texture();
-      this.mesh.material.coverColor = new T.Color(rgba.r, rgba.g, rgba.b);
+      this.mesh.material.coverColor = new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace);
       this.mesh.material.coverStength = rgba.a;
       this.mesh.material.cover = true
       this.mesh.material.mixColor = BLACK;
