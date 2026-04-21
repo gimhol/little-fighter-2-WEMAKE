@@ -18,6 +18,7 @@ export class WorldRenderer implements IWorldRenderer {
   bg_render: BgRender;
   scene: __Scene;
   camera: Camera;
+  ui_container: Object3D;
   readonly entity_renderers = new Set<EntityRenderer>();
   readonly world_node = new Object3D();
 
@@ -41,16 +42,18 @@ export class WorldRenderer implements IWorldRenderer {
     x = Math.max(0, x)
     this.camera.position.x = x;
     this.camera.position.y = y;
-    for (const stack of this.lf2.ui_stacks) {
-      for (const ui of stack.uis) {
-        // TODO: ...stupid
-        const { x: a, y: b } = ui.pos.default_value;
-        const { z: c } = ui.pos.value;
-        ui.move_to(a + x, b + y, c);
-        ui.renderer.x = a + x;
-        ui.renderer.y = -(b + y);
-      }
-    }
+    this.ui_container.position.x = x;
+    this.ui_container.position.y = y;
+    // for (const stack of this.lf2.ui_stacks) {
+    //   for (const ui of stack.uis) {
+    //     // TODO: ...stupid
+    //     const { x: a, y: b } = ui.pos.default_value;
+    //     const { z: c } = ui.pos.value;
+    //     ui.move_to(a + x, b + y, c);
+    //     ui.renderer.x = a + x;
+    //     ui.renderer.y = -(b + y);
+    //   }
+    // }
   }
   constructor(world: World) {
     if (!world) debugger;
@@ -76,6 +79,8 @@ export class WorldRenderer implements IWorldRenderer {
       this.scene.add_camera(camera);
       camera.updateProjectionMatrix();
     }
+    this.ui_container = new Object3D();
+    this.scene.inner.add(this.ui_container);
     {
       // const camera = this.camera = new PerspectiveCamera()
       // camera.aspect = 1;

@@ -9,9 +9,9 @@ export class PlayerKeyText extends Label {
   get player() { return this.lf2.players.get(this.player_id); }
   get key_code() {
     const { player } = this;
-    if (!player) return 'NOT SET'
+    if (!player) return 'None'
     const kc = player.keys[this.key_name as GameKey]?.toUpperCase();
-    return Defines.SHORT_KEY_CODES[kc] || kc || 'NOT SET'
+    return Defines.SHORT_KEY_CODES[kc] || kc || 'None'
   }
   override on_resume() {
     super.on_resume();

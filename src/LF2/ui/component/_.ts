@@ -37,6 +37,7 @@ export const regist_components = () => {
     _.IntegerPicker,
     _.Jalousie,
     _.Label,
+    _.LabelButton,
     _.LaunchPage,
     _.LittleFunnyAutoGame,
     _.LoadingContentText,

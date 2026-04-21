@@ -4,7 +4,16 @@
   size: "0,0",
   center: "0, 0",
   pos: "100, 100",
-  component: ["FitChildren()"],
+  component: [
+    "FitChildren()",
+    {
+      name: "LabelButton",
+      properties: {
+        back_label: "back_label",
+        hover_label: "hover_label",
+      },
+    },
+  ],
   values: {
     text: "文本按钮",
     style_normal: {
@@ -31,6 +40,7 @@
         i18n: "$val:text",
         style: "$val:style_normal",
       },
+      component: [{ name: "Label", id: "back_label" }],
     },
     {
       center: "0.5,0.5",
@@ -38,7 +48,7 @@
         i18n: "$val:text",
         style: "$val:style_hover",
       },
-      component: ["OpacityHover(0,1,255,1)"],
+      component: [{ name: "Label", id: "hover_label" }],
     },
   ],
 }

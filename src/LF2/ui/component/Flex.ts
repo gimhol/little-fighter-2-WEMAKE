@@ -1,11 +1,11 @@
 import { max } from "../../utils";
+import { FlexAlign } from "./FlexAlign";
 import { FlexItem } from "./FlexItem";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
 
 export type TFlexDirection = 'row' | 'column'
-export type TFlexAlign = 'start' | 'center' | 'end' | 'stretch'
-
+export type TFlexAlign = 'start' | 'center' | 'end' | 'stretch' | FlexAlign;
 export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks> extends UIComponent<{}, Callbacks> {
   static override readonly TAGS: string[] = ["Flex"];
   get direction(): TFlexDirection {
@@ -19,8 +19,13 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
   get fit_w(): boolean { return this.props_holder.bool('fit_w') ?? this.fit }
   get fit_h(): boolean { return this.props_holder.bool('fit_h') ?? this.fit }
   get padding(): [number, number, number, number] { return this.props_holder.nums('padding', 4) }
-
+  override on_resume(): void {
+    this.apply()
+  }
   override update(dt: number): void {
+    this.apply()
+  }
+  apply() {
     const {
       direction, col_gap, row_gap, align,
       fit_h, fit_w,
@@ -57,7 +62,6 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
         this.node.resize(this.node.w, h);
       }
     }
-
     const { x: my_w, y: my_h } = this.node.size.value;
     for (const child of this.node.children) {
       if (!child.self_visible) continue;

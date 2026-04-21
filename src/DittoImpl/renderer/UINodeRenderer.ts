@@ -1,9 +1,9 @@
+import { parse_rgba } from "@/LF2";
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
 import { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
-import { get_alpha_from_color } from "@/LF2/ui/utils/get_alpha_from_color";
 import { is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
@@ -41,6 +41,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected scale_version: number | null = null;
   protected pos_version: number | null = null;
   protected _img: ImageInfo<T.Texture> | undefined;
+  protected _input: HTMLInputElement | undefined;
   get is_size_dirty() { return this.size_version != this.ui.size.version }
   get is_center_dirty() { return this.center_version != this.ui.center.version }
 
@@ -63,6 +64,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.remove(this._css_obj);
     delete this._css_obj;
     delete this._dom;
+    delete this._input
   }
   protected hide_dom() {
     if (!this._css_obj) return;
@@ -99,10 +101,11 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
   on_resume(): void {
     const world_renderer = this.lf2.world.renderer as WorldRenderer;
-    if (this.ui.root === this.ui) world_renderer.scene.inner.add(this.mesh);
+    if (this.ui.root === this.ui) world_renderer.ui_container.add(this.mesh);
     const text_input = this.ui.find_component(TextInput)
     if (text_input) {
-      const ele_input = document.createElement('input');
+      const ele_input = this._input = document.createElement('input');
+      ele_input.id = "text_input"
       const { maxLength, defaultValue, text } = text_input
       if (is_num(maxLength)) ele_input.maxLength = maxLength
       else ele_input.removeAttribute('maxLength')
@@ -119,7 +122,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   on_pause(): void {
     const text_input = this.ui.find_component(TextInput)
     const world_renderer = this.lf2.world.renderer as WorldRenderer;
-    if (this.ui.root === this.ui) world_renderer.scene.inner.remove(this.mesh);
+    if (this.ui.root === this.ui) world_renderer.ui_container.remove(this.mesh);
     if (text_input) this.release_dom()
   }
   on_show(): void { }
@@ -149,8 +152,8 @@ export class UINodeRenderer implements IUINodeRenderer {
     m.uniforms.opacity.value = this.ui.global_opacity;
 
     const { w = 1, h = 1, scale = 1 } = _img || {}
-    const sw = w / scale
-    const sh = h / scale
+    const sw = w / scale;
+    const sh = h / scale;
     // look stupid.
     u.x.value = _texture.offset.x * sw / _texture.repeat.x;
     u.y.value = _texture.offset.y * sh / _texture.repeat.y;
@@ -160,7 +163,6 @@ export class UINodeRenderer implements IUINodeRenderer {
     u.th.value = h;
     u.tsw.value = (scale * _texture.repeat.x);
     u.tsh.value = (scale * _texture.repeat.y);
-
     if (u.tex.value !== _texture) {
       u.tex.value?.dispose();
       u.tex.value = _texture;
@@ -169,6 +171,38 @@ export class UINodeRenderer implements IUINodeRenderer {
     return this;
   }
 
+  update_color() {
+    if (
+      this.color_version == this.ui.color.version &&
+      this.img_idx_version === this.ui.img_idx.version &&
+      this.imgs_version === this.ui.imgs.version
+    ) return;
+    const color = this.ui.color.value.trim();
+    const img = this._img;
+
+    const rgba = parse_rgba(color)
+    const rgb = rgba ? new T.Color(rgba.r, rgba.g, rgba.b) : BLACK
+    const a = rgba?.a ?? 0;
+    if (img) {
+      this.mesh.material.coverColor = BLACK;
+      this.mesh.material.coverStength = 0;
+      this.mesh.material.cover = false
+      this.mesh.material.mixColor = rgb;
+      this.mesh.material.mixStength = a;
+    } else if (rgba) {
+      this.mesh.material.coverColor = rgb;
+      this.mesh.material.coverStength = a;
+      this.mesh.material.cover = true
+      this.mesh.material.mixColor = BLACK;
+      this.mesh.material.mixStength = 0;
+    } else {
+      this.mesh.material.coverColor = BLACK;
+      this.mesh.material.coverStength = 0;
+      this.mesh.material.cover = true
+      this.mesh.material.mixColor = BLACK;
+      this.mesh.material.mixStength = 0;
+    }
+  }
 
   update_texture() {
     if (
@@ -186,28 +220,11 @@ export class UINodeRenderer implements IUINodeRenderer {
     this._img = img;
     const color = this.ui.color.value.trim();
     if (img) {
-      const texture: T.Texture = img.pic?.texture;
-      this.mesh.material.coverColor = BLACK;
-      this.mesh.material.coverStength = 0;
-      this.mesh.material.cover = false
-      this.mesh.material.mixColor = color ? new T.Color(color) : BLACK
-      this.mesh.material.mixStength = color ? (get_alpha_from_color(color) || 1) : 0;
-      this.mesh.material.texture = texture;
+      this.mesh.material.texture = img.pic?.texture;
     } else if (color) {
-      const texture: T.Texture = white_texture();
-      this.mesh.material.coverColor = new T.Color(color);
-      this.mesh.material.coverStength = get_alpha_from_color(color) || 1;
-      this.mesh.material.cover = true
-      this.mesh.material.mixColor = BLACK;
-      this.mesh.material.mixStength = 0;
-      this.mesh.material.texture = texture;
+      this.mesh.material.texture = white_texture();
     } else {
       this.mesh.material.texture = empty_texture()
-      this.mesh.material.coverColor = BLACK;
-      this.mesh.material.coverStength = 0;
-      this.mesh.material.cover = true
-      this.mesh.material.mixColor = BLACK;
-      this.mesh.material.mixStength = 0;
     }
   }
 
@@ -271,32 +288,34 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
   update_dom() {
     if (this._dom && this.is_size_dirty) {
-      this._dom.style.width = `${this._w}px`
-      this._dom.style.height = `${this._h}px`
+      this._dom.style.width = `${this._w}px`;
+      this._dom.style.height = `${this._h}px`;
     }
     if (this._css_obj && this.is_center_dirty)
-      this._css_obj.center.set(this.ui.center.value.x, this.ui.center.value.y)
+      this._css_obj.center.set(this.ui.center.value.x, this.ui.center.value.y);
   }
   update_texture_attributes(dt: number) {
     const t: T.Texture = this.mesh.material.uniforms.tex.value;
     if (!t || !this._ui_img) return;
-    const { offsetAnimX, offsetAnimY } = this._ui_img
+    const { offsetAnimX, offsetAnimY } = this._ui_img;
     if (!offsetAnimX && !offsetAnimY && this.user_data.ui_img == this._ui_img)
-      return
-    const { wrapS, wrapT, repeatX, repeatY } = this._ui_img
+      return;
+    const { wrapS, wrapT, repeatX, repeatY } = this._ui_img;
     if (offsetAnimX !== void 0) t.offset.y += (dt / 1000) * offsetAnimX;
     if (offsetAnimY !== void 0) t.offset.x += (dt / 1000) * offsetAnimY;
-    if (wrapS !== void 0) t.wrapS = (wrapS as any)
-    if (wrapT !== void 0) t.wrapT = (wrapT as any)
-    if (repeatX !== void 0) t.repeat.setX(repeatX)
-    if (repeatY !== void 0) t.repeat.setY(repeatY)
-    t.needsUpdate = true
+    if (wrapS !== void 0) t.wrapS = (wrapS as any);
+    if (wrapT !== void 0) t.wrapT = (wrapT as any);
+    if (repeatX !== void 0) t.repeat.setX(repeatX);
+    if (repeatY !== void 0) t.repeat.setY(repeatY);
+    t.needsUpdate = true;
   }
 
   render(dt: number) {
     this.update_center_and_size()
     this.update_dom();
     this.update_texture();
+    this.update_color();
+    this.update_texture_attributes(dt)
     const { background, backgroundAlpha, foreground, foregroundAlpha } = this.ui
     this.mesh.material.bgColor = background;
     this.mesh.material.bgAlpha = backgroundAlpha;
@@ -307,23 +326,25 @@ export class UINodeRenderer implements IUINodeRenderer {
       const { x, y, z } = this.ui.scale.value
       this.mesh.scale.set(x, y, z);
     }
-    this.update_texture_attributes(dt)
-
-    const sp = this.mesh;
     if (this.ui.pos.version !== this.pos_version) {
       const { x, y, z } = this.ui
-      sp.position.set(x, -y, z);
+      this.mesh.position.set(x, -y, z);
     }
-    sp.visible = this.ui.visible
-    const opacity = this.ui.global_opacity
-
-    if (this._dom) this._dom.style.opacity = '' + opacity
-
+    this.mesh.visible = this.ui.visible
+    if (this._dom) {
+      this._dom.style.opacity = '' + this.ui.global_opacity
+      if (this._input) {
+        this._input.style.fontSize = this._dom.style.height;
+        this._input.style.lineHeight = this._dom.style.height;
+      }
+    }
     this.apply()
 
-    for (const child of this.ui.children)
-      if (child.visible !== child.renderer.visible || child.renderer.visible)
+    for (const child of this.ui.children) {
+      if (child.renderer.visible) {
         child.renderer.render(dt)
+      }
+    }
 
     this.center_version = this.ui.center.version
     this.scale_version = this.ui.scale.version;
