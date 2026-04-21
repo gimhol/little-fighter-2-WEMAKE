@@ -27,6 +27,8 @@ export class PlayerCtrlType extends UIComponent {
       for (const [, p] of this.lf2.players) {
         if (p === this.player)
           continue;
+        if (p.ctrl !== CtrlDevice.TouchScreen)
+          continue;
         p.set_ctrl(CtrlDevice.Keyboard, true).save()
       }
     }
