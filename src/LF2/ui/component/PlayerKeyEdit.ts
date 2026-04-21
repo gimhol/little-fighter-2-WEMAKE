@@ -1,7 +1,4 @@
-import { IUICallback } from "@/LF2";
-import { IKeyboardCallback } from "../../ditto";
-import { IPointingsCallback } from "../../ditto/pointings/IPointingsCallback";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import { IUICallback, IKeyboardCallback, IPointingsCallback } from "@/LF2";
 import { PlayerKeyText } from "./PlayerKeyText";
 
 export class PlayerKeyEdit extends PlayerKeyText {

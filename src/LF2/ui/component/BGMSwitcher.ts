@@ -1,5 +1,5 @@
 import { loop_offset } from "../../utils/container_help/loop_offset";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import { LF2PointerEvent } from "../LF2PointerEvent";
 import { Label } from "./Label";
 
 export class BGMSwitcher extends Label {
@@ -23,7 +23,7 @@ export class BGMSwitcher extends Label {
     super.on_pause();
     this.lf2.sounds.callbacks.del(this._sounds_cbs)
   }
-  override on_click(e: IUIPointerEvent): void {
+  override on_click(e: LF2PointerEvent): void {
     super.on_click?.(e)
     e.stop_immediate_propagation()
     e.stop_propagation();
