@@ -329,8 +329,7 @@ function App() {
     document.addEventListener('visibilitychange', visibilitychange);
     window.addEventListener('blur', blur);
     window.addEventListener('focus', focus);
-
-    lf2.sounds.set_muted(document.hasFocus() && !document.hidden);
+    lf2.sounds.set_muted(!document.hasFocus() || document.hidden);
     return () => {
       window.removeEventListener("touchstart", on_touchstart)
       document.removeEventListener('visibilitychange', visibilitychange);
