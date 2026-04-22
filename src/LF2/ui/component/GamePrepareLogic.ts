@@ -88,7 +88,6 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
         debugger;
         continue;
       }
-      fighter.name = player.name;
       fighter.team = slot_info.team || new_team();
       fighter.stat_bar_type = StatBarType.UI;
       fighter.facing = is_stage_mode ?
@@ -118,6 +117,9 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
         this.lf2.change_stage(stage_switcher.stage.id);
       this.lf2.push_ui({ id: "stage_mode_page" });
     } else {
+      this.world.stage.right =
+        this.world.stage.player_r =
+        this.world.stage.cam_r = 100;
       this.lf2.push_ui({ id: "vs_mode_page" });
     }
   }

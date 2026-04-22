@@ -20,6 +20,7 @@ export class PlayerNameInput extends TextInput {
   }
   override on_stop(): void {
     this.player?.callbacks.del(this)
+    this.player?.set_name(this.text, true).save();
   }
   on_name_changed(name: string) {
     this._text = name

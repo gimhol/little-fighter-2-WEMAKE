@@ -148,24 +148,17 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     const { entity } = this;
     if (entity) {
       const { head } = entity.data.base;
-
-      let { name } = entity.data.base;
-      const player_name = this.lf2.players.get(entity.ctrl.player_id)?.name
-      if (player_name)
-        if (this.direction === 'r')
-          name = `(${player_name}) ${name} `.trim();
-        else
-          name = `${name} (${player_name})`.trim();
-
       this.props.head_img?.set_src(typeof head === 'string' ? head : '')
-      this.props.name_txt?.set_text(typeof name === 'string' ? name : '')
     } else {
       this.props.head_img?.set_src('')
-      this.props.name_txt?.set_text('')
     }
-
+  }
+  update_name() {
+    this.props.name_txt?.set_text(this.entity?.name ?? "")
   }
   override update(): void {
+    this.update_name();
+
     const { entity, props: { hp_bar } } = this
     if (hp_bar) {
       this.healing = !!entity?.healing && (entity.update_id.value % 8) < 4;
