@@ -54,7 +54,7 @@ export class UINode implements IDebugging {
   protected _focused_node?: UINode;
   protected _components = new Set<UIComponent>();
   protected _state: any = {};
-  protected _visible = () => !0;
+  protected _visible = true;
   protected _disabled = false;
   protected _opacity = () => 1;
 
@@ -150,7 +150,7 @@ export class UINode implements IDebugging {
   }
 
   get self_visible() {
-    return this._visible()
+    return this._visible
   }
   /**
    * 当前节点是否可见
@@ -183,7 +183,7 @@ export class UINode implements IDebugging {
   set foregroundAlpha(v: number | null) { this._foregroundAlpha = v; }
   set_visible(v: boolean): this {
     const prev = this.visible;
-    this._visible = () => v;
+    this._visible = v;
     if (prev !== this.visible) this.invoke_all_visible()
     if (!v && !this.focused_node?.visible) this.focused_node = void 0
     return this;
@@ -394,7 +394,7 @@ export class UINode implements IDebugging {
   on_resume() {
     if (!this.parent) {
       this.focused_node = this._state.focused_node;
-      if (this._visible()) this.invoke_all_visible();
+      if (this._visible) this.invoke_all_visible();
     }
     for (const c of this._components) {
       c.paused = false;
@@ -519,21 +519,14 @@ export class UINode implements IDebugging {
     }
   }
   private _read_data(get_val: IValGetter<UINode>) {
-    const { visible, opacity, disabled = false } = this.data;
-
-    if (is_bool(visible)) {
-      this._visible = () => visible;
-    } else if (is_str(visible)) {
-      const func = new Expression<UINode>(visible, () => get_val).run;
-      this._visible = () => func(this);
-    }
-
+    const { visible = true, opacity, disabled = false } = this.data;
     if (is_num(opacity)) {
       this._opacity = () => opacity;
     } else if (is_str(opacity)) {
       this._opacity = () => Number(get_val(this, opacity, "==")) || 0;
     }
     this._disabled = disabled
+    this._visible = visible
     this.center.set(...this.data.center);
     this.pos.set(...this.data.pos);
     this.size.set(...this.data.size);
@@ -576,7 +569,7 @@ export class UINode implements IDebugging {
   protected invoke_all_on_show() {
     this.on_show();
     for (const child of this.children) {
-      if (child._visible()) child.invoke_all_on_show();
+      if (child._visible) child.invoke_all_on_show();
     }
   }
 
@@ -586,12 +579,12 @@ export class UINode implements IDebugging {
   protected invoke_all_on_hide() {
     this.on_hide();
     for (const child of this.children) {
-      if (child._visible()) child.invoke_all_on_hide();
+      if (child._visible) child.invoke_all_on_hide();
     }
   }
 
   protected invoke_all_visible() {
-    if (this._visible()) {
+    if (this._visible) {
       this.invoke_all_on_show();
     } else {
       this.invoke_all_on_hide();
