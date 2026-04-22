@@ -44,6 +44,7 @@ export * from "./LoadingContentText";
 export * from "./OpacityAnimation";
 export * from "./OpacityFlash";
 export * from "./OpacityHover";
+export * from "./PauseHandling";
 export * from "./Picture";
 export * from "./PlayerCtrlType";
 export * from "./PlayerKeyEdit";

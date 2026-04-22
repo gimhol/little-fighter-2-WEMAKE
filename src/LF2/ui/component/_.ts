@@ -44,6 +44,7 @@ export const regist_components = () => {
     _.OpacityAnimation,
     _.OpacityFlash,
     _.OpacityHover,
+    _.PauseHandling,
     _.Picture,
     _.PlayerCtrlType,
     _.PlayerKeyEdit,

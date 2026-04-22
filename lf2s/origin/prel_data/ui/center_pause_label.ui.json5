@@ -1,7 +1,8 @@
 {
   name: "UI：居中暂停文本",
   id: "center_pause_label",
-  visible: "paused==1",
+  visible: false,
+  component: [{ name: "PauseHandling" }],
   txt: {
     i18n: "PAUSE",
     style: {

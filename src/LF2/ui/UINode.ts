@@ -55,7 +55,7 @@ export class UINode implements IDebugging {
   protected _components = new Set<UIComponent>();
   protected _state: any = {};
   protected _visible = () => !0;
-  protected _disabled = () => !1;
+  protected _disabled = false;
   protected _opacity = () => 1;
 
   readonly pos: IVector3 = new D.Vector3();
@@ -190,33 +190,26 @@ export class UINode implements IDebugging {
   }
 
   get disabled(): boolean {
-    if (!this.parent) return this._disabled();
-    return this.parent.disabled || this._disabled();
+    if (!this.parent) return this._disabled;
+    return this.parent.disabled || this._disabled;
   }
   set disabled(v: boolean) {
     this.set_disabled(v);
   }
   set_disabled(v: boolean): this {
-    this._disabled = () => v;
+    this._disabled = v;
     if (v && this.focused_node?.disabled) this.focused_node = void 0
     return this;
   }
-  get self_disabled() { return this._disabled() }
+  get self_disabled() { return this._disabled }
 
   get global_opacity(): number {
     if (!this.parent) return this._opacity()
     return this._opacity() * this.parent._opacity();
   }
-  get opacity(): number {
-    return this._opacity();
-  }
-  set opacity(v: number) {
-    this.set_opacity(v);
-  }
-  set_opacity(v: number): this {
-    this._opacity = () => v;
-    return this;
-  }
+  get opacity(): number { return this._opacity(); }
+  set opacity(v: number) { this.set_opacity(v); }
+  set_opacity(v: number): this { this._opacity = () => v; return this; }
 
   get parent(): UINode | undefined { return this._parent; }
   get children(): Readonly<UINode[]> { return this._children; }
@@ -527,12 +520,6 @@ export class UINode implements IDebugging {
   }
   private _read_data(get_val: IValGetter<UINode>) {
     const { visible, opacity, disabled = false } = this.data;
-    if (is_bool(disabled)) {
-      this._disabled = () => disabled;
-    } else if (is_str(disabled)) {
-      const func = new Expression<UINode>(disabled, () => get_val).run;
-      this._disabled = () => func(this);
-    }
 
     if (is_bool(visible)) {
       this._visible = () => visible;
@@ -546,6 +533,7 @@ export class UINode implements IDebugging {
     } else if (is_str(opacity)) {
       this._opacity = () => Number(get_val(this, opacity, "==")) || 0;
     }
+    this._disabled = disabled
     this.center.set(...this.data.center);
     this.pos.set(...this.data.pos);
     this.size.set(...this.data.size);

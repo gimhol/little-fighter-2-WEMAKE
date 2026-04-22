@@ -31,8 +31,8 @@ export interface IUIInfo {
   center?: number[] | string;
   scale?: number[] | string;
   size?: number[] | string;
-  visible?: boolean | string;
-  disabled?: boolean | string;
+  visible?: boolean;
+  disabled?: boolean;
   color?: string;
   background?: string;
   backgroundAlpha?: number;

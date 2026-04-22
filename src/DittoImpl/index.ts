@@ -18,4 +18,5 @@ export * from "./md5";
 export * from "./renderer";
 export * from "./sounds";
 export * from "./ui";
+export * from "./xml";
 /*** AUTO EXPORT END ***/

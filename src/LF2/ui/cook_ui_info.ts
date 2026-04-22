@@ -88,7 +88,7 @@ export async function cook_ui_info(
     pos: read_nums(ui_info.pos, 3, [0, 0, 0]),
     scale: read_nums(ui_info.scale, 3, [1, 1, 1]),
     center: read_nums(ui_info.center, 3, [0, 0, 0]),
-    size: [0, 0, 0],
+    size: [0, 0,0],
     parent,
     img_infos: [],
     txt_infos: [],
