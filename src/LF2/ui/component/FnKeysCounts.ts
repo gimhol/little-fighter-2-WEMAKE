@@ -37,11 +37,11 @@ export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
     on_counts: () => {
       this.props.fn_key_counts?.set_visible(true)
       const { f6, f7, f8, f9, f10 } = this.props;
-      f6?.set_text(this.world.counts.get('f6') ?? 0)
-      f7?.set_text(this.world.counts.get('f7') ?? 0)
-      f8?.set_text(this.world.counts.get('f8') ?? 0)
-      f9?.set_text(this.world.counts.get('f9') ?? 0)
-      f10?.set_text(this.world.counts.get('f10') ?? 0)
+      f6?.set_text('' + (this.world.counts.get('f6') ?? 0))
+      f7?.set_text('' + (this.world.counts.get('f7') ?? 0))
+      f8?.set_text('' + (this.world.counts.get('f8') ?? 0))
+      f9?.set_text('' + (this.world.counts.get('f9') ?? 0))
+      f10?.set_text('' + (this.world.counts.get('f10') ?? 0))
     }
   }
   override on_start(): void {

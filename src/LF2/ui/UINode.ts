@@ -700,13 +700,13 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   find_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1
+    condition: TCond<T> | string = () => true
   ): InstanceType<T> | undefined {
     for (const v of this._components) {
       if (!(v instanceof type))
@@ -726,13 +726,13 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {InstanceType<T>[]}
    * @memberof UINode
    */
   find_components<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1
+    condition: TCond<T> | string = () => true
   ): InstanceType<T>[] {
     const ret = filter(
       this.components,
@@ -750,13 +750,13 @@ export class UINode implements IDebugging {
    *
    * @template T 
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   search_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1
+    condition: TCond<T> | string = () => true
   ): InstanceType<T> | undefined {
     const ret = this.find_component(type, condition);
     if (ret) return ret;
@@ -771,12 +771,12 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {InstanceType<T>[]}
    * @memberof UINode
    */
   search_components<T extends TCls<UIComponent>>(
-    type: T, condition: TCond<T> | string = () => 1
+    type: T, condition: TCond<T> | string = () => true
   ): InstanceType<T>[] {
     const ret = this.find_components(type, condition);
     for (const i of this._children)
@@ -789,13 +789,13 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {TCond<T>} [condition=() => 1]
+   * @param {TCond<T>} [condition=() => true]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   lookup_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> = () => 1
+    condition: TCond<T> = () => true
   ): InstanceType<T> | undefined {
     const ret = this.find_component(type, condition);
     if (ret) return ret;
@@ -815,5 +815,5 @@ export class UINode implements IDebugging {
   }
 }
 type TCls<R = any> = abstract new (...args: any) => R;
-type TCond<T extends TCls,> = (c: InstanceType<T>) => unknown;
+type TCond<T extends TCls,> = (c: InstanceType<T>) => boolean;
 

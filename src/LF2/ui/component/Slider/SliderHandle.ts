@@ -80,7 +80,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     if (min_value == 0 && precision == 1 && step == 1) {
       const items = this.props.items?.split(',')
       if (items?.length) {
-        this.props.handle_label?.set_text(items.at(this.value) ?? this.value)
+        this.props.handle_label?.set_text('' + (items.at(this.value) ?? this.value))
       } else {
         this.props.handle_label?.set_text('' + this.value)
       }
