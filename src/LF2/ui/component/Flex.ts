@@ -43,7 +43,7 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
       for (let i = 0; i < len; ++i) {
         const child = children[i]
         if (!child.self_visible) continue;
-        const { x: child_w, y: child_h } = child.size.value
+        const { x: child_w, y: child_h } = child.size
         if (fit_w && direction === 'row')
           w += child_w + (i < len - 1 ? row_gap : 0);
         else if (fit_w && direction === 'column')
@@ -62,7 +62,7 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
         this.node.resize(this.node.w, h);
       }
     }
-    const { x: my_w, y: my_h } = this.node.size.value;
+    const { x: my_w, y: my_h } = this.node.size;
     for (const child of this.node.children) {
       if (!child.self_visible) continue;
       const { x, y, z, w: child_w, h: child_h } = child

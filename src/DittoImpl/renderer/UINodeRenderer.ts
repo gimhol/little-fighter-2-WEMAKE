@@ -43,7 +43,6 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected pos_version: number | null = null;
   protected _img: ImageInfo<T.Texture> | undefined;
   protected _input: HTMLInputElement | undefined;
-  get is_size_dirty() { return this.size_version != this.ui.size.version }
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -144,30 +143,31 @@ export class UINodeRenderer implements IUINodeRenderer {
   apply() {
     const { mesh: sp } = this;
     sp.geometry = this.next_geometry();
-    const _texture = sp.material.texture!
-    const { _img } = this;
+    const t = sp.material.texture
+    const { _img: i } = this;
 
     const { material: m } = sp;
     const { uniforms: u } = m;
-    m.uniforms.opacity.value = this.ui.global_opacity;
 
-    const { w = 1, h = 1, scale = 1 } = _img || {}
-    const sw = w / scale;
-    const sh = h / scale;
     // look stupid.
-    u.x.value = _texture.offset.x * sw / _texture.repeat.x;
-    u.y.value = _texture.offset.y * sh / _texture.repeat.y;
-    u.w.value = sw;
-    u.h.value = sh;
-    u.tw.value = w;
-    u.th.value = h;
-    u.tsw.value = (scale * _texture.repeat.x);
-    u.tsh.value = (scale * _texture.repeat.y);
-    if (u.tex.value !== _texture) {
-      u.tex.value?.dispose();
-      u.tex.value = _texture;
+    if (t && i) {
+      const { w, h, scale } = i
+      const sw = w / scale;
+      const sh = h / scale;
+      u.x.value = t.offset.x * sw / t.repeat.x;
+      u.y.value = t.offset.y * sh / t.repeat.y;
+      u.w.value = sw;
+      u.h.value = sh;
+      u.tw.value = w;
+      u.th.value = h;
+      u.tsw.value = (scale * t.repeat.x);
+      u.tsh.value = (scale * t.repeat.y);
     }
-    m.needsUpdate = true;
+    if (u.tex.value !== t) {
+      u.tex.value?.dispose();
+      u.tex.value = t;
+    }
+    m.alpha = this.ui.global_opacity;
     return this;
   }
 
@@ -201,13 +201,16 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.mesh.material.mixColor = BLACK;
       this.mesh.material.mixStength = 0;
     } else {
-      this.mesh.material.texture = empty_texture()
+      this.mesh.material.texture = void 0
       this.mesh.material.coverColor = BLACK;
       this.mesh.material.coverStength = 0;
       this.mesh.material.cover = true
       this.mesh.material.mixColor = BLACK;
       this.mesh.material.mixStength = 0;
     }
+
+
+
   }
   get x(): number { return this.mesh.position.x }
   set x(v: number) { this.mesh.position.x = v; }
@@ -257,7 +260,6 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
 
   update_center_and_size() {
-    if (!this.is_size_dirty) return;
     const { w, h } = this.ui;
     const { x, y, z } = this.ui.center
     this._w = w;
@@ -267,7 +269,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this._tran_z = round(z);
   }
   update_dom() {
-    if (this._dom && this.is_size_dirty) {
+    if (this._dom) {
       this._dom.style.width = `${this._w}px`;
       this._dom.style.height = `${this._h}px`;
     }
@@ -321,7 +323,6 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.imgs_version = this.ui.imgs.version
     this.txt_idx_version = this.ui.txt_idx.version
     this.txts_version = this.ui.txts.version
-    this.size_version = this.ui.size.version
     this.color_version = this.ui.color.version
   }
 }

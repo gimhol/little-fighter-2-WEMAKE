@@ -88,7 +88,7 @@ export async function cook_ui_info(
     pos: read_nums(ui_info.pos, 3, [0, 0, 0]),
     scale: read_nums(ui_info.scale, 3, [1, 1, 1]),
     center: read_nums(ui_info.center, 3, [0, 0, 0]),
-    size: [0, 0],
+    size: [0, 0, 0],
     parent,
     img_infos: [],
     txt_infos: [],
@@ -131,11 +131,11 @@ export async function cook_ui_info(
   const { w: img_w = 0, h: img_h = 0, scale = 1 } = ret.img_infos[0] || ret.txt_infos[0] || {};
   const sw = img_w / scale;
   const sh = img_h / scale;
-  const [w, h] = read_nums(ui_info.size, 2, [parent ? sw : lf2.world.screen_w, parent ? sh : lf2.world.screen_h]);
+  const [w, h] = read_nums(ui_info.size, 3, [parent ? sw : lf2.world.screen_w, parent ? sh : lf2.world.screen_h]);
   // 宽或高其一为0时，使用原图宽高比例的计算之
   const dw = floor(w ? w : sh ? (h * sw / sh) : 0);
   const dh = floor(h ? h : sw ? (w * sh / sw) : 0);
-  ret.size = [dw, dh];
+  ret.size = [dw, dh, 0];
   const { items } = ui_info;
   if (items && !Array.isArray(items)) {
     Ditto.warn(`[${UINode.TAG}::cook_ui_info] items must be array, but got`, items);

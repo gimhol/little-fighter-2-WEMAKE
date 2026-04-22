@@ -15,7 +15,7 @@ export interface ICookedUIInfo extends IUIInfo {
   items?: ICookedUIInfo[];
   img_infos: ImageInfo[];
   txt_infos: TextInfo[];
-  size: [number, number];
+  size: [number, number, number];
   img: IUIImgInfo[];
   txt: ICookedUITxtInfo[];
   values: { [x in string]?: any };

@@ -1,7 +1,7 @@
 import { LF2 } from "../LF2";
 import { Callbacks, Expression, StateDelegate } from "../base";
-import { IStyle, IValGetter, IVector2, IVector3 } from "../defines";
-import { Ditto as D, Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
+import { IStyle, IValGetter, IVector3 } from "../defines";
+import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
 import { filter, is_bool, is_num, is_str, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
@@ -54,16 +54,18 @@ export class UINode implements IDebugging {
   protected _focused_node?: UINode;
   protected _components = new Set<UIComponent>();
   protected _state: any = {};
-  protected readonly _visible: StateDelegate<boolean> = new StateDelegate(true);
-  protected readonly _disabled: StateDelegate<boolean> = new StateDelegate(() => this.data.disabled === true);
-  protected readonly _opacity: StateDelegate<number> = new StateDelegate(1);
+  protected _visible = () => !0;
+  protected _disabled = () => !1;
+  protected _opacity = () => 1;
 
   readonly pos: IVector3 = new D.Vector3();
   readonly scale: IVector3 = new D.Vector3(1, 1, 1)
+  readonly size: IVector3 = new D.Vector3();
+  readonly center: IVector3 = new D.Vector3()
+
   readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
-  readonly size: StateDelegate<IVector2> = new StateDelegate(() => new D.Vector2(...this.data.size)).comparer(StateDelegate.CompareVec2);
-  readonly center: IVector3 = new D.Vector3()
+
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
   readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
@@ -72,7 +74,7 @@ export class UINode implements IDebugging {
   protected _children: UINode[] = [];
 
   get cross(): ICrossInfo {
-    const { x: w, y: h } = this.size.value
+    const { x: w, y: h } = this.size
     const { x: a, y: b } = this.center
     const left = -a * w
     const top = -b * h
@@ -148,7 +150,7 @@ export class UINode implements IDebugging {
   }
 
   get self_visible() {
-    return this._visible.value
+    return this._visible()
   }
   /**
    * 当前节点是否可见
@@ -181,52 +183,55 @@ export class UINode implements IDebugging {
   set foregroundAlpha(v: number | null) { this._foregroundAlpha = v; }
   set_visible(v: boolean): this {
     const prev = this.visible;
-    this._visible.value = v;
+    this._visible = () => v;
     if (prev !== this.visible) this.invoke_all_visible()
     if (!v && !this.focused_node?.visible) this.focused_node = void 0
     return this;
   }
 
   get disabled(): boolean {
-    if (!this.parent) return this._disabled.value;
-    return this.parent.disabled || this._disabled.value;
+    if (!this.parent) return this._disabled();
+    return this.parent.disabled || this._disabled();
   }
   set disabled(v: boolean) {
     this.set_disabled(v);
   }
   set_disabled(v: boolean): this {
-    this._disabled.value = v;
+    this._disabled = () => v;
     if (v && this.focused_node?.disabled) this.focused_node = void 0
     return this;
   }
-
+  get self_disabled() { return this._disabled() }
 
   get global_opacity(): number {
-    if (!this.parent) return this._opacity.value
-    return this._opacity.value * this.parent._opacity.value;
+    if (!this.parent) return this._opacity()
+    return this._opacity() * this.parent._opacity();
   }
   get opacity(): number {
-    return this._opacity.value;
+    return this._opacity();
   }
   set opacity(v: number) {
     this.set_opacity(v);
   }
   set_opacity(v: number): this {
-    this._opacity.set(0, v);
+    this._opacity = () => v;
     return this;
   }
 
   get parent(): UINode | undefined { return this._parent; }
   get children(): Readonly<UINode[]> { return this._children; }
 
-  get w(): number { return this.size.value.x; }
+  get w(): number { return this.size.x; }
   set w(v: number) { this.set_w(v); }
-  get h(): number { return this.size.value.y; }
+  get h(): number { return this.size.y; }
   set h(v: number) { this.set_h(v); }
   set_w(v: number): this { return this.resize(v, this.h); }
   set_h(v: number): this { return this.resize(this.w, v); }
-  resize(w: number, h: number): this {
-    this.size.value = new D.Vector2(w, h); return this;
+  resize(x: number, y: number, z: number = this.size.z): this {
+    this.size.x = x;
+    this.size.y = y;
+    this.size.z = z;
+    return this;
   }
 
   get x(): number { return this.pos.x; }
@@ -322,7 +327,7 @@ export class UINode implements IDebugging {
   hit(x: number, y: number): boolean {
     const { x: cx, y: cy } = this.center;
     const { x: px, y: py } = this.pos;
-    const { x: dw, y: dh } = this.size.value;
+    const { x: dw, y: dh } = this.size;
     const l = px - round(cx * dw);
     const t = py - round(cy * dh);
     const [w, h] = this.data.size;
@@ -396,7 +401,7 @@ export class UINode implements IDebugging {
   on_resume() {
     if (!this.parent) {
       this.focused_node = this._state.focused_node;
-      if (this._visible) this.invoke_all_visible();
+      if (this._visible()) this.invoke_all_visible();
     }
     for (const c of this._components) {
       c.paused = false;
@@ -456,7 +461,7 @@ export class UINode implements IDebugging {
   static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {
     const ret = new UINode(lf2, info, parent);
     const get_val = lf2.ui_val_getter;
-    ret._cook_data(get_val);
+    ret._read_data(get_val);
     ret._cook_img_idx(get_val);
 
     const { component } = ret.data;
@@ -520,30 +525,31 @@ export class UINode implements IDebugging {
       this._callbacks.emit('on_component_del')(component, this)
     }
   }
-  private _cook_data(get_val: IValGetter<UINode>) {
+  private _read_data(get_val: IValGetter<UINode>) {
     const { visible, opacity, disabled = false } = this.data;
     if (is_bool(disabled)) {
-      this._disabled.default_value = disabled;
+      this._disabled = () => disabled;
     } else if (is_str(disabled)) {
       const func = new Expression<UINode>(disabled, () => get_val).run;
-      this._disabled.default_value = () => func(this);
+      this._disabled = () => func(this);
     }
 
     if (is_bool(visible)) {
-      this._visible.default_value = visible;
+      this._visible = () => visible;
     } else if (is_str(visible)) {
       const func = new Expression<UINode>(visible, () => get_val).run;
-      this._visible.default_value = () => func(this);
+      this._visible = () => func(this);
     }
 
     if (is_num(opacity)) {
-      this._opacity.default_value = opacity;
+      this._opacity = () => opacity;
     } else if (is_str(opacity)) {
-      this._opacity.default_value = () =>
-        Number(get_val(this, opacity, "==")) || 0;
+      this._opacity = () => Number(get_val(this, opacity, "==")) || 0;
     }
     this.center.set(...this.data.center);
     this.pos.set(...this.data.pos);
+    this.size.set(...this.data.size);
+    this.scale.set(...this.data.scale);
   }
 
   private _cook_img_idx(get_val: IValGetter<UINode>) {
@@ -582,7 +588,7 @@ export class UINode implements IDebugging {
   protected invoke_all_on_show() {
     this.on_show();
     for (const child of this.children) {
-      if (child._visible.value) child.invoke_all_on_show();
+      if (child._visible()) child.invoke_all_on_show();
     }
   }
 
@@ -592,12 +598,12 @@ export class UINode implements IDebugging {
   protected invoke_all_on_hide() {
     this.on_hide();
     for (const child of this.children) {
-      if (child._visible.value) child.invoke_all_on_hide();
+      if (child._visible()) child.invoke_all_on_hide();
     }
   }
 
   protected invoke_all_visible() {
-    if (this._visible.value) {
+    if (this._visible()) {
       this.invoke_all_on_show();
     } else {
       this.invoke_all_on_hide();

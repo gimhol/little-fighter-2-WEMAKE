@@ -54,6 +54,9 @@ export class OutlineMaterial extends ShaderMaterial {
   }
   get texture(): Texture | undefined { return this.uniforms.tex.value }
   set texture(v: Texture | undefined) { this.uniforms.tex.value = v }
+  get alpha(): number { return this.uniforms.opacity.value ?? 1 }
+  set alpha(v: number) { this.uniforms.opacity.value = v }
+
   get coverColor(): Color { return this.uniforms.coverColor.value }
   set coverColor(v: ColorRepresentation) { this.uniforms.coverColor.value = new Color(v) }
   get coverStength(): number { return this.uniforms.coverStength.value }
