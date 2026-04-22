@@ -22,23 +22,23 @@ enum Status {
 }
 export interface ILaunchPageProps {
   entry: string;
-  tests: UINode[];
-  tests2: ScaleAnimation[];
-  tests3: string[];
-  tests4: number[];
-  tests5: boolean[];
-  tests6: boolean[];
+  // tests: UINode[];
+  // tests2: ScaleAnimation[];
+  // tests3: string[];
+  // tests4: number[];
+  // tests5: boolean[];
+  // tests6: boolean[];
 }
 export class LaunchPage extends UIComponent<ILaunchPageProps> {
   static override readonly TAGS: string[] = ["LaunchPage"];
   static override readonly PROPS: IPropsMeta<ILaunchPageProps> = {
     entry: String,
-    tests: { type: 'array', items: UINode },
-    tests2: { type: 'array', items: ScaleAnimation },
-    tests3: { type: 'array', items: String },
-    tests4: { type: 'array', items: Number },
-    tests5: { type: 'array', items: Boolean },
-    tests6: { type: 'array' },
+    // tests: { type: 'array', items: UINode },
+    // tests2: { type: 'array', items: ScaleAnimation },
+    // tests3: { type: 'array', items: String },
+    // tests4: { type: 'array', items: Number },
+    // tests5: { type: 'array', items: Boolean },
+    // tests6: { type: 'array' },
   };
   protected fsm: FSM<Status, IState<Status>>;
   protected tap_to_launch!: UINode;
