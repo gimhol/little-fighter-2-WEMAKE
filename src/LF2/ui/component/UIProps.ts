@@ -1,5 +1,4 @@
-import type { ISchema } from "../../defines/ISchema";
-import { is_num, is_str, ISchemaMeta, make_schema } from "../../utils";
+import { IPropsMeta, is_num, is_str, make_schema } from "../../utils";
 import { SchemaValidator } from "../../utils/schema/validate_schema";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
 import { isUINodeClass } from "../utils/isUINodeClass";
@@ -85,11 +84,10 @@ export class UIProps {
   component() {
     return this.owner.node.search_component
   }
-  validate<P>(Cls: { TAG: string, PROPS: ISchemaMeta<P> }): P {
+  validate<P>(Cls: { TAG: string, PROPS: IPropsMeta<P> }): P {
     const { TAG, PROPS } = Cls
-    PROPS.type = 'object';
     const errors: string[] = [];
-    this.validator.validate(this.raw, make_schema(PROPS), errors)
+    this.validator.validate(this.raw, make_schema({ key: TAG, type: 'object', properties: PROPS }), errors)
     if (!errors.length) return this.raw as P;
     throw new Error(`[${TAG}] props.error:` + errors.join('\n'))
   }

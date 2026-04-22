@@ -1,6 +1,6 @@
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
-import { ISchemaMeta, make_schema } from "@/LF2/utils/schema/make_schema";
+import { IPropsMeta } from "@/LF2/utils/schema/make_schema";
 import { UINode } from "../UINode";
 import { Label } from "./Label";
 import { Picture } from "./Picture";
@@ -20,19 +20,16 @@ interface IFighterStatBarProps {
 }
 export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   static override readonly TAGS: string[] = ["FighterStatBar"];
-  static override readonly PROPS: ISchemaMeta<IFighterStatBarProps> = {
-    key: "IFighterStatBarProps",
-    properties: {
-      dark_hp_bar: UINode,
-      hp_bar: UINode,
-      dark_mp_bar: UINode,
-      mp_bar: UINode,
-      fall_value_bar: UINode,
-      defend_value_bar: UINode,
-      toughness_bar: UINode,
-      head_img: Picture,
-      name_txt: Label,
-    }
+  static override readonly PROPS: IPropsMeta<IFighterStatBarProps> = {
+    dark_hp_bar: UINode,
+    hp_bar: UINode,
+    dark_mp_bar: UINode,
+    mp_bar: UINode,
+    fall_value_bar: UINode,
+    defend_value_bar: UINode,
+    toughness_bar: UINode,
+    head_img: Picture,
+    name_txt: Label,
   };
   protected entity?: Entity;
   protected defend_value_max = new SmoothNumber().on_change(() => this.update_defend_value())

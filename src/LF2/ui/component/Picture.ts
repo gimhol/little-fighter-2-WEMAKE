@@ -1,4 +1,4 @@
-import { ISchemaMeta, IUIImgInfo, UIComponent } from "@/LF2";
+import { IPropsMeta, IUIImgInfo, UIComponent } from "@/LF2";
 import { Ditto } from "@/LF2/ditto";
 import { UIImgLoader } from "../UIImgLoader";
 
@@ -8,12 +8,9 @@ export interface IPictureProps {
 }
 export class Picture extends UIComponent<IPictureProps> {
   static override readonly TAGS: string[] = ["Picture", "Image"];
-  static override readonly PROPS: ISchemaMeta<IPictureProps> = {
-    key: 'IPictureProps',
-    properties: {
-      width: { type: Number, nullable: true },
-      height: { type: Number, nullable: true }
-    }
+  static override readonly PROPS: IPropsMeta<IPictureProps> = {
+    width: { type: Number, nullable: true },
+    height: { type: Number, nullable: true }
   }
   protected _img_loader = new UIImgLoader(() => this.node);
 

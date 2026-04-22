@@ -1,14 +1,11 @@
-import { ISchemaMeta, UIComponent } from "@/LF2";
+import { IPropsMeta, UIComponent } from "@/LF2";
 export interface IPauseHandlingProps {
   reverse?: boolean;
 }
 export class PauseHandling extends UIComponent<IPauseHandlingProps> {
   static override readonly TAGS: string[] = ["PauseHandling"];
-  static override readonly PROPS: ISchemaMeta<IPauseHandlingProps> = {
-    key: "IPauseHandlingProps",
-    properties: {
-      reverse: Boolean
-    }
+  static override readonly PROPS: IPropsMeta<IPauseHandlingProps> = {
+    reverse: Boolean
   }
   override update(dt: number): void {
     const { paused } = this.world;

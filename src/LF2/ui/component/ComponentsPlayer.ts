@@ -1,4 +1,4 @@
-import { ISchemaMeta } from "@/LF2/utils/schema";
+import { IPropsMeta } from "@/LF2/utils/schema";
 import { IPlayable, is_playable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
 
@@ -10,27 +10,25 @@ export interface IComponentsPlayerProps {
 export class ComponentsPlayer extends UIComponent implements IPlayable {
   readonly __is_playable__ = true;
   static override readonly TAGS: string[] = ["ComponentsPlayer"];
-  static override readonly PROPS: ISchemaMeta<IComponentsPlayerProps> = {
-    key: "IComponentsPlayerProps",
-    properties: {
-      components: {
-        key: "children",
-        type: "array",
-        items: { type: "string" },
-        nullable: true,
-      },
-      local: {
-        key: "local",
-        type: "boolean",
-        nullable: true,
-      },
-      recursive: {
-        key: "local",
-        type: "boolean",
-        nullable: true,
-      }
+  static override readonly PROPS: IPropsMeta<IComponentsPlayerProps> = {
+    components: {
+      key: "children",
+      type: "array",
+      items: { type: "string" },
+      nullable: true,
+    },
+    local: {
+      key: "local",
+      type: "boolean",
+      nullable: true,
+    },
+    recursive: {
+      key: "local",
+      type: "boolean",
+      nullable: true,
     }
   }
+
   protected components: ((UIComponent & IPlayable) | null)[] = [];
   override on_start(): void {
     const { components, local, recursive } = this.props_holder.validate(ComponentsPlayer);

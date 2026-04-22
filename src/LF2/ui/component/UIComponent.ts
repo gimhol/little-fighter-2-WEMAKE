@@ -1,16 +1,15 @@
-import { ISchema, IVector3 } from "../../defines";
-import { ISchemaMeta, make_schema } from "../../utils/schema/make_schema";
 import { Callbacks } from "../../base";
+import { IVector3 } from "../../defines";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";
 import { is_num } from "../../utils";
+import { IPropsMeta } from "../../utils/schema/make_schema";
 import { IComponentInfo } from "../IComponentInfo";
 import { IUIKeyEvent } from "../IUIKeyEvent";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import { LF2PointerEvent } from "../LF2PointerEvent";
 import type { UINode } from "../UINode";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIProps } from "./UIProps";
-import { LF2PointerEvent } from "../LF2PointerEvent";
 /**
  * 组件
  * 
@@ -23,7 +22,7 @@ export class UIComponent<
 > implements IDebugging {
   static get TAG(): string { return this.TAGS[0]; }
   static readonly TAGS: string[] = ["UIComponent"]
-  static readonly PROPS: ISchemaMeta = {}
+  static readonly PROPS: IPropsMeta = {}
   readonly node: UINode;
   readonly f_name: string;
   readonly callbacks = new Callbacks<C>()

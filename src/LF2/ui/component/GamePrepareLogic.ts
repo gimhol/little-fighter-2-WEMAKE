@@ -1,7 +1,7 @@
 import { Ditto } from "@/LF2/ditto";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { ILf2Callback } from "@/LF2/ILf2Callback";
-import { make_schema } from "@/LF2/utils";
+import { IPropsMeta } from "@/LF2/utils";
 import { new_team } from "../../base";
 import LocalController from "../../controller/LocalController";
 import { Defines, FacingFlag, TeamEnum } from "../../defines";
@@ -18,15 +18,11 @@ const GAME_MODE_VS = "vs_mode"
 const GAME_MODE_STAGE = "stage_mode"
 export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
   static override readonly TAGS: string[] = ["GamePrepareLogic"];
-  static override  readonly PROPS = make_schema<IGamePrepareLogicProps>({
-    key: 'GamePrepareLogic',
-    type: 'object',
-    properties: {
-      stage_switcher: StageSwitcher,
-      bg_switcher: BackgroundSwitcher,
-      game_mode: String,
-    }
-  })
+  static override readonly PROPS: IPropsMeta<IGamePrepareLogicProps> = {
+    stage_switcher: StageSwitcher,
+    bg_switcher: BackgroundSwitcher,
+    game_mode: String
+  }
 
   override on_resume(): void {
     super.on_resume();

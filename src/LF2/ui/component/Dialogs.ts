@@ -1,7 +1,7 @@
 import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
 import { Ditto } from "@/LF2/ditto/Instance";
 import { Transform } from "@/LF2/Transform";
-import { ISchemaMeta } from "@/LF2/utils/schema/make_schema";
+import { IPropsMeta } from "@/LF2/utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
 import { Label } from "./Label";
@@ -15,14 +15,10 @@ export interface IDialogsProps {
 }
 export class Dialogs extends UIComponent<IDialogsProps> {
   static override readonly TAGS: string[] = ["Dialogs"];
-  static override readonly PROPS: ISchemaMeta<IDialogsProps> = {
-    key: "IDialogsProps",
-    type: "object",
-    properties: {
-      head_node: UINode,
-      text: Label,
-      talker: Label
-    }
+  static override readonly PROPS: IPropsMeta<IDialogsProps> = {
+    head_node: UINode,
+    text: Label,
+    talker: Label
   }
   protected _listner = new StageDialogListener(this, (d) => this.set_dialog(d));
   protected _head_loader = new UIImgLoader(() => this.props.head_node)
