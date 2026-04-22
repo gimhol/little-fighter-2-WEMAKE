@@ -3,7 +3,7 @@ import { Callbacks, StateDelegate } from "../base";
 import { IStyle, IValGetter, IVector3 } from "../defines";
 import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
-import { filter, is_num, is_str, round, Times } from "../utils";
+import { is_num, is_str, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
@@ -706,13 +706,13 @@ export class UINode implements IDebugging {
    */
   find_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => true
+    condition: TCond<T> | string | undefined | null
   ): InstanceType<T> | undefined {
     for (const v of this._components) {
       if (!(v instanceof type))
         continue;
       if (!condition)
-        continue
+        return v as InstanceType<T>;
       if (condition === v.id)
         return v as InstanceType<T>;
       if (typeof condition === 'function' && condition(v as any))
@@ -734,14 +734,20 @@ export class UINode implements IDebugging {
     type: T,
     condition: TCond<T> | string = () => true
   ): InstanceType<T>[] {
-    const ret = filter(
-      this.components,
-      (v) => {
-        if (!(v instanceof type)) return 0;
-        if (is_str(condition)) return condition === v.id;
-        return condition(v as any);
-      },
-    ) as InstanceType<T>[];
+    const ret: any[] = []
+    for (const v of this.components) {
+      if (!(v instanceof type)) continue;
+      if (condition === v.id) {
+        ret.push(v as InstanceType<T>)
+        continue;
+      }
+      if (typeof condition !== 'function')
+        continue;
+      const r = condition(v as any)
+      if (r == 'abort') break;
+      if (r) ret.push(v)
+      if (r == 'end') break;
+    }
     return ret;
   }
 
@@ -815,5 +821,5 @@ export class UINode implements IDebugging {
   }
 }
 type TCls<R = any> = abstract new (...args: any) => R;
-type TCond<T extends TCls,> = (c: InstanceType<T>) => boolean;
+type TCond<T extends TCls,> = (c: InstanceType<T>) => true | false | 'abort' | 'end';
 
