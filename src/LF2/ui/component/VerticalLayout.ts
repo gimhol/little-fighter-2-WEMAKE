@@ -10,12 +10,12 @@ export class VerticalLayout extends UIComponent {
     let max_w = 0;
     let max_h = 0;
 
-    const { x: cx, y: cy } = this.node.center.value;
+    const { x: cx, y: cy } = this.node.center;
     const pos_list: [number, number, number][] = []
     for (const item of this.node.children) {
       if (!item.visible) continue;
       const { w, h, z } = item
-      const { x: cx, y: cy } = item.center.value
+      const { x: cx, y: cy } = item.center
       pos_list.unshift([(1 - cx) * w, max_h + (1 - cy) * h, z] as const)
       max_h += item.h + this.gap;
       max_w = max(max_w, item.w);

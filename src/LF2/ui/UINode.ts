@@ -63,7 +63,7 @@ export class UINode implements IDebugging {
   readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
   readonly size: StateDelegate<IVector2> = new StateDelegate(() => new D.Vector2(...this.data.size)).comparer(StateDelegate.CompareVec2);
-  readonly center: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.center)).comparer(StateDelegate.CompareVec3);
+  readonly center: IVector3 = new D.Vector3()
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
   readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
@@ -73,7 +73,7 @@ export class UINode implements IDebugging {
 
   get cross(): ICrossInfo {
     const { x: w, y: h } = this.size.value
-    const { x: a, y: b } = this.center.value
+    const { x: a, y: b } = this.center
     const left = -a * w
     const top = -b * h
     const right = (1 - a) * w
@@ -245,17 +245,19 @@ export class UINode implements IDebugging {
     return this;
   }
 
-  get cx(): number { return this.center.value.x; }
+  get cx(): number { return this.center.x; }
   set cx(v: number) { this.set_cx(v); }
-  get cy(): number { return this.center.value.y; }
+  get cy(): number { return this.center.y; }
   set cy(v: number) { this.set_cy(v); }
-  get cz(): number { return this.center.value.z; }
+  get cz(): number { return this.center.z; }
   set cz(v: number) { this.set_cz(v); }
   set_cx(v: number): this { return this.set_center(v); }
   set_cy(v: number): this { return this.set_center(void 0, v); }
   set_cz(v: number): this { return this.set_center(void 0, void 0, v); }
-  set_center(cx: number = this.cx, cy: number = this.cy, cz: number = this.cz): this {
-    this.center.value = new Ditto.Vector3(cx, cy, cz)
+  set_center(x: number = this.cx, y: number = this.cy, z: number = this.cz): this {
+    this.center.x = x;
+    this.center.y = y;
+    this.center.z = z;
     return this;
   }
 
@@ -318,7 +320,7 @@ export class UINode implements IDebugging {
     return this;
   }
   hit(x: number, y: number): boolean {
-    const { x: cx, y: cy } = this.center.value;
+    const { x: cx, y: cy } = this.center;
     const { x: px, y: py } = this.pos;
     const { x: dw, y: dh } = this.size.value;
     const l = px - round(cx * dw);
@@ -540,10 +542,8 @@ export class UINode implements IDebugging {
       this._opacity.default_value = () =>
         Number(get_val(this, opacity, "==")) || 0;
     }
-    const [x, y, z] = this.data.pos;
-    this.pos.x = x
-    this.pos.y = y
-    this.pos.z = z
+    this.center.set(...this.data.center);
+    this.pos.set(...this.data.pos);
   }
 
   private _cook_img_idx(get_val: IValGetter<UINode>) {

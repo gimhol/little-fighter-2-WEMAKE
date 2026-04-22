@@ -44,7 +44,6 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _img: ImageInfo<T.Texture> | undefined;
   protected _input: HTMLInputElement | undefined;
   get is_size_dirty() { return this.size_version != this.ui.size.version }
-  get is_center_dirty() { return this.center_version != this.ui.center.version }
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -258,9 +257,9 @@ export class UINodeRenderer implements IUINodeRenderer {
   }
 
   update_center_and_size() {
-    if (!this.is_size_dirty && !this.is_center_dirty) return;
+    if (!this.is_size_dirty) return;
     const { w, h } = this.ui;
-    const { x, y, z } = this.ui.center.value
+    const { x, y, z } = this.ui.center
     this._w = w;
     this._h = h;
     this._tran_x = round(w * (0.5 - x));
@@ -272,8 +271,8 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._dom.style.width = `${this._w}px`;
       this._dom.style.height = `${this._h}px`;
     }
-    if (this._css_obj && this.is_center_dirty)
-      this._css_obj.center.set(this.ui.center.value.x, this.ui.center.value.y);
+    if (this._css_obj)
+      this._css_obj.center.set(this.ui.center.x, this.ui.center.y);
   }
   update_texture_attributes(dt: number) {
     const t: T.Texture = this.mesh.material.uniforms.tex.value;
@@ -318,7 +317,6 @@ export class UINodeRenderer implements IUINodeRenderer {
       if (child.visible || (child.visible != child.renderer.visible))
         child.renderer.render(dt)
     }
-    this.center_version = this.ui.center.version
     this.img_idx_version = this.ui.img_idx.version
     this.imgs_version = this.ui.imgs.version
     this.txt_idx_version = this.ui.txt_idx.version
