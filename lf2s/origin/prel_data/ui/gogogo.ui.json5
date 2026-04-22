@@ -3,27 +3,25 @@
   name: "gogogo",
   visible: false,
   opacity: 0,
-  txt: [
-    {
-      i18n: "Go! ➡",
-      style: {
-        fill_style: "white",
-        font: '46px "Arial Black", Arial',
-        back_style: {
-          font: '46px "Arial Black", Arial',
-          stroke_style: "#005A8E",
-          line_width: 5,
-        },
+  txt: {
+    i18n: "Go! ➡",
+    style: {
+      fill_style: "white",
+      font: "46px \"Arial Black\", Arial",
+      back_style: {
+        font: "46px \"Arial Black\", Arial",
+        stroke_style: "#005A8E",
+        line_width: 5,
       },
     },
-  ],
+  },
   component: [
     {
       id: "play_gogogo",
       name: "ComponentsPlayer",
       enabled: false,
       properties: {
-        components: ["sounds", "opacity_flash"],
+        components: [ "sounds", "opacity_flash" ],
         local: true,
         recursive: true,
       },
@@ -32,7 +30,7 @@
       id: "sounds",
       name: "Sounds",
       enabled: false,
-      args: ["350", "ok", "800", "ok", "800", "ok"],
+      args: [ "350", "ok", "800", "ok", "800", "ok" ],
     },
     {
       id: "opacity_flash",
@@ -40,7 +38,7 @@
       enabled: false,
       properties: {
         times: 3,
-        steps: [0, 350, 1, 100, 1, 350, 0],
+        steps: [ 0, 350, 1, 100, 1, 350, 0 ],
       },
     },
     {

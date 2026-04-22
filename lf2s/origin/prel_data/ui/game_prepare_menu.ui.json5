@@ -38,9 +38,9 @@
           values: {
             text: "game_prepare_menu.fight",
           },
-          component: ["Reachable(menu)"],
+          component: [ "Reachable(menu)" ],
           actions: {
-            click: ["broadcast(start_game)", "sound(ok)"],
+            click: [ "broadcast(start_game)", "sound(ok)" ],
           },
         },
         {
@@ -49,9 +49,9 @@
           values: {
             text: "game_prepare_menu.reset_all",
           },
-          component: ["Reachable(menu)"],
+          component: [ "Reachable(menu)" ],
           actions: {
-            click: ["broadcast(reset_gpl)", "sound(ok)"],
+            click: [ "broadcast(reset_gpl)", "sound(ok)" ],
           },
         },
         {
@@ -61,9 +61,9 @@
           values: {
             text: "game_prepare_menu.reset_random",
           },
-          component: ["Reachable(menu)"],
+          component: [ "Reachable(menu)" ],
           actions: {
-            click: ["broadcast(update_random)", "sound(ok)"],
+            click: [ "broadcast(update_random)", "sound(ok)" ],
           },
         },
         {
@@ -86,9 +86,9 @@
               values: {
                 text: "game_prepare_menu.background",
               },
-              component: ["Reachable(menu)"],
+              component: [ "Reachable(menu)" ],
               actions: {
-                click: ["broadcast(switch_background)", "sound(ok)"],
+                click: [ "broadcast(switch_background)", "sound(ok)" ],
               },
             },
             {
@@ -101,16 +101,14 @@
                   id: "background_name_text",
                   pos: "0,0",
                   center: "0.5,0.5",
-                  txt: [
-                    {
-                      i18n: "",
-                      style: {
-                        fill_style: "#9b9bff",
-                        font: "15px Arial",
-                      },
+                  txt: {
+                    i18n: "",
+                    style: {
+                      fill_style: "#9b9bff",
+                      font: "15px Arial",
                     },
-                  ],
-                  component: [{ id: "BackgroundSwitcher", name: "BackgroundSwitcher" }],
+                  },
+                  component: [ { id: "BackgroundSwitcher", name: "BackgroundSwitcher" } ],
                 },
               ],
             },
@@ -136,9 +134,9 @@
               values: {
                 text: "game_prepare_menu.stage",
               },
-              component: ["Reachable(menu)"],
+              component: [ "Reachable(menu)" ],
               actions: {
-                click: ["broadcast(switch_stage)", "sound(ok)"],
+                click: [ "broadcast(switch_stage)", "sound(ok)" ],
               },
             },
             {
@@ -151,16 +149,14 @@
                   id: "stage_name_text",
                   pos: "0,0",
                   center: "0.5,0.5",
-                  txt: [
-                    {
-                      i18n: "",
-                      style: {
-                        fill_style: "#9b9bff",
-                        font: "15px Arial",
-                      },
+                  txt: {
+                    i18n: "",
+                    style: {
+                      fill_style: "#9b9bff",
+                      font: "15px Arial",
                     },
-                  ],
-                  component: [{ name: "StageSwitcher", id: "StageSwitcher" }],
+                  },
+                  component: [ { name: "StageSwitcher", id: "StageSwitcher" } ],
                 },
               ],
             },
@@ -186,9 +182,9 @@
               values: {
                 text: "game_prepare_menu.difficulty",
               },
-              component: ["Reachable(menu)"],
+              component: [ "Reachable(menu)" ],
               actions: {
-                click: ["switch_difficulty()", "sound(ok)"],
+                click: [ "switch_difficulty()", "sound(ok)" ],
               },
             },
             {
@@ -201,16 +197,14 @@
                   pos: "0,0",
                   center: "0.5,0.5",
                   id: "difficulty_text",
-                  txt: [
-                    {
-                      i18n: "",
-                      style: {
-                        fill_style: "#9b9bff",
-                        font: "15px Arial",
-                      },
+                  txt: {
+                    i18n: "",
+                    style: {
+                      fill_style: "#9b9bff",
+                      font: "15px Arial",
                     },
-                  ],
-                  component: ["difficulty_text()"],
+                  },
+                  component: [ "difficulty_text()" ],
                 },
               ],
             },
@@ -222,9 +216,9 @@
           values: {
             text: "game_prepare_menu.exit",
           },
-          component: ["Reachable(menu)"],
+          component: [ "Reachable(menu)" ],
           actions: {
-            click: ["pop_ui()", "sound(cancel)"],
+            click: [ "pop_ui()", "sound(cancel)" ],
           },
         },
       ],

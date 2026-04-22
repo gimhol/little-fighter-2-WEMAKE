@@ -114,15 +114,13 @@
           id: "txt_pos",
           pos: "-227, 0",
           center: "0, 1",
-          txt: [
-            {
-              i18n: "tutorial.dialog_5",
-              style: {
-                fill_style: "white",
-                font: "13px Arial",
-              },
+          txt: {
+            i18n: "tutorial.dialog_5",
+            style: {
+              fill_style: "white",
+              font: "13px Arial",
             },
-          ],
+          },
           component: [
             {
               id: "dialog_text",
@@ -143,15 +141,13 @@
           id: "talker_pos",
           pos: "0, 0",
           center: "0, 1",
-          txt: [
-            {
-              i18n: "Davis",
-              style: {
-                fill_style: "white",
-                font: "13px Arial",
-              },
+          txt: {
+            i18n: "Davis",
+            style: {
+              fill_style: "white",
+              font: "13px Arial",
             },
-          ],
+          },
           component: [
             {
               id: "talker_name",

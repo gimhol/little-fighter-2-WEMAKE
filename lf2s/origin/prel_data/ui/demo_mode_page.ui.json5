@@ -1,7 +1,7 @@
 {
   name: "页面：DEMO模式",
   id: "demo_mode_page",
-  component: ["DemoModeLogic()", "CameraCtrl()"],
+  component: [ "DemoModeLogic()", "CameraCtrl()" ],
   items: [
     {
       pos: "0,0,5",
@@ -12,14 +12,14 @@
     "ui/fighter_stat_s_x8.ui.json5",
     {
       visible: true,
-      component: [{ name: "PauseHandling", properties: { reverse: true } }],
+      component: [ { name: "PauseHandling", properties: { reverse: true } } ],
       txt: {
         i18n: "DEMO",
         style: {
           fill_style: "white",
-          font: '24px "Arial Black", Arial',
+          font: "24px \"Arial Black\", Arial",
           back_style: {
-            font: '24px "Arial Black", Arial',
+            font: "24px \"Arial Black\", Arial",
             stroke_style: "#005A8E",
             line_width: 4,
           },
@@ -45,7 +45,7 @@
           },
         },
       },
-      component: [{ name: "Alignment", properties: { right: "right", bottom: "bottom" } }],
+      component: [ { name: "Alignment", properties: { right: "right", bottom: "bottom" } } ],
       center: "1,1",
     },
     {
@@ -76,30 +76,28 @@
           },
         },
       ],
-      component: [{ name: "Alignment", properties: { left: "left", bottom: "bottom" } }],
+      component: [ { name: "Alignment", properties: { left: "left", bottom: "bottom" } } ],
       center: "0,1",
     },
     {
       id: "curr_focus",
-      txt: [
-        {
-          i18n: "",
-          style: {
-            fill_style: "white",
-            font: "9px  Arial",
-            back_style: {
-              font: "9px Arial",
-              stroke_style: "#005A8E",
-              line_width: 1,
-            },
+      txt: {
+        i18n: "",
+        style: {
+          fill_style: "white",
+          font: "9px  Arial",
+          back_style: {
+            font: "9px Arial",
+            stroke_style: "#005A8E",
+            line_width: 1,
           },
         },
-      ],
-      component: [{ name: "Alignment", properties: { left: "right", bottom: "bottom", followed: { l: "id:curr_focus_prefix" } } }],
+      },
+      component: [ { name: "Alignment", properties: { left: "right", bottom: "bottom", followed: { l: "id:curr_focus_prefix" } } } ],
       center: "0,1",
     },
   ],
   actions: {
-    stop: ["remove_all_entities()", "destory_stage()"],
+    stop: [ "remove_all_entities()", "destory_stage()" ],
   },
 }

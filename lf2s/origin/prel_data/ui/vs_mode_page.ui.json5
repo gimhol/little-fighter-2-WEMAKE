@@ -38,7 +38,7 @@
       id: "bgm_switcher",
       center: "0,1",
       pos: "0, 450",
-      txt: [ { i18n: "", style: { fill_style: "white" } } ],
+      txt: { i18n: "", style: { fill_style: "white" } },
       component: [ { name: "BGMSwitcher", args: [ 0 ] }, "OpacityHover(0.7,1)" ],
     },
   ],
