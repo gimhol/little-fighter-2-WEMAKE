@@ -1,10 +1,9 @@
 import { Delay, Easing, Sequence } from "@/LF2/animation";
 import { Animation } from "@/LF2/animation/Animation";
-import { ISchema } from "@/LF2/defines";
 import ease_linearity from "@/LF2/utils/ease_method/ease_linearity";
-import { make_schema } from "@/LF2/utils/schema";
-import { UIComponent } from "./UIComponent";
+import { ISchemaMeta } from "@/LF2/utils/schema";
 import { IPlayable } from "./IPlayable";
+import { UIComponent } from "./UIComponent";
 
 export interface IOpacityFlashProps {
   steps?: number[];
@@ -12,7 +11,7 @@ export interface IOpacityFlashProps {
 }
 export class OpacityFlash extends UIComponent implements IPlayable {
   static override readonly TAGS: string[] = ["OpacityFlash"];
-  static override readonly PROPS: ISchema<IOpacityFlashProps> = make_schema({
+  static override readonly PROPS: ISchemaMeta<IOpacityFlashProps> = {
     key: "IOpacityFlashProps",
     type: 'object',
     properties: {
@@ -31,7 +30,7 @@ export class OpacityFlash extends UIComponent implements IPlayable {
         description: "循环次数，小于0时，无限循环"
       }
     }
-  })
+  }
 
   readonly __is_playable__ = true;
   protected _anim: Sequence = new Sequence();

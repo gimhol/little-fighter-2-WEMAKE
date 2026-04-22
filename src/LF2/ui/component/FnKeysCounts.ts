@@ -1,7 +1,6 @@
-import { ISchema } from "@/LF2/defines";
 import { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
 import { UINode } from "@/LF2/ui/UINode";
-import { make_schema } from "@/LF2/utils/schema";
+import { ISchemaMeta } from "@/LF2/utils/schema";
 import { Label } from "./Label";
 import { UIComponent } from "./UIComponent";
 
@@ -16,9 +15,8 @@ export interface IFnKeysCountsProps {
 }
 export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
   static override readonly TAGS: string[] = ["FnKeysCounts"];
-  static override PROPS: ISchema<IFnKeysCountsProps> = make_schema({
+  static override readonly PROPS: ISchemaMeta<IFnKeysCountsProps> = {
     key: "IFnKeysCountsProps",
-    type: "object",
     properties: {
       f6: Label,
       f7: Label,
@@ -28,7 +26,7 @@ export class FnKeysCounts extends UIComponent<IFnKeysCountsProps> {
       fn_key_counts: UINode,
       fn_key_locked: UINode
     }
-  })
+  }
   readonly world_cbs: IWorldCallbacks = {
     on_fn_locked_change: (locked) => {
       if (locked) {

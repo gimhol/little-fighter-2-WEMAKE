@@ -1,5 +1,4 @@
-import { ISchema } from "@/LF2/defines/ISchema";
-import { make_schema } from "@/LF2/utils/schema";
+import { ISchemaMeta } from "@/LF2/utils/schema";
 import { IPlayable, is_playable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
 
@@ -11,9 +10,8 @@ export interface IComponentsPlayerProps {
 export class ComponentsPlayer extends UIComponent implements IPlayable {
   readonly __is_playable__ = true;
   static override readonly TAGS: string[] = ["ComponentsPlayer"];
-  static override readonly PROPS: ISchema<IComponentsPlayerProps> = make_schema({
+  static override readonly PROPS: ISchemaMeta<IComponentsPlayerProps> = {
     key: "IComponentsPlayerProps",
-    type: "object",
     properties: {
       components: {
         key: "children",
@@ -32,7 +30,7 @@ export class ComponentsPlayer extends UIComponent implements IPlayable {
         nullable: true,
       }
     }
-  })
+  }
   protected components: ((UIComponent & IPlayable) | null)[] = [];
   override on_start(): void {
     const { components, local, recursive } = this.props_holder.validate(ComponentsPlayer);

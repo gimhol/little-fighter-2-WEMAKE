@@ -1,5 +1,5 @@
 import { ISchema, IVector3 } from "../../defines";
-import { make_schema } from "../../utils/schema/make_schema";
+import { ISchemaMeta, make_schema } from "../../utils/schema/make_schema";
 import { Callbacks } from "../../base";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";
@@ -23,10 +23,7 @@ export class UIComponent<
 > implements IDebugging {
   static get TAG(): string { return this.TAGS[0]; }
   static readonly TAGS: string[] = ["UIComponent"]
-  static readonly PROPS: ISchema = make_schema({
-    key: "UIComponentProps",
-    type: "object",
-  })
+  static readonly PROPS: ISchemaMeta = {}
   readonly node: UINode;
   readonly f_name: string;
   readonly callbacks = new Callbacks<C>()

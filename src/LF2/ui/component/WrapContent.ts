@@ -1,4 +1,4 @@
-import type { ISchema } from "../../defines/ISchema";
+import { ISchemaMeta } from "@/LF2/utils";
 import { max, min } from "../../utils/math";
 import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
@@ -9,9 +9,8 @@ export interface IWrapContentProps {
 }
 export class WrapContent<P extends IWrapContentProps, C extends IUICompnentCallbacks> extends UIComponent<P, C> {
   static override readonly TAGS: string[] = ["WrapContent"];
-  static override readonly PROPS: ISchema<IWrapContentProps> = {
+  static override readonly PROPS: ISchemaMeta<IWrapContentProps> = {
     key: "IWrapContentProps",
-    type: "object",
     properties: {
       wrapHeight: { type: Boolean, nullable: true },
       wrapWidth: { type: Boolean, nullable: true },

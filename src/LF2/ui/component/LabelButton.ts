@@ -1,4 +1,4 @@
-import { Easing, Label, make_schema, UIComponent, UINode } from "@/LF2";
+import { Easing, ISchemaMeta, Label, UIComponent, UINode } from "@/LF2";
 export interface ILabelButtonProps {
   back_label?: Label;
   hover_label?: Label;
@@ -10,7 +10,7 @@ export interface ILabelButtonProps {
 }
 export class LabelButton extends UIComponent<ILabelButtonProps> {
   static override readonly TAGS: string[] = ["LabelButton"];
-  static override readonly PROPS = make_schema<ILabelButtonProps>({
+  static override readonly PROPS: ISchemaMeta<ILabelButtonProps> = {
     key: "ILabelButtonProps",
     type: "object",
     properties: {
@@ -22,7 +22,7 @@ export class LabelButton extends UIComponent<ILabelButtonProps> {
       disable_color: String,
       text: String,
     }
-  });
+  };
   protected anim = new Easing(0, 1).set_duration(150);
   get responser(): UINode {
     return this.props.responser ?? this.node;

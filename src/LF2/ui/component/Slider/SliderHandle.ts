@@ -1,4 +1,4 @@
-import { clamp, Defines, GK, IPointingEvent, IPointingsCallback, ISchema, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, make_schema, round_float, UIComponent, UINode } from "@/LF2";
+import { clamp, Defines, GK, IPointingEvent, IPointingsCallback, ISchemaMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, round_float, UIComponent, UINode } from "@/LF2";
 export interface ISliderHandleProps {
   min?: number;
   max?: number;
@@ -14,8 +14,8 @@ export interface ISliderHandleCallbacks extends IUICompnentCallbacks {
 }
 export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleCallbacks> {
   static override readonly TAGS: string[] = ["SliderHandle"];
-  static override PROPS: ISchema<ISliderHandleProps> = make_schema<ISliderHandleProps>({
-    key: "ISliderHandleProps", type: "object", properties: {
+  static override readonly PROPS: ISchemaMeta<ISliderHandleProps> = {
+    key: "ISliderHandleProps", properties: {
       min: Number,
       max: Number,
       precision: Number,
@@ -25,7 +25,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       handle_label: Label,
       items: String
     }
-  });
+  }
   private _on_me = false;
   private _factor: number = 0;
   private p: IUICallback = {

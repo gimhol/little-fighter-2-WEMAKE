@@ -1,5 +1,6 @@
 import type { ISchema, ISchemaPropertyTypes } from "../../defines/ISchema";
-export interface ISchemaMeta<T = any> extends Omit<ISchema<T>, 'properties'> {
+export interface ISchemaMeta<T = any> extends Omit<ISchema<T>, 'properties' | 'type'> {
+  type?: ISchema<T>['type'];
   properties?: Record<keyof T, ISchema | ISchemaPropertyTypes>
 }
 export function make_schema<T = any>(meta: ISchemaMeta<T>, parent?: ISchema): ISchema<T> {
@@ -8,6 +9,7 @@ export function make_schema<T = any>(meta: ISchemaMeta<T>, parent?: ISchema): IS
   const { properties } = meta;
   const ret: ISchema = {
     ...meta,
+    type: meta.type ?? 'object',
     path: parent ? [parent.path, meta.key].join('.') : meta.key,
     properties: void 0
   }
