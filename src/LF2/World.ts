@@ -246,26 +246,31 @@ export class World extends WorldDataset {
     this._fix_radio = 1;
     this._update_count = 0;
     const on_update = () => {
-      const time = Date.now();
-      const real_dt = time - this._prev_time;
-      if (real_dt < this._ideally_dt * this._fix_radio) return;
-      if (this._sleeping) return;
-      this.before_update?.();
-      this._update_count++;
-      this.update_once();
-      this.lf2.events.length = 0;
-      this.lf2.cmds.length = 0;
-      this.lf2.broadcasts.length = 0;
-      if (0 === this._update_count % this.sync_render) {
-        this.render_once(real_dt);
-        if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
+      try {
+        const time = Date.now();
+        const real_dt = time - this._prev_time;
+        if (real_dt < this._ideally_dt * this._fix_radio) return;
+        if (this._sleeping) return;
+        this.before_update?.();
+        this._update_count++;
+        this.update_once();
+        this.lf2.events.length = 0;
+        this.lf2.cmds.length = 0;
+        this.lf2.broadcasts.length = 0;
+        if (0 === this._update_count % this.sync_render) {
+          this.render_once(real_dt);
+          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
+        }
+        if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
+        this.after_update?.();
+        this._UPS.update(real_dt);
+        this._fix_radio = 1 - clamp(6 * (this._ups - this._UPS.value) / this._ups, 0, 1);
+        this._prev_time = time;
+      } catch (e: any) {
+        Ditto.warn(e)
+        if (e.errors) Ditto.warn(e.errors)
+        this.stop_update();
       }
-      if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
-      this.after_update?.();
-      this._UPS.update(real_dt);
-      this._fix_radio = 1 - clamp(6 * (this._ups - this._UPS.value) / this._ups, 0, 1);
-      this._prev_time = time;
-
     };
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
   }

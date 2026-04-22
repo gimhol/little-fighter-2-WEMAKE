@@ -31,7 +31,7 @@ export class ComponentsPlayer extends UIComponent implements IPlayable {
 
   protected components: ((UIComponent & IPlayable) | null)[] = [];
   override on_start(): void {
-    const { components, local, recursive } = this.props_holder.validate(ComponentsPlayer);
+    const { components, local, recursive } = this.props_holder.validate(ComponentsPlayer)!;
     const search_node = local ? this.node : this.node.root;
     if (components?.length) {
       for (let i = 0; i < components.length; i++)

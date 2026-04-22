@@ -38,7 +38,7 @@ export class OpacityFlash extends UIComponent implements IPlayable {
         0, 350, 1, 100, 1, 350, 0, 350, 1, 100,
         1, 350, 0, 350, 1, 100, 1, 350, 0
       ]
-    } = this.props_holder.validate(OpacityFlash);
+    } = this.props_holder.validate(OpacityFlash)!;
 
     const anims: Animation[] = [];
     for (let i = 1; i < steps.length; i += 2) {

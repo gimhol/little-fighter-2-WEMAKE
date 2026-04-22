@@ -30,11 +30,21 @@ export class UIComponent<
   readonly props_holder: UIProps;
   protected _props: any;
   private _args_caches = new Map<any, any>()
+  private _props_error?: Error & { errors: ReadonlyArray<string> };
   stopped: boolean = true;
   paused: boolean = true;
   get props(): P {
     if (this._props) return this._props;
-    return this._props = this.props_holder.validate(this.constructor as any)
+    if (this._props_error) throw this._props_error;
+    this._props = this.props_holder.validate(this.constructor as any)
+    if (this.props_holder.errors.length) {
+      const e = new Error("[UIComponent.props] failed")
+      this._props_error = Object.assign(e, {
+        errors: this.props_holder.errors
+      })
+      throw this._props_error
+    }
+    return this._props
   }
   __debugging?: boolean | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

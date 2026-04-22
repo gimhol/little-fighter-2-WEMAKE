@@ -22,6 +22,7 @@ export class UIProps {
   }).instance_setter((value, clazz) => {
 
   })
+  get errors() { return this.validator.errors }
   constructor(raw: { [x in string]?: any }, owner: UIComponent<unknown, any>) {
     this.raw = { ...raw };
     this.owner = owner;
@@ -84,16 +85,15 @@ export class UIProps {
   component() {
     return this.owner.node.search_component
   }
-  validate<P>(Cls: { TAG: string, PROPS: IPropsMeta<P> }): P {
+  validate<P>(Cls: { TAG: string, PROPS: IPropsMeta<P> }): P | null {
     const { TAG, PROPS } = Cls
-    const errors: string[] = [];
     this.validator.validate(this.raw, make_schema({
       key: TAG + 'Props',
       type: 'object',
       properties: PROPS
-    }), errors)
-    if (!errors.length) return this.raw as P;
-    throw new Error(`[${TAG}] props.error:` + errors.join('\n'))
+    }))
+    if (!this.validator.errors.length)
+      return this.raw as P;
+    return null
   }
-
 }

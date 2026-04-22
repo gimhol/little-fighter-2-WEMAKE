@@ -3,7 +3,19 @@
   id: "launch",
   color: "rgb(16, 32, 108)",
   size: "794, 794",
-  component: ["LaunchPage(entry)"],
+  component: [
+    {
+      name: "LaunchPage",
+      properties: {
+        entry: "entry",
+        tests: ["tap_to_launch", "sound_warning"],
+        tests2: ["scale_in", "scale_out"],
+        tests3: ["scale_in", "scale_out"],
+        tests4: [0],
+        tests5: [0],
+      },
+    },
+  ],
   items: [
     "builtin_data/launch/bg.ui.json5",
     "builtin_data/launch/version_name.ui.json5",
