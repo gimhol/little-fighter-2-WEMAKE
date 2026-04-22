@@ -59,7 +59,7 @@ export class UINode implements IDebugging {
   protected readonly _opacity: StateDelegate<number> = new StateDelegate(1);
 
   readonly pos: IVector3 = new D.Vector3();
-  readonly scale: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.scale)).comparer(StateDelegate.CompareVec3);
+  readonly scale: IVector3 = new D.Vector3(1, 1, 1)
   readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
   readonly size: StateDelegate<IVector2> = new StateDelegate(() => new D.Vector2(...this.data.size)).comparer(StateDelegate.CompareVec2);
@@ -259,17 +259,19 @@ export class UINode implements IDebugging {
     return this;
   }
 
-  get sx(): number { return this.scale.value.x; }
+  get sx(): number { return this.scale.x; }
   set sx(v: number) { this.set_sx(v); }
-  get sy(): number { return this.scale.value.y; }
+  get sy(): number { return this.scale.y; }
   set sy(v: number) { this.set_sy(v); }
-  get sz(): number { return this.scale.value.z; }
+  get sz(): number { return this.scale.z; }
   set sz(v: number) { this.set_sz(v); }
   set_sx(v: number): this { return this.set_scale(v); }
   set_sy(v: number): this { return this.set_scale(void 0, v); }
   set_sz(v: number): this { return this.set_scale(void 0, void 0, v); }
   set_scale(x: number = this.sx, y: number = this.sy, z: number = this.sz): this {
-    this.scale.value = new D.Vector3(x, y, z);
+    this.scale.x = x;
+    this.scale.y = y;
+    this.scale.z = z;
     return this;
   }
 

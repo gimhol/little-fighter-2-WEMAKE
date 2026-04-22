@@ -301,10 +301,8 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.material.bgAlpha = backgroundAlpha;
     this.mesh.material.fgColor = foreground;
     this.mesh.material.fgAlpha = foregroundAlpha;
-    if (this.ui.scale.version !== this.scale_version) {
-      const { x, y, z } = this.ui.scale.value
-      this.mesh.scale.set(x, y, z);
-    }
+    const s = this.ui.scale
+    this.mesh.scale.set(s.x, s.y, s.z);
     const { x, y, z } = this.ui.pos
     this.mesh.position.set(x, -y, z);
 
@@ -321,7 +319,6 @@ export class UINodeRenderer implements IUINodeRenderer {
         child.renderer.render(dt)
     }
     this.center_version = this.ui.center.version
-    this.scale_version = this.ui.scale.version;
     this.img_idx_version = this.ui.img_idx.version
     this.imgs_version = this.ui.imgs.version
     this.txt_idx_version = this.ui.txt_idx.version
