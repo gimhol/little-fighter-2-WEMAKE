@@ -58,7 +58,7 @@ export class UINode implements IDebugging {
   protected readonly _disabled: StateDelegate<boolean> = new StateDelegate(() => this.data.disabled === true);
   protected readonly _opacity: StateDelegate<number> = new StateDelegate(1);
 
-  readonly pos: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.pos)).comparer(StateDelegate.CompareVec3);
+  readonly pos: IVector3 = new D.Vector3();
   readonly scale: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.scale)).comparer(StateDelegate.CompareVec3);
   readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
@@ -89,7 +89,7 @@ export class UINode implements IDebugging {
   }
   get rect() {
     const c = this.cross
-    const { x, y } = this.pos.value
+    const { x, y } = this.pos
     return {
       left: x + c.left,
       top: y + c.top,
@@ -229,17 +229,19 @@ export class UINode implements IDebugging {
     this.size.value = new D.Vector2(w, h); return this;
   }
 
-  get x(): number { return this.pos.value.x; }
+  get x(): number { return this.pos.x; }
   set x(v: number) { this.set_x(v); }
-  get y(): number { return this.pos.value.y; }
+  get y(): number { return this.pos.y; }
   set y(v: number) { this.set_y(v); }
-  get z(): number { return this.pos.value.z; }
+  get z(): number { return this.pos.z; }
   set z(v: number) { this.set_z(v); }
   set_x(v: number): this { return this.move_to(v); }
   set_y(v: number): this { return this.move_to(void 0, v); }
   set_z(v: number): this { return this.move_to(void 0, void 0, v); }
   move_to(x: number = this.x, y: number = this.y, z: number = this.z): this {
-    this.pos.value = new D.Vector3(x, y, z);
+    this.pos.x = x;
+    this.pos.y = y;
+    this.pos.z = z;
     return this;
   }
 
@@ -297,7 +299,7 @@ export class UINode implements IDebugging {
     make_debugging(this)
   }
   get global_pos(): IVector3 {
-    const ret = this.pos.value.clone()
+    const ret = this.pos.clone()
     if (!this.parent) return ret;
     ret.add(this.parent.global_pos)
     return ret;
@@ -315,7 +317,7 @@ export class UINode implements IDebugging {
   }
   hit(x: number, y: number): boolean {
     const { x: cx, y: cy } = this.center.value;
-    const { x: px, y: py } = this.pos.value;
+    const { x: px, y: py } = this.pos;
     const { x: dw, y: dh } = this.size.value;
     const l = px - round(cx * dw);
     const t = py - round(cy * dh);
@@ -536,10 +538,10 @@ export class UINode implements IDebugging {
       this._opacity.default_value = () =>
         Number(get_val(this, opacity, "==")) || 0;
     }
-    this.pos.default_value = () => {
-      const [x, y, z] = this.data.pos;
-      return new D.Vector3(x, y, z)
-    }
+    const [x, y, z] = this.data.pos;
+    this.pos.x = x
+    this.pos.y = y
+    this.pos.z = z
   }
 
   private _cook_img_idx(get_val: IValGetter<UINode>) {

@@ -305,10 +305,9 @@ export class UINodeRenderer implements IUINodeRenderer {
       const { x, y, z } = this.ui.scale.value
       this.mesh.scale.set(x, y, z);
     }
-    if (this.ui.pos.version !== this.pos_version) {
-      const { x, y, z } = this.ui
-      this.mesh.position.set(x, -y, z);
-    }
+    const { x, y, z } = this.ui.pos
+    this.mesh.position.set(x, -y, z);
+
     if (this._dom) {
       this._dom.style.opacity = '' + this.ui.global_opacity
       if (this._input) {
@@ -323,7 +322,6 @@ export class UINodeRenderer implements IUINodeRenderer {
     }
     this.center_version = this.ui.center.version
     this.scale_version = this.ui.scale.version;
-    this.pos_version = this.ui.pos.version;
     this.img_idx_version = this.ui.img_idx.version
     this.imgs_version = this.ui.imgs.version
     this.txt_idx_version = this.ui.txt_idx.version

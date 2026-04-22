@@ -70,8 +70,8 @@ export class UIStack {
     const info = this.lf2.uis.all?.find((v) => v.id === id)
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
-      const { x, y, z } = curr.pos.value
-      curr.pos.push(new Ditto.Vector3(x, y, z + this._index))
+      const { x, y, z } = curr.pos
+      curr.z = curr.z + this._index
       this.uis.push(curr);
       curr.on_start();
       curr.on_resume();
@@ -86,8 +86,7 @@ export class UIStack {
     const info = this.lf2.uis.all?.find((v) => v.id === id)
     const curr = info && UINode.create(this.lf2, info);
     if (curr) {
-      const { x, y, z } = curr.pos.value
-      curr.pos.push(new Ditto.Vector3(x, y, z + this._index))
+      curr.z = curr.z + this._index
       this.uis.push(curr);
       curr.on_start();
       curr.on_resume();
