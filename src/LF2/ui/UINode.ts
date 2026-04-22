@@ -1,9 +1,9 @@
 import { LF2 } from "../LF2";
-import { Callbacks, Expression, StateDelegate } from "../base";
+import { Callbacks, StateDelegate } from "../base";
 import { IStyle, IValGetter, IVector3 } from "../defines";
 import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
-import { filter, is_bool, is_num, is_str, round, Times } from "../utils";
+import { filter, is_num, is_str, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
@@ -56,7 +56,7 @@ export class UINode implements IDebugging {
   protected _state: any = {};
   protected _visible = true;
   protected _disabled = false;
-  protected _opacity = () => 1;
+  protected _opacity = 1;
 
   readonly pos: IVector3 = new D.Vector3();
   readonly scale: IVector3 = new D.Vector3(1, 1, 1)
@@ -204,12 +204,12 @@ export class UINode implements IDebugging {
   get self_disabled() { return this._disabled }
 
   get global_opacity(): number {
-    if (!this.parent) return this._opacity()
-    return this._opacity() * this.parent._opacity();
+    if (!this.parent) return this._opacity
+    return this._opacity * this.parent._opacity;
   }
-  get opacity(): number { return this._opacity(); }
+  get opacity(): number { return this._opacity; }
   set opacity(v: number) { this.set_opacity(v); }
-  set_opacity(v: number): this { this._opacity = () => v; return this; }
+  set_opacity(v: number): this { this._opacity = v; return this; }
 
   get parent(): UINode | undefined { return this._parent; }
   get children(): Readonly<UINode[]> { return this._children; }
@@ -296,6 +296,15 @@ export class UINode implements IDebugging {
     this._root = parent?.root ?? this;
     this.id_ui_map = new Map();
     this.name_ui_map = new Map();
+
+    const { visible = true, opacity = 1, disabled = false } = this.data;
+    this._disabled = disabled
+    this._visible = visible
+    this._opacity = opacity
+    this.center.set(...this.data.center);
+    this.pos.set(...this.data.pos);
+    this.size.set(...this.data.size);
+    this.scale.set(...this.data.scale);
 
     this.renderer = new D.UINodeRenderer(this);
     make_debugging(this)
@@ -454,7 +463,6 @@ export class UINode implements IDebugging {
   static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {
     const ret = new UINode(lf2, info, parent);
     const get_val = lf2.ui_val_getter;
-    ret._read_data(get_val);
     ret._cook_img_idx(get_val);
 
     const { component } = ret.data;
@@ -517,20 +525,6 @@ export class UINode implements IDebugging {
       component.on_del?.()
       this._callbacks.emit('on_component_del')(component, this)
     }
-  }
-  private _read_data(get_val: IValGetter<UINode>) {
-    const { visible = true, opacity, disabled = false } = this.data;
-    if (is_num(opacity)) {
-      this._opacity = () => opacity;
-    } else if (is_str(opacity)) {
-      this._opacity = () => Number(get_val(this, opacity, "==")) || 0;
-    }
-    this._disabled = disabled
-    this._visible = visible
-    this.center.set(...this.data.center);
-    this.pos.set(...this.data.pos);
-    this.size.set(...this.data.size);
-    this.scale.set(...this.data.scale);
   }
 
   private _cook_img_idx(get_val: IValGetter<UINode>) {
