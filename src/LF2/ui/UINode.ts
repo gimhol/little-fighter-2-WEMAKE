@@ -538,8 +538,7 @@ export class UINode implements IDebugging {
     }
     this.pos.default_value = () => {
       const [x, y, z] = this.data.pos;
-      if (this.parent) return new D.Vector3(x, y, z);
-      return new D.Vector3(x, y - this.lf2.world.screen_h, z)
+      return new D.Vector3(x, y, z)
     }
   }
 

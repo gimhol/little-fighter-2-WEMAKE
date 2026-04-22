@@ -1,6 +1,6 @@
 {
-  name: "页面：按键设置",
   id: "ctrl_settings",
+  name: "页面：按键设置",
   templates: {
     suffixies: {
       center: "0,0",
