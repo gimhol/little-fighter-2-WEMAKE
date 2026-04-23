@@ -13,12 +13,10 @@ export class BackgroundSwitcher extends Label {
     return this._background;
   }
   override on_resume(): void {
-    super.on_resume();
     this.set_text(this._background.base.name)
     this.lf2.callbacks.add(this)
   }
   override on_pause(): void {
-    super.on_pause();
     this.lf2.callbacks.del(this);
   }
   override on_show(): void {

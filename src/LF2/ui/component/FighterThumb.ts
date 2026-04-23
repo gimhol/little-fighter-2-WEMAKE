@@ -6,6 +6,7 @@ import { UIImgLoader } from "../UIImgLoader";
 import { GamePrepareLogic } from "./GamePrepareLogic";
 import { PlayerScore } from "./PlayerScore";
 import { UIComponent } from "./UIComponent";
+import { Picture } from "@/LF2";
 
 /**
  * 显示玩家角色选择的角色小头像
@@ -14,10 +15,9 @@ import { UIComponent } from "./UIComponent";
  * @class PlayerCharacterThumb
  * @extends {UIComponent}
  */
-export class FighterThumb extends UIComponent {
+export class FighterThumb extends Picture {
   static override readonly TAGS: string[] = ["FighterThumb"];
   private fighter?: Entity;
-  private img_loader = new UIImgLoader(() => this.node).ignore_out_of_date();
   get thumb_url(): string {
     return (
       this.fighter?.data.base.small ?? Defines.BuiltIn_Imgs.CHARACTER_THUMB
@@ -35,8 +35,11 @@ export class FighterThumb extends UIComponent {
   constructor(...args: ConstructorParameters<typeof UIComponent>) {
     super(...args);
   }
+  override on_start(): void {
+    this.width = 40;
+    this.height = 45;
+  }
   override on_resume(): void {
-    super.on_resume();
     this.fighter = this.node.lookup_component(PlayerScore)?.fighter;
   }
 
@@ -45,11 +48,10 @@ export class FighterThumb extends UIComponent {
   }
 
   override on_pause(): void {
-    super.on_pause();
     this._unmount_jobs.invoke_and_clear();
   }
 
   protected handle_changed() {
-    this.img_loader.load([{ path: this.thumb_url, w: 40, h: 45 }], 0).catch(_ => _)
+    this.set_src(this.thumb_url)
   }
 }

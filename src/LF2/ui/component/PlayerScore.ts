@@ -26,12 +26,10 @@ export class PlayerScore extends UIComponent {
   private _unmount_job = new Invoker();
 
   override on_resume(): void {
-    super.on_resume();
     this.node.visible = !!this.fighter;
   }
 
   override on_pause(): void {
-    super.on_resume();
     this._unmount_job.invoke_and_clear();
   }
 }

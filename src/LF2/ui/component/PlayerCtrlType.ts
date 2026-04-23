@@ -7,7 +7,6 @@ export class PlayerCtrlType extends UIComponent {
   get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
   get player() { return this.lf2.players.get(this.player_id)! }
   override on_resume(): void {
-    super.on_resume();
     this.player.callbacks.add(this)
     this.on_ctrl_changed(this.player.ctrl)
   }

@@ -1,9 +1,9 @@
 import { LF2 } from "../LF2";
 import { Callbacks, StateDelegate } from "../base";
-import { IStyle, IValGetter, IVector3 } from "../defines";
+import { IStyle, IVector3 } from "../defines";
 import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
-import { is_num, is_str, round, Times } from "../utils";
+import { is_num, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
@@ -62,8 +62,7 @@ export class UINode implements IDebugging {
   readonly center: IVector3 = new D.Vector3()
 
   text: TextInfo | null = null
-  readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
-  readonly img_idx: StateDelegate<number> = new StateDelegate(0);
+  image: ImageInfo | null = null
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
 
   protected _parent?: UINode;
@@ -311,6 +310,7 @@ export class UINode implements IDebugging {
     this.size.set(...this.data.size);
     this.scale.set(...this.data.scale);
     this.text = this.data.txt_info ?? null;
+    this.image = this.data.img_info ?? null;
     this.renderer = new D.UINodeRenderer(this);
     make_debugging(this)
   }
@@ -412,6 +412,7 @@ export class UINode implements IDebugging {
     }
     for (const c of this._components) {
       c.paused = false;
+      c.mounted = true;
       c.on_resume?.();
     }
     for (const i of this.children) i.on_resume();
@@ -431,6 +432,7 @@ export class UINode implements IDebugging {
     if (pause) actor.act(this, pause);
     for (const c of this._components) {
       c.paused = true;
+      c.mounted = false;
       c.on_pause?.();
     }
     for (const item of this.children) item.on_pause();
@@ -453,18 +455,10 @@ export class UINode implements IDebugging {
     this.renderer.on_hide?.();
   }
 
-  next_img(r: boolean = false) {
-    const idx = this.img_idx.value;
-    const len = this.data.img.length;
-    this.img_idx.value = (r ? (idx + len - 1) : (idx + 1)) % len
-  }
   readonly cook = UINode.create.bind(UINode)
 
   static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {
     const ret = new UINode(lf2, info, parent);
-    const get_val = lf2.ui_val_getter;
-    ret._cook_img_idx(get_val);
-
     const { component } = ret.data;
     if (component)
       for (const c of lf2.factory.create_components(ret, component))
@@ -514,23 +508,6 @@ export class UINode implements IDebugging {
       this._components.splice(idx, 1)
       component.on_del?.()
       this._callbacks.emit('on_component_del')(component, this)
-    }
-  }
-
-  private _cook_img_idx(get_val: IValGetter<UINode>) {
-    const imgs = this.imgs.value;
-    if (!imgs?.length) return;
-    const { which } = this.data;
-    if (is_str(which)) {
-      this.img_idx.default_value = () => {
-        const num = get_val(this, which, "==")
-        return num % imgs.length || 0;
-      };
-      return
-    }
-    if (is_num(which)) {
-      this.img_idx.default_value = () => (which % imgs.length || 0)
-      return
     }
   }
 

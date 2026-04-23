@@ -14,12 +14,10 @@ export class PlayerKeyText extends Label {
     return Defines.SHORT_KEY_CODES[kc] || kc || 'None'
   }
   override on_resume() {
-    super.on_resume();
     this.player?.callbacks.add(this)
     this.on_key_changed();
   }
   override on_pause(): void {
-    super.on_pause();
     this.player?.callbacks.del(this)
   }
   on_key_changed() {

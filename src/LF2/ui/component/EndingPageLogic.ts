@@ -37,7 +37,6 @@ export class EndingPageLogic extends UIComponent<IEndingPageLogicProps> {
     this.props.jalousie?.callbacks.add(this.jalousie_cbs)
   }
   override on_resume(): void {
-    super.on_resume()
     this.lf2.sounds.stop_bgm()
     if (this.props.jalousie?.anim.done) this.props.jalousie.open = !this.props.jalousie.open
   }

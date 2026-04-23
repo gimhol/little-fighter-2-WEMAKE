@@ -37,7 +37,7 @@ export class Dialogs extends UIComponent<IDialogsProps> {
     this.node.visible = false;
     this.props.text?.set_text('');
     this.props.talker?.set_text('');
-    this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
+    this._head_loader.set_img('').catch(e => Ditto.warn('' + e))
   }
   show_dialog(dialog: IDialogInfo) {
     this._transform.scale_to(1, 1, 1, true)
@@ -53,9 +53,9 @@ export class Dialogs extends UIComponent<IDialogsProps> {
       this.props.talker?.set_text('')
     }
     if (fighter?.base.head) {
-      this._head_loader.set_img([fighter.base.head]).catch(e => Ditto.warn('' + e))
+      this._head_loader.set_img(fighter.base.head).catch(e => Ditto.warn('' + e))
     } else {
-      this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
+      this._head_loader.set_img('').catch(e => Ditto.warn('' + e))
     }
   }
   override update(dt: number): void {

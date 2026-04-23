@@ -25,12 +25,10 @@ export class LoadingContentText extends Label {
   }
 
   override on_resume(): void {
-    super.on_resume();
     this.lf2.callbacks.add(this);
   }
 
   override on_pause(): void {
-    super.on_pause();
     this.lf2.callbacks.del(this);
   }
 

@@ -13,10 +13,10 @@ export interface ICookedUIInfo extends IUIInfo {
   center: [number, number, number];
   parent?: ICookedUIInfo;
   items?: ICookedUIInfo[];
-  img_infos: ImageInfo[];
+  img_info?: ImageInfo;
   txt_info?: TextInfo;
   size: [number, number, number];
-  img: IUIImgInfo[];
+  img?: IUIImgInfo;
   txt?: ICookedUITxtInfo;
   values: { [x in string]?: any };
   component: IComponentInfo[];

@@ -1,7 +1,7 @@
 import { ISchema } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
-import { floor, is_str, Unsafe } from "../utils";
+import { floor, is_str } from "../utils";
 import { find_ui_template } from "./find_ui_template";
 import { IComponentInfo } from "./IComponentInfo";
 import { ICookedUIInfo } from "./ICookedUIInfo";
@@ -17,26 +17,6 @@ import { UINode } from "./UINode";
 import { parse_call_func_expression } from "./utils";
 import read_nums from "./utils/read_nums";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
-
-export function flat_ui_img_info(imgs: IUIImgInfo[], output?: IUIImgInfo[]): IUIImgInfo[] {
-  const ret: IUIImgInfo[] = [];
-  for (const img of imgs) {
-    const errors: string[] = [];
-    validate_ui_img_info(img, errors);
-    if (errors.length) throw new Error(errors.join('\n'));
-    const { x = 0, y = 0, w = 0, h = 0, col: cols = 1, row: rows = 1, count = 0 } = img;
-    let idx = 0;
-    for (let row = 0; row < rows && (count <= 0 || idx < count); ++row) {
-      for (let col = 0; col < cols && (count <= 0 || idx < count); ++col) {
-        const i: IUIImgInfo = { ...img, x: x + col * w, y: y + row * h }
-        ret.push(i);
-        output?.push(i)
-        ++idx;
-      }
-    }
-  }
-  return ret;
-}
 
 function cook_ui_txt_info(lf2: LF2, ui_info: ICookedUIInfo, raw: TUITxtInfo): ICookedUITxtInfo {
   if (typeof raw === 'string') {
@@ -81,44 +61,36 @@ export async function cook_ui_info(
     center: read_nums(ui_info.center, 3, [0, 0, 0]),
     size: [0, 0, 0],
     parent,
-    img_infos: [],
+    img_info: void 0,
     txt_info: void 0,
     items: void 0,
-    img: [],
+    img: void 0,
     txt: void 0,
     component: components
   };
-  const { img } = ui_info;
-  const imgs = Array.isArray(img) ? img : img ? [img] : []
-  const _img: IUIImgInfo[] = [];
-  for (const i of imgs) {
-    let rr: Unsafe<IUIImgInfo> = void 0;
-    if (typeof i === 'string') {
-      rr = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), i)
-    } else {
-      rr = i
-    }
-    if (!rr) {
-      // debugger;
-      continue;
-    }
+  let { img } = ui_info;
+  do {
+    if (!img) break;
+    if (typeof img == 'string') 
+      img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), img) ?? void 0
+    if (!img) break;
+    debugger
     for (const k in Schema_IUIImgInfo.properties) {
       const meta = (Schema_IUIImgInfo.properties as any)[k] as ISchema;
-      const val = (rr as any)[k];
+      const val = (img as any)[k];
       if (!meta || !val || typeof val !== 'string' || !val.startsWith('$val:'))
         continue;
       // FIXME: `meta.type as any`
-      (rr as any)[k] = parse_ui_value(ret, meta.type as any, val) ?? val
+      (img as any)[k] = parse_ui_value(ret, meta.type as any, val) ?? val
     }
-    _img.push(rr)
-  }
-  if (_img.some(v => typeof v !== 'object')) debugger;
-  if (_img.length) ret.img_infos.push(...await ui_load_img(lf2, _img, ret.img));
+    ret.img = img;
+    ret.img_info = await ui_load_img(lf2, img);
+  } while (0);
 
   if (ui_info.txt) ret.txt = cook_ui_txt_info(lf2, ret, ui_info.txt);
   if (ret.txt) ret.txt_info = await ui_load_txt(lf2, ret.txt);
 
-  const { w: img_w = 0, h: img_h = 0, scale = 1 } = ret.img_infos[0] || ret.txt_info || {};
+  const { w: img_w = 0, h: img_h = 0, scale = 1 } = ret.img_info || ret.txt_info || {};
   const sw = img_w / scale;
   const sh = img_h / scale;
   const [w, h] = read_nums(ui_info.size, 3, [parent ? sw : lf2.world.screen_w, parent ? sh : lf2.world.screen_h]);

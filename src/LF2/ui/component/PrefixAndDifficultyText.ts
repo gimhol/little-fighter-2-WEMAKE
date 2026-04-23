@@ -22,12 +22,10 @@ export class PrefixAndDifficultyText extends UIComponent implements IWorldCallba
     return `${this._prefix} (${DifficultyNames[this.world.difficulty]})`
   }
   override on_resume(): void {
-    super.on_resume();
     this.world.callbacks.add(this)
     this.on_dataset_change('difficulty');
   }
   override on_pause(): void {
-    super.on_pause();
     this.world.callbacks.del(this)
   }
   on_dataset_change<K extends keyof IWorldDataset>(key: K): void {

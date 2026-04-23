@@ -13,14 +13,15 @@ export class Picture extends UIComponent<IPictureProps> {
     height: { type: Number, nullable: true }
   }
   protected _img_loader = new UIImgLoader(() => this.node);
-
   get width() { return this.props.width ?? this.node.w }
   get height() { return this.props.height ?? this.node.h }
-  get src(): string { return this.node.imgs.value[0].src; }
+  get src(): string { return this.node.image?.src ?? ''; }
   set src(v: string) { this.set_src(v); }
+  set width(w: number) { this.props.width = w }
+  set height(h: number) { this.props.height = h }
   set_src(v: string): this {
     const info: IUIImgInfo = { path: v, dw: this.width, dh: this.height }
-    this._img_loader.load([info]).catch(e => Ditto.warn(`[${Picture.TAG}::set_src]` + e));
+    this._img_loader.load(info).catch(e => Ditto.warn(`[${Picture.TAG}::set_src]` + e));
     return this;
   }
 }

@@ -53,7 +53,6 @@ export class TeamSituationText extends UIComponent {
   }
 
   override on_resume(): void {
-    super.on_resume()
     this.rr();
   }
 

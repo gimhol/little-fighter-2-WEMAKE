@@ -32,7 +32,6 @@ export * from "./IPlayable";
 export * from "./ISumInfo";
 export * from "./ITeamSumInfo";
 export * from "./IUICompnentCallbacks";
-export * from "./ImgClickable";
 export * from "./ImgLoop";
 export * from "./IntegerPicker";
 export * from "./Jalousie";

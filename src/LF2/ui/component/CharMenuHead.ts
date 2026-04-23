@@ -35,16 +35,14 @@ export class CharMenuHead extends UIComponent<ICharMenuHeadProps> {
   join(path: string): void {
     this._joined = true;
     this._path = path;
-    this.img_loader.load([{ path, w: 120, h: 120 }], 0).catch(_ => _)
-    this.node.img_idx.value = 0
+    this.img_loader.load({ path, w: 120, h: 120 }).catch(_ => _)
     this.props.hints_node?.set_visible(false);
     this.countdown_node?.set_visible(false);
   }
   quit(): void {
     this._joined = false;
     this._path = '';
-    this.img_loader.load([{ path: '', w: 120, h: 120 }], 0).catch(_ => _)
-    this.node.img_idx.value = -1
+    this.img_loader.load({ path: '', w: 120, h: 120 }).catch(_ => _)
     this.props.hints_node?.set_visible(true);
     this.countdown_node?.set_visible(false);
   }
@@ -53,9 +51,7 @@ export class CharMenuHead extends UIComponent<ICharMenuHeadProps> {
     const hints_visible = !this._joined && !this.countdown_node?.visible
     this.props.hints_node?.set_visible(hints_visible);
     this.props.hints_node?.set_opacity(this._opacity.value);
-
-    const head_visible = !hints_visible && !this.countdown_node?.visible && !!this._path
-    this.node.img_idx.value = head_visible ? 0 : -1;
+    this.node.visible = !hints_visible && !this.countdown_node?.visible && !!this._path
   }
   count_down(num: number): void {
     num = floor(num)

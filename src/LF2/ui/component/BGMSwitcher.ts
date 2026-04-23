@@ -11,7 +11,6 @@ export class BGMSwitcher extends Label {
     on_bgm_changed: () => this.set_text('BGM: ' + this.which)
   }
   override on_resume(): void {
-    super.on_resume();
     if (this.lf2.sounds.is_random)
       this._which = 'Random'
     if (this.offset == 0) {
@@ -20,7 +19,6 @@ export class BGMSwitcher extends Label {
     }
   }
   override on_pause(): void {
-    super.on_pause();
     this.lf2.sounds.callbacks.del(this._sounds_cbs)
   }
   override on_click(e: LF2PointerEvent): void {

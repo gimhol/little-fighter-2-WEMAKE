@@ -15,7 +15,6 @@ class UIActor {
     [UIActionEnum.SetUI, ({ lf2 }, layout_id, index) => lf2.set_ui({ id: layout_id }, Number(index) || 0)],
     [UIActionEnum.PushUI, ({ lf2 }, layout_id, index) => lf2.push_ui({ id: layout_id }, Number(index) || 0)],
     [UIActionEnum.PopUI, ({ lf2 }) => lf2.pop_ui_safe()],
-    [UIActionEnum.LoopImg, (l, d) => l.next_img(d === '1')],
     [UIActionEnum.LoadData, ({ lf2 }, url) => lf2.load(...(url ? [url] : LF2.DATA_ZIPS)).catch(e => Ditto.warn('Failed to load, reason', e))
       .catch((e) => Ditto.warn(`[${UIActor.TAG}::load_data] ${url} not exists, err: ${e}`))],
     [UIActionEnum.Broadcast, ({ lf2 }, msg) => lf2.broadcast(msg)],

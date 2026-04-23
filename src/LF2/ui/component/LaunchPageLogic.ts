@@ -150,7 +150,6 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     this.lf2.callbacks.del(this.lf2_cb)
   }
   override on_resume(): void {
-    super.on_resume();
     this.bearface = this.node.find_child("bearface")!;
     this.yeonface = this.node.find_child("yeonface")!;
     this.tap_to_launch = this.node.find_child("tap_to_launch")!;

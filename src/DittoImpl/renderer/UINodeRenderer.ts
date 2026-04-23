@@ -22,7 +22,7 @@ interface IUserData {
   t_y?: number,
   t_z?: number,
   ui_img?: IUIImgInfo,
-  img?: ImageInfo<T.Texture>,
+  img?: ImageInfo<T.Texture> | null,
   nine_patch?: INinePatch,
 }
 export class UINodeRenderer implements IUINodeRenderer {
@@ -41,9 +41,9 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected center_version: number | null = null;
   protected scale_version: number | null = null;
   protected pos_version: number | null = null;
-  protected _img: ImageInfo<T.Texture> | undefined;
   protected _input: HTMLInputElement | undefined;
-  protected _text: TextInfo<any> | null = null;
+  protected _txt: TextInfo<any> | null = null;
+  protected _img: ImageInfo<T.Texture> | null = null;
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -174,16 +174,13 @@ export class UINodeRenderer implements IUINodeRenderer {
 
   update_texture() {
     if (
-      this.img_idx_version === this.ui.img_idx.version &&
-      this.imgs_version === this.ui.imgs.version &&
-      this._text === this.ui.text &&
+      this._txt === this.ui.text &&
+      this._img === this.ui.image &&
       this.color_version === this.ui.color.version
     ) return;
 
-    const img: ImageInfo | undefined =
-      this.ui.imgs.value[this.ui.img_idx.value] ||
-      this.ui.text;
-    this._ui_img = this.ui.data.img[this.ui.img_idx.value];
+    const img = this.ui.image || this.ui.text;
+    this._ui_img = this.ui.data.img;
     this._img = img;
     const rgba = parse_rgba(this.ui.color.value)
     if (img) {
@@ -316,9 +313,8 @@ export class UINodeRenderer implements IUINodeRenderer {
       if (child.visible || (child.visible != child.renderer.visible))
         child.renderer.render(dt)
     }
-    this.img_idx_version = this.ui.img_idx.version
-    this.imgs_version = this.ui.imgs.version
-    this._text = this.ui.text
+    this._img = this.ui.image
+    this._txt = this.ui.text
     this.color_version = this.ui.color.version
   }
 }

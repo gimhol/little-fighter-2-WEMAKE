@@ -31,11 +31,9 @@ export class StageSwitcher extends Label {
     return this._stage.starting_name ?? this._stage.name;
   }
   override on_resume(): void {
-    super.on_resume();
     this.lf2.callbacks.add(this)
   }
   override on_pause(): void {
-    super.on_pause();
     this.lf2.callbacks.del(this);
   }
   override on_show(): void {

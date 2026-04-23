@@ -54,7 +54,7 @@ export class UIComponent<
   id: string = '';
   get lf2() { return this.node.lf2; }
   get world() { return this.node.lf2.world; }
-  private _mounted: boolean = false;
+  mounted: boolean = false;
 
   /** @deprecated */
   private _args: readonly any[] = [];
@@ -66,8 +66,6 @@ export class UIComponent<
 
   get disabled() { return !this.enabled }
   set disabled(v: boolean) { this.set_enabled(!v); }
-
-  get mounted() { return this._mounted; }
 
   /** @deprecated */
   get args(): readonly string[] { return this._args; }
@@ -180,15 +178,9 @@ export class UIComponent<
   on_pointer_leave?(): void;
   on_pointer_enter?(): void;
   on_click?(e: LF2PointerEvent): void;
-
   on_start?(): void;
-
-  on_resume(): void {
-    this._mounted = true;
-  }
-  on_pause(): void {
-    this._mounted = false;
-  }
+  on_resume?(): void
+  on_pause?(): void
   on_stop?(): void;
 
   on_show?(): void;

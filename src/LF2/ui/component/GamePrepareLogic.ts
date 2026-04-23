@@ -25,7 +25,6 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
   }
 
   override on_resume(): void {
-    super.on_resume();
     const background_row = this.node.search_node("background_row")!;
     const stage_row = this.node.search_node("stage_row")!;
     const char_menu_logic = this.node.search_component(CharMenuLogic)

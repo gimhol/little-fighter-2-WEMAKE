@@ -32,7 +32,6 @@ export const regist_components = () => {
     _.GamePrepareLogic,
     _.HideWhenDialoging,
     _.HorizontalLayout,
-    _.ImgClickable,
     _.ImgLoop,
     _.IntegerPicker,
     _.Jalousie,
