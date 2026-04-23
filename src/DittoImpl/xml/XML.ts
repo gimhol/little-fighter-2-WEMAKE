@@ -35,7 +35,7 @@ export class XML implements IXMLNode {
 }
 
 const aa = XML.parse(`
-<node id="ctrl_settings" name="页面：按键设置">
+<node id="settings" name="页面：按键设置">
   <template id="suffixies">
   </template>
 </node> 

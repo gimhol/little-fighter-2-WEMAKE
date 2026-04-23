@@ -598,7 +598,7 @@ function App() {
           checked={s.sound_muted}
           onClick={() => lf2?.sounds?.set_sound_muted(!s.sound_muted)}
           src={[img_btn_0_3, img_btn_1_0]} />
-        <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}>
+        <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "settings"}>
           <ToggleImgButton
             checked={paused}
             onClick={() => lf2?.cmds.push(CMD.F1)}
@@ -609,8 +609,8 @@ function App() {
             onClick={() => {
               if (!lf2) return;
               lf2.cmds.push(CMD.F2)
-              if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings') lf2.pop_ui_safe()
-              else lf2.set_ui({ id: "ctrl_settings" }, 1);
+              if (lf2.ui_stacks[1]?.ui?.data.id == 'settings') lf2.pop_ui_safe()
+              else lf2.set_ui({ id: "settings" }, 1);
             }}
             src={[img_btn_1_1, img_btn_1_1]}
           />
