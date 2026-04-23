@@ -30,7 +30,7 @@ export class EntityMainRender {
   protected images!: Map<string, RImageInfo>;
   entity!: Entity;
   protected node!: T.Object3D;
-  protected main_mesh!: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
+  protected main_mesh!: T.Mesh<T.BufferGeometry, OutlineMaterial>;
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
 
   protected variants = new Map<string, string[]>();
@@ -89,6 +89,8 @@ export class EntityMainRender {
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY, material
     )
+    mesh.material = material;
+
     if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
     mesh.visible = false;
     mesh.name = "Entity:" + data.id;
@@ -107,6 +109,9 @@ export class EntityMainRender {
     this.node = this.node || new T.Object3D();
     this.prev_position = this.entity.position.clone()
     this.position = this.entity.position.clone()
+
+
+
   }
 
   on_mount() {
@@ -220,6 +225,15 @@ export class EntityMainRender {
     }
     this.render_bpoint();
     this.render_outline();
+    if (this.lf2.ui?.id == "main_page") {
+      const { material: m } = main_mesh;
+      m.uniforms.gray.value = 0.3
+      m.uniforms.mixColor.value = new T.Color('#364791')
+      m.uniforms.mixStength.value = 0.3
+      m.uniforms.outlineWidth.value = 2
+      m.uniforms.outlineAlpha.value = 1
+      m.uniforms.outlineColor.value = new T.Color('#131C47')
+    }
   }
   private render_outline() {
     const { main_mesh } = this;

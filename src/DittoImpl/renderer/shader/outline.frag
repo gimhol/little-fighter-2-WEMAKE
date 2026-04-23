@@ -88,11 +88,10 @@ void apply(vec4 color) {
     color.rgb = gamma_correct(coverColor);
     color.a = coverStength;
   }
-  if(mixStength > 0.0)
-    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStength);
   if(gray > 0.0)
     color.rgb = to_gray(color.rgb, gray);
-
+  if(mixStength > 0.0)
+    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStength);
   if(bgAlpha > 0.0)
     color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
   if(fgAlpha > 0.0)

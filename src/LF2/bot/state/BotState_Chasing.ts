@@ -156,7 +156,7 @@ export class BotState_Chasing extends BotState_Base {
           between(abs_dz, 0, c.dataset.d_atk_z) &&
           is_fighter(en)
         ) {
-          c.click(GK.a)
+          c.key_down(GK.a)
           return
         }
         break;
@@ -179,7 +179,8 @@ export class BotState_Chasing extends BotState_Base {
           is_fighter(en)
         ) {
           // 跳攻
-          c.click(GK.a)
+          c.key_down(GK.a)
+          return
         } else if (!out_of_range) {
           if (my_x < en_x && abs_dx > c.w_atk_x) {
             // 转向
