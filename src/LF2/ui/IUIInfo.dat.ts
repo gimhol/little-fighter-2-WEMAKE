@@ -39,7 +39,7 @@ export interface IUIInfo {
   foreground?: string;
   foregroundAlpha?: number;
   img?: TUIImgInfo | TUIImgInfo[];
-  txt?: TUITxtInfo | TUITxtInfo[];
+  txt?: TUITxtInfo;
   which?: number | string;
   dev_component?: TComponentInfo[];
   component?: TComponentInfo[];

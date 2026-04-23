@@ -61,11 +61,10 @@ export class UINode implements IDebugging {
   readonly size: IVector3 = new D.Vector3();
   readonly center: IVector3 = new D.Vector3()
 
-  readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
+  text: TextInfo | null = null
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
 
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
-  readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
 
   protected _parent?: UINode;
@@ -277,7 +276,7 @@ export class UINode implements IDebugging {
     return this._components;
   }
   get style(): IStyle {
-    return this.txts.value[0].style || {}
+    return this.text?.style || {}
   }
   /** 光标是否在本节点上 */
   get pointer_over() { return this._pointer_over }
@@ -447,11 +446,6 @@ export class UINode implements IDebugging {
     const idx = this.img_idx.value;
     const len = this.data.img.length;
     this.img_idx.value = (r ? (idx + len - 1) : (idx + 1)) % len
-  }
-  next_txt(r: boolean = false) {
-    const idx = this.txt_idx.value;
-    const len = this.data.txt.length;
-    this.txt_idx.value = (r ? (idx + len - 1) : (idx + 1)) % len
   }
   readonly cook = UINode.create.bind(UINode)
 
