@@ -59,7 +59,7 @@ export * from "./Players";
 export * from "./PlayingTimeText";
 export * from "./PositionAnimation";
 export * from "./PrefixAndDifficultyText";
-export * from "./RandomImg";
+export * from "./RandomVisible";
 export * from "./Reachable";
 export * from "./ReachableGroup";
 export * from "./ScaleAnimation";

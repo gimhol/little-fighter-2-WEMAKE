@@ -110,37 +110,55 @@
           ],
         },
         {
+          size: "91,106",
           component: ["PlayerCtrlType()"],
-          img: [
+          items: [
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS6.png",
+              img: {
+                w: 106,
+                h: 91,
+                path: "sprite/CS6.png",
+              },
             },
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS2.png",
+              visible: false,
+              img: {
+                w: 106,
+                h: 91,
+                path: "sprite/CS2.png",
+              },
             },
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS3.png",
+              visible: false,
+              img: {
+                w: 106,
+                h: 91,
+                path: "sprite/CS3.png",
+              },
             },
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS4.png",
+              visible: false,
+              img: {
+                w: 106,
+                h: 91,
+                path: "sprite/CS4.png",
+              },
             },
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS5.png",
+              visible: false,
+              img: {
+                w: 106,
+                h: 91,
+                path: "sprite/CS5.png",
+              },
             },
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS7.png",
+              visible: false,
+              img: {
+                w: 106,
+                h: 91,
+                path: "sprite/CS7.png",
+              },
             },
           ],
         },
@@ -179,7 +197,7 @@
     {
       template: "builtin_data/launch/bg.ui.json5",
       color: "#00000033",
-      opacity: 0.9
+      opacity: 0.9,
     },
     // "ui/slider_test.ui.json5",
     {

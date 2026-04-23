@@ -59,7 +59,7 @@ export const regist_components = () => {
     _.PlayingTimeText,
     _.PositionAnimation,
     _.PrefixAndDifficultyText,
-    _.RandomImg,
+    _.RandomVisible,
     _.Reachable,
     _.ReachableGroup,
     _.ScaleAnimation,

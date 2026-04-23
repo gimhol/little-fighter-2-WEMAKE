@@ -9,7 +9,7 @@ export class PlayerCtrlType extends UIComponent {
   override on_resume(): void {
     super.on_resume();
     this.player.callbacks.add(this)
-    this.node.img_idx.value = this.player.ctrl;
+    this.on_ctrl_changed(this.player.ctrl)
   }
   override on_pause(): void {
     this.player.callbacks.del(this)
@@ -22,7 +22,6 @@ export class PlayerCtrlType extends UIComponent {
         (this.player.ctrl + 5) % 6 :
         (this.player.ctrl + 1) % 6
     ) as CtrlDevice;
-    const { player: player } = this;
     if (ctrl === CtrlDevice.TouchScreen) {
       for (const [, p] of this.lf2.players) {
         if (p === this.player)
@@ -34,8 +33,10 @@ export class PlayerCtrlType extends UIComponent {
     }
     this.player.set_ctrl(ctrl, true).save()
   }
-  on_ctrl_changed(curr: CtrlDevice) {
-    this.node.img_idx.value = curr;
+  on_ctrl_changed(c: CtrlDevice) {
+    this.node.children.forEach((v, i) => {
+      v.visible = i == c
+    })
   }
 }
 

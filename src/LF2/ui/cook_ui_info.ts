@@ -55,7 +55,6 @@ export async function cook_ui_info(
   data_or_path: IUIInfo | string,
   parent?: ICookedUIInfo
 ): Promise<ICookedUIInfo> {
-
   let ui_info: IUIInfo = is_str(data_or_path)
     ? await find_ui_template(lf2, parent, data_or_path)
     : data_or_path;
@@ -89,7 +88,6 @@ export async function cook_ui_info(
     txt: void 0,
     component: components
   };
-
   const { img } = ui_info;
   const imgs = Array.isArray(img) ? img : img ? [img] : []
   const _img: IUIImgInfo[] = [];
@@ -119,7 +117,7 @@ export async function cook_ui_info(
 
   if (ui_info.txt) ret.txt = cook_ui_txt_info(lf2, ret, ui_info.txt);
   if (ret.txt) ret.txt_info = await ui_load_txt(lf2, ret.txt);
-  
+
   const { w: img_w = 0, h: img_h = 0, scale = 1 } = ret.img_infos[0] || ret.txt_info || {};
   const sw = img_w / scale;
   const sh = img_h / scale;

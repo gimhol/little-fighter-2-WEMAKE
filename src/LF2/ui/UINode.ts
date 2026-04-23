@@ -63,7 +63,6 @@ export class UINode implements IDebugging {
 
   text: TextInfo | null = null
   readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
-
   readonly img_idx: StateDelegate<number> = new StateDelegate(0);
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
 
@@ -225,15 +224,19 @@ export class UINode implements IDebugging {
   }
 
   get x(): number { return this.pos.x; }
-  set x(v: number) { this.set_x(v); }
   get y(): number { return this.pos.y; }
-  set y(v: number) { this.set_y(v); }
   get z(): number { return this.pos.z; }
-  set z(v: number) { this.set_z(v); }
-  set_x(v: number): this { return this.move_to(v); }
-  set_y(v: number): this { return this.move_to(void 0, v); }
-  set_z(v: number): this { return this.move_to(void 0, void 0, v); }
-  move_to(x: number = this.x, y: number = this.y, z: number = this.z): this {
+  set x(v: number) { this.pos.x = v; }
+  set y(v: number) { this.pos.y = v; }
+  set z(v: number) { this.pos.z = v; }
+  set_x(v: number): this { this.pos.x = v; return this; }
+  set_y(v: number): this { this.pos.y = v; return this; }
+  set_z(v: number): this { this.pos.z = v; return this; }
+  move_to(
+    x: number = this.pos.x,
+    y: number = this.pos.y,
+    z: number = this.pos.z
+  ): this {
     this.pos.x = x;
     this.pos.y = y;
     this.pos.z = z;
@@ -241,15 +244,19 @@ export class UINode implements IDebugging {
   }
 
   get cx(): number { return this.center.x; }
-  set cx(v: number) { this.set_cx(v); }
   get cy(): number { return this.center.y; }
-  set cy(v: number) { this.set_cy(v); }
   get cz(): number { return this.center.z; }
-  set cz(v: number) { this.set_cz(v); }
-  set_cx(v: number): this { return this.set_center(v); }
-  set_cy(v: number): this { return this.set_center(void 0, v); }
-  set_cz(v: number): this { return this.set_center(void 0, void 0, v); }
-  set_center(x: number = this.cx, y: number = this.cy, z: number = this.cz): this {
+  set cx(v: number) { this.center.x = v; }
+  set cy(v: number) { this.center.y = v; }
+  set cz(v: number) { this.center.z = v; }
+  set_cx(v: number): this { this.center.x = v; return this }
+  set_cy(v: number): this { this.center.y = v; return this }
+  set_cz(v: number): this { this.center.z = v; return this }
+  set_center(
+    x: number = this.center.x,
+    y: number = this.center.y,
+    z: number = this.center.z
+  ): this {
     this.center.x = x;
     this.center.y = y;
     this.center.z = z;
@@ -257,15 +264,19 @@ export class UINode implements IDebugging {
   }
 
   get sx(): number { return this.scale.x; }
-  set sx(v: number) { this.set_sx(v); }
   get sy(): number { return this.scale.y; }
-  set sy(v: number) { this.set_sy(v); }
   get sz(): number { return this.scale.z; }
-  set sz(v: number) { this.set_sz(v); }
-  set_sx(v: number): this { return this.set_scale(v); }
-  set_sy(v: number): this { return this.set_scale(void 0, v); }
-  set_sz(v: number): this { return this.set_scale(void 0, void 0, v); }
-  set_scale(x: number = this.sx, y: number = this.sy, z: number = this.sz): this {
+  set sx(v: number) { this.scale.x = v; }
+  set sy(v: number) { this.scale.y = v; }
+  set sz(v: number) { this.scale.z = v; }
+  set_sx(v: number): this { this.scale.x = v; return this; }
+  set_sy(v: number): this { this.scale.y = v; return this; }
+  set_sz(v: number): this { this.scale.z = v; return this; }
+  set_scale(
+    x: number = this.scale.x,
+    y: number = this.scale.y,
+    z: number = this.scale.z
+  ): this {
     this.scale.x = x;
     this.scale.y = y;
     this.scale.z = z;
