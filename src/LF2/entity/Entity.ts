@@ -735,6 +735,7 @@ export class Entity {
     this._landing_frame = null;
     this._bearer = null;
     this._holding = null;
+    this.pre_emitter?.copies.delete(this)
     this._emitters.length = 0;
     this._emitter_opoint = null;
     this._arest = 0;
@@ -1032,7 +1033,7 @@ export class Entity {
         }
         switch (multi_type) {
           case OpointMultiEnum.AccordingEnemies:
-          if (e.frame.chase) e.chasing = enemies[i % enemies.length]
+            if (e.frame.chase) e.chasing = enemies[i % enemies.length]
             break;
           case OpointMultiEnum.AccordingAllies:
             if (e.frame.chase) e.chasing = allies[i % allies.length];
