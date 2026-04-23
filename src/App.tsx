@@ -66,6 +66,9 @@ type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
 type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
 type sync_render = 0 | 1 | 2;
+
+const ele_root = document.firstElementChild;
+const lower = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
 const init_s = () => ({
   game_overlay: false,
   showing_panel: "" as showing_panel,
@@ -88,8 +91,8 @@ const init_s = () => ({
   custom_v_align: 0.5,
   dev_ui_pos: 'bottom' as debug_ui_pos,
   touchpad: '',
-  touchpad_enabled: document.firstElementChild?.classList.contains('mobile') || document.firstElementChild?.classList.contains('tablet') || false,
-  sync_render: 0 as sync_render
+  touchpad_enabled: !!lower,
+  sync_render: lower ? 2 : 1,
 })
 const is_mobile_container = navigator.userAgent.includes('lfw-mobile-container')
 function App() {
