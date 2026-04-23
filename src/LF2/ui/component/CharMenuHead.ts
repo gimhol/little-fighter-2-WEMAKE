@@ -1,7 +1,8 @@
-import { Label, Picture, UINode } from "@/LF2";
+import { Label, UINode } from "@/LF2";
 import { floor, IPropsMeta } from "@/LF2/utils";
 import { Sine } from "../../animation/Sine";
 import { GamePrepareLogic } from "./GamePrepareLogic";
+import { Picture } from "./Picture";
 import { UIComponent } from "./UIComponent";
 export interface ICharMenuHeadProps {
   countdown_label?: Label,

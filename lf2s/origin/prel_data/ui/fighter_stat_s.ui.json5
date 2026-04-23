@@ -1,7 +1,6 @@
 {
   name: "ui: fighter_stat_s",
   id: "fighter_stat_s",
-  // color: "gray",
   size: "180,30",
   component: [
     {
@@ -51,7 +50,7 @@
     {
       id: "_",
       size: "30,30",
-      // color: "red",
+      color: "black",
       center: "0,0",
       items: [
         {
