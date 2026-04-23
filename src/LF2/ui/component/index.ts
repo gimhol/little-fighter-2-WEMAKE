@@ -40,6 +40,7 @@ export * from "./LabelButton";
 export * from "./LaunchPageLogic";
 export * from "./LittleFunnyAutoGame";
 export * from "./LoadingContentText";
+export * from "./MiscSettingsLogic";
 export * from "./OpacityAnimation";
 export * from "./OpacityFlash";
 export * from "./OpacityHover";

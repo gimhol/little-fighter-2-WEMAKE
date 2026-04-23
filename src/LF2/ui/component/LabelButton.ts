@@ -24,7 +24,7 @@ export class LabelButton extends UIComponent<ILabelButtonProps> {
     return this.props.responser ?? this.node;
   }
   get normal_color(): string {
-    return this.props.normal_color ?? '#5A73D6'
+    return this.props.normal_color ?? '#9ba5ce'
   }
   get hover_color(): string {
     return this.props.hover_color ?? 'white'
@@ -39,7 +39,7 @@ export class LabelButton extends UIComponent<ILabelButtonProps> {
   override update(dt: number): void {
     const { responser } = this;
     const reverse = (!responser.pointer_over && !responser.focused) || !!responser.pointer_down;
-    const { hover_label: front_label } = this.props;
-    if (front_label) front_label.node.opacity = this.anim.auto_trip(reverse, dt).value;
+    const { hover_label } = this.props;
+    if (hover_label) hover_label.node.opacity = this.anim.auto_trip(reverse, dt).value;
   }
 }

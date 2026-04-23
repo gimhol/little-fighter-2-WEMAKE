@@ -1,10 +1,22 @@
 {
-  id: "slider_test_page",
-  name: "slider_test_page",
-  component: [ { name: "SettingsLogic" } ],
+  id: "settings_misc",
+  name: "settings_misc",
+  component: [
+    { name: "MiscSettingsLogic" },
+    {
+      name: "Flex",
+      properties: {
+        direction: "column",
+        align: "center",
+        gap: 5,
+        padding: "0,0,0,0",
+        fit: true,
+      },
+    },
+  ],
   templates: {
     percentage_slider_row: {
-      size: "700,36",
+      size: "625,36",
       center: "0.5,0.5",
       component: [
         {
@@ -14,13 +26,14 @@
       ],
       items: [
         {
-          size: "200,36",
+          size: "165,36",
           center: "0.5,0.5",
           items: [
             {
+              color: "#5A73D6",
               center: "0.5,0.5",
-              txt: { i18n: "$val:prefix", style: { font: "20px Arial" } },
-              component: [ { name: "Label", id: "prefix_label" } ],
+              txt: { i18n: "$val:prefix", style: { font: "18px Arial" } },
+              component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
         },
@@ -49,8 +62,8 @@
                 {
                   center: "0.5,0.5",
                   color: "black",
-                  txt: { i18n: "0", style: { font: "20px Arial" } },
-                  component: [ { name: "Label", id: "handle_label" } ],
+                  txt: { i18n: "0", style: { font: "18px Arial" } },
+                  component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
             },
@@ -59,7 +72,7 @@
       ],
     },
     toggle_slider_row: {
-      size: "700,36",
+      size: "625,36",
       center: "0.5,0.5",
       component: [
         {
@@ -69,19 +82,20 @@
       ],
       items: [
         {
-          size: "200,36",
+          size: "165,36",
           center: "0.5,0.5",
           items: [
             {
+              color: "#5A73D6",
               center: "0.5,0.5",
               txt: {
                 i18n: "$val:prefix",
-                style: { font: "20px Arial" },
+                style: { font: "18px Arial" },
               },
-              component: [ { name: "Label", id: "prefix_label" } ],
+              component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
-          component: [ { name: "Label", id: "handle_label" } ],
+          component: [{ name: "Label", id: "handle_label" }],
         },
         {
           size: "500,36",
@@ -92,13 +106,13 @@
               pos: "-125,0",
               center: "0.5,0.5",
               color: "#333333",
-              txt: { i18n: "disable", style: { font: "20px Arial" } }
+              txt: { i18n: "disable", style: { font: "18px Arial" } },
             },
             {
               pos: "125,0",
               center: "0.5,0.5",
               color: "#333333",
-              txt: { i18n: "enable", style: { font: "20px Arial" } }
+              txt: { i18n: "enable", style: { font: "18px Arial" } },
             },
             {
               size: "250,36",
@@ -121,8 +135,8 @@
                 {
                   center: "0.5,0.5",
                   color: "black",
-                  txt: { i18n: "disabled", style: { font: "20px Arial" } },
-                  component: [ { name: "Label", id: "handle_label" } ],
+                  txt: { i18n: "disabled", style: { font: "18px Arial" } },
+                  component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
             },
@@ -131,7 +145,7 @@
       ],
     },
     triple_switcher_row: {
-      size: "700,36",
+      size: "625,36",
       center: "0.5,0.5",
       component: [
         {
@@ -141,19 +155,20 @@
       ],
       items: [
         {
-          size: "200,36",
+          size: "165,36",
           center: "0.5,0.5",
           items: [
             {
+              color: "#5A73D6",
               center: "0.5,0.5",
               txt: {
                 i18n: "$val:prefix",
-                style: { font: "20px Arial" },
+                style: { font: "18px Arial" },
               },
-              component: [ { name: "Label", id: "prefix_label" } ],
+              component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
-          component: [ { name: "Label", id: "handle_label" } ],
+          component: [{ name: "Label", id: "handle_label" }],
         },
         {
           size: "500,36",
@@ -164,18 +179,18 @@
               center: "0.5,0.5",
               color: "#333333",
               pos: "-166,0",
-              txt: { i18n: "sync_2", style: { font: "20px Arial" } },
+              txt: { i18n: "sync_2", style: { font: "18px Arial" } },
             },
             {
               center: "0.5,0.5",
               color: "#333333",
-              txt: { i18n: "sync_1", style: { font: "20px Arial" } },
+              txt: { i18n: "sync_1", style: { font: "18px Arial" } },
             },
             {
               center: "0.5,0.5",
               pos: "166,0",
               color: "#333333",
-              txt: { i18n: "sync_0", style: { font: "20px Arial" } },
+              txt: { i18n: "sync_0", style: { font: "18px Arial" } },
             },
             {
               size: "166,36",
@@ -198,8 +213,8 @@
                 {
                   center: "0.5,0.5",
                   color: "black",
-                  txt: { i18n: "disabled", style: { font: "20px Arial" } },
-                  component: [ { name: "Label", id: "handle_label" } ],
+                  txt: { i18n: "disabled", style: { font: "18px Arial" } },
+                  component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
             },
@@ -209,58 +224,40 @@
     },
   },
   items: [
-    "builtin_data/launch/bg.ui.json5",
     {
-      component: [
-        {
-          name: "Flex",
-          properties: {
-            direction: "column",
-            align: "center",
-            gap: 5,
-            padding: "0,0,0,0",
-          },
-        },
-      ],
-      center: "0.5, 0.5",
-      pos: "397, 100",
-      items: [
-        {
-          id: "main_volume_row",
-          values: { prefix: "main_volume" },
-          template: "percentage_slider_row",
-        },
-        {
-          id: "bgm_toggle_row",
-          values: { prefix: "bgm" },
-          template: "toggle_slider_row",
-        },
-        {
-          id: "bgm_volume_row",
-          values: { prefix: "bgm_volume" },
-          template: "percentage_slider_row",
-        },
-        {
-          id: "sfx_toggle_row",
-          values: { prefix: "sfx" },
-          template: "toggle_slider_row",
-        },
-        {
-          id: "sfx_volume_row",
-          values: { prefix: "sfx_volume" },
-          template: "percentage_slider_row",
-        },
-        {
-          id: "team_outline_row",
-          values: { prefix: "team_outline" },
-          template: "toggle_slider_row",
-        },
-        {
-          id: "render_rate_row",
-          values: { prefix: "render_fps" },
-          template: "triple_switcher_row",
-        },
-      ],
+      id: "main_volume_row",
+      values: { prefix: "main_volume" },
+      template: "percentage_slider_row",
+    },
+    {
+      id: "bgm_toggle_row",
+      values: { prefix: "bgm" },
+      template: "toggle_slider_row",
+    },
+    {
+      id: "bgm_volume_row",
+      values: { prefix: "bgm_volume" },
+      template: "percentage_slider_row",
+    },
+    {
+      id: "sfx_toggle_row",
+      values: { prefix: "sfx" },
+      template: "toggle_slider_row",
+    },
+    {
+      id: "sfx_volume_row",
+      values: { prefix: "sfx_volume" },
+      template: "percentage_slider_row",
+    },
+    {
+      id: "team_outline_row",
+      values: { prefix: "team_outline" },
+      template: "toggle_slider_row",
+    },
+    {
+      id: "render_rate_row",
+      values: { prefix: "render_fps" },
+      template: "triple_switcher_row",
     },
   ],
 }

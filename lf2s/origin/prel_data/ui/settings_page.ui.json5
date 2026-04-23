@@ -1,246 +1,68 @@
 {
   id: "settings",
   name: "页面：设置页",
-  templates: {
-    suffixies: {
-      center: "0,0",
-      component: [
-        {
-          name: "Flex",
-          properties: {
-            direction: "column",
-            gap: 9,
-            fit: true,
-          },
-        },
-        {
-          name: "FlexItem",
-          properties: {
-            align: "end",
-          },
-        },
-      ],
-      items: [
-        {
-          txt: {
-            i18n: "ctrl_settings.key_up",
-            style: {
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          txt: {
-            i18n: "ctrl_settings.key_down",
-            style: {
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          txt: {
-            i18n: "ctrl_settings.key_left",
-            style: {
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          txt: {
-            i18n: "ctrl_settings.key_right",
-            style: {
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          txt: {
-            i18n: "ctrl_settings.key_attack",
-            style: {
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          txt: {
-            i18n: "ctrl_settings.key_jump",
-            style: {
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          txt: {
-            i18n: "ctrl_settings.key_defend",
-            style: {
-              font: "bold 16px Arial",
-            },
-          },
-        },
-      ],
+  component: [
+    {
+      name: "SettingsLogic",
+      properties: {
+        btn_misc_settings: "btn_misc_settings",
+        btn_ctrl_settings: "btn_ctrl_settings",
+        misc_settings_node: "misc_settings_node",
+        ctrl_settings_node: "ctrl_settings_node",
+      },
     },
-    key_edit_cell: {
-      size: "106, 26",
-      color: "#000000",
-      items: [
-        {
-          pos: "53,15",
-          center: "0.5, 0.5",
-          component: [{ name: "PlayerKeyEdit" }],
-        },
-      ],
-    },
-    player_set: {
-      component: [
-        {
-          name: "Flex",
-          properties: { direction: "column", gap: 3, fit: true },
-        },
-      ],
-      items: [
-        {
-          size: "106, 26",
-          color: "#000000",
-          items: [
-            {
-              pos: "0,5",
-              size: "106, 16",
-              component: ["PlayerNameInput()"],
-            },
-          ],
-        },
-        {
-          size: "106,106",
-          component: ["PlayerCtrlType()"],
-          items: [
-            {
-              img: {
-                path: "sprite/CS6.png",
-              },
-            },
-            {
-              visible: false,
-              img: {
-                path: "sprite/CS2.png",
-              },
-            },
-            {
-              visible: false,
-              img: {
-                path: "sprite/CS3.png",
-              },
-            },
-            {
-              visible: false,
-              img: {
-                path: "sprite/CS4.png",
-              },
-            },
-            {
-              visible: false,
-              img: {
-                path: "sprite/CS5.png",
-              },
-            },
-            {
-              visible: false,
-              img: {
-                path: "sprite/CS7.png",
-              },
-            },
-          ],
-        },
-        {
-          template: "key_edit_cell",
-          values: { key_name: "U" },
-        },
-        {
-          template: "key_edit_cell",
-          values: { key_name: "D" },
-        },
-        {
-          template: "key_edit_cell",
-          values: { key_name: "L" },
-        },
-        {
-          template: "key_edit_cell",
-          values: { key_name: "R" },
-        },
-        {
-          template: "key_edit_cell",
-          values: { key_name: "a" },
-        },
-        {
-          template: "key_edit_cell",
-          values: { key_name: "j" },
-        },
-        {
-          template: "key_edit_cell",
-          values: { key_name: "d" },
-        },
-      ],
-    },
-  },
+  ],
   items: [
     {
       template: "builtin_data/launch/bg.ui.json5",
       color: "#00000033",
       opacity: 0.9,
     },
-    // "ui/slider_test.ui.json5",
     {
-      id: "main_menu",
-      center: "0.5, 0.5",
-      pos: "397, 220",
+      pos: "394,30",
+      center: "0.5,0",
+      component: [
+        {
+          name: "Flex",
+          properties: {
+            direction: "column",
+            fit: true,
+            gap: 20,
+            align: "center",
+          },
+        },
+      ],
       items: [
         {
-          color: "#5A73D6",
-          txt: {
-            i18n: "entry_page.ctrl_settings",
-            style: { font: "20px Arial" },
-          },
-          pos: "0, -170",
-          center: "0.5, 0.5",
-        },
-        {
-          center: "0.5, 0.5",
-          pos: "0, 0",
+          items: [
+            {
+              id: "btn_misc_settings",
+              template: "builtin_data/launch/main_text_button.ui.json5",
+              values: {
+                text: "misc_settings",
+              },
+            },
+            {
+              id: "btn_ctrl_settings",
+              template: "builtin_data/launch/main_text_button.ui.json5",
+              values: {
+                text: "ctrl_settings",
+              },
+            },
+          ],
           component: [
             {
               name: "Flex",
-              properties: { direction: "row", gap: 20, fit: true },
-            },
-          ],
-          items: [
-            {
-              template: "suffixies",
+              properties: { direction: "row", fit: true, gap: 20 },
             },
             {
-              template: "player_set",
-              values: {
-                player_id: "1",
-              },
-            },
-            {
-              template: "player_set",
-              values: {
-                player_id: "2",
-              },
-            },
-            {
-              template: "player_set",
-              values: {
-                player_id: "3",
-              },
-            },
-            {
-              template: "player_set",
-              values: {
-                player_id: "4",
-              },
+              name: "FlexItem",
+              properties: { align: "center" },
             },
           ],
         },
+        { id: "misc_settings_node", template: "ui/settings_misc.ui.json5" },
+        { id: "ctrl_settings_node", template: "ui/settings_ctrl.ui.json5", visible: false },
       ],
     },
     {

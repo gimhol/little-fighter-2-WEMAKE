@@ -40,6 +40,7 @@ export const regist_components = () => {
     _.LaunchPage,
     _.LittleFunnyAutoGame,
     _.LoadingContentText,
+    _.MiscSettingsLogic,
     _.OpacityAnimation,
     _.OpacityFlash,
     _.OpacityHover,
