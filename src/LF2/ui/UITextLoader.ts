@@ -42,7 +42,14 @@ export class UITextLoader {
   set_text(txt: string): Promise<void> {
     return this.load({ i18n: txt, style: this._style(0) })
   }
-
+  preload(texts: string[]) {
+    const node = this.node()
+    if (!node) return Promise.reject(new Error('node not found'));
+    const style = this._style(0)
+    for (const text of texts) {
+      node.lf2.images.load_text(text, style);
+    }
+  }
   async load(txt: ICookedUITxtInfo): Promise<void> {
     const node = this.node()
     if (!node) return Promise.reject(new Error(`[UITextLoader::load] node got ${node}`));

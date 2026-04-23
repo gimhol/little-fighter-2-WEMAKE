@@ -86,7 +86,7 @@ export class UIComponent<
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
-    this.props_holder = new UIProps(info.properties, this)
+    this.props_holder = new UIProps({ ...info.props, ...info.properties }, this)
     this._args = args;
     make_debugging(this);
   }

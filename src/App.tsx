@@ -165,8 +165,8 @@ function App() {
             const networking = !prev
             // FIXME: ...
             const btns = [
-              lf2.ui?.search_child("btn_game_start"),
-              lf2.ui?.search_child("btn_custom_game")
+              lf2.ui?.search_node("btn_game_start"),
+              lf2.ui?.search_node("btn_custom_game")
             ]
             for (const btn of btns) {
               btn?.blur()

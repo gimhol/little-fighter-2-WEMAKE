@@ -13,4 +13,8 @@ export class Label extends UIComponent {
     this._txt_loader.text = v
     return this;
   }
+  preload(texts: string[]): this {
+    this._txt_loader.preload(texts)
+    return this;
+  }
 }

@@ -10,13 +10,15 @@ export class UIProps {
   readonly owner: UIComponent<unknown, any>;
   readonly validator = new SchemaValidator().instance_getter((value, clazz) => {
     if (isUIComponentClass(clazz)) {
-      const mine = this.owner.node.search_component(clazz, v => v.id === value);
-      const outer = this.owner.node.root.search_component(clazz, v => v.id === value)
-      return mine || outer
+      if (typeof value !== 'string') return null
+      const mine = this.owner.node.search_component(clazz, v => v.id == value);
+      if (mine) return mine;
+      return this.owner.node.parent?.lookup_component(clazz, v => v.id == value) ?? null
     } else if (isUINodeClass(clazz)) {
-      const mine = this.owner.node.search_child(value)
-      const outer = this.owner.node.root.search_child(value)
-      return mine || outer
+      if (typeof value !== 'string') return null
+      const mine = this.owner.node.search_node(value)
+      if (mine) return mine;
+      return this.owner.node.parent?.lookup_node(value) ?? null
     }
     return null
   }).instance_setter((value, clazz) => {

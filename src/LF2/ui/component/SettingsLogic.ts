@@ -11,7 +11,7 @@ export class SettingsLogic extends UIComponent {
   main_volume: SliderHandle | undefined;
   override on_start(): void {
 
-    this.main_volume = this.node.search_child("main_volume_row")?.search_component(SliderHandle)
+    this.main_volume = this.node.search_node("main_volume_row")?.search_component(SliderHandle)
     if (this.main_volume) this.main_volume.factor = this.lf2.sounds.volume()
     this.main_volume?.callbacks.add({
       on_value_changed: (_, s) => {
@@ -21,7 +21,7 @@ export class SettingsLogic extends UIComponent {
     })
 
 
-    this.bgm_toggle = this.node.search_child("bgm_toggle_row")?.search_component(SliderHandle)
+    this.bgm_toggle = this.node.search_node("bgm_toggle_row")?.search_component(SliderHandle)
     if (this.bgm_toggle) this.bgm_toggle.value = this.lf2.sounds.bgm_muted() ? 0 : 1
     this.bgm_toggle?.callbacks.add({
       on_value_changed: (v) => {
@@ -30,7 +30,7 @@ export class SettingsLogic extends UIComponent {
       }
     })
 
-    this.bgm_volume = this.node.search_child("bgm_volume_row")?.search_component(SliderHandle)
+    this.bgm_volume = this.node.search_node("bgm_volume_row")?.search_component(SliderHandle)
     if (this.bgm_volume) this.bgm_volume.factor = this.lf2.sounds.bgm_volume()
     this.bgm_volume?.callbacks.add({
       on_value_changed: (_, s) => {
@@ -39,7 +39,7 @@ export class SettingsLogic extends UIComponent {
       }
     })
 
-    this.sfx_toggle = this.node.search_child("sfx_toggle_row")?.search_component(SliderHandle)
+    this.sfx_toggle = this.node.search_node("sfx_toggle_row")?.search_component(SliderHandle)
     this.sfx_toggle?.set_value(this.lf2.sounds.sound_muted() ? 0 : 1)
     this.sfx_toggle?.callbacks.add({
       on_value_changed: (v) => {
@@ -48,7 +48,7 @@ export class SettingsLogic extends UIComponent {
       }
     })
 
-    this.sfx_volume = this.node.search_child("sfx_volume_row")?.search_component(SliderHandle)
+    this.sfx_volume = this.node.search_node("sfx_volume_row")?.search_component(SliderHandle)
     if (this.sfx_volume) this.sfx_volume.factor = this.lf2.sounds.sound_volume()
     this.sfx_volume?.callbacks.add({
       on_value_changed: (_, s) => {
@@ -57,7 +57,7 @@ export class SettingsLogic extends UIComponent {
       }
     })
 
-    this.team_outline = this.node.search_child("team_outline_row")?.search_component(SliderHandle)
+    this.team_outline = this.node.search_node("team_outline_row")?.search_component(SliderHandle)
     if (this.team_outline) this.team_outline.factor = this.world.teamoutline_enabled
     this.team_outline?.callbacks.add({
       on_value_changed: (v) => {
@@ -66,7 +66,7 @@ export class SettingsLogic extends UIComponent {
       }
     })
 
-    this.render_rate = this.node.search_child("render_rate_row")?.search_component(SliderHandle)
+    this.render_rate = this.node.search_node("render_rate_row")?.search_component(SliderHandle)
     if (this.render_rate) this.render_rate.set_value(2 - this.world.sync_render);
     this.render_rate?.callbacks.add({
       on_value_changed: (v) => {

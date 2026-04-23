@@ -16,7 +16,7 @@ export class EndingPageLogic extends UIComponent {
     super.on_start?.();
     this.jalousie = this.node.search_component(Jalousie);
     this.jalousie?.callbacks.add(this.jalousie_cbs)
-    this.txt_node = this.node.search_child('txt_b')
+    this.txt_node = this.node.search_node('txt_b')
   }
   override on_resume(): void {
     super.on_resume()

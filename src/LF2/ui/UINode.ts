@@ -20,8 +20,6 @@ export class UINode implements IDebugging {
   log!: (_0: string, ..._1: any[]) => void;
 
   readonly lf2: LF2;
-  readonly id_ui_map: Map<string, UINode[]>;
-  readonly name_ui_map: Map<string, UINode[]>;
 
   /**
    * 原始UI数据
@@ -294,9 +292,6 @@ export class UINode implements IDebugging {
     this.data = Object.freeze(data);
     this._parent = parent;
     this._root = parent?.root ?? this;
-    this.id_ui_map = new Map();
-    this.name_ui_map = new Map();
-
     const { visible = true, opacity = 1, disabled = false } = this.data;
     this._disabled = disabled
     this._visible = visible
@@ -487,16 +482,6 @@ export class UINode implements IDebugging {
 
   add_child(node: UINode): this {
     this._children.push(node);
-    if (node.id) {
-      const set = this.id_ui_map.get(node.id) || [];
-      set.push(node)
-      this.id_ui_map.set(node.id, set);
-    }
-    if (node.name) {
-      const set = this.name_ui_map.get(node.name) || [];
-      set.push(node)
-      this.name_ui_map.set(node.name, set);
-    }
     return this;
   }
 
@@ -639,15 +624,18 @@ export class UINode implements IDebugging {
    * @memberof UINode
    */
   find_child(id: string): UINode | undefined {
-    return this.id_ui_map.get(id)?.[0];
+    return this.children.find(v => v.id == id)
   }
-  search_child(id: string): UINode | undefined {
+  search_node(id: string): UINode | undefined {
     let ret = this.find_child(id);
     if (ret) return ret;
-    for (const child of this.children) {
-      ret = child.search_child(id)
+    for (const c of this.children) {
+      ret = c.search_node(id)
       if (ret) return ret;
     }
+  }
+  lookup_node(id: string): UINode | undefined {
+    return this.find_child(id) ?? this.parent?.lookup_node(id)
   }
 
   /**
@@ -659,7 +647,7 @@ export class UINode implements IDebugging {
    * @memberof UINode
    */
   find_child_by_name(name: string): UINode | undefined {
-    return this.name_ui_map.get(name)?.[0];
+    return this.children.find(v => v.name == name)
   }
 
   find_parent<T>(
@@ -706,7 +694,7 @@ export class UINode implements IDebugging {
    */
   find_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string | undefined | null
+    condition: TCond<T> | string | undefined | null = void 0
   ): InstanceType<T> | undefined {
     for (const v of this._components) {
       if (!(v instanceof type))

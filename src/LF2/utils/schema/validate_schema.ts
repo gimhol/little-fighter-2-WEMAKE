@@ -61,8 +61,17 @@ export class SchemaValidator {
           ) {
             Object.defineProperty(value, i, {
               configurable: true,
-              get: () => this._get_instance?.(prop_value, prop_type, prop_schema),
-              set: (v) => this._set_instance?.(v, prop_value, prop_type, prop_schema),
+              get: () => {
+                if (!this._get_instance) throw new Error(`[SchemaValidator] instance_getter not set! ${prop_schema.path}`)
+                const ret = this._get_instance(prop_value, prop_type, prop_schema)
+                if (ret) return ret;
+                if (prop_schema.nullable != false) return null
+                throw new Error(`[SchemaValidator] ${prop_schema.path} not found, value: ${prop_value}`)
+              },
+              set: (v) => {
+                if (!this._set_instance) throw new Error(`[SchemaValidator] instance_setter not set! ${prop_schema.path}`)
+                this._set_instance(v, prop_value, prop_type, prop_schema)
+              },
             })
             continue;
           }
@@ -86,8 +95,17 @@ export class SchemaValidator {
             delete value[k]
             Object.defineProperty(value, k, {
               configurable: true,
-              get: () => this._get_instance?.(prop_value, prop_type, prop_schema),
-              set: (v) => this._set_instance?.(v, prop_value, prop_type, prop_schema),
+              get: () => {
+                if (!this._get_instance) throw new Error(`[SchemaValidator] instance_getter not set! ${prop_schema.path}`)
+                const ret = this._get_instance(prop_value, prop_type, prop_schema)
+                if (ret) return ret;
+                if (prop_schema.nullable != false) return null
+                throw new Error(`[SchemaValidator] ${prop_schema.path} not found, value: ${prop_value}`)
+              },
+              set: (v) => {
+                if (!this._set_instance) throw new Error(`[SchemaValidator] instance_setter not set! ${prop_schema.path}`)
+                this._set_instance?.(v, prop_value, prop_type, prop_schema)
+              },
             })
             continue;
           }

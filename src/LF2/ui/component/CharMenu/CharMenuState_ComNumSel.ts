@@ -13,17 +13,17 @@ export class CharMenuState_ComNumSel extends CharMenuState_Base {
     super(CharMenuState.ComNumSel, owner);
   }
   override enter() {
-    this.how_many_coms = this.owner.node.root.search_child("how_many_computer");
+    this.how_many_coms = this.owner.node.root.search_node("how_many_computer");
     this.how_many_coms?.set_visible(true);
     this.btns = [
-      this.how_many_coms!.search_child(`com_num_0`)!,
-      this.how_many_coms!.search_child(`com_num_1`)!,
-      this.how_many_coms!.search_child(`com_num_2`)!,
-      this.how_many_coms!.search_child(`com_num_3`)!,
-      this.how_many_coms!.search_child(`com_num_4`)!,
-      this.how_many_coms!.search_child(`com_num_5`)!,
-      this.how_many_coms!.search_child(`com_num_6`)!,
-      this.how_many_coms!.search_child(`com_num_7`)!,
+      this.how_many_coms!.search_node(`com_num_0`)!,
+      this.how_many_coms!.search_node(`com_num_1`)!,
+      this.how_many_coms!.search_node(`com_num_2`)!,
+      this.how_many_coms!.search_node(`com_num_3`)!,
+      this.how_many_coms!.search_node(`com_num_4`)!,
+      this.how_many_coms!.search_node(`com_num_5`)!,
+      this.how_many_coms!.search_node(`com_num_6`)!,
+      this.how_many_coms!.search_node(`com_num_7`)!,
     ]
     const { min_coms, max_coms } = this.owner;
     for (let i = 0; i < this.btns.length; i++) {

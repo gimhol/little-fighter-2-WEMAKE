@@ -10,7 +10,7 @@ export class CharMenuState_GameSetting extends CharMenuState_Base {
   }
   override enter(): void {
     this.owner.update_slots()
-    this.game_settings_menu = this.owner.node.root.search_child("game_settings_menu");
+    this.game_settings_menu = this.owner.node.root.search_node("game_settings_menu");
     this.game_settings_menu?.set_visible(true);
   }
   override leave(): void {

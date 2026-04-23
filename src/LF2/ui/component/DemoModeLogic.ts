@@ -49,7 +49,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
     super.on_start?.();
     this.fsm.use(0)
 
-    this.node.search_child("curr_focus")!.visible = false
+    this.node.search_node("curr_focus")!.visible = false
 
     const bg = this.lf2.mt.pick(this.lf2.datas.backgrounds);
     if (bg) this.lf2.change_bg(bg.id);
@@ -193,7 +193,7 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       this._cam_ctrl = this.node.find_component(CameraCtrl)
     return this._cam_ctrl
   }
-  protected txt_loader = new UITextLoader(() => this.node.search_child("curr_focus"))
+  protected txt_loader = new UITextLoader(() => this.node.search_node("curr_focus"))
 
   override update(dt: number): void {
     this.fsm.update(dt)
@@ -206,11 +206,11 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
       if (staring) {
         const txt = `[${staring.team}] ${staring.data.base.name} (${staring.name})`
         this.txt_loader.set_text(txt)
-        this.node.search_child("curr_focus_prefix")!.txt_idx.value = 0
-        this.node.search_child("curr_focus")!.visible = true
+        this.node.search_node("curr_focus_prefix")!.txt_idx.value = 0
+        this.node.search_node("curr_focus")!.visible = true
       } else {
-        this.node.search_child("curr_focus_prefix")!.txt_idx.value = 1
-        this.node.search_child("curr_focus")!.visible = false
+        this.node.search_node("curr_focus_prefix")!.txt_idx.value = 1
+        this.node.search_node("curr_focus")!.visible = false
       }
       this._staring = staring
     }

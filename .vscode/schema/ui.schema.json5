@@ -21,6 +21,9 @@
         "properties": {
           "type": "object"
         },
+        "props": {
+          "type": "object"
+        },
         "weight": {
           "type": "number"
         }
