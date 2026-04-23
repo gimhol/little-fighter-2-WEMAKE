@@ -1,18 +1,19 @@
+import { Label, UINode } from "@/LF2";
 import FSM from "@/LF2/base/FSM";
 import { Entity } from "@/LF2/entity";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 import { Times } from "@/LF2/utils/Times";
 import { new_team } from "../../base";
 import { Defines, EntityGroup, GameKey } from "../../defines";
 import IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
-import { floor, traversal } from "../../utils";
+import { floor, IPropsMeta, traversal } from "../../utils";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UITextLoader } from "../UITextLoader";
 import { CameraCtrl } from "./CameraCtrl";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
-import { StatBarType } from "@/LF2/entity/StatBarType";
 class FSMState extends ComponentFSMState<number, DemoModeLogic> {
   override readonly key: number = 0
   get fsm() { return this.owner.fsm }
@@ -28,17 +29,26 @@ class FSMState_End extends FSMState {
   override readonly key: number = 2;
   override enter(): void {
     this.lf2.sounds.play_preset("end");
-    const score_board = this.node.find_child("score_board")
-    score_board?.set_visible(true);
+    this.owner.props.score_board?.set_visible(true);
   }
   override leave(): void {
-    const score_board = this.node.find_child("score_board")
-    score_board?.set_visible(false);
+    this.owner.props.score_board?.set_visible(false);
   }
 }
-
-export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
+export interface IDemoModeLogicProps {
+  focus_prefix?: Label;
+  focus_on?: Label;
+  cam_ctrl?: CameraCtrl;
+  score_board?: UINode;
+}
+export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> implements IEntityCallbacks {
   static override readonly TAGS: string[] = ["DemoModeLogic"];
+  static override readonly PROPS: IPropsMeta<IDemoModeLogicProps> = {
+    focus_prefix: Label,
+    focus_on: Label,
+    cam_ctrl: CameraCtrl,
+    score_board: UINode,
+  };
   readonly fsm = new FSM<number, FSMState>().add(
     new FSMState(this),
     new FSMState_BeforeEnd(this),
@@ -188,32 +198,29 @@ export class DemoModeLogic extends UIComponent implements IEntityCallbacks {
   protected _cam_ctrl?: CameraCtrl;
   protected _staring?: Entity | undefined;
   protected _free?: boolean
-  get cam_ctrl(): CameraCtrl | undefined {
-    if (!this._cam_ctrl)
-      this._cam_ctrl = this.node.find_component(CameraCtrl)
-    return this._cam_ctrl
-  }
-  protected txt_loader = new UITextLoader(() => this.node.search_node("curr_focus"))
-
   override update(dt: number): void {
     this.fsm.update(dt)
     if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) <= 2) {
       this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
     }
-    const staring = this.cam_ctrl?.staring
-    // TODO
-    if (this._staring !== staring || this._free != !!this.cam_ctrl?.free) {
-      if (staring) {
-        const txt = `[${staring.team}] ${staring.data.base.name} (${staring.name})`
-        this.txt_loader.set_text(txt)
-        this.node.search_node("curr_focus_prefix")!.txt_idx.value = 0
-        this.node.search_node("curr_focus")!.visible = true
-      } else {
-        this.node.search_node("curr_focus_prefix")!.txt_idx.value = 1
-        this.node.search_node("curr_focus")!.visible = false
-      }
+    const { cam_ctrl } = this.props;
+    do {
+      if (!cam_ctrl) break;
+      const { staring, free } = cam_ctrl
+      if (this._staring == staring && this._free == free)
+        break;
       this._staring = staring
-    }
+      this._free = free
+      if (!free) {
+        this.props.focus_prefix?.set_text("cam_controlling");
+        this.props.focus_on?.node.set_visible(false)
+      }
+      const txt = staring ? `[${staring.team}] ${staring.name}` : '-'
+      this.props.focus_prefix?.set_text("curr_focus")
+      this.props.focus_on?.node.set_visible(true)
+      this.props.focus_on?.set_text(txt)
+
+    } while (0)
   }
   override on_key_down(e: IUIKeyEvent): void {
     switch (e.game_key) {

@@ -261,7 +261,7 @@ function App() {
     function print_ui_tree(node = LF2.ui) {
       console.group('id: ' + node?.id + ', name: ' + node?.name);
       console.log("node:      ", node);
-      if (node?.components.size)
+      if (node?.components.length)
         console.log("components:", Array.from(node?.components));
       if (node?.children.length)
         for (const child of node?.children)
