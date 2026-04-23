@@ -1,18 +1,15 @@
 {
   name: "页面：bg",
   id: "main_bg",
-  size: "794, 794",
+  size: "794, 450",
   img: {
     path: "!launch/bg.png",
-    x: 0,
-    y: 0,
-    w: 32,
-    h: 32,
     offsetAnimX: 0.5,
     offsetAnimY: 0.5,
+    offsetAnimR: 0.5,
     wrapS: 1000,
     wrapT: 1000,
     repeatX: 20,
-    repeatY: 20
+    repeatY: 11
   }
 }

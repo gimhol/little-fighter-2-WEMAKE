@@ -4,7 +4,8 @@ uniform float tw;
 /** 一倍纹理图的高度（像素）*/
 uniform float th;
 /** 当前纹理图倍数 */
-uniform float ts;
+uniform float tsw;
+uniform float tsh;
 
 uniform float repeatX;
 uniform float repeatY;
@@ -102,10 +103,10 @@ void apply(vec4 color) {
 
 void main() {
   /** 原图像素宽 */
-  float ow = tw / ts;
+  float ow = tw / tsw;
   /** 原图像素高 */
-  float oh = th / ts;
-  
+  float oh = th / tsh;
+
   float uv_x = vUv.x * w / ow + x / ow;
   float uv_y = 1.0 + vUv.y * h / oh - (y + h) / oh;
   vec2 uv = vec2(uv_x, uv_y);

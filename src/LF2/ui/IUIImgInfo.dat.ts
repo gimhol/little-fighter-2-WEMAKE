@@ -19,15 +19,13 @@ export interface IUIImgInfo {
   /** 目标高度 */
   dh?: number;
 
-  col?: number;
-  row?: number;
-  count?: number;
   wrapS?: number;
   wrapT?: number;
   offsetX?: number;
   offsetY?: number;
   offsetAnimX?: number;
   offsetAnimY?: number;
+  offsetAnimR?: number;
   repeatX?: number;
   repeatY?: number;
   flip_x?: 0 | 1;

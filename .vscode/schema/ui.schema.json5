@@ -193,6 +193,9 @@
         "offsetAnimY": {
           "type": "number"
         },
+        "offsetAnimR": {
+          "type": "number"
+        },
         "offsetX": {
           "type": "number"
         },

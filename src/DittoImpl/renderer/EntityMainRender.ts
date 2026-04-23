@@ -140,7 +140,8 @@ export class EntityMainRender {
     m.uniforms.tex.value = img.pic.texture;
     m.uniforms.tw.value = img.w;
     m.uniforms.th.value = img.h;
-    m.uniforms.ts.value = img.scale;
+    m.uniforms.tsw.value = img.scale;
+    m.uniforms.tsh.value = img.scale;
     m.uniforms.x.value = x;
     m.uniforms.y.value = y;
     m.uniforms.w.value = w;
@@ -161,18 +162,6 @@ export class EntityMainRender {
   render(dt: number) {
     // const game_time = this.world.game_time.value
     const { entity, main_mesh } = this;
-
-    // if (this._game_time != game_time) {
-    //   this._game_time = game_time;
-    //   this._time = 0;
-    //   this.prev_position = this.position.clone();
-    //   this.position = entity.position.clone()
-    // } else {
-    //   this._time += dt;
-    // }
-    // let x = this.prev_position.x + (this.position.x - this.prev_position.x) * (this._time / this.world.ideally_dt);
-    // const y = this.prev_position.y + (this.position.y - this.prev_position.y) * (this._time / this.world.ideally_dt);
-    // const z = this.prev_position.z + (this.position.z - this.prev_position.z) * (this._time / this.world.ideally_dt);
     let { x, y, z } = this.entity.position;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     this.update_shaking(dt)

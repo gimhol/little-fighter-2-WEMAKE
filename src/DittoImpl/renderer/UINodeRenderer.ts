@@ -44,6 +44,8 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _input: HTMLInputElement | undefined;
   protected _txt: TextInfo<any> | null = null;
   protected _img: ImageInfo<T.Texture> | null = null;
+  protected _uv_anim_angle: number = 0;
+  protected _uv_anim_vec = new T.Vector2(0, 0);
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -148,15 +150,14 @@ export class UINodeRenderer implements IUINodeRenderer {
     const { _img: i } = this;
     const { material: m } = sp;
     const { uniforms: u } = m;
-
-    // look stupid.
     if (t && i) {
       const { w, h, scale, clip_x = 0, clip_y = 0, clip_w = w / scale, clip_h = h / scale } = i
       u.tw.value = w;
       u.th.value = h;
-      u.ts.value = scale;
-      u.x.value = clip_x;
-      u.y.value = clip_y;
+      u.tsw.value = scale * t.repeat.x;
+      u.tsh.value = scale * t.repeat.y;
+      u.x.value = (clip_x + t.offset.x * clip_w / t.repeat.x) % clip_w;
+      u.y.value = (clip_y + t.offset.y * clip_h / t.repeat.y) % clip_h;
       u.w.value = clip_w;
       u.h.value = clip_h;
     }
@@ -269,18 +270,27 @@ export class UINodeRenderer implements IUINodeRenderer {
   update_texture_attributes(dt: number) {
     const t: T.Texture = this.mesh.material.uniforms.tex.value;
     if (!t || !this._ui_img) return;
-    const { offsetAnimX, offsetAnimY } = this._ui_img;
-    if (!offsetAnimX && !offsetAnimY && this.user_data.ui_img == this._ui_img)
-      return;
+    const { offsetAnimX = 0, offsetAnimY = 0, offsetAnimR = 0 } = this._ui_img;
     const { wrapS, wrapT, repeatX, repeatY } = this._ui_img;
-    if (offsetAnimX !== void 0) t.offset.y += (dt / 1000) * offsetAnimX;
-    if (offsetAnimY !== void 0) t.offset.x += (dt / 1000) * offsetAnimY;
+    const sec = dt / 1000;
+
+    this._uv_anim_angle += sec * offsetAnimR
+    this._uv_anim_vec.x = offsetAnimX ?? 0
+    this._uv_anim_vec.y = offsetAnimY ?? 0
+
+    if (this._uv_anim_vec.x || this._uv_anim_vec.y) {
+      const { x, y } = this._uv_anim_vec.clone().rotateAround(new T.Vector2(0, 0), this._uv_anim_angle)
+      t.offset.x += sec * x;
+      t.offset.y += sec * y;
+    }
+
+
+
+
     if (wrapS !== void 0) t.wrapS = (wrapS as any);
     if (wrapT !== void 0) t.wrapT = (wrapT as any);
     if (repeatX !== void 0) t.repeat.setX(repeatX);
     if (repeatY !== void 0) t.repeat.setY(repeatY);
-
-
   }
 
   render(dt: number) {
