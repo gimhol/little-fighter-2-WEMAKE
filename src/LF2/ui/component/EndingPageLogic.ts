@@ -1,62 +1,76 @@
+import { IPropsMeta, Label } from "@/LF2";
 import { Difficulty } from "../../defines";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { IUIPointerEvent } from "../IUIPointerEvent";
 import { UINode } from "../UINode";
 import { IJalousieCallbacks, Jalousie } from "./Jalousie";
 import { UIComponent } from "./UIComponent";
-
-export class EndingPageLogic extends UIComponent {
-  static override readonly TAGS: string[] = [`EndingPageLogic`];
+export interface IEndingPageLogicProps {
+  label: Label | undefined;
   jalousie: Jalousie | undefined;
-  txt_node: UINode | undefined;
-  jalousie_cbs: IJalousieCallbacks = {
+}
+export class EndingPageLogic extends UIComponent<IEndingPageLogicProps> {
+  static override readonly TAGS: string[] = [`EndingPageLogic`];
+  static override readonly PROPS: IPropsMeta<IEndingPageLogicProps> = {
+    label: { type: Label, nullable: false },
+    jalousie: { type: Jalousie, nullable: false },
+  }
+  protected texts_idx = 0;
+  protected texts = [
+    "old_ending_0_0",
+    "old_ending_0_1",
+    "old_ending_1",
+    "old_ending_2",
+    "old_ending_3",
+    "gim_ending_0",
+    "gim_ending_1",
+    "gim_ending_2",
+    "gim_ending_3",
+  ]
+  protected jalousie_cbs: IJalousieCallbacks = {
     on_anim_end: (j) => this.on_jalousie_anim_end(j)
   }
   override on_start(): void {
     super.on_start?.();
-    this.jalousie = this.node.search_component(Jalousie);
-    this.jalousie?.callbacks.add(this.jalousie_cbs)
-    this.txt_node = this.node.search_node('txt_b')
+    this.texts_idx = -1
+    this.props.label?.preload(this.texts)
+    this.props.jalousie?.callbacks.add(this.jalousie_cbs)
   }
   override on_resume(): void {
     super.on_resume()
     this.lf2.sounds.stop_bgm()
-    if (this.jalousie?.anim.done) this.jalousie.open = !this.jalousie.open
+    if (this.props.jalousie?.anim.done) this.props.jalousie.open = !this.props.jalousie.open
   }
   override on_stop(): void {
     super.on_stop?.();
-    this.jalousie?.callbacks.del(this.jalousie_cbs)
+    this.props.jalousie?.callbacks.del(this.jalousie_cbs)
   }
   override on_click(e: IUIPointerEvent): void {
-    if (this.jalousie?.anim.done) this.jalousie.open = !this.jalousie.open
+    if (this.props.jalousie?.anim.done) this.props.jalousie.open = !this.props.jalousie.open
   }
   override on_key_down(e: IUIKeyEvent): void {
-    if (this.jalousie?.anim.done) this.jalousie.open = !this.jalousie.open
+    if (this.props.jalousie?.anim.done) this.props.jalousie.open = !this.props.jalousie.open
   }
   on_jalousie_anim_end(j: Jalousie): void {
     if (j.open) return;
-
-    if (this.txt_node) {
-      const i = this.txt_node.txt_idx.value++
-      const l = this.txt_node.txts.value.length;
-      if (i < l - 1) {
-        if (i === 0 && this.world.difficulty >= Difficulty.Difficult) {
-          this.txt_node.txt_idx.value = i + 2
-        } else {
-          this.txt_node.txt_idx.value = i + 1
-        }
-        const txt_idx = this.txt_node.txt_idx.value
-        const { w, h, scale } = this.txt_node.txts.value[txt_idx]!
-        this.txt_node.resize(w / scale, h / scale)
-      } else {
+    do {
+      const { label } = this.props;
+      if (!label) continue;
+      if (this.texts_idx === -1 && this.world.difficulty >= Difficulty.Difficult)
+        this.texts_idx += 2
+      else
+        this.texts_idx += 1
+      if (this.texts_idx >= this.texts.length) {
         if (this.lf2.ui_stacks[0].uis.length > 1) {
           this.lf2.pop_ui({ until: (_, i) => i === 0 })
         } else {
           this.lf2.set_ui({ id: "main_page" })
           this.lf2.sounds.play_bgm("bgm/main.wma.mp3")
         }
+        break;
       }
-    }
+      label.set_text(this.texts[this.texts_idx])
+    } while (0);
     j.open = true;
   }
 }
