@@ -60,7 +60,6 @@ export const regist_components = () => {
     _.PositionAnimation,
     _.PrefixAndDifficultyText,
     _.RandomImg,
-    _.RandomTxt,
     _.Reachable,
     _.ReachableGroup,
     _.ScaleAnimation,
@@ -78,7 +77,6 @@ export const regist_components = () => {
     _.TeamSituationText,
     _.Tests,
     _.TextInput,
-    _.TxtClickable,
     _.VerticalLayout,
     _.VsModeLogic,
     _.WrapContent

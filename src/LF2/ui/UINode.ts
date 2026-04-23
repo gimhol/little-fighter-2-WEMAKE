@@ -299,7 +299,7 @@ export class UINode implements IDebugging {
     this.pos.set(...this.data.pos);
     this.size.set(...this.data.size);
     this.scale.set(...this.data.scale);
-
+    this.text = this.data.txt_info ?? null;
     this.renderer = new D.UINodeRenderer(this);
     make_debugging(this)
   }

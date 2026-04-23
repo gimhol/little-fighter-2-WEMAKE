@@ -18,7 +18,7 @@ export class IntegerPicker extends UIComponent<{}, IIntegerPickerCallbacks> {
   protected _max: number = MAX;
   protected _val: number = this._min;
   protected _txt = new UITextLoader(() => this.node)
-    .set_style(() => this.node.txts.value[0]?.style ?? {})
+    .set_style(() => this.node.text?.style ?? {})
   protected _triggers: Set<String> = new Set();
   get val(): number { return this._val }
   set val(v: number) { this.set_val(v) }

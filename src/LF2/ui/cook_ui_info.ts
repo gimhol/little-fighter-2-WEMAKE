@@ -119,7 +119,7 @@ export async function cook_ui_info(
 
   if (ui_info.txt) ret.txt = cook_ui_txt_info(lf2, ret, ui_info.txt);
   if (ret.txt) ret.txt_info = await ui_load_txt(lf2, ret.txt);
-
+  
   const { w: img_w = 0, h: img_h = 0, scale = 1 } = ret.img_infos[0] || ret.txt_info || {};
   const sw = img_w / scale;
   const sh = img_h / scale;

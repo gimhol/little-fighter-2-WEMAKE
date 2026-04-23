@@ -1,4 +1,4 @@
-import { parse_rgba } from "@/LF2";
+import { parse_rgba, TextInfo } from "@/LF2";
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
@@ -7,6 +7,7 @@ import type { UINode } from "@/LF2/ui/UINode";
 import { is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
+import { SRGBColorSpace } from "../_t";
 import { empty_texture } from "./empty_texture";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
@@ -14,7 +15,6 @@ import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
 import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
-import { SRGBColorSpace } from "../_t";
 interface IUserData {
   w?: number;
   h?: number;
@@ -43,6 +43,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected pos_version: number | null = null;
   protected _img: ImageInfo<T.Texture> | undefined;
   protected _input: HTMLInputElement | undefined;
+  protected _text: TextInfo<any> | null = null;
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -52,7 +53,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this._css_obj.position.set(0, 0, 0);
     this._css_obj.center.set(0, 1);
 
-    const txt = this.ui.txts.value[this.ui.txt_idx.value]
+    const txt = this.ui.text
     if (txt?.style.font) this.dom.style.font = txt.style.font;
     if (txt?.style.fill_style) this.dom.style.color = txt.style.fill_style;
     this.mesh.add(this._css_obj);
@@ -175,14 +176,13 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (
       this.img_idx_version === this.ui.img_idx.version &&
       this.imgs_version === this.ui.imgs.version &&
-      this.txt_idx_version === this.ui.txt_idx.version &&
-      this.txts_version === this.ui.txts.version &&
+      this._text === this.ui.text &&
       this.color_version === this.ui.color.version
     ) return;
 
     const img: ImageInfo | undefined =
       this.ui.imgs.value[this.ui.img_idx.value] ||
-      this.ui.txts.value[this.ui.txt_idx.value];
+      this.ui.text;
     this._ui_img = this.ui.data.img[this.ui.img_idx.value];
     this._img = img;
     const rgba = parse_rgba(this.ui.color.value)
@@ -208,9 +208,6 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.mesh.material.mixColor = BLACK;
       this.mesh.material.mixStength = 0;
     }
-
-
-
   }
   get x(): number { return this.mesh.position.x }
   set x(v: number) { this.mesh.position.x = v; }
@@ -321,8 +318,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     }
     this.img_idx_version = this.ui.img_idx.version
     this.imgs_version = this.ui.imgs.version
-    this.txt_idx_version = this.ui.txt_idx.version
-    this.txts_version = this.ui.txts.version
+    this._text = this.ui.text
     this.color_version = this.ui.color.version
   }
 }
