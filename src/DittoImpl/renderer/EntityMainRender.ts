@@ -230,7 +230,7 @@ export class EntityMainRender {
       m.uniforms.gray.value = 0.3
       m.uniforms.mixColor.value = new T.Color('#364791')
       m.uniforms.mixStength.value = 0.3
-      m.uniforms.outlineWidth.value = 2
+      m.uniforms.outlineWidth.value = 1
       m.uniforms.outlineAlpha.value = 1
       m.uniforms.outlineColor.value = new T.Color('#131C47')
     }

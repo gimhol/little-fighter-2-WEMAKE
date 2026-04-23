@@ -127,10 +127,24 @@ void main() {
   float outline = 0.0;
   vec2 texel = vec2(outlineWidth) / vec2(textureSize(tex, 0));
   float center = texture2D(tex, uv).a;
-  float up = texture2D(tex, uv + vec2(0, -texel.y)).a;
-  float down = texture2D(tex, uv + vec2(0, texel.y)).a;
-  float left = texture2D(tex, uv + vec2(-texel.x, 0)).a;
-  float right = texture2D(tex, uv + vec2(texel.x, 0)).a;
+
+  vec2 coord_up = uv + vec2(0, -texel.y);
+  vec2 coord_down = uv + vec2(0, texel.y);
+  vec2 coord_left = uv + vec2(-texel.x, 0);
+  vec2 coord_right = uv + vec2(texel.x, 0);
+  float up = texture2D(tex, coord_up).a;
+  float down = texture2D(tex, coord_down).a;
+  float left = texture2D(tex, coord_left).a;
+  float right = texture2D(tex, coord_right).a;
+  if(coord_up.y < 1.0 - (y + h) / oh)
+    up = 0.0;
+  if(coord_down.y > y / oh)
+    down = 0.0;
+  if(coord_left.x < x / ow)
+    left = 0.0;
+  if(coord_right.x > (x + w) / ow)
+    right = 0.0;
+
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
   if(outline <= 0.1 || center >= 0.5) {
     apply(color);
