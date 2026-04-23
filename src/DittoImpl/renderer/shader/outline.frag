@@ -3,14 +3,8 @@ uniform sampler2D tex;
 uniform float tw;
 /** 一倍纹理图的高度（像素）*/
 uniform float th;
-/** 当前纹理图的宽度倍数 */
-uniform float tsw;
-/** 当前纹理图的高度倍数 */
-uniform float tsh;
-/*
-实际图片宽（像素） = tsh * tw
-实际图片高（像素） = tsh * th
-*/
+/** 当前纹理图倍数 */
+uniform float ts;
 
 uniform float repeatX;
 uniform float repeatY;
@@ -107,9 +101,15 @@ void apply(vec4 color) {
 }
 
 void main() {
-  float ow = tw / tsw;
-  float oh = th / tsh;
-  vec2 uv = vec2((vUv.x * w / ow) + x / ow, (vUv.y * h / oh) + 1.0 - (y + h) / oh);
+  /** 原图像素宽 */
+  float ow = tw / ts;
+  /** 原图像素高 */
+  float oh = th / ts;
+  
+  float uv_x = vUv.x * w / ow + x / ow;
+  float uv_y = 1.0 + vUv.y * h / oh - (y + h) / oh;
+  vec2 uv = vec2(uv_x, uv_y);
+
   if(!keepout && (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)) {
     // 超出纹理图的部分将不显示
     discard;

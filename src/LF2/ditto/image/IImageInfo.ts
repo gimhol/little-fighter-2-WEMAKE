@@ -42,4 +42,9 @@ export interface IImageInfo {
   flip_x?: boolean;
   flip_y?: boolean;
   pic?: IPicture;
+
+  clip_x?: number;
+  clip_y?: number;
+  clip_w?: number;
+  clip_h?: number;
 }

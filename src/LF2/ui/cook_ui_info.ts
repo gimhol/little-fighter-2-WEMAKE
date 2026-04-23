@@ -71,10 +71,9 @@ export async function cook_ui_info(
   let { img } = ui_info;
   do {
     if (!img) break;
-    if (typeof img == 'string') 
+    if (typeof img == 'string')
       img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), img) ?? void 0
     if (!img) break;
-    debugger
     for (const k in Schema_IUIImgInfo.properties) {
       const meta = (Schema_IUIImgInfo.properties as any)[k] as ISchema;
       const val = (img as any)[k];

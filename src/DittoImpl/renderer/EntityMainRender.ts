@@ -140,8 +140,7 @@ export class EntityMainRender {
     m.uniforms.tex.value = img.pic.texture;
     m.uniforms.tw.value = img.w;
     m.uniforms.th.value = img.h;
-    m.uniforms.tsw.value = img.scale;
-    m.uniforms.tsh.value = img.scale;
+    m.uniforms.ts.value = img.scale;
     m.uniforms.x.value = x;
     m.uniforms.y.value = y;
     m.uniforms.w.value = w;

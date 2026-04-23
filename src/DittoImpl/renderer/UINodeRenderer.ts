@@ -146,23 +146,19 @@ export class UINodeRenderer implements IUINodeRenderer {
     sp.geometry = this.next_geometry();
     const t = sp.material.texture
     const { _img: i } = this;
-
     const { material: m } = sp;
     const { uniforms: u } = m;
 
     // look stupid.
     if (t && i) {
-      const { w, h, scale } = i
-      const sw = w / scale;
-      const sh = h / scale;
-      u.x.value = t.offset.x * sw / t.repeat.x;
-      u.y.value = t.offset.y * sh / t.repeat.y;
-      u.w.value = sw;
-      u.h.value = sh;
+      const { w, h, scale, clip_x = 0, clip_y = 0, clip_w = w / scale, clip_h = h / scale } = i
       u.tw.value = w;
       u.th.value = h;
-      u.tsw.value = (scale * t.repeat.x);
-      u.tsh.value = (scale * t.repeat.y);
+      u.ts.value = scale;
+      u.x.value = clip_x;
+      u.y.value = clip_y;
+      u.w.value = clip_w;
+      u.h.value = clip_h;
     }
     if (u.tex.value !== t) {
       u.tex.value?.dispose();
@@ -283,6 +279,8 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (wrapT !== void 0) t.wrapT = (wrapT as any);
     if (repeatX !== void 0) t.repeat.setX(repeatX);
     if (repeatY !== void 0) t.repeat.setY(repeatY);
+
+
   }
 
   render(dt: number) {
