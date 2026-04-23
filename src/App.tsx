@@ -330,6 +330,7 @@ function App() {
     window.addEventListener('blur', blur);
     window.addEventListener('focus', focus);
     lf2.sounds.set_muted(!document.hasFocus() || document.hidden);
+
     return () => {
       window.removeEventListener("touchstart", on_touchstart)
       document.removeEventListener('visibilitychange', visibilitychange);
@@ -447,6 +448,7 @@ function App() {
     [players],
   );
 
+  useShortcut("Escape", 0, () => lf2?.cmds.push(CMD.F4));
   useShortcut("F8", 0, () => lf2?.cmds.push(CMD.F8));
   useShortcut("F9", 0, () => lf2?.cmds.push(CMD.F9));
   useShortcut("F10", 0, () => lf2?.cmds.push(CMD.F10));

@@ -110,53 +110,41 @@
           ],
         },
         {
-          size: "91,106",
+          size: "106,106",
           component: ["PlayerCtrlType()"],
           items: [
             {
               img: {
-                w: 106,
-                h: 91,
                 path: "sprite/CS6.png",
               },
             },
             {
               visible: false,
               img: {
-                w: 106,
-                h: 91,
                 path: "sprite/CS2.png",
               },
             },
             {
               visible: false,
               img: {
-                w: 106,
-                h: 91,
                 path: "sprite/CS3.png",
               },
             },
             {
               visible: false,
               img: {
-                w: 106,
-                h: 91,
                 path: "sprite/CS4.png",
               },
             },
             {
               visible: false,
               img: {
-                w: 106,
-                h: 91,
                 path: "sprite/CS5.png",
               },
             },
             {
               visible: false,
               img: {
-                w: 106,
-                h: 91,
                 path: "sprite/CS7.png",
               },
             },
