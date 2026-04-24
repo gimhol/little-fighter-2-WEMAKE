@@ -1,4 +1,4 @@
-import { IPropsMeta, IUICallback, UIComponent, UINode } from "@/LF2";
+import { IPropsMeta, IUICallback, LabelButton, UIComponent, UINode } from "@/LF2";
 export interface ISettingsLogicProps {
   btn_misc_settings: UINode,
   btn_ctrl_settings: UINode,
@@ -15,17 +15,23 @@ export class SettingsLogic extends UIComponent<ISettingsLogicProps> {
   };
   private a: IUICallback = {
     on_click: () => {
+      this.props.btn_misc_settings.search_component(LabelButton)!.checked = true
+      this.props.btn_ctrl_settings.search_component(LabelButton)!.checked = false
       this.props.misc_settings_node?.set_visible(true)
       this.props.ctrl_settings_node?.set_visible(false)
     }
   }
   private b: IUICallback = {
     on_click: () => {
+      this.props.btn_misc_settings.search_component(LabelButton)!.checked = false
+      this.props.btn_ctrl_settings.search_component(LabelButton)!.checked = true
       this.props.misc_settings_node?.set_visible(false)
       this.props.ctrl_settings_node?.set_visible(true)
     }
   }
   override on_start(): void {
+    this.props.btn_misc_settings.search_component(LabelButton)!.checked = true
+    this.props.btn_ctrl_settings.search_component(LabelButton)!.checked = false
     this.props.btn_misc_settings?.callbacks.add(this.a)
     this.props.btn_ctrl_settings?.callbacks.add(this.b)
   }

@@ -19,6 +19,7 @@ export class LabelButton extends UIComponent<ILabelButtonProps> {
     disable_color: String,
     text: String,
   };
+  checked: boolean | null = null;
   protected anim = new Easing(0, 1).set_duration(150);
   get responser(): UINode {
     return this.props.responser ?? this.node;
@@ -38,8 +39,10 @@ export class LabelButton extends UIComponent<ILabelButtonProps> {
   }
   override update(dt: number): void {
     const { responser } = this;
-    const reverse = (!responser.pointer_over && !responser.focused) || !!responser.pointer_down;
-    const { hover_label } = this.props;
-    if (hover_label) hover_label.node.opacity = this.anim.auto_trip(reverse, dt).value;
+    const reverse = null == this.checked ?
+      (!responser.pointer_over && !responser.focused) || !!responser.pointer_down :
+      !this.checked
+
+    this.props.hover_label?.node.set_opacity(this.anim.auto_trip(reverse, dt).value);
   }
 }
