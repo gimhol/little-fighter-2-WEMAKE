@@ -49,7 +49,7 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     this.fsm = new FSM<Status>().add({
       key: Status.TapHints,
       enter: () => {
-        // this.props.loading_anim.anim.set_times(this._prel_loaded ? 1 : 0).set_count(0)
+        this.props.loading_anim.anim.set_times(this._prel_loaded ? 1 : 0).set_count(0)
         this.props.tap_to_launch.find_component(SineOpacity)!.enabled = true;
         this.props.sound_warning.find_component(SineOpacity)!.enabled = true;
         this.props.tap_to_launch.find_component(FadeOutOpacity)!.enabled = false;
@@ -122,7 +122,7 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
   }
   protected on_prel_loaded() {
     this._prel_loaded = true;
-    // this.props.loading_anim.anim.set_times(4).set_count(0)
+    this.props.loading_anim.anim.set_times(4).set_count(0)
   }
   readonly lf2_cb: ILf2Callback = {
     on_prel_loaded: () => {
