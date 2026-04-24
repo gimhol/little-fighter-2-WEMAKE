@@ -27,7 +27,7 @@
           properties: {
             direction: "column",
             fit: true,
-            gap: 20,
+            gap: 10,
             align: "center",
           },
         },

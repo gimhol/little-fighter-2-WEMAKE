@@ -12,7 +12,7 @@ export class CharactersHelper extends EntitiesHelper {
   }
   override add(
     data: IEntityData | string | undefined,
-    num: number,
+    num: number = 1,
     team?: string,
   ): Entity[] {
     if (typeof data === "string")

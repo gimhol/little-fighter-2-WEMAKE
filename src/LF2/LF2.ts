@@ -17,15 +17,6 @@ import * as UI from "./ui";
 import { regist_components } from './ui/component/_';
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
-const cheat_info_pair = (n: D.CheatType) =>
-  [
-    n,
-    {
-      keys: D.Defines.CheatKeys[n],
-      gkeys: D.Defines.CheatGameKeys[n],
-      sound: D.Defines.CheatTypeSounds[n],
-    },
-  ] as const;
 
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
@@ -232,11 +223,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _keys = ''
   private _gkeys = new Map<string, string>()
   private _gkeys_matchs = new Set<string>()
-  private readonly _cheat_infos = new Map<D.CheatType, D.Defines.ICheatInfo>([
-    cheat_info_pair(D.CheatType.LF2_NET),
-    cheat_info_pair(D.CheatType.HERO_FT),
-    cheat_info_pair(D.CheatType.GIM_INK),
-  ]);
   private readonly _cheat_enables = new Map<string, boolean>();
 
   is_cheat(name: string | D.CheatType) {
@@ -246,7 +232,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const enabled = this._cheat_enables.get(name);
     enable = enable ?? (!enabled)
     if (enabled === enable) return;
-    const cheat = this._cheat_infos.get(name as D.CheatType);
+    const cheat = D.Defines.CheatInfos.get(name as D.CheatType);
     if (!cheat) return;
     if (cheat.sound) this.sounds.play_with_load(cheat.sound);
     this._cheat_enables.set(name, enable);
@@ -281,7 +267,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     let match = false;
     this._gkeys_matchs.clear()
     this._keys += key_code;
-    for (const [cheat_name, { keys: k, gkeys: g }] of this._cheat_infos) {
+    for (const [cheat_name, { keys: k, gkeys: g }] of D.Defines.CheatInfos) {
       for (const [pid, gkeys] of this._gkeys) {
         if (g.startsWith(gkeys)) this._gkeys_matchs.add(pid);
         if (g === gkeys) this.cmds.push(cheat_name)
@@ -408,27 +394,22 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load_data')
     for (const d of this.datas.fighters) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.fighters as any)[`add_${name}`] = (num = 1, team = void 0) =>
-        this.fighters.add(d, num, team);
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.fighters.add(d, num, team_1);
+      (this.fighters as any)[`add_${name}`] = (num?: number, team?: string) => this.fighters.add(d, num, team);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.fighters.add(d, num, team);
     }
     for (const d of this.datas.weapons) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.weapons as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.weapons.add(d, num, team_1);
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.weapons.add(d, num, team_1);
+      (this.weapons as any)[`add_${name}`] = (num?: number, team?: string) => this.weapons.add(d, num, team);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.weapons.add(d, num, team);
     }
     for (const d of this.datas.balls) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.entities.add(d, num, team_1);
+      (this.balls as any)[`add_${name}`] = (num?: number, team?: string) => this.balls.add(d, num, team);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.balls.add(d, num, team);
     }
     for (const d of this.datas.entity) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.entities.add(d, num, team_1);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.entities.add(d, num, team);
     }
     if (zip) {
       const bgms = zip.file(/bgm\/.*?\.mp3$/)
@@ -590,7 +571,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       stack.pop()
     if (!stack.ui && stack_index > 0)
       this._ui_stacks.splice(stack_index, 1)
-
   }
 
   push_ui(opts: UI.IPushUIOpts, index: number = 0): void {

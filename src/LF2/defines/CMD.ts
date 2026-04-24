@@ -27,7 +27,7 @@ export enum CMD {
   SET_DIFFICULTY = "SET_DIFFICULTY",
   LOCK_CAM = "LOCK_CAM",
   CHANGE_BG = "CHANGE_BG",
-  CHANGE_STAGE = "CHANGE_STAGE",
+  CHANGE_STAGE = "CHANGE_STAGE"
 }
 export const CMD_NAMES: Record<CMD, string> = {
   [CMD.F1]: "F1",

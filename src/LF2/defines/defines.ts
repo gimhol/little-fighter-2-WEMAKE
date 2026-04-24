@@ -95,31 +95,16 @@ export namespace Defines {
   export const NEXT_FRAME_SELF: Readonly<INextFrame> = {
     id: Builtin_FrameId.Self,
   };
-
-  export const CheatKeys: Record<CheatType, string> = {
-    [CheatType.LF2_NET]: "lf2.net",
-    [CheatType.HERO_FT]: "herofighter.com",
-    [CheatType.GIM_INK]: "gim.ink",
-  };
-
-  export const CheatGameKeys: Record<CheatType, string> = {
-    [CheatType.LF2_NET]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.a, GK.d, GK.a].join(''),
-    [CheatType.HERO_FT]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.j, GK.a, GK.j, GK.a].join(''),
-    [CheatType.GIM_INK]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.j, GK.d, GK.j].join(''),
-  };
-
-  export const CheatTypeSounds: Record<CheatType, string> = {
-    [CheatType.LF2_NET]: "data/m_pass.wav.mp3",
-    [CheatType.HERO_FT]: "data/m_end.wav.mp3",
-    [CheatType.GIM_INK]: "data/093_r.wav.mp3",
-  };
-
   export interface ICheatInfo {
     keys: string;
     gkeys: string;
     sound: string;
   }
-
+  export const CheatInfos = new Map<CheatType, ICheatInfo>([
+    [CheatType.LF2_NET, { keys: "lf2.net", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.a, GK.d, GK.a].join(''), sound: "data/m_pass.wav.mp3" }],
+    [CheatType.HERO_FT, { keys: "herofighter.com", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.j, GK.a, GK.j, GK.a].join(''), sound: "data/m_end.wav.mp3"  }],
+    [CheatType.GIM_INK, { keys: "gim.ink", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.j, GK.d, GK.j].join(''), sound: "data/093_r.wav.mp3"  }],
+  ]);
   export const Sounds = {
     StagePass: "data/m_pass.wav.mp3",
     BattleEnd: "data/m_end.wav.mp3",

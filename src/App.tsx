@@ -612,8 +612,10 @@ function App() {
             onClick={() => {
               if (!lf2) return;
               lf2.cmds.push(CMD.F2)
-              if (lf2.ui_stacks[1]?.ui?.data.id == 'settings') lf2.pop_ui_safe()
-              else lf2.set_ui({ id: "settings" }, 1);
+              if (lf2.ui?.id == 'settings')
+                lf2.pop_ui_safe()
+              else
+                lf2.set_ui({ id: "settings" }, 1);
             }}
             src={[img_btn_1_1, img_btn_1_1]}
           />
