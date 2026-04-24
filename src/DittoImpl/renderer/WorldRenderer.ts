@@ -71,16 +71,6 @@ export class WorldRenderer implements IWorldRenderer {
     }
     this.ui_container = new Object3D();
     this.scene.inner.add(this.ui_container);
-    {
-      // const camera = this.camera = new PerspectiveCamera()
-      // camera.aspect = 1;
-      // camera.near = 0.1;
-      // camera.far = 2000;
-      // camera.position.set(0, 0, 10)
-      // camera.name = "default_orthographic_camera"
-      // this.scene.add_camera(camera);
-      // camera.updateProjectionMatrix(); 
-    }
   }
   ensure_stat(pack: EntityRenderer) {
     // Criminal...?

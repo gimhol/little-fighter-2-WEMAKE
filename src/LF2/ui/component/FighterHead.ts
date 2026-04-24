@@ -1,9 +1,6 @@
 import { Picture } from "@/LF2";
-import Invoker from "../../base/Invoker";
 import { Defines } from "../../defines/defines";
-import { IPlayerInfoCallback } from "../../IPlayerInfoCallback";
 import { PlayerInfo } from "../../PlayerInfo";
-import { UIImgLoader } from "../UIImgLoader";
 import { UIComponent } from "./UIComponent";
 
 /**

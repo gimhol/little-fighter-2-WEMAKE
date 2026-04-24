@@ -20,8 +20,6 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
 }
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
-
-
 export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
 
