@@ -57,7 +57,6 @@ export class ImgLoop extends UIComponent<IImgLoopProps> {
     if (!rect) {
       this.node.visible = false;
     } else {
-      console.log(rect, idx)
       this.node.visible = true;
       this.node.image = image.clone();
       this.node.image.clip_x = rect.x
