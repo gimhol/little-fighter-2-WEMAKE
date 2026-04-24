@@ -261,7 +261,16 @@ export class BotController extends BaseController {
     if (e.state === StateEnum.Lying) return dxz < 180;
     if (e.blinking) return dxz < 180;
     if (e.invulnerable) return dxz < 180;
-    if (me.holding?.base_type === W_T.Drink) return dxz < 180;
+    if (me.holding?.base_type === W_T.Drink) {
+      if (this.fsm.state?.key !== BotStateEnum.Avoiding) {
+        // 非逃跑的状态下，太近了，开始逃跑
+        return dxz < 180;
+      } else {
+        // 逃跑的状态下，跑出一定距离，停止逃跑
+        return dxz < 260;
+      }
+    }
+
 
     // 不再地上
     if (me.ground_y != me.position.y) return false;
@@ -411,19 +420,19 @@ export class BotController extends BaseController {
     let y = 0;
     switch (entity.state) {
       case StateEnum.Jump:
-        x = round_float(px + 3 * vx);
-        z = round_float(pz + 2 * vz);
+        x = round_float(px + 2 * vx);
+        z = round_float(pz + 1 * vz);
         y = round_float(py + 2 * vy);
         break;
       case StateEnum.Running:
-        x = round_float(px + 4 * vx);
-        z = round_float(pz + 2.5 * vz);
-        y = round_float(py + 2.5 * vy);
+        x = round_float(px + 2 * vx);
+        z = round_float(pz + 1 * vz);
+        y = round_float(py + 2 * vy);
         break;
       case StateEnum.Dash:
-        x = round_float(px + 5 * vx);
-        z = round_float(pz + 3 * vz);
-        y = round_float(py + 3 * vy)
+        x = round_float(px + 3 * vx);
+        z = round_float(pz + 1 * vz);
+        y = round_float(py + 1 * vy)
         break;
       default:
         x = round_float(px + vx);
