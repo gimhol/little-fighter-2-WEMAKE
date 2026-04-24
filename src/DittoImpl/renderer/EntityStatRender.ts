@@ -1,7 +1,7 @@
 import { get_team_outline_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
-import { GameKey, GKLabels, IStyle } from "@/LF2/defines";
-import { is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { GameKey, GKLabels, IVector3Like } from "@/LF2/defines";
+import { is_bot_ctrl, is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
@@ -33,7 +33,7 @@ export class EntityStatRender implements IEntityCallbacks {
   entity: Entity;
 
   protected _ctrl_node: Object3D | null = null;
-  protected _key_nodes: Map<GameKey, SmallTextMesh> | null = null
+  protected _ctrls: Map<GameKey | 'bot', SmallTextMesh> | null = null
 
   get ctrl_node(): Object3D {
     if (this._ctrl_node) return this._ctrl_node
@@ -41,11 +41,12 @@ export class EntityStatRender implements IEntityCallbacks {
     this.world_renderer.world_node.add(this._ctrl_node);
     return this._ctrl_node
   }
-  get key_nodes(): Map<GameKey, SmallTextMesh> {
-    if (this._key_nodes) return this._key_nodes;
+  get ctrls(): Map<GameKey | 'bot', SmallTextMesh> {
+    if (this._ctrls) return this._ctrls;
     const f = 7;
     const ox = -25
-    const map = new Map([
+    const map = new Map<GameKey | 'bot', IVector3Like>([
+      ['bot', new T.Vector3(ox, f * 2, 0)],
       [GameKey.U, new T.Vector3(ox + f * -1.5, f * 1, 0)],
       [GameKey.D, new T.Vector3(ox + f * -1.5, f * -1, 0)],
       [GameKey.L, new T.Vector3(ox + f * -2.5, f * 0, 0)],
@@ -54,19 +55,23 @@ export class EntityStatRender implements IEntityCallbacks {
       [GameKey.j, new T.Vector3(ox + f * 1.5, f * 0, 0)],
       [GameKey.d, new T.Vector3(ox + f * 2.5, f * 1, 0)],
     ])
-    this._key_nodes = new Map();
+    this._ctrls = new Map();
 
     const { lf2 } = this.entity
     for (const [k, pos] of map) {
       const mesh = SmallTextMesh.get()
       mesh.name = `key ${k}`;
       mesh.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
-      mesh.set_text(lf2, GKLabels[k]).catch(e => console.warn(e));
+      if (k == 'bot') {
+        mesh.set_text(lf2, '?').catch(e => console.warn(e));
+      } else {
+        mesh.set_text(lf2, GKLabels[k]).catch(e => console.warn(e));
+      }
       mesh.strokeStyle = 'black'
       this.ctrl_node.add(mesh)
-      this._key_nodes.set(k, mesh)
+      this._ctrls.set(k, mesh)
     }
-    return this._key_nodes;
+    return this._ctrls;
   }
 
 
@@ -83,7 +88,7 @@ export class EntityStatRender implements IEntityCallbacks {
   clear_ctrl_node(): void {
     this._ctrl_node?.removeFromParent();
     this._ctrl_node = null;
-    this._key_nodes = null;
+    this._ctrls = null;
   }
 
   constructor(entity: Entity, world_renderer: WorldRenderer) {
@@ -227,7 +232,7 @@ export class EntityStatRender implements IEntityCallbacks {
 
   update_ctrl() {
     const {
-      world, position: { x, z, y }, ctrl_visible, frame: { centery }
+      lf2, world, position: { x, z, y }, ctrl_visible, frame: { centery }
     } = this.entity;
 
     const _ctrl_visible = ctrl_visible || world.indicator_flags & INDICATINGS.ctrl
@@ -235,7 +240,7 @@ export class EntityStatRender implements IEntityCallbacks {
       this.clear_ctrl_node();
       return;
     }
-    for (const [key, node] of this.key_nodes) {
+    for (const [key, node] of this.ctrls) {
       node.visible = !this.entity.ctrl.is_end(key)
     }
     const _x = round(x)
@@ -243,10 +248,22 @@ export class EntityStatRender implements IEntityCallbacks {
     const _z = round(z)
     if (this.bars_node.visible) _y += 25
     this.ctrl_node.position.set(_x, _y, _z);
+
+    do {
+      const bot = this.ctrls.get('bot')
+      if (!bot) break;
+      bot.visible = false;
+      const ctrl = this.entity.ctrl
+      if (!is_bot_ctrl(ctrl)) break;
+      const k = ctrl.fsm.state?.key
+      if (!k) break;
+      bot.set_text(lf2, k)
+      bot.visible = true;
+    } while (0);
   }
   render() {
     const {
-      invisible, position: { x, z, y },  frame: { centery }, hp, key_role,
+      invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
       stat_bar_type
     } = this.entity;
     const _is_fighter = is_fighter(this.entity)

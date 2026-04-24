@@ -9,7 +9,7 @@ export interface IBotDataSet {
    * 当目标过近时，应拉开距离
    */
   w_atk_m_x?: number;
-    
+
   /** 
    * 走攻触发最小范围X 
    * 当目标过近时，应拉开距离
@@ -69,6 +69,10 @@ export interface IBotDataSet {
    * [0, 10000]
    */
   d_desire?: number;
+
+  avoid_x?: number;
+
+  avoid_z?: number;
 }
 
 export class BotDataSet implements Required<IBotDataSet> {
@@ -123,6 +127,9 @@ export class BotDataSet implements Required<IBotDataSet> {
    */
   r_x_max = 2000;
 
+  avoid_x = 250;
+
+  avoid_z = 100;
 }
 
 export const bot_dataset_fields = fields<IBotDataSet>({
@@ -147,4 +154,6 @@ export const bot_dataset_fields = fields<IBotDataSet>({
   r_x_max: int,
   r_stop_desire: int,
   d_desire: int,
+  avoid_x: int,
+  avoid_z: int,
 })

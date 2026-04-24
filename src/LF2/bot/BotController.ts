@@ -133,7 +133,9 @@ export class BotController extends BaseController {
     ) return 100;
     return this.dataset.w_atk_m_x
   }
-
+  get atk_r_x() {
+    return this.dataset.w_atk_r_x
+  }
   get stage() { return this.world.stage }
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.chasings.get()?.entity;
@@ -182,21 +184,18 @@ export class BotController extends BaseController {
   /**
    * 判断是否应该追击某个对象
    *
-   * @param {(Entity | null)} [e]
+   * @param {Entity} [e]
    * @return {*}  {boolean}
    * @memberof BotController
    */
-  should_chase(e?: Entity | null): boolean {
+  should_chase(e: Entity): boolean {
     const { entity: me } = this;
-    const e_state = e?.state;
 
-    if (me.hp <= 0)
-      return false;
-    if (me.holding?.base_type == W_T.Drink)
-      return false;
-    if (!e?.is_attach || e.hp <= 0)
-      return false;
+    if (me.hp <= 0) return false;
+    if (me.holding?.base_type == W_T.Drink) return false;
+    if (e.hp <= 0) return false;
 
+    const e_state = e.state;
     const [l, r] = this.world.fighter_bound(me)
     if (!between(e.position.x, l, r))
       return false;
@@ -237,13 +236,13 @@ export class BotController extends BaseController {
     if (e.invisible) return false
     if (e.blinking) return false
     if (e.invulnerable) return false
-    if (me.ground_y == me.position.y) return true
-    if (this.fsm.state?.key === BotStateEnum.Chasing) {
-      return this.atk_m_x <= abs_dx
-    } else if (this.fsm.state?.key === BotStateEnum.Avoiding) {
-      return this.dataset.w_atk_r_x > abs(me.position.x - e.position.x)
+    if (me.ground_y != me.position.y) return true
+
+    if (this.fsm.state?.key === BotStateEnum.Avoiding) {
+      const { atk_r_x } = this;
+      return atk_r_x > 0 && atk_r_x < abs_dx
     }
-    return false
+    return this.atk_m_x <= abs_dx
   }
 
   /**
@@ -253,13 +252,10 @@ export class BotController extends BaseController {
    * @return {*}  {boolean}
    * @memberof BotController
    */
-  should_avoid(e?: Entity | null): boolean {
+  should_avoid(e: Entity): boolean {
     const { entity: me } = this;
-    if (
-      me.hp <= 0 ||
-      !e?.is_attach ||
-      e.hp <= 0
-    ) return false;
+    if (me.hp <= 0) return false
+    if (e.hp <= 0) return false;
 
     const dxz = manhattan_xz(this.entity, e)
     if (e.state === StateEnum.Lying) return dxz < 180;
@@ -278,12 +274,12 @@ export class BotController extends BaseController {
       e.state == StateEnum.Frozen
     ) return false
 
-    if (this.fsm.state?.key === BotStateEnum.Chasing) {
-      return this.atk_m_x > abs(me.position.x - e.position.x)
-    } else if (this.fsm.state?.key === BotStateEnum.Avoiding && this.dataset.w_atk_r_x > 0) {
-      return this.dataset.w_atk_r_x < abs(me.position.x - e.position.x)
+    const abs_x = abs(me.position.x - e.position.x)
+    if (this.fsm.state?.key === BotStateEnum.Avoiding) {
+      const { atk_r_x } = this;
+      return atk_r_x > 0 && atk_r_x > abs_x
     }
-    return false
+    return this.atk_m_x > abs_x
   }
 
 
@@ -297,14 +293,14 @@ export class BotController extends BaseController {
    *    威胁无法防御时，返回2；
    * @memberof BotController
    */
-  should_defend(e?: Entity | null): 0 | 1 | 2 {
+  should_defend(e: Entity): 0 | 1 | 2 {
     if (
-      e?.is_attach != true ||
       e.invisible ||
       this.entity.toughness ||
       this.entity.invisible ||
       this.entity.blinking ||
-      this.entity.invulnerable) return 0
+      this.entity.invulnerable
+    ) return 0
 
     const { itr: itrs } = e
     do {
