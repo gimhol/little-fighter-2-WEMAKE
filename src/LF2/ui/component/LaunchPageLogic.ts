@@ -22,30 +22,25 @@ enum Status {
 }
 export interface ILaunchPageProps {
   entry: string;
-  // tests: UINode[];
-  // tests2: ScaleAnimation[];
-  // tests3: string[];
-  // tests4: number[];
-  // tests5: boolean[];
-  // tests6: boolean[];
+  loading_anim: ImgLoop;
+  tap_to_launch: UINode;
+  sound_warning: UINode;
+  yeonface: UINode;
+  bearface: UINode;
+  long_text: UINode;
 }
 export class LaunchPage extends UIComponent<ILaunchPageProps> {
   static override readonly TAGS: string[] = ["LaunchPage"];
   static override readonly PROPS: IPropsMeta<ILaunchPageProps> = {
     entry: String,
-    // tests: { type: 'array', items: UINode },
-    // tests2: { type: 'array', items: ScaleAnimation },
-    // tests3: { type: 'array', items: String },
-    // tests4: { type: 'array', items: Number },
-    // tests5: { type: 'array', items: Boolean },
-    // tests6: { type: 'array' },
+    loading_anim: { type: ImgLoop, nullable: false },
+    tap_to_launch: { type: UINode, nullable: false },
+    sound_warning: { type: UINode, nullable: false },
+    yeonface: { type: UINode, nullable: false },
+    bearface: { type: UINode, nullable: false },
+    long_text: { type: UINode, nullable: false },
   };
   protected fsm: FSM<Status, IState<Status>>;
-  protected tap_to_launch!: UINode;
-  protected sound_warning!: UINode;
-  protected yeonface!: UINode;
-  protected bearface!: UINode;
-  protected long_text!: UINode;
   protected _prel_loaded: boolean = false;
 
   constructor(...args: ConstructorParameters<typeof UIComponent>) {
@@ -54,60 +49,59 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     this.fsm = new FSM<Status>().add({
       key: Status.TapHints,
       enter: () => {
-        const c = this.node.search_component(ImgLoop, 'loading')
-        if (c) c.anim.set_times(this._prel_loaded ? 1 : 0).set_count(0)
-        this.tap_to_launch.find_component(SineOpacity)!.enabled = true;
-        this.sound_warning.find_component(SineOpacity)!.enabled = true;
-        this.tap_to_launch.find_component(FadeOutOpacity)!.enabled = false;
-        this.sound_warning.find_component(FadeOutOpacity)!.enabled = false;
+        // this.props.loading_anim.anim.set_times(this._prel_loaded ? 1 : 0).set_count(0)
+        this.props.tap_to_launch.find_component(SineOpacity)!.enabled = true;
+        this.props.sound_warning.find_component(SineOpacity)!.enabled = true;
+        this.props.tap_to_launch.find_component(FadeOutOpacity)!.enabled = false;
+        this.props.sound_warning.find_component(FadeOutOpacity)!.enabled = false;
       },
       leave: () => {
-        this.tap_to_launch.find_component(SineOpacity)!.enabled = false
-        this.sound_warning.find_component(SineOpacity)!.enabled = false
-        this.tap_to_launch.find_component(FadeOutOpacity)!.enabled = true
-        this.sound_warning.find_component(FadeOutOpacity)!.enabled = true
+        this.props.tap_to_launch.find_component(SineOpacity)!.enabled = false
+        this.props.sound_warning.find_component(SineOpacity)!.enabled = false
+        this.props.tap_to_launch.find_component(FadeOutOpacity)!.enabled = true
+        this.props.sound_warning.find_component(FadeOutOpacity)!.enabled = true
       }
     }, {
       key: Status.Introduction,
       enter: () => {
         Ditto.Timeout.add(() => this.lf2.sounds.play("builtin_data/launch/093.wav.mp3"), 1000);
-        this.yeonface.find_component(ScaleAnimation, 'scale_in')?.start(false)
-        this.yeonface.find_component(PositionAnimation, 'move_in')?.start(false)
-        this.yeonface.find_component(OpacityAnimation)?.start(false)
-        this.bearface.find_component(ScaleAnimation, 'scale_in')?.start(false)
-        this.bearface.find_component(PositionAnimation, 'move_in')?.start(false)
-        this.bearface.find_component(OpacityAnimation)?.start(false)
-        this.long_text.find_component(PositionAnimation, 'move_in')?.start(false)
-        this.long_text.find_component(OpacityAnimation, 'opacity')?.start(false)
+        this.props.yeonface.find_component(ScaleAnimation, 'scale_in')?.start(false)
+        this.props.yeonface.find_component(PositionAnimation, 'move_in')?.start(false)
+        this.props.yeonface.find_component(OpacityAnimation)?.start(false)
+        this.props.bearface.find_component(ScaleAnimation, 'scale_in')?.start(false)
+        this.props.bearface.find_component(PositionAnimation, 'move_in')?.start(false)
+        this.props.bearface.find_component(OpacityAnimation)?.start(false)
+        this.props.long_text.find_component(PositionAnimation, 'move_in')?.start(false)
+        this.props.long_text.find_component(OpacityAnimation, 'opacity')?.start(false)
       },
       leave: () => {
         {
-          const c = this.yeonface.find_component(OpacityAnimation)
+          const c = this.props.yeonface.find_component(OpacityAnimation)
           c?.start(true)
           c?.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
         }
         {
-          const c = this.bearface.find_component(OpacityAnimation)
+          const c = this.props.bearface.find_component(OpacityAnimation)
           c?.start(true)
           c?.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
         }
         {
-          const c = this.yeonface.find_component(ScaleAnimation, 'scale_out')
+          const c = this.props.yeonface.find_component(ScaleAnimation, 'scale_out')
           c?.start(false);
         }
         {
-          const c = this.bearface.find_component(ScaleAnimation, 'scale_out')
+          const c = this.props.bearface.find_component(ScaleAnimation, 'scale_out')
           c?.start(false);
         }
         {
-          const c = this.long_text.find_component(OpacityAnimation, void 0)
+          const c = this.props.long_text.find_component(OpacityAnimation, void 0)
           c?.start(true)
           c?.update(c.anim.anims[c.anim.anims.length - 1]!.duration)
 
         }
       },
       update: (dt) => {
-        if (this._prel_loaded && this.long_text.find_component(OpacityAnimation)!.done)
+        if (this._prel_loaded && this.props.long_text.find_component(OpacityAnimation)!.done)
           return Status.GoToEntry
       }
     }, {
@@ -116,7 +110,7 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
         this.lf2.sounds.play_bgm("bgm/main.wma.mp3");
       },
       update: (dt) => {
-        if (this.long_text.find_component(OpacityAnimation)!.done) {
+        if (this.props.long_text.find_component(OpacityAnimation)!.done) {
           this.lf2.set_ui({ id: this.props.entry });
           return Status.End
         }
@@ -128,8 +122,7 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
   }
   protected on_prel_loaded() {
     this._prel_loaded = true;
-    const c = this.node.search_component(ImgLoop, 'loading')
-    if (c) c.anim.set_times(4).set_count(0)
+    // this.props.loading_anim.anim.set_times(4).set_count(0)
   }
   readonly lf2_cb: ILf2Callback = {
     on_prel_loaded: () => {
@@ -150,11 +143,11 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     this.lf2.callbacks.del(this.lf2_cb)
   }
   override on_resume(): void {
-    this.bearface = this.node.find_child("bearface")!;
-    this.yeonface = this.node.find_child("yeonface")!;
-    this.tap_to_launch = this.node.find_child("tap_to_launch")!;
-    this.sound_warning = this.node.find_child("sound_warning")!;
-    this.long_text = this.node.find_child("long_text")!;
+    this.props.bearface = this.node.find_child("bearface")!;
+    this.props.yeonface = this.node.find_child("yeonface")!;
+    this.props.tap_to_launch = this.node.find_child("tap_to_launch")!;
+    this.props.sound_warning = this.node.find_child("sound_warning")!;
+    this.props.long_text = this.node.find_child("long_text")!;
     this.fsm.use(Status.TapHints)
   }
   override on_key_down(e: IUIKeyEvent): void {

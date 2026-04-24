@@ -2,7 +2,6 @@ import { IStyle } from "../defines/IStyle";
 import type { TextInfo } from "../ditto/image/TextInfo";
 import { Ditto } from "../ditto/Instance";
 import { Times } from "../utils/Times";
-import type { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 import { UINode } from "./UINode";
 
 export class UITextLoader {
@@ -13,18 +12,12 @@ export class UITextLoader {
   constructor(node: () => UINode | null | undefined) {
     this.node = node;
   }
-  private _load_txt(info: ICookedUITxtInfo) {
+  private _load_txt(info: { i18n: string, style: IStyle }) {
     const node = this.node()
     if (!node) return Promise.reject(new Error('node not found'));
     const value = node.lf2.string(info.i18n);
     const job = node.lf2.images.load_text(value, info.style);
     return job;
-  }
-  private _out_of_date(texture?: TextInfo) {
-    return Object.assign(new Error('out_of_date'), {
-      __is_out_of_date_error: true,
-      texture
-    });
   }
   get style(): IStyle { return this._style() }
   set style(style: IStyle | (() => IStyle)) { this.set_style(style); }
@@ -46,7 +39,7 @@ export class UITextLoader {
       node.lf2.images.load_text(text, style);
     }
   }
-  async load(txt: ICookedUITxtInfo): Promise<void> {
+  async load(txt: { i18n: string, style: IStyle }): Promise<void> {
     const node = this.node()
     if (!node) return Promise.reject(new Error(`[UITextLoader::load] node got ${node}`));
     this._jid.add();

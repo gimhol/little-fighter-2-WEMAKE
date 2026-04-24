@@ -67,28 +67,24 @@
     },
     {
       id: "btn_move_table_normal",
-      txt: {
-        i18n: "goto_special_moves_table",
-        style: {
-          fill_style: "#5A73D6",
-          underline_color: "#5A73D6",
-          underline_width: 1,
-          font: "12px Arial",
-        },
+      i18n: "goto_special_moves_table",
+      style: {
+        fill_style: "#5A73D6",
+        underline_color: "#5A73D6",
+        underline_width: 1,
+        font: "12px Arial",
       },
       center: "0, 1",
       pos: "5, 445",
     },
     {
       id: "btn_move_table_hover",
-      txt: {
-        i18n: "goto_special_moves_table",
-        style: {
-          fill_style: "white",
-          underline_color: "white",
-          underline_width: 1,
-          font: "12px Arial",
-        },
+      i18n: "goto_special_moves_table",
+      style: {
+        fill_style: "white",
+        underline_color: "white",
+        underline_width: 1,
+        font: "12px Arial",
       },
       center: "0, 1",
       pos: "5, 445",
@@ -98,27 +94,23 @@
       },
     },
     {
-      txt: {
-        i18n: "goto_github_url",
-        style: {
-          fill_style: "#5A73D6",
-          underline_color: "#5A73D6",
-          underline_width: 1,
-          font: "12px Arial",
-        },
+      i18n: "goto_github_url",
+      style: {
+        fill_style: "#5A73D6",
+        underline_color: "#5A73D6",
+        underline_width: 1,
+        font: "12px Arial",
       },
       center: "1, 1",
       pos: "789, 445",
     },
     {
-      txt: {
-        i18n: "goto_github_url",
-        style: {
-          fill_style: "white",
-          underline_color: "white",
-          underline_width: 1,
-          font: "12px Arial",
-        },
+      i18n: "goto_github_url",
+      style: {
+        fill_style: "white",
+        underline_color: "white",
+        underline_width: 1,
+        font: "12px Arial",
       },
       center: "1, 1",
       pos: "789, 445",

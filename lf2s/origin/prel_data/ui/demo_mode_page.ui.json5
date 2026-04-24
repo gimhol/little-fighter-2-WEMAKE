@@ -28,16 +28,14 @@
     {
       visible: true,
       component: [{ name: "PauseHandling", properties: { reverse: true } }],
-      txt: {
-        i18n: "DEMO",
-        style: {
-          fill_style: "white",
+      i18n: "DEMO",
+      style: {
+        fill_style: "white",
+        font: '24px "Arial Black", Arial',
+        back_style: {
           font: '24px "Arial Black", Arial',
-          back_style: {
-            font: '24px "Arial Black", Arial',
-            stroke_style: "#005A8E",
-            line_width: 4,
-          },
+          stroke_style: "#005A8E",
+          line_width: 4,
         },
       },
       center: "0.5,0.5",
@@ -49,16 +47,14 @@
       visible: false,
     },
     {
-      txt: {
-        i18n: "demo_cam_ctrl",
-        style: {
-          fill_style: "white",
-          font: "9px  Arial",
-          back_style: {
-            font: "9px Arial",
-            stroke_style: "#005A8E",
-            line_width: 1,
-          },
+      i18n: "demo_cam_ctrl",
+      style: {
+        fill_style: "white",
+        font: "9px  Arial",
+        back_style: {
+          font: "9px Arial",
+          stroke_style: "#005A8E",
+          line_width: 1,
         },
       },
       component: [{ name: "Alignment", properties: { right: "right", bottom: "bottom" } }],
@@ -66,16 +62,14 @@
     },
     {
       id: "curr_focus_prefix",
-      txt: {
-        i18n: "curr_focus",
-        style: {
-          fill_style: "white",
-          font: "9px  Arial",
-          back_style: {
-            font: "9px Arial",
-            stroke_style: "#005A8E",
-            line_width: 1,
-          },
+      i18n: "curr_focus",
+      style: {
+        fill_style: "white",
+        font: "9px  Arial",
+        back_style: {
+          font: "9px Arial",
+          stroke_style: "#005A8E",
+          line_width: 1,
         },
       },
       component: [
@@ -89,16 +83,14 @@
     },
     {
       id: "curr_focus",
-      txt: {
-        i18n: "",
-        style: {
-          fill_style: "white",
-          font: "9px  Arial",
-          back_style: {
-            font: "9px Arial",
-            stroke_style: "#005A8E",
-            line_width: 1,
-          },
+      i18n: "",
+      style: {
+        fill_style: "white",
+        font: "9px  Arial",
+        back_style: {
+          font: "9px Arial",
+          stroke_style: "#005A8E",
+          line_width: 1,
         },
       },
       component: [

@@ -1,602 +1,527 @@
 {
-  "$ref": "#/definitions/IUIInfo",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "IComponentInfo": {
-      "additionalProperties": false,
-      "properties": {
-        "args": {
-          "items": {},
-          "type": "array"
+  $ref: "#/definitions/IUIInfo",
+  $schema: "http://json-schema.org/draft-07/schema#",
+  definitions: {
+    IComponentInfo: {
+      additionalProperties: false,
+      properties: {
+        args: {
+          items: {},
+          type: "array",
         },
-        "enabled": {
-          "type": "boolean"
+        enabled: {
+          type: "boolean",
         },
-        "id": {
-          "type": "string"
+        id: {
+          type: "string",
         },
-        "name": {
-          "type": "string"
+        name: {
+          type: "string",
         },
-        "properties": {
-          "type": "object"
+        properties: {
+          type: "object",
         },
-        "props": {
-          "type": "object"
+        props: {
+          type: "object",
         },
-        "weight": {
-          "type": "number"
-        }
+        weight: {
+          type: "number",
+        },
       },
-      "required": [
-        "name"
-      ],
-      "type": "object"
+      required: ["name"],
+      type: "object",
     },
-    "IStyle": {
-      "additionalProperties": false,
-      "properties": {
-        "back_style": {
-          "$ref": "#/definitions/IStyle"
+    IStyle: {
+      additionalProperties: false,
+      properties: {
+        back_style: {
+          $ref: "#/definitions/IStyle",
         },
-        "direction": {
-          "type": "string"
+        direction: {
+          type: "string",
         },
-        "disposable": {
-          "type": "boolean"
+        disposable: {
+          type: "boolean",
         },
-        "fill_style": {
-          "type": "string"
+        fill_style: {
+          type: "string",
         },
-        "font": {
-          "type": "string"
+        font: {
+          type: "string",
         },
-        "font_kerning": {
-          "type": "string"
+        font_kerning: {
+          type: "string",
         },
-        "font_stretch": {
-          "type": "string"
+        font_stretch: {
+          type: "string",
         },
-        "font_variant_caps": {
-          "type": "string"
+        font_variant_caps: {
+          type: "string",
         },
-        "letter_spacing": {
-          "type": "string"
+        letter_spacing: {
+          type: "string",
         },
-        "line_cap": {
-          "type": "string"
+        line_cap: {
+          type: "string",
         },
-        "line_dash_offset": {
-          "type": "number"
+        line_dash_offset: {
+          type: "number",
         },
-        "line_join": {
-          "type": "string"
+        line_join: {
+          type: "string",
         },
-        "line_width": {
-          "type": "number"
+        line_width: {
+          type: "number",
         },
-        "miter_limit": {
-          "type": "number"
+        miter_limit: {
+          type: "number",
         },
-        "padding_b": {
-          "type": "number"
+        padding_b: {
+          type: "number",
         },
-        "padding_l": {
-          "type": "number"
+        padding_l: {
+          type: "number",
         },
-        "padding_r": {
-          "type": "number"
+        padding_r: {
+          type: "number",
         },
-        "padding_t": {
-          "type": "number"
+        padding_t: {
+          type: "number",
         },
-        "shadow_blur": {
-          "type": "number"
+        shadow_blur: {
+          type: "number",
         },
-        "shadow_color": {
-          "type": "string"
+        shadow_color: {
+          type: "string",
         },
-        "shadow_offset_x": {
-          "type": "number"
+        shadow_offset_x: {
+          type: "number",
         },
-        "shadow_offset_y": {
-          "type": "number"
+        shadow_offset_y: {
+          type: "number",
         },
-        "smoothing": {
-          "type": "boolean"
+        smoothing: {
+          type: "boolean",
         },
-        "stroke_style": {
-          "type": "string"
+        stroke_style: {
+          type: "string",
         },
-        "text_align": {
-          "enum": [
-            "left",
-            "right",
-            "center",
-            "end",
-            "start"
-          ],
-          "type": "string"
+        text_align: {
+          enum: ["left", "right", "center", "end", "start"],
+          type: "string",
         },
-        "text_baseline": {
-          "type": "string"
+        text_baseline: {
+          type: "string",
         },
-        "text_rendering": {
-          "type": "string"
+        text_rendering: {
+          type: "string",
         },
-        "underline_color": {
-          "type": "string"
+        underline_color: {
+          type: "string",
         },
-        "underline_width": {
-          "type": "number"
+        underline_width: {
+          type: "number",
         },
-        "word_spacing": {
-          "type": "string"
-        }
+        word_spacing: {
+          type: "string",
+        },
       },
-      "type": "object"
+      type: "object",
     },
-    "IUIAction": {
-      "additionalProperties": false,
-      "properties": {
-        "args": {
-          "items": {},
-          "type": "array"
+    IUIAction: {
+      additionalProperties: false,
+      properties: {
+        args: {
+          items: {},
+          type: "array",
         },
-        "name": {
-          "$ref": "#/definitions/UIActionEnum"
-        }
+        name: {
+          $ref: "#/definitions/UIActionEnum",
+        },
       },
-      "required": [
-        "name"
-      ],
-      "type": "object"
+      required: ["name"],
+      type: "object",
     },
-    "IUIImgInfo": {
-      "additionalProperties": false,
-      "properties": {
-        "col": {
-          "type": "number"
+    IUIImgInfo: {
+      additionalProperties: false,
+      properties: {
+        col: {
+          type: "number",
         },
-        "count": {
-          "type": "number"
+        count: {
+          type: "number",
         },
-        "dh": {
-          "description": "目标高度",
-          "type": "number"
+        dh: {
+          description: "目标高度",
+          type: "number",
         },
-        "dw": {
-          "description": "目标宽度",
-          "type": "number"
+        dw: {
+          description: "目标宽度",
+          type: "number",
         },
-        "flip_x": {
-          "enum": [
-            0,
-            1
-          ],
-          "type": "number"
+        flip_x: {
+          enum: [0, 1],
+          type: "number",
         },
-        "flip_y": {
-          "enum": [
-            0,
-            1
-          ],
-          "type": "number"
+        flip_y: {
+          enum: [0, 1],
+          type: "number",
         },
-        "h": {
-          "description": "裁剪源高",
-          "type": "number"
+        h: {
+          description: "裁剪源高",
+          type: "number",
         },
-        "offsetAnimX": {
-          "type": "number"
+        offsetAnimX: {
+          type: "number",
         },
-        "offsetAnimY": {
-          "type": "number"
+        offsetAnimY: {
+          type: "number",
         },
-        "offsetAnimR": {
-          "type": "number"
+        offsetAnimR: {
+          type: "number",
         },
-        "offsetX": {
-          "type": "number"
+        offsetX: {
+          type: "number",
         },
-        "offsetY": {
-          "type": "number"
+        offsetY: {
+          type: "number",
         },
-        "path": {
-          "type": "string"
+        path: {
+          type: "string",
         },
-        "repeatX": {
-          "type": "number"
+        repeatX: {
+          type: "number",
         },
-        "repeatY": {
-          "type": "number"
+        repeatY: {
+          type: "number",
         },
-        "row": {
-          "type": "number"
+        row: {
+          type: "number",
         },
-        "w": {
-          "description": "裁剪源宽",
-          "type": "number"
+        w: {
+          description: "裁剪源宽",
+          type: "number",
         },
-        "wrapS": {
-          "type": "number"
+        wrapS: {
+          type: "number",
         },
-        "wrapT": {
-          "type": "number"
+        wrapT: {
+          type: "number",
         },
-        "x": {
-          "description": "裁剪起始X坐标",
-          "type": "number"
+        x: {
+          description: "裁剪起始X坐标",
+          type: "number",
         },
-        "y": {
-          "description": "裁剪起始Y坐标",
-          "type": "number"
-        }
+        y: {
+          description: "裁剪起始Y坐标",
+          type: "number",
+        },
       },
-      "required": [
-        "path"
-      ],
-      "type": "object"
+      required: ["path"],
+      type: "object",
     },
-    "IUIInfo": {
-      "additionalProperties": false,
-      "properties": {
-        "actions": {
-          "additionalProperties": false,
-          "properties": {
-            "click": {
-              "anyOf": [
+    IUIInfo: {
+      additionalProperties: false,
+      properties: {
+        actions: {
+          additionalProperties: false,
+          properties: {
+            click: {
+              anyOf: [
                 {
-                  "$ref": "#/definitions/TUIAction"
+                  $ref: "#/definitions/TUIAction",
                 },
                 {
-                  "items": {
-                    "$ref": "#/definitions/TUIAction"
+                  items: {
+                    $ref: "#/definitions/TUIAction",
                   },
-                  "type": "array"
-                }
-              ]
+                  type: "array",
+                },
+              ],
             },
-            "pause": {
-              "anyOf": [
+            pause: {
+              anyOf: [
                 {
-                  "$ref": "#/definitions/TUIAction"
+                  $ref: "#/definitions/TUIAction",
                 },
                 {
-                  "items": {
-                    "$ref": "#/definitions/TUIAction"
+                  items: {
+                    $ref: "#/definitions/TUIAction",
                   },
-                  "type": "array"
-                }
-              ]
+                  type: "array",
+                },
+              ],
             },
-            "resume": {
-              "anyOf": [
+            resume: {
+              anyOf: [
                 {
-                  "$ref": "#/definitions/TUIAction"
+                  $ref: "#/definitions/TUIAction",
                 },
                 {
-                  "items": {
-                    "$ref": "#/definitions/TUIAction"
+                  items: {
+                    $ref: "#/definitions/TUIAction",
                   },
-                  "type": "array"
-                }
-              ]
+                  type: "array",
+                },
+              ],
             },
-            "start": {
-              "anyOf": [
+            start: {
+              anyOf: [
                 {
-                  "$ref": "#/definitions/TUIAction"
+                  $ref: "#/definitions/TUIAction",
                 },
                 {
-                  "items": {
-                    "$ref": "#/definitions/TUIAction"
+                  items: {
+                    $ref: "#/definitions/TUIAction",
                   },
-                  "type": "array"
-                }
-              ]
+                  type: "array",
+                },
+              ],
             },
-            "stop": {
-              "anyOf": [
+            stop: {
+              anyOf: [
                 {
-                  "$ref": "#/definitions/TUIAction"
+                  $ref: "#/definitions/TUIAction",
                 },
                 {
-                  "items": {
-                    "$ref": "#/definitions/TUIAction"
+                  items: {
+                    $ref: "#/definitions/TUIAction",
                   },
-                  "type": "array"
-                }
-              ]
-            }
+                  type: "array",
+                },
+              ],
+            },
           },
-          "type": "object"
+          type: "object",
         },
-        "auto_focus": {
-          "type": "boolean"
+        auto_focus: {
+          type: "boolean",
         },
-        "center": {
-          "anyOf": [
+        center: {
+          anyOf: [
             {
-              "items": {
-                "type": "number"
+              items: {
+                type: "number",
               },
-              "type": "array"
+              type: "array",
             },
             {
-              "type": "string"
-            }
-          ]
+              type: "string",
+            },
+          ],
         },
-        "color": {
-          "type": "string"
+        color: {
+          type: "string",
         },
-        "component": {
-          "anyOf": [
+        component: {
+          anyOf: [
             {
-              "$ref": "#/definitions/TComponentInfo"
+              $ref: "#/definitions/TComponentInfo",
             },
             {
-              "items": {
-                "$ref": "#/definitions/TComponentInfo"
+              items: {
+                $ref: "#/definitions/TComponentInfo",
               },
-              "type": "array"
-            }
-          ]
+              type: "array",
+            },
+          ],
         },
-        "count": {
-          "description": "循环创建次数，默认为1",
-          "type": "number"
+        count: {
+          description: "循环创建次数，默认为1",
+          type: "number",
         },
-        "background": {
-          "description": "background",
-          "type": "string"
+        background: {
+          description: "background",
+          type: "string",
         },
-        "backgroundAlpha": {
-          "description": "backgroundAlpha",
-          "type": "number"
+        backgroundAlpha: {
+          description: "backgroundAlpha",
+          type: "number",
         },
-        "foreground": {
-          "description": "foreground",
-          "type": "string"
+        foreground: {
+          description: "foreground",
+          type: "string",
         },
-        "foregroundAlpha": {
-          "description": "foregroundAlpha",
-          "type": "number"
+        foregroundAlpha: {
+          description: "foregroundAlpha",
+          type: "number",
         },
-        "dev_component": {
-          "anyOf": [
+        dev_component: {
+          anyOf: [
             {
-              "$ref": "#/definitions/TComponentInfo"
+              $ref: "#/definitions/TComponentInfo",
             },
             {
-              "items": {
-                "$ref": "#/definitions/TComponentInfo"
+              items: {
+                $ref: "#/definitions/TComponentInfo",
               },
-              "type": "array"
-            }
-          ]
+              type: "array",
+            },
+          ],
         },
-        "disabled": {
-          "type": [
-            "boolean",
-            "string"
-          ]
+        disabled: {
+          type: ["boolean", "string"],
         },
-        "id": {
-          "description": "节点ID",
-          "type": "string"
+        id: {
+          description: "节点ID",
+          type: "string",
         },
-        "img": {
-          "anyOf": [
+        img: {
+          anyOf: [
             {
-              "$ref": "#/definitions/TUIImgInfo"
+              $ref: "#/definitions/TUIImgInfo",
             },
             {
-              "items": {
-                "$ref": "#/definitions/TUIImgInfo"
+              items: {
+                $ref: "#/definitions/TUIImgInfo",
               },
-              "type": "array"
-            }
-          ]
+              type: "array",
+            },
+          ],
         },
-        "items": {
-          "items": {
-            "anyOf": [
+        items: {
+          items: {
+            anyOf: [
               {
-                "$ref": "#/definitions/IUIInfo"
+                $ref: "#/definitions/IUIInfo",
               },
               {
-                "type": "string"
-              }
-            ]
-          },
-          "type": "array"
-        },
-        "key_press_actions": {
-          "items": {
-            "items": [
-              {
-                "type": "string"
+                type: "string",
               },
-              {
-                "$ref": "#/definitions/TUIAction"
-              }
             ],
-            "maxItems": 2,
-            "minItems": 2,
-            "type": "array"
           },
-          "type": "array"
+          type: "array",
         },
-        "name": {
-          "description": "节点名",
-          "type": "string"
-        },
-        "opacity": {
-          "type": "number"
-        },
-        "pos": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "number"
+        key_press_actions: {
+          items: {
+            items: [
+              {
+                type: "string",
               },
-              "type": "array"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "scale": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "number"
+              {
+                $ref: "#/definitions/TUIAction",
               },
-              "type": "array"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "size": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "number"
-              },
-              "type": "array"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "template": {
-          "description": "模板名",
-          "type": "string"
-        },
-        "templates": {
-          "additionalProperties": {
-            "$ref": "#/definitions/IUIInfo"
+            ],
+            maxItems: 2,
+            minItems: 2,
+            type: "array",
           },
-          "type": "object"
+          type: "array",
         },
-        "txt": {
-          "anyOf": [
+        name: {
+          description: "节点名",
+          type: "string",
+        },
+        opacity: {
+          type: "number",
+        },
+        pos: {
+          anyOf: [
             {
-              "$ref": "#/definitions/TUITxtInfo"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TUITxtInfo"
+              items: {
+                type: "number",
               },
-              "type": "array"
-            }
-          ]
-        },
-        "values": {
-          "type": "object"
-        },
-        "visible": {
-          "type": [
-            "boolean",
-            "string"
-          ]
-        },
-        "which": {
-          "type": [
-            "number",
-            "string"
-          ]
-        }
-      },
-      "type": "object"
-    },
-    "IUITxtInfo": {
-      "additionalProperties": false,
-      "properties": {
-        "i18n": {
-          "type": "string"
-        },
-        "style": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/IStyle"
+              type: "array",
             },
             {
-              "type": "string"
-            }
-          ]
+              type: "string",
+            },
+          ],
         },
-        "value": {
-          "type": "string"
-        }
+        scale: {
+          anyOf: [
+            {
+              items: {
+                type: "number",
+              },
+              type: "array",
+            },
+            {
+              type: "string",
+            },
+          ],
+        },
+        size: {
+          anyOf: [
+            {
+              items: {
+                type: "number",
+              },
+              type: "array",
+            },
+            {
+              type: "string",
+            },
+          ],
+        },
+        template: {
+          description: "模板名",
+          type: "string",
+        },
+        templates: {
+          additionalProperties: {
+            $ref: "#/definitions/IUIInfo",
+          },
+          type: "object",
+        },
+        i18n: {
+          type: "string",
+        },
+        style: {
+          anyOf: [
+            {
+              $ref: "#/definitions/IStyle",
+            },
+            {
+              type: "string",
+            },
+          ],
+        },
+        values: {
+          type: "object",
+        },
+        visible: {
+          type: ["boolean", "string"],
+        },
+        which: {
+          type: ["number", "string"],
+        },
       },
-      "type": "object"
+      type: "object",
     },
-    "TComponentInfo": {
-      "anyOf": [
+    TComponentInfo: {
+      anyOf: [
         {
-          "$ref": "#/definitions/IComponentInfo"
+          $ref: "#/definitions/IComponentInfo",
         },
         {
-          "type": "string"
-        }
-      ]
-    },
-    "TUIAction": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/IUIAction"
+          type: "string",
         },
-        {
-          "$ref": "#/definitions/UIActionEnum"
-        }
-      ]
-    },
-    "TUIImgInfo": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/IUIImgInfo"
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "TUITxtInfo": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/IUITxtInfo"
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "UIActionEnum": {
-      "enum": [
-        "alert",
-        "link_to",
-        "set_ui",
-        "push_ui",
-        "pop_ui",
-        "loop_img",
-        "loop_txt",
-        "load_data",
-        "broadcast",
-        "sound",
-        "switch_difficulty",
-        "destory_stage",
-        "remove_all_entities",
-        "exit"
       ],
-      "type": "string"
-    }
-  }
+    },
+    TUIAction: {
+      anyOf: [
+        {
+          $ref: "#/definitions/IUIAction",
+        },
+        {
+          $ref: "#/definitions/UIActionEnum",
+        },
+      ],
+    },
+    TUIImgInfo: {
+      anyOf: [
+        {
+          $ref: "#/definitions/IUIImgInfo",
+        },
+        {
+          type: "string",
+        },
+      ],
+    },
+    UIActionEnum: {
+      enum: ["alert", "link_to", "set_ui", "push_ui", "pop_ui", "loop_img", "loop_txt", "load_data", "broadcast", "sound", "switch_difficulty", "destory_stage", "remove_all_entities", "exit"],
+      type: "string",
+    },
+  },
 }
-

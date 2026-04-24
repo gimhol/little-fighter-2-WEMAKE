@@ -8,11 +8,12 @@
       name: "LaunchPage",
       properties: {
         entry: "entry",
-        // tests: ["tap_to_launch", "sound_warning"],
-        // tests2: ["scale_in", "scale_out"],
-        // tests3: ["scale_in", "scale_out"],
-        // tests4: [0],
-        // tests5: [0],
+        loading_anim: "loading_anim",
+        tap_to_launch: "tap_to_launch",
+        sound_warning: "sound_warning",
+        yeonface: "yeonface",
+        bearface: "bearface",
+        long_text: "long_text",
       },
     },
   ],
@@ -22,12 +23,10 @@
     "builtin_data/launch/extra_zips.ui.json5",
     {
       id: "tap_to_launch",
-      txt: {
-        i18n: "init.tap_any_place_to_launch",
-        style: {
-          font: "36px Arial",
-          text_align: "center",
-        },
+      i18n: "init.tap_any_place_to_launch",
+      style: {
+        font: "36px Arial",
+        text_align: "center",
       },
       center: "0.5,0.5",
       pos: "397,225,1",
@@ -35,12 +34,10 @@
     },
     {
       id: "sound_warning",
-      txt: {
-        i18n: "init.sound_warning",
-        style: {
-          font: "18px Arial",
-          text_align: "center",
-        },
+      i18n: "init.sound_warning",
+      style: {
+        font: "18px Arial",
+        text_align: "center",
       },
       center: "0.5,0.5",
       pos: "397,400,1",
@@ -112,12 +109,10 @@
     },
     {
       id: "long_text",
-      txt: {
-        i18n: "init.long_description",
-        style: {
-          font: "18px Arial",
-          text_align: "center",
-        },
+      i18n: "init.long_description",
+      style: {
+        font: "18px Arial",
+        text_align: "center",
       },
       center: "0.5,0",
       pos: "397,150,2",
@@ -141,11 +136,9 @@
       component: ["LoadingContentText(,1000,1000)"],
       pos: "0,0",
       center: "0,0",
-      txt: {
-        i18n: "",
-        style: {
-          font: "12px Arial",
-        },
+      i18n: "",
+      style: {
+        font: "12px Arial",
       },
     },
   ],

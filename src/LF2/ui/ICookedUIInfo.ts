@@ -3,7 +3,6 @@ import { TextInfo } from "../ditto/image/TextInfo";
 import { IComponentInfo } from "./IComponentInfo";
 import { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo } from "./IUIInfo.dat";
-import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
 
 export interface ICookedUIInfo extends IUIInfo {
   id: string;
@@ -17,7 +16,6 @@ export interface ICookedUIInfo extends IUIInfo {
   txt_info?: TextInfo;
   size: [number, number, number];
   img?: IUIImgInfo;
-  txt?: ICookedUITxtInfo;
   values: { [x in string]?: any };
   component: IComponentInfo[];
   background?: string;

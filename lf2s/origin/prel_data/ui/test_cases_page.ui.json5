@@ -15,19 +15,15 @@
   },
   items: [
     {
-      txt: {
-        i18n: "[Left | Right]: Switch Test Case   [Up | Down]: Switch Test Group   [Attack]: Replay   [F4]: Exit",
-        style: "$val:txt_style",
-      },
+      i18n: "[Left | Right]: Switch Test Case   [Up | Down]: Switch Test Group   [Attack]: Replay   [F4]: Exit",
+      style: "$val:txt_style",
       center: "0,1",
       pos: "0, 450",
       component: ["Text()"],
     },
     {
-      txt: {
-        i18n: "None",
-        style: "$val:txt_style",
-      },
+      i18n: "None",
+      style: "$val:txt_style",
       center: "0,0",
       pos: "0",
       component: [{ id: "test_case_name", name: "Text" }],

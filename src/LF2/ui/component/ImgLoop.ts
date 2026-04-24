@@ -29,9 +29,8 @@ export class ImgLoop extends UIComponent<IImgLoopProps> {
   override on_start(): void {
     const { duration = 1000, w, h, count = 1, col = 1, row = 1 } = this.props;
     this.anim.set(0, count).set_duration(duration);
-    
-    for (let i = 0; i < row && this.rects.length < count; ++i) {
-      for (let j = 0; j < col && this.rects.length < count; ++j) {
+    for (let i = 0; i < row && this.rects.length <= count; ++i) {
+      for (let j = 0; j < col && this.rects.length <= count; ++j) {
         const x = w * j
         const y = h * i
         this.rects.push({ x, y, w, h })
@@ -53,15 +52,19 @@ export class ImgLoop extends UIComponent<IImgLoopProps> {
       return;
     }
     this.anim.update(dt);
-
     const idx = floor(this.anim.value);
     const rect = this.rects[idx];
+    if (!rect) {
+      this.node.visible = false;
+    } else {
+      this.node.visible = true;
+      this.node.image = image.clone();
+      this.node.image.clip_x = rect.x
+      this.node.image.clip_y = rect.y
+      this.node.image.clip_w = rect.w
+      this.node.image.clip_h = rect.h
+    }
 
-    this.node.image = image.clone();
-    this.node.image.clip_x = rect.x
-    this.node.image.clip_y = rect.y
-    this.node.image.clip_w = rect.w
-    this.node.image.clip_h = rect.h
     if (this.anim.done) this.enabled = false;
   }
 }

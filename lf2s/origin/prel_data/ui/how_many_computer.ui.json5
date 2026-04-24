@@ -14,111 +14,90 @@
   },
   size: "365,111",
   pos: "204,175,1",
-  component: [ "ReachableGroup(com_num,lr,how_many_computer)" ],
+  component: ["ReachableGroup(com_num,lr,how_many_computer)"],
   templates: {
     com_num: {
       auto_focus: true,
-      component: [
-        "OpacityHover(0.3,1)",
-        "Reachable(com_num)",
-      ],
-    }
+      component: ["OpacityHover(0.3,1)", "Reachable(com_num)"],
+    },
   },
   items: [
     {
-      txt: {
-        i18n: "cmc.how_many_coms",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "cmc.how_many_coms",
+      style: {
+        font: "16px Arial",
       },
       pos: "182,33",
       center: "0.5,0.5",
     },
     {
       id: "com_num_0",
-      txt: {
-        i18n: "0",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "0",
+      style: {
+        font: "16px Arial",
       },
       pos: "30,60",
       template: "com_num",
     },
     {
       id: "com_num_1",
-      txt: {
-        i18n: "1",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "1",
+      style: {
+        font: "16px Arial",
       },
       pos: "70,60",
       template: "com_num",
     },
     {
       id: "com_num_2",
-      txt: {
-        i18n: "2",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "2",
+      style: {
+        font: "16px Arial",
       },
       pos: "110,60",
       template: "com_num",
     },
     {
       id: "com_num_3",
-      txt: {
-        i18n: "3",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "3",
+      style: {
+        font: "16px Arial",
       },
       pos: "150,60",
       template: "com_num",
     },
     {
       id: "com_num_4",
-      txt: {
-        i18n: "4",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "4",
+      style: {
+        font: "16px Arial",
       },
       pos: "190,60",
       template: "com_num",
     },
     {
       id: "com_num_5",
-      txt: {
-        i18n: "5",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "5",
+      style: {
+        font: "16px Arial",
       },
       pos: "230,60",
       template: "com_num",
     },
     {
       id: "com_num_6",
-      txt: {
-        i18n: "6",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "6",
+      style: {
+        font: "16px Arial",
       },
       pos: "270,60",
       template: "com_num",
     },
     {
       id: "com_num_7",
-      txt: {
-        i18n: "7",
-        style: {
-          font: "16px Arial",
-        },
+      i18n: "7",
+      style: {
+        font: "16px Arial",
       },
       pos: "310,60",
       template: "com_num",

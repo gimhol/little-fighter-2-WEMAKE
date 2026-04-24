@@ -8,12 +8,10 @@
       name: "click_integer_picker",
       pos: "0,100",
       center: "0,0",
-      txt: {
-        i18n: "0",
-        style: {
-          fill_style: "white",
-          font: "90px \"Arial Black\", Arial",
-        },
+      i18n: "0",
+      style: {
+        fill_style: "white",
+        font: '90px "Arial Black", Arial',
       },
       component: [
         {
@@ -27,12 +25,10 @@
       name: "aj_integer_picker",
       pos: "100,100",
       center: "0,0",
-      txt: {
-        i18n: "0",
-        style: {
-          fill_style: "white",
-          font: "90px \"Arial Black\", Arial",
-        },
+      i18n: "0",
+      style: {
+        fill_style: "white",
+        font: '90px "Arial Black", Arial',
       },
       component: [
         {
@@ -41,7 +37,7 @@
             min: 0,
             max: 8,
             val: 8,
-            triggers: [ "aj", "no-focused" ],
+            triggers: ["aj", "no-focused"],
           },
         },
       ],
@@ -51,12 +47,10 @@
       name: "ud_integer_picker",
       pos: "200,100",
       center: "0,0",
-      txt: {
-        i18n: "0",
-        style: {
-          fill_style: "white",
-          font: "90px \"Arial Black\", Arial",
-        },
+      i18n: "0",
+      style: {
+        fill_style: "white",
+        font: '90px "Arial Black", Arial',
       },
       component: [
         {
@@ -65,7 +59,7 @@
             min: 0,
             max: 8,
             val: 8,
-            triggers: [ "ud", "no-focused" ],
+            triggers: ["ud", "no-focused"],
           },
         },
       ],
@@ -75,12 +69,10 @@
       name: "lr_integer_picker",
       pos: "300,100",
       center: "0,0",
-      txt: {
-        i18n: "0",
-        style: {
-          fill_style: "white",
-          font: "90px \"Arial Black\", Arial",
-        },
+      i18n: "0",
+      style: {
+        fill_style: "white",
+        font: '90px "Arial Black", Arial',
       },
       component: [
         {
@@ -89,7 +81,7 @@
             min: 0,
             max: 8,
             val: 8,
-            triggers: [ "lr", "no-focused" ],
+            triggers: ["lr", "no-focused"],
           },
         },
       ],

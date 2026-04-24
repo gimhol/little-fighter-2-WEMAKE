@@ -23,12 +23,10 @@
       id: "txt",
       pos: "580, 355",
       center: "0.5, 0.5",
-      txt: {
-        i18n: "tutorial.dialog_12",
-        style: {
-          fill_style: "white",
-          font: "14px Arial",
-        },
+      i18n: "tutorial.dialog_12",
+      style: {
+        fill_style: "white",
+        font: "14px Arial",
       },
     },
   ],

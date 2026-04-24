@@ -1,7 +1,7 @@
 {
   name: "页面：对战模式",
   id: "vs_mode_page",
-  component: [ "SummaryLogic()", "VsModeLogic()" ],
+  component: ["SummaryLogic()", "VsModeLogic()"],
   items: [
     {
       pos: "0, 10",
@@ -9,10 +9,10 @@
     },
     {
       pos: "0, 10",
-      template: "ui/fighter_stat_s_x8.ui.json5"
+      template: "ui/fighter_stat_s_x8.ui.json5",
     },
     {
-      template: "ui/fn_key_counts_row.ui.json5"
+      template: "ui/fn_key_counts_row.ui.json5",
     },
     {
       pos: "0,0,5",
@@ -23,12 +23,12 @@
     {
       pos: "397,0",
       center: "0.5,0",
-      component: [ "StageTitleText()" ],
+      component: ["StageTitleText()"],
     },
     {
       pos: "794,450",
       center: "1,1",
-      component: [ "PrefixAndDifficultyText(VS mode)" ],
+      component: ["PrefixAndDifficultyText(VS mode)"],
     },
     {
       template: "ui/score_board.ui.json5",
@@ -38,11 +38,12 @@
       id: "bgm_switcher",
       center: "0,1",
       pos: "0, 450",
-      txt: { i18n: "", style: { fill_style: "white" } },
-      component: [ { name: "BGMSwitcher", args: [ 0 ] }, "OpacityHover(0.7,1)" ],
+      i18n: "",
+      style: { fill_style: "white" },
+      component: [{ name: "BGMSwitcher", args: [0] }, "OpacityHover(0.7,1)"],
     },
   ],
   actions: {
-    stop: [ "remove_all_entities()", "destory_stage()" ],
+    stop: ["remove_all_entities()", "destory_stage()"],
   },
 }

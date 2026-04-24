@@ -36,18 +36,14 @@
   items: [
     {
       center: "0.5,0.5",
-      txt: {
-        i18n: "$val:text",
-        style: "$val:style_normal",
-      },
+      i18n: "$val:text",
+      style: "$val:style_normal",
       component: [{ name: "Label", id: "back_label" }],
     },
     {
       center: "0.5,0.5",
-      txt: {
-        i18n: "$val:text",
-        style: "$val:style_hover",
-      },
+      i18n: "$val:text",
+      style: "$val:style_hover",
       component: [{ name: "Label", id: "hover_label" }],
     },
   ],

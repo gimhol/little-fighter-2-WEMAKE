@@ -6,29 +6,17 @@ import { find_ui_template } from "./find_ui_template";
 import { IComponentInfo } from "./IComponentInfo";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { IUIImgInfo } from "./IUIImgInfo.dat";
-import type { IUIInfo, TUITxtInfo } from "./IUIInfo.dat";
-import { ICookedUITxtInfo } from "./IUITxtInfo.dat";
+import type { IUIInfo } from "./IUIInfo.dat";
 import { judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
 import { read_ui_template } from "./read_ui_template";
 import { Schema_IUIImgInfo } from "./Schema_IUIImgInfo";
 import { ui_load_img } from "./ui_load_img";
-import { ui_load_txt } from "./ui_load_txt";
 import { UINode } from "./UINode";
 import { parse_call_func_expression } from "./utils";
 import read_nums from "./utils/read_nums";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
-function cook_ui_txt_info(lf2: LF2, ui_info: ICookedUIInfo, raw: TUITxtInfo): ICookedUITxtInfo {
-  if (typeof raw === 'string') {
-    const i18n = parse_ui_value(ui_info, 'string', raw) ?? raw
-    return { i18n: lf2.string(i18n), style: {} }
-  }
-  const i18n = parse_ui_value(ui_info, 'string', raw.i18n) ?? ''
-  return {
-    i18n: lf2.string(i18n),
-    style: parse_ui_value(ui_info, unsafe_is_object, raw.style) ?? {}
-  }
-}
+
 
 export async function cook_ui_info(
   lf2: LF2,
@@ -65,11 +53,10 @@ export async function cook_ui_info(
     txt_info: void 0,
     items: void 0,
     img: void 0,
-    txt: void 0,
     component: components
   };
-  let { img } = ui_info;
   do {
+    let { img } = ui_info;
     if (!img) break;
     if (typeof img == 'string')
       img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), img) ?? void 0
@@ -86,17 +73,47 @@ export async function cook_ui_info(
     ret.img_info = await ui_load_img(lf2, img);
   } while (0);
 
-  if (ui_info.txt) ret.txt = cook_ui_txt_info(lf2, ret, ui_info.txt);
-  if (ret.txt) ret.txt_info = await ui_load_txt(lf2, ret.txt);
+  do {
+    const { i18n, style } = ui_info;
+    if (!i18n && !style) break;
 
-  const { w: img_w = 0, h: img_h = 0, scale = 1 } = ret.img_info || ret.txt_info || {};
-  const sw = img_w / scale;
-  const sh = img_h / scale;
-  const [w, h] = read_nums(ui_info.size, 3, [parent ? sw : lf2.world.screen_w, parent ? sh : lf2.world.screen_h]);
-  // 宽或高其一为0时，使用原图宽高比例的计算之
-  const dw = floor(w ? w : sh ? (h * sw / sh) : 0);
-  const dh = floor(h ? h : sw ? (w * sh / sw) : 0);
-  ret.size = [dw, dh, 0];
+    ret.i18n = parse_ui_value(ret, 'string', i18n) ?? ''
+    ret.style = parse_ui_value(ret, unsafe_is_object, style) ?? {}
+
+    const value = lf2.string(ret.i18n);
+    ret.txt_info = await lf2.images.load_text(value, ret.style)
+  } while (0)
+
+  const img = ret.img_info || ret.txt_info;
+  if (ui_info.size) {
+    ret.size = read_nums(ui_info.size, 3, [0, 0, 0])
+  } else if (!parent) {
+    ret.size = [lf2.world.screen_w, lf2.world.screen_h, 0]
+  }
+
+  do {
+    if (!img) break;
+    const { w: img_w = 0, h: img_h = 0, scale = 1 } = img;
+    if (!img_w || !img_h || !scale) {
+      debugger;
+      break;
+    }
+    const sw = img_w / scale;
+    const sh = img_h / scale;
+    const [w, h] = ret.size;
+    if (!w && !h) {
+      ret.size[0] = sw
+      ret.size[1] = sh
+    } else if (!w && h) {
+      ret.size[0] = floor(h * sw / sh);
+    } else if (!h && w) {
+      ret.size[1] = floor(w * sh / sw);
+    }
+  } while (0)
+
+
+
+
   const { items } = ui_info;
   if (items && !Array.isArray(items)) {
     Ditto.warn(`[${UINode.TAG}::cook_ui_info] items must be array, but got`, items);

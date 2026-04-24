@@ -147,17 +147,17 @@ export class UINodeRenderer implements IUINodeRenderer {
     const { mesh: sp } = this;
     sp.geometry = this.next_geometry();
     const t = sp.material.texture
-    const { _img: i } = this;
     const { material: m } = sp;
     const { uniforms: u } = m;
+    const i = this.ui.image;
     if (t && i) {
       const { w, h, scale, clip_x = 0, clip_y = 0, clip_w = w / scale, clip_h = h / scale } = i
       u.tw.value = w;
       u.th.value = h;
       u.tsw.value = scale * t.repeat.x;
       u.tsh.value = scale * t.repeat.y;
-      u.x.value = (clip_x + t.offset.x * clip_w / t.repeat.x) % clip_w;
-      u.y.value = (clip_y + t.offset.y * clip_h / t.repeat.y) % clip_h;
+      u.x.value = (clip_x + t.offset.x * clip_w / t.repeat.x) % (w / scale);
+      u.y.value = (clip_y + t.offset.y * clip_h / t.repeat.y) % (h / scale);
       u.w.value = clip_w;
       u.h.value = clip_h;
     }

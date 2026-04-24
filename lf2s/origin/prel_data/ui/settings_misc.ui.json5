@@ -32,7 +32,8 @@
             {
               color: "#5A73D6",
               center: "0.5,0.5",
-              txt: { i18n: "$val:prefix", style: { font: "18px Arial" } },
+              i18n: "$val:prefix",
+              style: { font: "18px Arial" },
               component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
@@ -62,7 +63,8 @@
                 {
                   center: "0.5,0.5",
                   color: "black",
-                  txt: { i18n: "0", style: { font: "18px Arial" } },
+                  i18n: "0",
+                  style: { font: "18px Arial" },
                   component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
@@ -88,10 +90,8 @@
             {
               color: "#5A73D6",
               center: "0.5,0.5",
-              txt: {
-                i18n: "$val:prefix",
-                style: { font: "18px Arial" },
-              },
+              i18n: "$val:prefix",
+              style: { font: "18px Arial" },
               component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
@@ -106,13 +106,15 @@
               pos: "-125,0",
               center: "0.5,0.5",
               color: "#333333",
-              txt: { i18n: "disable", style: { font: "18px Arial" } },
+              i18n: "disable",
+              style: { font: "18px Arial" },
             },
             {
               pos: "125,0",
               center: "0.5,0.5",
               color: "#333333",
-              txt: { i18n: "enable", style: { font: "18px Arial" } },
+              i18n: "enable",
+              style: { font: "18px Arial" },
             },
             {
               size: "250,36",
@@ -135,7 +137,8 @@
                 {
                   center: "0.5,0.5",
                   color: "black",
-                  txt: { i18n: "disabled", style: { font: "18px Arial" } },
+                  i18n: "disabled",
+                  style: { font: "18px Arial" },
                   component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
@@ -161,10 +164,8 @@
             {
               color: "#5A73D6",
               center: "0.5,0.5",
-              txt: {
-                i18n: "$val:prefix",
-                style: { font: "18px Arial" },
-              },
+              i18n: "$val:prefix",
+              style: { font: "18px Arial" },
               component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
@@ -179,18 +180,21 @@
               center: "0.5,0.5",
               color: "#333333",
               pos: "-166,0",
-              txt: { i18n: "sync_2", style: { font: "18px Arial" } },
+              i18n: "sync_2",
+              style: { font: "18px Arial" },
             },
             {
               center: "0.5,0.5",
               color: "#333333",
-              txt: { i18n: "sync_1", style: { font: "18px Arial" } },
+              i18n: "sync_1",
+              style: { font: "18px Arial" },
             },
             {
               center: "0.5,0.5",
               pos: "166,0",
               color: "#333333",
-              txt: { i18n: "sync_0", style: { font: "18px Arial" } },
+              i18n: "sync_0",
+              style: { font: "18px Arial" },
             },
             {
               size: "166,36",
@@ -213,7 +217,8 @@
                 {
                   center: "0.5,0.5",
                   color: "black",
-                  txt: { i18n: "disabled", style: { font: "18px Arial" } },
+                  i18n: "disabled",
+                  style: { font: "18px Arial" },
                   component: [{ name: "Label", id: "handle_label" }],
                 },
               ],

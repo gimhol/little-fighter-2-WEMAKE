@@ -183,16 +183,14 @@
       items: [{ color: "rgb(0,204,255)", template: "bar_inner" }],
     },
     {
-      txt: {
-        i18n: "Template(com)",
-        style: {
-          fill_style: "white",
+      i18n: "Template(com)",
+      style: {
+        fill_style: "white",
+        font: "9px Arial",
+        back_style: {
           font: "9px Arial",
-          back_style: {
-            font: "9px Arial",
-            stroke_style: "#005A8E",
-            line_width: 1,
-          },
+          stroke_style: "#005A8E",
+          line_width: 1,
         },
       },
       component: [
