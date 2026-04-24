@@ -15,6 +15,7 @@ import { frames } from "./frames";
 export function make_fighter_data_henry(data: IEntityData): IEntityData {
   BotBuilder.make(data).set_dataset({
     w_atk_m_x: 100,
+    w_atk_r_x: 250,
     w_atk_x: 350
   }).set_actions(
     // d>a

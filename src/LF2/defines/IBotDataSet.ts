@@ -4,8 +4,17 @@ export interface IBotDataSet {
   /** 走攻触发范围X(敌人正对) */
   w_atk_x?: number;
 
-  /** 走攻触发最小范围X */
+  /** 
+   * 走攻触发最小范围X 
+   * 当目标过近时，应拉开距离
+   */
   w_atk_m_x?: number;
+    
+  /** 
+   * 走攻触发最小范围X 
+   * 当目标过近时，应拉开距离
+   */
+  w_atk_r_x?: number;
 
   /** 走攻触发范围Z */
   w_atk_z?: number;
@@ -74,6 +83,7 @@ export class BotDataSet implements Required<IBotDataSet> {
   w_atk_b_x = 40;
   /** 走攻盲区 */
   w_atk_m_x = -1;
+  w_atk_r_x = -1;
   /** 走攻触发范围Z */
   w_atk_z = 15;
   /** 跑攻欲望值 */
@@ -118,6 +128,7 @@ export class BotDataSet implements Required<IBotDataSet> {
 export const bot_dataset_fields = fields<IBotDataSet>({
   w_atk_x: int,
   w_atk_m_x: int,
+  w_atk_r_x: int,
   w_atk_z: int,
   r_atk_desire: int,
   r_atk_x: int,

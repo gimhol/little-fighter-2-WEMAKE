@@ -266,23 +266,30 @@ export class BotController extends BaseController {
     ) return false;
 
     const dxz = manhattan_xz(this.entity, e)
-    if (dxz > 300) return false;
-    return !!(
-      e.state === StateEnum.Lying ||
-      e.invisible ||
-      e.blinking ||
-      e.invulnerable ||
-      !e.frame.bdy?.length ||
-      me.holding?.base_type === W_T.Drink ||
-      (
-        me.ground_y == me.position.y &&
-        this.atk_m_x > abs(me.position.x - e.position.x) &&
-        e.state !== StateEnum.Defend &&
-        e.state !== StateEnum.BrokenDefend &&
-        e.state !== StateEnum.Caught &&
-        e.state !== StateEnum.Injured
-      )
-    )
+    if (e.state === StateEnum.Lying) return dxz < 180;
+    if (e.blinking) return dxz < 180;
+    if (e.invulnerable) return dxz < 180;
+    if (me.holding?.base_type === W_T.Drink) return dxz < 180;
+
+    // 不再地上
+    if (me.ground_y != me.position.y) return false;
+
+    if (
+      e.state == StateEnum.Defend ||
+      e.state == StateEnum.BrokenDefend ||
+      e.state == StateEnum.Caught ||
+      e.state == StateEnum.Injured ||
+      e.state == StateEnum.Falling ||
+      e.state == StateEnum.Drink ||
+      e.state == StateEnum.Frozen
+    ) return false
+
+    if (this.fsm.state?.key === BotStateEnum.Chasing) {
+      return this.atk_m_x > abs(me.position.x - e.position.x)
+    } else if (this.fsm.state?.key === BotStateEnum.Avoiding && this.dataset.w_atk_r_x > 0) {
+      return this.dataset.w_atk_r_x < abs(me.position.x - e.position.x)
+    }
+    return false
   }
 
 
