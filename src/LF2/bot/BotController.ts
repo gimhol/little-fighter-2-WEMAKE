@@ -17,7 +17,6 @@ import {
 import { Ditto } from "../ditto";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
-import { PlayerInfo } from "../PlayerInfo";
 import { abs, between, clamp, max, round, round_float } from "../utils";
 import { DummyEnum, dummy_updaters } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
@@ -238,11 +237,7 @@ export class BotController extends BaseController {
     if (e.invisible) return false
     if (e.blinking) return false
     if (e.invulnerable) return false
-    if (e_state == StateEnum.Defend) return true
-    if (e_state == StateEnum.BrokenDefend) return true
-    if (e_state == StateEnum.Caught) return true
     if (me.ground_y == me.position.y) return true
-
     if (this.fsm.state?.key === BotStateEnum.Chasing) {
       return this.atk_m_x <= abs_dx
     } else if (this.fsm.state?.key === BotStateEnum.Avoiding) {
