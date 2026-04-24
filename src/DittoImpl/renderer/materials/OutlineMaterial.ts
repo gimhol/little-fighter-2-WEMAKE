@@ -75,6 +75,28 @@ export class OutlineMaterial extends ShaderMaterial {
   set fgColor(v: ColorRepresentation) { this.uniforms.fgColor.value = new Color(v) }
   get fgAlpha(): number { return this.uniforms.fgAlpha.value }
   set fgAlpha(v: number) { this.uniforms.fgAlpha.value = v }
+  get x(): number { return this.uniforms.x.value }
+  set x(v: number) { this.uniforms.x.value = v }
+  get y(): number { return this.uniforms.y.value }
+  set y(v: number) { this.uniforms.y.value = v }
+  get w(): number { return this.uniforms.w.value }
+  set w(v: number) { this.uniforms.w.value = v }
+  get h(): number { return this.uniforms.h.value }
+  set h(v: number) { this.uniforms.h.value = v }
+  set_origin_size(w: number, h: number): void {
+    this.uniforms.tw.value = w;
+    this.uniforms.th.value = h;
+  }
+  set_origin_scale(x: number, y: number): void {
+    this.uniforms.tsw.value = x;
+    this.uniforms.tsh.value = y;
+  }
+  set_clip(x: number, y: number, w: number, h: number): void {
+    this.uniforms.x.value = x
+    this.uniforms.y.value = y
+    this.uniforms.w.value = w
+    this.uniforms.h.value = h
+  }
 }
 
 MaterialFactory.register({
