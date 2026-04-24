@@ -235,19 +235,20 @@ export class BotController extends BaseController {
     }
     if (e_state == StateEnum.Lying)
       return false;
-    return !!(
-      !e.invisible &&
-      !e.blinking &&
-      !e.invulnerable &&
-      (
-        me.ground_y != me.position.y ||
-        this.atk_m_x <= abs_dx ||
-        e_state == StateEnum.Defend ||
-        e_state == StateEnum.BrokenDefend ||
-        e_state == StateEnum.Caught ||
-        e_state == StateEnum.Injured
-      )
-    )
+    if (e.invisible) return false
+    if (e.blinking) return false
+    if (e.invulnerable) return false
+    if (e_state == StateEnum.Defend) return true
+    if (e_state == StateEnum.BrokenDefend) return true
+    if (e_state == StateEnum.Caught) return true
+    if (me.ground_y == me.position.y) return true
+
+    if (this.fsm.state?.key === BotStateEnum.Chasing) {
+      return this.atk_m_x <= abs_dx
+    } else if (this.fsm.state?.key === BotStateEnum.Avoiding) {
+      return this.dataset.w_atk_r_x > abs(me.position.x - e.position.x)
+    }
+    return false
   }
 
   /**
@@ -275,10 +276,8 @@ export class BotController extends BaseController {
     if (me.ground_y != me.position.y) return false;
 
     if (
-      e.state == StateEnum.Defend ||
       e.state == StateEnum.BrokenDefend ||
       e.state == StateEnum.Caught ||
-      e.state == StateEnum.Injured ||
       e.state == StateEnum.Falling ||
       e.state == StateEnum.Drink ||
       e.state == StateEnum.Frozen
