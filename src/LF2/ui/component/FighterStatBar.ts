@@ -1,6 +1,6 @@
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
-import { make_schema } from "@/LF2/utils/schema/make_schema";
+import { IPropsMeta } from "@/LF2/utils/schema/make_schema";
 import { UINode } from "../UINode";
 import { Label } from "./Label";
 import { Picture } from "./Picture";
@@ -19,22 +19,18 @@ interface IFighterStatBarProps {
   name_txt?: Label;
 }
 export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
-  static override readonly TAG: string = 'FighterStatBar'
-  static override readonly PROPS = make_schema<IFighterStatBarProps>({
-    type: "object",
-    key: "IFighterStatBarProps",
-    properties: {
-      dark_hp_bar: UINode,
-      hp_bar: UINode,
-      dark_mp_bar: UINode,
-      mp_bar: UINode,
-      fall_value_bar: UINode,
-      defend_value_bar: UINode,
-      toughness_bar: UINode,
-      head_img: Picture,
-      name_txt: Label,
-    }
-  });
+  static override readonly TAGS: string[] = ["FighterStatBar"];
+  static override readonly PROPS: IPropsMeta<IFighterStatBarProps> = {
+    dark_hp_bar: UINode,
+    hp_bar: UINode,
+    dark_mp_bar: UINode,
+    mp_bar: UINode,
+    fall_value_bar: UINode,
+    defend_value_bar: UINode,
+    toughness_bar: UINode,
+    head_img: Picture,
+    name_txt: Label,
+  };
   protected entity?: Entity;
   protected defend_value_max = new SmoothNumber().on_change(() => this.update_defend_value())
   protected defend_value = new SmoothNumber().on_change(() => this.update_defend_value())
@@ -54,6 +50,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
   protected fall_value_bar_w: number = 200;
   protected defend_value_bar_w: number = 200;
   protected toughness_bar_w: number = 200;
+  protected healing: boolean = false;
   protected cbs: IEntityCallbacks = {
     on_hp_changed: (_, v) => {
       this.hp.target = v;
@@ -151,24 +148,22 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     const { entity } = this;
     if (entity) {
       const { head } = entity.data.base;
-
-      let { name } = entity.data.base;
-      const player_name = this.lf2.players.get(entity.ctrl.player_id)?.name
-      if (player_name)
-        if (this.direction === 'r')
-          name = `(${player_name}) ${name} `.trim();
-        else
-          name = `${name} (${player_name})`.trim();
-
       this.props.head_img?.set_src(typeof head === 'string' ? head : '')
-      this.props.name_txt?.set_text(typeof name === 'string' ? name : '')
     } else {
       this.props.head_img?.set_src('')
-      this.props.name_txt?.set_text('')
     }
-
+  }
+  update_name() {
+    this.props.name_txt?.set_text(this.entity?.name ?? "")
   }
   override update(): void {
+    this.update_name();
+
+    const { entity, props: { hp_bar } } = this
+    if (hp_bar) {
+      this.healing = !!entity?.healing && (entity.update_id.value % 8) < 4;
+      hp_bar.children[0].color.value = this.healing ? 'rgb(255,130,130)' : 'rgb(255,0,0)'
+    }
     this.defend_value_max.update()
     this.defend_value.update()
     this.fall_value_max.update()

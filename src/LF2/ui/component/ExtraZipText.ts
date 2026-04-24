@@ -1,19 +1,17 @@
 import { ILf2Callback } from "@/LF2";
-import { UITextLoader } from "../UITextLoader";
-import { UIComponent } from "./UIComponent";
+import { Label } from "./Label";
 
 
-export class ExtraZipText extends UIComponent {
-  static override TAG: string = 'ExtraZipText';
-  private _txt_loader = new UITextLoader(() => this.node);
+export class ExtraZipText extends Label {
+  static override readonly TAGS: string[] = ["ExtraZipText"];
   private _lf2_cbs: ILf2Callback = {
     on_extra_zips_changed: (lf2) => {
       const extra_zips = lf2.string('DATA_LIST')
       if (extra_zips) {
         const text = lf2.string('extra_data') + ':\n' + extra_zips
-        this._txt_loader.set_text([text])
+        this.set_text(text)
       } else {
-        this._txt_loader.set_text([' '])
+        this.set_text(' ')
       }
     }
   };

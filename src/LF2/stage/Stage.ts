@@ -356,14 +356,14 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
   dispose() {
     for (const f of this._disposers) f();
     for (const item of this.items) item.release();
-
     const temp: Entity[] = [];
     const player_teams = new Set<string>();
     for (const [, v] of this.lf2.world.puppets) {
       player_teams.add(v.team);
     }
     for (const e of this.world.entities) {
-      if (is_fighter(e) && player_teams.has(e.team)) continue;
+      if (is_fighter(e) && player_teams.has(e.team))
+        continue;
       else if (is_weapon(e) && e.bearer && player_teams.has(e.bearer.team))
         continue;
       temp.push(e);

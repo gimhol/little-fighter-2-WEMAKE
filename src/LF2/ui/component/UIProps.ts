@@ -1,5 +1,4 @@
-import type { ISchema } from "../../defines/ISchema";
-import { is_num, is_str } from "../../utils";
+import { IPropsMeta, is_num, is_str, make_schema } from "../../utils";
 import { SchemaValidator } from "../../utils/schema/validate_schema";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
 import { isUINodeClass } from "../utils/isUINodeClass";
@@ -11,18 +10,21 @@ export class UIProps {
   readonly owner: UIComponent<unknown, any>;
   readonly validator = new SchemaValidator().instance_getter((value, clazz) => {
     if (isUIComponentClass(clazz)) {
-      const mine = this.owner.node.search_component(clazz, v => v.id === value);
-      const outer = this.owner.node.root.search_component(clazz, v => v.id === value)
-      return mine || outer
+      if (typeof value !== 'string') return null
+      const mine = this.owner.node.search_component(clazz, v => v.id == value);
+      if (mine) return mine;
+      return this.owner.node.parent?.lookup_component(clazz, v => v.id == value) ?? null
     } else if (isUINodeClass(clazz)) {
-      const mine = this.owner.node.search_child(value)
-      const outer = this.owner.node.root.search_child(value)
-      return mine || outer
+      if (typeof value !== 'string') return null
+      const mine = this.owner.node.search_node(value)
+      if (mine) return mine;
+      return this.owner.node.parent?.lookup_node(value) ?? null
     }
     return null
   }).instance_setter((value, clazz) => {
 
   })
+  get errors() { return this.validator.errors }
   constructor(raw: { [x in string]?: any }, owner: UIComponent<unknown, any>) {
     this.raw = { ...raw };
     this.owner = owner;
@@ -85,12 +87,15 @@ export class UIProps {
   component() {
     return this.owner.node.search_component
   }
-  validate<P>(Cls: { TAG: string, PROPS: ISchema<P> }): P {
+  validate<P>(Cls: { TAG: string, PROPS: IPropsMeta<P> }): P | null {
     const { TAG, PROPS } = Cls
-    const errors: string[] = [];
-    this.validator.validate(this.raw, PROPS, errors)
-    if (!errors.length) return this.raw as P;
-    throw new Error(`[${TAG}] props.error:` + errors.join('\n'))
+    this.validator.validate(this.raw, make_schema({
+      key: TAG + 'Props',
+      type: 'object',
+      properties: PROPS
+    }))
+    if (!this.validator.errors.length)
+      return this.raw as P;
+    return null
   }
-
 }

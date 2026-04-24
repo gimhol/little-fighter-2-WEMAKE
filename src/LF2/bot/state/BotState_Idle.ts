@@ -1,5 +1,4 @@
-import { GameKey, StateEnum, WeaponType } from "@/LF2/defines";
-import { KEY_NAME_LIST } from "../../controller/BaseController";
+import { GameKey, StateEnum, WeaponType, AGK } from "@/LF2/defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { BotState_Base } from "./BotState";
@@ -7,7 +6,7 @@ import { BotState_Base } from "./BotState";
 export class BotState_Idle extends BotState_Base {
   readonly key = BotStateEnum.Idle;
   override enter(): void {
-    this.ctrl.key_up(...KEY_NAME_LIST)
+    this.ctrl.key_up(...AGK)
   }
   override update(dt: number) {
     super.update(dt)
@@ -29,7 +28,7 @@ export class BotState_Idle extends BotState_Base {
     else if (av)
       return BotStateEnum.Avoiding;
 
-    c.key_up(...KEY_NAME_LIST)
+    c.key_up(...AGK)
     if (
       me.holding?.base_type === WeaponType.Drink &&
       me.state !== StateEnum.Drink

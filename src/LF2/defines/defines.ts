@@ -17,7 +17,6 @@ export type TFace = -1 | 1;
 export type TTrend = -1 | 0 | 1;
 export type BOOL = 1 | 0;
 export namespace Defines {
-  export const DATA_VERSION: number = 14;
   export const TeamEnum = _TeamEnum;
   export type TeamEnum = _TeamEnum;
   export const CLASSIC_SCREEN_WIDTH = 794;
@@ -59,7 +58,7 @@ export namespace Defines {
       shadowsize: [0, 0],
       left: 0,
       right: MODERN_SCREEN_WIDTH * 2,
-      far: -0,
+      far: -40,
       near: -0,
       group: []
     },
@@ -67,7 +66,7 @@ export namespace Defines {
   export const RANDOM_BG: IBgData = {
     type: "background",
     layers: [],
-    id: "RANDOM_BG",
+    id: "?",
     base: {
       name: "Random",
       shadow: "",
@@ -96,31 +95,16 @@ export namespace Defines {
   export const NEXT_FRAME_SELF: Readonly<INextFrame> = {
     id: Builtin_FrameId.Self,
   };
-
-  export const CheatKeys: Record<CheatType, string> = {
-    [CheatType.LF2_NET]: "lf2.net",
-    [CheatType.HERO_FT]: "herofighter.com",
-    [CheatType.GIM_INK]: "gim.ink",
-  };
-
-  export const CheatGameKeys: Record<CheatType, string> = {
-    [CheatType.LF2_NET]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.a, GK.d, GK.a].join(''),
-    [CheatType.HERO_FT]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.j, GK.a, GK.j, GK.a].join(''),
-    [CheatType.GIM_INK]: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.j, GK.d, GK.j].join(''),
-  };
-
-  export const CheatTypeSounds: Record<CheatType, string> = {
-    [CheatType.LF2_NET]: "data/m_pass.wav.mp3",
-    [CheatType.HERO_FT]: "data/m_end.wav.mp3",
-    [CheatType.GIM_INK]: "data/093_r.wav.mp3",
-  };
-
   export interface ICheatInfo {
     keys: string;
     gkeys: string;
     sound: string;
   }
-
+  export const CheatInfos = new Map<CheatType, ICheatInfo>([
+    [CheatType.LF2_NET, { keys: "lf2.net", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.a, GK.d, GK.a].join(''), sound: "data/m_pass.wav.mp3" }],
+    [CheatType.HERO_FT, { keys: "herofighter.com", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.j, GK.a, GK.j, GK.a].join(''), sound: "data/m_end.wav.mp3"  }],
+    [CheatType.GIM_INK, { keys: "gim.ink", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.j, GK.d, GK.j].join(''), sound: "data/093_r.wav.mp3"  }],
+  ]);
   export const Sounds = {
     StagePass: "data/m_pass.wav.mp3",
     BattleEnd: "data/m_end.wav.mp3",
@@ -137,7 +121,7 @@ export namespace Defines {
   export interface ITeamInfo {
     i18n: string;
     txt_color: string;
-    txt_shadow_color: string;
+    txt_outline_color: string;
     outline_color?: string;
   }
 
@@ -160,30 +144,30 @@ export namespace Defines {
     [TeamEnum.Independent]: {
       i18n: "Independent",
       txt_color: "#ffffff",
-      txt_shadow_color: "#000000",
+      txt_outline_color: "#000000",
     },
     [TeamEnum.Team_1]: {
       i18n: "Team_1",
       txt_color: "#4f9bff",
-      txt_shadow_color: "#001e46",
+      txt_outline_color: "#001e46",
       outline_color: "#4f9bff",
     },
     [TeamEnum.Team_2]: {
       i18n: "Team_2",
       txt_color: "#ff4f4f",
-      txt_shadow_color: "#460000",
+      txt_outline_color: "#460000",
       outline_color: "#ff4f4f",
     },
     [TeamEnum.Team_3]: {
       i18n: "Team_3",
       txt_color: "#3cad0f",
-      txt_shadow_color: "#154103",
+      txt_outline_color: "#154103",
       outline_color: "#3cad0f",
     },
     [TeamEnum.Team_4]: {
       i18n: "Team_4",
       txt_color: "#ffd34c",
-      txt_shadow_color: "#9a5700",
+      txt_outline_color: "#9a5700",
       outline_color: "#ffd34c",
     },
   };

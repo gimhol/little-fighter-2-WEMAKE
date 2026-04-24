@@ -4,5 +4,6 @@ export interface IComponentInfo {
   name: string;
   enabled?: boolean;
   properties?: { [x in string]?: any };
+  props?: { [x in string]?: any };
   weight?: number;
 }

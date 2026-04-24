@@ -101,28 +101,22 @@
           pos: "-297, 0",
           center: "0.5, 0.5",
           size: "120, 120",
-          img: [
-            {
-              w: 120,
-              h: 120,
-              path: "sprite/gim/face.png",
-            },
-          ],
+          img: {
+            w: 120,
+            h: 120,
+            path: "sprite/gim/face.png",
+          },
         },
         "next_bro_frame",
         {
           id: "txt_pos",
           pos: "-227, 0",
           center: "0, 1",
-          txt: [
-            {
-              i18n: "tutorial.dialog_5",
-              style: {
-                fill_style: "white",
-                font: "13px Arial",
-              },
-            },
-          ],
+          i18n: "tutorial.dialog_5",
+          style: {
+            fill_style: "white",
+            font: "13px Arial",
+          },
           component: [
             {
               id: "dialog_text",
@@ -143,15 +137,11 @@
           id: "talker_pos",
           pos: "0, 0",
           center: "0, 1",
-          txt: [
-            {
-              i18n: "Davis",
-              style: {
-                fill_style: "white",
-                font: "13px Arial",
-              },
-            },
-          ],
+          i18n: "Davis",
+          style: {
+            fill_style: "white",
+            font: "13px Arial",
+          },
           component: [
             {
               id: "talker_name",

@@ -38,7 +38,9 @@ export class UIInputHandle implements IUIInputHandle {
     const leave_ui = this._pointer_on_uis;
     const stay_ui = new Set<UINode>();
     const enter_ui = new Set<UINode>();
-    for (const { extra: ui } of intersections) {
+    for (const { extra: ui, point } of intersections) {
+      const _e = new LF2PointerEvent(point, e.button);
+      ui.on_pointer_move(_e);
       if (leave_ui.has(ui)) {
         leave_ui.delete(ui)
         stay_ui.add(ui)
@@ -57,6 +59,7 @@ export class UIInputHandle implements IUIInputHandle {
     for (const ui of stay_ui) {
       this._pointer_on_uis.add(ui)
     }
+
   }
   on_pointer_up(e: IPointingEvent) {
     const { ui } = this.lf2; if (!ui) return;

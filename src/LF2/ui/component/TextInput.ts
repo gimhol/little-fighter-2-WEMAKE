@@ -1,7 +1,7 @@
 import { UIComponent } from "./UIComponent";
 
 export class TextInput extends UIComponent {
-  static override readonly TAG: string = 'TextInput';
+  static override readonly TAGS: string[] = ["TextInput"];
   protected _text: string = '';
 
   get maxLength() { return this.props_holder.num('maxLength') }

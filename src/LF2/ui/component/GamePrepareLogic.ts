@@ -1,7 +1,7 @@
 import { Ditto } from "@/LF2/ditto";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { ILf2Callback } from "@/LF2/ILf2Callback";
-import { make_schema } from "@/LF2/utils";
+import { IPropsMeta } from "@/LF2/utils";
 import { new_team } from "../../base";
 import LocalController from "../../controller/LocalController";
 import { Defines, FacingFlag, TeamEnum } from "../../defines";
@@ -17,21 +17,16 @@ export interface IGamePrepareLogicProps {
 const GAME_MODE_VS = "vs_mode"
 const GAME_MODE_STAGE = "stage_mode"
 export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
-  static override readonly TAG = 'GamePrepareLogic';
-  static override  readonly PROPS = make_schema<IGamePrepareLogicProps>({
-    key: 'GamePrepareLogic',
-    type: 'object',
-    properties: {
-      stage_switcher: StageSwitcher,
-      bg_switcher: BackgroundSwitcher,
-      game_mode: String,
-    }
-  })
+  static override readonly TAGS: string[] = ["GamePrepareLogic"];
+  static override readonly PROPS: IPropsMeta<IGamePrepareLogicProps> = {
+    stage_switcher: StageSwitcher,
+    bg_switcher: BackgroundSwitcher,
+    game_mode: String
+  }
 
   override on_resume(): void {
-    super.on_resume();
-    const background_row = this.node.search_child("background_row")!;
-    const stage_row = this.node.search_child("stage_row")!;
+    const background_row = this.node.search_node("background_row")!;
+    const stage_row = this.node.search_node("stage_row")!;
     const char_menu_logic = this.node.search_component(CharMenuLogic)
 
     if (this.props.game_mode === GAME_MODE_STAGE) {
@@ -56,8 +51,8 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     this.lf2.callbacks.add(this._lf2_callbacks)
   }
   override on_stop(): void {
-    this.lf2.change_stage(Defines.VOID_STAGE)
-    this.lf2.change_bg(Defines.VOID_BG)
+    this.lf2.change_stage('')
+    this.lf2.change_bg('')
     this.lf2.callbacks.del(this._lf2_callbacks)
   }
   start_game() {
@@ -68,7 +63,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     if (stage_switcher?.node.visible && !stage_switcher.node.disabled)
       this.lf2.change_bg(stage_switcher.stage.bg);
     else if (bg_switcher?.node.visible && !bg_switcher.node.disabled)
-      this.lf2.change_bg(bg_switcher.background);
+      this.lf2.change_bg(bg_switcher.background.id);
 
 
     const { far, near, left, right } = this.lf2.world.bg;
@@ -92,7 +87,6 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
         debugger;
         continue;
       }
-      fighter.name = player.name;
       fighter.team = slot_info.team || new_team();
       fighter.stat_bar_type = StatBarType.UI;
       fighter.facing = is_stage_mode ?
@@ -119,10 +113,13 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
 
     if (is_stage_mode) {
       if (stage_switcher)
-        this.lf2.change_stage(stage_switcher?.stage);
-      this.lf2.push_ui("stage_mode_page");
+        this.lf2.change_stage(stage_switcher.stage.id);
+      this.lf2.push_ui({ id: "stage_mode_page" });
     } else {
-      this.lf2.push_ui("vs_mode_page");
+      // this.world.stage.right =
+      //   this.world.stage.player_r =
+      //   this.world.stage.cam_r = 100;
+      this.lf2.push_ui({ id: "vs_mode_page" });
     }
   }
 }

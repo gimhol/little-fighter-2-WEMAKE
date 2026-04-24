@@ -4,7 +4,7 @@ import { Entity } from "../../entity/Entity";
 import { UIComponent } from "./UIComponent";
 
 export class PlayerScore extends UIComponent {
-  static override readonly TAG: string = 'PlayerScore'
+  static override readonly TAGS: string[] = ["PlayerScore"];
   get index(): number { return this.num(0) ?? -1 }
   get lose(): boolean | undefined {
     const { fighter } = this;
@@ -26,12 +26,10 @@ export class PlayerScore extends UIComponent {
   private _unmount_job = new Invoker();
 
   override on_resume(): void {
-    super.on_resume();
     this.node.visible = !!this.fighter;
   }
 
   override on_pause(): void {
-    super.on_resume();
     this._unmount_job.invoke_and_clear();
   }
 }

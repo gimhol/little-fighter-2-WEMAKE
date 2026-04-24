@@ -19,15 +19,14 @@ export class EntitiesHelper {
     ], this.lf2)
   }
 
-  list(): Entity[] {
+  get all(): Entity[] {
     const ret: Entity[] = [];
     this.lf2.world.entities.forEach((v) => ret.push(v));
     return ret;
   }
-
-  at(idx: number): Entity | undefined {
-    return this.list()[idx];
-  }
+  get a(): Entity | undefined { return this.at(0) }
+  get b(): Entity | undefined { return this.at(1) }
+  at(idx: number): Entity | undefined { return this.all[idx]; }
 
   add(data: IEntityData, num: number = 1, team?: string): Entity[] {
     const ret: Entity[] = [];
@@ -42,6 +41,6 @@ export class EntitiesHelper {
     return ret;
   }
   del_all() {
-    this.lf2.world.del_entities(Array.from(this.lf2.world.entities));
+    this.lf2.world.del_entities(this.all);
   }
 }

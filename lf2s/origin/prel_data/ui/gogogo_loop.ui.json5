@@ -3,20 +3,16 @@
   name: "gogogo_loop",
   visible: false,
   opacity: 0,
-  txt: [
-    {
-      i18n: "Go! ➡",
-      style: {
-        fill_style: "white",
-        font: '46px "Arial Black", Arial',
-        back_style: {
-          font: '46px "Arial Black", Arial',
-          stroke_style: "#005A8E",
-          line_width: 5,
-        },
-      },
+  i18n: "Go! ➡",
+  style: {
+    fill_style: "white",
+    font: '46px "Arial Black", Arial',
+    back_style: {
+      font: '46px "Arial Black", Arial',
+      stroke_style: "#005A8E",
+      line_width: 5,
     },
-  ],
+  },
   component: [
     {
       id: "play_gogogo_loop",

@@ -57,7 +57,7 @@ class FSMState_Win extends FSMState {
   }
 }
 export class StageModeLogic extends UIComponent {
-  static override readonly TAG = 'StageModeLogic'
+  static override readonly TAGS: string[] = ["StageModeLogic"];
   readonly fsm = new FSM<number, FSMState>().add(
     new FSMState(this),
     new FSMState_BeforeEnd(this),

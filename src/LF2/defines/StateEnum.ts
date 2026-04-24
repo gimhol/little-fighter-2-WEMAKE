@@ -113,14 +113,20 @@ export enum StateEnum {
   Ball_Hitting = 3001,
   /**
    * 能被反弹
+   * - LF2:
+   *   - 发射时，按着上下键不可为其增加Z速度
    */
   Ball_Hit = 3002,
   /**
    * 能被反弹
+   * - LF2:
+   *   - 发射时，按着上下键不可为其增加Z速度
    */
   Ball_Rebounding = 3003,
   /**
    * 能被反弹
+   * - LF2:
+   *   - 发射时，按着上下键不可为其增加Z速度
    */
   Ball_Disappear = 3004,
   Ball_3005 = 3005,

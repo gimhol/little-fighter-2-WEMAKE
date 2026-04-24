@@ -1,3 +1,4 @@
+import { parse_rgba } from "@/LF2";
 import AsyncValuesKeeper from "../../LF2/base/AsyncValuesKeeper";
 import { ILegacyPictureInfo } from "../../LF2/defines/ILegacyPictureInfo";
 import type IPicture from "../../LF2/defines/IPicture";
@@ -6,7 +7,6 @@ import type { IStyle } from "../../LF2/defines/IStyle";
 import { IImageMgr, ImageOperation } from "../../LF2/ditto/image/IImageMgr";
 import type { LF2 } from "../../LF2/LF2";
 import { validate_ui_img_operation_crop } from "../../LF2/loader/validate_ui_img_operation_crop";
-import { get_alpha_from_color } from "../../LF2/ui/utils/get_alpha_from_color";
 import { is_positive_int, max, round } from "../../LF2/utils";
 import { create_img_ele } from "../../Utils/create_img_ele";
 import { get_blob } from "../../Utils/get_blob";
@@ -92,9 +92,9 @@ export class ImageMgr implements IImageMgr {
     const {
       padding_l = 2,
       padding_t = 2,
+      scale = 2,
     } = style;
     apply_text_style(style, ctx);
-    const scale = 2;
     const [lines, w, h] = split_text_to_lines(text, ctx, style);
     cvs.style.width = (cvs.width = scale * w) + "px";
     cvs.style.height = (cvs.height = scale * h) + "px";
@@ -113,6 +113,7 @@ export class ImageMgr implements IImageMgr {
       }
     }
 
+    style.fill_style = style.fill_style ?? 'white';
     const nf = need_fiil(style);
     const ns = need_stroke(style);
     if (nf || ns) {
@@ -248,9 +249,9 @@ function split_text_to_lines(text: string, ctx: CanvasRenderingContext2D, style:
 
 function draw_underline(style: IStyle, ctx: CanvasRenderingContext2D, lines: ITextLineInfo[]) {
   const { underline_color, underline_width } = style
-  if (!underline_color || !underline_width) return;
+  if (!underline_width) return;
   const { padding_l = 2, padding_t = 2 } = style
-  ctx.strokeStyle = underline_color;
+  ctx.strokeStyle = underline_color ?? style.fill_style ?? "white";
   ctx.lineWidth = underline_width;
   for (const { x, y, w } of lines) {
     ctx.beginPath();
@@ -288,11 +289,9 @@ function apply_text_style(style: IStyle, ctx: CanvasRenderingContext2D) {
 function need_stroke(style: IStyle): boolean {
   if (!style.stroke_style) return false;
   if (!style.line_width || style.line_width < 0) return false;
-  const n = get_alpha_from_color(style.fill_style);
-  return n === null || n > 0;
+  return !!parse_rgba(style.stroke_style)?.a;
 }
 function need_fiil(style: IStyle): boolean {
   if (!style.fill_style) return true;
-  const n = get_alpha_from_color(style.fill_style);
-  return n === null || n > 0;
+  return !!parse_rgba(style.fill_style)?.a
 }

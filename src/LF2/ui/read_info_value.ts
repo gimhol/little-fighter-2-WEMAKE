@@ -23,7 +23,7 @@ export function find_ui_value<C>(ui_info: ICookedUIInfo, type: Judger, name: str
 export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, name: string): C | T | null;
 export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, name: string): C | T | null {
   const value = ui_info.values?.[name];
-  if (value === null || value === undefined)
+if (value === null || value === undefined)
     return ui_info.parent ? find_ui_value(ui_info.parent, type, name) : null
   if (typeof type === 'string') return typeof value === type ? value : null;
   if (is_judger(type)) return type(value) ? value : null

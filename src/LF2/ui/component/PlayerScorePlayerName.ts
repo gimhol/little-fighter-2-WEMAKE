@@ -6,7 +6,7 @@ import { Defines, Entity, is_bot_ctrl, is_human_ctrl, IStyle, TeamEnum } from "@
 
 
 export class PlayerScorePlayerName extends UIComponent {
-  static override readonly TAG = 'PlayerScorePlayerName';
+  static override readonly TAGS: string[] = ["PlayerScorePlayerName"];
   private fighter?: Entity;
 
   private readonly txt_loader = new UITextLoader(() => this.node).set_style(() => {
@@ -17,12 +17,12 @@ export class PlayerScorePlayerName extends UIComponent {
       fill_style: team_info.txt_color,
       back_style: {
         font: "12px Arial",
-        stroke_style: team_info.txt_shadow_color,
+        stroke_style: team_info.txt_outline_color,
         line_width: 2
       }
     }
     return ret;
-  }).ignore_out_of_date();
+  })
 
   override on_show(): void {
     super.on_show?.()
@@ -35,7 +35,7 @@ export class PlayerScorePlayerName extends UIComponent {
         name = ctrl.player?.name || '-';
       }
     }
-    this.txt_loader.set_text([name])
+    this.txt_loader.set_text(name)
 
   }
 }

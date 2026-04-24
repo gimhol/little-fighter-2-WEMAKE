@@ -1,11 +1,10 @@
+import { IStyle } from "../defines/IStyle";
 import type { IComponentInfo } from "./IComponentInfo";
 import type { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
-import type { IUITxtInfo } from "./IUITxtInfo.dat";
 import type { UIActionEnum } from "./UIActionEnum";
 export type TComponentInfo = IComponentInfo | string
 export type TUIAction = IUIAction | UIActionEnum
-export type TUITxtInfo = IUITxtInfo | string
 export type TUIImgInfo = IUIImgInfo | string
 export type TUIActionPlace = 'click' | 'resume' | 'pause' | 'start' | 'stop';
 
@@ -31,11 +30,16 @@ export interface IUIInfo {
   center?: number[] | string;
   scale?: number[] | string;
   size?: number[] | string;
-  visible?: boolean | string;
-  disabled?: boolean | string;
+  visible?: boolean;
+  disabled?: boolean;
   color?: string;
-  img?: TUIImgInfo | TUIImgInfo[];
-  txt?: TUITxtInfo | TUITxtInfo[];
+  background?: string;
+  backgroundAlpha?: number;
+  foreground?: string;
+  foregroundAlpha?: number;
+  img?: TUIImgInfo;
+  i18n?: string;
+  style?: IStyle | string;
   which?: number | string;
   dev_component?: TComponentInfo[];
   component?: TComponentInfo[];

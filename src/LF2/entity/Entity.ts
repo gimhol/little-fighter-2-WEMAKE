@@ -9,7 +9,7 @@ import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId,
   Defines, EntityEnum, EntityGroup, FacingFlag,
-  FrameBehavior, GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
@@ -25,7 +25,7 @@ import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, find, float_equal, floor, intersection, max, min, round, round_float } from "../utils";
+import { abs, clamp, find, float_equal, floor, max, min, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
@@ -45,13 +45,14 @@ export class Entity {
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected _spawn_time: number = 0;
   protected _outline_color: string | undefined = void 0;
-  protected _game_time: number = -1; // 每次update前与world对齐
+  protected _outline_alpha: number | undefined = void 0;
   get outline_color(): string | undefined {
     return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
   };
-  set outline_color(v: string | undefined) {
-    this._outline_color = v;
-  }
+  set outline_color(v: string | undefined) { this._outline_color = v; }
+  get outline_alpha(): number | undefined { return this._outline_alpha };
+  set outline_alpha(v: number | undefined) { this._outline_alpha = v; }
+
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 
@@ -134,9 +135,9 @@ export class Entity {
    * 实体名称
    *
    * @protected
-   * @type {string}
+   * @type {string|null}
    */
-  protected _name!: string;
+  protected _name: string | null = null;
 
   /**
    * 所属队伍
@@ -199,9 +200,11 @@ export class Entity {
 
   protected _state!: State_Base | null;
   protected _key_role!: boolean | null;
+  protected _name_visible!: boolean | null;
   protected _wakeup_invuln!: boolean | null;
   protected _dead_gone!: boolean | null;
   protected _dead_join!: IDeadJoin | null;
+  protected _ctrl_visible!: boolean | null;
   protected _ctrl!: BaseController;
   armor!: Readonly<IArmorInfo> | null;
   protected _opoints!: [IOpointInfo, number][];
@@ -254,6 +257,7 @@ export class Entity {
   get prev_ground_y(): number { return this._prev_ground_y }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
+  /** 落地一刻的速度 */
   get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
@@ -419,13 +423,19 @@ export class Entity {
   }
 
   get name(): string {
-    return this._name;
+    if (this._name !== null)
+      return this._name;
+    const { ctrl } = this;
+    if (is_human_ctrl(ctrl))
+      return ctrl.player.name || `Player ${ctrl.player.id}`
+    return this.data.base.name ?? ''
   }
 
-  set name(v: string) {
-    if (v === this._name) return;
+  set name(v: string | null) {
+    if (v === this.name) return;
     const o = this._name;
-    this.callbacks.emit("on_name_changed")(this, (this._name = v), o);
+    this._name = v;
+    this.callbacks.emit("on_name_changed")(this, v || '', o);
   }
 
   get mp(): number {
@@ -591,21 +601,29 @@ export class Entity {
   }
   get key_role(): boolean {
     if (this._key_role !== null) return this._key_role;
-    const is_player = !!this.ctrl?.player_id;
-    const is_key = !!intersection(this._data.base.group, [EntityGroup.Regular, EntityGroup.Boss]).length
-    return this._key_role = is_player || is_key;
+    const is_key = [
+      EntityGroup.Regular,
+      EntityGroup.Boss
+    ].some(a => {
+      return this._data.base.group?.some(b => a == b)
+    })
+    return this._key_role = !!this.ctrl.player || is_key;
   }
   set key_role(v: boolean | null) {
     if (this._key_role === v) return;
     this._key_role = v;
-    this.callbacks.emit("on_name_changed")(this, this._name, this._name);
+  }
+  get name_visible(): boolean {
+    return this._name_visible ?? this.key_role;
+  }
+  set name_visible(v: boolean | null) {
+    this._name_visible = v;
   }
   /** 是否有起身无敌 */
   get wakeup_invuln(): boolean {
     return this._wakeup_invuln ?? this.key_role
   }
   set wakeup_invuln(v: boolean) {
-    if (this._wakeup_invuln === v) return;
     this._wakeup_invuln = v;
   }
 
@@ -655,6 +673,12 @@ export class Entity {
   get base_type(): number {
     return this.data.base.type ?? 0
   }
+  get ctrl_visible(): boolean | null {
+    return this._ctrl_visible
+  }
+  set ctrl_visible(v: boolean | null) {
+    this._ctrl_visible = v;
+  }
   get state() { return this.frame.state }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.reset(world, data, states)
@@ -680,7 +704,6 @@ export class Entity {
     this.dismiss_data = null;
     this.copies.clear()
     this._stat_bar_type = null;
-    this._game_time = -1;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
     this._resting_max = d.base.resting;
     this._resting = 0;
@@ -700,16 +723,19 @@ export class Entity {
     this._catching = null
     this._catcher = null
     this._wakeup_invuln = null;
+    this._name_visible = null;
+    this._outline_alpha = void 0;
     this._velocity.set(0, 0, 0)
     this._landing_velocity.set(0, 0, 0)
     this.velocities.length = 0;
     this.velocities[0] = new Ditto.Vector3(0, 0, 0)
     this.callbacks.clear();
-    this._name = ""
+    this._name = null
     this._team = new_team();
     this._landing_frame = null;
     this._bearer = null;
     this._holding = null;
+    this.pre_emitter?.copies.delete(this)
     this._emitters.length = 0;
     this._emitter_opoint = null;
     this._arest = 0;
@@ -748,7 +774,7 @@ export class Entity {
     this._key_role = null;
     this._dead_gone = null;
     this._dead_join = null;
-
+    this._ctrl_visible = null;
     this.drink = d.base.drink ? new DrinkInfo(d.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
@@ -831,10 +857,9 @@ export class Entity {
       dvx: o_dvx = 0,
       dvy: o_dvy = 0,
       dvz: o_dvz = 0,
-      speedz: o_speedz = Defines.DEFAULT_OPOINT_SPEED_Z
+      speedz: o_speedz = this.get_opoint_speed_z(emitter, opoint)
     } = opoint;
-    if (!is_fighter(emitter))
-      o_speedz = 0;
+
     const { weight } = this
     o_dvy = o_dvy / weight;
     const ud = emitter.ctrl?.UD || 0;
@@ -874,7 +899,19 @@ export class Entity {
     this.motionless = opoint.motionless ?? 2
     return this;
   }
-
+  get_opoint_speed_z(emitter: Entity, opoint: IOpointInfo): number {
+    if (opoint.speedz !== void 0) return opoint.speedz;
+    if (!is_fighter(emitter)) return 0;
+    // shit
+    switch (this.state) {
+      case StateEnum.Ball_Flying:
+      case StateEnum.Ball_3006:
+      case StateEnum.Weapon_Throwing:
+      case StateEnum.HeavyWeapon_InTheSky:
+        return Defines.DEFAULT_OPOINT_SPEED_Z;
+    }
+    return 0;
+  }
   set_state(state_code: number) {
     const v = this.states.get(state_code) || this.states.fallback(this._data.type, state_code);
     if (this._state === v) return;
@@ -982,7 +1019,6 @@ export class Entity {
         }
         const e = this.spawn_entity(opoint, v, facing);
         if (!e) return;
-
         switch (opoint.spreading) {
           case OpointSpreading.FloatRange:
             const { x, y, z } = e.velocity;
@@ -995,28 +1031,15 @@ export class Entity {
             e.set_velocity(xx, yy, zz)
             break;
         }
-
-        switch (this.frame.behavior) {
-          case FrameBehavior.FirzenDisasterStart:
-          case FrameBehavior.FirzenVolcanoStart:
-          case FrameBehavior.BatStart:
-          case FrameBehavior.DevilJudgementStart:
-            e.chasing = enemies[i % enemies.length]
-            if (e.chasing) {
-              const vx = e.velocity.x
-              if (vx == 0) e.facing = this.facing
-              else if (vx > 0) e.facing = 1
-              else e.facing = -1
-            }
+        switch (multi_type) {
+          case OpointMultiEnum.AccordingEnemies:
+            if (e.frame.chase) e.chasing = enemies[i % enemies.length]
             break;
-          case FrameBehavior.AngelBlessingStart:
-            if (this.frame.chase && multi_type === OpointMultiEnum.AccordingAllies) {
-              e.chasing = allies[i % allies.length]
-            }
+          case OpointMultiEnum.AccordingAllies:
+            if (e.frame.chase) e.chasing = allies[i % allies.length];
             break;
         }
       }
-
     }
   }
 
@@ -1343,7 +1366,6 @@ export class Entity {
   }
 
   update(): void {
-    this._game_time = this.world.game_time.value;
     this.update_id.add()
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)

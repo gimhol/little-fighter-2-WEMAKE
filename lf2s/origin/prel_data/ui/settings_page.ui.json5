@@ -1,337 +1,122 @@
 {
-  name: "页面：设置",
-  id: "settings_page",
-  color: "rgb(16, 32, 108)",
-  templates: {
-    suffixies: {
-      items: [
+  id: "settings",
+  name: "页面：设置页",
+  component: [
+    {
+      name: "SettingsLogic",
+      properties: {
+        btn_misc_settings: "btn_misc_settings",
+        btn_ctrl_settings: "btn_ctrl_settings",
+        misc_settings_node: "misc_settings_node",
+        ctrl_settings_node: "ctrl_settings_node",
+      },
+    },
+  ],
+  items: [
+    {
+      template: "builtin_data/launch/bg.ui.json5",
+      color: "#00000033",
+      opacity: 0.9,
+    },
+    {
+      pos: "394,30",
+      center: "0.5,0",
+      component: [
         {
-          id: "key_set_U",
-          center: "1,0.5",
-          pos: "0, 134",
-          txt: {
-            i18n: "ctrl_settings.key_up",
-            style: {
-              fill_style: "#AAC3FF",
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          id: "key_set_D",
-          center: "1,0.5",
-          pos: "0, 156",
-          txt: {
-            i18n: "ctrl_settings.key_down",
-            style: {
-              fill_style: "#AAC3FF",
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          id: "key_set_L",
-          center: "1,0.5",
-          pos: "0, 178",
-          txt: {
-            i18n: "ctrl_settings.key_left",
-            style: {
-              fill_style: "#AAC3FF",
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          id: "key_set_R",
-          center: "1,0.5",
-          pos: "0, 200",
-          txt: {
-            i18n: "ctrl_settings.key_right",
-            style: {
-              fill_style: "#AAC3FF",
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          id: "key_set_a",
-          center: "1,0.5",
-          pos: "0, 222",
-          txt: {
-            i18n: "ctrl_settings.key_attack",
-            style: {
-              fill_style: "#AAC3FF",
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          id: "key_set_j",
-          center: "1,0.5",
-          pos: "0, 244",
-          txt: {
-            i18n: "ctrl_settings.key_jump",
-            style: {
-              fill_style: "#AAC3FF",
-              font: "bold 16px Arial",
-            },
-          },
-        },
-        {
-          id: "key_set_d",
-          center: "1,0.5",
-          pos: "0, 266",
-          txt: {
-            i18n: "ctrl_settings.key_defend",
-            style: {
-              fill_style: "#AAC3FF",
-              font: "bold 16px Arial",
-            },
+          name: "Flex",
+          properties: {
+            direction: "column",
+            fit: true,
+            gap: 10,
+            align: "center",
           },
         },
       ],
-    },
-    player_set: {
       items: [
         {
-          id: "btn_player_name",
-          component: ["PlayerNameInput()"],
-          size: "106, 19",
-        },
-        {
-          id: "btn_ctrl_type",
-          component: ["PlayerCtrlType()"],
-          img: [
+          items: [
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS6.png",
+              id: "btn_misc_settings",
+              template: "builtin_data/launch/main_text_button.ui.json5",
+              values: {
+                text: "misc_settings",
+              },
             },
             {
-              w: 106,
-              h: 91,
-              path: "sprite/CS2.png",
-            },
-            {
-              w: 106,
-              h: 91,
-              path: "sprite/CS3.png",
-            },
-            {
-              w: 106,
-              h: 91,
-              path: "sprite/CS4.png",
-            },
-            {
-              w: 106,
-              h: 91,
-              path: "sprite/CS5.png",
+              id: "btn_ctrl_settings",
+              template: "builtin_data/launch/main_text_button.ui.json5",
+              values: {
+                text: "ctrl_settings",
+              },
             },
           ],
-          pos: "0, 26",
-        },
-        {
-          id: "btn_key_set_U",
-          component: ["PlayerKeyEdit(,U)"],
-          center: "0.5,0.5",
-          pos: "53, 134",
-          size: "106, 19",
-        },
-        {
-          id: "btn_key_set_D",
-          component: ["PlayerKeyEdit(,D)"],
-          center: "0.5,0.5",
-          pos: "53, 156",
-          size: "106, 19",
-        },
-        {
-          id: "btn_key_set_L",
-          component: ["PlayerKeyEdit(,L)"],
-          center: "0.5,0.5",
-          pos: "53, 178",
-          size: "106, 19",
-        },
-        {
-          id: "btn_key_set_R",
-          component: ["PlayerKeyEdit(,R)"],
-          center: "0.5,0.5",
-          pos: "53, 200",
-          size: "106, 19",
-        },
-        {
-          id: "btn_key_set_a",
-          component: ["PlayerKeyEdit(,a)"],
-          center: "0.5,0.5",
-          pos: "53, 222",
-          size: "106, 19",
-        },
-        {
-          id: "btn_key_set_j",
-          component: ["PlayerKeyEdit(,j)"],
-          center: "0.5,0.5",
-          pos: "53, 244",
-          size: "106, 19",
-        },
-        {
-          id: "btn_key_set_d",
-          component: ["PlayerKeyEdit(,d)"],
-          center: "0.5,0.5",
-          pos: "53, 266",
-          size: "106, 19",
-        },
-      ],
-    },
-  },
-  items: [
-    "@/bg",
-    "ui/bg_l_face",
-    "ui/bg_r_face",
-    {
-      template:"@/img_button",
-      values: {
-        img_normal: {
-          path: "!builtin_data/launch/bearface.png",
-          w: 100,
-          h: 100,
-        },
-        img_hover: {
-          path: "!builtin_data/launch/yeonface.png",
-          w: 100,
-          h: 100,
-        },
-        img_press: {
-          path: "!builtin_data/launch/bearface.png",
-          w: 100,
-          h: 100,
-        },
-      },
-      component:[{
-        name: "Alignment",
-        properties: {right:"right",top:"top"}
-      }]
-    },
-    {
-      id: "main_menu",
-      img: {
-        path: "!sprite/MENU_CLIP2.png",
-        x: 0,
-        y: 0,
-        w: 626,
-        h: 344,
-      },
-      center: "0.5, 0.5",
-      pos: "397, 220",
-      items: [
-        {
-          txt: {
-            i18n: "entry_page.ctrl_settings",
-            style: {
-              fill_style: "#5A73D6",
-              font: "20px Arial",
+          component: [
+            {
+              name: "Flex",
+              properties: { direction: "row", fit: true, gap: 20 },
             },
-          },
-          pos: "0, -185",
-          center: "0.5, 0.5",
+            {
+              name: "FlexItem",
+              properties: { align: "center" },
+            },
+          ],
         },
-        {
-          id: "suffixies",
-          pos: "-170,-144",
-          template: "suffixies",
-        },
-        {
-          id: "player_1",
-          pos: "-165,-145",
-          values: {
-            player_id: "1",
-          },
-          template: "player_set",
-        },
-        {
-          id: "player_2",
-          pos: "-52,-145",
-          values: {
-            player_id: "2",
-          },
-          template: "player_set",
-        },
-        {
-          id: "player_3",
-          pos: "61,-145",
-          values: {
-            player_id: "3",
-          },
-          template: "player_set",
-        },
-        {
-          id: "player_4",
-          pos: "174,-145",
-          values: {
-            player_id: "4",
-          },
-          template: "player_set",
-        },
+        { id: "misc_settings_node", template: "ui/settings_misc.ui.json5" },
+        { id: "ctrl_settings_node", template: "ui/settings_ctrl.ui.json5", visible: false },
       ],
-    },
-    {
-      id: "btn_confirm",
-      img: {
-        path: "!sprite/MENU_CLIP.png",
-        x: 489,
-        y: 426,
-        w: 151,
-        h: 26,
-      },
-      pos: "368, 359",
-      component: ["OpacityHover(0,1)"],
-      actions: {
-        click: ["sound(ok)", "pop_ui(entry)"],
-      },
-    },
-    {
-      id: "btn_cancel",
-      img: {
-        path: "!sprite/MENU_CLIP.png",
-        x: 643,
-        y: 426,
-        w: 151,
-        h: 26,
-      },
-      pos: "525, 359",
-      component: ["OpacityHover(0,1)"],
-      actions: {
-        click: ["sound(cancel)", "pop_ui(entry)"],
-      },
     },
     {
       id: "btn_move_table_normal",
-      txt: {
-        i18n: "goto_special_moves_table",
-        style: {
-          fill_style: "#5A73D6",
-          underline_color: "#5A73D6",
-          underline_width: 1,
-          font: "12px Arial",
-        },
+      i18n: "goto_special_moves_table",
+      style: {
+        fill_style: "#5A73D6",
+        underline_color: "#5A73D6",
+        underline_width: 1,
+        font: "12px Arial",
       },
       center: "0, 1",
       pos: "5, 445",
     },
     {
       id: "btn_move_table_hover",
-      txt: {
-        i18n: "goto_special_moves_table",
-        style: {
-          fill_style: "white",
-          underline_color: "white",
-          underline_width: 1,
-          font: "12px Arial",
-        },
+      i18n: "goto_special_moves_table",
+      style: {
+        fill_style: "white",
+        underline_color: "white",
+        underline_width: 1,
+        font: "12px Arial",
       },
       center: "0, 1",
       pos: "5, 445",
       component: ["OpacityHover(0,1)"],
       actions: {
         click: ["sound(ok)", "link_to(https://lf2.net/control.html)"],
+      },
+    },
+    {
+      i18n: "goto_github_url",
+      style: {
+        fill_style: "#5A73D6",
+        underline_color: "#5A73D6",
+        underline_width: 1,
+        font: "12px Arial",
+      },
+      center: "1, 1",
+      pos: "789, 445",
+    },
+    {
+      i18n: "goto_github_url",
+      style: {
+        fill_style: "white",
+        underline_color: "white",
+        underline_width: 1,
+        font: "12px Arial",
+      },
+      center: "1, 1",
+      pos: "789, 445",
+      component: ["OpacityHover(0,1)"],
+      actions: {
+        click: ["sound(ok)", "link_to(https://github.com/gimhol/little-fighter-2-WEMAKE)"],
       },
     },
   ],

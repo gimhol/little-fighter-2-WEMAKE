@@ -3,13 +3,12 @@ import { IUIPointerEvent } from "../IUIPointerEvent";
 import { UIComponent } from "./UIComponent";
 
 export class PlayerCtrlType extends UIComponent {
-  static override readonly TAG: string = 'PlayerCtrlType';
+  static override readonly TAGS: string[] = ["PlayerCtrlType"];
   get player_id() { return this.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
   get player() { return this.lf2.players.get(this.player_id)! }
   override on_resume(): void {
-    super.on_resume();
     this.player.callbacks.add(this)
-    this.node.img_idx.value = this.player.ctrl;
+    this.on_ctrl_changed(this.player.ctrl)
   }
   override on_pause(): void {
     this.player.callbacks.del(this)
@@ -22,18 +21,21 @@ export class PlayerCtrlType extends UIComponent {
         (this.player.ctrl + 5) % 6 :
         (this.player.ctrl + 1) % 6
     ) as CtrlDevice;
-    const { player: player } = this;
     if (ctrl === CtrlDevice.TouchScreen) {
       for (const [, p] of this.lf2.players) {
         if (p === this.player)
+          continue;
+        if (p.ctrl !== CtrlDevice.TouchScreen)
           continue;
         p.set_ctrl(CtrlDevice.Keyboard, true).save()
       }
     }
     this.player.set_ctrl(ctrl, true).save()
   }
-  on_ctrl_changed(curr: CtrlDevice) {
-    this.node.img_idx.value = curr;
+  on_ctrl_changed(c: CtrlDevice) {
+    this.node.children.forEach((v, i) => {
+      v.visible = i == c
+    })
   }
 }
 

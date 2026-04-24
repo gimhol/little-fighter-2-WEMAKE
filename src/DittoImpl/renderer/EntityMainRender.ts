@@ -1,13 +1,11 @@
-import type { IEntityData, IFrameInfo, IFramePictureInfo, TFace } from "@/LF2/defines";
-import { Builtin_FrameId, StateEnum } from "@/LF2/defines";
-import type { Entity } from "@/LF2/entity/Entity";
-import { LF2 } from "@/LF2/LF2";
-import { clamp, floor, random_in, round } from "@/LF2/utils";
+import type { Entity, IEntityData, IFrameInfo, IFramePictureInfo, IVector3, TFace } from "@/LF2";
+import { Builtin_FrameId, clamp, floor, LF2, random_in, round, StateEnum, World } from "@/LF2";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
+import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_geometry } from "./GeometryKeeper";
-import { MaterialFactory, MaterialKind } from "./MaterialFactory";
+import { OutlineMaterial } from "./materials/OutlineMaterial";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
@@ -22,15 +20,15 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
 }
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
-
-
-export class EntityRender {
+export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
 
+  protected _game_time: number = -1;
+  protected _time: number = 0;
   protected images!: Map<string, RImageInfo>;
   entity!: Entity;
   protected node!: T.Object3D;
-  protected main_mesh!: T.Mesh<T.BufferGeometry, T.ShaderMaterial>;
+  protected main_mesh!: T.Mesh<T.BufferGeometry, OutlineMaterial>;
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
 
   protected variants = new Map<string, string[]>();
@@ -48,7 +46,10 @@ export class EntityRender {
   protected z = 0;
   protected offset_x: number = 0;
   protected offset_y: number = 0;
-
+  protected world!: World;
+  protected lf2!: LF2;
+  protected prev_position!: IVector3;
+  protected position!: IVector3;
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
     this.reset(entity)
@@ -56,6 +57,8 @@ export class EntityRender {
 
   reset(entity: Entity) {
     this.entity = entity
+    this.world = entity.world
+    this.lf2 = entity.lf2;
     this._frame = void 0;
     this._facing = void 0;
     this._x = void 0;
@@ -77,13 +80,15 @@ export class EntityRender {
     this.images = get_img_map(lf2, entity.data);
 
     const texture = this.images.get("0")?.pic?.texture;
-    const material = MaterialFactory.get(MaterialKind.Outline, T.ShaderMaterial, m => {
+    const material = MaterialFactory.get(MaterialKind.Outline, OutlineMaterial, m => {
       m.uniforms.tex = { value: texture }
     });
     material.uniforms.outlineWidth.value = 1;
     const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
       BODY_GEOMETRY, material
     )
+    mesh.material = material;
+
     if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
     mesh.visible = false;
     mesh.name = "Entity:" + data.id;
@@ -100,12 +105,16 @@ export class EntityRender {
     )
     this.blood_mesh.visible = false;
     this.node = this.node || new T.Object3D();
+    this.prev_position = this.entity.position.clone()
+    this.position = this.entity.position.clone()
+
+
+
   }
 
   on_mount() {
     this.reset(this.entity);
     this.node.add(
-      // this.outline_mesh, 
       this.main_mesh,
       this.blood_mesh
     )
@@ -154,13 +163,15 @@ export class EntityRender {
     }
   }
   render(dt: number) {
+    // const game_time = this.world.game_time.value
     const { entity, main_mesh } = this;
+    let { x, y, z } = this.entity.position;
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     this.update_shaking(dt)
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
-    let { x, y, z } = entity.position
+
     if (
       this._x !== x ||
       this._y !== y ||
@@ -212,15 +223,26 @@ export class EntityRender {
     }
     this.render_bpoint();
     this.render_outline();
+    if (this.lf2.ui?.id == "main_page") {
+      const { material: m } = main_mesh;
+      m.uniforms.gray.value = 0.3
+      m.uniforms.mixColor.value = new T.Color('#364791')
+      m.uniforms.mixStength.value = 0.3
+      m.uniforms.outlineWidth.value = 1
+      m.uniforms.outlineAlpha.value = 1
+      m.uniforms.outlineColor.value = new T.Color('#131C47')
+    }
   }
   private render_outline() {
     const { main_mesh } = this;
     if (this.entity.is_ghost) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
-      if (this.entity.outline_color) {
-        m.uniforms.outlineColor.value = new T.Color(this.entity.outline_color);
-        m.uniforms.outlineAlpha.value = 0.7
+      const { outline_color, outline_alpha } = this.entity;
+      const enabled = this.entity.dataset('teamoutline_enabled')
+      if (outline_color && enabled) {
+        m.uniforms.outlineColor.value = new T.Color(outline_color);
+        m.uniforms.outlineAlpha.value = outline_alpha ?? 0.7
       } else {
         m.uniforms.outlineAlpha.value = 0
       }

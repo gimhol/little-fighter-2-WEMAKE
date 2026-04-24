@@ -24,13 +24,7 @@ export class Factory {
   static readonly components = new Map<string, typeof UIComponent>();
   protected static readonly _usedALIAS = new Set<string[]>()
   static register_component(Cls: typeof UIComponent<any, any>): void {
-    const names = [Cls.TAG].concat()
-    if (Cls.ALIAS && !this._usedALIAS.has(Cls.ALIAS)) {
-      // so stupid
-      this._usedALIAS.add(Cls.ALIAS)
-      names.push(...Cls.ALIAS)
-    }
-
+    const names = Cls.TAGS
     for (let i = 0; i < names.length; i++) {
       const name = names[i];
       if (this.components.has(name)) {
@@ -77,7 +71,7 @@ export class Factory {
         continue;
       }
       const { name, args = [], enabled = true, id = '', properties = {}, weight = 0 } = info;
-      const component = new cls(layout, name, { name, args, enabled, id, properties, weight }, args)
+      const component = new cls(layout, name, { name, args, enabled, id, properties, props: {}, weight }, args)
       component.init?.()
       component.set_enabled(enabled);
       component.id = id || `${name}_${idx}`

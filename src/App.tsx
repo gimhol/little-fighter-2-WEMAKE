@@ -66,6 +66,9 @@ type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
 type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
 type sync_render = 0 | 1 | 2;
+
+const ele_root = document.firstElementChild;
+const lower = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
 const init_s = () => ({
   game_overlay: false,
   showing_panel: "" as showing_panel,
@@ -88,8 +91,8 @@ const init_s = () => ({
   custom_v_align: 0.5,
   dev_ui_pos: 'bottom' as debug_ui_pos,
   touchpad: '',
-  touchpad_enabled: document.firstElementChild?.classList.contains('mobile') || document.firstElementChild?.classList.contains('tablet') || false,
-  sync_render: 0 as sync_render
+  touchpad_enabled: !!lower,
+  sync_render: lower ? 2 : 1,
 })
 const is_mobile_container = navigator.userAgent.includes('lfw-mobile-container')
 function App() {
@@ -165,8 +168,8 @@ function App() {
             const networking = !prev
             // FIXME: ...
             const btns = [
-              lf2.ui?.search_child("btn_game_start"),
-              lf2.ui?.search_child("btn_custom_game")
+              lf2.ui?.search_node("btn_game_start"),
+              lf2.ui?.search_node("btn_custom_game")
             ]
             for (const btn of btns) {
               btn?.blur()
@@ -227,8 +230,8 @@ function App() {
       }
     },
     on_prel_loaded: (lf2) => {
-      const { test_ui } = params
-      if (typeof test_ui === 'string') lf2.set_ui(test_ui)
+      const { page } = params
+      if (typeof page === 'string') lf2.set_ui({ id: page })
     },
   })
 
@@ -261,7 +264,7 @@ function App() {
     function print_ui_tree(node = LF2.ui) {
       console.group('id: ' + node?.id + ', name: ' + node?.name);
       console.log("node:      ", node);
-      if (node?.components.size)
+      if (node?.components.length)
         console.log("components:", Array.from(node?.components));
       if (node?.children.length)
         for (const child of node?.children)
@@ -276,7 +279,6 @@ function App() {
 
     lf2.load(...LF2.PREL_ZIPS).catch(LF2.IgnoreDisposed);
     set_lf2(lf2)
-    lf2.sounds.set_muted(s.muted);
     lf2.sounds.set_volume(s.volume);
     lf2.sounds.set_bgm_muted(s.bgm_muted);
     lf2.sounds.set_bgm_volume(s.bgm_volume);
@@ -327,10 +329,11 @@ function App() {
     const visibilitychange = () => lf2.sounds.set_muted(document.hidden)
     const blur = () => lf2.sounds.set_muted(true)
     const focus = () => lf2.sounds.set_muted(false)
-
     document.addEventListener('visibilitychange', visibilitychange);
     window.addEventListener('blur', blur);
     window.addEventListener('focus', focus);
+    lf2.sounds.set_muted(!document.hasFocus() || document.hidden);
+
     return () => {
       window.removeEventListener("touchstart", on_touchstart)
       document.removeEventListener('visibilitychange', visibilitychange);
@@ -448,6 +451,7 @@ function App() {
     [players],
   );
 
+  useShortcut("Escape", 0, () => lf2?.cmds.push(CMD.F4));
   useShortcut("F8", 0, () => lf2?.cmds.push(CMD.F8));
   useShortcut("F9", 0, () => lf2?.cmds.push(CMD.F9));
   useShortcut("F10", 0, () => lf2?.cmds.push(CMD.F10));
@@ -551,7 +555,7 @@ function App() {
       if (!zips.length) return
       LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
       lf2.load(...zips)
-      lf2.set_ui('loading')
+      lf2.set_ui({ id: 'loading' })
     }
   }
   const game_cell_view = game_cell ? createPortal(
@@ -597,7 +601,7 @@ function App() {
           checked={s.sound_muted}
           onClick={() => lf2?.sounds?.set_sound_muted(!s.sound_muted)}
           src={[img_btn_0_3, img_btn_1_0]} />
-        <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "ctrl_settings"}>
+        <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "settings"}>
           <ToggleImgButton
             checked={paused}
             onClick={() => lf2?.cmds.push(CMD.F1)}
@@ -608,8 +612,10 @@ function App() {
             onClick={() => {
               if (!lf2) return;
               lf2.cmds.push(CMD.F2)
-              if (lf2.ui_stacks[1]?.ui?.data.id == 'ctrl_settings') lf2.pop_ui_safe()
-              else lf2.set_ui("ctrl_settings", 1);
+              if (lf2.ui?.id == 'settings')
+                lf2.pop_ui_safe()
+              else
+                lf2.set_ui({ id: "settings" }, 1);
             }}
             src={[img_btn_1_1, img_btn_1_1]}
           />
@@ -733,7 +739,7 @@ function App() {
         <Select
           placeholder="页面"
           value={ui_id}
-          onChange={v => lf2?.set_ui(v!)}
+          onChange={v => lf2?.set_ui({ id: v })}
           options={uis}
           parse={(o) => [o.id!, o.name]}
         />

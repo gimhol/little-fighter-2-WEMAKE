@@ -11,7 +11,8 @@ export type ISchemaPropertyTypes =
   ArrayConstructor |
   BooleanConstructor |
   StringConstructor |
-  NumberConstructor;
+  NumberConstructor |
+  ObjectConstructor;
 export interface ISchema<T = any> {
   path?: string;
   key?: string;

@@ -1,7 +1,6 @@
 {
   name: "ui: fighter_stat_s",
   id: "fighter_stat_s",
-  // color: "gray",
   size: "180,30",
   component: [
     {
@@ -184,16 +183,14 @@
       items: [{ color: "rgb(0, 204, 255)", template: "bar_inner" }],
     },
     {
-      txt: {
-        i18n: "Template(com)",
-        style: {
-          fill_style: "white",
+      i18n: "Template(com)",
+      style: {
+        fill_style: "white",
+        font: "8px Arial",
+        back_style: {
           font: "8px Arial",
-          back_style: {
-            font: "8px Arial",
-            stroke_style: "#005A8E",
-            line_width: 1,
-          },
+          stroke_style: "#005A8E",
+          line_width: 1,
         },
       },
       component: [
@@ -206,7 +203,7 @@
           properties: {
             left: "left",
             bottom: "top",
-            followed: "id:dark_hp",
+            followed: "bro:1",
             offset: { l: 2, b: 1 },
             once: true,
           },

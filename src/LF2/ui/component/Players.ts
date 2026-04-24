@@ -2,7 +2,7 @@ import { PlayerInfo } from "../../PlayerInfo";
 import { UIComponent } from "./UIComponent";
 
 export class Players extends UIComponent {
-  static override readonly TAG = 'Players';
+  static override readonly TAGS: string[] = ["Players"];
   readonly players = new Set<PlayerInfo>();
   get max(): number { return this.props_holder.num('max') ?? 8; };
 

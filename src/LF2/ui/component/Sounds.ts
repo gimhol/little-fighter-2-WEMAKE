@@ -4,7 +4,7 @@ import { IPlayable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
 
 export class Sounds extends UIComponent implements IPlayable {
-  static override readonly TAG: string = 'Sounds';
+  static override readonly TAGS: string[] = ["Sounds"];
   readonly __is_playable__ = true;
   protected seq: [number, string, boolean][] = [];
   protected idx = 0;

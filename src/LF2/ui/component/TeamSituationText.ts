@@ -9,11 +9,10 @@ import { SummaryLogic } from "./SummaryLogic";
 import { UIComponent } from "./UIComponent";
 
 export class TeamSituationText extends UIComponent {
-  static override readonly TAG = "TeamSituationText"
+  static override readonly TAGS: string[] = ["TeamSituationText"]
 
   private _text_loader = new UITextLoader(() => this.node)
     .set_style(() => this._style)
-    .ignore_out_of_date();
 
   private _team: string | null = null;
   private _style: IStyle = {
@@ -54,7 +53,6 @@ export class TeamSituationText extends UIComponent {
   }
 
   override on_resume(): void {
-    super.on_resume()
     this.rr();
   }
 
@@ -67,6 +65,6 @@ export class TeamSituationText extends UIComponent {
     let text = `Man: ${this._sum.lives}　HP: ${max(0, floor(this._sum.hp))}`;
     if (this._sum.reserve) text += `　Reserve: ${this._sum.reserve}`;
     if (this._text == text) return;
-    this._text_loader.set_text([text])
+    this._text_loader.set_text(text)
   }
 }

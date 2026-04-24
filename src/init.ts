@@ -5,7 +5,10 @@ import { UINodeRenderer } from "./DittoImpl/renderer/UINodeRenderer";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import { actor, Ditto, UIActionEnum } from "./LF2";
 import { Debug, Log, Warn } from "./Log";
+import './Utils/events';
+import './Utils/fingerprint';
 import './i18n';
+import { XML } from "./DittoImpl/xml/XML";
 actor
   .add(UIActionEnum.Alert, (_, msg) => window.alert(msg))
   .add(UIActionEnum.LinkTo, (_, url) => window.open(url))
@@ -33,5 +36,6 @@ Ditto.setup({
   warn: Warn.print,
   Log: Log.print,
   debug: Debug.print,
+  XML: XML,
   DEV
 });

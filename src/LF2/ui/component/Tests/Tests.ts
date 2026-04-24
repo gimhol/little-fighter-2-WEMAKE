@@ -1,4 +1,4 @@
-import { BotAvoiding } from "@/LF2";
+import { BotAvoiding, FasterSlowerStandUp } from "@/LF2";
 import { FSM } from "../../../base/FSM";
 import { GK, IClazz } from "../../../defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
@@ -10,6 +10,7 @@ import { Firzen_DUA, Firzen_FUSION } from "./Firezen";
 import { Freeze_DFA, Freeze_DFJ, Freeze_DUJ, Freeze_DVJ } from "./Freeze";
 import { Jan_DUA, Jan_DUJ } from "./Jan";
 import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
+import { Bat_DUJ_0, Bat_DUJ_1, Bat_DUJ_2 } from "./Bat";
 import { LOUIS_JUMP_ATTACK } from "./Louis";
 import { BottomsUp, Come, MoveStayCome } from "./Others";
 import { Rudolf_DFJ } from "./Rudolf";
@@ -23,7 +24,7 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     Firzen_DUA,
     Firzen_FUSION
-  ], [
+  ], [Bat_DUJ_0, Bat_DUJ_1, Bat_DUJ_2], [
     Jan_DUA,
     Jan_DUJ
   ], [
@@ -45,13 +46,14 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     BottomsUp,
     MoveStayCome,
-    Come
+    Come,
+    FasterSlowerStandUp,
   ], [
     BotAvoiding
   ]
 ]
 export class Tests extends UIComponent {
-  static override readonly TAG = 'Tests';
+  static override readonly TAGS: string[] = ["Tests"];
   readonly fsm = new FSM<number, TestCase>();
   groups: TestCase[][] = []
   override init(): void { }

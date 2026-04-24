@@ -2,7 +2,7 @@ import { max, min } from "../../utils";
 import { UIComponent } from "./UIComponent";
 
 export class FitChildren extends UIComponent {
-  static override readonly TAG: string = 'FitChildren';
+  static override readonly TAGS: string[] = ["FitChildren"];
   override on_resume(): void {
     this.apply()
   }

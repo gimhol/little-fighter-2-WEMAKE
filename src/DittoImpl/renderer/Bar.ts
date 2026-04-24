@@ -1,7 +1,7 @@
 import type { LF2 } from "@/LF2/LF2";
 import * as T from "../_t";
 import { get_geometry } from "./GeometryKeeper";
-import { MaterialFactory, MaterialKind } from "./MaterialFactory";
+import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 
 export class Bar {
   readonly mesh: T.Mesh;

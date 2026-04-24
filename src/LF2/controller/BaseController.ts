@@ -1,7 +1,8 @@
 import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TNextFrame } from "../defines";
-import { GK, StateEnum } from "../defines";
+import { AGK, CONFLICTS_KEY_MAP, GK, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
+import type { PlayerInfo } from "../PlayerInfo";
 import { is_f_num, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
@@ -9,24 +10,6 @@ import DoubleClick from "./DoubleClick";
 import { KeyStatus } from "./KeyStatus";
 import { SeqKeys } from "./SeqKeys";
 export type TKeys = Record<GK, string>;
-export const KEY_NAME_LIST = [
-  GK.d,
-  GK.L,
-  GK.R,
-  GK.U,
-  GK.D,
-  GK.j,
-  GK.a,
-] as const;
-export const CONFLICTS_KEY_MAP: Record<GK, GK | undefined> = {
-  a: void 0,
-  j: void 0,
-  d: void 0,
-  [GK.L]: GK.R,
-  [GK.R]: GK.L,
-  [GK.U]: GK.D,
-  [GK.D]: GK.U,
-};
 enum Status {
   UP = 0,
   DOWN = 1,
@@ -39,6 +22,7 @@ export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
   readonly player_id: string;
+  player: PlayerInfo | undefined;
   private _chase_pos: IVector3 | null = null;
   private _time = new Times(10, Number.MAX_SAFE_INTEGER);
   private _disposers = new Set<() => void>();
@@ -227,15 +211,17 @@ export class BaseController {
 
   constructor(player_id: string, entity: Entity) {
     this.player_id = player_id;
+    const { lf2, world } = entity
+    this.player = lf2.players.get(player_id);
     this.entity = entity;
     this.dbc = {
-      d: new DoubleClick("d", entity.world.double_click_interval),
-      a: new DoubleClick("a", entity.world.double_click_interval),
-      j: new DoubleClick("j", entity.world.double_click_interval),
-      L: new DoubleClick("L", entity.world.double_click_interval),
-      R: new DoubleClick("R", entity.world.double_click_interval),
-      U: new DoubleClick("U", entity.world.double_click_interval),
-      D: new DoubleClick("D", entity.world.double_click_interval),
+      d: new DoubleClick("d", world.double_click_interval),
+      a: new DoubleClick("a", world.double_click_interval),
+      j: new DoubleClick("j", world.double_click_interval),
+      L: new DoubleClick("L", world.double_click_interval),
+      R: new DoubleClick("R", world.double_click_interval),
+      U: new DoubleClick("U", world.double_click_interval),
+      D: new DoubleClick("D", world.double_click_interval),
     };
   }
   dispose(): void {
@@ -346,7 +332,7 @@ export class BaseController {
       if (hld.B && this.tst("hld", B)) ret.set(hld.B, this.keys[B].time, B);
     }
 
-    for (const name of KEY_NAME_LIST) {
+    for (const name of AGK) {
       const key = this.keys[name];
 
       if (kd_map) {

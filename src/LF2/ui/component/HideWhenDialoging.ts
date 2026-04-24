@@ -3,7 +3,7 @@ import { StageDialogListener } from "./StageDialogListener";
 import { UIComponent } from "./UIComponent";
 
 export class HideWhenDialoging extends UIComponent {
-  static override readonly TAG: string = 'HideWhenDialoging';
+  static override readonly TAGS: string[] = ["HideWhenDialoging"];
   protected dialog_listener = new StageDialogListener(this, (d) => this.set_dialog(d));
   override on_start(): void {
     super.on_start?.();

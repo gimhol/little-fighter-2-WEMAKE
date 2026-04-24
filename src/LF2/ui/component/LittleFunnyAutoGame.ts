@@ -6,7 +6,7 @@ import { Ticker } from "@/LF2/Ticker";
 import { UIComponent } from "./UIComponent";
 
 export class LittleFunnyAutoGame extends UIComponent {
-  static override TAG: string = 'LittleFunnyAutoGame'
+  static override TAGS: string[] = ["LittleFunnyAutoGame"];
   private _datas: IEntityData[] = [];
   private _lr: number = 0;
   private _fighter_cbs: IEntityCallbacks = {
@@ -23,7 +23,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     this._lr = 0;
     this.world.transform.scale_to(0.5, 0.5, 0.5)
     this.world.paused = false;
-    this.lf2.change_bg(Defines.VOID_BG)
+    this.lf2.change_bg('')
     this._ticker = this.world.ticker().set_range(0, 180).set_lifes(1)
     this._ticker.callbacks.add({
       end: (t) => {
@@ -54,6 +54,8 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.callbacks.add(this._fighter_cbs)
     fighter.hp = fighter.hp_r = fighter.hp_max = 150;
     fighter.stat_bar_type = StatBarType.None;
+    fighter.wakeup_invuln = true;
+    fighter.blinking = 200
     fighter.dead_gone = true;
     fighter.attach()
     fighter.enter_frame({ id: "running_0" })

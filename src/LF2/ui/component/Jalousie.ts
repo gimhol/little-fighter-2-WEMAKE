@@ -2,14 +2,14 @@ import { Easing, Sequence } from "../../animation";
 import { Animation } from "../../animation/Animation";
 import { Sine } from "../../animation/Sine";
 import { Ditto } from "../../ditto";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import { LF2PointerEvent } from "../LF2PointerEvent";
 import { Flex } from "./Flex";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 export interface IJalousieCallbacks extends IUICompnentCallbacks {
   on_anim_end?(v: Jalousie): void;
 }
 export class Jalousie extends Flex<IJalousieCallbacks> {
-  static override readonly TAG = 'Jalousie'
+  static override readonly TAGS: string[] = ["Jalousie"];
   protected _anim: Animation = new Sequence(
     new Easing(0, 0).set_duration(250),
     new Sine(-1, 2, 0.5).set_duration(250),
@@ -30,7 +30,7 @@ export class Jalousie extends Flex<IJalousieCallbacks> {
   get w(): number { return this.node.root.w }
   get h(): number { return this.node.root.h }
 
-  override on_click(e: IUIPointerEvent): void {
+  override on_click(e: LF2PointerEvent): void {
     super.on_click?.(e)
     if (this.click_test) {
       this.open = !this.open;

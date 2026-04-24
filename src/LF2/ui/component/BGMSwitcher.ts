@@ -1,20 +1,16 @@
 import { loop_offset } from "../../utils/container_help/loop_offset";
-import { IUIPointerEvent } from "../IUIPointerEvent";
-import { UITextLoader } from "../UITextLoader";
-import { UIComponent } from "./UIComponent";
+import { LF2PointerEvent } from "../LF2PointerEvent";
+import { Label } from "./Label";
 
-export class BGMSwitcher extends UIComponent {
-  static override readonly TAG: string = "BGMSwitcher";
-  private _text_loader = new UITextLoader(() => this.node).ignore_out_of_date();
+export class BGMSwitcher extends Label {
+  static override readonly TAGS: string[] = ["BGMSwitcher"];
   private _which: 'Silent' | 'Random' | '' = '';
-  private _sounds_cbs = {
-    on_bgm_changed: () => this._text_loader.set_text(['BGM: ' + this.text])
-  }
+  get which(): string { return this._which || this.lf2.sounds.bgm() || "Silent"; }
   get offset(): number { return this.num(0) ?? 0; }
-  get which(): boolean { return this.which }
-  get text(): string { return this._which || this.lf2.sounds.bgm() || "Silent"; }
+  private _sounds_cbs = {
+    on_bgm_changed: () => this.set_text('BGM: ' + this.which)
+  }
   override on_resume(): void {
-    super.on_resume();
     if (this.lf2.sounds.is_random)
       this._which = 'Random'
     if (this.offset == 0) {
@@ -23,24 +19,20 @@ export class BGMSwitcher extends UIComponent {
     }
   }
   override on_pause(): void {
-    super.on_pause();
     this.lf2.sounds.callbacks.del(this._sounds_cbs)
   }
-  override on_click(e: IUIPointerEvent): void {
+  override on_click(e: LF2PointerEvent): void {
     super.on_click?.(e)
     e.stop_immediate_propagation()
     e.stop_propagation();
     const { offset } = this;
     const list = ['Silent', 'Random', ...this.lf2.bgms]
-
-    let o = 0;
     let next: string | undefined = void 0;
-    if (offset) next = loop_offset(list, this.text, offset)
-    else if (e.button === 0) next = loop_offset(list, this.text, 1)
-    else if (e.button === 1) next = this.text === 'Silent' ? 'Random' : 'Silent'
-    else if (e.button === 2) next = loop_offset(list, this.text, -1)
+    if (offset) next = loop_offset(list, this.which, offset)
+    else if (e.button === 0) next = loop_offset(list, this.which, 1)
+    else if (e.button === 1) next = this.which === 'Silent' ? 'Random' : 'Silent'
+    else if (e.button === 2) next = loop_offset(list, this.which, -1)
     else return;
-
 
     switch (next) {
       case 'Random':

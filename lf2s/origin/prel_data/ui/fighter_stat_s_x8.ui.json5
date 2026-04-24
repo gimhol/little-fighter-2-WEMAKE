@@ -25,7 +25,7 @@
         {
           name: "Alignment",
           properties: {
-            followed: "bro:-1",
+            followed: "bro:0",
             top: "top",
             left: "right",
             offset: { l: 13 },
@@ -41,7 +41,7 @@
         {
           name: "Alignment",
           properties: {
-            followed: "bro:-1",
+            followed: "bro:1",
             top: "top",
             left: "right",
             offset: { l: 13 },
@@ -57,7 +57,7 @@
         {
           name: "Alignment",
           properties: {
-            followed: "bro:-1",
+            followed: "bro:2",
             top: "top",
             left: "right",
             offset: { l: 13 },
@@ -75,7 +75,7 @@
           properties: {
             top: "bottom",
             left: "left",
-            followed: "id:p1_stat",
+            followed: "bro:0",
             offset: { t: 10 },
             once: true,
           },
@@ -91,7 +91,7 @@
           properties: {
             top: "bottom",
             left: "left",
-            followed: "id:p2_stat",
+            followed: "bro:1",
             offset: { t: 10 },
             once: true,
           },
@@ -107,7 +107,7 @@
           properties: {
             top: "bottom",
             left: "left",
-            followed: "id:p3_stat",
+            followed: "bro:2",
             offset: { t: 10 },
             once: true,
           },
@@ -123,7 +123,7 @@
           properties: {
             top: "bottom",
             left: "left",
-            followed: "id:p4_stat",
+            followed: "bro:3",
             offset: { t: 10 },
             once: true,
           },

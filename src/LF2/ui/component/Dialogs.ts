@@ -1,12 +1,11 @@
 import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
-import { ISchema } from "@/LF2/defines/ISchema";
 import { Ditto } from "@/LF2/ditto/Instance";
 import { Transform } from "@/LF2/Transform";
-import { make_schema } from "@/LF2/utils/schema/make_schema";
+import { IPropsMeta } from "@/LF2/utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
-import { StageDialogListener } from "./StageDialogListener";
 import { Label } from "./Label";
+import { StageDialogListener } from "./StageDialogListener";
 import { UIComponent } from "./UIComponent";
 
 export interface IDialogsProps {
@@ -15,16 +14,12 @@ export interface IDialogsProps {
   talker?: Label | null;
 }
 export class Dialogs extends UIComponent<IDialogsProps> {
-  static override readonly TAG: string = 'Dialogs';
-  static override readonly PROPS: ISchema<IDialogsProps> = make_schema({
-    key: "IDialogsProps",
-    type: "object",
-    properties: {
-      head_node: UINode,
-      text: Label,
-      talker: Label
-    }
-  })
+  static override readonly TAGS: string[] = ["Dialogs"];
+  static override readonly PROPS: IPropsMeta<IDialogsProps> = {
+    head_node: UINode,
+    text: Label,
+    talker: Label
+  }
   protected _listner = new StageDialogListener(this, (d) => this.set_dialog(d));
   protected _head_loader = new UIImgLoader(() => this.props.head_node)
   protected _transform = new Transform()
@@ -42,7 +37,7 @@ export class Dialogs extends UIComponent<IDialogsProps> {
     this.node.visible = false;
     this.props.text?.set_text('');
     this.props.talker?.set_text('');
-    this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
+    this._head_loader.set_img('').catch(e => Ditto.warn('' + e))
   }
   show_dialog(dialog: IDialogInfo) {
     this._transform.scale_to(1, 1, 1, true)
@@ -58,9 +53,9 @@ export class Dialogs extends UIComponent<IDialogsProps> {
       this.props.talker?.set_text('')
     }
     if (fighter?.base.head) {
-      this._head_loader.set_img([fighter.base.head]).catch(e => Ditto.warn('' + e))
+      this._head_loader.set_img(fighter.base.head).catch(e => Ditto.warn('' + e))
     } else {
-      this._head_loader.set_img([], -1).catch(e => Ditto.warn('' + e))
+      this._head_loader.set_img('').catch(e => Ditto.warn('' + e))
     }
   }
   override update(dt: number): void {

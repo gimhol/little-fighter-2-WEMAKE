@@ -1,5 +1,5 @@
-import { IVector3 } from "../defines";
-import { IUIPointerEvent } from "./IUIPointerEvent";
+import type { IVector3 } from "../defines/IVector3";
+import type { IUIPointerEvent } from "./IUIPointerEvent";
 import { LF2UIEvent } from "./LF2UIEvent";
 
 

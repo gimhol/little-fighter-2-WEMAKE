@@ -1,36 +1,27 @@
-import { EntityGroup } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { Entity } from "../entity/Entity";
 import { is_weapon } from "../entity/type_check";
-import { LF2 } from "../LF2";
+import { EntitiesHelper } from "./EntitiesHelper";
 import { Randoming } from "./Randoming";
 
-export class WeaponsHelper {
-  readonly lf2: LF2;
+export class WeaponsHelper extends EntitiesHelper {
   readonly random_map = new Map<string, Randoming<IEntityData>>()
   readonly random_d_map = new Map<string, Randoming<IEntityData>>()
-  constructor(lf2: LF2) {
-    this.lf2 = lf2;
-  }
-  list(): Entity[] {
+  override get all(): Entity[] {
     const ret: Entity[] = [];
     this.lf2.world.entities.forEach((v) => is_weapon(v) && ret.push(v));
     return ret;
   }
-  at(idx: number): Entity | undefined {
-    return this.list()[idx];
-  }
-
-  add(
+  override add(
     data?: IEntityData | string,
     num: number = 1,
     team?: string,
   ): Entity[] {
-    if (typeof data === "string") data = this.lf2.datas.find_weapon(data);
+    if (typeof data === "string") 
+      data = this.lf2.datas.find_weapon(data);
     if (!data) return [];
     return this.lf2.entities.add(data, num, team);
   }
-  
   randoms(group: string, duplicate: boolean) {
     const map = duplicate ? this.random_d_map : this.random_map
     let ret = map.get(group);
@@ -45,7 +36,6 @@ export class WeaponsHelper {
   }
   add_random(num = 1, duplicate = false, group: string = ''): Entity[] {
     const randoms = this.randoms(group, duplicate)
-
     const ret: Entity[] = [];
     if (!randoms) return ret;
 

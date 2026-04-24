@@ -4,10 +4,9 @@ import { UITextLoader } from "../UITextLoader";
 import { PlayerScore } from "./PlayerScore";
 import { UIComponent } from "./UIComponent";
 export class PlayerScoreCell extends UIComponent {
-  static override readonly TAG = 'PlayerScoreCell'
+  static override readonly TAGS: string[] = ["PlayerScoreCell"];
   private _text_loader = new UITextLoader(() => this.node)
     .set_style(() => this.get_style())
-    .ignore_out_of_date();
   get kind() {
     return this.args[0];
   }
@@ -17,7 +16,7 @@ export class PlayerScoreCell extends UIComponent {
 
   override on_show(): void {
     super.on_show?.();
-    this._text_loader.set_text([ this.get_txt() ])
+    this._text_loader.set_text( this.get_txt() )
   }
 
   protected get_style(): IStyle {

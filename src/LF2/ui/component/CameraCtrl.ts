@@ -1,6 +1,6 @@
-import { CMD } from "../../defines/CMD";
 import { KeyStatus } from "../../controller/KeyStatus";
 import { GameKey } from "../../defines";
+import { CMD } from "../../defines/CMD";
 import { Entity } from "../../entity";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UIComponent } from "./UIComponent";
@@ -12,12 +12,10 @@ import { UIComponent } from "./UIComponent";
  * @extends {UIComponent}
  */
 export class CameraCtrl extends UIComponent {
-  static override readonly TAG = 'CameraCtrl';
+  static override readonly TAGS: string[] = ["CameraCtrl"];
   time: number = 0;
   free: boolean = true;
-  _staring?: Entity;
-  get staring(): Entity | undefined { return this._staring; }
-  set staring(v: Entity | undefined) { this._staring = v; };
+  staring?: Entity;
   readonly keys: Record<GameKey, KeyStatus> = {
     [GameKey.L]: new KeyStatus(this),
     [GameKey.R]: new KeyStatus(this),
@@ -53,21 +51,32 @@ export class CameraCtrl extends UIComponent {
       this.free = true
     } else if (this.keys.U.is_start()) {
       this.keys.U.use()
-      const fighters = this.lf2.characters.list()
-      const idx = fighters.indexOf(this.staring!)
-      const len = fighters.length
-      this.staring = fighters[(idx + len - 1) % len]
+      const fighters = this.lf2.fighters.all;
+      if (!this.staring) {
+        this.staring = fighters.at(fighters.length - 1)
+      } else {
+        const idx = fighters.indexOf(this.staring!)
+        const len = fighters.length
+        this.staring = fighters.at((idx + len - 1) % len)
+      }
       this.free = !!this.staring;
     } else if (this.keys.D.is_start()) {
       this.keys.D.use()
-      const fighters = this.lf2.characters.list()
-      const idx = fighters.indexOf(this.staring!)
-      const len = fighters.length
-      this.staring = fighters[(idx + 1) % len]
+      const fighters = this.lf2.fighters.all
+      if (!this.staring) {
+        this.staring = fighters.at(0)
+      } else {
+        const idx = fighters.indexOf(this.staring)
+        const len = fighters.length
+        this.staring = fighters.at((idx + 1) % len)
+      }
       this.free = !!this.staring;
     }
-    if (this.staring?.is_attach === false)
-      this._staring = void 0;
+    if (this.staring) {
+      if (this.staring.hp <= 0 || !this.staring.is_attach) {
+        this.staring = void 0;
+      }
+    }
     if (this.free && this.staring) {
       const cam_x = this.staring.position.x - this.world.screen_w / 2
       this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)

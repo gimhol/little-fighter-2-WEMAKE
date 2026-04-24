@@ -103,6 +103,8 @@ export class WorldDataset implements IWorldDataset {
   whirlwind_acc_y: number = 1;
   whirlwind_acc_x: number = 0.5;
   whirlwind_acc_z: number = 0.5;
+  teamoutline_enabled: number = 1;
+  indicator_flags: number = 0;
 
   constructor() {
     make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))

@@ -41,4 +41,5 @@ export interface IStyle {
   underline_color?: string;
   underline_width?: number;
   disposable?: boolean;
+  scale?: number;
 }

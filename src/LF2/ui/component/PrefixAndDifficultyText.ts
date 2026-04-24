@@ -5,13 +5,13 @@ import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 export class PrefixAndDifficultyText extends UIComponent implements IWorldCallbacks {
-  static override readonly TAG = "PrefixAndDifficultyText"
+  static override readonly TAGS: string[] = ["PrefixAndDifficultyText"]
   private _text_loader = new UITextLoader(() => this.node).set_style({
     fill_style: "white",
     font: "12px Arial",
     line_width: 1,
     disposable: true
-  }).ignore_out_of_date();
+  })
   private _prefix: string = '';
 
   override on_start(): void {
@@ -22,15 +22,13 @@ export class PrefixAndDifficultyText extends UIComponent implements IWorldCallba
     return `${this._prefix} (${DifficultyNames[this.world.difficulty]})`
   }
   override on_resume(): void {
-    super.on_resume();
     this.world.callbacks.add(this)
     this.on_dataset_change('difficulty');
   }
   override on_pause(): void {
-    super.on_pause();
     this.world.callbacks.del(this)
   }
   on_dataset_change<K extends keyof IWorldDataset>(key: K): void {
-    if (key === 'difficulty') this._text_loader.set_text([this.text])
+    if (key === 'difficulty') this._text_loader.set_text(this.text)
   }
 }

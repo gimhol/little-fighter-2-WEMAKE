@@ -101,15 +101,11 @@
                   id: "background_name_text",
                   pos: "0,0",
                   center: "0.5,0.5",
-                  txt: [
-                    {
-                      i18n: "",
-                      style: {
-                        fill_style: "#9b9bff",
-                        font: "15px Arial",
-                      },
-                    },
-                  ],
+                  i18n: "",
+                  style: {
+                    fill_style: "#9b9bff",
+                    font: "15px Arial",
+                  },
                   component: [{ id: "BackgroundSwitcher", name: "BackgroundSwitcher" }],
                 },
               ],
@@ -151,15 +147,11 @@
                   id: "stage_name_text",
                   pos: "0,0",
                   center: "0.5,0.5",
-                  txt: [
-                    {
-                      i18n: "",
-                      style: {
-                        fill_style: "#9b9bff",
-                        font: "15px Arial",
-                      },
-                    },
-                  ],
+                  i18n: "",
+                  style: {
+                    fill_style: "#9b9bff",
+                    font: "15px Arial",
+                  },
                   component: [{ name: "StageSwitcher", id: "StageSwitcher" }],
                 },
               ],
@@ -201,6 +193,11 @@
                   pos: "0,0",
                   center: "0.5,0.5",
                   id: "difficulty_text",
+                  i18n: "",
+                  style: {
+                    fill_style: "#9b9bff",
+                    font: "15px Arial",
+                  },
                   component: ["difficulty_text()"],
                 },
               ],

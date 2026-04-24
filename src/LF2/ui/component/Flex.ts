@@ -1,13 +1,13 @@
 import { max } from "../../utils";
+import { FlexAlign } from "./FlexAlign";
 import { FlexItem } from "./FlexItem";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
 
 export type TFlexDirection = 'row' | 'column'
-export type TFlexAlign = 'start' | 'center' | 'end' | 'stretch'
-
+export type TFlexAlign = 'start' | 'center' | 'end' | 'stretch' | FlexAlign;
 export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks> extends UIComponent<{}, Callbacks> {
-  static override readonly TAG: string = 'Flex';
+  static override readonly TAGS: string[] = ["Flex"];
   get direction(): TFlexDirection {
     return this.props_holder.str('direction', ['row', 'column']) ?? 'row'
   }
@@ -19,8 +19,13 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
   get fit_w(): boolean { return this.props_holder.bool('fit_w') ?? this.fit }
   get fit_h(): boolean { return this.props_holder.bool('fit_h') ?? this.fit }
   get padding(): [number, number, number, number] { return this.props_holder.nums('padding', 4) }
-
+  override on_resume(): void {
+    this.apply()
+  }
   override update(dt: number): void {
+    this.apply()
+  }
+  apply() {
     const {
       direction, col_gap, row_gap, align,
       fit_h, fit_w,
@@ -38,7 +43,7 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
       for (let i = 0; i < len; ++i) {
         const child = children[i]
         if (!child.self_visible) continue;
-        const { x: child_w, y: child_h } = child.size.value
+        const { x: child_w, y: child_h } = child.size
         if (fit_w && direction === 'row')
           w += child_w + (i < len - 1 ? row_gap : 0);
         else if (fit_w && direction === 'column')
@@ -57,8 +62,7 @@ export class Flex<Callbacks extends IUICompnentCallbacks = IUICompnentCallbacks>
         this.node.resize(this.node.w, h);
       }
     }
-
-    const { x: my_w, y: my_h } = this.node.size.value;
+    const { x: my_w, y: my_h } = this.node.size;
     for (const child of this.node.children) {
       if (!child.self_visible) continue;
       const { x, y, z, w: child_w, h: child_h } = child

@@ -3,6 +3,7 @@ import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   ALL_ENTITY_ENUM,
+  BackgroundGroup,
   Builtin_FrameId,
   CheatType,
   Defines,
@@ -35,7 +36,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, is_num, max, min, round, Times } from "./utils";
+import { abs, clamp, floor, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -153,19 +154,20 @@ export class World extends WorldDataset {
     this.renderer = new Ditto.WorldRender(this);
   }
   add_entities(...entities: Entity[]) {
-    for (const entity of entities) {
-      if (is_fighter(entity)) {
-        this.callbacks.emit("on_fighter_add")(entity);
-        const player = this.lf2.players.get(entity.ctrl.player_id)
+    for (const e of entities) {
+      // this.freshs.add(entity)
+      if (is_fighter(e)) {
+        this.callbacks.emit("on_fighter_add")(e);
+        const player = this.lf2.players.get(e.ctrl.player_id)
         if (player) {
-          player.fighter = entity;
-          this.puppets.set(entity.ctrl.player_id, entity);
-          this.callbacks.emit("on_puppet_add")(entity.ctrl.player_id);
+          player.fighter = e;
+          this.puppets.set(e.ctrl.player_id, e);
+          this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
         }
       }
-      this.entities.add(entity);
-      this.entity_map.set(entity.id, entity)
-      this.renderer.add_entity(entity);
+      this.entities.add(e);
+      this.entity_map.set(e.id, e)
+      this.renderer.add_entity(e);
     }
   }
 
@@ -195,6 +197,7 @@ export class World extends WorldDataset {
 
   del_entity(entity: Entity): this {
     this.gones.add(entity)
+    this.freshs.delete(entity)
     return this
   }
 
@@ -243,26 +246,31 @@ export class World extends WorldDataset {
     this._fix_radio = 1;
     this._update_count = 0;
     const on_update = () => {
-      const time = Date.now();
-      const real_dt = time - this._prev_time;
-      if (real_dt < this._ideally_dt * this._fix_radio) return;
-      if (this._sleeping) return;
-      this.before_update?.();
-      this._update_count++;
-      this.update_once();
-      this.lf2.events.length = 0;
-      this.lf2.cmds.length = 0;
-      this.lf2.broadcasts.length = 0;
-      if (0 === this._update_count % this.sync_render) {
-        this.render_once(real_dt);
-        if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
+      try {
+        const time = Date.now();
+        const real_dt = time - this._prev_time;
+        if (real_dt < this._ideally_dt * this._fix_radio) return;
+        if (this._sleeping) return;
+        this.before_update?.();
+        this._update_count++;
+        this.update_once();
+        this.lf2.events.length = 0;
+        this.lf2.cmds.length = 0;
+        this.lf2.broadcasts.length = 0;
+        if (0 === floor(this._update_count / this.playrate) % this.sync_render) {
+          this.render_once(real_dt);
+          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
+        }
+        if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
+        this.after_update?.();
+        this._UPS.update(real_dt);
+        this._fix_radio = 1 - clamp(6 * (this._ups - this._UPS.value) / this._ups, 0, 1);
+        this._prev_time = time;
+      } catch (e: any) {
+        Ditto.warn(e)
+        if (e.errors) Ditto.warn(e.errors)
+        this.stop_update();
       }
-      if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
-      this.after_update?.();
-      this._UPS.update(real_dt);
-      this._fix_radio = this._UPS.value / 70;
-      this._prev_time = time;
-
     };
     this._update_worker_id = Ditto.Interval.add(on_update, 0);
   }
@@ -358,6 +366,7 @@ export class World extends WorldDataset {
   }
 
   private gones = new Set<Entity>();
+  private freshs = new Set<Entity>();
   private _chasers = new Set<Entity>();
   add_chaser(entity: Entity) {
     this._chasers.add(entity);
@@ -399,6 +408,25 @@ export class World extends WorldDataset {
     }
   }
 
+  change_bg(bg_id: string | undefined): void {
+    if (this.stage.bg.id == bg_id)
+      return;
+    const bg_data = (
+      bg_id == Defines.RANDOM_BG.id ?
+        this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
+        bg_id ?
+          this.lf2.datas.find_background(bg_id) :
+          Defines.VOID_BG
+    ) || Defines.VOID_BG;
+    const stage = new Stage(this, Defines.VOID_STAGE);
+    stage.change_bg(bg_data);
+    this.stage = stage
+  }
+  change_stage(stage_id: string | undefined) {
+    const stage_data = this.lf2.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
+    if (stage_data == this.stage.data) return;
+    this.stage = new Stage(this, stage_data);
+  }
   protected handle_cmds() {
     const { cmds } = this.lf2;
     if (!cmds.length) return;
@@ -484,10 +512,16 @@ export class World extends WorldDataset {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-
           this._lock_cam_x = x
-          continue
+          continue;
         }
+        case CMD.CHANGE_BG:
+          this.change_bg(cmds.at(i += 1))
+          continue;
+
+        case CMD.CHANGE_STAGE:
+          this.change_stage(cmds.at(i += 1))
+          continue;
       }
     }
   }
@@ -529,6 +563,21 @@ export class World extends WorldDataset {
     }
 
     this.has_players_alive = false
+    for (const e of this.freshs) {
+      if (is_fighter(e)) {
+        this.callbacks.emit("on_fighter_add")(e);
+        const player = this.lf2.players.get(e.ctrl.player_id)
+        if (player) {
+          player.fighter = e;
+          this.puppets.set(e.ctrl.player_id, e);
+          this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
+        }
+      }
+      this.entities.add(e);
+      this.entity_map.set(e.id, e)
+      this.renderer.add_entity(e);
+    }
+    this.freshs.clear()
     for (const e of this.entities) {
       const { is_ghost } = e;
       if (!is_ghost && update_chasing && this._chasers.size)
@@ -831,6 +880,7 @@ export class World extends WorldDataset {
       Ditto.warn(`[${World.TAG}::spark] failed`);
       return;
     }
+    e.outline_alpha = 0;
     e.position.set(round(x), round(y), round(z));
     e.enter_frame({ id: f });
     e.attach(false);
@@ -872,10 +922,12 @@ export class World extends WorldDataset {
       near: round(far + l),
     };
   }
-
-  private _ideally_dt: number = round(1000 / 60);
+  private _ups: number = 60
+  private _ideally_dt: number = round(1000 / this._ups);
   private _playrate: number = 1;
-
+  get ideally_dt() {
+    return this._ideally_dt;
+  }
   get playrate() {
     return this._playrate;
   }
@@ -883,14 +935,13 @@ export class World extends WorldDataset {
     if (v <= 0) throw new Error("playrate must be larger than 0");
     if (v === this._playrate) return;
     this._playrate = v;
-    this._ideally_dt = round(1000 / 60) / this._playrate;
+    this._ideally_dt = round(1000 / this._ups) / this._playrate;
     this.start_update();
   }
 
   private _paused: 0 | 1 | 2 = 0;
   get paused() { return this._paused == 1; }
   set paused(v: boolean) { this.set_paused(v ? 1 : 0); }
-  indicator_flags: number = 0;
 
   protected set_paused(v: 0 | 1 | 2) {
     if (this._paused === v) return;

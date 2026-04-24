@@ -2,7 +2,7 @@ import { floor } from "../../utils";
 import { Label } from "./Label";
 
 export class PlayingTimeText extends Label {
-  static override readonly TAG = 'PlayingTimeText'
+  static override readonly TAGS: string[] = ["PlayingTimeText"];
   
   override on_show(): void {
     this.text = this.get_txt();

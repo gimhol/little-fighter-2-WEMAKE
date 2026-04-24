@@ -22,6 +22,7 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
   }
   BotBuilder.make(data).set_dataset({
     w_atk_m_x: 50,
+    w_atk_r_x: 150,
     w_atk_x: 300,
     r_desire_max: 1000,
     r_desire_min: 0

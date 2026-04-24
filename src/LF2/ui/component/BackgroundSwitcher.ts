@@ -1,15 +1,9 @@
-import { IBgData } from "../../defines";
-import { Defines } from "../../defines/defines";
-import { UITextLoader } from "../UITextLoader";
-import { UIComponent } from "./UIComponent";
+import { IBgData, Defines } from "../../defines";
+import { Label } from "./Label";
 
-
-export class BackgroundSwitcher extends UIComponent {
-  static override readonly TAG = 'BackgroundSwitcher'
+export class BackgroundSwitcher extends Label {
+  static override readonly TAGS: string[] = ["BackgroundSwitcher"];
   private _background: IBgData = Defines.RANDOM_BG;
-  private _text_loader = new UITextLoader(() => this.node)
-    .ignore_out_of_date();
-
   get backgrounds(): IBgData[] {
     const ret = this.lf2.datas.backgrounds?.filter((v) => v.id !== Defines.VOID_BG.id) || []
     ret.unshift(Defines.RANDOM_BG)
@@ -18,23 +12,15 @@ export class BackgroundSwitcher extends UIComponent {
   get background(): IBgData {
     return this._background;
   }
-  get text(): string {
-    return this._background.base.name;
-  }
   override on_resume(): void {
-    super.on_resume();
-    this.update_text();
+    this.set_text(this._background.base.name)
     this.lf2.callbacks.add(this)
   }
   override on_pause(): void {
-    super.on_pause();
     this.lf2.callbacks.del(this);
   }
   override on_show(): void {
     if (this._background === Defines.VOID_BG) this.on_broadcast();
-  }
-  update_text() {
-    this._text_loader.set_text([this.text])
   }
   on_broadcast(v: string = Defines.BuiltIn_Broadcast.SwitchBackground) {
     if (v !== Defines.BuiltIn_Broadcast.SwitchBackground) return;
@@ -49,6 +35,6 @@ export class BackgroundSwitcher extends UIComponent {
       this._background = backgrounds[next_idx]!;
       this.world.stage.change_bg(this._background)
     }
-    this.update_text()
+    this.set_text(this._background.base.name)
   }
 }

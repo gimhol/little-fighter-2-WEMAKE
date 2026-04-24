@@ -5,7 +5,7 @@ import { Reachable } from "./Reachable";
 import { UIComponent } from "./UIComponent";
 
 export class ReachableGroup extends UIComponent {
-  static override readonly TAG = 'ReachableGroup'
+  static override readonly TAGS: string[] = ["ReachableGroup"];
   protected reachables: Reachable[] = [];
 
   get name(): string { return this.args[0] || ""; }

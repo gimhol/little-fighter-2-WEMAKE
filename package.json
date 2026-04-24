@@ -1,9 +1,12 @@
 {
   "name": "little-fighter-2-wemake",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "type": "module",
   "private": true,
   "homepage": ".",
+  "author": {
+    "name": "Gim"
+  },
   "scripts": {
     "dev": "vite",
     "start": "vite --profile",
@@ -17,7 +20,7 @@
     "build:prel": "node ./tool make-prel -c ./lf2s/origin/conf.json5 -d",
     "build:tool:data": "npm run build:tool && npm run build:data",
     "build:tool:prel": "npm run build:tool && npm run build:prel",
-    "zip": " node ./tool zip-full -c ./lf2s/origin/conf.json5 -d",
+    "zip": "node ./tool zip-full -c ./lf2s/origin/conf.json5 -d",
     "txt": "node ./tool dat-2-txt -c ./lf2s/origin/conf.json5 -d",
     "build:data:rn": "node ./tool make-data-zip -c ./lf2s/rn/conf.json5 -d",
     "build:prel:rn": "node ./tool make-prel -c ./lf2s/rn/conf.json5 -d",
@@ -26,8 +29,8 @@
     "pick:rn": "npm run build:tool && node ./tool make-data -c ./lf2s/rn/conf.json5 -d && node ./tool pick -c ./lf2s/rn/pick-conf.json5 -d",
     "txt:rn": "node ./tool dat-2-txt -c ./lf2s/rn/conf.json5 -d",
     "___deploy___": "___deploy___",
-    "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.24 --LOCAL_PATH ./dist",
-    "deploy:rn": "fdeploy -s oss --REMOTE_DIR rn/0.1.24 --LOCAL_PATH ./dist",
+    "deploy": "fdeploy -s oss --REMOTE_DIR 0.1.25 --LOCAL_PATH ./dist",
+    "deploy:rn": "fdeploy -s oss --REMOTE_DIR rn/0.1.25 --LOCAL_PATH ./dist",
     "deploy:docs": "fdeploy -s oss --REMOTE_DIR docs --LOCAL_PATH docs",
     "___flow___": "___flow___",
     "flow": "npm run build && npm run deploy",
@@ -49,6 +52,7 @@
     "@fimagine/dom-hooks": "^1.0.6",
     "@fimagine/logger": "^1.2.1",
     "@fimagine/writeboard": "^0.2.0",
+    "@fingerprintjs/fingerprintjs": "^5.2.0",
     "axios": "^1.10.0",
     "compressing": "^2.0.0",
     "current-device": "0.10.2",

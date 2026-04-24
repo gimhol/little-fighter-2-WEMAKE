@@ -1,6 +1,5 @@
 import { is_fighter, is_weapon } from "@/LF2/entity";
-import { KEY_NAME_LIST } from "../../controller/BaseController";
-import { Defines, GK, StateEnum, WeaponType } from "../../defines";
+import { Defines, GK, StateEnum, WeaponType, AGK } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { abs, between, round_float } from "../../utils";
@@ -157,7 +156,7 @@ export class BotState_Chasing extends BotState_Base {
           between(abs_dz, 0, c.dataset.d_atk_z) &&
           is_fighter(en)
         ) {
-          c.click(GK.a)
+          c.key_down(GK.a)
           return
         }
         break;
@@ -180,7 +179,8 @@ export class BotState_Chasing extends BotState_Base {
           is_fighter(en)
         ) {
           // 跳攻
-          c.click(GK.a)
+          c.key_down(GK.a)
+          return
         } else if (!out_of_range) {
           if (my_x < en_x && abs_dx > c.w_atk_x) {
             // 转向
@@ -196,7 +196,7 @@ export class BotState_Chasing extends BotState_Base {
         return
       }
       default:
-        c.key_up(...KEY_NAME_LIST);
+        c.key_up(...AGK);
 
     }
     if (!out_of_range) {

@@ -16,13 +16,28 @@
           id: "CharMenuHead",
           size: "120, 120",
           pos: "0, 0",
-          component: [{ name: "CharMenuHead" }],
+          component: [
+            {
+              name: "CharMenuHead",
+              properties: {
+                countdown_label: "countdown_label",
+                hints_node: "hints",
+                head_pic: "head_pic",
+              },
+            },
+          ],
           items: [
+            {
+              id: "head",
+              pos: "60, 60",
+              center: "0.5,0.5",
+              size: "120, 120",
+              component: [{ id: "head_pic", name: "Picture" }],
+            },
             {
               id: "hints",
               pos: "60, 60",
               center: "0.5,0.5",
-              visible: true,
               img: {
                 path: "!sprite/CMA@4x.png",
                 w: 120,
@@ -34,41 +49,14 @@
               pos: "60, 60",
               center: "0.5,0.5",
               visible: false,
-              txt: [
+              i18n: "5",
+              style: {
+                font: '90px "Arial Black", Arial',
+              },
+              component: [
                 {
-                  i18n: "1",
-                  style: {
-                    fill_style: "white",
-                    font: '90px "Arial Black", Arial',
-                  },
-                },
-                {
-                  i18n: "2",
-                  style: {
-                    fill_style: "white",
-                    font: '90px "Arial Black", Arial',
-                  },
-                },
-                {
-                  i18n: "3",
-                  style: {
-                    fill_style: "white",
-                    font: '90px "Arial Black", Arial',
-                  },
-                },
-                {
-                  i18n: "4",
-                  style: {
-                    fill_style: "white",
-                    font: '90px "Arial Black", Arial',
-                  },
-                },
-                {
-                  i18n: "5",
-                  style: {
-                    fill_style: "white",
-                    font: '90px "Arial Black", Arial',
-                  },
+                  id: "countdown_label",
+                  name: "Label",
                 },
               ],
             },
@@ -100,31 +88,25 @@
     prefix_1: {
       pos: "-230, 133",
       center: "1, 0.5",
-      txt: {
-        i18n: "char_menu.player_colon",
-        style: {
-          font: "12px Arial",
-        },
+      i18n: "char_menu.player_colon",
+      style: {
+        font: "12px Arial",
       },
     },
     prefix_2: {
       pos: "-230, 155",
       center: "1, 0.5",
-      txt: {
-        i18n: "char_menu.fighter_colon",
-        style: {
-          font: "12px Arial",
-        },
+      i18n: "char_menu.fighter_colon",
+      style: {
+        font: "12px Arial",
       },
     },
     prefix_3: {
       pos: "-230, 177",
       center: "1, 0.5",
-      txt: {
-        i18n: "char_menu.team_colon",
-        style: {
-          font: "12px Arial",
-        },
+      i18n: "char_menu.team_colon",
+      style: {
+        font: "12px Arial",
       },
     },
   },

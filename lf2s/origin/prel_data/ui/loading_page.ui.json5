@@ -12,12 +12,10 @@
     },
     {
       id: "now_loading_text",
-      txt: {
-        i18n: "now_loading",
-        style: {
-          font: "16px Arial",
-          text_align: "center",
-        },
+      i18n: "now_loading",
+      style: {
+        font: "16px Arial",
+        text_align: "center",
       },
       pos: "10,400",
       center: "0,0",
@@ -40,12 +38,10 @@
       component: ["LoadingContentText(main_page)"],
       pos: "10,420",
       center: "0,0",
-      txt: {
-        i18n: "",
-        style: {
-          font: "16px Arial",
-          disposable: true,
-        },
+      i18n: "",
+      style: {
+        font: "16px Arial",
+        disposable: true,
       },
     },
     {

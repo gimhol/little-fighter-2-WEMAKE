@@ -26,7 +26,7 @@ class Offsets implements IOffsets {
   b: number = 0;
 }
 export class Alignment extends UIComponent {
-  static override TAG: string = 'Alignment';
+  static override readonly TAGS: string[] = ["Alignment"];
   follower: UINode | null = null;
 
   readonly followed: IFolloweds = {};
@@ -60,7 +60,7 @@ export class Alignment extends UIComponent {
     let _t: number | null = null;
     let _b: number | null = null;
 
-    const { x: cx, y: cy } = follower.center.value;
+    const { x: cx, y: cy } = follower.center;
     // eslint-disable-next-line prefer-const
     let { x, y, z } = follower.global_pos;
     let { w, h } = follower;

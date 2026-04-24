@@ -61,7 +61,7 @@ export interface IEntityCallbacks<E extends Entity = Entity> {
    * @param value
    * @param prev
    */
-  on_name_changed?(e: E, value: string, prev: string): void;
+  on_name_changed?(e: E, value: string, prev: string | null): void;
 
   /**
    * 角色倒地死亡回调

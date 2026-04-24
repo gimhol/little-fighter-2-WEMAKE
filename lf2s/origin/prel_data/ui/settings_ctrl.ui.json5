@@ -1,0 +1,205 @@
+{
+  id: "settings_ctrl",
+  name: "settings_ctrl",
+  templates: {
+    suffixies: {
+      center: "0,0",
+      component: [
+        {
+          name: "Flex",
+          properties: {
+            direction: "column",
+            gap: 9,
+            fit: true,
+          },
+        },
+        {
+          name: "FlexItem",
+          properties: {
+            align: "end",
+          },
+        },
+      ],
+      items: [
+        {
+          i18n: "ctrl_settings.key_up",
+          style: {
+            font: "bold 16px Arial",
+          },
+        },
+        {
+          i18n: "ctrl_settings.key_down",
+          style: {
+            font: "bold 16px Arial",
+          },
+        },
+        {
+          i18n: "ctrl_settings.key_left",
+          style: {
+            font: "bold 16px Arial",
+          },
+        },
+        {
+          i18n: "ctrl_settings.key_right",
+          style: {
+            font: "bold 16px Arial",
+          },
+        },
+        {
+          i18n: "ctrl_settings.key_attack",
+          style: {
+            font: "bold 16px Arial",
+          },
+        },
+        {
+          i18n: "ctrl_settings.key_jump",
+          style: {
+            font: "bold 16px Arial",
+          },
+        },
+        {
+          i18n: "ctrl_settings.key_defend",
+          style: {
+            font: "bold 16px Arial",
+          },
+        },
+      ],
+    },
+    key_edit_cell: {
+      size: "106, 26",
+      color: "#000000",
+      items: [
+        {
+          pos: "53,15",
+          center: "0.5, 0.5",
+          component: [{ name: "PlayerKeyEdit" }],
+        },
+      ],
+    },
+    player_set: {
+      component: [
+        {
+          name: "Flex",
+          properties: { direction: "column", gap: 3, fit: true },
+        },
+      ],
+      items: [
+        {
+          size: "106, 26",
+          color: "#000000",
+          items: [
+            {
+              pos: "0,5",
+              size: "106, 16",
+              component: ["PlayerNameInput()"],
+            },
+          ],
+        },
+        {
+          size: "106,106",
+          component: ["PlayerCtrlType()"],
+          items: [
+            {
+              img: {
+                path: "sprite/CS6.png",
+              },
+            },
+            {
+              visible: false,
+              img: {
+                path: "sprite/CS2.png",
+              },
+            },
+            {
+              visible: false,
+              img: {
+                path: "sprite/CS3.png",
+              },
+            },
+            {
+              visible: false,
+              img: {
+                path: "sprite/CS4.png",
+              },
+            },
+            {
+              visible: false,
+              img: {
+                path: "sprite/CS5.png",
+              },
+            },
+            {
+              visible: false,
+              img: {
+                path: "sprite/CS7.png",
+              },
+            },
+          ],
+        },
+        {
+          template: "key_edit_cell",
+          values: { key_name: "U" },
+        },
+        {
+          template: "key_edit_cell",
+          values: { key_name: "D" },
+        },
+        {
+          template: "key_edit_cell",
+          values: { key_name: "L" },
+        },
+        {
+          template: "key_edit_cell",
+          values: { key_name: "R" },
+        },
+        {
+          template: "key_edit_cell",
+          values: { key_name: "a" },
+        },
+        {
+          template: "key_edit_cell",
+          values: { key_name: "j" },
+        },
+        {
+          template: "key_edit_cell",
+          values: { key_name: "d" },
+        },
+      ],
+    },
+  },
+  component: [
+    {
+      name: "Flex",
+      properties: { direction: "row", gap: 20, fit: true },
+    },
+  ],
+  items: [
+    {
+      template: "suffixies",
+    },
+    {
+      template: "player_set",
+      values: {
+        player_id: "1",
+      },
+    },
+    {
+      template: "player_set",
+      values: {
+        player_id: "2",
+      },
+    },
+    {
+      template: "player_set",
+      values: {
+        player_id: "3",
+      },
+    },
+    {
+      template: "player_set",
+      values: {
+        player_id: "4",
+      },
+    },
+  ],
+}

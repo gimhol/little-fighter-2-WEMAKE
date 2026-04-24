@@ -1,37 +1,32 @@
 import { Delay, Easing, Sequence } from "@/LF2/animation";
 import { Animation } from "@/LF2/animation/Animation";
-import { ISchema } from "@/LF2/defines";
 import ease_linearity from "@/LF2/utils/ease_method/ease_linearity";
-import { make_schema } from "@/LF2/utils/schema";
-import { UIComponent } from "./UIComponent";
 import { IPlayable } from "./IPlayable";
+import { UIComponent } from "./UIComponent";
+import { IPropsMeta } from "@/LF2";
 
 export interface IOpacityFlashProps {
   steps?: number[];
   times?: number;
 }
 export class OpacityFlash extends UIComponent implements IPlayable {
-  static override readonly TAG: string = "OpacityFlash";
-  static override readonly PROPS: ISchema<IOpacityFlashProps> = make_schema({
-    key: "IOpacityFlashProps",
-    type: 'object',
-    properties: {
-      steps: {
-        key: "steps",
-        type: "array",
-        items: { type: "number" },
-        nullable: true,
-        description: "透明度1, 动画时间，透明度2....",
-      },
-      times: {
-        key: "times",
-        type: "number",
-        nullable: true,
-        number: { int: true },
-        description: "循环次数，小于0时，无限循环"
-      }
+  static override readonly TAGS: string[] = ["OpacityFlash"];
+  static override readonly PROPS: IPropsMeta<IOpacityFlashProps> = {
+    steps: {
+      key: "steps",
+      type: "array",
+      items: { type: "number" },
+      nullable: true,
+      description: "透明度1, 动画时间，透明度2....",
+    },
+    times: {
+      key: "times",
+      type: "number",
+      nullable: true,
+      number: { int: true },
+      description: "循环次数，小于0时，无限循环"
     }
-  })
+  }
 
   readonly __is_playable__ = true;
   protected _anim: Sequence = new Sequence();
@@ -43,7 +38,7 @@ export class OpacityFlash extends UIComponent implements IPlayable {
         0, 350, 1, 100, 1, 350, 0, 350, 1, 100,
         1, 350, 0, 350, 1, 100, 1, 350, 0
       ]
-    } = this.props_holder.validate(OpacityFlash);
+    } = this.props_holder.validate(OpacityFlash)!;
 
     const anims: Animation[] = [];
     for (let i = 1; i < steps.length; i += 2) {

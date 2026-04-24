@@ -1,20 +1,22 @@
-import { IKeyboardCallback } from "../../ditto";
-import { IPointingsCallback } from "../../ditto/pointings/IPointingsCallback";
-import { IUIPointerEvent } from "../IUIPointerEvent";
-import { ui_load_txt } from "../ui_load_txt";
+import { IKeyboardCallback, IPointingsCallback, IUICallback } from "@/LF2";
 import { PlayerKeyText } from "./PlayerKeyText";
 
 export class PlayerKeyEdit extends PlayerKeyText {
-  static override readonly TAG: string = 'PlayerKeyEdit'
-  override on_click(e: IUIPointerEvent) {
-    this.node.focused = !this.node.focused;
-    e.stop_immediate_propagation();
+  static override readonly TAGS: string[] = ["PlayerKeyEdit"];
+
+  override on_start(): void {
+    this.style = { font: "16px Arial" }
+    this.node.parent?.callbacks.add(this.p)
+  }
+  override on_stop(): void {
+    this.node.parent?.callbacks.del(this.p)
   }
   override on_foucs(): void {
     super.on_foucs?.();
     this.on_key_changed();
     this.lf2.pointings.callback.add(this.r);
     this.lf2.keyboard.callback.add(this.l);
+
   }
   override on_blur(): void {
     super.on_blur?.();
@@ -22,7 +24,14 @@ export class PlayerKeyEdit extends PlayerKeyText {
     this.lf2.pointings.callback.del(this.r);
     this.lf2.keyboard.callback.del(this.l);
   }
-
+  private _click_me = false;
+  private p: IUICallback = {
+    on_click: (e) => {
+      this._click_me = true
+      this.node.focused = !this.node.focused;
+      e.stop_immediate_propagation();
+    },
+  }
   private l: IKeyboardCallback = {
     on_key_down: (e) => {
       if (!this.node.focused) return;
@@ -37,25 +46,22 @@ export class PlayerKeyEdit extends PlayerKeyText {
     }
   }
   private r: IPointingsCallback = {
-    on_pointer_down: () => this.node.focused = false
-  };
-
-  override on_key_changed() {
-    ui_load_txt(this.lf2, {
-      i18n: this.key_code, style: {
-        fill_style: this.node.focused ? "blue" : 'white',
-        font: "14px Arial",
-        padding_l: 20,
-        padding_r: 20,
-        padding_t: 3,
-        padding_b: 3,
+    on_click: (e) => {
+      if (this._click_me) {
+        this._click_me = false;
+        return
       }
-    }).then(v => {
-      this.node.txts.value = v;
-      this.node.txt_idx.value = 0;
-      const { w, h, scale } = v[0]!
-      this.node.resize(w / scale, h / scale);
-    })
+      this.node.focused = false
+    }
+  };
+  override on_key_changed() {
+    this.set_text(this.key_code)
+    if (this.node.focused)
+      this.node.color.value = "blue"
+    else if (this.key_code == "None")
+      this.node.color.value = 'gray'
+    else
+      this.node.color.value = 'white'
   }
 }
 

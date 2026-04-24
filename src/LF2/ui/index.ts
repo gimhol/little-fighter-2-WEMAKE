@@ -9,7 +9,6 @@ export * from "./IUIImgInfo.dat";
 export * from "./IUIInfo.dat";
 export * from "./IUIKeyEvent";
 export * from "./IUIPointerEvent";
-export * from "./IUITxtInfo.dat";
 export * from "./LF2KeyEvent";
 export * from "./LF2PointerEvent";
 export * from "./LF2UIEvent";
@@ -27,6 +26,5 @@ export * from "./find_ui_template";
 export * from "./read_info_value";
 export * from "./read_ui_template";
 export * from "./ui_load_img";
-export * from "./ui_load_txt";
 export * from "./utils";
 /*** AUTO EXPORT END ***/

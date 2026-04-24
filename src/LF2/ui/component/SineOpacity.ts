@@ -1,7 +1,7 @@
 import { Sine } from "../../animation/Sine";
 import { UIComponent } from "./UIComponent";
 export class SineOpacity extends UIComponent {
-  static override readonly TAG: string = "SineOpacity"
+  static override readonly TAGS: string[] = ["SineOpacity"];
   protected anim: Sine = new Sine(0, 1, 1);
   override on_start(): void {
     super.on_start?.();

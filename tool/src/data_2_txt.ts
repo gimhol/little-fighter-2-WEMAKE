@@ -14,11 +14,15 @@ export async function data_2_txt(src_path: string, dst_path: string) {
   const stat = await fs.stat(src_path);
 
   if (stat.isFile()) {
-    if (!src_path.endsWith(".dat")) return;
-    dst_path = dst_path.replace(/.dat$/, ".txt");
-    log(`data_2_txt: ${src_path} => ${dst_path}`);
-    const data = await read_lf2_dat_file(src_path);
-    await fs.writeFile(dst_path, data);
+    if (src_path.endsWith(".dat")) {
+      dst_path = dst_path.replace(/.dat$/, ".txt");
+      log(`data_2_txt: ${src_path} => ${dst_path}`);
+      const data = await read_lf2_dat_file(src_path);
+      await fs.writeFile(dst_path, data);
+    } else if (src_path.endsWith(".txt")) {
+      log(`data_2_txt: ${src_path} => ${dst_path}`);
+      await fs.copyFile(src_path, dst_path)
+    }
     return;
   }
 

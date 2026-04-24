@@ -11,7 +11,7 @@ import { make_team_sum_info } from "./make_team_sum_info";
 import { UIComponent } from "./UIComponent";
 
 export class SummaryLogic extends UIComponent {
-  static override readonly TAG: string = 'SummaryLogic';
+  static override readonly TAGS: string[] = ["SummaryLogic"];
   readonly fighters = new Map<string, IFighterSumInfo>();
   readonly players = new Map<string, IPlayerSumInfo>();
   readonly teams = new Map<string, ITeamSumInfo>();

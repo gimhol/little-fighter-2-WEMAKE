@@ -1,23 +1,23 @@
-import { get_team_shadow_color } from "@/LF2/base/get_team_shadow_color";
+import { get_team_outline_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
-import { GameKey, IVector3, GameKeyLabels } from "@/LF2/defines";
-import { is_bot_ctrl, is_fighter, is_human_ctrl, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { GameKey, GKLabels, IVector3Like } from "@/LF2/defines";
+import { is_bot_ctrl, is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { StatBarType } from "@/LF2/entity/StatBarType";
 import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
+import { Object3D } from "../_t";
 import { Bar } from "./Bar";
-import { WorldRenderer } from "./WorldRenderer";
 import { INDICATINGS } from "./INDICATINGS";
-import { StatBarType } from "@/LF2/entity/StatBarType";
+import { WorldRenderer } from "./WorldRenderer";
+import { SmallTextMesh } from "./meshs/SmallTextMesh";
 
 const BAR_W = 40;
 const BAR_H = 3;
 const BAR_BG_W = BAR_W + 2;
 const BAR_BG_H = 1 + (BAR_H + 1) * 2 + 4;
 export class EntityStatRender implements IEntityCallbacks {
-  protected reserve_node: T.Sprite;
-  protected name_node: T.Sprite;
+  protected _reserve_mesh: SmallTextMesh | null = null;
   protected bars_node = new T.Object3D();
-  protected ctrl_node = new T.Object3D();
   protected bars_bg: Bar;
 
   protected self_healing_hp_bar: Bar;
@@ -32,30 +32,68 @@ export class EntityStatRender implements IEntityCallbacks {
 
   entity: Entity;
 
-  protected key_nodes: Map<GameKey, { node: T.Sprite, pos: IVector3 }>
+  protected _ctrl_node: Object3D | null = null;
+  protected _ctrls: Map<GameKey | 'bot', SmallTextMesh> | null = null
+
+  get ctrl_node(): Object3D {
+    if (this._ctrl_node) return this._ctrl_node
+    this._ctrl_node = new Object3D()
+    this.world_renderer.world_node.add(this._ctrl_node);
+    return this._ctrl_node
+  }
+  get ctrls(): Map<GameKey | 'bot', SmallTextMesh> {
+    if (this._ctrls) return this._ctrls;
+    const f = 7;
+    const ox = -25
+    const map = new Map<GameKey | 'bot', IVector3Like>([
+      ['bot', new T.Vector3(ox, f * 2, 0)],
+      [GameKey.U, new T.Vector3(ox + f * -1.5, f * 1, 0)],
+      [GameKey.D, new T.Vector3(ox + f * -1.5, f * -1, 0)],
+      [GameKey.L, new T.Vector3(ox + f * -2.5, f * 0, 0)],
+      [GameKey.R, new T.Vector3(ox + f * -0.5, f * 0, 0)],
+      [GameKey.a, new T.Vector3(ox + f * 0.5, f * -1, 0)],
+      [GameKey.j, new T.Vector3(ox + f * 1.5, f * 0, 0)],
+      [GameKey.d, new T.Vector3(ox + f * 2.5, f * 1, 0)],
+    ])
+    this._ctrls = new Map();
+
+    const { lf2 } = this.entity
+    for (const [k, pos] of map) {
+      const mesh = SmallTextMesh.get()
+      mesh.name = `key ${k}`;
+      mesh.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
+      if (k == 'bot') {
+        mesh.set_text(lf2, '?').catch(e => console.warn(e));
+      } else {
+        mesh.set_text(lf2, GKLabels[k]).catch(e => console.warn(e));
+      }
+      mesh.strokeStyle = 'black'
+      this.ctrl_node.add(mesh)
+      this._ctrls.set(k, mesh)
+    }
+    return this._ctrls;
+  }
+
+
   world_renderer: WorldRenderer;
   protected _heading: boolean = false;
 
+  private get reserve_mesh(): SmallTextMesh {
+    if (this._reserve_mesh) return this._reserve_mesh;
+    const ret = this._reserve_mesh = SmallTextMesh.get()
+    ret.name = `reserve_mesh_${this.entity.name}_${this.entity.id}`;
+    this.world_renderer.world_node.add(ret)
+    return ret
+  }
+  clear_ctrl_node(): void {
+    this._ctrl_node?.removeFromParent();
+    this._ctrl_node = null;
+    this._ctrls = null;
+  }
 
   constructor(entity: Entity, world_renderer: WorldRenderer) {
     this.world_renderer = world_renderer;
     const { lf2 } = entity.world;
-    const f = 7;
-    this.key_nodes = new Map([
-      [GameKey.U, { node: new T.Sprite(), pos: new T.Vector3(f * (-2 + 0.5), f * 2, 0) }],
-      [GameKey.D, { node: new T.Sprite(), pos: new T.Vector3(f * (-2 + 0.5), f * 0, 0) }],
-      [GameKey.L, { node: new T.Sprite(), pos: new T.Vector3(f * (-3 + 0.5), f * 1, 0) }],
-      [GameKey.R, { node: new T.Sprite(), pos: new T.Vector3(f * (-1 + 0.5), f * 1, 0) }],
-      [GameKey.a, { node: new T.Sprite(), pos: new T.Vector3(f * (1 - 0.5), f * 0, 0) }],
-      [GameKey.j, { node: new T.Sprite(), pos: new T.Vector3(f * (2 - 0.5), f * 1, 0) }],
-      [GameKey.d, { node: new T.Sprite(), pos: new T.Vector3(f * (3 - 0.5), f * 2, 0) }],
-    ])
-
-    this.name_node = new T.Sprite();
-    this.name_node.name = EntityStatRender.name;
-    this.name_node.renderOrder = 0;
-    this.reserve_node = new T.Sprite();
-
     this.bars_bg = new Bar(lf2, "rgb(0,0,0)", BAR_BG_W, BAR_BG_H, 0.5, 0);
     this.self_healing_hp_bar = new Bar(
       lf2,
@@ -80,8 +118,6 @@ export class EntityStatRender implements IEntityCallbacks {
     this.fall_value_bar = new Bar(lf2, "rgb(216, 115, 0)", BAR_W, 1, 0.5, 1);
     this.defend_value_bar = new Bar(lf2, "rgb(0, 122, 71)", BAR_W, 1, 0.5, 1);
     this.toughness_value_bar = new Bar(lf2, "rgba(0, 204, 255, 1)", BAR_W, 1, 0.5, 1);
-
-
     this.entity = entity;
 
     let y = -1;
@@ -119,46 +155,15 @@ export class EntityStatRender implements IEntityCallbacks {
     this.toughness_value_bar.mesh.position.set(0, y, 0);
     this.toughness_value_bar.set(entity.toughness, entity.toughness_max);
     this.bars_node.add(this.toughness_value_bar.mesh);
-
-    for (const [k, { node: sprite, pos }] of this.key_nodes) {
-      sprite.name = `key ${k}`;
-      sprite.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
-      lf2.images
-        .load_text(GameKeyLabels[k], {
-          fill_style: 'white',
-          line_width: 0,
-          smoothing: false,
-          font: "bold 12px Arial",
-          back_style: {
-            fill_style: '',
-            stroke_style: 'black',
-            line_width: 2,
-            smoothing: false,
-            font: "bold 12px Arial",
-          },
-        })
-        .then((p) => {
-          sprite.material.map?.dispose();
-          sprite.material.dispose();
-          sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
-          sprite.material.needsUpdate = true;
-          sprite.scale.x = p.w / p.scale;
-          sprite.scale.y = p.h / p.scale;
-        });
-      this.ctrl_node.add(sprite)
-    }
-
   }
 
   on_mount() {
     const { entity: e } = this;
     e.callbacks.add(this);
-    this.world_renderer.world_node.add(this.bars_node, this.name_node, this.ctrl_node, this.reserve_node);
+    this.world_renderer.world_node.add(
+      this.bars_node
+    );
     this.bars_node.visible = e.key_role
-    this.name_node.visible = e.key_role
-    this.ctrl_node.visible = false
-    this.on_name_changed(e)
-    this.on_reserve_changed(e)
     this.on_hp_changed(e)
     this.on_hp_max_changed(e)
     this.on_mp_changed(e)
@@ -175,15 +180,11 @@ export class EntityStatRender implements IEntityCallbacks {
   on_unmount() {
     const { entity: e } = this;
     this.bars_node.removeFromParent();
-    this.name_node.removeFromParent();
-    this.ctrl_node.removeFromParent();
-    this.reserve_node.removeFromParent();
+    this.clear_ctrl_node()
+    this._reserve_mesh?.removeFromParent();
+    this._reserve_mesh = null
     e.callbacks.del(this);
   }
-
-  on_name_changed(e: Entity): void { this.update_name_sprite(e) }
-  on_team_changed(e: Entity): void { this.update_name_sprite(e); this.update_reverse_sprite(e); }
-  on_reserve_changed(e: Entity): void { this.update_reverse_sprite(e) }
   on_hp_changed(e: Entity): void { this.hp_bar.val = e.hp; }
   on_hp_max_changed(e: Entity): void { this.self_healing_hp_bar.max = e.hp_max; this.hp_bar.max = e.hp_max; }
   on_hp_r_changed(e: Entity): void { this.self_healing_hp_bar.val = e.hp_r; }
@@ -195,95 +196,80 @@ export class EntityStatRender implements IEntityCallbacks {
   on_defend_value_max_changed(e: Entity): void { this.defend_value_bar.max = e.defend_value_max; }
   on_toughness_changed(e: Entity): void { this.toughness_value_bar.val = e.toughness; }
   on_toughness_max_changed(e: Entity): void { this.toughness_value_bar.max = e.toughness_max; }
-  private update_reverse_sprite(e: Entity) {
-    const sprite = this.reserve_node
-    const { team, reserve } = e;
-    const fillStyle = get_team_text_color(team);
-    const strokeStyle = get_team_shadow_color(team);
-    const world = e.world;
-    const lf2 = world.lf2;
-    const text = reserve ? 'x' + reserve : void 0;
-    if (!text) {
-      sprite.visible = false;
-      sprite.material.map?.dispose();
-      sprite.material.map = null;
-      sprite.material.needsUpdate = true
+
+  private update_reverse(e: Entity) {
+    const { reserve } = e;
+    if (!reserve) {
+      this._reserve_mesh?.removeFromParent()
+      this._reserve_mesh = null;
       return;
     }
-    sprite.userData.text = text
-    lf2.images.load_text(text, {
-      fill_style: fillStyle,
-      back_style: {
-        stroke_style: strokeStyle,
-        line_width: 2
-      },
-      smoothing: false,
-    }).then((p) => {
-      if (sprite.userData.text !== text)
-        return;
-      sprite.material.map?.dispose();
-      sprite.material.dispose();
-      sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
-      sprite.material.needsUpdate = true;
-      sprite.visible = true;
-      sprite.name = "reserve sprite";
-      sprite.scale.x = p.w / p.scale;
-      sprite.scale.y = p.h / p.scale;
-    });
+    const { invisible } = e;
+    if (invisible) {
+      if (this._reserve_mesh) {
+        this._reserve_mesh.visible = false;
+      }
+      return;
+    }
+    const { lf2, team } = e;
+    const mesh = this.reserve_mesh;
+    mesh.set_text(lf2, `x${reserve}`)
+    mesh.visible = true;
+    if (mesh.userData.team != team) {
+      mesh.userData.team = team;
+      mesh.fillStyle = get_team_text_color(team);
+      mesh.strokeStyle = get_team_outline_color(team);
+    }
+    const {
+      position: { x, y, z },
+      frame: { centery }
+    } = e
+    const _x = round(x)
+    const _y = round(y - z / 2 + centery + mesh.scale.y / 2)
+    const _z = round(z)
+    mesh.position.set(_x, _y, _z)
   }
-  private update_name_sprite(e: Entity) {
-    const sprite = this.name_node
-    const { key_role, ctrl, team } = e;
-    let text = ' ';
-    if (is_human_ctrl(ctrl)) {
-      text = ctrl.player.name || ' '
-    } else if (is_bot_ctrl(ctrl) && ctrl.player) {
-      text = "com"
-    } else if (key_role) {
-      text = this.world_renderer.lf2.string(e.data.base.name)
-    } else {
-      text = 'com'
-    }
-    const fillStyle = get_team_text_color(team);
-    const strokeStyle = get_team_shadow_color(team);
-    const world = e.world;
-    const lf2 = world.lf2;
-    if (!text) {
-      sprite.visible = false;
-      sprite.material.map?.dispose();
-      sprite.material.map = null;
-      sprite.material.needsUpdate = true
+
+  update_ctrl() {
+    const {
+      lf2, world, position: { x, z, y }, ctrl_visible, frame: { centery }
+    } = this.entity;
+
+    const _ctrl_visible = ctrl_visible || world.indicator_flags & INDICATINGS.ctrl
+    if (!_ctrl_visible) {
+      this.clear_ctrl_node();
       return;
     }
-    sprite.userData.text = text
-    lf2.images.load_text(text, {
-      fill_style: fillStyle,
-      back_style: {
-        stroke_style: strokeStyle,
-        line_width: 2
-      },
-      disposable: true,
-      smoothing: false,
-    }).then((p) => {
-      if (sprite.userData.text !== text) return;
-      sprite.visible = true;
-      sprite.material.map?.dispose();
-      sprite.material.dispose();
-      sprite.material = new T.SpriteMaterial({ map: p.pic?.texture })
-      sprite.material.needsUpdate = true;
-      sprite.scale.x = p.w / p.scale;
-      sprite.scale.y = p.h / p.scale;
-      sprite.name = "name sprite";
-    });
+    for (const [key, node] of this.ctrls) {
+      node.visible = !this.entity.ctrl.is_end(key)
+    }
+    const _x = round(x)
+    let _y = round(y - z / 2 + centery)
+    const _z = round(z)
+    if (this.bars_node.visible) _y += 25
+    this.ctrl_node.position.set(_x, _y, _z);
+
+    do {
+      const bot = this.ctrls.get('bot')
+      if (!bot) break;
+      bot.visible = false;
+      const ctrl = this.entity.ctrl
+      if (!is_bot_ctrl(ctrl)) break;
+      const k = ctrl.fsm.state?.key
+      if (!k) break;
+      bot.set_text(lf2, k)
+      bot.visible = true;
+    } while (0);
   }
   render() {
     const {
       invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
-      stat_bar_type, ground_y
+      stat_bar_type
     } = this.entity;
     const _is_fighter = is_fighter(this.entity)
-    this.name_node.visible = _is_fighter && key_role && !invisible
     this.bars_node.visible = !!(stat_bar_type & StatBarType.Float) && _is_fighter && key_role && !invisible && hp > 0;
+    this.update_reverse(this.entity)
+    this.update_ctrl()
 
     if (this.entity.healing) {
       const heading = (this.entity.update_id.value % 8) < 4;
@@ -300,25 +286,7 @@ export class EntityStatRender implements IEntityCallbacks {
     const bar_y = floor(y - z / 2 + BAR_BG_H + 5 + centery);
     const bar_x = floor(_x - BAR_BG_W / 2);
     const bar_z = floor(z);
-
     this.set_bars_position(bar_x, bar_y, bar_z);
-
-    const name_y = floor(ground_y - z / 2 - this.name_node.scale.y);
-    this.set_name_position(_x, name_y, z);
-
-    this.ctrl_node.visible = !!(this.entity.lf2.world.indicator_flags & INDICATINGS.ctrl);
-    if (this.ctrl_node.visible) for (const [k, { node }] of this.key_nodes) {
-      node.visible = !this.entity.ctrl.is_end(k)
-    }
-  }
-
-  set_name_position(x: number, y: number, z: number) {
-    const hw = (this.name_node.scale.x + 10) / 2;
-    const { cam_x: cam_l } = this.entity.world.renderer;
-    const cam_r = cam_l + this.entity.world.screen_w;
-    if (x + hw > cam_r) x = cam_r - hw;
-    else if (x - hw < cam_l) x = cam_l + hw;
-    this.name_node.position.set(round(x), round(y), round(z));
   }
 
   set_bars_position(x: number, y: number, z: number) {
@@ -327,9 +295,7 @@ export class EntityStatRender implements IEntityCallbacks {
     let __y = old_y === 0 ? _y : old_y + (_y - old_y) * 0.2
 
     this.bars_node.position.set(x, __y, z);
-    if (!this.bars_node.parent) __y -= BAR_BG_H + 5
-
-    this.reserve_node.position.set(x + BAR_BG_W / 2, __y, z)
-    this.ctrl_node.position.set(x, __y, z);
+    if (!this.bars_node.parent || !this.bars_node.visible)
+      __y -= BAR_BG_H + 5
   }
 }

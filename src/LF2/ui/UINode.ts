@@ -1,14 +1,14 @@
 import { LF2 } from "../LF2";
-import { Callbacks, Expression, StateDelegate } from "../base";
-import { IStyle, IValGetter, IVector2, IVector3 } from "../defines";
-import { Ditto as D, Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
+import { Callbacks, StateDelegate } from "../base";
+import { IStyle, IVector3 } from "../defines";
+import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
-import { filter, is_bool, is_num, is_str, round, Times } from "../utils";
+import { is_num, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { ICrossInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
-import { IUIPointerEvent } from "./IUIPointerEvent";
+import { LF2PointerEvent } from "./LF2PointerEvent";
 import { actor } from "./action";
 import { UIComponent } from "./component";
 import { parse_ui_value } from "./read_info_value";
@@ -20,8 +20,6 @@ export class UINode implements IDebugging {
   log!: (_0: string, ..._1: any[]) => void;
 
   readonly lf2: LF2;
-  readonly id_ui_map: Map<string, UINode[]>;
-  readonly name_ui_map: Map<string, UINode[]>;
 
   /**
    * 原始UI数据
@@ -52,28 +50,27 @@ export class UINode implements IDebugging {
    */
   protected _root: UINode;
   protected _focused_node?: UINode;
-  protected _components = new Set<UIComponent>();
+  protected _components: UIComponent[] = [];
   protected _state: any = {};
-  protected readonly _visible: StateDelegate<boolean> = new StateDelegate(true);
-  protected readonly _disabled: StateDelegate<boolean> = new StateDelegate(() => this.data.disabled === true);
-  protected readonly _opacity: StateDelegate<number> = new StateDelegate(1);
+  protected _visible = true;
+  protected _disabled = false;
+  protected _opacity = 1;
 
-  readonly pos: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.pos)).comparer(StateDelegate.CompareVec3);
-  readonly scale: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.scale)).comparer(StateDelegate.CompareVec3);
-  readonly txts: StateDelegate<TextInfo[]> = new StateDelegate(() => this.data.txt_infos).comparer(StateDelegate.CompareArray);
-  readonly imgs: StateDelegate<ImageInfo[]> = new StateDelegate(() => this.data.img_infos).comparer(StateDelegate.CompareArray);
-  readonly size: StateDelegate<IVector2> = new StateDelegate(() => new D.Vector2(...this.data.size)).comparer(StateDelegate.CompareVec2);
-  readonly center: StateDelegate<IVector3> = new StateDelegate(() => new D.Vector3(...this.data.center)).comparer(StateDelegate.CompareVec3);
-  readonly img_idx: StateDelegate<number> = new StateDelegate(0);
-  readonly txt_idx: StateDelegate<number> = new StateDelegate(0);
+  readonly pos: IVector3 = new D.Vector3();
+  readonly scale: IVector3 = new D.Vector3(1, 1, 1)
+  readonly size: IVector3 = new D.Vector3();
+  readonly center: IVector3 = new D.Vector3()
+
+  text: TextInfo | null = null
+  image: ImageInfo | null = null
   readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
 
   protected _parent?: UINode;
   protected _children: UINode[] = [];
 
   get cross(): ICrossInfo {
-    const { x: w, y: h } = this.size.value
-    const { x: a, y: b } = this.center.value
+    const { x: w, y: h } = this.size
+    const { x: a, y: b } = this.center
     const left = -a * w
     const top = -b * h
     const right = (1 - a) * w
@@ -89,8 +86,19 @@ export class UINode implements IDebugging {
   }
   get rect() {
     const c = this.cross
-    const { x, y } = this.pos.value
+    const { x, y } = this.pos
     return {
+      left: x + c.left,
+      top: y + c.top,
+      right: x + c.right,
+      bottom: y + c.bottom
+    }
+  }
+  get geo() {
+    const c = this.cross
+    const { x, y } = this.global_pos
+    return {
+      pos: { x, y },
       left: x + c.left,
       top: y + c.top,
       right: x + c.right,
@@ -137,7 +145,7 @@ export class UINode implements IDebugging {
   }
 
   get self_visible() {
-    return this._visible.value
+    return this._visible
   }
   /**
    * 当前节点是否可见
@@ -156,104 +164,129 @@ export class UINode implements IDebugging {
   set visible(v: boolean) {
     this.set_visible(v);
   }
-
+  private _background: string | null = null;
+  private _backgroundAlpha: number | null = null;
+  private _foreground: string | null = null;
+  private _foregroundAlpha: number | null = null;
+  get background(): string { return this._background ?? this.data.background ?? '#000000' }
+  set background(v: string | null) { this._background = v; }
+  get foreground(): string { return this._foreground ?? this.data.foreground ?? '#000000' }
+  set foreground(v: string | null) { this._foreground = v; }
+  get backgroundAlpha(): number { return this._backgroundAlpha ?? this.data.backgroundAlpha ?? 0 }
+  set backgroundAlpha(v: number | null) { this._backgroundAlpha = v; }
+  get foregroundAlpha(): number { return this._foregroundAlpha ?? this.data.foregroundAlpha ?? 0 }
+  set foregroundAlpha(v: number | null) { this._foregroundAlpha = v; }
   set_visible(v: boolean): this {
     const prev = this.visible;
-    this._visible.value = v;
+    this._visible = v;
     if (prev !== this.visible) this.invoke_all_visible()
     if (!v && !this.focused_node?.visible) this.focused_node = void 0
     return this;
   }
 
   get disabled(): boolean {
-    if (!this.parent) return this._disabled.value;
-    return this.parent.disabled || this._disabled.value;
+    if (!this.parent) return this._disabled;
+    return this.parent.disabled || this._disabled;
   }
   set disabled(v: boolean) {
     this.set_disabled(v);
   }
   set_disabled(v: boolean): this {
-    this._disabled.value = v;
+    this._disabled = v;
     if (v && this.focused_node?.disabled) this.focused_node = void 0
     return this;
   }
-
+  get self_disabled() { return this._disabled }
 
   get global_opacity(): number {
-    if (!this.parent) return this._opacity.value
-    return this._opacity.value * this.parent._opacity.value;
+    if (!this.parent) return this._opacity
+    return this._opacity * this.parent._opacity;
   }
-  get opacity(): number {
-    return this._opacity.value;
-  }
-  set opacity(v: number) {
-    this.set_opacity(v);
-  }
-  set_opacity(v: number): this {
-    this._opacity.set(0, v);
-    return this;
-  }
+  get opacity(): number { return this._opacity; }
+  set opacity(v: number) { this.set_opacity(v); }
+  set_opacity(v: number): this { this._opacity = v; return this; }
 
   get parent(): UINode | undefined { return this._parent; }
   get children(): Readonly<UINode[]> { return this._children; }
 
-  get w(): number { return this.size.value.x; }
+  get w(): number { return this.size.x; }
   set w(v: number) { this.set_w(v); }
-  get h(): number { return this.size.value.y; }
+  get h(): number { return this.size.y; }
   set h(v: number) { this.set_h(v); }
   set_w(v: number): this { return this.resize(v, this.h); }
   set_h(v: number): this { return this.resize(this.w, v); }
-  resize(w: number, h: number): this {
-    this.size.value = new D.Vector2(w, h); return this;
-  }
-
-  get x(): number { return this.pos.value.x; }
-  set x(v: number) { this.set_x(v); }
-  get y(): number { return this.pos.value.y; }
-  set y(v: number) { this.set_y(v); }
-  get z(): number { return this.pos.value.z; }
-  set z(v: number) { this.set_z(v); }
-  set_x(v: number): this { return this.move_to(v); }
-  set_y(v: number): this { return this.move_to(void 0, v); }
-  set_z(v: number): this { return this.move_to(void 0, void 0, v); }
-  move_to(x: number = this.x, y: number = this.y, z: number = this.z): this {
-    this.pos.value = new D.Vector3(x, y, z);
+  resize(x: number, y: number, z: number = this.size.z): this {
+    this.size.x = x;
+    this.size.y = y;
+    this.size.z = z;
     return this;
   }
 
-  get cx(): number { return this.center.value.x; }
-  set cx(v: number) { this.set_cx(v); }
-  get cy(): number { return this.center.value.y; }
-  set cy(v: number) { this.set_cy(v); }
-  get cz(): number { return this.center.value.z; }
-  set cz(v: number) { this.set_cz(v); }
-  set_cx(v: number): this { return this.set_center(v); }
-  set_cy(v: number): this { return this.set_center(void 0, v); }
-  set_cz(v: number): this { return this.set_center(void 0, void 0, v); }
-  set_center(cx: number = this.cx, cy: number = this.cy, cz: number = this.cz): this {
-    this.center.value = new Ditto.Vector3(cx, cy, cz)
+  get x(): number { return this.pos.x; }
+  get y(): number { return this.pos.y; }
+  get z(): number { return this.pos.z; }
+  set x(v: number) { this.pos.x = v; }
+  set y(v: number) { this.pos.y = v; }
+  set z(v: number) { this.pos.z = v; }
+  set_x(v: number): this { this.pos.x = v; return this; }
+  set_y(v: number): this { this.pos.y = v; return this; }
+  set_z(v: number): this { this.pos.z = v; return this; }
+  move_to(
+    x: number = this.pos.x,
+    y: number = this.pos.y,
+    z: number = this.pos.z
+  ): this {
+    this.pos.x = x;
+    this.pos.y = y;
+    this.pos.z = z;
     return this;
   }
 
-  get sx(): number { return this.scale.value.x; }
-  set sx(v: number) { this.set_sx(v); }
-  get sy(): number { return this.scale.value.y; }
-  set sy(v: number) { this.set_sy(v); }
-  get sz(): number { return this.scale.value.z; }
-  set sz(v: number) { this.set_sz(v); }
-  set_sx(v: number): this { return this.set_scale(v); }
-  set_sy(v: number): this { return this.set_scale(void 0, v); }
-  set_sz(v: number): this { return this.set_scale(void 0, void 0, v); }
-  set_scale(x: number = this.sx, y: number = this.sy, z: number = this.sz): this {
-    this.scale.value = new D.Vector3(x, y, z);
+  get cx(): number { return this.center.x; }
+  get cy(): number { return this.center.y; }
+  get cz(): number { return this.center.z; }
+  set cx(v: number) { this.center.x = v; }
+  set cy(v: number) { this.center.y = v; }
+  set cz(v: number) { this.center.z = v; }
+  set_cx(v: number): this { this.center.x = v; return this }
+  set_cy(v: number): this { this.center.y = v; return this }
+  set_cz(v: number): this { this.center.z = v; return this }
+  set_center(
+    x: number = this.center.x,
+    y: number = this.center.y,
+    z: number = this.center.z
+  ): this {
+    this.center.x = x;
+    this.center.y = y;
+    this.center.z = z;
     return this;
   }
 
-  get components(): ReadonlySet<UIComponent> {
+  get sx(): number { return this.scale.x; }
+  get sy(): number { return this.scale.y; }
+  get sz(): number { return this.scale.z; }
+  set sx(v: number) { this.scale.x = v; }
+  set sy(v: number) { this.scale.y = v; }
+  set sz(v: number) { this.scale.z = v; }
+  set_sx(v: number): this { this.scale.x = v; return this; }
+  set_sy(v: number): this { this.scale.y = v; return this; }
+  set_sz(v: number): this { this.scale.z = v; return this; }
+  set_scale(
+    x: number = this.scale.x,
+    y: number = this.scale.y,
+    z: number = this.scale.z
+  ): this {
+    this.scale.x = x;
+    this.scale.y = y;
+    this.scale.z = z;
+    return this;
+  }
+
+  get components(): ReadonlyArray<UIComponent> {
     return this._components;
   }
   get style(): IStyle {
-    return this.txts.value[0].style || {}
+    return this.text?.style || {}
   }
   /** 光标是否在本节点上 */
   get pointer_over() { return this._pointer_over }
@@ -268,14 +301,21 @@ export class UINode implements IDebugging {
     this.data = Object.freeze(data);
     this._parent = parent;
     this._root = parent?.root ?? this;
-    this.id_ui_map = new Map();
-    this.name_ui_map = new Map();
-
+    const { visible = true, opacity = 1, disabled = false } = this.data;
+    this._disabled = disabled
+    this._visible = visible
+    this._opacity = opacity
+    this.center.set(...this.data.center);
+    this.pos.set(...this.data.pos);
+    this.size.set(...this.data.size);
+    this.scale.set(...this.data.scale);
+    this.text = this.data.txt_info ?? null;
+    this.image = this.data.img_info ?? null;
     this.renderer = new D.UINodeRenderer(this);
     make_debugging(this)
   }
   get global_pos(): IVector3 {
-    const ret = this.pos.value.clone()
+    const ret = this.pos.clone()
     if (!this.parent) return ret;
     ret.add(this.parent.global_pos)
     return ret;
@@ -292,30 +332,35 @@ export class UINode implements IDebugging {
     return this;
   }
   hit(x: number, y: number): boolean {
-    const { x: cx, y: cy } = this.center.value;
-    const { x: px, y: py } = this.pos.value;
-    const { x: dw, y: dh } = this.size.value;
+    const { x: cx, y: cy } = this.center;
+    const { x: px, y: py } = this.pos;
+    const { x: dw, y: dh } = this.size;
     const l = px - round(cx * dw);
     const t = py - round(cy * dh);
     const [w, h] = this.data.size;
     return l <= x && t <= y && l + w >= x && t + h >= y;
   }
-  on_pointer_down(e: IUIPointerEvent) {
+  on_pointer_down(e: LF2PointerEvent) {
     this._pointer_down = 1;
     this._click_flag = 1;
     for (const c of this.components)
       c.on_pointer_down?.(e);
     this.callbacks.emit('on_pointer_down')(e, this);
   }
+  on_pointer_move(e: LF2PointerEvent) {
+    for (const c of this.components)
+      c.on_pointer_move?.(e);
+    this.callbacks.emit('on_pointer_move')(e, this);
+  }
 
-  on_pointer_up(e: IUIPointerEvent) {
+  on_pointer_up(e: LF2PointerEvent) {
     this._pointer_down = 0
     for (const c of this.components)
       c.on_pointer_up?.(e);
     this.callbacks.emit('on_pointer_up')(e, this);
   }
 
-  on_pointer_cancel(e: IUIPointerEvent) {
+  on_pointer_cancel(e: LF2PointerEvent) {
     this._pointer_down = 0
     for (const c of this.components)
       c.on_pointer_cancel?.(e);
@@ -367,6 +412,7 @@ export class UINode implements IDebugging {
     }
     for (const c of this._components) {
       c.paused = false;
+      c.mounted = true;
       c.on_resume?.();
     }
     for (const i of this.children) i.on_resume();
@@ -386,6 +432,7 @@ export class UINode implements IDebugging {
     if (pause) actor.act(this, pause);
     for (const c of this._components) {
       c.paused = true;
+      c.mounted = false;
       c.on_pause?.();
     }
     for (const item of this.children) item.on_pause();
@@ -408,28 +455,14 @@ export class UINode implements IDebugging {
     this.renderer.on_hide?.();
   }
 
-  next_img(r: boolean = false) {
-    const idx = this.img_idx.value;
-    const len = this.data.img.length;
-    this.img_idx.value = (r ? (idx + len - 1) : (idx + 1)) % len
-  }
-  next_txt(r: boolean = false) {
-    const idx = this.txt_idx.value;
-    const len = this.data.txt.length;
-    this.txt_idx.value = (r ? (idx + len - 1) : (idx + 1)) % len
-  }
   readonly cook = UINode.create.bind(UINode)
 
   static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {
     const ret = new UINode(lf2, info, parent);
-    const get_val = lf2.ui_val_getter;
-    ret._cook_data(get_val);
-    ret._cook_img_idx(get_val);
-
     const { component } = ret.data;
     if (component)
       for (const c of lf2.factory.create_components(ret, component))
-        ret._components.add(c);
+        ret._components.push(c);
 
     if (info.items) {
       for (const item_info of info.items) {
@@ -448,16 +481,6 @@ export class UINode implements IDebugging {
 
   add_child(node: UINode): this {
     this._children.push(node);
-    if (node.id) {
-      const set = this.id_ui_map.get(node.id) || [];
-      set.push(node)
-      this.id_ui_map.set(node.id, set);
-    }
-    if (node.name) {
-      const set = this.name_ui_map.get(node.name) || [];
-      set.push(node)
-      this.name_ui_map.set(node.name, set);
-    }
     return this;
   }
 
@@ -467,9 +490,9 @@ export class UINode implements IDebugging {
   }
   add_components(...components: UIComponent[]) {
     for (const component of components) {
-      if (this._components.has(component))
+      if (this._components.some(c => c == component))
         continue;
-      this._components.add(component)
+      this._components.push(component)
       component.on_add?.()
       this._callbacks.emit('on_component_add')(component, this)
     }
@@ -480,60 +503,15 @@ export class UINode implements IDebugging {
       return;
     }
     for (const component of components) {
-      if (!this._components.has(component))
-        continue;
-      this._components.delete(component)
+      const idx = this._components.indexOf(component)
+      if (idx < 0) continue;
+      this._components.splice(idx, 1)
       component.on_del?.()
       this._callbacks.emit('on_component_del')(component, this)
     }
   }
-  private _cook_data(get_val: IValGetter<UINode>) {
-    const { visible, opacity, disabled = false } = this.data;
-    if (is_bool(disabled)) {
-      this._disabled.default_value = disabled;
-    } else if (is_str(disabled)) {
-      const func = new Expression<UINode>(disabled, () => get_val).run;
-      this._disabled.default_value = () => func(this);
-    }
 
-    if (is_bool(visible)) {
-      this._visible.default_value = visible;
-    } else if (is_str(visible)) {
-      const func = new Expression<UINode>(visible, () => get_val).run;
-      this._visible.default_value = () => func(this);
-    }
-
-    if (is_num(opacity)) {
-      this._opacity.default_value = opacity;
-    } else if (is_str(opacity)) {
-      this._opacity.default_value = () =>
-        Number(get_val(this, opacity, "==")) || 0;
-    }
-    this.pos.default_value = () => {
-      const [x, y, z] = this.data.pos;
-      if (this.parent) return new D.Vector3(x, y, z);
-      return new D.Vector3(x, y - this.lf2.world.screen_h, z)
-    }
-  }
-
-  private _cook_img_idx(get_val: IValGetter<UINode>) {
-    const imgs = this.imgs.value;
-    if (!imgs?.length) return;
-    const { which } = this.data;
-    if (is_str(which)) {
-      this.img_idx.default_value = () => {
-        const num = get_val(this, which, "==")
-        return num % imgs.length || 0;
-      };
-      return
-    }
-    if (is_num(which)) {
-      this.img_idx.default_value = () => (which % imgs.length || 0)
-      return
-    }
-  }
-
-  on_click(e: IUIPointerEvent) {
+  on_click(e: LF2PointerEvent) {
     const { click } = this.data.actions ?? {};
     if (click) {
       actor.act(this, click);
@@ -543,6 +521,7 @@ export class UINode implements IDebugging {
       c.on_click?.(e);
       if (e.stopped === 2) break;
     }
+    this.callbacks.emit('on_click')(e);
   }
 
   /** 
@@ -551,7 +530,7 @@ export class UINode implements IDebugging {
   protected invoke_all_on_show() {
     this.on_show();
     for (const child of this.children) {
-      if (child._visible.value) child.invoke_all_on_show();
+      if (child._visible) child.invoke_all_on_show();
     }
   }
 
@@ -561,12 +540,12 @@ export class UINode implements IDebugging {
   protected invoke_all_on_hide() {
     this.on_hide();
     for (const child of this.children) {
-      if (child._visible.value) child.invoke_all_on_hide();
+      if (child._visible) child.invoke_all_on_hide();
     }
   }
 
   protected invoke_all_visible() {
-    if (this._visible.value) {
+    if (this._visible) {
       this.invoke_all_on_show();
     } else {
       this.invoke_all_on_hide();
@@ -627,15 +606,18 @@ export class UINode implements IDebugging {
    * @memberof UINode
    */
   find_child(id: string): UINode | undefined {
-    return this.id_ui_map.get(id)?.[0];
+    return this.children.find(v => v.id == id)
   }
-  search_child(id: string): UINode | undefined {
+  search_node(id: string): UINode | undefined {
     let ret = this.find_child(id);
     if (ret) return ret;
-    for (const child of this.children) {
-      ret = child.search_child(id)
+    for (const c of this.children) {
+      ret = c.search_node(id)
       if (ret) return ret;
     }
+  }
+  lookup_node(id: string): UINode | undefined {
+    return this.find_child(id) ?? this.parent?.lookup_node(id)
   }
 
   /**
@@ -647,7 +629,7 @@ export class UINode implements IDebugging {
    * @memberof UINode
    */
   find_child_by_name(name: string): UINode | undefined {
-    return this.name_ui_map.get(name)?.[0];
+    return this.children.find(v => v.name == name)
   }
 
   find_parent<T>(
@@ -688,19 +670,19 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   find_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1
+    condition: TCond<T> | string | undefined | null = void 0
   ): InstanceType<T> | undefined {
     for (const v of this._components) {
       if (!(v instanceof type))
         continue;
       if (!condition)
-        continue
+        return v as InstanceType<T>;
       if (condition === v.id)
         return v as InstanceType<T>;
       if (typeof condition === 'function' && condition(v as any))
@@ -714,22 +696,28 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {InstanceType<T>[]}
    * @memberof UINode
    */
   find_components<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1
+    condition: TCond<T> | string = () => true
   ): InstanceType<T>[] {
-    const ret = filter(
-      this.components,
-      (v) => {
-        if (!(v instanceof type)) return 0;
-        if (is_str(condition)) return condition === v.id;
-        return condition(v as any);
-      },
-    ) as InstanceType<T>[];
+    const ret: any[] = []
+    for (const v of this.components) {
+      if (!(v instanceof type)) continue;
+      if (condition === v.id) {
+        ret.push(v as InstanceType<T>)
+        continue;
+      }
+      if (typeof condition !== 'function')
+        continue;
+      const r = condition(v as any)
+      if (r == 'abort') break;
+      if (r) ret.push(v)
+      if (r == 'end') break;
+    }
     return ret;
   }
 
@@ -738,13 +726,13 @@ export class UINode implements IDebugging {
    *
    * @template T 
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   search_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> | string = () => 1
+    condition: TCond<T> | string = () => true
   ): InstanceType<T> | undefined {
     const ret = this.find_component(type, condition);
     if (ret) return ret;
@@ -759,12 +747,12 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {(TCond<T> | string)} [condition=() => 1]
+   * @param {(TCond<T> | string)} [condition=() => true]
    * @return {InstanceType<T>[]}
    * @memberof UINode
    */
   search_components<T extends TCls<UIComponent>>(
-    type: T, condition: TCond<T> | string = () => 1
+    type: T, condition: TCond<T> | string = () => true
   ): InstanceType<T>[] {
     const ret = this.find_components(type, condition);
     for (const i of this._children)
@@ -777,13 +765,13 @@ export class UINode implements IDebugging {
    *
    * @template T
    * @param {T} type
-   * @param {TCond<T>} [condition=() => 1]
+   * @param {TCond<T>} [condition=() => true]
    * @return {(InstanceType<T> | undefined)}
    * @memberof UINode
    */
   lookup_component<T extends TCls<UIComponent>>(
     type: T,
-    condition: TCond<T> = () => 1
+    condition: TCond<T> = () => true
   ): InstanceType<T> | undefined {
     const ret = this.find_component(type, condition);
     if (ret) return ret;
@@ -803,5 +791,5 @@ export class UINode implements IDebugging {
   }
 }
 type TCls<R = any> = abstract new (...args: any) => R;
-type TCond<T extends TCls,> = (c: InstanceType<T>) => unknown;
+type TCond<T extends TCls,> = (c: InstanceType<T>) => true | false | 'abort' | 'end';
 

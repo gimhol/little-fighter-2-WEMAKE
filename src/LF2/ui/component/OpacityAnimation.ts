@@ -4,7 +4,7 @@ import { UIComponent } from "./UIComponent";
 
 export class OpacityAnimation extends UIComponent {
 
-  static override readonly TAG: string = "OpacityAnimation";
+  static override readonly TAGS: string[] = ["OpacityAnimation"];
   protected _anim: Sequence = new Sequence();
   get loop() { return this._anim.loop }
   get done() { return this._anim.done }

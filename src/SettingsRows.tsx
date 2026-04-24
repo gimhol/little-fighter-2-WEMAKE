@@ -113,12 +113,12 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     weapon_id ? lf2.weapons.add(weapon_id, rwn) : lf2.weapons.add_random(rwn);
   };
   const on_click_del_weapon = () => {
-    lf2.weapons.list().forEach(v => v.hp = v.hp_r = 0)
+    lf2.weapons.all.forEach(v => v.hp = v.hp_r = 0)
   };
   const on_click_add_bot = () => {
     (c_id
-      ? lf2.characters.add(c_id, rcn, team)
-      : lf2.characters.add_random(rcn, team)
+      ? lf2.fighters.add(c_id, rcn, team)
+      : lf2.fighters.add_random(rcn, team)
     ).forEach((e) => {
       e.name = "bot";
       const controller_creator = bot_controllers[bot_ctrl];
@@ -163,7 +163,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           <Combine>
             <Select
               value={stage_id}
-              onChange={v => lf2.change_stage(v!)}
+              onChange={v => lf2.change_stage(v || '')}
               options={stage_list}
               parse={(i) => [i.id, i.name]}
             />
@@ -201,7 +201,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
         <Titled float_label="背景">
           <Select
             value={bg_id}
-            onChange={v => lf2.change_bg(v!)}
+            onChange={v => lf2.change_bg(v ?? '')}
             options={lf2.datas.backgrounds}
             parse={(i) => [i.id, i.base.name]}
           />

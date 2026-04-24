@@ -2,7 +2,7 @@ export enum FrameBehavior {
   /** 
    * * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    * 
    * 追敌人的center(因为敌人站在地面，所以会下飘) 
    * 
@@ -13,7 +13,7 @@ export enum FrameBehavior {
   /** 
    * * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    * 
    * 水平追敌？
    * Dennis的d^a
@@ -30,6 +30,13 @@ export enum FrameBehavior {
 
   /** 
    * 天使之祝福的开始(会追我方的人物很久) 
+   * 
+   * * [X] LF2
+   * * [X] LFW
+   * 
+   * 游戏数据加载时，
+   * 当ball/weapon的frame拥有hit_Fa: 5时，
+   * 会被添加上opoint
    */
   AngelBlessingStart = 5,
 
@@ -41,7 +48,7 @@ export enum FrameBehavior {
   /** 
    * * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    * 
    * 恶魔之审判,殃殒天降(可以做出打到地面的追踪波) 
    * 
@@ -54,7 +61,7 @@ export enum FrameBehavior {
   /**
    * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    *
    * 吸血蝙蝠的开始
    *
@@ -71,7 +78,7 @@ export enum FrameBehavior {
   /**
    * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    *
    * 殃殒天降的开始(视敌人数目而增加，基本数值是四个)
    *
@@ -83,7 +90,7 @@ export enum FrameBehavior {
   /**
    * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    *
    * 加速(从慢变快), john 盘子失去跟踪
    * 
@@ -96,7 +103,7 @@ export enum FrameBehavior {
   /**
    * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    *
    * 极地火山的开始
    *
@@ -108,7 +115,7 @@ export enum FrameBehavior {
   /**
    * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    *
    * 吸血蝙蝠
    */
@@ -117,7 +124,7 @@ export enum FrameBehavior {
   /**
    * 用于：
    * * [X] LF2
-   * * [X] WEMAKE
+   * * [X] LFW
    *
    * 连环重炮的开始
    *

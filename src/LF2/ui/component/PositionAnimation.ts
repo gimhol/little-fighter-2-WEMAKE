@@ -6,7 +6,7 @@ import ease_in_out_sine from "@/LF2/utils/ease_method/ease_in_out_sine";
 
 
 export class PositionAnimation extends UIComponent {
-  static override readonly TAG: string = "PositionAnimation";
+  static override readonly TAGS: string[] = ["PositionAnimation"];
   protected seq_anim: Sequence = new Sequence();
   protected values = new Map<any, [IVector3, IVector3]>()
   start(v?: boolean) {
@@ -22,7 +22,7 @@ export class PositionAnimation extends UIComponent {
     const len = this.args.length;
     const anims: Animation[] = [];
     for (let i = 0; i < len - 2; i += 2) {
-      const value = this.vec3(i + 2) || this.node.pos.value;
+      const value = this.vec3(i + 2) || this.node.pos;
       const duration = this.num(i + 3) || 0;
       const prev_value = i == 0 ? value : (this.vec3(i) || value);
       const a = value.equals(prev_value) ?

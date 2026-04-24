@@ -1,7 +1,7 @@
 import { Easing } from "@/LF2/animation";
 import { UIComponent } from "./UIComponent";
 export class ScaleClickable extends UIComponent {
-  static override readonly TAG = 'ScaleClickable';
+  static override readonly TAGS: string[] = ["ScaleClickable"];
   protected normal_scale: number = 1;
   protected hover_scale: number = 1.1;
   protected press_scale: number = 0.9;

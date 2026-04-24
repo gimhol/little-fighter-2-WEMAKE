@@ -1,4 +1,4 @@
-import { StateEnum, WeaponType, type IFrameInfo } from "../defines";
+import { GK, StateEnum, WeaponType, type IFrameInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import type { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";
@@ -7,7 +7,13 @@ export default class CharacterState_Lying extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Lying) {
     super(state)
   }
+  private a_map = new Map<string, number>()
+  private d_map = new Map<string, number>()
+  private c_map = new Map<string, number>()
   override enter(e: Entity, prev_frame: IFrameInfo): void {
+    this.a_map.delete(e.id)
+    this.d_map.delete(e.id)
+    this.c_map.delete(e.id)
     e.ctrl.reset_key_list();
     const holding = e.holding
     if (holding) e.drop_holding();
@@ -17,6 +23,29 @@ export default class CharacterState_Lying extends CharacterState_Base {
     e.toughness_resting = 0;
     if (e.hp <= 0) this.on_dead(e)
   }
+
+  override update(e: Entity): void {
+    super.update(e);
+    do {
+      const count_c = this.c_map.get(e.id) ?? 0;
+      const count_a = this.a_map.get(e.id) ?? 0
+      const pressing_a = !e.ctrl.is_end(GK.a)
+      this.a_map.set(e.id, count_a + 1)
+      if (count_a && count_a % 2 && pressing_a && e.wait > 0) {
+        this.c_map.set(e.id, count_c + 1);
+        e.wait -= 1;
+        break;
+      }
+      const count_d = this.d_map.get(e.id) ?? 0
+      const pressing_d = !e.ctrl.is_end(GK.d)
+      this.d_map.set(e.id, count_d + 1)
+      if (count_d && count_d % 2 && pressing_d) {
+        this.c_map.set(e.id, count_c + 1);
+        e.wait += 1;
+      }
+    } while (0)
+  }
+
   override leave(e: Entity, next_frame: IFrameInfo): void {
     if (e.dead_join && e.hp <= 0) {
       e.motionless = 30
@@ -30,7 +59,10 @@ export default class CharacterState_Lying extends CharacterState_Base {
       e.wakeup_invuln = true;// 是否全部加入的都要这个？
     }
     if (e.wakeup_invuln) { // 关键角色起身的闪烁无敌时间
-      e.blinking = e.world.lying_blink_time;
+      // 提前或延迟起身都会降低无敌闪烁时间?
+      // const count_c = this.c_map.get(e.id) ?? 0;
+      const count_c = 0;
+      e.blinking = (e.world.lying_blink_time - count_c);
     }
   }
   override on_dead(e: Entity): void {

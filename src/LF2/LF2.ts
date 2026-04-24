@@ -1,6 +1,7 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
-import { KEY_NAME_LIST, LocalController } from "./controller";
+import { LocalController } from "./controller";
 import * as D from "./defines";
+import { AGK } from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
 import * as I from "./ditto";
 import { Entity, is_fighter } from "./entity";
@@ -12,26 +13,16 @@ import { ILf2Callback } from "./ILf2Callback";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
-import { Stage } from "./stage";
 import * as UI from "./ui";
 import { regist_components } from './ui/component/_';
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
-const cheat_info_pair = (n: D.CheatType) =>
-  [
-    n,
-    {
-      keys: D.Defines.CheatKeys[n],
-      gkeys: D.Defines.CheatGameKeys[n],
-      sound: D.Defines.CheatTypeSounds[n],
-    },
-  ] as const;
 
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.24'
-  static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
+  static readonly VERSION_NAME: string = 'v0.1.25'
+  static readonly DATA_VERSION: number = 16;
   static readonly DATA_TYPE: string = 'DataZip';
 
   static get PREL_ZIPS() { return this._PREL_ZIPS }
@@ -43,15 +34,16 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static get instance() { return LF2.instances[0] }
   static get world() { return this.instance?.world }
   static get objects() { return this.instance?.entities }
-  static get fighters() { return this.instance?.characters }
+  static get fighters() { return this.instance?.fighters }
   static get weapons() { return this.instance?.weapons }
   static get balls() { return this.instance?.balls }
   static get bg() { return this.world?.bg }
   static get stage() { return this.world?.stage }
   static get phase() { return this.stage?.phase }
 
-  static get ui() { return LF2.instances[0].ui }
+  static get ui() { return this.instance.ui }
   static get ditto() { return I.Ditto }
+  static get uis() { return this.instance.uis }
 
   get lang(): string { return this._i18n.lang }
   set lang(v: string) { this._i18n.lang = v }
@@ -110,10 +102,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!ret) this.players.set(player_id, ret = new PlayerInfo(player_id))
     return ret
   }
-  readonly characters = new Helper.CharactersHelper(this);
+  readonly fighters = new Helper.CharactersHelper(this);
   readonly weapons = new Helper.WeaponsHelper(this);
   readonly entities = new Helper.EntitiesHelper(this);
   readonly balls = new Helper.BallsHelper(this);
+  readonly uis = new Helper.UIHelper(this)
   readonly datas: DatMgr;
   readonly sounds: I.ISounds;
   readonly images: I.IImageMgr;
@@ -230,11 +223,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _keys = ''
   private _gkeys = new Map<string, string>()
   private _gkeys_matchs = new Set<string>()
-  private readonly _cheat_infos = new Map<D.CheatType, D.Defines.ICheatInfo>([
-    cheat_info_pair(D.CheatType.LF2_NET),
-    cheat_info_pair(D.CheatType.HERO_FT),
-    cheat_info_pair(D.CheatType.GIM_INK),
-  ]);
   private readonly _cheat_enables = new Map<string, boolean>();
 
   is_cheat(name: string | D.CheatType) {
@@ -244,7 +232,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const enabled = this._cheat_enables.get(name);
     enable = enable ?? (!enabled)
     if (enabled === enable) return;
-    const cheat = this._cheat_infos.get(name as D.CheatType);
+    const cheat = D.Defines.CheatInfos.get(name as D.CheatType);
     if (!cheat) return;
     if (cheat.sound) this.sounds.play_with_load(cheat.sound);
     this._cheat_enables.set(name, enable);
@@ -264,7 +252,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     }
 
     if (e.times === 0) {
-      for (const key_name of KEY_NAME_LIST) {
+      for (const key_name of AGK) {
         for (const [pid, player] of this.players) {
           if (!player.local) continue;
           if (player.keys[key_name] !== key_code) continue;
@@ -279,7 +267,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     let match = false;
     this._gkeys_matchs.clear()
     this._keys += key_code;
-    for (const [cheat_name, { keys: k, gkeys: g }] of this._cheat_infos) {
+    for (const [cheat_name, { keys: k, gkeys: g }] of D.Defines.CheatInfos) {
       for (const [pid, gkeys] of this._gkeys) {
         if (g.startsWith(gkeys)) this._gkeys_matchs.add(pid);
         if (g === gkeys) this.cmds.push(cheat_name)
@@ -295,7 +283,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   on_key_up(e: I.IKeyEvent) {
     const key_code = e.key?.toLowerCase() ?? "";
-    for (const key_name of KEY_NAME_LIST) {
+    for (const key_name of AGK) {
       for (const [pid, player] of this.players) {
         if (!player.local) continue;
         if (player.keys[key_name] !== key_code) continue
@@ -351,7 +339,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load')
     this._loading = true;
     this.callbacks.emit("on_loading_start")();
-    this.set_ui("loading");
+    this.set_ui({ id: "loading" });
     if (is_first) {
       const [obj] = await this.import_json("builtin_data/launch/strings.json5")
       this._i18n.add(obj)
@@ -364,7 +352,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         await this.load_ui(zip);
       }
       if (is_first) {
-        this.set_ui(this.uiinfos[0]!)
+        this.set_ui({ id: this.uis.all?.[0].id })
         this.callbacks.emit("on_prel_loaded")(this);
       }
       this._playable = true;
@@ -406,27 +394,22 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load_data')
     for (const d of this.datas.fighters) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.characters as any)[`add_${name}`] = (num = 1, team = void 0) =>
-        this.characters.add(d, num, team);
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.characters.add(d, num, team_1);
+      (this.fighters as any)[`add_${name}`] = (num?: number, team?: string) => this.fighters.add(d, num, team);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.fighters.add(d, num, team);
     }
     for (const d of this.datas.weapons) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.weapons as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.weapons.add(d, num, team_1);
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.weapons.add(d, num, team_1);
+      (this.weapons as any)[`add_${name}`] = (num?: number, team?: string) => this.weapons.add(d, num, team);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.weapons.add(d, num, team);
     }
     for (const d of this.datas.balls) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.entities.add(d, num, team_1);
+      (this.balls as any)[`add_${name}`] = (num?: number, team?: string) => this.balls.add(d, num, team);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.balls.add(d, num, team);
     }
     for (const d of this.datas.entity) {
       const name = d.base.name?.toLowerCase() ?? d.type + "_id_" + d.id;
-      (this.entities as any)[`add_${name}`] = (num = 1, team_1 = void 0) =>
-        this.entities.add(d, num, team_1);
+      (this.entities as any)[`add_${name}`] = (num?: number, team?: string) => this.entities.add(d, num, team);
     }
     if (zip) {
       const bgms = zip.file(/bgm\/.*?\.mp3$/)
@@ -474,35 +457,19 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   del_puppet(player_id: string) {
     this.cmds.push(CMD.DEL_PUPPET, player_id)
   }
-  change_bg(bg_info: D.IBgData): void;
-  change_bg(bg_id: string): void;
-  change_bg(arg: D.IBgData | string | undefined) {
-    if (!arg) return;
-    if (arg === D.Defines.RANDOM_BG || arg === D.Defines.RANDOM_BG.id || arg === '?')
-      arg = this.mt.pick(this.datas.backgrounds.filter(v => v.base.group.some(a => a === D.BackgroundGroup.Regular)))
-    if (is_str(arg)) arg = this.datas.find_background(arg);
-    if (!arg) return;
-    this.world.stage.change_bg(arg);
+  change_bg(bg: string): void {
+    this.world.change_bg(bg)
+    // this.cmds.push(CMD.CHANGE_BG, bg)
   }
-  remove_bg = () => this.remove_stage();
-
-  change_stage(stage_info: D.IStageInfo): void;
-  change_stage(stage_id: string): void;
-  change_stage(arg: D.IStageInfo | string | undefined): void {
-    if (arg === this.world.stage.data) return;
-    if (is_str(arg)) arg = this.stages?.find((v) => v.id === arg);
-    if (!arg) return;
-    this.world.stage = new Stage(this.world, arg);
+  change_stage(stage: string): void {
+    this.world.change_stage(stage)
+    // this.cmds.push(CMD.CHANGE_STAGE, stage)
   }
-  remove_stage() {
-    this.world.stage = new Stage(this.world, D.Defines.VOID_STAGE);
-  }
-
   goto_next_stage() {
     const next = this.world.stage.data.next;
     if (!next) return;
     if (next === 'end') {
-      this.set_ui("ending_page")
+      this.set_ui({ id: "ending_page" })
       return;
     }
     const next_stage = this.stages?.find((v) => v.id === next);
@@ -518,15 +485,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       }
     }
 
-    this.change_stage(next_stage || D.Defines.VOID_STAGE);
+    this.change_stage(next_stage?.id || '');
     this.callbacks.emit("on_enter_next_stage")();
   }
 
   private _uiinfos_loaded = false;
-  private _uiinfos: Readonly<UI.ICookedUIInfo>[] = [];
-  get uiinfos(): readonly UI.ICookedUIInfo[] {
-    return this._uiinfos;
-  }
   get uiinfos_loaded() {
     return this._uiinfos_loaded;
   }
@@ -550,14 +513,14 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return ret
   }
 
-  async load_ui(zip: I.IZip): Promise<UI.ICookedUIInfo[]> {
+  async load_ui(zip: I.IZip): Promise<ReadonlyArray<UI.ICookedUIInfo>> {
     this._dispose_check('load_ui')
-    if (this._uiinfos.length) return this._uiinfos;
+    if (this.uis.all.length) return this.uis.all;
 
     this._uiinfos_loaded = false;
     const files = zip.file(/^ui\/.*?\.ui\.json5?$/)
     const ret: UI.ICookedUIInfo[] = []
-    if (!this._uiinfos.length) {
+    if (!this.uis.all.length) {
       ret.unshift(...await this.load_builtin_ui())
       this._dispose_check('load_ui')
     }
@@ -570,11 +533,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       ret.push(cooked_ui_info);
     }
     if (this._disposed) {
-      this._uiinfos.length = 0;
-      return this._uiinfos = [];
+      this.uis.clear()
+      return this.uis.all;
     } else {
       this._uiinfos_loaded = true;
-      this._uiinfos.push(...ret)
+      this.uis.add(...ret)
       this.callbacks.emit("on_ui_loaded")(ret);
       return ret;
     }
@@ -587,17 +550,17 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return word;
   };
 
-  set_ui(arg: string | UI.ICookedUIInfo | undefined, index: number = 0): void {
+  set_ui(opts: UI.IPushUIOpts, index: number = 0): void {
     if (index < 0) return;
     if (index >= this._ui_stacks.length)
       index = this._ui_stacks.length
     if (!this._ui_stacks[index])
       this._ui_stacks[index] = new UI.UIStack(this, index)
-    this._ui_stacks[index].set(arg)
+    this._ui_stacks[index].set(opts)
   }
 
-  pop_ui(inclusive?: boolean, until?: (ui: UI.UINode, index: number, stack: UI.UINode[]) => boolean): void {
-    this._ui_stacks[0].pop(inclusive, until)
+  pop_ui(opts?: UI.IPopUIOpts): void {
+    this._ui_stacks[0].pop(opts)
   }
 
   pop_ui_safe() {
@@ -608,16 +571,15 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       stack.pop()
     if (!stack.ui && stack_index > 0)
       this._ui_stacks.splice(stack_index, 1)
-
   }
 
-  push_ui(arg: string | UI.ICookedUIInfo | undefined, index: number = 0): void {
+  push_ui(opts: UI.IPushUIOpts, index: number = 0): void {
     if (index < 0) return;
     if (index >= this._ui_stacks.length)
       index = this._ui_stacks.length
     if (!this._ui_stacks[index])
       this._ui_stacks[index] = new UI.UIStack(this, index)
-    this._ui_stacks[index].push(arg)
+    this._ui_stacks[index].push(opts)
   }
 
   on_loading_content(content: string, progress: number) {

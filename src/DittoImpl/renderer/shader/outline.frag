@@ -3,14 +3,9 @@ uniform sampler2D tex;
 uniform float tw;
 /** 一倍纹理图的高度（像素）*/
 uniform float th;
-/** 当前纹理图的宽度倍数 */
+/** 当前纹理图倍数 */
 uniform float tsw;
-/** 当前纹理图的高度倍数 */
 uniform float tsh;
-/*
-实际图片宽（像素） = tsh * tw
-实际图片高（像素） = tsh * th
-*/
 
 uniform float repeatX;
 uniform float repeatY;
@@ -34,7 +29,7 @@ uniform vec3 outlineColor;
 /** 灰度 */
 uniform float gray;
 /** 混色强度 */
-uniform float mixStreath;
+uniform float mixStength;
 /** 混色 */
 uniform vec3 mixColor;
 /** opacity */
@@ -43,11 +38,21 @@ uniform bool keepout;
 
 uniform bool cover;
 /** 色强度 */
-uniform float coverStreath;
+uniform float coverStength;
 /** 色 */
 uniform vec3 coverColor;
 
-// 你之前的灰度权重（扩展成 vec4）
+/** 背景色 */
+uniform vec3 bgColor;
+/** 背景色透明度 */
+uniform float bgAlpha;
+
+/** 前景色 */
+uniform vec3 fgColor;
+/** 前景色透明度 */
+uniform float fgAlpha;
+
+// 灰度权重
 const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
 
 const float gamma = 2.2;
@@ -62,31 +67,49 @@ vec3 gamma_invert(vec3 color) {
   return pow(color, vec3(gamma));
 }
 
-vec3 toGray(vec3 color, float strength) {
+vec3 to_gray(vec3 color, float strength) {
   float gray = dot(color, GRAY_WEIGHT);
   return mix(color, vec3(gray), strength);
+}
+
+vec4 bgfg(vec3 c0, float a0, vec3 c1, float a1) {
+  if(a0 <= 0.0)
+    return vec4(c1, a1);
+  if(a1 <= 0.0)
+    return vec4(c0, a0);
+  vec4 ret = vec4(0, 0, 0, 0);
+  ret.a = a0 * (1.0 - a1) + a1;
+  ret.rgb = (c0 * a0 * (1.0 - a1) + c1 * a1) / ret.a;
+  return ret;
 }
 
 void apply(vec4 color) {
   if(cover) {
     color.rgb = gamma_correct(coverColor);
-    color.a = coverStreath;
+    color.a = coverStength;
   }
-  if(mixStreath > 0.0) {
-    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStreath);
-  }
-  if(gray > 0.0) {
-    color.rgb = toGray(color.rgb, gray);
-  }
+  if(gray > 0.0)
+    color.rgb = to_gray(color.rgb, gray);
+  if(mixStength > 0.0)
+    color.rgb = mix(color.rgb, gamma_correct(mixColor), mixStength);
+  if(bgAlpha > 0.0)
+    color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
+  if(fgAlpha > 0.0)
+    color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
   color.a *= opacity;
   gl_FragColor = color;
-
 }
 
 void main() {
+  /** 原图像素宽 */
   float ow = tw / tsw;
+  /** 原图像素高 */
   float oh = th / tsh;
-  vec2 uv = vec2((vUv.x * w / ow) + x / ow, (vUv.y * h / oh) + 1.0 - (y + h) / oh);
+
+  float uv_x = vUv.x * w / ow + x / ow;
+  float uv_y = 1.0 + vUv.y * h / oh - (y + h) / oh;
+  vec2 uv = vec2(uv_x, uv_y);
+
   if(!keepout && (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)) {
     // 超出纹理图的部分将不显示
     discard;
@@ -104,15 +127,37 @@ void main() {
   float outline = 0.0;
   vec2 texel = vec2(outlineWidth) / vec2(textureSize(tex, 0));
   float center = texture2D(tex, uv).a;
-  float up = texture2D(tex, uv + vec2(0, -texel.y)).a;
-  float down = texture2D(tex, uv + vec2(0, texel.y)).a;
-  float left = texture2D(tex, uv + vec2(-texel.x, 0)).a;
-  float right = texture2D(tex, uv + vec2(texel.x, 0)).a;
+
+  vec2 coord_up = uv + vec2(0, -texel.y);
+  vec2 coord_down = uv + vec2(0, texel.y);
+  vec2 coord_left = uv + vec2(-texel.x, 0);
+  vec2 coord_right = uv + vec2(texel.x, 0);
+  float up = texture2D(tex, coord_up).a;
+  float down = texture2D(tex, coord_down).a;
+  float left = texture2D(tex, coord_left).a;
+  float right = texture2D(tex, coord_right).a;
+  if(coord_up.y < 1.0 - (y + h) / oh)
+    up = 0.0;
+  if(coord_down.y > y / oh)
+    down = 0.0;
+  if(coord_left.x < x / ow)
+    left = 0.0;
+  if(coord_right.x > (x + w) / ow)
+    right = 0.0;
+
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
-  if(outline > 0.1 && center < 0.1) {
-    gl_FragColor.rgb = gamma_correct(outlineColor);
-    gl_FragColor.a = outlineAlpha;
-  } else {
+  if(outline <= 0.1 || center >= 0.5) {
     apply(color);
+    return;
   }
+
+  // 描边
+  color = vec4(gamma_correct(outlineColor), outlineAlpha);
+  if(bgAlpha > 0.0)
+    color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
+  if(fgAlpha > 0.0)
+    color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
+  color.a *= opacity;
+  gl_FragColor = color;
+
 }

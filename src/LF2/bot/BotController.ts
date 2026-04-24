@@ -1,6 +1,7 @@
 import FSM from "../base/FSM";
-import { BaseController, KEY_NAME_LIST } from "../controller/BaseController";
+import { BaseController } from "../controller/BaseController";
 import {
+  AGK,
   ATTCKING_ITR_KINDS,
   ATTCKING_STATES,
   BotDataSet,
@@ -16,7 +17,6 @@ import {
 import { Ditto } from "../ditto";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
-import { PlayerInfo } from "../PlayerInfo";
 import { abs, between, clamp, max, round, round_float } from "../utils";
 import { DummyEnum, dummy_updaters } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
@@ -30,7 +30,6 @@ export enum BotBehavior {
   Move = 'move',
 }
 export class BotController extends BaseController {
-  readonly player: PlayerInfo | undefined;
   readonly fsm = new FSM<BotStateEnum>()
     .add(
       new BotState_Idle(this),
@@ -134,7 +133,9 @@ export class BotController extends BaseController {
     ) return 100;
     return this.dataset.w_atk_m_x
   }
-
+  get atk_r_x() {
+    return this.dataset.w_atk_r_x
+  }
   get stage() { return this.world.stage }
   get r_desire(): -1 | 1 | 0 {
     const chasing = this.chasings.get()?.entity;
@@ -177,28 +178,24 @@ export class BotController extends BaseController {
   }
   constructor(player_id: string, entity: Entity) {
     super(player_id, entity);
-    this.player = this.lf2.players.get(player_id);
     this._dataset = new BotDataSet();
   }
 
   /**
    * 判断是否应该追击某个对象
    *
-   * @param {(Entity | null)} [e]
+   * @param {Entity} [e]
    * @return {*}  {boolean}
    * @memberof BotController
    */
-  should_chase(e?: Entity | null): boolean {
+  should_chase(e: Entity): boolean {
     const { entity: me } = this;
-    const e_state = e?.state;
 
-    if (me.hp <= 0)
-      return false;
-    if (me.holding?.base_type == W_T.Drink)
-      return false;
-    if (!e?.is_attach || e.hp <= 0)
-      return false;
+    if (me.hp <= 0) return false;
+    if (me.holding?.base_type == W_T.Drink) return false;
+    if (e.hp <= 0) return false;
 
+    const e_state = e.state;
     const [l, r] = this.world.fighter_bound(me)
     if (!between(e.position.x, l, r))
       return false;
@@ -236,19 +233,16 @@ export class BotController extends BaseController {
     }
     if (e_state == StateEnum.Lying)
       return false;
-    return !!(
-      !e.invisible &&
-      !e.blinking &&
-      !e.invulnerable &&
-      (
-        me.ground_y != me.position.y ||
-        this.atk_m_x <= abs_dx ||
-        e_state == StateEnum.Defend ||
-        e_state == StateEnum.BrokenDefend ||
-        e_state == StateEnum.Caught ||
-        e_state == StateEnum.Injured
-      )
-    )
+    if (e.invisible) return false
+    if (e.blinking) return false
+    if (e.invulnerable) return false
+    if (me.ground_y != me.position.y) return true
+
+    if (this.fsm.state?.key === BotStateEnum.Avoiding) {
+      const { atk_r_x } = this;
+      return atk_r_x > 0 && atk_r_x < abs_dx
+    }
+    return this.atk_m_x <= abs_dx
   }
 
   /**
@@ -258,32 +252,43 @@ export class BotController extends BaseController {
    * @return {*}  {boolean}
    * @memberof BotController
    */
-  should_avoid(e?: Entity | null): boolean {
+  should_avoid(e: Entity): boolean {
     const { entity: me } = this;
-    if (
-      me.hp <= 0 ||
-      !e?.is_attach ||
-      e.hp <= 0
-    ) return false;
+    if (me.hp <= 0) return false
+    if (e.hp <= 0) return false;
 
     const dxz = manhattan_xz(this.entity, e)
-    if (dxz > 300) return false;
-    return !!(
-      e.state === StateEnum.Lying ||
-      e.invisible ||
-      e.blinking ||
-      e.invulnerable ||
-      !e.frame.bdy?.length ||
-      me.holding?.base_type === W_T.Drink ||
-      (
-        me.ground_y == me.position.y &&
-        this.atk_m_x > abs(me.position.x - e.position.x) &&
-        e.state !== StateEnum.Defend &&
-        e.state !== StateEnum.BrokenDefend &&
-        e.state !== StateEnum.Caught &&
-        e.state !== StateEnum.Injured
-      )
-    )
+    if (e.state === StateEnum.Lying) return dxz < 180;
+    if (e.blinking) return dxz < 180;
+    if (e.invulnerable) return dxz < 180;
+    if (me.holding?.base_type === W_T.Drink) {
+      if (this.fsm.state?.key !== BotStateEnum.Avoiding) {
+        // 非逃跑的状态下，太近了，开始逃跑
+        return dxz < 180;
+      } else {
+        // 逃跑的状态下，跑出一定距离，停止逃跑
+        return dxz < 260;
+      }
+    }
+
+
+    // 不再地上
+    if (me.ground_y != me.position.y) return false;
+
+    if (
+      e.state == StateEnum.BrokenDefend ||
+      e.state == StateEnum.Caught ||
+      e.state == StateEnum.Falling ||
+      e.state == StateEnum.Drink ||
+      e.state == StateEnum.Frozen
+    ) return false
+
+    const abs_x = abs(me.position.x - e.position.x)
+    if (this.fsm.state?.key === BotStateEnum.Avoiding) {
+      const { atk_r_x } = this;
+      return atk_r_x > 0 && atk_r_x > abs_x
+    }
+    return this.atk_m_x > abs_x
   }
 
 
@@ -297,14 +302,14 @@ export class BotController extends BaseController {
    *    威胁无法防御时，返回2；
    * @memberof BotController
    */
-  should_defend(e?: Entity | null): 0 | 1 | 2 {
+  should_defend(e: Entity): 0 | 1 | 2 {
     if (
-      e?.is_attach != true ||
       e.invisible ||
       this.entity.toughness ||
       this.entity.invisible ||
       this.entity.blinking ||
-      this.entity.invulnerable) return 0
+      this.entity.invulnerable
+    ) return 0
 
     const { itr: itrs } = e
     do {
@@ -415,19 +420,19 @@ export class BotController extends BaseController {
     let y = 0;
     switch (entity.state) {
       case StateEnum.Jump:
-        x = round_float(px + 3 * vx);
-        z = round_float(pz + 2 * vz);
+        x = round_float(px + 2 * vx);
+        z = round_float(pz + 1 * vz);
         y = round_float(py + 2 * vy);
         break;
       case StateEnum.Running:
-        x = round_float(px + 4 * vx);
-        z = round_float(pz + 2.5 * vz);
-        y = round_float(py + 2.5 * vy);
+        x = round_float(px + 2 * vx);
+        z = round_float(pz + 1 * vz);
+        y = round_float(py + 2 * vy);
         break;
       case StateEnum.Dash:
-        x = round_float(px + 5 * vx);
-        z = round_float(pz + 3 * vz);
-        y = round_float(py + 3 * vy)
+        x = round_float(px + 3 * vx);
+        z = round_float(pz + 1 * vz);
+        y = round_float(py + 1 * vy)
         break;
       default:
         x = round_float(px + vx);
@@ -483,9 +488,9 @@ export class BotController extends BaseController {
     if (this.dummy) {
       dummy_updaters[this.dummy]?.update(this);
     } else if (this.world.stage.is_chapter_finish) {
-      this.key_up(...KEY_NAME_LIST)
+      this.key_up(...AGK)
     } else if (this.entity.hp <= 0) {
-      this.key_up(...KEY_NAME_LIST)
+      this.key_up(...AGK)
     } else {
       this.chasings.del(({ entity }) => !this.should_chase(entity))
       this.chasings.sort(this.entity)

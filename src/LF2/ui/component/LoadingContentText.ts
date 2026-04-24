@@ -1,14 +1,9 @@
-import { UITextLoader } from "../UITextLoader";
 import { parse_call_func_expression } from "../utils";
 import { FadeOutOpacity } from "./FadeOutOpacity";
-import { UIComponent } from "./UIComponent";
+import { Label } from "./Label";
 
-export class LoadingContentText extends UIComponent {
-  static override readonly TAG = "LoadingContentText"
-  private _text_loader = new UITextLoader(() => this.node)
-    .set_style(() => this.node.style)
-    .ignore_out_of_date();
-
+export class LoadingContentText extends Label {
+  static override readonly TAGS: string[] = ["LoadingContentText"]
   get fade_out_duration() { return this.num(1) ?? 0 };
   get fade_out_delay() { return this.num(2) ?? 0 }
   protected fadeout?: FadeOutOpacity;
@@ -30,24 +25,22 @@ export class LoadingContentText extends UIComponent {
   }
 
   override on_resume(): void {
-    super.on_resume();
     this.lf2.callbacks.add(this);
   }
 
   override on_pause(): void {
-    super.on_pause();
     this.lf2.callbacks.del(this);
   }
 
   on_loading_end() {
     const page = this.str(0)
-    if (page) this.lf2.set_ui(page)
+    if (page) this.lf2.set_ui({ id: page })
     else this.on_loading_content("waiting_others_players", 0)
   }
 
   on_loading_content(text: string, progress: number) {
     this.fadeout?.start();
     const str = progress ? `loading: ${text}(${progress}%)` : ` loading: ${text}`;
-    this._text_loader.set_text([str])
+    this.set_text(str)
   }
 }

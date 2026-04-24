@@ -6,7 +6,7 @@ import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 export class StageTitleText extends UIComponent {
-  static override readonly TAG = "StageTitleText";
+  static override readonly TAGS: string[] = ["StageTitleText"];
   private _title: string = '';
   private _stage: Stage | null = null;
   private _text_loader = new UITextLoader(() => this.node).set_style({
@@ -14,7 +14,7 @@ export class StageTitleText extends UIComponent {
     font: "12px Arial",
     line_width: 1,
     padding_t: 2
-  }).ignore_out_of_date();
+  })
 
   private _world_cbs: IWorldCallbacks = {
     on_stage_change: (stage: Stage) => this.set_stage(stage)
@@ -36,7 +36,7 @@ export class StageTitleText extends UIComponent {
   set_title(title: string) {
     if (this._title == title) return;
     this._title = title;
-    this._text_loader.set_text([title]);
+    this._text_loader.set_text(title);
   }
   override on_start(): void {
     super.on_start?.();

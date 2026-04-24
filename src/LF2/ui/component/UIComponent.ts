@@ -1,12 +1,12 @@
-import { ISchema, IVector3 } from "../../defines";
-import { make_schema } from "../../utils/schema/make_schema";
 import { Callbacks } from "../../base";
+import { IVector3 } from "../../defines";
 import { Ditto } from "../../ditto";
 import { IDebugging, make_debugging } from "../../entity/make_debugging";
 import { is_num } from "../../utils";
+import { IPropsMeta } from "../../utils/schema/make_schema";
 import { IComponentInfo } from "../IComponentInfo";
 import { IUIKeyEvent } from "../IUIKeyEvent";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import { LF2PointerEvent } from "../LF2PointerEvent";
 import type { UINode } from "../UINode";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIProps } from "./UIProps";
@@ -20,12 +20,9 @@ export class UIComponent<
   P extends unknown = unknown,
   C extends IUICompnentCallbacks = IUICompnentCallbacks
 > implements IDebugging {
-  static readonly TAG: string = "UIComponent"
-  static readonly ALIAS?: string[] = [];
-  static readonly PROPS: ISchema = make_schema({
-    key: "UIComponentProps",
-    type: "object",
-  })
+  static get TAG(): string { return this.TAGS[0]; }
+  static readonly TAGS: string[] = ["UIComponent"]
+  static readonly PROPS: IPropsMeta = {}
   readonly node: UINode;
   readonly f_name: string;
   readonly callbacks = new Callbacks<C>()
@@ -33,11 +30,21 @@ export class UIComponent<
   readonly props_holder: UIProps;
   protected _props: any;
   private _args_caches = new Map<any, any>()
+  private _props_error?: Error & { errors: ReadonlyArray<string> };
   stopped: boolean = true;
   paused: boolean = true;
   get props(): P {
     if (this._props) return this._props;
-    return this._props = this.props_holder.validate(this.constructor as any)
+    if (this._props_error) throw this._props_error;
+    this._props = this.props_holder.validate(this.constructor as any)
+    if (this.props_holder.errors.length) {
+      const e = new Error("[UIComponent.props] failed")
+      this._props_error = Object.assign(e, {
+        errors: this.props_holder.errors
+      })
+      throw this._props_error
+    }
+    return this._props
   }
   __debugging?: boolean | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,7 +54,7 @@ export class UIComponent<
   id: string = '';
   get lf2() { return this.node.lf2; }
   get world() { return this.node.lf2.world; }
-  private _mounted: boolean = false;
+  mounted: boolean = false;
 
   /** @deprecated */
   private _args: readonly any[] = [];
@@ -59,8 +66,6 @@ export class UIComponent<
 
   get disabled() { return !this.enabled }
   set disabled(v: boolean) { this.set_enabled(!v); }
-
-  get mounted() { return this._mounted; }
 
   /** @deprecated */
   get args(): readonly string[] { return this._args; }
@@ -79,7 +84,7 @@ export class UIComponent<
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
-    this.props_holder = new UIProps(info.properties, this)
+    this.props_holder = new UIProps({ ...info.props, ...info.properties }, this)
     this._args = args;
     make_debugging(this);
   }
@@ -166,22 +171,16 @@ export class UIComponent<
     return this.node.name ?? this.node.id ?? 'no_name'
   }
 
-  on_pointer_down?(e: IUIPointerEvent): void;
-  on_pointer_move?(e: IUIPointerEvent): void;
-  on_pointer_up?(e: IUIPointerEvent): void;
-  on_pointer_cancel?(e: IUIPointerEvent): void;
+  on_pointer_down?(e: LF2PointerEvent): void;
+  on_pointer_move?(e: LF2PointerEvent): void;
+  on_pointer_up?(e: LF2PointerEvent): void;
+  on_pointer_cancel?(e: LF2PointerEvent): void;
   on_pointer_leave?(): void;
   on_pointer_enter?(): void;
-  on_click?(e: IUIPointerEvent): void;
-
+  on_click?(e: LF2PointerEvent): void;
   on_start?(): void;
-
-  on_resume(): void {
-    this._mounted = true;
-  }
-  on_pause(): void {
-    this._mounted = false;
-  }
+  on_resume?(): void
+  on_pause?(): void
   on_stop?(): void;
 
   on_show?(): void;
@@ -202,6 +201,7 @@ export class UIComponent<
 
   on_del?(): void;
 
+  /** stupid. */
   find_node(which: string | null | undefined): UINode | null {
     if (typeof which !== 'string')
       return this.node
@@ -212,27 +212,34 @@ export class UIComponent<
         return this.node;
     }
     const parent = this.node.parent
-    if (parent) {
-      if (which.startsWith('bro:')) {
-        const v = which.substring(4).trim();
-        const brothers = parent.children
-        switch (v) {
-          case 'prev': case '-1':
-            return brothers[brothers.indexOf(this.node) - 1] || null;
-          case 'next': case '+1':
-            return brothers[brothers.indexOf(this.node) + 1] || null;
-          default:
-            return brothers[v as any] || null
-        }
+    if (parent && which.startsWith('bro:')) {
+      const v = which.substring(4).trim();
+      const brothers = parent.children;
+      const len = brothers.length;
+      if (len < 1) return null;
+      let bro: UINode | null = null
+      switch (v) {
+        case 'prev': case '-1':
+          bro = brothers[brothers.indexOf(this.node) - 1] || null;
+          break;
+        case 'next': case '+1':
+          bro = brothers[brothers.indexOf(this.node) + 1] || null;
+          break;
+        default:
+          bro = brothers[v as any] || null
+          break;
       }
-      if (which.startsWith('id:')) {
-        const v = which.substring(3).trim();
-        return this.node.parent?.find_child(v) || null
-      }
-      if (which.startsWith('name:')) {
-        const v = which.substring(5).trim();
-        return this.node.parent?.find_child_by_name(v) || null
-      }
+      if (bro === this.node)
+        return null
+      return bro
+    }
+    if (which.startsWith('id:')) {
+      const v = which.substring(3).trim();
+      return this.node.root?.find_child(v) || null
+    }
+    if (which.startsWith('name:')) {
+      const v = which.substring(5).trim();
+      return this.node.root?.find_child_by_name(v) || null
     }
     return null
   }

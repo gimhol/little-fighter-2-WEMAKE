@@ -12,17 +12,15 @@ interface IUIActionHandler {
 class UIActor {
   static readonly TAG: string = "Actor";
   private _handler_map = new Map<string, IUIActionHandler>([
-    [UIActionEnum.SetUI, ({ lf2 }, layout_id, index) => lf2.set_ui(layout_id, Number(index) || 0)],
-    [UIActionEnum.PushUI, ({ lf2 }, layout_id, index) => lf2.push_ui(layout_id, Number(index) || 0)],
+    [UIActionEnum.SetUI, ({ lf2 }, layout_id, index) => lf2.set_ui({ id: layout_id }, Number(index) || 0)],
+    [UIActionEnum.PushUI, ({ lf2 }, layout_id, index) => lf2.push_ui({ id: layout_id }, Number(index) || 0)],
     [UIActionEnum.PopUI, ({ lf2 }) => lf2.pop_ui_safe()],
-    [UIActionEnum.LoopImg, (l, d) => l.next_img(d === '1')],
-    [UIActionEnum.LoopTxt, (l, d) => l.next_txt(d === '1')],
     [UIActionEnum.LoadData, ({ lf2 }, url) => lf2.load(...(url ? [url] : LF2.DATA_ZIPS)).catch(e => Ditto.warn('Failed to load, reason', e))
       .catch((e) => Ditto.warn(`[${UIActor.TAG}::load_data] ${url} not exists, err: ${e}`))],
     [UIActionEnum.Broadcast, ({ lf2 }, msg) => lf2.broadcast(msg)],
     [UIActionEnum.Sound, ({ lf2 }, name) => lf2.sounds.play_preset(name)],
     [UIActionEnum.SwitchDifficulty, ({ lf2 }, v) => lf2.switch_difficulty(v ? Number(v) : void 0)],
-    [UIActionEnum.DestoryStage, ({ lf2 }) => lf2.remove_stage()],
+    [UIActionEnum.DestoryStage, ({ lf2 }) => lf2.change_stage('')],
     [UIActionEnum.RemoveAllEntities, ({ lf2 }) => lf2.entities.del_all()]
   ]);
 
