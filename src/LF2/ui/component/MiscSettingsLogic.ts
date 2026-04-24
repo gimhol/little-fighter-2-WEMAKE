@@ -1,4 +1,4 @@
-import { floor, SliderHandle, UIComponent } from "@/LF2";
+import { floor, ISoundsCallback, SliderHandle, UIComponent } from "@/LF2";
 
 export class MiscSettingsLogic extends UIComponent {
   static override readonly TAGS: string[] = ["MiscSettingsLogic"];
@@ -9,7 +9,16 @@ export class MiscSettingsLogic extends UIComponent {
   team_outline: SliderHandle | undefined;
   render_rate: SliderHandle | undefined;
   main_volume: SliderHandle | undefined;
+  cbs: ISoundsCallback = {
+    on_volume_changed: (volume) => this.main_volume?.set_factor(volume),
+    on_bgm_volume_changed: (volume) => this.bgm_volume?.set_factor(volume),
+    on_sound_volume_changed: (volume) => this.sfx_volume?.set_factor(volume),
+    on_bgm_muted_changed: (muted) => this.bgm_toggle?.set_value(muted ? 0 : 1),
+    on_sound_muted_changed: (muted) => this.sfx_toggle?.set_value(muted ? 0 : 1),
+  }
+
   override on_start(): void {
+    this.lf2.sounds.callbacks.add(this.cbs)
 
     this.main_volume = this.node.search_node("main_volume_row")?.search_component(SliderHandle)
     if (this.main_volume) this.main_volume.factor = this.lf2.sounds.volume()
@@ -19,7 +28,6 @@ export class MiscSettingsLogic extends UIComponent {
         this.lf2.sounds.play_preset('cancel')
       }
     })
-
 
     this.bgm_toggle = this.node.search_node("bgm_toggle_row")?.search_component(SliderHandle)
     if (this.bgm_toggle) this.bgm_toggle.value = this.lf2.sounds.bgm_muted() ? 0 : 1

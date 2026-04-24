@@ -1,12 +1,13 @@
-@use "./styles/lfui_hoverable_border.scss" as *;
+@use "./styles/lfui_hoverable_border.scss"as *;
 
 html {
   /* -webkit-filter: grayscale(1); */
   /* Chrome, Safari, Opera */
   /* filter: grayscale(1); */
-  width   : 100vw;
-  height  : 100vh;
-  overflow: hidden;
+  width       : 100vw;
+  height      : 100vh;
+  overflow    : hidden;
+  touch-action: none;
 }
 
 body {
@@ -92,7 +93,7 @@ textarea {
 }
 
 textarea {
-  color      : #9ab3f6;
+  color: #9ab3f6;
 }
 
 textarea::selection {

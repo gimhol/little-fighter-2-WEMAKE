@@ -36,7 +36,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, clamp, is_num, max, min, round, Times } from "./utils";
+import { abs, clamp, floor, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -257,7 +257,7 @@ export class World extends WorldDataset {
         this.lf2.events.length = 0;
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
-        if (0 === this._update_count % this.sync_render) {
+        if (0 === floor(this._update_count / this.playrate) % this.sync_render) {
           this.render_once(real_dt);
           if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
         }

@@ -57,8 +57,9 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     },
     on_pointer_cancel: (e) => {
       if (!this._on_me) return;
-      this.handle_pointing_event(e);
       this.callbacks.emit('on_value_changed')(this.value, this)
+      // this.handle_pointing_event(e);
+      // this.callbacks.emit('on_value_changed')(this.value, this)
       this._on_me = false;
     },
   }
