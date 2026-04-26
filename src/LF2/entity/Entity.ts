@@ -1454,15 +1454,11 @@ export class Entity {
             this.set_position(x, 550, z)
           } else {
             this.set_position_y(550)
-
           }
-
           this.next_frame = Defines.NEXT_FRAME_AUTO;
         }
       }
     }
-
-
     for (const pair of this._opoints) {
       const [opoint, time] = pair
       if (time === opoint.interval) {
