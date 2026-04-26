@@ -106,7 +106,7 @@
           },
           component: [ "Reachable(main)" ],
           actions: {
-            click: [ "sound(ok)", "push_ui(ctrl_settings,1)" ],
+            click: [ "sound(ok)", "push_ui(settings,1)" ],
           },
         },
       ],
