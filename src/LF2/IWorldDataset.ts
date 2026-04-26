@@ -207,6 +207,7 @@ export interface IWorldDataset {
   indicator_flags: number;
   UPS: number;
   playrate: number;
+  atom_time: number;
 }
 
 export const world_dataset_fields = fields<IWorldDataset>({
@@ -302,5 +303,6 @@ export const world_dataset_fields = fields<IWorldDataset>({
   teamoutline_enabled: int({ min: 0, max: 1 }),
   indicator_flags: int,
   UPS: int({ min: 1, max: 120 }),
-  playrate: float({ min: 0.01, max: 1000 })
+  playrate: float({ min: 0.01, max: 1000 }),
+  atom_time: float
 })

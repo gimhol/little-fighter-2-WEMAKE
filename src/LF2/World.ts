@@ -252,8 +252,12 @@ export class World extends WorldDataset {
           this.playrate = 1
         }
         if (!between(this.UPS, 1, 120)) {
-          Ditto.warn(`[${World.TAG}::start_update] UPS must be between 1 and 120, but got ${this.playrate}, now reset to 60`);
+          Ditto.warn(`[${World.TAG}::start_update] UPS must be between 1 and 120, but got ${this.UPS}, now reset to 60`);
           this.UPS = 60
+        }
+        if (!(this.atom_time > 0)) {
+          Ditto.warn(`[${World.TAG}::start_update] atom_time must be > 0, but got ${this.atom_time}, now reset to 60`);
+          this.atom_time = 1;
         }
         const time = Date.now();
         const real_dt = time - this._prev_time;

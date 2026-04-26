@@ -107,6 +107,7 @@ export class WorldDataset implements IWorldDataset {
   indicator_flags: number = 0;
   UPS: number = 60;
   playrate: number = 1;
+  atom_time: number = 1;
 
   constructor() {
     make_private_properties(
