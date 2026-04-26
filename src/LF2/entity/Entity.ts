@@ -25,7 +25,7 @@ import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, find, float_equal, floor, max, min, round, round_float } from "../utils";
+import { abs, clamp, find, float_equal, floor, max, min, pow, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
@@ -1116,7 +1116,10 @@ export class Entity {
 
   handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
     let { x, z } = this.velocities[0];
-    if (factor != void 0) { x *= factor; z *= factor; }
+    x *= pow(factor, this.world.atom_time);
+    z *= pow(factor, this.world.atom_time);
+    fx *= this.world.atom_time;
+    fz *= this.world.atom_time;
     const { ctrl_x, ctrl_z } = this.frame;
     let { dvx = 0, dvz = 0 } = this;
     const { UD, LR } = this.ctrl
@@ -1136,7 +1139,6 @@ export class Entity {
       z += fz;
       if (z > -dvz) z = -dvz; // 不能因为摩擦力反向加速
     }
-
     this.set_velocity_0_x(x)
     this.set_velocity_0_z(z);
   }
@@ -1164,7 +1166,7 @@ export class Entity {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
-    this.velocities[0].y -= this.gravity;
+    this.velocities[0].y -= this.gravity * this.world.atom_time;
   }
   get dvx() {
     const { dvx: v } = this.frame;
@@ -1188,9 +1190,9 @@ export class Entity {
       vxm = SpeedMode.LF2,
       vym = SpeedMode.AccTo,
       vzm = SpeedMode.LF2,
-      acc_x = (vxm == SpeedMode.AccTo) ? dvx : void 0,
-      acc_y = (vym == SpeedMode.AccTo) ? dvy : void 0,
-      acc_z = (vzm == SpeedMode.AccTo) ? dvz : void 0,
+      acc_x = ((vxm == SpeedMode.AccTo) ? dvx ?? 0 : 0) * this.world.atom_time,
+      acc_y = ((vym == SpeedMode.AccTo) ? dvy ?? 0 : 0) * this.world.atom_time,
+      acc_z = ((vzm == SpeedMode.AccTo) ? dvz ?? 0 : 0) * this.world.atom_time,
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
@@ -1279,13 +1281,26 @@ export class Entity {
    * @memberof Entity
    */
   stat_recovering(): void {
-    if (this.resting > 0) { this.resting--; return; }
-    if (this.toughness_resting > 0) this.toughness_resting--;
-    else if (this.toughness < this.toughness_max) this.toughness += 1;
-    if (this.fall_value < this.fall_value_max && this._fall_r_tick.add())
+    if (this.resting > 0) {
+      this.resting = round_float(this.resting - this.world.wait_offset)
+      if (this.resting < 0) this.resting = 0;
+      return;
+    }
+    if (this.toughness_resting > 0) {
+      this.toughness_resting = round_float(this.toughness_resting - this.world.wait_offset)
+      if (this.toughness_resting < 0) this.toughness_resting = 0;
+    } else if (this.toughness < this.toughness_max) {
+      this.toughness = round_float(this.toughness + this.world.wait_offset)
+      if (this.toughness > this.toughness_max) this.toughness = this.toughness_max
+    }
+    if (this.fall_value < this.fall_value_max && this._fall_r_tick.add(this.world.atom_time)) {
       this.fall_value += this._fall_r_value;
-    if (this.defend_value < this.defend_value_max && this._defend_r_tick.add())
+      if (this.fall_value > this.fall_value_max) this.fall_value = this.fall_value_max
+    }
+    if (this.defend_value < this.defend_value_max && this._defend_r_tick.add(this.world.atom_time)) {
       this.defend_value += this._defend_r_value;
+      if (this.defend_value > this.defend_value_max) this.defend_value = this.defend_value_max
+    }
   }
 
   /**
@@ -1313,7 +1328,7 @@ export class Entity {
     this._hp_r_tick.max = this.healing > 0 ?
       this.dataset('hp_healing_ticks') :
       this.dataset('hp_r_ticks')
-    if (!this._hp_r_tick.add())
+    if (!this._hp_r_tick.add(this.world.atom_time))
       return;
     const value = this.healing > 0 ?
       this.dataset('hp_healing_value') :
@@ -1332,7 +1347,7 @@ export class Entity {
     if (this._hp <= 0 || this._mp >= this.mp_max || this._blinking_duration || this._invisible_duration)
       return;
     this._mp_r_tick.max = this.dataset('mp_r_ticks');
-    if (!this._mp_r_tick.add())
+    if (!this._mp_r_tick.add(this.world.atom_time))
       return;
     const r_ratio = this.dataset('mp_r_ratio');
     const value = 1 + floor(round_float((this.hp_max - min(r_ratio * this._hp, this.hp_max)) / 100))
@@ -1352,7 +1367,9 @@ export class Entity {
     for (const fighter of this.fuse_bys) {
       fighter.position.set(x, y, z)
     }
-    if (this.dismiss_time) this.dismiss_time--;
+    if (this.dismiss_time) {
+      this.dismiss_time = round_float(this.dismiss_time - this.world.wait_offset);
+    }
 
     const should_dismiss = (
       this.dismiss_time !== null &&
@@ -1377,26 +1394,34 @@ export class Entity {
 
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
       for (const [k, v] of this.vrests) {
-        if (v.rest > 0) --v.rest;
-        else this.del_v_rest(k)
+        if (v.rest > 0) {
+          v.rest = round_float(v.rest - this.world.atom_time);
+        } else {
+          this.del_v_rest(k)
+        }
       }
     for (const [k, v] of this.victims)
       if (v.rest) this.victims.delete(k)
 
-    if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0)
-      this.arest > 0 ? this.arest-- : (this.arest = 0);
+    if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
+      if (this.arest > 0) {
+        this.arest = round_float(this.arest - this.world.atom_time);
+      } else {
+        this.arest = 0
+      }
+    }
 
     if (this._invisible_duration > 0) {
-      this._invisible_duration--;
+      this._invisible_duration = round_float(this._invisible_duration - this.world.atom_time);
       if (this._invisible_duration <= 0) {
         this._blinking_duration = this.dataset('invisible_blinking');
       }
     }
     if (this._invulnerable_duration > 0) {
-      this._invulnerable_duration--;
+      this._invulnerable_duration = round_float(this._invulnerable_duration - this.world.atom_time);
     }
     if (this._blinking_duration > 0) {
-      this._blinking_duration--;
+      this._blinking_duration = round_float(this._blinking_duration - this.world.atom_time);
       if (this._blinking_duration <= 0) {
         if (this._after_blink === Builtin_FrameId.Gone) {
           this.next_frame = null;
@@ -1429,15 +1454,11 @@ export class Entity {
             this.set_position(x, 550, z)
           } else {
             this.set_position_y(550)
-
           }
-
           this.next_frame = Defines.NEXT_FRAME_AUTO;
         }
       }
     }
-
-
     for (const pair of this._opoints) {
       const [opoint, time] = pair
       if (time === opoint.interval) {
@@ -1450,8 +1471,14 @@ export class Entity {
     this._state?.pre_update?.(this);
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
-      if (!this._catcher && !this._bearer) {
-        --this.wait;
+      if (
+        this.motionless <= 0 &&
+        this.shaking <= 0 &&
+        !this._catcher &&
+        !this._bearer
+      ) {
+        this.wait = round_float(this.wait - this.world.atom_time);
+        if (this.wait < 0) this.wait = 0;
       }
     } else {
       const nf = this.get_next_frame(this.frame.next);
@@ -1465,12 +1492,12 @@ export class Entity {
     this.update_position();
 
     if (this.motionless > 0) {
-      ++this.wait;
-      --this.motionless;
+      this.motionless = round_float(this.motionless - this.world.atom_time);
+      if (this.motionless < 0) this.motionless = 0
     }
     if (this.shaking > 0) {
-      ++this.wait;
-      --this.shaking;
+      this.shaking = round_float(this.shaking - this.world.atom_time);
+      if (this.shaking < 0) this.shaking = 0
     }
     if (this.update_catching()) return;
     if (this.update_caught()) return;
@@ -1555,9 +1582,9 @@ export class Entity {
       vy += v.y;
       vz += v.z;
     }
-    if (vx) vx = round_float(vx)
-    if (vy) vy = round_float(vy)
-    if (vz) vz = round_float(vz)
+    if (vx) vx = round_float(vx * this.world.atom_time)
+    if (vy) vy = round_float(vy * this.world.atom_time)
+    if (vz) vz = round_float(vz * this.world.atom_time)
     for (const [, v] of this.blockers) {
       if (
         (vx < 0 && v.attacker.position.x < this._position.x) ||

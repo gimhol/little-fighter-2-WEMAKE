@@ -36,7 +36,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, clamp, floor, is_num, max, min, round, Times } from "./utils";
+import { abs, between, clamp, floor, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -116,7 +116,7 @@ export class World extends WorldDataset {
   get depth() { return this.stage.depth; }
   get middle() { return this.stage.middle; }
 
-  private _cam_speed = 0;
+  private _cam_speed: number = 0;
   private _lock_cam_x: number | undefined = void 0;
   public renderer: IWorldRenderer;
 
@@ -247,9 +247,23 @@ export class World extends WorldDataset {
     this._update_count = 0;
     const on_update = () => {
       try {
+        if (!between(this.playrate, 0.01, 1000)) {
+          Ditto.warn(`[${World.TAG}::start_update] playrate must be between 0.01 and 1000, but got ${this.playrate}, now reset to 1.0`);
+          this.playrate = 1
+        }
+        if (!between(this.UPS, 1, 120)) {
+          Ditto.warn(`[${World.TAG}::start_update] UPS must be between 1 and 120, but got ${this.UPS}, now reset to 60`);
+          this.UPS = 60
+        }
+        if (!(this.atom_time > 0)) {
+          Ditto.warn(`[${World.TAG}::start_update] atom_time must be > 0, but got ${this.atom_time}, now reset to 60`);
+          this.atom_time = 1;
+        }
         const time = Date.now();
         const real_dt = time - this._prev_time;
-        if (real_dt < this._ideally_dt * this._fix_radio) return;
+        const ideally_dt = this._fix_radio * round(1000 / this.UPS) / this.playrate
+
+        if (real_dt < ideally_dt) return;
         if (this._sleeping) return;
         this.before_update?.();
         this._update_count++;
@@ -264,7 +278,7 @@ export class World extends WorldDataset {
         if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
         this.after_update?.();
         this._UPS.update(real_dt);
-        this._fix_radio = 1 - clamp(6 * (this._ups - this._UPS.value) / this._ups, 0, 1);
+        this._fix_radio = 1 - clamp(6 * (this.UPS - this._UPS.value) / this.UPS, 0, 1);
         this._prev_time = time;
       } catch (e: any) {
         Ditto.warn(e)
@@ -921,22 +935,6 @@ export class World extends WorldDataset {
       far: round(far),
       near: round(far + l),
     };
-  }
-  private _ups: number = 60
-  private _ideally_dt: number = round(1000 / this._ups);
-  private _playrate: number = 1;
-  get ideally_dt() {
-    return this._ideally_dt;
-  }
-  get playrate() {
-    return this._playrate;
-  }
-  set playrate(v: number) {
-    if (v <= 0) throw new Error("playrate must be larger than 0");
-    if (v === this._playrate) return;
-    this._playrate = v;
-    this._ideally_dt = round(1000 / this._ups) / this._playrate;
-    this.start_update();
   }
 
   private _paused: 0 | 1 | 2 = 0;

@@ -46,7 +46,8 @@ export class EntityNameRender {
     }
     const hw = (mesh.scale.x + 10) / 2;
     const min_x = this.world_renderer.cam_x + hw;
-    const max_x = min_x + world.screen_w - 2 * hw;
+
+    const max_x = min_x + (world.screen_w / world.transform.scale_x) - 2 * hw;
     const x = clamp(position.x, min_x, max_x);
     const z = position.z;
     const y = ground_y - z / 2 - mesh.scale.y;

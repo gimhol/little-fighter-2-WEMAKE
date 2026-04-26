@@ -5,9 +5,9 @@ export class Transform implements ITransform {
   protected _x: number = 0;
   protected _y: number = 0;
   protected _z: number = 0;
-  protected _scale_x: number = 0;
-  protected _scale_y: number = 0;
-  protected _scale_z: number = 0;
+  protected _scale_x: number = 1;
+  protected _scale_y: number = 1;
+  protected _scale_z: number = 1;
   protected _d: ITransform = {
     x: 0, y: 0, z: 0,
     scale_x: 1, scale_y: 1, scale_z: 1
