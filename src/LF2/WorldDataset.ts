@@ -105,9 +105,15 @@ export class WorldDataset implements IWorldDataset {
   whirlwind_acc_z: number = 0.5;
   teamoutline_enabled: number = 1;
   indicator_flags: number = 0;
+  UPS: number = 60;
+  playrate: number = 1;
 
   constructor() {
-    make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
+    make_private_properties(
+      `${WorldDataset.TAG}::constructor`, this,
+      (key) => (key in world_dataset_fields),
+      (...args) => this.on_dataset_change?.(...args)
+    )
     Object.assign(this, wdataset)
   }
   on_dataset_change?: (k: string, curr: any, prev: any) => void;
