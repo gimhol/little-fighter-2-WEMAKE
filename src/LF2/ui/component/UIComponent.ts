@@ -205,6 +205,19 @@ export class UIComponent<
   find_node(which: string | null | undefined): UINode | null {
     if (typeof which !== 'string')
       return this.node
+    which = which.trim();
+    if (which.startsWith('parent:')) {
+      debugger
+      let distance = Number(which.substring(7))
+      let parent = this.node.parent;
+      while (distance && parent) {
+        parent = parent.parent
+        --distance;
+      }
+      return parent || null
+    } else if (which === 'parent') {
+      return this.node.parent || null
+    }
     switch (which) {
       case 'parent':
         return this.node.parent ?? null
@@ -233,6 +246,7 @@ export class UIComponent<
         return null
       return bro
     }
+
     if (which.startsWith('id:')) {
       const v = which.substring(3).trim();
       return this.node.root?.find_child(v) || null

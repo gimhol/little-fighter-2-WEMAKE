@@ -1,4 +1,4 @@
-import { floor, ISoundsCallback, SliderHandle, UIComponent } from "@/LF2";
+import { floor, ISoundsCallback, IWorldCallbacks, SliderHandle, UIComponent } from "@/LF2";
 
 export class MiscSettingsLogic extends UIComponent {
   static override readonly TAGS: string[] = ["MiscSettingsLogic"];
@@ -16,10 +16,14 @@ export class MiscSettingsLogic extends UIComponent {
     on_bgm_muted_changed: (muted) => this.bgm_toggle?.set_value(muted ? 0 : 1),
     on_sound_muted_changed: (muted) => this.sfx_toggle?.set_value(muted ? 0 : 1),
   }
-
+  cbs2: IWorldCallbacks = {
+    on_dataset_change: (key, value, prev, zworld) => {
+      if (key === 'sync_render') this.render_rate?.set_value(2 - value)
+    },
+  }
   override on_start(): void {
     this.lf2.sounds.callbacks.add(this.cbs)
-
+    this.lf2.world.callbacks.add(this.cbs2)
     this.main_volume = this.node.search_node("main_volume_row")?.search_component(SliderHandle)
     if (this.main_volume) this.main_volume.factor = this.lf2.sounds.volume()
     this.main_volume?.callbacks.add({
@@ -79,8 +83,13 @@ export class MiscSettingsLogic extends UIComponent {
     this.render_rate?.callbacks.add({
       on_value_changed: (v) => {
         this.world.sync_render = floor(2 - v);
+        this.render_rate?.set_value(floor(v))
         this.lf2.sounds.play_preset('ok')
       }
     })
+  }
+  override on_stop(): void {
+    this.lf2.sounds.callbacks.del(this.cbs)
+    this.lf2.world.callbacks.del(this.cbs2)
   }
 }

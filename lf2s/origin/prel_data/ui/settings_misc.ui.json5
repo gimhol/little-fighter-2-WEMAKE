@@ -2,11 +2,12 @@
   id: "settings_misc",
   name: "settings_misc",
   component: [
+    "ReachableGroup(misc_settings,ud)",
     { name: "MiscSettingsLogic" },
     {
       name: "Flex",
       properties: {
-        direction: "column",
+        direction: "row",
         align: "center",
         gap: 5,
         padding: "0,0,0,0",
@@ -15,18 +16,43 @@
     },
   ],
   templates: {
+    scrollbar: {
+      size: "36,300",
+      color: "black",
+      center: "0.5,0.5",
+      items: [
+        {
+          size: "36,36",
+          color: "white",
+          center: "0.5,0.5",
+          component: [
+            {
+              name: "SliderHandle",
+              properties: {
+                direction: "col",
+                min: 0,
+                max: 100,
+                step: 1,
+                precision: 1
+              },
+            },
+          ]
+        },
+      ],
+    },
     percentage_slider_row: {
-      size: "625,36",
+      size: "600,36",
       center: "0.5,0.5",
       component: [
         {
           name: "Flex",
           properties: { direction: "row", align: "center" },
         },
+        "Reachable(misc_settings)"
       ],
       items: [
         {
-          size: "165,36",
+          size: "140,36",
           center: "0.5,0.5",
           items: [
             {
@@ -34,16 +60,18 @@
               center: "0.5,0.5",
               i18n: "$val:prefix",
               style: { font: "18px Arial" },
-              component: [{ name: "Label", id: "prefix_label" }],
+              component: [ { name: "Label", id: "prefix_label" } ],
             },
           ],
         },
         {
-          size: "500,36",
+          id: "slider_bar_node",
+          size: "440,36",
           color: "black",
           center: "0.5,0.5",
           items: [
             {
+              id: "slider_handle_node",
               size: "46,36",
               color: "white",
               center: "0.5,0.5",
@@ -55,6 +83,7 @@
                     max: 100,
                     step: 1,
                     precision: 1,
+                    responser: "parent:1",
                     handle_label: "handle_label",
                   },
                 },
@@ -65,7 +94,7 @@
                   color: "black",
                   i18n: "0",
                   style: { font: "18px Arial" },
-                  component: [{ name: "Label", id: "handle_label" }],
+                  component: [ { name: "Label", id: "handle_label" } ],
                 },
               ],
             },
@@ -74,17 +103,18 @@
       ],
     },
     toggle_slider_row: {
-      size: "625,36",
+      size: "600,36",
       center: "0.5,0.5",
       component: [
         {
           name: "Flex",
           properties: { direction: "row", align: "center" },
         },
+        "Reachable(misc_settings)"
       ],
       items: [
         {
-          size: "165,36",
+          size: "140,36",
           center: "0.5,0.5",
           items: [
             {
@@ -92,13 +122,14 @@
               center: "0.5,0.5",
               i18n: "$val:prefix",
               style: { font: "18px Arial" },
-              component: [{ name: "Label", id: "prefix_label" }],
+              component: [ { name: "Label", id: "prefix_label" } ],
             },
           ],
-          component: [{ name: "Label", id: "handle_label" }],
+          component: [ { name: "Label", id: "handle_label" } ],
         },
         {
-          size: "500,36",
+          id: "slider_bar_node",
+          size: "440,36",
           color: "black",
           center: "0.5,0.5",
           items: [
@@ -117,6 +148,7 @@
               style: { font: "18px Arial" },
             },
             {
+              id: "slider_handle_node",
               size: "250,36",
               color: "white",
               center: "0.5,0.5",
@@ -128,6 +160,8 @@
                     max: 1,
                     step: 1,
                     precision: 1,
+                    switcher: true,
+                    responser: "parent:1",
                     handle_label: "handle_label",
                     items: "disabled,enabled",
                   },
@@ -139,7 +173,7 @@
                   color: "black",
                   i18n: "disabled",
                   style: { font: "18px Arial" },
-                  component: [{ name: "Label", id: "handle_label" }],
+                  component: [ { name: "Label", id: "handle_label" } ],
                 },
               ],
             },
@@ -148,17 +182,18 @@
       ],
     },
     triple_switcher_row: {
-      size: "625,36",
+      size: "600,36",
       center: "0.5,0.5",
       component: [
         {
           name: "Flex",
           properties: { direction: "row", align: "center" },
         },
+        "Reachable(misc_settings)"
       ],
       items: [
         {
-          size: "165,36",
+          size: "140,36",
           center: "0.5,0.5",
           items: [
             {
@@ -166,13 +201,14 @@
               center: "0.5,0.5",
               i18n: "$val:prefix",
               style: { font: "18px Arial" },
-              component: [{ name: "Label", id: "prefix_label" }],
+              component: [ { name: "Label", id: "prefix_label" } ],
             },
           ],
-          component: [{ name: "Label", id: "handle_label" }],
+          component: [ { name: "Label", id: "handle_label" } ],
         },
         {
-          size: "500,36",
+          id: "slider_bar_node",
+          size: "440,36",
           color: "black",
           center: "0.5,0.5",
           items: [
@@ -197,6 +233,7 @@
               style: { font: "18px Arial" },
             },
             {
+              id: "slider_handle_node",
               size: "166,36",
               color: "white",
               center: "0.5,0.5",
@@ -208,6 +245,8 @@
                     max: 2,
                     step: 1,
                     precision: 1,
+                    switcher: true,
+                    responser: "parent:1",
                     handle_label: "handle_label",
                     items: "sync_2,sync_1,sync_0",
                   },
@@ -219,7 +258,7 @@
                   color: "black",
                   i18n: "disabled",
                   style: { font: "18px Arial" },
-                  component: [{ name: "Label", id: "handle_label" }],
+                  component: [ { name: "Label", id: "handle_label" } ],
                 },
               ],
             },
@@ -230,39 +269,59 @@
   },
   items: [
     {
-      id: "main_volume_row",
-      values: { prefix: "main_volume" },
-      template: "percentage_slider_row",
+      id: "settings_misc_view",
+      component: [
+        {
+          name: "Flex",
+          properties: {
+            direction: "column",
+            align: "center",
+            gap: 5,
+            padding: "0,0,0,0",
+            fit: true,
+          },
+        },
+      ],
+      items: [
+        {
+          id: "main_volume_row",
+          values: { prefix: "main_volume" },
+          template: "percentage_slider_row",
+        },
+        {
+          id: "bgm_toggle_row",
+          values: { prefix: "bgm" },
+          template: "toggle_slider_row",
+        },
+        {
+          id: "bgm_volume_row",
+          values: { prefix: "bgm_volume" },
+          template: "percentage_slider_row",
+        },
+        {
+          id: "sfx_toggle_row",
+          values: { prefix: "sfx" },
+          template: "toggle_slider_row",
+        },
+        {
+          id: "sfx_volume_row",
+          values: { prefix: "sfx_volume" },
+          template: "percentage_slider_row",
+        },
+        {
+          id: "team_outline_row",
+          values: { prefix: "team_outline" },
+          template: "toggle_slider_row",
+        },
+        {
+          id: "render_rate_row",
+          values: { prefix: "render_fps" },
+          template: "triple_switcher_row",
+        },
+      ]
     },
     {
-      id: "bgm_toggle_row",
-      values: { prefix: "bgm" },
-      template: "toggle_slider_row",
-    },
-    {
-      id: "bgm_volume_row",
-      values: { prefix: "bgm_volume" },
-      template: "percentage_slider_row",
-    },
-    {
-      id: "sfx_toggle_row",
-      values: { prefix: "sfx" },
-      template: "toggle_slider_row",
-    },
-    {
-      id: "sfx_volume_row",
-      values: { prefix: "sfx_volume" },
-      template: "percentage_slider_row",
-    },
-    {
-      id: "team_outline_row",
-      values: { prefix: "team_outline" },
-      template: "toggle_slider_row",
-    },
-    {
-      id: "render_rate_row",
-      values: { prefix: "render_fps" },
-      template: "triple_switcher_row",
-    },
+      template: "scrollbar"
+    }
   ],
 }

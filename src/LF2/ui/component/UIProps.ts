@@ -16,6 +16,8 @@ export class UIProps {
       return this.owner.node.parent?.lookup_component(clazz, v => v.id == value) ?? null
     } else if (isUINodeClass(clazz)) {
       if (typeof value !== 'string') return null
+      const spec = this.owner.find_node(value)
+      if (spec) return spec;
       const mine = this.owner.node.search_node(value)
       if (mine) return mine;
       return this.owner.node.parent?.lookup_node(value) ?? null
