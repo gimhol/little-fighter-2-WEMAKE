@@ -92,7 +92,7 @@ const init_s = () => ({
   dev_ui_pos: 'bottom' as debug_ui_pos,
   touchpad: '',
   touchpad_enabled: !!low_device,
-  sync_render: low_device ? 2 : 1,
+  sync_render: low_device ? 1 : 1,
   UPS: low_device ? 30 : 60,
 })
 const is_mobile_container = navigator.userAgent.includes('lfw-mobile-container')
@@ -123,7 +123,7 @@ function App() {
   const [dat_viewer_open, set_dat_viewer_open] = useState(false);
   const [editor_open, set_editor_open] = useState(false);
 
-  const [s, set_state, state_ready] = useForage({ key: 'app_state', version: 1, init: init_s })
+  const [s, set_state, state_ready] = useForage({ key: 'app_state', version: 2, init: init_s })
   const [is_maximised, set_is_maximised] = useState(false);
   const [is_fullscreen, _set_is_fullscreen] = useState(false);
   const [indicator_flags, set_indicator_flags] = useState<number>(0);
