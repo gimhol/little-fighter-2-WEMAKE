@@ -3,6 +3,7 @@ export * from "./MersenneTwister";
 export * from "./arithmetic_progression";
 export * from "./base";
 export * from "./clamp";
+export * from "./clamp_add";
 export * from "./float_equal";
 export * from "./floor_float";
 export * from "./probability";
