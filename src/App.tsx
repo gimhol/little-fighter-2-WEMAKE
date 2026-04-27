@@ -68,7 +68,7 @@ type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "playe
 type sync_render = 0 | 1 | 2;
 
 const ele_root = document.firstElementChild;
-const lower = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
+const low_device = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
 const init_s = () => ({
   game_overlay: false,
   showing_panel: "" as showing_panel,
@@ -91,8 +91,9 @@ const init_s = () => ({
   custom_v_align: 0.5,
   dev_ui_pos: 'bottom' as debug_ui_pos,
   touchpad: '',
-  touchpad_enabled: !!lower,
-  sync_render: lower ? 2 : 1,
+  touchpad_enabled: !!low_device,
+  sync_render: low_device ? 2 : 1,
+  UPS: low_device ? 30 : 60,
 })
 const is_mobile_container = navigator.userAgent.includes('lfw-mobile-container')
 function App() {
@@ -239,8 +240,8 @@ function App() {
     on_stage_change: (s) => _set_bg_id(s.bg.id),
     on_pause_change: (v) => _set_paused(v),
     on_dataset_change: (key, value) => {
-      if (key !== 'sync_render') return
-      set_state(d => { d.sync_render = value as any })
+      if (key == 'sync_render') set_state(d => { d.sync_render = value as any })
+      if (key == 'UPS') set_state(d => { d.UPS = value as any })
     },
   })
 
@@ -285,6 +286,7 @@ function App() {
     lf2.sounds.set_sound_muted(s.sound_muted);
     lf2.sounds.set_sound_volume(s.sound_volume);
     lf2.world.sync_render = s.sync_render;
+    lf2.world.UPS = s.UPS;
     set_state(d => {
       d.cheat_1 = lf2.is_cheat(CheatType.LF2_NET)
       d.cheat_2 = lf2.is_cheat(CheatType.HERO_FT)
