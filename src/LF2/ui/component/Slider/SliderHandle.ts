@@ -164,12 +164,12 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       const min_num = geo.left - geo.pos.x - cross.left;
       const max_num = geo.right - geo.pos.x - cross.right;
       const x = min_num + (max_num - min_num) * this.factor;
-      this.node.x = round_float(this.node.x + (x - this.node.x) * 0.25);
+      this.node.x = round_float(this.node.x + (x - this.node.x) * 0.25 * dt / 16.666);
     } else {
       const min_num = geo.top - geo.pos.y - cross.top;
       const max_num = geo.bottom - geo.pos.y - cross.bottom;
       const y = min_num + (max_num - min_num) * this.factor;
-      this.node.y = round_float(this.node.y + (y - this.node.y) * 0.25);
+      this.node.y = round_float(this.node.y + (y - this.node.y) * 0.25 * dt / 16.666);
     }
     if (
       !responser?.focused &&
@@ -205,7 +205,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
         if (curr < this.min_value) curr = this.max_value;
         if (curr > this.max_value) curr = this.min_value;
         this.value = curr;
-        if (prev != curr) 
+        if (prev != curr)
           this.callbacks.emit('on_value_changed')(this.value, this)
       } else if (this.direction == 'col' && ud) {
         const prev = this.value
@@ -213,7 +213,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
         if (curr < this.min_value) curr = this.max_value;
         if (curr > this.max_value) curr = this.min_value;
         this.value = curr;
-        if (prev != curr) 
+        if (prev != curr)
           this.callbacks.emit('on_value_changed')(this.value, this)
       }
     }

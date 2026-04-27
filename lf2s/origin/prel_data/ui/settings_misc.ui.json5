@@ -137,14 +137,14 @@
               pos: "-110,0",
               center: "0.5,0.5",
               color: "#333333",
-              i18n: "disable",
+              i18n: "$val:item0",
               style: { font: "18px Arial" },
             },
             {
               pos: "110,0",
               center: "0.5,0.5",
               color: "#333333",
-              i18n: "enable",
+              i18n: "$val:item1",
               style: { font: "18px Arial" },
             },
             {
@@ -163,7 +163,7 @@
                     switcher: true,
                     responser: "parent:1",
                     handle_label: "handle_label",
-                    items: "disabled,enabled",
+                    items: "$val:items",
                   },
                 },
               ],
@@ -383,7 +383,12 @@
         },
         {
           id: "bgm_toggle_row",
-          values: { prefix: "bgm" },
+          values: {
+            prefix: "bgm",
+            item0: "disable",
+            item1: "enable",
+            items: "disable,enable" 
+          },
           template: "toggle_switcher_row",
         },
         {
@@ -393,7 +398,12 @@
         },
         {
           id: "sfx_toggle_row",
-          values: { prefix: "sfx" },
+          values: {
+            prefix: "sfx",
+            item0: "disable",
+            item1: "enable",
+            items: "disable,enable"
+          },
           template: "toggle_switcher_row",
         },
         {
@@ -403,7 +413,12 @@
         },
         {
           id: "team_outline_row",
-          values: { prefix: "team_outline" },
+          values: {
+            prefix: "team_outline",
+            item0: "disable",
+            item1: "enable",
+            items: "disable,enable"
+          },
           template: "toggle_switcher_row",
         },
         {
