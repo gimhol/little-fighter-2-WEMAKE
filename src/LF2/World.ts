@@ -50,8 +50,6 @@ export class World extends WorldDataset {
   private _need_UPS: boolean = true;
   private _FPS = new FPS(0.9);
   private _UPS = new FPS(0.9);
-  private _prev_time: number = 0;
-  private _fix_radio: number = 1;
   private _update_count: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
@@ -103,7 +101,7 @@ export class World extends WorldDataset {
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
     this.callbacks.emit('on_dataset_change')(k as any, curr, prev, this)
-    if (k === 'sync_render') {
+    if (k === 'sync_render' || k === 'UPS') {
       this.start_render();
       this.start_update();
     }
@@ -241,29 +239,31 @@ export class World extends WorldDataset {
   sleep(): void { this._sleeping = true }
   awake(): void { this._sleeping = false }
   start_update() {
+    let { playrate, UPS, atom_time, sync_render } = this;
+    if (!between(playrate, 0.01, 1000)) {
+      Ditto.warn(`[${World.TAG}::start_update] playrate must be between 0.01 and 1000, but got ${playrate}, now reset to 1.0`);
+      playrate = this.playrate = 1
+    }
+    if (!between(UPS, 1, 120)) {
+      Ditto.warn(`[${World.TAG}::start_update] UPS must be between 1 and 120, but got ${UPS}, now reset to 60`);
+      UPS = this.UPS = 60
+    }
+    if (!(atom_time > 0)) {
+      Ditto.warn(`[${World.TAG}::start_update] atom_time must be > 0, but got ${atom_time}, now reset to 1`);
+      atom_time = this.atom_time = 1;
+    }
+
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
-    this._prev_time = Date.now();
-    this._fix_radio = 1;
+    let _prev_update_time = Date.now();
+    let _prev_render_time = Date.now();
+    let _fix_radio = 1;
     this._update_count = 0;
+    const ideally_dt = round(1000 / UPS / playrate)
     const on_update = () => {
       try {
-        if (!between(this.playrate, 0.01, 1000)) {
-          Ditto.warn(`[${World.TAG}::start_update] playrate must be between 0.01 and 1000, but got ${this.playrate}, now reset to 1.0`);
-          this.playrate = 1
-        }
-        if (!between(this.UPS, 1, 120)) {
-          Ditto.warn(`[${World.TAG}::start_update] UPS must be between 1 and 120, but got ${this.UPS}, now reset to 60`);
-          this.UPS = 60
-        }
-        if (!(this.atom_time > 0)) {
-          Ditto.warn(`[${World.TAG}::start_update] atom_time must be > 0, but got ${this.atom_time}, now reset to 60`);
-          this.atom_time = 1;
-        }
         const time = Date.now();
-        const real_dt = time - this._prev_time;
-        const ideally_dt = this._fix_radio * round(1000 / this.UPS) / this.playrate
-
-        if (real_dt < ideally_dt) return;
+        const real_update_dt = time - _prev_update_time;
+        if (real_update_dt < _fix_radio * ideally_dt) return;
         if (this._sleeping) return;
         this.before_update?.();
         this._update_count++;
@@ -271,15 +271,21 @@ export class World extends WorldDataset {
         this.lf2.events.length = 0;
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
-        if (0 === floor(this._update_count / this.playrate) % this.sync_render) {
-          this.render_once(real_dt);
-          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
+
+        if (0 === floor(this._update_count / playrate) % sync_render) {
+          const real_render_dt = time - _prev_render_time;
+          this.render_once(real_render_dt);
+          if (this._need_FPS) {
+            this._FPS.update(real_render_dt);
+            this.callbacks.emit("on_fps_update")(this._FPS.value);
+          }
+          _prev_render_time = time;
         }
         if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
         this.after_update?.();
-        this._UPS.update(real_dt);
-        this._fix_radio = 1 - clamp(6 * (this.UPS - this._UPS.value) / this.UPS, 0, 1);
-        this._prev_time = time;
+        this._UPS.update(real_update_dt);
+        _fix_radio = 1 - clamp(6 * (UPS - this._UPS.value) / UPS, 0, 1);
+        _prev_update_time = time;
       } catch (e: any) {
         Ditto.warn(e)
         if (e.errors) Ditto.warn(e.errors)
@@ -399,7 +405,7 @@ export class World extends WorldDataset {
       const ui_stack = ui_stacks[i];
       const { ui } = ui_stack
       if (!ui || ui.disabled) continue;
-      ui.update(16);
+      ui.update(16.66666 * this.atom_time);
 
       if (!flag) continue;
       for (const e of this.lf2.events)
@@ -837,7 +843,7 @@ export class World extends WorldDataset {
     const dz = vz - az;
     let rest = 0;
     if (!itr.arest && itr.vrest)
-      rest = max(this.min_vrest, itr.vrest + this.vrest_offset)
+      rest = max(this.min_vrest * this.atom_time, itr.vrest + this.vrest_offset)
     const collision: ICollision = {
       lf2: this.lf2,
       world: this,
