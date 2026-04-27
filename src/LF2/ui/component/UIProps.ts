@@ -1,5 +1,6 @@
 import { IPropsMeta, is_num, is_str, make_schema } from "../../utils";
 import { SchemaValidator } from "../../utils/schema/validate_schema";
+import { parse_ui_value } from "../read_info_value";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
 import { isUINodeClass } from "../utils/isUINodeClass";
 import read_nums from "../utils/read_nums";
@@ -28,6 +29,12 @@ export class UIProps {
   })
   get errors() { return this.validator.errors }
   constructor(raw: { [x in string]?: any }, owner: UIComponent<unknown, any>) {
+    for (const key in raw) {
+      const value = raw[key];
+      if (typeof value === 'string' && value.startsWith(`$val:`)) {
+        raw[key] = parse_ui_value(owner.node.data, null, value) ?? value
+      }
+    }
     this.raw = { ...raw };
     this.owner = owner;
   }
