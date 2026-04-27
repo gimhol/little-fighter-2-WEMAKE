@@ -15,30 +15,33 @@ export function judger(fn: (v: any) => boolean): Judger {
 function is_judger(v: any): v is Judger {
   return typeof v === 'function' && v._judger === true;
 }
+export function find_ui_value(ui_info: ICookedUIInfo, type: null, name: string): any;
 export function find_ui_value(ui_info: ICookedUIInfo, type: 'boolean', name: string): boolean | null;
 export function find_ui_value(ui_info: ICookedUIInfo, type: 'number', name: string): number | null;
 export function find_ui_value(ui_info: ICookedUIInfo, type: 'string', name: string): string | null;
 export function find_ui_value<C>(ui_info: ICookedUIInfo, type: Cls<C>, name: string): C | null;
 export function find_ui_value<C>(ui_info: ICookedUIInfo, type: Judger, name: string): C | null;
-export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, name: string): C | T | null;
-export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, name: string): C | T | null {
+export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: null | T | Cls<C> | Judger, name: string): C | T | null;
+export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: null | T | Cls<C> | Judger, name: string): C | T | null {
   const value = ui_info.values?.[name];
-if (value === null || value === undefined)
+  if (value === null || value === undefined)
     return ui_info.parent ? find_ui_value(ui_info.parent, type, name) : null
+  if (type === null) return value;
   if (typeof type === 'string') return typeof value === type ? value : null;
   if (is_judger(type)) return type(value) ? value : null
   if (instance_of(value, type)) return value;
   return null;
 }
 
+export function parse_ui_value(ui_info: ICookedUIInfo, type: null, value: Unsafe<boolean | string>): any | null;
 export function parse_ui_value(ui_info: ICookedUIInfo, type: 'boolean', value: Unsafe<boolean | string>): boolean | null;
 export function parse_ui_value(ui_info: ICookedUIInfo, type: 'number', value: Unsafe<number | string>): number | null;
 export function parse_ui_value(ui_info: ICookedUIInfo, type: 'string', value: Unsafe<string>): Unsafe<string>;
 export function parse_ui_value(ui_info: ICookedUIInfo, type: 'string', value: string): string;
 export function parse_ui_value<C>(ui_info: ICookedUIInfo, type: Cls<C>, value: Unsafe<C | string>): C | null
 export function parse_ui_value<C>(ui_info: ICookedUIInfo, type: Judger, value: Unsafe<C | string>): C | null
-export function parse_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, value: Unsafe<T | string>): C | T | null
-export function parse_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, value: Unsafe<T | string>): C | T | null {
+export function parse_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: null | T | Cls<C> | Judger, value: Unsafe<T | string>): C | T | null
+export function parse_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: null | T | Cls<C> | Judger, value: Unsafe<T | string>): C | T | null {
   if (value === null || value === undefined)
     return null
   if (typeof value !== 'string')
