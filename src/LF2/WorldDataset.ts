@@ -112,7 +112,7 @@ export class WorldDataset implements IWorldDataset {
   constructor() {
     make_private_properties(
       `${WorldDataset.TAG}::constructor`, this,
-      (key) => (key in world_dataset_fields),
+      (key) => world_dataset_fields.has(key as keyof IWorldDataset),
       (...args) => this.on_dataset_change?.(...args)
     )
     Object.assign(this, wdataset)

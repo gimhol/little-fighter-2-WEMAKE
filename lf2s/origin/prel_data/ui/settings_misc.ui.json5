@@ -149,7 +149,7 @@
             },
             {
               id: "slider_handle_node",
-              size: "250,36",
+              size: "220,36",
               color: "white",
               center: "0.5,0.5",
               component: [
@@ -215,7 +215,7 @@
             {
               center: "0.5,0.5",
               color: "#333333",
-              pos: "-166,0",
+              pos: "-146,0",
               i18n: "sync_2",
               style: { font: "18px Arial" },
             },
@@ -227,14 +227,14 @@
             },
             {
               center: "0.5,0.5",
-              pos: "166,0",
+              pos: "146,0",
               color: "#333333",
               i18n: "sync_0",
               style: { font: "18px Arial" },
             },
             {
               id: "slider_handle_node",
-              size: "166,36",
+              size: "146,36",
               color: "white",
               center: "0.5,0.5",
               component: [

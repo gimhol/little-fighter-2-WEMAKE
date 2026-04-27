@@ -207,7 +207,6 @@ export class UIComponent<
       return this.node
     which = which.trim();
     if (which.startsWith('parent:')) {
-      debugger
       let distance = Number(which.substring(7))
       let parent = this.node.parent;
       while (distance && parent) {

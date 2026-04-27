@@ -55,7 +55,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.hp = fighter.hp_r = fighter.hp_max = 150;
     fighter.stat_bar_type = StatBarType.None;
     fighter.wakeup_invuln = true;
-    fighter.blinking = 200
+    fighter.blinking = 64
     fighter.dead_gone = true;
     fighter.attach()
     fighter.enter_frame({ id: "running_0" })

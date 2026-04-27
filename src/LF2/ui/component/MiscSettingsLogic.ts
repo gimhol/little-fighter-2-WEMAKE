@@ -83,7 +83,6 @@ export class MiscSettingsLogic extends UIComponent {
     this.render_rate?.callbacks.add({
       on_value_changed: (v) => {
         this.world.sync_render = floor(2 - v);
-        this.render_rate?.set_value(floor(v))
         this.lf2.sounds.play_preset('ok')
       }
     })
