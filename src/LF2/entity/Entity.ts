@@ -1718,8 +1718,11 @@ export class Entity {
     }
     const { cpoint: cpoint_a } = this.frame;
     if (cpoint_a?.decrease) {
-      this._catch_time += cpoint_a.decrease;
-      if (this._catch_time < 0) this._catch_time = 0;
+      this._catch_time = clamp_add(
+        this._catch_time, cpoint_a.decrease * this.world.atom_time,
+        0,
+        this.catch_time_max
+      )
     }
     if (!cpoint_a) {
       this._catching = null;
