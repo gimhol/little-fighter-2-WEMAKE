@@ -12,7 +12,7 @@ export function cook_opoint(opoint: IOpointInfo, frame: IFrameInfo) {
   opoint.oid = "" + take(opoint, "oid");
 
   if (is_num(raw_action)) {
-    const act = get_next_frame_by_raw_id(raw_action);
+    const act = get_next_frame_by_raw_id(raw_action, 'frame');
     const facing = take(opoint, "facing");
     if (is_num(facing)) {
       act.facing =

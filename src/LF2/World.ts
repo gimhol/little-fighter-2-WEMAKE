@@ -600,6 +600,7 @@ export class World extends WorldDataset {
     this.freshs.clear()
     for (const e of this.entities) {
       const { is_ghost } = e;
+      e.update();
       if (!is_ghost && update_chasing && this._chasers.size)
         for (const c of this._chasers)
           c.update_chasing(e)
@@ -622,7 +623,6 @@ export class World extends WorldDataset {
           else if (collision2?.handlers) this.add_collisions(collision2)
         }
       }
-      e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
         e.state === StateEnum.Gone
@@ -843,7 +843,7 @@ export class World extends WorldDataset {
     const dz = vz - az;
     let rest = 0;
     if (!itr.arest && itr.vrest)
-      rest = max(this.min_vrest * this.atom_time, itr.vrest + this.vrest_offset)
+      rest = max(this.min_vrest, itr.vrest + this.vrest_offset)
     const collision: ICollision = {
       lf2: this.lf2,
       world: this,

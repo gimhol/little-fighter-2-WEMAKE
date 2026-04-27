@@ -1,4 +1,4 @@
-import { floor, ISoundsCallback, IWorldCallbacks, SliderHandle, UIComponent } from "@/LF2";
+import { floor, ISoundsCallback, IWorldCallbacks, round_float, SliderHandle, UIComponent } from "@/LF2";
 
 export class MiscSettingsLogic extends UIComponent {
   static override readonly TAGS: string[] = ["MiscSettingsLogic"];
@@ -9,6 +9,7 @@ export class MiscSettingsLogic extends UIComponent {
   team_outline: SliderHandle | undefined;
   render_rate: SliderHandle | undefined;
   main_volume: SliderHandle | undefined;
+  ups: SliderHandle | undefined;
   cbs: ISoundsCallback = {
     on_volume_changed: (volume) => this.main_volume?.set_factor(volume),
     on_bgm_volume_changed: (volume) => this.bgm_volume?.set_factor(volume),
@@ -83,6 +84,25 @@ export class MiscSettingsLogic extends UIComponent {
     this.render_rate?.callbacks.add({
       on_value_changed: (v) => {
         this.world.sync_render = floor(2 - v);
+        this.lf2.sounds.play_preset('ok')
+      }
+    })
+
+    this.ups = this.node.search_node("ups_row")?.search_component(SliderHandle)
+    if (this.ups) this.ups.set_value([30, 60, 90, 120].indexOf(this.world.UPS));
+    this.ups?.callbacks.add({
+      on_value_changed: (v) => {
+        this.world.UPS = [30, 60, 90, 120][v];
+        this.world.atom_time = [2, 1, 0.7, 0.5][v];
+        this.world.wait_offset = [-1, 0, 0, 0][v];
+        this.world.arest_offset = [-6, -6, -7, -8][v];
+        this.world.double_click_interval = [
+          15, 30, 45, 60
+        ][v];
+        this.world.key_hit_duration = [
+          5, 10, 15, 20
+        ][v];
+
         this.lf2.sounds.play_preset('ok')
       }
     })

@@ -25,7 +25,7 @@
           properties: {
             left: "left",
             top: "top",
-            offset: { t: 30, l: 24 },
+            offset: { t: 34, l: 14 },
             once: true,
           },
         },
@@ -42,7 +42,7 @@
           properties: {
             right: "right",
             top: "top",
-            offset: { t: 30, r: -24 },
+            offset: { t: 34, r: -14 },
             once: true,
           },
         },

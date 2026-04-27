@@ -134,14 +134,14 @@
           center: "0.5,0.5",
           items: [
             {
-              pos: "-125,0",
+              pos: "-110,0",
               center: "0.5,0.5",
               color: "#333333",
               i18n: "disable",
               style: { font: "18px Arial" },
             },
             {
-              pos: "125,0",
+              pos: "110,0",
               center: "0.5,0.5",
               color: "#333333",
               i18n: "enable",
@@ -216,20 +216,20 @@
               center: "0.5,0.5",
               color: "#333333",
               pos: "-146,0",
-              i18n: "sync_2",
+              i18n: "$val:item0",
               style: { font: "18px Arial" },
             },
             {
               center: "0.5,0.5",
               color: "#333333",
-              i18n: "sync_1",
+              i18n: "$val:item1",
               style: { font: "18px Arial" },
             },
             {
               center: "0.5,0.5",
               pos: "146,0",
               color: "#333333",
-              i18n: "sync_0",
+              i18n: "$val:item2",
               style: { font: "18px Arial" },
             },
             {
@@ -248,7 +248,7 @@
                     switcher: true,
                     responser: "parent:1",
                     handle_label: "handle_label",
-                    items: "sync_2,sync_1,sync_0",
+                    items: "$val:items",
                   },
                 },
               ],
@@ -256,7 +256,100 @@
                 {
                   center: "0.5,0.5",
                   color: "black",
-                  i18n: "disabled",
+                  i18n: "$val:item0",
+                  style: { font: "18px Arial" },
+                  component: [ { name: "Label", id: "handle_label" } ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    four_switcher_row: {
+      size: "600,36",
+      center: "0.5,0.5",
+      component: [
+        {
+          name: "Flex",
+          properties: { direction: "row", align: "center" },
+        },
+        "Reachable(misc_settings)"
+      ],
+      items: [
+        {
+          size: "140,36",
+          center: "0.5,0.5",
+          items: [
+            {
+              color: "#5A73D6",
+              center: "0.5,0.5",
+              i18n: "$val:prefix",
+              style: { font: "18px Arial" },
+              component: [ { name: "Label", id: "prefix_label" } ],
+            },
+          ],
+          component: [ { name: "Label", id: "handle_label" } ],
+        },
+        {
+          id: "slider_bar_node",
+          size: "440,36",
+          color: "black",
+          center: "0.5,0.5",
+          items: [
+            {
+              center: "0.5,0.5",
+              color: "#333333",
+              pos: "-161,0",
+              i18n: "$val:item0",
+              style: { font: "18px Arial" },
+            },
+            {
+              center: "0.5,0.5",
+              color: "#333333",
+              pos: "-55,0",
+              i18n: "$val:item1",
+              style: { font: "18px Arial" },
+            },
+            {
+              center: "0.5,0.5",
+              pos: "55,0",
+              color: "#333333",
+              i18n: "$val:item2",
+              style: { font: "18px Arial" },
+            },
+            {
+              center: "0.5,0.5",
+              pos: "161,0",
+              color: "#333333",
+              i18n: "$val:item3",
+              style: { font: "18px Arial" },
+            },
+            {
+              id: "slider_handle_node",
+              size: "110,36",
+              color: "white",
+              center: "0.5,0.5",
+              component: [
+                {
+                  name: "SliderHandle",
+                  properties: {
+                    min: 0,
+                    max: 3,
+                    step: 1,
+                    precision: 1,
+                    switcher: true,
+                    responser: "parent:1",
+                    handle_label: "handle_label",
+                    items: "$val:items",
+                  },
+                },
+              ],
+              items: [
+                {
+                  center: "0.5,0.5",
+                  color: "black",
+                  i18n: "$val:item0",
                   style: { font: "18px Arial" },
                   component: [ { name: "Label", id: "handle_label" } ],
                 },
@@ -315,9 +408,27 @@
         },
         {
           id: "render_rate_row",
-          values: { prefix: "render_fps" },
+          values: {
+            prefix: "render_fps",
+            item0: "sync_2",
+            item1: "sync_1",
+            item2: "sync_0",
+            items: "sync_2,sync_1,sync_0"
+          },
           template: "triple_switcher_row",
         },
+        {
+          id: "ups_row",
+          values: {
+            prefix: "UPS",
+            item0: "30UPS",
+            item1: "60UPS",
+            item2: "90UPS",
+            item3: "120UPS",
+            items: "30UPS,60UPS,90UPS,120UPS"
+          },
+          template: "four_switcher_row",
+        }
       ]
     },
     {

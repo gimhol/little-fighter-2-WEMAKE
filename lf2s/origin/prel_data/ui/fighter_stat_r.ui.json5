@@ -49,8 +49,9 @@
   },
   items: [
     {
-      id: "_",
+      id: "head_frame",
       size: "30,30",
+      color: "black",
       component: [
         {
           name: "Alignment",

@@ -25,7 +25,7 @@ import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, find, float_equal, floor, max, min, pow, round, round_float } from "../utils";
+import { abs, clamp, clamp_add, find, float_equal, floor, max, min, pow, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
@@ -1116,10 +1116,10 @@ export class Entity {
 
   handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
     let { x, z } = this.velocities[0];
-    x *= pow(factor, this.world.atom_time);
-    z *= pow(factor, this.world.atom_time);
-    fx *= this.world.atom_time;
-    fz *= this.world.atom_time;
+    x = round_float(x * pow(factor, this.world.atom_time));
+    z = round_float(z * pow(factor, this.world.atom_time));
+    fx = round_float(fx * this.world.atom_time);
+    fz = round_float(fz * this.world.atom_time);
     const { ctrl_x, ctrl_z } = this.frame;
     let { dvx = 0, dvz = 0 } = this;
     const { UD, LR } = this.ctrl
@@ -1166,7 +1166,10 @@ export class Entity {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
-    this.velocities[0].y -= this.gravity * this.world.atom_time;
+    this.set_velocity_0_y(
+      this.velocities[0].y - (this.gravity * this.world.atom_time)
+    )
+
   }
   get dvx() {
     const { dvx: v } = this.frame;
@@ -1183,20 +1186,23 @@ export class Entity {
   update_velocity(vinfo: IVelocityInfo = this.frame): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     let { dvx, dvy, dvz } = vinfo;
-    if (dvx) dvx *= this.dataset('fvx_f')
-    if (dvy) dvy *= this.dataset('fvy_f')
-    if (dvz) dvz *= this.dataset('fvz_f')
-    const {
+    if (dvx) dvx = round_float(dvx * this.dataset('fvx_f'))
+    if (dvy) dvy = round_float(dvy * this.dataset('fvy_f'))
+    if (dvz) dvz = round_float(dvz * this.dataset('fvz_f'))
+    let {
       vxm = SpeedMode.LF2,
       vym = SpeedMode.AccTo,
       vzm = SpeedMode.LF2,
-      acc_x = ((vxm == SpeedMode.AccTo) ? dvx ?? 0 : 0) * this.world.atom_time,
-      acc_y = ((vym == SpeedMode.AccTo) ? dvy ?? 0 : 0) * this.world.atom_time,
-      acc_z = ((vzm == SpeedMode.AccTo) ? dvz ?? 0 : 0) * this.world.atom_time,
+      acc_x = (vxm == SpeedMode.AccTo) ? dvx ?? 0 : 0,
+      acc_y = (vym == SpeedMode.AccTo) ? dvy ?? 0 : 0,
+      acc_z = (vzm == SpeedMode.AccTo) ? dvz ?? 0 : 0,
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
     } = vinfo;
+    if (acc_x) acc_x = round_float(acc_x * this.world.atom_time)
+    if (acc_y) acc_y = round_float(acc_y * this.world.atom_time)
+    if (acc_z) acc_z = round_float(acc_z * this.world.atom_time)
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
 
@@ -1282,24 +1288,44 @@ export class Entity {
    */
   stat_recovering(): void {
     if (this.resting > 0) {
-      this.resting = round_float(this.resting - this.world.wait_offset)
-      if (this.resting < 0) this.resting = 0;
+      this.resting = clamp_add(
+        this.resting,
+        -this.world.atom_time,
+        0,
+        this.resting_max
+      )
       return;
     }
     if (this.toughness_resting > 0) {
-      this.toughness_resting = round_float(this.toughness_resting - this.world.wait_offset)
-      if (this.toughness_resting < 0) this.toughness_resting = 0;
+      this.toughness_resting = clamp_add(
+        this.toughness_resting,
+        -this.world.atom_time,
+        0,
+        this._toughness_resting_max
+      )
+
     } else if (this.toughness < this.toughness_max) {
-      this.toughness = round_float(this.toughness + this.world.wait_offset)
-      if (this.toughness > this.toughness_max) this.toughness = this.toughness_max
+      this.toughness = clamp_add(
+        this.toughness,
+        this.world.atom_time,
+        0,
+        this._toughness_max
+      )
     }
     if (this.fall_value < this.fall_value_max && this._fall_r_tick.add(this.world.atom_time)) {
-      this.fall_value += this._fall_r_value;
-      if (this.fall_value > this.fall_value_max) this.fall_value = this.fall_value_max
+      this.fall_value = clamp_add(
+        this.fall_value,
+        this._fall_r_value,
+        0,
+        this.fall_value_max
+      )
     }
     if (this.defend_value < this.defend_value_max && this._defend_r_tick.add(this.world.atom_time)) {
-      this.defend_value += this._defend_r_value;
-      if (this.defend_value > this.defend_value_max) this.defend_value = this.defend_value_max
+      this.defend_value = clamp_add(
+        this.defend_value,
+        this._defend_r_value,
+        0, this.defend_value_max
+      );
     }
   }
 
@@ -1368,7 +1394,9 @@ export class Entity {
       fighter.position.set(x, y, z)
     }
     if (this.dismiss_time) {
-      this.dismiss_time = round_float(this.dismiss_time - this.world.wait_offset);
+      this.dismiss_time = round_float(
+        this.dismiss_time - this.world.atom_time
+      );
     }
 
     const should_dismiss = (
@@ -1390,12 +1418,13 @@ export class Entity {
     this.hp_recovering()
     this.mp_recovering();
 
-    if (this.frame.hp) this.hp -= this.frame.hp;
+    if (this.frame.hp) this.hp -= this.frame.hp * this.world.atom_time;
 
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
       for (const [k, v] of this.vrests) {
         if (v.rest > 0) {
           v.rest = round_float(v.rest - this.world.atom_time);
+          if (v.rest < 0) v.rest = 0;
         } else {
           this.del_v_rest(k)
         }
@@ -1406,6 +1435,7 @@ export class Entity {
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
       if (this.arest > 0) {
         this.arest = round_float(this.arest - this.world.atom_time);
+        if (this.arest < 0) this.arest = 0;
       } else {
         this.arest = 0
       }
@@ -1414,15 +1444,19 @@ export class Entity {
     if (this._invisible_duration > 0) {
       this._invisible_duration = round_float(this._invisible_duration - this.world.atom_time);
       if (this._invisible_duration <= 0) {
+        this._invisible_duration = 0;
         this._blinking_duration = this.dataset('invisible_blinking');
       }
     }
     if (this._invulnerable_duration > 0) {
       this._invulnerable_duration = round_float(this._invulnerable_duration - this.world.atom_time);
+      if (this._invulnerable_duration < 0) this._invulnerable_duration = 0;
     }
+
     if (this._blinking_duration > 0) {
       this._blinking_duration = round_float(this._blinking_duration - this.world.atom_time);
       if (this._blinking_duration <= 0) {
+        this._blinking_duration = 0;
         if (this._after_blink === Builtin_FrameId.Gone) {
           this.next_frame = null;
           this.frame = GONE_FRAME_INFO;
@@ -1477,7 +1511,7 @@ export class Entity {
         !this._catcher &&
         !this._bearer
       ) {
-        this.wait = round_float(this.wait - this.world.atom_time);
+        this.wait = round_float(this.wait - this.world.atom_time)
         if (this.wait < 0) this.wait = 0;
       }
     } else {

@@ -155,7 +155,7 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       if (itr.dvx) {
         itr.actions = ensure(itr.actions, {
           type: ActionType.A_NextFrame,
-          data: get_next_frame_by_raw_id(itr.dvx),
+          data: get_next_frame_by_raw_id(itr.dvx, 'frame'),
         })
       }
       itr.test = itr.test ?? new CondMaker<C_Val>()

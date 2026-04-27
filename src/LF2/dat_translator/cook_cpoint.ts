@@ -28,7 +28,7 @@ export function cook_cpoint(unsure_cpoint: ICpointInfo, frame: IFrameInfo): void
   if (is_num(raw_injury)) unsure_cpoint.injury = abs(raw_injury);
 
   if (is_str(vaction) || is_num(vaction)) {
-    unsure_cpoint.vaction = get_next_frame_by_raw_id(vaction);
+    unsure_cpoint.vaction = get_next_frame_by_raw_id(vaction, 'frame');
     if (cover === 11 || cover === 10) // for louis throw
       unsure_cpoint.vaction.facing = FacingFlag.SameAsCatcher
 

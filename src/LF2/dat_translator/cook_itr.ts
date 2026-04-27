@@ -29,12 +29,12 @@ export function cook_itr(itr?: Partial<IItrInfo>, frame?: IFrameInfo) {
   }
   const catchingact = take(itr, "catchingact");
   if (is_num(catchingact))
-    itr.catchingact = get_next_frame_by_raw_id(catchingact);
+    itr.catchingact = get_next_frame_by_raw_id(catchingact, 'frame');
 
   const caughtact = take(itr, "caughtact");
   if (is_num(caughtact))
     itr.caughtact = {
-      ...get_next_frame_by_raw_id(caughtact),
+      ...get_next_frame_by_raw_id(caughtact, 'frame'),
       facing: FacingFlag.OpposingCatcher,
     };
 }

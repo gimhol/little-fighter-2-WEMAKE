@@ -3,6 +3,7 @@ import { cook_next_frame_cost as cook_next_frame_cost } from "./cook_next_frame_
 
 export const get_next_frame_by_raw_id = (
   id: number | string,
+  zero_as: "frame" | "repeat",
   type?: "next" | "hit",
   frame_mp_hp_map?: Map<string, { mp: number, hp: number }>,
 ): INextFrame => {
@@ -10,7 +11,13 @@ export const get_next_frame_by_raw_id = (
   if ("" + id === "999") return { id: Builtin_FrameId.Auto };
   if ("" + id === "-999")
     return { id: Builtin_FrameId.Auto, facing: FacingFlag.Backward };
-  if ("" + id === "0") return {};
+
+  if ("" + id === "0") {
+    if (zero_as == 'frame') // for opoint...
+      return { id: "" + id };
+    else
+      return {};
+  }
 
   if (typeof id === "number") {
     if (id >= 1100 && id <= 1299) {
