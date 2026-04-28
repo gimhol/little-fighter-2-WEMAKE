@@ -11,7 +11,6 @@ export * from "./Invoker";
 export * from "./Loader";
 export * from "./NoEmitCallbacks";
 export * from "./PromisesInOne";
-export * from "./StateDelegate";
 export * from "./get_short_file_size_txt";
 export * from "./get_team_shadow_color";
 export * from "./get_team_text_color";

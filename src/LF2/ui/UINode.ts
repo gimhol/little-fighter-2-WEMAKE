@@ -1,5 +1,5 @@
 import { LF2 } from "../LF2";
-import { Callbacks, StateDelegate } from "../base";
+import { Callbacks } from "../base";
 import { IStyle, IVector3 } from "../defines";
 import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
@@ -11,7 +11,6 @@ import { IUIKeyEvent } from "./IUIKeyEvent";
 import { LF2PointerEvent } from "./LF2PointerEvent";
 import { actor } from "./action";
 import { UIComponent } from "./component";
-import { parse_ui_value } from "./read_info_value";
 export class UINode implements IDebugging {
 
   static readonly TAG: string = 'UINode';
@@ -63,7 +62,7 @@ export class UINode implements IDebugging {
 
   text: TextInfo | null = null
   image: ImageInfo | null = null
-  readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
+  color: string = '';
 
   protected _parent?: UINode;
   protected _children: UINode[] = [];
@@ -311,6 +310,7 @@ export class UINode implements IDebugging {
     this.scale.set(...this.data.scale);
     this.text = this.data.txt_info ?? null;
     this.image = this.data.img_info ?? null;
+    this.color = this.data.color ?? '';
     this.renderer = new D.UINodeRenderer(this);
     make_debugging(this)
   }

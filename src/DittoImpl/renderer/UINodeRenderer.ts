@@ -37,7 +37,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected txt_idx_version: number | null = null;
   protected txts_version: number | null = null;
   protected size_version: number | null = null;
-  protected color_version: number | null = null;
+  protected _color: string | null = null;
   protected center_version: number | null = null;
   protected scale_version: number | null = null;
   protected pos_version: number | null = null;
@@ -179,13 +179,13 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (
       this._txt === this.ui.text &&
       this._img === this.ui.image &&
-      this.color_version === this.ui.color.version
+      this._color === this.ui.color
     ) return;
 
     const img = this.ui.image || this.ui.text;
     this._ui_img = this.ui.data.img;
     this._img = img;
-    const rgba = parse_rgba(this.ui.color.value)
+    const rgba = parse_rgba(this.ui.color)
     if (img) {
       this.mesh.material.texture = img.pic?.texture;
       this.mesh.material.coverColor = BLACK;
@@ -329,6 +329,6 @@ export class UINodeRenderer implements IUINodeRenderer {
     }
     this._img = this.ui.image
     this._txt = this.ui.text
-    this.color_version = this.ui.color.version
+    this._color = this.ui.color
   }
 }
