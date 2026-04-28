@@ -1185,6 +1185,8 @@ export class Entity {
   }
   update_velocity(vinfo: IVelocityInfo = this.frame): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    const { atom_time } = this.world;
+
     let { dvx, dvy, dvz } = vinfo;
     if (dvx) dvx = round_float(dvx * this.dataset('fvx_f'))
     if (dvy) dvy = round_float(dvy * this.dataset('fvy_f'))
@@ -1193,21 +1195,28 @@ export class Entity {
       vxm = SpeedMode.LF2,
       vym = SpeedMode.AccTo,
       vzm = SpeedMode.LF2,
-      acc_x = (vxm == SpeedMode.AccTo) ? dvx ?? 0 : 0,
-      acc_y = (vym == SpeedMode.AccTo) ? dvy ?? 0 : 0,
-      acc_z = (vzm == SpeedMode.AccTo) ? dvz ?? 0 : 0,
+      acc_x,
+      acc_y,
+      acc_z,
       ctrl_x = 0,
       ctrl_y = 0,
       ctrl_z = 0,
     } = vinfo;
-    if (acc_x) acc_x = round_float(acc_x * this.world.atom_time)
-    if (acc_y) acc_y = round_float(acc_y * this.world.atom_time)
-    if (acc_z) acc_z = round_float(acc_z * this.world.atom_time)
+
+    if (acc_x) acc_x = round_float(acc_x * atom_time)
+    if (acc_y) acc_y = round_float(acc_y * atom_time)
+    if (acc_z) acc_z = round_float(acc_z * atom_time)
+
+    // 此处不要 * atom_time
+    if (vxm == SpeedMode.AccTo && acc_x == void 0 && dvx) acc_x = dvx;
+    if (vym == SpeedMode.AccTo && acc_y == void 0 && dvy) acc_y = dvy;
+    if (vzm == SpeedMode.AccTo && acc_z == void 0 && dvz) acc_z = dvz;
+
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;
-
+    const { facing } = this;
     if (dvx == void 0) { }
-    else if (!ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, this.facing);
+    else if (!ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, facing);
     else if (LR != 0 && SpeedCtrl.Control == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, LR);
     else if (LR != 0 && SpeedCtrl.Enable == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, 1);
     else if (LR == 0 && SpeedCtrl.Disable == ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, 1);
