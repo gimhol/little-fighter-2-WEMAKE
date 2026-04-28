@@ -72,7 +72,7 @@ export class Entity {
    * @type {IVector3}
    */
   protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _landing_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
 
   readonly vrests = new Map<string, ICollision>();
@@ -874,7 +874,9 @@ export class Entity {
     if (vym == SpeedMode.Extra && acc_y) vy += acc_y
     if (vzm == SpeedMode.Extra && acc_z) vz += acc_z
 
-    this.set_velocity(vx, vy, vz)
+    this._prev_velocity.x = this._velocity.x = round_float(vx)
+    this._prev_velocity.y = this._velocity.y = round_float(vy)
+    this._prev_velocity.z = this._velocity.z = round_float(vz)
     if (sus_cases.debugging) {
       sus_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
       sus_cases.push('on_spawn::vec1', vx, vy, vz)
@@ -1201,7 +1203,7 @@ export class Entity {
     if (acc_z) acc_z = round_float(acc_z * atom_time)
 
 
-    let { x: vx, y: vy, z: vz } = this.velocity;
+    let { x: vx, y: vy, z: vz } = this._velocity;
     const { UD, LR, jd } = this._ctrl;
     const { facing } = this;
     if (dvx == void 0) { }
@@ -1222,7 +1224,9 @@ export class Entity {
     else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
     else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
 
-    this.set_velocity(vx, vy, vz);
+    this._velocity.x = round_float(vx)
+    this._velocity.y = round_float(vy)
+    this._velocity.z = round_float(vz)
     if (vxm == SpeedMode.Fixed) this.set_velocity_x(0)
     if (vym == SpeedMode.Fixed) this.set_velocity_y(0)
     if (vzm == SpeedMode.Fixed) this.set_velocity_z(0)

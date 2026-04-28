@@ -106,8 +106,9 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   const [c_id, set_character_id] = useState<string>("");
   const [team, set_team] = useLocalString<string>("debug_bot_team", "");
   const [bot_ctrl, set_bot_ctrl] = useLocalString<string>("debug_bot_ctrl", "");
-
-  if (!lf2 || visible === false) return <></>;
+  const [dwds, set_dwds] = useImmer<Partial<IWorldDataset>>({})
+  const [cwds, set_cwds] = useImmer<Partial<IWorldDataset>>({})
+  const [ready, set_ready] = useState(false)
 
   const on_click_add_weapon = () => {
     weapon_id ? lf2.weapons.add(weapon_id, rwn) : lf2.weapons.add_random(rwn);
@@ -127,17 +128,15 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   };
   const phase_desc = stage_phase_list[stage_phase_idx]?.desc;
 
-  const [dwds, set_dwds] = useImmer<Partial<IWorldDataset>>({})
-  const [cwds, set_cwds] = useImmer<Partial<IWorldDataset>>({})
-  const [ready, set_ready] = useState(false)
   useEffect(() => {
-    if (!lf2.world) return;
+    if (!lf2) return;
+    if (!lf2?.world) return;
     if (!ready) return;
     Object.assign(lf2.world, cwds)
   }, [ready, cwds, lf2])
 
   useEffect(() => {
-    if (!lf2.world) return;
+    if (!lf2?.world) return;
     set_dwds(d => {
       for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
@@ -153,6 +152,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     set_ready(true);
   }, [lf2, set_dwds, set_cwds])
 
+  if (!lf2 || visible === false) return <></>;
   return (
     <>
       <Show.Div
