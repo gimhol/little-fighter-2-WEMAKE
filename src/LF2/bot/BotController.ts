@@ -190,6 +190,8 @@ export class BotController extends BaseController {
    */
   should_chase(e: Entity): boolean {
     const { entity: me } = this;
+    if (!me.is_attach) return false
+    if (!e.is_attach) return false
 
     if (me.hp <= 0) return false;
     if (me.holding?.base_type == W_T.Drink) return false;
@@ -254,8 +256,11 @@ export class BotController extends BaseController {
    */
   should_avoid(e: Entity): boolean {
     const { entity: me } = this;
+    if (!me.is_attach) return false
+    if (!e.is_attach) return false
     if (me.hp <= 0) return false
     if (e.hp <= 0) return false;
+
 
     const dxz = manhattan_xz(this.entity, e)
     if (e.state === StateEnum.Lying) return dxz < 180;
@@ -303,6 +308,9 @@ export class BotController extends BaseController {
    * @memberof BotController
    */
   should_defend(e: Entity): 0 | 1 | 2 {
+    const { entity: me } = this;
+    if (!me.is_attach) return 0
+    if (!e.is_attach) return 0
     if (
       e.invisible ||
       this.entity.toughness ||
@@ -367,6 +375,13 @@ export class BotController extends BaseController {
   }
 
   look_other(other: Entity) {
+    const { entity: me } = this;
+    if (!me.is_attach || !other.is_attach) {
+      this.avoidings.clear();
+      this.chasings.clear();
+      this.defends.clear()
+      return
+    }
     if (is_fighter(other)) {
       if (this.entity.is_ally(other)) {
         return;
@@ -406,6 +421,10 @@ export class BotController extends BaseController {
         this.defends.look(this.entity, other, dd)
         return;
       }
+    } else {
+      this.avoidings.clear();
+      this.chasings.clear();
+      this.defends.clear()
     }
   }
 

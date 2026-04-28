@@ -6,7 +6,6 @@ export class NearestTargets {
   max: number;
   targets: BotTarget[] = [];
   entities = new Set<Entity>();
-
   constructor(max: number) { this.max = max; }
 
   get(): BotTarget | undefined { return this.targets[0]; }
@@ -50,5 +49,11 @@ export class NearestTargets {
       b.distance = manhattan_xz(self, b.entity);
       return a.distance - b.distance;
     });
+  }
+
+  clear() {
+
+    this.targets.length = 0
+    this.entities.clear()
   }
 }
