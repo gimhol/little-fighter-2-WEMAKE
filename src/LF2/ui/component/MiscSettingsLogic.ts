@@ -90,18 +90,20 @@ export class MiscSettingsLogic extends UIComponent {
 
     this.ups = this.node.search_node("ups_row")?.search_component(SliderHandle)
     const ups_arr = [30, 60, 90, 120]
-
+    const atom_time_arr = ups_arr.map(v => round_float(60 / v))
+    const double_click_interval_arr = ups_arr.map(v => 30 * v / 60)
+    const key_hit_duration_arr = ups_arr.map(v => 10 * v / 60)
+    const fvy_f_arr = [-0.5, -0.5, -0.5324, -0.678];
+    const wait_offset_arr = [-1, 0, 0, 0.5]
     if (this.ups) this.ups.set_value(ups_arr.indexOf(this.world.UPS));
     this.ups?.callbacks.add({
       on_value_changed: (v) => {
         this.world.UPS = ups_arr[v];
-        this.world.atom_time = round_float(ups_arr.map(v => round_float(60 / v))[v]);
-        this.world.wait_offset = [-1, 0, 0, 0.5][v];
-        this.world.arest_offset;// = [-5, -6, -6, -5][v];
-        this.world.fvy_f = [-0.5, -0.5, -0.5324, -0.678][v];
-
-        this.world.double_click_interval = ups_arr.map(v => 30 * v / 60)[v];
-        this.world.key_hit_duration = ups_arr.map(v => 10 * v / 60)[v];
+        this.world.atom_time = atom_time_arr[v];
+        this.world.wait_offset = wait_offset_arr[v];
+        this.world.fvy_f = fvy_f_arr[v];
+        this.world.double_click_interval = double_click_interval_arr[v];
+        this.world.key_hit_duration = key_hit_duration_arr[v];
         this.lf2.sounds.play_preset('ok')
       }
     })
