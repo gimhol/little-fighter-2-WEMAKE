@@ -1,4 +1,4 @@
-import { ISchema } from "../defines";
+import { ISchema, IStyle } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { floor, is_str } from "../utils";
@@ -44,16 +44,17 @@ export async function cook_ui_info(
     ...ui_info,
     values: ui_info.values ? ui_info.values : {},
     id, name,
-    pos: read_nums(ui_info.pos, 3, [0, 0, 0]),
-    scale: read_nums(ui_info.scale, 3, [1, 1, 1]),
-    center: read_nums(ui_info.center, 3, [0, 0, 0]),
+    pos: read_nums(ui_info.pos, 3),
+    scale: read_nums(ui_info.scale, 3, 1),
+    center: read_nums(ui_info.center, 3),
     size: [0, 0, 0],
     parent,
     img_info: void 0,
     txt_info: void 0,
     items: void 0,
     img: void 0,
-    component: components
+    component: components,
+    style: void 0,
   };
   do {
     let { img } = ui_info;
@@ -77,16 +78,16 @@ export async function cook_ui_info(
     const { i18n, style } = ui_info;
     if (!i18n && !style) break;
 
-    ret.i18n = parse_ui_value(ret, 'string', i18n) ?? ''
-    ret.style = parse_ui_value(ret, unsafe_is_object, style) ?? {}
-
+    ret.i18n = parse_ui_value(ret, String, i18n) ?? void 0;
+    ret.style = parse_ui_value(ret, unsafe_is_object<IStyle>(), style) ?? void 0;
+    if (!ret.i18n) break;
     const value = lf2.string(ret.i18n);
     ret.txt_info = await lf2.images.load_text(value, ret.style)
   } while (0)
 
   const img = ret.img_info || ret.txt_info;
   if (ui_info.size) {
-    ret.size = read_nums(ui_info.size, 3, [0, 0, 0])
+    ret.size = read_nums(ui_info.size, 3)
   } else if (!parent) {
     ret.size = [lf2.world.screen_w, lf2.world.screen_h, 0]
   }

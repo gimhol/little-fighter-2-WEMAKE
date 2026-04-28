@@ -12,7 +12,7 @@ export type ImageOperation = IImageOp_Crop | IImageOp_Resize | IImageOp_Flip | I
 export interface IImageMgr {
   find(key: string): ImageInfo | undefined;
   del(key: string): void;
-  load_text(text: string, style?: IStyle): Promise<TextInfo>;
+  load_text(text: string, style?: IStyle | null): Promise<TextInfo>;
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<ImageInfo>;
   load_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): Promise<ImageInfo>;
   find_by_pic_info(f: IPictureInfo | ILegacyPictureInfo): ImageInfo | undefined;

@@ -85,12 +85,12 @@ export class UIProps {
     const v = this.raw[name];
     return !['false', '0'].some(b => b === '' + v);
   }
-  nums(name: string, len: 4, fallbacks?: number[]): [number, number, number, number];
-  nums(name: string, len: 3, fallbacks?: number[]): [number, number, number];
-  nums(name: string, len: 2, fallbacks?: number[]): [number, number];
-  nums(name: string, len: 1, fallbacks?: number[]): [number];
-  nums(name: string, len: number, fallbacks?: number[]): number[];
-  nums(name: string, len: number, fallbacks?: number[]): number[] {
+  nums(name: string, len: 4, fallbacks?: number[] | number): [number, number, number, number];
+  nums(name: string, len: 3, fallbacks?: number[] | number): [number, number, number];
+  nums(name: string, len: 2, fallbacks?: number[] | number): [number, number];
+  nums(name: string, len: 1, fallbacks?: number[] | number): [number];
+  nums(name: string, len: number, fallbacks?: number[] | number): number[];
+  nums(name: string, len: number, fallbacks?: number[] | number): number[] {
     return read_nums(this.raw[name], len, fallbacks);
   }
   component() {

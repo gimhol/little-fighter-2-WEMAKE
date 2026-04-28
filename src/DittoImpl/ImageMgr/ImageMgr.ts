@@ -85,10 +85,11 @@ export class ImageMgr implements IImageMgr {
     return ret;
   }
 
-  private async create_txt_info(key: string, text: string, style: IStyle = {}): Promise<RTextInfo> {
+  private async create_txt_info(key: string, text: string, style?: IStyle | null): Promise<RTextInfo> {
     const cvs = document.createElement("canvas");
     const ctx = cvs.getContext("2d");
     if (!ctx) throw new Error("can not get context from canvas");
+    if (!style) style = {};
     const {
       padding_l = 2,
       padding_t = 2,
@@ -161,7 +162,7 @@ export class ImageMgr implements IImageMgr {
     return this.infos.get(key);
   }
 
-  load_text(text: string, style: IStyle = {}): Promise<RTextInfo> {
+  load_text(text: string, style: IStyle | null = {}): Promise<RTextInfo> {
     const key = md5(text, JSON.stringify(style));
     const fn = async () => {
       const info = await this.create_txt_info(key, text, style)

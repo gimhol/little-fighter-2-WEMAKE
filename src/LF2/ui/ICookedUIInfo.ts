@@ -1,7 +1,8 @@
-import { ImageInfo } from "../ditto/image/ImageInfo";
-import { TextInfo } from "../ditto/image/TextInfo";
-import { IComponentInfo } from "./IComponentInfo";
-import { IUIImgInfo } from "./IUIImgInfo.dat";
+import type { IStyle } from "../defines/IStyle";
+import type { ImageInfo } from "../ditto/image/ImageInfo";
+import type { TextInfo } from "../ditto/image/TextInfo";
+import type { IComponentInfo } from "./IComponentInfo";
+import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo } from "./IUIInfo.dat";
 
 export interface ICookedUIInfo extends IUIInfo {
@@ -14,6 +15,7 @@ export interface ICookedUIInfo extends IUIInfo {
   items?: ICookedUIInfo[];
   img_info?: ImageInfo;
   txt_info?: TextInfo;
+  style?: IStyle | null;
   size: [number, number, number];
   img?: IUIImgInfo;
   values: { [x in string]?: any };

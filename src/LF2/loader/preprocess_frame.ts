@@ -61,10 +61,7 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
   const unchecked_frame = frame as any;
   if (unchecked_frame) {
     if (unchecked_frame.center) {
-      const [x, y] = read_nums(unchecked_frame.center, 2, [
-        frame.centerx ?? 0,
-        frame.centery ?? 0,
-      ]);
+      const [x, y] = read_nums(unchecked_frame.center, 2);
       frame.centerx = x;
       frame.centery = y;
     }

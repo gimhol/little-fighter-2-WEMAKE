@@ -124,8 +124,7 @@
               style: { font: "18px Arial" },
               component: [ { name: "Label", id: "prefix_label" } ],
             },
-          ],
-          component: [ { name: "Label", id: "handle_label" } ],
+          ]
         },
         {
           id: "slider_bar_node",
@@ -203,8 +202,7 @@
               style: { font: "18px Arial" },
               component: [ { name: "Label", id: "prefix_label" } ],
             },
-          ],
-          component: [ { name: "Label", id: "handle_label" } ],
+          ]
         },
         {
           id: "slider_bar_node",
@@ -442,7 +440,7 @@
             item3: "120UPS",
             items: "30UPS,60UPS,90UPS,120UPS"
           },
-          template: "toggle_switcher_row",
+          template: "four_switcher_row",
         }
       ]
     },

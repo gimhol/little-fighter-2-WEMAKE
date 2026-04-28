@@ -9,14 +9,14 @@ export function handle_itr_kind_whirlwind(c: ICollision) {
   if (is_ball(victim)) return;
 
   let { x: vx, y: vy, z: vz } = victim.velocity;
-  const dz = round(victim.position.z - attacker.position.z);
-  const dx = round(victim.position.x - attacker.position.x);
+  const dz = round(attacker.position.z - victim.position.z);
+  const dx = round(attacker.position.x - victim.position.x);
   const x_direction = normalize(dx);
   const z_direction = normalize(dz);
   const max_vy = attacker.dataset('whirlwind_vy_max');
-  const acc_y = attacker.dataset('whirlwind_acc_y') * world.atom_time;
-  const acc_x = attacker.dataset('whirlwind_acc_x') * world.atom_time;
-  const acc_z = attacker.dataset('whirlwind_acc_z') * world.atom_time;
+  const acc_y = attacker.dataset('whirlwind_acc_y') / world.atom_time;
+  const acc_x = attacker.dataset('whirlwind_acc_x') / world.atom_time;
+  const acc_z = attacker.dataset('whirlwind_acc_z') / world.atom_time;
 
   if (vy < max_vy) vy += acc_y;
   vx += x_direction * acc_x;

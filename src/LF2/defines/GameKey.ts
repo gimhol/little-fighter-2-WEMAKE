@@ -39,8 +39,12 @@ export const GKLabels: Record<LGK, string> = {
   [GK.j]: "J",
   [GK.d]: "D"
 }
-export const ALL_GAME_KEYS: GK[] = [GK.L, GK.R, GK.U, GK.D, GK.a, GK.j, GK.d]
-export const AGK = ALL_GAME_KEYS;
+/** 
+ * 全部按键 
+ * 
+ * 该数组的顺序会影响按键跳转的先后判定，在前面的会被先判定
+ */
+export const AGK: GK[] = [GK.d, GK.L, GK.R, GK.U, GK.D, GK.j, GK.a];
 export const CONFLICTS_KEY_MAP: Record<GK, GK | undefined> = {
   [GK.a]: void 0,
   [GK.j]: void 0,

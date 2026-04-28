@@ -59,9 +59,9 @@ export class BaseController {
     R: new KeyStatus(this),
     U: new KeyStatus(this),
     D: new KeyStatus(this),
-    a: new KeyStatus(this),
-    j: new KeyStatus(this),
     d: new KeyStatus(this),
+    j: new KeyStatus(this),
+    a: new KeyStatus(this),
   };
 
   readonly dbc: Record<LGK, DoubleClick<IFrameInfo>>;
@@ -313,7 +313,6 @@ export class BaseController {
       if (ku_map.B && this.tst("ku", B) && !ret.time)
         ret.set(ku_map.B, this.keys[B].time, B);
     }
-
     if (hit) {
       /** 相对方向的按钮判定 */
       if (hit.F && this.tst("hit", F) && !ret.time)
@@ -340,6 +339,7 @@ export class BaseController {
         let act = kd_map[name];
         if (act && this.tst("kd", name) && !ret.time) {
           ret.set(act, key.time, name);
+          break;
         }
       }
       if (ku_map) {
@@ -347,6 +347,7 @@ export class BaseController {
         let act = ku_map[name];
         if (act && this.tst("ku", name) && !ret.time) {
           ret.set(act, key.time, name);
+          break;
         }
       }
       if (hit) {
@@ -354,6 +355,7 @@ export class BaseController {
         let act = hit[name];
         if (act && this.tst("hit", name) && !ret.time) {
           ret.set(act, key.use(), name);
+          break;
         }
 
         /** 双击判定 */
@@ -361,6 +363,7 @@ export class BaseController {
         act = hit[keykey];
         if (act && this.tst("dbl", name)) {
           ret.set(act, this.dbc[name].time);
+          break;
         }
       }
       if (hld) {

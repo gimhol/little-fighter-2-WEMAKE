@@ -112,13 +112,15 @@ export class WorldDataset implements IWorldDataset {
   playrate: number = 1;
   atom_time: number = 1;
 
-  constructor() {
-    make_private_properties(
-      `${WorldDataset.TAG}::constructor`, this,
-      (key) => world_dataset_fields.has(key as keyof IWorldDataset),
-      (...args) => this.on_dataset_change?.(...args)
-    )
-    Object.assign(this, wdataset)
+  constructor(pure: boolean = false) {
+    if (!pure) {
+      make_private_properties(
+        `${WorldDataset.TAG}::constructor`, this,
+        (key) => world_dataset_fields.has(key as keyof IWorldDataset),
+        (...args) => this.on_dataset_change?.(...args)
+      )
+      Object.assign(this, wdataset)
+    }
   }
   on_dataset_change?: (k: string, curr: any, prev: any) => void;
   dump_dataset() {
