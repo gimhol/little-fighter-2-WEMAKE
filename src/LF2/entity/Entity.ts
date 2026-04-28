@@ -859,7 +859,7 @@ export class Entity {
     if (is_num(opoint.mp)) this.mp = opoint.mp;
 
     const { dvy = 0, dvz = 0, dvx = 0 } = this
-    const { vxm, vym, vzm } = this.frame
+    const { vxm, vym, vzm, acc_x = 0, acc_y = 0, acc_z = 0 } = this.frame
     const z_disabled =
       result?.frame?.state === StateEnum.Normal ||
       result?.frame?.state === StateEnum.Burning
@@ -870,6 +870,10 @@ export class Entity {
     if (vxm === SpeedMode.Fixed) vx = dvx;
     if (vym === SpeedMode.Fixed) vy = dvy;
     if (vzm === SpeedMode.Fixed) vz = dvz;
+    if (vxm == SpeedMode.Extra && acc_x) vx += acc_x
+    if (vym == SpeedMode.Extra && acc_y) vy += acc_y
+    if (vzm == SpeedMode.Extra && acc_z) vz += acc_z
+
     this.set_velocity(vx, vy, vz)
     if (sus_cases.debugging) {
       sus_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
@@ -1220,10 +1224,7 @@ export class Entity {
     else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
     else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
 
-    this.set_velocity_0(vx, vy, vz);
-    if (vxm == SpeedMode.Extra && dvx) this.set_velocity_x(dvx)
-    if (vym == SpeedMode.Extra && dvy) this.set_velocity_y(dvy)
-    if (vzm == SpeedMode.Extra && dvz) this.set_velocity_z(dvz)
+    this.set_velocity(vx, vy, vz);
     if (vxm == SpeedMode.Fixed) this.set_velocity_x(0)
     if (vym == SpeedMode.Fixed) this.set_velocity_y(0)
     if (vzm == SpeedMode.Fixed) this.set_velocity_z(0)
@@ -2273,15 +2274,6 @@ export class Entity {
   }
   get_prev_frame() {
     return this._prev_frame;
-  }
-  set_velocity_0(
-    x?: number | null,
-    y?: number | null,
-    z?: number | null,
-  ) {
-    if (x !== null && x !== void 0) this.set_velocity_x(x)
-    if (y !== null && y !== void 0) this.set_velocity_y(y)
-    if (z !== null && z !== void 0) this.set_velocity_z(z)
   }
   set_velocity(
     x?: number | null,

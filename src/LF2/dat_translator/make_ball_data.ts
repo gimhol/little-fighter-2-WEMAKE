@@ -47,7 +47,7 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
     const hit_j = take(frame, "hit_j");
     if (hit_j !== 0) {
       frame.vzm = SpeedMode.Extra
-      frame.dvz = round_float((to_num(hit_j, 50) - 50) / 2);
+      frame.acc_z = round_float((to_num(hit_j, 50) - 50));
     }
     const hit_a = take(frame, "hit_a");
     if (hit_a) frame.hp = round_float(hit_a / 2, 10);
