@@ -211,17 +211,17 @@ export class BaseController {
 
   constructor(player_id: string, entity: Entity) {
     this.player_id = player_id;
-    const { lf2, world } = entity
+    const { lf2 } = entity
     this.player = lf2.players.get(player_id);
     this.entity = entity;
     this.dbc = {
-      d: new DoubleClick("d", world.double_click_interval),
-      a: new DoubleClick("a", world.double_click_interval),
-      j: new DoubleClick("j", world.double_click_interval),
-      L: new DoubleClick("L", world.double_click_interval),
-      R: new DoubleClick("R", world.double_click_interval),
-      U: new DoubleClick("U", world.double_click_interval),
-      D: new DoubleClick("D", world.double_click_interval),
+      d: new DoubleClick("d"),
+      a: new DoubleClick("a"),
+      j: new DoubleClick("j"),
+      L: new DoubleClick("L"),
+      R: new DoubleClick("R"),
+      U: new DoubleClick("U"),
+      D: new DoubleClick("D"),
     };
   }
   dispose(): void {
@@ -268,7 +268,7 @@ export class BaseController {
             this.keys[k].hit(this.time);
             const ck = CONFLICTS_KEY_MAP[k];
             if (ck) this.dbc[ck].reset();
-            this.dbc[k].press(this.time, e.frame);
+            this.dbc[k].press(this.time, e.frame, e.world.double_click_interval);
             break;
           case Status.HOLD:
             this.keys[k].hit(this.time - e.world.key_hit_duration);

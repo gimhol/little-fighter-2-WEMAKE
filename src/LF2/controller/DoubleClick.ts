@@ -3,13 +3,11 @@ export class DoubleClick<D> {
   time: number = 0;
   used: boolean = false;
   readonly name: string;
-  readonly interval: number;
-  constructor(name: string, interval: number) {
+  constructor(name: string) {
     this.name = name;
-    this.interval = interval;
   }
-  press(time: number, data: D) {
-    if (this.time + time <= this.interval) {
+  press(time: number, data: D, interval: number) {
+    if (this.time + time <= interval) {
       //  双击判定：间隔时间内再次按下
       this.time = time;
       this.data[1] = data;

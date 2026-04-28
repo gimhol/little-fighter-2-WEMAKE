@@ -137,7 +137,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   }, [lf2, set_dwds, set_cwds])
 
   if (!lf2 || visible === false) return <></>;
-  const on_click_add_weapon = () => {
+    const on_click_add_weapon = () => {
     weapon_id ? lf2.weapons.add(weapon_id, rwn) : lf2.weapons.add_random(rwn);
   };
   const on_click_del_weapon = () => {
