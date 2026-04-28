@@ -1,5 +1,5 @@
-import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TNextFrame } from "../defines";
-import { AGK, CONFLICTS_KEY_MAP, GK, StateEnum } from "../defines";
+import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TFace, TNextFrame } from "../defines";
+import { AGK, CONFLICTS_KEY_MAP, GK, StateEnum as SE } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
 import type { PlayerInfo } from "../PlayerInfo";
@@ -64,7 +64,7 @@ export class BaseController {
     a: new KeyStatus(this),
   };
 
-  readonly dbc: Record<LGK, DoubleClick<IFrameInfo>>;
+  readonly dbc: Record<LGK, DoubleClick<{ frame: IFrameInfo, facing: TFace }>>;
   get LR(): 0 | 1 | -1 {
     const L = !this.keys.L.is_end();
     const R = !this.keys.R.is_end();
@@ -144,24 +144,27 @@ export class BaseController {
   }
 
   is_db_hit(k: LGK): boolean {
-    const { time, data: [f_0, f_1] } = this.dbc[k];
+    const dbc = this.dbc[k]
+    const { time, data: [d0, d1] } = dbc;
+    const ret = time >= 0 && this.time - time <= this.entity.world.key_hit_duration;
+    if (!ret) return false
+    if (!d0 || !d1) return true;
+    // stupid...
     if (
-      f_0?.state !== StateEnum.Standing &&
-      f_0?.state !== StateEnum.Walking &&
-      f_1?.state !== StateEnum.Standing &&
-      f_1?.state !== StateEnum.Walking &&
-      (k === GK.L || k === GK.R)
+      (d0.frame.state == SE.Standing || d0.frame.state == SE.Walking) &&
+      (d0.frame.state == SE.Standing || d0.frame.state == SE.Walking)
     ) {
-      /*
-        Note: 
-          （特殊对待跑步的逻辑）
-          状态为“站立”与“行走”的帧，左键或右键双击，
-          需要两次点击的帧状态均为“站立”或“行走”，才视为双击。
-            -Gim
-      */
+      return true;
+    }
+    if (k === GK.L && (d0.facing !== -1 || d1.facing !== -1)) {
+      dbc.step();
       return false;
     }
-    return time >= 0 && this.time - time <= this.entity.world.key_hit_duration;
+    if (k === GK.R && (d0.facing !== 1 || d1.facing !== 1)) {
+      dbc.step();
+      return false;
+    }
+    return true
   }
   is_end(k: string): boolean;
   is_end(k: LGK): boolean;
@@ -268,7 +271,9 @@ export class BaseController {
             this.keys[k].hit(this.time);
             const ck = CONFLICTS_KEY_MAP[k];
             if (ck) this.dbc[ck].reset();
-            this.dbc[k].press(this.time, e.frame, e.world.double_click_interval);
+            this.dbc[k].press(this.time, {
+              frame: e.frame, facing: e.facing
+            }, e.world.double_click_interval);
             break;
           case Status.HOLD:
             this.keys[k].hit(this.time - e.world.key_hit_duration);

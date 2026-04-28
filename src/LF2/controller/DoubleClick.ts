@@ -18,6 +18,12 @@ export class DoubleClick<D> {
       this.data[1] = void 0;
     }
   }
+  step() {
+    debugger;
+    this.time = -this.time;
+    this.data[0] = this.data[1];
+    this.data[1] = void 0;
+  }
   reset() {
     this.time = 0;
     this.data = [void 0, void 0];
