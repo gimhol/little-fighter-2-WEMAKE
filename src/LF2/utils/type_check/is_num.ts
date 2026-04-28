@@ -24,3 +24,16 @@ export const is_positive_int = (v: any): v is number => is_int(v) && v > 0;
 export const is_non_nagative_int = (v: any): v is number => is_int(v) && v >= 0;
 export const is_non_positive_int = (v: any): v is number => is_int(v) && v <= 0;
 export const is_nagative_int = (v: any): v is number => is_int(v) && v < 0;
+
+/**
+ * 判断是否的数字数组
+ *
+ * - 空数组时，返回true
+ * - 存在NaN时，返回false
+ * 
+ * @param {*} v 任意
+ * @returns {v is number[]} 
+ */
+export const is_num_arr = (v: any): v is number[] => {
+  return Array.isArray(v) && !v.some(v => Number.isNaN(v))
+}

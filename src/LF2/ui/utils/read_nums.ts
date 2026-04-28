@@ -1,4 +1,4 @@
-import { is_nan, is_num, is_str } from "../../utils/type_check";
+import { is_nan, is_num, is_num_arr, is_str } from "../../utils/type_check";
 /**
  * 读取固定长度为4的数字数组
  *
@@ -63,26 +63,30 @@ export default function read_nums(
   len: number,
   fallbacks: number[] = [],
 ): number[] {
-  if (len < 1) return [];
+  if (!is_num_arr(fallbacks))
+    throw new Error(`[read_nums] failed, fallbacks must be number[], but got ${fallbacks}`)
 
+  if (len < 1) return [];
   const ret: number[] = [];
+
+  /* 当fallbacks长度不足len，将fallbacks补长至len */
   const last_fallback = fallbacks[fallbacks.length - 1] || 0;
   while (fallbacks.length < len) fallbacks.push(last_fallback);
 
   if (!src || is_nan(src)) return fallbacks;
-  if (is_str(src))
+  if (is_str(src)) {
     src = src
       .replace(/\s/g, "")
       .split(",")
       .map((v) => Number(v));
+  }
 
   while (ret.length < len) {
-    const num: number | undefined = src[ret.length];
-
-    if (is_num(num)) {
-      ret.push(num);
+    const idx = ret.length
+    if (ret.length < src.length) {
+      ret.push(fallbacks[idx]);
     } else {
-      ret.push(fallbacks[ret.length]!);
+      ret.push(src[idx])
     }
   }
   return ret;
