@@ -16,7 +16,7 @@ export class ExtraZipText extends Label {
     }
   };
   override on_start(): void {
-    super.on_start?.();
+    super.on_start();
     this.lf2.callbacks.add(this._lf2_cbs);
     this._lf2_cbs.on_extra_zips_changed?.(this.lf2);
   }

@@ -12,6 +12,9 @@ export class BackgroundSwitcher extends Label {
   get background(): IBgData {
     return this._background;
   }
+  override on_start(): void {
+    super.on_start();
+  }
   override on_resume(): void {
     this.set_text(this._background.base.name)
     this.lf2.callbacks.add(this)

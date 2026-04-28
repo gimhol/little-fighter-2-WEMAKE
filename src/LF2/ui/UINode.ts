@@ -288,9 +288,7 @@ export class UINode implements IDebugging {
   get components(): ReadonlyArray<UIComponent> {
     return this._components;
   }
-  get style(): IStyle {
-    return this.text?.style || {}
-  }
+  style: IStyle = {}
   /** 光标是否在本节点上 */
   get pointer_over() { return this._pointer_over }
   /** 光标是否在本节点中按下 */
@@ -318,6 +316,7 @@ export class UINode implements IDebugging {
     this.outlineColor = this.data.outlineColor
     this.outlineWidth = this.data.outlineWidth
     this.outlineAlpha = this.data.outlineAlpha
+    this.style = this.data.style ? { ...this.data.style } : {}
     make_debugging(this)
   }
   get global_pos(): IVector3 {

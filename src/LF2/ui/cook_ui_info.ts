@@ -73,11 +73,9 @@ export async function cook_ui_info(
     ret.img = img;
     ret.img_info = await ui_load_img(lf2, img);
   } while (0);
-
   do {
     const { i18n, style } = ui_info;
     if (!i18n && !style) break;
-
     ret.i18n = parse_ui_value(ret, String, i18n) ?? void 0;
     ret.style = parse_ui_value(ret, unsafe_is_object<IStyle>(), style) ?? void 0;
     if (!ret.i18n) break;
