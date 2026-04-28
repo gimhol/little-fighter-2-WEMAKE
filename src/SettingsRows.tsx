@@ -110,23 +110,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   const [cwds, set_cwds] = useImmer<Partial<IWorldDataset>>({})
   const [ready, set_ready] = useState(false)
 
-  const on_click_add_weapon = () => {
-    weapon_id ? lf2.weapons.add(weapon_id, rwn) : lf2.weapons.add_random(rwn);
-  };
-  const on_click_del_weapon = () => {
-    lf2.weapons.all.forEach(v => v.hp = v.hp_r = 0)
-  };
-  const on_click_add_bot = () => {
-    (c_id
-      ? lf2.fighters.add(c_id, rcn, team)
-      : lf2.fighters.add_random(rcn, team)
-    ).forEach((e) => {
-      e.name = "bot";
-      const controller_creator = bot_controllers[bot_ctrl];
-      if (controller_creator) e.ctrl = controller_creator(e);
-    });
-  };
-  const phase_desc = stage_phase_list[stage_phase_idx]?.desc;
+
 
   useEffect(() => {
     if (!lf2) return;
@@ -153,6 +137,23 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   }, [lf2, set_dwds, set_cwds])
 
   if (!lf2 || visible === false) return <></>;
+  const on_click_add_weapon = () => {
+    weapon_id ? lf2.weapons.add(weapon_id, rwn) : lf2.weapons.add_random(rwn);
+  };
+  const on_click_del_weapon = () => {
+    lf2.weapons.all.forEach(v => v.hp = v.hp_r = 0)
+  };
+  const on_click_add_bot = () => {
+    (c_id
+      ? lf2.fighters.add(c_id, rcn, team)
+      : lf2.fighters.add_random(rcn, team)
+    ).forEach((e) => {
+      e.name = "bot";
+      const controller_creator = bot_controllers[bot_ctrl];
+      if (controller_creator) e.ctrl = controller_creator(e);
+    });
+  };
+  const phase_desc = stage_phase_list[stage_phase_idx]?.desc;
   return (
     <>
       <Show.Div
