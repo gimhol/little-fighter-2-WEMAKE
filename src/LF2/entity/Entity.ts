@@ -1114,29 +1114,30 @@ export class Entity {
     this.handle_velocity_decay(fx, fz, factor)
   }
 
-  handle_velocity_decay(fx: number, fz: number = fx, factor: number = 1) {
+  handle_velocity_decay(accx: number, accz: number = accx, factor: number = 1) {
     let { x, z } = this.velocities[0];
-    x = round_float(x * pow(factor, this.world.atom_time));
-    z = round_float(z * pow(factor, this.world.atom_time));
-    fx = round_float(fx * this.world.atom_time);
-    fz = round_float(fz * this.world.atom_time);
+    const { atom_time } = this.world
+    x = round_float(x * pow(factor, atom_time));
+    z = round_float(z * pow(factor, atom_time));
+    accx = round_float(accx * atom_time);
+    accz = round_float(accz * atom_time);
     const { ctrl_x, ctrl_z } = this.frame;
     let { dvx = 0, dvz = 0 } = this;
     const { UD, LR } = this.ctrl
     if (ctrl_x && !LR) dvx = 0;
     if (ctrl_z && !UD) dvz = 0;
     if (x > dvx) {
-      x -= fx;
+      x -= accx;
       if (x < dvx) x = dvx; // 不能因为摩擦力反向加速
     } else if (x < -dvx) {
-      x += fx;
+      x += accx;
       if (x > -dvx) x = -dvx; // 不能因为摩擦力反向加速
     }
     if (z > dvz) {
-      z -= fz;
+      z -= accz;
       if (z < dvz) z = dvz; // 不能因为摩擦力反向加速
     } else if (z < -dvz) {
-      z += fz;
+      z += accz;
       if (z > -dvz) z = -dvz; // 不能因为摩擦力反向加速
     }
     this.set_velocity_0_x(x)
@@ -1201,14 +1202,16 @@ export class Entity {
       ctrl_y = 0,
       ctrl_z = 0,
     } = vinfo;
-    if (acc_x) acc_x = round_float(acc_x * acc_factor)
-    if (acc_y) acc_y = round_float(acc_y * acc_factor)
-    if (acc_z) acc_z = round_float(acc_z * acc_factor)
+
 
     // 此处不要 * atom_time
     if (vxm == SpeedMode.AccTo && acc_x == void 0 && dvx) acc_x = dvx;
     if (vym == SpeedMode.AccTo && acc_y == void 0 && dvy) acc_y = dvy;
     if (vzm == SpeedMode.AccTo && acc_z == void 0 && dvz) acc_z = dvz;
+    if (acc_x) acc_x = round_float(acc_x * acc_factor)
+    if (acc_y) acc_y = round_float(acc_y * acc_factor)
+    if (acc_z) acc_z = round_float(acc_z * acc_factor)
+
 
     let { x: vx, y: vy, z: vz } = this.velocities[0];
     const { UD, LR, jd } = this._ctrl;

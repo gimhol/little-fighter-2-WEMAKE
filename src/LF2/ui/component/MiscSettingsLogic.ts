@@ -94,7 +94,7 @@ export class MiscSettingsLogic extends UIComponent {
       on_value_changed: (v) => {
         this.world.UPS = [30, 60, 90, 120][v];
         this.world.atom_time = [2, 1, 0.7, 0.5][v];
-        this.world.wait_offset = [0, 0, 0, 0][v];
+        this.world.wait_offset = [-1, 0, 0, 0][v];
         this.world.arest_offset = [-6, -6, -7, -8][v];
         this.world.double_click_interval = [
           15, 30, 45, 60
