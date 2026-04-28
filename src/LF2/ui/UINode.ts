@@ -20,6 +20,10 @@ export class UINode implements IDebugging {
 
   readonly lf2: LF2;
 
+  outlineColor: string | undefined;
+  outlineWidth: number | undefined;
+  outlineAlpha: number | undefined;
+
   /**
    * 原始UI数据
    * 
@@ -300,10 +304,9 @@ export class UINode implements IDebugging {
     this.data = Object.freeze(data);
     this._parent = parent;
     this._root = parent?.root ?? this;
-    const { visible = true, opacity = 1, disabled = false } = this.data;
-    this._disabled = disabled
-    this._visible = visible
-    this._opacity = opacity
+    this._disabled = this.data.disabled == true
+    this._visible = this.data.visible != false
+    this._opacity = this.data.opacity ?? 1
     this.center.set(...this.data.center);
     this.pos.set(...this.data.pos);
     this.size.set(...this.data.size);
@@ -312,6 +315,9 @@ export class UINode implements IDebugging {
     this.image = this.data.img_info ?? null;
     this.color = this.data.color ?? '';
     this.renderer = new D.UINodeRenderer(this);
+    this.outlineColor = this.data.outlineColor
+    this.outlineWidth = this.data.outlineWidth
+    this.outlineAlpha = this.data.outlineAlpha
     make_debugging(this)
   }
   get global_pos(): IVector3 {

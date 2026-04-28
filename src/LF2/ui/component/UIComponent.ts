@@ -70,7 +70,6 @@ export class UIComponent<
   /** @deprecated */
   get args(): readonly string[] { return this._args; }
 
-
   /**
    * 组件基类构造函数
    *

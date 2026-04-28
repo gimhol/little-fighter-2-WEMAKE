@@ -18,7 +18,7 @@ export class StageTitleShow extends UIComponent {
     font: `46px "Arial Black", Arial`,
   })
   override on_resume(): void {
-    Object.assign(this.node.data, {
+    Object.assign(this.node, {
       outlineColor: "#005A8E",
       outlineWidth: 5,
       outlineAlpha: 1,
