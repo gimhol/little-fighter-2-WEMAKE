@@ -1,4 +1,4 @@
-import { parse_rgba, TextInfo } from "@/LF2";
+import { clamp, IVector3Like, parse_rgba, TextInfo } from "@/LF2";
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
@@ -32,20 +32,15 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
   protected _geo = get_geometry(0, 0, 0, 0, 0);
-  protected img_idx_version: number | null = null;
-  protected imgs_version: number | null = null;
-  protected txt_idx_version: number | null = null;
-  protected txts_version: number | null = null;
-  protected size_version: number | null = null;
   protected _color: string | null = null;
-  protected center_version: number | null = null;
-  protected scale_version: number | null = null;
-  protected pos_version: number | null = null;
   protected _input: HTMLInputElement | undefined;
   protected _txt: TextInfo<any> | null = null;
   protected _img: ImageInfo<T.Texture> | null = null;
   protected _uv_anim_angle: number = 0;
   protected _uv_anim_vec = new T.Vector2(0, 0);
+  protected _old_pos: IVector3Like | null = null;
+  protected _old_scale: IVector3Like | null = null;
+  protected _old_alpha: number | null = null;
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -89,6 +84,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.next_geometry(),
       MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
     )
+    this.mesh.material.alpha = 0;
     this.mesh.material.texture = empty_texture()
     this.mesh.userData.owner = ui;
   }
@@ -171,7 +167,13 @@ export class UINodeRenderer implements IUINodeRenderer {
       u.tex.value?.dispose();
       u.tex.value = t;
     }
-    m.alpha = this.ui.global_opacity;
+    if (this._old_alpha == null) {
+      this._old_alpha = m.alpha = this.ui.global_opacity;
+    } else {
+      const a = m.alpha + (this.ui.global_opacity - m.alpha) * 0.5
+      this._old_alpha = m.alpha = a;
+    }
+
     return this;
   }
 
@@ -310,13 +312,36 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.material.bgAlpha = backgroundAlpha;
     this.mesh.material.fgColor = foreground;
     this.mesh.material.fgAlpha = foregroundAlpha;
-    const s = this.ui.scale
-    this.mesh.scale.set(s.x, s.y, s.z);
-    const { x, y, z } = this.ui.pos
-    this.mesh.position.set(x, -y, z);
-
+    const t = 0.5;
+    if (this._old_pos) {
+      const { x, y, z } = this.ui.pos;
+      const { x: ox, y: oy, z: oz } = this._old_pos;
+      this.mesh.position.set(
+        ox + (x - ox) * t,
+        oy + (-y - oy) * t,
+        oz + (z - oz) * t,
+      )
+      this._old_pos = this.mesh.position.clone()
+    } else {
+      this._old_pos = this.ui.pos.clone()
+      this._old_pos.y = -this._old_pos.y
+      this.mesh.position.copy(this._old_pos)
+    }
+    if (this._old_scale) {
+      const { x, y, z } = this.ui.scale;
+      const { x: ox, y: oy, z: oz } = this._old_scale;
+      this.mesh.scale.set(
+        ox + (x - ox) * t,
+        oy + (y - oy) * t,
+        oz + (z - oz) * t,
+      )
+      this._old_scale = this.ui.scale.clone();
+    } else {
+      this.mesh.scale.copy(this.ui.scale);
+      this._old_scale = this.ui.scale.clone();
+    }
     if (this._dom) {
-      this._dom.style.opacity = '' + this.ui.global_opacity
+      this._dom.style.opacity = '' + this.mesh.material.alpha
       if (this._input) {
         this._input.style.fontSize = this._dom.style.height;
         this._input.style.lineHeight = this._dom.style.height;

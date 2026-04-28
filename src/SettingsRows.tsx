@@ -19,7 +19,7 @@ import { CMD } from "./LF2/defines/CMD";
 import { Entity } from "./LF2/entity/Entity";
 import { Stage } from "./LF2/stage/Stage";
 import { is_num } from "./LF2/utils/type_check";
-import { WorldDataset } from "./pages/dev_panel/world_dataset";
+import { WorldDatasetView } from "./pages/dev_panel/world_dataset";
 import { useLocalNumber, useLocalString } from "./useLocalStorage";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
@@ -296,7 +296,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       <Show.Div
         className={csses.settings_row}
         show={props.show_world_tuning !== false}>
-        <WorldDataset lf2={lf2} />
+        <WorldDatasetView lf2={lf2} />
       </Show.Div>
     </>
   );

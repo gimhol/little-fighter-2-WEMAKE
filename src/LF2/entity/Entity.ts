@@ -1432,7 +1432,7 @@ export class Entity {
       if (v.rest) this.victims.delete(k)
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
-      if (this.arest > 0) {
+      if (this.arest > 0 && this.frame.itr?.length) {
         this.arest = round_float(this.arest - this.world.atom_time);
         if (this.arest < 0) this.arest = 0;
       } else {

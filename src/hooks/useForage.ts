@@ -17,7 +17,9 @@ export function useForage<T>(opts: IUseForageOpts<T>) {
     let unmounted = false;
     (async () => {
       const _version = await localforage.getItem(`${key}#version`);
-      if (unmounted || _version !== version) return;
+      if (unmounted) return;
+      if (_version !== version) console.log(`[useForage] ${key} version change, will reset`)
+      if (_version !== version) return;
       const _value = await localforage.getItem<T>(key)
       if (unmounted) return;
       if (_value) set_value(_value);
