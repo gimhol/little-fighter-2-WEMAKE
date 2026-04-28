@@ -36,6 +36,7 @@ export class CharMenuHead extends UIComponent<ICharMenuHeadProps> {
   join(path: string): void {
     this._joined = true;
     this._path = path;
+    this.props.head_pic?.node.set_visible(true)
     this.props.head_pic?.set_src(path)
     this.props.hints_node?.set_visible(false);
     this.countdown_node?.set_visible(false);
@@ -43,7 +44,7 @@ export class CharMenuHead extends UIComponent<ICharMenuHeadProps> {
   quit(): void {
     this._joined = false;
     this._path = '';
-    this.props.head_pic?.set_src('')
+    this.props.head_pic?.node.set_visible(false)
     this.props.hints_node?.set_visible(true);
     this.countdown_node?.set_visible(false);
   }

@@ -83,7 +83,7 @@ vec4 bgfg(vec3 c0, float a0, vec3 c1, float a1) {
   return ret;
 }
 
-void apply(vec4 color) {
+vec4 apply(vec4 color) {
   if(cover) {
     color.rgb = gamma_correct(coverColor);
     color.a = coverStength;
@@ -97,7 +97,7 @@ void apply(vec4 color) {
   if(fgAlpha > 0.0)
     color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
   color.a *= opacity;
-  gl_FragColor = color;
+  return color;
 }
 
 void main() {
@@ -119,7 +119,7 @@ void main() {
 
   /* 无需描边时，仅处理颜色 */
   if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
-    apply(color);
+    gl_FragColor = apply(color);
     return;
   }
 
@@ -146,8 +146,9 @@ void main() {
     right = 0.0;
 
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
+  
   if(outline <= 0.1 || center >= 0.5) {
-    apply(color);
+    gl_FragColor = apply(color);
     return;
   }
 
