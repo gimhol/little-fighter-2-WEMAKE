@@ -40,9 +40,9 @@ export class BotState_Avoiding extends BotState_Base {
     if (avoid_x > abs_x) {
       let x_d: -1 | 1;
       if (en_x <= me_x) { // 敌人在左边
-        x_d = en_x < round_float(right - 100) ? 1 : -1;
+        x_d = me_x < round_float(right - 50) ? 1 : -1;
       } else { // 敌人在右边
-        x_d = en_x > round_float(left + 100) ? -1 : 1;
+        x_d = me_x > round_float(left + 50) ? -1 : 1;
       }
       // 若与前进方向相背，则回头，然后才前进（目前db_hit无法进行回头）
       const XF = x_d > 0 ? GK.R : GK.L;
@@ -50,7 +50,7 @@ export class BotState_Avoiding extends BotState_Base {
       if (me.facing != x_d) { // 回头
         c.key_down(XF)
       } else { // 奔跑（TODO: 调整奔跑的概率）
-        c.db_hit(XF).key_up(GK.L, GK.R)
+        c.key_up(GK.L, GK.R).db_hit(XF)
       }
     } else {
       c.key_up(GK.L, GK.R)
