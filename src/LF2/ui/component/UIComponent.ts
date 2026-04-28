@@ -47,10 +47,10 @@ export class UIComponent<
     return this._props
   }
   __debugging?: boolean | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  debug(func: string, ...args: any[]): void { }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  log(func: string, ...args: any[]): void { }
+  debug(...args: any[]): void { }
+  warn(...args: any[]): void { }
+  log(...args: any[]): void { }
+
   id: string = '';
   get lf2() { return this.node.lf2; }
   get world() { return this.node.lf2.world; }
@@ -84,9 +84,9 @@ export class UIComponent<
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
-    this.props_holder = new UIProps({ 
-      ...info.props, 
-      ...info.properties 
+    this.props_holder = new UIProps({
+      ...info.props,
+      ...info.properties
     }, this)
     this._args = args;
     make_debugging(this);
@@ -109,9 +109,7 @@ export class UIComponent<
     if (!str) return false;
     return !['false', '0'].some(v => v === str);
   }
-  warn(func: string, msg: string) {
-    Ditto.warn(`[${this.node_name}][<${this.id}>${this.f_name}::${func}] ${msg}`)
-  }
+
   /** @deprecated */
   nums(idx: number, length: 1): [number] | null
   /** @deprecated */
