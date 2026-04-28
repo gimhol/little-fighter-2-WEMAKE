@@ -271,9 +271,12 @@ export class BaseController {
             this.keys[k].hit(this.time);
             const ck = CONFLICTS_KEY_MAP[k];
             if (ck) this.dbc[ck].reset();
-            this.dbc[k].press(this.time, {
+
+            const dbc = this.dbc[k]
+            if (!dbc.fired) dbc.press(this.time, {
               frame: e.frame, facing: e.facing
             }, e.world.double_click_interval);
+
             break;
           case Status.HOLD:
             this.keys[k].hit(this.time - e.world.key_hit_duration);
@@ -378,6 +381,8 @@ export class BaseController {
           ret.set(act, key.time, name);
         }
       }
+      if (this.dbc[name].fired)
+        this.dbc[name].fired = false;
     }
     frame?.seq_map && this.check_hit_seqs(frame.seq_map, ret);
     /** 这里不想支持过长的指令 */
