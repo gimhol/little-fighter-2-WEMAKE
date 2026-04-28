@@ -2288,15 +2288,15 @@ export class Entity {
   }
   set_velocity_x(x: number) {
     if (is_f_num(x)) debugger;
-    this._velocity.x = this._prev_velocity.x = round_float(x)
+    this._velocity.x = round_float(x)
   }
   set_velocity_y(y: number) {
     if (is_f_num(y)) debugger;
-    this._velocity.y = this._prev_velocity.y = round_float(y)
+    this._velocity.y = round_float(y)
   }
   set_velocity_z(z: number) {
     if (is_f_num(z)) debugger;
-    this._velocity.z = this._prev_velocity.z = round_float(z)
+    this._velocity.z = round_float(z)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
     if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
