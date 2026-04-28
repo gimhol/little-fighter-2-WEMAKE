@@ -59,9 +59,9 @@ export class BotState_Avoiding extends BotState_Base {
     if (avoid_z > abs_z) {
       let z_d: -1 | 1;
       if (me_z <= en_z) {
-        z_d = en_z > round_float(far + 25) ? 1 : -1;
+        z_d = me_x > round_float(far + 25) ? 1 : -1;
       } else {
-        z_d = en_z < round_float(near - 25) ? -1 : 1;
+        z_d = me_x < round_float(near - 25) ? -1 : 1;
       }
       const ZF = z_d > 0 ? GK.U : GK.D;
       const ZB = z_d > 0 ? GK.D : GK.U;
