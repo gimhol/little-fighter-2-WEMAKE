@@ -1,6 +1,6 @@
 {
   id: "menu",
-  name: "game_prepare_menu",
+  name: "UI: 游戏准备菜单",
   img: {
     path: "!sprite/frame@4x.png",
     nine_patch: {
