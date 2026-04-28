@@ -1227,9 +1227,6 @@ export class Entity {
     this._velocity.x = round_float(vx)
     this._velocity.y = round_float(vy)
     this._velocity.z = round_float(vz)
-    if (vxm == SpeedMode.Fixed) this.set_velocity_x(0)
-    if (vym == SpeedMode.Fixed) this.set_velocity_y(0)
-    if (vzm == SpeedMode.Fixed) this.set_velocity_z(0)
   }
 
   dismiss_fusion(frame_id: string) {
