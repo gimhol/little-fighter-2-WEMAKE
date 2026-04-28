@@ -15,7 +15,6 @@ export class CharacterState_Rowing extends CharacterState_Base {
     } = e.data.base;
     dx *= e.dataset('bfall_x_f')
     vy *= e.dataset('bfall_h_f')
-    e.merge_velocities();
     const { x: prev_vx, y: prev_vy } = e.velocity;
     const next_vx = prev_vx >= 0 ? dx : -dx;
     const next_vy = calc_v(prev_vy, vy, SpeedMode.LF2, 0)

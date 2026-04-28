@@ -72,14 +72,9 @@ export class Entity {
    * @type {IVector3}
    */
   protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _landing_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  /**
-   * 速度向量数组
-   *
-   * @readonly
-   * @type {IVector3[]}
-   */
-  private readonly velocities: IVector3[] = [new Ditto.Vector3(0, 0, 0)];
+
   readonly vrests = new Map<string, ICollision>();
   readonly blockers = new Map<string, ICollision>();
   readonly superpunchs = new Map<string, ICollision>();
@@ -397,14 +392,6 @@ export class Entity {
   }
   get lf2(): LF2 {
     return this.world.lf2;
-  }
-  get velocity_0(): Readonly<IVector3> {
-    if (this.velocities.length > 0) return this.velocities[0];
-    return this.velocities[0] = new Ditto.Vector3(0, 0, 0);
-  }
-  get velocity_1(): Readonly<IVector3> {
-    if (this.velocities.length > 1) return this.velocities[1];
-    return this.velocities[1] = new Ditto.Vector3(0, 0, 0);
   }
   get bearer(): Entity | null {
     return this._bearer;
@@ -726,9 +713,8 @@ export class Entity {
     this._name_visible = null;
     this._outline_alpha = void 0;
     this._velocity.set(0, 0, 0)
+    this._prev_velocity.set(0, 0, 0);
     this._landing_velocity.set(0, 0, 0)
-    this.velocities.length = 0;
-    this.velocities[0] = new Ditto.Vector3(0, 0, 0)
     this.callbacks.clear();
     this._name = null
     this._team = new_team();
@@ -1115,7 +1101,7 @@ export class Entity {
   }
 
   handle_velocity_decay(accx: number, accz: number = accx, factor: number = 1) {
-    let { x, z } = this.velocities[0];
+    let { x, z } = this.velocity;
     const { atom_time } = this.world
     x = round_float(x * pow(factor, atom_time));
     z = round_float(z * pow(factor, atom_time));
@@ -1140,8 +1126,8 @@ export class Entity {
       z += accz;
       if (z > -dvz) z = -dvz; // 不能因为摩擦力反向加速
     }
-    this.set_velocity_0_x(x)
-    this.set_velocity_0_z(z);
+    this.set_velocity_x(x)
+    this.set_velocity_z(z);
   }
 
   /**
@@ -1167,8 +1153,8 @@ export class Entity {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || !gravity_enabled) return;
-    this.set_velocity_0_y(
-      this.velocities[0].y - this.gravity * this.world.atom_time
+    this.set_velocity_y(
+      this.velocity.y - this.gravity * this.world.atom_time
     )
   }
   get dvx() {
@@ -1213,7 +1199,7 @@ export class Entity {
     if (acc_z) acc_z = round_float(acc_z * acc_factor)
 
 
-    let { x: vx, y: vy, z: vz } = this.velocities[0];
+    let { x: vx, y: vy, z: vz } = this.velocity;
     const { UD, LR, jd } = this._ctrl;
     const { facing } = this;
     if (dvx == void 0) { }
@@ -1235,12 +1221,12 @@ export class Entity {
     else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
 
     this.set_velocity_0(vx, vy, vz);
-    if (vxm == SpeedMode.Extra && dvx) this.set_velocity_1_x(dvx)
-    if (vym == SpeedMode.Extra && dvy) this.set_velocity_1_y(dvy)
-    if (vzm == SpeedMode.Extra && dvz) this.set_velocity_1_z(dvz)
-    if (vxm == SpeedMode.Fixed) this.set_velocity_1_x(0)
-    if (vym == SpeedMode.Fixed) this.set_velocity_1_y(0)
-    if (vzm == SpeedMode.Fixed) this.set_velocity_1_z(0)
+    if (vxm == SpeedMode.Extra && dvx) this.set_velocity_x(dvx)
+    if (vym == SpeedMode.Extra && dvy) this.set_velocity_y(dvy)
+    if (vzm == SpeedMode.Extra && dvz) this.set_velocity_z(dvz)
+    if (vxm == SpeedMode.Fixed) this.set_velocity_x(0)
+    if (vym == SpeedMode.Fixed) this.set_velocity_y(0)
+    if (vzm == SpeedMode.Fixed) this.set_velocity_z(0)
   }
 
   dismiss_fusion(frame_id: string) {
@@ -1585,8 +1571,8 @@ export class Entity {
           this._landing_velocity.x = this._velocity.x
           this._landing_velocity.y = this._velocity.y
           this._landing_velocity.z = this._velocity.z
-          this.velocities[0].y = 0;
           this._velocity.y = 0;
+          this._prev_velocity.y = 0;
           this._state?.on_landing?.(this);
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {
@@ -1620,31 +1606,24 @@ export class Entity {
 
   update_position() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
-    let vx = 0, vy = 0, vz = 0;
-    for (const v of this.velocities) {
-      vx += v.x;
-      vy += v.y;
-      vz += v.z;
-    }
+    let { x: vx, y: vy, z: vz } = this._velocity;
     const { atom_time } = this.world
-    if (vx) vx = round_float(vx * atom_time)
-    if (vy) vy = round_float(vy * atom_time)
-    if (vz) vz = round_float(vz * atom_time)
     for (const [, v] of this.blockers) {
       if (
         (vx < 0 && v.attacker.position.x < this._position.x) ||
         (vx > 0 && v.attacker.position.x > this._position.x)
       ) {
         vx = 0;
+        this._prev_velocity.x = 0;
       }
       if (
         (vz < 0 && v.attacker.position.z < this._position.z) ||
         (vz > 0 && v.attacker.position.z > this._position.z)
       ) {
         vz = 0;
+        this._prev_velocity.x = 0;
       }
     }
-    this._velocity.set(vx, vy, vz);
     if (!this.shaking && !this.motionless) {
       this._prev_position.set(
         this._position.x,
@@ -1652,12 +1631,13 @@ export class Entity {
         this._position.z
       )
       this.set_position(
-        this._position.x + vx,
-        this._position.y + vy,
-        this._position.z + vz
+        this._position.x + (vx + this._prev_velocity.x) * 0.5 * atom_time,
+        this._position.y + (vy + this._prev_velocity.y) * 0.5 * atom_time,
+        this._position.z + (vz + this._prev_velocity.z) * 0.5 * atom_time,
       )
     }
     this.world.restrict(this);
+    this._prev_velocity.set(vx, vy, vz);
   }
 
   /**
@@ -2291,72 +2271,17 @@ export class Entity {
     }
     return this._data.frames[id];
   }
-
   get_prev_frame() {
     return this._prev_frame;
-  }
-
-  merge_velocities(vx?: number, vy?: number, vz?: number) {
-    if (this.velocities.length <= 1) {
-      const { x, y, z } = this.velocities[0]
-      this.set_velocity(vx ?? x, vy ?? y, vz ?? z);
-    } else {
-      let x = 0, y = 0, z = 0;
-      for (const v of this.velocities) {
-        x += v.x;
-        y += v.y;
-        z += v.z;
-      }
-      this.set_velocity(vx ?? x, vy ?? y, vz ?? z)
-    }
-  }
-  set_velocity_0_x(x: number) {
-    if (is_f_num(x)) debugger;
-    const v = this.velocity_0;
-    if (v.x !== x) this.velocities[0].x = round_float(x)
-  }
-  set_velocity_0_y(y: number) {
-    if (is_f_num(y)) debugger;
-    const v = this.velocity_0;
-    if (v.y !== y) this.velocities[0].y = round_float(y)
-  }
-  set_velocity_0_z(z: number) {
-    if (is_f_num(z)) debugger;
-    const v = this.velocity_0;
-    if (v.z !== z) this.velocities[0].z = round_float(z)
-  }
-  set_velocity_1_x(x: number) {
-    if (is_f_num(x)) debugger;
-    const v = this.velocity_1;
-    if (v.x !== x) this.velocities[1].x = round_float(x)
-  }
-  set_velocity_1_y(y: number) {
-    if (is_f_num(y)) debugger;
-    const v = this.velocity_1;
-    if (v.y !== y) this.velocities[1].y = round_float(y)
-  }
-  set_velocity_1_z(z: number) {
-    if (is_f_num(z)) debugger;
-    const v = this.velocity_1;
-    if (v.z !== z) this.velocities[1].z = round_float(z)
   }
   set_velocity_0(
     x?: number | null,
     y?: number | null,
     z?: number | null,
   ) {
-    if (x !== null && x !== void 0) this.set_velocity_0_x(x)
-    if (y !== null && y !== void 0) this.set_velocity_0_y(y)
-    if (z !== null && z !== void 0) this.set_velocity_0_z(z)
-  }
-  set_velocity_1(
-    x?: number | null,
-    y?: number | null,
-    z?: number | null,
-  ) {
-    if (x !== null && x !== void 0) this.set_velocity_1_x(x)
-    if (y !== null && y !== void 0) this.set_velocity_1_y(y)
-    if (z !== null && z !== void 0) this.set_velocity_1_z(z)
+    if (x !== null && x !== void 0) this.set_velocity_x(x)
+    if (y !== null && y !== void 0) this.set_velocity_y(y)
+    if (z !== null && z !== void 0) this.set_velocity_z(z)
   }
   set_velocity(
     x?: number | null,
@@ -2364,27 +2289,26 @@ export class Entity {
     z?: number | null,
   ) {
     if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
-    this.velocities.length = 1;
     x = (x === null || x === void 0) ? this.velocity.x : x ? round_float(x) : x
     y = (y === null || y === void 0) ? this.velocity.y : y ? round_float(y) : y
     z = (z === null || z === void 0) ? this.velocity.z : z ? round_float(z) : z
-    this.velocities[0].set(x, y, z);
+    this.velocity.set(x, y, z);
     this._velocity.set(x, y, z);
+    this._prev_velocity.set(x, y, z);
   }
   set_velocity_x(x: number) {
     if (is_f_num(x)) debugger;
-    if (this.velocities.length > 1) this.merge_velocities(x, void 0, void 0)
-    else this.set_velocity_0_x(x)
+    this._velocity.x = this._prev_velocity.x = round_float(x)
   }
   set_velocity_y(y: number) {
     if (is_f_num(y)) debugger;
-    if (this.velocities.length > 1) this.merge_velocities(void 0, y, void 0)
-    else this.set_velocity_0_y(y)
+    const v = this.velocity;
+    this._velocity.y = this._prev_velocity.y = round_float(y)
   }
   set_velocity_z(z: number) {
     if (is_f_num(z)) debugger;
-    if (this.velocities.length > 1) this.merge_velocities(void 0, void 0, z)
-    else this.set_velocity_0_z(z)
+    const v = this.velocity;
+    this._velocity.z = this._prev_velocity.z = round_float(z)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
     if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;

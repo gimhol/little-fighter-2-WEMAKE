@@ -8,7 +8,6 @@ export default class WeaponState_Throwing extends WeaponState_Base {
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     this._hit_ground_weapons.add(e);
-    e.merge_velocities();
   }
   override leave(e: Entity, next_frame: IFrameInfo): void {
     this._hit_ground_weapons.delete(e);
