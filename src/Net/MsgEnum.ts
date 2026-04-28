@@ -14,7 +14,8 @@ export enum MsgEnum {
   KeyTick = "KeyTick",
   RoomPwd = "RoomPwd",
   Ping = "Ping",
+  Dataset = 'Dataset',
 
   // for admin.
-  ListClients = 'ListClients'
+  ListClients = 'ListClients',
 }

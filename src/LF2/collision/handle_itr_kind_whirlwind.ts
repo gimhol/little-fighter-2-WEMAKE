@@ -14,9 +14,10 @@ export function handle_itr_kind_whirlwind(c: ICollision) {
   const x_direction = normalize(dx);
   const z_direction = normalize(dz);
   const max_vy = attacker.dataset('whirlwind_vy_max');
-  const acc_y = attacker.dataset('whirlwind_acc_y') / world.atom_time;
-  const acc_x = attacker.dataset('whirlwind_acc_x') / world.atom_time;
-  const acc_z = attacker.dataset('whirlwind_acc_z') / world.atom_time;
+  const { atom_time } = world;
+  const acc_y = attacker.dataset('whirlwind_acc_y') * atom_time;
+  const acc_x = attacker.dataset('whirlwind_acc_x') * atom_time;
+  const acc_z = attacker.dataset('whirlwind_acc_z') * atom_time;
 
   if (vy < max_vy) vy += acc_y;
   vx += x_direction * acc_x;

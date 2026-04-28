@@ -1,7 +1,7 @@
 
 import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
 import { bot_cases, mt_cases, sus_cases } from "@/LF2/cases_instances";
-import { IKeyEvent, IReqTick, IRespClientInfo, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
+import { IKeyEvent, IReqTick, IRespClientInfo, IRespDataset, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -82,6 +82,9 @@ class Lf2NetworkDriver {
     lf2.pointings.enabled = false
     lf2.keyboard.enabled = false
     lf2.mt.reset(resp.seed ?? 0, debugging)
+  }
+  update_dataset(resp: IRespDataset) {
+    // resp.
   }
   update_client(resp: IRespClientInfo) {
     const { lf2 } = this;
@@ -196,6 +199,9 @@ export function Networking(props: INetworkingProps) {
         case MsgEnum.RoomStart:
           updater.on_room_start(resp);
           set_started(true)
+          break;
+        case MsgEnum.Dataset:
+          updater.update_dataset(resp)
           break;
         case MsgEnum.KeyTick:
         case MsgEnum.Tick: {

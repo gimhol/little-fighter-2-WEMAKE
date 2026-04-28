@@ -1165,11 +1165,10 @@ export class Entity {
   private handle_gravity() {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
-    if (this._position.y <= this.ground_y || this.shaking || this.motionless || !gravity_enabled) return;
+    if (this._position.y <= this.ground_y || !gravity_enabled) return;
     this.set_velocity_0_y(
-      this.velocities[0].y - (this.gravity * this.world.atom_time)
+      this.velocities[0].y - this.gravity * this.world.atom_time
     )
-
   }
   get dvx() {
     const { dvx: v } = this.frame;
@@ -1183,10 +1182,10 @@ export class Entity {
     const { dvz: v } = this.frame;
     return v ? v * this.dataset('fvz_f') : v
   }
-  update_velocity(vinfo: IVelocityInfo = this.frame): void {
+  update_velocity(vinfo: IVelocityInfo): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { atom_time } = this.world;
-
+    let acc_factor = atom_time
     let { dvx, dvy, dvz } = vinfo;
     if (dvx) dvx = round_float(dvx * this.dataset('fvx_f'))
     if (dvy) dvy = round_float(dvy * this.dataset('fvy_f'))
@@ -1202,10 +1201,9 @@ export class Entity {
       ctrl_y = 0,
       ctrl_z = 0,
     } = vinfo;
-
-    if (acc_x) acc_x = round_float(acc_x * atom_time)
-    if (acc_y) acc_y = round_float(acc_y * atom_time)
-    if (acc_z) acc_z = round_float(acc_z * atom_time)
+    if (acc_x) acc_x = round_float(acc_x * acc_factor)
+    if (acc_y) acc_y = round_float(acc_y * acc_factor)
+    if (acc_z) acc_z = round_float(acc_z * acc_factor)
 
     // 此处不要 * atom_time
     if (vxm == SpeedMode.AccTo && acc_x == void 0 && dvx) acc_x = dvx;
@@ -1530,7 +1528,7 @@ export class Entity {
       this.enter_frame(this.next_frame)
     }
     this.handle_gravity();
-    this.update_velocity();
+    this.update_velocity(this.frame);
     this._state?.update(this);
     this.update_position();
 
@@ -1625,9 +1623,10 @@ export class Entity {
       vy += v.y;
       vz += v.z;
     }
-    if (vx) vx = round_float(vx * this.world.atom_time)
-    if (vy) vy = round_float(vy * this.world.atom_time)
-    if (vz) vz = round_float(vz * this.world.atom_time)
+    const { atom_time } = this.world
+    if (vx) vx = round_float(vx * atom_time)
+    if (vy) vy = round_float(vy * atom_time)
+    if (vz) vz = round_float(vz * atom_time)
     for (const [, v] of this.blockers) {
       if (
         (vx < 0 && v.attacker.position.x < this._position.x) ||

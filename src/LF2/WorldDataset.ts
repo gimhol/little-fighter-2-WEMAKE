@@ -1,5 +1,5 @@
 import { Defines, Difficulty } from "./defines";
-import { IWorldDataset, world_dataset_fields as world_dataset_fields } from "./IWorldDataset";
+import { IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {
@@ -125,8 +125,8 @@ export class WorldDataset implements IWorldDataset {
   on_dataset_change?: (k: string, curr: any, prev: any) => void;
   dump_dataset() {
     const ret: any = {}
-    for (const k in world_dataset_fields)
-      ret[k] = (this as any)[k];
+    const keys = Array.from(world_dataset_fields.keys()).sort()
+    for (const k of keys) ret[k] = this[k];
     return ret;
   }
 }

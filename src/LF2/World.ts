@@ -574,7 +574,7 @@ export class World extends WorldDataset {
     const update_chasing = game_time.value % 8 === 0;
     const dead_buff: [string, Buff][] = []
     for (const [key, buff] of this.buffs) {
-      buff.update()
+      buff.update(this.atom_time)
       if (buff.dead) dead_buff.push([key, buff])
     }
     for (const [key, buff] of dead_buff) {
