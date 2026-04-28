@@ -16,13 +16,14 @@ export class StageTitleShow extends UIComponent {
   private _txt_loader = new UITextLoader(() => this.node).set_style({
     fill_style: "white",
     font: `46px "Arial Black", Arial`,
-    back_style: {
-      font: `46px "Arial Black", Arial`,
-      stroke_style: "#005A8E",
-      line_width: 5
-    }
   })
-
+  override on_resume(): void {
+    Object.assign(this.node.data, {
+      outlineColor: "#005A8E",
+      outlineWidth: 5,
+      outlineAlpha: 1,
+    })
+  }
   set_text(text: string) {
     this.node.visible = false;
     this._txt_loader.set_text(text).then(() => {

@@ -132,18 +132,18 @@ void main() {
   vec2 coord_down = uv + vec2(0, texel.y);
   vec2 coord_left = uv + vec2(-texel.x, 0);
   vec2 coord_right = uv + vec2(texel.x, 0);
+  
   float up = texture2D(tex, coord_up).a;
   float down = texture2D(tex, coord_down).a;
   float left = texture2D(tex, coord_left).a;
   float right = texture2D(tex, coord_right).a;
-  if(coord_up.y < 1.0 - (y + h) / oh)
-    up = 0.0;
-  if(coord_down.y > y / oh)
-    down = 0.0;
-  if(coord_left.x < x / ow)
-    left = 0.0;
-  if(coord_right.x > (x + w) / ow)
-    right = 0.0;
+
+  float topUv    = 1.0 - (y + h) / oh;
+  float bottomUv = 1.0 - y / oh;
+  if (coord_up.y < topUv) up = 0.0;
+  if (coord_down.y > bottomUv) down = 0.0;
+  if (coord_left.x < x / ow) left = 0.0;
+  if (coord_right.x > (x + w) / ow) right = 0.0;
 
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
   

@@ -37,7 +37,6 @@ export interface IStyle {
   text_rendering?: CanvasTextRendering;
   word_spacing?: string;
   smoothing?: boolean;
-  back_style?: IStyle;
   underline_color?: string;
   underline_width?: number;
   disposable?: boolean;
