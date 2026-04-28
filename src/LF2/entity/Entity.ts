@@ -1157,9 +1157,7 @@ export class Entity {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || !gravity_enabled) return;
-    this.set_velocity_y(
-      this.velocity.y - this.gravity * this.world.atom_time
-    )
+    this._velocity.y = round_float(this._velocity.y - this.gravity * this.world.atom_time)
   }
   get dvx() {
     const { dvx: v } = this.frame;
@@ -1176,7 +1174,7 @@ export class Entity {
   update_velocity(vinfo: IVelocityInfo): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { atom_time } = this.world;
-    let acc_factor = atom_time
+
     let { dvx, dvy, dvz } = vinfo;
     if (dvx) dvx = round_float(dvx * this.dataset('fvx_f'))
     if (dvy) dvy = round_float(dvy * this.dataset('fvy_f'))
@@ -1198,9 +1196,9 @@ export class Entity {
     if (vxm == SpeedMode.AccTo && acc_x == void 0 && dvx) acc_x = dvx;
     if (vym == SpeedMode.AccTo && acc_y == void 0 && dvy) acc_y = dvy;
     if (vzm == SpeedMode.AccTo && acc_z == void 0 && dvz) acc_z = dvz;
-    if (acc_x) acc_x = round_float(acc_x * acc_factor)
-    if (acc_y) acc_y = round_float(acc_y * acc_factor)
-    if (acc_z) acc_z = round_float(acc_z * acc_factor)
+    if (acc_x) acc_x = round_float(acc_x * atom_time)
+    if (acc_y) acc_y = round_float(acc_y * atom_time)
+    if (acc_z) acc_z = round_float(acc_z * atom_time)
 
 
     let { x: vx, y: vy, z: vz } = this.velocity;
@@ -1622,7 +1620,7 @@ export class Entity {
         (vz > 0 && v.attacker.position.z > this._position.z)
       ) {
         vz = 0;
-        this._prev_velocity.x = 0;
+        this._prev_velocity.z = 0;
       }
     }
     if (!this.shaking && !this.motionless) {
@@ -2294,12 +2292,10 @@ export class Entity {
   }
   set_velocity_y(y: number) {
     if (is_f_num(y)) debugger;
-    const v = this.velocity;
     this._velocity.y = this._prev_velocity.y = round_float(y)
   }
   set_velocity_z(z: number) {
     if (is_f_num(z)) debugger;
-    const v = this.velocity;
     this._velocity.z = this._prev_velocity.z = round_float(z)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
