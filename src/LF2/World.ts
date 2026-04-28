@@ -101,7 +101,12 @@ export class World extends WorldDataset {
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
     this.callbacks.emit('on_dataset_change')(k as any, curr, prev, this)
-    if (k === 'sync_render' || k === 'UPS') {
+    if (
+      k === 'sync_render' ||
+      k === 'UPS' ||
+      k === 'atom_time' ||
+      k === 'playrate'
+    ) {
       this.start_render();
       this.start_update();
     }

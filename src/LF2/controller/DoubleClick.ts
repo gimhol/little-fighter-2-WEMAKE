@@ -19,7 +19,6 @@ export class DoubleClick<D> {
     }
   }
   step() {
-    debugger;
     this.time = -this.time;
     this.data[0] = this.data[1];
     this.data[1] = void 0;
