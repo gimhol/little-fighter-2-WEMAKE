@@ -724,8 +724,8 @@ export class World extends WorldDataset {
     if (new_x > max_cam_right - this.screen_w) new_x = max_cam_right - this.screen_w;
     let cur_x = this.renderer.cam_x;
     const acc = min(
-      acc_ratio,
-      0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
+      this.atom_time * acc_ratio,
+      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
     );
     const max_speed = max_speed_ratio * acc;
 
