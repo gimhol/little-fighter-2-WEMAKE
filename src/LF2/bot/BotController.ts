@@ -263,16 +263,18 @@ export class BotController extends BaseController {
 
 
     const dxz = manhattan_xz(this.entity, e)
-    if (e.state === StateEnum.Lying) return dxz < 120;
-    if (e.blinking) return dxz < 120;
-    if (e.invulnerable) return dxz < 120;
+    const too_close_dxz = 250
+    const too_far_dxz = 350
+    if (e.state === StateEnum.Lying) return dxz < too_close_dxz;
+    if (e.blinking) return dxz < too_close_dxz;
+    if (e.invulnerable) return dxz < too_close_dxz;
     if (me.holding?.base_type === W_T.Drink) {
       if (this.fsm.state?.key !== BotStateEnum.Avoiding) {
         // 非逃跑的状态下，太近了，开始逃跑
-        return dxz < 120;
+        return dxz < too_close_dxz;
       } else {
         // 逃跑的状态下，跑出一定距离，停止逃跑
-        return dxz < 260;
+        return dxz < too_far_dxz;
       }
     }
 

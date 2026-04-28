@@ -35,7 +35,8 @@ export class BotState_Avoiding extends BotState_Base {
     }
 
     const { left, right, near, far } = c.lf2.world;
-    
+
+    // stupid.
     /** next x direction */
     if (avoid_x > abs_x) {
       let x_d: -1 | 1;
@@ -57,15 +58,16 @@ export class BotState_Avoiding extends BotState_Base {
     }
 
     if (avoid_z > abs_z) {
-      let z_d: -1 | 1;
       if (me_z <= en_z) {
-        z_d = me_x > round_float(far + 25) ? 1 : -1;
+        // 敌人在下方
+        // 按上
+        c.key_down(GK.U).key_up(GK.D);
       } else {
-        z_d = me_x < round_float(near - 25) ? -1 : 1;
+        const near_edge = me_x < round_float(near - 25)
+        // 敌人在上方
+        // 按下
+        c.key_down(GK.D).key_up(GK.U);
       }
-      const ZF = z_d > 0 ? GK.U : GK.D;
-      const ZB = z_d > 0 ? GK.D : GK.U;
-      c.key_down(ZF).key_up(ZB);
     } else {
       c.key_up(GK.U, GK.D)
     }
