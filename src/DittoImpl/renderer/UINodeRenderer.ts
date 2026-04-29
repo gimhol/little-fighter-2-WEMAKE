@@ -13,7 +13,6 @@ import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
 import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
-import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
 interface IUserData {
   w?: number;
@@ -73,11 +72,9 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (this._css_obj.parent) return;
     this.mesh.add(this._css_obj);
   }
-
   get world() { return this.ui.lf2.world }
   get lf2() { return this.ui.lf2 }
   get parent() { return this.ui.parent?.renderer || null }
-  img_idx = -1
   constructor(ui: UINode) {
     this.ui = ui;
     this.mesh = new T.Mesh(
@@ -202,7 +199,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.mesh.material.mixColor = rgba ? new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace) : BLACK;
       this.mesh.material.mixStength = rgba?.a ?? 0;
     } else if (rgba) {
-      this.mesh.material.texture = white_texture();
+      this.mesh.material.texture = ImageMgr.WHITE_TEXTURE.clone();
       this.mesh.material.coverColor = new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace);
       this.mesh.material.coverStength = rgba.a;
       this.mesh.material.cover = true

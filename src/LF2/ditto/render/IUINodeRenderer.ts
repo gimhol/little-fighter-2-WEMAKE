@@ -7,7 +7,6 @@ export interface IUINodeRenderer {
   ui: UINode;
   visible: boolean;
   parent: IUINodeRenderer | null;
-  img_idx: number;
   del(child: IUINodeRenderer): void;
   add(child: IUINodeRenderer): void;
   del_self(): void;

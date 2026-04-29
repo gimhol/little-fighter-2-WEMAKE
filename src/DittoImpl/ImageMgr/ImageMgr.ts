@@ -4,6 +4,7 @@ import { MagnificationTextureFilter } from "@/LF2/defines/MagnificationTextureFi
 import { MinificationTextureFilter } from "@/LF2/defines/MinificationTextureFilter";
 import { TextureWrapping } from "@/LF2/defines/TextureWrapping";
 import { IImageInfo } from "@/LF2/ditto/image/IImageInfo";
+import img_white from "@/assets/white.png"
 import AsyncValuesKeeper from "../../LF2/base/AsyncValuesKeeper";
 import { ILegacyPictureInfo } from "../../LF2/defines/ILegacyPictureInfo";
 import type IPicture from "../../LF2/defines/IPicture";
@@ -24,6 +25,7 @@ export class ImageMgr implements IImageMgr {
   static readonly TextureLoader = new T.TextureLoader();
   static readonly ERROR_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load(img_error)
   static readonly EMPTY_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load("");
+  static readonly WHITE_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load("");
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
   protected disposables = new Map<string, RImageInfo>();

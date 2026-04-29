@@ -21,5 +21,4 @@ export * from "./factory";
 export * from "./materials";
 export * from "./meshs";
 export * from "./shader";
-export * from "./white_texture";
 /*** AUTO EXPORT END ***/
