@@ -21,7 +21,7 @@ import { World } from "./World";
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.26'
+  static readonly VERSION_NAME: string = 'v0.1.26 dev'
   static readonly DATA_VERSION: number = 18;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -48,9 +48,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   get lang(): string { return this._i18n.lang }
   set lang(v: string) { this._i18n.lang = v }
   dev: boolean = false;
-  debug!: (_0: string, ..._1: any[]) => void;
-  warn!: (_0: string, ..._1: any[]) => void;
-  log!: (_0: string, ..._1: any[]) => void;
+  __debugging = false
+  debug(..._1: any[]): void { };
+  warn(..._1: any[]): void { };
+  log(..._1: any[]): void { };
 
   readonly callbacks = new Callbacks<ILf2Callback>();
   private _disposed: boolean = false;

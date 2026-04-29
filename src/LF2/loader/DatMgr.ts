@@ -272,12 +272,10 @@ export default class DatMgr {
   get_randoming_by_group(group: string) {
     let ret = this.randomings.get(group);
     if (!ret) {
-      const { characters, weapons, entity, balls } = this.find_group(group);
+      const { entity } = this.find_group(group);
       this.randomings.set(
         group,
-        ret = new Randoming([
-          ...characters, ...weapons, ...entity, ...balls
-        ], this.lf2)
+        ret = new Randoming([...entity], this.lf2)
       );
     }
     return ret

@@ -184,14 +184,12 @@
     },
     {
       i18n: "Template(com)",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
       style: {
         fill_style: "white",
-        font: "8px Arial",
-        back_style: {
-          font: "8px Arial",
-          stroke_style: "#005A8E",
-          line_width: 1,
-        },
+        font: "9px Arial"
       },
       component: [
         {

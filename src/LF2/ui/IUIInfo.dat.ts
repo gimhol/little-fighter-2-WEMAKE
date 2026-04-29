@@ -37,6 +37,9 @@ export interface IUIInfo {
   backgroundAlpha?: number;
   foreground?: string;
   foregroundAlpha?: number;
+  outlineColor?: string;
+  outlineWidth?: number;
+  outlineAlpha?: number;
   img?: TUIImgInfo;
   i18n?: string;
   style?: IStyle | string | null;

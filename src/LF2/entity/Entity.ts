@@ -72,7 +72,7 @@ export class Entity {
    * @type {IVector3}
    */
   protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _landing_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
 
   readonly vrests = new Map<string, ICollision>();
@@ -874,7 +874,9 @@ export class Entity {
     if (vym == SpeedMode.Extra && acc_y) vy += acc_y
     if (vzm == SpeedMode.Extra && acc_z) vz += acc_z
 
-    this.set_velocity(vx, vy, vz)
+    this._prev_velocity.x = this._velocity.x = round_float(vx)
+    this._prev_velocity.y = this._velocity.y = round_float(vy)
+    this._prev_velocity.z = this._velocity.z = round_float(vz)
     if (sus_cases.debugging) {
       sus_cases.push('on_spawn::pos', pos_x, pos_y, pos_z)
       sus_cases.push('on_spawn::vec1', vx, vy, vz)
@@ -1201,7 +1203,7 @@ export class Entity {
     if (acc_z) acc_z = round_float(acc_z * atom_time)
 
 
-    let { x: vx, y: vy, z: vz } = this.velocity;
+    let { x: vx, y: vy, z: vz } = this._velocity;
     const { UD, LR, jd } = this._ctrl;
     const { facing } = this;
     if (dvx == void 0) { }
@@ -1222,10 +1224,9 @@ export class Entity {
     else if (UD != 0 && SpeedCtrl.Enable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
     else if (UD == 0 && SpeedCtrl.Disable == ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
 
-    this.set_velocity(vx, vy, vz);
-    if (vxm == SpeedMode.Fixed) this.set_velocity_x(0)
-    if (vym == SpeedMode.Fixed) this.set_velocity_y(0)
-    if (vzm == SpeedMode.Fixed) this.set_velocity_z(0)
+    this._velocity.x = round_float(vx)
+    this._velocity.y = round_float(vy)
+    this._velocity.z = round_float(vz)
   }
 
   dismiss_fusion(frame_id: string) {
@@ -1428,7 +1429,7 @@ export class Entity {
       if (v.rest) this.victims.delete(k)
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
-      if (this.arest > 0) {
+      if (this.arest > 0 && this.frame.itr?.length) {
         this.arest = round_float(this.arest - this.world.atom_time);
         if (this.arest < 0) this.arest = 0;
       } else {
@@ -2288,15 +2289,15 @@ export class Entity {
   }
   set_velocity_x(x: number) {
     if (is_f_num(x)) debugger;
-    this._velocity.x = this._prev_velocity.x = round_float(x)
+    this._velocity.x = round_float(x)
   }
   set_velocity_y(y: number) {
     if (is_f_num(y)) debugger;
-    this._velocity.y = this._prev_velocity.y = round_float(y)
+    this._velocity.y = round_float(y)
   }
   set_velocity_z(z: number) {
     if (is_f_num(z)) debugger;
-    this._velocity.z = this._prev_velocity.z = round_float(z)
+    this._velocity.z = round_float(z)
   }
   set_position(x?: number | null, y?: number | null, z?: number | null) {
     if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;

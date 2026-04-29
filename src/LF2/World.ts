@@ -102,7 +102,12 @@ export class World extends WorldDataset {
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
     this.callbacks.emit('on_dataset_change')(k as any, curr, prev, this)
-    if (k === 'sync_render' || k === 'UPS') {
+    if (
+      k === 'sync_render' ||
+      k === 'UPS' ||
+      k === 'atom_time' ||
+      k === 'playrate'
+    ) {
       this.start_render();
       this.start_update();
     }
@@ -730,8 +735,8 @@ export class World extends WorldDataset {
     if (new_x > max_cam_right - this.screen_w) new_x = max_cam_right - this.screen_w;
     let cur_x = this.renderer.cam_x;
     const acc = min(
-      acc_ratio,
-      0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
+      this.atom_time * acc_ratio,
+      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
     );
     const max_speed = max_speed_ratio * acc;
 

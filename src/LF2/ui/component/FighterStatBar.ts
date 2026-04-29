@@ -154,7 +154,12 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     }
   }
   update_name() {
-    this.props.name_txt?.set_text(this.entity?.name ?? "")
+    const name0 = this.entity?.name.trim() ?? ''
+    const name1 = this.entity?.data.base.name.trim() ?? ''
+    let name = name0 || name1;
+    if (name0 !== name1 && name0 && name1)
+      name = `${name1} (${name0})`
+    this.props.name_txt?.set_text(name)
   }
   override update(): void {
     this.update_name();

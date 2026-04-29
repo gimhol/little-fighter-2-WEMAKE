@@ -101,19 +101,6 @@ export class ImageMgr implements IImageMgr {
     cvs.style.height = (cvs.height = scale * h) + "px";
     ctx.save();
     ctx.scale(scale, scale);
-    if (style.back_style) {
-      const nf = need_fiil(style.back_style);
-      const ns = need_stroke(style.back_style);
-      apply_text_style(style.back_style, ctx);
-      if (nf || ns) {
-        for (const { x, y, t } of lines) {
-          if (nf) ctx.fillText(t, padding_l + x, padding_t + y)
-          if (ns) ctx.strokeText(t, padding_l + x, padding_t + y)
-        }
-        draw_underline(style, ctx, lines);
-      }
-    }
-
     style.fill_style = style.fill_style ?? 'white';
     const nf = need_fiil(style);
     const ns = need_stroke(style);

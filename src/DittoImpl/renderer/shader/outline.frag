@@ -83,7 +83,7 @@ vec4 bgfg(vec3 c0, float a0, vec3 c1, float a1) {
   return ret;
 }
 
-void apply(vec4 color) {
+vec4 apply(vec4 color) {
   if(cover) {
     color.rgb = gamma_correct(coverColor);
     color.a = coverStength;
@@ -97,7 +97,7 @@ void apply(vec4 color) {
   if(fgAlpha > 0.0)
     color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
   color.a *= opacity;
-  gl_FragColor = color;
+  return color;
 }
 
 void main() {
@@ -119,7 +119,7 @@ void main() {
 
   /* 无需描边时，仅处理颜色 */
   if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
-    apply(color);
+    gl_FragColor = apply(color);
     return;
   }
 
@@ -132,22 +132,23 @@ void main() {
   vec2 coord_down = uv + vec2(0, texel.y);
   vec2 coord_left = uv + vec2(-texel.x, 0);
   vec2 coord_right = uv + vec2(texel.x, 0);
+  
   float up = texture2D(tex, coord_up).a;
   float down = texture2D(tex, coord_down).a;
   float left = texture2D(tex, coord_left).a;
   float right = texture2D(tex, coord_right).a;
-  if(coord_up.y < 1.0 - (y + h) / oh)
-    up = 0.0;
-  if(coord_down.y > y / oh)
-    down = 0.0;
-  if(coord_left.x < x / ow)
-    left = 0.0;
-  if(coord_right.x > (x + w) / ow)
-    right = 0.0;
+
+  float topUv    = 1.0 - (y + h) / oh;
+  float bottomUv = 1.0 - y / oh;
+  if (coord_up.y < topUv) up = 0.0;
+  if (coord_down.y > bottomUv) down = 0.0;
+  if (coord_left.x < x / ow) left = 0.0;
+  if (coord_right.x > (x + w) / ow) right = 0.0;
 
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
+  
   if(outline <= 0.1 || center >= 0.5) {
-    apply(color);
+    gl_FragColor = apply(color);
     return;
   }
 

@@ -14,7 +14,7 @@ export class WorldDataset implements IWorldDataset {
   fvz_f: number = 1;
 
   ivx_f: number = 0.5;
-  ivy_f: number = -0.5;
+  ivy_f: number = -0.54;
   ivz_f: number = 1;
 
   ivy_d: number = -7;
@@ -32,7 +32,7 @@ export class WorldDataset implements IWorldDataset {
   itr_arest: number = 20;
   min_arest: number = 2;
   min_vrest: number = 2;
-  arest_offset: number = -6;
+  arest_offset: number = 0;
   wait_offset: number = 0;
 
   cha_bc_spd: number = 2;
@@ -130,6 +130,6 @@ export class WorldDataset implements IWorldDataset {
     const ret: any = {}
     const keys = Array.from(world_dataset_fields.keys()).sort()
     for (const k of keys) ret[k] = this[k];
-    return ret;
+    return ret as IWorldDataset;
   }
 }

@@ -18,7 +18,7 @@ import Select from "./Component/Select";
 import Show from "./Component/Show";
 import Titled from "./Component/Titled";
 import { DanmuOverlay } from "./DanmuOverlay";
-import { __Pointings } from "./DittoImpl";
+import { __Pointings, md5 } from "./DittoImpl";
 import { Indicating } from "./DittoImpl/renderer/FrameIndicators";
 import { INDICATINGS } from "./DittoImpl/renderer/INDICATINGS";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
@@ -70,7 +70,7 @@ type sync_render = 0 | 1 | 2;
 
 const ele_root = document.firstElementChild;
 const low_device = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
-const init_s = () => ({
+const init_app_state = () => ({
   game_overlay: false,
   showing_panel: "" as showing_panel,
   dev_ui_open: false,
@@ -97,11 +97,15 @@ const init_s = () => ({
   UPS: low_device ? 30 : 60,
 })
 const init_world_dataset = (): IWorldDataset => {
-  const ret = new WorldDataset(true)
+  const ret = new WorldDataset(true).dump_dataset();
   ret.sync_render = low_device ? 1 : 1;
   ret.UPS = low_device ? 30 : 60;
   return ret;
 }
+const world_dataset_version = md5(JSON.stringify(init_world_dataset()))
+const app_state_version = '2'
+
+
 const is_mobile_container = navigator.userAgent.includes('lfw-mobile-container')
 function App() {
   const l = useLocation()
@@ -130,8 +134,14 @@ function App() {
   const [dat_viewer_open, set_dat_viewer_open] = useState(false);
   const [editor_open, set_editor_open] = useState(false);
 
-  const [app_state, set_app_state, app_state_ready] = useForage({ key: 'app_state', version: 2, init: init_s })
-  const [world_dataset, set_world_dataset, world_dataset_ready] = useForage({ key: 'world_dataset', version: 2, init: init_world_dataset })
+  const [app_state, set_app_state, app_state_ready] = useForage({
+    key: 'app_state', version: app_state_version, init: init_app_state
+  })
+  const [world_dataset, set_world_dataset, world_dataset_ready] = useForage({
+    key: 'world_dataset', 
+    version: world_dataset_version, 
+    init: init_world_dataset
+  })
 
   const [is_maximised, set_is_maximised] = useState(false);
   const [is_fullscreen, _set_is_fullscreen] = useState(false);
