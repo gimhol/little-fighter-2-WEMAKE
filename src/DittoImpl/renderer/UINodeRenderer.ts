@@ -1,4 +1,4 @@
-import { clamp, IVector3Like, parse_rgba, TextInfo } from "@/LF2";
+import { IVector3Like, parse_rgba, TextInfo } from "@/LF2";
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
@@ -8,7 +8,7 @@ import { is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { SRGBColorSpace } from "../_t";
-import { empty_texture } from "./empty_texture";
+import { ImageMgr } from "../ImageMgr";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
 import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
@@ -85,7 +85,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
     )
     this.mesh.material.alpha = 0;
-    this.mesh.material.texture = empty_texture()
+    this.mesh.material.texture = ImageMgr.EMPTY_TEXTURE.clone()
     this.mesh.userData.owner = ui;
   }
   del(child: UINodeRenderer) {
@@ -151,8 +151,8 @@ export class UINodeRenderer implements IUINodeRenderer {
         w, h, scale,
         clip_x = this.ui.data.img?.x ?? 0,
         clip_y = this.ui.data.img?.y ?? 0,
-        clip_w = this.ui.data.img?.w ?? w / scale,
-        clip_h = this.ui.data.img?.h ?? h / scale
+        clip_w = this.ui.data.img?.dw ?? w / scale,
+        clip_h = this.ui.data.img?.dh ?? h / scale
       } = i
       m.set_origin_size(
         w,

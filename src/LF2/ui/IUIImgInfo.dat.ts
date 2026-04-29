@@ -13,6 +13,12 @@ export interface IUIImgInfo {
   /** 裁剪源高 */
   h?: number;
 
+  /** 目标宽度 */
+  dw?: number;
+
+  /** 目标高度 */
+  dh?: number;
+
   wrapS?: number;
   wrapT?: number;
   offsetX?: number;

@@ -155,12 +155,15 @@ export async function cook_ui_info(
     ret.img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), raw.img) ?? void 0
   }
   if (raw.img && typeof raw.img === 'object') {
+    const w = parse_num(raw.img.w);
+    const h = parse_num(raw.img.h);
     const img: IUIImgInfo = {
       path        /**/: parse_str(raw.img.path) ?? '',
       x           /**/: parse_num(raw.img.x),
       y           /**/: parse_num(raw.img.y),
-      w           /**/: parse_num(raw.img.w),
-      h           /**/: parse_num(raw.img.h),
+      w, h,
+      dw          /**/: parse_num(raw.img.dw) ?? w,
+      dh          /**/: parse_num(raw.img.dh) ?? h,
       wrapS       /**/: parse_num(raw.img.wrapS),
       wrapT       /**/: parse_num(raw.img.wrapT),
       offsetX     /**/: parse_num(raw.img.offsetX),
@@ -201,8 +204,8 @@ export async function cook_ui_info(
   if (raw.size) {
     ret.size = read_nums(parse_nums(raw.size), 3)
   } else if (ret.img) {
-    const w = ret.img.w ?? 0;
-    const h = ret.img.h ?? 0;
+    const w = ret.img.dw ?? ret.img.w ?? 0;
+    const h = ret.img.dh ?? ret.img.h ?? 0;
     ret.size = [w, h, 0]
   } else if (!parent) {
     ret.size = [lf2.world.screen_w, lf2.world.screen_h, 0]

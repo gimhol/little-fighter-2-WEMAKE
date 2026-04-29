@@ -1,4 +1,9 @@
+import img_error from "@/assets/error.png";
 import { parse_rgba } from "@/LF2";
+import { MagnificationTextureFilter } from "@/LF2/defines/MagnificationTextureFilter";
+import { MinificationTextureFilter } from "@/LF2/defines/MinificationTextureFilter";
+import { TextureWrapping } from "@/LF2/defines/TextureWrapping";
+import { IImageInfo } from "@/LF2/ditto/image/IImageInfo";
 import AsyncValuesKeeper from "../../LF2/base/AsyncValuesKeeper";
 import { ILegacyPictureInfo } from "../../LF2/defines/ILegacyPictureInfo";
 import type IPicture from "../../LF2/defines/IPicture";
@@ -12,12 +17,13 @@ import { create_img_ele } from "../../Utils/create_img_ele";
 import { get_blob } from "../../Utils/get_blob";
 import * as T from "../_t";
 import { md5 } from "../md5";
-import { p_create_picture } from "../renderer/create_picture";
-import { error_texture } from "../renderer/error_texture";
 import { RImageInfo } from "../RImageInfo";
 import { RTextInfo } from "../RTextInfo";
 import { handle_image_operation_crop, handle_image_operation_flip, handle_image_operation_mask, handle_image_operation_resize } from "./handle_image_operation";
 export class ImageMgr implements IImageMgr {
+  static readonly TextureLoader = new T.TextureLoader();
+  static readonly ERROR_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load(img_error)
+  static readonly EMPTY_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load("");
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
   protected disposables = new Map<string, RImageInfo>();
@@ -153,7 +159,7 @@ export class ImageMgr implements IImageMgr {
     const key = md5(text, JSON.stringify(style));
     const fn = async () => {
       const info = await this.create_txt_info(key, text, style)
-      info.pic = await p_create_picture(info, err_pic_info(info.key));
+      info.pic = await this.p_create_picture(info);
       return info;
     };
     return this.infos.fetch(key, fn) as Promise<RTextInfo>;
@@ -163,7 +169,7 @@ export class ImageMgr implements IImageMgr {
     const fn = async () => {
       this.lf2.on_loading_content(`${key}`, 0);
       const info = await this.create_img_info(key, src, operations);
-      info.pic = await p_create_picture(info, err_pic_info(info.key));
+      info.pic = await this.p_create_picture(info);
       return info;
     };
     return this.infos.fetch(key, fn);
@@ -198,8 +204,47 @@ export class ImageMgr implements IImageMgr {
       case 'flip': return handle_image_operation_flip(src, op);
     }
   }
-}
 
+  create_picture(
+    img_info: IImageInfo,
+    onLoad?: (data: IPicture) => void,
+    onProgress?: (event: ProgressEvent) => void,
+    onError?: (err: unknown) => void): IPicture {
+    const {
+      url, w, h,
+      min_filter = MinificationTextureFilter.Nearest,
+      mag_filter = MagnificationTextureFilter.Nearest,
+      wrap_s = TextureWrapping.MirroredRepeat,
+      wrap_t = TextureWrapping.MirroredRepeat,
+      scale
+    } = img_info;
+
+    const ret: IPicture = {
+      id: img_info.key,
+      w: w / scale,
+      h: h / scale,
+      texture: ImageMgr.EMPTY_TEXTURE.clone()
+    }
+    ret.texture = ImageMgr.TextureLoader.load(url, (t) => {
+      ret.texture = t
+      onLoad?.(ret)
+    }, onProgress, onError);
+    ret.texture.colorSpace = T.SRGBColorSpace;
+    ret.texture.minFilter = min_filter;
+    ret.texture.magFilter = mag_filter;
+    ret.texture.wrapS = wrap_s;
+    ret.texture.wrapT = wrap_t;
+    return ret;
+  }
+  p_create_picture(
+    img_info: IImageInfo,
+    onProgress?: (event: ProgressEvent) => void
+  ): Promise<IPicture> {
+    return new Promise((resolve, reject) => {
+      this.create_picture(img_info, resolve, onProgress, reject)
+    })
+  }
+}
 interface ITextLineInfo {
   x: number;
   y: number;
@@ -247,19 +292,7 @@ function draw_underline(style: IStyle, ctx: CanvasRenderingContext2D, lines: ITe
     ctx.lineTo(padding_l + x + w, padding_t + y + underline_width + 1);
     ctx.stroke();
   }
-
 }
-
-export function err_pic_info(id: string = ""): IPicture {
-  return {
-    id,
-    w: 0,
-    h: 0,
-    texture: error_texture(),
-  };
-}
-export const texture_loader = new T.TextureLoader();
-
 
 function apply_text_style(style: IStyle, ctx: CanvasRenderingContext2D) {
   ctx.font = style.font ?? "normal 9px system-ui";
