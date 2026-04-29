@@ -24,8 +24,8 @@ import { handle_image_operation_crop, handle_image_operation_flip, handle_image_
 export class ImageMgr implements IImageMgr {
   static readonly TextureLoader = new T.TextureLoader();
   static readonly ERROR_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load(img_error)
+  static readonly WHITE_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load(img_white);
   static readonly EMPTY_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load("");
-  static readonly WHITE_TEXTURE: Readonly<T.Texture<HTMLImageElement>> = ImageMgr.TextureLoader.load("");
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
   protected disposables = new Map<string, RImageInfo>();
@@ -229,6 +229,7 @@ export class ImageMgr implements IImageMgr {
     }
     ret.texture = ImageMgr.TextureLoader.load(url, (t) => {
       ret.texture = t
+      t.needsUpdate = true;
       onLoad?.(ret)
     }, onProgress, onError);
     ret.texture.colorSpace = T.SRGBColorSpace;

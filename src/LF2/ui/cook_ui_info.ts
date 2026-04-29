@@ -12,9 +12,6 @@ import { parse_call_func_expression } from "./utils";
 import read_nums from "./utils/read_nums";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
-
-
-
 let __new_id = 0;
 const new_id = () => ++__new_id;
 export async function merge_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICookedUIInfo | undefined): Promise<IUIInfo> {
@@ -44,6 +41,10 @@ export async function merge_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICo
     values: {
       ...template_info.values,
       ...remain_info.values
+    },
+    template_values: {
+      ...template_info.template_values,
+      ...remain_info.template_values
     }
   };
 }
@@ -150,7 +151,6 @@ export async function cook_ui_info(
   ret.outlineAlpha    /**/ = parse_num(raw.outlineAlpha);
   ret.i18n            /**/ = parse_str(raw.i18n) ?? void 0;
   ret.style           /**/ = parse_ui_value(ret, unsafe_is_object<IStyle>(), raw.style) ?? void 0
-  if (ret.id == 'main_title') debugger;
   if (raw.img && typeof raw.img === 'string') {
     ret.img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), raw.img) ?? void 0
   }

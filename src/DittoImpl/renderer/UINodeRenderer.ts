@@ -82,7 +82,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
     )
     this.mesh.material.alpha = 0;
-    this.mesh.material.texture = ImageMgr.EMPTY_TEXTURE.clone()
+    this.mesh.material.texture = void 0//ImageMgr.EMPTY_TEXTURE.clone()
     this.mesh.userData.owner = ui;
   }
   del(child: UINodeRenderer) {
@@ -146,8 +146,8 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (t && i) {
       const {
         w, h, scale,
-        clip_x = this.ui.data.img?.x ?? 0,
-        clip_y = this.ui.data.img?.y ?? 0,
+        clip_x = 0,
+        clip_y = 0,
         clip_w = this.ui.data.img?.dw ?? w / scale,
         clip_h = this.ui.data.img?.dh ?? h / scale
       } = i

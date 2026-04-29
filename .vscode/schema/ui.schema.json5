@@ -480,6 +480,9 @@
         values: {
           type: "object",
         },
+        template_values: {
+          type: "object",
+        },
         visible: {
           type: ["boolean", "string"],
         },

@@ -74,7 +74,7 @@ export interface IUIInfo {
    * @memberof IUIInfo
    */
   count?: number | string;
-
+  template_values?: { [x in string]?: any };
   values?: { [x in string]?: any };
   templates?: { [x in string]?: IUIInfo };
 }

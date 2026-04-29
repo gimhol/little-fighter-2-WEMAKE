@@ -1,3 +1,4 @@
+import { Unsafe } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 
 type BaseType = 'string' | 'number' | 'boolean'
@@ -29,11 +30,23 @@ function is_judger(v: any): v is ITypeJudger {
 }
 
 export function find_ui_value(ui: ICookedUIInfo, name: string): unknown | null {
-  const value = ui.values?.[name];
-  if (value !== null && value !== void 0)
-    return value;
-  if (!ui.parent) return null;
-  return find_ui_value(ui.parent, name)
+  let current: Unsafe<ICookedUIInfo> = ui;
+  while (current) {
+    const value = current.values?.[name];
+    if (value !== null && value !== undefined) {
+      return value;
+    }
+    current = current.parent;
+  }
+  current = ui;
+  while (current) {
+    const value = current.template_values?.[name];
+    if (value !== null && value !== undefined) {
+      return value;
+    }
+    current = current.parent;
+  }
+  return null;
 }
 
 type AllType<T extends BaseType, C> =
