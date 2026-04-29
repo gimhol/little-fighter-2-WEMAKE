@@ -33,10 +33,10 @@
                 min: 0,
                 max: 100,
                 step: 1,
-                precision: 1
+                precision: 1,
               },
             },
-          ]
+          ],
         },
       ],
     },
@@ -48,7 +48,9 @@
           name: "Flex",
           properties: { direction: "row", align: "center" },
         },
-        "Reachable(misc_settings)"
+        { name: "FocusBehavior" },
+        { name: "HoverBehavior", properties: { behavior: "focus" } },
+        "Reachable(misc_settings)",
       ],
       items: [
         {
@@ -60,14 +62,14 @@
               center: "0.5,0.5",
               i18n: "$val:prefix",
               style: { font: "18px Arial" },
-              component: [ { name: "Label", id: "prefix_label" } ],
+              component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
         },
         {
           id: "slider_bar_node",
           size: "440,36",
-          color: "black",
+          color: "#00000099",
           center: "0.5,0.5",
           items: [
             {
@@ -94,7 +96,7 @@
                   color: "black",
                   i18n: "0",
                   style: { font: "18px Arial" },
-                  component: [ { name: "Label", id: "handle_label" } ],
+                  component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
             },
@@ -110,7 +112,9 @@
           name: "Flex",
           properties: { direction: "row", align: "center" },
         },
-        "Reachable(misc_settings)"
+        { name: "FocusBehavior" },
+        { name: "HoverBehavior", properties: { behavior: "focus" } },
+        "Reachable(misc_settings)",
       ],
       items: [
         {
@@ -122,14 +126,14 @@
               center: "0.5,0.5",
               i18n: "$val:prefix",
               style: { font: "18px Arial" },
-              component: [ { name: "Label", id: "prefix_label" } ],
+              component: [{ name: "Label", id: "prefix_label" }],
             },
-          ]
+          ],
         },
         {
           id: "slider_bar_node",
           size: "440,36",
-          color: "black",
+          color: "#00000099",
           center: "0.5,0.5",
           items: [
             {
@@ -172,7 +176,7 @@
                   color: "black",
                   i18n: "disabled",
                   style: { font: "18px Arial" },
-                  component: [ { name: "Label", id: "handle_label" } ],
+                  component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
             },
@@ -188,7 +192,9 @@
           name: "Flex",
           properties: { direction: "row", align: "center" },
         },
-        "Reachable(misc_settings)"
+        { name: "FocusBehavior" },
+        { name: "HoverBehavior" },
+        "Reachable(misc_settings)",
       ],
       items: [
         {
@@ -200,14 +206,14 @@
               center: "0.5,0.5",
               i18n: "$val:prefix",
               style: { font: "18px Arial" },
-              component: [ { name: "Label", id: "prefix_label" } ],
+              component: [{ name: "Label", id: "prefix_label" }],
             },
-          ]
+          ],
         },
         {
           id: "slider_bar_node",
           size: "440,36",
-          color: "black",
+          color: "#00000099",
           center: "0.5,0.5",
           items: [
             {
@@ -256,7 +262,7 @@
                   color: "black",
                   i18n: "$val:item0",
                   style: { font: "18px Arial" },
-                  component: [ { name: "Label", id: "handle_label" } ],
+                  component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
             },
@@ -272,7 +278,9 @@
           name: "Flex",
           properties: { direction: "row", align: "center" },
         },
-        "Reachable(misc_settings)"
+        { name: "FocusBehavior" },
+        { name: "HoverBehavior", properties: { behavior: "focus" } },
+        "Reachable(misc_settings)",
       ],
       items: [
         {
@@ -284,15 +292,15 @@
               center: "0.5,0.5",
               i18n: "$val:prefix",
               style: { font: "18px Arial" },
-              component: [ { name: "Label", id: "prefix_label" } ],
+              component: [{ name: "Label", id: "prefix_label" }],
             },
           ],
-          component: [ { name: "Label", id: "handle_label" } ],
+          component: [{ name: "Label", id: "handle_label" }],
         },
         {
           id: "slider_bar_node",
           size: "440,36",
-          color: "black",
+          color: "#00000099",
           center: "0.5,0.5",
           items: [
             {
@@ -349,7 +357,7 @@
                   color: "black",
                   i18n: "$val:item0",
                   style: { font: "18px Arial" },
-                  component: [ { name: "Label", id: "handle_label" } ],
+                  component: [{ name: "Label", id: "handle_label" }],
                 },
               ],
             },
@@ -385,7 +393,7 @@
             prefix: "bgm",
             item0: "disable",
             item1: "enable",
-            items: "disable,enable" 
+            items: "disable,enable",
           },
           template: "toggle_switcher_row",
         },
@@ -400,7 +408,7 @@
             prefix: "sfx",
             item0: "disable",
             item1: "enable",
-            items: "disable,enable"
+            items: "disable,enable",
           },
           template: "toggle_switcher_row",
         },
@@ -415,7 +423,7 @@
             prefix: "team_outline",
             item0: "disable",
             item1: "enable",
-            items: "disable,enable"
+            items: "disable,enable",
           },
           template: "toggle_switcher_row",
         },
@@ -426,7 +434,7 @@
             item0: "sync_2",
             item1: "sync_1",
             item2: "sync_0",
-            items: "sync_2,sync_1,sync_0"
+            items: "sync_2,sync_1,sync_0",
           },
           template: "triple_switcher_row",
         },
@@ -438,14 +446,14 @@
             item1: "60UPS",
             item2: "90UPS",
             item3: "120UPS",
-            items: "30UPS,60UPS,90UPS,120UPS"
+            items: "30UPS,60UPS,90UPS,120UPS",
           },
           template: "four_switcher_row",
-        }
-      ]
+        },
+      ],
     },
     {
-      template: "scrollbar"
-    }
+      template: "scrollbar",
+    },
   ],
 }

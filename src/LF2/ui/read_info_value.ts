@@ -17,6 +17,7 @@ export function unsafe_is_object<T extends unknown>() {
 /** @deprecated 如有条件，应当更精确的确认内部数据 */
 export const unsafe_is_array = judger(v => Array.isArray(v))
 
+export const is_0_or_1 = judger((v): v is 0 | 1 => v === 0 || v === 1)
 export function judger<C = unknown>(run: (v: any) => v is C): ITypeJudger<C> {
   return { _$_judger: true as const, run }
 }

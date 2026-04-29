@@ -22,9 +22,7 @@ export * from "./UITextLoader";
 export * from "./action";
 export * from "./component";
 export * from "./cook_ui_info";
-export * from "./find_ui_template";
 export * from "./read_info_value";
-export * from "./read_ui_template";
 export * from "./ui_load_img";
 export * from "./utils";
 /*** AUTO EXPORT END ***/

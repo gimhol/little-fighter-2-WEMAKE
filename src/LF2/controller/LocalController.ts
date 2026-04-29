@@ -8,7 +8,7 @@ export class LocalController
   override player: PlayerInfo;
   constructor(player_id: string, entity: Entity) {
     super(player_id, entity);
-    this.player = this.lf2.ensure_player(player_id)
+    this.player = this.lf2.player(player_id)
   }
 }
 export default LocalController;

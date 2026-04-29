@@ -20,7 +20,7 @@ export class Picture extends UIComponent<IPictureProps> {
   set width(w: number) { this.props.width = w }
   set height(h: number) { this.props.height = h }
   set_src(v: string): this {
-    const info: IUIImgInfo = { path: v, dw: this.width, dh: this.height }
+    const info: IUIImgInfo = { path: v }
     this._img_loader.load(info).catch(e => Ditto.warn(`[${Picture.TAG}::set_src]` + e));
     return this;
   }

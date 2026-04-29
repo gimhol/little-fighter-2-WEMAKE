@@ -22,4 +22,12 @@ export interface ICookedUIInfo extends IUIInfo {
   component: IComponentInfo[];
   background?: string;
   foreground?: string;
+  count?: number;
+  visible?: boolean;
+  disabled?: boolean;
+  backgroundAlpha?: number;
+  foregroundAlpha?: number;
+  outlineWidth?: number;
+  outlineAlpha?: number;
+  opacity?: number;
 }

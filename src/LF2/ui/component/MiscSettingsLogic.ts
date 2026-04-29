@@ -1,5 +1,4 @@
 import { floor, ISoundsCallback, IWorldCallbacks, round, round_float, SliderHandle, UIComponent } from "@/LF2";
-
 export class MiscSettingsLogic extends UIComponent {
   static override readonly TAGS: string[] = ["MiscSettingsLogic"];
   bgm_toggle: SliderHandle | undefined;

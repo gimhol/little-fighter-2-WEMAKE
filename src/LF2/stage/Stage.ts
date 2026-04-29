@@ -128,7 +128,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.drink_l = -1200;
     this.drink_r = this.bg.width + 1200
     if (this.data.next)
-      this.next_stage = this.lf2.stages.find(v => v.id === this.data.next);
+      this.next_stage = this.lf2.datas.stages.find(v => v.id === this.data.next);
     this.team = new_team();
   }
 

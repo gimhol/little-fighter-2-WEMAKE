@@ -1,4 +1,4 @@
-import { clamp, Defines, GameKey, GK, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, KeyStatus, Label, LF2PointerEvent, round_float, UIComponent, UINode } from "@/LF2";
+import { clamp, Defines, GameKey, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, KeyStatus, Label, LF2PointerEvent, round_float, UIComponent, UINode } from "@/LF2";
 export interface ISliderHandleProps {
   min?: number;
   max?: number;
@@ -163,13 +163,15 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     if (this.direction == 'row') {
       const min_num = geo.left - geo.pos.x - cross.left;
       const max_num = geo.right - geo.pos.x - cross.right;
-      const x = min_num + (max_num - min_num) * this.factor;
-      this.node.x = round_float(this.node.x + (x - this.node.x) * 0.25 * dt / 16.666);
+      const dist = min_num + (max_num - min_num) * this.factor;
+      const curr = this.node.x + (dist - this.node.x) * 0.25
+      this.node.x = round_float(clamp(curr, min_num, max_num));
     } else {
       const min_num = geo.top - geo.pos.y - cross.top;
       const max_num = geo.bottom - geo.pos.y - cross.bottom;
-      const y = min_num + (max_num - min_num) * this.factor;
-      this.node.y = round_float(this.node.y + (y - this.node.y) * 0.25 * dt / 16.666);
+      const dist = min_num + (max_num - min_num) * this.factor;
+      const curr = this.node.y + (dist - this.node.y) * 0.25
+      this.node.y = round_float(clamp(curr, min_num, max_num))
     }
     if (
       !responser?.focused &&

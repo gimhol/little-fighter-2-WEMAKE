@@ -213,9 +213,9 @@ export class __Modern extends BaseSounds {
       this.apply_bgm_volume();
     };
     do {
-      const [obj, , origin] = this.lf2.sniff_from_zips(real_name, false)
+      const { file, origin } = this.lf2.find_from_zips([real_name], false).at(0) || {}
       // 非本地存在资源，说明来自网络，不必重载
-      if (!obj || !origin) break;
+      if (!file || !origin) break;
 
       // 判断是否来源是否产生了变化
       if (this.get_origin(real_name) === origin)

@@ -58,7 +58,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   useEffect(() => {
     set_bgm(lf2?.sounds.bgm() ?? "");
     set_difficulty(lf2?.world.difficulty ?? Difficulty.Difficult);
-    set_stage_list(lf2?.stages);
+    set_stage_list(lf2?.datas.stages);
     const on_stage_change = (stage: Stage | undefined) => {
       set_stage_id(stage?.data.id ?? Defines.VOID_STAGE.id);
       set_bg_id(stage?.bg.data.id ?? Defines.VOID_BG.id);
@@ -75,7 +75,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     if (!lf2) return;
     const a = [
       lf2.callbacks.add({
-        on_loading_end: () => set_stage_list(lf2.stages),
+        on_loading_end: () => set_stage_list(lf2.datas.stages),
       }),
       lf2.world.callbacks.add({
         on_stage_change,

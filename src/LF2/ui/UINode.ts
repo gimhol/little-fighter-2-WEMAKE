@@ -460,8 +460,6 @@ export class UINode implements IDebugging {
     this.renderer.on_hide?.();
   }
 
-  readonly cook = UINode.create.bind(UINode)
-
   static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {
     const ret = new UINode(lf2, info, parent);
     const { component } = ret.data;

@@ -3,9 +3,18 @@ import type { IComponentInfo } from "./IComponentInfo";
 import type { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { UIActionEnum } from "./UIActionEnum";
+export type ToStringable<T> = {
+  [K in keyof T]: T[K] | string;
+};
+export type ToStringableDeep<T> =
+  T extends Array<infer U>
+  ? Array<ToStringableDeep<U>>
+  : T extends Record<string, any>
+  ? { [K in keyof T]: ToStringableDeep<T[K]> }
+  : T | string;
 export type TComponentInfo = IComponentInfo | string
 export type TUIAction = IUIAction | UIActionEnum
-export type TUIImgInfo = IUIImgInfo | string
+export type TUIImgInfo = ToStringableDeep<IUIImgInfo> | string
 export type TUIActionPlace = 'click' | 'resume' | 'pause' | 'start' | 'stop';
 
 export interface IUIInfo {
@@ -26,24 +35,23 @@ export interface IUIInfo {
   name?: string;
 
   pos?: number[] | string;
-  opacity?: number;
+  opacity?: number | string;
   center?: number[] | string;
   scale?: number[] | string;
   size?: number[] | string;
-  visible?: boolean;
-  disabled?: boolean;
+  visible?: boolean | string;
+  disabled?: boolean | string;
   color?: string;
   background?: string;
-  backgroundAlpha?: number;
+  backgroundAlpha?: number | string;
   foreground?: string;
-  foregroundAlpha?: number;
+  foregroundAlpha?: number | string;
   outlineColor?: string;
-  outlineWidth?: number;
-  outlineAlpha?: number;
+  outlineWidth?: number | string;
+  outlineAlpha?: number | string;
   img?: TUIImgInfo;
   i18n?: string;
   style?: IStyle | string | null;
-  which?: number | string;
   dev_component?: TComponentInfo[];
   component?: TComponentInfo[];
   actions?: { [x in TUIActionPlace]?: TUIAction | TUIAction[] };
@@ -65,7 +73,7 @@ export interface IUIInfo {
    * @type {number}
    * @memberof IUIInfo
    */
-  count?: number;
+  count?: number | string;
 
   values?: { [x in string]?: any };
   templates?: { [x in string]?: IUIInfo };

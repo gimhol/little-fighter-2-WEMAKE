@@ -448,8 +448,9 @@ export class World extends WorldDataset {
     stage.change_bg(bg_data);
     this.stage = stage
   }
+  
   change_stage(stage_id: string | undefined) {
-    const stage_data = this.lf2.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
+    const stage_data = this.lf2.datas.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
     if (stage_data == this.stage.data) return;
     this.stage = new Stage(this, stage_data);
   }

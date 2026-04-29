@@ -147,7 +147,13 @@ export class UINodeRenderer implements IUINodeRenderer {
     const { uniforms: u } = m;
     const i = this.ui.image;
     if (t && i) {
-      const { w, h, scale, clip_x = 0, clip_y = 0, clip_w = w / scale, clip_h = h / scale } = i
+      const {
+        w, h, scale,
+        clip_x = this.ui.data.img?.x ?? 0,
+        clip_y = this.ui.data.img?.y ?? 0,
+        clip_w = this.ui.data.img?.w ?? w / scale,
+        clip_h = this.ui.data.img?.h ?? h / scale
+      } = i
       m.set_origin_size(
         w,
         h,
