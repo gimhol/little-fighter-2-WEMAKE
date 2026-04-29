@@ -182,16 +182,16 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           </Combine>
         </Titled>
         <Combine>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_ENEMIES)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_ENEMIES)}>
             杀死全部敌人
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_BOSS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_BOSS)}>
             杀死Boss
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_SOLIDERS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_SOLIDERS)}>
             杀死士兵
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_OTHERS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_OTHERS)}>
             杀死其他
           </Button>
         </Combine>

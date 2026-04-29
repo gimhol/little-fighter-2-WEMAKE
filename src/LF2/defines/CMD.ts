@@ -1,5 +1,5 @@
 import { CheatType } from "./CheatType";
-export enum CMD {
+export const enum CMD {
   F1 = 'f1',
   F2 = 'f2',
   F3 = 'f3',
@@ -13,12 +13,6 @@ export enum CMD {
   LF2_NET = CheatType.LF2_NET,
   HERO_FT = CheatType.HERO_FT,
   GIM_INK = CheatType.GIM_INK,
-  LF2_NET_ON = CheatType.LF2_NET + '#1',
-  HERO_FT_ON = CheatType.HERO_FT + '#1',
-  GIM_INK_ON = CheatType.GIM_INK + '#1',
-  LF2_NET_OFF = CheatType.LF2_NET + '#0',
-  HERO_FT_OFF = CheatType.HERO_FT + '#0',
-  GIM_INK_OFF = CheatType.GIM_INK + '#0',
   KILL_ENEMIES = 'KILL_ENEMIES',
   KILL_BOSS = 'KILL_BOSS',
   KILL_SOLIDERS = 'KILL_SOLIDERS',
@@ -27,7 +21,8 @@ export enum CMD {
   SET_DIFFICULTY = "SET_DIFFICULTY",
   LOCK_CAM = "LOCK_CAM",
   CHANGE_BG = "CHANGE_BG",
-  CHANGE_STAGE = "CHANGE_STAGE"
+  CHANGE_STAGE = "CHANGE_STAGE",
+  PAUSE = "PAUSE",
 }
 export const CMD_NAMES: Record<CMD, string> = {
   [CMD.F1]: "F1",
@@ -49,13 +44,8 @@ export const CMD_NAMES: Record<CMD, string> = {
   [CMD.KILL_OTHERS]: "KILL_OTHERS",
   [CMD.DEL_PUPPET]: "DEL_PUPPET",
   [CMD.SET_DIFFICULTY]: "SET_DIFFICULTY",
-  [CMD.LF2_NET_ON]: "LF2_NET#",
-  [CMD.HERO_FT_ON]: "HERO_FT#",
-  [CMD.GIM_INK_ON]: "GIM_INK#",
-  [CMD.LF2_NET_OFF]: "LF2_NET#1",
-  [CMD.HERO_FT_OFF]: "HERO_FT#1",
-  [CMD.GIM_INK_OFF]: "GIM_INK#1",
   [CMD.LOCK_CAM]: "",
   [CMD.CHANGE_BG]: "CHANGE_BG",
-  [CMD.CHANGE_STAGE]: "CHANGE_STAGE"
+  [CMD.CHANGE_STAGE]: "CHANGE_STAGE",
+  [CMD.PAUSE]: "PAUSE"
 }

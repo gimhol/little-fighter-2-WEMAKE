@@ -223,26 +223,19 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _keys = ''
   private _gkeys = new Map<string, string>()
   private _gkeys_matchs = new Set<string>()
-  private readonly _cheat_enables = new Map<string, boolean>();
-
-  is_cheat(name: string | D.CheatType) {
-    return !!this._cheat_enables.get("" + name);
-  }
-  set_cheat(name: string | D.CheatType, enable?: boolean) {
-    const enabled = this._cheat_enables.get(name);
-    enable = enable ?? (!enabled)
-    if (enabled === enable) return;
-    const cheat = D.Defines.CheatInfos.get(name as D.CheatType);
-    if (!cheat) return;
-    if (cheat.sound) this.sounds.play_with_load(cheat.sound);
-    this._cheat_enables.set(name, enable);
-    this.callbacks.emit("on_cheat_changed")(name, enable);
-    this._keys = "";
-    this._gkeys.clear();
-  }
   cmds: (CMD | D.CheatType | string)[] = [];
   events: UI.LF2KeyEvent[] = [];
   broadcasts: string[] = [];
+  is_cheat(name: string | D.CheatType): boolean {
+    if (!D.is_cheat_type(name)) return false;
+    return !!this.world[name];
+  }
+  set_cheat(name: string | D.CheatType, enable: boolean = !this.is_cheat(name)) {
+    if (enable == this.is_cheat(name)) return;
+    this.cmds.push(name, enable ? '1' : '');
+    this._keys = "";
+    this._gkeys.clear();
+  }
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
     const key_code = e.key.toLowerCase();
@@ -270,10 +263,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     for (const [cheat_name, { keys: k, gkeys: g }] of D.Defines.CheatInfos) {
       for (const [pid, gkeys] of this._gkeys) {
         if (g.startsWith(gkeys)) this._gkeys_matchs.add(pid);
-        if (g === gkeys) this.cmds.push(cheat_name)
+        if (g === gkeys) this.cmds.push(cheat_name, '1')
       }
       if (k.startsWith(this._keys)) match = true;
-      if (k === this._keys) this.cmds.push(cheat_name)
+      if (k === this._keys) this.cmds.push(cheat_name, '1')
     }
     for (const [k] of this._gkeys)
       if (!this._gkeys_matchs.has(k))
@@ -630,8 +623,7 @@ function full_zip_url(info_url: string, zip_url: string) {
   ) return zip_url;
   const s_idx = info_url.indexOf('?');
   const h_idx = info_url.indexOf('#');
-  const end = (s_idx > 0 && h_idx > 0) ? Math.min(s_idx, h_idx) : s_idx > 0 ? s_idx : h_idx
-
+  const end = (s_idx > 0 && h_idx > 0) ? Math.min(s_idx, h_idx) : s_idx > 0 ? s_idx : h_idx;
   const part_a = end > 0 ? info_url.substring(0, end) : info_url;
   if (!part_a.endsWith('.zip.json')) return zip_url;
   const part_b = end > 0 ? info_url.substring(end) : '';

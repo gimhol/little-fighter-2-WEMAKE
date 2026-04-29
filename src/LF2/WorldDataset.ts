@@ -1,4 +1,4 @@
-import { Defines, Difficulty } from "./defines";
+import { CheatType, Defines, Difficulty } from "./defines";
 import { IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
@@ -111,6 +111,9 @@ export class WorldDataset implements IWorldDataset {
   UPS: number = 60;
   playrate: number = 1;
   atom_time: number = 1;
+  [CheatType.GIM_INK]: number = 0;
+  [CheatType.HERO_FT]: number = 0;
+  [CheatType.LF2_NET]: number = 0;
 
   constructor(pure: boolean = false) {
     if (!pure) {

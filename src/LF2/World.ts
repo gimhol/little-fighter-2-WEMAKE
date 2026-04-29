@@ -12,7 +12,8 @@ import {
   GONE_FRAME_INFO,
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
-  IFrameInfo, IItrInfo, ItrKind,
+  IFrameInfo, IItrInfo,
+  ItrKind,
   IVector3,
   O_ID,
   StateEnum,
@@ -467,11 +468,16 @@ export class World extends WorldDataset {
           else Ditto.warn('DEL_PUPPET failed, puppet not found.')
           continue;
         }
-        case CMD.LF2_NET: case CMD.LF2_NET_ON: case CMD.LF2_NET_OFF:
-        case CMD.HERO_FT: case CMD.HERO_FT_ON: case CMD.HERO_FT_OFF:
-        case CMD.GIM_INK: case CMD.GIM_INK_ON: case CMD.GIM_INK_OFF:
-          const [cheat, state] = cmd.split('#')
-          this.lf2.set_cheat(cheat, state !== void 0 ? state === '1' : void 0);
+        case CheatType.LF2_NET: // same as "case CMD.LF2_NET:"
+        case CheatType.HERO_FT: // same as "case CMD.HERO_FT:"
+        case CheatType.GIM_INK: // same as "case CMD.GIM_INK:"
+          const prev = this[cmd];
+          const enabled = this[cmd] = Number(cmds[i += 1]) ? 1 : 0;
+          if (prev == enabled) continue;
+          const cheat = Defines.CheatInfos.get(cmd)
+          if (!cheat) continue;
+          if (cheat.sound) this.lf2.sounds.play_with_load(cheat.sound);
+          this.lf2.callbacks.emit("on_cheat_changed")(cmd, !!enabled);
           continue;
         case CMD.F1: this.paused = !this.paused; continue;
         case CMD.F2: this.set_paused(2); continue;
