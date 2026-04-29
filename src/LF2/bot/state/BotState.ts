@@ -12,6 +12,12 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
   constructor(ctrl: BotController) {
     this.ctrl = ctrl;
   }
+  wanted_jumping() {
+    const c = this.ctrl;
+    const desire = c.desire('wj_1')
+    if (desire < c.dataset.jump_desire * 2) 
+      c.key_down(GK.j).key_up(GK.j)
+  }
   random_jumping() {
     const c = this.ctrl;
     const { state } = c.entity.frame;
