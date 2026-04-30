@@ -33,18 +33,17 @@ export class BotState_Avoiding extends BotState_Base {
     if (av_z === me_z) av_z += this.oz;
     if (av_x === me_x) av_x += this.oz;
 
-    if (c.out_of_avoid_zone(av)) {
+    if (c.is_leave_avoid_zone(av)) {
       c.key_up(...AGK);
       return BotStateEnum.Idle;
     }
 
 
-
-    const z_forwrd_key = av_z < me_z ? GK.U : GK.D
+    const z_forwrd_key = av_z > me_z ? GK.U : GK.D
     const z_backward_key = av_z > me_z ? GK.D : GK.U
     c.key_down(z_forwrd_key).key_up(z_backward_key);
 
-    const x_forwrd_key = av_x < me_x ? GK.L : GK.R;
+    const x_forwrd_key = av_x > me_x ? GK.L : GK.R;
     const x_backward_key = av_x > me_x ? GK.R : GK.L;
 
     const edge_l = c.world.left + 10;

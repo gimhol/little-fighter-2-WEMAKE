@@ -1,4 +1,4 @@
-import { GameKey, StateEnum, WeaponType, AGK } from "@/LF2/defines";
+import { AGK, GK, StateEnum, WeaponType } from "@/LF2/defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { BotState_Base } from "./BotState";
@@ -19,7 +19,6 @@ export class BotState_Idle extends BotState_Base {
     if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     if (this.handle_defends()) return;
     if (this.handle_bot_actions()) return;
-    this.random_jumping()
 
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
       return BotStateEnum.Avoiding;
@@ -29,16 +28,26 @@ export class BotState_Idle extends BotState_Base {
       return BotStateEnum.Avoiding;
 
     c.key_up(...AGK)
+
+    /* 喝 */
     if (
-      me.holding?.base_type === WeaponType.Drink &&
-      me.state !== StateEnum.Drink
-    ) c.key_down(GameKey.a)
+      me.holding?.base_type === WeaponType.Drink && (
+        me.state === StateEnum.Running ||
+        me.state === StateEnum.Standing ||
+        me.state === StateEnum.Walking
+      )
+    ) c.click(GK.a)
+
+    /* 概率停跑 */
+    if (me.frame.state === StateEnum.Running && c.desire('idle_stop_run') < 100)
+      c.click(me.facing > 0 ? GK.L : GK.R);
   }
+
   override leave(): void {
     const { ctrl: c } = this;
     const me = c.entity;
     if (me.state === StateEnum.Drink)
-      c.click(GameKey.d)
+      c.click(GK.d)
   }
 }
 

@@ -70,9 +70,11 @@ export interface IBotDataSet {
    */
   d_desire?: number;
 
-  avoid_x?: number;
+  avoiding_in_x?: number;
+  avoiding_in_z?: number;
+  avoiding_out_x?: number;
+  avoiding_out_z?: number;
 
-  avoid_z?: number;
 }
 
 export class BotDataSet implements Required<IBotDataSet> {
@@ -127,9 +129,10 @@ export class BotDataSet implements Required<IBotDataSet> {
    */
   r_x_max = 2000;
 
-  avoid_x = 250;
-
-  avoid_z = 100;
+  avoiding_in_x = 200;
+  avoiding_in_z = 100;
+  avoiding_out_x = 300;
+  avoiding_out_z = 150;
 }
 
 export const bot_dataset_fields = fields<IBotDataSet>({
@@ -154,6 +157,8 @@ export const bot_dataset_fields = fields<IBotDataSet>({
   r_x_max: int,
   r_stop_desire: int,
   d_desire: int,
-  avoid_x: int,
-  avoid_z: int,
+  avoiding_in_x: int,
+  avoiding_in_z: int,
+  avoiding_out_x: int,
+  avoiding_out_z: int,
 })

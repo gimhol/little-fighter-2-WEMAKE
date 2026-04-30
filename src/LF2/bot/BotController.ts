@@ -16,7 +16,6 @@ import {
 } from "../defines";
 import { Ditto } from "../ditto";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
-import { manhattan_xz } from "../helper/manhattan_xz";
 import { abs, between, clamp, max, round, round_float } from "../utils";
 import { DummyEnum, dummy_updaters } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
@@ -250,60 +249,51 @@ export class BotController extends BaseController {
   /**
    * 判断是否应该躲避某个对象
    *
-   * @param {(Entity | null)} [e]
+   * @param {(Entity | null)} [av]
    * @return {*}  {boolean}
    * @memberof BotController
    */
-  should_avoid(e: Entity): boolean {
+  should_avoid(av: Entity): boolean {
     const { entity: me } = this;
     if (!me.is_attach) return false
-    if (!e.is_attach) return false
+    if (!av.is_attach) return false
     if (me.hp <= 0) return false
-    if (e.hp <= 0) return false;
+    if (av.hp <= 0) return false;
 
+    const bot_state = this.fsm.state?.key
+    const ret = bot_state === BotStateEnum.Avoiding ?
+      !this.is_leave_avoid_zone(av) :
+      this.is_enter_avoiding_zone(av);
 
-    const dxz = manhattan_xz(this.entity, e)
-    const too_close_dxz = 250
-    const too_far_dxz = 350
-    if (e.state === StateEnum.Lying) return dxz < too_close_dxz;
-    if (e.blinking) return dxz < too_close_dxz;
-    if (e.invulnerable) return dxz < too_close_dxz;
-    if (me.holding?.base_type === W_T.Drink) {
-      if (this.fsm.state?.key !== BotStateEnum.Avoiding) {
-        // 非逃跑的状态下，太近了，开始逃跑
-        return dxz < too_close_dxz;
-      } else {
-        // 逃跑的状态下，跑出一定距离，停止逃跑
-        return dxz < too_far_dxz;
-      }
-    }
-
+    if (av.state === StateEnum.Lying) return ret;
+    if (av.blinking) return ret;
+    if (av.invulnerable) return ret;
+    if (me.holding?.base_type === W_T.Drink) return ret;
 
     // 不再地上
     if (me.ground_y != me.position.y) return false;
 
-    if (
-      e.state == StateEnum.BrokenDefend ||
-      e.state == StateEnum.Caught ||
-      e.state == StateEnum.Falling ||
-      e.state == StateEnum.Drink ||
-      e.state == StateEnum.Frozen
-    ) return false
-
-    const abs_x = abs(me.position.x - e.position.x)
-    if (this.fsm.state?.key === BotStateEnum.Avoiding) {
+    const abs_x = abs(me.position.x - av.position.x)
+    if (bot_state === BotStateEnum.Avoiding) {
       const { atk_r_x } = this;
       return atk_r_x > 0 && atk_r_x > abs_x
     }
     return this.atk_m_x > abs_x
   }
-  
-  out_of_avoid_zone(av: Entity): boolean {
-    const { avoid_x, avoid_z } = this.dataset;
+
+  is_leave_avoid_zone(av: Entity): boolean {
+    const { avoiding_out_x, avoiding_out_z } = this.dataset;
     const { entity: me } = this
     const abs_x = abs(av.position.x - me.position.x);
     const abs_z = abs(av.position.z - me.position.z);
-    return abs_x > avoid_x && abs_z > avoid_z;
+    return abs_x > avoiding_out_x || abs_z > avoiding_out_z;
+  }
+  is_enter_avoiding_zone(av: Entity): boolean {
+    const { avoiding_in_x, avoiding_in_z } = this.dataset;
+    const { entity: me } = this
+    const abs_x = abs(av.position.x - me.position.x);
+    const abs_z = abs(av.position.z - me.position.z);
+    return abs_x < avoiding_in_x && abs_z < avoiding_in_z;
   }
 
   /**

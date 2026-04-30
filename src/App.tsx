@@ -887,17 +887,6 @@ function App() {
             <>全屏</>
             <>全屏✓</>
           </ToggleButton>
-          <StatusButton
-            items={[
-              { value: 0, label: "非同步渲染✓" },
-              { value: 1, label: "同步渲染✓" },
-              { value: 2, label: "同步渲染(x0.5)✓" },
-            ]}
-            parse={i => [i.value, i.label]}
-            value={app_state.sync_render}
-            onClick={() => { if (lf2) lf2.world.sync_render = (lf2.world.sync_render + 1) % 3 }}
-          />
-
         </Combine>
       </div>
       <div className={csses.settings_row}>
