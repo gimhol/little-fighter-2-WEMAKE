@@ -7,6 +7,9 @@ import type { BotController } from "../BotController";
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
   readonly ctrl: BotController
+  private _oz: number = -1
+  get oz() { return this._oz *= -1 }
+
   get world() { return this.ctrl.world }
   get stage() { return this.world.stage }
   constructor(ctrl: BotController) {
@@ -15,7 +18,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
   wanted_jumping() {
     const c = this.ctrl;
     const desire = c.desire('wj_1')
-    if (desire < c.dataset.jump_desire * 2) 
+    if (desire < c.dataset.jump_desire * 2)
       c.key_down(GK.j).key_up(GK.j)
   }
   random_jumping() {

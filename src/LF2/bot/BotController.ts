@@ -297,7 +297,14 @@ export class BotController extends BaseController {
     }
     return this.atk_m_x > abs_x
   }
-
+  
+  out_of_avoid_zone(av: Entity): boolean {
+    const { avoid_x, avoid_z } = this.dataset;
+    const { entity: me } = this
+    const abs_x = abs(av.position.x - me.position.x);
+    const abs_z = abs(av.position.z - me.position.z);
+    return abs_x > avoid_x && abs_z > avoid_z;
+  }
 
   /**
    * 判断是否应该防御某个对象
