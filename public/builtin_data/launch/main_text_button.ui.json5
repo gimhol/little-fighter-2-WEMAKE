@@ -7,7 +7,7 @@
   component: [
     "FitChildren()",
     {
-      name: "LabelButton",
+      cls: "LabelButton",
       properties: {
         back_label: "back_label",
         hover_label: "hover_label",

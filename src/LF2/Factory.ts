@@ -68,7 +68,7 @@ export class Factory {
 
       const clz = Factory.components.get(info.cls);
       if (!clz) {
-        Ditto.warn(`[${Factory.TAG}::create_components] Component not found! cls: ${info.cls}`);
+        Ditto.warn(`[${Factory.TAG}::create_components] Component not found! cls: ${info.cls}`, info);
         continue;
       }
       const id = info.id ?? `${info.cls}_${idx}`
