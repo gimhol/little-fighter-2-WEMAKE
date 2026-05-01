@@ -96,10 +96,12 @@ export async function cook_ui_info(
     const result = parse_call_func_expression(t);
     const ret: IComponentInfo = result ? {
       ...result,
+      cls: result.name,
       id: result.id || `no_id_${new_id()}`
     } : {
       id: `no_id_${new_id()}`,
-      name: t
+      name: t,
+      cls: t,
     }
     return ret;
   }).sort((a, b) => (b.weight || 0) - (a.weight || 0)) ?? [];

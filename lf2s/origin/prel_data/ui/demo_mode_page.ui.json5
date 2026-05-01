@@ -3,7 +3,7 @@
   id: "demo_mode_page",
   component: [
     {
-      name: "DemoModeLogic",
+      cls: "DemoModeLogic",
       properties: {
         focus_prefix: "focus_prefix",
         focus_on: "focus_on",
@@ -13,7 +13,7 @@
     },
     {
       id: "cam_ctrl",
-      name: "CameraCtrl",
+      cls: "CameraCtrl",
       properties: { },
     },
   ],
@@ -27,7 +27,7 @@
     "ui/fighter_stat_s_x8.ui.json5",
     {
       visible: true,
-      component: [ { name: "PauseHandling", properties: { reverse: true } } ],
+      component: [ { cls: "PauseHandling", properties: { reverse: true } } ],
       i18n: "DEMO",
       outlineColor: "#005A8E",
       outlineWidth: 4,
@@ -53,7 +53,7 @@
         fill_style: "white",
         font: "9px Arial",
       },
-      component: [ { name: "Alignment", properties: { right: "right", bottom: "bottom" } } ],
+      component: [ { cls: "Alignment", properties: { right: "right", bottom: "bottom" } } ],
       center: "1,1",
     },
     {
@@ -69,9 +69,9 @@
       component: [
         {
           id: "focus_prefix",
-          name: "Label",
+          cls: "Label",
         },
-        { name: "Alignment", properties: { left: "left", bottom: "bottom" } },
+        { cls: "Alignment", properties: { left: "left", bottom: "bottom" } },
       ],
       center: "0,1",
     },
@@ -88,10 +88,10 @@
       component: [
         {
           id: "focus_on",
-          name: "Label",
+          cls: "Label",
         },
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: { left: "right", bottom: "bottom", followed: { l: "id:curr_focus_prefix" } },
         },
       ],

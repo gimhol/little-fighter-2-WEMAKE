@@ -3,7 +3,7 @@
   name: "UI: 八人框",
   component: [
     {
-      name: "CharMenuLogic",
+      cls: "CharMenuLogic",
       properties: {
         max_player: 8,
       },
@@ -18,7 +18,7 @@
           pos: "0, 0",
           component: [
             {
-              name: "CharMenuHead",
+              cls: "CharMenuHead",
               properties: {
                 countdown_label: "countdown_label",
                 hints_node: "hints",
@@ -32,7 +32,7 @@
               pos: "60, 60",
               center: "0.5,0.5",
               size: "120, 120",
-              component: [{ id: "head_pic", name: "Picture" }],
+              component: [{ id: "head_pic", cls: "Picture" }],
             },
             {
               id: "hints",
@@ -56,7 +56,7 @@
               component: [
                 {
                   id: "countdown_label",
-                  name: "Label",
+                  cls: "Label",
                 },
               ],
             },

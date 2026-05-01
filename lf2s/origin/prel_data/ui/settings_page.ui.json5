@@ -23,7 +23,7 @@
       center: "0.5,0",
       component: [
         {
-          name: "Flex",
+          cls: "Flex",
           properties: {
             direction: "column",
             fit: true,
@@ -52,11 +52,11 @@
           ],
           component: [
             {
-              name: "Flex",
+              cls: "Flex",
               properties: { direction: "row", fit: true, gap: 20 },
             },
             {
-              name: "FlexItem",
+              cls: "FlexItem",
               properties: { align: "center" },
             },
           ],

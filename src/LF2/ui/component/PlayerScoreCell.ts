@@ -8,7 +8,7 @@ export class PlayerScoreCell extends UIComponent {
   private _text_loader = new UITextLoader(() => this.node)
     .set_style(() => this.get_style())
   get kind() {
-    return this.args[0];
+    return this.info.args[0];
   }
   get player_score() {
     return this.node.lookup_component(PlayerScore);

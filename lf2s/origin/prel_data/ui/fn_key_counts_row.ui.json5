@@ -34,14 +34,14 @@
       outlineColor: "#000000",
       outlineWidth: 1,
       outlineAlpha: 1,
-      component: [ { name: "Label" } ],
+      component: [ { cls: "Label" } ],
     },
     {
       visible: false,
       id: "fn_key_counts",
       component: [
         {
-          name: "Flex",
+          cls: "Flex",
         },
       ],
       items: [
@@ -60,7 +60,7 @@
           outlineWidth: 1,
           outlineAlpha: 1,
           style: "$val:txt_style",
-          component: [ { id: "f6", name: "Text" } ],
+          component: [ { id: "f6", cls: "Text" } ],
         },
         {
           i18n: " F7: ",
@@ -77,7 +77,7 @@
           outlineWidth: 1,
           outlineAlpha: 1,
           style: "$val:txt_style",
-          component: [ { id: "f7", name: "Text" } ],
+          component: [ { id: "f7", cls: "Text" } ],
         },
         {
           i18n: " F8: ",
@@ -94,7 +94,7 @@
           outlineWidth: 1,
           outlineAlpha: 1,
           style: "$val:txt_style",
-          component: [ { id: "f8", name: "Text" } ],
+          component: [ { id: "f8", cls: "Text" } ],
         },
         {
           i18n: " F9: ",
@@ -111,7 +111,7 @@
           outlineWidth: 1,
           outlineAlpha: 1,
           style: "$val:txt_style",
-          component: [ { id: "f9", name: "Text" } ],
+          component: [ { id: "f9", cls: "Text" } ],
         },
         {
           i18n: " F10: ",
@@ -128,7 +128,7 @@
           outlineWidth: 1,
           outlineAlpha: 1,
           style: "$val:txt_style",
-          component: [ { id: "f10", name: "Text" } ],
+          component: [ { id: "f10", cls: "Text" } ],
         },
       ],
     },

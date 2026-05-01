@@ -3,7 +3,7 @@
   id: "jalousie_ew",
   component: [
     {
-      name: "Jalousie",
+      cls: "Jalousie",
       properties: {
         direction: "row",
         align: "stretch",

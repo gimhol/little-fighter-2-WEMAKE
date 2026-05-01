@@ -46,7 +46,7 @@
     {
       component: [
         {
-          name: "Jalousie",
+          cls: "Jalousie",
           properties: {
             direction: "column",
             align: "stretch",
@@ -55,7 +55,7 @@
           },
         },
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             right: "right",

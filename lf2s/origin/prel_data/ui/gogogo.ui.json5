@@ -14,7 +14,7 @@
   component: [
     {
       id: "play_gogogo",
-      name: "ComponentsPlayer",
+      cls: "ComponentsPlayer",
       enabled: false,
       properties: {
         components: [ "sounds", "opacity_flash" ],
@@ -24,13 +24,13 @@
     },
     {
       id: "sounds",
-      name: "Sounds",
+      cls: "Sounds",
       enabled: false,
       args: [ "350", "ok", "800", "ok", "800", "ok" ],
     },
     {
       id: "opacity_flash",
-      name: "OpacityFlash",
+      cls: "OpacityFlash",
       enabled: false,
       properties: {
         times: 3,
@@ -38,7 +38,7 @@
       },
     },
     {
-      name: "Alignment",
+      cls: "Alignment",
       properties: {
         right: "right",
         top: "top",

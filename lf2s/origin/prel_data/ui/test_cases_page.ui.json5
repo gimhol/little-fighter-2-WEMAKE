@@ -1,14 +1,9 @@
 {
   id: "test_cases_page",
   name: "页面：测试用例",
-  component: [ "Tests" ],
-  values: {
-    txt_style: {
-      fill_style: "white",
-      font: "12px Arial"
-    },
-  },
+  component: ["Tests"],
   items: [
+    "ui/center_pause_label.ui.json5",
     {
       i18n: "[Left | Right]: Switch Test Case   [Up | Down]: Switch Test Group   [Attack]: Replay   [F4]: Exit",
       style: "$val:txt_style",
@@ -17,7 +12,7 @@
       outlineAlpha: 1,
       center: "0,1",
       pos: "0, 450",
-      component: [ "Text()" ],
+      component: [{ cls: "Label" }],
     },
     {
       i18n: "None",
@@ -26,8 +21,8 @@
       outlineWidth: 1,
       outlineAlpha: 1,
       center: "0,0",
-      pos: "0",
-      component: [ { id: "test_case_name", name: "Text" } ],
+      pos: "0,0",
+      component: [{ id: "test_case_name", cls: "Label" }],
     },
   ],
 }

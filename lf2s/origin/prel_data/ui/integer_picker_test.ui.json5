@@ -15,7 +15,7 @@
       },
       component: [
         {
-          name: "IntegerPicker",
+          cls: "IntegerPicker",
           properties: { min: 0, max: 8, val: 8 },
         },
       ],
@@ -32,7 +32,7 @@
       },
       component: [
         {
-          name: "IntegerPicker",
+          cls: "IntegerPicker",
           properties: {
             min: 0,
             max: 8,
@@ -54,7 +54,7 @@
       },
       component: [
         {
-          name: "IntegerPicker",
+          cls: "IntegerPicker",
           properties: {
             min: 0,
             max: 8,
@@ -76,7 +76,7 @@
       },
       component: [
         {
-          name: "IntegerPicker",
+          cls: "IntegerPicker",
           properties: {
             min: 0,
             max: 8,

@@ -30,7 +30,7 @@
       _color: "red",
       component: [
         {
-          name: "Flex",
+          cls: "Flex",
           properties: {
             direction: "column",
             align: "center",

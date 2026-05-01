@@ -4,7 +4,7 @@
   // color: "gray",
   component: [
     {
-      name: "Alignment",
+      cls: "Alignment",
       properties: {
         left: "left",
         top: "top",
@@ -21,7 +21,7 @@
       // disabled: true,
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -38,7 +38,7 @@
       // disabled: true,
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             top: "top",

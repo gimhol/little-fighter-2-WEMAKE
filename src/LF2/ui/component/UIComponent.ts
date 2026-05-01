@@ -52,12 +52,11 @@ export class UIComponent<
   log(...args: any[]): void { }
 
   id: string = '';
+  name: string = ''
   get lf2() { return this.node.lf2; }
   get world() { return this.node.lf2.world; }
   mounted: boolean = false;
 
-  /** @deprecated */
-  private _args: readonly any[] = [];
   private _enabled: boolean = true;
 
   get enabled() { return this._enabled; }
@@ -66,9 +65,6 @@ export class UIComponent<
 
   get disabled() { return !this.enabled }
   set disabled(v: boolean) { this.set_enabled(!v); }
-
-  /** @deprecated */
-  get args(): readonly string[] { return this._args; }
 
   /**
    * 组件基类构造函数
@@ -79,7 +75,7 @@ export class UIComponent<
    * @param {string} f_name 组件在工厂中的名字
    * @param {IComponentInfo} info
    */
-  constructor(layout: UINode, f_name: string, info: Required<IComponentInfo>, args: any[]) {
+  constructor(layout: UINode, f_name: string, info: Required<IComponentInfo>) {
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
@@ -87,20 +83,22 @@ export class UIComponent<
       ...info.props,
       ...info.properties
     }, this)
-    this._args = args;
+    this._enabled = info.enabled;
+    this.id = info.id
+    this.name = info.name;
     make_debugging(this);
   }
   init?(): void;
   /** @deprecated */
   num(idx: number): number | null {
-    if (idx >= this._args.length) return null;
-    const num = Number(this._args[idx]);
+    if (idx >= this.info.args.length) return null;
+    const num = Number(this.info.args[idx]);
     return is_num(num) ? num : null;
   }
   /** @deprecated */
   str(idx: number): string | null {
-    if (idx >= this._args.length) return null;
-    return '' + this._args[idx]
+    if (idx >= this.info.args.length) return null;
+    return '' + this.info.args[idx]
   }
   /** @deprecated */
   bool(idx: number): boolean {
@@ -118,13 +116,13 @@ export class UIComponent<
   /** @deprecated */
   nums(idx: number, length: number): number[] | null;
   nums(idx: number, length: number): number[] | null {
-    if (idx >= this._args.length) return null;
+    if (idx >= this.info.args.length) return null;
 
     const key = `nums_${idx}_${length}`
     const cache = this._args_caches.get(key)
     if (cache) return cache;
 
-    let raw = this._args[idx];
+    let raw = this.info.args[idx];
     raw = typeof raw === 'string' ? raw.split(',') : raw
     if (Array.isArray(raw)) {
       if (raw.length < length) {

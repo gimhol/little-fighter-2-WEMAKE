@@ -18,7 +18,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const c = this.ctrl;
     const desire = c.desire('wj_1')
     if (desire < c.dataset.jump_desire * 2)
-      c.key_down(GK.j).key_up(GK.j)
+      c.click(GK.j)
   }
   random_jumping() {
     const c = this.ctrl;
@@ -26,11 +26,11 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const desire = c.desire('rj_1')
     switch (state) {
       case StateEnum.Running:
-        if (desire < c.dataset.dash_desire) c.key_down(GK.j).key_up(GK.j)
+        if (desire < c.dataset.dash_desire) c.click(GK.j)
         break;
       case StateEnum.Standing:
       case StateEnum.Walking:
-        if (desire < c.dataset.jump_desire) c.key_down(GK.j).key_up(GK.j)
+        if (desire < c.dataset.jump_desire) c.click(GK.j)
         break;
     }
   }

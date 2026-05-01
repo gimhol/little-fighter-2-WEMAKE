@@ -25,7 +25,7 @@
       ],
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: { left: "left", top: "top", offset: { l: 10, t: 10 } },
         },
       ],
@@ -41,7 +41,7 @@
       ],
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: { right: "right", top: "top", offset: { r: -10, t: 10 } },
         },
       ],
@@ -57,7 +57,7 @@
       ],
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             bottom: "bottom",
@@ -77,7 +77,7 @@
       ],
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             bottom: "bottom",
@@ -91,7 +91,7 @@
       id: "tttt",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             right: "left",
@@ -107,7 +107,7 @@
       id: "llll",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -124,7 +124,7 @@
       size: "120,80",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "mid",
             top: "bottom",
@@ -140,7 +140,7 @@
       color: "rgba(255,255,0,1)",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "mid",
             top: "bottom",
@@ -156,7 +156,7 @@
       size: "80,120",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             top: "mid",
@@ -172,7 +172,7 @@
       color: "rgba(255,255,0,1)",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             top: "mid",

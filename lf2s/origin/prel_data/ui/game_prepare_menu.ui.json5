@@ -21,7 +21,7 @@
       component: [
         "ReachableGroup(menu,ud,menu)",
         {
-          name: "Flex",
+          cls: "Flex",
           properties: {
             direction: "column",
             align: "center",
@@ -70,7 +70,7 @@
           id: "background_row",
           component: [
             {
-              name: "Flex",
+              cls: "Flex",
               properties: {
                 direction: "row",
                 align: "center",
@@ -106,7 +106,7 @@
                     fill_style: "#9b9bff",
                     font: "16px Arial",
                   },
-                  component: [{ id: "BackgroundSwitcher", name: "BackgroundSwitcher" }],
+                  component: [{ id: "BackgroundSwitcher", cls: "BackgroundSwitcher" }],
                 },
               ],
             },
@@ -116,7 +116,7 @@
           id: "stage_row",
           component: [
             {
-              name: "Flex",
+              cls: "Flex",
               properties: {
                 direction: "row",
                 align: "center",
@@ -152,7 +152,7 @@
                     fill_style: "#9b9bff",
                     font: "16px Arial",
                   },
-                  component: [{ name: "StageSwitcher", id: "StageSwitcher" }],
+                  component: [{ cls: "StageSwitcher", id: "StageSwitcher" }],
                 },
               ],
             },
@@ -162,7 +162,7 @@
           id: "difficulty_row",
           component: [
             {
-              name: "Flex",
+              cls: "Flex",
               properties: {
                 direction: "row",
                 align: "center",

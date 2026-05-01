@@ -40,7 +40,7 @@
       pos: "0, 450",
       i18n: "",
       style: { fill_style: "white" },
-      component: [{ name: "BGMSwitcher", args: [0] }, "OpacityHover(0.7,1)"],
+      component: [{ cls: "BGMSwitcher", args: [0] }, "OpacityHover(0.7,1)"],
     },
   ],
   actions: {

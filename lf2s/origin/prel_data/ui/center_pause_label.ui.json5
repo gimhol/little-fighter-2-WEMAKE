@@ -2,7 +2,7 @@
   name: "UI：居中暂停文本",
   id: "center_pause_label",
   visible: false,
-  component: [ { name: "PauseHandling" } ],
+  component: [ { cls: "PauseHandling" } ],
   i18n: "PAUSE",
   outlineColor: "#005A8E",
   outlineWidth: 4,

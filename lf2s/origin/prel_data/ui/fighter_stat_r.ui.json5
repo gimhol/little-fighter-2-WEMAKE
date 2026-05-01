@@ -34,7 +34,7 @@
       center: "1,0",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -54,7 +54,7 @@
       color: "black",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             top: "top",
@@ -71,7 +71,7 @@
           component: [
             {
               id: "head_img",
-              name: "Picture",
+              cls: "Picture",
             },
           ],
         },
@@ -82,7 +82,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "left",
             bottom: "bottom",
@@ -98,7 +98,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "left",
             bottom: "bottom",
@@ -114,7 +114,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             top: "bottom",
@@ -131,7 +131,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             top: "top",
@@ -147,7 +147,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             top: "bottom",
@@ -164,7 +164,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             top: "bottom",
@@ -181,7 +181,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             top: "top",
@@ -205,10 +205,10 @@
       component: [
         {
           id: "name_txt",
-          name: "Text",
+          cls: "Text",
         },
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             right: "right",
             bottom: "top",

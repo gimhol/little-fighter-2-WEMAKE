@@ -32,7 +32,7 @@
       center: "0,0",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -59,7 +59,7 @@
           component: [
             {
               id: "head_img",
-              name: "Picture",
+              cls: "Picture",
             },
           ],
         },
@@ -70,7 +70,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             bottom: "bottom",
@@ -87,7 +87,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             bottom: "bottom",
@@ -104,7 +104,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -121,7 +121,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -137,7 +137,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -154,7 +154,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -171,7 +171,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -195,10 +195,10 @@
       component: [
         {
           id: "name_txt",
-          name: "Text",
+          cls: "Text",
         },
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             bottom: "top",

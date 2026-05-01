@@ -5,7 +5,7 @@
   size: "794, 794",
   component: [
     {
-      name: "LaunchPage",
+      cls: "LaunchPage",
       properties: {
         entry: "entry",
         loading_anim: "loading_anim",
@@ -58,18 +58,18 @@
         "!OpacityAnimation(0,1, 0,500, 1,500, 1,2500)",
         {
           id: "scale_in",
-          name: "ScaleAnimation",
+          cls: "ScaleAnimation",
           enabled: false,
           args: [0, 1, "0.2,0.2,0.2", 500, "2,2,2", 250, "1,1,1", 250],
         },
         {
           id: "move_in",
-          name: "PositionAnimation",
+          cls: "PositionAnimation",
           args: [0, 1, "397,150,1", 500, "319,150,1", 500],
         },
         {
           id: "scale_out",
-          name: "ScaleAnimation",
+          cls: "ScaleAnimation",
           enabled: false,
           args: [0, 1, "1,1,1", 500, "0.2,0.2,0.2", 500],
         },
@@ -90,18 +90,18 @@
         "!OpacityAnimation(0,1, 0,500, 1,500, 1,2500)",
         {
           id: "scale_in",
-          name: "ScaleAnimation",
+          cls: "ScaleAnimation",
           args: [0, 1, "0.2,0.2,0.2", 500, "2,2,2", 250, "1,1,1", 250],
         },
         {
           id: "scale_out",
-          name: "ScaleAnimation",
+          cls: "ScaleAnimation",
           enabled: false,
           args: [0, 1, "1,1,1", 500, "0.2,0.2,0.2", 500],
         },
         {
           id: "move_in",
-          name: "PositionAnimation",
+          cls: "PositionAnimation",
           enabled: false,
           args: [0, 1, "397,150,1", 500, "477,150,1", 500],
         },
@@ -121,7 +121,7 @@
         "<opacity>!OpacityAnimation(0,1, 0,500, 1,500, 1,2500)",
         {
           id: "move_in",
-          name: "PositionAnimation",
+          cls: "PositionAnimation",
           args: [0, 1, "397,150,1", 500, "397,230,1", 500],
         },
       ],
