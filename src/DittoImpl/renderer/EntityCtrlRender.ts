@@ -1,4 +1,4 @@
-import { type Entity, GameKey, IVector3Like, GKLabels, round, is_bot_ctrl } from "@/LF2";
+import { type Entity, GameKey, IVector3Like, GKLabels, round, is_bot_ctrl, clamp } from "@/LF2";
 import { Object3D } from "three";
 import * as T from "../_t";
 import { BAR_BG_W } from "./EntityStatRender";
@@ -75,9 +75,15 @@ export class EntityCtrlRender {
     for (const [key, node] of this.ctrls) {
       node.visible = !this.entity.ctrl.is_end(key);
     }
-    const _x = round(x);
+
+    const hw = 40;
+    const min_x = this.world_renderer.cam_x + hw;
+    const max_x = min_x + (world.screen_w / world.transform.scale_x) - 2 * hw;
+    const _x = clamp(x, min_x, max_x);
+    // const _x = round(x);
     let _y = round(25 + y - z / 2 + centery);
     const _z = round(z);
+
     this.ctrl_node.position.set(_x, _y, _z);
     do {
       const bot = this.ctrls.get('bot');

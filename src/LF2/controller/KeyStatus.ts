@@ -39,7 +39,7 @@ export class KeyStatus {
   constructor(ctrl: typeof this.ctrl) {
     this.ctrl = ctrl;
   }
-  use() {
+  use(): number {
     this._used = 1;
     return this._d_time;
   }

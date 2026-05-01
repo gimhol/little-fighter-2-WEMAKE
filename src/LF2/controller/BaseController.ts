@@ -307,27 +307,28 @@ export class BaseController {
     let F: "L" | "R" = facing === 1 ? "R" : "L";
     let B: "L" | "R" = facing === 1 ? "L" : "R";
 
-    if (kd_map) {
+    if (kd_map && !ret.time) {
       /** 相对方向的按钮判定 */
-      if (kd_map.F && this.tst('kd', F) && !ret.time)
+      if (kd_map.F && this.tst('kd', F))
         ret.set(kd_map.F, this.keys[F].time, F);
-      if (kd_map.B && this.tst("kd", B) && !ret.time)
+      if (kd_map.B && this.tst("kd", B))
         ret.set(kd_map.B, this.keys[B].time, B);
     }
-    if (ku_map) {
+    if (ku_map && !ret.time) {
       /** 相对方向的按钮判定 */
-      if (ku_map.F && this.tst("ku", F) && !ret.time)
+      if (ku_map.F && this.tst("ku", F))
         ret.set(ku_map.F, this.keys[F].time, F);
-      if (ku_map.B && this.tst("ku", B) && !ret.time)
+      if (ku_map.B && this.tst("ku", B))
         ret.set(ku_map.B, this.keys[B].time, B);
     }
-    if (hit) {
+    if (hit && !ret.time) {
       /** 相对方向的按钮判定 */
-      if (hit.F && this.tst("hit", F) && !ret.time)
+      if (hit.F && this.tst("hit", F))
         ret.set(hit.F, this.keys[F].use(), F);
-      if (hit.B && this.tst("hit", B) && !ret.time)
+      if (hit.B && this.tst("hit", B))
         ret.set(hit.B, this.keys[B].use(), B);
-
+    }
+    if (hit) {
       /** 相对方向的双击判定 */
       if (hit.FF && this.tst("dbl", F)) ret.set(hit.FF, this.dbc[F].time);
       if (hit.BB && this.tst("dbl", B)) ret.set(hit.BB, this.dbc[B].time);
@@ -342,26 +343,26 @@ export class BaseController {
     for (const name of AGK) {
       const key = this.keys[name];
 
-      if (kd_map) {
+      if (kd_map && !ret.time) {
         /** 按键判定 */
         let act = kd_map[name];
-        if (act && this.tst("kd", name) && !ret.time) {
+        if (act && this.tst("kd", name)) {
           ret.set(act, key.time, name);
           break;
         }
       }
-      if (ku_map) {
+      if (ku_map && !ret.time) {
         /** 按键判定 */
         let act = ku_map[name];
-        if (act && this.tst("ku", name) && !ret.time) {
+        if (act && this.tst("ku", name)) {
           ret.set(act, key.time, name);
           break;
         }
       }
-      if (hit) {
+      if (hit && !ret.time) {
         /** 按键判定 */
         let act = hit[name];
-        if (act && this.tst("hit", name) && !ret.time) {
+        if (act && this.tst("hit", name)) {
           ret.set(act, key.use(), name);
           break;
         }
@@ -374,10 +375,10 @@ export class BaseController {
           break;
         }
       }
-      if (hld) {
+      if (hld && !ret.time) {
         /** 长按判定 */
         let act = hld[name];
-        if (act && this.tst("hld", name) && !ret.time) {
+        if (act && this.tst("hld", name)) {
           ret.set(act, key.time, name);
         }
       }

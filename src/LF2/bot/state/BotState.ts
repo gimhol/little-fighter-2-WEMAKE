@@ -7,8 +7,7 @@ import type { BotController } from "../BotController";
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
   readonly ctrl: BotController
-  private _oz: number = -1
-  get oz() { return this._oz *= -1 }
+
 
   get world() { return this.ctrl.world }
   get stage() { return this.world.stage }
