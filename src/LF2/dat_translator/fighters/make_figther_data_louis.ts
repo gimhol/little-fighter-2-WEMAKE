@@ -16,9 +16,9 @@ import { frames } from "./frames";
 export function make_figther_data_louis(data: IEntityData): IEntityData {
   data.base.armor = {
     hit_sounds: ["data/085.wav.mp3"],
-    type: ArmorEnum.Defend,
+    type: ArmorEnum.Times,
     fulltime: false,
-    toughness: 30,
+    toughness: 2,
   };
   for (const k in data.frames) {
     const ja = data.frames[k].seqs?.["ja"];

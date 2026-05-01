@@ -12,7 +12,7 @@ export function make_fighter_data_knigt(data: IEntityData): IEntityData {
   data.base.armor = {
     hit_sounds: ["data/085.wav.mp3"],
     type: ArmorEnum.Defend,
-    toughness: 90,
+    toughness: 120,
   };
   BotBuilder.make(data).set_dataset({
     w_atk_x: 90,
