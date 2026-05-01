@@ -37,6 +37,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     super.on_pause?.();
     this.world.clear();
     this._ticker?.release();
+    this._ticker = null
   }
 
   add_fighter() {

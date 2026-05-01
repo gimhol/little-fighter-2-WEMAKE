@@ -1016,7 +1016,7 @@ export class World extends WorldDataset {
   ticker(): Ticker {
     let ret = this.ticker_pool.pop();
     if (!ret) this.tickers.add(ret = new Ticker(this.lf2));
-    else ret.reborn()
+    else this.tickers.add(ret.reborn())
     return ret;
   }
 }
