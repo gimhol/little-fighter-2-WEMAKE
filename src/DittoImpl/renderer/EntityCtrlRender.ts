@@ -26,8 +26,8 @@ export class EntityCtrlRender {
     const f = 7;
     const ox = -25;
     const map = new Map<GameKey | 'bot' | 'keys', IVector3Like>([
-      ['keys', new T.Vector3(ox, f * 4, 0)],
-      ['bot', new T.Vector3(ox, f * 2, 0)],
+      ['bot', new T.Vector3(ox, f * 4, 0)],
+      ['keys', new T.Vector3(ox, f * 2, 0)],
       [GameKey.U, new T.Vector3(ox + f * -1.5, f * 1, 0)],
       [GameKey.D, new T.Vector3(ox + f * -1.5, f * -1, 0)],
       [GameKey.L, new T.Vector3(ox + f * -2.5, f * 0, 0)],
