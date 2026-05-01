@@ -14,24 +14,13 @@ import { is_armor_work } from "./is_armor_work";
 export function handle_armor(collision: ICollision): boolean {
   const { victim, attacker } = collision;
   const { armor } = victim;
-
-  /* 无护甲 或 护甲耐久为0 */
+  /* 无护甲 */
   if (!armor || !is_armor_work(collision))
     return false;
 
   const { itr, a_cube, b_cube } = collision;
-  /* 判断是否强制破防 */
-  const { bdefend = 0 } = itr;
-  const {
-    type,
-    hit_sounds,
-    injury_ratio = Defines.DEFAULT_ARMOR_INJURY_RATIO,
-    motionless_ratio = Defines.DEFAULT_ARMOR_MOTIONLESS_RATIO,
-    shaking_ratio = Defines.DEFAULT_ARMOR_SHAKING_RATIO,
-    dead_sounds = hit_sounds
-  } = armor;
-  const { injury = 0 } = itr;
-  const fall = attacker.itr_fall(itr)
+  const { bdefend = 0, injury = 0, fall = attacker.itr_fall(itr) } = itr;
+  const { type } = armor
   let decrease_value = 0;
   switch (type) {
     case ArmorEnum.Fall: decrease_value = fall; break;
@@ -39,7 +28,19 @@ export function handle_armor(collision: ICollision): boolean {
     case ArmorEnum.Times: decrease_value = 1; break;
     case ArmorEnum.Injury: decrease_value = injury; break;
   }
+
+  /* 护甲耐久为0 */
   victim.toughness -= decrease_value;
+  if (victim.toughness <= 0)
+    return false;
+
+  const {
+    hit_sounds,
+    injury_ratio = Defines.DEFAULT_ARMOR_INJURY_RATIO,
+    motionless_ratio = Defines.DEFAULT_ARMOR_MOTIONLESS_RATIO,
+    shaking_ratio = Defines.DEFAULT_ARMOR_SHAKING_RATIO,
+    dead_sounds = hit_sounds
+  } = armor;
   const [x, y, z] = victim.spark_point(a_cube, b_cube);
   const spark_type = fall >= Defines.DEFAULT_FALL_VALUE_CRITICAL ?
     SparkEnum.SilentCriticalHit :
