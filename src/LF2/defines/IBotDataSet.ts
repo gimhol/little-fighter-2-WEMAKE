@@ -129,9 +129,9 @@ export class BotDataSet implements Required<IBotDataSet> {
    */
   r_x_max = 2000;
 
-  avoiding_in_x = 200;
+  avoiding_in_x = 180;
   avoiding_in_z = 100;
-  avoiding_out_x = 300;
+  avoiding_out_x = 250;
   avoiding_out_z = 150;
 }
 
