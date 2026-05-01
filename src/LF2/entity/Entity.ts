@@ -1195,9 +1195,9 @@ export class Entity {
 
 
     // 此处不要 * atom_time
-    if (vxm == SpeedMode.AccTo && acc_x == void 0 && dvx) acc_x = dvx;
-    if (vym == SpeedMode.AccTo && acc_y == void 0 && dvy) acc_y = dvy;
-    if (vzm == SpeedMode.AccTo && acc_z == void 0 && dvz) acc_z = dvz;
+    if (vxm == SpeedMode.AccTo && acc_x == void 0 && vinfo.dvx) acc_x = vinfo.dvx;
+    if (vym == SpeedMode.AccTo && acc_y == void 0 && vinfo.dvy) acc_y = vinfo.dvy;
+    if (vzm == SpeedMode.AccTo && acc_z == void 0 && vinfo.dvz) acc_z = vinfo.dvz;
     if (acc_x) acc_x = round_float(acc_x * atom_time)
     if (acc_y) acc_y = round_float(acc_y * atom_time)
     if (acc_z) acc_z = round_float(acc_z * atom_time)
