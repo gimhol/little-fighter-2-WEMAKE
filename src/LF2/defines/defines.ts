@@ -60,7 +60,8 @@ export namespace Defines {
       right: MODERN_SCREEN_WIDTH * 2,
       far: -40,
       near: -0,
-      group: []
+      group: [],
+      zoom: [0.5, 0.5, 0.5]
     },
   };
   export const RANDOM_BG: IBgData = {
@@ -102,8 +103,8 @@ export namespace Defines {
   }
   export const CheatInfos = new Map<CheatType, ICheatInfo>([
     [CheatType.LF2_NET, { keys: "lf2.net", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.a, GK.d, GK.a].join(''), sound: "data/m_pass.wav.mp3" }],
-    [CheatType.HERO_FT, { keys: "herofighter.com", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.j, GK.a, GK.j, GK.a].join(''), sound: "data/m_end.wav.mp3"  }],
-    [CheatType.GIM_INK, { keys: "gim.ink", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.j, GK.d, GK.j].join(''), sound: "data/093_r.wav.mp3"  }],
+    [CheatType.HERO_FT, { keys: "herofighter.com", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.j, GK.a, GK.j, GK.a].join(''), sound: "data/m_end.wav.mp3" }],
+    [CheatType.GIM_INK, { keys: "gim.ink", gkeys: [GK.U, GK.U, GK.D, GK.D, GK.L, GK.R, GK.L, GK.R, GK.d, GK.j, GK.d, GK.j].join(''), sound: "data/093_r.wav.mp3" }],
   ]);
   export const Sounds = {
     StagePass: "data/m_pass.wav.mp3",

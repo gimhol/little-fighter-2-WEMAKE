@@ -21,7 +21,6 @@ export class LittleFunnyAutoGame extends UIComponent {
   override on_resume(): void {
     super.on_resume?.()
     this._lr = 0;
-    this.world.transform.scale_to(0.5, 0.5, 0.5)
     this.world.paused = false;
     this.lf2.change_bg('')
     this._ticker = this.world.ticker().set_range(0, 180).set_lifes(1)
@@ -57,6 +56,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.wakeup_invuln = true;
     fighter.blinking = 64
     fighter.dead_gone = true;
+    fighter.name_visible = false
     fighter.attach()
     fighter.enter_frame({ id: "running_0" })
     this._lr = (this._lr + 1) % 2

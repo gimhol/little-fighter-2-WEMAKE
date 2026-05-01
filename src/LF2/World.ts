@@ -83,6 +83,7 @@ export class World extends WorldDataset {
     if (v === this._bg) return;
     const o = this._bg;
     this._bg = v;
+    this.transform.scale_to(...this._bg.zoom)
     o.dispose();
   }
   get stage() {
@@ -154,6 +155,7 @@ export class World extends WorldDataset {
     super()
     this.lf2 = lf2;
     this._bg = new Background(this, Defines.VOID_BG);
+    this.transform.scale_to(...this._bg.zoom)
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
   }
@@ -448,7 +450,7 @@ export class World extends WorldDataset {
     stage.change_bg(bg_data);
     this.stage = stage
   }
-  
+
   change_stage(stage_id: string | undefined) {
     const stage_data = this.lf2.datas.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
     if (stage_data == this.stage.data) return;
@@ -1005,7 +1007,6 @@ export class World extends WorldDataset {
       this.stage = new Stage(this, Defines.VOID_STAGE)
     if (this.stage.bg.id !== Defines.VOID_BG.id)
       this.stage.change_bg(Defines.VOID_BG)
-    this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;
     this.callbacks.emit('on_counts')();

@@ -3,7 +3,7 @@
   id: "fighter_stat_l",
   component: [
     {
-      name: "FighterStatBar",
+      cls: "FighterStatBar",
       properties: {
         dark_hp_bar: "dark_hp",
         hp_bar: "hp",
