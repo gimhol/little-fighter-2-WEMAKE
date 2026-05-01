@@ -286,10 +286,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     for (const [cheat_name, { keys: k, gkeys: g }] of D.Defines.CheatInfos) {
       for (const [pid, gkeys] of this._gkeys) {
         if (g.startsWith(gkeys)) this._gkeys_matchs.add(pid);
-        if (g === gkeys) this.cmds.push(cheat_name, '1')
+        if (g === gkeys) this.set_cheat(cheat_name)
       }
       if (k.startsWith(this._keys)) match = true;
-      if (k === this._keys) this.cmds.push(cheat_name, '1')
+      if (k === this._keys) this.set_cheat(cheat_name)
     }
     for (const [k] of this._gkeys)
       if (!this._gkeys_matchs.has(k))
