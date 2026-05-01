@@ -146,7 +146,7 @@ export class BaseController {
   is_db_hit(k: LGK): boolean {
     const dbc = this.dbc[k]
     const { time, data: [d0, d1] } = dbc;
-    const ret = time >= 0 && this.time - time <= this.entity.world.key_hit_duration;
+    const ret = time > 0 && this.time - time <= this.entity.world.key_hit_duration;
     if (!ret) return false
     if (!d0 || !d1) return true;
     // stupid...
