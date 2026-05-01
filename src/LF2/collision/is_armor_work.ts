@@ -10,8 +10,8 @@ export function is_armor_work(collision: ICollision): boolean {
   const { victim } = collision;
   const { armor } = victim;
 
-  /* 无护甲 或 护甲耐久为0 */
-  if (!armor || victim.toughness <= 0)
+  /* 无护甲 */
+  if (!armor)
     return false;
 
   /* 受击帧护甲无效 */

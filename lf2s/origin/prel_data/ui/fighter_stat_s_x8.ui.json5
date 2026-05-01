@@ -8,7 +8,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             top: "top",
             left: "left",
@@ -23,7 +23,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             followed: "bro:0",
             top: "top",
@@ -39,7 +39,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             followed: "bro:1",
             top: "top",
@@ -55,7 +55,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             followed: "bro:2",
             top: "top",
@@ -71,7 +71,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             top: "bottom",
             left: "left",
@@ -87,7 +87,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             top: "bottom",
             left: "left",
@@ -103,7 +103,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             top: "bottom",
             left: "left",
@@ -119,7 +119,7 @@
       template: "ui/fighter_stat_s.ui.json5",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             top: "bottom",
             left: "left",

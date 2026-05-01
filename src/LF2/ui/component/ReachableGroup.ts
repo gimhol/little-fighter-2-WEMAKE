@@ -8,15 +8,15 @@ export class ReachableGroup extends UIComponent {
   static override readonly TAGS: string[] = ["ReachableGroup"];
   protected reachables: Reachable[] = [];
 
-  get name(): string { return this.args[0] || ""; }
-  get direction(): string { return this.args[1] || ""; }
+  get group(): string { return this.info.args[0] || ""; }
+  get direction(): string { return this.info.args[1] || ""; }
   get binded_layout(): UINode {
-    const lid = this.args[2];
+    const lid = this.info.args[2];
     if (!lid) return this.node;
     return this.node.root.find_child(lid) || this.node;
   }
   override on_start(): void {
-    this.reachables = this.node.root.search_components(Reachable, (v) => v.group_name === this.name)
+    this.reachables = this.node.root.search_components(Reachable, (v) => v.group_name === this.group)
     if (this.direction === "lr") {
       this.reachables.sort((a, b) => a.node.global_pos.x - b.node.global_pos.x);
     } else if (this.direction === "ud") {

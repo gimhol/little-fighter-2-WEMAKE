@@ -4,8 +4,8 @@ import { GK, O_ID } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity";
 
 
-export class Come extends TestCase {
-  override name: string = 'MOVE(DADA) / STAY(DDDD) / COME(DJDJ)';
+export class BotCome extends TestCase {
+  override name: string = 'Bot Response COME(DJDJ)';
   figters: Entity[] = [];
   director = new ActionDirector()
     .offset(50,
@@ -13,12 +13,12 @@ export class Come extends TestCase {
       () => this.figters[0].ctrl.click(GK.Jump),
       () => this.figters[0].ctrl.click(GK.Defend),
       () => this.figters[0].ctrl.click(GK.Jump)
-    ).wait(15000).offset(50,
+    ).wait(1500).offset(50,
       () => this.figters[1].ctrl.click(GK.Defend),
       () => this.figters[1].ctrl.click(GK.Jump),
       () => this.figters[1].ctrl.click(GK.Defend),
       () => this.figters[1].ctrl.click(GK.Jump)
-    ).wait(15000).times(10000);
+    ).wait(1500).times(10000);
 
   override update(dt: number): number | void | undefined {
     this.director.update(dt);

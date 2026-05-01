@@ -18,6 +18,9 @@
         name: {
           type: "string",
         },
+        cls:{
+          type: "string",
+        },
         properties: {
           type: "object",
         },
@@ -28,7 +31,7 @@
           type: "number",
         },
       },
-      required: ["name"],
+      required: ["cls"],
       type: "object",
     },
     IStyle: {
@@ -480,10 +483,22 @@
         values: {
           type: "object",
         },
+        template_values: {
+          type: "object",
+        },
         visible: {
           type: ["boolean", "string"],
         },
         which: {
+          type: ["number", "string"],
+        },
+        outlineColor: {
+          type: "string",
+        },
+        outlineWidth: {
+          type: ["number", "string"],
+        },
+        outlineAlpha: {
           type: ["number", "string"],
         },
       },
@@ -520,7 +535,22 @@
       ],
     },
     UIActionEnum: {
-      enum: ["alert", "link_to", "set_ui", "push_ui", "pop_ui", "loop_img", "loop_txt", "load_data", "broadcast", "sound", "switch_difficulty", "destory_stage", "remove_all_entities", "exit"],
+      enum: [
+        "alert",
+        "link_to",
+        "set_ui",
+        "push_ui",
+        "pop_ui",
+        "loop_img",
+        "loop_txt",
+        "load_data",
+        "broadcast",
+        "sound",
+        "switch_difficulty",
+        "destory_stage",
+        "remove_all_entities",
+        "exit",
+      ],
       type: "string",
     },
   },

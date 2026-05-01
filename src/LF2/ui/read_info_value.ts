@@ -1,49 +1,103 @@
 import { Unsafe } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
-import { instance_of } from "../utils";
 
 type BaseType = 'string' | 'number' | 'boolean'
 export type Cls<T> = new (...args: any[]) => T
-type Judger = ((v: any) => boolean) & { readonly _judger: true }
+
+export interface ITypeJudger<C = unknown> {
+  readonly _$_judger: true;
+  run(v: any): v is C;
+}
 /** @deprecated 如有条件，应当更精确的确认内部数据 */
-export const unsafe_is_object = judger(v => typeof v === 'object' && !Array.isArray(v))
+export function unsafe_is_object<T extends unknown>() {
+  return judger<T>((v: any): v is T => {
+    return typeof v === 'object' && !Array.isArray(v);
+  });
+}
+
 /** @deprecated 如有条件，应当更精确的确认内部数据 */
 export const unsafe_is_array = judger(v => Array.isArray(v))
-export function judger(fn: (v: any) => boolean): Judger {
-  return Object.assign(function (v: any) { return fn(v) }, { _judger: true as true })
+
+export const is_0_or_1 = judger((v): v is 0 | 1 => v === 0 || v === 1)
+export function judger<C = unknown>(run: (v: any) => v is C): ITypeJudger<C> {
+  return { _$_judger: true as const, run }
 }
-function is_judger(v: any): v is Judger {
-  return typeof v === 'function' && v._judger === true;
+
+function is_judger(v: any): v is ITypeJudger {
+  if (!v) return false;
+  if (!v._$_judger) return false;
+  return typeof v.run == 'function';
 }
-export function find_ui_value(ui_info: ICookedUIInfo, type: 'boolean', name: string): boolean | null;
-export function find_ui_value(ui_info: ICookedUIInfo, type: 'number', name: string): number | null;
-export function find_ui_value(ui_info: ICookedUIInfo, type: 'string', name: string): string | null;
-export function find_ui_value<C>(ui_info: ICookedUIInfo, type: Cls<C>, name: string): C | null;
-export function find_ui_value<C>(ui_info: ICookedUIInfo, type: Judger, name: string): C | null;
-export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, name: string): C | T | null;
-export function find_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, name: string): C | T | null {
-  const value = ui_info.values?.[name];
-if (value === null || value === undefined)
-    return ui_info.parent ? find_ui_value(ui_info.parent, type, name) : null
-  if (typeof type === 'string') return typeof value === type ? value : null;
-  if (is_judger(type)) return type(value) ? value : null
-  if (instance_of(value, type)) return value;
+
+export function find_ui_value(ui: ICookedUIInfo, name: string): unknown | null {
+  let current: Unsafe<ICookedUIInfo> = ui;
+  while (current) {
+    const value = current.values?.[name];
+    if (value !== null && value !== undefined) {
+      return value;
+    }
+    current = current.parent;
+  }
+  current = ui;
+  while (current) {
+    const value = current.template_values?.[name];
+    if (value !== null && value !== undefined) {
+      return value;
+    }
+    current = current.parent;
+  }
   return null;
 }
 
-export function parse_ui_value(ui_info: ICookedUIInfo, type: 'boolean', value: Unsafe<boolean | string>): boolean | null;
-export function parse_ui_value(ui_info: ICookedUIInfo, type: 'number', value: Unsafe<number | string>): number | null;
-export function parse_ui_value(ui_info: ICookedUIInfo, type: 'string', value: Unsafe<string>): Unsafe<string>;
-export function parse_ui_value(ui_info: ICookedUIInfo, type: 'string', value: string): string;
-export function parse_ui_value<C>(ui_info: ICookedUIInfo, type: Cls<C>, value: Unsafe<C | string>): C | null
-export function parse_ui_value<C>(ui_info: ICookedUIInfo, type: Judger, value: Unsafe<C | string>): C | null
-export function parse_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, value: Unsafe<T | string>): C | T | null
-export function parse_ui_value<T extends BaseType, C>(ui_info: ICookedUIInfo, type: T | Cls<C> | Judger, value: Unsafe<T | string>): C | T | null {
-  if (value === null || value === undefined)
+type AllType<T extends BaseType, C> =
+  BooleanConstructor |
+  NumberConstructor |
+  StringConstructor |
+  T | Cls<C> | ITypeJudger |
+  null;
+export function parse_ui_value(ui: ICookedUIInfo, type: null, value: unknown): any | null;
+export function parse_ui_value(ui: ICookedUIInfo, type: BooleanConstructor | 'boolean', value: unknown): boolean | null;
+export function parse_ui_value(ui: ICookedUIInfo, type: NumberConstructor | 'number', value: unknown): number | null;
+export function parse_ui_value(ui: ICookedUIInfo, type: StringConstructor | 'string', value: unknown): string | null;
+export function parse_ui_value<T>(ui: ICookedUIInfo, type: ITypeJudger<T>, value: unknown): T | null
+export function parse_ui_value<T extends BaseType, C>(ui: ICookedUIInfo, type: Cls<C> | null, value: unknown): C | T | null
+export function parse_ui_value<T extends BaseType, C>(ui: ICookedUIInfo, type: AllType<T, C>, value: unknown): C | T | null {
+  let ret: unknown = value
+  if (ret === null || ret === void 0)
     return null
-  if (typeof value !== 'string')
-    return value;
-  if (ui_info && value.startsWith("$val:"))
-    return find_ui_value(ui_info, type, value.substring(5).trim()) as T;
-  return value as T;
+  if (!ui)
+    throw new Error(`[parse_ui_value] failed, ui is not an object, got ${ui}`)
+  if (Array.isArray(ui))
+    throw new Error(`[parse_ui_value] failed, ui is not an object, got ${ui}`)
+  if (typeof ui !== 'object')
+    throw new Error(`[parse_ui_value] failed, ui is not an object, got ${ui}`)
+
+  if (typeof ret == 'string' && ret.trim().startsWith("$val:")) {
+    ret = find_ui_value(ui, ret.substring(5).trim());
+    if (ret === null || ret === void 0)
+      return null;
+  }
+  switch (type) {
+    case 'boolean': case Boolean:
+      if (typeof ret != 'boolean')
+        throw { ui, error: new Error(`[parse_ui_value] failed, value must be boolean, got ${ret}, src: ${value}`) }
+      return ret as any
+    case 'number': case Number:
+      if (typeof ret != 'number')
+        throw { ui, error: new Error(`[parse_ui_value] failed, value must be number, got ${ret}, src: ${value}`) }
+      return ret as any
+    case 'string': case String:
+      if (typeof ret != 'string')
+        throw { ui, error: new Error(`[parse_ui_value] failed, value must be string, got ${ret}, src: ${value}`) }
+      return ret as any
+  }
+  if (is_judger(type)) {
+    if (type.run(ret)) return ret as any
+    return null
+  }
+  if (typeof type === 'function') {
+    if (ret instanceof type) return ret as any;
+    return null;
+  }
+  return ret as any;
 }

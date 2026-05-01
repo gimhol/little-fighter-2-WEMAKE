@@ -39,7 +39,7 @@ export class KeyStatus {
   constructor(ctrl: typeof this.ctrl) {
     this.ctrl = ctrl;
   }
-  use() {
+  use(): number {
     this._used = 1;
     return this._d_time;
   }
@@ -57,10 +57,12 @@ export class KeyStatus {
     return dt < this.ctrl.world.key_hit_duration;
   }
   is_hld(): boolean {
-    return !this.is_hit() && this._d_time > this._u_time;
+    const { _d_time } = this;
+    return !this.is_hit() && _d_time > this._u_time;
   }
   is_end(): boolean {
-    return this._d_time <= this._u_time;
+    const { _d_time } = this;
+    return _d_time <= this._u_time;
   }
   hit(t: number = this.ctrl.time): void {
     this._d_time = t;

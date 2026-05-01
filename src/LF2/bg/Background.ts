@@ -5,6 +5,7 @@ import { Layer } from "./Layer";
 export class Background {
   readonly data: Readonly<IBgData>;
   private _layers: Layer[] = [];
+  private _zoom: [number, number, number] = [1, 1, 1]
   get name(): string {
     return this.data.base.name
   }
@@ -26,6 +27,9 @@ export class Background {
   get layers(): ReadonlyArray<Layer> {
     return this._layers;
   }
+  get zoom(): [number, number, number] {
+    return this._zoom
+  }
   readonly width: number;
   readonly depth: number;
 
@@ -36,7 +40,6 @@ export class Background {
   constructor(world: World, data: Readonly<IBgData>) {
     this.data = data;
     this.world = world;
-
     this.width = this.data.base.right - this.data.base.left;
     this.depth = this.data.base.near - this.data.base.far;
     this.middle = {
@@ -45,6 +48,7 @@ export class Background {
     };
     for (const info of data.layers)
       this.add_layer(info);
+    if (data.base.zoom) this._zoom = [...data.base.zoom]
   }
 
   private add_layer(info: IBgLayerInfo) {

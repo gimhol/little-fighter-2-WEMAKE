@@ -65,6 +65,8 @@ export enum CollisionVal {
   BdyCode = "bdy_code",
   /** IItrInfo.code */
   ItrCode = "itr_code",
+  VToughness = "v_toughness",
+  AToughness = "a_toughness",
 }
 export const C_Val = CollisionVal;
 export type C_Val = CollisionVal;

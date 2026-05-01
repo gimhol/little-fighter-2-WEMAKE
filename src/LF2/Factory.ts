@@ -65,16 +65,26 @@ export class Factory {
     const ret: UIComponent[] = [];
     for (let idx = 0; idx < components.length; idx++) {
       const info = components[idx];
-      const cls = Factory.components.get(info.name);
-      if (!cls) {
-        Ditto.warn(`[${Factory.TAG}::create_components] Component not found! expression: ${info.name}`);
+
+      const clz = Factory.components.get(info.cls);
+      if (!clz) {
+        Ditto.warn(`[${Factory.TAG}::create_components] Component not found! cls: ${info.cls}`, info);
         continue;
       }
-      const { name, args = [], enabled = true, id = '', properties = {}, weight = 0 } = info;
-      const component = new cls(layout, name, { name, args, enabled, id, properties, props: {}, weight }, args)
+      const id = info.id ?? `${info.cls}_${idx}`
+      const name = info.name ?? id
+      const rinfo: Required<IComponentInfo> = {
+        id: id,
+        name: name,
+        cls: info.cls,
+        args: info.args || [],
+        enabled: info.enabled ?? true,
+        properties: info.properties || {},
+        props: info.props || {},
+        weight: info.weight ?? 0
+      }
+      const component = new clz(layout, rinfo.name, rinfo)
       component.init?.()
-      component.set_enabled(enabled);
-      component.id = id || `${name}_${idx}`
       ret.push(component);
     }
     return ret;

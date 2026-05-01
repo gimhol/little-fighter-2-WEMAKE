@@ -17,12 +17,16 @@ import * as UI from "./ui";
 import { regist_components } from './ui/component/_';
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
-
+export interface IZipResult {
+  origin: string;
+  file: I.IZipObject;
+  zip: I.IZip;
+}
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.25'
-  static readonly DATA_VERSION: number = 16;
+  static readonly VERSION_NAME: string = 'v0.1.26'
+  static readonly DATA_VERSION: number = 19;
   static readonly DATA_TYPE: string = 'DataZip';
 
   static get PREL_ZIPS() { return this._PREL_ZIPS }
@@ -48,25 +52,39 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   get lang(): string { return this._i18n.lang }
   set lang(v: string) { this._i18n.lang = v }
   dev: boolean = false;
-  debug!: (_0: string, ..._1: any[]) => void;
-  warn!: (_0: string, ..._1: any[]) => void;
-  log!: (_0: string, ..._1: any[]) => void;
+  __debugging = false
+  debug(..._1: any[]): void { };
+  warn(..._1: any[]): void { };
+  log(..._1: any[]): void { };
 
   readonly callbacks = new Callbacks<ILf2Callback>();
-  private _disposed: boolean = false;
-  private _ui_stacks: UI.UIStack[] = [];
-  private _loading: boolean = false;
-  private _playable: boolean = false;
-  private _mt = new MersenneTwister(Date.now())
-  get mt() { return this._mt }
   readonly factory: Factory = new Factory();
-  get loading() {
+  readonly bgms: string[] = []
+  
+  protected _disposed: boolean = false;
+  protected _ui_stacks: UI.UIStack[] = [];
+  protected _loading: boolean = false;
+  protected _playable: boolean = false;
+  protected _mt = new MersenneTwister(Date.now())
+  protected _ui_loaded = false;
+  protected _i18n = new I18N();
+  protected _strings = new Map<string, { [x in string]?: string }>()
+  protected _strings_list = new Map<string, { [x in string]?: string[] }>();
+  protected _keys = ''
+  protected _gkeys = new Map<string, string>()
+  protected _gkeys_matchs = new Set<string>()
+
+  cmds: (CMD | D.CheatType | string)[] = [];
+  events: UI.LF2KeyEvent[] = [];
+  broadcasts: string[] = [];
+
+  get loading(): boolean {
     return this._loading;
   }
-  get playable() {
+  get playable(): boolean {
     return this._playable;
   }
-  get need_load() {
+  get need_load(): boolean {
     return !this._playable && !this._loading;
   }
   get ui_stacks(): UI.UIStack[] {
@@ -74,6 +92,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
   get ui(): UI.UINode | undefined {
     return this._ui_stacks[this._ui_stacks.length - 1]?.ui;
+  }
+  get mt(): MersenneTwister {
+    return this._mt
+  }
+  get ui_loaded(): boolean {
+    return this._ui_loaded;
   }
   readonly world: World;
 
@@ -97,11 +121,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     ["7", new PlayerInfo("7")],
     ["8", new PlayerInfo("8")],
   ]);
-  ensure_player(player_id: string): PlayerInfo {
-    let ret = this.players.get(player_id)
-    if (!ret) this.players.set(player_id, ret = new PlayerInfo(player_id))
-    return ret
-  }
   readonly fighters = new Helper.CharactersHelper(this);
   readonly weapons = new Helper.WeaponsHelper(this);
   readonly entities = new Helper.EntitiesHelper(this);
@@ -112,32 +131,42 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   readonly images: I.IImageMgr;
   readonly keyboard: I.IKeyboard;
   readonly pointings: I.IPointings;
-
-  get stages(): D.IStageInfo[] {
-    return this.datas.stages;
+  
+  /**
+   * 获取玩家信息
+   * 
+   * 当玩家信息不存在，创建之
+   * 
+   * @param {string} player_id 玩家ID 
+   * @returns {PlayerInfo} 玩家信息
+   */
+  player(player_id: string): PlayerInfo {
+    let ret = this.players.get(player_id)
+    if (!ret) this.players.set(player_id, ret = new PlayerInfo(player_id))
+    return ret
   }
 
-  find_stage(stage_id: string): D.IStageInfo | undefined {
-    return this.stages.find((v) => v.id === stage_id);
-  }
-
-  readonly bgms: string[] = []
-
-  sniff_from_zips(path: string, exact: boolean) {
-    const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    return this.find_from_zips(paths)
-  }
-
-  protected find_from_zips(paths: string[]): [I.IZipObject, I.IZip, string] | [undefined, undefined, undefined] {
+  find_from_zips(paths: string[], exact: boolean): IZipResult[] {
+    if (!exact) {
+      const temp = new Set(paths);
+      for (const path of paths) {
+        const [more] = get_import_fallbacks(path)
+        for (const path of more) {
+          temp.add(path)
+        }
+      }
+      paths = Array.from(temp)
+    }
+    const ret: IZipResult[] = [];
     for (const zip of this.zips) {
       for (const path of paths) {
         const file = zip.file(path)
-        if (file) return [file, zip, `[${zip.name}]${file.name}`]
+        if (!file) continue;
+        ret.push({ file, zip, origin: `[${zip.name}]${file.name}` })
       }
     }
-    return [void 0, void 0, void 0];
+    return ret;
   }
-
 
   /**
    * TODO
@@ -151,8 +180,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   @PIO
   async import_json<C = any>(path: string, exact: boolean = true): Promise<[C, I.HitUrl, string?]> {
     const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const [zip_obj, , origin] = this.find_from_zips(paths)
-    if (zip_obj && origin) return [await zip_obj.json<C>(), zip_obj.name, origin];
+    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+    if (file && tag) return [await file.json<C>(), file.name, tag];
     return await I.Ditto.Importer.import_as_json<C>(paths);
   }
 
@@ -166,15 +195,15 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    */
   @PIO async import_resource(path: string, exact: boolean): Promise<[I.BlobUrl, I.HitUrl, string?]> {
     const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const [zip_obj, , origin] = this.find_from_zips(paths)
-    if (zip_obj && origin) return [await zip_obj.blob_url(), zip_obj.name, origin];
+    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+    if (file && tag) return [await file.blob_url(), file.name, tag];
     return I.Ditto.Importer.import_as_blob_url(paths);
   }
 
   @PIO async import_array_buffer(path: string, exact: boolean): Promise<[ArrayBuffer, I.HitUrl, string?]> {
     const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const [zip_obj, , origin] = this.find_from_zips(paths)
-    if (zip_obj && origin) return [await zip_obj.array_buffer(), zip_obj.name, origin];
+    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+    if (file && tag) return [await file.array_buffer(), file.name, tag];
     return I.Ditto.Importer.import_as_array_buffer(paths);
   }
 
@@ -220,29 +249,16 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return e;
   }
 
-  private _keys = ''
-  private _gkeys = new Map<string, string>()
-  private _gkeys_matchs = new Set<string>()
-  private readonly _cheat_enables = new Map<string, boolean>();
-
-  is_cheat(name: string | D.CheatType) {
-    return !!this._cheat_enables.get("" + name);
+  is_cheat(name: string | D.CheatType): boolean {
+    if (!D.is_cheat_type(name)) return false;
+    return !!this.world[name];
   }
-  set_cheat(name: string | D.CheatType, enable?: boolean) {
-    const enabled = this._cheat_enables.get(name);
-    enable = enable ?? (!enabled)
-    if (enabled === enable) return;
-    const cheat = D.Defines.CheatInfos.get(name as D.CheatType);
-    if (!cheat) return;
-    if (cheat.sound) this.sounds.play_with_load(cheat.sound);
-    this._cheat_enables.set(name, enable);
-    this.callbacks.emit("on_cheat_changed")(name, enable);
+  set_cheat(name: string | D.CheatType, enable: boolean = !this.is_cheat(name)) {
+    if (enable == this.is_cheat(name)) return;
+    this.cmds.push(name, enable ? '1' : '');
     this._keys = "";
     this._gkeys.clear();
   }
-  cmds: (CMD | D.CheatType | string)[] = [];
-  events: UI.LF2KeyEvent[] = [];
-  broadcasts: string[] = [];
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
     const key_code = e.key.toLowerCase();
@@ -270,10 +286,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     for (const [cheat_name, { keys: k, gkeys: g }] of D.Defines.CheatInfos) {
       for (const [pid, gkeys] of this._gkeys) {
         if (g.startsWith(gkeys)) this._gkeys_matchs.add(pid);
-        if (g === gkeys) this.cmds.push(cheat_name)
+        if (g === gkeys) this.cmds.push(cheat_name, '1')
       }
       if (k.startsWith(this._keys)) match = true;
-      if (k === this._keys) this.cmds.push(cheat_name)
+      if (k === this._keys) this.cmds.push(cheat_name, '1')
     }
     for (const [k] of this._gkeys)
       if (!this._gkeys_matchs.has(k))
@@ -472,7 +488,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       this.set_ui({ id: "ending_page" })
       return;
     }
-    const next_stage = this.stages?.find((v) => v.id === next);
+    const next_stage = this.datas.stages?.find((v) => v.id === next);
     if (!next_stage) {
       this.world.stage.stop_bgm();
       this.sounds.play_with_load(D.Defines.Sounds.StagePass);
@@ -489,15 +505,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.callbacks.emit("on_enter_next_stage")();
   }
 
-  private _uiinfos_loaded = false;
-  get uiinfos_loaded() {
-    return this._uiinfos_loaded;
-  }
-
-  protected _uiinfo_map = new Map<string, UI.IUIInfo>();
-  protected _i18n = new I18N();
-  protected _strings = new Map<string, { [x in string]?: string }>()
-  protected _strings_list = new Map<string, { [x in string]?: string[] }>();
   string(name: string): string { return this._i18n.string(name) }
   strings(name: string): string[] { return this._i18n.strings(name) }
 
@@ -517,7 +524,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load_ui')
     if (this.uis.all.length) return this.uis.all;
 
-    this._uiinfos_loaded = false;
     const files = zip.file(/^ui\/.*?\.ui\.json5?$/)
     const ret: UI.ICookedUIInfo[] = []
     if (!this.uis.all.length) {
@@ -535,12 +541,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (this._disposed) {
       this.uis.clear()
       return this.uis.all;
-    } else {
-      this._uiinfos_loaded = true;
-      this.uis.add(...ret)
-      this.callbacks.emit("on_ui_loaded")(ret);
-      return ret;
     }
+    this._ui_loaded = true;
+    this.uis.add(...ret)
+    this.callbacks.emit("on_ui_loaded")(ret);
+    return ret;
   }
 
   ui_val_getter = (item: UI.UINode, word: string) => {
@@ -630,8 +635,7 @@ function full_zip_url(info_url: string, zip_url: string) {
   ) return zip_url;
   const s_idx = info_url.indexOf('?');
   const h_idx = info_url.indexOf('#');
-  const end = (s_idx > 0 && h_idx > 0) ? Math.min(s_idx, h_idx) : s_idx > 0 ? s_idx : h_idx
-
+  const end = (s_idx > 0 && h_idx > 0) ? Math.min(s_idx, h_idx) : s_idx > 0 ? s_idx : h_idx;
   const part_a = end > 0 ? info_url.substring(0, end) : info_url;
   if (!part_a.endsWith('.zip.json')) return zip_url;
   const part_b = end > 0 ? info_url.substring(end) : '';

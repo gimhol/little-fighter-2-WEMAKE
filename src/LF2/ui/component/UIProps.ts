@@ -1,5 +1,6 @@
 import { IPropsMeta, is_num, is_str, make_schema } from "../../utils";
 import { SchemaValidator } from "../../utils/schema/validate_schema";
+import { parse_ui_value } from "../read_info_value";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
 import { isUINodeClass } from "../utils/isUINodeClass";
 import read_nums from "../utils/read_nums";
@@ -16,6 +17,8 @@ export class UIProps {
       return this.owner.node.parent?.lookup_component(clazz, v => v.id == value) ?? null
     } else if (isUINodeClass(clazz)) {
       if (typeof value !== 'string') return null
+      const spec = this.owner.find_node(value)
+      if (spec) return spec;
       const mine = this.owner.node.search_node(value)
       if (mine) return mine;
       return this.owner.node.parent?.lookup_node(value) ?? null
@@ -26,6 +29,12 @@ export class UIProps {
   })
   get errors() { return this.validator.errors }
   constructor(raw: { [x in string]?: any }, owner: UIComponent<unknown, any>) {
+    for (const key in raw) {
+      const value = raw[key];
+      if (typeof value === 'string' && value.startsWith(`$val:`)) {
+        raw[key] = parse_ui_value(owner.node.data, null, value) ?? value
+      }
+    }
     this.raw = { ...raw };
     this.owner = owner;
   }
@@ -76,12 +85,12 @@ export class UIProps {
     const v = this.raw[name];
     return !['false', '0'].some(b => b === '' + v);
   }
-  nums(name: string, len: 4, fallbacks?: number[]): [number, number, number, number];
-  nums(name: string, len: 3, fallbacks?: number[]): [number, number, number];
-  nums(name: string, len: 2, fallbacks?: number[]): [number, number];
-  nums(name: string, len: 1, fallbacks?: number[]): [number];
-  nums(name: string, len: number, fallbacks?: number[]): number[];
-  nums(name: string, len: number, fallbacks?: number[]): number[] {
+  nums(name: string, len: 4, fallbacks?: number[] | number): [number, number, number, number];
+  nums(name: string, len: 3, fallbacks?: number[] | number): [number, number, number];
+  nums(name: string, len: 2, fallbacks?: number[] | number): [number, number];
+  nums(name: string, len: 1, fallbacks?: number[] | number): [number];
+  nums(name: string, len: number, fallbacks?: number[] | number): number[];
+  nums(name: string, len: number, fallbacks?: number[] | number): number[] {
     return read_nums(this.raw[name], len, fallbacks);
   }
   component() {

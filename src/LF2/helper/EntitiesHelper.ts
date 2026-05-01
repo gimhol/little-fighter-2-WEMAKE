@@ -35,7 +35,8 @@ export class EntitiesHelper {
       if (!entity) continue;
       entity.ctrl = this.lf2.factory.create_ctrl(entity.data.id, "", entity)
       entity.team = team === '?' ? this.team_randoming.take() : (team || new_team())
-      this.lf2.random_entity_info(entity).attach();
+      this.lf2.random_entity_info(entity)
+      entity.attach();
       ret.push(entity);
     }
     return ret;

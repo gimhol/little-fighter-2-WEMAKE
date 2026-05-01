@@ -12,7 +12,7 @@ import { Jan_DUA, Jan_DUJ } from "./Jan";
 import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
 import { Bat_DUJ_0, Bat_DUJ_1, Bat_DUJ_2 } from "./Bat";
 import { LOUIS_JUMP_ATTACK } from "./Louis";
-import { BottomsUp, Come, MoveStayCome } from "./Others";
+import { BottomsUp, BotCome, MoveStayCome } from "./Others";
 import { Rudolf_DFJ } from "./Rudolf";
 import { TestCase } from "./TestCase";
 
@@ -46,7 +46,7 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     BottomsUp,
     MoveStayCome,
-    Come,
+    BotCome,
     FasterSlowerStandUp,
   ], [
     BotAvoiding

@@ -1,6 +1,6 @@
 import type { IReq, IResp } from "./_Base";
 import type { IReqChat, IRespChat } from "./IMsg_Chat";
-import type { IReqClientInfo, IRespClientInfo } from "./IMsg_ClientInfo";
+import type { IReqClientInfo, IReqDataset, IRespClientInfo, IRespDataset } from "./IMsg_ClientInfo";
 import type { IReqClientReady, IRespClientReady } from "./IMsg_ClientReady";
 import type { IReqCloseRoom, IRespCloseRoom } from "./IMsg_CloseRoom";
 import type { IReqCreateRoom, IRespCreateRoom } from "./IMsg_CreateRoom";
@@ -30,6 +30,7 @@ export interface IMsgReqMap {
   [MsgEnum.KeyTick]: IReqKeyTick,
   [MsgEnum.ListClients]: IReqListClients,
   [MsgEnum.RoomPwd]: IReqRoomPwd,
+  [MsgEnum.Dataset]: IReqDataset,
   [MsgEnum.Ping]: IReq<MsgEnum.Ping> & { time: number, client?: string },
 }
 export interface IMsgRespMap {
@@ -49,5 +50,6 @@ export interface IMsgRespMap {
   [MsgEnum.KeyTick]: IRespKeyTick,
   [MsgEnum.ListClients]: IRespListClients,
   [MsgEnum.RoomPwd]: IRespRoomPwd,
+  [MsgEnum.Dataset]: IRespDataset,
   [MsgEnum.Ping]: IResp<MsgEnum.Ping> & { time: number, client?: string },
 }

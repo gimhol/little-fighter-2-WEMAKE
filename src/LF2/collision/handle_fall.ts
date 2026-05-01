@@ -13,16 +13,20 @@ export function handle_fall(collision: ICollision) {
   victim.resting = 0;
   const [vx, vy, vz, facing] = calc_itr_velocity(collision)
   victim.set_velocity(vx, vy, vz)
-
   const is_critical = !!(itr.fall && itr.fall >= Defines.DEFAULT_FALL_VALUE_CRITICAL)
-
   const spark_pos = victim.spark_point(a_cube, b_cube);
+  const v_is_fighter = is_fighter(victim);
+  const is_sharp = itr.effect === ItrEffect.Sharp;
   let effect = SparkEnum.Hit;
-  if (itr.effect === ItrEffect.Sharp && is_fighter(victim)) {
-    effect = is_critical ? SparkEnum.CriticalBleed : SparkEnum.BleedFall;
-  } else {
-    effect = is_critical ? SparkEnum.CriticalHit : SparkEnum.HitFall;
-  }
+  if (v_is_fighter && is_sharp && is_critical)
+    effect = SparkEnum.CriticalBleed;
+  else if (v_is_fighter && is_sharp)
+    effect = SparkEnum.BleedFall;
+  else if (is_critical)
+    effect = SparkEnum.CriticalHit;
+  else
+    effect = SparkEnum.HitFall;
+
   victim.world.spark(...spark_pos, effect)
 
   const { fire, critical_hit } = victim.data.indexes || {}

@@ -12,7 +12,8 @@ import {
   GONE_FRAME_INFO,
   HitFlag,
   IBdyInfo, IBounding, IEntityData,
-  IFrameInfo, IItrInfo, ItrKind,
+  IFrameInfo, IItrInfo,
+  ItrKind,
   IVector3,
   O_ID,
   StateEnum,
@@ -36,7 +37,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, clamp, floor, is_num, max, min, round, Times } from "./utils";
+import { abs, between, clamp, floor, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
@@ -50,8 +51,6 @@ export class World extends WorldDataset {
   private _need_UPS: boolean = true;
   private _FPS = new FPS(0.9);
   private _UPS = new FPS(0.9);
-  private _prev_time: number = 0;
-  private _fix_radio: number = 1;
   private _update_count: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
@@ -84,6 +83,7 @@ export class World extends WorldDataset {
     if (v === this._bg) return;
     const o = this._bg;
     this._bg = v;
+    this.transform.scale_to(...this._bg.zoom)
     o.dispose();
   }
   get stage() {
@@ -103,7 +103,12 @@ export class World extends WorldDataset {
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
     this.callbacks.emit('on_dataset_change')(k as any, curr, prev, this)
-    if (k === 'sync_render') {
+    if (
+      k === 'sync_render' ||
+      k === 'UPS' ||
+      k === 'atom_time' ||
+      k === 'playrate'
+    ) {
       this.start_render();
       this.start_update();
     }
@@ -116,7 +121,7 @@ export class World extends WorldDataset {
   get depth() { return this.stage.depth; }
   get middle() { return this.stage.middle; }
 
-  private _cam_speed = 0;
+  private _cam_speed: number = 0;
   private _lock_cam_x: number | undefined = void 0;
   public renderer: IWorldRenderer;
 
@@ -150,6 +155,7 @@ export class World extends WorldDataset {
     super()
     this.lf2 = lf2;
     this._bg = new Background(this, Defines.VOID_BG);
+    this.transform.scale_to(...this._bg.zoom)
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
   }
@@ -241,15 +247,31 @@ export class World extends WorldDataset {
   sleep(): void { this._sleeping = true }
   awake(): void { this._sleeping = false }
   start_update() {
+    let { playrate, UPS, atom_time, sync_render } = this;
+    if (!between(playrate, 0.01, 1000)) {
+      Ditto.warn(`[${World.TAG}::start_update] playrate must be between 0.01 and 1000, but got ${playrate}, now reset to 1.0`);
+      playrate = this.playrate = 1
+    }
+    if (!between(UPS, 1, 120)) {
+      Ditto.warn(`[${World.TAG}::start_update] UPS must be between 1 and 120, but got ${UPS}, now reset to 60`);
+      UPS = this.UPS = 60
+    }
+    if (!(atom_time > 0)) {
+      Ditto.warn(`[${World.TAG}::start_update] atom_time must be > 0, but got ${atom_time}, now reset to 1`);
+      atom_time = this.atom_time = 1;
+    }
+
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
-    this._prev_time = Date.now();
-    this._fix_radio = 1;
+    let _prev_update_time = Date.now();
+    let _prev_render_time = Date.now();
+    let _fix_radio = 1;
     this._update_count = 0;
+    const ideally_dt = round(1000 / UPS / playrate)
     const on_update = () => {
       try {
         const time = Date.now();
-        const real_dt = time - this._prev_time;
-        if (real_dt < this._ideally_dt * this._fix_radio) return;
+        const real_update_dt = time - _prev_update_time;
+        if (real_update_dt < _fix_radio * ideally_dt) return;
         if (this._sleeping) return;
         this.before_update?.();
         this._update_count++;
@@ -257,15 +279,21 @@ export class World extends WorldDataset {
         this.lf2.events.length = 0;
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
-        if (0 === floor(this._update_count / this.playrate) % this.sync_render) {
-          this.render_once(real_dt);
-          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._UPS.value / this.sync_render);
+
+        if (0 === floor(this._update_count / playrate) % sync_render) {
+          const real_render_dt = time - _prev_render_time;
+          this.render_once(real_render_dt);
+          if (this._need_FPS) {
+            this._FPS.update(real_render_dt);
+            this.callbacks.emit("on_fps_update")(this._FPS.value);
+          }
+          _prev_render_time = time;
         }
         if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
         this.after_update?.();
-        this._UPS.update(real_dt);
-        this._fix_radio = 1 - clamp(6 * (this._ups - this._UPS.value) / this._ups, 0, 1);
-        this._prev_time = time;
+        this._UPS.update(real_update_dt);
+        _fix_radio = 1 - clamp(6 * (UPS - this._UPS.value) / UPS, 0, 1);
+        _prev_update_time = time;
       } catch (e: any) {
         Ditto.warn(e)
         if (e.errors) Ditto.warn(e.errors)
@@ -385,7 +413,7 @@ export class World extends WorldDataset {
       const ui_stack = ui_stacks[i];
       const { ui } = ui_stack
       if (!ui || ui.disabled) continue;
-      ui.update(16);
+      ui.update(16.66666 * this.atom_time);
 
       if (!flag) continue;
       for (const e of this.lf2.events)
@@ -422,8 +450,9 @@ export class World extends WorldDataset {
     stage.change_bg(bg_data);
     this.stage = stage
   }
+
   change_stage(stage_id: string | undefined) {
-    const stage_data = this.lf2.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
+    const stage_data = this.lf2.datas.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
     if (stage_data == this.stage.data) return;
     this.stage = new Stage(this, stage_data);
   }
@@ -447,11 +476,16 @@ export class World extends WorldDataset {
           else Ditto.warn('DEL_PUPPET failed, puppet not found.')
           continue;
         }
-        case CMD.LF2_NET: case CMD.LF2_NET_ON: case CMD.LF2_NET_OFF:
-        case CMD.HERO_FT: case CMD.HERO_FT_ON: case CMD.HERO_FT_OFF:
-        case CMD.GIM_INK: case CMD.GIM_INK_ON: case CMD.GIM_INK_OFF:
-          const [cheat, state] = cmd.split('#')
-          this.lf2.set_cheat(cheat, state !== void 0 ? state === '1' : void 0);
+        case CheatType.LF2_NET: // same as "case CMD.LF2_NET:"
+        case CheatType.HERO_FT: // same as "case CMD.HERO_FT:"
+        case CheatType.GIM_INK: // same as "case CMD.GIM_INK:"
+          const prev = this[cmd];
+          const enabled = this[cmd] = Number(cmds[i += 1]) ? 1 : 0;
+          if (prev == enabled) continue;
+          const cheat = Defines.CheatInfos.get(cmd)
+          if (!cheat) continue;
+          if (cheat.sound) this.lf2.sounds.play_with_load(cheat.sound);
+          this.lf2.callbacks.emit("on_cheat_changed")(cmd, !!enabled);
           continue;
         case CMD.F1: this.paused = !this.paused; continue;
         case CMD.F2: this.set_paused(2); continue;
@@ -554,7 +588,7 @@ export class World extends WorldDataset {
     const update_chasing = game_time.value % 8 === 0;
     const dead_buff: [string, Buff][] = []
     for (const [key, buff] of this.buffs) {
-      buff.update()
+      buff.update(this.atom_time)
       if (buff.dead) dead_buff.push([key, buff])
     }
     for (const [key, buff] of dead_buff) {
@@ -580,6 +614,7 @@ export class World extends WorldDataset {
     this.freshs.clear()
     for (const e of this.entities) {
       const { is_ghost } = e;
+      e.update();
       if (!is_ghost && update_chasing && this._chasers.size)
         for (const c of this._chasers)
           c.update_chasing(e)
@@ -602,7 +637,6 @@ export class World extends WorldDataset {
           else if (collision2?.handlers) this.add_collisions(collision2)
         }
       }
-      e.update();
       if (
         e.frame.id === Builtin_FrameId.Gone ||
         e.state === StateEnum.Gone
@@ -704,8 +738,8 @@ export class World extends WorldDataset {
     if (new_x > max_cam_right - this.screen_w) new_x = max_cam_right - this.screen_w;
     let cur_x = this.renderer.cam_x;
     const acc = min(
-      acc_ratio,
-      0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
+      this.atom_time * acc_ratio,
+      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
     );
     const max_speed = max_speed_ratio * acc;
 
@@ -922,22 +956,6 @@ export class World extends WorldDataset {
       near: round(far + l),
     };
   }
-  private _ups: number = 60
-  private _ideally_dt: number = round(1000 / this._ups);
-  private _playrate: number = 1;
-  get ideally_dt() {
-    return this._ideally_dt;
-  }
-  get playrate() {
-    return this._playrate;
-  }
-  set playrate(v: number) {
-    if (v <= 0) throw new Error("playrate must be larger than 0");
-    if (v === this._playrate) return;
-    this._playrate = v;
-    this._ideally_dt = round(1000 / this._ups) / this._playrate;
-    this.start_update();
-  }
 
   private _paused: 0 | 1 | 2 = 0;
   get paused() { return this._paused == 1; }
@@ -989,7 +1007,6 @@ export class World extends WorldDataset {
       this.stage = new Stage(this, Defines.VOID_STAGE)
     if (this.stage.bg.id !== Defines.VOID_BG.id)
       this.stage.change_bg(Defines.VOID_BG)
-    this.transform.scale_to(1, 1, 1, false)
     this.paused = false;
     this._lock_cam_x = void 0;
     this.callbacks.emit('on_counts')();
@@ -999,7 +1016,7 @@ export class World extends WorldDataset {
   ticker(): Ticker {
     let ret = this.ticker_pool.pop();
     if (!ret) this.tickers.add(ret = new Ticker(this.lf2));
-    else ret.reborn()
+    else this.tickers.add(ret.reborn())
     return ret;
   }
 }

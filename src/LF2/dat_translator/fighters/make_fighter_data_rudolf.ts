@@ -1,4 +1,4 @@
-import { BuiltIn_OID, IEntityData } from "../../defines";
+import { BuiltIn_OID, IEntityData, StateEnum } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { BotBuilder } from "./BotBuilder";
@@ -13,13 +13,32 @@ import { frames } from "./frames";
  */
 export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
   for (const k in data.frames) {
-    data.frames[k].opoint?.forEach((opoint) => {
+    const frame = data.frames[k]
+    frame.opoint?.forEach((opoint) => {
       if (opoint.oid === BuiltIn_OID.Rudolf) {
         opoint.hp = opoint.max_hp = 20;
         opoint.mp = opoint.max_mp = 150;
       }
     });
+    if (
+      frame.state === StateEnum.Standing ||
+      frame.state === StateEnum.Walking ||
+      frame.state === StateEnum.Defend
+    ) {
+      frame.seqs = frame.seqs || {}
+      frame.seqs[`LRa`] = {
+        id: "70",
+        mp: 60,
+        facing: 1,
+      }
+      frame.seqs[`RLa`] = {
+        id: "70",
+        mp: 60,
+        facing: -1,
+      }
+    }
   }
+
   BotBuilder.make(data).set_dataset({
     w_atk_m_x: 50,
     w_atk_r_x: 150,

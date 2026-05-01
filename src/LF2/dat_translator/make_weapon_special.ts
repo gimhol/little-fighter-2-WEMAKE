@@ -62,7 +62,10 @@ export function make_weapon_special(data: IEntityData) {
               .add(C_Val.VictimType, '==', EntityEnum.Fighter)
               .and(C_Val.BdyKind, '==', BdyKind.Normal)
               .and(C_Val.VictimState, '!=', StateEnum.Defend)
-              .and(C_Val.ArmorWork, '==', 0)
+              .and(c => c
+                .add(C_Val.ArmorWork, '==', 0)
+                .or(C_Val.VToughness, '<=', 0)
+              )
               .done()
           })
         })

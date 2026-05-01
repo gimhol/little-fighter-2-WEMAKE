@@ -17,7 +17,7 @@ export class LoadingContentText extends Label {
       // TODO: fix it.
       const pr = parse_call_func_expression(expression);
       if (pr) {
-        this.fadeout = this.lf2.factory.create_components(this.node, [{ ...pr }])[0] as FadeOutOpacity
+        this.fadeout = this.lf2.factory.create_components(this.node, [{ ...pr, cls: pr.name }])[0] as FadeOutOpacity
         this.node.add_components(this.fadeout)
       }
     }

@@ -12,18 +12,17 @@ export class PlayerScorePlayerName extends UIComponent {
   private readonly txt_loader = new UITextLoader(() => this.node).set_style(() => {
     const team = this.fighter?.team;
     const team_info = Defines.TeamInfoMap[team as TeamEnum] ?? Defines.TeamInfoMap[TeamEnum.Independent]
+    Object.assign(this.node, {
+      outlineColor: team_info.txt_outline_color,
+      outlineWidth: 2,
+      outlineAlpha: 1,
+    })
     const ret: IStyle = {
       font: "12px Arial",
-      fill_style: team_info.txt_color,
-      back_style: {
-        font: "12px Arial",
-        stroke_style: team_info.txt_outline_color,
-        line_width: 2
-      }
+      fill_style: team_info.txt_color
     }
     return ret;
   })
-
   override on_show(): void {
     super.on_show?.()
 

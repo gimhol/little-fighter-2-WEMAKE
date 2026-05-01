@@ -4,7 +4,7 @@
   size: "180,30",
   component: [
     {
-      name: "FighterStatBar",
+      cls: "FighterStatBar",
       properties: {
         dark_hp_bar: "dark_hp",
         hp_bar: "hp",
@@ -33,7 +33,7 @@
       center: "0,0",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -60,7 +60,7 @@
           component: [
             {
               id: "head_img",
-              name: "Picture",
+              cls: "Picture",
             },
           ],
         },
@@ -71,7 +71,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             bottom: "bottom",
@@ -88,7 +88,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -104,7 +104,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -121,7 +121,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -137,7 +137,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -154,7 +154,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -171,7 +171,7 @@
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -184,22 +184,20 @@
     },
     {
       i18n: "Template(com)",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
       style: {
         fill_style: "white",
-        font: "8px Arial",
-        back_style: {
-          font: "8px Arial",
-          stroke_style: "#005A8E",
-          line_width: 1,
-        },
+        font: "9px Arial"
       },
       component: [
         {
           id: "name_txt",
-          name: "Text",
+          cls: "Text",
         },
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             bottom: "top",

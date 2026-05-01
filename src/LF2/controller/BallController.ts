@@ -32,7 +32,6 @@ export class BallController extends BaseController {
       y = round_float(y + chasing.frame.centery * (chase.oy ?? 0.5))
 
     if (hp > 0 && (this._chasing || (chase.lost & ChaseLost.Hover))) {
-      this.entity.merge_velocities();
       if (x < me.x) this.key_down(L).key_up(R)
       else if (x > me.x) this.key_down(R).key_up(L)
       else this.key_up(L, R)

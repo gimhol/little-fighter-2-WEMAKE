@@ -85,6 +85,7 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   hp?: number;
 
   hold?: IHoldKeyCollection;
+  /**  */
   hit?: IHitKeyCollection;
   key_down?: IHoldKeyCollection;
   key_up?: IHoldKeyCollection;

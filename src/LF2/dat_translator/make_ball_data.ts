@@ -47,14 +47,14 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
     const hit_j = take(frame, "hit_j");
     if (hit_j !== 0) {
       frame.vzm = SpeedMode.Extra
-      frame.dvz = round_float((to_num(hit_j, 50) - 50) / 2);
+      frame.acc_z = round_float((to_num(hit_j, 50) - 50));
     }
     const hit_a = take(frame, "hit_a");
     if (hit_a) frame.hp = round_float(hit_a / 2, 10);
 
     const hit_d = take(frame, "hit_d");
     if (hit_d && hit_d !== frame.id)
-      frame.on_dead = get_next_frame_by_raw_id(hit_d);
+      frame.on_dead = get_next_frame_by_raw_id(hit_d, 'frame');
     const hit_Fa = take(frame, "hit_Fa");
     if (hit_Fa) {
       frame.behavior = hit_Fa;

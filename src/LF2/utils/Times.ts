@@ -1,3 +1,4 @@
+import { round_float } from "./math";
 import { floor, max, min } from "./math/base";
 /**
  * 次数
@@ -56,7 +57,7 @@ export class Times {
   }
   add(d: number = 1): boolean {
     if (this._remains == 0) return false;
-    const v = this._value += (Number(d) || 0);
+    const v = this._value = round_float(this._value + d);
     const ret = v >= this._max;
     if (ret && this._remains > 0) --this._remains;
     if (v > this._max) this._value = this._min;

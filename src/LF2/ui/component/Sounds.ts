@@ -34,7 +34,7 @@ export class Sounds extends UIComponent implements IPlayable {
   }
 
   override on_start(): void {
-    const l = this.args.length;
+    const l = this.info.args.length;
     let t = 0;
     let s = '';
     for (let i = 0; i < l; i += 2) {

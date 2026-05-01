@@ -7,24 +7,40 @@ import type { BotController } from "../BotController";
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
   readonly ctrl: BotController
+
+
   get world() { return this.ctrl.world }
   get stage() { return this.world.stage }
   constructor(ctrl: BotController) {
     this.ctrl = ctrl;
   }
-  random_jumping() {
+  wanted_jumping(): boolean {
+    const c = this.ctrl;
+    const desire = c.desire('wj_1')
+    const ret = desire < c.dataset.jump_desire * 2
+    if (ret)
+      c.click(GK.j)
+
+    return ret
+  }
+  random_jumping(): boolean {
     const c = this.ctrl;
     const { state } = c.entity.frame;
     const desire = c.desire('rj_1')
     switch (state) {
-      case StateEnum.Running:
-        if (desire < c.dataset.dash_desire) c.key_down(GK.j).key_up(GK.j)
-        break;
+      case StateEnum.Running: {
+        const ret = desire < c.dataset.dash_desire;
+        if (ret) c.click(GK.j)
+        return ret;
+      }
       case StateEnum.Standing:
-      case StateEnum.Walking:
-        if (desire < c.dataset.jump_desire) c.key_down(GK.j).key_up(GK.j)
-        break;
+      case StateEnum.Walking: {
+        const ret = desire < c.dataset.jump_desire;
+        if (ret) c.click(GK.j)
+        return ret;
+      }
     }
+    return false;
   }
   update(dt: number): BotStateEnum | undefined | void {
     if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;

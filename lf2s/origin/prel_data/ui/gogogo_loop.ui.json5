@@ -4,43 +4,41 @@
   visible: false,
   opacity: 0,
   i18n: "Go! ➡",
+  outlineColor: "#005A8E",
+  outlineWidth: 5,
+  outlineAlpha: 1,
   style: {
     fill_style: "white",
-    font: '46px "Arial Black", Arial',
-    back_style: {
-      font: '46px "Arial Black", Arial',
-      stroke_style: "#005A8E",
-      line_width: 5,
-    },
+    font: "46px \"Arial Black\", Arial",
   },
   component: [
     {
       id: "play_gogogo_loop",
-      name: "ComponentsPlayer",
+      cls: "ComponentsPlayer",
       enabled: false,
       properties: {
-        components: ["sounds", "opacity_flash"],
+        components: [ "sounds", "opacity_flash" ],
         local: true,
         recursive: true,
       },
     },
     {
       id: "sounds",
-      name: "Sounds",
+      cls: "Sounds",
       enabled: false,
-      args: ["350", "ok", "800", "ok", "800", "ok"],
+      args: [ "350", "ok", "800", "ok", "800", "ok" ],
     },
     {
       id: "opacity_flash",
-      name: "OpacityFlash",
+      cls: "OpacityFlash",
       enabled: false,
       properties: {
         times: -1,
-        steps: [0, 350, 1, 100, 1, 350, 0],
+        steps: [ 0, 350, 1, 100, 1, 350, 0 ],
       },
     },
     {
-      name: "Alignment",
+      cls: "Alignment",
       properties: {
         right: "right",
         top: "top",

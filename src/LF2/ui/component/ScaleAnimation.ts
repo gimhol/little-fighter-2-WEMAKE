@@ -16,7 +16,7 @@ export class ScaleAnimation extends UIComponent {
   }
   override on_start(): void {
     super.on_start?.();
-    const len = this.args.length;
+    const len = this.info.args.length;
     const anims: Animation[] = [];
     for (let i = 0; i < len - 2; i += 2) {
       const scale = this.vec3(i + 2) || this.node.scale;

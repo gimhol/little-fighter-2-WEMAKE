@@ -1,23 +1,69 @@
+/**
+ * 处理顺序:
+ * - 会先根据(x,y,w,h)对原图裁剪
+ *   - x默认0
+ *   - y默认0
+ *   - w默认原图宽
+ *   - h默认原图高
+ * - 在缩放至(dw,dh)
+ *   - dw默认 = w
+ *   - dh默认 = h
+ * - 根据(flip_x,flip_y)上下反转
+ */
 export interface IUIImgInfo {
   path: string;
 
-  /** 裁剪起始X坐标 */
+  /** 
+   * 裁剪起始X坐标 
+   * 
+   * default: 0
+   */
   x?: number;
 
-  /** 裁剪起始Y坐标 */
+  /** 
+   * 裁剪起始Y坐标 
+   * 
+   * default: 0
+   */
   y?: number;
 
-  /** 裁剪源宽 */
+  /** 
+   * 裁剪源宽 
+   * 
+   * default: 源图宽
+   */
   w?: number;
 
-  /** 裁剪源高 */
+  /** 
+   * 裁剪源高 
+   * 
+   * default: 源图高
+   */
   h?: number;
 
-  /** 目标宽度 */
+  /** 
+   * 目标宽度 
+   * 
+   * 默认 = w
+   */
   dw?: number;
 
-  /** 目标高度 */
+  /** 
+   * 目标高度
+   * 
+   * 默认 = h
+   */
   dh?: number;
+
+  /**
+   * 是否水平翻转
+   */
+  flip_x?: 0 | 1;
+
+  /**
+   * 是否垂直翻转
+   */
+  flip_y?: 0 | 1;
 
   wrapS?: number;
   wrapT?: number;
@@ -28,8 +74,6 @@ export interface IUIImgInfo {
   offsetAnimR?: number;
   repeatX?: number;
   repeatY?: number;
-  flip_x?: 0 | 1;
-  flip_y?: 0 | 1;
   nine_patch?: INinePatch
 }
 

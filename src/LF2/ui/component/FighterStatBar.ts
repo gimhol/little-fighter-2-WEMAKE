@@ -154,7 +154,12 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     }
   }
   update_name() {
-    this.props.name_txt?.set_text(this.entity?.name ?? "")
+    const name0 = this.entity?.name.trim() ?? ''
+    const name1 = this.entity?.data.base.name.trim() ?? ''
+    let name = name0 || name1;
+    if (name0 !== name1 && name0 && name1)
+      name = `${name1} (${name0})`
+    this.props.name_txt?.set_text(name)
   }
   override update(): void {
     this.update_name();
@@ -162,7 +167,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     const { entity, props: { hp_bar } } = this
     if (hp_bar) {
       this.healing = !!entity?.healing && (entity.update_id.value % 8) < 4;
-      hp_bar.children[0].color.value = this.healing ? 'rgb(255,130,130)' : 'rgb(255,0,0)'
+      hp_bar.children[0].color = this.healing ? 'rgb(255,130,130)' : 'rgb(255,0,0)'
     }
     this.defend_value_max.update()
     this.defend_value.update()

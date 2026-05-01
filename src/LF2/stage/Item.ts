@@ -59,10 +59,10 @@ export default class Item {
     } else if (data_list.length && !randoming_list.length) {
       randoming_list.push(new Randoming(data_list, this.lf2))
     } else if (!data_list.length && randoming_list.length) {
-      this.randoming = new Randoming(randoming_list, stage.lf2)
+      this.randoming = new Randoming(randoming_list, this.lf2)
     } else if (data_list.length && randoming_list.length) {
       randoming_list.push(new Randoming(data_list, this.lf2))
-      this.randoming = new Randoming(randoming_list, stage.lf2)
+      this.randoming = new Randoming(randoming_list, this.lf2)
     } else {
       debugger;
     }

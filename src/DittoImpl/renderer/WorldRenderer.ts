@@ -7,6 +7,7 @@ import type { World } from "@/LF2/World";
 import { Camera, Object3D, OrthographicCamera } from "../_t";
 import { __Scene } from "../Scene";
 import { BgRender } from "./BgRender";
+import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
@@ -32,6 +33,7 @@ export class WorldRenderer implements IWorldRenderer {
     for (const renderer of this.entity_renderers) {
       this.ensure_stat(renderer)
       this.ensure_indi(renderer)
+      this.ensure_ctrl(renderer)
     }
   }
   get cam_x(): number { return this.camera.position.x }
@@ -72,12 +74,20 @@ export class WorldRenderer implements IWorldRenderer {
     this.ui_container = new Object3D();
     this.scene.inner.add(this.ui_container);
   }
+  ensure_ctrl(pack: EntityRenderer) {
+    if (!pack.ctrl && this._indicator_flags & INDICATINGS.ctrl) {
+      pack.ctrl = new EntityCtrlRender(pack.entity, this)
+      pack.ctrl.on_mount();
+    } else if (pack.ctrl) {
+      pack.ctrl.on_unmount();
+      pack.ctrl = null;
+    }
+  }
   ensure_stat(pack: EntityRenderer) {
     // Criminal...?
     if (
       is_fighter(pack.entity) ||
-      pack.entity.data.id === BuiltIn_OID.Criminal ||
-      (this._indicator_flags & INDICATINGS.ctrl)
+      pack.entity.data.id === BuiltIn_OID.Criminal
     ) {
       if (!pack.stat) {
         pack.stat = new EntityStatRender(pack.entity, this);
@@ -102,6 +112,7 @@ export class WorldRenderer implements IWorldRenderer {
       entity.renderer = new EntityRenderer(entity)
     );
     this.ensure_stat(pack)
+    this.ensure_ctrl(pack)
     this.ensure_indi(pack)
     pack.mount();
     this.entity_renderers.add(pack)

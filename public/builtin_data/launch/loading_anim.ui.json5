@@ -10,7 +10,7 @@
   component: [
     {
       id: "loading_anim",
-      name: "ImgLoop",
+      cls: "ImgLoop",
       properties: {
         w: 33,
         h: 21,

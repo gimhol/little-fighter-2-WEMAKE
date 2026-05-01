@@ -16,7 +16,7 @@
       },
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             followed: "bro:+1",
             left: "left",
@@ -47,7 +47,7 @@
       },
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             followed: "bro:+1",
             left: "left",
@@ -86,7 +86,7 @@
       scale: "0,0,1",
       component: [
         {
-          name: "Dialogs",
+          cls: "Dialogs",
           properties: {
             head_node: "head_pos",
             text: "dialog_text",
@@ -120,10 +120,10 @@
           component: [
             {
               id: "dialog_text",
-              name: "Text",
+              cls: "Text",
             },
             {
-              name: "Alignment",
+              cls: "Alignment",
               properties: {
                 followed: "id:head_pos",
                 left: "right",
@@ -145,10 +145,10 @@
           component: [
             {
               id: "talker_name",
-              name: "Text",
+              cls: "Text",
             },
             {
-              name: "Alignment",
+              cls: "Alignment",
               properties: {
                 followed: "id:head_pos",
                 left: "left",

@@ -1,17 +1,17 @@
-import { is_nan, is_num, is_str } from "../../utils/type_check";
+import { is_num_arr, is_str } from "../../utils/type_check";
 /**
  * 读取固定长度为4的数字数组
  *
  * @export
  * @param {(string | number[] | null | undefined)} src
  * @param {4} len
- * @param {[number, number, number, number]} [fallbacks]
+ * @param {number[]|number} [fallbacks]
  * @return {[number, number, number, number]}
  */
 export default function read_nums(
   src: string | number[] | null | undefined,
   len: 4,
-  fallbacks?: [number, number, number, number],
+  fallbacks?: number[] | number,
 ): [number, number, number, number];
 
 /**
@@ -20,13 +20,13 @@ export default function read_nums(
  * @export
  * @param {(string | number[] | null | undefined)} src
  * @param {3} len
- * @param {[number, number, number]} [fallbacks]
+ * @param {number[]|number} [fallbacks]
  * @return {[number, number, number]}
  */
 export default function read_nums(
   src: string | number[] | null | undefined,
   len: 3,
-  fallbacks?: [number, number, number],
+  fallbacks?: number[] | number,
 ): [number, number, number];
 
 /**
@@ -35,13 +35,13 @@ export default function read_nums(
  * @export
  * @param {(string | number[] | null | undefined)} src
  * @param {2} len
- * @param {[number, number]} [fallbacks]
+ * @param {number[]|number} [fallbacks]
  * @return {[number, number]}
  */
 export default function read_nums(
   src: string | number[] | null | undefined,
   len: 2,
-  fallbacks?: [number, number],
+  fallbacks?: number[] | number,
 ): [number, number];
 /**
  * 读取指定长度的数字数组
@@ -49,40 +49,49 @@ export default function read_nums(
  * @export
  * @param {(string | number[] | null | undefined)} src
  * @param {number} len
- * @param {number[]} [fallbacks]
+ * @param {number[]|number} [fallbacks]
  * @return {number[]}
  */
 export default function read_nums(
   src: string | number[] | null | undefined,
   len: number,
-  fallbacks?: number[],
+  fallbacks?: number[] | number,
 ): number[];
 
 export default function read_nums(
   src: string | number[] | null | undefined,
   len: number,
-  fallbacks: number[] = [],
+  fallbacks: number[] | number = [],
 ): number[] {
+
+  if (typeof fallbacks === 'number')
+    fallbacks = [fallbacks];
+  if (!is_num_arr(fallbacks))
+    throw new Error(`[read_nums] failed, fallbacks must be number[], but got ${fallbacks}`)
+
   if (len < 1) return [];
-
   const ret: number[] = [];
-  const last_fallback = fallbacks[fallbacks.length - 1] || 0;
-  while (fallbacks.length < len) fallbacks.push(last_fallback);
 
-  if (!src || is_nan(src)) return fallbacks;
-  if (is_str(src))
+  /* 当fallbacks长度不足len，将fallbacks补长至len */
+  while (fallbacks.length < len) fallbacks.push(fallbacks[fallbacks.length - 1] || 0);
+
+  if (!src) return fallbacks;
+
+  if (is_str(src)) {
     src = src
       .replace(/\s/g, "")
       .split(",")
       .map((v) => Number(v));
+  }
+  if (!is_num_arr(src))
+    throw new Error(`[read_nums] failed, src must be string or number[], but got ${src}`)
 
   while (ret.length < len) {
-    const num: number | undefined = src[ret.length];
-
-    if (is_num(num)) {
-      ret.push(num);
+    const idx = ret.length
+    if (idx > src.length) {
+      ret.push(fallbacks[idx]);
     } else {
-      ret.push(fallbacks[ret.length]!);
+      ret.push(src[idx])
     }
   }
   return ret;

@@ -3,7 +3,7 @@ import Combine from "@/Component/Combine";
 import { Cross } from "@/Component/Icons/Cross";
 import { InputNumber } from "@/Component/Input";
 import Titled from "@/Component/Titled";
-import { IWorldDataset, LF2, round, world_dataset_fields } from "@/LF2";
+import { IWorldDataset, LF2, round, world_dataset_fields, WorldDataset } from "@/LF2";
 import { download } from "@/Utils/download";
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
@@ -12,7 +12,7 @@ import csses from "./index.module.scss";
 interface IWorldDatasetProps extends React.HTMLAttributes<HTMLDivElement> {
   lf2?: LF2 | null;
 }
-export function WorldDataset(props: IWorldDatasetProps) {
+export function WorldDatasetView(props: IWorldDatasetProps) {
   const { lf2 } = props;
 
   const [dwds, set_dwds] = useImmer<Partial<IWorldDataset>>({})
@@ -79,10 +79,18 @@ export function WorldDataset(props: IWorldDatasetProps) {
           </Titled>
         );
       })}
-      <Button disabled={!ready} onClick={(e) => { e.preventDefault(); e.stopPropagation(); dump() }}>
+      <Button disabled={!ready} onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dump()
+      }}>
         Dump
       </Button>
-      <Button disabled={!ready} onClick={(e) => { e.preventDefault(); e.stopPropagation(); set_cwds(dwds) }}>
+      <Button disabled={!ready} onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        set_cwds((v) => v = { ...new WorldDataset(true) })
+      }}>
         Reset
       </Button>
     </div>

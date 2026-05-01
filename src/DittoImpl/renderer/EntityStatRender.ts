@@ -1,19 +1,16 @@
 import { get_team_outline_color } from "@/LF2/base/get_team_shadow_color";
 import { get_team_text_color } from "@/LF2/base/get_team_text_color";
-import { GameKey, GKLabels, IVector3Like } from "@/LF2/defines";
-import { is_bot_ctrl, is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
+import { is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
-import { Object3D } from "../_t";
 import { Bar } from "./Bar";
-import { INDICATINGS } from "./INDICATINGS";
 import { WorldRenderer } from "./WorldRenderer";
 import { SmallTextMesh } from "./meshs/SmallTextMesh";
 
 const BAR_W = 40;
 const BAR_H = 3;
-const BAR_BG_W = BAR_W + 2;
+export const BAR_BG_W = BAR_W + 2;
 const BAR_BG_H = 1 + (BAR_H + 1) * 2 + 4;
 export class EntityStatRender implements IEntityCallbacks {
   protected _reserve_mesh: SmallTextMesh | null = null;
@@ -30,53 +27,11 @@ export class EntityStatRender implements IEntityCallbacks {
   protected defend_value_bar: Bar;
   protected toughness_value_bar: Bar;
 
-  entity: Entity;
-
-  protected _ctrl_node: Object3D | null = null;
-  protected _ctrls: Map<GameKey | 'bot', SmallTextMesh> | null = null
-
-  get ctrl_node(): Object3D {
-    if (this._ctrl_node) return this._ctrl_node
-    this._ctrl_node = new Object3D()
-    this.world_renderer.world_node.add(this._ctrl_node);
-    return this._ctrl_node
-  }
-  get ctrls(): Map<GameKey | 'bot', SmallTextMesh> {
-    if (this._ctrls) return this._ctrls;
-    const f = 7;
-    const ox = -25
-    const map = new Map<GameKey | 'bot', IVector3Like>([
-      ['bot', new T.Vector3(ox, f * 2, 0)],
-      [GameKey.U, new T.Vector3(ox + f * -1.5, f * 1, 0)],
-      [GameKey.D, new T.Vector3(ox + f * -1.5, f * -1, 0)],
-      [GameKey.L, new T.Vector3(ox + f * -2.5, f * 0, 0)],
-      [GameKey.R, new T.Vector3(ox + f * -0.5, f * 0, 0)],
-      [GameKey.a, new T.Vector3(ox + f * 0.5, f * -1, 0)],
-      [GameKey.j, new T.Vector3(ox + f * 1.5, f * 0, 0)],
-      [GameKey.d, new T.Vector3(ox + f * 2.5, f * 1, 0)],
-    ])
-    this._ctrls = new Map();
-
-    const { lf2 } = this.entity
-    for (const [k, pos] of map) {
-      const mesh = SmallTextMesh.get()
-      mesh.name = `key ${k}`;
-      mesh.position.set(BAR_BG_W / 2 + pos.x, 10 + pos.y, pos.z)
-      if (k == 'bot') {
-        mesh.set_text(lf2, '?').catch(e => console.warn(e));
-      } else {
-        mesh.set_text(lf2, GKLabels[k]).catch(e => console.warn(e));
-      }
-      mesh.strokeStyle = 'black'
-      this.ctrl_node.add(mesh)
-      this._ctrls.set(k, mesh)
-    }
-    return this._ctrls;
-  }
-
-
-  world_renderer: WorldRenderer;
   protected _heading: boolean = false;
+
+  entity: Entity;
+  world_renderer: WorldRenderer;
+
 
   private get reserve_mesh(): SmallTextMesh {
     if (this._reserve_mesh) return this._reserve_mesh;
@@ -85,12 +40,6 @@ export class EntityStatRender implements IEntityCallbacks {
     this.world_renderer.world_node.add(ret)
     return ret
   }
-  clear_ctrl_node(): void {
-    this._ctrl_node?.removeFromParent();
-    this._ctrl_node = null;
-    this._ctrls = null;
-  }
-
   constructor(entity: Entity, world_renderer: WorldRenderer) {
     this.world_renderer = world_renderer;
     const { lf2 } = entity.world;
@@ -180,7 +129,6 @@ export class EntityStatRender implements IEntityCallbacks {
   on_unmount() {
     const { entity: e } = this;
     this.bars_node.removeFromParent();
-    this.clear_ctrl_node()
     this._reserve_mesh?.removeFromParent();
     this._reserve_mesh = null
     e.callbacks.del(this);
@@ -230,37 +178,6 @@ export class EntityStatRender implements IEntityCallbacks {
     mesh.position.set(_x, _y, _z)
   }
 
-  update_ctrl() {
-    const {
-      lf2, world, position: { x, z, y }, ctrl_visible, frame: { centery }
-    } = this.entity;
-
-    const _ctrl_visible = ctrl_visible || world.indicator_flags & INDICATINGS.ctrl
-    if (!_ctrl_visible) {
-      this.clear_ctrl_node();
-      return;
-    }
-    for (const [key, node] of this.ctrls) {
-      node.visible = !this.entity.ctrl.is_end(key)
-    }
-    const _x = round(x)
-    let _y = round(y - z / 2 + centery)
-    const _z = round(z)
-    if (this.bars_node.visible) _y += 25
-    this.ctrl_node.position.set(_x, _y, _z);
-
-    do {
-      const bot = this.ctrls.get('bot')
-      if (!bot) break;
-      bot.visible = false;
-      const ctrl = this.entity.ctrl
-      if (!is_bot_ctrl(ctrl)) break;
-      const k = ctrl.fsm.state?.key
-      if (!k) break;
-      bot.set_text(lf2, k)
-      bot.visible = true;
-    } while (0);
-  }
   render() {
     const {
       invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
@@ -269,7 +186,6 @@ export class EntityStatRender implements IEntityCallbacks {
     const _is_fighter = is_fighter(this.entity)
     this.bars_node.visible = !!(stat_bar_type & StatBarType.Float) && _is_fighter && key_role && !invisible && hp > 0;
     this.update_reverse(this.entity)
-    this.update_ctrl()
 
     if (this.entity.healing) {
       const heading = (this.entity.update_id.value % 8) < 4;

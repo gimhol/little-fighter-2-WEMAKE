@@ -19,7 +19,7 @@ export class PositionAnimation extends UIComponent {
 
   override on_start(): void {
     super.on_start?.();
-    const len = this.args.length;
+    const len = this.info.args.length;
     const anims: Animation[] = [];
     for (let i = 0; i < len - 2; i += 2) {
       const value = this.vec3(i + 2) || this.node.pos;

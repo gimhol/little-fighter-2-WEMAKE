@@ -8,7 +8,6 @@ export default class CharacterState_Frozen extends CharacterState_Base {
     super(state)
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
-    e.ctrl.reset_key_list();
     if (e.catcher) e.catcher.drop_catching()
   }
   override leave(e: Entity, next_frame: IFrameInfo): void {

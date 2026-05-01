@@ -9,7 +9,7 @@ function split_path(path: string, suffix: string): [string, string, string] | un
 
 
 /**
- * 获取后备名
+ * 根据引入名，获取后备名, 包含引入名
  *
  * @export
  * @todo 也许使“引入名”变明确才更合适，而不是找好几次

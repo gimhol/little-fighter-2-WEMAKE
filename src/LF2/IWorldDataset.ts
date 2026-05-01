@@ -1,3 +1,4 @@
+import { CheatType } from "./defines/CheatType";
 import { Difficulty } from "./defines/Difficulty";
 import { fields, float, int, invalid } from "./fields";
 
@@ -205,6 +206,12 @@ export interface IWorldDataset {
   whirlwind_acc_z: number;
   teamoutline_enabled: number;
   indicator_flags: number;
+  UPS: number;
+  playrate: number;
+  atom_time: number;
+  [CheatType.GIM_INK]: number;
+  [CheatType.HERO_FT]: number;
+  [CheatType.LF2_NET]: number;
 }
 
 export const world_dataset_fields = fields<IWorldDataset>({
@@ -299,4 +306,10 @@ export const world_dataset_fields = fields<IWorldDataset>({
   itr_fall: int,
   teamoutline_enabled: int({ min: 0, max: 1 }),
   indicator_flags: int,
+  UPS: int({ min: 1, max: 120 }),
+  playrate: float({ min: 0.01, max: 1000 }),
+  atom_time: float,
+  [CheatType.GIM_INK]: int({ min: 0, max: 1 }),
+  [CheatType.HERO_FT]: int({ min: 0, max: 1 }),
+  [CheatType.LF2_NET]: int({ min: 0, max: 1 }),
 })

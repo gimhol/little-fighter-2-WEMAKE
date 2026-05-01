@@ -134,7 +134,7 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     },
   }
   override on_start(): void {
-    this._prel_loaded = this.lf2.uiinfos_loaded;
+    this._prel_loaded = this.lf2.ui_loaded;
     this.lf2.sounds.load("builtin_data/launch/093.wav.mp3", "builtin_data/launch/093.wav.mp3");
     this.lf2.callbacks.add(this.lf2_cb)
   }

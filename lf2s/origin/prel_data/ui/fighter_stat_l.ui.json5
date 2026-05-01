@@ -3,7 +3,7 @@
   id: "fighter_stat_l",
   component: [
     {
-      name: "FighterStatBar",
+      cls: "FighterStatBar",
       properties: {
         dark_hp_bar: "dark_hp",
         hp_bar: "hp",
@@ -32,7 +32,7 @@
       center: "0,0",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -59,7 +59,7 @@
           component: [
             {
               id: "head_img",
-              name: "Picture",
+              cls: "Picture",
             },
           ],
         },
@@ -70,7 +70,7 @@
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             bottom: "bottom",
@@ -80,14 +80,14 @@
           },
         },
       ],
-      items: [{ color: "rgb(111,8,31)", template: "bar_inner" }],
+      items: [ { color: "rgb(111,8,31)", template: "bar_inner" } ],
     },
     {
       id: "hp",
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "right",
             bottom: "bottom",
@@ -97,14 +97,14 @@
           },
         },
       ],
-      items: [{ color: "#EE3F3A", template: "bar_inner" }],
+      items: [ { color: "#EE3F3A", template: "bar_inner" } ],
     },
     {
       id: "dark_mp",
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -114,14 +114,14 @@
           },
         },
       ],
-      items: [{ color: "rgb(31,8,111)", template: "bar_inner" }],
+      items: [ { color: "rgb(31,8,111)", template: "bar_inner" } ],
     },
     {
       id: "mp",
       template: "bar",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -130,14 +130,14 @@
           },
         },
       ],
-      items: [{ color: "rgb(0,0,255)", template: "bar_inner" }],
+      items: [ { color: "rgb(0,0,255)", template: "bar_inner" } ],
     },
     {
       id: "fall_value",
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -147,14 +147,14 @@
           },
         },
       ],
-      items: [{ color: "rgb(216,115,0)", template: "bar_inner" }],
+      items: [ { color: "rgb(216,115,0)", template: "bar_inner" } ],
     },
     {
       id: "defend_value",
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "bottom",
@@ -164,14 +164,14 @@
           },
         },
       ],
-      items: [{ color: "rgb(0,122,71)", template: "bar_inner" }],
+      items: [ { color: "rgb(0,122,71)", template: "bar_inner" } ],
     },
     {
       id: "toughness",
       template: "bar_2",
       component: [
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             top: "top",
@@ -180,26 +180,25 @@
           },
         },
       ],
-      items: [{ color: "rgb(0,204,255)", template: "bar_inner" }],
+      items: [ { color: "rgb(0,204,255)", template: "bar_inner" } ],
     },
     {
       i18n: "Template(com)",
+      center: "0,0",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
       style: {
         fill_style: "white",
-        font: "9px Arial",
-        back_style: {
-          font: "9px Arial",
-          stroke_style: "#005A8E",
-          line_width: 1,
-        },
+        font: "9px Arial"
       },
       component: [
         {
           id: "name_txt",
-          name: "Text",
+          cls: "Text",
         },
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: {
             left: "left",
             bottom: "top",

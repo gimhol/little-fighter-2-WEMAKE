@@ -38,7 +38,9 @@ const map: Record<CollisionVal, IValGetter<ICollision>> = {
   [CollisionVal.BdyHitFlag]: c => c.bdy.hit_flag ?? HitFlag.AllEnemy,
   [CollisionVal.ItrHitFlag]: c => c.itr.hit_flag ?? HitFlag.AllEnemy,
   [CollisionVal.BdyCode]: c => c.bdy.code,
-  [CollisionVal.ItrCode]: c => c.itr.code
+  [CollisionVal.ItrCode]: c => c.itr.code,
+  [CollisionVal.VToughness]: c => c.victim.toughness,
+  [CollisionVal.AToughness]: c => c.attacker.toughness,
 };
 export const get_val_geter_from_collision: IValGetterGetter<ICollision> = (
   word: string,

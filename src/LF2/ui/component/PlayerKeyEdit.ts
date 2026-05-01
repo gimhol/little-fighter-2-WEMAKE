@@ -57,11 +57,11 @@ export class PlayerKeyEdit extends PlayerKeyText {
   override on_key_changed() {
     this.set_text(this.key_code)
     if (this.node.focused)
-      this.node.color.value = "blue"
+      this.node.color = "blue"
     else if (this.key_code == "None")
-      this.node.color.value = 'gray'
+      this.node.color = 'gray'
     else
-      this.node.color.value = 'white'
+      this.node.color = 'white'
   }
 }
 

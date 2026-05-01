@@ -21,7 +21,7 @@ export class OpacityAnimation extends UIComponent {
   }
   override on_start(): void {
     super.on_start?.();
-    const len = this.args.length;
+    const len = this.info.args.length;
     const anims: Animation[] = [];
     for (let i = 0; i < len - 2; i += 2) {
       const opacity = this.num(2 + i) || 0;

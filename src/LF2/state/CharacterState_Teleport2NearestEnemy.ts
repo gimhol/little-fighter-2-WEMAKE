@@ -13,6 +13,7 @@ export default class CharacterState_Teleport2NearestEnemy extends CharacterState
     let _tar: Entity | undefined;
     for (const o of m.world.entities) {
       if (!is_fighter(o) || o === m || o.is_ally(m)) continue;
+      if (o.hp <= 0) continue;
       const dis =
         abs(o.position.x - m.position.x) +
         abs(o.position.z - o.position.z);

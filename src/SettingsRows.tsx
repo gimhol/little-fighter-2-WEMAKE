@@ -19,7 +19,7 @@ import { CMD } from "./LF2/defines/CMD";
 import { Entity } from "./LF2/entity/Entity";
 import { Stage } from "./LF2/stage/Stage";
 import { is_num } from "./LF2/utils/type_check";
-import { WorldDataset } from "./pages/dev_panel/world_dataset";
+import { WorldDatasetView } from "./pages/dev_panel/world_dataset";
 import { useLocalNumber, useLocalString } from "./useLocalStorage";
 const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
   OFF: (e: Entity) => new InvalidController("", e),
@@ -58,7 +58,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   useEffect(() => {
     set_bgm(lf2?.sounds.bgm() ?? "");
     set_difficulty(lf2?.world.difficulty ?? Difficulty.Difficult);
-    set_stage_list(lf2?.stages);
+    set_stage_list(lf2?.datas.stages);
     const on_stage_change = (stage: Stage | undefined) => {
       set_stage_id(stage?.data.id ?? Defines.VOID_STAGE.id);
       set_bg_id(stage?.bg.data.id ?? Defines.VOID_BG.id);
@@ -75,7 +75,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     if (!lf2) return;
     const a = [
       lf2.callbacks.add({
-        on_loading_end: () => set_stage_list(lf2.stages),
+        on_loading_end: () => set_stage_list(lf2.datas.stages),
       }),
       lf2.world.callbacks.add({
         on_stage_change,
@@ -106,10 +106,38 @@ export default function SettingsRows(props: ISettingsRowsProps) {
   const [c_id, set_character_id] = useState<string>("");
   const [team, set_team] = useLocalString<string>("debug_bot_team", "");
   const [bot_ctrl, set_bot_ctrl] = useLocalString<string>("debug_bot_ctrl", "");
+  const [dwds, set_dwds] = useImmer<Partial<IWorldDataset>>({})
+  const [cwds, set_cwds] = useImmer<Partial<IWorldDataset>>({})
+  const [ready, set_ready] = useState(false)
+
+
+
+  useEffect(() => {
+    if (!lf2) return;
+    if (!lf2?.world) return;
+    if (!ready) return;
+    Object.assign(lf2.world, cwds)
+  }, [ready, cwds, lf2])
+
+  useEffect(() => {
+    if (!lf2?.world) return;
+    set_dwds(d => {
+      for (const [k] of world_dataset_fields) {
+        const key = k as keyof IWorldDataset;
+        d[key] = lf2.world[key]
+      }
+    })
+    set_cwds(d => {
+      for (const [k] of world_dataset_fields) {
+        const key = k as keyof IWorldDataset;
+        d[key] = lf2.world[key]
+      }
+    })
+    set_ready(true);
+  }, [lf2, set_dwds, set_cwds])
 
   if (!lf2 || visible === false) return <></>;
-
-  const on_click_add_weapon = () => {
+    const on_click_add_weapon = () => {
     weapon_id ? lf2.weapons.add(weapon_id, rwn) : lf2.weapons.add_random(rwn);
   };
   const on_click_del_weapon = () => {
@@ -126,33 +154,6 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     });
   };
   const phase_desc = stage_phase_list[stage_phase_idx]?.desc;
-
-  const [dwds, set_dwds] = useImmer<Partial<IWorldDataset>>({})
-  const [cwds, set_cwds] = useImmer<Partial<IWorldDataset>>({})
-  const [ready, set_ready] = useState(false)
-  useEffect(() => {
-    if (!lf2.world) return;
-    if (!ready) return;
-    Object.assign(lf2.world, cwds)
-  }, [ready, cwds, lf2])
-
-  useEffect(() => {
-    if (!lf2.world) return;
-    set_dwds(d => {
-      for (const [k] of world_dataset_fields) {
-        const key = k as keyof IWorldDataset;
-        d[key] = lf2.world[key]
-      }
-    })
-    set_cwds(d => {
-      for (const [k] of world_dataset_fields) {
-        const key = k as keyof IWorldDataset;
-        d[key] = lf2.world[key]
-      }
-    })
-    set_ready(true);
-  }, [lf2, set_dwds, set_cwds])
-
   return (
     <>
       <Show.Div
@@ -182,16 +183,16 @@ export default function SettingsRows(props: ISettingsRowsProps) {
           </Combine>
         </Titled>
         <Combine>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_ENEMIES)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_ENEMIES)}>
             杀死全部敌人
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_BOSS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_BOSS)}>
             杀死Boss
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_SOLIDERS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_SOLIDERS)}>
             杀死士兵
           </Button>
-          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT_ON, CMD.KILL_OTHERS)}>
+          <Button onClick={() => lf2?.cmds.push(CMD.HERO_FT, '1', CMD.KILL_OTHERS)}>
             杀死其他
           </Button>
         </Combine>
@@ -295,7 +296,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
       <Show.Div
         className={csses.settings_row}
         show={props.show_world_tuning !== false}>
-        <WorldDataset lf2={lf2} />
+        <WorldDatasetView lf2={lf2} />
       </Show.Div>
     </>
   );

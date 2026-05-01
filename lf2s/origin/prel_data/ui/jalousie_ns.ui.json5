@@ -3,7 +3,7 @@
   id: "jalousie_ns",
   component: [
     {
-      name: "Jalousie",
+      cls: "Jalousie",
       properties: {
         direction: "column",
         align: "stretch",

@@ -1,5 +1,5 @@
-import { Defines, Difficulty } from "./defines";
-import { IWorldDataset, world_dataset_fields as world_dataset_fields } from "./IWorldDataset";
+import { CheatType, Defines, Difficulty } from "./defines";
+import { IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {
@@ -14,7 +14,7 @@ export class WorldDataset implements IWorldDataset {
   fvz_f: number = 1;
 
   ivx_f: number = 0.5;
-  ivy_f: number = -0.5;
+  ivy_f: number = -0.54;
   ivz_f: number = 1;
 
   ivy_d: number = -7;
@@ -32,7 +32,7 @@ export class WorldDataset implements IWorldDataset {
   itr_arest: number = 20;
   min_arest: number = 2;
   min_vrest: number = 2;
-  arest_offset: number = -6;
+  arest_offset: number = 0;
   wait_offset: number = 0;
 
   cha_bc_spd: number = 2;
@@ -59,6 +59,9 @@ export class WorldDataset implements IWorldDataset {
 
   screen_w: number = Defines.MODERN_SCREEN_WIDTH;
   screen_h: number = Defines.MODERN_SCREEN_HEIGHT;
+  // gravity: number = 0.5;
+  // gravity_d: number = 0.5;
+  // weapon_throwing_gravity: number = 0.25;
   gravity: number = 0.4375;
   gravity_d: number = 0.4375;
   weapon_throwing_gravity: number = 0.21875;
@@ -105,16 +108,28 @@ export class WorldDataset implements IWorldDataset {
   whirlwind_acc_z: number = 0.5;
   teamoutline_enabled: number = 1;
   indicator_flags: number = 0;
+  UPS: number = 60;
+  playrate: number = 1;
+  atom_time: number = 1;
+  [CheatType.GIM_INK]: number = 0;
+  [CheatType.HERO_FT]: number = 0;
+  [CheatType.LF2_NET]: number = 0;
 
-  constructor() {
-    make_private_properties(`${WorldDataset.TAG}::constructor`, this, (...args) => this.on_dataset_change?.(...args))
-    Object.assign(this, wdataset)
+  constructor(pure: boolean = false) {
+    if (!pure) {
+      make_private_properties(
+        `${WorldDataset.TAG}::constructor`, this,
+        (key) => world_dataset_fields.has(key as keyof IWorldDataset),
+        (...args) => this.on_dataset_change?.(...args)
+      )
+      Object.assign(this, wdataset)
+    }
   }
   on_dataset_change?: (k: string, curr: any, prev: any) => void;
   dump_dataset() {
     const ret: any = {}
-    for (const k in world_dataset_fields)
-      ret[k] = (this as any)[k];
-    return ret;
+    const keys = Array.from(world_dataset_fields.keys()).sort()
+    for (const k of keys) ret[k] = this[k];
+    return ret as IWorldDataset;
   }
 }

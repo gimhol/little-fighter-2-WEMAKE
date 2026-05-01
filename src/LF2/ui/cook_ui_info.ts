@@ -1,92 +1,214 @@
-import { ISchema } from "../defines";
+import { IStyle } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
-import { floor, is_str } from "../utils";
-import { find_ui_template } from "./find_ui_template";
+import { floor, is_num_arr, is_str, Unsafe } from "../utils";
 import { IComponentInfo } from "./IComponentInfo";
 import { ICookedUIInfo } from "./ICookedUIInfo";
-import { IUIImgInfo } from "./IUIImgInfo.dat";
-import type { IUIInfo } from "./IUIInfo.dat";
-import { judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
-import { read_ui_template } from "./read_ui_template";
-import { Schema_IUIImgInfo } from "./Schema_IUIImgInfo";
+import { INinePatch, IUIImgInfo } from "./IUIImgInfo.dat";
+import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
+import { is_0_or_1, judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
 import { ui_load_img } from "./ui_load_img";
-import { UINode } from "./UINode";
 import { parse_call_func_expression } from "./utils";
 import read_nums from "./utils/read_nums";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
+let __new_id = 0;
+const new_id = () => ++__new_id;
+export async function merge_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICookedUIInfo | undefined): Promise<IUIInfo> {
+  const { template: template_name, ...remain_info } = raw_info;
+  if (!template_name) return raw_info;
+  const template_info: Unsafe<IUIInfo> = await find_ui_template(lf2, parent, template_name);
+  const component: TComponentInfo[] = [];
+  template_info.component?.forEach(c => {
+    component.push(c)
+  })
+  remain_info.component?.forEach(c => {
+    component.push(c)
+  })
+  if (lf2.dev === true) {
+    template_info.dev_component?.forEach(c => {
+      component.push(c)
+    })
+    remain_info.dev_component?.forEach(c => {
+      component.push(c)
+    })
+  }
+  return {
+    ...template_info,
+    ...remain_info,
+    template: template_name,
+    component,
+    values: {
+      ...template_info.values,
+      ...remain_info.values
+    },
+    template_values: {
+      ...template_info.template_values,
+      ...remain_info.template_values
+    }
+  };
+}
+merge_ui_template.TAG = 'read_ui_template';
 
+export async function find_ui_template(
+  lf2: LF2,
+  parent: Unsafe<ICookedUIInfo>,
+  template_name: string
+): Promise<IUIInfo> {
+  const { TAG } = find_ui_template;
+  let ret: Unsafe<IUIInfo>;
+  let ptr: Unsafe<ICookedUIInfo> = parent;
+  while (ptr && !ret) {
+    ret = ptr.templates?.[template_name];
+    ptr = ptr.parent;
+  }
+  if (ret) return ret;
+  try {
+    let path = template_name.startsWith('@/') ? template_name.replace('@/', 'builtin_data/launch/') : template_name;
+    if (!path.endsWith('.ui.json5')) path += '.ui.json5';
+    ret = await lf2.import_json<IUIInfo>(path, true).then(r => r[0]);
+  } catch (e) {
+    Ditto.warn(`[${TAG}] ui template not found! template_name: ${template_name}, e:${e}`);
+  }
+  return ret || {};
+}
+find_ui_template.TAG = 'find_ui_template';
 
 export async function cook_ui_info(
   lf2: LF2,
-  data_or_path: IUIInfo | string,
+  info: IUIInfo | string,
   parent?: ICookedUIInfo
 ): Promise<ICookedUIInfo> {
-  let ui_info: IUIInfo = is_str(data_or_path)
-    ? await find_ui_template(lf2, parent, data_or_path)
-    : data_or_path;
+  let raw: IUIInfo;
+  if (is_str(info)) {
+    raw = await find_ui_template(lf2, parent, info)
+  } else {
+    raw = info
+  }
+  if (raw.template) {
+    raw = await merge_ui_template(lf2, raw, parent);
+  }
 
-  if (ui_info.template)
-    ui_info = await read_ui_template(lf2, ui_info, parent);
-
-  const id = ui_info.id || 'no_id_' + Date.now();
-  const name = ui_info.name || 'no_name_' + Date.now();
-  const components = ui_info.component?.map(t => {
+  const id = raw.id || `no_id_${new_id()}`;
+  const name = raw.name || id;
+  const components = raw.component?.map(t => {
     if (typeof t !== 'string') return t;
-    const pr = parse_call_func_expression(t);
-    if (!pr) return { name: t }
-    const ret: IComponentInfo = { ...pr }
+    const result = parse_call_func_expression(t);
+    const ret: IComponentInfo = result ? {
+      ...result,
+      cls: result.name,
+      id: result.id || `no_id_${new_id()}`
+    } : {
+      id: `no_id_${new_id()}`,
+      name: t,
+      cls: t,
+    }
     return ret;
   }).sort((a, b) => (b.weight || 0) - (a.weight || 0)) ?? [];
 
   const ret: ICookedUIInfo = {
-    ...ui_info,
-    values: ui_info.values ? ui_info.values : {},
-    id, name,
-    pos: read_nums(ui_info.pos, 3, [0, 0, 0]),
-    scale: read_nums(ui_info.scale, 3, [1, 1, 1]),
-    center: read_nums(ui_info.center, 3, [0, 0, 0]),
+    ...raw,
+    values: raw.values ? raw.values : {},
+    id, name, parent,
+    pos: [0, 0, 0],
+    scale: [0, 0, 0],
+    center: [0, 0, 0],
     size: [0, 0, 0],
-    parent,
     img_info: void 0,
     txt_info: void 0,
     items: void 0,
     img: void 0,
-    component: components
+    component: components,
+    style: void 0,
+    count: void 0,
+    visible: void 0,
+    disabled: void 0,
+    backgroundAlpha: void 0,
+    foregroundAlpha: void 0,
+    outlineWidth: void 0,
+    outlineAlpha: void 0,
+    opacity: void 0,
   };
-  do {
-    let { img } = ui_info;
-    if (!img) break;
-    if (typeof img == 'string')
-      img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), img) ?? void 0
-    if (!img) break;
-    for (const k in Schema_IUIImgInfo.properties) {
-      const meta = (Schema_IUIImgInfo.properties as any)[k] as ISchema;
-      const val = (img as any)[k];
-      if (!meta || !val || typeof val !== 'string' || !val.startsWith('$val:'))
-        continue;
-      // FIXME: `meta.type as any`
-      (img as any)[k] = parse_ui_value(ret, meta.type as any, val) ?? val
+  const parse_str = (v: string | undefined) => parse_ui_value(ret, String, v) ?? void 0
+  const parse_boolean = (v: string | boolean | undefined) => parse_ui_value(ret, Boolean, v) ?? void 0
+  const parse_num = (v: string | number | undefined) => parse_ui_value(ret, Number, v) ?? void 0
+  const parse_nums = (v: string | number[] | undefined): string | number[] | undefined => {
+    if (is_num_arr(v)) return v;
+    return parse_ui_value(ret, null, v)
+  }
+  ret.pos             /**/ = read_nums(parse_nums(raw.pos), 3)
+  ret.scale           /**/ = read_nums(parse_nums(raw.scale), 3, 1)
+  ret.center          /**/ = read_nums(parse_nums(raw.center), 3)
+  ret.visible         /**/ = parse_boolean(raw.visible);
+  ret.disabled        /**/ = parse_boolean(raw.disabled);
+  ret.count           /**/ = parse_num(raw.count);
+  ret.opacity         /**/ = parse_num(raw.opacity);
+  ret.color           /**/ = parse_str(raw.color) ?? void 0;
+  ret.background      /**/ = parse_str(raw.background) ?? void 0;
+  ret.backgroundAlpha /**/ = parse_num(raw.backgroundAlpha);
+  ret.foreground      /**/ = parse_str(raw.foreground) ?? void 0;
+  ret.foregroundAlpha /**/ = parse_num(raw.foregroundAlpha);
+  ret.outlineColor    /**/ = parse_str(raw.outlineColor) ?? void 0;
+  ret.outlineWidth    /**/ = parse_num(raw.outlineWidth);
+  ret.outlineAlpha    /**/ = parse_num(raw.outlineAlpha);
+  ret.i18n            /**/ = parse_str(raw.i18n) ?? void 0;
+  ret.style           /**/ = parse_ui_value(ret, unsafe_is_object<IStyle>(), raw.style) ?? void 0
+  if (raw.img && typeof raw.img === 'string') {
+    ret.img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), raw.img) ?? void 0
+  }
+  if (raw.img && typeof raw.img === 'object') {
+    const w = parse_num(raw.img.w);
+    const h = parse_num(raw.img.h);
+    const img: IUIImgInfo = {
+      path        /**/: parse_str(raw.img.path) ?? '',
+      x           /**/: parse_num(raw.img.x),
+      y           /**/: parse_num(raw.img.y),
+      w, h,
+      dw          /**/: parse_num(raw.img.dw) ?? w,
+      dh          /**/: parse_num(raw.img.dh) ?? h,
+      wrapS       /**/: parse_num(raw.img.wrapS),
+      wrapT       /**/: parse_num(raw.img.wrapT),
+      offsetX     /**/: parse_num(raw.img.offsetX),
+      offsetY     /**/: parse_num(raw.img.offsetY),
+      offsetAnimX /**/: parse_num(raw.img.offsetAnimX),
+      offsetAnimY /**/: parse_num(raw.img.offsetAnimY),
+      offsetAnimR /**/: parse_num(raw.img.offsetAnimR),
+      repeatX     /**/: parse_num(raw.img.repeatX),
+      repeatY     /**/: parse_num(raw.img.repeatY),
+      flip_x      /**/: parse_ui_value(ret, is_0_or_1, raw.img.flip_x) ?? void 0,
+      flip_y      /**/: parse_ui_value(ret, is_0_or_1, raw.img.flip_y) ?? void 0,
     }
-    ret.img = img;
-    ret.img_info = await ui_load_img(lf2, img);
-  } while (0);
-
-  do {
-    const { i18n, style } = ui_info;
-    if (!i18n && !style) break;
-
-    ret.i18n = parse_ui_value(ret, 'string', i18n) ?? ''
-    ret.style = parse_ui_value(ret, unsafe_is_object, style) ?? {}
-
-    const value = lf2.string(ret.i18n);
-    ret.txt_info = await lf2.images.load_text(value, ret.style)
-  } while (0)
+    const { nine_patch: np } = raw.img;
+    if (np) {
+      if (typeof np === 'string') {
+        img.nine_patch = parse_ui_value(ret, unsafe_is_object<INinePatch>(), np) ?? void 0
+      } else {
+        img.nine_patch = {
+          f_l: parse_num(np.f_l),
+          f_t: parse_num(np.f_t),
+          f_r: parse_num(np.f_r),
+          f_b: parse_num(np.f_b),
+          f_w: parse_num(np.f_w),
+          f_h: parse_num(np.f_h),
+          l_w: parse_num(np.l_w),
+          t_h: parse_num(np.t_h),
+          r_w: parse_num(np.r_w),
+          b_h: parse_num(np.b_h),
+        }
+      }
+    }
+    ret.img = img
+  }
+  if (ret.img) ret.img_info = await ui_load_img(lf2, ret.img);
+  if (ret.i18n) ret.txt_info = await lf2.images.load_text(lf2.string(ret.i18n), ret.style)
 
   const img = ret.img_info || ret.txt_info;
-  if (ui_info.size) {
-    ret.size = read_nums(ui_info.size, 3, [0, 0, 0])
+  if (raw.size) {
+    ret.size = read_nums(parse_nums(raw.size), 3)
+  } else if (ret.img) {
+    const w = ret.img.dw ?? ret.img.w ?? 0;
+    const h = ret.img.dh ?? ret.img.h ?? 0;
+    ret.size = [w, h, 0]
   } else if (!parent) {
     ret.size = [lf2.world.screen_w, lf2.world.screen_h, 0]
   }
@@ -111,19 +233,23 @@ export async function cook_ui_info(
     }
   } while (0)
 
-
-
-
-  const { items } = ui_info;
-  if (items && !Array.isArray(items)) {
-    Ditto.warn(`[${UINode.TAG}::cook_ui_info] items must be array, but got`, items);
+  const { items: raw_items } = raw;
+  if (raw_items && !Array.isArray(raw_items)) {
+    Ditto.warn(`[cook_ui_info] items must be array, but got`, raw_items);
   }
-  if (Array.isArray(items) && items.length) {
+  if (raw_items?.length) {
     ret.items = [];
-    for (const item of items)
-      ret.items.push(await cook_ui_info(lf2, item, ret));
-  } else {
-    delete ret.items;
+    for (const raw_item of raw_items) {
+      const item = await cook_ui_info(lf2, raw_item, ret);
+      let { count = 1 } = item;
+      while (count) {
+        ret.items.push(item);
+        count = floor(count - 1)
+      };
+    }
   }
+  if (!ret.items?.length)
+    delete ret.items;
   return ret;
 }
+merge_ui_template.TAG = 'cook_ui_info';

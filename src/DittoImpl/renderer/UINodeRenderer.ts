@@ -1,4 +1,4 @@
-import { parse_rgba, TextInfo } from "@/LF2";
+import { IVector3Like, parse_rgba, TextInfo } from "@/LF2";
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
@@ -8,12 +8,11 @@ import { is_num, is_str, round } from "@/LF2/utils";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import * as T from "../_t";
 import { SRGBColorSpace } from "../_t";
-import { empty_texture } from "./empty_texture";
+import { ImageMgr } from "../ImageMgr";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
 import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
-import { white_texture } from "./white_texture";
 import type { WorldRenderer } from "./WorldRenderer";
 interface IUserData {
   w?: number;
@@ -32,20 +31,15 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
   protected _geo = get_geometry(0, 0, 0, 0, 0);
-  protected img_idx_version: number | null = null;
-  protected imgs_version: number | null = null;
-  protected txt_idx_version: number | null = null;
-  protected txts_version: number | null = null;
-  protected size_version: number | null = null;
-  protected color_version: number | null = null;
-  protected center_version: number | null = null;
-  protected scale_version: number | null = null;
-  protected pos_version: number | null = null;
+  protected _color: string | null = null;
   protected _input: HTMLInputElement | undefined;
   protected _txt: TextInfo<any> | null = null;
   protected _img: ImageInfo<T.Texture> | null = null;
   protected _uv_anim_angle: number = 0;
   protected _uv_anim_vec = new T.Vector2(0, 0);
+  protected _old_pos: IVector3Like | null = null;
+  protected _old_scale: IVector3Like | null = null;
+  protected _old_alpha: number | null = null;
 
   protected get dom() {
     if (this._dom) return this._dom;
@@ -78,18 +72,17 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (this._css_obj.parent) return;
     this.mesh.add(this._css_obj);
   }
-
   get world() { return this.ui.lf2.world }
   get lf2() { return this.ui.lf2 }
   get parent() { return this.ui.parent?.renderer || null }
-  img_idx = -1
   constructor(ui: UINode) {
     this.ui = ui;
     this.mesh = new T.Mesh(
       this.next_geometry(),
       MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
     )
-    this.mesh.material.texture = empty_texture()
+    this.mesh.material.alpha = 0;
+    this.mesh.material.texture = void 0//ImageMgr.EMPTY_TEXTURE.clone()
     this.mesh.userData.owner = ui;
   }
   del(child: UINodeRenderer) {
@@ -151,7 +144,13 @@ export class UINodeRenderer implements IUINodeRenderer {
     const { uniforms: u } = m;
     const i = this.ui.image;
     if (t && i) {
-      const { w, h, scale, clip_x = 0, clip_y = 0, clip_w = w / scale, clip_h = h / scale } = i
+      const {
+        w, h, scale,
+        clip_x = 0,
+        clip_y = 0,
+        clip_w = this.ui.data.img?.dw ?? w / scale,
+        clip_h = this.ui.data.img?.dh ?? h / scale
+      } = i
       m.set_origin_size(
         w,
         h,
@@ -171,7 +170,13 @@ export class UINodeRenderer implements IUINodeRenderer {
       u.tex.value?.dispose();
       u.tex.value = t;
     }
-    m.alpha = this.ui.global_opacity;
+    if (this._old_alpha == null) {
+      this._old_alpha = m.alpha = this.ui.global_opacity;
+    } else {
+      const a = m.alpha + (this.ui.global_opacity - m.alpha) * 0.5
+      this._old_alpha = m.alpha = a;
+    }
+
     return this;
   }
 
@@ -179,13 +184,13 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (
       this._txt === this.ui.text &&
       this._img === this.ui.image &&
-      this.color_version === this.ui.color.version
+      this._color === this.ui.color
     ) return;
 
     const img = this.ui.image || this.ui.text;
     this._ui_img = this.ui.data.img;
     this._img = img;
-    const rgba = parse_rgba(this.ui.color.value)
+    const rgba = parse_rgba(this.ui.color)
     if (img) {
       this.mesh.material.texture = img.pic?.texture;
       this.mesh.material.coverColor = BLACK;
@@ -194,7 +199,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.mesh.material.mixColor = rgba ? new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace) : BLACK;
       this.mesh.material.mixStength = rgba?.a ?? 0;
     } else if (rgba) {
-      this.mesh.material.texture = white_texture();
+      this.mesh.material.texture = ImageMgr.WHITE_TEXTURE.clone();
       this.mesh.material.coverColor = new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace);
       this.mesh.material.coverStength = rgba.a;
       this.mesh.material.cover = true
@@ -310,13 +315,42 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.material.bgAlpha = backgroundAlpha;
     this.mesh.material.fgColor = foreground;
     this.mesh.material.fgAlpha = foregroundAlpha;
-    const s = this.ui.scale
-    this.mesh.scale.set(s.x, s.y, s.z);
-    const { x, y, z } = this.ui.pos
-    this.mesh.position.set(x, -y, z);
 
+
+    this.mesh.material.outlineWidth = this.ui.data.outlineWidth || 0;
+    this.mesh.material.outlineColor = this.ui.data.outlineColor || 0
+    this.mesh.material.outlineAlpha = this.ui.data.outlineAlpha || 0
+
+    const t = 0.5;
+    if (this._old_pos) {
+      const { x, y, z } = this.ui.pos;
+      const { x: ox, y: oy, z: oz } = this._old_pos;
+      this.mesh.position.set(
+        ox + (x - ox) * t,
+        oy + (-y - oy) * t,
+        oz + (z - oz) * t,
+      )
+      this._old_pos = this.mesh.position.clone()
+    } else {
+      this._old_pos = this.ui.pos.clone()
+      this._old_pos.y = -this._old_pos.y
+      this.mesh.position.copy(this._old_pos)
+    }
+    if (this._old_scale) {
+      const { x, y, z } = this.ui.scale;
+      const { x: ox, y: oy, z: oz } = this._old_scale;
+      this.mesh.scale.set(
+        ox + (x - ox) * t,
+        oy + (y - oy) * t,
+        oz + (z - oz) * t,
+      )
+      this._old_scale = this.ui.scale.clone();
+    } else {
+      this.mesh.scale.copy(this.ui.scale);
+      this._old_scale = this.ui.scale.clone();
+    }
     if (this._dom) {
-      this._dom.style.opacity = '' + this.ui.global_opacity
+      this._dom.style.opacity = '' + this.mesh.material.alpha
       if (this._input) {
         this._input.style.fontSize = this._dom.style.height;
         this._input.style.lineHeight = this._dom.style.height;
@@ -329,6 +363,6 @@ export class UINodeRenderer implements IUINodeRenderer {
     }
     this._img = this.ui.image
     this._txt = this.ui.text
-    this.color_version = this.ui.color.version
+    this._color = this.ui.color
   }
 }

@@ -1,6 +1,7 @@
 import { GK, StateEnum, WeaponType, type IFrameInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import type { Entity } from "../entity/Entity";
+import { round_float } from "../utils/math/round_float";
 import CharacterState_Base from "./CharacterState_Base";
 
 export default class CharacterState_Lying extends CharacterState_Base {
@@ -33,7 +34,7 @@ export default class CharacterState_Lying extends CharacterState_Base {
       this.a_map.set(e.id, count_a + 1)
       if (count_a && count_a % 2 && pressing_a && e.wait > 0) {
         this.c_map.set(e.id, count_c + 1);
-        e.wait -= 1;
+        e.wait = round_float(e.wait - e.world.atom_time);
         break;
       }
       const count_d = this.d_map.get(e.id) ?? 0
@@ -41,7 +42,7 @@ export default class CharacterState_Lying extends CharacterState_Base {
       this.d_map.set(e.id, count_d + 1)
       if (count_d && count_d % 2 && pressing_d) {
         this.c_map.set(e.id, count_c + 1);
-        e.wait += 1;
+        e.wait = round_float(e.wait + e.world.atom_time);
       }
     } while (0)
   }

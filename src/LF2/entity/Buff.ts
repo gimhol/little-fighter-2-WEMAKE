@@ -30,8 +30,8 @@ export class Buff {
     }
     return this;
   }
-  update() {
-    if (this._tick.add()) this.job();
+  update(d: number) {
+    if (this._tick.add(d)) this.job();
     this._life.add()
   }
   unmount() {

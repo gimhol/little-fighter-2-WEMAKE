@@ -9,6 +9,9 @@ export class Label extends UIComponent {
   set text(v: string) { this.set_text(v) }
   get style(): IStyle { return this._txt_loader.style }
   set style(v: IStyle) { this._txt_loader.style = v }
+  override on_start(): void {
+    this.style = this.node.style;
+  }
   set_text(v: string): this {
     this._txt_loader.text = v
     return this;

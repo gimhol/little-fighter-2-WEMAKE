@@ -1,32 +1,40 @@
 import { ICollision } from "../base/ICollision";
-import { EntityEnum, StateEnum } from "../defines";
+import { StateEnum } from "../defines";
+import { is_ball, is_weapon } from "../entity";
 import { round } from "../utils/math/base";
+import { normalize } from "../utils/math/normalize";
 
 export function handle_itr_kind_whirlwind(c: ICollision) {
-  const { attacker, victim } = c;
-  let { x, y, z } = victim.velocity;
-  const dz = round(victim.position.z - attacker.position.z);
-  const dx = round(victim.position.x - attacker.position.x);
-  let d = dx > 0 ? -1 : dx < 0 ? 1 : 0;
-  let l = dz > 0 ? -1 : dz < 0 ? 1 : 0;
-  const max_vy = attacker.dataset('whirlwind_vy_max'); // 4
-  const acc_y = attacker.dataset('whirlwind_acc_y'); // 1
-  const acc_x = attacker.dataset('whirlwind_acc_x'); // 0.5
-  const acc_z = attacker.dataset('whirlwind_acc_z'); // 0.5
-  y += y < max_vy ? acc_y : 0;
-  x += d * acc_x;
-  z += l * acc_z;
-  victim.set_velocity(x, y, z);
-  switch (victim.type) {
-    case EntityEnum.Weapon:
-      switch (victim.state) {
-        case StateEnum.Weapon_InTheSky:
-        case StateEnum.HeavyWeapon_InTheSky:
-          break;
-        default:
-          victim.next_frame = { id: victim.data.indexes?.in_the_skys?.[0] };
-          break;
-      }
+  const { attacker, victim, world } = c;
+  if (is_ball(victim)) return;
+
+  let { x: vx, y: vy, z: vz } = victim.velocity;
+  const dz = round(attacker.position.z - victim.position.z);
+  const dx = round(attacker.position.x - victim.position.x);
+  const x_direction = normalize(dx);
+  const z_direction = normalize(dz);
+  const max_vy = attacker.dataset('whirlwind_vy_max');
+  const { atom_time } = world;
+  const acc_y = attacker.dataset('whirlwind_acc_y') * atom_time;
+  const acc_x = attacker.dataset('whirlwind_acc_x') * atom_time;
+  const acc_z = attacker.dataset('whirlwind_acc_z') * atom_time;
+
+  if (vy < max_vy) vy += acc_y;
+  vx += x_direction * acc_x;
+  vz += z_direction * acc_z;
+  victim.set_velocity(vx, vy, vz);
+
+  if (!is_weapon(victim)) return;
+
+  switch (victim.state) {
+    case StateEnum.Weapon_OnHand:
+    case StateEnum.HeavyWeapon_OnHand:
+    case StateEnum.HeavyWeapon_InTheSky:
+    case StateEnum.Weapon_InTheSky:
+      break;
+    default:
+      victim.next_frame = { id: victim.data.indexes?.in_the_skys?.[0] };
       break;
   }
+
 }

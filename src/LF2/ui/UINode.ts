@@ -1,5 +1,5 @@
 import { LF2 } from "../LF2";
-import { Callbacks, StateDelegate } from "../base";
+import { Callbacks } from "../base";
 import { IStyle, IVector3 } from "../defines";
 import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
@@ -11,7 +11,6 @@ import { IUIKeyEvent } from "./IUIKeyEvent";
 import { LF2PointerEvent } from "./LF2PointerEvent";
 import { actor } from "./action";
 import { UIComponent } from "./component";
-import { parse_ui_value } from "./read_info_value";
 export class UINode implements IDebugging {
 
   static readonly TAG: string = 'UINode';
@@ -20,6 +19,10 @@ export class UINode implements IDebugging {
   log!: (_0: string, ..._1: any[]) => void;
 
   readonly lf2: LF2;
+
+  outlineColor: string | undefined;
+  outlineWidth: number | undefined;
+  outlineAlpha: number | undefined;
 
   /**
    * 原始UI数据
@@ -63,7 +66,7 @@ export class UINode implements IDebugging {
 
   text: TextInfo | null = null
   image: ImageInfo | null = null
-  readonly color: StateDelegate<string> = new StateDelegate(() => parse_ui_value(this.data, "string", this.data.color) ?? '');
+  color: string = '';
 
   protected _parent?: UINode;
   protected _children: UINode[] = [];
@@ -285,9 +288,7 @@ export class UINode implements IDebugging {
   get components(): ReadonlyArray<UIComponent> {
     return this._components;
   }
-  get style(): IStyle {
-    return this.text?.style || {}
-  }
+  style: IStyle = {}
   /** 光标是否在本节点上 */
   get pointer_over() { return this._pointer_over }
   /** 光标是否在本节点中按下 */
@@ -301,17 +302,21 @@ export class UINode implements IDebugging {
     this.data = Object.freeze(data);
     this._parent = parent;
     this._root = parent?.root ?? this;
-    const { visible = true, opacity = 1, disabled = false } = this.data;
-    this._disabled = disabled
-    this._visible = visible
-    this._opacity = opacity
+    this._disabled = this.data.disabled == true
+    this._visible = this.data.visible != false
+    this._opacity = this.data.opacity ?? 1
     this.center.set(...this.data.center);
     this.pos.set(...this.data.pos);
     this.size.set(...this.data.size);
     this.scale.set(...this.data.scale);
     this.text = this.data.txt_info ?? null;
     this.image = this.data.img_info ?? null;
+    this.color = this.data.color ?? '';
     this.renderer = new D.UINodeRenderer(this);
+    this.outlineColor = this.data.outlineColor
+    this.outlineWidth = this.data.outlineWidth
+    this.outlineAlpha = this.data.outlineAlpha
+    this.style = this.data.style ? { ...this.data.style } : {}
     make_debugging(this)
   }
   get global_pos(): IVector3 {
@@ -454,8 +459,6 @@ export class UINode implements IDebugging {
     this._callbacks.emit("on_hide")(this);
     this.renderer.on_hide?.();
   }
-
-  readonly cook = UINode.create.bind(UINode)
 
   static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {
     const ret = new UINode(lf2, info, parent);

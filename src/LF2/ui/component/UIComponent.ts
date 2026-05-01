@@ -47,17 +47,16 @@ export class UIComponent<
     return this._props
   }
   __debugging?: boolean | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  debug(func: string, ...args: any[]): void { }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  log(func: string, ...args: any[]): void { }
+  debug(...args: any[]): void { }
+  warn(...args: any[]): void { }
+  log(...args: any[]): void { }
+
   id: string = '';
+  name: string = ''
   get lf2() { return this.node.lf2; }
   get world() { return this.node.lf2.world; }
   mounted: boolean = false;
 
-  /** @deprecated */
-  private _args: readonly any[] = [];
   private _enabled: boolean = true;
 
   get enabled() { return this._enabled; }
@@ -66,10 +65,6 @@ export class UIComponent<
 
   get disabled() { return !this.enabled }
   set disabled(v: boolean) { this.set_enabled(!v); }
-
-  /** @deprecated */
-  get args(): readonly string[] { return this._args; }
-
 
   /**
    * 组件基类构造函数
@@ -80,25 +75,30 @@ export class UIComponent<
    * @param {string} f_name 组件在工厂中的名字
    * @param {IComponentInfo} info
    */
-  constructor(layout: UINode, f_name: string, info: Required<IComponentInfo>, args: any[]) {
+  constructor(layout: UINode, f_name: string, info: Required<IComponentInfo>) {
     this.node = layout;
     this.f_name = f_name;
     this.info = info;
-    this.props_holder = new UIProps({ ...info.props, ...info.properties }, this)
-    this._args = args;
+    this.props_holder = new UIProps({
+      ...info.props,
+      ...info.properties
+    }, this)
+    this._enabled = info.enabled;
+    this.id = info.id
+    this.name = info.name;
     make_debugging(this);
   }
   init?(): void;
   /** @deprecated */
   num(idx: number): number | null {
-    if (idx >= this._args.length) return null;
-    const num = Number(this._args[idx]);
+    if (idx >= this.info.args.length) return null;
+    const num = Number(this.info.args[idx]);
     return is_num(num) ? num : null;
   }
   /** @deprecated */
   str(idx: number): string | null {
-    if (idx >= this._args.length) return null;
-    return '' + this._args[idx]
+    if (idx >= this.info.args.length) return null;
+    return '' + this.info.args[idx]
   }
   /** @deprecated */
   bool(idx: number): boolean {
@@ -106,9 +106,7 @@ export class UIComponent<
     if (!str) return false;
     return !['false', '0'].some(v => v === str);
   }
-  warn(func: string, msg: string) {
-    Ditto.warn(`[${this.node_name}][<${this.id}>${this.f_name}::${func}] ${msg}`)
-  }
+
   /** @deprecated */
   nums(idx: number, length: 1): [number] | null
   /** @deprecated */
@@ -118,13 +116,13 @@ export class UIComponent<
   /** @deprecated */
   nums(idx: number, length: number): number[] | null;
   nums(idx: number, length: number): number[] | null {
-    if (idx >= this._args.length) return null;
+    if (idx >= this.info.args.length) return null;
 
     const key = `nums_${idx}_${length}`
     const cache = this._args_caches.get(key)
     if (cache) return cache;
 
-    let raw = this._args[idx];
+    let raw = this.info.args[idx];
     raw = typeof raw === 'string' ? raw.split(',') : raw
     if (Array.isArray(raw)) {
       if (raw.length < length) {
@@ -205,6 +203,18 @@ export class UIComponent<
   find_node(which: string | null | undefined): UINode | null {
     if (typeof which !== 'string')
       return this.node
+    which = which.trim();
+    if (which.startsWith('parent:')) {
+      let distance = Number(which.substring(7))
+      let parent = this.node.parent;
+      while (distance && parent) {
+        parent = parent.parent
+        --distance;
+      }
+      return parent || null
+    } else if (which === 'parent') {
+      return this.node.parent || null
+    }
     switch (which) {
       case 'parent':
         return this.node.parent ?? null
@@ -233,6 +243,7 @@ export class UIComponent<
         return null
       return bro
     }
+
     if (which.startsWith('id:')) {
       const v = which.substring(3).trim();
       return this.node.root?.find_child(v) || null

@@ -7,7 +7,7 @@
   component: [
     "FitChildren()",
     {
-      name: "LabelButton",
+      cls: "LabelButton",
       properties: {
         back_label: "back_label",
         hover_label: "hover_label",
@@ -38,13 +38,23 @@
       center: "0.5,0.5",
       i18n: "$val:text",
       style: "$val:style_normal",
-      component: [{ name: "Label", id: "back_label" }],
+      component: [
+        {
+          cls: "Label",
+          id: "back_label",
+        },
+      ],
     },
     {
       center: "0.5,0.5",
       i18n: "$val:text",
       style: "$val:style_hover",
-      component: [{ name: "Label", id: "hover_label" }],
+      component: [
+        {
+          cls: "Label",
+          id: "hover_label",
+        },
+      ],
     },
   ],
 }

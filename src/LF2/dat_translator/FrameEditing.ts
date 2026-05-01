@@ -23,7 +23,7 @@ export class FrameEditing {
   keydown(key: keyof IHoldKeyCollection | (keyof IHoldKeyCollection)[], ...nexts: (string | number | INextFrame)[]) {
     this.frame.key_down = this.frame.key_down || {};
     const cooks = nexts.map(v => {
-      if (is_str(v) || is_num(v)) return get_next_frame_by_raw_id('' + v, 'hit', this.costs);
+      if (is_str(v) || is_num(v)) return get_next_frame_by_raw_id('' + v, 'frame', 'hit', this.costs);
       const r: INextFrame = { ...v };
       cook_next_frame_cost(r, 'hit', this.costs)
       return r
@@ -37,7 +37,7 @@ export class FrameEditing {
   hit(key: keyof IHitKeyCollection, ...nexts: (string | number | INextFrame)[]) {
     this.frame.hit = this.frame.hit || {};
     const cooks = nexts.map(v => {
-      if (is_str(v) || is_num(v)) return get_next_frame_by_raw_id('' + v, 'hit', this.costs);
+      if (is_str(v) || is_num(v)) return get_next_frame_by_raw_id('' + v, 'frame', 'hit', this.costs);
       const r: INextFrame = { ...v };
       cook_next_frame_cost(r, 'hit', this.costs)
       return r
@@ -50,7 +50,7 @@ export class FrameEditing {
     const cookeds: INextFrame[] = [];
     for (const any of nexts) {
       if (is_str(any) || is_num(any)) {
-        const cooked = get_next_frame_by_raw_id('' + any, 'hit', this.costs)
+        const cooked = get_next_frame_by_raw_id('' + any, 'frame', 'hit', this.costs)
         cookeds.push(cooked)
         continue;
       }

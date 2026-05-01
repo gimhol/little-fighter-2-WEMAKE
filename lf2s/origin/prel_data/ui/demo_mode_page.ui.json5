@@ -3,7 +3,7 @@
   id: "demo_mode_page",
   component: [
     {
-      name: "DemoModeLogic",
+      cls: "DemoModeLogic",
       properties: {
         focus_prefix: "focus_prefix",
         focus_on: "focus_on",
@@ -13,8 +13,8 @@
     },
     {
       id: "cam_ctrl",
-      name: "CameraCtrl",
-      properties: {},
+      cls: "CameraCtrl",
+      properties: { },
     },
   ],
   items: [
@@ -27,16 +27,14 @@
     "ui/fighter_stat_s_x8.ui.json5",
     {
       visible: true,
-      component: [{ name: "PauseHandling", properties: { reverse: true } }],
+      component: [ { cls: "PauseHandling", properties: { reverse: true } } ],
       i18n: "DEMO",
+      outlineColor: "#005A8E",
+      outlineWidth: 4,
+      outlineAlpha: 1,
       style: {
         fill_style: "white",
-        font: '24px "Arial Black", Arial',
-        back_style: {
-          font: '24px "Arial Black", Arial',
-          stroke_style: "#005A8E",
-          line_width: 4,
-        },
+        font: "24px \"Arial Black\", Arial",
       },
       center: "0.5,0.5",
       pos: "397, 225",
@@ -48,58 +46,52 @@
     },
     {
       i18n: "demo_cam_ctrl",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
       style: {
         fill_style: "white",
-        font: "9px  Arial",
-        back_style: {
-          font: "9px Arial",
-          stroke_style: "#005A8E",
-          line_width: 1,
-        },
+        font: "9px Arial",
       },
-      component: [{ name: "Alignment", properties: { right: "right", bottom: "bottom" } }],
+      component: [ { cls: "Alignment", properties: { right: "right", bottom: "bottom" } } ],
       center: "1,1",
     },
     {
       id: "curr_focus_prefix",
       i18n: "curr_focus",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
       style: {
         fill_style: "white",
-        font: "9px  Arial",
-        back_style: {
-          font: "9px Arial",
-          stroke_style: "#005A8E",
-          line_width: 1,
-        },
+        font: "9px Arial",
       },
       component: [
         {
           id: "focus_prefix",
-          name: "Label",
+          cls: "Label",
         },
-        { name: "Alignment", properties: { left: "left", bottom: "bottom" } },
+        { cls: "Alignment", properties: { left: "left", bottom: "bottom" } },
       ],
       center: "0,1",
     },
     {
       id: "curr_focus",
       i18n: "",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
       style: {
         fill_style: "white",
-        font: "9px  Arial",
-        back_style: {
-          font: "9px Arial",
-          stroke_style: "#005A8E",
-          line_width: 1,
-        },
+        font: "9px Arial",
       },
       component: [
         {
           id: "focus_on",
-          name: "Label",
+          cls: "Label",
         },
         {
-          name: "Alignment",
+          cls: "Alignment",
           properties: { left: "right", bottom: "bottom", followed: { l: "id:curr_focus_prefix" } },
         },
       ],
@@ -107,6 +99,6 @@
     },
   ],
   actions: {
-    stop: ["remove_all_entities()", "destory_stage()"],
+    stop: [ "remove_all_entities()", "destory_stage()" ],
   },
 }

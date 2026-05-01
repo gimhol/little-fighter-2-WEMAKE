@@ -218,7 +218,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           let a_hit_a: INextFrame | undefined;
           if (t_action) {
             t_hit_a = [{
-              ...get_next_frame_by_raw_id(t_action),
+              ...get_next_frame_by_raw_id(t_action, 'frame'),
               facing: FF.Ctrl,
               expression: new CondMaker<EV>()
                 .add(EV.Catching, "==", 1)
@@ -233,7 +233,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           }
           if (a_action)
             a_hit_a = {
-              ...get_next_frame_by_raw_id(a_action),
+              ...get_next_frame_by_raw_id(a_action, 'frame'),
               expression: new CondMaker<EV>()
                 .add(EV.Catching, "==", 1)
                 .done(),

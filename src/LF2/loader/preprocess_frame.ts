@@ -50,21 +50,18 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
     } else if (n.spreading == OpointSpreading.FloatRange) {
       const { spreading_x: xx, spreading_y: yy, spreading_z: zz } = n;
       if (xx?.length == 3)
-        n.__spreading_random_x = { take: () => round_float(lf2.mt.range(-xx[0], xx[1]) / xx[2]) }
+        n.__spreading_random_x = { take: () => round_float(lf2.mt.range(xx[0], xx[1]) / xx[2]) }
       if (yy?.length == 3)
-        n.__spreading_random_y = { take: () => round_float(lf2.mt.range(-yy[0], yy[1]) / yy[2]) }
+        n.__spreading_random_y = { take: () => round_float(lf2.mt.range(yy[0], yy[1]) / yy[2]) }
       if (zz?.length == 3)
-        n.__spreading_random_z = { take: () => round_float(lf2.mt.range(-zz[0], zz[1]) / zz[2]) }
+        n.__spreading_random_z = { take: () => round_float(lf2.mt.range(zz[0], zz[1]) / zz[2]) }
     }
   })
 
   const unchecked_frame = frame as any;
   if (unchecked_frame) {
     if (unchecked_frame.center) {
-      const [x, y] = read_nums(unchecked_frame.center, 2, [
-        frame.centerx ?? 0,
-        frame.centery ?? 0,
-      ]);
+      const [x, y] = read_nums(unchecked_frame.center, 2);
       frame.centerx = x;
       frame.centery = y;
     }
