@@ -1,5 +1,5 @@
 import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TFace, TNextFrame } from "../defines";
-import { AGK, CONFLICTS_KEY_MAP, GK, StateEnum as SE } from "../defines";
+import { AGK, CONFLICTS_KEY_MAP, GK, GKLabels, StateEnum as SE } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
 import type { PlayerInfo } from "../PlayerInfo";
@@ -87,7 +87,12 @@ export class BaseController {
   get dj(): 0 | 1 | -1 { return -this.jd as 0 | 1 | -1 }
 
   private _key_list: string = '';
-  reset_key_list() { this._key_list = '' }
+  private _readable_key_list: string = '';
+  get key_list() { return this._readable_key_list; }
+  reset_key_list() {
+    this._key_list = ''
+    this._readable_key_list = ''
+  }
 
   /**
    * 指定按键进入start状态（按下）
@@ -252,7 +257,7 @@ export class BaseController {
   update(): ControllerUpdateResult {
     this._time.add()
     const e = this.entity;
-    if (!e.shaking && !e.motionless && this.queue.length) {
+    if (this.queue.length) {
       let key_downs = '';
       for (const [status, k] of this.queue) {
         switch (status) {
@@ -265,8 +270,10 @@ export class BaseController {
             key_downs += k
             if (k === GK.d) {
               this._key_list = k;
+              this._readable_key_list = GKLabels[k]
             } else if (this._key_list[0] === GK.d) {
               this._key_list += k;
+              this._readable_key_list += GKLabels[k]
             }
             this.keys[k].hit(this.time);
             const ck = CONFLICTS_KEY_MAP[k];
@@ -387,7 +394,10 @@ export class BaseController {
     }
     frame?.seq_map && this.check_hit_seqs(frame.seq_map, ret);
     /** 这里不想支持过长的指令 */
-    if (this._key_list && this._key_list.length >= 10) this._key_list = '';
+    if (this._key_list && this._key_list.length >= 10) {
+      this._key_list = '';
+      this._readable_key_list = ''
+    }
 
     return ret;
   }
@@ -401,6 +411,7 @@ export class BaseController {
         for (let k of seq) this.keys[k as GK]?.use();
         result.set(nf, this.time, void 0, this._key_list);
         this._key_list = '';
+        this._readable_key_list = ''
         return;
       }
     }
@@ -413,6 +424,7 @@ export class BaseController {
         result.set(nf, this.time, void 0, this._key_list);
         for (let k of seq) this.keys[k as GK]?.use();
         this._key_list = '';
+        this._readable_key_list = ''
         return;
       }
     }
