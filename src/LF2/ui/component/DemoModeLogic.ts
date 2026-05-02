@@ -379,10 +379,12 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       this.props.focus_on?.set_text(txt)
 
     } while (0)
-    if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
-      this.lf2.goto_next_stage()
-      this.fsm.use(0)
-      this.jalousie.open = true;
+    if (this.is_stage_mode) {
+      if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
+        this.lf2.goto_next_stage()
+        this.fsm.use(0)
+        this.jalousie.open = true;
+      }
     }
     this.fsm.update(dt)
   }
