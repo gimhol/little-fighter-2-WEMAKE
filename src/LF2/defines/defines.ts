@@ -171,6 +171,30 @@ export namespace Defines {
       txt_outline_color: "#9a5700",
       outline_color: "#ffd34c",
     },
+    [TeamEnum.Team_5]: {
+      i18n: "Team_5",
+      txt_color: "#ffd34c",
+      txt_outline_color: "#9a5700",
+      outline_color: "#ffd34c",
+    },
+    [TeamEnum.Team_6]: {
+      i18n: "Team_6",
+      txt_color: "#ffd34c",
+      txt_outline_color: "#9a5700",
+      outline_color: "#ffd34c",
+    },
+    [TeamEnum.Team_7]: {
+      i18n: "Team_7",
+      txt_color: "#ffd34c",
+      txt_outline_color: "#9a5700",
+      outline_color: "#ffd34c",
+    },
+    [TeamEnum.Team_8]: {
+      i18n: "Team_4",
+      txt_color: "#ffd34c",
+      txt_outline_color: "#9a5700",
+      outline_color: "#ffd34c",
+    },
   };
 
   export enum BuiltIn_Imgs {

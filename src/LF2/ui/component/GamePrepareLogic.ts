@@ -65,7 +65,6 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     else if (bg_switcher?.node.visible && !bg_switcher.node.disabled)
       this.lf2.change_bg(bg_switcher.background.id);
 
-
     const { far, near, left, right } = this.lf2.world.bg;
     const is_stage_mode = this.props.game_mode === GAME_MODE_STAGE
     const is_vs_mode = this.props.game_mode === GAME_MODE_VS

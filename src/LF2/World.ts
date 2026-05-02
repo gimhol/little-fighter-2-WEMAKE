@@ -414,8 +414,6 @@ export class World extends WorldDataset {
       const ui_stack = ui_stacks[i];
       const { ui } = ui_stack
       if (!ui || ui.disabled) continue;
-      ui.update(16.66666 * this.atom_time);
-
       if (!flag) continue;
       for (const e of this.lf2.events) {
         if (e.pressed) {
@@ -426,6 +424,7 @@ export class World extends WorldDataset {
           this.lf2._keys.forEach(v => v[e.game_key].end())
         }
       }
+      ui.update(16.66666 * this.atom_time);
       flag = false
     }
   }

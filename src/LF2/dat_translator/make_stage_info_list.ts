@@ -1,4 +1,4 @@
-import { Difficulty } from "../defines/Difficulty";
+import { Difficulty as DF } from "../defines/Difficulty";
 import { IStageInfo } from "../defines/IStageInfo";
 import { IStageObjectInfo } from "../defines/IStageObjectInfo";
 import { IStagePhaseInfo } from "../defines/IStagePhaseInfo";
@@ -92,26 +92,38 @@ export function make_stage_info_list(full_str: string): IStageInfo[] {
     }
     if (nid < 49 && stage_info.phases[0]) {
       stage_info.phases[0]!.health_up = stage_info.phases[0]!.respawn = {
-        [Difficulty.Easy]: 200,
-        [Difficulty.Normal]: 150,
-        [Difficulty.Difficult]: 100,
-        [Difficulty.Crazy]: 50,
+        [DF.Easy]: 200,
+        [DF.Normal]: 150,
+        [DF.Difficult]: 100,
+        [DF.Crazy]: 50,
       };
       stage_info.phases[0]!.mp_up = {
-        [Difficulty.Easy]: 500,
-        [Difficulty.Normal]: 500,
-        [Difficulty.Difficult]: 500,
-        [Difficulty.Crazy]: 500,
+        [DF.Easy]: 500,
+        [DF.Normal]: 500,
+        [DF.Difficult]: 500,
+        [DF.Crazy]: 500,
       };
     }
     if (nid === 50) {
       for (const p of stage_info.phases) {
         p.respawn = {
-          [Difficulty.Easy]: 300,
-          [Difficulty.Normal]: 150,
-          [Difficulty.Difficult]: 5,
-          [Difficulty.Crazy]: 5,
+          [DF.Easy]: 200,
+          [DF.Normal]: 100,
+          [DF.Difficult]: 5,
+          [DF.Crazy]: 5,
         };
+        p.respawn_r = {
+          [DF.Easy]: 500,
+          [DF.Normal]: 400,
+          [DF.Difficult]: 300,
+          [DF.Crazy]: 250,
+        };
+        p.respawn_x = {
+          [DF.Easy]: 100,
+          [DF.Normal]: 100,
+          [DF.Difficult]: 100,
+          [DF.Crazy]: 100,
+        }
       }
     }
 
