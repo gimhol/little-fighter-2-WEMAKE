@@ -23,7 +23,7 @@
     },
     head: "sprite/gim/face.png",
     small: "sprite/gim/s.png",
-    group: ["1000", "Dev"],
+    group: ["Dev"],
   },
   indexes: {
     standing: "0",

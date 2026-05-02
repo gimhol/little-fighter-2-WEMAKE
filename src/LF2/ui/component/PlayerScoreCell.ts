@@ -14,7 +14,7 @@ export class PlayerScoreCell extends UIComponent {
     return this.node.lookup_component(PlayerScore);
   }
 
-  override on_show(): void {
+  override update(): void {
     super.on_show?.();
     this._text_loader.set_text( this.get_txt() )
   }

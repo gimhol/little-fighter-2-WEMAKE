@@ -39,6 +39,7 @@ export class FSM<
     return this._state;
   }
   get time(): number { return this._time }
+  set time(v: number) { this._time = v }
   get state_time(): number { return this._state_time }
   protected set state(s: S | undefined) {
     this._prev_state = this._state;

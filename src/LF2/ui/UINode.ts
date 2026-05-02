@@ -1,7 +1,7 @@
 import { LF2 } from "../LF2";
 import { Callbacks } from "../base";
 import { IStyle, IVector3 } from "../defines";
-import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
+import { Ditto as D, Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
 import { is_num, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
@@ -439,6 +439,7 @@ export class UINode implements IDebugging {
       c.paused = true;
       c.mounted = false;
       c.on_pause?.();
+      c.recycle_keys();
     }
     for (const item of this.children) item.on_pause();
     this.renderer.on_pause?.();

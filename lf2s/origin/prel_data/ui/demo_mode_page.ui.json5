@@ -25,6 +25,13 @@
     },
     "ui/center_pause_label.ui.json5",
     "ui/fighter_stat_s_x8.ui.json5",
+    "ui/gogogo.ui.json5",
+    "ui/gogogo_loop.ui.json5",
+    {
+      pos: "397,10",
+      center: "0.5,0",
+      component: ["StageTitleText()"],
+    },
     {
       visible: true,
       component: [ { cls: "PauseHandling", properties: { reverse: true } } ],
@@ -96,6 +103,34 @@
         },
       ],
       center: "0,1",
+    },
+    {
+      component: [
+        {
+          cls: "Jalousie",
+          properties: {
+            direction: "column",
+            align: "stretch",
+            open: true,
+            end: true,
+          },
+        },
+        {
+          cls: "Alignment",
+          properties: {
+            left: "left",
+            right: "right",
+            top: "top",
+            bottom: "bottom",
+          },
+        },
+      ],
+      items: [
+        {
+          count: 30,
+          template: "shutter_item",
+        },
+      ],
     },
   ],
   actions: {

@@ -49,6 +49,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   get lf2() { return this.world.lf2; }
   get time() { return this.fsm.time; }
+  set time(v) { this.fsm.time = v; }
 
   get phase_idx(): number { return this._phase_idx };
   get phase(): IStagePhaseInfo | undefined { return this._phase; };
@@ -190,10 +191,14 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
     this.player_r = this.bg.right
     if (!phase) return;
 
-    const { objects, respawn, health_up, mp_up, dialogs } = phase;
+    const { objects, respawn, respawn_r, health_up, mp_up, respawn_x, dialogs } = phase;
     const hp_recovery = health_up?.[this.world.difficulty] || 0;
+    const hp_recovery_r = health_up?.[this.world.difficulty] || hp_recovery;
     const hp_respawn = respawn?.[this.world.difficulty] || 0;
+    const hp_respawn_r = respawn_r?.[this.world.difficulty] || hp_respawn;
     const mp_recovery = mp_up?.[this.world.difficulty] || 0;
+
+    const _respawn_x = respawn_x?.[this.world.difficulty];
     const loop_players_fighters = hp_recovery || hp_respawn || mp_recovery
     if (loop_players_fighters) {
       const teams = new Set<string>()
@@ -205,12 +210,23 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
           const hp = hp_respawn < 1 ?
             min(f.hp_max * hp_respawn, f.hp_max) :
             min(hp_respawn, f.hp_max)
-          f.hp = f.hp_r = hp;
+          f.hp = hp;
+          const hp_r = hp_respawn < 1 ?
+            min(f.hp_max * hp_respawn_r, f.hp_max) :
+            min(hp_respawn_r, f.hp_max)
+          f.hp_r = max(hp_r, hp)
+          if (typeof _respawn_x === 'number') {
+            f.set_position_x(_respawn_x);
+          }
         } else if (f.hp > 0 && hp_recovery) {
           const hp = hp_recovery < 1 ?
             min(f.hp_r + (f.hp_max - f.hp_r) * hp_recovery, f.hp_max) :
             min(f.hp_r + hp_recovery, f.hp_max)
-          f.hp = f.hp_r = hp
+          f.hp = hp
+          const hp_r = hp_recovery_r < 1 ?
+            min(f.hp_r + (f.hp_max - f.hp_r) * hp_recovery, f.hp_max) :
+            min(f.hp_r + hp_recovery, f.hp_max)
+          f.hp_r = max(hp_r, hp)
         }
         if (mp_recovery) f.mp = min(f.mp + mp_recovery, f.mp_max)
       }

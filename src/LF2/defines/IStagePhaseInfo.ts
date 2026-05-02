@@ -53,7 +53,8 @@ export interface IStagePhaseInfo {
   }[]
 
   respawn?: { [x in Difficulty]?: number };
-
+  respawn_r?: { [x in Difficulty]?: number };
+  respawn_x?: { [x in Difficulty]?: number };
   /**
    *
    *

@@ -1,5 +1,3 @@
-import { KeyStatus } from "../../controller/KeyStatus";
-import { GameKey } from "../../defines";
 import { CMD } from "../../defines/CMD";
 import { Entity } from "../../entity";
 import { IUIKeyEvent } from "../IUIKeyEvent";
@@ -16,15 +14,6 @@ export class CameraCtrl extends UIComponent {
   time: number = 0;
   free: boolean = true;
   staring?: Entity;
-  readonly keys: Record<GameKey, KeyStatus> = {
-    [GameKey.L]: new KeyStatus(this),
-    [GameKey.R]: new KeyStatus(this),
-    [GameKey.U]: new KeyStatus(this),
-    [GameKey.D]: new KeyStatus(this),
-    [GameKey.a]: new KeyStatus(this),
-    [GameKey.j]: new KeyStatus(this),
-    [GameKey.d]: new KeyStatus(this)
-  };
   get lr() {
     const r = this.keys.R.is_end() ? 0 : 1;
     const l = this.keys.L.is_end() ? 0 : 1;
@@ -36,6 +25,18 @@ export class CameraCtrl extends UIComponent {
   override on_key_up(e: IUIKeyEvent): void {
     this.keys[e.game_key].end();
   }
+  focus_next(d: -1 | 1) {
+    const fighters = this.lf2.fighters.all.filter(v => v.hp > 0)
+    fighters.sort((a, b) => a.position.x - b.position.x);
+    if (!this.staring) {
+      this.staring = fighters.at(d < 0 ? fighters.length - 1 : 0)
+    } else {
+      const idx = fighters.indexOf(this.staring!)
+      const len = fighters.length
+      this.staring = fighters.at((idx + len + d) % len)
+    }
+    this.free = !!this.staring;
+  }
   override update(dt: number): void {
     const { lr } = this;
     if (lr) {
@@ -46,37 +47,17 @@ export class CameraCtrl extends UIComponent {
       this.free = false
       const cam_x = this.world.renderer.cam_x;
       this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)
-    } else if (!this.keys.d.is_end()) {
+    }
+    if (!this.keys.d.is_end()) {
       this.lf2.cmds.push(CMD.LOCK_CAM, ``)
+      this.staring = void 0;
       this.free = true
-    } else if (this.keys.U.is_start()) {
-      this.keys.U.use()
-      const fighters = this.lf2.fighters.all;
-      if (!this.staring) {
-        this.staring = fighters.at(fighters.length - 1)
-      } else {
-        const idx = fighters.indexOf(this.staring!)
-        const len = fighters.length
-        this.staring = fighters.at((idx + len - 1) % len)
-      }
-      this.free = !!this.staring;
-    } else if (this.keys.D.is_start()) {
-      this.keys.D.use()
-      const fighters = this.lf2.fighters.all
-      if (!this.staring) {
-        this.staring = fighters.at(0)
-      } else {
-        const idx = fighters.indexOf(this.staring)
-        const len = fighters.length
-        this.staring = fighters.at((idx + 1) % len)
-      }
-      this.free = !!this.staring;
     }
-    if (this.staring) {
-      if (this.staring.hp <= 0 || !this.staring.is_attach) {
-        this.staring = void 0;
-      }
-    }
+    if (this.keys.U.is_start()) this.focus_next(-1);
+    if (this.keys.D.is_start()) this.focus_next(1);
+    if (this.staring && (this.staring.hp <= 0 || !this.staring.is_attach))
+      this.focus_next(1)
+
     if (this.free && this.staring) {
       const cam_x = this.staring.position.x - this.world.screen_w / 2
       this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)

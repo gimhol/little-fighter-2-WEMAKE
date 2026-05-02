@@ -15,10 +15,10 @@ export const arithmetic_progression = (
   if (gap === 0 || (to - from) / gap < 0)
     throw new Error("[arithmetic_progression] dead loop!");
 
-  const ret = [];
-  for (let i = 0; true; ++i) {
+  const ret = [from];
+  for (let i = 1; true; ++i) {
     const v = from + i * gap;
-    if (gap > 0 ? v >= to : v <= to) break;
+    if (gap > 0 ? v > to : v < to) break;
     ret.push(v);
   }
   return ret;
