@@ -421,9 +421,9 @@ export class BotController extends BaseController {
         return;
       }
     } else {
-      this.avoidings.clear();
-      this.chasings.clear();
-      this.defends.clear()
+      this.avoidings.del(t => t.entity === other);
+      this.chasings.del(t => t.entity === other);
+      this.defends.del(t => t.entity === other)
     }
   }
 
