@@ -50,13 +50,13 @@ export class CameraCtrl extends UIComponent {
     }
     if (!this.keys.d.is_end()) {
       this.lf2.cmds.push(CMD.LOCK_CAM, ``)
+      this.staring = void 0;
       this.free = true
     }
     if (this.keys.U.is_start()) this.focus_next(-1);
     if (this.keys.D.is_start()) this.focus_next(1);
     if (this.staring && (this.staring.hp <= 0 || !this.staring.is_attach))
       this.focus_next(1)
-
 
     if (this.free && this.staring) {
       const cam_x = this.staring.position.x - this.world.screen_w / 2

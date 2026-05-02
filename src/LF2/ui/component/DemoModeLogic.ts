@@ -1,7 +1,8 @@
-import { arithmetic_progression, CheatType, FacingFlag, IStageInfo, Label, Randoming, StageGroup, UINode } from "@/LF2";
+import { arithmetic_progression, ComponentsPlayer, FacingFlag, IStageInfo, IStagePhaseInfo, IWorldCallbacks, Jalousie, Label, LF2, Randoming, Stage, StageActions, StageGroup, UINode } from "@/LF2";
 import FSM from "@/LF2/base/FSM";
 import { Entity } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
+import IStageCallbacks from "@/LF2/stage/IStageCallbacks";
 import { Times } from "@/LF2/utils/Times";
 import { new_team } from "../../base";
 import { Defines, EntityGroup, GameKey } from "../../defines";
@@ -34,6 +35,25 @@ class FSMState_End extends FSMState {
     this.owner.props.score_board?.set_visible(false);
   }
 }
+class FSMState_BeforeWin extends FSMState {
+  override readonly key: number = 3;
+  override update() {
+    if (this.fsm.state_time > 3000)
+      return 4;
+  }
+}
+class FSMState_Win extends FSMState {
+  override readonly key: number = 4;
+  override enter(): void {
+    this.lf2.sounds.play_preset("pass");
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(true);
+  }
+  override leave(): void {
+    const score_board = this.node.find_child("score_board")
+    score_board?.set_visible(false);
+  }
+}
 export interface IDemoModeLogicProps {
   focus_prefix?: Label;
   focus_on?: Label;
@@ -41,11 +61,12 @@ export interface IDemoModeLogicProps {
   score_board?: UINode;
 }
 interface DemoSituation {
+  title: string;
   player_count: number;
   stage_mode: boolean;
   player_teams: string[]
 }
-export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> implements IEntityCallbacks {
+export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
   static override readonly TAGS: string[] = ["DemoModeLogic"];
   static override readonly PROPS: IPropsMeta<IDemoModeLogicProps> = {
     focus_prefix: Label,
@@ -56,94 +77,158 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> implements I
   readonly fsm = new FSM<number, FSMState>().add(
     new FSMState(this),
     new FSMState_BeforeEnd(this),
-    new FSMState_End(this)
+    new FSMState_End(this),
+    new FSMState_BeforeWin(this),
+    new FSMState_Win(this)
   )
   protected _staring?: Entity | undefined;
   protected _free?: boolean
   protected weapon_drop_timer = new Times(0, 1200);
-  protected _situations: Randoming<DemoSituation> | null = null
-  protected _situation: DemoSituation | null = null
-
-  get situations() {
+  jalousie?: Jalousie;
+  gogogo?: ComponentsPlayer;
+  gogogo_loop?: ComponentsPlayer;
+  protected static _situations: Randoming<DemoSituation> | null = null
+  protected static _situation: DemoSituation | null = null
+  protected static _stages: Randoming<IStageInfo> | null = null
+  protected static get_situations(lf2: LF2) {
     if (this._situations) return this._situations;
     return this._situations = new Randoming<DemoSituation>([
       /* 闯关 */
-      { player_count: 1, stage_mode: true, player_teams: new Array(1).fill('1') },
-      { player_count: 2, stage_mode: true, player_teams: new Array(2).fill('1') },
-      { player_count: 3, stage_mode: true, player_teams: new Array(3).fill('1') },
-      { player_count: 4, stage_mode: true, player_teams: new Array(4).fill('1') },
-      { player_count: 5, stage_mode: true, player_teams: new Array(5).fill('1') },
-      { player_count: 6, stage_mode: true, player_teams: new Array(6).fill('1') },
-      { player_count: 7, stage_mode: true, player_teams: new Array(7).fill('1') },
-      { player_count: 8, stage_mode: true, player_teams: new Array(8).fill('1') },
+      { title: '1 Players Stage Mode', player_count: 1, stage_mode: true, player_teams: new Array(1).fill('1') },
+      { title: '2 Players Stage Mode', player_count: 2, stage_mode: true, player_teams: new Array(2).fill('1') },
+      { title: '3 Players Stage Mode', player_count: 3, stage_mode: true, player_teams: new Array(3).fill('1') },
+      { title: '4 Players Stage Mode', player_count: 4, stage_mode: true, player_teams: new Array(4).fill('1') },
+      { title: '5 Players Stage Mode', player_count: 5, stage_mode: true, player_teams: new Array(5).fill('1') },
+      { title: '6 Players Stage Mode', player_count: 6, stage_mode: true, player_teams: new Array(6).fill('1') },
+      { title: '7 Players Stage Mode', player_count: 7, stage_mode: true, player_teams: new Array(7).fill('1') },
+      { title: '8 Players Stage Mode', player_count: 8, stage_mode: true, player_teams: new Array(8).fill('1') },
 
       /* 各自为战 */
-      { player_count: 2, stage_mode: false, player_teams: arithmetic_progression(1, 2).map(v => '' + v) },
-      { player_count: 3, stage_mode: false, player_teams: arithmetic_progression(1, 3).map(v => '' + v) },
-      { player_count: 4, stage_mode: false, player_teams: arithmetic_progression(1, 4).map(v => '' + v) },
-      { player_count: 5, stage_mode: false, player_teams: arithmetic_progression(1, 5).map(v => '' + v) },
-      { player_count: 6, stage_mode: false, player_teams: arithmetic_progression(1, 6).map(v => '' + v) },
-      { player_count: 7, stage_mode: false, player_teams: arithmetic_progression(1, 7).map(v => '' + v) },
-      { player_count: 8, stage_mode: false, player_teams: arithmetic_progression(1, 8).map(v => '' + v) },
+      { title: '2 Players, VS Mode', player_count: 2, stage_mode: false, player_teams: arithmetic_progression(1, 2).map(v => '' + v) },
+      { title: '3 Players, VS Mode', player_count: 3, stage_mode: false, player_teams: arithmetic_progression(1, 3).map(v => '' + v) },
+      { title: '4 Players, VS Mode', player_count: 4, stage_mode: false, player_teams: arithmetic_progression(1, 4).map(v => '' + v) },
+      { title: '5 Players, VS Mode', player_count: 5, stage_mode: false, player_teams: arithmetic_progression(1, 5).map(v => '' + v) },
+      { title: '6 Players, VS Mode', player_count: 6, stage_mode: false, player_teams: arithmetic_progression(1, 6).map(v => '' + v) },
+      { title: '7 Players, VS Mode', player_count: 7, stage_mode: false, player_teams: arithmetic_progression(1, 7).map(v => '' + v) },
+      { title: '8 Players, VS Mode', player_count: 8, stage_mode: false, player_teams: arithmetic_progression(1, 8).map(v => '' + v) },
 
       /* 两队交战 */
-      { player_count: 4, stage_mode: false, player_teams: ['1', '1', '2', '2'] },
-      { player_count: 6, stage_mode: false, player_teams: ['1', '1', '1', '2', '2', '2'] },
-      { player_count: 7, stage_mode: false, player_teams: ['1', '1', '1', '1', '2', '2', '2', '2'] },
+      { title: "2 Teams, 4 Players, VS Mode", player_count: 4, stage_mode: false, player_teams: ['1', '1', '2', '2'] },
+      { title: "3 Teams, 4 Players, VS Mode", player_count: 6, stage_mode: false, player_teams: ['1', '1', '1', '2', '2', '2'] },
+      { title: "4 Teams, 4 Players, VS Mode", player_count: 8, stage_mode: false, player_teams: ['1', '1', '1', '1', '2', '2', '2', '2'] },
 
       /* 三队交战 */
-      { player_count: 6, stage_mode: false, player_teams: ['1', '1', '2', '2', '3', '3'] },
+      { title: "3 Teams, 6 Players, VS Mode", player_count: 6, stage_mode: false, player_teams: ['1', '1', '2', '2', '3', '3'] },
 
       /* 四队交战 */
-      { player_count: 7, stage_mode: false, player_teams: ['1', '1', '2', '2', '3', '3', '4', '4'] },
-    ], this.lf2)
+      { title: "4 Teams, 6 Players, VS Mode", player_count: 8, stage_mode: false, player_teams: ['1', '1', '2', '2', '3', '3', '4', '4'] },
+    ], lf2)
   }
-  get stages(): IStageInfo[] {
-    const cheat_0 = this.lf2.is_cheat(CheatType.LF2_NET);
-    const cheat_1 = this.lf2.is_cheat(CheatType.GIM_INK);
-    const all = this.lf2.datas.stages;
-    if (cheat_0 && cheat_1) return all
-    const ret = all.filter(v => {
-      if (v.group?.some(v => v == StageGroup.Hidden))
-        return false;
-      if (v.group?.some(v => v == StageGroup.Dev))
-        return false;
-      if (!cheat_1 && !v.is_starting)
-        return false
-      return true
-    })
-    return ret.length ? ret : all;
-  }
-  get situation() {
+  protected static get_situation(lf2: LF2) {
     if (this._situation) return this._situation;
-    return this._situation = this.situations.take();
+    return this._situation = this.get_situations(lf2).take();
   }
-  get is_stage_mode(): boolean { return this.situation.stage_mode }
-  get is_vs_mode(): boolean { return !this.situation.stage_mode }
+  protected static clear_situation() {
+    this._situation = null
+  }
+  protected static get_stages(lf2: LF2): Randoming<IStageInfo> {
+    if (this._stages) return this._stages
+    return this._stages = new Randoming(
+      lf2.datas.stages.filter(v => {
+        return (
+          false != v.group?.some(v => v != StageGroup.Hidden) &&
+          false != v.group?.some(v => v != StageGroup.Dev) &&
+          v.is_starting
+        )
+      }),
+      lf2
+    )
+  }
+  get is_stage_mode(): boolean { return DemoModeLogic.get_situation(this.lf2).stage_mode }
+  get is_vs_mode(): boolean { return !DemoModeLogic.get_situation(this.lf2).stage_mode }
+  handle_stage_actions(actions: (string | StageActions)[]) {
+    for (const action of actions) {
+      switch (action) {
+        case StageActions.GoGoGoRight:
+          this.gogogo?.start();
+          this.gogogo?.node.set_visible(true);
+          break
+        case StageActions.LoopGoGoGoRight:
+          this.gogogo_loop?.start();
+          this.gogogo_loop?.node.set_visible(true)
+          break;
+      }
+    }
+  }
+  protected stage_callbacks: IStageCallbacks = {
+    on_phase_changed: (
+      stage: Stage,
+      curr: IStagePhaseInfo | undefined,
+      prev: IStagePhaseInfo | undefined,
+    ) => {
+      this.debug('on_phase_changed', stage, curr, prev)
+      if (stage.is_chapter_finish) return;
+      if (!prev) {
+        this.gogogo?.stop();
+        this.gogogo?.node.set_visible(false)
+        this.gogogo?.node.set_opacity(0)
+        this.gogogo_loop?.stop();
+        this.gogogo_loop?.node.set_visible(false)
+        this.gogogo_loop?.node.set_opacity(0)
+      }
+      const { on_end } = prev || {};
+      const { on_start } = curr || {};
+      if (on_end?.length) this.handle_stage_actions(on_end)
+      if (on_start?.length) this.handle_stage_actions(on_start)
+    },
+    on_chapter_finish: (stage: Stage) => {
+      this.debug('on_chapter_finish', stage)
+      this.fsm.use(3)
+    },
+    on_requrie_goto_next_stage: (stage: Stage) => {
+      this.debug('on_requrie_goto_next_stage', stage)
+      if (this.jalousie) this.jalousie.open = false;
+    }
+  }
   override on_start(): void {
     super.on_start?.();
+    this.jalousie = this.node.search_component(Jalousie)
+    this.gogogo = this.node.search_component(ComponentsPlayer, "play_gogogo")
+    this.gogogo_loop = this.node.search_component(ComponentsPlayer, "play_gogogo_loop")
     this.fsm.use(0)
-
-
     this.node.search_node("curr_focus")!.visible = false
-    const bg = this.lf2.mt.pick(this.lf2.datas.backgrounds);
-    if (bg) this.lf2.change_bg(bg.id);
-    const character_datas = this.lf2.datas.get_characters_of_group(
+
+    let stage: IStageInfo | undefined
+    if (this.is_stage_mode) {
+      stage = DemoModeLogic.get_stages(this.lf2).take()
+      this.lf2.change_bg(stage?.bg ?? '?');
+    } else {
+      const bg = this.lf2.mt.pick(this.lf2.datas.backgrounds)
+      this.lf2.change_bg(bg?.id || '?')
+    }
+    const fighters_datas = this.lf2.datas.get_characters_of_group(
       EntityGroup.Regular,
     );
+    const boss_datas = this.lf2.datas.get_characters_of_group(
+      EntityGroup.Boss,
+    );
+
     this.world.paused = false;
     const { far, near, left, right } = this.lf2.world.bg;
     const { is_stage_mode, is_vs_mode } = this;
+    if (is_vs_mode) this.lf2.sounds.play_bgm('?');
+    else fighters_datas.push(...boss_datas)
+
     let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
 
-    const { situation } = this;
+    const situation = DemoModeLogic.get_situation(this.lf2);
     const { player_count, player_teams } = situation
     const player_infos = Array.from(this.lf2.players.values());
     for (let i = 0; i < player_count; i++) {
       const player = player_infos[i]!;
       if (!player) continue;
 
-      const fighter_data = this.lf2.mt.take(character_datas);
+      const fighter_data = this.lf2.mt.take(fighters_datas);
       if (!fighter_data) continue;
 
       const fighter = this.lf2.factory.create_entity(this.world, fighter_data);
@@ -154,8 +239,6 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> implements I
         this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
 
       fighter.ctrl = this.lf2.factory.create_ctrl(fighter_data.id, player.id, fighter);
-
-      fighter.callbacks.add(this);
       fighter.key_role = true;
       fighter.name_visible = true;
       fighter.stat_bar_type = StatBarType.UI;
@@ -196,52 +279,87 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> implements I
       stat_bar.set_entity(fighter)
     }
 
-    if (this.is_stage_mode) {
-      this.lf2.change_stage(this.lf2.mt.take(this.stages)?.id!);
+    for (const [, f] of this.world.puppets) {
+      this.world_callbacks.on_fighter_add?.(f)
     }
+    if (is_stage_mode && stage) {
+      this.lf2.change_stage(stage.id);
+      this.lf2.world.stage.callbacks.add(this.stage_callbacks);
+    }
+    this.lf2.world.callbacks.add(this.world_callbacks);
+    this.node.find_component(CameraCtrl)?.focus_next(1)
   }
   override on_stop(): void {
     super.on_stop?.();
+    DemoModeLogic.clear_situation()
+    this.lf2.world.stage.callbacks.del(this.stage_callbacks)
+    this.lf2.world.callbacks.del(this.world_callbacks);
     this.world.clear();
   }
 
-  on_dead() {
-    // 队伍存活计数
-    const player_teams: { [x in string]?: number } = {};
-    for (const [, f] of this.world.puppets)
-      player_teams[f.team] = 0 // 玩家队伍
+  protected entity_callbacks: IEntityCallbacks = {
+    on_dead: () => {
+      // 队伍存活计数
+      const player_teams: { [x in string]?: number } = {};
+      for (const [, f] of this.world.puppets)
+        player_teams[f.team] = 0 // 玩家队伍
 
-    for (const e of this.world.entities) {
-      if (is_fighter(e) && e.hp > 0 && player_teams[e.team] !== void 0)
-        ++player_teams[e.team]!; // 存活计数++
-    }
-    // 剩余队伍数
-    let team_remains = 0;
-    traversal(player_teams, (_, v) => {
-      if (v) ++team_remains;
-    })
-
-    if (this.is_stage_mode) {
-
-      // 大于0队，继续打
-      if (team_remains > 0) {
-        this.fsm.use(0);
-      } else {
-        this.fsm.use(1);
+      for (const e of this.world.entities) {
+        if (is_fighter(e) && e.hp > 0 && player_teams[e.team] !== void 0)
+          ++player_teams[e.team]!; // 存活计数++
       }
-    } else if (this.is_vs_mode) {
+      // 剩余队伍数
+      let team_remains = 0;
+      traversal(player_teams, (_, v) => {
+        if (v) ++team_remains;
+      })
 
-      // 大于一队，继续打
-      if (team_remains > 1) return;
-      this.fsm.use(1)
+      if (this.is_stage_mode) {
+
+        // 大于0队，继续打
+        if (team_remains > 0) {
+          this.fsm.use(0);
+        } else {
+          this.fsm.use(1);
+        }
+      } else if (this.is_vs_mode) {
+
+        // 大于一队，继续打
+        if (team_remains > 1) return;
+        this.fsm.use(1)
+      }
+
     }
-
   }
-
+  protected world_callbacks: IWorldCallbacks = {
+    on_fighter_add: (entity: Entity): void => {
+      entity.callbacks.add(this.entity_callbacks)
+    },
+    on_stage_change: (stage, prev) => {
+      if (!this.is_stage_mode) return;
+      prev.callbacks.del(this.stage_callbacks)
+      stage.callbacks.add(this.stage_callbacks);
+      this.gogogo?.stop();
+      this.gogogo?.node.set_visible(false)
+      this.gogogo?.node.set_opacity(0)
+      this.gogogo_loop?.stop();
+      this.gogogo_loop?.node.set_visible(false)
+      this.gogogo_loop?.node.set_opacity(0)
+      if (this.jalousie) this.jalousie.open = true;
+    }
+  }
   override update(dt: number): void {
-    this.fsm.update(dt)
-    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) <= 2) {
-      this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+    if (
+      !this.world.paused &&
+      !this.lf2.world.stage.weapon_rain_disabled &&
+      this.weapon_drop_timer.add() &&
+      this.lf2.mt.range(0, 10) <= 2
+    ) {
+      this.lf2.weapons.add_random(1, true,
+        this.is_stage_mode ?
+          EntityGroup.StageWeapon :
+          EntityGroup.VsWeapon
+      )
     }
     const { cam_ctrl } = this.props;
     do {
@@ -261,6 +379,12 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> implements I
       this.props.focus_on?.set_text(txt)
 
     } while (0)
+    if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
+      this.lf2.goto_next_stage()
+      this.fsm.use(0)
+      this.jalousie.open = true;
+    }
+    this.fsm.update(dt)
   }
 
   override on_key_down(e: IUIKeyEvent): void {
@@ -272,7 +396,9 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> implements I
           this.fsm.state_time > 1000
         ) {
           e.stop_immediate_propagation();
-          this.lf2.pop_ui()
+          // this.lf2.pop_ui()
+          this.on_stop()
+          this.on_start()
         }
         break;
       }

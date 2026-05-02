@@ -486,6 +486,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     // this.cmds.push(CMD.CHANGE_STAGE, stage)
   }
   goto_next_stage() {
+    this.debug(`goto_next_stage`)
     const next = this.world.stage.data.next;
     if (!next) return;
     if (next === 'end') {
@@ -504,8 +505,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         e.release();
       }
     }
-
+    const time = this.world.stage.time;
     this.change_stage(next_stage?.id || '');
+    this.world.stage.time = time;
     this.callbacks.emit("on_enter_next_stage")();
   }
 

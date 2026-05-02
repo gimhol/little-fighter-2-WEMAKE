@@ -21,18 +21,12 @@ export class FighterThumb extends Picture {
       this.fighter?.data.base.small ?? Defines.BuiltIn_Imgs.CHARACTER_THUMB
     );
   }
-
-  get gpl(): GamePrepareLogic | undefined {
-    return this.node.root.find_component(GamePrepareLogic);
-  }
   override on_start(): void {
     this.width = 40;
     this.height = 45;
   }
-  override on_resume(): void {
-    this.fighter = this.node.lookup_component(PlayerScore)?.fighter;
-  }
   override on_show(): void {
+    this.fighter = this.node.lookup_component(PlayerScore)?.fighter;
     this.handle_changed();
   }
   protected handle_changed() {

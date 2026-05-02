@@ -49,6 +49,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   get lf2() { return this.world.lf2; }
   get time() { return this.fsm.time; }
+  set time(v) { this.fsm.time = v; }
 
   get phase_idx(): number { return this._phase_idx };
   get phase(): IStagePhaseInfo | undefined { return this._phase; };

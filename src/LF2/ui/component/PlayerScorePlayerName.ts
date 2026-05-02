@@ -24,8 +24,6 @@ export class PlayerScorePlayerName extends UIComponent {
     return ret;
   })
   override on_show(): void {
-    super.on_show?.()
-
     const fighter = this.fighter = this.node.lookup_component(PlayerScore)?.fighter;
     let name: string = '-';
     if (fighter) {
@@ -35,6 +33,5 @@ export class PlayerScorePlayerName extends UIComponent {
       }
     }
     this.txt_loader.set_text(name)
-
   }
 }
