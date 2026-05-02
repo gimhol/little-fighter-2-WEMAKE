@@ -309,24 +309,25 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
           ++player_teams[e.team]!; // 存活计数++
       }
       // 剩余队伍数
-      let team_remains = 0;
+      let plater_team_remains = 0;
       traversal(player_teams, (_, v) => {
-        if (v) ++team_remains;
+        if (v) ++plater_team_remains;
       })
 
       if (this.is_stage_mode) {
-
         // 大于0队，继续打
-        if (team_remains > 0) {
+        if (plater_team_remains > 0) {
           this.fsm.use(0);
         } else {
           this.fsm.use(1);
         }
       } else if (this.is_vs_mode) {
-
         // 大于一队，继续打
-        if (team_remains > 1) return;
-        this.fsm.use(1)
+        if (plater_team_remains > 1) {
+          this.fsm.use(0);
+        } else {
+          this.fsm.use(1)
+        }
       }
 
     }
