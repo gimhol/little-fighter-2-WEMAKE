@@ -16,15 +16,6 @@ export class CameraCtrl extends UIComponent {
   time: number = 0;
   free: boolean = true;
   staring?: Entity;
-  readonly keys: Record<GameKey, KeyStatus> = {
-    [GameKey.L]: new KeyStatus(this),
-    [GameKey.R]: new KeyStatus(this),
-    [GameKey.U]: new KeyStatus(this),
-    [GameKey.D]: new KeyStatus(this),
-    [GameKey.a]: new KeyStatus(this),
-    [GameKey.j]: new KeyStatus(this),
-    [GameKey.d]: new KeyStatus(this)
-  };
   get lr() {
     const r = this.keys.R.is_end() ? 0 : 1;
     const l = this.keys.L.is_end() ? 0 : 1;
@@ -50,7 +41,6 @@ export class CameraCtrl extends UIComponent {
       this.lf2.cmds.push(CMD.LOCK_CAM, ``)
       this.free = true
     } else if (this.keys.U.is_start()) {
-      this.keys.U.use()
       const fighters = this.lf2.fighters.all;
       if (!this.staring) {
         this.staring = fighters.at(fighters.length - 1)
@@ -61,7 +51,6 @@ export class CameraCtrl extends UIComponent {
       }
       this.free = !!this.staring;
     } else if (this.keys.D.is_start()) {
-      this.keys.D.use()
       const fighters = this.lf2.fighters.all
       if (!this.staring) {
         this.staring = fighters.at(0)

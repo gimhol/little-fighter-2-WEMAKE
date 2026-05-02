@@ -1,5 +1,5 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
-import { LocalController } from "./controller";
+import { IKeyStatusCtrl, LocalController } from "./controller";
 import * as D from "./defines";
 import { AGK } from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
@@ -10,6 +10,7 @@ import { Factory } from "./Factory";
 import * as Helper from "./helper";
 import { I18N } from "./I18N";
 import { ILf2Callback } from "./ILf2Callback";
+import { Keys } from "./Keys";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
@@ -22,6 +23,7 @@ export interface IZipResult {
   file: I.IZipObject;
   zip: I.IZip;
 }
+
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
@@ -60,7 +62,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   readonly callbacks = new Callbacks<ILf2Callback>();
   readonly factory: Factory = new Factory();
   readonly bgms: string[] = []
-  
+
   protected _disposed: boolean = false;
   protected _ui_stacks: UI.UIStack[] = [];
   protected _loading: boolean = false;
@@ -70,9 +72,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   protected _i18n = new I18N();
   protected _strings = new Map<string, { [x in string]?: string }>()
   protected _strings_list = new Map<string, { [x in string]?: string[] }>();
-  protected _keys = ''
-  protected _gkeys = new Map<string, string>()
-  protected _gkeys_matchs = new Set<string>()
+  protected _cheat_keys = ''
+  protected _cheat_gkeys = new Map<string, string>()
+  protected _cheat_gkeys_matchs = new Set<string>()
+  protected _keys_pool: Keys[] = [];
+  readonly _keys: Keys[] = [];
 
   cmds: (CMD | D.CheatType | string)[] = [];
   events: UI.LF2KeyEvent[] = [];
@@ -131,7 +135,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   readonly images: I.IImageMgr;
   readonly keyboard: I.IKeyboard;
   readonly pointings: I.IPointings;
-  
+
   /**
    * 获取玩家信息
    * 
@@ -256,8 +260,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   set_cheat(name: string | D.CheatType, enable: boolean = !this.is_cheat(name)) {
     if (enable == this.is_cheat(name)) return;
     this.cmds.push(name, enable ? '1' : '');
-    this._keys = "";
-    this._gkeys.clear();
+    this._cheat_keys = "";
+    this._cheat_gkeys.clear();
   }
   on_key_down(e: I.IKeyEvent) {
     this.debug('on_key_down', e)
@@ -274,27 +278,27 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
           if (player.keys[key_name] !== key_code) continue;
           if (e.device_type == 'controller') this.callbacks.emit('controller_detected')(player)
           if (e.device_type == 'keyboard') this.callbacks.emit('keyboard_detected')(player)
-          this._gkeys.set(pid, (this._gkeys.get(pid) || '') + key_name)
+          this._cheat_gkeys.set(pid, (this._cheat_gkeys.get(pid) || '') + key_name)
           this.events.push(new UI.LF2KeyEvent(pid, true, key_name, key_code));
         }
       }
     }
 
     let match = false;
-    this._gkeys_matchs.clear()
-    this._keys += key_code;
+    this._cheat_gkeys_matchs.clear()
+    this._cheat_keys += key_code;
     for (const [cheat_name, { keys: k, gkeys: g }] of D.Defines.CheatInfos) {
-      for (const [pid, gkeys] of this._gkeys) {
-        if (g.startsWith(gkeys)) this._gkeys_matchs.add(pid);
+      for (const [pid, gkeys] of this._cheat_gkeys) {
+        if (g.startsWith(gkeys)) this._cheat_gkeys_matchs.add(pid);
         if (g === gkeys) this.set_cheat(cheat_name)
       }
-      if (k.startsWith(this._keys)) match = true;
-      if (k === this._keys) this.set_cheat(cheat_name)
+      if (k.startsWith(this._cheat_keys)) match = true;
+      if (k === this._cheat_keys) this.set_cheat(cheat_name)
     }
-    for (const [k] of this._gkeys)
-      if (!this._gkeys_matchs.has(k))
-        this._gkeys.delete(k)
-    if (!match) this._keys = "";
+    for (const [k] of this._cheat_gkeys)
+      if (!this._cheat_gkeys_matchs.has(k))
+        this._cheat_gkeys.delete(k)
+    if (!match) this._cheat_keys = "";
   }
 
   on_key_up(e: I.IKeyEvent) {
@@ -616,6 +620,20 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._i18n.add({ '': { DATA_LIST } })
     this.callbacks.emit('on_extra_zips_changed')(this)
   }
+
+  create_keys(): Keys {
+    let r = this._keys_pool.pop();
+    if (!r) r = new Keys(this)
+    this._keys.push(r)
+    return r
+  }
+  recycle_keys(keys: Keys) {
+    const idx = this._keys.indexOf(keys);
+    if (idx < 0) return false;
+    this._keys.splice(idx, 1);
+    this._keys_pool.push(keys)
+  }
+
 }
 
 /**

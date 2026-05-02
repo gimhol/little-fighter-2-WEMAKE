@@ -1,3 +1,4 @@
+import { Keys } from "@/LF2/Keys";
 import { Callbacks } from "../../base";
 import { IVector3 } from "../../defines";
 import { Ditto } from "../../ditto";
@@ -20,6 +21,7 @@ export class UIComponent<
   P extends unknown = unknown,
   C extends IUICompnentCallbacks = IUICompnentCallbacks
 > implements IDebugging {
+
   static get TAG(): string { return this.TAGS[0]; }
   static readonly TAGS: string[] = ["UIComponent"]
   static readonly PROPS: IPropsMeta = {}
@@ -31,6 +33,7 @@ export class UIComponent<
   protected _props: any;
   private _args_caches = new Map<any, any>()
   private _props_error?: Error & { errors: ReadonlyArray<string> };
+  private _keys: Keys | null = null;
   stopped: boolean = true;
   paused: boolean = true;
   get props(): P {
@@ -168,7 +171,13 @@ export class UIComponent<
   get node_name() {
     return this.node.name ?? this.node.id ?? 'no_name'
   }
-
+  get keys(): Keys {
+    if (this._keys) return this._keys;
+    return this._keys = this.lf2.create_keys()
+  }
+  recycle_keys() {
+    this._keys?.recycle()
+  }
   on_pointer_down?(e: LF2PointerEvent): void;
   on_pointer_move?(e: LF2PointerEvent): void;
   on_pointer_up?(e: LF2PointerEvent): void;

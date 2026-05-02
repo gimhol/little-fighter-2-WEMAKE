@@ -138,8 +138,8 @@ function App() {
     key: 'app_state', version: app_state_version, init: init_app_state
   })
   const [world_dataset, set_world_dataset, world_dataset_ready] = useForage({
-    key: 'world_dataset', 
-    version: world_dataset_version, 
+    key: 'world_dataset',
+    version: world_dataset_version,
     init: init_world_dataset
   })
 
@@ -277,7 +277,9 @@ function App() {
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
     const lf2 = ref_lf2.current = new LF2(dev == '1');
     lf2.lang = lang;
-    (window as any).LF2 = LF2;
+    Object.assign(window, {
+      LF2, lf2, world: lf2.world
+    })
 
     function print_ui_tree(node = LF2.ui) {
       console.group('id: ' + node?.id + ', name: ' + node?.name);

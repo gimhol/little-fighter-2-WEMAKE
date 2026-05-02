@@ -1,7 +1,10 @@
 import type { World } from "../World";
-
+export interface IKeyStatusCtrl {
+  readonly time: number;
+  readonly world: World;
+}
 export class KeyStatus {
-  readonly ctrl: { time: number, world: World };
+  readonly ctrl: IKeyStatusCtrl;
   /**
    * 按键按下的时间
    *
@@ -36,7 +39,7 @@ export class KeyStatus {
     return this._used;
   }
 
-  constructor(ctrl: typeof this.ctrl) {
+  constructor(ctrl: IKeyStatusCtrl) {
     this.ctrl = ctrl;
   }
   use(): number {

@@ -29,15 +29,6 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     direction: { type: String, oneof: ["row", "col"], nullable: true }
   }
   time: number = 0;
-  readonly keys: Record<GameKey, KeyStatus> = {
-    [GameKey.L]: new KeyStatus(this),
-    [GameKey.R]: new KeyStatus(this),
-    [GameKey.U]: new KeyStatus(this),
-    [GameKey.D]: new KeyStatus(this),
-    [GameKey.a]: new KeyStatus(this),
-    [GameKey.j]: new KeyStatus(this),
-    [GameKey.d]: new KeyStatus(this)
-  };
   get direction() { return this.props.direction ?? 'row' }
   get lr() {
     const r = this.keys.R.is_end() ? 0 : 1;
@@ -187,38 +178,32 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       }
     }
   }
-  override on_key_down(e: IUIKeyEvent): void {
-    this.keys[e.game_key].hit();
-  }
   override on_key_up(e: IUIKeyEvent): void {
     if (
       !this.responser?.focused &&
       !this.container?.focused &&
       !this.node?.focused
     ) {
-      this.keys[e.game_key].end();
       return;
     }
-    if (this.props.switcher) {
-      const { lr, ud } = this;
-      if (this.direction == 'row' && lr) {
-        const prev = this.value
-        let curr = this.value + this.step * lr
-        if (curr < this.min_value) curr = this.max_value;
-        if (curr > this.max_value) curr = this.min_value;
-        this.value = curr;
-        if (prev != curr)
-          this.callbacks.emit('on_value_changed')(this.value, this)
-      } else if (this.direction == 'col' && ud) {
-        const prev = this.value
-        let curr = this.value - this.step * ud
-        if (curr < this.min_value) curr = this.max_value;
-        if (curr > this.max_value) curr = this.min_value;
-        this.value = curr;
-        if (prev != curr)
-          this.callbacks.emit('on_value_changed')(this.value, this)
-      }
+    if (!this.props.switcher) return;
+    const { lr, ud } = this;
+    if (this.direction == 'row' && lr) {
+      const prev = this.value
+      let curr = this.value + this.step * lr
+      if (curr < this.min_value) curr = this.max_value;
+      if (curr > this.max_value) curr = this.min_value;
+      this.value = curr;
+      if (prev != curr)
+        this.callbacks.emit('on_value_changed')(this.value, this)
+    } else if (this.direction == 'col' && ud) {
+      const prev = this.value
+      let curr = this.value - this.step * ud
+      if (curr < this.min_value) curr = this.max_value;
+      if (curr > this.max_value) curr = this.min_value;
+      this.value = curr;
+      if (prev != curr)
+        this.callbacks.emit('on_value_changed')(this.value, this)
     }
-    this.keys[e.game_key].end();
   }
 }

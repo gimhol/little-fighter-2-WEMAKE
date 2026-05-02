@@ -51,7 +51,7 @@ export class World extends WorldDataset {
   private _need_UPS: boolean = true;
   private _FPS = new FPS(0.9);
   private _UPS = new FPS(0.9);
-  private _update_count: number = 0;
+  private _update_time: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   readonly buffs = new Map<string, Buff>();
@@ -60,6 +60,7 @@ export class World extends WorldDataset {
   private _counts = new Map<string, number>()
   get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time }
+  get update_time() { return this._update_time }
   private _released_tickers = new Set<Ticker>();
   readonly tickers = new Set<Ticker>();
   readonly ticker_pool: Ticker[] = [];
@@ -265,7 +266,7 @@ export class World extends WorldDataset {
     let _prev_update_time = Date.now();
     let _prev_render_time = Date.now();
     let _fix_radio = 1;
-    this._update_count = 0;
+    this._update_time = 0;
     const ideally_dt = round(1000 / UPS / playrate)
     const on_update = () => {
       try {
@@ -274,13 +275,13 @@ export class World extends WorldDataset {
         if (real_update_dt < _fix_radio * ideally_dt) return;
         if (this._sleeping) return;
         this.before_update?.();
-        this._update_count++;
         this.update_once();
+        this._update_time++;
         this.lf2.events.length = 0;
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
 
-        if (0 === floor(this._update_count / playrate) % sync_render) {
+        if (0 === floor(this._update_time / playrate) % sync_render) {
           const real_render_dt = time - _prev_render_time;
           this.render_once(real_render_dt);
           if (this._need_FPS) {
@@ -416,9 +417,15 @@ export class World extends WorldDataset {
       ui.update(16.66666 * this.atom_time);
 
       if (!flag) continue;
-      for (const e of this.lf2.events)
-        if (e.pressed) ui.on_key_down(e)
-        else ui.on_key_up(e)
+      for (const e of this.lf2.events) {
+        if (e.pressed) {
+          ui.on_key_down(e)
+          this.lf2._keys.forEach(v => v[e.game_key].hit())
+        } else {
+          ui.on_key_up(e)
+          this.lf2._keys.forEach(v => v[e.game_key].end())
+        }
+      }
       flag = false
     }
   }
