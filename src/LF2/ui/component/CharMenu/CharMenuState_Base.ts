@@ -5,6 +5,7 @@ import type { CharMenuState } from "./CharMenuState";
 import type { ICharMenuState } from "./ICharMenuState";
 
 export class CharMenuState_Base implements Required<ICharMenuState> {
+  get name() { return this.key }
   readonly key: CharMenuState;
   readonly owner: CharMenuLogic;
   readonly lf2: LF2;
