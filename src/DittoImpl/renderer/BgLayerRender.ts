@@ -29,14 +29,14 @@ export class BgLayerRender {
   render(dt: number) {
     const { visible, info: { x, absolute, width, offsetAnimX, offsetAnimY }, bg } = this.layer;
     this.mesh.visible = visible;
-    const cam_x = bg.world.renderer.cam_x;
+    const { cam_x } = bg.world.renderer;
     const _x = absolute ?
       x + cam_x :
       bg.width > bg.world.screen_w ?
         x + (bg.width - width) * cam_x / (bg.width - bg.world.screen_w) :
         x + (bg.width - width) * cam_x
     this.mesh.position.x = _x;
-    
+
     if (offsetAnimX !== void 0) this.offsetX += (dt / 1000) * offsetAnimX;
     if (offsetAnimY !== void 0) this.offsetY += (dt / 1000) * offsetAnimY;
   }

@@ -1,8 +1,12 @@
-import { arithmetic_progression, ComponentsPlayer, FacingFlag, IStageInfo, IStagePhaseInfo, IWorldCallbacks, Jalousie, Label, LF2, Randoming, Stage, StageActions, StageGroup, UINode } from "@/LF2";
+import {
+  arithmetic_progression, ComponentsPlayer, FacingFlag, IStageInfo,
+  IStagePhaseInfo, IWorldCallbacks, LF2, Randoming, Stage,
+  StageActions, StageGroup
+} from "@/LF2";
 import FSM from "@/LF2/base/FSM";
 import { Entity } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
-import IStageCallbacks from "@/LF2/stage/IStageCallbacks";
+import { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
 import { Times } from "@/LF2/utils/Times";
 import { new_team } from "../../base";
 import { Defines, EntityGroup, GameKey } from "../../defines";
@@ -14,12 +18,18 @@ import { CameraCtrl } from "./CameraCtrl";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
+import { Jalousie } from "./Jalousie"
+import { Label } from "./Label"
+import { UINode } from "../UINode"
+
+
 enum StateKey {
   Base = 'Base',
   BeforeEnd = 'BeforeEnd',
   End = 'End',
   BeforeWin = 'BeforeWin',
   Win = 'Win',
+  Restart = "Restart",
 }
 class DemoFSMState_Base extends ComponentFSMState<StateKey, DemoModeLogic> {
   override name?: string | undefined;
@@ -35,6 +45,10 @@ class DemoFSMState_BeforeEnd extends DemoFSMState_Base {
 }
 class DemoFSMState_End extends DemoFSMState_Base {
   override readonly key: StateKey = StateKey.End;
+  override update() {
+    if (this.fsm.state_time > 5000)
+      return StateKey.Restart;
+  }
   override enter(): void {
     this.lf2.sounds.play_preset("end");
     this.owner.props.score_board?.set_visible(true);
@@ -52,6 +66,10 @@ class DemoFSMState_BeforeWin extends DemoFSMState_Base {
 }
 class DemoFSMState_Win extends DemoFSMState_Base {
   override readonly key: StateKey = StateKey.Win;
+  override update() {
+    if (this.fsm.state_time > 5000)
+      return StateKey.Restart;
+  }
   override enter(): void {
     this.lf2.sounds.play_preset("pass");
     const score_board = this.node.find_child("score_board")
@@ -62,18 +80,31 @@ class DemoFSMState_Win extends DemoFSMState_Base {
     score_board?.set_visible(false);
   }
 }
+class DemoFSMState_Restart extends DemoFSMState_Base {
+  override readonly key: StateKey = StateKey.Restart;
+  override update() {
+    return StateKey.Base;
+  }
+  override leave(): void {
+    this.owner.clearup()
+    this.owner.startup()
+  }
+}
 export interface IDemoModeLogicProps {
   focus_prefix?: Label;
   focus_on?: Label;
   cam_ctrl?: CameraCtrl;
   score_board?: UINode;
   situation_name?: Label,
+  focus_text_node?: UINode,
+  jalousie?: Jalousie,
+  gogogo?: ComponentsPlayer,
+  gogogo_loop?: ComponentsPlayer,
 }
 interface DemoSituation {
   title: string;
-  player_count: number;
   stage_mode: boolean;
-  player_teams: string[]
+  teams: ReadonlyArray<string>,
 }
 export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
   static override readonly TAGS: string[] = ["DemoModeLogic"];
@@ -83,21 +114,23 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     cam_ctrl: CameraCtrl,
     score_board: UINode,
     situation_name: Label,
+    focus_text_node: UINode,
+    jalousie: Jalousie,
+    gogogo: ComponentsPlayer,
+    gogogo_loop: ComponentsPlayer,
   };
   readonly fsm = new FSM<StateKey, DemoFSMState_Base>(`DemoFSM`).add(
     new DemoFSMState_Base(this),
     new DemoFSMState_BeforeEnd(this),
     new DemoFSMState_End(this),
     new DemoFSMState_BeforeWin(this),
-    new DemoFSMState_Win(this)
-  ).logger(console.debug)
+    new DemoFSMState_Win(this),
+    new DemoFSMState_Restart(this)
+  )//.logger(console.debug)
 
   protected _staring?: Entity | undefined;
   protected _free?: boolean
   protected weapon_drop_timer = new Times(0, 1200);
-  jalousie?: Jalousie;
-  gogogo?: ComponentsPlayer;
-  gogogo_loop?: ComponentsPlayer;
   protected static _situations: Randoming<DemoSituation> | null = null
   protected static _situation: DemoSituation | null = null
   protected static _stages: Randoming<IStageInfo> | null = null
@@ -105,34 +138,34 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     if (this._situations) return this._situations;
     return this._situations = new Randoming<DemoSituation>([
       /* 闯关 */
-      { title: '1 Players Stage Mode', player_count: 1, stage_mode: true, player_teams: new Array(1).fill('1') },
-      { title: '2 Players Stage Mode', player_count: 2, stage_mode: true, player_teams: new Array(2).fill('1') },
-      { title: '3 Players Stage Mode', player_count: 3, stage_mode: true, player_teams: new Array(3).fill('1') },
-      { title: '4 Players Stage Mode', player_count: 4, stage_mode: true, player_teams: new Array(4).fill('1') },
-      { title: '5 Players Stage Mode', player_count: 5, stage_mode: true, player_teams: new Array(5).fill('1') },
-      { title: '6 Players Stage Mode', player_count: 6, stage_mode: true, player_teams: new Array(6).fill('1') },
-      { title: '7 Players Stage Mode', player_count: 7, stage_mode: true, player_teams: new Array(7).fill('1') },
-      { title: '8 Players Stage Mode', player_count: 8, stage_mode: true, player_teams: new Array(8).fill('1') },
+      { title: '1 Players Stage Mode', stage_mode: true, teams: new Array(1).fill('1') },
+      { title: '2 Players Stage Mode', stage_mode: true, teams: new Array(2).fill('1') },
+      { title: '3 Players Stage Mode', stage_mode: true, teams: new Array(3).fill('1') },
+      { title: '4 Players Stage Mode', stage_mode: true, teams: new Array(4).fill('1') },
+      { title: '5 Players Stage Mode', stage_mode: true, teams: new Array(5).fill('1') },
+      { title: '6 Players Stage Mode', stage_mode: true, teams: new Array(6).fill('1') },
+      { title: '7 Players Stage Mode', stage_mode: true, teams: new Array(7).fill('1') },
+      { title: '8 Players Stage Mode', stage_mode: true, teams: new Array(8).fill('1') },
 
       /* 各自为战 */
-      { title: '2 Players, VS Mode', player_count: 2, stage_mode: false, player_teams: arithmetic_progression(1, 2).map(v => '' + v) },
-      { title: '3 Players, VS Mode', player_count: 3, stage_mode: false, player_teams: arithmetic_progression(1, 3).map(v => '' + v) },
-      { title: '4 Players, VS Mode', player_count: 4, stage_mode: false, player_teams: arithmetic_progression(1, 4).map(v => '' + v) },
-      { title: '5 Players, VS Mode', player_count: 5, stage_mode: false, player_teams: arithmetic_progression(1, 5).map(v => '' + v) },
-      { title: '6 Players, VS Mode', player_count: 6, stage_mode: false, player_teams: arithmetic_progression(1, 6).map(v => '' + v) },
-      { title: '7 Players, VS Mode', player_count: 7, stage_mode: false, player_teams: arithmetic_progression(1, 7).map(v => '' + v) },
-      { title: '8 Players, VS Mode', player_count: 8, stage_mode: false, player_teams: arithmetic_progression(1, 8).map(v => '' + v) },
+      { title: '2 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 2).map(v => '' + v) },
+      { title: '3 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 3).map(v => '' + v) },
+      { title: '4 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 4).map(v => '' + v) },
+      { title: '5 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 5).map(v => '' + v) },
+      { title: '6 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 6).map(v => '' + v) },
+      { title: '7 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 7).map(v => '' + v) },
+      { title: '8 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 8).map(v => '' + v) },
 
       /* 两队交战 */
-      { title: "2 Teams, 4 Players, VS Mode", player_count: 4, stage_mode: false, player_teams: ['1', '1', '2', '2'] },
-      { title: "3 Teams, 4 Players, VS Mode", player_count: 6, stage_mode: false, player_teams: ['1', '1', '1', '2', '2', '2'] },
-      { title: "4 Teams, 4 Players, VS Mode", player_count: 8, stage_mode: false, player_teams: ['1', '1', '1', '1', '2', '2', '2', '2'] },
+      { title: "2 Teams, 4 Players, VS Mode", stage_mode: false, teams: ['1', '1', '2', '2'] },
+      { title: "3 Teams, 4 Players, VS Mode", stage_mode: false, teams: ['1', '1', '1', '2', '2', '2'] },
+      { title: "4 Teams, 4 Players, VS Mode", stage_mode: false, teams: ['1', '1', '1', '1', '2', '2', '2', '2'] },
 
       /* 三队交战 */
-      { title: "3 Teams, 6 Players, VS Mode", player_count: 6, stage_mode: false, player_teams: ['1', '1', '2', '2', '3', '3'] },
+      { title: "3 Teams, 6 Players, VS Mode", stage_mode: false, teams: ['1', '1', '2', '2', '3', '3'] },
 
       /* 四队交战 */
-      { title: "4 Teams, 6 Players, VS Mode", player_count: 8, stage_mode: false, player_teams: ['1', '1', '2', '2', '3', '3', '4', '4'] },
+      { title: "4 Teams, 6 Players, VS Mode", stage_mode: false, teams: ['1', '1', '2', '2', '3', '3', '4', '4'] },
     ], lf2)
   }
   protected static get_situation(lf2: LF2) {
@@ -161,12 +194,12 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     for (const action of actions) {
       switch (action) {
         case StageActions.GoGoGoRight:
-          this.gogogo?.start();
-          this.gogogo?.node.set_visible(true);
+          this.props.gogogo?.start();
+          this.props.gogogo?.node.set_visible(true);
           break
         case StageActions.LoopGoGoGoRight:
-          this.gogogo_loop?.start();
-          this.gogogo_loop?.node.set_visible(true)
+          this.props.gogogo_loop?.start();
+          this.props.gogogo_loop?.node.set_visible(true)
           break;
       }
     }
@@ -180,12 +213,12 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       this.debug('on_phase_changed', stage, curr, prev)
       if (stage.is_chapter_finish) return;
       if (!prev) {
-        this.gogogo?.stop();
-        this.gogogo?.node.set_visible(false)
-        this.gogogo?.node.set_opacity(0)
-        this.gogogo_loop?.stop();
-        this.gogogo_loop?.node.set_visible(false)
-        this.gogogo_loop?.node.set_opacity(0)
+        this.props.gogogo?.stop();
+        this.props.gogogo?.node.set_visible(false)
+        this.props.gogogo?.node.set_opacity(0)
+        this.props.gogogo_loop?.stop();
+        this.props.gogogo_loop?.node.set_visible(false)
+        this.props.gogogo_loop?.node.set_opacity(0)
       }
       const { on_end } = prev || {};
       const { on_start } = curr || {};
@@ -198,17 +231,12 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     },
     on_requrie_goto_next_stage: (stage: Stage) => {
       this.debug('on_requrie_goto_next_stage', stage)
-      if (this.jalousie) this.jalousie.open = false;
+      if (this.props.jalousie) this.props.jalousie.open = false;
     }
   }
-  override on_start(): void {
-    super.on_start?.();
-    this.jalousie = this.node.search_component(Jalousie)
-    this.gogogo = this.node.search_component(ComponentsPlayer, "play_gogogo")
-    this.gogogo_loop = this.node.search_component(ComponentsPlayer, "play_gogogo_loop")
+  startup() {
     this.fsm.use(StateKey.Base)
-    this.node.search_node("curr_focus")!.visible = false
-
+    this.props.focus_text_node?.set_visible(false)
     let stage: IStageInfo | undefined
     if (this.is_stage_mode) {
       stage = DemoModeLogic.get_stages(this.lf2).take()
@@ -231,13 +259,16 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     else fighters_datas.push(...boss_datas)
 
     let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
+    const min_x = is_stage_mode ? (cam_x + 40) : (cam_x + 1 * Defines.MODERN_SCREEN_WIDTH / 3)
+    const max_x = is_stage_mode ? (80) : (cam_x + 2 * Defines.MODERN_SCREEN_WIDTH / 3)
 
     const situation = DemoModeLogic.get_situation(this.lf2);
     this.props.situation_name?.set_text(situation.title)
-    const { player_count, player_teams } = situation
-    const player_infos = Array.from(this.lf2.players.values());
-    for (let i = 0; i < player_count; i++) {
-      const player = player_infos[i]!;
+    const { teams } = situation
+    const players = Array.from(this.lf2.players.values());
+    for (let i = 0; i < teams.length; i++) {
+      const player = players[i]!;
+      const team = teams[i]!;
       if (!player) continue;
 
       const fighter_data = this.lf2.mt.take(fighters_datas);
@@ -245,7 +276,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
 
       const fighter = this.lf2.factory.create_entity(this.world, fighter_data);
       if (!fighter) return;
-      fighter.team = player_teams.shift() ?? new_team();
+      fighter.team = team ?? new_team();
       fighter.facing = is_stage_mode ?
         FacingFlag.Right :
         this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
@@ -259,14 +290,8 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
         player.id,
         fighter,
       );
-      const x = this.is_stage_mode ?
-        this.lf2.mt.range(
-          (cam_x + 40),
-          (cam_x + 80)
-        ) : this.lf2.mt.range(
-          (cam_x + 1 * Defines.MODERN_SCREEN_WIDTH / 3),
-          (cam_x + 2 * Defines.MODERN_SCREEN_WIDTH / 3)
-        )
+
+      const x = this.lf2.mt.range(min_x, max_x)
       fighter.set_position(x, void 0, this.lf2.mt.range(far, near))
       fighter.blinking = this.world.begin_blink_time;
       if (is_vs_mode) fighter.mp = (fighter.mp_max * 2 / 5)
@@ -276,7 +301,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     const stat_bars = this.node.search_components(FighterStatBar)
     for (let i = 0; i < stat_bars.length; i++) {
       const stat_bar = stat_bars[i];
-      const enabled = player_count >= Number(stat_bar.node.id?.match(/p(\d)_stat/)?.[1]);
+      const enabled = teams.length >= Number(stat_bar.node.id?.match(/p(\d)_stat/)?.[1]);
       stat_bar.node.visible = enabled;
       stat_bar.node.disabled = !enabled;
       if (enabled) continue;
@@ -299,16 +324,23 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       this.lf2.world.stage.callbacks.add(this.stage_callbacks);
     }
     this.lf2.world.callbacks.add(this.world_callbacks);
-    this.node.find_component(CameraCtrl)?.focus_next(1)
+    this.props.cam_ctrl?.focus_next(1);
+    this.world.renderer.cam_x = cam_x;
   }
-  override on_stop(): void {
-    super.on_stop?.();
+  clearup() {
     this.lf2.world.stage.callbacks.del(this.stage_callbacks)
     this.lf2.world.callbacks.del(this.world_callbacks);
     this.world.clear();
     DemoModeLogic.clear_situation()
   }
-
+  override on_start(): void {
+    super.on_start?.();
+    this.startup();
+  }
+  override on_stop(): void {
+    super.on_stop?.();
+    this.clearup()
+  }
   protected entity_callbacks: IEntityCallbacks = {
     on_dead: () => {
       // 队伍存活计数
@@ -325,15 +357,15 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       traversal(player_teams, (_, v) => {
         if (v) ++plater_team_remains;
       })
-
-      if (this.is_stage_mode) {
+      const { is_stage_mode, is_vs_mode } = this;
+      if (is_stage_mode) {
         // 大于0队，继续打
         if (plater_team_remains > 0) {
           this.fsm.use(StateKey.Base)
         } else {
           this.fsm.use(StateKey.BeforeEnd)
         }
-      } else if (this.is_vs_mode) {
+      } else if (is_vs_mode) {
         // 大于一队，继续打
         if (plater_team_remains > 1) {
           this.fsm.use(StateKey.Base)
@@ -352,13 +384,13 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       if (!this.is_stage_mode) return;
       prev.callbacks.del(this.stage_callbacks)
       stage.callbacks.add(this.stage_callbacks);
-      this.gogogo?.stop();
-      this.gogogo?.node.set_visible(false)
-      this.gogogo?.node.set_opacity(0)
-      this.gogogo_loop?.stop();
-      this.gogogo_loop?.node.set_visible(false)
-      this.gogogo_loop?.node.set_opacity(0)
-      if (this.jalousie) this.jalousie.open = true;
+      this.props.gogogo?.stop();
+      this.props.gogogo?.node.set_visible(false)
+      this.props.gogogo?.node.set_opacity(0)
+      this.props.gogogo_loop?.stop();
+      this.props.gogogo_loop?.node.set_visible(false)
+      this.props.gogogo_loop?.node.set_opacity(0)
+      if (this.props.jalousie) this.props.jalousie.open = true;
     }
   }
   override update(dt: number): void {
@@ -393,10 +425,10 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
 
     } while (0)
     if (this.is_stage_mode) {
-      if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
+      if (this.props.jalousie && !this.props.jalousie.open && this.props.jalousie.anim.done) {
         this.lf2.goto_next_stage()
         this.fsm.use(StateKey.Base)
-        this.jalousie.open = true;
+        this.props.jalousie.open = true;
       }
     }
     this.fsm.update(dt)
@@ -414,8 +446,8 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
           this.fsm.state_time > 1000
         ) {
           e.stop_immediate_propagation();
-          this.on_stop()
-          this.on_start()
+          this.clearup()
+          this.startup()
         }
         break;
       }

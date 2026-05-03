@@ -10,6 +10,10 @@
         cam_ctrl: "cam_ctrl",
         score_board: "score_board",
         situation_name: "situation_name",
+        focus_text_node: "focus_text_node",
+        jalousie: "jalousie",
+        gogogo: "play_gogogo",
+        gogogo_loop: "play_gogogo_loop",
       },
     },
     {
@@ -97,7 +101,7 @@
       center: "0,1",
     },
     {
-      id: "curr_focus",
+      id: "focus_text_node",
       i18n: "",
       outlineColor: "#005A8E",
       outlineWidth: 1,
@@ -121,6 +125,7 @@
     {
       component: [
         {
+          id: "jalousie",
           cls: "Jalousie",
           properties: {
             direction: "column",

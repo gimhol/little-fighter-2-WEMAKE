@@ -1,6 +1,6 @@
 import type { IStagePhaseInfo } from "@/LF2/defines";
 import type { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
-import type IStageCallbacks from "@/LF2/stage/IStageCallbacks";
+import type { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
 import { Stage } from "../../stage";
 import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";

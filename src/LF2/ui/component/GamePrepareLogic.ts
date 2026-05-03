@@ -70,7 +70,6 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     const is_vs_mode = this.props.game_mode === GAME_MODE_VS
     let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
 
-    this.world.renderer.cam_x = cam_x
 
     for (const [player, slot_info] of char_menu_logic.players) {
       const { fighter: fighter_data } = slot_info;
@@ -117,6 +116,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     } else {
       this.lf2.push_ui({ id: "vs_mode_page" });
     }
+    this.world.renderer.cam_x = cam_x
   }
 }
 

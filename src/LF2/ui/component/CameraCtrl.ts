@@ -41,11 +41,11 @@ export class CameraCtrl extends UIComponent {
     const { lr } = this;
     if (lr) {
       this.free = false
-      const cam_x = this.world.renderer.cam_x;
+      const { cam_x } = this.world.renderer;
       this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x + 10 * dt * lr}`)
     } else if (!this.keys.j.is_end()) {
       this.free = false
-      const cam_x = this.world.renderer.cam_x;
+      const { cam_x } = this.world.renderer;
       this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)
     }
     if (!this.keys.d.is_end()) {
