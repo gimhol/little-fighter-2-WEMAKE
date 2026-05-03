@@ -10,6 +10,5 @@ export class StageTransitions extends UIComponent implements ILf2Callback {
     this.lf2.callbacks.del(this);
   }
   on_enter_next_stage(): void {
-    alert("!");
   }
 }
