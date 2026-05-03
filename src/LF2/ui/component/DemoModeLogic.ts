@@ -83,11 +83,9 @@ class DemoFSMState_Win extends DemoFSMState_Base {
 class DemoFSMState_Restart extends DemoFSMState_Base {
   override readonly key: StateKey = StateKey.Restart;
   override update() {
-    return StateKey.Base;
-  }
-  override leave(): void {
     this.owner.clearup()
     this.owner.startup()
+    return StateKey.Base;
   }
 }
 export interface IDemoModeLogicProps {
