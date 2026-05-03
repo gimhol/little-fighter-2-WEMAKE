@@ -56,6 +56,7 @@ import img_btn_3_0 from "./assets/btn_3_0.png";
 import img_btn_3_1 from "./assets/btn_3_1.png";
 import img_btn_3_2 from "./assets/btn_3_2.png";
 import img_btn_3_3 from "./assets/btn_3_3.png";
+import img_btn_4_3 from "./assets/btn_4_3.png";
 import { useForage } from "./hooks/useForage";
 import "./init";
 import { DatViewer } from "./pages/dat_viewer/DatViewer";
@@ -623,11 +624,18 @@ function App() {
           checked={app_state.sound_muted}
           onClick={() => lf2?.sounds?.set_sound_muted(!app_state.sound_muted)}
           src={[img_btn_0_3, img_btn_1_0]} />
+
         <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "settings"}>
           <ToggleImgButton
             checked={paused}
             onClick={() => lf2?.cmds.push(CMD.F1)}
             src={[img_btn_2_1, img_btn_2_2]} />
+        </Show>
+        <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "settings" && (window as any).first_ui == 'init_demo'}>
+          <ToggleImgButton
+            checked={lf2?.world.playrate != 1}
+            onClick={() => lf2?.cmds.push(CMD.F5)}
+            src={[img_btn_4_3, img_btn_4_3]} />
         </Show>
         <Show show={!networking}>
           <ToggleImgButton
