@@ -52,11 +52,19 @@ export class BotController extends BaseController {
   get behavior(): BotBehavior { return this._behavior }
   get goingto(): IVector3 | undefined { return this._goingto }
 
-  /** 走攻触发范围X */
-  get w_atk_x() {
+
+  get stand_atk_b_x() {
     const en = this.chasings.get()?.entity;
     if (!en) return 0;
-    if (is_weapon(en)) return 40;
+    if (is_weapon(en)) return this.dataset.pick_weapon_b_x;
+    return -5; // TODO?
+  }
+
+  /** 地面攻击触发范围X */
+  get stand_atk_f_x() {
+    const en = this.chasings.get()?.entity;
+    if (!en) return 0;
+    if (is_weapon(en)) return this.dataset.pick_weapon_f_x;
 
     const wt = this.entity.holding?.base_type
     if (

@@ -669,8 +669,9 @@ export class World extends WorldDataset {
         this.callbacks.emit("on_fighter_del")(entity);
       const player = this.lf2.players.get(entity.ctrl.player_id)
       if (player) player.fighter = void 0
-      const ok = this.puppets.delete(entity.ctrl.player_id);
-      if (ok) this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
+      const puppet = this.puppets.get(entity.ctrl.player_id)
+      if (puppet === entity) this.puppets.delete(entity.ctrl.player_id);
+      this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
       this.renderer.del_entity(entity);
       entity.release();
       this.lf2.factory.recycle_entity(entity)

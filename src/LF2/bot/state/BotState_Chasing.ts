@@ -1,5 +1,5 @@
 import { is_fighter, is_weapon } from "@/LF2/entity";
-import { Defines, GK, StateEnum, WeaponType, AGK } from "../../defines";
+import { AGK, Defines, GK, StateEnum, WeaponType } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { abs, between, round_float } from "../../utils";
@@ -15,7 +15,6 @@ export class BotState_Chasing extends BotState_Base {
     const me = c.entity;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
-
 
     if (this.handle_defends()) return;
     if (this.handle_bot_actions()) return;
@@ -53,7 +52,7 @@ export class BotState_Chasing extends BotState_Base {
      */
     const abs_dz = round_float(abs(my_z - en_z))
 
-    const x_reach = abs_dx <= c.w_atk_x;
+    const x_reach = abs_dx <= c.stand_atk_f_x;
     const z_reach = abs_dz <= c.dataset.w_atk_z;
     const wt = me.holding?.base_type;
     const out_of_range = c.en_out_of_range = (
@@ -182,10 +181,10 @@ export class BotState_Chasing extends BotState_Base {
           c.key_down(GK.a)
           return
         } else if (!out_of_range) {
-          if (my_x < en_x && abs_dx > c.w_atk_x) {
+          if (my_x < en_x && abs_dx > c.stand_atk_f_x) {
             // 转向
             c.key_down(GK.R).key_up(GK.L);
-          } else if (my_x > en_x && abs_dx > c.w_atk_x) {
+          } else if (my_x > en_x && abs_dx > c.stand_atk_f_x) {
             // 转向
             c.key_down(GK.L).key_up(GK.R);
           } else {
@@ -200,8 +199,8 @@ export class BotState_Chasing extends BotState_Base {
 
     }
     if (!out_of_range) {
-      if (my_x < round_float(en_x - c.w_atk_x)) c.key_down(GK.R).key_up(GK.L);
-      else if (my_x > round_float(en_x + c.w_atk_x)) c.key_down(GK.L).key_up(GK.R);
+      if (my_x < round_float(en_x - c.stand_atk_f_x)) c.key_down(GK.R).key_up(GK.L);
+      else if (my_x > round_float(en_x + c.stand_atk_f_x)) c.key_down(GK.L).key_up(GK.R);
       else c.key_up(GK.L, GK.R);
       if (my_z < round_float(en_z - c.dataset.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
       else if (my_z > round_float(en_z + c.dataset.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
@@ -215,19 +214,18 @@ export class BotState_Chasing extends BotState_Base {
     }
 
     this.handle_block()
+
+    const is_weapon_picking = (
+      state === StateEnum.Walking ||
+      state === StateEnum.Standing ||
+      state === StateEnum.Rowing
+    ) && is_weapon(en)
+
     if (
-      between(dist_en_x, -5, c.w_atk_x) &&
-      between(abs_dz, 0, c.dataset.w_atk_z)
+      between(dist_en_x, c.stand_atk_b_x, c.stand_atk_f_x) &&
+      between(abs_dz, -c.dataset.w_atk_z, c.dataset.w_atk_z)
     ) {
-      if (
-        is_fighter(en) || (
-          is_weapon(en) && (
-            state === StateEnum.Walking ||
-            state === StateEnum.Standing ||
-            state === StateEnum.Rowing
-          )
-        )
-      ) c.click(GK.a)
+      c.click(GK.a)
     } else {
       c.key_up(GK.a)
     }

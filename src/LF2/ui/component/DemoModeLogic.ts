@@ -14,19 +14,27 @@ import { CameraCtrl } from "./CameraCtrl";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";
-class FSMState extends ComponentFSMState<number, DemoModeLogic> {
-  override readonly key: number = 0
-  get fsm() { return this.owner.fsm }
+enum StateKey {
+  Base = 'Base',
+  BeforeEnd = 'BeforeEnd',
+  End = 'End',
+  BeforeWin = 'BeforeWin',
+  Win = 'Win',
 }
-class FSMState_BeforeEnd extends FSMState {
-  override readonly key: number = 1;
+class DemoFSMState_Base extends ComponentFSMState<StateKey, DemoModeLogic> {
+  override name?: string | undefined;
+  override readonly key: StateKey = StateKey.Base;
+  get fsm(): FSM<StateKey, DemoFSMState_Base> { return this.owner.fsm }
+}
+class DemoFSMState_BeforeEnd extends DemoFSMState_Base {
+  override readonly key: StateKey = StateKey.BeforeEnd;
   override update() {
     if (this.fsm.state_time > 3000)
-      return 2;
+      return StateKey.End;
   }
 }
-class FSMState_End extends FSMState {
-  override readonly key: number = 2;
+class DemoFSMState_End extends DemoFSMState_Base {
+  override readonly key: StateKey = StateKey.End;
   override enter(): void {
     this.lf2.sounds.play_preset("end");
     this.owner.props.score_board?.set_visible(true);
@@ -35,15 +43,15 @@ class FSMState_End extends FSMState {
     this.owner.props.score_board?.set_visible(false);
   }
 }
-class FSMState_BeforeWin extends FSMState {
-  override readonly key: number = 3;
+class DemoFSMState_BeforeWin extends DemoFSMState_Base {
+  override readonly key: StateKey = StateKey.BeforeWin;
   override update() {
     if (this.fsm.state_time > 3000)
-      return 4;
+      return StateKey.Win;
   }
 }
-class FSMState_Win extends FSMState {
-  override readonly key: number = 4;
+class DemoFSMState_Win extends DemoFSMState_Base {
+  override readonly key: StateKey = StateKey.Win;
   override enter(): void {
     this.lf2.sounds.play_preset("pass");
     const score_board = this.node.find_child("score_board")
@@ -74,13 +82,14 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     cam_ctrl: CameraCtrl,
     score_board: UINode,
   };
-  readonly fsm = new FSM<number, FSMState>().add(
-    new FSMState(this),
-    new FSMState_BeforeEnd(this),
-    new FSMState_End(this),
-    new FSMState_BeforeWin(this),
-    new FSMState_Win(this)
-  )
+  readonly fsm = new FSM<StateKey, DemoFSMState_Base>(`DemoFSM`).add(
+    new DemoFSMState_Base(this),
+    new DemoFSMState_BeforeEnd(this),
+    new DemoFSMState_End(this),
+    new DemoFSMState_BeforeWin(this),
+    new DemoFSMState_Win(this)
+  ).logger(console.debug)
+
   protected _staring?: Entity | undefined;
   protected _free?: boolean
   protected weapon_drop_timer = new Times(0, 1200);
@@ -183,7 +192,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     },
     on_chapter_finish: (stage: Stage) => {
       this.debug('on_chapter_finish', stage)
-      this.fsm.use(3)
+      this.fsm.use(StateKey.BeforeWin)
     },
     on_requrie_goto_next_stage: (stage: Stage) => {
       this.debug('on_requrie_goto_next_stage', stage)
@@ -195,7 +204,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     this.jalousie = this.node.search_component(Jalousie)
     this.gogogo = this.node.search_component(ComponentsPlayer, "play_gogogo")
     this.gogogo_loop = this.node.search_component(ComponentsPlayer, "play_gogogo_loop")
-    this.fsm.use(0)
+    this.fsm.use(StateKey.Base)
     this.node.search_node("curr_focus")!.visible = false
 
     let stage: IStageInfo | undefined
@@ -291,10 +300,10 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
   }
   override on_stop(): void {
     super.on_stop?.();
-    DemoModeLogic.clear_situation()
     this.lf2.world.stage.callbacks.del(this.stage_callbacks)
     this.lf2.world.callbacks.del(this.world_callbacks);
     this.world.clear();
+    DemoModeLogic.clear_situation()
   }
 
   protected entity_callbacks: IEntityCallbacks = {
@@ -317,16 +326,16 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       if (this.is_stage_mode) {
         // 大于0队，继续打
         if (plater_team_remains > 0) {
-          this.fsm.use(0);
+          this.fsm.use(StateKey.Base)
         } else {
-          this.fsm.use(1);
+          this.fsm.use(StateKey.BeforeEnd)
         }
       } else if (this.is_vs_mode) {
         // 大于一队，继续打
         if (plater_team_remains > 1) {
-          this.fsm.use(0);
+          this.fsm.use(StateKey.Base)
         } else {
-          this.fsm.use(1)
+          this.fsm.use(StateKey.BeforeEnd)
         }
       }
 
@@ -383,7 +392,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     if (this.is_stage_mode) {
       if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
         this.lf2.goto_next_stage()
-        this.fsm.use(0)
+        this.fsm.use(StateKey.Base)
         this.jalousie.open = true;
       }
     }
@@ -395,11 +404,13 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       case GameKey.a:
       case GameKey.j: {
         if (
-          this.fsm.state?.key == 2 &&
+          (
+            this.fsm.state?.key == StateKey.End ||
+            this.fsm.state?.key == StateKey.Win
+          ) &&
           this.fsm.state_time > 1000
         ) {
           e.stop_immediate_propagation();
-          // this.lf2.pop_ui()
           this.on_stop()
           this.on_start()
         }

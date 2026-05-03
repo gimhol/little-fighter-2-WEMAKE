@@ -75,6 +75,12 @@ export interface IBotDataSet {
   avoiding_out_x?: number;
   avoiding_out_z?: number;
 
+  /* 武器拾取前向范围（一般为正数） */
+  pick_weapon_f_x?: number;
+  /* 武器拾取后向范围（一般为负数） */
+  pick_weapon_b_x?: number;
+
+  pick_weapon_z?: number;
 }
 
 export class BotDataSet implements Required<IBotDataSet> {
@@ -133,6 +139,10 @@ export class BotDataSet implements Required<IBotDataSet> {
   avoiding_in_z = 100;
   avoiding_out_x = 250;
   avoiding_out_z = 150;
+
+  pick_weapon_f_x: number = 25;
+  pick_weapon_b_x: number = -25;
+  pick_weapon_z: number = 25;
 }
 
 export const bot_dataset_fields = fields<IBotDataSet>({
@@ -161,4 +171,7 @@ export const bot_dataset_fields = fields<IBotDataSet>({
   avoiding_in_z: int,
   avoiding_out_x: int,
   avoiding_out_z: int,
+  pick_weapon_f_x: int,
+  pick_weapon_b_x: int,
+  pick_weapon_z: int,
 })
