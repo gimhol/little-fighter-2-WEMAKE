@@ -41,6 +41,11 @@
     justify-content  : flex-end;
     align-items      : flex-start;
     gap              : 0px;
+    pointer-events   : none;
+
+    &>* {
+      pointer-events: all;
+    }
 
     button {
       --wails-draggable: no-drag;
@@ -184,8 +189,13 @@
 
 :global(.mobile) {
   .top_bar {
-    padding   : 0px 10px;
-    box-sizing: border-box;
+    padding       : 0px 10px;
+    box-sizing    : border-box;
+    pointer-events: none;
+
+    &>* {
+      pointer-events: all;
+    }
   }
 }
 

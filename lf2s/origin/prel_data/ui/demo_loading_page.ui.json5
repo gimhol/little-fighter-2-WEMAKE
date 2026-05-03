@@ -51,7 +51,7 @@
     },
     {
       id: "demo_play_link",
-      i18n: "Click here to visit & play it.  ( https://lf.gim.ink )",
+      i18n: "Click here to visit & play it: https://lf.gim.ink",
       outlineColor: "#005A8E",
       outlineWidth: 1,
       outlineAlpha: 1,
