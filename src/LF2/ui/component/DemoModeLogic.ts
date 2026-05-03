@@ -67,6 +67,7 @@ export interface IDemoModeLogicProps {
   focus_on?: Label;
   cam_ctrl?: CameraCtrl;
   score_board?: UINode;
+  situation_name?: Label,
 }
 interface DemoSituation {
   title: string;
@@ -81,6 +82,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     focus_on: Label,
     cam_ctrl: CameraCtrl,
     score_board: UINode,
+    situation_name: Label,
   };
   readonly fsm = new FSM<StateKey, DemoFSMState_Base>(`DemoFSM`).add(
     new DemoFSMState_Base(this),
@@ -231,6 +233,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
 
     const situation = DemoModeLogic.get_situation(this.lf2);
+    this.props.situation_name?.set_text(situation.title)
     const { player_count, player_teams } = situation
     const player_infos = Array.from(this.lf2.players.values());
     for (let i = 0; i < player_count; i++) {

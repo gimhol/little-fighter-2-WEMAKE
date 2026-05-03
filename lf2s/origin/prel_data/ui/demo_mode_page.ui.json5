@@ -9,6 +9,7 @@
         focus_on: "focus_on",
         cam_ctrl: "cam_ctrl",
         score_board: "score_board",
+        situation_name: "situation_name",
       },
     },
     {
@@ -23,6 +24,19 @@
       visible: false,
       template: "ui/player_keys_hints.ui.json5",
     },
+    {
+      i18n: "None",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
+      style: {
+        fill_style: "white",
+        font: "9px Arial",
+      },
+      center: "0,0",
+      pos: "0,0",
+      component: [ { id: "situation_name", cls: "Label" } ],
+    },
     "ui/center_pause_label.ui.json5",
     "ui/fighter_stat_s_x8.ui.json5",
     "ui/gogogo.ui.json5",
@@ -30,7 +44,7 @@
     {
       pos: "397,10",
       center: "0.5,0",
-      component: ["StageTitleText()"],
+      component: [ "StageTitleText()" ],
     },
     {
       visible: true,
