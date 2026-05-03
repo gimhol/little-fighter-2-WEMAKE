@@ -8,6 +8,7 @@ export * from "./IPlayerInfoCallback";
 export * from "./ITransform";
 export * from "./IWorldCallbacks";
 export * from "./IWorldDataset";
+export * from "./Keys";
 export * from "./LF2";
 export * from "./PlayerInfo";
 export * from "./Ticker";
