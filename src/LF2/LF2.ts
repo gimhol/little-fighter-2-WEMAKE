@@ -76,7 +76,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   protected _cheat_gkeys = new Map<string, string>()
   protected _cheat_gkeys_matchs = new Set<string>()
   protected _keys_pool: Keys[] = [];
-  first_ui: string = 'init_demo';
+  first_ui: string = 'init';
   readonly _keys: Keys[] = [];
 
   cmds: (CMD | D.CheatType | string)[] = [];
