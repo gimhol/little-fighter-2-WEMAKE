@@ -642,7 +642,7 @@ function App() {
             src={[img_btn_1_1, img_btn_1_1]}
           />
         </Show>
-        <Show show={!is_mobile_container}>
+        <Show show={!is_mobile_container && (window as any).first_ui != 'init_demo'}>
           <ToggleImgButton
             checked={is_fullscreen}
             onClick={() => toggle_fullscreen()}
@@ -665,7 +665,10 @@ function App() {
             }}
             src={[img_btn_1_4, img_btn_2_4]} />
         </Show>
-        <Show show={!is_fullscreen && window.runtime?.Quit}>
+        <Show show={
+          !is_fullscreen &&
+          window.runtime?.Quit
+        }>
           <ToggleImgButton
             checked={is_fullscreen}
             onClick={() => window.runtime?.Quit?.()}

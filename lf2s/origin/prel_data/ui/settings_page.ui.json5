@@ -3,7 +3,7 @@
   name: "页面：设置页",
   component: [
     {
-      name: "SettingsLogic",
+      cls: "SettingsLogic",
       properties: {
         btn_misc_settings: "btn_misc_settings",
         btn_ctrl_settings: "btn_ctrl_settings",
