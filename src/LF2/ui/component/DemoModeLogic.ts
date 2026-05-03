@@ -335,6 +335,8 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
   }
   override on_start(): void {
     super.on_start?.();
+    if (this.lf2.first_ui !== 'init_demo')
+      this.node.search_node("demo_play_link")?.set_visible(false)
     this.startup();
   }
   override on_stop(): void {

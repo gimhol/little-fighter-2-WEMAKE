@@ -153,12 +153,12 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
   override on_key_down(e: IUIKeyEvent): void {
     this.debug('on_key_down', e)
     this.on_tap();
-    e.stop_immediate_propagation()
+    // e.stop_immediate_propagation()
   }
   override on_click(e: IUIPointerEvent): void {
     this.debug('on_click')
     this.on_tap()
-    e.stop_immediate_propagation()
+    // e.stop_immediate_propagation()
   }
   on_tap() {
     const status = this.fsm.state?.key
