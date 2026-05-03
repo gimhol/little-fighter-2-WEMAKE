@@ -9,7 +9,7 @@ This project should be able to run on node.js versions that are not too old. I h
 
 ## Data Building
 
-This step will generate the LFW data based on the original lf2 data.
+This step will generate the LFW data based on the original LF2 data.
 
 Prepare some necessary conversion tools:
 
@@ -20,9 +20,10 @@ After installing ffmpeg and magick, make sure they can be executed in the comman
 
 Execute the following commands:
 
-``` bash
+```bash
 npm run build:tool
 npm run build:data
+npm run build:prel
 ```
 
 After successfully building the data, five new files will appear in the public directory:
@@ -35,13 +36,13 @@ After successfully building the data, five new files will appear in the public d
 
 ## Init
 
-``` bash
+```bash
 npm i
 ```
 
 ## Running (Dev)
 
-``` bash
+```bash
 npm run dev
 ```
 
@@ -49,7 +50,7 @@ Then you can open http://localhost:3000 in your browser and start the game.
 
 ## Building
 
-``` bash
+```bash
 npm run build
 ```
 
