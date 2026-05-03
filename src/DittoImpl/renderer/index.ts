@@ -2,6 +2,7 @@
 export * from "./Bar";
 export * from "./BgLayerRender";
 export * from "./BgRender";
+export * from "./EntityCtrlRender";
 export * from "./EntityMainRender";
 export * from "./EntityNameRender";
 export * from "./EntityRenderer";

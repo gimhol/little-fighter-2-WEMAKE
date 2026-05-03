@@ -11,7 +11,7 @@ import { is_bot_ctrl, is_fighter, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
 import { is_num } from "../utils/type_check";
 import { Expressions } from "./Expressions";
-import type IStageCallbacks from "./IStageCallbacks";
+import type { IStageCallbacks } from "./IStageCallbacks";
 import { IDialogState } from "./IStageCallbacks";
 import Item from "./Item";
 import { Status } from "./Status";

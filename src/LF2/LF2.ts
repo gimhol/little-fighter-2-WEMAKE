@@ -76,6 +76,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   protected _cheat_gkeys = new Map<string, string>()
   protected _cheat_gkeys_matchs = new Set<string>()
   protected _keys_pool: Keys[] = [];
+  first_ui: string = 'init_demo';
   readonly _keys: Keys[] = [];
 
   cmds: (CMD | D.CheatType | string)[] = [];
@@ -372,7 +373,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         await this.load_ui(zip);
       }
       if (is_first) {
-        this.set_ui({ id: this.uis.all?.[0].id })
+        const ui = this.uis.all.find(v => v.id === this.first_ui)
+        this.set_ui({ id: ui?.id! })
         this.callbacks.emit("on_prel_loaded")(this);
       }
       this._playable = true;

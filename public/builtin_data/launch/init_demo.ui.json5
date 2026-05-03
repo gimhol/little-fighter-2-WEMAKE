@@ -1,13 +1,13 @@
 {
-  name: "页面：启动页",
-  id: "init",
+  name: "页面：Demo启动页",
+  id: "init_demo",
   color: "rgb(16, 32, 108)",
   size: "794, 794",
   component: [
     {
       cls: "LaunchPage",
       properties: {
-        entry: "entry",
+        entry: "demo_loading",
         loading_anim: "loading_anim",
         tap_to_launch: "tap_to_launch",
         sound_warning: "sound_warning",
@@ -20,7 +20,23 @@
   items: [
     "builtin_data/launch/bg.ui.json5",
     "builtin_data/launch/version_name.ui.json5",
-    "builtin_data/launch/extra_zips.ui.json5",
+    "builtin_data/launch/extra_zips.ui.json5",    
+    {
+      i18n: "play it: https://lf.gim.ink",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
+      style: {
+        underline_color: "white",
+        underline_width: 1,
+        font: "9px Arial",
+      },
+      center: "0.5, 0",
+      pos: "400, 0",
+      actions: {
+        click: [ "sound(ok)", "link_to(https://lf.gim.ink)" ],
+      },
+    },
     {
       id: "tap_to_launch",
       i18n: "init.tap_any_place_to_launch",
@@ -30,7 +46,7 @@
       },
       center: "0.5,0.5",
       pos: "397,225,1",
-      component: ["SineOpacity(0.1, 1, 0.5)", "<fade_out>!FadeOutOpacity(250)"],
+      component: [ "SineOpacity(0.1, 1, 0.5)", "<fade_out>!FadeOutOpacity(250)" ],
     },
     {
       id: "sound_warning",
@@ -41,7 +57,7 @@
       },
       center: "0.5,0.5",
       pos: "397,400,1",
-      component: ["SineOpacity(0.1, 1, 0.5)", "<fade_out>!FadeOutOpacity(250)"],
+      component: [ "SineOpacity(0.1, 1, 0.5)", "<fade_out>!FadeOutOpacity(250)" ],
     },
     {
       id: "bearface",
@@ -60,18 +76,18 @@
           id: "scale_in",
           cls: "ScaleAnimation",
           enabled: false,
-          args: [0, 1, "0.2,0.2,0.2", 500, "2,2,2", 250, "1,1,1", 250],
+          args: [ 0, 1, "0.2,0.2,0.2", 500, "2,2,2", 250, "1,1,1", 250 ],
         },
         {
           id: "move_in",
           cls: "PositionAnimation",
-          args: [0, 1, "397,150,1", 500, "319,150,1", 500],
+          args: [ 0, 1, "397,150,1", 500, "319,150,1", 500 ],
         },
         {
           id: "scale_out",
           cls: "ScaleAnimation",
           enabled: false,
-          args: [0, 1, "1,1,1", 500, "0.2,0.2,0.2", 500],
+          args: [ 0, 1, "1,1,1", 500, "0.2,0.2,0.2", 500 ],
         },
       ],
     },
@@ -91,19 +107,19 @@
         {
           id: "scale_in",
           cls: "ScaleAnimation",
-          args: [0, 1, "0.2,0.2,0.2", 500, "2,2,2", 250, "1,1,1", 250],
+          args: [ 0, 1, "0.2,0.2,0.2", 500, "2,2,2", 250, "1,1,1", 250 ],
         },
         {
           id: "scale_out",
           cls: "ScaleAnimation",
           enabled: false,
-          args: [0, 1, "1,1,1", 500, "0.2,0.2,0.2", 500],
+          args: [ 0, 1, "1,1,1", 500, "0.2,0.2,0.2", 500 ],
         },
         {
           id: "move_in",
           cls: "PositionAnimation",
           enabled: false,
-          args: [0, 1, "397,150,1", 500, "477,150,1", 500],
+          args: [ 0, 1, "397,150,1", 500, "477,150,1", 500 ],
         },
       ],
     },
@@ -122,7 +138,7 @@
         {
           id: "move_in",
           cls: "PositionAnimation",
-          args: [0, 1, "397,150,1", 500, "397,230,1", 500],
+          args: [ 0, 1, "397,150,1", 500, "397,230,1", 500 ],
         },
       ],
     },
@@ -133,7 +149,7 @@
     },
     {
       id: "txt_loading_content",
-      component: ["LoadingContentText(,1000,1000)"],
+      component: [ "LoadingContentText(,1000,1000)" ],
       pos: "0,0",
       center: "0,0",
       i18n: "",

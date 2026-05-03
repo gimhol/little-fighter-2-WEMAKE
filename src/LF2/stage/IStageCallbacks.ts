@@ -10,7 +10,7 @@ export interface IReadonlyDialogState {
   readonly index: number;
   readonly list: Readonly<IDialogInfo[]>
 }
-export default interface IStageCallbacks {
+export interface IStageCallbacks {
   on_phase_changed?(
     stage: Stage,
     curr: IStagePhaseInfo | undefined,

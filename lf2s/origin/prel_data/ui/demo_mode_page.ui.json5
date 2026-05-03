@@ -9,6 +9,11 @@
         focus_on: "focus_on",
         cam_ctrl: "cam_ctrl",
         score_board: "score_board",
+        situation_name: "situation_name",
+        focus_text_node: "focus_text_node",
+        jalousie: "jalousie",
+        gogogo: "play_gogogo",
+        gogogo_loop: "play_gogogo_loop",
       },
     },
     {
@@ -17,11 +22,47 @@
       properties: { },
     },
   ],
+  templates: {
+    shutter_item: {
+      color: "rgb(0, 0, 0)",
+      size: "10,10",
+      pos: "0,0,2",
+    },
+  },
   items: [
     {
       pos: "0,0,5",
       visible: false,
       template: "ui/player_keys_hints.ui.json5",
+    },
+    {
+      i18n: "None",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
+      style: {
+        fill_style: "white",
+        font: "9px Arial",
+      },
+      center: "0,0",
+      pos: "0,0",
+      component: [ { id: "situation_name", cls: "Label" } ],
+    },
+    {
+      i18n: "play it: https://lf.gim.ink",
+      outlineColor: "#005A8E",
+      outlineWidth: 1,
+      outlineAlpha: 1,
+      style: {
+        underline_color: "white",
+        underline_width: 1,
+        font: "9px Arial",
+      },
+      center: "0.5, 0",
+      pos: "400, 0",
+      actions: {
+        click: [ "sound(ok)", "link_to(https://lf.gim.ink)" ],
+      },
     },
     "ui/center_pause_label.ui.json5",
     "ui/fighter_stat_s_x8.ui.json5",
@@ -30,7 +71,7 @@
     {
       pos: "397,10",
       center: "0.5,0",
-      component: ["StageTitleText()"],
+      component: [ "StageTitleText()" ],
     },
     {
       visible: true,
@@ -83,7 +124,7 @@
       center: "0,1",
     },
     {
-      id: "curr_focus",
+      id: "focus_text_node",
       i18n: "",
       outlineColor: "#005A8E",
       outlineWidth: 1,
@@ -107,6 +148,7 @@
     {
       component: [
         {
+          id: "jalousie",
           cls: "Jalousie",
           properties: {
             direction: "column",

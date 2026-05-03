@@ -2,6 +2,7 @@ import Callbacks from "./Callbacks";
 import { NoEmitCallbacks } from "./NoEmitCallbacks";
 
 export interface IState<K extends string | number = string | number> {
+  name?: string;
   get key(): K;
   update?(dt: number): K | undefined | void;
   enter?(): void;
@@ -25,12 +26,18 @@ export class FSM<
   K extends string | number = string | number,
   S extends IState<K> = IState<K>,
 > implements IReadonlyFSM<K, S> {
+  static log?(msg: string): void
+  protected _name: string = '';
   protected _callbacks = new Callbacks<IFSMCallback<K, S>>();
   protected _state_map = new Map<K, S>();
   protected _prev_state?: S;
   protected _state?: S;
   protected _time: number = 0;
   protected _state_time: number = 0;
+
+  log?(msg: string): void
+  set name(v: string) { this._name = v }
+  get name(): string { return this._name }
   get states(): ReadonlyMap<K, S> { return this._state_map }
   get callbacks(): NoEmitCallbacks<IFSMCallback<K, S>> {
     return this._callbacks;
@@ -41,16 +48,16 @@ export class FSM<
   get time(): number { return this._time }
   set time(v: number) { this._time = v }
   get state_time(): number { return this._state_time }
-  protected set state(s: S | undefined) {
-    this._prev_state = this._state;
-    this._state?.leave?.();
-    this._state_time = 0;
-    this._state = s;
-    s?.enter?.();
-    this._callbacks.emit("on_state_changed")(this);
-  }
   get prev_state(): S | undefined {
     return this._prev_state;
+  }
+  constructor(name: string = '') {
+    this.name = name;
+    this.log = FSM.log
+  }
+  logger(log: (msg: string) => void): this {
+    this.log = log
+    return this;
   }
   get(key: K): S | undefined {
     return this._state_map.get(key);
@@ -60,8 +67,25 @@ export class FSM<
     return this;
   }
   use(key: K): this {
-    this.state = this._state_map.get(key);
+    this.set_state(this._state_map.get(key));
     return this;
+  }
+  set_state(next_state: S | undefined) {
+    this._prev_state = this._state;
+    this._state?.leave?.();
+    this._state_time = 0;
+    this._state = next_state;
+    next_state?.enter?.();
+    if (this.log) {
+      const prev_key = this._prev_state?.key
+      const prev_name = this._prev_state?.name ?? prev_key
+      const prev_label = prev_key == prev_name ? prev_name : `${prev_name}(${prev_key})`
+      const next_key = next_state?.key
+      const next_name = next_state?.name ?? next_key
+      const next_label = next_key == next_name ? next_name : `${next_name}(${next_key})`
+      this.log(`[${this.name}::state] ${prev_label} ==> ${next_label}`)
+    }
+    this._callbacks.emit("on_state_changed")(this);
   }
   update(dt: number) {
     this._time += dt;
@@ -75,7 +99,7 @@ export class FSM<
     const next_state = this._state_map.get(next_state_key);
     if (!next_state) return;
 
-    this.state = next_state;
+    this.set_state(next_state);
   }
 }
 export default FSM;
