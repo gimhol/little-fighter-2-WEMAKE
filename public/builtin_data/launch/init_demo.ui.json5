@@ -22,7 +22,8 @@
     "builtin_data/launch/version_name.ui.json5",
     "builtin_data/launch/extra_zips.ui.json5",    
     {
-      i18n: "play it: https://lf.gim.ink",
+      id: "demo_play_link",
+      i18n: "Click here to visit & play it.  ( https://lf.gim.ink )",
       outlineColor: "#005A8E",
       outlineWidth: 1,
       outlineAlpha: 1,
