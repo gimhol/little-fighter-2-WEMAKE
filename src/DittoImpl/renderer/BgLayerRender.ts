@@ -9,8 +9,8 @@ export class BgLayerRender {
   readonly mesh: T.Mesh;
   readonly layer: Layer;
   readonly bg_render: BgRender;
-  offsetX: number = 0;
-  offsetY: number = 0;
+  protected offsetX: number = 0;
+  protected offsetY: number = 0;
   constructor(bg_render: BgRender, layer: Layer) {
     this.layer = layer;
     this.bg_render = bg_render
@@ -29,7 +29,7 @@ export class BgLayerRender {
     this.offsetY = 0;
   }
 
-  render(dt: number) {
+  render(dt: number): void {
     const {
       visible,
       info: { absolute, offsetAnimX, offsetAnimY }

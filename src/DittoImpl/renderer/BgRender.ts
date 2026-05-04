@@ -20,7 +20,7 @@ export class BgRender {
     this.world_renderer = world_renderer;
   }
 
-  set_bg(bg: Background | null) {
+  set_bg(bg: Background | null): void {
     this.root_node?.removeFromParent();
     this.root_node = null
     this.cam_node?.removeFromParent();
@@ -52,7 +52,7 @@ export class BgRender {
     this.world_renderer.world_node.add(this.root_node, this.cam_node);
   }
 
-  render(dt: number) {
+  render(dt: number): void {
     const { cam_x } = this.world_renderer;
     const { root_node, layers, cam_node } = this;
     const { bg } = this.world
@@ -66,7 +66,7 @@ export class BgRender {
     for (const layer of layers) layer.render(dt);
   }
 
-  release() {
+  release(): void {
     this.root_node?.removeFromParent();
     this.cam_node?.removeFromParent();
     this.root_node = null
