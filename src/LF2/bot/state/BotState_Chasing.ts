@@ -1,5 +1,5 @@
 import { is_fighter, is_weapon } from "@/LF2/entity";
-import { AGK, Defines, GK, StateEnum, WeaponType } from "../../defines";
+import { AGK, BuiltIn_OID, Defines, GK, StateEnum, WeaponType } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { abs, between, round_float } from "../../utils";
@@ -53,13 +53,8 @@ export class BotState_Chasing extends BotState_Base {
      */
     const abs_dz = round_float(abs(my_z - en_z))
 
-    const is_weapon_picking = (
-      state === StateEnum.Walking ||
-      state === StateEnum.Standing ||
-      state === StateEnum.Rowing ||
-      state === StateEnum.Running
-    ) && is_weapon(en)
-
+    const is_weapon_picking = is_weapon(en)
+    const is_crimal_saving = en.data.id === BuiltIn_OID.Criminal;
     const x_reach = abs_dx <= c.stand_atk_f_x;
     const z_reach = abs_dz <= c.dataset.w_atk_z;
     const wt = me.holding?.base_type;

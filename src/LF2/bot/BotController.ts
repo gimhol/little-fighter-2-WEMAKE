@@ -6,6 +6,7 @@ import {
   ATTCKING_STATES,
   BotDataSet,
   BotStateEnum,
+  BuiltIn_OID,
   Defines as D,
   Difficulty,
   GK,
@@ -273,7 +274,8 @@ export class BotController extends BaseController {
       !this.is_leave_avoid_zone(av) :
       this.is_enter_avoiding_zone(av);
 
-    if (av.state === StateEnum.Lying) return ret;
+    if (av.state === StateEnum.Lying && av.wakeup_invuln) 
+      return ret;
     if (av.blinking) return ret;
     if (av.invulnerable) return ret;
     if (me.holding?.base_type === W_T.Drink) return ret;
@@ -428,6 +430,12 @@ export class BotController extends BaseController {
         this.defends.look(this.entity, other, dd)
         return;
       }
+    } else if (
+      other.data.id === BuiltIn_OID.Criminal &&
+      me.team != this.stage.team &&
+      !this.world.has_players_alive
+    ) {
+      this.chasings.look(this.entity, other)//
     } else {
       this.avoidings.del(t => t.entity === other);
       this.chasings.del(t => t.entity === other);
