@@ -241,6 +241,12 @@ export class BotState_Chasing extends BotState_Base {
         c.key_up(GK.L, GK.R)
       }
     }
+
+    const { team, player_l, player_r } = this.stage
+    if (team === me.team) {
+      if (my_x < player_l) c.click(GK.R)
+      if (my_x > player_r) c.click(GK.L)
+    }
   }
 }
 

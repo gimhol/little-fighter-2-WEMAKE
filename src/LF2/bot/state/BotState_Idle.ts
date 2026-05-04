@@ -1,4 +1,5 @@
 import { AGK, GK, StateEnum, WeaponType } from "@/LF2/defines";
+import { max, min, round } from "@/LF2/utils";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { BotState_Base } from "./BotState";
@@ -27,7 +28,19 @@ export class BotState_Idle extends BotState_Base {
     else if (av)
       return BotStateEnum.Avoiding;
 
-    c.key_up(...AGK)
+    const { x: my_x } = me.position;
+    const { team, player_l, player_r } = this.stage;
+    if (team !== me.team) {
+      const mid = round((player_l + player_r) * 0.5)
+      const min_x = min(player_l + 100, mid)
+      const max_x = max(player_r - 100, mid)
+      if (my_x < min_x) c.key_down(GK.R)
+      else if (my_x > max_x) c.key_down(GK.L)
+      else c.key_up(GK.R, GK.L)
+    } else {
+      c.key_up(...AGK)
+    }
+
 
     /* 喝 */
     if (
@@ -41,6 +54,8 @@ export class BotState_Idle extends BotState_Base {
     /* 概率停跑 */
     if (me.frame.state === StateEnum.Running && c.desire('idle_stop_run') < 100)
       c.click(me.facing > 0 ? GK.L : GK.R);
+
+
   }
 
   override leave(): void {

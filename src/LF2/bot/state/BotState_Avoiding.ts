@@ -34,14 +34,19 @@ export class BotState_Avoiding extends BotState_Base {
       c.key_up(...AGK);
       return BotStateEnum.Idle;
     }
+    
+    const { player_l, player_r, enemy_l, enemy_r, team } = this.stage;
+    const is_player = me.team !== team;
+    const l = is_player ? player_l : enemy_l;
+    const r = is_player ? player_r : enemy_r;
 
-    const av_edge_l = c.world.left + 80;
-    const av_edge_r = c.world.right - 80;
+    const av_edge_l = l + 80;
+    const av_edge_r = r - 80;
     const av_edge_b = c.world.near - 35;
     const av_edge_t = c.world.far + 35;
 
-    const av_danger_l = c.world.left + 120;
-    const av_danger_r = c.world.right - 120;
+    const av_danger_l = l + 120;
+    const av_danger_r = r - 120;
     const av_danger_b = c.world.near - 60;
     const av_danger_t = c.world.far + 60;
 
