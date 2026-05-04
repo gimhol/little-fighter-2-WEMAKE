@@ -18,6 +18,7 @@ export class BotState_Chasing extends BotState_Base {
 
     if (this.handle_defends()) return;
     if (this.handle_bot_actions()) return;
+    this.handle_block()
     this.random_jumping()
 
     if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
@@ -51,6 +52,13 @@ export class BotState_Chasing extends BotState_Base {
      * 敌人与自己的距离Z
      */
     const abs_dz = round_float(abs(my_z - en_z))
+
+    const is_weapon_picking = (
+      state === StateEnum.Walking ||
+      state === StateEnum.Standing ||
+      state === StateEnum.Rowing ||
+      state === StateEnum.Running
+    ) && is_weapon(en)
 
     const x_reach = abs_dx <= c.stand_atk_f_x;
     const z_reach = abs_dz <= c.dataset.w_atk_z;
@@ -89,14 +97,14 @@ export class BotState_Chasing extends BotState_Base {
             if (this.ctrl.desire('rtwd') < 25) c.key_down(GK_F).click(GK.a)
           }
         }
-        this.handle_block()
         if (x_to_much) { // 避免跑过头,停下
           c.key_down(GK_B).key_up(GK.L, GK.R)
         } else if (
           c.desire("chasing_1") < c.dataset.r_atk_desire &&
           between(dist_en_x, 0, c.r_atk_x) &&
           between(abs_dz, 0, c.dataset.r_atk_z) &&
-          is_fighter(en)
+          is_fighter(en) && 
+          !is_weapon_picking
         ) {
           // 概率跑攻
           c.click(GK.a).key_up(GK.R, GK.L)
@@ -149,7 +157,6 @@ export class BotState_Chasing extends BotState_Base {
         break;
       }
       case StateEnum.Dash: {
-        this.handle_block()
         if (
           between(dist_en_x, 0, c.d_atk_x) &&
           between(abs_dz, 0, c.dataset.d_atk_z) &&
@@ -212,15 +219,6 @@ export class BotState_Chasing extends BotState_Base {
     } else {
       c.key_up(GK.L, GK.R, GK.U, GK.D);
     }
-
-    this.handle_block()
-
-    const is_weapon_picking = (
-      state === StateEnum.Walking ||
-      state === StateEnum.Standing ||
-      state === StateEnum.Rowing ||
-      state === StateEnum.Running
-    ) && is_weapon(en)
 
     if (
       between(dist_en_x, c.stand_atk_b_x, c.stand_atk_f_x) &&
