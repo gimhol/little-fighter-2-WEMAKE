@@ -7,17 +7,15 @@ import { BgLayerRender } from "./BgLayerRender";
 import { WorldRenderer } from "./WorldRenderer";
 
 export class BgRender {
+  readonly world_renderer: WorldRenderer
   readonly world: World;
   protected bg: Background | null = null;
-  protected root_node: Object3D | null = new Object3D();
-  protected cam_node: Object3D | null = new Object3D();
+  protected root_node: Object3D | null = null;
+  protected cam_node: Object3D | null = null;
   protected layers: BgLayerRender[] = [];
   protected quaternion = new T.Quaternion();
 
-  readonly world_renderer: WorldRenderer
-
   constructor(world_renderer: WorldRenderer) {
-    if (!world_renderer) debugger;
     this.world = world_renderer.world;
     this.world_renderer = world_renderer;
   }
@@ -25,10 +23,8 @@ export class BgRender {
   set_bg(bg: Background | null) {
     this.root_node?.removeFromParent();
     this.root_node = null
-
     this.cam_node?.removeFromParent();
     this.cam_node = null
-
     this.layers.length = 0;
 
     this.bg = bg;
@@ -73,5 +69,10 @@ export class BgRender {
   release() {
     this.root_node?.removeFromParent();
     this.cam_node?.removeFromParent();
+    this.root_node = null
+    this.cam_node = null
+    this.layers.length = 0;
+    this.bg = null
+    this.quaternion.set(0, 0, 0, 0)
   }
 }
