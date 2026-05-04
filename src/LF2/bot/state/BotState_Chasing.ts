@@ -55,7 +55,7 @@ export class BotState_Chasing extends BotState_Base {
     const is_weapon_picking = is_weapon(en)
     const x_reach = abs_dx <= c.stand_atk_f_x;
     const z_reach = abs_dz <= c.dataset.w_atk_z;
-    if (!x_reach || z_reach) this.random_jumping()
+    if (!x_reach || !z_reach) this.random_jumping()
     const wt = me.holding?.base_type;
     const out_of_range = c.en_out_of_range = (
       abs_dx > Defines.AI_STAY_CHASING_RANGE &&
