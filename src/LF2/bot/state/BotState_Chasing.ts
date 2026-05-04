@@ -218,14 +218,18 @@ export class BotState_Chasing extends BotState_Base {
     const is_weapon_picking = (
       state === StateEnum.Walking ||
       state === StateEnum.Standing ||
-      state === StateEnum.Rowing
+      state === StateEnum.Rowing ||
+      state === StateEnum.Running
     ) && is_weapon(en)
 
     if (
       between(dist_en_x, c.stand_atk_b_x, c.stand_atk_f_x) &&
       between(abs_dz, -c.dataset.w_atk_z, c.dataset.w_atk_z)
     ) {
-      c.click(GK.a)
+      if (is_weapon_picking && state === StateEnum.Running)
+        c.click(GK.d)
+      else
+        c.click(GK.a)
     } else {
       c.key_up(GK.a)
     }
