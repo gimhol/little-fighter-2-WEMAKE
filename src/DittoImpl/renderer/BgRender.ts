@@ -72,5 +72,6 @@ export class BgRender {
 
   release() {
     this.root_node?.removeFromParent();
+    this.cam_node?.removeFromParent();
   }
 }
