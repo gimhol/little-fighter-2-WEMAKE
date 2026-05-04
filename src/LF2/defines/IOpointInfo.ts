@@ -160,10 +160,11 @@ export interface IOpointInfo {
   indicator_info?: IQubePair;
   motionless?: number;
 
-
   spreading_x?: number[];
   spreading_y?: number[];
   spreading_z?: number[];
+
+  unimportant?: number;
 
   /** 运行时生成 */
   __spreading_random_x?: { take(): number };
