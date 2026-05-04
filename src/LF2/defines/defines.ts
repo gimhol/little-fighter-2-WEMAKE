@@ -302,9 +302,17 @@ export namespace Defines {
   /**
    * stay下敌人距离多近才追击
    */
-  export const AI_STAY_CHASING_RANGE = 150;
-  export const AI_FOLLOWING_RANGE_X = 50;
-  export const AI_FOLLOWING_RANGE_Z = 25;
+  export const AI_STAY_CHASING_RANGE = 200;
+
+  export const AI_COME_RANGE_IN_X = 75;
+  export const AI_COME_RANGE_IN_Z = 76;
+  export const AI_COME_RANGE_OUT_X = 120;
+  export const AI_COME_RANGE_OUT_Z = 120;
+
+  export const AI_FOLLOWING_RANGE_IN_X = 100;
+  export const AI_FOLLOWING_RANGE_IN_Z = 100;
+  export const AI_FOLLOWING_RANGE_OUT_X = 250;
+  export const AI_FOLLOWING_RANGE_OUT_Z = 250;
 
   export const AI_MAX_CHASINGS_ENEMIES = 1;
   export const AI_MAX_AVOIDING_ENEMIES = 1;

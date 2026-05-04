@@ -8,9 +8,11 @@ import {
   BotStateEnum,
   BuiltIn_OID,
   Defines as D,
+  Defines,
   Difficulty,
   GK,
   IBotAction, IBotData, IBotDataSet,
+  IVector2Like,
   IVector3,
   LGK, StateEnum,
   W_T
@@ -26,8 +28,9 @@ import { BotState_StageEnd } from "./state/BotState_StageEnd";
 import { is_ray_hit } from "./utils/is_ray_hit";
 
 export enum BotBehavior {
-  Stay = 'stay',
-  Move = 'move',
+  Stay = 'Stay',
+  Move = 'Move',
+  Follow = 'Follow',
 }
 export class BotController extends BaseController {
   readonly fsm = new FSM<BotStateEnum>()
@@ -42,18 +45,93 @@ export class BotController extends BaseController {
 
   readonly __is_bot_ctrl__ = true;
 
-  protected _behavior: BotBehavior = BotBehavior.Move;
-  protected _goingto?: IVector3;
+  behavior: BotBehavior = BotBehavior.Move;
+  goingto: IVector3 | null = null;
+  following: Entity | null = null;
   en_out_of_range: boolean = false;
   protected _bot_id: string | undefined;
   protected _bot: IBotData | undefined;
   protected _dataset: Required<IBotDataSet>;
 
+  /** 是否已进入目标区域 */
+  is_enter_goto_range(entity: Entity): boolean {
+    const pos = this.following?.position ?? this.goingto;
+    if (!pos) return false
+    const { x, z } = entity.position;
+    const { x: en_x, z: en_z } = pos
+    let offset_x: number = 0;
+    let offset_z: number = 0;
+    if (this.fsm.state?.key === BotStateEnum.Following) {
+      offset_x = Defines.AI_FOLLOWING_RANGE_IN_X
+      offset_z = Defines.AI_FOLLOWING_RANGE_IN_Z
+    } else {
+      offset_x = Defines.AI_COME_RANGE_IN_X
+      offset_z = Defines.AI_COME_RANGE_IN_Z
+    }
+    const bound_l = round(en_x - offset_x);
+    const bound_r = round(en_x + offset_x);
+    const bound_t = round(en_z - offset_z);
+    const bound_b = round(en_z + offset_z);
+    return (
+      between(x, bound_l, bound_r) &&
+      between(z, bound_t, bound_b)
+    )
+  }
+
+  /** 是否已远离目标区域 */
+  is_leave_goto_range(entity: Entity): boolean {
+    const pos = this.following?.position ?? this.goingto;
+    if (!pos) return false
+    const { x, z } = entity.position;
+    const { x: en_x, z: en_z } = pos
+
+    let offset_x: number = 0;
+    let offset_z: number = 0;
+    if (this.fsm.state?.key === BotStateEnum.Following) {
+      offset_x = Defines.AI_FOLLOWING_RANGE_OUT_X
+      offset_z = Defines.AI_FOLLOWING_RANGE_OUT_Z
+    } else {
+      offset_x = Defines.AI_COME_RANGE_OUT_X
+      offset_z = Defines.AI_COME_RANGE_OUT_Z
+    }
+
+    const bound_l = round(en_x - offset_x);
+    const bound_r = round(en_x + offset_x);
+    const bound_t = round(en_z - offset_z);
+    const bound_b = round(en_z + offset_z);
+    return !(
+      between(x, bound_l, bound_r) &&
+      between(z, bound_t, bound_b)
+    )
+  }
+
+  is_leave_chasing_range(target: Entity): boolean {
+    const pos = this.following?.position ?? this.goingto;
+    if (!pos) return false;
+
+    const { x, z } = target.position;
+    const { x: en_x, z: en_z } = pos
+    let offset_x: number = 0;
+    let offset_z: number = 0;
+    if (this.fsm.state?.key === BotStateEnum.Following) {
+      offset_x = Defines.AI_FOLLOWING_RANGE_OUT_X
+      offset_z = Defines.AI_FOLLOWING_RANGE_OUT_Z
+    } else {
+      offset_x = Defines.AI_COME_RANGE_OUT_X
+      offset_z = Defines.AI_COME_RANGE_OUT_Z
+    }
+    offset_x += Defines.AI_STAY_CHASING_RANGE;
+    offset_z += Defines.AI_STAY_CHASING_RANGE;
+    const bound_l = round(en_x - offset_x);
+    const bound_r = round(en_x + offset_x);
+    const bound_t = round(en_z - offset_z);
+    const bound_b = round(en_z + offset_z);
+    return !(
+      between(x, bound_l, bound_r) &&
+      between(z, bound_t, bound_b)
+    )
+  }
   get dataset() { return this._dataset }
-  get behavior(): BotBehavior { return this._behavior }
-  get goingto(): IVector3 | undefined { return this._goingto }
-
-
   get stand_atk_b_x() {
     const en = this.chasings.get()?.entity;
     if (!en) return 0;
@@ -80,9 +158,10 @@ export class BotController extends BaseController {
       wt === W_T.Heavy
     ) return 200 * this.entity.strength;
 
-    
+
     return this.dataset.w_atk_x
   }
+
   /** 跑攻触发范围X */
   get r_atk_x() {
     const en = this.chasings.get()?.entity;
@@ -147,12 +226,11 @@ export class BotController extends BaseController {
     return this.dataset.w_atk_r_x
   }
   get stage() { return this.world.stage }
-  get r_desire(): -1 | 1 | 0 {
-    const chasing = this.chasings.get()?.entity;
-    this.desire(`${chasing?.id ?? 'no chasing'}`)
-    if (!chasing) return 0;
-    let dx = abs(this.entity.position.x - chasing.position.x) - this.dataset.r_x_min
-    // if (dx < 0) return 0;
+
+  should_run(target: IVector2Like): -1 | 1 | 0 {
+    this.desire(`should_run`)
+    if (!target) return 0;
+    let dx = abs(this.entity.position.x - target.x) - this.dataset.r_x_min
     let should_run = false
     const r_x_r = this.dataset.r_x_max - this.dataset.r_x_min
     if (r_x_r === 0) {
@@ -162,9 +240,9 @@ export class BotController extends BaseController {
     } else {
       should_run = this.desire(`rr2 ${dx}`) < this.dataset.r_x_min;
     }
-    if (dx < 0) should_run = false
+    if (dx < 0) should_run = false;
     if (!should_run) return 0;
-    return this.entity.position.x > chasing.position.x ? -1 : 1
+    return this.entity.position.x > target.x ? -1 : 1
   }
 
 
@@ -216,7 +294,8 @@ export class BotController extends BaseController {
     if (is_weapon(e)) {
       if (me.holding)
         return false;
-
+      if (this.is_leave_goto_range(e))
+        return false
       do {
         // 队友Bot尽量不喝
         if (this.stage.id === D.VOID_STAGE.id)
@@ -243,6 +322,8 @@ export class BotController extends BaseController {
         return true
       return false;
     }
+    if (this.is_leave_chasing_range(e))
+      return false
     if (e_state == StateEnum.Lying)
       return false;
     if (e.invisible) return false
@@ -276,7 +357,7 @@ export class BotController extends BaseController {
       !this.is_leave_avoid_zone(av) :
       this.is_enter_avoiding_zone(av);
 
-    if (av.state === StateEnum.Lying && av.wakeup_invuln) 
+    if (av.state === StateEnum.Lying && av.wakeup_invuln)
       return ret;
     if (av.blinking) return ret;
     if (av.invulnerable) return ret;
@@ -503,6 +584,7 @@ export class BotController extends BaseController {
     }
     return ret;
   }
+
   check_bot(): void {
     const { bot, bot_id } = this.entity.data.base;
     if (bot && bot === this._bot) return
@@ -519,7 +601,10 @@ export class BotController extends BaseController {
     this._bot = this.lf2.datas.find_bot(bot_id)
     Object.assign(this.dataset, this._bot?.dataset)
   }
+
   override update() {
+    if (!this.following?.is_attach || this.following.hp <= 0)
+      this.following = null;
     this.check_bot();
     if (this.dummy) {
       dummy_updaters[this.dummy]?.update(this);
@@ -582,17 +667,23 @@ export class BotController extends BaseController {
     })
     return ks;
   }
-
+  follow(e: Entity): void {
+    this.following = e;
+    this.goingto = null;
+  }
   move(): void {
-    this._behavior = BotBehavior.Move
+    this.behavior = BotBehavior.Move;
+    this.following = null;
   }
   stay(): void {
-    this._behavior = BotBehavior.Stay
+    this.behavior = BotBehavior.Stay;
+    this.following = null;
   }
   goto(x: number, y: number, z: number): void {
-    this._goingto = new Ditto.Vector3(x, y, z)
+    this.goingto = new Ditto.Vector3(x, y, z)
+    this.following = null
   }
-  stop(): void {
-    this._goingto = void 0;
+  cancel_goto(): void {
+    this.goingto = null;
   }
 }

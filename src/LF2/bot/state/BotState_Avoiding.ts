@@ -11,9 +11,9 @@ export class BotState_Avoiding extends BotState_Base {
     if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
 
     const { ctrl: c } = this;
-    if (c.goingto) return BotStateEnum.Following;
-
     const me = c.entity;
+    if (this.ctrl.is_leave_goto_range(me)) 
+      return BotStateEnum.Following;
     const en = c.chasings.get()?.entity;
     const av = c.avoidings.get()?.entity;
 
@@ -34,7 +34,7 @@ export class BotState_Avoiding extends BotState_Base {
       c.key_up(...AGK);
       return BotStateEnum.Idle;
     }
-    
+
     const { player_l, player_r, enemy_l, enemy_r, team } = this.stage;
     const is_player = me.team !== team;
     const l = is_player ? player_l : enemy_l;

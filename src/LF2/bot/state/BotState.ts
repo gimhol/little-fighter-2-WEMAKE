@@ -1,13 +1,13 @@
+import { between, round } from "@/LF2/utils";
 import type { IState } from "../../base/FSM";
 import { bot_cases } from "../../cases_instances";
-import { GK, LGK, StateEnum } from "../../defines";
+import { Defines, GK, LGK, StateEnum } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
-import type { BotController } from "../BotController";
+import { BotBehavior, type BotController } from "../BotController";
 
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
   readonly ctrl: BotController
-
 
   get world() { return this.ctrl.world }
   get stage() { return this.world.stage }

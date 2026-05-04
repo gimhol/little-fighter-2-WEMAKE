@@ -12,8 +12,9 @@ export class BotState_Idle extends BotState_Base {
   override update(dt: number) {
     super.update(dt)
     const { ctrl: c } = this;
-    if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;
+    if (this.ctrl.is_leave_goto_range(me)) 
+      return BotStateEnum.Following;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
 

@@ -122,7 +122,7 @@ export class BotDataSet implements Required<IBotDataSet> {
   /** 最小欲望值：跑步 */
   r_desire_min = 0;
   /** 最大欲望值：跑步 */
-  r_desire_max = 500;
+  r_desire_max = 2000;
   /** 
    * 最小起跑范围X 
    * 距离敌人小于于等于此距离时，此时奔跑欲望值最小
@@ -133,7 +133,7 @@ export class BotDataSet implements Required<IBotDataSet> {
    * 最大起跑范围X 
    * 距离敌人大于等于此距离时，此时奔跑欲望值最大
    */
-  r_x_max = 2000;
+  r_x_max = 1200;
 
   avoiding_in_x = 180;
   avoiding_in_z = 100;

@@ -3,6 +3,7 @@ import { AGK, Defines, GK, StateEnum, WeaponType } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import { manhattan_xz } from "../../helper/manhattan_xz";
 import { abs, between, round_float } from "../../utils";
+import { BotBehavior } from "../BotController";
 import { BotState_Base } from "./BotState";
 
 export class BotState_Chasing extends BotState_Base {
@@ -11,9 +12,14 @@ export class BotState_Chasing extends BotState_Base {
     super.update(dt)
     if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     const { ctrl: c } = this;
-    if (c.goingto) return BotStateEnum.Following;
     const me = c.entity;
     const en = c.chasings.get()?.entity
+
+    if (en && this.ctrl.is_leave_chasing_range(en))
+      return BotStateEnum.Following;
+    if (this.ctrl.is_leave_goto_range(me))
+      return BotStateEnum.Following;
+
     const av = c.avoidings.get()?.entity
 
     if (this.handle_defends()) return;
@@ -35,31 +41,35 @@ export class BotState_Chasing extends BotState_Base {
      * 敌人在背后时为负数
      * 敌人在正面时为正数
      */
-    const dist_en_x = round_float(me_facing * (en_x - my_x))
+    const en_rx = round_float(me_facing * (en_x - my_x))
     /** 
      * 敌人与自己的距离y
      * 敌人在上方时为正数
      * 敌人在下面时为负数数
      */
-    const dist_en_y = round_float(en_y - my_y)
+    const en_ry = round_float(en_y - my_y)
 
-    /**
-     * 敌人与自己的距离X
-     */
+    /** 敌人与自己的距离X */
     const abs_dx = round_float(abs(my_x - en_x))
-    /**
-     * 敌人与自己的距离Z
-     */
+    /** 敌人与自己的距离Z */
     const abs_dz = round_float(abs(my_z - en_z))
 
     const is_weapon_picking = is_weapon(en)
     const x_reach = abs_dx <= c.stand_atk_f_x;
     const z_reach = abs_dz <= c.dataset.w_atk_z;
-    if (!x_reach || !z_reach) this.random_jumping()
+
+    // 随机跳
+    if (!x_reach || !z_reach) this.random_jumping();
+
+    /** 持有武器的类型 */
     const wt = me.holding?.base_type;
+
     const out_of_range = c.en_out_of_range = (
       abs_dx > Defines.AI_STAY_CHASING_RANGE &&
-      c.behavior === 'stay'
+      (
+        c.behavior === BotBehavior.Stay ||
+        c.behavior === BotBehavior.Follow
+      )
     ) || (
         me.team !== c.world.stage.team && (
           en_x < c.world.stage.player_l - 80 ||
@@ -106,7 +116,7 @@ export class BotState_Chasing extends BotState_Base {
         // 概率跑攻
         if (
           c.desire("chasing_1") < c.dataset.r_atk_desire &&
-          between(dist_en_x, 0, c.stand_atk_f_x) &&
+          between(en_rx, 0, c.stand_atk_f_x) &&
           between(abs_dz, 0, c.dataset.r_atk_z) &&
           is_fighter(en)
         ) {
@@ -141,7 +151,7 @@ export class BotState_Chasing extends BotState_Base {
           }
         }
         if (!out_of_range) {
-          const { r_desire } = c;
+          const r_desire = c.should_run(en.position);
           if (r_desire > 0) {
             c.db_hit(GK.R).end(GK.R);
           } else if (r_desire < 0) {
@@ -154,7 +164,7 @@ export class BotState_Chasing extends BotState_Base {
       }
       case StateEnum.Dash: {
         if (
-          between(dist_en_x, 0, c.d_atk_x) &&
+          between(en_rx, 0, c.d_atk_x) &&
           between(abs_dz, 0, c.dataset.d_atk_z) &&
           is_fighter(en)
         ) {
@@ -175,9 +185,9 @@ export class BotState_Chasing extends BotState_Base {
         }
         if (
           my_y > 10 &&
-          between(dist_en_x, 0, c.j_atk_x) &&
+          between(en_rx, 0, c.j_atk_x) &&
           between(abs_dz, 0, c.dataset.j_atk_z) &&
-          between(dist_en_y, c.dataset.j_atk_y_min, c.dataset.j_atk_y_max) &&
+          between(en_ry, c.dataset.j_atk_y_min, c.dataset.j_atk_y_max) &&
           is_fighter(en)
         ) {
           // 跳攻
@@ -217,7 +227,7 @@ export class BotState_Chasing extends BotState_Base {
     }
 
     if (
-      between(dist_en_x, c.stand_atk_b_x, c.stand_atk_f_x) &&
+      between(en_rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
       between(abs_dz, -c.dataset.w_atk_z, c.dataset.w_atk_z)
     ) {
       if (is_weapon_picking && state === StateEnum.Running)

@@ -40,6 +40,7 @@ import { Transform } from "./Transform";
 import { abs, between, clamp, floor, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 export class World extends WorldDataset {
+
   static override readonly TAG: string = "World";
   readonly lf2: LF2;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
@@ -99,7 +100,7 @@ export class World extends WorldDataset {
     v.enter_phase(0);
     for (const e of this.entities) {
       const { ctrl } = e;
-      if (is_bot_ctrl(ctrl)) ctrl.stop()
+      if (is_bot_ctrl(ctrl)) ctrl.cancel_goto()
     }
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
@@ -149,6 +150,14 @@ export class World extends WorldDataset {
       const { ctrl, team } = e;
       if (_team === team && is_bot_ctrl(ctrl)) {
         ctrl.stay()
+      }
+    }
+  }
+  team_follow(target: Entity) {
+    for (const e of this.entities) {
+      const { ctrl, team } = e;
+      if (target.team === team && is_bot_ctrl(ctrl)) {
+        ctrl.follow(target)
       }
     }
   }

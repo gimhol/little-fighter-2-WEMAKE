@@ -246,9 +246,10 @@ export class BaseController {
   }
 
   protected seqKeyMap = new Map<string, SeqKeys<{ etc: string }>>([
+    ['djdj', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''), { etc: "0" })],
     ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join(''), { etc: "2" })],
     ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join(''), { etc: "4" })],
-    ['djdj', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''), { etc: "0" })],
+    ['djjj', new SeqKeys([GK.d, GK.j, GK.j, GK.j].join(''), { etc: "8" })],
   ])
 
   protected result = new ControllerUpdateResult();
@@ -296,9 +297,10 @@ export class BaseController {
           if (!v.hit) continue;
           const { x, y, z } = e.position;
           this.world.etc(x, y, z, v.data.etc)
+          if (v.data.etc === '0') this.world.team_come(e.team, x, y, z)
           if (v.data.etc === '2') this.world.team_stay(e.team)
           if (v.data.etc === '4') this.world.team_move(e.team)
-          if (v.data.etc === '0') this.world.team_come(e.team, x, y, z)
+          if (v.data.etc === '8') this.world.team_follow(e)
           v.reset()
         }
       }
