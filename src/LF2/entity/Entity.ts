@@ -1040,6 +1040,8 @@ export class Entity {
     offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
     facing: TFace = this.facing
   ): Entity | undefined {
+    if (opoint.unimportant && this.world.entities.size > 355)
+      return void 0;
     this.lf2.mt.mark = 'se_1'
     const oid = this.lf2.mt.pick(opoint.oid);
     if (!oid) {

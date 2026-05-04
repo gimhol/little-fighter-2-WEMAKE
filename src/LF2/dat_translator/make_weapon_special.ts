@@ -29,6 +29,7 @@ const broken_pieces_opoints = (...frame_ids: (string | string[])[]): IOpointInfo
       origin_type: 1,
       action: { id: frame_id },
       oid: "999",
+      unimportant: 1,
       ...aa[idx % aa.length],
     };
   });

@@ -50,11 +50,13 @@ export function make_ball_special(data: IEntityData) {
             dvz: 0,
             interval: 1,
             interval_id: '1',
-            interval_mode: 1
+            interval_mode: 1,
+            unimportant: 1,
           })
         }
         const tail = find(f.opoint, o => o.oid === BuiltIn_OID.JanChase && (o.action as any).id === '40')
         if (tail) {
+          tail.unimportant = 1
           tail.speedz = tail.dvx = tail.dvy = tail.dvz = 0;
           tail.is_entity = false
         }
@@ -67,6 +69,7 @@ export function make_ball_special(data: IEntityData) {
       traversal(data.frames, (_, f) => {
         const tail = find(f.opoint, o => o.oid === BuiltIn_OID.JanChaseh && (o.action as any).id === '40')
         if (tail) {
+          tail.unimportant = 1
           tail.speedz = tail.dvx = tail.dvy = tail.dvz = 0;
           tail.is_entity = false
         }
@@ -92,7 +95,8 @@ export function make_ball_special(data: IEntityData) {
             dvz: 0,
             interval: 1,
             interval_id: '1',
-            interval_mode: 1
+            interval_mode: 1,
+            unimportant: 1,
           })
         }
       })
@@ -114,7 +118,8 @@ export function make_ball_special(data: IEntityData) {
             dvz: 0,
             interval: 1,
             interval_id: '1',
-            interval_mode: 1
+            interval_mode: 1,
+            unimportant: 1,
           })
         }
       })

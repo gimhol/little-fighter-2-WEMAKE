@@ -20,6 +20,7 @@ export function spawn_ice_piece(entity: Entity, id: string): IOpointInfo {
     dvy: mt.range(0, 5),
     is_entity: false,
     speedz: 0,
+    unimportant: 1,
   }
   return ret;
 }

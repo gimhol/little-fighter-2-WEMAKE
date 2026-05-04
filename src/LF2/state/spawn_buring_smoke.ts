@@ -14,6 +14,7 @@ export function spawn_buring_smoke(entity: Entity, foo: 1 | 2): IOpointInfo {
     action: { id: "140", facing },
     speedz: 0,
     is_entity: false,
+    unimportant: 1,
   };
   switch (foo) {
     case 1:
