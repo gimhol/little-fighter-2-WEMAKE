@@ -1,5 +1,6 @@
 import type { Layer } from "@/LF2/bg/Layer";
 import * as T from "../_t";
+import type { BgRender } from "./BgRender";
 import { get_geometry } from "./GeometryKeeper";
 import { get_bg_layer_material } from "./MaterialKeeper";
 
@@ -7,10 +8,12 @@ import { get_bg_layer_material } from "./MaterialKeeper";
 export class BgLayerRender {
   readonly mesh: T.Mesh;
   readonly layer: Layer;
-  offsetX: number;
-  offsetY: number;
-  constructor(layer: Layer) {
+  readonly bg_render: BgRender;
+  offsetX: number = 0;
+  offsetY: number = 0;
+  constructor(bg_render: BgRender, layer: Layer) {
     this.layer = layer;
+    this.bg_render = bg_render
     const { info } = layer;
     const { x, y, z, file, id, name } = info;
     const pic = file ? this.layer.bg.world.lf2.images.find(file)?.pic : null
@@ -27,21 +30,22 @@ export class BgLayerRender {
   }
 
   render(dt: number) {
-    const { visible, info: { x, absolute, width, offsetAnimX, offsetAnimY }, bg } = this.layer;
+    const {
+      visible,
+      info: { absolute, offsetAnimX, offsetAnimY }
+    } = this.layer;
     this.mesh.visible = visible;
-    const { cam_x } = bg.world.renderer;
-    const _x = absolute ?
-      x + cam_x :
-      bg.width > bg.world.screen_w ?
-        x + (bg.width - width) * cam_x / (bg.width - bg.world.screen_w) :
-        x + (bg.width - width) * cam_x
-    this.mesh.position.x = _x;
-
     if (offsetAnimX !== void 0) this.offsetX += (dt / 1000) * offsetAnimX;
     if (offsetAnimY !== void 0) this.offsetY += (dt / 1000) * offsetAnimY;
-  }
-
-  release(): void {
-
+    if (absolute) return;
+    const { bg, info: { x, width: layer_width, } } = this.layer;
+    const { world } = bg;
+    const { screen_w } = world;
+    const { width: bg_width } = world;
+    const { cam_x } = world.renderer;
+    const _x = bg_width > screen_w ?
+      x + (bg_width - layer_width) * cam_x / (bg_width - screen_w) :
+      x + (bg_width - layer_width) * cam_x
+    this.mesh.position.x = _x;
   }
 }
