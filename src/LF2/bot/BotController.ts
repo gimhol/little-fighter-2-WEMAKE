@@ -79,6 +79,8 @@ export class BotController extends BaseController {
     if (
       wt === W_T.Heavy
     ) return 200 * this.entity.strength;
+
+    
     return this.dataset.w_atk_x
   }
   /** 跑攻触发范围X */
