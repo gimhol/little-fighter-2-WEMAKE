@@ -10,5 +10,10 @@
       type: "bg",
       file: "bg/moon/bg.bg.json5",
     },
+    {
+      id: "bg_octagon",
+      type: "bg",
+      file: "bg/octagon/bg.bg.json5",
+    },
   ],
 }
