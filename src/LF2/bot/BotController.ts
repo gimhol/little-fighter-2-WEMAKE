@@ -657,10 +657,9 @@ export class BotController extends BaseController {
     if (!action) return false
     const { desire: _desire, desire_step = 0, desire_base = 0 } = action;
     const action_desire = this.action_desire(action.keys.join());
-    const desire = _desire == void 0 ? _desire :
+    const desire = _desire != void 0 ? _desire :
       (desire_base + desire_step * (this.difficulty - 1))
     if (!desire || action_desire > desire) return false;
-
 
     const { bot_state } = this;
     if (action.status?.some(v => v === bot_state) === false)
@@ -683,7 +682,7 @@ export class BotController extends BaseController {
     const { judger } = action;
     if (judger && !judger.run(this))
       return false;
-    
+
     const ks = action.keys.map<LGK>(v => {
       if (v === 'F') return facing > 0 ? GK.R : GK.L;
       if (v === 'B') return facing > 0 ? GK.R : GK.L;

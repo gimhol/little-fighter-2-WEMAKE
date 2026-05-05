@@ -1,17 +1,14 @@
-import { BotStateEnum, Defines, GK, StateEnum, AGK } from "../../defines";
-import { manhattan_xz } from "../../helper/manhattan_xz";
-import { between, round_float } from "../../utils";
-import { BotBehavior } from "../BotController";
+import { AGK, BSE, GK, StateEnum } from "../../defines";
 import { BotState_Base } from "./BotState";
 
 
 export class BotState_Following extends BotState_Base {
-  readonly key = BotStateEnum.Following;
+  readonly key = BSE.Following;
   override enter(): void {
     this.ctrl.key_up(...AGK);
   }
   override update(dt: number) {
-    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
+    if (this.stage.is_stage_finish) return BSE.StageEnd;
     if (this.handle_defends()) return;
     if (this.handle_block()) return;
     this.random_jumping();
@@ -20,7 +17,7 @@ export class BotState_Following extends BotState_Base {
     const me = c.entity;
 
     const pos = c.following?.position ?? c.goingto;
-    if (!pos) return BotStateEnum.Idle;
+    if (!pos) return BSE.Idle;
 
     const { x: my_x, z: my_z } = me.position;
     const { x: en_x, z: en_z } = pos;
@@ -44,17 +41,6 @@ export class BotState_Following extends BotState_Base {
     // TODO: 是不是该想个办法让持续位移招式（dennis d>j）停下来？
 
     if (c.goingto) c.cancel_goto();
-    this.ctrl.key_up(...AGK);
-    const en = c.chasings.get()?.entity;
-    const av = c.avoidings.get()?.entity;
-
-    if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
-      return BotStateEnum.Avoiding;
-    else if (en)
-      return BotStateEnum.Chasing;
-    else if (av)
-      return BotStateEnum.Avoiding;
-    else
-      return BotStateEnum.Idle;
+    return BSE.Idle;
   }
 }

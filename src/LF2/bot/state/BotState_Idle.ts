@@ -1,39 +1,32 @@
 import { AGK, GK, StateEnum, WeaponType } from "@/LF2/defines";
 import { max, min, round } from "@/LF2/utils";
-import { BotStateEnum } from "../../defines/BotStateEnum";
-import { manhattan_xz } from "../../helper/manhattan_xz";
+import { BSE } from "../../defines/BotStateEnum";
 import { BotState_Base } from "./BotState";
 
 export class BotState_Idle extends BotState_Base {
-  readonly key = BotStateEnum.Idle;
+  readonly key = BSE.Idle;
   override enter(): void {
     this.ctrl.key_up(...AGK)
   }
   override update(dt: number) {
-    if (this.stage.is_stage_finish) 
-      return BotStateEnum.StageEnd;
-    const { ctrl: c } = this;
-    const me = c.entity;
-    if (this.ctrl.is_leave_goto_range(me)) 
-      return BotStateEnum.Following;
-    const en = c.chasings.get()?.entity
-    const av = c.avoidings.get()?.entity
-    if (this.handle_defends()) return;
+    if (this.stage.is_stage_finish)
+      return BSE.StageEnd;
+    const { c, me } = this;
+    if (this.ctrl.is_leave_goto_range(me))
+      return BSE.Following;
+    const { en, av } = this;
     if (this.handle_bot_actions()) return;
+    if (this.handle_defends()) return;
 
-    if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
-      return BotStateEnum.Avoiding;
-    else if (en)
-      return BotStateEnum.Chasing;
-    else if (av)
-      return BotStateEnum.Avoiding;
-
+    const closest = this.closest(en, av)
+    if (en == closest) return BSE.Chasing;
+    if (av == closest) return BSE.Avoiding;
     const { x: my_x } = me.position;
     const { team, player_l, player_r } = this.stage;
     if (team !== me.team) {
       const mid = round((player_l + player_r) * 0.5)
-      const min_x = min(player_l + 100, mid)
-      const max_x = max(player_r - 100, mid)
+      const min_x = min(player_l + 300, mid)
+      const max_x = max(player_r - 300, mid)
       if (my_x < min_x) c.key_down(GK.R)
       else if (my_x > max_x) c.key_down(GK.L)
       else c.key_up(GK.R, GK.L)

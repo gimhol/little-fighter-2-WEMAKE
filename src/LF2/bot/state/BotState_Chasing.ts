@@ -1,34 +1,28 @@
 import { is_fighter, is_weapon } from "@/LF2/entity";
 import { AGK, Defines, GK, StateEnum, WeaponType } from "../../defines";
-import { BotStateEnum } from "../../defines/BotStateEnum";
-import { manhattan_xz } from "../../helper/manhattan_xz";
+import { BSE } from "../../defines/BotStateEnum";
 import { abs, between, round_float } from "../../utils";
 import { BotBehavior } from "../BotController";
 import { BotState_Base } from "./BotState";
 
 export class BotState_Chasing extends BotState_Base {
-  readonly key = BotStateEnum.Chasing;
+  readonly key = BSE.Chasing;
   override update(dt: number) {
-    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
+    if (this.stage.is_stage_finish) return BSE.StageEnd;
     const { ctrl: c } = this;
     const me = c.entity;
     const en = c.chasings.get()?.entity
 
     if (en && this.ctrl.is_leave_chasing_range(en))
-      return BotStateEnum.Following;
+      return BSE.Following;
     if (this.ctrl.is_leave_goto_range(me))
-      return BotStateEnum.Following;
+      return BSE.Following;
 
-    const av = c.avoidings.get()?.entity
-
-    if (this.handle_defends()) return;
     if (this.handle_bot_actions()) return;
+    if (this.handle_defends()) return;
     this.handle_block()
 
-    if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
-      return BotStateEnum.Avoiding;
-    else if (!en)
-      return BotStateEnum.Idle;
+    if (!en) return BSE.Idle;
 
     const { facing: me_facing } = me
     const { x: my_x, z: my_z, y: my_y } = me.position;

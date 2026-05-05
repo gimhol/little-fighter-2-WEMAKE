@@ -290,12 +290,7 @@ export class BaseController {
     let B = facing === 1 ? GK.L : GK.R;
     if (this.queue.length) {
       let key_downs = '';
-      for (const [status, lgk] of this.queue) {
-        let gk: GK;
-        if (lgk === 'F') gk = F;
-        else if (lgk === 'B') gk = B;
-        else gk = lgk as GK
-
+      for (const [status, gk] of this.queue) {
         switch (status) {
           case Status.UP:
             if (this.is_end(gk)) break
