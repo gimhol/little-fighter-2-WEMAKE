@@ -438,17 +438,8 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     switch (e.game_key) {
       case GameKey.a:
       case GameKey.j: {
-        if (
-          (
-            this.fsm.state?.key == StateKey.End ||
-            this.fsm.state?.key == StateKey.Win
-          ) &&
-          this.fsm.state_time > 1000
-        ) {
-          e.stop_immediate_propagation();
-          this.clearup()
-          this.startup()
-        }
+        this.clearup()
+        this.startup()
         break;
       }
     }

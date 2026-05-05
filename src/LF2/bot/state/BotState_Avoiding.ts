@@ -83,10 +83,10 @@ export class BotState_Avoiding extends BotState_Base {
     const x_backward_key = x_forwrd_key == GK.L ? GK.R : GK.L;
 
     /* 威胁越近，跑的欲望越高 */
-    const { avoiding_out_x } = c.dataset;
+    const { avoid_out_x } = c.dataset;
     const { difficulty } = this // 1, 2, 3, 4
     const base_desire = 100 * difficulty; // [100, 200, 300, 400]
-    const ext_desire = 700 * clamp(1 - abs(me_x - av_x) / avoiding_out_x, 0, 1);
+    const ext_desire = 700 * clamp(1 - abs(me_x - av_x) / avoid_out_x, 0, 1);
     const run_desire = round_float(base_desire + ext_desire);
     // : [300, 1000]
 

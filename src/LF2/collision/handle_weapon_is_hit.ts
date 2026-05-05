@@ -1,5 +1,5 @@
 import { ICollision } from "../base";
-import { BuiltIn_OID, Defines, W_T } from "../defines";
+import { BuiltIn_OID, Defines, WT } from "../defines";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
@@ -21,9 +21,9 @@ export function handle_weapon_is_hit(collision: ICollision): void {
 
   let [vx, vy, vz] = calc_itr_velocity(collision)
   const is_base_ball =
-    victim.base_type === W_T.Baseball ||
-    victim.base_type === W_T.Drink;
-  if (victim.base_type !== W_T.Heavy || is_fly) {
+    victim.base_type === WT.Baseball ||
+    victim.base_type === WT.Drink;
+  if (victim.base_type !== WT.Heavy || is_fly) {
     victim.set_velocity(vx, vy, vz)
     victim.team = attacker.team;
     victim.lf2.mt.mark = 'hwih_1'

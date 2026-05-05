@@ -79,11 +79,11 @@ export interface IBotDataSet {
    */
   defend_desire_step?: number;
 
-  avoiding_in_x?: number;
-  avoiding_in_z?: number;
+  avoid_in_x?: number;
+  avoid_in_z?: number;
   /**  */
-  avoiding_out_x?: number;
-  avoiding_out_z?: number;
+  avoid_out_x?: number;
+  avoid_out_z?: number;
 
   /* 武器拾取前向范围（一般为正数） */
   pick_weapon_f_x?: number;
@@ -147,10 +147,10 @@ export class BotDataSet implements Required<IBotDataSet> {
    */
   r_x_max = 1200;
 
-  avoiding_in_x = 180;
-  avoiding_in_z = 100;
-  avoiding_out_x = 250;
-  avoiding_out_z = 150;
+  avoid_in_x = 180;
+  avoid_in_z = 100;
+  avoid_out_x = 250;
+  avoid_out_z = 150;
 
   pick_weapon_f_x: number = 25;
   pick_weapon_b_x: number = -25;
@@ -180,10 +180,10 @@ export const bot_dataset_fields = fields<IBotDataSet>({
   r_stop_desire: int,
   defend_desire_base: int,
   defend_desire_step: int,
-  avoiding_in_x: int,
-  avoiding_in_z: int,
-  avoiding_out_x: int,
-  avoiding_out_z: int,
+  avoid_in_x: int,
+  avoid_in_z: int,
+  avoid_out_x: int,
+  avoid_out_z: int,
   pick_weapon_f_x: int,
   pick_weapon_b_x: int,
   pick_weapon_z: int,

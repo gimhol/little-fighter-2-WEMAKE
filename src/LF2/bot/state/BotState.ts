@@ -9,7 +9,7 @@ import type { Stage } from "../../stage/Stage";
 import { abs, round } from "../../utils/math";
 import type { World } from "../../World";
 import type { BotController } from "../BotController";
-
+import { closest } from "./closest";
 
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
@@ -27,22 +27,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     this.ctrl = ctrl;
   }
   closest(...list: (Entity | undefined)[]): Entity | undefined {
-    let ret: Entity | undefined
-    let distance = 0;
-    const { me } = this;
-    const len = list.length
-    for (let i = 0; i < len; i++) {
-      const it = list[i];
-      if (!it) continue;
-      const d = round(
-        abs(me.position.x - it.position.x) +
-        abs(me.position.z - it.position.z)
-      )
-      if (ret && d < distance) continue;
-      ret = it;
-      distance = d;
-    }
-    return ret;
+    return closest(this.me, ...list);
   }
   wanted_jumping(): boolean {
     const c = this.ctrl;

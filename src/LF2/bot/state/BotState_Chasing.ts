@@ -13,7 +13,7 @@ export class BotState_Chasing extends BotState_Base {
     const me = c.entity;
     const en = c.chasings.get()?.entity
 
-    if (en && this.ctrl.is_leave_chasing_range(en))
+    if (en && this.ctrl.is_leave_chase_range(en))
       return BSE.Following;
     if (this.ctrl.is_leave_goto_range(me))
       return BSE.Following;

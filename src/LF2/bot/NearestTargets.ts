@@ -1,6 +1,7 @@
 import { Entity } from "../entity";
 import { manhattan_xz } from "../helper/manhattan_xz";
 import { BotTarget } from "./IBotTarget";
+import { closest } from "./state/closest";
 
 export class NearestTargets {
   max: number;
@@ -47,7 +48,8 @@ export class NearestTargets {
     this.targets.sort((a, b) => {
       a.distance = manhattan_xz(self, a.entity);
       b.distance = manhattan_xz(self, b.entity);
-      return a.distance - b.distance;
+      const c = closest(self, a.entity, b.entity);
+      return c == a.entity ? 1 : -1;
     });
   }
 

@@ -5,7 +5,6 @@ import {
   ATTCKING_ITR_KINDS,
   ATTCKING_STATES,
   BotDataSet,
-  BotStateEnum,
   BSE,
   BuiltIn_OID,
   Defines as D,
@@ -16,12 +15,12 @@ import {
   IVector2Like,
   IVector3,
   LGK, StateEnum,
-  W_T
+  WT
 } from "../defines";
 import { Ditto } from "../ditto";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { abs, between, clamp, max, round, round_float } from "../utils";
-import { DummyEnum, dummy_updaters } from "./DummyEnum";
+import { dummy_updaters, DummyEnum } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
 import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
 import { BotState_Following } from "./state/BotState_Following";
@@ -34,7 +33,7 @@ export enum BotBehavior {
   Follow = 'Follow',
 }
 export class BotController extends BaseController {
-  readonly fsm = new FSM<BotStateEnum>()
+  readonly fsm = new FSM<BSE>()
     .add(
       new BotState_Idle(this),
       new BotState_Chasing(this),
@@ -42,9 +41,20 @@ export class BotController extends BaseController {
       new BotState_Following(this),
       new BotState_StageEnd(this)
     )
-    .use(BotStateEnum.Idle)
+    .use(BSE.Idle)
 
   readonly __is_bot_ctrl__ = true;
+
+  /** 追击对象 */
+  readonly chasings = new NearestTargets(D.AI_MAX_CHASINGS_ENEMIES);
+
+  /** 躲避对象 */
+  readonly avoidings = new NearestTargets(D.AI_MAX_AVOIDING_ENEMIES);
+
+  /** 防御对象  */
+  readonly defends = new NearestTargets(D.AI_MAX_DEFENDS_ENEMIES);
+
+  protected _dummy: DummyEnum = DummyEnum.None;
 
   behavior: BotBehavior = BotBehavior.Move;
   goingto: IVector3 | null = null;
@@ -54,12 +64,163 @@ export class BotController extends BaseController {
   protected _bot: IBotData | undefined;
   protected _dataset: Required<IBotDataSet>;
 
+  get dummy(): DummyEnum {
+    return this._dummy;
+  }
+  set dummy(v) {
+    this.key_up(...Object.values(GK));
+    this._dummy = v;
+  }
   get difficulty(): Difficulty { return this.world.difficulty }
   get facing() { return this.entity.facing }
+  get team(): string { return this.entity.team }
   get me(): Entity { return this.entity }
   get en(): Entity | undefined { return this.chasings.get()?.entity }
   get av(): Entity | undefined { return this.avoidings.get()?.entity }
   get bot_state(): BSE { return this.fsm.state?.key || BSE.Idle }
+  get dataset() { return this._dataset }
+  get stand_atk_b_x() {
+    const en = this.chasings.get()?.entity;
+    if (!en) return 0;
+    if (is_weapon(en)) return this.dataset.pick_weapon_b_x;
+    return -5; // TODO?
+  }
+
+  /** 地面攻击触发范围X */
+  get stand_atk_f_x() {
+    const en = this.chasings.get()?.entity;
+    if (!en) return 0;
+    if (is_weapon(en)) return this.dataset.pick_weapon_f_x;
+
+    const wt = this.entity.holding?.base_type
+    if (
+      wt === WT.Baseball ||
+      wt === WT.Drink
+    ) return 800 * this.entity.strength;
+    if (
+      wt === WT.Stick ||
+      wt === WT.Knife
+    ) return 90;
+    if (
+      wt === WT.Heavy
+    ) return 200 * this.entity.strength;
+
+
+    return this.dataset.w_atk_x
+  }
+
+  /** 跑攻触发范围X */
+  get r_atk_x() {
+    const en = this.chasings.get()?.entity;
+    if (!en) return 0;
+    const wt = this.entity.holding?.base_type
+    if (
+      wt === WT.Baseball ||
+      wt === WT.Drink
+    ) return 800 * this.entity.strength;
+    if (
+      wt === WT.Heavy
+    ) return 200 * this.entity.strength;
+
+    if (
+      wt === WT.Stick ||
+      wt === WT.Knife
+    ) return 100;
+    return this.dataset.r_atk_x;
+  }
+  /** 冲跳攻触发范围X */
+  get d_atk_x() {
+    const chasing = this.chasings.get()?.entity;
+    if (!chasing) return 0;
+    const wt = this.entity.holding?.base_type;
+    const sp = this.entity.facing * this.entity.velocity.x * 8
+    if (
+      wt === WT.Baseball ||
+      wt === WT.Drink
+    ) return sp + 100 * this.entity.strength;
+    if (
+      wt === WT.Stick ||
+      wt === WT.Knife
+    ) return 100;
+    return sp + this.dataset.d_atk_x;
+  }
+
+  /** 跳攻触发范围X */
+  get j_atk_x() {
+    const chasing = this.chasings.get()?.entity;
+    if (!chasing) return 0;
+    const wt = this.entity.holding?.base_type;
+    const sp = this.entity.facing * this.entity.velocity.x * 8
+    if (
+      wt === WT.Baseball ||
+      wt === WT.Drink
+    ) return sp * 200 * this.entity.strength;
+    if (
+      wt === WT.Stick ||
+      wt === WT.Knife
+    ) return sp * 110;
+    return sp * this.dataset.j_atk_x;
+  }
+  /** 最近站立攻击距离 */
+  get atk_m_x() {
+    const wt = this.entity.holding?.base_type
+    if (
+      wt === WT.Baseball ||
+      wt === WT.Drink
+    ) return 100;
+    return this.dataset.w_atk_m_x
+  }
+  get atk_r_x() {
+    const wt = this.entity.holding?.base_type
+    if (
+      wt === WT.Baseball ||
+      wt === WT.Drink
+    ) return 200;
+    return this.dataset.w_atk_r_x
+  }
+  get stage() { return this.world.stage }
+
+  get defend_desire() {
+    const d = this.world.difficulty - 1
+    return round(
+      this.dataset.defend_desire_base +
+      d * this.dataset.defend_desire_step
+    )
+  }
+
+  constructor(player_id: string, entity: Entity) {
+    super(player_id, entity);
+    this._dataset = new BotDataSet();
+  }
+
+  w_atk_too_far(o: Entity) {
+    const { atk_r_x } = this;
+    const abs_dx = abs(this.me.position.x - o.position.x)
+    return atk_r_x > 0 && atk_r_x < abs_dx
+  }
+  w_atk_too_close(o: Entity) {
+    const { atk_m_x } = this;
+    const abs_dx = abs(this.me.position.x - o.position.x)
+    return atk_m_x > 0 && atk_m_x > abs_dx
+  }
+
+  should_run(target: IVector2Like): -1 | 1 | 0 {
+    this.desire(`should_run`)
+    if (!target) return 0;
+    let dx = abs(this.entity.position.x - target.x) - this.dataset.r_x_min
+    let should_run = false
+    const r_x_r = this.dataset.r_x_max - this.dataset.r_x_min
+    if (r_x_r === 0) {
+      dx = round(clamp(dx, 0, r_x_r) / r_x_r)
+      const min = this.dataset.r_desire_min + (this.dataset.r_desire_max - this.dataset.r_desire_min) * dx
+      should_run = this.desire(`rr1`) < min;
+    } else {
+      should_run = this.desire(`rr2 ${dx}`) < this.dataset.r_x_min;
+    }
+    if (dx < 0) should_run = false;
+    if (!should_run) return 0;
+    return this.entity.position.x > target.x ? -1 : 1
+  }
 
   /** 是否已进入目标区域 */
   is_enter_goto_range(entity: Entity): boolean {
@@ -69,7 +230,7 @@ export class BotController extends BaseController {
     const { x: en_x, z: en_z } = pos
     let offset_x: number = 0;
     let offset_z: number = 0;
-    if (this.fsm.state?.key === BotStateEnum.Following) {
+    if (this.fsm.state?.key === BSE.Following) {
       offset_x = Defines.AI_FOLLOWING_RANGE_IN_X
       offset_z = Defines.AI_FOLLOWING_RANGE_IN_Z
     } else {
@@ -95,7 +256,7 @@ export class BotController extends BaseController {
 
     let offset_x: number = 0;
     let offset_z: number = 0;
-    if (this.fsm.state?.key === BotStateEnum.Following) {
+    if (this.fsm.state?.key === BSE.Following) {
       offset_x = Defines.AI_FOLLOWING_RANGE_OUT_X
       offset_z = Defines.AI_FOLLOWING_RANGE_OUT_Z
     } else {
@@ -113,7 +274,7 @@ export class BotController extends BaseController {
     )
   }
 
-  is_leave_chasing_range(target: Entity): boolean {
+  is_leave_chase_range(target: Entity): boolean {
     const pos = this.following?.position ?? this.goingto;
     if (!pos) return false;
 
@@ -121,7 +282,7 @@ export class BotController extends BaseController {
     const { x: en_x, z: en_z } = pos
     let offset_x: number = 0;
     let offset_z: number = 0;
-    if (this.fsm.state?.key === BotStateEnum.Following) {
+    if (this.fsm.state?.key === BSE.Following) {
       offset_x = Defines.AI_FOLLOWING_RANGE_OUT_X
       offset_z = Defines.AI_FOLLOWING_RANGE_OUT_Z
     } else {
@@ -139,150 +300,6 @@ export class BotController extends BaseController {
       between(z, bound_t, bound_b)
     )
   }
-  get dataset() { return this._dataset }
-  get stand_atk_b_x() {
-    const en = this.chasings.get()?.entity;
-    if (!en) return 0;
-    if (is_weapon(en)) return this.dataset.pick_weapon_b_x;
-    return -5; // TODO?
-  }
-
-  /** 地面攻击触发范围X */
-  get stand_atk_f_x() {
-    const en = this.chasings.get()?.entity;
-    if (!en) return 0;
-    if (is_weapon(en)) return this.dataset.pick_weapon_f_x;
-
-    const wt = this.entity.holding?.base_type
-    if (
-      wt === W_T.Baseball ||
-      wt === W_T.Drink
-    ) return 800 * this.entity.strength;
-    if (
-      wt === W_T.Stick ||
-      wt === W_T.Knife
-    ) return 90;
-    if (
-      wt === W_T.Heavy
-    ) return 200 * this.entity.strength;
-
-
-    return this.dataset.w_atk_x
-  }
-
-  /** 跑攻触发范围X */
-  get r_atk_x() {
-    const en = this.chasings.get()?.entity;
-    if (!en) return 0;
-    const wt = this.entity.holding?.base_type
-    if (
-      wt === W_T.Baseball ||
-      wt === W_T.Drink
-    ) return 800 * this.entity.strength;
-    if (
-      wt === W_T.Heavy
-    ) return 200 * this.entity.strength;
-
-    if (
-      wt === W_T.Stick ||
-      wt === W_T.Knife
-    ) return 100;
-    return this.dataset.r_atk_x;
-  }
-  /** 冲跳攻触发范围X */
-  get d_atk_x() {
-    const chasing = this.chasings.get()?.entity;
-    if (!chasing) return 0;
-    const wt = this.entity.holding?.base_type;
-    const sp = this.entity.facing * this.entity.velocity.x * 8
-    if (
-      wt === W_T.Baseball ||
-      wt === W_T.Drink
-    ) return sp + 100 * this.entity.strength;
-    if (
-      wt === W_T.Stick ||
-      wt === W_T.Knife
-    ) return 100;
-    return sp + this.dataset.d_atk_x;
-  }
-  /** 跳攻触发范围X */
-  get j_atk_x() {
-    const chasing = this.chasings.get()?.entity;
-    if (!chasing) return 0;
-    const wt = this.entity.holding?.base_type;
-    const sp = this.entity.facing * this.entity.velocity.x * 8
-    if (
-      wt === W_T.Baseball ||
-      wt === W_T.Drink
-    ) return sp * 200 * this.entity.strength;
-    if (
-      wt === W_T.Stick ||
-      wt === W_T.Knife
-    ) return sp * 110;
-    return sp * this.dataset.j_atk_x;
-  }
-  /** 最近站立攻击距离 */
-  get atk_m_x() {
-    const wt = this.entity.holding?.base_type
-    if (
-      wt === W_T.Baseball ||
-      wt === W_T.Drink
-    ) return 100;
-    return this.dataset.w_atk_m_x
-  }
-  get atk_r_x() {
-    return this.dataset.w_atk_r_x
-  }
-  get stage() { return this.world.stage }
-
-  get defend_desire() {
-    const d = this.world.difficulty - 1
-    return round(
-      this.dataset.defend_desire_base +
-      d * this.dataset.defend_desire_step
-    )
-  }
-  should_run(target: IVector2Like): -1 | 1 | 0 {
-    this.desire(`should_run`)
-    if (!target) return 0;
-    let dx = abs(this.entity.position.x - target.x) - this.dataset.r_x_min
-    let should_run = false
-    const r_x_r = this.dataset.r_x_max - this.dataset.r_x_min
-    if (r_x_r === 0) {
-      dx = round(clamp(dx, 0, r_x_r) / r_x_r)
-      const min = this.dataset.r_desire_min + (this.dataset.r_desire_max - this.dataset.r_desire_min) * dx
-      should_run = this.desire(`rr1`) < min;
-    } else {
-      should_run = this.desire(`rr2 ${dx}`) < this.dataset.r_x_min;
-    }
-    if (dx < 0) should_run = false;
-    if (!should_run) return 0;
-    return this.entity.position.x > target.x ? -1 : 1
-  }
-
-
-  /** 追击对象 */
-  readonly chasings = new NearestTargets(D.AI_MAX_CHASINGS_ENEMIES);
-
-  /** 躲避对象 */
-  readonly avoidings = new NearestTargets(D.AI_MAX_AVOIDING_ENEMIES);
-
-  /** 防御对象  */
-  readonly defends = new NearestTargets(D.AI_MAX_DEFENDS_ENEMIES);
-
-  protected _dummy: DummyEnum = DummyEnum.None;
-
-  get dummy(): DummyEnum {
-    return this._dummy;
-  }
-  set dummy(v) {
-    this.key_up(...Object.values(GK));
-    this._dummy = v;
-  }
-  constructor(player_id: string, entity: Entity) {
-    super(player_id, entity);
-    this._dataset = new BotDataSet();
-  }
 
   /**
    * 判断是否应该追击某个对象
@@ -297,8 +314,9 @@ export class BotController extends BaseController {
     if (!e.is_attach) return false
 
     if (me.hp <= 0) return false;
-    if (me.holding?.base_type == W_T.Drink) return false;
+    if (me.holding?.base_type == WT.Drink) return false;
     if (e.hp <= 0) return false;
+    if (is_fighter(e) && e.team == this.team) return false;
 
     const e_state = e.state;
     const [l, r] = this.world.fighter_bound(me)
@@ -315,7 +333,7 @@ export class BotController extends BaseController {
         // 队友Bot尽量不喝
         if (this.stage.id === D.VOID_STAGE.id)
           break; // 非闯关
-        if (e.base_type !== W_T.Drink)
+        if (e.base_type !== WT.Drink)
           break; // 非饮料
         if (me.team == this.stage.team)
           break; // 敌人角色
@@ -337,7 +355,7 @@ export class BotController extends BaseController {
         return true
       return false;
     }
-    if (this.is_leave_chasing_range(e))
+    if (this.is_leave_chase_range(e))
       return false
     if (e_state == StateEnum.Lying)
       return false;
@@ -346,11 +364,12 @@ export class BotController extends BaseController {
     if (e.invulnerable) return false
     if (me.ground_y != me.position.y) return true
 
-    if (this.fsm.state?.key === BotStateEnum.Avoiding) {
-      const { atk_r_x } = this;
-      return atk_r_x > 0 && atk_r_x < abs_dx
+    if (this.bot_state === BSE.Avoiding) {
+      // 已拉开一定距离，攻击
+      return this.w_atk_too_far(e)
     }
-    return this.atk_m_x <= abs_dx
+
+    return !this.w_atk_too_close(e)
   }
 
   /**
@@ -361,47 +380,57 @@ export class BotController extends BaseController {
    * @memberof BotController
    */
   should_avoid(av: Entity): boolean {
-    const { entity: me } = this;
+    const { me } = this;
     if (!me.is_attach) return false
     if (!av.is_attach) return false
     if (me.hp <= 0) return false
     if (av.hp <= 0) return false;
 
-    const bot_state = this.fsm.state?.key
-    const ret = bot_state === BotStateEnum.Avoiding ?
+    const { bot_state } = this
+    const ret = bot_state === BSE.Avoiding ?
       !this.is_leave_avoid_zone(av) :
-      this.is_enter_avoiding_zone(av);
+      this.is_enter_avoid_zone(av);
 
     if (av.state === StateEnum.Lying && av.wakeup_invuln)
       return ret;
     if (av.blinking) return ret;
     if (av.invulnerable) return ret;
-    if (me.holding?.base_type === W_T.Drink) return ret;
+    if (me.holding?.base_type === WT.Drink) return ret;
 
     // 不再地上
     if (me.ground_y != me.position.y) return false;
 
-    const abs_x = abs(me.position.x - av.position.x)
-    if (bot_state === BotStateEnum.Avoiding) {
-      const { atk_r_x } = this;
-      return atk_r_x > 0 && atk_r_x > abs_x
-    }
-    return this.atk_m_x > abs_x
+    if (bot_state === BSE.Avoiding)
+      return !this.w_atk_too_far(av)
+    return this.w_atk_too_close(av)
   }
 
-  is_leave_avoid_zone(av: Entity): boolean {
-    const { avoiding_out_x, avoiding_out_z } = this.dataset;
-    const { entity: me } = this
-    const abs_x = abs(av.position.x - me.position.x);
-    const abs_z = abs(av.position.z - me.position.z);
-    return abs_x > avoiding_out_x || abs_z > avoiding_out_z;
+  /**
+   * 是否已离开躲避触发范围
+   *
+   * @param {Entity} target 躲避对象
+   * @returns {boolean} 不需要躲避时，返回true，否则返回false
+   */
+  is_leave_avoid_zone(target: Entity): boolean {
+    const { avoid_out_x, avoid_out_z } = this.dataset;
+    const { me } = this
+    const abs_x = abs(target.position.x - me.position.x);
+    const abs_z = abs(target.position.z - me.position.z);
+    return abs_x > avoid_out_x || abs_z > avoid_out_z;
   }
-  is_enter_avoiding_zone(av: Entity): boolean {
-    const { avoiding_in_x, avoiding_in_z } = this.dataset;
-    const { entity: me } = this
-    const abs_x = abs(av.position.x - me.position.x);
-    const abs_z = abs(av.position.z - me.position.z);
-    return abs_x < avoiding_in_x && abs_z < avoiding_in_z;
+
+  /**
+   * 是否已进入躲避触发范围
+   *
+   * @param {Entity} target 躲避对象
+   * @returns {boolean} 需要躲避时，返回true，否则返回false
+   */
+  is_enter_avoid_zone(target: Entity): boolean {
+    const { avoid_in_x, avoid_in_z } = this.dataset;
+    const { me } = this
+    const abs_x = abs(target.position.x - me.position.x);
+    const abs_z = abs(target.position.z - me.position.z);
+    return abs_x < avoid_in_x && abs_z < avoid_in_z;
   }
 
   /**
