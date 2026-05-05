@@ -77,6 +77,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         editing.hit('a', {
           // weapon throw
           id: "45", facing: FF.Ctrl, desc: "weapon throw",
+          mp_mode: 1,
           expression: new CondMaker<EV>()
             .add(EV.Holding_W_Type, "==", WT.Baseball)
             .or(c => c
@@ -85,6 +86,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
             ).done(),
         }, { // weapon swing
           id: ["20", "25"], facing: FF.Ctrl, desc: "weapon swing",
+          mp_mode: 1,
           expression: new CondMaker<EV>()
             .one_of(EV.Holding_W_Type, WT.Knife, WT.Stick)
             .done(),

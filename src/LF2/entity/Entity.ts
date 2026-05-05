@@ -2217,6 +2217,7 @@ export class Entity {
     const judger = which.judger;
     const use_hp = which.hp;
     const use_mp = which.mp;
+    const { mp_mode } = which;
     if (judger && !judger.run(this)) {
       return void 0;
     }
@@ -2234,7 +2235,7 @@ export class Entity {
         if (use_hp && this._hp <= use_hp)
           return this.get_next_frame(frame.hit?.d ?? Defines.NEXT_FRAME_AUTO);
       } else {
-        if (use_mp && this._mp < use_mp) return void 0;
+        if (use_mp && this._mp < use_mp && mp_mode != 1) return void 0;
         if (use_hp && this._hp <= use_hp) return void 0;
       }
     }
