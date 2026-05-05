@@ -53,7 +53,7 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
 
   
   /**
-   * 帧的图片信息
+   * 帧切图
    * 
    * LF2中, 这是个切图网格的索引数字；
    * 
@@ -86,10 +86,33 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    */
   next: TNextFrame;
 
-
-
+  /**
+   * 脚点x坐标（相对帧切图的x）
+   * 
+   * 简单的来说：
+   * 
+   * 角色地面接触时，玩家可见“帧切图”的 centerx, centery 将位于影子的中心
+   * 
+   * @type {number}
+   */
   centerx: number;
+
+  /**
+   * 脚点y坐标（相对帧切图的y）
+   * 
+   * 简单的来说：
+   * 
+   * 角色地面接触时，玩家可见“帧切图”的 centerx, centery 将位于影子的中心
+   * 
+   * @type {number}
+   */
   centery: number;
+
+  /**
+   * 进入此帧时播放的声音
+   *
+   * @type {?string}
+   */
   sound?: string;
 
   /**
@@ -102,7 +125,6 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   hp?: number;
 
   hold?: IHoldKeyCollection;
-  /**  */
   hit?: IHitKeyCollection;
   key_down?: IHoldKeyCollection;
   key_up?: IHoldKeyCollection;
