@@ -1,7 +1,8 @@
 
+import { is_ball } from "@/LF2/entity";
 import type { IState } from "../../base/FSM";
 import { bot_cases } from "../../cases_instances";
-import { GK, StateEnum, type LGK } from "../../defines";
+import { GK, SE, StateEnum, type LGK } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
 import type { Difficulty } from "../../defines/Difficulty";
 import type { Entity } from "../../entity/Entity";
@@ -75,6 +76,12 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
 
     // TODO: 不可防御的攻击
     if (!target.defendable) return false
+
+    if (me.state === SE.Attacking && me.frame.itr?.length) {
+      const { state } = target.entity.frame
+      if (state === SE.Ball_3005) return false
+      if (state === SE.Ball_3006) return false
+    }
 
     const dx = target.x - me.position.x;
     const en_facing = target.facing;
