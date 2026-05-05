@@ -10,15 +10,14 @@ export class BotState_Idle extends BotState_Base {
     this.ctrl.key_up(...AGK)
   }
   override update(dt: number) {
-    super.update(dt)
+    if (this.stage.is_stage_finish) 
+      return BotStateEnum.StageEnd;
     const { ctrl: c } = this;
     const me = c.entity;
     if (this.ctrl.is_leave_goto_range(me)) 
       return BotStateEnum.Following;
     const en = c.chasings.get()?.entity
     const av = c.avoidings.get()?.entity
-
-    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     if (this.handle_defends()) return;
     if (this.handle_bot_actions()) return;
 

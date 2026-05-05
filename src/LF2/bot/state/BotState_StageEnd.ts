@@ -11,7 +11,7 @@ export class BotState_StageEnd extends BotState_Base {
   override leave(): void {
     this.ctrl.key_up(...AGK);
   }
-  override update(dt: number): BotStateEnum | undefined | void {
+  override update(dt: number): BotStateEnum | undefined {
     const c = this.ctrl;
     const me = c.entity;
     if (!c.world.stage.is_stage_finish) {

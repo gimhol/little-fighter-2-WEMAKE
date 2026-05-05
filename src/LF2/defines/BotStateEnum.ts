@@ -5,3 +5,7 @@ export enum BotStateEnum {
   Following = 'Following',
   StageEnd = 'StageEnd',
 }
+export type BSE = BotStateEnum;
+export const BSE = BotStateEnum;
+
+

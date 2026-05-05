@@ -1,5 +1,5 @@
 
-import { LF2, LF2KeyEvent, LGK, PlayerInfo } from "@/LF2";
+import { GK, LF2, LF2KeyEvent, PlayerInfo } from "@/LF2";
 import { bot_cases, mt_cases, sus_cases } from "@/LF2/cases_instances";
 import { IKeyEvent, IReqTick, IRespClientInfo, IRespDataset, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
 import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
@@ -167,7 +167,7 @@ class Lf2NetworkDriver {
       if (!events?.length) continue;
       for (const { player_id, pressed = false, game_key = '' } of events) {
         if (!player_id) continue;
-        const gk = game_key as LGK
+        const gk = game_key as GK
         const le = new LF2KeyEvent(player_id, pressed, gk, gk)
         lf2.events.push(le)
       }

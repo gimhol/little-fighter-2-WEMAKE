@@ -6,6 +6,7 @@ import {
   ATTCKING_STATES,
   BotDataSet,
   BotStateEnum,
+  BSE,
   BuiltIn_OID,
   Defines as D,
   Defines,
@@ -52,6 +53,13 @@ export class BotController extends BaseController {
   protected _bot_id: string | undefined;
   protected _bot: IBotData | undefined;
   protected _dataset: Required<IBotDataSet>;
+
+  get difficulty(): Difficulty { return this.world.difficulty }
+  get facing() { return this.entity.facing }
+  get me(): Entity { return this.entity }
+  get en(): Entity | undefined { return this.chasings.get()?.entity }
+  get av(): Entity | undefined { return this.avoidings.get()?.entity }
+  get bot_state(): BSE { return this.fsm.state?.key || BSE.Idle }
 
   /** 是否已进入目标区域 */
   is_enter_goto_range(entity: Entity): boolean {
@@ -227,6 +235,13 @@ export class BotController extends BaseController {
   }
   get stage() { return this.world.stage }
 
+  get defend_desire() {
+    const d = this.world.difficulty - 1
+    return round(
+      this.dataset.defend_desire_base +
+      d * this.dataset.defend_desire_step
+    )
+  }
   should_run(target: IVector2Like): -1 | 1 | 0 {
     this.desire(`should_run`)
     if (!target) return 0;
@@ -578,7 +593,7 @@ export class BotController extends BaseController {
 
   action_desire(mark: string): number {
     let ret = this.desire(mark); // 默认action设置的desire是crazy的好了。
-    for (let i = Difficulty.MAX - this.world.difficulty; i > 0; --i) {
+    for (let i = Difficulty.MAX - this.difficulty; i > 0; --i) {
       this.lf2.mt.mark = mark;
       ret += this.lf2.mt.range(0, ret);
     }
@@ -638,29 +653,38 @@ export class BotController extends BaseController {
     return false;
   }
 
-
   handle_action(action: IBotAction | undefined): LGK[] | false {
     if (!action) return false
-    const { facing } = this.entity;
-    const { status, e_ray, judger, desire, keys } = action;
+    const { desire: _desire, desire_step = 0, desire_base = 0 } = action;
     const action_desire = this.action_desire(action.keys.join());
+    const desire = _desire == void 0 ? _desire :
+      (desire_base + desire_step * (this.difficulty - 1))
     if (!desire || action_desire > desire) return false;
-    if (status && !status.some(v => v === this.fsm.state?.key))
+
+
+    const { bot_state } = this;
+    if (action.status?.some(v => v === bot_state) === false)
       return false;
+
+    const { me } = this;
+    const { e_ray } = action;
+
     if (e_ray) {
-      const chasing = this.chasings.get()?.entity;
-      if (!chasing || !is_fighter(chasing)) return false;
+      const { en } = this;
+      if (!en || !is_fighter(en)) return false;
       let ray_hit = false
       for (const r of e_ray) {
-        ray_hit = is_ray_hit(this.entity, chasing, r);
+        ray_hit = is_ray_hit(me, en, r);
         if (ray_hit) break;
       }
       if (!ray_hit) return false;
     }
-
+    const { facing } = this;
+    const { judger } = action;
     if (judger && !judger.run(this))
       return false;
-    const ks = keys.map<LGK>(v => {
+    
+    const ks = action.keys.map<LGK>(v => {
       if (v === 'F') return facing > 0 ? GK.R : GK.L;
       if (v === 'B') return facing > 0 ? GK.R : GK.L;
       return v

@@ -9,7 +9,6 @@ import { BotState_Base } from "./BotState";
 export class BotState_Chasing extends BotState_Base {
   readonly key = BotStateEnum.Chasing;
   override update(dt: number) {
-    super.update(dt)
     if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
     const { ctrl: c } = this;
     const me = c.entity;

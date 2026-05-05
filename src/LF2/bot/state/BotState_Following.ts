@@ -12,7 +12,6 @@ export class BotState_Following extends BotState_Base {
   }
   override update(dt: number) {
     if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
-    super.update(dt);
     if (this.handle_defends()) return;
     if (this.handle_block()) return;
     this.random_jumping();

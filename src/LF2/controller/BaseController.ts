@@ -15,6 +15,7 @@ enum Status {
   DOWN = 1,
   HOLD = 2,
 }
+
 /**
  * @link https://www.processon.com/view/link/6765125f16640e2a68b21418?cid=6764eb96c3e02b46ac818e40
  */
@@ -54,17 +55,52 @@ export class BaseController {
     )
   }
   entity: Entity;
-  keys: Record<LGK, KeyStatus> = {
-    L: new KeyStatus(this),
-    R: new KeyStatus(this),
-    U: new KeyStatus(this),
-    D: new KeyStatus(this),
-    d: new KeyStatus(this),
-    j: new KeyStatus(this),
-    a: new KeyStatus(this),
-  };
+  keys: Record<LGK, KeyStatus> = new (class _ {
+    readonly owner: BaseController;
+    L: KeyStatus;
+    R: KeyStatus;
+    U: KeyStatus;
+    D: KeyStatus;
+    d: KeyStatus;
+    j: KeyStatus;
+    a: KeyStatus;
+    get F() { return this.L }
+    get B() { return this.L }
+    constructor(owner: BaseController) {
+      this.owner = owner;
+      this.L = new KeyStatus(this.owner)
+      this.R = new KeyStatus(this.owner)
+      this.U = new KeyStatus(this.owner)
+      this.D = new KeyStatus(this.owner)
+      this.d = new KeyStatus(this.owner)
+      this.j = new KeyStatus(this.owner)
+      this.a = new KeyStatus(this.owner)
+    }
+  })(this);
 
-  readonly dbc: Record<LGK, DoubleClick<{ frame: IFrameInfo, facing: TFace }>>;
+  readonly dbc: Record<LGK, DoubleClick<{ frame: IFrameInfo, facing: TFace }>> = new (class _ {
+    readonly owner: BaseController;
+    L: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+    R: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+    U: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+    D: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+    d: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+    j: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+    a: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+    get F() { return this.L }
+    get B() { return this.L }
+    constructor(owner: BaseController) {
+      this.owner = owner;
+      this.L = new DoubleClick("d")
+      this.R = new DoubleClick("a")
+      this.U = new DoubleClick("j")
+      this.D = new DoubleClick("L")
+      this.d = new DoubleClick("R")
+      this.j = new DoubleClick("U")
+      this.a = new DoubleClick("D")
+    }
+  })(this);
+
   get LR(): 0 | 1 | -1 {
     const L = !this.keys.L.is_end();
     const R = !this.keys.R.is_end();
@@ -222,20 +258,11 @@ export class BaseController {
     const { lf2 } = entity
     this.player = lf2.players.get(player_id);
     this.entity = entity;
-    this.dbc = {
-      d: new DoubleClick("d"),
-      a: new DoubleClick("a"),
-      j: new DoubleClick("j"),
-      L: new DoubleClick("L"),
-      R: new DoubleClick("R"),
-      U: new DoubleClick("U"),
-      D: new DoubleClick("D"),
-    };
   }
   dispose(): void {
     for (const f of this._disposers) f();
   }
-  tst(type: "hit" | "hld" | "dbl" | "kd" | 'ku', key: LGK) {
+  tst(type: "hit" | "hld" | "dbl" | "kd" | 'ku', key: GK) {
     const conflict_key = CONFLICTS_KEY_MAP[key];
     if (conflict_key && !this.is_end(conflict_key)) return false;
     if (type === "kd") return !this.is_end(key);
@@ -257,50 +284,58 @@ export class BaseController {
 
   update(): ControllerUpdateResult {
     this._time.add()
-    const e = this.entity;
+    const me = this.entity;
+    const { facing } = me;
+    let F = facing === 1 ? GK.R : GK.L;
+    let B = facing === 1 ? GK.L : GK.R;
     if (this.queue.length) {
       let key_downs = '';
-      for (const [status, k] of this.queue) {
+      for (const [status, lgk] of this.queue) {
+        let gk: GK;
+        if (lgk === 'F') gk = F;
+        else if (lgk === 'B') gk = B;
+        else gk = lgk as GK
+
         switch (status) {
           case Status.UP:
-            if (this.is_end(k)) break
-            this.keys[k].end();
+            if (this.is_end(gk)) break
+            this.keys[gk].end();
             break;
           case Status.DOWN:
-            if (!this.is_end(k)) break;
-            key_downs += k
-            if (k === GK.d) {
-              this._key_list = k;
-              this._readable_key_list = GKLabels[k]
+            if (!this.is_end(gk)) break;
+            key_downs += gk;
+            if (gk === GK.d) {
+              this._key_list = gk;
+              this._readable_key_list = GKLabels[gk]
             } else if (this._key_list[0] === GK.d) {
-              this._key_list += k;
-              this._readable_key_list += GKLabels[k]
+              this._key_list += gk;
+              this._readable_key_list += GKLabels[gk]
             }
-            this.keys[k].hit(this.time);
-            const ck = CONFLICTS_KEY_MAP[k];
+            this.keys[gk].hit(this.time);
+            const ck = CONFLICTS_KEY_MAP[gk];
             if (ck) this.dbc[ck].reset();
 
-            const dbc = this.dbc[k]
+            const dbc = this.dbc[gk]
             if (!dbc.fired) dbc.press(this.time, {
-              frame: e.frame, facing: e.facing
-            }, e.world.double_click_interval);
+              frame: me.frame, facing: me.facing
+            }, me.world.double_click_interval);
 
             break;
           case Status.HOLD:
-            this.keys[k].hit(this.time - e.world.key_hit_duration);
+            this.keys[gk].hit(this.time - me.world.key_hit_duration);
             break;
         }
       }
-      if (is_human_ctrl(this) && key_downs.length && e.hp) {
+      if (is_human_ctrl(this) && key_downs.length && me.hp) {
         for (const [k, v] of this.seqKeyMap) {
           v.press(key_downs)
           if (!v.hit) continue;
-          const { x, y, z } = e.position;
+          const { x, y, z } = me.position;
           this.world.etc(x, y, z, v.data.etc)
-          if (v.data.etc === '0') this.world.team_come(e.team, x, y, z)
-          if (v.data.etc === '2') this.world.team_stay(e.team)
-          if (v.data.etc === '4') this.world.team_move(e.team)
-          if (v.data.etc === '8') this.world.team_follow(e)
+          if (v.data.etc === '0') this.world.team_come(me.team, x, y, z)
+          if (v.data.etc === '2') this.world.team_stay(me.team)
+          if (v.data.etc === '4') this.world.team_move(me.team)
+          if (v.data.etc === '8') this.world.team_follow(me)
           v.reset()
         }
       }
@@ -312,9 +347,6 @@ export class BaseController {
 
     const ret = this.result.set(void 0, 0);
 
-    const { facing } = entity;
-    let F: "L" | "R" = facing === 1 ? "R" : "L";
-    let B: "L" | "R" = facing === 1 ? "L" : "R";
 
     if (kd_map && !ret.time) {
       /** 相对方向的按钮判定 */

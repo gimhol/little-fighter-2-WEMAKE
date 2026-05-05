@@ -64,14 +64,24 @@ export interface IBotDataSet {
   /** 欲望值：停止跑步 */
   r_stop_desire?: number;
 
-  /** 
-   * 欲望值：防御 
-   * [0, 10000]
+  /**
+   * 防御 基础欲值
+   * - defend_desire = defend_desire_base + difficulty * defend_desire_step
+   * @type {?number}
    */
-  d_desire?: number;
+  defend_desire_base?: number;
+
+  /**
+   * 防御 步进欲值
+   * - defend_desire = defend_desire_base + difficulty * defend_desire_step
+   *
+   * @type {?number}
+   */
+  defend_desire_step?: number;
 
   avoiding_in_x?: number;
   avoiding_in_z?: number;
+  /**  */
   avoiding_out_x?: number;
   avoiding_out_z?: number;
 
@@ -87,8 +97,10 @@ export class BotDataSet implements Required<IBotDataSet> {
   static Default: BotDataSet = new BotDataSet();
   /** 欲望值：停止跑步 */
   r_stop_desire = 10;
-  /** 欲望值: 防御 */
-  d_desire = 150;
+  defend_desire_base = 1000;
+  defend_desire_step = 1000;
+
+
   /** 走攻触发范围X(敌人正对) */
   w_atk_x = 50;
   /** 走攻触发范围X(敌人背对) */
@@ -166,7 +178,8 @@ export const bot_dataset_fields = fields<IBotDataSet>({
   r_x_min: int,
   r_x_max: int,
   r_stop_desire: int,
-  d_desire: int,
+  defend_desire_base: int,
+  defend_desire_step: int,
   avoiding_in_x: int,
   avoiding_in_z: int,
   avoiding_out_x: int,

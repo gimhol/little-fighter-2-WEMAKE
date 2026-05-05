@@ -20,6 +20,8 @@ export interface IBotAction {
    * 只有当前随机到的欲望值小于desire时，该Action才可能触发
    */
   desire?: number;
+  desire_base?: number;
+  desire_step?: number;
 
   /**
    * 针对敌人的XZ射线检测
