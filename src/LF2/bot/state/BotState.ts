@@ -77,7 +77,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     // TODO: 不可防御的攻击
     if (!target.defendable) return false
 
-    if (me.state === SE.Attacking && me.frame.itr?.length) {
+    if (me.frame.itr?.length) {
       const { state } = target.entity.frame
       if (state === SE.Ball_3005) return false
       if (state === SE.Ball_3006) return false
