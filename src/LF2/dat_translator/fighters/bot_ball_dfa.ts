@@ -19,7 +19,7 @@ const ID = 'd>a' as const
  */
 export function bot_ball_dfa(
   min_mp: number,
-  desire: number = DESIRE_RATIO * 2,
+  desire: number = DESIRE_RATIO_X_2,
   min_x: number = MIN_X,
   max_x?: number,
   zable?: number

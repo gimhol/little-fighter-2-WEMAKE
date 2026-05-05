@@ -5,6 +5,7 @@ import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { bot_uppercut_dva } from "./bot_uppercut_dva";
 import { BotBuilder } from "./BotBuilder";
+import { DESIRE_RATIO_D_4 } from "./constants";
 import { frames } from "./frames";
 
 
@@ -45,13 +46,13 @@ export function make_fighter_data_woody(data: IEntityData) {
     bot_uppercut_dua(0, void 0, bot_uppercut_dua.MIN_X, bot_uppercut_dua.MAX_X),
 
     // d^j
-    bot_chasing_skill_action('d^j', void 0, 50, 0.01)((a, c) => {
+    bot_chasing_skill_action('d^j', void 0, 50, DESIRE_RATIO_D_4)((a, c) => {
       a.expression = c.and(BotVal.EnemyOutOfRange, '!=', 1).done()
       return a;
     }),
 
     // dvj
-    bot_chasing_skill_action('dvj', void 0, 50, 0.01),
+    bot_chasing_skill_action('dvj', void 0, 50, DESIRE_RATIO_D_4),
 
     // catching_d^a
     bot_chasing_skill_action('d^a', 'catching_d^a', 0),
