@@ -66,7 +66,7 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
       action.e_ray?.forEach(v => v.reverse = true)
       return action;
     }),
-    bot_explosion_duj(350, 0.01, -300, 300, 500)((action) => {
+    bot_explosion_duj(350, 0.005, -150, 150, 500)((action) => {
       action.action_id = 'd^j_2'
       action.e_ray?.forEach(v => v.reverse = true)
       return action;
@@ -77,7 +77,7 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
       action.e_ray?.forEach(v => v.reverse = true)
       return action;
     }),
-    bot_explosion_duj(350, 0.01, -300, 300, 500)((action) => {
+    bot_explosion_duj(350, 0.005, -150, 150, 500)((action) => {
       action.action_id = 'dvj_2'
       action.keys = [GK.Defend, GK.Down, GK.Jump]
       action.e_ray?.forEach(v => v.reverse = true)
