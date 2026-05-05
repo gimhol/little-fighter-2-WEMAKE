@@ -29,7 +29,7 @@ export enum GameKey {
 }
 export type GK = GameKey;
 export const GK = GameKey;
-export type LGK = GK | "L" | "R" | "U" | "D" | "a" | "j" | "d" | 'F' | 'B';
+export type LGK = GK | "L" | "R" | "U" | "D" | "a" | "j" | "d";
 export const GKLabels: Record<LGK, string> = {
   [GK.L]: "<",
   [GK.R]: ">",
@@ -37,9 +37,7 @@ export const GKLabels: Record<LGK, string> = {
   [GK.D]: "v",
   [GK.a]: "A",
   [GK.j]: "J",
-  [GK.d]: "D",
-  F: "F",
-  B: "B",
+  [GK.d]: "D"
 }
 /** 
  * 全部按键 
