@@ -61,12 +61,24 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
       return a;
     }),
     bot_ball_dfj(0, void 0, 79, 120),
-    bot_explosion_duj(350, void 0, -300, 300, 500)((action) => {
+    bot_explosion_duj(350, 0.05, -300, 300, 500)((action) => {
+      action.action_id = 'd^j_1'
       action.e_ray?.forEach(v => v.reverse = true)
       return action;
     }),
-    bot_explosion_duj(350, void 0, -300, 300, 500)((action) => {
-      action.action_id = 'dvj'
+    bot_explosion_duj(350, 0.01, -300, 300, 500)((action) => {
+      action.action_id = 'd^j_2'
+      action.e_ray?.forEach(v => v.reverse = true)
+      return action;
+    }),
+    bot_explosion_duj(350, 0.05, -300, 300, 500)((action) => {
+      action.action_id = 'dvj_1'
+      action.keys = [GK.Defend, GK.Down, GK.Jump]
+      action.e_ray?.forEach(v => v.reverse = true)
+      return action;
+    }),
+    bot_explosion_duj(350, 0.01, -300, 300, 500)((action) => {
+      action.action_id = 'dvj_2'
       action.keys = [GK.Defend, GK.Down, GK.Jump]
       action.e_ray?.forEach(v => v.reverse = true)
       return action;
@@ -76,7 +88,7 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
       ...frames.standings,
       ...frames.walkings,
     ],
-    ['d>a_1', 'd>a_2', 'd>j', 'd^j', 'dvj']
+    ['d>a_1', 'd>a_2', 'd>j', 'd^j_1', 'dvj_1', 'd^j_2', 'dvj_2']
   )
   return data;
 }
