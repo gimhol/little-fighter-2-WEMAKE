@@ -165,6 +165,7 @@ export interface IOpointInfo {
   spreading_z?: number[];
 
   unimportant?: number;
+  delay?: number;
 
   /** 运行时生成 */
   __spreading_random_x?: { take(): number };
@@ -172,4 +173,6 @@ export interface IOpointInfo {
   __spreading_random_y?: { take(): number };
   /** 运行时生成 */
   __spreading_random_z?: { take(): number };
+
+  
 }

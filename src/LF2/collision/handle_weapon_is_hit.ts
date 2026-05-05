@@ -23,16 +23,16 @@ export function handle_weapon_is_hit(collision: ICollision): void {
   const is_base_ball =
     victim.base_type === WT.Baseball ||
     victim.base_type === WT.Drink;
+    
   if (victim.base_type !== WT.Heavy || is_fly) {
-    victim.set_velocity(vx, vy, vz)
-    victim.team = attacker.team;
-    victim.lf2.mt.mark = 'hwih_1'
+    victim.set_velocity(vx, vy, vz);
+    victim.lf2.mt.mark = 'hwih_1';
     let nid: string | undefined = void 0
     if (is_base_ball && (vx >= 6 || vx <= -6))
       nid = victim.lf2.mt.pick(victim.data.indexes?.throwings)
     else
       nid = victim.lf2.mt.pick(victim.data.indexes?.in_the_skys)
-    victim.next_frame = { id: nid };
+    victim.enter_frame({ id: nid });
   }
 
   if (
@@ -40,10 +40,12 @@ export function handle_weapon_is_hit(collision: ICollision): void {
     is_base_ball
   ) {
     const s = attacker.strength
-    vx = attacker.facing * s * 10 // super fast!
+    vx = attacker.facing * s * 2 // fast!
     victim.lf2.mt.mark = 'hwih_2'
-    victim.next_frame = { id: victim.data.indexes?.throwings?.[0] }
+    victim.enter_frame({ id: victim.data.indexes?.throwings?.[0] })
     victim.set_velocity(vx)
   }
+
+  victim.team = attacker.team;
 
 }

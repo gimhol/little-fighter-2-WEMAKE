@@ -1,5 +1,5 @@
 
-import { is_ball } from "@/LF2/entity";
+import { is_ball, is_weapon } from "@/LF2/entity";
 import type { IState } from "../../base/FSM";
 import { bot_cases } from "../../cases_instances";
 import { GK, SE, StateEnum, type LGK } from "../../defines";
@@ -7,7 +7,6 @@ import { BotStateEnum } from "../../defines/BotStateEnum";
 import type { Difficulty } from "../../defines/Difficulty";
 import type { Entity } from "../../entity/Entity";
 import type { Stage } from "../../stage/Stage";
-import { abs, round } from "../../utils/math";
 import type { World } from "../../World";
 import type { BotController } from "../BotController";
 import { closest } from "./closest";
@@ -71,17 +70,41 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const { ctrl: c } = this;
     const me = c.entity;
 
+    if (!me.frame.bdy?.length) return false;
+    if (me.blinking) return false;
+    if (me.invisible) return false;
+    if (me.invulnerable) return false;
+
     const target = c.defends.get();
     if (!target) return false;
 
     // TODO: 不可防御的攻击
     if (!target.defendable) return false
 
-    if (me.frame.itr?.length) {
-      const { state } = target.entity.frame
-      if (state === SE.Ball_3005) return false
-      if (state === SE.Ball_3006) return false
-    }
+    do {
+      // TODO: 是否需要更细致的判定itr kind?
+      if (!me.frame.itr?.length) break;
+      const pt = target.entity
+      const { state: pt_state } = target.entity.frame
+      if (
+        (
+          is_ball(pt) ||
+          is_weapon(pt)
+        ) && (
+          (
+            pt_state >= SE.Ball_Flying &&
+            pt_state <= SE.Ball_Disappear
+          ) || (
+            pt_state == SE.HeavyWeapon_InTheSky ||
+            pt_state == SE.Weapon_Throwing
+          )
+        )
+      ) {
+        return false
+      }
+      // TODO: 武器?
+    } while (0)
+
 
     const dx = target.x - me.position.x;
     const en_facing = target.facing;

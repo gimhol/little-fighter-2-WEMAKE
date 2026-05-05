@@ -962,7 +962,7 @@ export class Entity {
 
   apply_opoints(opoints: IOpointInfo[]) {
     for (let opoint of opoints) {
-      const { interval = 0, interval_id, interval_mode } = opoint;
+      const { interval = 0, interval_id, interval_mode, delay = 1 } = opoint;
       const interval_info = this._opoints.find(v => v[0].interval_id === interval_id)
       if (interval_info && interval_mode === 1) {
         if (interval_info[1] !== opoint.interval) continue;
