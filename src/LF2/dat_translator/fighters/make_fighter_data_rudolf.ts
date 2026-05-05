@@ -1,6 +1,8 @@
-import { BuiltIn_OID, IEntityData, StateEnum } from "../../defines";
+import { BuiltIn_OID, GK, IEntityData, StateEnum } from "../../defines";
+import { CondMaker } from "../CondMaker";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
+import { bot_explosion_duj } from "./bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
@@ -58,14 +60,23 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
       a.e_ray![0].max_d = 160000;
       return a;
     }),
-    // d>a_2
-    bot_ball_dfj(0, void 0, 79, 120)
+    bot_ball_dfj(0, void 0, 79, 120),
+    bot_explosion_duj(350, void 0, -300, 300, 500)((action) => {
+      action.e_ray?.forEach(v => v.reverse = true)
+      return action;
+    }),
+    bot_explosion_duj(350, void 0, -300, 300, 500)((action) => {
+      action.action_id = 'dvj'
+      action.keys = [GK.Defend, GK.Down, GK.Jump]
+      action.e_ray?.forEach(v => v.reverse = true)
+      return action;
+    }),
   ).set_frames(
     [
       ...frames.standings,
       ...frames.walkings,
     ],
-    ['d>a_1', 'd>a_2', 'd>j']
+    ['d>a_1', 'd>a_2', 'd>j', 'd^j', 'dvj']
   )
   return data;
 }
