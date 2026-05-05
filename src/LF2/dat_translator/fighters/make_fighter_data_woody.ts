@@ -5,7 +5,7 @@ import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { bot_uppercut_dva } from "./bot_uppercut_dva";
 import { BotBuilder } from "./BotBuilder";
-import { DESIRE_RATIO_D_4 } from "./constants";
+import { DESIRE_RATIO_D_4, DESIRE_RATIO_X_4 } from "./constants";
 import { frames } from "./frames";
 
 
@@ -31,7 +31,7 @@ export function make_fighter_data_woody(data: IEntityData) {
     }),
 
     // c_d>j
-    bot_ball_dfj(200, 0.3, 50, 200)((a, c) => {
+    bot_ball_dfj(200, DESIRE_RATIO_X_4, 50, 200)((a, c) => {
       a.action_id = 'c_d>j'
       const ray = a.e_ray![0]
       a.e_ray?.push(
@@ -43,7 +43,7 @@ export function make_fighter_data_woody(data: IEntityData) {
     }),
 
     // d^a
-    bot_uppercut_dua(0, void 0, bot_uppercut_dua.MIN_X, bot_uppercut_dua.MAX_X),
+    bot_uppercut_dua(0, DESIRE_RATIO_X_4),
 
     // d^j
     bot_chasing_skill_action('d^j', void 0, 50, DESIRE_RATIO_D_4)((a, c) => {
@@ -55,7 +55,7 @@ export function make_fighter_data_woody(data: IEntityData) {
     bot_chasing_skill_action('dvj', void 0, 50, DESIRE_RATIO_D_4),
 
     // catching_d^a
-    bot_chasing_skill_action('d^a', 'catching_d^a', 0),
+    bot_chasing_skill_action('d^a', 'catching_d^a', 0, DESIRE_RATIO_X_4),
 
     // dva
     bot_uppercut_dva(0, void 0, 80, bot_uppercut_dua.MAX_X),
