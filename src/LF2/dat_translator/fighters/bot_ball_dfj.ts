@@ -17,7 +17,7 @@ const ID = 'd>j' as const
  */
 export function bot_ball_dfj(
   min_mp: number,
-  desire: number = DESIRE_RATIO,
+  desire: number = DESIRE_RATIO * 2,
   min_x: number = MIN_X,
   max_x?: number,
   zable?: number

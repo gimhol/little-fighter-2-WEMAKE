@@ -19,7 +19,7 @@ export function make_fighter_data_henry(data: IEntityData): IEntityData {
     w_atk_x: 350
   }).set_actions(
     // d>a
-    bot_ball_dfa(150, void 0, 120, 400),
+    bot_ball_dfa(150, void 0, 120, 800),
     // d>j
     bot_ball_dfj(200, void 0, 120, 1000, 0.3),
     // dja_1
