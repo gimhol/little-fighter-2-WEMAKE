@@ -27,7 +27,7 @@ export interface IZipResult {
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.26'
+  static readonly VERSION_NAME: string = 'v0.1.27'
   static readonly DATA_VERSION: number = 19;
   static readonly DATA_TYPE: string = 'DataZip';
 
