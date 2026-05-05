@@ -1,5 +1,5 @@
 export interface IFramePictureInfo {
-  /** 纹理ID */
+  /** 图片ID */
   tex: string;
   /** 裁剪起点X坐标（像素） */
   x: number;

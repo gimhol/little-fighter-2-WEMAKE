@@ -17,6 +17,7 @@ import type { IQubePair } from "./IQubePair";
 import type { IVelocityInfo } from "./IVelocityInfo";
 import type { IWpointInfo } from "./IWpointInfo";
 import type { StateEnum } from "./StateEnum";
+
 /**
  * 实体的帧信息
  *
@@ -29,26 +30,43 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    * 
    * 每个实体的帧ID不允许重复
    *
+   * 对应LF2 数据里`<frame> id name` 的 `id`;
+   * 
+   * LF2 的 `frame.id` 只能是 >= 0 && <= 399 的整帧数；
+   * 
+   * LFW 的 `frame.id` 则为字符串
+   * 
    * @type {string}
-   * @memberof IFrameInfo
    */
   id: string;
 
   /**
    * 帧名
-   *
+   * 
+   * 对应LF2数据里 `<frame> id name` 的 `name`；
+   * 
+   * 似乎仅仅用来方便人看的；
+   * 
    * @type {string}
-   * @memberof IFrameInfo
    */
   name: string;
 
+  
+  /**
+   * 帧的图片信息
+   * 
+   * LF2中, 这是个切图网格的索引数字；
+   * 
+   * LFW中，已改为通过图片ID+切图矩形表示；
+   * 
+   * @type {?IFramePictureInfo}
+   */
   pic?: IFramePictureInfo;
 
   /**
    *
    * @see {StateEnum}
    * @type {number}
-   * @memberof IFrameInfo
    */
   state: number | StateEnum;
 
@@ -58,7 +76,6 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    * 本帧持续多长时间
    * 
    * @type {number}
-   * @memberof IFrameInfo
    */
   wait: number;
 
@@ -162,6 +179,9 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   facing?: FacingFlag;
 
   landable?: number;
+
+  /* 为渲染层预留的玩意 */
+  __tex?: any;
 }
 
 export interface IChaseInfo {
