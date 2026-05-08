@@ -49,7 +49,7 @@ export class BgRender {
       if (!layer.is_static())
         this.layers.push(layer_render);
     }
-    this.world_renderer.world_node.add(this.root_node, this.cam_node);
+    this.world_renderer.bg_container.add(this.root_node, this.cam_node);
   }
 
   render(dt: number): void {
