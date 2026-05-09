@@ -5,7 +5,7 @@ import { floor } from "../LF2/utils";
 import * as T from "./_t";
 import styles from "./styles.module.scss";
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-const loader = new GLTFLoader();
+// const loader = new GLTFLoader();
 export class __Scene {
   readonly is_scene_node = true;
   protected _cameras = new Set<T.Camera>();
