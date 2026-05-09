@@ -495,7 +495,7 @@ function App() {
   useEffect(() => {
     if (!lf2) return;
     (lf2.pointings as __Pointings).set_element(ele_game_canvas);
-    (lf2.world.renderer as WorldRenderer).scene.set_canvas(ele_game_canvas);
+    (lf2.world.renderer as WorldRenderer).set_canvas(ele_game_canvas);
   }, [lf2, ele_game_canvas])
 
   useWorkspaces({ container: ele_root })

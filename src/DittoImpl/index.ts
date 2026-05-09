@@ -8,7 +8,6 @@ export * from "./Pointings";
 export * from "./RImageInfo";
 export * from "./RTextInfo";
 export * from "./Render";
-export * from "./Scene";
 export * from "./Timeout";
 export * from "./Zip";
 export * from "./__PointingEvent";
