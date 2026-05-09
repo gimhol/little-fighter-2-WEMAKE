@@ -37,3 +37,7 @@ export const is_nagative_int = (v: any): v is number => is_int(v) && v < 0;
 export const is_num_arr = (v: any): v is number[] => {
   return Array.isArray(v) && !v.some(v => Number.isNaN(v))
 }
+
+export const is_undefined_or_number = (v: any): v is undefined | number => {
+  return v == void 0 || is_num(v)
+}
