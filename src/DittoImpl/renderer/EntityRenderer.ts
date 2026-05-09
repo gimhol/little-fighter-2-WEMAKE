@@ -21,8 +21,8 @@ export class EntityRenderer {
   protected _indicators: number = 0;
 
   constructor(e: Entity) {
-    this.reset(e);
     this.world_renderer = e.world.renderer as WorldRenderer
+    this.reset(e);
   }
   reset(e: Entity) {
     this.entity = e;
