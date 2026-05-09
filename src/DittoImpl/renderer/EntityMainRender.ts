@@ -1,4 +1,4 @@
-import type { Entity, IEntityData, IFrameInfo, IFramePictureInfo, IVector3, TFace } from "@/LF2";
+import type { Entity, IEntityData, IFrameInfo, IFramePictureInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
 import { Builtin_FrameId, clamp, floor, LF2, random_in, round, StateEnum, World } from "@/LF2";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
@@ -10,7 +10,7 @@ import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
-  const { base: { files } } = data;
+  const { base: { files = {} } } = data;
   const images = lf2.images as ImageMgr
   for (const key of Object.keys(files)) {
     const img = images.find_by_pic_info(files[key]);
@@ -50,6 +50,7 @@ export class EntityMainRender {
   protected lf2!: LF2;
   protected prev_position!: IVector3;
   protected position!: IVector3;
+  protected files: Record<string, IPictureInfo> = {};
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
     this.reset(entity)
@@ -71,9 +72,10 @@ export class EntityMainRender {
     this.shaking_x = 0;
     const { lf2, data } = entity;
     this.variants.clear();
-    for (const k in data.base.files) {
-      if (data.base.files[k].variants)
-        this.variants.set(k, [k, ...data.base.files[k].variants]);
+    this.files = data.base.files ?? {}
+    for (const k in this.files) {
+      if (this.files[k].variants)
+        this.variants.set(k, [k, ...this.files[k].variants]);
       else this.variants.set(k, [k]);
     }
     this._data = entity.data;

@@ -47,7 +47,9 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
    */
   group?: string[];
 
-  files: Record<string, IPictureInfo | ILegacyPictureInfo>;
+  files?: Record<string, IPictureInfo | ILegacyPictureInfo>;
+
+  // models: Record<string, IModelInfo>;
 
   depth_test?: boolean;
 

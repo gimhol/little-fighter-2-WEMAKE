@@ -250,8 +250,10 @@ export default function EditorView(props: IEditorViewProps) {
     })
 
     const add = () => {
-      let i = Object.keys(editing_data.base.files).length;
-      while (('' + i) in editing_data.base.files) ++i;
+      const { files = {} } = editing_data.base
+      editing_data.base.files = files;
+      let i = Object.keys(files).length;
+      while (('' + i) in files) ++i;
       const pic_info: ILegacyPictureInfo = {
         row: 0,
         col: 0,
@@ -260,7 +262,7 @@ export default function EditorView(props: IEditorViewProps) {
         cell_w: 0,
         cell_h: 0,
       }
-      editing_data.base.files['' + i] = pic_info
+      files['' + i] = pic_info
       set_change_flag(change_flag + 1);
     }
     const header = <WorkspaceColumnView.TitleAndAdd title="实体图片" on_add={add} />

@@ -19,14 +19,15 @@ export function PicInfoEditorView(props: IFileEditorViewProps) {
       e.target.value = prev_id;
       return;
     }
-    if (next_id in data.base.files) {
+    const { files = {} } = data.base
+    if (next_id in files) {
       alert('ID不可重复')
       e.target.value = pic_info.id;
       return;
     }
-    delete data.base.files[prev_id];
+    delete files[prev_id];
     pic_info.id = next_id;
-    data.base.files[next_id] = pic_info;
+    files[next_id] = pic_info;
     traversal(data.frames, (_, { pic }) => {
       if (!pic) return;
       if (pic.tex.trim() === prev_id) {
@@ -43,14 +44,14 @@ export function PicInfoEditorView(props: IFileEditorViewProps) {
     on_changed?.();
   }
   const on_click_remove = () => {
-
+    const { files } = data.base;
     for (const k in data.frames) {
       if (data.frames[k].pic?.tex.trim() === pic_info.id) {
         alert(`已经被帧:${k}引用，不能删除!`)
         return;
       }
     }
-    delete data.base.files[pic_info.id]
+    if (files) delete files[pic_info.id]
     on_changed?.();
   }
   const { String, Strings, ImageFile: EditorImg } = useEditor(pic_info)
@@ -60,7 +61,7 @@ export function PicInfoEditorView(props: IFileEditorViewProps) {
       <Space vertical stretchs>
         <String field='id' title='图片索引id' onBlur={on_input_id_blur} />
         <EditorImg field='path' title='图片路径' clearable={false} />
-        <Strings field="variants" placeholder="图片索引id" title="变体"/>
+        <Strings field="variants" placeholder="图片索引id" title="变体" />
       </Space>
     </Frame>
   );
