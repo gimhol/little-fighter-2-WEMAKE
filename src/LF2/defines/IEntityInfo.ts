@@ -4,9 +4,9 @@ import type { IBotData } from "./IBotData";
 import type { IDrinkInfo } from "./IDrinkInfo";
 import type { IFramePictureInfo } from "./IFramePictureInfo";
 import type { ILegacyPictureInfo } from "./ILegacyPictureInfo";
+import type { IModelInfo } from "./IModelInfo";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IPictureInfo } from "./IPictureInfo";
-
 export interface IEntityInfo extends Partial<IWorldDataset> {
   type?: number;
 
@@ -49,7 +49,7 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
 
   files?: Record<string, IPictureInfo | ILegacyPictureInfo>;
 
-  // models: Record<string, IModelInfo>;
+  models?: Record<string, IModelInfo>;
 
   depth_test?: boolean;
 
