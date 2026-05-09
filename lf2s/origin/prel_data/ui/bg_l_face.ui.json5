@@ -1,13 +1,15 @@
 {
   id: "bg_l_face",
   name: "UI: 背景左边脸",
-  component: ["RandomVisible(bg_fighter_face)"],
+  component: [ "RandomVisible(bg_fighter_face)" ],
   size: "0, 450",
   items: [
     {
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK1.png",
       },
     },
@@ -15,6 +17,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK2.png",
       },
     },
@@ -22,6 +26,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK3.png",
       },
     },
@@ -29,6 +35,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK4.png",
       },
     },
@@ -36,6 +44,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK5.png",
       },
     },
@@ -43,6 +53,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK6.png",
       },
     },
@@ -50,6 +62,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK7.png",
       },
     },
@@ -57,6 +71,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK8.png",
       },
     },
@@ -64,6 +80,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK9.png",
       },
     },
@@ -71,6 +89,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK10.png",
       },
     },
@@ -78,6 +98,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK11.png",
       },
     },
@@ -85,6 +107,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK12.png",
       },
     },
@@ -92,6 +116,8 @@
       img: {
         w: 409,
         h: 546,
+        dw: 338,
+        dh: 450,
         path: "sprite/MENU_BACK13.png",
       },
     },

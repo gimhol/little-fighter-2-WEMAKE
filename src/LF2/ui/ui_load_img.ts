@@ -12,7 +12,7 @@ export async function ui_load_img(lf2: LF2, img: IUIImgInfo): Promise<ImageInfo>
   validate_ui_img_info(img, errors);
   if (errors.length) throw new Error(errors.join('\n'));
 
-  const { path, x, y, w = 0, h = 0, dw = w, dh = h, flip_x = 0, flip_y = 0 } = img;
+  const { path, x = 0, y = 0, w = 0, h = 0, dw = w, dh = h, flip_x = 0, flip_y = 0 } = img;
   const p = Ditto.MD5([x, y, w, h, dw, dh, flip_x, flip_y].join())
   const img_key = `${path}?x=${p}`;
   const ops: ImageOperation[] = []
