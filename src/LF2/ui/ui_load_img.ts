@@ -18,7 +18,7 @@ export async function ui_load_img(lf2: LF2, img: IUIImgInfo): Promise<ImageInfo>
   const ops: ImageOperation[] = []
   if (dw > 0 || dh > 0) {
     const op: IImageOp_Crop = {
-      type: "crop", ...img
+      type: "crop", x, y, w, h, dw, dh
     }
     ops.push(op)
   }
