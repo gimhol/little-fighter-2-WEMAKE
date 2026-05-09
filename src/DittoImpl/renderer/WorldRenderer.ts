@@ -31,23 +31,11 @@ export class WorldRenderer implements IWorldRenderer {
   protected _renderer?: WebGLRenderer;
   protected _css_renderer?: CSS2DRenderer;
   protected _canvas_ob = new MutationObserver(() => this.on_win_resize());
-  readonly scene: Scene = new Scene();
+  protected scene: Scene = new Scene();
   protected renderer_w: number = 0;
   protected renderer_h: number = 0;
+  indicators: number = 0;
 
-  private _indicator_flags: number = 0;
-  get indicator_flags() {
-    return this._indicator_flags;
-  }
-  set indicator_flags(v: number) {
-    if (this._indicator_flags === v) return;
-    this._indicator_flags = v;
-    for (const renderer of this.entity_renderers) {
-      this.ensure_stat(renderer)
-      this.ensure_indi(renderer)
-      this.ensure_ctrl(renderer)
-    }
-  }
   get cam_x(): number { return this.camera.position.x }
   set cam_x(v: number) { this.set_cam_pos(v, this.cam_y) }
   get cam_y(): number { return this.camera.position.y }
@@ -132,46 +120,11 @@ export class WorldRenderer implements IWorldRenderer {
     }
     window.addEventListener('resize', this.on_win_resize)
   }
-  ensure_ctrl(pack: EntityRenderer) {
-    if (!pack.ctrl && this._indicator_flags & INDICATINGS.ctrl) {
-      pack.ctrl = new EntityCtrlRender(pack.entity, this)
-      pack.ctrl.on_mount();
-    } else if (pack.ctrl) {
-      pack.ctrl.on_unmount();
-      pack.ctrl = null;
-    }
-  }
-  ensure_stat(pack: EntityRenderer) {
-    // Criminal...?
-    if (
-      is_fighter(pack.entity) ||
-      pack.entity.data.id === BuiltIn_OID.Criminal
-    ) {
-      if (!pack.stat) {
-        pack.stat = new EntityStatRender(pack.entity, this);
-        pack.stat.on_mount()
-      }
-    } else if (pack.stat) {
-      pack.stat.on_unmount();
-      pack.stat = null
-    }
-  }
-  ensure_indi(pack: EntityRenderer) {
-    if (this._indicator_flags ^ INDICATINGS.ctrl) {
-      if (!pack.indi) pack.indi = new FrameIndicators(pack.entity);
-      pack.indi.flags = this._indicator_flags
-    } else if (pack.indi) {
-      pack.indi.on_unmount();
-      pack.indi = null
-    }
-  }
+
   add_entity(entity: Entity): void {
     const pack: EntityRenderer = entity.renderer ? entity.renderer : (
       entity.renderer = new EntityRenderer(entity)
     );
-    this.ensure_stat(pack)
-    this.ensure_ctrl(pack)
-    this.ensure_indi(pack)
     pack.mount();
     this.entity_renderers.add(pack)
   }
@@ -191,8 +144,8 @@ export class WorldRenderer implements IWorldRenderer {
       z + this.world_offset.z
     );
     this.world_node.scale.set(scale_x, scale_y, scale_z);
-    if (indicator_flags != this.indicator_flags)
-      this.indicator_flags = indicator_flags;
+    if (indicator_flags != this.indicators)
+      this.indicators = indicator_flags;
     this.bg_render.render(dt);
     for (const renderer of this.entity_renderers)
       renderer.render(dt)
