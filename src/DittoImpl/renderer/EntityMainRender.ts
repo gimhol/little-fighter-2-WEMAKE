@@ -1,5 +1,6 @@
-import type { Entity, IEntityData, IFrameInfo, IFramePictureInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
+import type { Entity, IEntityData, IFrameInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
 import { Builtin_FrameId, clamp, floor, LF2, random_in, round, StateEnum, World } from "@/LF2";
+import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import * as T from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
@@ -8,6 +9,7 @@ import { get_geometry } from "./GeometryKeeper";
 import { OutlineMaterial } from "./materials/OutlineMaterial";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
+
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
   const { base: { files = {} } } = data;
@@ -20,30 +22,25 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
 }
 const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
 const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
+
 export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
-
   protected _game_time: number = -1;
   protected _time: number = 0;
   protected images!: Map<string, RImageInfo>;
-  entity!: Entity;
+  protected entity!: Entity;
   protected node!: T.Object3D;
   protected main_mesh!: T.Mesh<T.BufferGeometry, OutlineMaterial>;
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
-
-  protected variants = new Map<string, string[]>();
+  protected file_variants = new Map<string, string[]>();
   protected shaking: number = 0;
   protected shaking_x: number = 0;
   protected _data?: IEntityData;
-
   protected _frame?: IFrameInfo;
   protected _facing?: TFace;
   protected _x?: number;
   protected _y?: number;
   protected _z?: number;
-  protected x = 0;
-  protected y = 0;
-  protected z = 0;
   protected offset_x: number = 0;
   protected offset_y: number = 0;
   protected world!: World;
@@ -51,11 +48,13 @@ export class EntityMainRender {
   protected prev_position!: IVector3;
   protected position!: IVector3;
   protected files: Record<string, IPictureInfo> = {};
+  protected models: Record<string, IModelInfo> = {};
+
+  protected model_variants = new Map<string, string[]>();
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
     this.reset(entity)
   }
-
   reset(entity: Entity) {
     this.entity = entity
     this.world = entity.world
@@ -65,19 +64,30 @@ export class EntityMainRender {
     this._x = void 0;
     this._y = void 0;
     this._z = void 0;
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
     this.shaking = 0;
     this.shaking_x = 0;
     const { lf2, data } = entity;
-    this.variants.clear();
-    this.files = data.base.files ?? {}
-    for (const k in this.files) {
-      if (this.files[k].variants)
-        this.variants.set(k, [k, ...this.files[k].variants]);
-      else this.variants.set(k, [k]);
+    this.file_variants.clear();
+    const files = this.files = data.base.files ?? {}
+    for (const k in files) {
+      const file = files[k]
+      if (file.variants?.length) {
+        this.file_variants.set(k, [k, ...file.variants]);
+      } else {
+        this.file_variants.set(k, [k]);
+      }
     }
+
+    const models = this.models = data.base.models ?? {}
+    for (const k in files) {
+      const model = models[k]
+      if (model.variants?.length) {
+        this.model_variants.set(k, [k, ...model.variants]);
+      } else {
+        this.model_variants.set(k, [k]);
+      }
+    }
+
     this._data = entity.data;
     this.images = get_img_map(lf2, entity.data);
 
@@ -109,9 +119,6 @@ export class EntityMainRender {
     this.node = this.node || new T.Object3D();
     this.prev_position = this.entity.position.clone()
     this.position = this.entity.position.clone()
-
-
-
   }
 
   on_mount() {
@@ -129,31 +136,6 @@ export class EntityMainRender {
     this.blood_mesh.removeFromParent();
     this.node.removeFromParent();
   }
-
-  apply_tex(entity: Entity, info: IFramePictureInfo | undefined) {
-    const { images, main_mesh } = this
-    if (!info) return;
-
-    const { tex } = info;
-    const real_tex = this.variants.get(tex)?.at(entity.variant) ?? tex;
-
-    const img = images.get(real_tex);
-    if (!img?.pic) return;
-    const { x, y, w, h } = info;
-    main_mesh.scale.set(w, h, 0);
-    const { material: m } = main_mesh;
-    m.uniforms.tex.value = img.pic.texture;
-    m.uniforms.tw.value = img.w;
-    m.uniforms.th.value = img.h;
-    m.uniforms.tsw.value = img.scale;
-    m.uniforms.tsh.value = img.scale;
-    m.uniforms.x.value = x;
-    m.uniforms.y.value = y;
-    m.uniforms.w.value = w;
-    m.uniforms.h.value = h;
-    m.uniforms.flipX.value = entity.facing
-  }
-
   update_shaking(dt: number) {
     const { entity: { shaking, facing } } = this;
     if (shaking == this.shaking) return;
@@ -173,29 +155,47 @@ export class EntityMainRender {
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
-
     if (
-      this._x !== x ||
-      this._y !== y ||
-      this._z !== z ||
       this._frame !== frame ||
       this._facing !== facing
     ) {
-      this._x = x;
-      this._y = y;
-      this._z = z;
       this._frame = frame;
       this._facing = facing;
-      const pic = frame.pic
-      this.apply_tex(entity, pic)
+      const { pic } = frame
+      const { variant } = entity;
+      const { images, main_mesh } = this
+      if (pic) {
+        let { tex } = pic;
+        if (variant) do {
+          const variants = this.file_variants.get(tex);
+          if (!variants?.length) break;
+          tex = variants[variant]
+        } while (0);
+        const img = images.get(tex);
+        if (img?.pic) {
+          const { x, y, w, h } = pic;
+          main_mesh.scale.set(w, h, 0);
+          const { material: m } = main_mesh;
+          m.uniforms.tex.value = img.pic.texture;
+          m.uniforms.tw.value = img.w;
+          m.uniforms.th.value = img.h;
+          m.uniforms.tsw.value = img.scale;
+          m.uniforms.tsh.value = img.scale;
+          m.uniforms.x.value = x;
+          m.uniforms.y.value = y;
+          m.uniforms.w.value = w;
+          m.uniforms.h.value = h;
+          m.uniforms.flipX.value = entity.facing;
+        }
+      }
       const { centerx, centery, state } = frame;
       const offset_x = entity.facing === 1 ? centerx : main_mesh.scale.x - centerx;
       if (state === StateEnum.Message) {
-        let { cam_x } = this.entity.world.renderer;
-        let cam_r = cam_x + this.entity.world.screen_w;
-        cam_r -= main_mesh.scale.x - offset_x
-        cam_x += offset_x
-        x = clamp(x, cam_x, cam_r)
+        let { cam_x: l } = this.entity.world.renderer;
+        let r = l + this.entity.world.screen_w;
+        r -= main_mesh.scale.x - offset_x
+        l += offset_x
+        x = clamp(x, l, r)
       }
       this.offset_x = -offset_x;
       this.offset_y = centery;
@@ -207,22 +207,33 @@ export class EntityMainRender {
         this.offset_y -= (cc.y - c1y)
         main_mesh.setRotationFromAxisAngle(vec001, pic.r)
       }
-      this.x = round(x);
-      this.y = round(y - z / 2);
-      this.z = round(z);
-      this.node.position.set(this.x, this.y, this.z)
     }
+
+    if (this._x !== x || this._y !== y || this._z !== z) {
+      this._x = x;
+      this._y = y;
+      this._z = z;
+      this.node.position.set(
+        round(x),
+        round(y - z / 2),
+        round(z),
+      )
+    }
+
     main_mesh.position.set(
       this.offset_x + this.shaking_x,
       this.offset_y,
       0
     );
-    const visible = !entity.invisible;
-    const blinking = !!entity.blinking;
-    main_mesh.visible = visible;
-    if (blinking && visible) {
-      main_mesh.visible = 0 === Math.floor(entity.blinking / 4) % 2;
+    const { invisible, blinking } = entity;
+    if (invisible) {
+      main_mesh.visible = false;
+    } if (blinking) {
+      main_mesh.visible = 0 === floor(blinking / 4) % 2;
+    } else {
+      main_mesh.visible = true;
     }
+
     this.render_bpoint();
     this.render_outline();
     if (this.lf2.ui?.id == "main_page") {
@@ -236,7 +247,7 @@ export class EntityMainRender {
     }
   }
   private render_outline() {
-    const { main_mesh } = this;
+    const { main_mesh: main_mesh } = this;
     if (this.entity.is_ghost) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
@@ -251,7 +262,7 @@ export class EntityMainRender {
     }
   }
   private render_bpoint() {
-    const { entity, main_mesh } = this;
+    const { entity, main_mesh: main_mesh } = this;
     const { bpoint } = entity.frame
     const visible = !!bpoint && main_mesh.visible && entity.hp < entity.hp_max * 0.33;
     this.blood_mesh.visible = visible
