@@ -4,7 +4,7 @@ import { LF2 } from "../LF2/LF2";
 import { floor } from "../LF2/utils";
 import * as T from "./_t";
 import styles from "./styles.module.scss";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 const loader = new GLTFLoader();
 export class __Scene {
   readonly is_scene_node = true;
@@ -22,24 +22,24 @@ export class __Scene {
     this.lf2 = lf2;
     window.addEventListener('resize', this.on_win_resize)
 
-    lf2.import_resource('builtin_data/model/basketball.glb', true).then(([blob_url]) => {
-      console.log(blob_url)
-      return loader.load(blob_url, gltf => {
-        const model = gltf.scene;
-        gltf.animations.find(v => v.name = '')
-        model.position.set(200, 200, 0);
-        model.scale.set(20, 20, 20)
-        this.inner.add(model);
-        const light = new T.AmbientLight(0xffffff, 0.3);
-        this.inner.add(light);
-        const light2 = new T.DirectionalLight(0xffffff, 1);
-        light2.position.set(5, 10, 5);
+    // lf2.import_resource('builtin_data/model/basketball.glb', true).then(([blob_url]) => {
+    //   console.log(blob_url)
+    //   return loader.load(blob_url, gltf => {
+    //     const model = gltf.scene;
+    //     gltf.animations.find(v => v.name = '')
+    //     model.position.set(200, 200, 0);
+    //     model.scale.set(20, 20, 20)
+    //     this.inner.add(model);
+    //     const light = new T.AmbientLight(0xffffff, 0.3);
+    //     this.inner.add(light);
+    //     const light2 = new T.DirectionalLight(0xffffff, 1);
+    //     light2.position.set(5, 10, 5);
 
-        this.inner.add(light2);
-      });
-    }).catch(e => {
-      console.warn('!!', e)
-    })
+    //     this.inner.add(light2);
+    //   });
+    // }).catch(e => {
+    //   console.warn('!!', e)
+    // })
   }
   on_win_resize = () => {
     if (!this._css_renderer || !this._renderer) return;
