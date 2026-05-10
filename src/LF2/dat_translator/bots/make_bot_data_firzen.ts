@@ -5,12 +5,12 @@ import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_action } from "./bot_chasing_action";
 import { bot_explosion_dua } from "./bot_explosion_dua";
 import { bot_explosion_duj } from "./bot_explosion_duj";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
 
-export function make_bot_data_firzen(): BotBuilder {
-  return new BotBuilder(OID.Firzen).set_actions(
+export function make_bot_data_firzen(): BotMaker {
+  return new BotMaker(OID.Firzen).set_actions(
     // d^a
     bot_ball_dfj(50, void 0),
 
@@ -37,4 +37,4 @@ export function make_bot_data_firzen(): BotBuilder {
   )
 }
 
-BotBuilder.register(OID.Firzen, make_bot_data_firzen)
+BotMaker.register(OID.Firzen, make_bot_data_firzen)

@@ -1,9 +1,9 @@
 import { GK, IEntityData } from "../../defines";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_explosion_duj } from "./bot_explosion_duj";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_explosion_duj } from "../bots/bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 /**
  *

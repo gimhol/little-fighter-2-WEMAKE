@@ -7,12 +7,12 @@ import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_explosion_dua } from "./bot_explosion_dua";
 import { bot_uppercut_dva } from "./bot_uppercut_dva";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
 
-export function make_bot_data_dennis(): BotBuilder {
-  return new BotBuilder(OID.Dennis).set_actions(
+export function make_bot_data_dennis(): BotMaker {
+  return new BotMaker(OID.Dennis).set_actions(
     // d>a
     bot_ball_dfa(40, void 0, 50),
 
@@ -95,4 +95,4 @@ export function make_bot_data_dennis(): BotBuilder {
   );
 }
 
-BotBuilder.register(OID.Dennis, make_bot_data_dennis)
+BotMaker.register(OID.Dennis, make_bot_data_dennis)

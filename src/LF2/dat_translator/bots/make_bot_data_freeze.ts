@@ -3,12 +3,12 @@ import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_explosion_duj } from "./bot_explosion_duj";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
 
-export function make_bot_data_freeze(): BotBuilder {
-  return new BotBuilder(OID.Freeze).set_actions(
+export function make_bot_data_freeze(): BotMaker {
+  return new BotMaker(OID.Freeze).set_actions(
     // d>a
     bot_ball_dfa(100, void 0, 50)(e => {
       e.e_ray?.push(
@@ -45,4 +45,4 @@ export function make_bot_data_freeze(): BotBuilder {
   );
 }
 
-BotBuilder.register(OID.Freeze, make_bot_data_freeze)
+BotMaker.register(OID.Freeze, make_bot_data_freeze)

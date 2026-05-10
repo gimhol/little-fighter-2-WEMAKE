@@ -2,11 +2,11 @@ import { GK, OID } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_explosion_duj } from "./bot_explosion_duj";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-export function make_bot_data_henry(): BotBuilder {
-  return new BotBuilder(OID.Henry).set_dataset({
+export function make_bot_data_henry(): BotMaker {
+  return new BotMaker(OID.Henry).set_dataset({
     w_atk_m_x: 120,
     w_atk_r_x: 250,
     w_atk_x: 350
@@ -41,4 +41,4 @@ export function make_bot_data_henry(): BotBuilder {
 }
 
 
-BotBuilder.register(OID.Henry, make_bot_data_henry)
+BotMaker.register(OID.Henry, make_bot_data_henry)

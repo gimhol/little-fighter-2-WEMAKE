@@ -6,11 +6,11 @@ import { bot_chasing_action } from "./bot_chasing_action";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_explosion_duj } from "./bot_explosion_duj";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-export function make_bot_data_julian(): BotBuilder {
-  return new BotBuilder(OID.Julian).set_actions(
+export function make_bot_data_julian(): BotMaker {
+  return new BotMaker(OID.Julian).set_actions(
 
     // ball
     bot_chasing_skill_action('d>a', void 0, 25, 1 / 60),
@@ -61,4 +61,4 @@ export function make_bot_data_julian(): BotBuilder {
 
 }
 
-BotBuilder.register(OID.Julian, make_bot_data_julian)
+BotMaker.register(OID.Julian, make_bot_data_julian)

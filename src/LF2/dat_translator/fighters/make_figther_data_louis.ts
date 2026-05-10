@@ -1,11 +1,11 @@
 import { ArmorEnum, EntityVal, IEntityData } from "../../defines";
 import { CondMaker } from "../CondMaker";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
-import { bot_uppercut_duj } from "./bot_uppercut_duj";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_chasing_skill_action } from "../bots/bot_chasing_skill_action";
+import { bot_uppercut_duj } from "../bots/bot_uppercut_duj";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 /**
  *

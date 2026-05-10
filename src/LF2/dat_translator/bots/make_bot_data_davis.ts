@@ -6,12 +6,11 @@ import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_chasing_action } from "./bot_chasing_action";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { bot_uppercut_dva } from "./bot_uppercut_dva";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-
-export function make_bot_data_davis(): BotBuilder {
-  return new BotBuilder(O_ID.Davis).set_actions(
+export function make_bot_data_davis(): BotMaker {
+  return new BotMaker(O_ID.Davis).set_actions(
     // d>a
     bot_ball_dfa(50, void 0, 50),
 
@@ -89,4 +88,4 @@ export function make_bot_data_davis(): BotBuilder {
     ["d^j+a"]
   )
 }
-BotBuilder.register(O_ID.Davis, make_bot_data_davis)
+BotMaker.register(O_ID.Davis, make_bot_data_davis)

@@ -1,10 +1,10 @@
 import { BotStateEnum, BotVal, EntityVal as E_Val, GK, IEntityData, StateEnum } from "../../defines";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_chasing_action } from "./bot_chasing_action";
-import { bot_idle_action } from "./bot_idle_action";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_chasing_action } from "../bots/bot_chasing_action";
+import { bot_idle_action } from "../bots/bot_idle_action";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 
 export function make_fighter_data_john(data: IEntityData) {

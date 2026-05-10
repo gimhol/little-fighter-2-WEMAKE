@@ -4,11 +4,11 @@ import {
   StateEnum
 } from "../../defines";
 import { ensure } from "../../utils";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_chasing_skill_action } from "../bots/bot_chasing_skill_action";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 export function make_fighter_data_bat(data: IEntityData) {
   data.base.group = ensure(data.base.group, EntityGroup.Boss);

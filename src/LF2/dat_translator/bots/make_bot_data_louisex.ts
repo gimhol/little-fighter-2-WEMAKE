@@ -3,11 +3,11 @@ import { arithmetic_progression } from "../../utils";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_uppercut_dva } from "./bot_uppercut_dva";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-export function make_bot_data_louisex(): BotBuilder {
-  return new BotBuilder(OID.LouisEX).set_actions(
+export function make_bot_data_louisex(): BotMaker {
+  return new BotMaker(OID.LouisEX).set_actions(
     // d>a
     bot_ball_dfa(100, void 0, 150, 400),
     // `d>a+a`
@@ -34,4 +34,4 @@ export function make_bot_data_louisex(): BotBuilder {
   });
 }
 
-BotBuilder.register(OID.LouisEX, make_bot_data_louisex)
+BotMaker.register(OID.LouisEX, make_bot_data_louisex)

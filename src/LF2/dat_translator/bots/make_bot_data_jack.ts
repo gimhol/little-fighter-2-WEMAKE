@@ -5,12 +5,12 @@ import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
 
-export function make_bot_data_jack(): BotBuilder {
-  return new BotBuilder(OID.Jack).set_actions(
+export function make_bot_data_jack(): BotMaker {
+  return new BotMaker(OID.Jack).set_actions(
     // d>a
     bot_ball_dfa(40, void 0, 50),
 
@@ -37,4 +37,4 @@ export function make_bot_data_jack(): BotBuilder {
   );
 }
 
-BotBuilder.register(OID.Jack, make_bot_data_jack)
+BotMaker.register(OID.Jack, make_bot_data_jack)

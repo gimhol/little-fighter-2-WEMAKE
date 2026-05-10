@@ -1,5 +1,5 @@
 /*** AUTO EXPORT START ***/
-export * from "./BotBuilder";
+export * from "./BotMaker";
 export * from "./IEditBotAction";
 export * from "./bot_ball_cancelling";
 export * from "./bot_ball_continuation";

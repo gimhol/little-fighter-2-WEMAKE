@@ -1,8 +1,8 @@
 import { Defines, IEntityData } from "../../defines";
-import { bot_explosion_dua } from "./bot_explosion_dua";
-import { bot_explosion_duj } from "./bot_explosion_duj";
+import { bot_explosion_dua } from "../bots/bot_explosion_dua";
+import { bot_explosion_duj } from "../bots/bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 export function make_fighter_data_jan(data: IEntityData) {
   data.base.strength = Defines.FIGHTER_STREAGTH_WEAK

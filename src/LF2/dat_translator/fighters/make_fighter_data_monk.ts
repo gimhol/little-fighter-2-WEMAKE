@@ -1,8 +1,8 @@
 import { GK, IEntityData } from "../../defines";
 import { arithmetic_progression } from "../../utils";
-import { bot_ball_dfa } from "./bot_ball_dfa";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 export function make_fighter_data_monk(data: IEntityData) {
   BotBuilder.make(data).set_actions(

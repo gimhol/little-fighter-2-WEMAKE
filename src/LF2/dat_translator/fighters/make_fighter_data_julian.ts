@@ -1,13 +1,13 @@
 import { ArmorEnum, BotVal, BuiltIn_OID, Defines, EntityGroup, EntityVal, GK, IEntityData, StateEnum } from "../../defines";
 import { ensure } from "../../utils";
 import { CondMaker } from "../CondMaker";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_chasing_action } from "./bot_chasing_action";
-import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
-import { bot_explosion_duj } from "./bot_explosion_duj";
-import { bot_uppercut_dua } from "./bot_uppercut_dua";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_chasing_action } from "../bots/bot_chasing_action";
+import { bot_chasing_skill_action } from "../bots/bot_chasing_skill_action";
+import { bot_explosion_duj } from "../bots/bot_explosion_duj";
+import { bot_uppercut_dua } from "../bots/bot_uppercut_dua";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 export function make_fighter_data_julian(data: IEntityData) {
   data.base.strength = Defines.FIGHTER_STREAGTH_STRONG

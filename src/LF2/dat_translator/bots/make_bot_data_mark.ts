@@ -4,11 +4,11 @@ import { foreach } from "../../utils/container_help/foreach";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_action } from "./bot_chasing_action";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-export function make_bot_data_mark(): BotBuilder {
-  return new BotBuilder(OID.Mark).set_actions(
+export function make_bot_data_mark(): BotMaker {
+  return new BotMaker(OID.Mark).set_actions(
     // d>a
     bot_ball_dfa(0, void 0, 0, 80, 0.1)(a => {
       foreach(a.e_ray, r => r.max_d = 1600)
@@ -55,4 +55,4 @@ export function make_bot_data_mark(): BotBuilder {
   );
 }
 
-BotBuilder.register(OID.Mark, make_bot_data_mark)
+BotMaker.register(OID.Mark, make_bot_data_mark)

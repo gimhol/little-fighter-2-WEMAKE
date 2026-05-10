@@ -1,11 +1,11 @@
 import { BotVal, Defines, GK, IEntityData } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { foreach } from "../../utils/container_help/foreach";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_chasing_action } from "./bot_chasing_action";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_chasing_action } from "../bots/bot_chasing_action";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 export function make_fighter_data_mark(data: IEntityData) {
   data.base.strength = Defines.FIGHTER_STREAGTH_STRONG

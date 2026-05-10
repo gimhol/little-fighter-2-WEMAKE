@@ -3,11 +3,11 @@ import { arithmetic_progression } from "../../utils";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_chasing_action } from "./bot_chasing_action";
 import { bot_front_test } from "./bot_front_test";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-export function make_bot_data_justin(): BotBuilder {
-  return new BotBuilder(OID.Justin).set_actions(
+export function make_bot_data_justin(): BotMaker {
+  return new BotMaker(OID.Justin).set_actions(
     // d>a
     bot_ball_dfa(75, void 0, 50, 200),
 
@@ -32,4 +32,4 @@ export function make_bot_data_justin(): BotBuilder {
   );
 }
 
-BotBuilder.register(OID.Justin, make_bot_data_justin)
+BotMaker.register(OID.Justin, make_bot_data_justin)

@@ -3,11 +3,11 @@ import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_uppercut_duj } from "./bot_uppercut_duj";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-export function make_bot_data_louis(): BotBuilder {
-  return new BotBuilder(OID.Louis).set_actions(
+export function make_bot_data_louis(): BotMaker {
+  return new BotMaker(OID.Louis).set_actions(
     // d>a
     bot_ball_dfa(150, void 0, 120, 800),
     // d>j
@@ -33,5 +33,5 @@ export function make_bot_data_louis(): BotBuilder {
   )
 }
 
-BotBuilder.register(OID.Louis, make_bot_data_louis)
+BotMaker.register(OID.Louis, make_bot_data_louis)
 

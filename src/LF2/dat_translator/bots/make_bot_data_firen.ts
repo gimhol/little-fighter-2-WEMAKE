@@ -4,11 +4,11 @@ import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_explosion_duj } from "./bot_explosion_duj";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
 
-export function make_bot_data_firen(): BotBuilder {
-  return new BotBuilder(OID.Firen).set_actions(
+export function make_bot_data_firen(): BotMaker {
+  return new BotMaker(OID.Firen).set_actions(
     // d>a
     bot_ball_dfa(75, void 0, 50),
 
@@ -84,4 +84,4 @@ export function make_bot_data_firen(): BotBuilder {
   );
 }
 
-BotBuilder.register(OID.Firen, make_bot_data_firen)
+BotMaker.register(OID.Firen, make_bot_data_firen)

@@ -2,11 +2,11 @@
 import { GK, IEntityData, StateEnum } from "../../defines";
 import { probability } from "../../utils/math/probability";
 import { arithmetic_progression } from "../../utils";
-import { bot_ball_continuation } from "./bot_ball_continuation";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_uppercut_dua } from "./bot_uppercut_dua";
+import { bot_ball_continuation } from "../bots/bot_ball_continuation";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_uppercut_dua } from "../bots/bot_uppercut_dua";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 
 export function make_fighter_data_jack(data: IEntityData) {

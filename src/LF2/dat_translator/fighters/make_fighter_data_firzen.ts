@@ -6,13 +6,13 @@ import {
 } from "../../defines";
 import { ensure } from "../../utils";
 import { probability } from "../../utils/math/probability";
-import { bot_ball_cancelling } from "./bot_ball_cancelling";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_chasing_action } from "./bot_chasing_action";
-import { bot_explosion_dua } from "./bot_explosion_dua";
-import { bot_explosion_duj } from "./bot_explosion_duj";
+import { bot_ball_cancelling } from "../bots/bot_ball_cancelling";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_chasing_action } from "../bots/bot_chasing_action";
+import { bot_explosion_dua } from "../bots/bot_explosion_dua";
+import { bot_explosion_duj } from "../bots/bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 
 export function make_fighter_data_firzen(data: IEntityData) {

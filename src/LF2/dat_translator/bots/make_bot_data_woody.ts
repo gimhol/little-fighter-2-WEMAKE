@@ -4,13 +4,13 @@ import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { bot_uppercut_dva } from "./bot_uppercut_dva";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 import { DESIRE_RATIO_D_4, DESIRE_RATIO_X_4 } from "./constants";
 import { frames } from "./frames";
 
 
-export function make_bot_data_woody(): BotBuilder {
-  return new BotBuilder(OID.Woody).set_actions(
+export function make_bot_data_woody(): BotMaker {
+  return new BotMaker(OID.Woody).set_actions(
     // d>a
     bot_ball_dfa(125, void 0, 50)(e => {
       const ray = e.e_ray![0]
@@ -84,4 +84,4 @@ export function make_bot_data_woody(): BotBuilder {
   );
 }
 
-BotBuilder.register(OID.Woody, make_bot_data_woody)
+BotMaker.register(OID.Woody, make_bot_data_woody)

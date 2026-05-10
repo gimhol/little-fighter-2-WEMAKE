@@ -4,10 +4,10 @@ import { IBotDataSet } from "../../defines/IBotDataSet";
 import { find } from "../../utils/container_help/find";
 import { traversal } from "../../utils/container_help/traversal";
 
-export class BotBuilder {
-  static builders = new Map<string, () => BotBuilder>();
-  static register(oid: string, func: () => BotBuilder) {
-    this.builders.set(oid, func);
+export class BotMaker {
+  static makers = new Map<string, () => BotMaker>();
+  static register(oid: string, func: () => BotMaker) {
+    this.makers.set(oid, func);
   }
   protected readonly _bot: IBotData
   constructor(oid: string) {

@@ -1,8 +1,8 @@
 import { OID } from "../../defines";
-import { BotBuilder } from "./BotBuilder";
+import { BotMaker } from "./BotMaker";
 
-export function make_bot_data_knight(): BotBuilder {
-  return new BotBuilder(OID.Knight).set_dataset({
+export function make_bot_data_knight(): BotMaker {
+  return new BotMaker(OID.Knight).set_dataset({
     w_atk_x: 90,
     j_atk_x: 90,
     d_atk_x: 200,
@@ -10,4 +10,4 @@ export function make_bot_data_knight(): BotBuilder {
   })
 }
 
-BotBuilder.register(OID.Knight, make_bot_data_knight)
+BotMaker.register(OID.Knight, make_bot_data_knight)

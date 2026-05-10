@@ -1,10 +1,10 @@
 import { Defines, EntityGroup, IEntityData } from "../../defines";
 import { arithmetic_progression, ensure } from "../../utils";
-import { bot_ball_continuation } from "./bot_ball_continuation";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_uppercut_dva } from "./bot_uppercut_dva";
+import { bot_ball_continuation } from "../bots/bot_ball_continuation";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_uppercut_dva } from "../bots/bot_uppercut_dva";
 import { BotBuilder } from "./BotBuilder";
-import { frames } from "./frames";
+import { frames } from "../bots/frames";
 
 /**
  * @param data 

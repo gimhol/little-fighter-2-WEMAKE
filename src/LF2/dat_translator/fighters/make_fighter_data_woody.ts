@@ -1,12 +1,12 @@
 import { BotVal, IEntityData, StateEnum } from "../../defines";
-import { bot_ball_dfa } from "./bot_ball_dfa";
-import { bot_ball_dfj } from "./bot_ball_dfj";
-import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
-import { bot_uppercut_dua } from "./bot_uppercut_dua";
-import { bot_uppercut_dva } from "./bot_uppercut_dva";
+import { bot_ball_dfa } from "../bots/bot_ball_dfa";
+import { bot_ball_dfj } from "../bots/bot_ball_dfj";
+import { bot_chasing_skill_action } from "../bots/bot_chasing_skill_action";
+import { bot_uppercut_dua } from "../bots/bot_uppercut_dua";
+import { bot_uppercut_dva } from "../bots/bot_uppercut_dva";
 import { BotBuilder } from "./BotBuilder";
-import { DESIRE_RATIO_D_4, DESIRE_RATIO_X_4 } from "./constants";
-import { frames } from "./frames";
+import { DESIRE_RATIO_D_4, DESIRE_RATIO_X_4 } from "../bots/constants";
+import { frames } from "../bots/frames";
 
 
 export function make_fighter_data_woody(data: IEntityData) {
