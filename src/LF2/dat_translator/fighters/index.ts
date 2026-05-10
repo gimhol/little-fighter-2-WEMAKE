@@ -1,5 +1,4 @@
 /*** AUTO EXPORT START ***/
-export * from "./BotBuilder";
 export * from "./make_fighter_data_bat";
 export * from "./make_fighter_data_davis";
 export * from "./make_fighter_data_deep";

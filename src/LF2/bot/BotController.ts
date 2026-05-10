@@ -630,7 +630,8 @@ export class BotController extends BaseController {
   }
 
   check_bot(): void {
-    const { bot, bot_id } = this.entity.data.base;
+    const { id: oid } = this.entity.data
+    const { bot, bot_id = oid } = this.entity.data.base;
     if (bot && bot === this._bot) return
     if (bot && bot !== this._bot) {
       Object.assign(this.dataset, BotDataSet.Default, bot.dataset)

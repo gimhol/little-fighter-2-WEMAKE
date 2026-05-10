@@ -12,7 +12,7 @@ export class BotMaker {
   protected readonly _bot: IBotData
   constructor(oid: string) {
     this._bot = {
-      id: 'bot_' + oid,
+      id: oid,
       oid: oid,
       actions: {},
     }
