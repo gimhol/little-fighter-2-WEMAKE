@@ -19,7 +19,6 @@ export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
   const bdy_list = frame.bdy ? frame.bdy : (frame.bdy = []);
   const new_bdy: IBdyInfo[] = [];
   for (const bdy of bdy_list) {
-
     const cond = new CondMaker<C_Val>()
       .add(C_Val.ItrKind, "!=", ItrKind.JohnShield)
       .and(C_Val.ItrKind, "!=", ItrKind.Block)
@@ -67,7 +66,8 @@ export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
             .and(C_Val.AttackerType, "==", EntityEnum.Fighter)
             .and(C_Val.ItrKind, "==", ItrKind.Normal)
             .and(C_Val.ItrEffect, "!=", ItrEffect.Ice)
-            .and(C_Val.ItrEffect, "!=", ItrEffect.MFire1),
+            .and(C_Val.ItrEffect, "!=", ItrEffect.MFire1)
+            .and(C_Val.ItrEffect, "!=", ItrEffect.Fire),
           )
           .or((c) => c
             // 队友角色的攻击必须相向才能反弹气功波
@@ -111,7 +111,6 @@ export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
         }]
       }),
     );
-
   }
   bdy_list.push(...new_bdy);
 

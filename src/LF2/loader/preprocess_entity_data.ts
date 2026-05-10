@@ -1,5 +1,8 @@
+import { make_weapon_special } from "../dat_translator";
+import { make_ball_special } from "../dat_translator/make_ball_special";
 import { IEntityData } from "../defines";
 import { Ditto } from "../ditto";
+import { is_ball_data, is_weapon_data } from "../entity";
 import { LF2 } from "../LF2";
 import { is_non_blank_str } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
@@ -11,8 +14,11 @@ import { preprocess_pic } from "./preprocess_pic";
 
 export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
   const { images, sounds } = lf2;
-
   const { small, head } = data.base;
+
+  if (is_ball_data(data)) make_ball_special(data)
+  if (is_weapon_data(data)) make_weapon_special(data)
+
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));
   is_non_blank_str(head) && jobs.push(images.load_img(head, head));
   data.base.dead_sounds?.forEach(i => is_non_blank_str(i) && sounds.load(i, i));

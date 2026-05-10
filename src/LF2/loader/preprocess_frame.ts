@@ -1,7 +1,7 @@
 import { LF2 } from "../LF2";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
 import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
-import { EntityEnum, FacingFlag as FF, FrameBehavior, IFrameInfo, OpointSpreading } from "../defines";
+import { EntityEnum, FacingFlag as FF, FrameBehavior, IFrameInfo, OpointSpreading, StateEnum } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
 import { Randoming } from "../helper/Randoming";
@@ -14,8 +14,9 @@ import { preprocess_itr } from "./preprocess_itr";
 import { preprocess_next_frame } from "./preprocess_next_frame";
 
 export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
-
   cook_frame_indicator_info(frame);
+
+
   if (is_weapon_data(data) || is_ball_data(data))
     make_frame_behavior(frame, data.id);
 

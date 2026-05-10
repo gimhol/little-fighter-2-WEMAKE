@@ -25,6 +25,7 @@ import type { StateEnum } from "./StateEnum";
  * @interface IFrameInfo
  */
 export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
+
   /**
    * 帧ID
    * 
@@ -51,7 +52,7 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    */
   name: string;
 
-  
+
   /**
    * 帧切图
    * 
@@ -202,8 +203,14 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
 
   landable?: number;
 
+
   /* 为渲染层预留的玩意 */
   __tex?: any;
+
+  /** 
+   * 是否根据lf2逻辑预处理此frame 
+   */
+  likelf2?: boolean;
 }
 
 export interface IChaseInfo {

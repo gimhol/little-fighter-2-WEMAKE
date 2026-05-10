@@ -8,7 +8,6 @@ import { round_float } from "../utils/math/round_float";
 import { to_num } from "../utils/type_cast/to_num";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_itr_prefabs } from "./make_itr_prefabs";
-import { make_weapon_special } from "./make_weapon_special";
 import { set_hit_flag } from "./set_hit_flag";
 import { take } from "./take";
 
@@ -150,6 +149,5 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
     frames,
     indexes,
   };
-  make_weapon_special(ret);
   return ret;
 }
