@@ -1,4 +1,4 @@
-import { GK, IEntityData } from "../../defines";
+import { GK, OID } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_chasing_action } from "./bot_chasing_action";
@@ -6,8 +6,8 @@ import { bot_front_test } from "./bot_front_test";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_bot_data_justin(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_justin(): BotBuilder {
+  return new BotBuilder(OID.Justin).set_actions(
     // d>a
     bot_ball_dfa(75, void 0, 50, 200),
 
@@ -30,5 +30,6 @@ export function make_bot_data_justin(data: IEntityData) {
     arithmetic_progression(240, 246),
     ['d>a+a']
   );
-  return data;
 }
+
+BotBuilder.register(OID.Justin, make_bot_data_justin)

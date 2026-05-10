@@ -1,19 +1,12 @@
-import { GK, IEntityData } from "../../defines";
+import { GK, OID } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_explosion_duj } from "./bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-/**
- *
- * @todo
- * @export
- * @param {IEntityData} data
- * @return {IEntityData}
- */
-export function make_bot_data_henry(data: IEntityData): IEntityData {
-  BotBuilder.write_entity(data).set_dataset({
+export function make_bot_data_henry(): BotBuilder {
+  return new BotBuilder(OID.Henry).set_dataset({
     w_atk_m_x: 120,
     w_atk_r_x: 250,
     w_atk_x: 350
@@ -45,6 +38,7 @@ export function make_bot_data_henry(data: IEntityData): IEntityData {
     ],
     ['d>a', 'd>j', 'dja_1', 'dja_2', 'd^j']
   )
-  return data;
 }
 
+
+BotBuilder.register(OID.Henry, make_bot_data_henry)

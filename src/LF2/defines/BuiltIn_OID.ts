@@ -79,3 +79,5 @@ export enum BuiltIn_OID {
 }
 export const O_ID = BuiltIn_OID;
 export type O_ID = BuiltIn_OID;
+export const OID = BuiltIn_OID;
+export type OID = BuiltIn_OID;

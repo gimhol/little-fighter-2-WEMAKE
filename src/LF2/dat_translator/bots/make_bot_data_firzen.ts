@@ -1,10 +1,4 @@
-import {
-  Defines,
-  EntityGroup,
-  IEntityData,
-  StateEnum
-} from "../../defines";
-import { ensure } from "../../utils";
+import { OID, StateEnum } from "../../defines";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_cancelling } from "./bot_ball_cancelling";
 import { bot_ball_dfj } from "./bot_ball_dfj";
@@ -15,8 +9,8 @@ import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
 
-export function make_bot_data_firzen(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_firzen(): BotBuilder {
+  return new BotBuilder(OID.Firzen).set_actions(
     // d^a
     bot_ball_dfj(50, void 0),
 
@@ -41,5 +35,6 @@ export function make_bot_data_firzen(data: IEntityData) {
     ],
     [bot_ball_dfj.ID, bot_explosion_dua.ID, bot_explosion_duj.ID]
   )
-  return data;
 }
+
+BotBuilder.register(OID.Firzen, make_bot_data_firzen)

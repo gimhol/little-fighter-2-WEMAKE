@@ -5,20 +5,10 @@ import { find } from "../../utils/container_help/find";
 import { traversal } from "../../utils/container_help/traversal";
 
 export class BotBuilder {
-  static builders: BotBuilder[] = []
-  /** @deprecated */
-  static write_entity(data: IEntityData) {
-    const ret = new BotBuilder(data.id)
-    data.base.bot_id = ret.bot.id;
-    data.base.bot = ret.bot;
-    ret.entity = data;
-    this.builders.push(ret);
-    return ret;
+  static builders = new Map<string, () => BotBuilder>();
+  static register(oid: string, func: () => BotBuilder) {
+    this.builders.set(oid, func);
   }
-  static check_all(): void {
-    this.builders.forEach(b => b.check())
-  }
-  protected entity: IEntityData | null = null
   protected readonly _bot: IBotData
   constructor(oid: string) {
     this._bot = {
@@ -58,9 +48,8 @@ export class BotBuilder {
     states['' + state_ids] = action_ids;
     return this;
   }
-  check() {
-    const { states, frames, bot: { actions }, entity } = this;
-    if (!entity) return;
+  check(entity: IEntityData) {
+    const { states, frames, bot: { actions } } = this;
     const exists_action_ids = new Set<string>(Object.keys(actions));
 
     traversal(states, (states, action_ids) => {

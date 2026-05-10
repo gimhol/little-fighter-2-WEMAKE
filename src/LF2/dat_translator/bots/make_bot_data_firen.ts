@@ -1,9 +1,5 @@
-import { BotVal, BuiltIn_OID, Defines, GameKey as GK, HitFlag, IEntityData, ItrEffect, ItrKind } from "../../defines";
-import { ActionType } from "../../defines/ActionType";
-import { CollisionVal as C_Val } from "../../defines/CollisionVal";
-import { arithmetic_progression, ensure } from "../../utils";
-import { CondMaker } from "../CondMaker";
-import { set_hit_flag } from "../set_hit_flag";
+import { BotVal, GameKey as GK, IEntityData, OID } from "../../defines";
+import { arithmetic_progression } from "../../utils";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
@@ -11,8 +7,8 @@ import { bot_explosion_duj } from "./bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_bot_data_firen(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_firen(): BotBuilder {
+  return new BotBuilder(OID.Firen).set_actions(
     // d>a
     bot_ball_dfa(75, void 0, 50),
 
@@ -86,5 +82,6 @@ export function make_bot_data_firen(data: IEntityData) {
     arithmetic_progression(235, 252),
     ["d>a+a"]
   );
-  return data;
 }
+
+BotBuilder.register(OID.Firen, make_bot_data_firen)

@@ -1,4 +1,4 @@
-import { BotVal, GameKey, IEntityData, StateEnum } from "../../defines";
+import { BotVal, GameKey, OID, StateEnum } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
@@ -11,8 +11,8 @@ import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
 
-export function make_bot_data_dennis(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_dennis(): BotBuilder {
+  return new BotBuilder(OID.Dennis).set_actions(
     // d>a
     bot_ball_dfa(40, void 0, 50),
 
@@ -93,6 +93,6 @@ export function make_bot_data_dennis(data: IEntityData) {
     arithmetic_progression(280, 290),
     ["cancel_d>j"]
   );
-  return data;
 }
 
+BotBuilder.register(OID.Dennis, make_bot_data_dennis)

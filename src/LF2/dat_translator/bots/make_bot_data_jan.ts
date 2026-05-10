@@ -1,11 +1,11 @@
-import { Defines, IEntityData } from "../../defines";
+import { OID } from "../../defines";
 import { bot_explosion_dua } from "./bot_explosion_dua";
 import { bot_explosion_duj } from "./bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_bot_data_jan(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_jan(): BotBuilder {
+  return new BotBuilder(OID.Jan).set_actions(
     // d^a
     bot_explosion_dua(150, void 0, 50, 400, 160000),
 
@@ -21,5 +21,6 @@ export function make_bot_data_jan(data: IEntityData) {
     ],
     ['d^a', 'd^j']
   );
-  return data;
 }
+
+BotBuilder.register(OID.Jan, make_bot_data_jan)

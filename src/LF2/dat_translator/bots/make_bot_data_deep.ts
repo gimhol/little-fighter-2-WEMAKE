@@ -1,4 +1,4 @@
-import { BotVal, Defines, GameKey, IEntityData, StateEnum } from "../../defines";
+import { BotVal, GameKey, O_ID, StateEnum } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
@@ -10,8 +10,8 @@ import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
 
-export function make_bot_data_deep(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_deep(): BotBuilder {
+  return new BotBuilder(O_ID.Deep).set_actions(
     // d>a
     bot_ball_dfa(75, void 0, 50, 200),
 
@@ -97,5 +97,6 @@ export function make_bot_data_deep(data: IEntityData) {
     arithmetic_progression(266, 267),
     ["d^j+a"]
   );
-  return data;
 }
+
+BotBuilder.register(O_ID.Deep, make_bot_data_deep)

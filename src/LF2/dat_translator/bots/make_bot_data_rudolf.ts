@@ -1,46 +1,12 @@
-import { BuiltIn_OID, GK, IEntityData, StateEnum } from "../../defines";
+import { GK, OID } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_explosion_duj } from "./bot_explosion_duj";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-/**
- *
- * @todo
- * @export
- * @param {IEntityData} data
- * @return {IEntityData}
- */
-export function make_bot_data_rudolf(data: IEntityData): IEntityData {
-  for (const k in data.frames) {
-    const frame = data.frames[k]
-    frame.opoint?.forEach((opoint) => {
-      if (opoint.oid === BuiltIn_OID.Rudolf) {
-        opoint.hp = opoint.max_hp = 20;
-        opoint.mp = opoint.max_mp = 150;
-      }
-    });
-    if (
-      frame.state === StateEnum.Standing ||
-      frame.state === StateEnum.Walking ||
-      frame.state === StateEnum.Defend
-    ) {
-      frame.seqs = frame.seqs || {}
-      frame.seqs[`LRa`] = {
-        id: "70",
-        mp: 60,
-        facing: 1,
-      }
-      frame.seqs[`RLa`] = {
-        id: "70",
-        mp: 60,
-        facing: -1,
-      }
-    }
-  }
-
-  BotBuilder.write_entity(data).set_dataset({
+export function make_bot_data_rudolf(): BotBuilder {
+  return new BotBuilder(OID.Rudolf).set_dataset({
     w_atk_m_x: 40,
     w_atk_r_x: 150,
     w_atk_x: 300,
@@ -89,5 +55,6 @@ export function make_bot_data_rudolf(data: IEntityData): IEntityData {
     ],
     ['d>a_1', 'd>a_2', 'd>j', 'd^j_1', 'dvj_1', 'd^j_2', 'dvj_2']
   )
-  return data;
 }
+
+BotBuilder.register(OID.Rudolf, make_bot_data_rudolf)

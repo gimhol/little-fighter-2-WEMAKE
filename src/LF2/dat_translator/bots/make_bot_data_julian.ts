@@ -1,4 +1,4 @@
-import { ArmorEnum, BotVal, BuiltIn_OID, Defines, EntityGroup, EntityVal, GK, IEntityData, StateEnum } from "../../defines";
+import { ArmorEnum, BotVal, BuiltIn_OID, Defines, EntityGroup, EntityVal, GK, IEntityData, OID, StateEnum } from "../../defines";
 import { ensure } from "../../utils";
 import { CondMaker } from "../CondMaker";
 import { bot_ball_dfj } from "./bot_ball_dfj";
@@ -9,9 +9,9 @@ import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_bot_data_julian(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
-    
+export function make_bot_data_julian(): BotBuilder {
+  return new BotBuilder(OID.Julian).set_actions(
+
     // ball
     bot_chasing_skill_action('d>a', void 0, 25, 1 / 60),
 
@@ -59,5 +59,6 @@ export function make_bot_data_julian(data: IEntityData) {
     ['shaking_dja', 'd>a+a']
   )
 
-  return data;
 }
+
+BotBuilder.register(OID.Julian, make_bot_data_julian)

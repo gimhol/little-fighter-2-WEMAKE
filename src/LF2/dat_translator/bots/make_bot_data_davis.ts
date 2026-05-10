@@ -1,4 +1,4 @@
-import { BotVal, GameKey, IEntityData, StateEnum } from "../../defines";
+import { BotVal, GameKey, O_ID, StateEnum } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
@@ -10,8 +10,8 @@ import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
 
-export function make_bot_data_davis(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_davis(): BotBuilder {
+  return new BotBuilder(O_ID.Davis).set_actions(
     // d>a
     bot_ball_dfa(50, void 0, 50),
 
@@ -87,6 +87,6 @@ export function make_bot_data_davis(data: IEntityData) {
     // jumphit
     arithmetic_progression(290, 292),
     ["d^j+a"]
-  );
-  return data;
+  )
 }
+BotBuilder.register(O_ID.Davis, make_bot_data_davis)

@@ -1,15 +1,12 @@
-import {
-  IEntityData,
-  StateEnum
-} from "../../defines";
+import { O_ID, StateEnum } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_bot_data_bat(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_bat(): BotBuilder {
+  return new BotBuilder(O_ID.Bat).set_actions(
     // laser_eyes
     bot_ball_dfa(25, void 0),
     // fast_punch
@@ -26,5 +23,5 @@ export function make_bot_data_bat(data: IEntityData) {
     ...frames.walkings,
     ...frames.runnings
   ], ['d^j', 'd>j', 'd>a'])
-  return data;
 }
+BotBuilder.register(O_ID.Bat, make_bot_data_bat)

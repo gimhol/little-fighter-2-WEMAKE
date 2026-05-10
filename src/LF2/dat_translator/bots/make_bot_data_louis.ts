@@ -1,5 +1,4 @@
-import { ArmorEnum, EntityVal, IEntityData } from "../../defines";
-import { CondMaker } from "../CondMaker";
+import { EntityVal, OID } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
@@ -7,14 +6,8 @@ import { bot_uppercut_duj } from "./bot_uppercut_duj";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-/**
- *
- * @export
- * @param {IEntityData} data
- * @return {IEntityData} 
- */
-export function make_bot_data_louis(data: IEntityData): IEntityData {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_louis(): BotBuilder {
+  return new BotBuilder(OID.Louis).set_actions(
     // d>a
     bot_ball_dfa(150, void 0, 120, 800),
     // d>j
@@ -38,7 +31,7 @@ export function make_bot_data_louis(data: IEntityData): IEntityData {
     ],
     ['d^j']
   )
-  return data;
 }
 
+BotBuilder.register(OID.Louis, make_bot_data_louis)
 

@@ -1,11 +1,11 @@
-import { GK, IEntityData } from "../../defines";
+import { GK, OID } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_bot_data_monk(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_monk(): BotBuilder {
+  return new BotBuilder(OID.Monk).set_actions(
     // d>a
     bot_ball_dfa(100, void 0, 0, 400),
     // d>a+d>a
@@ -26,5 +26,6 @@ export function make_bot_data_monk(data: IEntityData) {
     arithmetic_progression(240, 248),
     ["d>a+d>a"]
   );
-  return data;
 }
+
+BotBuilder.register(OID.Monk, make_bot_data_monk)

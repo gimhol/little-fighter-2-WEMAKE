@@ -1,4 +1,4 @@
-import { BotStateEnum, BotVal, EntityVal as E_Val, GK, IEntityData } from "../../defines";
+import { BotStateEnum, BotVal, EntityVal as E_Val, GK, OID } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_idle_action } from "./bot_idle_action";
@@ -6,8 +6,8 @@ import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
 
-export function make_bot_data_sorcerer(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_sorcerer(): BotBuilder {
+  return new BotBuilder(OID.Sorcerer).set_actions(
     // d>a
     bot_ball_dfa(75, void 0, 100, 10000),
     // d>j
@@ -32,5 +32,6 @@ export function make_bot_data_sorcerer(data: IEntityData) {
     ],
     ['d>a', 'd>j', 'd^j', 'dvj']
   );
-  return data;
 }
+
+BotBuilder.register(OID.Sorcerer, make_bot_data_sorcerer)

@@ -1,7 +1,7 @@
 
-import { GK, IEntityData, StateEnum } from "../../defines";
-import { probability } from "../../utils/math/probability";
+import { GK, OID, StateEnum } from "../../defines";
 import { arithmetic_progression } from "../../utils";
+import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
@@ -9,8 +9,8 @@ import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
 
-export function make_bot_data_jack(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_jack(): BotBuilder {
+  return new BotBuilder(OID.Jack).set_actions(
     // d>a
     bot_ball_dfa(40, void 0, 50),
 
@@ -35,5 +35,6 @@ export function make_bot_data_jack(data: IEntityData) {
     arithmetic_progression(240, 247),
     ["d>a+d>a"]
   );
-  return data;
 }
+
+BotBuilder.register(OID.Jack, make_bot_data_jack)

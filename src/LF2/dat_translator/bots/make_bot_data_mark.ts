@@ -1,4 +1,4 @@
-import { BotVal, GK, IEntityData } from "../../defines";
+import { BotVal, GK, OID } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { foreach } from "../../utils/container_help/foreach";
 import { bot_ball_dfa } from "./bot_ball_dfa";
@@ -7,8 +7,8 @@ import { bot_chasing_action } from "./bot_chasing_action";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_bot_data_mark(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_mark(): BotBuilder {
+  return new BotBuilder(OID.Mark).set_actions(
     // d>a
     bot_ball_dfa(0, void 0, 0, 80, 0.1)(a => {
       foreach(a.e_ray, r => r.max_d = 1600)
@@ -53,8 +53,6 @@ export function make_bot_data_mark(data: IEntityData) {
     arithmetic_progression(85, 89),
     ["d>a+a"]
   );
-  return data;
 }
 
-
-
+BotBuilder.register(OID.Mark, make_bot_data_mark)

@@ -1,4 +1,4 @@
-import { BotVal, IEntityData, StateEnum } from "../../defines";
+import { BotVal, OID, StateEnum } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
@@ -9,8 +9,8 @@ import { DESIRE_RATIO_D_4, DESIRE_RATIO_X_4 } from "./constants";
 import { frames } from "./frames";
 
 
-export function make_bot_data_woody(data: IEntityData) {
-  BotBuilder.write_entity(data).set_actions(
+export function make_bot_data_woody(): BotBuilder {
+  return new BotBuilder(OID.Woody).set_actions(
     // d>a
     bot_ball_dfa(125, void 0, 50)(e => {
       const ray = e.e_ray![0]
@@ -82,5 +82,6 @@ export function make_bot_data_woody(data: IEntityData) {
     [215, 219],
     ['c_d>j', 'd^a']
   );
-  return data;
 }
+
+BotBuilder.register(OID.Woody, make_bot_data_woody)
