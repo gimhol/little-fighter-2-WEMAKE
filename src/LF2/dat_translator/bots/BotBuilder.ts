@@ -6,26 +6,28 @@ import { traversal } from "../../utils/container_help/traversal";
 
 export class BotBuilder {
   static builders: BotBuilder[] = []
-  static make(data: IEntityData) {
-    const ret = new BotBuilder(data)
-    data.base.bot_id = 'bot_' + data.id;
+  /** @deprecated */
+  static write_entity(data: IEntityData) {
+    const ret = new BotBuilder(data.id)
+    data.base.bot_id = ret.bot.id;
+    data.base.bot = ret.bot;
+    ret.entity = data;
     this.builders.push(ret);
     return ret;
   }
   static check_all(): void {
     this.builders.forEach(b => b.check())
   }
- 
-  readonly entity: IEntityData;
-  get bot(): IBotData {
-    let ret = this.entity.base.bot
-    if (!ret) ret = this.entity.base.bot = {
-      id: this.entity.base.bot_id ?? ('bot_' + this.entity.id),
-      oid: this.entity.id,
+  protected entity: IEntityData | null = null
+  protected readonly _bot: IBotData
+  constructor(oid: string) {
+    this._bot = {
+      id: 'bot_' + oid,
+      oid: oid,
       actions: {},
     }
-    return ret;
   }
+  get bot(): IBotData { return this._bot; }
   get frames(): Exclude<IBotData['frames'], undefined> {
     const { bot } = this;
     let frames = bot.frames
@@ -37,9 +39,6 @@ export class BotBuilder {
     let states = bot.states
     if (!states) states = bot.states = {};
     return states;
-  }
-  protected constructor(entity: IEntityData) {
-    this.entity = entity;
   }
   set_actions(...actions: (IBotAction | (() => IBotAction))[]): this {
     const { bot } = this
@@ -61,6 +60,7 @@ export class BotBuilder {
   }
   check() {
     const { states, frames, bot: { actions }, entity } = this;
+    if (!entity) return;
     const exists_action_ids = new Set<string>(Object.keys(actions));
 
     traversal(states, (states, action_ids) => {

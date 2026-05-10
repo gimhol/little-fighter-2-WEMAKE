@@ -148,6 +148,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
     itr_prefabs,
     frames,
     indexes,
+    processed: false,
   };
   return ret;
 }

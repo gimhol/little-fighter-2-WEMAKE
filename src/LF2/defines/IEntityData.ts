@@ -14,6 +14,7 @@ export type TBdyPrefabs = {
 }
 export interface IEntityData extends IBaseData<IEntityInfo> {
   type: TEntityEnum;
+  processed?: boolean;
   on_dead?: TNextFrame;
   on_exhaustion?: TNextFrame;
   indexes?: IFrameIndexes;

@@ -19,6 +19,7 @@ import { take, take_str } from "./take";
 
 export function make_ball_data(ctx: IDatContext): IEntityData {
   const { base: info, frames, index: datIndex } = ctx
+
   info.name = datIndex.hash ?? datIndex.file.split('/').slice(-1)[0].replace(/[^a-z|A-Z|0-9|_]/g, "-").replace(/-obj-json5$/, '');
   info.hp = 500;
 
@@ -39,8 +40,8 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
     type: EntityEnum.Ball,
     base: info,
     frames: frames,
+    processed: false,
   };
-
   traversal(ret.frames, (_, frame) => {
     const hit_j = take(frame, "hit_j");
     if (hit_j !== 0) {

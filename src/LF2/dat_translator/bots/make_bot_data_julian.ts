@@ -9,27 +9,8 @@ import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { BotBuilder } from "./BotBuilder";
 import { frames } from "./frames";
 
-export function make_fighter_data_julian(data: IEntityData) {
-  data.base.strength = Defines.FIGHTER_STREAGTH_STRONG
-  data.base.group = ensure(data.base.group, EntityGroup.Boss);
-  data.base.mp_r_ratio = 2;
-  data.base.ce = 3;
-  data.base.armor = {
-    fireproof: 1,
-    antifreeze: 1,
-    hit_sounds: ["data/002.wav.mp3"],
-    type: ArmorEnum.Defend,
-    toughness: 120,
-  };
-  for (const k in data.frames) {
-    data.frames[k].opoint?.forEach((opoint) => {
-      if (opoint.oid === BuiltIn_OID.Julian) {
-        opoint.hp = opoint.max_hp = 20;
-        opoint.mp = opoint.max_mp = 150;
-      }
-    });
-  }
-  BotBuilder.make(data).set_actions(
+export function make_bot_data_julian(data: IEntityData) {
+  BotBuilder.write_entity(data).set_actions(
     
     // ball
     bot_chasing_skill_action('d>a', void 0, 25, 1 / 60),

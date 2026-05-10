@@ -16,8 +16,8 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   const { images, sounds } = lf2;
   const { small, head } = data.base;
 
-  if (is_ball_data(data)) make_ball_special(data)
-  if (is_weapon_data(data)) make_weapon_special(data)
+  if (data.processed == false && is_ball_data(data)) make_ball_special(data)
+  if (data.processed == false && is_weapon_data(data)) make_weapon_special(data)
 
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));
   is_non_blank_str(head) && jobs.push(images.load_img(head, head));
@@ -41,6 +41,7 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   });
   if (data.base.bot)
     data.base.bot = preprocess_bot_data(data.base.bot)
+  data.processed = true;
   return data;
 }
 
