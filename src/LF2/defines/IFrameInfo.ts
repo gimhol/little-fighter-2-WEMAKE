@@ -201,6 +201,20 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
 
   facing?: FacingFlag;
 
+  
+  /**
+   * 决定了帧的落地行为
+   * 
+   * - ball.frame.landable 默认为 0
+   * - weapon.frame.landable 默认为 1
+   * - fighter.frame.landable 默认为 1
+   * 
+   * - 可用值: 
+   *    - 0 = 不与地面反应，将掉落到地面以下
+   *    - 1 = 与地面接触时，y速度归0，进入frame.on_landing，播放drop_sounds
+   *
+   * @type {?number}
+   */
   landable?: number;
 
 

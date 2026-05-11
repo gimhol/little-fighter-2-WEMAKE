@@ -2,18 +2,17 @@ import { LF2 } from "../LF2";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
 import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
 import { set_hit_flag } from "../dat_translator/set_hit_flag";
-import { EntityEnum, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, OpointSpreading, StateEnum } from "../defines";
+import { EntityEnum, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, StateEnum } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
-import { Randoming } from "../helper/Randoming";
 import read_nums from "../ui/utils/read_nums";
-import { round_float } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
 import { preprocess_ball_frame } from "./preprocess_ball_frame";
 import { preprocess_bdy } from "./preprocess_bdy";
 import { preprocess_frame_pic } from "./preprocess_frame_pic";
 import { preprocess_itr } from "./preprocess_itr";
 import { preprocess_next_frame } from "./preprocess_next_frame";
+import { preprocess_opoint } from "./preprocess_opoint";
 
 
 
@@ -55,7 +54,6 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
     if (on_hands.length) data.indexes.on_hands = on_hands
   }
 
-
   cook_frame_indicator_info(frame);
   if (is_weapon_data(data) || is_ball_data(data))
     make_frame_behavior(frame, data.id);
@@ -83,21 +81,7 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
 
   frame.bdy?.forEach((n, i, l) => l[i] = preprocess_bdy(lf2, n, data, jobs))
   frame.itr?.forEach((n, i, l) => l[i] = preprocess_itr(lf2, n, data, jobs))
-  frame.opoint?.forEach((n, i, j) => {
-    if (n.spreading == OpointSpreading.Spreading) {
-      if (n.spreading_x?.length) n.__spreading_random_x = new Randoming(n.spreading_x, lf2);
-      if (n.spreading_y?.length) n.__spreading_random_y = new Randoming(n.spreading_y, lf2);
-      if (n.spreading_z?.length) n.__spreading_random_z = new Randoming(n.spreading_z, lf2);
-    } else if (n.spreading == OpointSpreading.FloatRange) {
-      const { spreading_x: xx, spreading_y: yy, spreading_z: zz } = n;
-      if (xx?.length == 3)
-        n.__spreading_random_x = { take: () => round_float(lf2.mt.range(xx[0], xx[1]) / xx[2]) }
-      if (yy?.length == 3)
-        n.__spreading_random_y = { take: () => round_float(lf2.mt.range(yy[0], yy[1]) / yy[2]) }
-      if (zz?.length == 3)
-        n.__spreading_random_z = { take: () => round_float(lf2.mt.range(zz[0], zz[1]) / zz[2]) }
-    }
-  })
+  frame.opoint?.forEach((n, i, l) => l[i] = preprocess_opoint(n, lf2))
 
   const unchecked_frame = frame as any;
   if (unchecked_frame) {
@@ -112,7 +96,6 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
   if (frame.landable === void 0)
     frame.landable = data.type === EntityEnum.Ball ? 0 : 1;
 
-
   switch (frame.behavior) {
     // shit.
     case FrameBehavior.Boomerang: {
@@ -123,5 +106,3 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
   return frame
 }
 preprocess_frame.TAG = "preprocess_frame";
-
-
