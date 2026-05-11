@@ -1,5 +1,6 @@
 import { ICollision } from "../base";
-import { BuiltIn_OID, Defines, WT } from "../defines";
+import { BuiltIn_OID, Defines, I_K, SparkEnum, WT } from "../defines";
+import { is_fighter, is_weapon } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
@@ -16,14 +17,16 @@ export function handle_weapon_is_hit(collision: ICollision): void {
   }
 
   const is_fly = itr.fall && itr.fall >= Defines.DEFAULT_FALL_VALUE_CRITICAL;
-  const spark_frame_name = is_fly ? "silent_critical_hit" : "silent_hit";
-  victim.world.spark(...collision.victim.spark_point(a_cube, b_cube), spark_frame_name);
+  victim.world.spark(
+    ...collision.victim.spark_point(a_cube, b_cube),
+    is_fly ? SparkEnum.SilentCriticalHit : SparkEnum.SilentHit
+  );
 
   let [vx, vy, vz] = calc_itr_velocity(collision)
   const is_base_ball =
     victim.base_type === WT.Baseball ||
     victim.base_type === WT.Drink;
-    
+
   if (victim.base_type !== WT.Heavy || is_fly) {
     victim.set_velocity(vx, vy, vz);
     victim.lf2.mt.mark = 'hwih_1';
@@ -46,6 +49,7 @@ export function handle_weapon_is_hit(collision: ICollision): void {
     victim.set_velocity(vx)
   }
 
-  victim.team = attacker.team;
-
+  if (is_fighter(attacker) || (is_weapon(attacker) && itr.kind == I_K.WeaponSwing)) {
+    victim.team = attacker.team;
+  }
 }
