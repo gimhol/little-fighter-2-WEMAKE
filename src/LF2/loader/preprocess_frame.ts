@@ -1,22 +1,62 @@
 import { LF2 } from "../LF2";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
 import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
-import { EntityEnum, FacingFlag as FF, FrameBehavior, IFrameInfo, OpointSpreading, StateEnum } from "../defines";
+import { set_hit_flag } from "../dat_translator/set_hit_flag";
+import { EntityEnum, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, OpointSpreading, StateEnum } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
 import { Randoming } from "../helper/Randoming";
 import read_nums from "../ui/utils/read_nums";
 import { round_float } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
+import { preprocess_ball_frame } from "./preprocess_ball_frame";
 import { preprocess_bdy } from "./preprocess_bdy";
 import { preprocess_frame_pic } from "./preprocess_frame_pic";
 import { preprocess_itr } from "./preprocess_itr";
 import { preprocess_next_frame } from "./preprocess_next_frame";
 
+
+
 export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
+
+
+  if (data.processed != false) { }
+  else if (is_ball_data(data)) preprocess_ball_frame(frame, data);
+  else if (is_weapon_data(data)) {
+    const in_the_skys: string[] = []
+    const throwings: string[] = []
+    const on_hands: string[] = []
+    switch (frame.state) {
+      case StateEnum.Weapon_InTheSky:
+        in_the_skys.push(frame.id)
+        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
+        break;
+      case StateEnum.Weapon_Rebounding:
+      case StateEnum.HeavyWeapon_JustOnGround:
+        frame.itr = void 0;
+        break;
+      case StateEnum.Weapon_Throwing:
+        throwings.push(frame.id)
+        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
+        break;
+      case StateEnum.HeavyWeapon_InTheSky:
+        in_the_skys.push(frame.id)
+        throwings.push(frame.id)
+        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
+        break;
+      case StateEnum.Weapon_OnHand:
+      case StateEnum.HeavyWeapon_OnHand:
+        on_hands.push(frame.id)
+        break;
+    }
+    data.indexes = data.indexes || {}
+    if (in_the_skys.length) data.indexes.in_the_skys = in_the_skys
+    if (throwings.length) data.indexes.throwings = throwings
+    if (on_hands.length) data.indexes.on_hands = on_hands
+  }
+
+
   cook_frame_indicator_info(frame);
-
-
   if (is_weapon_data(data) || is_ball_data(data))
     make_frame_behavior(frame, data.id);
 
@@ -83,4 +123,5 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
   return frame
 }
 preprocess_frame.TAG = "preprocess_frame";
+
 

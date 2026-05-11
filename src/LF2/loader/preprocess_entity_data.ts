@@ -13,8 +13,6 @@ import { preprocess_next_frame } from "./preprocess_next_frame";
 import { preprocess_pic } from "./preprocess_pic";
 
 export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
-  const { images, sounds } = lf2;
-  const { small, head } = data.base;
 
   if (data.processed != false) { }
   if (is_ball_data(data)) make_ball_special(data)
@@ -22,6 +20,8 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   else if (is_fighter_data(data)) make_fighter_special(data)
   else make_entity_special(data);
 
+  const { images, sounds } = lf2;
+  const { small, head } = data.base;
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));
   is_non_blank_str(head) && jobs.push(images.load_img(head, head));
   data.base.dead_sounds?.forEach(i => is_non_blank_str(i) && sounds.load(i, i));

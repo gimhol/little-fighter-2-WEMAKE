@@ -1,4 +1,4 @@
-import { Builtin_FrameId, FrameBehavior, HitFlag, SpeedMode, StateEnum, WeaponType } from "../defines";
+import { Builtin_FrameId, FrameBehavior, SpeedMode, WeaponType } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
@@ -8,7 +8,6 @@ import { round_float } from "../utils/math/round_float";
 import { to_num } from "../utils/type_cast/to_num";
 import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_itr_prefabs } from "./make_itr_prefabs";
-import { set_hit_flag } from "./set_hit_flag";
 import { take } from "./take";
 
 const indexes_map: Record<WeaponType, IFrameIndexes> = {
@@ -91,9 +90,6 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
   const weapon_hp = take(info, "weapon_hp");
   if (weapon_hp && Number(weapon_hp)) info.hp = Number(weapon_hp);
 
-  const in_the_skys: string[] = []
-  const throwings: string[] = []
-  const on_hands: string[] = []
   traversal(frames, (k, frame) => {
     const hit_j = take(frame, "hit_j");
     if (hit_j !== 0) {
@@ -112,34 +108,8 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
       frame.behavior = hit_Fa;
       (frame as any).behavior_name = `FrameBehavior.` + FrameBehavior[hit_Fa];
     }
-    switch (frame.state) {
-      case StateEnum.Weapon_InTheSky:
-        in_the_skys.push(k)
-        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
-        break;
-      case StateEnum.Weapon_Rebounding:
-      case StateEnum.HeavyWeapon_JustOnGround:
-        frame.itr = void 0;
-        break;
-      case StateEnum.Weapon_Throwing:
-        throwings.push(k)
-        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
-        break;
-      case StateEnum.HeavyWeapon_InTheSky:
-        in_the_skys.push(k)
-        throwings.push(k)
-        frame.bdy?.forEach((v) => set_hit_flag(v, HitFlag.AllBoth))
-        break;
-      case StateEnum.Weapon_OnHand:
-      case StateEnum.HeavyWeapon_OnHand:
-        on_hands.push(k)
-        break;
-    }
   })
 
-  indexes.in_the_skys = in_the_skys.length ? in_the_skys : void 0
-  indexes.throwings = in_the_skys.length ? throwings : void 0;
-  indexes.on_hands = on_hands.length ? on_hands : void 0;
   const ret = {
     id: datIndex.id,
     on_dead: { id: Builtin_FrameId.Gone },
