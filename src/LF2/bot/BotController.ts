@@ -319,6 +319,7 @@ export class BotController extends BaseController {
 
     const e_state = e.state;
     const [l, r] = this.world.fighter_bound(me)
+    /* 对方的位置，我方无法抵达，故不追之 */
     if (!between(e.position.x, l, r))
       return false;
 

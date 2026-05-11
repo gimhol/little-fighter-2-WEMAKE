@@ -330,7 +330,7 @@ export class World extends WorldDataset {
    */
   restrict_fighter(e: Entity): void {
     const { near, far, player_l, player_r, enemy_l, enemy_r, team } = this.stage;
-
+    
     const is_player = e.team !== team;
     const l = is_player ? player_l : enemy_l;
     const r = is_player ? player_r : enemy_r;
