@@ -71,21 +71,15 @@ export class EntityMainRender {
     const files = this.files = data.base.files ?? {}
     for (const k in files) {
       const file = files[k]
-      if (file.variants?.length) {
-        this.file_variants.set(k, [k, ...file.variants]);
-      } else {
-        this.file_variants.set(k, [k]);
-      }
+      if (!file.variants?.length) continue;
+      this.file_variants.set(k, [k, ...file.variants]);
     }
 
     const models = this.models = data.base.models ?? {}
     for (const k in models) {
       const model = models[k]
-      if (model.variants?.length) {
-        this.model_variants.set(k, [k, ...model.variants]);
-      } else {
-        this.model_variants.set(k, [k]);
-      }
+      if (!model.variants?.length) continue;
+      this.model_variants.set(k, [k, ...model.variants]);
     }
 
     this._data = entity.data;
@@ -169,8 +163,11 @@ export class EntityMainRender {
         if (variant) do {
           const variants = this.file_variants.get(tex);
           if (!variants?.length) break;
-          tex = variants[variant]
+          const real_tex = variants[variant];
+          if (!real_tex) continue;
+          tex = real_tex
         } while (0);
+
         const img = images.get(tex);
         if (img?.pic) {
           const { x, y, w, h } = pic;
