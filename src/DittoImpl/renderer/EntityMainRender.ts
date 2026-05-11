@@ -79,7 +79,7 @@ export class EntityMainRender {
     }
 
     const models = this.models = data.base.models ?? {}
-    for (const k in files) {
+    for (const k in models) {
       const model = models[k]
       if (model.variants?.length) {
         this.model_variants.set(k, [k, ...model.variants]);

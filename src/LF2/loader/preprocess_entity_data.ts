@@ -1,8 +1,8 @@
-import { make_weapon_special } from "../dat_translator";
+import { make_entity_special, make_fighter_special, make_weapon_special } from "../dat_translator";
 import { make_ball_special } from "../dat_translator/make_ball_special";
 import { IEntityData } from "../defines";
 import { Ditto } from "../ditto";
-import { is_ball_data, is_weapon_data } from "../entity";
+import { is_ball_data, is_fighter_data, is_weapon_data } from "../entity";
 import { LF2 } from "../LF2";
 import { is_non_blank_str } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
@@ -16,8 +16,11 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   const { images, sounds } = lf2;
   const { small, head } = data.base;
 
-  if (data.processed == false && is_ball_data(data)) make_ball_special(data)
-  if (data.processed == false && is_weapon_data(data)) make_weapon_special(data)
+  if (data.processed != false) { }
+  if (is_ball_data(data)) make_ball_special(data)
+  else if (is_weapon_data(data)) make_weapon_special(data)
+  else if (is_fighter_data(data)) make_fighter_special(data)
+  else make_entity_special(data);
 
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));
   is_non_blank_str(head) && jobs.push(images.load_img(head, head));
