@@ -68,10 +68,7 @@ class Inner {
     else if (is_fighter_data(data))
       Factory.register_ctrl(data.id, (a, b) => new BotController(a, b));
     if (is_entity_data(data)) {
-      data.base.bot
-      if (data.base.bot_id) {
-        data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id)
-      };
+      data.base.bot = data.base.bot ?? this.bot_map.get(data.id ?? data.base.bot_id)
       data = await preprocess_entity_data(this.lf2, data, jobs);
     }
     return data;

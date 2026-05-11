@@ -3,6 +3,7 @@ export * from "./ColonValueReader";
 export * from "./CondMaker";
 export * from "./EditBdy";
 export * from "./FrameEditing";
+export * from "./bots";
 export * from "./broken_piece_frames";
 export * from "./conditions";
 export * from "./cook_ball_frame_state_3000";

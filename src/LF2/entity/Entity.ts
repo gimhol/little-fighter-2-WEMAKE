@@ -2239,7 +2239,7 @@ export class Entity {
         if (use_hp && this._hp <= use_hp) return void 0;
       }
     }
-
+    
     let w: INextFrame;
     if (is_str(which)) {
       w = { id: which };

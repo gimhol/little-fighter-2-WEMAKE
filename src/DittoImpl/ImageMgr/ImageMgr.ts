@@ -55,7 +55,10 @@ export class ImageMgr implements IImageMgr {
       switch (v.type) {
         case "mask": return true;
         case "crop":
-          return validate_ui_img_operation_crop(v)
+          const errors: string[] = []
+          const ok = validate_ui_img_operation_crop(v, errors);
+          if (errors.length) console.warn(errors)
+          return ok
         case "resize":
           if (!is_positive_int(v.w)) return false
           if (!is_positive_int(v.h)) return false

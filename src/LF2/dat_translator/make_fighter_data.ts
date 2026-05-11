@@ -552,6 +552,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
     base,
     indexes,
     frames,
+    processed: false,
   };
   cook_transform_begin_expression_to_hit(ret.frames);
   cook_file_variants(ret);
