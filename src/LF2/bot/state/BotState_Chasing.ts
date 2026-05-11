@@ -1,5 +1,5 @@
 import { is_fighter, is_weapon } from "@/LF2/entity";
-import { AGK, Defines, GK, StateEnum, WeaponType } from "../../defines";
+import { AGK, Defines, GK, StateEnum, WeaponType, WT } from "../../defines";
 import { BSE } from "../../defines/BotStateEnum";
 import { abs, between, round_float } from "../../utils";
 import { BotBehavior } from "../BotController";
@@ -223,10 +223,23 @@ export class BotState_Chasing extends BotState_Base {
       between(en_rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
       between(abs_dz, -c.dataset.w_atk_z, c.dataset.w_atk_z)
     ) {
-      if (is_weapon_picking && state === StateEnum.Running)
-        c.click(GK.d)
-      else
+      if (is_weapon_picking) {
+        switch (me.frame.state) {
+          case StateEnum.Standing:
+          case StateEnum.Walking:
+            c.click(GK.a)
+            break;
+          case StateEnum.Running:
+            if (en.base_type == WT.Heavy) {
+              c.click(me_facing > 0 ? GK.L : GK.R)
+            } else {
+              c.click(GK.d).click(GK.a)
+            }
+            break;
+        }
+      } else {
         c.click(GK.a)
+      }
     } else {
       c.key_up(GK.a)
     }

@@ -105,7 +105,6 @@ export class BotController extends BaseController {
       wt === WT.Heavy
     ) return 200 * this.entity.strength;
 
-
     return this.dataset.w_atk_x
   }
 
