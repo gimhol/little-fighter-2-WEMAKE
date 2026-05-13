@@ -1071,7 +1071,7 @@ export class Entity {
   }
 
   attach(is_entity = true): this {
-    this._spawn_time = this.world.game_time.value;
+    this._spawn_time = this.world.game_time;
     this._is_attach = true
     this._is_ghost = !is_entity
     this.world.add_entities(this);
