@@ -5,9 +5,10 @@ export interface IUseForageOpts<T> {
   key: string;
   version?: any;
   init: T | (() => T);
+  preprocess?: (v: T) => T;
 }
 export function useForage<T>(opts: IUseForageOpts<T>) {
-  const { key, init, version = null } = opts;
+  const { key, init, preprocess, version = null } = opts;
   const [value, set_value] = useImmer<T>(init)
   const [ready, set_ready] = useState(false);
   useEffect(() => {
@@ -22,7 +23,7 @@ export function useForage<T>(opts: IUseForageOpts<T>) {
       if (_version !== version) return;
       const _value = await localforage.getItem<T>(key)
       if (unmounted) return;
-      if (_value) set_value(_value);
+      if (_value) set_value(preprocess ? preprocess(_value) : _value);
     })().finally(() => {
       if (unmounted) return;
       localforage.setItem(`${key}#version`, version)

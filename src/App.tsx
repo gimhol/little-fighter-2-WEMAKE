@@ -25,7 +25,7 @@ import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
 import { GameOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
-import { IWorldDataset, WorldDataset } from "./LF2";
+import { Difficulty, IWorldDataset, WorldDataset } from "./LF2";
 import { LF2 } from "./LF2/LF2";
 import { CheatType, CtrlDevice } from "./LF2/defines";
 import { CMD } from "./LF2/defines/CMD";
@@ -136,12 +136,26 @@ function App() {
   const [editor_open, set_editor_open] = useState(false);
 
   const [app_state, set_app_state, app_state_ready] = useForage({
-    key: 'app_state', version: app_state_version, init: init_app_state
+    key: 'app_state', version: app_state_version, init: init_app_state,
+    preprocess: v => {
+      v.cheat_1 = false;
+      v.cheat_2 = false;
+      v.cheat_3 = false;
+      return v;
+    }
   })
   const [world_dataset, set_world_dataset, world_dataset_ready] = useForage({
     key: 'world_dataset',
     version: world_dataset_version,
-    init: init_world_dataset
+    init: init_world_dataset,
+    preprocess: v => {
+      v.playrate = 1;
+      v.GIM_INK = 0;
+      v.LF2_NET = 0;
+      v.HERO_FT = 0;
+      v.difficulty = Difficulty.Difficult;
+      return v;
+    }
   })
 
   const [is_maximised, set_is_maximised] = useState(false);
@@ -308,11 +322,6 @@ function App() {
     lf2.sounds.set_sound_muted(app_state.sound_muted);
     lf2.sounds.set_sound_volume(app_state.sound_volume);
     Object.assign(lf2.world, world_dataset);
-    set_app_state(d => {
-      d.cheat_1 = lf2.is_cheat(CheatType.LF2_NET)
-      d.cheat_2 = lf2.is_cheat(CheatType.HERO_FT)
-      d.cheat_3 = lf2.is_cheat(CheatType.GIM_INK)
-    })
     _set_bg_id(lf2.world.stage.bg.id);
     const on_touchstart = () => set_app_state(d => {
       d.touchpad_enabled = true;
@@ -332,7 +341,6 @@ function App() {
     for (const [id, player] of lf2.players) {
       player.callbacks.add({
         on_ctrl_changed(value, prev) {
-
           set_app_state(draft => {
             if (value === CtrlDevice.TouchScreen && draft.touchpad !== id) {
               draft.touchpad_enabled = true
