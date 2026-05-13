@@ -2,12 +2,12 @@ import { Callbacks, FPS, ICollision } from "./base";
 import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
-  ALL_ENTITY_ENUM,
   BackgroundGroup,
   BFID,
   CheatType,
   Defines,
   Difficulty,
+  ENTITY_PRIORITY_MAP,
   EntityGroup,
   GONE_FRAME_INFO,
   HitFlag,
@@ -39,6 +39,8 @@ import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
 import { abs, between, clamp, floor, is_num, max, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
+const CHASING_UPDATE_INTERVAL = 8;
+const MAX_DEBUG_ENTITIES = 355
 export class World extends WorldDataset {
 
   static override readonly TAG: string = "World";
@@ -177,10 +179,7 @@ export class World extends WorldDataset {
   }
   add_entities(...entities: Entity[]) {
     for (const e of entities) {
-      if (this.entity_map.has(e.id)) {
-        debugger; // should not happen.
-        continue;
-      }
+      if (this.entity_map.has(e.id)) continue;
       // this.freshs.add(entity)
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
@@ -604,35 +603,30 @@ export class World extends WorldDataset {
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
 
-    if (this.stage.world_pause) {
-      this.bg.update();
-      return;
-    }
+    if (this.stage.world_pause) return;
 
     const { game_time } = this;
     const { length: size } = this.entities
-    if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
+    if (size > MAX_DEBUG_ENTITIES)
+      Ditto.debug(`[World::update_once]entities.size = ${size}`)
     this.v_collisions.length = 0;
     this.a_collisions.clear();
     this._used_itrs.clear()
-    this._temp_entitis.length = 0;
-    const update_chasing = game_time.value % 8 === 0;
-    const dead_buff: [string, Buff][] = []
+    this._temp_entities.length = 0;
+    const update_chasing = game_time.value % CHASING_UPDATE_INTERVAL === 0;
+    const dead_buffs: [string, Buff][] = []
     for (const [key, buff] of this.buffs) {
       buff.update(this.atom_time)
-      if (buff.dead) dead_buff.push([key, buff])
+      if (buff.dead) dead_buffs.push([key, buff])
     }
-    for (const [key, buff] of dead_buff) {
+    for (const [key, buff] of dead_buffs) {
       buff.unmount();
       this.buffs.delete(key);
     }
 
     this.has_players_alive = false
     for (const e of this.freshs) {
-      if (this.entity_map.has(e.id)) {
-        debugger;
-        continue;
-      }
+      if (this.entity_map.has(e.id)) continue;
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
         const player = this.lf2.players.get(e.ctrl.player_id)
@@ -672,8 +666,8 @@ export class World extends WorldDataset {
           c.update_chasing(a)
 
       const a_ctrl = a.ctrl
-      for (let j = 0; j < this._temp_entitis.length; j++) {
-        const b = this._temp_entitis[j];
+      for (let j = 0; j < this._temp_entities.length; j++) {
+        const b = this._temp_entities[j];
         const b_ctrl = b.ctrl;
         if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
         if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
@@ -687,17 +681,17 @@ export class World extends WorldDataset {
         const collision1 = this.collision_detection(a, b);
         const collision2 = this.collision_detection(b, a);
         if (collision1?.handlers && collision2?.handlers) {
-          const index1 = ALL_ENTITY_ENUM.indexOf(collision1.attacker.type)
-          const index2 = ALL_ENTITY_ENUM.indexOf(collision2.attacker.type)
-          if (index1 < index2) this.add_collisions(collision1)
-          else if (index1 > index2) this.add_collisions(collision2)
+          const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
+          const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
+          if (priority1 < priority2) this.add_collisions(collision1)
+          else if (priority1 > priority2) this.add_collisions(collision2)
           else this.add_collisions(collision1, collision2)
         }
         else if (collision1?.handlers) this.add_collisions(collision1)
         else if (collision2?.handlers) this.add_collisions(collision2)
       }
 
-      this._temp_entitis.push(a);
+      this._temp_entities.push(a);
     }
     for (const c of this.v_collisions)
       collisions_keeper.handle(c)
@@ -814,7 +808,7 @@ export class World extends WorldDataset {
     }
   }
 
-  private _temp_entitis: Entity[] = [];
+  private _temp_entities: Entity[] = [];
   private _used_itrs = new Set<Entity>()
   add_collisions(...cs: ICollision[]) {
     for (const c of cs) {
