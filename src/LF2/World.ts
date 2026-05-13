@@ -671,8 +671,6 @@ export class World extends WorldDataset {
         for (const c of this._chasers)
           c.update_chasing(a)
 
-      this._temp_entitis.push(a);
-
       const a_ctrl = a.ctrl
       for (let j = 0; j < this._temp_entitis.length; j++) {
         const b = this._temp_entitis[j];
@@ -698,6 +696,8 @@ export class World extends WorldDataset {
         else if (collision1?.handlers) this.add_collisions(collision1)
         else if (collision2?.handlers) this.add_collisions(collision2)
       }
+
+      this._temp_entitis.push(a);
     }
     for (const c of this.v_collisions)
       collisions_keeper.handle(c)
