@@ -435,7 +435,6 @@ export class World extends WorldDataset {
       if (!ui || ui.disabled) continue;
       if (!flag) continue;
       for (const e of this.lf2.events) {
-        const fn = e.pressed ? 'on_key_down' : 'on_key_up';
         if (e.pressed) ui.on_key_down(e)
         else ui.on_key_up(e)
       }
@@ -446,12 +445,14 @@ export class World extends WorldDataset {
 
   protected handle_keys() {
     if (!this.lf2.events.length) return;
-    if (this.stage.control_disabled) return;
+
     for (const e of this.lf2.events) {
       const gk = e.game_key;
       const fn1 = e.pressed ? 'hit' : 'end';
       this.lf2._keys.forEach(keys => keys[gk][fn1]())
-
+      
+      // WTF.
+      if (this.stage.control_disabled) continue;
       const fighter = this.puppets.get(e.player)
       if (!fighter) continue;
       const { ctrl } = fighter
