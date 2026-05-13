@@ -243,10 +243,10 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       const bg = this.lf2.mt.pick(this.lf2.datas.backgrounds)
       this.lf2.change_bg(bg?.id || '?')
     }
-    const fighters_datas = this.lf2.datas.get_characters_of_group(
+    const fighters_datas = this.lf2.datas.get_fighters_of_group(
       EntityGroup.Regular,
     );
-    const boss_datas = this.lf2.datas.get_characters_of_group(
+    const boss_datas = this.lf2.datas.get_fighters_of_group(
       EntityGroup.Boss,
     );
 

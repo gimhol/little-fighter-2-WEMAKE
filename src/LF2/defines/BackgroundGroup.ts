@@ -5,3 +5,5 @@ export enum BackgroundGroup {
    */
   Regular = "regular"
 }
+export const BGG = BackgroundGroup;
+export type BGG = BackgroundGroup;

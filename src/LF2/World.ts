@@ -2,8 +2,8 @@ import { Callbacks, FPS, ICollision } from "./base";
 import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
-  BackgroundGroup,
   BFID,
+  BGG,
   CheatType,
   Defines,
   Difficulty,
@@ -11,7 +11,7 @@ import {
   EntityGroup,
   GONE_FRAME_INFO,
   HitFlag,
-  IBdyInfo, IBounding, IEntityData,
+  IBdyInfo, IBgData, IBounding, IEntityData,
   IFrameInfo, IItrInfo,
   ItrKind,
   IVector3,
@@ -475,13 +475,15 @@ export class World extends WorldDataset {
   change_bg(bg_id: string | undefined): void {
     if (this.stage.bg.id == bg_id)
       return;
-    const bg_data = (
-      bg_id == Defines.RANDOM_BG.id ?
-        this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
-        bg_id ?
-          this.lf2.datas.find_background(bg_id) :
-          Defines.VOID_BG
-    ) || Defines.VOID_BG;
+
+    let bg_data: IBgData | undefined;
+    if (bg_id == Defines.RANDOM_BG.id) {
+      bg_data = this.lf2.datas.get_random_bg(BGG.Regular)
+    } else if (bg_id) {
+      bg_data = this.lf2.datas.find_background(bg_id);
+    }
+    if (!bg_data) bg_data = Defines.VOID_BG;
+
     const stage = new Stage(this, Defines.VOID_STAGE);
     stage.change_bg(bg_data);
     this.stage = stage
