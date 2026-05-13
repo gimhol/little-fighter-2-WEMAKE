@@ -8,3 +8,5 @@ export enum Builtin_FrameId {
   Invisible_Max = "1299",
   Respawn = "respawn"
 }
+export type BFID = Builtin_FrameId;
+export const BFID = Builtin_FrameId;

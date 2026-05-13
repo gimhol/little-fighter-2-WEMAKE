@@ -4,7 +4,7 @@ import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   ALL_ENTITY_ENUM,
   BackgroundGroup,
-  Builtin_FrameId,
+  BFID,
   CheatType,
   Defines,
   Difficulty,
@@ -16,7 +16,7 @@ import {
   ItrKind,
   IVector3,
   O_ID,
-  StateEnum,
+  SE,
   WeaponType
 } from "./defines";
 import { CMD } from "./defines/CMD";
@@ -616,7 +616,6 @@ export class World extends WorldDataset {
     this.a_collisions.clear();
     this._used_itrs.clear()
     this._temp_entitis.length = 0;
-    const update_collisions = game_time.value % 1 === 0
     const update_chasing = game_time.value % 8 === 0;
     const dead_buff: [string, Buff][] = []
     for (const [key, buff] of this.buffs) {
@@ -649,7 +648,6 @@ export class World extends WorldDataset {
     }
     this.freshs.clear()
 
-    
     this.entities.forEach((a) => {
       const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
       a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
@@ -659,42 +657,37 @@ export class World extends WorldDataset {
 
     let divider = 0
     for (let i = 0; i < this.entities.length; i++) {
-      const e = this.entities[i];
-      const { is_ghost } = e;
-      e.update();
-      if (!is_ghost && update_chasing && this._chasers.size)
-        for (const c of this._chasers)
-          c.update_chasing(e)
-      if (
-        e.frame.id === Builtin_FrameId.Gone ||
-        e.state === StateEnum.Gone
-      ) {
-        e.hp = e.hp_r = 0;
-        this.gones.add(e);
+      const a = this.entities[i];
+      if (a.frame.id === BFID.Gone || a.state === SE.Gone) {
+        a.hp = a.hp_r = 0;
+        this.gones.add(a);
         continue;
       }
-      if (!this.has_players_alive && e.hp > 0 && is_human_ctrl(e.ctrl))
+      if (!this.has_players_alive && a.hp > 0 && is_human_ctrl(a.ctrl))
         this.has_players_alive = true;
-      if (is_ghost) continue;
+      a.update();
+      if (a.is_ghost) continue;
+      if (update_chasing && this._chasers.size)
+        for (const c of this._chasers)
+          c.update_chasing(a)
 
-      this._temp_entitis.push(e);
-      if (!update_collisions) continue;
+      this._temp_entitis.push(a);
 
-      const a_ctrl = e.ctrl
+      const a_ctrl = a.ctrl
       for (let j = 0; j < this._temp_entitis.length; j++) {
         const b = this._temp_entitis[j];
         const b_ctrl = b.ctrl;
-        if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(e)
+        if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
         if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
 
         if (j < divider) continue; //
-        if (e.aabb_x1 > b.aabb_x2 || e.aabb_x2 < b.aabb_x1) {
+        if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
           // 分割，前面的不会与此后的碰撞了
           divider = j + 1;
           continue;
         }
-        const collision1 = this.collision_detection(e, b);
-        const collision2 = this.collision_detection(b, e);
+        const collision1 = this.collision_detection(a, b);
+        const collision2 = this.collision_detection(b, a);
         if (collision1?.handlers && collision2?.handlers) {
           const index1 = ALL_ENTITY_ENUM.indexOf(collision1.attacker.type)
           const index2 = ALL_ENTITY_ENUM.indexOf(collision2.attacker.type)
@@ -706,12 +699,11 @@ export class World extends WorldDataset {
         else if (collision2?.handlers) this.add_collisions(collision2)
       }
     }
-    if (update_collisions) {
-      for (const c of this.v_collisions)
-        collisions_keeper.handle(c)
-      for (const [, c] of this.a_collisions)
-        collisions_keeper.handle(c)
-    }
+    for (const c of this.v_collisions)
+      collisions_keeper.handle(c)
+    for (const [, c] of this.a_collisions)
+      collisions_keeper.handle(c)
+
     for (const entity of this.gones) {
       const idx = this.entities.indexOf(entity);
       if (idx < 0) continue;
