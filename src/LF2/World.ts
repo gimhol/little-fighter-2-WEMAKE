@@ -618,7 +618,6 @@ export class World extends WorldDataset {
       Ditto.debug(`[World::update_once]entities.size = ${size}`)
     this.v_collisions.length = 0;
     this.a_collisions.clear();
-    this._used_itrs.clear()
     const temp_entities: Entity[] = [];
     const update_chasing = game_time.value % CHASING_UPDATE_INTERVAL === 0;
     const dead_buffs: [string, Buff][] = []
@@ -822,7 +821,6 @@ export class World extends WorldDataset {
     }
   }
 
-  private _used_itrs = new Set<Entity>()
   add_collisions(...cs: ICollision[]) {
     for (const c of cs) {
       if (c.itr.vrest) {
