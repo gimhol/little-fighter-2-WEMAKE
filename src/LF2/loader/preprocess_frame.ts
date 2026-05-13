@@ -6,6 +6,7 @@ import { EntityEnum, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, State
 import { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
 import read_nums from "../ui/utils/read_nums";
+import { max, min } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
 import { preprocess_ball_frame } from "./preprocess_ball_frame";
 import { preprocess_bdy } from "./preprocess_bdy";
@@ -103,6 +104,19 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
         frame.facing = FF.VX
     }
   }
+
+  frame.bdy?.forEach(({ x = 0, w = 0 }) => {
+    if (frame.__aabb_x1 == void 0) frame.__aabb_x1 = x - frame.centerx;
+    else frame.__aabb_x1 = min(frame.__aabb_x1, x - frame.centerx);
+    if (frame.__aabb_x2 == void 0) frame.__aabb_x2 = x + w - frame.centerx;
+    else frame.__aabb_x2 = max(frame.__aabb_x2, x + w - frame.centerx);
+  })
+  frame.itr?.forEach(({ x = 0, w = 0 }) => {
+    if (frame.__aabb_x1 == void 0) frame.__aabb_x1 = x - frame.centerx;
+    else frame.__aabb_x1 = min(frame.__aabb_x1, x - frame.centerx);
+    if (frame.__aabb_x2 == void 0) frame.__aabb_x2 = (x + w) - frame.centerx;
+    else frame.__aabb_x2 = max(frame.__aabb_x2, (x + w) - frame.centerx);
+  })
   return frame
 }
 preprocess_frame.TAG = "preprocess_frame";

@@ -2381,6 +2381,8 @@ export class Entity {
   itr_fall(itr: IItrInfo): number {
     return itr.fall ?? this.dataset('itr_fall')
   }
+  aabb_x1: number = 0;
+  aabb_x2: number = 0;
 }
 
 const common_creator = (world: World, data: IEntityData, states?: States) => {

@@ -615,7 +615,7 @@ export class World extends WorldDataset {
     this.v_collisions.length = 0;
     this.a_collisions.clear();
     this._used_itrs.clear()
-    this._temp_entitis_set.clear();
+    this._temp_entitis.length = 0;
     const update_collisions = game_time.value % 1 === 0
     const update_chasing = game_time.value % 8 === 0;
     const dead_buff: [string, Buff][] = []
@@ -649,34 +649,22 @@ export class World extends WorldDataset {
     }
     this.freshs.clear()
 
-    // 顺序变化不大的情况下，这个排序应该快，for SAP
-    // this.entities.sort((a, b) => round(a.position.x) - round(b.position.x))
+    
+    this.entities.forEach((a) => {
+      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
+      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+    })
+    this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
 
-    for (const e of this.entities) {
+    let divider = 0
+    for (let i = 0; i < this.entities.length; i++) {
+      const e = this.entities[i];
       const { is_ghost } = e;
       e.update();
       if (!is_ghost && update_chasing && this._chasers.size)
         for (const c of this._chasers)
           c.update_chasing(e)
-      if (!is_ghost && update_collisions) {
-        const a_ctrl = e.ctrl
-        for (const b of this._temp_entitis_set) {
-          const b_ctrl = b.ctrl;
-          if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(e)
-          if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
-          const collision1 = this.collision_detection(e, b);
-          const collision2 = this.collision_detection(b, e);
-          if (collision1?.handlers && collision2?.handlers) {
-            const index1 = ALL_ENTITY_ENUM.indexOf(collision1.attacker.type)
-            const index2 = ALL_ENTITY_ENUM.indexOf(collision2.attacker.type)
-            if (index1 < index2) this.add_collisions(collision1)
-            else if (index1 > index2) this.add_collisions(collision2)
-            else this.add_collisions(collision1, collision2)
-          }
-          else if (collision1?.handlers) this.add_collisions(collision1)
-          else if (collision2?.handlers) this.add_collisions(collision2)
-        }
-      }
       if (
         e.frame.id === Builtin_FrameId.Gone ||
         e.state === StateEnum.Gone
@@ -687,7 +675,36 @@ export class World extends WorldDataset {
       }
       if (!this.has_players_alive && e.hp > 0 && is_human_ctrl(e.ctrl))
         this.has_players_alive = true;
-      if (!is_ghost) this._temp_entitis_set.add(e);
+      if (is_ghost) continue;
+
+      this._temp_entitis.push(e);
+      if (!update_collisions) continue;
+
+      const a_ctrl = e.ctrl
+      for (let j = 0; j < this._temp_entitis.length; j++) {
+        const b = this._temp_entitis[j];
+        const b_ctrl = b.ctrl;
+        if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(e)
+        if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
+
+        if (j < divider) continue; //
+        if (e.aabb_x1 > b.aabb_x2 || e.aabb_x2 < b.aabb_x1) {
+          // 分割，前面的不会与此后的碰撞了
+          divider = j + 1;
+          continue;
+        }
+        const collision1 = this.collision_detection(e, b);
+        const collision2 = this.collision_detection(b, e);
+        if (collision1?.handlers && collision2?.handlers) {
+          const index1 = ALL_ENTITY_ENUM.indexOf(collision1.attacker.type)
+          const index2 = ALL_ENTITY_ENUM.indexOf(collision2.attacker.type)
+          if (index1 < index2) this.add_collisions(collision1)
+          else if (index1 > index2) this.add_collisions(collision2)
+          else this.add_collisions(collision1, collision2)
+        }
+        else if (collision1?.handlers) this.add_collisions(collision1)
+        else if (collision2?.handlers) this.add_collisions(collision2)
+      }
     }
     if (update_collisions) {
       for (const c of this.v_collisions)
@@ -805,7 +822,7 @@ export class World extends WorldDataset {
     }
   }
 
-  private _temp_entitis_set = new Set<Entity>();
+  private _temp_entitis: Entity[] = [];
   private _used_itrs = new Set<Entity>()
   add_collisions(...cs: ICollision[]) {
     for (const c of cs) {

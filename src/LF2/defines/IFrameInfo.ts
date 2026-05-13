@@ -225,6 +225,9 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    * 是否根据lf2逻辑预处理此frame 
    */
   likelf2?: boolean;
+
+  __aabb_x1?: number;
+  __aabb_x2?: number;
 }
 
 export interface IChaseInfo {
