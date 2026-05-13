@@ -612,7 +612,7 @@ export class World extends WorldDataset {
     this.v_collisions.length = 0;
     this.a_collisions.clear();
     this._used_itrs.clear()
-    this._temp_entities.length = 0;
+    const temp_entities: Entity[] = [];
     const update_chasing = game_time.value % CHASING_UPDATE_INTERVAL === 0;
     const dead_buffs: [string, Buff][] = []
     for (const [key, buff] of this.buffs) {
@@ -649,14 +649,22 @@ export class World extends WorldDataset {
     })
     this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
 
-    let divider = 0
+    let divider = 0;
+    let offset = 0;
     for (let i = 0; i < this.entities.length; i++) {
       const a = this.entities[i];
+      if (offset) this.entities[i - offset] = a;
       if (a.frame.id === BFID.Gone || a.state === SE.Gone) {
         a.hp = a.hp_r = 0;
         this.gones.add(a);
+        ++offset
         continue;
       }
+      if (this.gones.has(a)) {
+        ++offset
+        continue;
+      }
+
       if (!this.has_players_alive && a.hp > 0 && is_human_ctrl(a.ctrl))
         this.has_players_alive = true;
       a.update();
@@ -666,8 +674,8 @@ export class World extends WorldDataset {
           c.update_chasing(a)
 
       const a_ctrl = a.ctrl
-      for (let j = 0; j < this._temp_entities.length; j++) {
-        const b = this._temp_entities[j];
+      for (let j = 0; j < temp_entities.length; j++) {
+        const b = temp_entities[j];
         const b_ctrl = b.ctrl;
         if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
         if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
@@ -691,17 +699,16 @@ export class World extends WorldDataset {
         else if (collision2?.handlers) this.add_collisions(collision2)
       }
 
-      this._temp_entities.push(a);
+      temp_entities.push(a);
     }
+    this.entities.length = this.entities.length - offset
+
     for (const c of this.v_collisions)
       collisions_keeper.handle(c)
     for (const [, c] of this.a_collisions)
       collisions_keeper.handle(c)
 
     for (const entity of this.gones) {
-      const idx = this.entities.indexOf(entity);
-      if (idx < 0) continue;
-      this.entities.splice(idx, 1)
       this.entity_map.delete(entity.id)
       if (is_fighter(entity))
         this.callbacks.emit("on_fighter_del")(entity);
@@ -808,7 +815,6 @@ export class World extends WorldDataset {
     }
   }
 
-  private _temp_entities: Entity[] = [];
   private _used_itrs = new Set<Entity>()
   add_collisions(...cs: ICollision[]) {
     for (const c of cs) {
