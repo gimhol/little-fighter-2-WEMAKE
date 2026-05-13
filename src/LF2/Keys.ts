@@ -18,7 +18,10 @@ export class Keys {
     this.lf2 = lf2;
     this.world = lf2.world;
   }
-  recycle() {
+  mount(): void {
+    this.lf2.regist_keys(this);
+  }
+  unmount(): void {
     this.lf2.recycle_keys(this);
   }
 }

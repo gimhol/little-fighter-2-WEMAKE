@@ -176,7 +176,7 @@ export class UIComponent<
     return this._keys = this.lf2.create_keys()
   }
   recycle_keys() {
-    this._keys?.recycle()
+    this._keys?.unmount()
   }
   on_pointer_down?(e: LF2PointerEvent): void;
   on_pointer_move?(e: LF2PointerEvent): void;
