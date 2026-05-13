@@ -117,13 +117,13 @@ class Inner {
     for (const k of Object.keys(Defines.BuiltIn_Imgs)) {
       const src = (Defines.BuiltIn_Imgs as any)[k];
       if (!is_non_blank_str(src)) continue;
-      this.lf2.emit_loading_progress(`${src}`, 0);
+      this.lf2.emit_progress(`${src}`, 0);
       await this.lf2.images.load_img(src, src);
     }
     for (const k of Object.keys(Defines.BuiltIn_Dats)) {
       const src = (Defines.BuiltIn_Dats as any)[k];
       if (!is_non_blank_str(src)) continue;
-      this.lf2.emit_loading_progress(`${src}`, 0);
+      this.lf2.emit_progress(`${src}`, 0);
       const raw = await this.lf2.import_json<IBaseData>(src).then(r => r[0])
       const cooked = await this._cook_data(raw) as IEntityData;
       this._add_obj(src, cooked);
@@ -140,7 +140,7 @@ class Inner {
 
     if (this.cancelled) throw new Error("cancelled");
     for (const { id, file } of data.bots) {
-      this.lf2.emit_loading_progress(`${file}`, 0);
+      this.lf2.emit_progress(`${file}`, 0);
       const raw = await this.lf2.import_json<IBotData>(file, true)
         .then(r => {
           return r[0]
@@ -160,7 +160,7 @@ class Inner {
     for (const { id, file, alias } of data.objects) {
       if (this.cancelled) throw new Error("cancelled");
       try {
-        this.lf2.emit_loading_progress(`${file}`, 0);
+        this.lf2.emit_progress(`${file}`, 0);
         const raw = await this.lf2.import_json<IEntityData>(file, true).then(r => r[0])
         const cooked = await this._cook_data(raw) as IEntityData;
         this._add_obj(id, cooked);
@@ -174,7 +174,7 @@ class Inner {
     for (const { id, file } of data.backgrounds) {
       if (this.cancelled) throw new Error("cancelled");
       try {
-        this.lf2.emit_loading_progress(`${file}`, 0);
+        this.lf2.emit_progress(`${file}`, 0);
         const raw = await this.lf2.import_json(file, true).then(r => r[0])
         const cooked = await this._cook_data(raw) as IBgData;
         this._add_bg(cooked)
@@ -184,11 +184,11 @@ class Inner {
     }
     const stages: IStageInfo[] = []
     for (const stage_file of data.stages) {
-      this.lf2.emit_loading_progress(`${stage_file.file}`, 0);
+      this.lf2.emit_progress(`${stage_file.file}`, 0);
       const stage_datas = await this.lf2.import_json<IStageInfo[]>(stage_file.file, true)
         .then(r => r[0])
         .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
-      this.lf2.emit_loading_progress(`${stage_file.file}`, 100);
+      this.lf2.emit_progress(`${stage_file.file}`, 100);
       for (const stage of stage_datas) {
         stages.push(preprocess_stage(stage))
       }

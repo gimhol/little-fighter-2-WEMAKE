@@ -969,8 +969,8 @@ export class Entity {
       } else if (interval > 0) {
         this._opoints.push([opoint, 0])
       }
-      let enemies: Entity[] = []
-      let allies: Entity[] = []
+      let enemies: ReadonlyArray<Entity> = []
+      let allies: ReadonlyArray<Entity> = []
       let multi_type: OpointMultiEnum | undefined = void 0
       let count = 0;
       const multi = opoint.multi ?? 1;
@@ -980,12 +980,12 @@ export class Entity {
         const { type, min = 0, max = 355, skip_zero } = multi
         switch (multi_type = type) {
           case OpointMultiEnum.AccordingEnemies:
-            enemies = this.world.list_enemy_fighters(this, o => o.hp > 0)
+            enemies = this.world.list_enemies(this)
             if (skip_zero && !enemies.length) break;
             count = clamp(enemies.length, min, max);
             break;
           case OpointMultiEnum.AccordingAllies:
-            allies = this.world.list_ally_fighters(this, o => o.hp > 0)
+            allies = this.world.list_allies(this)
             if (skip_zero && !allies.length) break;
             count = clamp(allies.length, min, max);
             break;
@@ -2239,7 +2239,7 @@ export class Entity {
         if (use_hp && this._hp <= use_hp) return void 0;
       }
     }
-    
+
     let w: INextFrame;
     if (is_str(which)) {
       w = { id: which };

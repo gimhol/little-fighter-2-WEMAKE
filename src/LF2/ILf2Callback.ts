@@ -15,7 +15,7 @@ export interface ILf2Callback {
   on_loading_end?(): void;
   on_loading_failed?(reason: any): void;
 
-  on_loading_content?(content: string, progress: number): void;
+  on_progress?(content: string, progress: number): void;
 
   on_bgms_loaded?(names: string[]): void;
   on_bgms_clear?(): void;

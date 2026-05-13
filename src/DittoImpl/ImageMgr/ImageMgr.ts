@@ -172,7 +172,7 @@ export class ImageMgr implements IImageMgr {
 
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
     const fn = async () => {
-      this.lf2.emit_loading_progress(`${key}`, 0);
+      this.lf2.emit_progress(`${key}`, 0);
       const info = await this.create_img_info(key, src, operations);
       info.pic = await this.p_create_picture(info);
       return info;

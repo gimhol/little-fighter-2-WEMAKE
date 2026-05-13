@@ -170,7 +170,7 @@ export class GameOverlay {
   };
 
   private _l_listener: Partial<ILf2Callback> = {
-    on_loading_content: (content, progress) =>
+    on_progress: (content, progress) =>
       (this.loading = `${content}, ${progress}%`),
   };
   private _w_listener: Partial<IWorldCallbacks> = {

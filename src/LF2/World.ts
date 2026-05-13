@@ -55,6 +55,12 @@ export class World extends WorldDataset {
   private _update_time: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
+  /** 
+   * 临时实体列表
+   *  
+   * 每次更新前，此map会被清除
+   */
+  private _entities_map = new Map<string, Entity[]>();
   readonly buffs = new Map<string, Buff>();
   private _game_time = new Times();
   private _ground = new Ground();
@@ -187,28 +193,31 @@ export class World extends WorldDataset {
     }
   }
 
-  list_enemy_fighters(e: Entity, fn: (other: Entity) => boolean): Entity[] {
-    const ret: Entity[] = []
+  list_entities(name: string, predicate: (o: Entity) => boolean): ReadonlyArray<Entity> {
+    let ret = this._entities_map.get(name)
+    if (ret) return ret;
+    this._entities_map.set(name, ret = [])
     for (const o of this.entities) {
-      if (!e.is_ally(o) && is_fighter(o) && fn(o)) {
-        ret.push(o)
+      if (predicate(o)) {
+        ret.push(o);
       }
     }
-    const { x, z } = e.position;
-    ret.sort(({ position: a }, { position: b }) => abs(a.x - x) + abs(a.z - z) / 2 - abs(b.x - x) - abs(b.z - z) / 2)
     return ret;
   }
 
-  list_ally_fighters(e: Entity, fn: (other: Entity) => boolean): Entity[] {
-    const ret: Entity[] = []
-    for (const o of this.entities) {
-      if (e.is_ally(o) && is_fighter(o) && fn(o)) {
-        ret.push(o)
-      }
-    }
-    const { x, z } = e.position;
-    ret.sort(({ position: a }, { position: b }) => abs(a.x - x) + abs(a.z - z) / 2 - abs(b.x - x) - abs(b.z - z) / 2)
-    return ret;
+  /** 存活敌人列表 */
+  list_enemies(e: Entity): ReadonlyArray<Entity> {
+    return this.list_entities(`ef_${e.team}`, (o) => {
+      return is_fighter(o) && e.team != o.team && o.hp > 0
+    })
+  }
+
+
+  /** 存活队友列表 */
+  list_allies(e: Entity): ReadonlyArray<Entity> {
+    return this.list_entities(`af_${e.team}`, (o) => {
+      return is_fighter(o) && e.team == o.team && o.hp > 0
+    })
   }
 
   del_entity(entity: Entity): this {
@@ -330,7 +339,7 @@ export class World extends WorldDataset {
    */
   restrict_fighter(e: Entity): void {
     const { near, far, player_l, player_r, enemy_l, enemy_r, team } = this.stage;
-    
+
     const is_player = e.team !== team;
     const l = is_player ? player_l : enemy_l;
     const r = is_player ? player_r : enemy_r;
@@ -416,22 +425,19 @@ export class World extends WorldDataset {
   }
 
   protected update_ui() {
-    const { ui_stacks } = this.lf2
-    const len = ui_stacks.length
-    let flag = true
+    const { ui_stacks } = this.lf2;
+    const len = ui_stacks.length;
+    let flag = true;
+
     for (let i = len - 1; i >= 0; i--) {
       const ui_stack = ui_stacks[i];
       const { ui } = ui_stack
       if (!ui || ui.disabled) continue;
       if (!flag) continue;
       for (const e of this.lf2.events) {
-        if (e.pressed) {
-          ui.on_key_down(e)
-          this.lf2._keys.forEach(v => v[e.game_key].hit())
-        } else {
-          ui.on_key_up(e)
-          this.lf2._keys.forEach(v => v[e.game_key].end())
-        }
+        const fn = e.pressed ? 'on_key_down' : 'on_key_up';
+        if (e.pressed) ui.on_key_down(e)
+        else ui.on_key_up(e)
       }
       ui.update(16.66666 * this.atom_time);
       flag = false
@@ -442,12 +448,17 @@ export class World extends WorldDataset {
     if (!this.lf2.events.length) return;
     if (this.stage.control_disabled) return;
     for (const e of this.lf2.events) {
+      const gk = e.game_key;
+      const fn1 = e.pressed ? 'hit' : 'end';
+      this.lf2._keys.forEach(keys => keys[gk][fn1]())
+
       const fighter = this.puppets.get(e.player)
       if (!fighter) continue;
       const { ctrl } = fighter
       if (!is_human_ctrl(ctrl)) continue;
-      if (e.pressed) ctrl.start(e.game_key)
-      else ctrl.end(e.game_key)
+
+      const fn2 = e.pressed ? 'start' : 'end';
+      ctrl[fn2](gk)
     }
   }
 
@@ -576,6 +587,7 @@ export class World extends WorldDataset {
   }
 
   update_once() {
+    this._entities_map.clear();
     this.transform.update();
     this.update_ui();
     this.handle_keys();

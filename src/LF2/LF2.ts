@@ -315,12 +315,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   private on_loading_file(url: string, progress: number, full_size: number) {
     const txt = `${url}(${get_short_file_size_txt(full_size)})`;
-    this.emit_loading_progress(txt, progress);
+    this.emit_progress(txt, progress);
   }
 
   protected async load_zip_from_info_url(info_url: string): Promise<[I.IZip, string]> {
     this._dispose_check('load_zip_from_info_url')
-    this.emit_loading_progress(`${info_url}`, 0);
+    this.emit_progress(`${info_url}`, 0);
     const [{ url, md5 }] = await I.Ditto.Importer.import_as_json([info_url]);
     const zip_url = full_zip_url(info_url, url)
     this._dispose_check('load_zip_from_info_url')
@@ -351,7 +351,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         blob: await ret.blob()
       });
     }
-    this.emit_loading_progress(`${url}`, 100);
+    this.emit_progress(`${url}`, 100);
     return [ret, md5];
   }
 
@@ -595,9 +595,17 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._ui_stacks[index].push(opts)
   }
 
-  emit_loading_progress(content: string, progress: number) {
-    this.callbacks.emit("on_loading_content")(content, progress);
+
+  /**
+   * 触发进度回调
+   *
+   * @param {string} content 加载内容
+   * @param {number} progress 加载进度 [0~100]
+   */
+  emit_progress(content: string, progress: number): void {
+    this.callbacks.emit("on_progress")(content, progress);
   }
+
   broadcast(message: string): void {
     this.broadcasts.push(message);
     this.callbacks.emit("on_broadcast")(message, this);
@@ -643,7 +651,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (idx >= 0) this._keys.splice(idx, 1);
     this._keys_pool.push(keys);
   }
-
 }
 
 /**
