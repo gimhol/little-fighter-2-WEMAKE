@@ -42,7 +42,6 @@ import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355
 export class World extends WorldDataset {
-
   static override readonly TAG: string = "World";
   readonly lf2: LF2;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
@@ -144,7 +143,7 @@ export class World extends WorldDataset {
   set fn_locked(v: boolean) { this.set_fn_locked(v ? 1 : 0); }
 
   get counts(): ReadonlyMap<string, number> { return this._counts }
-  get game_time() { return this._game_time }
+  get game_time() { return this._game_time.value }
   get update_time() { return this._update_time }
   get lock_cam_x() { return this._lock_cam_x }
 
@@ -609,17 +608,13 @@ export class World extends WorldDataset {
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
-
     if (this.stage.world_pause) return;
-
-    const { game_time } = this;
-    const { length: size } = this.entities
-    if (size > MAX_DEBUG_ENTITIES)
-      Ditto.debug(`[World::update_once]entities.size = ${size}`)
+    if (this.entities.length > MAX_DEBUG_ENTITIES)
+      Ditto.debug(`[World::update_once]entities.size = ${this.entities.length}`)
     this.v_collisions.length = 0;
     this.a_collisions.clear();
     const temp_entities: Entity[] = [];
-    const update_chasing = game_time.value % CHASING_UPDATE_INTERVAL === 0;
+    const update_chasing = this._game_time.value % CHASING_UPDATE_INTERVAL === 0;
     const dead_buffs: [string, Buff][] = []
     for (const [key, buff] of this.buffs) {
       buff.update(this.atom_time)
@@ -1067,5 +1062,9 @@ export class World extends WorldDataset {
     if (!ret) this.tickers.add(ret = new Ticker(this.lf2));
     else this.tickers.add(ret.reborn())
     return ret;
+  }
+
+  reset_game_time(): void {
+    this._game_time.reset()
   }
 }
