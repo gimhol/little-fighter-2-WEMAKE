@@ -74,7 +74,7 @@ export class World extends WorldDataset {
 
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
-  readonly entities = new Set<Entity>();
+  readonly entities: Entity[] = [];
   /** 
    * 被玩家操作的角色 
    * 键: 玩家ID
@@ -177,6 +177,10 @@ export class World extends WorldDataset {
   }
   add_entities(...entities: Entity[]) {
     for (const e of entities) {
+      if (this.entity_map.has(e.id)) {
+        debugger; // should not happen.
+        continue;
+      }
       // this.freshs.add(entity)
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
@@ -187,7 +191,7 @@ export class World extends WorldDataset {
           this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
         }
       }
-      this.entities.add(e);
+      this.entities.push(e);
       this.entity_map.set(e.id, e)
       this.renderer.add_entity(e);
     }
@@ -450,7 +454,7 @@ export class World extends WorldDataset {
       const gk = e.game_key;
       const fn1 = e.pressed ? 'hit' : 'end';
       this.lf2._keys.forEach(keys => keys[gk][fn1]())
-      
+
       // WTF.
       if (this.stage.control_disabled) continue;
       const fighter = this.puppets.get(e.player)
@@ -606,7 +610,7 @@ export class World extends WorldDataset {
     }
 
     const { game_time } = this;
-    const { size } = this.entities
+    const { length: size } = this.entities
     if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
     this.v_collisions.length = 0;
     this.a_collisions.clear();
@@ -626,6 +630,10 @@ export class World extends WorldDataset {
 
     this.has_players_alive = false
     for (const e of this.freshs) {
+      if (this.entity_map.has(e.id)) {
+        debugger;
+        continue;
+      }
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
         const player = this.lf2.players.get(e.ctrl.player_id)
@@ -635,11 +643,15 @@ export class World extends WorldDataset {
           this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
         }
       }
-      this.entities.add(e);
+      this.entities.push(e);
       this.entity_map.set(e.id, e)
       this.renderer.add_entity(e);
     }
     this.freshs.clear()
+
+    // 顺序变化不大的情况下，这个排序应该快，for SAP
+    // this.entities.sort((a, b) => round(a.position.x) - round(b.position.x))
+
     for (const e of this.entities) {
       const { is_ghost } = e;
       e.update();
@@ -684,8 +696,9 @@ export class World extends WorldDataset {
         collisions_keeper.handle(c)
     }
     for (const entity of this.gones) {
-      const attached = this.entities.delete(entity)
-      if (!attached) continue;
+      const idx = this.entities.indexOf(entity);
+      if (idx < 0) continue;
+      this.entities.splice(idx, 1)
       this.entity_map.delete(entity.id)
       if (is_fighter(entity))
         this.callbacks.emit("on_fighter_del")(entity);
