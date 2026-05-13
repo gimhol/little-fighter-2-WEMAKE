@@ -46,6 +46,7 @@ export class World extends WorldDataset {
   static override readonly TAG: string = "World";
   readonly lf2: LF2;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
+  private _sleeping: boolean = false;
   private _spark_data?: IEntityData;
   private _etc_data?: IEntityData;
   private _bg: Background;
@@ -67,10 +68,16 @@ export class World extends WorldDataset {
   private _game_time = new Times();
   private _ground = new Ground();
   private _counts = new Map<string, number>()
-  get counts(): ReadonlyMap<string, number> { return this._counts }
-  get game_time() { return this._game_time }
-  get update_time() { return this._update_time }
+  /** 待移除实体 */
+  private _gones = new Set<Entity>();
+  private _freshs = new Set<Entity>();
+  private _chasers = new Set<Entity>();
+  private _paused: 0 | 1 | 2 = 0;
+  private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
+  private _cam_speed: number = 0;
+  private _lock_cam_x: number | undefined = void 0;
+  public renderer: IWorldRenderer;
   readonly tickers = new Set<Ticker>();
   readonly ticker_pool: Ticker[] = [];
 
@@ -87,7 +94,8 @@ export class World extends WorldDataset {
 
   readonly v_collisions: ICollision[] = [];
   readonly a_collisions = new Map<Entity, ICollision>();
-  has_players_alive: boolean = false
+  public has_players_alive: boolean = false;
+
   get bg() { return this._bg; }
   set bg(v: Background) {
     if (v === this._bg) return;
@@ -130,11 +138,14 @@ export class World extends WorldDataset {
   get width() { return this.stage.width; }
   get depth() { return this.stage.depth; }
   get middle() { return this.stage.middle; }
+  get paused() { return this._paused == 1; }
+  set paused(v: boolean) { this.set_paused(v ? 1 : 0); }
+  get fn_locked(): boolean { return this._fn_locked == 1; }
+  set fn_locked(v: boolean) { this.set_fn_locked(v ? 1 : 0); }
 
-  private _cam_speed: number = 0;
-  private _lock_cam_x: number | undefined = void 0;
-  public renderer: IWorldRenderer;
-
+  get counts(): ReadonlyMap<string, number> { return this._counts }
+  get game_time() { return this._game_time }
+  get update_time() { return this._update_time }
   get lock_cam_x() { return this._lock_cam_x }
 
   team_come(_team: string, x: number, y: number, z: number) {
@@ -224,8 +235,8 @@ export class World extends WorldDataset {
   }
 
   del_entity(entity: Entity): this {
-    this.gones.add(entity)
-    this.freshs.delete(entity)
+    this._gones.add(entity)
+    this._freshs.delete(entity)
     return this
   }
 
@@ -265,7 +276,6 @@ export class World extends WorldDataset {
   }
   before_update?(): void;
   after_update?(): void;
-  private _sleeping: boolean = false;
   sleep(): void { this._sleeping = true }
   awake(): void { this._sleeping = false }
   start_update() {
@@ -415,9 +425,6 @@ export class World extends WorldDataset {
     }
   }
 
-  private gones = new Set<Entity>();
-  private freshs = new Set<Entity>();
-  private _chasers = new Set<Entity>();
   add_chaser(entity: Entity) {
     this._chasers.add(entity);
   }
@@ -625,7 +632,7 @@ export class World extends WorldDataset {
     }
 
     this.has_players_alive = false
-    for (const e of this.freshs) {
+    for (const e of this._freshs) {
       if (this.entity_map.has(e.id)) continue;
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
@@ -640,7 +647,7 @@ export class World extends WorldDataset {
       this.entity_map.set(e.id, e)
       this.renderer.add_entity(e);
     }
-    this.freshs.clear()
+    this._freshs.clear()
 
     this.entities.forEach((a) => {
       const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
@@ -656,11 +663,11 @@ export class World extends WorldDataset {
       if (offset) this.entities[i - offset] = a;
       if (a.frame.id === BFID.Gone || a.state === SE.Gone) {
         a.hp = a.hp_r = 0;
-        this.gones.add(a);
+        this._gones.add(a);
         ++offset
         continue;
       }
-      if (this.gones.has(a)) {
+      if (this._gones.has(a)) {
         ++offset
         continue;
       }
@@ -708,7 +715,7 @@ export class World extends WorldDataset {
     for (const [, c] of this.a_collisions)
       collisions_keeper.handle(c)
 
-    for (const entity of this.gones) {
+    for (const entity of this._gones) {
       this.entity_map.delete(entity.id)
       if (is_fighter(entity))
         this.callbacks.emit("on_fighter_del")(entity);
@@ -721,7 +728,7 @@ export class World extends WorldDataset {
       entity.release();
       this.lf2.factory.recycle_entity(entity)
     }
-    this.gones.clear()
+    this._gones.clear()
     this.stage.update();
 
     this._released_tickers.clear()
@@ -1008,10 +1015,6 @@ export class World extends WorldDataset {
     };
   }
 
-  private _paused: 0 | 1 | 2 = 0;
-  get paused() { return this._paused == 1; }
-  set paused(v: boolean) { this.set_paused(v ? 1 : 0); }
-
   protected set_paused(v: 0 | 1 | 2) {
     if (this._paused === v) return;
     const changed = (!v) !== (!this._paused)
@@ -1019,9 +1022,6 @@ export class World extends WorldDataset {
     if (changed) this.callbacks.emit("on_pause_change")(!!v);
   }
 
-  private _fn_locked: 0 | 1 = 0;
-  get fn_locked(): boolean { return this._fn_locked == 1; }
-  set fn_locked(v: boolean) { this.set_fn_locked(v ? 1 : 0); }
   set_fn_locked(v: 0 | 1) {
     if (this._fn_locked === v) return;
     this._fn_locked = v;
