@@ -147,6 +147,14 @@ export class World extends WorldDataset {
   get update_time() { return this._update_time }
   get lock_cam_x() { return this._lock_cam_x }
 
+  constructor(lf2: LF2) {
+    super()
+    this.lf2 = lf2;
+    this._bg = new Background(this, Defines.VOID_BG);
+    this.transform.scale_to(...this._bg.zoom)
+    this._stage = new Stage(this, Defines.VOID_STAGE);
+    this.renderer = new Ditto.WorldRender(this);
+  }
   team_come(_team: string, x: number, y: number, z: number) {
     for (const e of this.entities) {
       const { ctrl, team } = e;
@@ -178,14 +186,6 @@ export class World extends WorldDataset {
         ctrl.follow(target)
       }
     }
-  }
-  constructor(lf2: LF2) {
-    super()
-    this.lf2 = lf2;
-    this._bg = new Background(this, Defines.VOID_BG);
-    this.transform.scale_to(...this._bg.zoom)
-    this._stage = new Stage(this, Defines.VOID_STAGE);
-    this.renderer = new Ditto.WorldRender(this);
   }
   add_entities(...entities: Entity[]) {
     for (const e of entities) {
