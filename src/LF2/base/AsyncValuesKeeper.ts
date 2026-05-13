@@ -3,6 +3,8 @@ import { PromiseInOne } from "promise-in-one/dist/es/pio";
 /**
  * 异步值管理
  *
+ * TODO: 我需要这么个玩意吗?
+ * 
  * @export
  * @class ValuesKeeper
  * @template V
