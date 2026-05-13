@@ -1,5 +1,4 @@
 import { Sine } from "../../animation/Sine";
-import Invoker from "../../base/Invoker";
 import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
@@ -33,7 +32,6 @@ export class PlayerTeamName extends UIComponent {
     this.node.visible = false;
   }
   protected _opacity: Sine = new Sine(0.65, 1, 3);
-  protected _unmount_jobs = new Invoker();
   override update(dt: number): void {
     this._opacity.update(dt);
     this.node.opacity = this._decided ? 1 : this._opacity.value;
