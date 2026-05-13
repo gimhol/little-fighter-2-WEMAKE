@@ -633,9 +633,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
   recycle_keys(keys: Keys) {
     const idx = this._keys.indexOf(keys);
-    if (idx < 0) return false;
-    this._keys.splice(idx, 1);
-    this._keys_pool.push(keys)
+    if (idx >= 0) this._keys.splice(idx, 1);
+    this._keys_pool.push(keys);
   }
 
 }
