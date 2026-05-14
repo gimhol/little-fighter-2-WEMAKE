@@ -34,7 +34,7 @@ export class FrameEditing {
       this.frame.key_down[k] = add_next_frame(this.frame.key_down[k], ...cooks);
     return this;
   }
-  hit(key: keyof IHitKeyCollection, ...nexts: (string | number | INextFrame)[]) {
+  hit(key: keyof IHitKeyCollection | (keyof IHitKeyCollection)[], ...nexts: (string | number | INextFrame)[]) {
     this.frame.hit = this.frame.hit || {};
     const cooks = nexts.map(v => {
       if (is_str(v) || is_num(v)) return get_next_frame_by_raw_id('' + v, 'frame', 'hit', this.costs);
@@ -42,7 +42,9 @@ export class FrameEditing {
       cook_next_frame_cost(r, 'hit', this.costs)
       return r
     })
-    this.frame.hit[key] = add_next_frame(this.frame.hit[key], ...cooks);
+    if (typeof key === 'string') key = [key];
+    for (const k of key)
+      this.frame.hit[k] = add_next_frame(this.frame.hit[k], ...cooks);
     return this;
   }
   seq(key: string, ...nexts: (string | number | INextFrame)[]) {

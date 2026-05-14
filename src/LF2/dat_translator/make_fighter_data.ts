@@ -96,6 +96,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           ...hit_next_frame.punch())
           .hit('j', "210") // jump
           .hit('d', "110") // defend
+          .keydown('j', "210") // jump
+          .keydown('d', "110") // defend
           .hit('FF', "running_0")
         frame.dvx = walking_speed;
         frame.dvz = walking_speedz;
@@ -125,7 +127,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           .hit('d', "102") // rowing
           .hit('B', "218") // running_stop
           .keydown('j', "213")
-          .keydown('d', "218")
+          .keydown('d', "102")
           .keydown('B', "218")
         frame.dvx = running_speed;
         frame.dvz = running_speedz;

@@ -210,19 +210,8 @@ export class BotState_Chasing extends BotState_Base {
       between(en_rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
       between(abs_dz, -c.dataset.w_atk_z, c.dataset.w_atk_z)
     ) {
-      if (is_weapon_picking) {
-        switch (me.frame.state) {
-          case StateEnum.Standing:
-          case StateEnum.Walking:
-            c.click(GK.a)
-            break;
-        }
-      } else {
-        c.click(GK.a)
-      }
-    } else {
-      c.key_up(GK.a)
-    }
+      c.click(GK.a)
+    } 
     if (my_z < round(en_z - c.dataset.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
     else if (my_z > round(en_z + c.dataset.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
     else c.key_up(GK.U, GK.D);

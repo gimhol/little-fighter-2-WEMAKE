@@ -47,6 +47,13 @@ export namespace hit_next_frame {
         facing: FF.Backward
       }
     });
+    frame.hit = assign(frame.hit, {
+      B: {
+        id: back_frame,
+        wait: "i",
+        facing: FF.Backward
+      }
+    });
   }
 
   export function jump(): INextFrame[] {

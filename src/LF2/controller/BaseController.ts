@@ -102,22 +102,22 @@ export class BaseController {
   })(this);
 
   get LR(): 0 | 1 | -1 {
-    const L = !this.keys.L.is_end();
-    const R = !this.keys.R.is_end();
+    const L = !this.keys.L.is_end() || this.keys.L.is_start();
+    const R = !this.keys.R.is_end() || this.keys.R.is_start();
     return L === R ? 0 : R ? 1 : -1;
   }
   get RL(): 0 | 1 | -1 { return -this.LR as 0 | 1 | -1 }
 
   get UD(): 0 | 1 | -1 {
-    const U = !this.keys.U.is_end();
-    const D = !this.keys.D.is_end();
+    const U = !this.keys.U.is_end() || this.keys.U.is_start();
+    const D = !this.keys.D.is_end() || this.keys.D.is_start();
     return U === D ? 0 : D ? 1 : -1;
   }
   get DU(): 0 | 1 | -1 { return -this.UD as 0 | 1 | -1 }
 
   get jd(): 0 | 1 | -1 {
-    const d = !this.keys.d.is_end();
-    const j = !this.keys.j.is_end();
+    const d = !this.keys.d.is_end() || this.keys.d.is_start();
+    const j = !this.keys.j.is_end() || this.keys.j.is_start();
     return d === j ? 0 : d ? -1 : 1;
   }
   get dj(): 0 | 1 | -1 { return -this.jd as 0 | 1 | -1 }
