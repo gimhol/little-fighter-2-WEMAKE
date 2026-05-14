@@ -97,8 +97,8 @@ export class BotDataSet implements Required<IBotDataSet> {
   static Default: BotDataSet = new BotDataSet();
   /** 欲望值：停止跑步 */
   r_stop_desire = 10;
-  defend_desire_base = 1000;
-  defend_desire_step = 1000;
+  defend_desire_base = 2000;
+  defend_desire_step = 2000;
 
 
   /** 走攻触发范围X(敌人正对) */
