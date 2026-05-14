@@ -265,8 +265,8 @@ export class BaseController {
   tst(type: "hit" | "hld" | "dbl" | "kd" | 'ku', key: GK) {
     const conflict_key = CONFLICTS_KEY_MAP[key];
     if (conflict_key && !this.is_end(conflict_key)) return false;
-    if (type === "kd") return !this.is_end(key);
-    if (type === "ku") return this.is_end(key);
+    if (type === "kd") return !this.is_end(key) || this.keys[key].time == this.time;
+    if (type === "ku") return this.is_end(key) || this.keys[key].u_time == this.time;
     if (type === "dbl") return this.is_db_hit(key);
     if (type === "hit") return this.keys[key].is_hit() && !this.keys[key].used;
     else return this.keys[key].is_hld();
