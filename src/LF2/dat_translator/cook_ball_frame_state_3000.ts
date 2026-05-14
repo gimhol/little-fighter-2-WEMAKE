@@ -1,8 +1,8 @@
-import { BuiltIn_OID } from "../defines";
+import { BuiltIn_OID, StateEnum } from "../defines";
 import { ActionType } from "../defines/ActionType";
-import { HitFlag } from "../defines/HitFlag";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { EntityEnum } from "../defines/EntityEnum";
+import { HitFlag } from "../defines/HitFlag";
 import { IBdyInfo } from "../defines/IBdyInfo";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameInfo } from "../defines/IFrameInfo";
@@ -23,10 +23,15 @@ export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
       .add(C_Val.ItrKind, "!=", ItrKind.JohnShield)
       .and(C_Val.ItrKind, "!=", ItrKind.Block)
       .and((c) => c
-        .add(C_Val.AttackerType, "==", EntityEnum.Ball).or((c) => c
-          /** 被武器s击中 */
+        .add(C_Val.AttackerType, "==", EntityEnum.Ball)
+        .or(c => c
+          /** 被武器击中 */
           .add(C_Val.AttackerType, "==", EntityEnum.Weapon)
           .and(C_Val.ItrKind, "!=", ItrKind.WeaponSwing),
+        ).or(c => c
+          /**  */
+          .add(C_Val.AttackerType, "==", EntityEnum.Fighter)
+          .and(C_Val.AttackerState, "==", StateEnum.BurnRun),
         ),
       ).and().not_in(
         C_Val.ItrKind,
@@ -67,7 +72,6 @@ export function cook_ball_frame_state_3000(e: IEntityData, frame: IFrameInfo) {
             .and(C_Val.ItrKind, "==", ItrKind.Normal)
             .and(C_Val.ItrEffect, "!=", ItrEffect.Ice)
             .and(C_Val.ItrEffect, "!=", ItrEffect.MFire1)
-            .and(C_Val.ItrEffect, "!=", ItrEffect.Fire),
           )
           .or((c) => c
             // 队友角色的攻击必须相向才能反弹气功波
