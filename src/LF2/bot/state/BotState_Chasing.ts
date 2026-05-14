@@ -71,7 +71,7 @@ export class BotState_Chasing extends BotState_Base {
     /** 持有武器的类型 */
     const wt = me.holding?.base_type;
 
-    const out_of_range = c.en_out_of_range = me.team !== c.world.stage.team && (
+    c.en_out_of_range = me.team !== c.world.stage.team && (
       en_x < c.world.stage.player_l - 80 ||
       en_x > c.world.stage.player_r + 80
     )
@@ -80,7 +80,7 @@ export class BotState_Chasing extends BotState_Base {
     const x_to_much = (
       my_x > en_x && me_facing > 0 ||
       my_x < en_x && me_facing < 0 ||
-      out_of_range
+      c.en_out_of_range
     )
     const GK_F = me_facing > 0 ? GK.R : GK.L;
     const GK_B = me_facing > 0 ? GK.L : GK.R;
@@ -150,7 +150,7 @@ export class BotState_Chasing extends BotState_Base {
             }
           }
         }
-        if (!out_of_range) {
+        if (!c.en_out_of_range) {
           const r_desire = c.should_run(en.position);
           if (r_desire > 0) {
             c.db_hit(GK.R).end(GK.R);
@@ -193,7 +193,7 @@ export class BotState_Chasing extends BotState_Base {
           // 跳攻
           c.key_down(GK.a)
           return
-        } else if (!out_of_range) {
+        } else if (!c.en_out_of_range) {
           if (my_x < en_x && abs_dx > c.stand_atk_f_x) {
             // 转向
             c.key_down(GK.R).key_up(GK.L);
@@ -211,7 +211,7 @@ export class BotState_Chasing extends BotState_Base {
         c.key_up(...AGK);
 
     }
-    if (!out_of_range) {
+    if (!c.en_out_of_range) {
       if (my_x < round(en_x - c.stand_atk_f_x)) c.key_down(GK.R).key_up(GK.L);
       else if (my_x > round(en_x + c.stand_atk_f_x)) c.key_down(GK.L).key_up(GK.R);
       else c.key_up(GK.L, GK.R);
