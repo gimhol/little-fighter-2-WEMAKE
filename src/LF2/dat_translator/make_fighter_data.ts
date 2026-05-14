@@ -123,7 +123,10 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           id: "85"
         }).hit('j', "213") // dash
           .hit('d', "102") // rowing
-          .keydown('B', "218"); // running_stop
+          .hit('B', "218") // running_stop
+          .keydown('j', "213")
+          .keydown('d', "218")
+          .keydown('B', "218")
         frame.dvx = running_speed;
         frame.dvz = running_speedz;
         frame.ctrl_z = 1;
@@ -143,6 +146,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
       case 16: case 17: case 18: {
         editing
           .hit('a', '50') // throw
+          .hit('B', '19') // running_stop
+          .keydown('a', '50') // throw
           .keydown('B', '19') // running_stop
         frame.dvx = heavy_running_speed;
         frame.dvz = heavy_running_speedz;

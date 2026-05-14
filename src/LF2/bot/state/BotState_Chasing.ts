@@ -92,12 +92,12 @@ export class BotState_Chasing extends BotState_Base {
             my_x > en_x && me_facing > 0 ||
             my_x < en_x && me_facing < 0
           ) {
-            c.click(GK_B)
+            c.key_down(GK_B)
             return;
           }
           // 概率刹车
           if (c.desire("chasing_stop_running_1") < c.dataset.r_stop_desire) {
-            c.click(GK_B);
+            c.key_down(GK_B);
             return
           }
           // 概率丢武器
