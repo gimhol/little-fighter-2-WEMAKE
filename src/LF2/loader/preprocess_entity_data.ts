@@ -13,13 +13,6 @@ import { preprocess_next_frame } from "./preprocess_next_frame";
 import { preprocess_pic } from "./preprocess_pic";
 
 export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
-
-  if (data.processed != false) { }
-  if (is_ball_data(data)) make_ball_special(data)
-  else if (is_weapon_data(data)) make_weapon_special(data)
-  else if (is_fighter_data(data)) make_fighter_special(data)
-  else make_entity_special(data);
-
   const { images, sounds } = lf2;
   const { small, head } = data.base;
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));
@@ -44,6 +37,14 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   });
   if (data.base.bot)
     data.base.bot = preprocess_bot_data(data.base.bot)
+
+
+  if (data.processed != false) { }
+  if (is_ball_data(data)) make_ball_special(data)
+  else if (is_weapon_data(data)) make_weapon_special(data)
+  else if (is_fighter_data(data)) make_fighter_special(data)
+
+  else make_entity_special(data);
   data.processed = true;
   return data;
 }
