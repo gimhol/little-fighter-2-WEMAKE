@@ -87,17 +87,13 @@ export class BotState_Chasing extends BotState_Base {
         )
 
         if (!en_in_range) {
-          // 避免跑过头,停下
+          // 避免跑过头停下 || 概率刹车
           if (
             my_x > en_x && me_facing > 0 ||
-            my_x < en_x && me_facing < 0
+            my_x < en_x && me_facing < 0 ||
+            c.desire("chasing_stop_running_1") < c.dataset.r_stop_desire
           ) {
-            c.key_down(GK_B)
-            return;
-          }
-          // 概率刹车
-          if (c.desire("chasing_stop_running_1") < c.dataset.r_stop_desire) {
-            c.key_down(GK_B);
+            c.click(GK_B).key_up(GK_F);
             return
           }
           // 概率丢武器
@@ -118,7 +114,7 @@ export class BotState_Chasing extends BotState_Base {
 
         if (en_in_range && is_weapon(en)) {
           if (en.base_type == WT.Heavy) {
-            c.click(GK_B)
+            c.click(GK_B).key_up(GK_F);
           } else {
             c.click(GK.d, GK.a)
           }
@@ -211,7 +207,7 @@ export class BotState_Chasing extends BotState_Base {
       between(abs_dz, -c.dataset.w_atk_z, c.dataset.w_atk_z)
     ) {
       c.click(GK.a)
-    } 
+    }
     if (my_z < round(en_z - c.dataset.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
     else if (my_z > round(en_z + c.dataset.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
     else c.key_up(GK.U, GK.D);
