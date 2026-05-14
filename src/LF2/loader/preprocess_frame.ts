@@ -23,9 +23,10 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
   if (data.processed != false) { }
   else if (is_ball_data(data)) preprocess_ball_frame(frame, data);
   else if (is_weapon_data(data)) {
-    const in_the_skys: string[] = []
-    const throwings: string[] = []
-    const on_hands: string[] = []
+    data.indexes = data.indexes || {}
+    const in_the_skys: string[] = data.indexes.in_the_skys || []
+    const throwings: string[] = data.indexes.throwings || []
+    const on_hands: string[] = data.indexes.on_hands || []
     switch (frame.state) {
       case StateEnum.Weapon_InTheSky:
         in_the_skys.push(frame.id)
@@ -49,7 +50,6 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
         on_hands.push(frame.id)
         break;
     }
-    data.indexes = data.indexes || {}
     if (in_the_skys.length) data.indexes.in_the_skys = in_the_skys
     if (throwings.length) data.indexes.throwings = throwings
     if (on_hands.length) data.indexes.on_hands = on_hands

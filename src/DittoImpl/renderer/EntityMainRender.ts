@@ -149,15 +149,16 @@ export class EntityMainRender {
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
-    if (
-      this._frame !== frame ||
-      this._facing !== facing
-    ) {
-      this._frame = frame;
+    if (this._facing !== facing) {
       this._facing = facing;
+      const { material: m } = main_mesh;
+      m.uniforms.flipX.value = entity.facing;
+    }
+    if (this._frame !== frame) {
+      this._frame = frame;
       const { pic } = frame
       const { variant } = entity;
-      const { images, main_mesh } = this
+      const { images } = this
       if (pic) {
         let { tex } = pic;
         if (variant) do {
@@ -182,7 +183,6 @@ export class EntityMainRender {
           m.uniforms.y.value = y;
           m.uniforms.w.value = w;
           m.uniforms.h.value = h;
-          m.uniforms.flipX.value = entity.facing;
         }
       }
       const { centerx, centery, state } = frame;
