@@ -1,7 +1,7 @@
 import { is_fighter, is_weapon } from "@/LF2/entity";
 import { AGK, Defines, GK, StateEnum, WeaponType, WT } from "../../defines";
-import { BSE } from "../../defines/BotStateEnum";
-import { abs, between, round_float } from "../../utils";
+import { BotStateEnum, BSE } from "../../defines/BotStateEnum";
+import { abs, between, round, round_float } from "../../utils";
 import { BotBehavior } from "../BotController";
 import { BotState_Base } from "./BotState";
 
@@ -44,10 +44,24 @@ export class BotState_Chasing extends BotState_Base {
 
     /** 敌人与自己的距离X */
     const abs_dx = round_float(abs(my_x - en_x))
+
+    if (
+      abs_dx > Defines.AI_STAY_CHASING_RANGE &&
+      (
+        c.behavior === BotBehavior.Stay ||
+        c.behavior === BotBehavior.Follow
+      )
+    ) {
+      c.en_out_of_range = true;
+      return BotStateEnum.Following;
+    }
+
+
     /** 敌人与自己的距离Z */
     const abs_dz = round_float(abs(my_z - en_z))
 
     const is_weapon_picking = is_weapon(en)
+    /** abs_dx <= c.stand_atk_f_x */
     const x_reach = abs_dx <= c.stand_atk_f_x;
     const z_reach = abs_dz <= c.dataset.w_atk_z;
 
@@ -57,18 +71,11 @@ export class BotState_Chasing extends BotState_Base {
     /** 持有武器的类型 */
     const wt = me.holding?.base_type;
 
-    const out_of_range = c.en_out_of_range = (
-      abs_dx > Defines.AI_STAY_CHASING_RANGE &&
-      (
-        c.behavior === BotBehavior.Stay ||
-        c.behavior === BotBehavior.Follow
-      )
-    ) || (
-        me.team !== c.world.stage.team && (
-          en_x < c.world.stage.player_l - 80 ||
-          en_x > c.world.stage.player_r + 80
-        )
-      )
+    const out_of_range = c.en_out_of_range = me.team !== c.world.stage.team && (
+      en_x < c.world.stage.player_l - 80 ||
+      en_x > c.world.stage.player_r + 80
+    )
+
     // 过了头
     const x_to_much = (
       my_x > en_x && me_facing > 0 ||
@@ -205,11 +212,12 @@ export class BotState_Chasing extends BotState_Base {
 
     }
     if (!out_of_range) {
-      if (my_x < round_float(en_x - c.stand_atk_f_x)) c.key_down(GK.R).key_up(GK.L);
-      else if (my_x > round_float(en_x + c.stand_atk_f_x)) c.key_down(GK.L).key_up(GK.R);
+      if (my_x < round(en_x - c.stand_atk_f_x)) c.key_down(GK.R).key_up(GK.L);
+      else if (my_x > round(en_x + c.stand_atk_f_x)) c.key_down(GK.L).key_up(GK.R);
       else c.key_up(GK.L, GK.R);
-      if (my_z < round_float(en_z - c.dataset.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
-      else if (my_z > round_float(en_z + c.dataset.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
+
+      if (my_z < round(en_z - c.dataset.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
+      else if (my_z > round(en_z + c.dataset.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
       else c.key_up(GK.U, GK.D);
     } else if (me.facing > 0 && my_x > en_x) {
       c.click(GK.L)
@@ -243,6 +251,7 @@ export class BotState_Chasing extends BotState_Base {
     } else {
       c.key_up(GK.a)
     }
+
     if (x_reach) {
       /** 回头 */
       if (abs_dx < 3) {

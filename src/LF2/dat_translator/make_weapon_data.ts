@@ -56,10 +56,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
       break;
     case "2":
       info.type = WeaponType.Heavy;
-      switch (datIndex.id) {
-        case "150": info.bounce = 0.2; break;
-        default: info.bounce = 0.1; break;
-      }
+      info.bounce = 0.2;
       break;
     case "4":
       info.type = WeaponType.Baseball;
@@ -110,7 +107,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
     }
   })
 
-  const ret = {
+  const ret: IEntityData = {
     id: datIndex.id,
     on_dead: { id: Builtin_FrameId.Gone },
     type: EntityEnum.Weapon,

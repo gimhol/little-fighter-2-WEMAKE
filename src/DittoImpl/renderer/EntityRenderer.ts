@@ -25,6 +25,7 @@ export class EntityRenderer {
     this.reset(e);
   }
   reset(e: Entity) {
+    this._indicators = this.world_renderer.indicators
     this.entity = e;
     this.main = new EntityMainRender(e);
     this.shad = new EntityShadowRender(e);
@@ -32,9 +33,12 @@ export class EntityRenderer {
     this.stat?.on_unmount();
     this.indi?.on_unmount();
     this.ctrl?.on_unmount();
-    this.stat = null
-    this.indi = null
-    this.ctrl = null
+    this.stat = null;
+    this.indi = null;
+    this.ctrl = null;
+    this.ensure_stat()
+    this.ensure_indi()
+    this.ensure_ctrl()
   }
   ensure_ctrl() {
     if (!this.ctrl && this._indicators & INDICATINGS.ctrl) {
@@ -70,9 +74,12 @@ export class EntityRenderer {
     }
   }
   render(dt: number) {
-    if (this._indicators === this.world_renderer.indicators) {
+    if (this._indicators !== this.world_renderer.indicators) {
       this._indicators = this.world_renderer.indicators
+      this.ensure_indi()
+      this.ensure_ctrl()
     }
+
 
     const update_id = this.entity.update_id.value
     if (this.update_id === update_id) return;
