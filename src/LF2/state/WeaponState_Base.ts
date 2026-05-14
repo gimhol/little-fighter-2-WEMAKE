@@ -35,10 +35,10 @@ export default class WeaponState_Base extends State_Base {
     const is_base_ball =
       e.base_type === WT.Baseball ||
       e.base_type === WT.Drink;
-    const dvy = round_float(-vy * (base.bounce ?? 0));
-    const dvx = round_float(vx * (is_base_ball ? 0.6 : 0.5));
+    const dvy = round_float(-vy * (base.bounce ?? 0.5));
+    const dvx = round_float(vx * 0.5);
     const dvz = round_float(vz * 0.5);
-    const min_bounce_vy = 1;
+    const min_bounce_vy = 2;
     if (this._hit_ground_weapons.has(e)) {
       this._hit_ground_weapons.delete(e);
       if (base.drop_hurt) {
