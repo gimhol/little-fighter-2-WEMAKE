@@ -1,4 +1,4 @@
-import { Ditto } from "..";
+import { Ditto, I_K, SE, StateEnum } from "..";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo } from "../defines";
@@ -126,7 +126,7 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
 }
 
 export function collision_new(o: ICollisionInits): Collision {
-  let { attacker: a, victim: v, aframe, bframe, itr, bdy } = o;
+  let { attacker: a, victim: v, aframe, bframe, itr, bdy, itr_index, bdy_index } = o;
   const world = a.world;
   const ax = a.position.x;
   const ay = a.position.y;
@@ -139,18 +139,20 @@ export function collision_new(o: ICollisionInits): Collision {
   const dz = vz - az;
   const a_cube = world.get_bounding(a, aframe, itr);
   const b_cube = world.get_bounding(v, bframe, bdy);
-  let rest = 0;
-  if (!o.itr.arest && o.itr.vrest)
-    rest = max(a.world.min_vrest, o.itr.vrest + a.world.vrest_offset)
 
   do {
     if (o.itr.kind !== ItrKind.WeaponSwing) break;
     const prefab_id = a.bearer?.frame.wpoint?.attacking;
-    if (!prefab_id) break;
+    if (!prefab_id) { itr_index = -1; break; }
     const itr_prefab = a.data.itr_prefabs?.[prefab_id];
-    if (!itr_prefab) break;
+    if (!itr_prefab) { itr_index = -1; break; }
     itr = { ...o.itr, ...itr_prefab };
   } while (0);
+
+  let rest = 0;
+  if (!itr.arest && itr.vrest) {
+    rest = max(a.world.min_vrest, itr.vrest + a.world.vrest_offset)
+  }
 
   const c: Collision = {
     lf2: a.lf2,
@@ -165,8 +167,8 @@ export function collision_new(o: ICollisionInits): Collision {
     vdata_id: v.data.id,
     aframe_id: aframe.id,
     bframe_id: bframe.id,
-    itr_index: o.itr_index,
-    bdy_index: o.bdy_index,
+    itr_index,
+    bdy_index,
     m_distance: abs(dx) + abs(dy) + abs(dz),
     a_cube,
     b_cube,
@@ -185,6 +187,7 @@ export function collision_get(attacker: Entity, victim: Entity): Collision | nul
   if (!itr?.length || !bdy?.length) return null;
   for (let i = 0; i < itr.length; ++i) {
     for (let j = 0; j < bdy.length; ++j) {
+
       const collision = collision_new({
         victim, attacker, itr: itr[i], bdy: bdy[j], aframe, bframe,
         itr_index: i, bdy_index: j,
