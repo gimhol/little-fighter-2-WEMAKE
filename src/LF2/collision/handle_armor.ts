@@ -29,9 +29,14 @@ export function handle_armor(collision: Collision): boolean {
     case ArmorEnum.Injury: decrease_value = injury; break;
   }
 
-  /* 护甲耐久为0 */
+  const is_full = victim.toughness == victim.toughness_max;
   victim.toughness -= decrease_value;
-  if (victim.toughness <= 0)
+  
+  /* 
+    护甲全新时，保证至少防御一次
+    否则，护甲耐久为0时，防护失效
+  */
+  if (!is_full && victim.toughness <= 0)
     return false;
 
   const {
