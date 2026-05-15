@@ -291,8 +291,13 @@ function App() {
     let { lang, dev } = params;
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
     const lf2 = ref_lf2.current = new LF2(dev == '1');
-    if ('first_ui' in window && typeof window.first_ui === 'string')
-      lf2.first_ui = window.first_ui
+    if (
+      location.pathname.endsWith('demo') ||
+      location.search.indexOf('demo=0') > 0 ||
+      location.hash.indexOf('demo=0') > 0
+    ) {
+      lf2.first_ui = 'init_demo'
+    }
     lf2.lang = lang;
     Object.assign(window, {
       LF2, lf2, world: lf2.world
