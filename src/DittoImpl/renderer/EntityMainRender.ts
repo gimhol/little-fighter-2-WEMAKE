@@ -223,7 +223,7 @@ export class EntityMainRender {
     const { invisible, blinking } = entity;
     if (invisible) {
       main_mesh.visible = false;
-    } if (blinking) {
+    } else if (blinking) {
       main_mesh.visible = 0 === floor(blinking / 4) % 2;
     } else {
       main_mesh.visible = true;
