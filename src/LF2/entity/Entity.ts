@@ -2,7 +2,7 @@ import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { Callbacks, collision_clone, Collision, new_id, new_team } from "../base";
+import { Callbacks, Collision, collision_clone, new_id, new_team } from "../base";
 import { sus_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
@@ -11,7 +11,8 @@ import {
   Defines, EntityEnum, EntityGroup, FacingFlag,
   GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
-  is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
+  is_independent, ItrKind, IVector3,
+  IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
 import { ChaseStratedy } from "../defines/ChaseStratedy";
@@ -38,23 +39,36 @@ import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
 import { is_fighter, is_human_ctrl } from "./type_check";
 
+interface IEntitySnapshot {
+  nums: number[];
+}
+function entity_to_snapshot(e: Entity): IEntitySnapshot {
+  const ret: IEntitySnapshot = {
+    nums: [
+      e._prev_position.x, e._prev_position.y, e._prev_position.z,
+      e._position.x, e._position.y, e._position.z,
+      e._prev_velocity.x, e._prev_velocity.y, e._prev_velocity.z,
+      e._velocity.x, e._velocity.y, e._velocity.z,
+    ]
+  }
+  return ret;
+}
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
 
-  protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected _spawn_time: number = 0;
   protected _outline_color: string | undefined = void 0;
   protected _outline_alpha: number | undefined = void 0;
+  readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
 
   /**
    * 影分身
    */
   readonly copies = new Set<string>();
-  protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _landing_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
   readonly vrests = new Map<string, Collision>();
   readonly blockers = new Map<string, Collision>();
   readonly superpunchs = new Map<string, Collision>();
@@ -243,7 +257,6 @@ export class Entity {
 
   get velocity(): Readonly<IVector3> { return this._velocity }
   /** 落地一刻的速度 */
-  get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get mounted() { return this._mounted }
@@ -704,7 +717,6 @@ export class Entity {
     this._outline_alpha = void 0;
     this._velocity.set(0, 0, 0)
     this._prev_velocity.set(0, 0, 0);
-    this._landing_velocity.set(0, 0, 0)
     this.callbacks.clear();
     this._name = null
     this._team = new_team();
@@ -1565,12 +1577,10 @@ export class Entity {
             if (result) this.enter_frame(result.which);
           }
           this._position.y = this._prev_position.y = ground_y;
-          this._landing_velocity.x = this._velocity.x
-          this._landing_velocity.y = this._velocity.y
-          this._landing_velocity.z = this._velocity.z
+          this._state?.on_landing?.(this);
           this._velocity.y = 0;
           this._prev_velocity.y = 0;
-          this._state?.on_landing?.(this);
+          
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {
             this.hp -= this.throwinjury;
