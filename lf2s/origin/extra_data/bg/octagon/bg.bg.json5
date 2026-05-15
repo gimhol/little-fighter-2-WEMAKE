@@ -4,18 +4,13 @@
   base: {
     name: "Octagon",
     shadow: "bg/sys/bc/s.png",
-    shadowsize: [
-      37,
-      9,
-    ],
+    shadowsize: [37, 9],
     left: 0,
     right: 400,
     far: -160,
     near: -40,
-    zoom: [ 2, 2, 2 ],
-    group: [
-      "regular"
-    ],
+    zoom: [2, 2, 2],
+    group: ["hidden"],
   },
   layers: [
     {

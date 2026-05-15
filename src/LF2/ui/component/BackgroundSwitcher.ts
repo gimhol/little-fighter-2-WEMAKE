@@ -1,13 +1,23 @@
-import { IBgData, Defines } from "../../defines";
+import { BGG, Defines, IBgData } from "../../defines";
 import { Label } from "./Label";
 
 export class BackgroundSwitcher extends Label {
   static override readonly TAGS: string[] = ["BackgroundSwitcher"];
   private _background: IBgData = Defines.RANDOM_BG;
   get backgrounds(): IBgData[] {
-    const ret = this.lf2.datas.backgrounds?.filter((v) => v.id !== Defines.VOID_BG.id) || []
-    ret.unshift(Defines.RANDOM_BG)
-    return ret;
+    let set = new Set<IBgData>();
+    set.add(Defines.RANDOM_BG)
+
+    for (const bg of this.lf2.datas.backgrounds) {
+      if (bg.base.group.includes(BGG.Regular)) {
+        set.add(bg)
+      } else if (bg.base.group.includes(BGG.Hidden)) {
+        if (this.world.LF2_NET) set.add(bg)
+      } else {
+        if (this.world.GIM_INK) set.add(bg)
+      }
+    }
+    return Array.from(set).filter(v => v.id !== Defines.VOID_BG.id);
   }
   get background(): IBgData {
     return this._background;

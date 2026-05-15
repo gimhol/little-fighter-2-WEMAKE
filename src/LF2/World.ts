@@ -475,7 +475,11 @@ export class World extends WorldDataset {
 
     let bg_data: IBgData | undefined;
     if (bg_id == Defines.RANDOM_BG.id) {
-      bg_data = this.lf2.datas.get_random_bg(BGG.Regular)
+      if (this.LF2_NET) {
+        bg_data = this.lf2.datas.get_random_bg([BGG.Regular, BGG.Hidden])
+      } else {
+        bg_data = this.lf2.datas.get_random_bg([BGG.Regular])
+      }
     } else if (bg_id) {
       bg_data = this.lf2.datas.find_background(bg_id);
     }

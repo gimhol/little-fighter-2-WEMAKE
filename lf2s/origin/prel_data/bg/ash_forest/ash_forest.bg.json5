@@ -9,7 +9,7 @@
     right: 3200,
     far: -370,
     near: -90,
-    group: ["regular"],
+    group: ["hidden"],
   },
   layers: [
     {

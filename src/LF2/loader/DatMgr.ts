@@ -341,15 +341,22 @@ export default class DatMgr {
     return this.backgrounds.filter(a => a.base.group?.some(b => b === group));
   }
 
-  get_bg_randoming_of_group(group: string) {
-    let ret = this._inner.bg_randomings.get(group);
+  get_bg_randoming_of_group(groups: string[]) {
+    const key = groups.join()
+    let ret = this._inner.bg_randomings.get(key);
     if (ret) return ret;
-    const bgs = this.get_backgrouds_of_group(group);
-    this._inner.bg_randomings.set(group, ret = new Randoming([...bgs], this.lf2));
+    const bg_set = new Set<IBgData>();
+    for (const group of groups) {
+      for (const bg of this.get_backgrouds_of_group(group)) {
+        bg_set.add(bg)
+      }
+    }
+    this._inner.bg_randomings.set(key, ret = new Randoming(Array.from(bg_set), this.lf2));
     return ret
   }
-  get_random_bg(group: string) {
-    return this.get_bg_randoming_of_group(group).take();
+
+  get_random_bg(groups: string[]) {
+    return this.get_bg_randoming_of_group(groups).take();
   }
 }
 interface IFindPredicate<T> {
