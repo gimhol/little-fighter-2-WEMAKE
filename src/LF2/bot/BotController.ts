@@ -571,7 +571,8 @@ export class BotController extends BaseController {
   }
 
   /**
-   *  预判敌人位置(有点粗暴)
+   * 预判敌人位置(有点粗暴)
+   * @deprecated
    */
   guess_entity_pos(entity: Entity) {
     const { x: px, z: pz, y: py } = entity.position;

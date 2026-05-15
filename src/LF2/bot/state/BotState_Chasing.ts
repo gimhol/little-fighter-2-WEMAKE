@@ -7,7 +7,7 @@ import { BotState_Base } from "./BotState";
 
 export class BotState_Chasing extends BotState_Base {
   readonly key = BSE.Chasing;
-  override update(dt: number) {
+  override update(dt: number): BSE | undefined {
     if (this.stage.is_stage_finish) return BSE.StageEnd;
     const { ctrl: c } = this;
     const me = c.entity;
@@ -60,7 +60,6 @@ export class BotState_Chasing extends BotState_Base {
     /** 敌人与自己的距离Z */
     const abs_dz = round_float(abs(my_z - en_z))
 
-    const is_weapon_picking = is_weapon(en)
     /** abs_dx <= c.stand_atk_f_x */
     const x_reach = abs_dx <= c.stand_atk_f_x;
     const z_reach = abs_dz <= c.dataset.w_atk_z;
@@ -79,10 +78,7 @@ export class BotState_Chasing extends BotState_Base {
     const GK_F = me_facing > 0 ? GK.R : GK.L;
     const GK_B = me_facing > 0 ? GK.L : GK.R;
     switch (state) {
-      case StateEnum.Running:
-        this.update_running();
-        return;
-
+      case StateEnum.Running: return this.update_running();
       case StateEnum.Catching:
         // shit, louisEx air-push frame's state is StateEnum.Catching...
         if (me.catching) c.click(GK.a)
@@ -155,10 +151,7 @@ export class BotState_Chasing extends BotState_Base {
       }
       default:
         c.key_up(...AGK);
-
     }
-
-
 
     if (
       between(en_rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
@@ -172,7 +165,7 @@ export class BotState_Chasing extends BotState_Base {
 
     if (x_reach) {
       /** 回头 */
-      if (abs_dx < 3) {
+      if (abs_dx < 10) {
         c.key_up(GK.L, GK.R)
       } else if (my_x > en_x && me.facing > 0) {
         c.key_down(GK.L).key_up(GK.R);
@@ -192,30 +185,37 @@ export class BotState_Chasing extends BotState_Base {
     }
   }
 
-  private update_running() {
+  /**
+   * 奔跑时的行为
+   * 
+   * 此函数的可能不会松开按键：上, 下
+   */
+  private update_running(): BSE | undefined {
     const { me, en, c } = this;
     if (!en) return;
-
     const wt = me.holding?.base_type;
 
     const { facing: me_facing } = me
-    const { x: my_x, z: my_z, y: my_y } = me.position;
-    const { next_x: en_x, next_z: en_z, next_y: en_y } = c.guess_entity_pos(en);
+    const { x: my_x, z: my_z } = me.position;
+    const { x: en_x, z: en_z, y: en_y } = en.position;
 
     const GK_F = me_facing > 0 ? GK.R : GK.L;
     const GK_B = me_facing > 0 ? GK.L : GK.R;
 
+    /* 奔跑中无特殊情况时，不需要按'前'，此处松开'前' */
+    c.key_up(GK_F);
+
     /** 
      * 敌人与自己的距离Z
-     * 敌人在上时为负数
-     * 敌人在下时为正数
+     * 敌在上时为负
+     * 敌在下时为正
      */
     const rz = round(en_z - my_z)
 
     /** 
      * 敌人与自己的距离X
-     * 敌人在背后时为负数
-     * 敌人在正面时为正数
+     * 敌在背时为负
+     * 敌在前时为正
      */
     const rx = round(me_facing * (en_x - my_x))
 
@@ -226,7 +226,7 @@ export class BotState_Chasing extends BotState_Base {
     if (x_ok && z_ok) {
       if (is_weapon(en)) {
         if (en.base_type == WT.Heavy) {
-          c.click(GK_B).key_up(GK_F);
+          c.click(GK_B);
         } else {
           c.click(GK.d, GK.a)
         }
@@ -239,6 +239,13 @@ export class BotState_Chasing extends BotState_Base {
       return;
     }
 
+    if (rz < -c.dataset.r_atk_z)
+      c.key_down(GK.U).key_up(GK.D)
+    else if (rz < -c.dataset.r_atk_z)
+      c.key_down(GK.D).key_up(GK.U)
+    else
+      c.key_up(GK.D, GK.U)
+
     /* 
       避免跑过头停下
       概率刹车 
@@ -249,7 +256,7 @@ export class BotState_Chasing extends BotState_Base {
         my_x < en_x && me_facing < 0 ||
         c.desire("chasing_stop_running_1") < c.dataset.r_stop_desire
       ) {
-        c.click(GK_B).key_up(GK_F);
+        c.click(GK_B);
         return
       }
     }
@@ -259,23 +266,15 @@ export class BotState_Chasing extends BotState_Base {
       这里暂时不考虑X距离
     */
     if (z_ok && wt) {
-      if (wt == WeaponType.Knife && this.ctrl.desire('rtwd_1') < 400) {
-        c.click(GK_F).click(GK.a)
-        return;
-      }
-      if (wt === WeaponType.Stick && this.ctrl.desire('rtwd_2') < 100) {
-        c.click(GK_F).click(GK.a)
-        return;
-      }
-      if (wt === WeaponType.Drink && this.ctrl.desire('rtwd_3') < 50) {
-        c.click(GK_F).click(GK.a)
-        return;
-      }
+      const d = this.ctrl.desire('rtwd_1')
+      const t_ok = (
+        wt == WT.Knife && d < 400 ||
+        wt == WT.Stick && d < 100 ||
+        wt == WT.Drink && d < 50
+      );
+      if (t_ok) c.click(GK_F).click(GK.a)
       return
     }
-
-
-    return;
   }
 }
 
