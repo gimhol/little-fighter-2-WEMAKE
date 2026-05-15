@@ -354,7 +354,7 @@ export default class DatMgr {
     this._inner.bg_randomings.set(key, ret = new Randoming(Array.from(bg_set), this.lf2));
     return ret
   }
-
+  /** @deprecated 我突然觉得这玩意不该由DatMgr负责... */
   get_random_bg(groups: string[]) {
     return this.get_bg_randoming_of_group(groups).take();
   }
