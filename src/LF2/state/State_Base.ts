@@ -1,5 +1,5 @@
-import { Defines, INextFrame, ItrKind, StateEnum, type IFrameInfo } from "../defines";
 import { Collision } from "../base/Collision";
+import { Defines, INextFrame, IVector3, StateEnum, type IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { spawn_buring_smoke } from "./spawn_buring_smoke";
 export class State_Base {
@@ -28,7 +28,7 @@ export class State_Base {
     }
   }
   on_dead?(e: Entity): void;
-  on_landing?(e: Entity): void;
+  on_landing?(e: Entity, velocity: IVector3): void;
   get_gravity?(e: Entity): number | undefined | null;
   on_be_collided?(collision: Collision): void;
 

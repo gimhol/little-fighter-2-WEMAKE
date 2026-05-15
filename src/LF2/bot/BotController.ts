@@ -127,8 +127,9 @@ export class BotController extends BaseController {
     ) return 100;
     return this.dataset.r_atk_x;
   }
+
   /** 冲跳攻触发范围X */
-  get d_atk_x() {
+  get d_atk_max_x() {
     const chasing = this.chasings.get()?.entity;
     if (!chasing) return 0;
     const wt = this.entity.holding?.base_type;
@@ -141,8 +142,16 @@ export class BotController extends BaseController {
       wt === WT.Stick ||
       wt === WT.Knife
     ) return 100;
-    return sp + this.dataset.d_atk_x;
+    return sp + this.dataset.d_atk_max_x;
   }
+  get d_atk_min_x() {
+    const chasing = this.chasings.get()?.entity;
+    if (!chasing) return 0;
+    const wt = this.entity.holding?.base_type;
+    if (wt) return 0;
+    return this.dataset.d_atk_min_x;
+  }
+
 
   /** 跳攻触发范围X */
   get j_atk_x() {

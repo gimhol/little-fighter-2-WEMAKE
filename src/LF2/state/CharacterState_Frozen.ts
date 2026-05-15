@@ -1,4 +1,4 @@
-import { IFrameInfo, StateEnum } from "../defines";
+import { IFrameInfo, IVector3, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";
 import { spawn_ice_piece } from "./spawn_ice_piece";
@@ -34,11 +34,11 @@ export default class CharacterState_Frozen extends CharacterState_Base {
     }
     super.leave?.(e, next_frame);
   }
-  override on_landing(e: Entity): void {
+  override on_landing(e: Entity, velocity: IVector3): void {
     const {
       data: { indexes },
     } = e;
-    const { y: vy } = e.velocity;
+    const { y: vy } = velocity;
     if (vy <= e.world.cha_bc_tst_spd_y * 2) {
       e.enter_frame({ id: indexes?.bouncing?.[-1][0] });
       e.set_velocity_y(e.world.cha_bc_spd)

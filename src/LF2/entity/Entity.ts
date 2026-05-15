@@ -1582,9 +1582,10 @@ export class Entity {
             if (result) this.enter_frame(result.which);
           }
           this._position.y = this._prev_position.y = ground_y;
-          this._state?.on_landing?.(this);
+          const v = this._velocity.clone();
           this._velocity.y = 0;
           this._prev_velocity.y = 0;
+          this._state?.on_landing?.(this, v);
 
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {

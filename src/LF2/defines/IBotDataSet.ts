@@ -17,7 +17,8 @@ export interface IBotDataSet {
   w_atk_r_x?: number;
 
   /** 走攻触发范围Z */
-  w_atk_z?: number;
+  w_atk_min_z?: number;
+  w_atk_max_z?: number;
 
   /** 跑攻欲望值 */
   r_atk_desire?: number;
@@ -27,23 +28,28 @@ export interface IBotDataSet {
 
 
   /** 跑攻触发范围Z */
-  r_atk_z?: number;
+  r_atk_min_z?: number;
+  r_atk_max_z?: number;
 
   /** 冲跳攻触发范围X */
-  d_atk_x?: number;
+  d_atk_min_x?: number;
+  d_atk_max_x?: number;
 
   /** 冲跳攻触发范围Z */
-  d_atk_z?: number;
+  d_atk_min_z?: number;
+  d_atk_max_z?: number;
 
   /** 跳攻触发范围X(敌人正对) */
   j_atk_x?: number;
 
   /** 跳攻触发范围Z */
-  j_atk_z?: number;
+  j_atk_min_z?: number;
+  j_atk_max_z?: number;
 
   /** 跳攻触发范围Y */
-  j_atk_y_min?: number;
-  j_atk_y_max?: number;
+  j_atk_min_y?: number;
+  j_atk_max_y?: number;
+  j_atk_desire?: number;
 
   jump_desire?: number;
   dash_desire?: number;
@@ -109,26 +115,33 @@ export class BotDataSet implements Required<IBotDataSet> {
   w_atk_m_x = -1;
   w_atk_r_x = -1;
   /** 走攻触发范围Z */
-  w_atk_z = 15;
+  w_atk_min_z = -15;
+  w_atk_max_z = 15;
   /** 跑攻欲望值 */
   r_atk_desire = 10000;
+  j_atk_desire = 10000;
   /** 跑攻触发范围X(敌人正对) */
   r_atk_x = 100;
   /** 跑攻触发范围Z */
-  r_atk_z = 15;
+  r_atk_min_z = -15;
+  r_atk_max_z = 15;
   /** 冲跳攻触发范围X(敌人正对) */
-  d_atk_x = 100;
+  d_atk_min_x = 0;
+  d_atk_max_x = 100;
   /** 冲跳攻触发范围Z */
-  d_atk_z = 60;
+  d_atk_min_z = -60;
+  d_atk_max_z = 60;
   /** 跳攻触发范围X(敌人正对) */
   j_atk_x = 80;
   /** 跳攻触发范围Z */
-  j_atk_z = 60;
+  j_atk_min_z = -60;
+  j_atk_max_z = 60;
   /** 跳攻触发范围Y */
-  j_atk_y_min = -160;
-  j_atk_y_max = 160;
+  j_atk_min_y = -160;
+  j_atk_max_y = 160;
   /** 跳越欲望 */
   jump_desire = 50;
+
   /** 冲刺欲望 */
   dash_desire = 100;
   /** 最小欲望值：跑步 */
@@ -161,16 +174,22 @@ export const bot_dataset_fields = fields<IBotDataSet>({
   w_atk_x: int,
   w_atk_m_x: int,
   w_atk_r_x: int,
-  w_atk_z: int,
+  w_atk_min_z: int,
+  w_atk_max_z: int,
   r_atk_desire: int,
+  j_atk_desire: int,
   r_atk_x: int,
-  r_atk_z: int,
-  d_atk_x: int,
-  d_atk_z: int,
+  r_atk_min_z: int,
+  r_atk_max_z: int,
+  d_atk_min_x: int,
+  d_atk_max_x: int,
+  d_atk_min_z: int,
+  d_atk_max_z: int,
   j_atk_x: int,
-  j_atk_z: int,
-  j_atk_y_min: int,
-  j_atk_y_max: int,
+  j_atk_min_z: int,
+  j_atk_max_z: int,
+  j_atk_min_y: int,
+  j_atk_max_y: int,
   jump_desire: int,
   dash_desire: int,
   r_desire_min: int,

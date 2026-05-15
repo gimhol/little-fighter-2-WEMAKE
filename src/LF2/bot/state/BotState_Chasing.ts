@@ -30,23 +30,31 @@ export class BotState_Chasing extends BotState_Base {
     const { state } = me.frame;
 
     /** 
+     * 敌人与自己的距离Z
+     * 敌在上时为负
+     * 敌在下时为正
+     */
+    const rz = round(en_z - my_z)
+
+    /** 
      * 敌人与自己的距离X
      * 敌人在背后时为负数
      * 敌人在正面时为正数
      */
-    const en_rx = round_float(me_facing * (en_x - my_x))
+    const rx = round(me_facing * (en_x - my_x))
+
     /** 
      * 敌人与自己的距离y
-     * 敌人在上方时为正数
-     * 敌人在下面时为负数数
+     * 敌人在高时为正数
+     * 敌人在低时为负数
      */
-    const en_ry = round_float(en_y - my_y)
+    const ry = round(en_y - my_y)
 
     /** 敌人与自己的距离X */
-    const abs_dx = round_float(abs(my_x - en_x))
+    const absx = round(abs(my_x - en_x))
 
     if (
-      abs_dx > Defines.AI_STAY_CHASING_RANGE &&
+      absx > Defines.AI_STAY_CHASING_RANGE &&
       (
         c.behavior === BotBehavior.Stay ||
         c.behavior === BotBehavior.Follow
@@ -61,8 +69,8 @@ export class BotState_Chasing extends BotState_Base {
     const abs_dz = round_float(abs(my_z - en_z))
 
     /** abs_dx <= c.stand_atk_f_x */
-    const x_reach = abs_dx <= c.stand_atk_f_x;
-    const z_reach = abs_dz <= c.dataset.w_atk_z;
+    const x_reach = absx <= c.stand_atk_f_x;
+    const z_reach = between(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
 
     // 随机跳
     if (!x_reach || !z_reach) this.random_jumping();
@@ -79,6 +87,7 @@ export class BotState_Chasing extends BotState_Base {
     const GK_B = me_facing > 0 ? GK.L : GK.R;
     switch (state) {
       case StateEnum.Running: return this.update_running();
+      case StateEnum.Dash: return this.update_dash();
       case StateEnum.Catching:
         // shit, louisEx air-push frame's state is StateEnum.Catching...
         if (me.catching) c.click(GK.a)
@@ -104,82 +113,48 @@ export class BotState_Chasing extends BotState_Base {
         }
         break;
       }
-      case StateEnum.Dash: {
-        if (
-          between(en_rx, 0, c.d_atk_x) &&
-          between(abs_dz, 0, c.dataset.d_atk_z) &&
-          is_fighter(en)
-        ) {
-          c.key_down(GK.a)
-          return
-        }
-        break;
-      }
-      case StateEnum.Jump: {
-        if (wt && between(abs_dz, 0, 30)) {
-          if (wt == WeaponType.Knife) {
-            if (this.ctrl.desire('rtwd') < 100) c.key_down(GK_F).click(GK.a)
-          } else if (wt === WeaponType.Stick) {
-            if (this.ctrl.desire('rtwd') < 50) c.key_down(GK_F).click(GK.a)
-          } else if (wt === WeaponType.Drink) {
-            if (this.ctrl.desire('rtwd') < 25) c.key_down(GK_F).click(GK.a)
-          }
-        }
-        if (
-          my_y > 10 &&
-          between(en_rx, 0, c.j_atk_x) &&
-          between(abs_dz, 0, c.dataset.j_atk_z) &&
-          between(en_ry, c.dataset.j_atk_y_min, c.dataset.j_atk_y_max) &&
-          is_fighter(en)
-        ) {
-          // 跳攻
-          c.key_down(GK.a)
-          return
-        } else if (!c.en_out_of_range) {
-          if (my_x < en_x && abs_dx > c.stand_atk_f_x) {
-            // 转向
-            c.key_down(GK.R).key_up(GK.L);
-          } else if (my_x > en_x && abs_dx > c.stand_atk_f_x) {
-            // 转向
-            c.key_down(GK.L).key_up(GK.R);
-          } else {
-            c.key_up(GK.L, GK.R);
-            break;
-          }
-        }
-        return
-      }
+      case StateEnum.Jump: return this.update_jump()
+
       default:
         c.key_up(...AGK);
     }
 
     if (
-      between(en_rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
-      between(abs_dz, -c.dataset.w_atk_z, c.dataset.w_atk_z)
+      between(rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
+      between(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
     ) {
       c.click(GK.a)
     }
-    if (my_z < round(en_z - c.dataset.w_atk_z)) c.key_down(GK.D).key_up(GK.U)
-    else if (my_z > round(en_z + c.dataset.w_atk_z)) c.key_down(GK.U).key_up(GK.D)
-    else c.key_up(GK.U, GK.D);
 
-    if (x_reach) {
-      /** 回头 */
-      if (abs_dx < 10) {
-        c.key_up(GK.L, GK.R)
-      } else if (en_rx < 0) {
-        c.key_down(GK_B).key_up(GK_F);
-      } else {
-        c.key_up(GK.L, GK.R)
-      }
-    } else if (my_x < round(en_x - c.stand_atk_f_x)) c.key_down(GK.R).key_up(GK.L);
-    else if (my_x > round(en_x + c.stand_atk_f_x)) c.key_down(GK.L).key_up(GK.R);
-    else c.key_up(GK.L, GK.R);
+    this.hold_ud(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
+
+    /** 回头 */
+    if (rx < 0 && absx > 10)
+      c.key_down(GK_B).key_up(GK_F);
+    else
+      c.key_up(GK.L, GK.R)
 
     const { team, player_l, player_r } = this.stage
     if (team === me.team) {
       if (my_x < player_l) c.click(GK.R)
       if (my_x > player_r) c.click(GK.L)
+    }
+  }
+  update_dash(): BotStateEnum | undefined {
+    const { me, en, c } = this;
+    if (!en) return;
+
+    const { x: my_x, z: my_z } = me.position;
+    const { x: en_x, z: en_z } = en.position;
+    const { facing: me_facing } = me
+    const rx = round(me_facing * (en_x - my_x))
+    const rz = round(en_z - my_z)
+    const x_ok = rx >= c.d_atk_min_x && rx <= c.d_atk_max_x
+    const z_ok = rz >= c.dataset.d_atk_min_z && rx <= c.dataset.d_atk_max_z
+
+    if (x_ok && z_ok) {
+      c.click(GK.a)
+      return
     }
   }
 
@@ -219,7 +194,7 @@ export class BotState_Chasing extends BotState_Base {
 
     /** 目标已在攻击范围内 */
     const x_ok = between(rx, c.stand_atk_b_x, c.stand_atk_f_x);
-    const z_ok = between(rz, -c.dataset.r_atk_z, c.dataset.r_atk_z);
+    const z_ok = between(rz, c.dataset.r_atk_min_z, c.dataset.r_atk_max_z);
 
     if (x_ok && z_ok) {
       if (is_weapon(en)) {
@@ -237,12 +212,7 @@ export class BotState_Chasing extends BotState_Base {
       return;
     }
 
-    if (rz < -c.dataset.r_atk_z)
-      c.key_down(GK.U).key_up(GK.D)
-    else if (rz < -c.dataset.r_atk_z)
-      c.key_down(GK.D).key_up(GK.U)
-    else
-      c.key_up(GK.D, GK.U)
+    this.hold_ud(rz, c.dataset.r_atk_min_z, c.dataset.r_atk_max_z);
 
     /* 
       避免跑过头停下
@@ -259,11 +229,8 @@ export class BotState_Chasing extends BotState_Base {
       }
     }
 
-    /* 
-      概率丢武器
-      这里暂时不考虑X距离
-    */
-    if (z_ok && wt) {
+    /* 概率丢武器 */
+    if (wt) {
       const d = this.ctrl.desire('rtwd_1')
       const t_ok = (
         wt == WT.Knife && d < 400 ||
@@ -272,6 +239,75 @@ export class BotState_Chasing extends BotState_Base {
       );
       if (t_ok) c.click(GK_F).click(GK.a)
       return
+    }
+  }
+
+  hold_ud(rz: number, min_z: number, max_z: number): void {
+    const { c } = this;
+    if (rz < min_z) c.key_down(GK.U).key_up(GK.D)
+    else if (rz > max_z) c.key_down(GK.D).key_up(GK.U)
+    else c.key_up(GK.D, GK.U)
+  }
+
+  update_jump(): BotStateEnum | undefined {
+    const { me, en, c } = this;
+    if (!en) return;
+    const wt = me.holding?.base_type;
+
+    const { facing: me_facing } = me
+    const { x: my_x, z: my_z, y: my_y } = me.position;
+    const { x: en_x, z: en_z, y: en_y } = en.position;
+
+    /** 
+     * 敌人与自己的距离Z
+     * 敌在上时为负
+     * 敌在下时为正
+     */
+    const rz = round(en_z - my_z)
+
+    /** 
+     * 敌人与自己的距离X
+     * 敌人在背后时为负数
+     * 敌人在正面时为正数
+     */
+    const rx = round(me_facing * (en_x - my_x))
+
+    /** 
+     * 敌人与自己的距离y
+     * 敌人在高时为正数
+     * 敌人在低时为负数
+     */
+    const ry = round(en_y - my_y)
+
+    const GK_F = me_facing > 0 ? GK.R : GK.L;
+    const GK_B = me_facing > 0 ? GK.L : GK.R;
+    const x_ok = between(rx, 0, c.j_atk_x)
+    const z_ok = between(rz, c.dataset.j_atk_min_z, c.dataset.j_atk_max_z);
+    const y_ok = between(ry, c.dataset.j_atk_min_y, c.dataset.j_atk_max_y);
+
+
+    if (my_y > 0 && x_ok && z_ok && y_ok && c.desire('ja') < c.dataset.j_atk_desire) {
+      c.click(GK.a)
+      return;
+    }
+
+    if (rx < 0) c.key_down(GK_B).key_up(GK_F);
+    else c.key_up(GK_B, GK_F);
+
+    this.hold_ud(rz, c.dataset.j_atk_min_z, c.dataset.j_atk_max_z)
+
+    /* 
+      概率丢武器
+      这里暂时不考虑X距离
+    */
+    if (wt) {
+      const d = this.ctrl.desire('jtw')
+      const t_ok = (
+        wt == WT.Knife && d < 400 ||
+        wt == WT.Stick && d < 100 ||
+        wt == WT.Drink && d < 50
+      );
+      if (t_ok) c.click(GK_F).click(GK.a)
     }
   }
 }

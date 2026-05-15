@@ -258,6 +258,7 @@ export function collision_test(c: Collision): boolean {
   if (c.itr_index < 0) return false; // should not happen
   const { itr, attacker, victim, a_cube, b_cube, bdy } = c
   if (!itr.vrest && attacker.arest) return false;
+  if (itr.vrest && victim.get_v_rest(c.aid)) return false;
 
   if (itr.kind !== ItrKind.Heal) {
     const b_catcher = victim.catcher;

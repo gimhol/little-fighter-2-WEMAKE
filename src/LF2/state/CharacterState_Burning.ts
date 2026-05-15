@@ -1,5 +1,5 @@
 
-import { IFrameInfo, StateEnum } from "../defines";
+import { IFrameInfo, IVector3, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { abs } from "../utils/math";
 import CharacterState_Base from "./CharacterState_Base";
@@ -22,8 +22,8 @@ export default class CharacterState_Burning extends CharacterState_Base {
     super.leave(e, next_frame);
     this._bouncings.delete(e)
   }
-  override on_landing(e: Entity): void {
-    const { y: vy, x: vx } = e.velocity;
+  override on_landing(e: Entity, velocity: IVector3): void {
+    const { y: vy, x: vx } = velocity;
     const {
       data: { indexes },
     } = e;

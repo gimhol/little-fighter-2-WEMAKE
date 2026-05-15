@@ -29,7 +29,7 @@ export function make_bot_data_louisex(): BotMaker {
   ).set_dataset({
     w_atk_x: 90,
     j_atk_x: 90,
-    d_atk_x: 200,
+    d_atk_max_x: 200,
     r_atk_x: 200,
   });
 }
