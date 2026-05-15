@@ -1,4 +1,4 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { Defines, ItrEffect, SparkEnum } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
@@ -8,7 +8,7 @@ import { handle_itr_normal_bdy_normal } from "./handle_itr_normal_bdy_normal";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 
-export function handle_itr_normal_bdy_defend(collision: ICollision) {
+export function handle_itr_normal_bdy_defend(collision: Collision) {
   const { itr, attacker, victim, a_cube, b_cube, bdy } = collision;
   const { bdefend = Defines.DEFAULT_BREAK_DEFEND_VALUE } = itr;
   if (

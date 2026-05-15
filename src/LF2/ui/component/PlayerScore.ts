@@ -1,5 +1,4 @@
 import { is_fighter } from "@/LF2/entity";
-import Invoker from "../../base/Invoker";
 import { Entity } from "../../entity/Entity";
 import { UIComponent } from "./UIComponent";
 
@@ -23,12 +22,8 @@ export class PlayerScore extends UIComponent {
     if (index >= arr.length) return void 0
     return arr[index][1];
   }
-  private _unmount_job = new Invoker();
 
   override update(): void {
     this.node.visible = !!this.fighter;
-  }
-  override on_pause(): void {
-    this._unmount_job.invoke_and_clear();
   }
 }

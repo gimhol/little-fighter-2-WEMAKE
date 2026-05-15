@@ -1,11 +1,6 @@
-import { make_bg_data } from "../../../src/LF2/dat_translator/make_bg_data";
-import { make_stage_info_list } from "../../../src/LF2/dat_translator/make_stage_info_list";
-import { obj_dat_to_json } from "../../../src/LF2/dat_translator/obj_dat_to_json";
-import type { IBgData } from "../../../src/LF2/defines/IBgData";
-import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
-import { DatTypeEnum, } from "../../../src/LF2/defines/IDatIndex";
-import type { IEntityData } from "../../../src/LF2/defines/IEntityData";
-import type { IStageInfo } from "../../../src/LF2/defines/IStageInfo";
+import { BotMaker, make_bg_data, make_stage_info_list, obj_dat_to_json } from "../../../src/LF2/dat_translator";
+import type { IBgData, IDataLists, IEntityData, IStageInfo } from "../../../src/LF2/defines";
+import { DatTypeEnum } from "../../../src/LF2/defines";
 import { debug, error, info } from "./log";
 import { read_lf2_dat_file } from "./read_lf2_dat_file";
 import { write_obj_file } from "./write_obj_file";
@@ -35,13 +30,11 @@ export async function convert_dat_file(
   if (index_info) {
     const txt = await read_lf2_dat_file(src_path);
     const ret = obj_dat_to_json(txt, index_info);
-    let dirty = ret as Partial<IEntityData>;
-    if (typeof dirty.base?.bot_id === 'string' && dirty.base.bot) {
-      const { bot } = dirty.base;
-      delete dirty.base.bot;
+    const bot_data = BotMaker.makers.get(ret.id)?.().bot
+    if (bot_data) {
       const bot_dst_path = dst_path.replace(/(.*)\/(.*?)\.obj\.json5$/, `$1/bots/${ret.id}.bot.json5`)
-      indexes.bots.push({ id: dirty.base.bot_id, type: DatTypeEnum.Bot, file: bot_dst_path.replace(out_dir + "/", "") });
-      await write_obj_file(bot_dst_path, bot);
+      indexes.bots.push({ id: bot_data.id, type: DatTypeEnum.Bot, file: bot_dst_path.replace(out_dir + "/", "") });
+      await write_obj_file(bot_dst_path, bot_data);
     }
     info(src_path, "=>\n    " + dst_path);
     await write_obj_file(dst_path, ret);

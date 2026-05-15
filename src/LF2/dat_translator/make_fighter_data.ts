@@ -20,7 +20,6 @@ import {
   get_next_frame_by_raw_id,
 } from "./get_the_next";
 import { hit_next_frame } from "./hit_next_frame";
-import { make_fighter_special } from "./make_fighter_special";
 import { make_frame_state } from "./make_frame_state";
 import { take } from "./take";
 import { take_raw_frame_mp } from "./take_raw_frame_mp";
@@ -77,6 +76,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         editing.hit('a', {
           // weapon throw
           id: "45", facing: FF.Ctrl, desc: "weapon throw",
+          mp_mode: 1,
           expression: new CondMaker<EV>()
             .add(EV.Holding_W_Type, "==", WT.Baseball)
             .or(c => c
@@ -85,6 +85,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
             ).done(),
         }, { // weapon swing
           id: ["20", "25"], facing: FF.Ctrl, desc: "weapon swing",
+          mp_mode: 1,
           expression: new CondMaker<EV>()
             .one_of(EV.Holding_W_Type, WT.Knife, WT.Stick)
             .done(),
@@ -94,6 +95,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           ...hit_next_frame.punch())
           .hit('j', "210") // jump
           .hit('d', "110") // defend
+          .keydown('j', "210") // jump
+          .keydown('d', "110") // defend
           .hit('FF', "running_0")
         frame.dvx = walking_speed;
         frame.dvz = walking_speedz;
@@ -121,7 +124,10 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           id: "85"
         }).hit('j', "213") // dash
           .hit('d', "102") // rowing
-          .keydown('B', "218"); // running_stop
+          .hit('B', "218") // running_stop
+          .keydown('j', "213")
+          .keydown('d', "102")
+          .keydown('B', "218")
         frame.dvx = running_speed;
         frame.dvz = running_speedz;
         frame.ctrl_z = 1;
@@ -141,6 +147,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
       case 16: case 17: case 18: {
         editing
           .hit('a', '50') // throw
+          .hit('B', '19') // running_stop
+          .keydown('a', '50') // throw
           .keydown('B', '19') // running_stop
         frame.dvx = heavy_running_speed;
         frame.dvz = heavy_running_speedz;
@@ -550,10 +558,10 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
     base,
     indexes,
     frames,
+    processed: false,
   };
   cook_transform_begin_expression_to_hit(ret.frames);
   cook_file_variants(ret);
-  make_fighter_special(ret);
   if (datIndex.bot) ret.base.bot_id = datIndex.bot
   return ret;
 }

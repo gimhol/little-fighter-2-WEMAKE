@@ -1,54 +1,69 @@
-import { AGK, GK, StateEnum, WeaponType } from "@/LF2/defines";
-import { BotStateEnum } from "../../defines/BotStateEnum";
-import { manhattan_xz } from "../../helper/manhattan_xz";
+import { AGK, GK, SE, WeaponType as WT } from "@/LF2/defines";
+import { max, min, round } from "@/LF2/utils";
+import { BSE } from "../../defines/BotStateEnum";
 import { BotState_Base } from "./BotState";
 
 export class BotState_Idle extends BotState_Base {
-  readonly key = BotStateEnum.Idle;
+  readonly key = BSE.Idle;
   override enter(): void {
-    this.ctrl.key_up(...AGK)
+    this.c.key_up(...AGK)
+  }
+  override leave(): void {
+    const { c, me } = this;
+    if (me.state === SE.Drink) c.click(GK.d)
+    c.key_up(...AGK)
   }
   override update(dt: number) {
-    super.update(dt)
-    const { ctrl: c } = this;
-    if (c.goingto) return BotStateEnum.Following;
-    const me = c.entity;
-    const en = c.chasings.get()?.entity
-    const av = c.avoidings.get()?.entity
-
-    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
-    if (this.handle_defends()) return;
+    if (this.stage.is_stage_finish)
+      return BSE.StageEnd;
+    const { c, me } = this;
+    if (c.is_leave_goto_range(me))
+      return BSE.Following;
     if (this.handle_bot_actions()) return;
+    if (this.handle_defends()) return;
 
-    if (en && av && manhattan_xz(me, av) < manhattan_xz(me, en))
-      return BotStateEnum.Avoiding;
-    else if (en)
-      return BotStateEnum.Chasing;
-    else if (av)
-      return BotStateEnum.Avoiding;
+    const { x: my_x } = me.position;
+    const { player_l, player_r } = this.stage;
 
-    c.key_up(...AGK)
-
-    /* 喝 */
-    if (
-      me.holding?.base_type === WeaponType.Drink && (
-        me.state === StateEnum.Running ||
-        me.state === StateEnum.Standing ||
-        me.state === StateEnum.Walking
-      )
-    ) c.click(GK.a)
+    // 空闲时远离边界300px
+    const mid = round((player_l + player_r) * 0.5)
+    const min_x = round(min(player_l + 300, mid))
+    const max_x = round(max(player_r - 300, mid))
+    if (my_x < min_x) {
+      // click确保回头
+      if (c.facing < 0) c.click(GK.R)
+      else c.key_down(GK.R)
+      c.key_up(GK.L)
+    } else if (my_x > max_x) {
+      // click确保回头
+      if (c.facing > 0) c.click(GK.L)
+      else c.key_down(GK.L)
+      c.key_up(GK.R)
+    } else {
+      c.key_up(GK.L, GK.R)
+    }
 
     /* 概率停跑 */
-    if (me.frame.state === StateEnum.Running && c.desire('idle_stop_run') < 100)
+    if (me.frame.state === SE.Running && c.desire('idle_stop_run') < 100)
       c.click(me.facing > 0 ? GK.L : GK.R);
+
+    const { en, av } = this;
+    const wt = me.holding?.base_type
+    if (wt === WT.Drink) {
+      /* 喝 */
+      if (
+        me.state === SE.Running ||
+        me.state === SE.Standing ||
+        me.state === SE.Walking
+      ) c.click(GK.a);
+      if (av) return BSE.Avoiding
+    }
+
+    const closest = this.closest(en, av)
+    if (av && av == closest) return BSE.Avoiding;
+    if (en && en == closest) return BSE.Chasing;
   }
 
-  override leave(): void {
-    const { ctrl: c } = this;
-    const me = c.entity;
-    if (me.state === StateEnum.Drink)
-      c.click(GK.d)
-  }
 }
 
 

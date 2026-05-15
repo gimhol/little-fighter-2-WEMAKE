@@ -64,7 +64,6 @@ export async function make_data() {
   }
 
   const pic_list_map = new Map<string, ILegacyPictureInfo[]>();
-  if (IN_EXTRA_DIR) await copy_dir(IN_EXTRA_DIR, TMP_DAT_DIR);
   const all = [
     ...indexes.objects,
     ...indexes.stages,
@@ -199,8 +198,10 @@ export async function make_data() {
     await fs.copyFile(src_path, dst_path);
     await cache_info.update();
   }
+  if (IN_EXTRA_DIR) await copy_dir(IN_EXTRA_DIR, TMP_DAT_DIR);
   await cache_infos.save();
   await write_index_file(indexes, TMP_DAT_DIR);
+
 }
 export async function make_data_zip() {
   debug(`make_data_zip()`)

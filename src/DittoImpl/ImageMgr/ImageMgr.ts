@@ -55,7 +55,10 @@ export class ImageMgr implements IImageMgr {
       switch (v.type) {
         case "mask": return true;
         case "crop":
-          return validate_ui_img_operation_crop(v)
+          const errors: string[] = []
+          const ok = validate_ui_img_operation_crop(v, errors);
+          if (errors.length) console.warn(errors)
+          return ok
         case "resize":
           if (!is_positive_int(v.w)) return false
           if (!is_positive_int(v.h)) return false
@@ -169,7 +172,7 @@ export class ImageMgr implements IImageMgr {
 
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
     const fn = async () => {
-      this.lf2.on_loading_content(`${key}`, 0);
+      this.lf2.emit_progress(`${key}`, 0);
       const info = await this.create_img_info(key, src, operations);
       info.pic = await this.p_create_picture(info);
       return info;

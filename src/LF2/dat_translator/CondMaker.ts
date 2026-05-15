@@ -3,9 +3,7 @@ import { is_str } from "../utils/type_check";
 export class CondMaker<T extends string = string> {
   readonly is_cond = true;
   static is = (v: any): v is CondMaker => v?.is_cond === true;
-
   private _parts: (string | CondMaker)[] = [];
-
   add(func: (c: CondMaker<T>) => CondMaker<T>): this;
   add(word: T, op: TBinOp, value: any): this;
   add(
@@ -17,8 +15,15 @@ export class CondMaker<T extends string = string> {
     else this._parts.push(arg1(new CondMaker()));
     return this;
   }
-  not(func: (c: CondMaker<T>) => CondMaker<T>): this {
-    this._parts.push("!", func(new CondMaker()));
+  not(): this;
+  not(func: (c: CondMaker<T>) => CondMaker<T>): this;
+  not(func?: (c: CondMaker<T>) => CondMaker<T>): this {
+    if (func) {
+      this._parts.push("!", func(new CondMaker()));
+    } else {
+      this._parts.unshift('!(')
+      this._parts.push(')')
+    }
     return this;
   }
   wrap(func: (c: CondMaker<T>) => CondMaker<T>): this {

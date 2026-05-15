@@ -1,4 +1,4 @@
-import { IFrameInfo } from "../defines";
+import { IFrameInfo, IVector3 } from "../defines";
 import type { Entity } from "../entity/Entity";
 import WeaponState_Base from "./WeaponState_Base";
 
@@ -12,9 +12,9 @@ export default class WeaponState_Throwing extends WeaponState_Base {
   override leave(e: Entity, next_frame: IFrameInfo): void {
     this._hit_ground_weapons.delete(e);
   }
-  override on_landing(e: Entity): void {
+  override on_landing(e: Entity, velocity: IVector3): void {
     const { indexes } = e.data;
-    this.hit_ground_rebouncing(e, indexes?.throw_on_ground || indexes?.just_on_ground);
+    this.hit_ground_rebouncing(e, indexes?.throw_on_ground || indexes?.just_on_ground, velocity);
   }
   override update(e: Entity): void {
     e.handle_ground_velocity_decay();

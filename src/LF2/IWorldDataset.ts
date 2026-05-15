@@ -1,6 +1,6 @@
 import { CheatType } from "./defines/CheatType";
 import { Difficulty } from "./defines/Difficulty";
-import { fields, float, int, invalid } from "./fields";
+import { fields, float, int, any } from "./fields";
 
 export interface IWorldDataset {
   itr_fall: number;
@@ -272,9 +272,9 @@ export const world_dataset_fields = fields<IWorldDataset>({
   land_friction_factor: float("落地摩擦X", "在物体着地时，当前动作结束前，速度将每帧乘以此值"),
   land_friction_x: float("落地摩擦X", "在物体着地时，当前动作结束前，每帧X速度将±=此值,向0靠近"),
   land_friction_z: float("落地摩擦Z", "在物体着地时，当前动作结束前，每帧Z速度将±=此值,向0靠近"),
-  screen_w: invalid,
-  screen_h: invalid,
-  sync_render: invalid,
+  screen_w: any,
+  screen_h: any,
+  sync_render: any,
   difficulty: int,
   infinity_mp: int("无限MP", "无限MP, 1=无限, 0=有限(默认)", { min: 0, max: 1 }),
   fall_r_ticks: int("摔落值恢复周期", "每几帧恢复一次摔落值"),

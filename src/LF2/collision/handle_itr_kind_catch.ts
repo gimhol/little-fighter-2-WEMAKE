@@ -1,6 +1,6 @@
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 
-export function handle_itr_kind_catch(c: ICollision) {
+export function handle_itr_kind_catch(c: Collision) {
   if (c.attacker.catching) return;
   if (c.victim.catcher) return;
   if (c.attacker.dizzy_catch_test(c.victim)) {

@@ -1,8 +1,8 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { is_independent, WeaponType } from "../defines";
 import { summary_mgr } from "../entity/SummaryMgr";
 
-export function handle_weapon_is_picked(collision: ICollision): void {
+export function handle_weapon_is_picked(collision: Collision): void {
   const { victim, attacker } = collision;
   if (attacker.holding) return;
   if (victim.bearer) return;

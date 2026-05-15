@@ -9,21 +9,18 @@ export class CharacterState_Walking extends CharacterState_Base {
   }
   override update(e: Entity): void {
     super.update(e);
-    if (e.ctrl) {
-      const { UD, LR } = e.ctrl;
-      if (!UD && !LR && !e.wait) {
-        if (
-          is_weapon(e.holding) &&
-          e.holding?.base_type === WeaponType.Heavy
-        ) {
-          e.wait = e.frame.wait;
-        } else {
-          e.enter_frame({ id: e.data.indexes?.standing });
-        }
+    const { UD, LR } = e.ctrl;
+    if (!UD && !LR && !e.wait) {
+      if (
+        is_weapon(e.holding) &&
+        e.holding?.base_type === WeaponType.Heavy
+      ) {
+        e.wait = e.frame.wait;
+      } else {
+        e.enter_frame({ id: e.data.indexes?.standing });
       }
-    } else {
-      e.enter_frame({ id: e.data.indexes?.standing });
     }
+
     if (e.hp <= 0) {
       e.enter_frame(e.get_sudden_death_frame());
     } else if (e.position.y > e.ground_y) {

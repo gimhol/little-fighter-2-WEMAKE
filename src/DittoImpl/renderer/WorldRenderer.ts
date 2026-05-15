@@ -1,41 +1,41 @@
-import { random_in } from "@/LF2";
+import { Defines, floor, random_in } from "@/LF2";
 import { BuiltIn_OID } from "@/LF2/defines";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { is_fighter, type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
-import { Camera, Object3D, OrthographicCamera } from "../_t";
-import { __Scene } from "../Scene";
+import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
+import { Camera, Object3D, OrthographicCamera, Scene, Vector3, WebGLRenderer } from "../_t";
 import { BgRender } from "./BgRender";
 import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityRenderer } from "./EntityRenderer";
 import { EntityStatRender } from "./EntityStatRender";
 import { FrameIndicators } from "./FrameIndicators";
 import { INDICATINGS } from "./INDICATINGS";
+import csses from "./styles.module.scss";
 
 export class WorldRenderer implements IWorldRenderer {
-  lf2: LF2;
-  world: World;
-  bg_render: BgRender;
-  scene: __Scene;
-  camera: Camera;
-  ui_container: Object3D;
+  readonly lf2: LF2;
+  readonly world: World;
+  readonly bg_render: BgRender;
+  readonly camera: Camera;
+  readonly ui_container: Object3D;
+  readonly ui_offset = new Vector3(0, 0, 0);
+  readonly bg_container: Object3D;
+  readonly bg_offset = new Vector3(0, 0, 0);
   readonly entity_renderers = new Set<EntityRenderer>();
   readonly world_node = new Object3D();
+  readonly world_offset = new Vector3(0, 0, 0);
+  readonly is_scene_node = true;
+  protected _cameras = new Set<Camera>();
+  protected _renderer?: WebGLRenderer;
+  protected _css_renderer?: CSS2DRenderer;
+  protected _canvas_ob = new MutationObserver(() => this.on_win_resize());
+  protected scene: Scene = new Scene();
+  protected renderer_w: number = 0;
+  protected renderer_h: number = 0;
+  indicators: number = 0;
 
-  private _indicator_flags: number = 0;
-  get indicator_flags() {
-    return this._indicator_flags;
-  }
-  set indicator_flags(v: number) {
-    if (this._indicator_flags === v) return;
-    this._indicator_flags = v;
-    for (const renderer of this.entity_renderers) {
-      this.ensure_stat(renderer)
-      this.ensure_indi(renderer)
-      this.ensure_ctrl(renderer)
-    }
-  }
   get cam_x(): number { return this.camera.position.x }
   set cam_x(v: number) { this.set_cam_pos(v, this.cam_y) }
   get cam_y(): number { return this.camera.position.y }
@@ -44,8 +44,32 @@ export class WorldRenderer implements IWorldRenderer {
     x = Math.max(0, x)
     this.camera.position.x = x;
     this.camera.position.y = y;
-    this.ui_container.position.x = x;
-    this.ui_container.position.y = y + this.world.screen_h;
+    this.ui_container.position.set(
+      x + this.ui_offset.x,
+      y + this.world.screen_h + this.ui_offset.y,
+      this.ui_offset.z
+    )
+  }
+  set_renderer_size(w: number, h: number): this {
+    this.renderer_w = w;
+    this.renderer_h = h;
+    this._renderer?.setSize(w, h, false);
+    return this;
+  }
+  on_win_resize = () => {
+    if (!this._css_renderer || !this._renderer) return;
+    const styles = window.getComputedStyle(this._renderer.domElement)
+    let w = parseInt(styles.width)
+    let h = parseInt(styles.height)
+    const scale = w / Defines.CLASSIC_SCREEN_WIDTH
+    this._css_renderer.setSize(w / scale, h / scale)
+    this._css_renderer.domElement.style.top = styles.top;
+    this._css_renderer.domElement.style.left = styles.left;
+    this._css_renderer.domElement.style.width = floor(w / scale) + 'px';
+    this._css_renderer.domElement.style.height = floor(h / scale) + 'px';
+    this._css_renderer.domElement.style.zIndex = '1';
+    this._css_renderer.domElement.style.transform = `scale(${scale})`
+    this._css_renderer.domElement.style.transformOrigin = `0px 0px`
   }
   constructor(world: World) {
     if (!world) debugger;
@@ -55,9 +79,16 @@ export class WorldRenderer implements IWorldRenderer {
     this.lf2 = world.lf2;
     const w = world.screen_w;
     const h = world.screen_h;
+
     this.bg_render = new BgRender(this);
-    this.scene = new __Scene(world.lf2).set_size(w * 4, h * 4);
-    this.scene.inner.add(this.world_node);
+    this.set_renderer_size(w * 4, h * 4);
+    this.scene.add(this.world_node);
+
+    this.ui_container = new Object3D();
+    this.scene.add(this.ui_container);
+
+    this.bg_container = new Object3D();
+    this.scene.add(this.bg_container);
     {
       const camera = this.camera = new OrthographicCamera()
       camera.left = 0;
@@ -66,83 +97,102 @@ export class WorldRenderer implements IWorldRenderer {
       camera.bottom = 0;
       camera.near = 0.1;
       camera.far = 2000;
-      camera.position.set(0, 0, 10)
+      camera.position.set(0, 0, 100)
       camera.name = "default_orthographic_camera"
-      this.scene.add_camera(camera);
+      this.add_camera(camera);
       camera.updateProjectionMatrix();
     }
-    this.ui_container = new Object3D();
-    this.scene.inner.add(this.ui_container);
-  }
-  ensure_ctrl(pack: EntityRenderer) {
-    if (!pack.ctrl && this._indicator_flags & INDICATINGS.ctrl) {
-      pack.ctrl = new EntityCtrlRender(pack.entity, this)
-      pack.ctrl.on_mount();
-    } else if (pack.ctrl) {
-      pack.ctrl.on_unmount();
-      pack.ctrl = null;
+
+    {
+      // this.ui_offset.x = -Defines.MODERN_SCREEN_WIDTH / 2
+      // this.ui_offset.y = -Defines.MODERN_SCREEN_HEIGHT / 2
+      // this.world_offset.x = -Defines.MODERN_SCREEN_WIDTH / 2
+      // this.world_offset.y = -Defines.MODERN_SCREEN_HEIGHT / 2
+
+      // const camera = this.camera = new PerspectiveCamera()
+      // camera.aspect = Defines.MODERN_SCREEN_WIDTH / Defines.MODERN_SCREEN_HEIGHT
+      // camera.near = 0.1;
+      // camera.far = 2000;
+      // camera.position.set(0, 0, 482)
+      // camera.name = "default_orthographic_camera"
+      // this.scene.add_camera(camera);
+      // camera.updateProjectionMatrix();
     }
+    window.addEventListener('resize', this.on_win_resize)
   }
-  ensure_stat(pack: EntityRenderer) {
-    // Criminal...?
-    if (
-      is_fighter(pack.entity) ||
-      pack.entity.data.id === BuiltIn_OID.Criminal
-    ) {
-      if (!pack.stat) {
-        pack.stat = new EntityStatRender(pack.entity, this);
-        pack.stat.on_mount()
-      }
-    } else if (pack.stat) {
-      pack.stat.on_unmount();
-      pack.stat = null
-    }
-  }
-  ensure_indi(pack: EntityRenderer) {
-    if (this._indicator_flags ^ INDICATINGS.ctrl) {
-      if (!pack.indi) pack.indi = new FrameIndicators(pack.entity);
-      pack.indi.flags = this._indicator_flags
-    } else if (pack.indi) {
-      pack.indi.on_unmount();
-      pack.indi = null
-    }
-  }
+
   add_entity(entity: Entity): void {
     const pack: EntityRenderer = entity.renderer ? entity.renderer : (
       entity.renderer = new EntityRenderer(entity)
     );
-    this.ensure_stat(pack)
-    this.ensure_ctrl(pack)
-    this.ensure_indi(pack)
     pack.mount();
     this.entity_renderers.add(pack)
   }
-
   del_entity(e: Entity): void {
     const renderer: EntityRenderer = e.renderer;
     if (!renderer) return;
     renderer.unmount();
     this.entity_renderers.delete(renderer);
   }
-
   render(dt: number): void {
     const { indicator_flags, transform } = this.world;
     let { x, y, z, earthquake, earthquake_level, scale_x, scale_y, scale_z } = transform
     if (earthquake) x += random_in(-earthquake_level, earthquake_level)
-    this.world_node.position.set(x, y, z);
+    this.world_node.position.set(
+      x + this.world_offset.x,
+      y + this.world_offset.y,
+      z + this.world_offset.z
+    );
     this.world_node.scale.set(scale_x, scale_y, scale_z);
-    if (indicator_flags != this.indicator_flags)
-      this.indicator_flags = indicator_flags;
+    if (indicator_flags != this.indicators)
+      this.indicators = indicator_flags;
     this.bg_render.render(dt);
     for (const renderer of this.entity_renderers)
       renderer.render(dt)
     for (const ui_stack of this.lf2.ui_stacks)
       ui_stack.ui?.renderer.render(dt)
-    this.scene.render();
-  }
 
+    const { scene } = this;
+    if (!this._renderer) return;
+    for (const camera of this._cameras) {
+      this._renderer.render(scene, camera);
+      this._css_renderer?.render(scene, camera);
+    }
+  }
+  set_canvas(canvas: HTMLCanvasElement | null | undefined) {
+    if (this._renderer) {
+      if (canvas === this._renderer.domElement)
+        return;
+      this._renderer.clear();
+      this._renderer.dispose();
+    }
+    this._renderer = void 0;
+    if (canvas) {
+      const { renderer_w, renderer_h } = this;
+      this._canvas_ob.observe(canvas, { attributes: true, attributeFilter: ['style'] })
+      this._renderer = new WebGLRenderer({ canvas, premultipliedAlpha: false });
+      this._renderer.setSize(renderer_w, renderer_h, false);
+      this._css_renderer = new CSS2DRenderer();
+      this._css_renderer.domElement.className = csses.css_2d_renderer
+      this.on_win_resize()
+      canvas.parentElement?.appendChild(this._css_renderer.domElement);
+    } else {
+      this._canvas_ob.disconnect()
+    }
+  }
+  add_camera(...cameras: Camera[]) {
+    for (const camera of cameras) {
+      if (this._cameras.has(camera)) continue;
+      this._cameras.add(camera);
+    }
+  }
   dispose() {
-    this.scene.dispose();
+    window.removeEventListener('resize', this.on_win_resize)
+    if (this._css_renderer) this._css_renderer?.domElement.remove()
+    this._canvas_ob.disconnect()
+    this._renderer?.clear();
+    this._renderer?.dispose();
+    this._renderer = void 0;
     this.bg_render.release();
   }
 }

@@ -43,11 +43,13 @@ class Inner {
   get cancelled(): boolean {
     return this.mgr.inner_id !== this.id;
   }
-  data_list_map = create_data_list_map();
+  datas = create_data_list_map();
   data_map = new Map<string, IEntityData>();
   alias_map = new Map<string, IEntityData>();
   stages: IStageInfo[] = [Defines.VOID_STAGE];
   bot_map = new Map<string, IBotData>();
+  randomings = new Map<string, Randoming<IEntityData>>();
+  bg_randomings = new Map<string, Randoming<IBgData>>();
 
   get lf2() {
     return this.mgr.lf2;
@@ -68,10 +70,7 @@ class Inner {
     else if (is_fighter_data(data))
       Factory.register_ctrl(data.id, (a, b) => new BotController(a, b));
     if (is_entity_data(data)) {
-      data.base.bot
-      if (data.base.bot_id) {
-        data.base.bot = data.base.bot ?? this.bot_map.get(data.base.bot_id)
-      };
+      data.base.bot = data.base.bot ?? this.bot_map.get(data.id ?? data.base.bot_id)
       data = await preprocess_entity_data(this.lf2, data, jobs);
     }
     return data;
@@ -99,34 +98,35 @@ class Inner {
       );
     }
     this.data_map.set(id, data);
-    const list = this.data_list_map[data.type]
+    const list = this.datas[data.type]
     const idx = list.findIndex(v => v.id === data.id)
     if (idx < 0) list.push(data); else list[idx] = data;
 
     {
-      const list = this.data_list_map[EntityEnum.Entity]
+      const list = this.datas[EntityEnum.Entity]
       const idx = list.findIndex(v => v.id === data.id)
       if (idx < 0) list.push(data); else list[idx] = data;
     }
   }
 
   private _add_bg(data: IBgData) {
-    const list = this.data_list_map[data.type]
-    const idx = list.findIndex(v => v.id === data.id)
+    const list = this.datas[data.type];
+    const idx = list.findIndex(v => v.id === data.id);
     if (idx < 0) list.push(data); else list[idx] = data;
+    data.base.group.forEach(v => this.bg_randomings.delete(v))
   }
 
   async load(index_files: string[]) {
     for (const k of Object.keys(Defines.BuiltIn_Imgs)) {
       const src = (Defines.BuiltIn_Imgs as any)[k];
       if (!is_non_blank_str(src)) continue;
-      this.lf2.on_loading_content(`${src}`, 0);
+      this.lf2.emit_progress(`${src}`, 0);
       await this.lf2.images.load_img(src, src);
     }
     for (const k of Object.keys(Defines.BuiltIn_Dats)) {
       const src = (Defines.BuiltIn_Dats as any)[k];
       if (!is_non_blank_str(src)) continue;
-      this.lf2.on_loading_content(`${src}`, 0);
+      this.lf2.emit_progress(`${src}`, 0);
       const raw = await this.lf2.import_json<IBaseData>(src).then(r => r[0])
       const cooked = await this._cook_data(raw) as IEntityData;
       this._add_obj(src, cooked);
@@ -143,7 +143,7 @@ class Inner {
 
     if (this.cancelled) throw new Error("cancelled");
     for (const { id, file } of data.bots) {
-      this.lf2.on_loading_content(`${file}`, 0);
+      this.lf2.emit_progress(`${file}`, 0);
       const raw = await this.lf2.import_json<IBotData>(file, true)
         .then(r => {
           return r[0]
@@ -163,7 +163,7 @@ class Inner {
     for (const { id, file, alias } of data.objects) {
       if (this.cancelled) throw new Error("cancelled");
       try {
-        this.lf2.on_loading_content(`${file}`, 0);
+        this.lf2.emit_progress(`${file}`, 0);
         const raw = await this.lf2.import_json<IEntityData>(file, true).then(r => r[0])
         const cooked = await this._cook_data(raw) as IEntityData;
         this._add_obj(id, cooked);
@@ -177,7 +177,7 @@ class Inner {
     for (const { id, file } of data.backgrounds) {
       if (this.cancelled) throw new Error("cancelled");
       try {
-        this.lf2.on_loading_content(`${file}`, 0);
+        this.lf2.emit_progress(`${file}`, 0);
         const raw = await this.lf2.import_json(file, true).then(r => r[0])
         const cooked = await this._cook_data(raw) as IBgData;
         this._add_bg(cooked)
@@ -187,11 +187,11 @@ class Inner {
     }
     const stages: IStageInfo[] = []
     for (const stage_file of data.stages) {
-      this.lf2.on_loading_content(`${stage_file.file}`, 0);
+      this.lf2.emit_progress(`${stage_file.file}`, 0);
       const stage_datas = await this.lf2.import_json<IStageInfo[]>(stage_file.file, true)
         .then(r => r[0])
         .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
-      this.lf2.on_loading_content(`${stage_file.file}`, 100);
+      this.lf2.emit_progress(`${stage_file.file}`, 100);
       for (const stage of stage_datas) {
         stages.push(preprocess_stage(stage))
       }
@@ -210,6 +210,16 @@ class Inner {
 
 export default class DatMgr {
   static readonly TAG: string = "DatMgr";
+  readonly lf2: LF2;
+  private _inner_id: number = 0;
+  private _inner = new Inner(this, ++this._inner_id);
+  get inner_id(): number {
+    return this._inner_id;
+  }
+  constructor(lf2: LF2) {
+    this.lf2 = lf2;
+  }
+
 
   find_group(group: string) {
     const f = (v: IEntityData) => v.base.group?.some(g => g === group)
@@ -219,16 +229,6 @@ export default class DatMgr {
       entity: this.entity.filter(f),
       balls: this.balls.filter(f),
     };
-  }
-  private _inner_id: number = 0;
-  private _inner = new Inner(this, ++this._inner_id);
-  get inner_id(): number {
-    return this._inner_id;
-  }
-  readonly lf2: LF2;
-
-  constructor(lf2: LF2) {
-    this.lf2 = lf2;
   }
 
   load(index_files: string[]): Promise<void> {
@@ -244,19 +244,19 @@ export default class DatMgr {
   }
 
   get fighters() {
-    return this._inner.data_list_map[EntityEnum.Fighter];
+    return this._inner.datas[EntityEnum.Fighter];
   }
   get weapons() {
-    return this._inner.data_list_map[EntityEnum.Weapon];
+    return this._inner.datas[EntityEnum.Weapon];
   }
   get backgrounds() {
-    return this._inner.data_list_map.background;
+    return this._inner.datas.background;
   }
   get balls() {
-    return this._inner.data_list_map[EntityEnum.Ball];
+    return this._inner.datas[EntityEnum.Ball];
   }
   get entity() {
-    return this._inner.data_list_map[EntityEnum.Entity];
+    return this._inner.datas[EntityEnum.Entity];
   }
   get stages(): IStageInfo[] {
     return this._inner.stages;
@@ -268,16 +268,14 @@ export default class DatMgr {
   find_bot(id: string): IBotData | undefined {
     return this._inner.bot_map.get(id)
   }
-  private randomings = new Map<string, Randoming<IEntityData>>();
   get_randoming_by_group(group: string) {
-    let ret = this.randomings.get(group);
-    if (!ret) {
-      const { entity } = this.find_group(group);
-      this.randomings.set(
-        group,
-        ret = new Randoming([...entity], this.lf2)
-      );
-    }
+    let ret = this._inner.randomings.get(group);
+    if (ret) return ret
+    const { entity } = this.find_group(group);
+    this._inner.randomings.set(
+      group,
+      ret = new Randoming([...entity], this.lf2)
+    );
     return ret
   }
 
@@ -323,7 +321,7 @@ export default class DatMgr {
       : this.backgrounds.find(arg_0);
   }
 
-  get_characters_of_group(group: string): IEntityData[] {
+  get_fighters_of_group(group: string): IEntityData[] {
     return this.fighters.filter(
       (v) => v.base.group && v.base.group.indexOf(group) >= 0,
     );
@@ -337,6 +335,28 @@ export default class DatMgr {
     return this.fighters.filter(
       (v) => !v.base.group || v.base.group.indexOf(group) < 0,
     );
+  }
+
+  get_backgrouds_of_group(group: string): IBgData[] {
+    return this.backgrounds.filter(a => a.base.group?.some(b => b === group));
+  }
+
+  get_bg_randoming_of_group(groups: string[]) {
+    const key = groups.join()
+    let ret = this._inner.bg_randomings.get(key);
+    if (ret) return ret;
+    const bg_set = new Set<IBgData>();
+    for (const group of groups) {
+      for (const bg of this.get_backgrouds_of_group(group)) {
+        bg_set.add(bg)
+      }
+    }
+    this._inner.bg_randomings.set(key, ret = new Randoming(Array.from(bg_set), this.lf2));
+    return ret
+  }
+  /** @deprecated 我突然觉得这玩意不该由DatMgr负责... */
+  get_random_bg(groups: string[]) {
+    return this.get_bg_randoming_of_group(groups).take();
   }
 }
 interface IFindPredicate<T> {

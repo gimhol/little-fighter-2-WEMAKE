@@ -28,8 +28,9 @@ export function make_frame_state(frame: IFrameInfo) {
       const dvy_a = 5
       const dvy_b = 4
       const dvx_b = 5.5
-      const dvx_z = 4.5
-      const y_b = 70
+      const dvx_z = 4
+      const y_b = 50
+      const offset_z = 5
       frame.opoint = ensure(frame.opoint, {
         kind: OpointKind.Normal,
         x: 39,
@@ -40,8 +41,9 @@ export function make_frame_state(frame: IFrameInfo) {
         speedz: 0
       }, {
         kind: OpointKind.Normal,
-        x: 39,
+        x: 39 + offset_z,
         y: y_b,
+        z: 30,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
@@ -50,8 +52,9 @@ export function make_frame_state(frame: IFrameInfo) {
         speedz: 0
       }, {
         kind: OpointKind.Normal,
-        x: 39,
+        x: 39 + offset_z,
         y: y_b,
+        z: -30,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
@@ -60,8 +63,9 @@ export function make_frame_state(frame: IFrameInfo) {
         speedz: 0
       }, {
         kind: OpointKind.Normal,
-        x: 39,
+        x: 39 - offset_z,
         y: y_b,
+        z: 30,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
@@ -70,12 +74,13 @@ export function make_frame_state(frame: IFrameInfo) {
         speedz: 0
       }, {
         kind: OpointKind.Normal,
-        x: 39,
+        x: 39 - offset_z,
         y: y_b,
+        z: -30,
         oid: BuiltIn_OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
-        dvz: -4,
+        dvz: -dvx_z,
         action: { id: "auto" },
         speedz: 0
       });

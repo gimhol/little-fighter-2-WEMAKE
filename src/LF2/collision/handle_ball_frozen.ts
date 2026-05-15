@@ -2,7 +2,13 @@ import { BuiltIn_OID, Builtin_FrameId, EntityGroup, IItrInfo, ItrKind, StateEnum
 import { Entity, is_ball, is_fighter, turn_face } from "../entity";
 import { round } from "../utils";
 
-
+const freeze_ball_opoint = {
+  oid: BuiltIn_OID.FreezeBall,
+  kind: 0,
+  x: 0,
+  y: 0,
+  action: { id: Builtin_FrameId.Auto }
+}
 export function handle_ball_frozen(attacker: Entity, victim: Entity, itr: IItrInfo): boolean {
   if (!attacker.group?.length) return false;
   if (!victim.group?.length) return false;
@@ -30,13 +36,10 @@ export function handle_ball_frozen(attacker: Entity, victim: Entity, itr: IItrIn
     return false;
   } while (0)
 
-  const freeze_ball = attacker.spawn_entity({
-    oid: BuiltIn_OID.FreezeBall,
-    kind: 0,
-    x: 0,
-    y: 0,
-    action: { id: Builtin_FrameId.Auto }
-  }, void 0, turn_face(victim.facing))
+  // stupid?
+  const freeze_ball = attacker.spawn_entity(
+    freeze_ball_opoint, void 0, turn_face(victim.facing)
+  )
 
   if (!freeze_ball) return false;
   const p1 = attacker.position;

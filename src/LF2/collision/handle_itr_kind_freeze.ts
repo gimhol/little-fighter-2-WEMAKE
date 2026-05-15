@@ -1,11 +1,11 @@
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 import { Defines, WeaponType } from "../defines";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 
-export function handle_itr_kind_freeze(collision: ICollision) {
+export function handle_itr_kind_freeze(collision: Collision) {
   const { itr, victim, attacker } = collision;
   victim.play_sound(["data/065.wav.mp3"]);
   victim.fall_value -= attacker.itr_fall(itr)
@@ -19,7 +19,7 @@ export function handle_itr_kind_freeze(collision: ICollision) {
   handle_stiffness(collision)
 }
 
-export function handle_itr_effect_freeze(collision: ICollision) {
+export function handle_itr_effect_freeze(collision: Collision) {
   const { itr, victim, attacker } = collision;
   victim.play_sound(["data/065.wav.mp3"]);
   victim.fall_value -= attacker.itr_fall(itr)

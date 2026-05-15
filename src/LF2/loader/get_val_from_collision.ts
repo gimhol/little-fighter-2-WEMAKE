@@ -1,11 +1,11 @@
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 import { is_armor_work } from "../collision/is_armor_work";
 import { CheatType, EntityGroup, HitFlag } from "../defines";
 import { CollisionVal } from "../defines/CollisionVal";
 import { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { round } from "../utils";
 
-const map: Record<CollisionVal, IValGetter<ICollision>> = {
+const map: Record<CollisionVal, IValGetter<Collision>> = {
   [CollisionVal.AttackerType]: c => c.attacker.data.type,
   [CollisionVal.VictimType]: c => c.victim.data.type,
   [CollisionVal.ItrKind]: c => c.itr.kind,
@@ -29,7 +29,7 @@ const map: Record<CollisionVal, IValGetter<ICollision>> = {
   [CollisionVal.VictimIsChasing]: c => c.victim === c.attacker.chasing ? 1 : 0,
   [CollisionVal.VictimIsFreezableBall]: c => c.victim.group?.some(v => v === EntityGroup.FreezableBall) ? 1 : 0,
   [CollisionVal.AttackerIsFreezableBall]: c => c.attacker.group?.some(v => v === EntityGroup.FreezableBall) ? 1 : 0,
-  [CollisionVal.ArmorWork]: (collision: ICollision) => is_armor_work(collision) ? 1 : 0,
+  [CollisionVal.ArmorWork]: (collision: Collision) => is_armor_work(collision) ? 1 : 0,
   [CollisionVal.V_FrameBehavior]: c => c.victim.frame.behavior,
   [CollisionVal.NoItrEffect]: c => c.itr.effect === void 0 ? 1 : 0,
   [CollisionVal.A_HP_P]: c => round(100 * c.attacker.hp / c.attacker.hp_max),
@@ -42,8 +42,8 @@ const map: Record<CollisionVal, IValGetter<ICollision>> = {
   [CollisionVal.VToughness]: c => c.victim.toughness,
   [CollisionVal.AToughness]: c => c.attacker.toughness,
 };
-export const get_val_geter_from_collision: IValGetterGetter<ICollision> = (
+export const get_val_geter_from_collision: IValGetterGetter<Collision> = (
   word: string,
-): IValGetter<ICollision> | undefined => {
+): IValGetter<Collision> | undefined => {
   return (map as any)[word];
 };

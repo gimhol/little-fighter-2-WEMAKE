@@ -169,7 +169,7 @@ export class FrameDrawer extends Shape<FrameDrawerData> {
     ctx.stroke();
   }
   get_img(zip: IZip, data: IEntityData, tex: string): Promise<HTMLImageElement> {
-    const { base: { files } } = data;
+    const { base: { files = {} } } = data;
     const pic = files[tex];
     if (!pic) {
       return Promise.reject(new Error('pic not found: ' + tex))

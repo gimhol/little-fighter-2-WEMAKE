@@ -103,8 +103,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     }
     this.update_head();
   }
-  override on_start(): void {
-    super.on_start?.();
+  override on_show(): void {
     if (this.props.dark_hp_bar) this.dark_hp_bar_w = this.props.dark_hp_bar.w
     if (this.props.hp_bar) this.hp_bar_w = this.props.hp_bar.w
     if (this.props.dark_mp_bar) this.dark_mp_bar_w = this.props.dark_mp_bar.w

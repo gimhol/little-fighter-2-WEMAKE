@@ -8,7 +8,9 @@ import { INextFrame } from "../defines";
 export namespace hit_next_frame {
   export function drink(): INextFrame[] {
     return [{
-      id: "55", desc: 'drink',
+      id: "55", 
+      desc: 'drink',
+      mp_mode: 1,
       expression: new CondMaker<EV>()
         .one_of(EV.Holding_W_Type, WT.Drink)
         .done(),
@@ -16,7 +18,10 @@ export namespace hit_next_frame {
   }
   export function super_punch(): INextFrame[] {
     return [{
-      id: "70", facing: FF.Ctrl, desc: "super_punch",
+      id: "70",
+      mp_mode: 1,
+      facing: FF.Ctrl,
+      desc: "super_punch",
       expression: new CondMaker<EV>()
         .add(EV.RequireSuperPunch, "==", 1)
         .done(),
@@ -24,7 +29,10 @@ export namespace hit_next_frame {
   }
   export function punch(): INextFrame[] {
     return [{
-      id: ["60", "65"], facing: FF.Ctrl, desc: "punch",
+      mp_mode: 1,
+      id: ["60", "65"],
+      facing: FF.Ctrl,
+      desc: "punch",
     }]
   }
   export function turn_back(frame: IFrameInfo, back_frame?: string) {
@@ -39,16 +47,32 @@ export namespace hit_next_frame {
         facing: FF.Backward
       }
     });
+    frame.hit = assign(frame.hit, {
+      B: {
+        id: back_frame,
+        wait: "i",
+        facing: FF.Backward
+      }
+    });
   }
 
   export function jump(): INextFrame[] {
-    return [{ id: "210", facing: FF.Ctrl }]
+    return [{
+      id: "210",
+      facing: FF.Ctrl,
+      mp_mode: 1,
+    }]
   }
   export function defend(): INextFrame[] {
-    return [{ id: "110", facing: FF.Ctrl }]
+    return [{
+      id: "110",
+      facing: FF.Ctrl,
+      mp_mode: 1,
+    }]
   }
   export function weapon_atk(): INextFrame[] {
     return [{
+      mp_mode: 1,
       id: "45", facing: FF.Ctrl,
       expression: new CondMaker<EV>()
         .add(EV.Holding_W_Type, "==", WT.Baseball)
@@ -57,6 +81,7 @@ export namespace hit_next_frame {
           .and(EV.PressFB, "!=", 0),
         ).done(),
     }, {
+      mp_mode: 1,
       id: ["20", "25"], facing: FF.Ctrl,
       expression: new CondMaker<EV>()
         .one_of(EV.Holding_W_Type, WT.Knife, WT.Stick)
@@ -68,6 +93,7 @@ export namespace hit_next_frame {
       id: "52", // 角色跳跃丢出武器
       facing: FF.Ctrl,
       desc: "空中丢出武器",
+      mp_mode: 1,
       expression: new CondMaker<EV>()
         .one_of(
           EV.Holding_W_Type,
@@ -83,6 +109,7 @@ export namespace hit_next_frame {
       id: "30", // 角色跳跃用武器攻击
       facing: FF.Ctrl,
       desc: "空中武器攻击",
+      mp_mode: 1,
       expression: new CondMaker<EV>()
         .one_of(
           EV.Holding_W_Type,

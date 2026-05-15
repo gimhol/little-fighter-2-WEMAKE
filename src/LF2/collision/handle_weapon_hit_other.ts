@@ -1,14 +1,14 @@
-import { ICollision } from "../base";
-import { StateEnum, W_T } from "../defines";
+import { Collision } from "../base";
+import { StateEnum, WT } from "../defines";
 
-export function handle_weapon_hit_other(collision: ICollision): void {
+export function handle_weapon_hit_other(collision: Collision): void {
   const { attacker } = collision;
   if (attacker.state === StateEnum.Weapon_OnHand) {
     return;
   }
   const is_base_ball =
-    attacker.base_type === W_T.Baseball ||
-    attacker.base_type === W_T.Drink;
+    attacker.base_type === WT.Baseball ||
+    attacker.base_type === WT.Drink;
 
   switch (attacker.state) {
     case StateEnum.Weapon_Throwing:

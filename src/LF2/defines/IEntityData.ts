@@ -20,4 +20,16 @@ export interface IEntityData extends IBaseData<IEntityInfo> {
   bdy_prefabs?: TBdyPrefabs;
   itr_prefabs?: TItrPrefabs;
   frames: Record<string, IFrameInfo>;
+  
+  /**
+   * 数据是否已处理
+   *
+   * 存在processed为false时 
+   * 
+   * 加载后时会对数据进行额外处理
+   * 见函数 preprocess_entity_data
+   * 
+   * @type {?boolean} 默认值: true
+   */
+  processed?: boolean;
 }

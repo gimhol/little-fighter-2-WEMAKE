@@ -1,4 +1,4 @@
-import { IFrameInfo, INextFrame, StateEnum, WeaponType } from "../defines";
+import { IFrameInfo, INextFrame, IVector3, StateEnum, WeaponType } from "../defines";
 import type { Entity } from "../entity/Entity";
 import State_Base from "./State_Base";
 
@@ -19,7 +19,7 @@ export default class CharacterState_Base extends State_Base {
     super.update(e)
     e.handle_ground_velocity_decay();
   }
-  override on_landing(e: Entity): void {
+  override on_landing(e: Entity, velocity: IVector3): void {
     e.enter_frame({ id: e.data.indexes?.landing_2 });
   }
   override get_auto_frame(e: Entity): IFrameInfo | undefined {

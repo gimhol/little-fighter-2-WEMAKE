@@ -1,9 +1,11 @@
-import { BotStateEnum, BotVal, Defines, EntityVal, GK, IBotAction } from "../../defines";
+import {
+  BotStateEnum, BotVal, Defines, EntityVal, GK, IBotAction
+} from "../../defines";
 import { CondMaker } from "../CondMaker";
-import { DESIRE_RATIO } from "./constants";
+import { DESIRE_RATIO_X_3 } from "./constants";
 const MIN_X = -10 as const;
 const MAX_X = 120 as const;
-const ID = 'd^a' as const
+const ID = 'd^j' as const
 /**
  * 矩形范围，检测成功将会按下D^A
  *
@@ -14,9 +16,9 @@ const ID = 'd^a' as const
  * @param {number} [max_x=120] 最大距离
  * @return {IBotAction}
  */
-export function bot_uppercut_dua(
+export function bot_uppercut_duj(
   min_mp: number,
-  desire: number = DESIRE_RATIO,
+  desire: number = DESIRE_RATIO_X_3,
   min_x: number = MIN_X,
   max_x: number = MAX_X
 ): IBotAction {
@@ -27,9 +29,9 @@ export function bot_uppercut_dua(
     status: [BotStateEnum.Chasing],
     e_ray: [{ x: 1, z: 0, min_x, max_x }],
     expression: min_mp > 0 ? cond.done() : void 0,
-    keys: [GK.d, GK.U, GK.a]
+    keys: [GK.d, GK.U, GK.j]
   };
 }
-bot_uppercut_dua.ID = ID
-bot_uppercut_dua.MIN_X = MIN_X
-bot_uppercut_dua.MAX_X = MAX_X
+bot_uppercut_duj.ID = ID
+bot_uppercut_duj.MIN_X = MIN_X
+bot_uppercut_duj.MAX_X = MAX_X

@@ -6,7 +6,6 @@ import { set_obj_field } from "../utils/container_help/set_obj_field";
 import { match_block_once } from "../utils/string_parser/match_block";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";
 import { cook_frames } from "./cook_frames";
-import { BotBuilder } from "./fighters/BotBuilder";
 import { make_ball_data } from "./make_ball_data";
 import { make_entity_data } from "./make_entity_data";
 import { make_fighter_data } from "./make_fighter_data";
@@ -122,8 +121,6 @@ export function obj_dat_to_json(text: string, datIndex: IDatIndex): IEntityData 
       break;
   }
   post_process_obj_data(ctx)
-  BotBuilder.check_all();
-  BotBuilder.builders.length = 0
   return ctx.data;
 }
 export default obj_dat_to_json;

@@ -1,5 +1,5 @@
 import { is_ball_ctrl } from "../entity/type_check";
-import { FrameBehavior, HitFlag, IFrameInfo, W_T } from "../defines";
+import { FrameBehavior, HitFlag, IFrameInfo, IVector3, WT } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
 import State_Base from "./State_Base";
@@ -20,7 +20,7 @@ export default class WeaponState_Base extends State_Base {
     return indexes?.on_ground ? frames[indexes.on_ground] : void 0;
   }
 
-  override on_landing(e: Entity): void {
+  override on_landing(e: Entity, velocity: IVector3): void {
     const { indexes } = e.data;
     e.enter_frame({ id: indexes?.on_ground });
   }
@@ -29,16 +29,16 @@ export default class WeaponState_Base extends State_Base {
     e.handle_ground_velocity_decay();
   }
 
-  hit_ground_rebouncing(e: Entity, nf: string | undefined) {
-    const { y: vy, x: vx, z: vz } = e.landing_velocity;
+  hit_ground_rebouncing(e: Entity, nf: string | undefined, velocity: IVector3) {
+    const { y: vy, x: vx, z: vz } = velocity;
     const { base, indexes } = e.data;
     const is_base_ball =
-      e.base_type === W_T.Baseball ||
-      e.base_type === W_T.Drink;
-    const dvy = round_float(-vy * (base.bounce ?? 0));
-    const dvx = round_float(vx * (is_base_ball ? 0.6 : 0.5));
+      e.base_type === WT.Baseball ||
+      e.base_type === WT.Drink;
+    const dvy = round_float(-vy * (base.bounce ?? 0.5));
+    const dvx = round_float(vx * 0.5);
     const dvz = round_float(vz * 0.5);
-    const min_bounce_vy = 1;
+    const min_bounce_vy = 2;
     if (this._hit_ground_weapons.has(e)) {
       this._hit_ground_weapons.delete(e);
       if (base.drop_hurt) {

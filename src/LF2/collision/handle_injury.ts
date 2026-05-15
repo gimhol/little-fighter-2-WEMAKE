@@ -1,8 +1,8 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { summary_mgr } from "../entity/SummaryMgr";
 import { round } from "../utils";
 
-export function handle_injury(c: ICollision, scale = 1, keep_toughness = false) {
+export function handle_injury(c: Collision, scale = 1, keep_toughness = false) {
   let { itr, victim, attacker } = c;
   if (!itr.injury) return;
   const injury = round(itr.injury * scale);

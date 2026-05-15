@@ -14,5 +14,3 @@ export function manhattan_xz(a: Entity, b: Entity): number {
     abs(a.position.z - b.position.z)
   )
 }
-
-

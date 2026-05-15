@@ -1,0 +1,21 @@
+import type { Entity } from "@/LF2/entity";
+import { round, abs } from "@/LF2/utils";
+
+
+export function closest(me: Entity, ...list: (Entity | undefined)[]): Entity | undefined {
+  let ret: Entity | undefined;
+  let distance = 0;
+  const len = list.length;
+  for (let i = 0; i < len; i++) {
+    const it = list[i];
+    if (!it) continue;
+    const d = round(
+      abs(me.position.x - it.position.x) +
+      abs(me.position.z - it.position.z)
+    );
+    if (ret && d < distance) continue;
+    ret = it;
+    distance = d;
+  }
+  return ret;
+}

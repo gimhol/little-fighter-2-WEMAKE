@@ -1,4 +1,4 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { IActionHandler } from "../base/IActionHandler";
 import { ActionType } from "../defines/ActionType";
 import { IAction_Broadcast } from "../defines/IAction_Broadcast";
@@ -13,34 +13,42 @@ import { is_bot_ctrl } from "./type_check";
 
 export const collision_action_handlers: IActionHandler = {
   a_sound: (a, c) => c.attacker.play_sound(a.data.path, a.data.pos),
-  a_next_frame: (a, c) => c.attacker.next_frame = c.attacker.get_next_frame(a.data)?.which ?? c.attacker.next_frame,
+  a_next_frame: (a, c) => {
+    const nf = c.attacker.get_next_frame(a.data)
+    if (!nf) return;
+    c.attacker.enter_frame(nf.which)
+  },
   a_set_prop: (a, c) => (c.attacker as any)[a.prop_name] = a.prop_value,
   a_broken_defend: () => 0, // 特殊对待，此处留空
   a_defend: () => 0, // 特殊对待，此处留空
 
   v_sound: (a, c) => c.victim.play_sound(a.data.path, a.data.pos),
-  v_next_frame: (a, c) => c.victim.next_frame = c.victim.get_next_frame(a.data)?.which ?? c.victim.next_frame,
+  v_next_frame: (a, c) => {
+    const nf = c.victim.get_next_frame(a.data)
+    if (!nf) return;
+    c.victim.enter_frame(nf.which)
+  },
   v_set_prop: (a, c) => (c.victim as any)[a.prop_name] = a.prop_value,
   v_broken_defend: () => 0,
   v_defend: () => 0,
 
-  [ActionType.A_REBOUND_VX]: function (action: IAction_ReboundVX, collision: ICollision) {
+  [ActionType.A_REBOUND_VX]: function (action: IAction_ReboundVX, collision: Collision) {
     const { attacker } = collision;
     attacker.set_velocity_x(-attacker.velocity.x)
   },
-  [ActionType.V_REBOUND_VX]: function (action: IAction_ReboundVX, collision: ICollision) {
+  [ActionType.V_REBOUND_VX]: function (action: IAction_ReboundVX, collision: Collision) {
     const { victim } = collision;
     victim.set_velocity_x(-victim.velocity.x)
   },
-  [ActionType.V_TURN_FACE]: function (action: IAction_TurnFace, collision: ICollision) {
+  [ActionType.V_TURN_FACE]: function (action: IAction_TurnFace, collision: Collision) {
     const { victim } = collision;
     victim.facing = turn_face(victim.facing);
   },
-  [ActionType.V_TURN_TEAM]: function (action: IAction_TurnTeam, collision: ICollision) {
+  [ActionType.V_TURN_TEAM]: function (action: IAction_TurnTeam, collision: Collision) {
     const { victim, attacker } = collision;
     victim.team = attacker.team;
   },
-  [ActionType.FUSION]: function (action: IAction_Fusion, collision: ICollision) {
+  [ActionType.FUSION]: function (action: IAction_Fusion, collision: Collision) {
     const { data: { oid, act, time } } = action;
     const { attacker, victim } = collision;
     const lf2 = collision.attacker.lf2;
@@ -80,6 +88,6 @@ export const collision_action_handlers: IActionHandler = {
       fighter_1.next_frame = fighter_1.get_next_frame(act)?.frame ?? null;
     }
   },
-  [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: ICollision) => lf2.broadcast(action.data)
+  [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: Collision) => lf2.broadcast(action.data)
 
 };

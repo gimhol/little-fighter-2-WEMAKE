@@ -163,8 +163,8 @@ export enum StateEnum {
   TransformToCatching_End = 501,
 }
 
-export const S_E = StateEnum;
-export type S_E = StateEnum;
+export const SE = StateEnum;
+export type SE = StateEnum;
 export const ATTCKING_STATES: readonly StateEnum[] = [
   StateEnum.Attacking,
   StateEnum.Ball_3005,

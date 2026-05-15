@@ -5,10 +5,11 @@ const suffix_reg = /\.[^.]*$/
 const get_letter = (offset: number) => String.fromCharCode(98 + offset);
 
 export function cook_file_variants(ret: IEntityData) {
-  const file_keys = Object.keys(ret.base.files);
+  const { files = {} } = ret.base;
+  const file_keys = Object.keys(files);
   if (!file_keys.length || file_keys.length % 2 !== 0)
     return;
-  const infos: ILegacyPictureInfo[] = file_keys.sort().map(k => ret.base.files[k] as ILegacyPictureInfo)
+  const infos: ILegacyPictureInfo[] = file_keys.sort().map(k => files[k] as ILegacyPictureInfo)
   const indexes = [0]
   const first_str = infos[0].path.replace(suffix_reg, '')
   for (let i = 0; i < 16; ++i) {

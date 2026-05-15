@@ -1,10 +1,10 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { BdyKind, Defines, FrameBehavior } from "../defines";
 import { is_fighter } from "../entity";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 
-export function handle_ball_hit_other(collision: ICollision): void {
+export function handle_ball_hit_other(collision: Collision): void {
   handle_rest(collision);
   handle_stiffness(collision);
   const { attacker, aframe, victim, bdy, itr } = collision;

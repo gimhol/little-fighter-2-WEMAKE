@@ -1,18 +1,33 @@
+
+import { is_ball, is_weapon } from "@/LF2/entity";
 import type { IState } from "../../base/FSM";
 import { bot_cases } from "../../cases_instances";
-import { GK, LGK, StateEnum } from "../../defines";
+import { GK, SE, StateEnum, type LGK } from "../../defines";
 import { BotStateEnum } from "../../defines/BotStateEnum";
+import type { Difficulty } from "../../defines/Difficulty";
+import type { Entity } from "../../entity/Entity";
+import type { Stage } from "../../stage/Stage";
+import type { World } from "../../World";
 import type { BotController } from "../BotController";
+import { closest } from "./closest";
 
 export abstract class BotState_Base implements IState<BotStateEnum> {
   abstract key: BotStateEnum;
-  readonly ctrl: BotController
+  readonly ctrl: BotController;
+  get world(): World { return this.ctrl.world }
+  get difficulty(): Difficulty { return this.world.difficulty }
+  get stage(): Stage { return this.world.stage }
 
-
-  get world() { return this.ctrl.world }
-  get stage() { return this.world.stage }
+  get s(): Stage { return this.stage }
+  get c(): BotController { return this.ctrl }
+  get me(): Entity { return this.ctrl.entity }
+  get en(): Entity | undefined { return this.ctrl.chasings.get()?.entity }
+  get av(): Entity | undefined { return this.ctrl.avoidings.get()?.entity }
   constructor(ctrl: BotController) {
     this.ctrl = ctrl;
+  }
+  closest(...list: (Entity | undefined)[]): Entity | undefined {
+    return closest(this.me, ...list);
   }
   wanted_jumping(): boolean {
     const c = this.ctrl;
@@ -20,9 +35,9 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const ret = desire < c.dataset.jump_desire * 2
     if (ret)
       c.click(GK.j)
-
     return ret
   }
+
   random_jumping(): boolean {
     const c = this.ctrl;
     const { state } = c.entity.frame;
@@ -42,9 +57,7 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     }
     return false;
   }
-  update(dt: number): BotStateEnum | undefined | void {
-    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
-  }
+  update?(dt: number): BotStateEnum | undefined;
   enter?(): void;
   leave?(): void;
 
@@ -57,19 +70,54 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const { ctrl: c } = this;
     const me = c.entity;
 
+    if (!me.frame.bdy?.length) return false;
+    if (me.blinking) return false;
+    if (me.invisible) return false;
+    if (me.invulnerable) return false;
+
     const target = c.defends.get();
     if (!target) return false;
 
     // TODO: 不可防御的攻击
     if (!target.defendable) return false
 
+    do {
+      // TODO: 是否需要更细致的判定itr kind?
+      if (!me.frame.itr?.length) break;
+      const pt = target.entity
+      const { state: pt_state } = target.entity.frame
+      if (
+        (
+          is_ball(pt) ||
+          is_weapon(pt)
+        ) && (
+          (
+            pt_state >= SE.Ball_Flying &&
+            pt_state <= SE.Ball_Disappear
+          ) || (
+            pt_state == SE.HeavyWeapon_InTheSky ||
+            pt_state == SE.Weapon_Throwing
+          )
+        )
+      ) {
+        return false
+      }
+      // TODO: 武器?
+    } while (0)
+
+
     const dx = target.x - me.position.x;
     const en_facing = target.facing;
-    if (dx > 0 && en_facing < 0) c.key_down(GK.R).key_up(GK.L)
-    if (dx < 0 && en_facing > 0) c.key_down(GK.L).key_up(GK.R)
 
-    if (c.action_desire('handle_defends') >= c.dataset.d_desire) {
-      c.click(GK.d).key_up(GK.L, GK.R)
+    // TODO: 是否会存在倒着飞的玩意?
+    if (dx >= 0 && en_facing < 0 && me.facing < 0)
+      c.click(GK.R);
+
+    if (dx <= 0 && en_facing > 0 && me.facing > 0)
+      c.click(GK.L)
+
+    if (c.desire('handle_defends') >= c.defend_desire) {
+      c.click(GK.d)
       return true
     }
     return me.state == StateEnum.Defend;

@@ -1,10 +1,10 @@
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 import { StateEnum } from "../defines";
 import { is_ball, is_weapon } from "../entity";
 import { round } from "../utils/math/base";
 import { normalize } from "../utils/math/normalize";
 
-export function handle_itr_kind_whirlwind(c: ICollision) {
+export function handle_itr_kind_whirlwind(c: Collision) {
   const { attacker, victim, world } = c;
   if (is_ball(victim)) return;
 

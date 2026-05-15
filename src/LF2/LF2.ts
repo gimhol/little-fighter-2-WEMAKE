@@ -1,5 +1,5 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
-import { IKeyStatusCtrl, LocalController } from "./controller";
+import { LocalController } from "./controller";
 import * as D from "./defines";
 import { AGK } from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
@@ -27,7 +27,7 @@ export interface IZipResult {
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v0.1.26'
+  static readonly VERSION_NAME: string = 'v0.1.27'
   static readonly DATA_VERSION: number = 19;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -315,12 +315,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   private on_loading_file(url: string, progress: number, full_size: number) {
     const txt = `${url}(${get_short_file_size_txt(full_size)})`;
-    this.on_loading_content(txt, progress);
+    this.emit_progress(txt, progress);
   }
 
   protected async load_zip_from_info_url(info_url: string): Promise<[I.IZip, string]> {
     this._dispose_check('load_zip_from_info_url')
-    this.on_loading_content(`${info_url}`, 0);
+    this.emit_progress(`${info_url}`, 0);
     const [{ url, md5 }] = await I.Ditto.Importer.import_as_json([info_url]);
     const zip_url = full_zip_url(info_url, url)
     this._dispose_check('load_zip_from_info_url')
@@ -351,7 +351,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         blob: await ret.blob()
       });
     }
-    this.on_loading_content(`${url}`, 100);
+    this.emit_progress(`${url}`, 100);
     return [ret, md5];
   }
 
@@ -576,7 +576,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._ui_stacks[0].pop(opts)
   }
 
-  pop_ui_safe() {
+  pop_ui_safe(): void {
     const stack_index = this._ui_stacks.length - 1
     const stack = this._ui_stacks[stack_index];
     if (!stack) return;
@@ -595,9 +595,17 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._ui_stacks[index].push(opts)
   }
 
-  on_loading_content(content: string, progress: number) {
-    this.callbacks.emit("on_loading_content")(content, progress);
+
+  /**
+   * 触发进度回调
+   *
+   * @param {string} content 加载内容
+   * @param {number} progress 加载进度 [0~100]
+   */
+  emit_progress(content: string, progress: number): void {
+    this.callbacks.emit("on_progress")(content, progress);
   }
+
   broadcast(message: string): void {
     this.broadcasts.push(message);
     this.callbacks.emit("on_broadcast")(message, this);
@@ -628,16 +636,21 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   create_keys(): Keys {
     let r = this._keys_pool.pop();
     if (!r) r = new Keys(this)
-    this._keys.push(r)
+    r.mount();
     return r
   }
-  recycle_keys(keys: Keys) {
+
+  regist_keys(keys: Keys): void {
     const idx = this._keys.indexOf(keys);
-    if (idx < 0) return false;
-    this._keys.splice(idx, 1);
-    this._keys_pool.push(keys)
+    if (idx >= 0) return this.warn('regist_keys', `keys already registered`);
+    this._keys.push(keys);
   }
 
+  recycle_keys(keys: Keys): void {
+    const idx = this._keys.indexOf(keys);
+    if (idx >= 0) this._keys.splice(idx, 1);
+    this._keys_pool.push(keys);
+  }
 }
 
 /**

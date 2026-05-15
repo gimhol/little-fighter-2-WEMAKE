@@ -1,11 +1,12 @@
-import { ICollision } from "../base";
-import { BuiltIn_OID, Defines, W_T } from "../defines";
+import { Collision } from "../base";
+import { BuiltIn_OID, Defines, I_K, SparkEnum, WT } from "../defines";
+import { is_fighter, is_weapon } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 
-export function handle_weapon_is_hit(collision: ICollision): void {
+export function handle_weapon_is_hit(collision: Collision): void {
   handle_rest(collision)
   handle_stiffness(collision)
   handle_injury(collision)
@@ -16,23 +17,25 @@ export function handle_weapon_is_hit(collision: ICollision): void {
   }
 
   const is_fly = itr.fall && itr.fall >= Defines.DEFAULT_FALL_VALUE_CRITICAL;
-  const spark_frame_name = is_fly ? "silent_critical_hit" : "silent_hit";
-  victim.world.spark(...collision.victim.spark_point(a_cube, b_cube), spark_frame_name);
+  victim.world.spark(
+    ...collision.victim.spark_point(a_cube, b_cube),
+    is_fly ? SparkEnum.SilentCriticalHit : SparkEnum.SilentHit
+  );
 
   let [vx, vy, vz] = calc_itr_velocity(collision)
   const is_base_ball =
-    victim.base_type === W_T.Baseball ||
-    victim.base_type === W_T.Drink;
-  if (victim.base_type !== W_T.Heavy || is_fly) {
-    victim.set_velocity(vx, vy, vz)
-    victim.team = attacker.team;
-    victim.lf2.mt.mark = 'hwih_1'
+    victim.base_type === WT.Baseball ||
+    victim.base_type === WT.Drink;
+
+  if (victim.base_type !== WT.Heavy || is_fly) {
+    victim.set_velocity(vx, vy, vz);
+    victim.lf2.mt.mark = 'hwih_1';
     let nid: string | undefined = void 0
     if (is_base_ball && (vx >= 6 || vx <= -6))
       nid = victim.lf2.mt.pick(victim.data.indexes?.throwings)
     else
       nid = victim.lf2.mt.pick(victim.data.indexes?.in_the_skys)
-    victim.next_frame = { id: nid };
+    victim.enter_frame({ id: nid });
   }
 
   if (
@@ -40,10 +43,13 @@ export function handle_weapon_is_hit(collision: ICollision): void {
     is_base_ball
   ) {
     const s = attacker.strength
-    vx = attacker.facing * s * 10 // super fast!
+    vx = attacker.facing * s * 2 // fast!
     victim.lf2.mt.mark = 'hwih_2'
-    victim.next_frame = { id: victim.data.indexes?.throwings?.[0] }
+    victim.enter_frame({ id: victim.data.indexes?.throwings?.[0] })
     victim.set_velocity(vx)
   }
 
+  if (is_fighter(attacker) || (is_weapon(attacker) && itr.kind == I_K.WeaponSwing)) {
+    victim.team = attacker.team;
+  }
 }

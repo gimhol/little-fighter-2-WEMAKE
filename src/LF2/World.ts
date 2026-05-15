@@ -1,22 +1,20 @@
-import { Callbacks, FPS, ICollision } from "./base";
+import { Callbacks, Collision, collision_get, FPS } from "./base";
 import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
-  ALL_ENTITY_ENUM,
-  BackgroundGroup,
-  Builtin_FrameId,
+  BFID,
+  BGG,
   CheatType,
   Defines,
   Difficulty,
+  ENTITY_PRIORITY_MAP,
   EntityGroup,
   GONE_FRAME_INFO,
-  HitFlag,
-  IBdyInfo, IBounding, IEntityData,
+  IBdyInfo, IBgData, IBounding, IEntityData,
   IFrameInfo, IItrInfo,
-  ItrKind,
   IVector3,
   O_ID,
-  StateEnum,
+  SE,
   WeaponType
 } from "./defines";
 import { CMD } from "./defines/CMD";
@@ -37,12 +35,15 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, between, clamp, floor, is_num, max, min, round, Times } from "./utils";
+import { abs, between, clamp, floor, is_num, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
+const CHASING_UPDATE_INTERVAL = 8;
+const MAX_DEBUG_ENTITIES = 355
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
   readonly lf2: LF2;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
+  private _sleeping: boolean = false;
   private _spark_data?: IEntityData;
   private _etc_data?: IEntityData;
   private _bg: Background;
@@ -54,20 +55,32 @@ export class World extends WorldDataset {
   private _update_time: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
+  /** 
+   * 临时实体列表
+   *  
+   * 每次更新前，此map会被清除
+   */
+  private _entities_map = new Map<string, Entity[]>();
   readonly buffs = new Map<string, Buff>();
   private _game_time = new Times();
   private _ground = new Ground();
   private _counts = new Map<string, number>()
-  get counts(): ReadonlyMap<string, number> { return this._counts }
-  get game_time() { return this._game_time }
-  get update_time() { return this._update_time }
+  /** 待移除实体 */
+  private _gones = new Set<Entity>();
+  private _freshs = new Set<Entity>();
+  private _chasers = new Set<Entity>();
+  private _paused: 0 | 1 | 2 = 0;
+  private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
+  private _cam_speed: number = 0;
+  private _lock_cam_x: number | undefined = void 0;
+  public renderer: IWorldRenderer;
   readonly tickers = new Set<Ticker>();
   readonly ticker_pool: Ticker[] = [];
 
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
-  readonly entities = new Set<Entity>();
+  readonly entities: Entity[] = [];
   /** 
    * 被玩家操作的角色 
    * 键: 玩家ID
@@ -76,9 +89,9 @@ export class World extends WorldDataset {
   readonly puppets = new Map<string, Entity>();
   readonly puppet_teams = new Set<string>();
 
-  readonly v_collisions: ICollision[] = [];
-  readonly a_collisions = new Map<Entity, ICollision>();
-  has_players_alive: boolean = false
+  readonly collisions: Collision[] = [];
+  public has_players_alive: boolean = false;
+
   get bg() { return this._bg; }
   set bg(v: Background) {
     if (v === this._bg) return;
@@ -99,7 +112,7 @@ export class World extends WorldDataset {
     v.enter_phase(0);
     for (const e of this.entities) {
       const { ctrl } = e;
-      if (is_bot_ctrl(ctrl)) ctrl.stop()
+      if (is_bot_ctrl(ctrl)) ctrl.cancel_goto()
     }
   }
   override on_dataset_change = (k: string, curr: any, prev: any) => {
@@ -121,13 +134,24 @@ export class World extends WorldDataset {
   get width() { return this.stage.width; }
   get depth() { return this.stage.depth; }
   get middle() { return this.stage.middle; }
+  get paused() { return this._paused == 1; }
+  set paused(v: boolean) { this.set_paused(v ? 1 : 0); }
+  get fn_locked(): boolean { return this._fn_locked == 1; }
+  set fn_locked(v: boolean) { this.set_fn_locked(v ? 1 : 0); }
 
-  private _cam_speed: number = 0;
-  private _lock_cam_x: number | undefined = void 0;
-  public renderer: IWorldRenderer;
-
+  get counts(): ReadonlyMap<string, number> { return this._counts }
+  get game_time() { return this._game_time.value }
+  get update_time() { return this._update_time }
   get lock_cam_x() { return this._lock_cam_x }
 
+  constructor(lf2: LF2) {
+    super()
+    this.lf2 = lf2;
+    this._bg = new Background(this, Defines.VOID_BG);
+    this.transform.scale_to(...this._bg.zoom)
+    this._stage = new Stage(this, Defines.VOID_STAGE);
+    this.renderer = new Ditto.WorldRender(this);
+  }
   team_come(_team: string, x: number, y: number, z: number) {
     for (const e of this.entities) {
       const { ctrl, team } = e;
@@ -152,16 +176,17 @@ export class World extends WorldDataset {
       }
     }
   }
-  constructor(lf2: LF2) {
-    super()
-    this.lf2 = lf2;
-    this._bg = new Background(this, Defines.VOID_BG);
-    this.transform.scale_to(...this._bg.zoom)
-    this._stage = new Stage(this, Defines.VOID_STAGE);
-    this.renderer = new Ditto.WorldRender(this);
+  team_follow(target: Entity) {
+    for (const e of this.entities) {
+      const { ctrl, team } = e;
+      if (target.team === team && is_bot_ctrl(ctrl)) {
+        ctrl.follow(target)
+      }
+    }
   }
   add_entities(...entities: Entity[]) {
     for (const e of entities) {
+      if (this.entity_map.has(e.id)) continue;
       // this.freshs.add(entity)
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
@@ -172,39 +197,42 @@ export class World extends WorldDataset {
           this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
         }
       }
-      this.entities.add(e);
+      this.entities.push(e);
       this.entity_map.set(e.id, e)
       this.renderer.add_entity(e);
     }
   }
 
-  list_enemy_fighters(e: Entity, fn: (other: Entity) => boolean): Entity[] {
-    const ret: Entity[] = []
+  list_entities(name: string, predicate: (o: Entity) => boolean): ReadonlyArray<Entity> {
+    let ret = this._entities_map.get(name)
+    if (ret) return ret;
+    this._entities_map.set(name, ret = [])
     for (const o of this.entities) {
-      if (!e.is_ally(o) && is_fighter(o) && fn(o)) {
-        ret.push(o)
+      if (predicate(o)) {
+        ret.push(o);
       }
     }
-    const { x, z } = e.position;
-    ret.sort(({ position: a }, { position: b }) => abs(a.x - x) + abs(a.z - z) / 2 - abs(b.x - x) - abs(b.z - z) / 2)
     return ret;
   }
 
-  list_ally_fighters(e: Entity, fn: (other: Entity) => boolean): Entity[] {
-    const ret: Entity[] = []
-    for (const o of this.entities) {
-      if (e.is_ally(o) && is_fighter(o) && fn(o)) {
-        ret.push(o)
-      }
-    }
-    const { x, z } = e.position;
-    ret.sort(({ position: a }, { position: b }) => abs(a.x - x) + abs(a.z - z) / 2 - abs(b.x - x) - abs(b.z - z) / 2)
-    return ret;
+  /** 存活敌人列表 */
+  list_enemies(e: Entity): ReadonlyArray<Entity> {
+    return this.list_entities(`ef_${e.team}`, (o) => {
+      return is_fighter(o) && e.team != o.team && o.hp > 0
+    })
+  }
+
+
+  /** 存活队友列表 */
+  list_allies(e: Entity): ReadonlyArray<Entity> {
+    return this.list_entities(`af_${e.team}`, (o) => {
+      return is_fighter(o) && e.team == o.team && o.hp > 0
+    })
   }
 
   del_entity(entity: Entity): this {
-    this.gones.add(entity)
-    this.freshs.delete(entity)
+    this._gones.add(entity)
+    this._freshs.delete(entity)
     return this
   }
 
@@ -244,7 +272,6 @@ export class World extends WorldDataset {
   }
   before_update?(): void;
   after_update?(): void;
-  private _sleeping: boolean = false;
   sleep(): void { this._sleeping = true }
   awake(): void { this._sleeping = false }
   start_update() {
@@ -394,9 +421,6 @@ export class World extends WorldDataset {
     }
   }
 
-  private gones = new Set<Entity>();
-  private freshs = new Set<Entity>();
-  private _chasers = new Set<Entity>();
   add_chaser(entity: Entity) {
     this._chasers.add(entity);
   }
@@ -407,22 +431,18 @@ export class World extends WorldDataset {
   }
 
   protected update_ui() {
-    const { ui_stacks } = this.lf2
-    const len = ui_stacks.length
-    let flag = true
+    const { ui_stacks } = this.lf2;
+    const len = ui_stacks.length;
+    let flag = true;
+
     for (let i = len - 1; i >= 0; i--) {
       const ui_stack = ui_stacks[i];
       const { ui } = ui_stack
       if (!ui || ui.disabled) continue;
       if (!flag) continue;
       for (const e of this.lf2.events) {
-        if (e.pressed) {
-          ui.on_key_down(e)
-          this.lf2._keys.forEach(v => v[e.game_key].hit())
-        } else {
-          ui.on_key_up(e)
-          this.lf2._keys.forEach(v => v[e.game_key].end())
-        }
+        if (e.pressed) ui.on_key_down(e)
+        else ui.on_key_up(e)
       }
       ui.update(16.66666 * this.atom_time);
       flag = false
@@ -431,27 +451,40 @@ export class World extends WorldDataset {
 
   protected handle_keys() {
     if (!this.lf2.events.length) return;
-    if (this.stage.control_disabled) return;
+
     for (const e of this.lf2.events) {
+      const gk = e.game_key;
+      const fn1 = e.pressed ? 'hit' : 'end';
+      this.lf2._keys.forEach(keys => keys[gk][fn1]())
+
+      // WTF.
+      if (this.stage.control_disabled) continue;
       const fighter = this.puppets.get(e.player)
       if (!fighter) continue;
       const { ctrl } = fighter
       if (!is_human_ctrl(ctrl)) continue;
-      if (e.pressed) ctrl.start(e.game_key)
-      else ctrl.end(e.game_key)
+
+      const fn2 = e.pressed ? 'start' : 'end';
+      ctrl[fn2](gk)
     }
   }
 
   change_bg(bg_id: string | undefined): void {
     if (this.stage.bg.id == bg_id)
       return;
-    const bg_data = (
-      bg_id == Defines.RANDOM_BG.id ?
-        this.lf2.mt.pick(this.lf2.datas.backgrounds.filter(v => v.base.group.some(a => a === BackgroundGroup.Regular))) :
-        bg_id ?
-          this.lf2.datas.find_background(bg_id) :
-          Defines.VOID_BG
-    ) || Defines.VOID_BG;
+
+    let bg_data: IBgData | undefined;
+    if (bg_id == Defines.RANDOM_BG.id) {
+      if (this.LF2_NET) {
+        bg_data = this.lf2.datas.get_random_bg([BGG.Regular, BGG.Hidden])
+      } else {
+        bg_data = this.lf2.datas.get_random_bg([BGG.Regular])
+      }
+    } else if (bg_id) {
+      bg_data = this.lf2.datas.find_background(bg_id);
+    }
+    if (!bg_data) bg_data = Defines.VOID_BG;
+
     const stage = new Stage(this, Defines.VOID_STAGE);
     stage.change_bg(bg_data);
     this.stage = stage
@@ -567,6 +600,7 @@ export class World extends WorldDataset {
   }
 
   update_once() {
+    this._entities_map.clear();
     this.transform.update();
     this.update_ui();
     this.handle_keys();
@@ -577,33 +611,25 @@ export class World extends WorldDataset {
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
-
-    if (this.stage.world_pause) {
-      this.bg.update();
-      return;
-    }
-
-    const { game_time } = this;
-    const { size } = this.entities
-    if (size > 355) Ditto.debug(`[World::update_once]entities.size = ${size}`)
-    this.v_collisions.length = 0;
-    this.a_collisions.clear();
-    this._used_itrs.clear()
-    this._temp_entitis_set.clear();
-    const update_collisions = game_time.value % 1 === 0
-    const update_chasing = game_time.value % 8 === 0;
-    const dead_buff: [string, Buff][] = []
+    if (this.stage.world_pause) return;
+    if (this.entities.length > MAX_DEBUG_ENTITIES)
+      Ditto.debug(`[World::update_once]entities.size = ${this.entities.length}`)
+    this.collisions.length = 0;
+    const temp_entities: Entity[] = [];
+    const update_chasing = this._game_time.value % CHASING_UPDATE_INTERVAL === 0;
+    const dead_buffs: [string, Buff][] = []
     for (const [key, buff] of this.buffs) {
       buff.update(this.atom_time)
-      if (buff.dead) dead_buff.push([key, buff])
+      if (buff.dead) dead_buffs.push([key, buff])
     }
-    for (const [key, buff] of dead_buff) {
+    for (const [key, buff] of dead_buffs) {
       buff.unmount();
       this.buffs.delete(key);
     }
 
     this.has_players_alive = false
-    for (const e of this.freshs) {
+    for (const e of this._freshs) {
+      if (this.entity_map.has(e.id)) continue;
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
         const player = this.lf2.players.get(e.ctrl.player_id)
@@ -613,57 +639,81 @@ export class World extends WorldDataset {
           this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
         }
       }
-      this.entities.add(e);
+      this.entities.push(e);
       this.entity_map.set(e.id, e)
       this.renderer.add_entity(e);
     }
-    this.freshs.clear()
-    for (const e of this.entities) {
-      const { is_ghost } = e;
-      e.update();
-      if (!is_ghost && update_chasing && this._chasers.size)
-        for (const c of this._chasers)
-          c.update_chasing(e)
-      if (!is_ghost && update_collisions) {
-        const a_ctrl = e.ctrl
-        for (const b of this._temp_entitis_set) {
-          const b_ctrl = b.ctrl;
-          if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(e)
-          if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
-          const collision1 = this.collision_detection(e, b);
-          const collision2 = this.collision_detection(b, e);
-          if (collision1?.handlers && collision2?.handlers) {
-            const index1 = ALL_ENTITY_ENUM.indexOf(collision1.attacker.type)
-            const index2 = ALL_ENTITY_ENUM.indexOf(collision2.attacker.type)
-            if (index1 < index2) this.add_collisions(collision1)
-            else if (index1 > index2) this.add_collisions(collision2)
-            else this.add_collisions(collision1, collision2)
-          }
-          else if (collision1?.handlers) this.add_collisions(collision1)
-          else if (collision2?.handlers) this.add_collisions(collision2)
-        }
-      }
-      if (
-        e.frame.id === Builtin_FrameId.Gone ||
-        e.state === StateEnum.Gone
-      ) {
-        e.hp = e.hp_r = 0;
-        this.gones.add(e);
+    this._freshs.clear()
+
+    this.entities.forEach((a) => {
+      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
+      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+    })
+    this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
+
+    let divider = 0;
+    let offset = 0;
+    for (let i = 0; i < this.entities.length; i++) {
+      const a = this.entities[i];
+      if (offset) this.entities[i - offset] = a;
+      if (a.frame.id === BFID.Gone || a.state === SE.Gone) {
+        a.hp = a.hp_r = 0;
+        this._gones.add(a);
+        ++offset
         continue;
       }
-      if (!this.has_players_alive && e.hp > 0 && is_human_ctrl(e.ctrl))
+      if (this._gones.has(a)) {
+        ++offset
+        continue;
+      }
+
+      if (!this.has_players_alive && a.hp > 0 && is_human_ctrl(a.ctrl))
         this.has_players_alive = true;
-      if (!is_ghost) this._temp_entitis_set.add(e);
+      a.update();
+      if (a.ghosted) continue;
+      if (update_chasing && this._chasers.size)
+        for (const c of this._chasers)
+          c.update_chasing(a)
+
+      const a_ctrl = a.ctrl
+      for (let j = 0; j < temp_entities.length; j++) {
+        const b = temp_entities[j];
+        const b_ctrl = b.ctrl;
+        if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
+        if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
+
+        if (j < divider) continue; //
+        if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
+          // 分割，前面的不会与此后的碰撞了
+          divider = j + 1;
+          continue;
+        }
+        const collision1 = collision_get(a, b);
+        const collision2 = collision_get(b, a);
+        if (collision1 && collision2) {
+          const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
+          const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
+          if (priority1 < priority2) {
+            this.collisions.push(collision1)
+          } else if (priority1 > priority2) {
+            this.collisions.push(collision2)
+          } else {
+            this.collisions.push(collision1)
+            this.collisions.push(collision2)
+          }
+        }
+        else if (collision1) this.collisions.push(collision1)
+        else if (collision2) this.collisions.push(collision2)
+      }
+      temp_entities.push(a);
     }
-    if (update_collisions) {
-      for (const c of this.v_collisions)
-        collisions_keeper.handle(c)
-      for (const [, c] of this.a_collisions)
-        collisions_keeper.handle(c)
-    }
-    for (const entity of this.gones) {
-      const attached = this.entities.delete(entity)
-      if (!attached) continue;
+    this.entities.length = this.entities.length - offset
+
+    for (const c of this.collisions)
+      collisions_keeper.handle(c);
+
+    for (const entity of this._gones) {
       this.entity_map.delete(entity.id)
       if (is_fighter(entity))
         this.callbacks.emit("on_fighter_del")(entity);
@@ -676,7 +726,7 @@ export class World extends WorldDataset {
       entity.release();
       this.lf2.factory.recycle_entity(entity)
     }
-    this.gones.clear()
+    this._gones.clear()
     this.stage.update();
 
     this._released_tickers.clear()
@@ -770,133 +820,6 @@ export class World extends WorldDataset {
     }
   }
 
-  private _temp_entitis_set = new Set<Entity>();
-  private _used_itrs = new Set<Entity>()
-  add_collisions(...cs: ICollision[]) {
-    for (const c of cs) {
-      if (c.itr.vrest) {
-        this.v_collisions.push(c);
-      } else {
-        const prev = this.a_collisions.get(c.attacker);
-        if (!prev || prev.m_distance > c.m_distance)
-          this.a_collisions.set(c.attacker, c);
-      }
-    }
-  }
-
-  collision_detection(a: Entity, b: Entity): ICollision | undefined {
-    const af = a.frame;
-    const bf = b.frame;
-    if (!af.itr?.length || !bf.bdy?.length) return;
-    const l0 = af.itr.length;
-    const l1 = bf.bdy.length;
-    for (let i = 0; i < l0; ++i) {
-      for (let j = 0; j < l1; ++j) {
-        const itr = af.itr[i]!
-        const bdy = bf.bdy[j]!
-        const collision = this.collision_test(a, af, itr, b, bf, bdy);
-        if (!collision) continue;
-        collision.handlers = collisions_keeper.handler(collision)
-        return collision
-      }
-    }
-  }
-
-  collision_test(
-    attacker: Entity,
-    aframe: IFrameInfo,
-    itr: IItrInfo,
-    victim: Entity,
-    bframe: IFrameInfo,
-    bdy: IBdyInfo,
-  ): ICollision | undefined {
-
-    if (!itr.vrest && attacker.arest) return;
-    if (itr.kind !== ItrKind.Heal) {
-      const b_catcher = victim.catcher;
-      if (victim.blinking || victim.invisible || victim.invulnerable) return;
-      if (b_catcher && b_catcher.frame.cpoint?.hurtable !== 1) return;
-    }
-    if (itr.kind === ItrKind.WeaponSwing) {
-      const prefab_id = attacker.bearer?.frame.wpoint?.attacking;
-      if (!prefab_id) return;
-      const itr_prefab = attacker.data.itr_prefabs?.[prefab_id];
-      if (!itr_prefab) return;
-      itr = { ...itr, ...itr_prefab };
-    }
-
-    const a_cube = this.get_bounding(attacker, aframe, itr);
-    const b_cube = this.get_bounding(victim, bframe, bdy);
-    if (!(
-      a_cube.left <= b_cube.right &&
-      a_cube.right >= b_cube.left &&
-      a_cube.bottom <= b_cube.top &&
-      a_cube.top >= b_cube.bottom &&
-      a_cube.far <= b_cube.near &&
-      a_cube.near >= b_cube.far
-    )) return;
-
-    const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
-    const bdy_flag = bdy.hit_flag ?? HitFlag.AllEnemy;
-    const itr_flag = itr.hit_flag ?? HitFlag.AllEnemy;
-    if (
-      !(itr_flag & victim.data.type) ||
-      !(bdy_flag & attacker.data.type) ||
-      !(itr_flag & ally_flag) &&
-      !(bdy_flag & ally_flag)
-    ) return;
-    if (
-      victim.team === attacker.team && victim.pre_emitter &&
-      victim.pre_emitter === attacker.pre_emitter &&
-      victim.spawn_time === attacker.spawn_time
-    ) return;
-
-    if (!itr.vrest && attacker.arest) return;
-    if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
-    const ax = attacker.position.x;
-    const ay = attacker.position.y;
-    const az = attacker.position.z;
-    const vx = victim.position.x;
-    const vy = victim.position.y;
-    const vz = victim.position.z;
-    const dx = vx - ax;
-    const dy = vy - ay;
-    const dz = vz - az;
-    let rest = 0;
-    if (!itr.arest && itr.vrest)
-      rest = max(this.min_vrest, itr.vrest + this.vrest_offset)
-    const collision: ICollision = {
-      lf2: this.lf2,
-      world: this,
-      rest,
-      v_id: victim.id,
-      a_id: attacker.id,
-      victim,
-      attacker,
-      itr,
-      bdy,
-      aframe,
-      bframe,
-      a_cube,
-      b_cube,
-      ax,
-      ay,
-      az,
-      vx,
-      vy,
-      vz,
-      dx,
-      dy,
-      dz,
-      m_distance: abs(dx) + abs(dy) + abs(dz),
-      duration: 0,
-    };
-
-    if (bdy.tester?.run(collision) === false) return void 0;
-    if (itr.tester?.run(collision) === false) return void 0;
-
-    return collision
-  }
 
   /**
    * 火花特效
@@ -964,10 +887,6 @@ export class World extends WorldDataset {
     };
   }
 
-  private _paused: 0 | 1 | 2 = 0;
-  get paused() { return this._paused == 1; }
-  set paused(v: boolean) { this.set_paused(v ? 1 : 0); }
-
   protected set_paused(v: 0 | 1 | 2) {
     if (this._paused === v) return;
     const changed = (!v) !== (!this._paused)
@@ -975,9 +894,6 @@ export class World extends WorldDataset {
     if (changed) this.callbacks.emit("on_pause_change")(!!v);
   }
 
-  private _fn_locked: 0 | 1 = 0;
-  get fn_locked(): boolean { return this._fn_locked == 1; }
-  set fn_locked(v: boolean) { this.set_fn_locked(v ? 1 : 0); }
   set_fn_locked(v: 0 | 1) {
     if (this._fn_locked === v) return;
     this._fn_locked = v;
@@ -1025,5 +941,13 @@ export class World extends WorldDataset {
     if (!ret) this.tickers.add(ret = new Ticker(this.lf2));
     else this.tickers.add(ret.reborn())
     return ret;
+  }
+
+  reset_game_time(): void {
+    this._game_time.reset()
+  }
+
+  find_entity(id: string) {
+    return this.entity_map.get(id);
   }
 }

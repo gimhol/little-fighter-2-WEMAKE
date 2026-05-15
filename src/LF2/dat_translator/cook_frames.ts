@@ -34,7 +34,7 @@ import { make_frame_state } from "./make_frame_state";
 import { take } from "./take";
 
 export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
-  const { text, base: { files } } = ctx
+  const { text, base: { files = {} } } = ctx
   const frames: Record<string, IFrameInfo> = {};
   const frame_regexp = /<frame>\s+(.*?)\s+(.*)((.|\n)+?)<frame_end>/g;
   for (const [, frame_id, frame_name, content] of match_all(

@@ -17,5 +17,11 @@ export const ALL_ENTITY_ENUM: TEntityEnum[] = [
   EntityEnum.Ball,
   EntityEnum.Entity,
 ];
+export const ENTITY_PRIORITY_MAP: Record<EntityEnum, number> = {
+  [EntityEnum.Fighter]: 0,
+  [EntityEnum.Weapon]: 1,
+  [EntityEnum.Ball]: 2,
+  [EntityEnum.Entity]: 3,
+}
 export const E_E = EntityEnum;
 export type E_E = EntityEnum;

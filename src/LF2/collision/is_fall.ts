@@ -1,8 +1,8 @@
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 import { Defines as D, StateEnum as SE } from "../defines";
 import { is_fighter } from "../entity/type_check";
 
-export function is_fall(collision: ICollision) {
+export function is_fall(collision: Collision) {
   const { victim } = collision;
   return (
     !is_fighter(victim) ||

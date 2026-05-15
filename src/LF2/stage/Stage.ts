@@ -16,7 +16,7 @@ import { IDialogState } from "./IStageCallbacks";
 import Item from "./Item";
 import { Status } from "./Status";
 
-export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
+export class Stage {
   static readonly TAG: string = "Stage";
   readonly world: World;
   readonly data: Readonly<IStageInfo>;
@@ -44,7 +44,7 @@ export class Stage implements Readonly<Omit<IStageInfo, 'bg'>> {
 
   get bg(): Background { return this.world.bg; }
   get phases() { return this.data.phases }
-  get id(): string { return this.data.name; }
+  get id(): string { return this.data.id; }
   get name(): string { return this.data.name; }
 
   get lf2() { return this.world.lf2; }

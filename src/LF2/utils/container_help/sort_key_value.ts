@@ -1,7 +1,6 @@
 import { take } from "../../dat_translator/take";
-import { IBdyInfo } from "../../defines/IBdyInfo";
 
-export function sort_key_value<T extends {}>(obj: T, orders: Record<keyof IBdyInfo, number>) {
+export function sort_key_value<T extends {}>(obj: T, orders: Record<keyof T, number>) {
   const all_keys = new Set(Object.keys(obj));
   const known_keys = new Set(Object.keys(orders).sort((a, b) => (orders as any)[a] - (orders as any)[b]));
   const kvs: [any, any][] = [];

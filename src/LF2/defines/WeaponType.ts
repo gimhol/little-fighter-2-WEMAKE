@@ -37,5 +37,5 @@ export enum WeaponType {
    */
   Drink = 5
 }
-export const W_T = WeaponType;
-export type W_T = WeaponType;
+export const WT = WeaponType;
+export type WT = WeaponType;

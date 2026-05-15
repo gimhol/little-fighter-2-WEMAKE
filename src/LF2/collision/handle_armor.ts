@@ -1,4 +1,4 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { ArmorEnum, Defines, SparkEnum } from "../defines";
 import { round } from "../utils";
 import { handle_injury } from "./handle_injury";
@@ -8,10 +8,10 @@ import { is_armor_work } from "./is_armor_work";
  * 护甲逻辑
  *
  * @export
- * @param {ICollision} collision 碰撞信息
+ * @param {Collision} collision 碰撞信息
  * @return {boolean} 护甲是否有效
  */
-export function handle_armor(collision: ICollision): boolean {
+export function handle_armor(collision: Collision): boolean {
   const { victim, attacker } = collision;
   const { armor } = victim;
   /* 无护甲 */
@@ -29,9 +29,14 @@ export function handle_armor(collision: ICollision): boolean {
     case ArmorEnum.Injury: decrease_value = injury; break;
   }
 
-  /* 护甲耐久为0 */
+  const is_full = victim.toughness == victim.toughness_max;
   victim.toughness -= decrease_value;
-  if (victim.toughness <= 0)
+  
+  /* 
+    护甲全新时，保证至少防御一次
+    否则，护甲耐久为0时，防护失效
+  */
+  if (!is_full && victim.toughness <= 0)
     return false;
 
   const {

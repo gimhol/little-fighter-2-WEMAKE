@@ -1,47 +1,46 @@
-import { AGK, GK, StateEnum } from "../../defines";
-import { BotStateEnum } from "../../defines/BotStateEnum";
-import { manhattan_xz } from "../../helper/manhattan_xz";
-import { abs, round_float } from "../../utils";
+import { AGK, Defines, GK, StateEnum } from "../../defines";
+import { BSE } from "../../defines/BotStateEnum";
+import { abs, clamp, round_float } from "../../utils/math";
 import { BotState_Base } from "./BotState";
 
 export class BotState_Avoiding extends BotState_Base {
-  readonly key = BotStateEnum.Avoiding;
-  override update(dt: number) {
-    super.update(dt);
-    if (this.stage.is_stage_finish) return BotStateEnum.StageEnd;
-
-    const { ctrl: c } = this;
-    if (c.goingto) return BotStateEnum.Following;
-
-    const me = c.entity;
-    const en = c.chasings.get()?.entity;
-    const av = c.avoidings.get()?.entity;
-
-    if (this.handle_defends()) return;
+  readonly key = BSE.Avoiding;
+  override leave(): void {
+    this.c.key_up(...AGK);
+  }
+  override update(dt: number): BSE | undefined {
+    const { s } = this;
+    if (s.is_stage_finish)
+      return BSE.StageEnd;
+    const { c, me } = this;
+    if (c.is_leave_goto_range(me))
+      return BSE.Following;
+    const { en, av } = this
     if (this.handle_bot_actions()) return;
+    if (this.handle_defends()) return;
 
-    if (!av) return BotStateEnum.Idle;
-    if (en && manhattan_xz(me, av) > manhattan_xz(me, en)) {
-      return BotStateEnum.Chasing;
-    }
+    if (!av) return BSE.Idle;
 
-    let av_x = av.position.x;
-    let av_z = av.position.z;
+    const av_x = av.position.x;
+    const av_z = av.position.z;
     const me_x = me.position.x;
     const me_z = me.position.z;
 
-    if (c.is_leave_avoid_zone(av)) {
-      c.key_up(...AGK);
-      return BotStateEnum.Idle;
-    }
+    if (c.is_leave_avoid_zone(av))
+      return BSE.Idle;
 
-    const av_edge_l = c.world.left + 80;
-    const av_edge_r = c.world.right - 80;
+    const { player_l, player_r, enemy_l, enemy_r, team } = s;
+    const is_player = me.team !== team;
+    const l = is_player ? player_l : enemy_l;
+    const r = is_player ? player_r : enemy_r;
+
+    const av_edge_l = l + 80;
+    const av_edge_r = r - 80;
     const av_edge_b = c.world.near - 35;
     const av_edge_t = c.world.far + 35;
 
-    const av_danger_l = c.world.left + 120;
-    const av_danger_r = c.world.right - 120;
+    const av_danger_l = l + 120;
+    const av_danger_r = r - 120;
     const av_danger_b = c.world.near - 60;
     const av_danger_t = c.world.far + 60;
 
@@ -68,32 +67,38 @@ export class BotState_Avoiding extends BotState_Base {
     const in_danger_x = (av_x > av_danger_r && me_x > av_edge_r && av_x < me_x) !== (av_x < av_danger_l && me_x < av_edge_l && av_x > me_x)
     const in_danger_z = (av_z > av_danger_b && me_z > av_edge_b && av_z < me_z) !== (av_z < av_danger_t && me_x < av_edge_t && av_z > me_z)
     const me_in_danger = in_danger_x && in_danger_z;
-    let is_jump = me_in_danger ? this.wanted_jumping() : this.random_jumping()
-
-    if (me.frame.state === StateEnum.Running && in_danger_x && !is_jump) {
+    let is_jumping = me_in_danger ? this.wanted_jumping() : this.random_jumping()
+    let jump_desire = 0;
+    if (me.frame.state === StateEnum.Running && in_danger_x && !is_jumping) {
       // 停跑很容易被攻击，这里跳
-      c.click(GK.j);
-      is_jump = true
+      jump_desire = Defines.MAX_AI_DESIRE
+      is_jumping = true
     }
-    if (me.frame.state === StateEnum.Jump || is_jump) {
+    if (me.frame.state === StateEnum.Jump || is_jumping) {
       if (in_danger_z && me_z > av_edge_b) z_forwrd_key = GK.U;
       if (in_danger_z && me_z < av_edge_t) z_forwrd_key = GK.D;
     }
 
-    let z_backward_key = z_forwrd_key == GK.D ? GK.U : GK.D
-    let x_backward_key = x_forwrd_key == GK.L ? GK.R : GK.L;
+    const z_backward_key = z_forwrd_key == GK.D ? GK.U : GK.D
+    const x_backward_key = x_forwrd_key == GK.L ? GK.R : GK.L;
 
-    const run_desire = round_float(
-      100 * me.world.difficulty +
-      400 * (200 - abs(me_x - av_x)) / 200 +
-      (me_in_danger ? 100 * me.world.difficulty : 0)
-    );
+    /* 威胁越近，跑的欲望越高 */
+    const { avoid_out_x } = c.dataset;
+    const { difficulty } = this // 1, 2, 3, 4
+    const base_desire = 100 * difficulty; // [100, 200, 300, 400]
+    const ext_desire = 700 * clamp(1 - abs(me_x - av_x) / avoid_out_x, 0, 1);
+    const run_desire = round_float(base_desire + ext_desire);
+    // : [300, 1000]
+
+    if (c.desire('jump_avoiding') < jump_desire) {
+      c.click(GK.j);
+    }
     if (c.desire('run_avoiding') < run_desire) {
-      c.dbl_click(x_forwrd_key).key_up(x_backward_key)
+      c.dbl_click(x_forwrd_key)
     } else {
       c.key_down(x_forwrd_key)
-      c.key_up(x_backward_key)
     }
+    c.key_up(x_backward_key)
     c.key_down(z_forwrd_key)
     c.key_up(z_backward_key)
   }

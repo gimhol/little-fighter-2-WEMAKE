@@ -2,7 +2,7 @@ import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { Callbacks, ICollision, new_id, new_team } from "../base";
+import { Callbacks, Collision, collision_clone, new_id, new_team } from "../base";
 import { sus_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
@@ -11,7 +11,9 @@ import {
   Defines, EntityEnum, EntityGroup, FacingFlag,
   GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
-  is_independent, ItrKind, IVector3, IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
+  is_independent, ItrKind, IVector3,
+  IVector3Like,
+  IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
 import { ChaseStratedy } from "../defines/ChaseStratedy";
@@ -37,61 +39,58 @@ import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
 import { is_fighter, is_human_ctrl } from "./type_check";
+
+interface IEntitySnapshot {
+  id: string,
+  oid: string,
+  fid: string,
+  wait: number,
+  reserve: number,
+  variant: number,
+  ghosted: boolean,
+  p0: IVector3Like,
+  p1: IVector3Like,
+  v0: IVector3Like,
+  v1: IVector3Like,
+  outline_color: string | undefined;
+  outline_alpha: number | undefined;
+  copies: string[] | undefined;
+  emitters: string[] | undefined;
+  transforms: [string, string] | undefined;
+}
+
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
 
-  protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected _spawn_time: number = 0;
-  protected _outline_color: string | undefined = void 0;
-  protected _outline_alpha: number | undefined = void 0;
-  get outline_color(): string | undefined {
-    return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
-  };
-  set outline_color(v: string | undefined) { this._outline_color = v; }
-  get outline_alpha(): number | undefined { return this._outline_alpha };
-  set outline_alpha(v: number | undefined) { this._outline_alpha = v; }
+  readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
 
-  get position(): Readonly<IVector3> { return this._position }
-  get prev_position(): Readonly<IVector3> { return this._prev_position }
+  protected _spawn_time: number = 0;
+  protected _outline_color: string = '';
+  protected _outline_alpha: number = 0;
+  protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
 
   /**
    * 影分身
-   *
-   * @memberof Entity
    */
-  readonly copies = new Set<Entity>();
-
-  /**
-   * 最终速度向量
-   * - 每次更新position前，通过velocities计算得出
-   * - 直接修改速度向量将不会影响position的计算，
-   * - 直接修改会影响到使用其他到velocity判断的逻辑，所以别直接改
-   * @readonly
-   * @type {IVector3}
-   */
-  protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _landing_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-
-  readonly vrests = new Map<string, ICollision>();
-  readonly blockers = new Map<string, ICollision>();
-  readonly superpunchs = new Map<string, ICollision>();
-
-  readonly victims = new Map<string, ICollision>();
+  protected readonly copies = new Set<string>();
+  protected readonly vrests = new Map<string, Collision>();
+  readonly blockers = new Map<string, Collision>();
+  readonly superpunchs = new Map<string, Collision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
   protected readonly _emitters: string[] = [];
 
   id!: string;
   wait!: number;
-  readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
   variant!: number;
-  transform_datas!: [IEntityData, IEntityData] | null;
+  transforms!: [string, string] | null;
   protected _data!: IEntityData;
   protected _reserve!: number;
-  protected _is_attach!: boolean;
-  protected _is_ghost!: boolean;
+  protected _mounted!: boolean;
+  protected _ghosted!: boolean;
   protected _landing_frame!: IFrameInfo | null;
   protected _hp_r_tick!: Times;
   protected _mp_r_tick!: Times;
@@ -209,38 +208,38 @@ export class Entity {
   /**
    * 最近一次攻击信息
    *
-   * @type {ICollision}
+   * @type {Collision}
    * @memberof Entity
    */
-  lastest_collision!: ICollision | null;
+  lastest_collision!: Collision | null;
 
   /**
    * 最近一次被攻击信息
    *
-   * @type {ICollision}
+   * @type {Collision}
    * @memberof Entity
    */
-  lastest_collided!: ICollision | null;
+  lastest_collided!: Collision | null;
 
   /**
    * 当前tick碰撞信息
    *
    * - 会在update后置空
    *
-   * @type {ICollision[]}
+   * @type {Collision[]}
    * @memberof Entity
    */
-  readonly collision_list: ICollision[] = [];
+  readonly collision_list: Collision[] = [];
 
   /**
    * 当前tick被碰撞信息
    *
    * - 会在update后置空
    *
-   * @type {ICollision[]}
+   * @type {Collision[]}
    * @memberof Entity
    */
-  readonly collided_list: ICollision[] = [];
+  readonly collided_list: Collision[] = [];
 
   protected _chasing!: Entity | null;
   protected _ground_y: number = 0;
@@ -248,16 +247,25 @@ export class Entity {
   readonly buff = new Map<string, Buff>()
 
   renderer: any;
+
+  get outline_color(): string {
+    return this._outline_color || Defines.TeamInfoMap[this.team]?.outline_color || ''
+  };
+  set outline_color(v: string) { this._outline_color = v; }
+  get outline_alpha(): number { return this._outline_alpha; }
+  set outline_alpha(v: number) { this._outline_alpha = v; }
+
+  get position(): Readonly<IVector3> { return this._position }
+  get prev_position(): Readonly<IVector3> { return this._prev_position }
+
   get ground_y(): number { return this._ground_y }
   get prev_ground_y(): number { return this._prev_ground_y }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
-  /** 落地一刻的速度 */
-  get landing_velocity(): Readonly<IVector3> { return this._landing_velocity }
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
-  get is_attach() { return this._is_attach }
-  get is_ghost() { return this._is_ghost }
+  get mounted() { return this._mounted }
+  get ghosted() { return this._ghosted }
   get reserve(): number { return this._reserve; }
   set reserve(v: number) {
     const o = this._reserve;
@@ -680,10 +688,10 @@ export class Entity {
     this.fallinjury = 0;
     this._ground_y = 0;
     this.variant = 0;
-    this.transform_datas = null;
+    this.transforms = null;
     this._reserve = 0
-    this._is_attach = false;
-    this._is_ghost = false;
+    this._mounted = false;
+    this._ghosted = false;
     this._position.set(0, 0, 0)
     this._prev_position.set(0, 0, 0)
     this.fuse_bys = null;
@@ -711,17 +719,15 @@ export class Entity {
     this._catcher = null
     this._wakeup_invuln = null;
     this._name_visible = null;
-    this._outline_alpha = void 0;
+    this._outline_alpha = 0;
     this._velocity.set(0, 0, 0)
     this._prev_velocity.set(0, 0, 0);
-    this._landing_velocity.set(0, 0, 0)
     this.callbacks.clear();
     this._name = null
     this._team = new_team();
     this._landing_frame = null;
     this._bearer = null;
     this._holding = null;
-    this.pre_emitter?.copies.delete(this)
     this._emitters.length = 0;
     this._emitter_opoint = null;
     this._arest = 0;
@@ -729,7 +735,6 @@ export class Entity {
     this.vrests.clear()
     this.blockers.clear()
     this.superpunchs.clear()
-    this.victims.clear()
     this.motionless = 0;
     this.shaking = 0;
     this.states = states;
@@ -769,7 +774,7 @@ export class Entity {
     this.collided_list.length = 0;
     this.lastest_collision = null;
     this.lastest_collided = null;
-    this._outline_color = void 0;
+    this._outline_color = '';
 
     let buffs = Array.from(this.buff.values())
     for (const buf of buffs) buf.del(this)
@@ -962,15 +967,15 @@ export class Entity {
 
   apply_opoints(opoints: IOpointInfo[]) {
     for (let opoint of opoints) {
-      const { interval = 0, interval_id, interval_mode } = opoint;
+      const { interval = 0, interval_id, interval_mode, delay = 1 } = opoint;
       const interval_info = this._opoints.find(v => v[0].interval_id === interval_id)
       if (interval_info && interval_mode === 1) {
         if (interval_info[1] !== opoint.interval) continue;
       } else if (interval > 0) {
         this._opoints.push([opoint, 0])
       }
-      let enemies: Entity[] = []
-      let allies: Entity[] = []
+      let enemies: ReadonlyArray<Entity> = []
+      let allies: ReadonlyArray<Entity> = []
       let multi_type: OpointMultiEnum | undefined = void 0
       let count = 0;
       const multi = opoint.multi ?? 1;
@@ -980,12 +985,12 @@ export class Entity {
         const { type, min = 0, max = 355, skip_zero } = multi
         switch (multi_type = type) {
           case OpointMultiEnum.AccordingEnemies:
-            enemies = this.world.list_enemy_fighters(this, o => o.hp > 0)
+            enemies = this.world.list_enemies(this)
             if (skip_zero && !enemies.length) break;
             count = clamp(enemies.length, min, max);
             break;
           case OpointMultiEnum.AccordingAllies:
-            allies = this.world.list_ally_fighters(this, o => o.hp > 0)
+            allies = this.world.list_allies(this)
             if (skip_zero && !allies.length) break;
             count = clamp(allies.length, min, max);
             break;
@@ -1040,6 +1045,8 @@ export class Entity {
     offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
     facing: TFace = this.facing
   ): Entity | undefined {
+    if (opoint.unimportant && this.world.entities.length > 355)
+      return void 0;
     this.lf2.mt.mark = 'se_1'
     const oid = this.lf2.mt.pick(opoint.oid);
     if (!oid) {
@@ -1060,18 +1067,18 @@ export class Entity {
     }
     entity.ctrl = this.lf2.factory.create_ctrl(entity._data.id, "", entity,) ?? entity.ctrl;
     entity.on_spawn(this, opoint, offset_velocity, facing).attach(opoint.is_entity);
-    if (entity.data.id === this.data.id) this.copies.add(entity)
+    if (entity.data.id === this.data.id) this.copies.add(entity.id)
     entity.key_role = false;
     entity.dead_gone = true;
     /* Note: 继承v_rests，避免重复反弹ball... */
-    for (const [, v] of this.vrests) entity.add_v_rest({ ...v })
+    for (const [, v] of this.vrests) entity.add_v_rest(collision_clone(v))
     return entity;
   }
 
   attach(is_entity = true): this {
-    this._spawn_time = this.world.game_time.value;
-    this._is_attach = true
-    this._is_ghost = !is_entity
+    this._spawn_time = this.world.game_time;
+    this._mounted = true
+    this._ghosted = !is_entity
     this.world.add_entities(this);
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
@@ -1334,8 +1341,17 @@ export class Entity {
   drop_holding(): void {
     if (!this.holding) return;
     this.lf2.mt.mark = 'dh_1'
-    this.holding.enter_frame({ id: this.lf2.mt.pick(this.holding.data.indexes?.in_the_skys) });
-    this.holding.bearer = null;
+    const w = this.holding;
+    const nf = this.find_align_frame(
+      w.frame.id,
+      w.data.indexes?.on_hands,
+      w.data.indexes?.in_the_skys
+    ) ?? {
+      id: w.data.indexes?.in_the_skys?.[0] ?? Builtin_FrameId.Auto,
+    }
+    w.enter_frame(nf);
+    if (w.position.y < w.ground_y) w.set_position_y(w.ground_y);
+    w.bearer = null;
     this.holding = null;
   }
 
@@ -1425,8 +1441,6 @@ export class Entity {
           this.del_v_rest(k)
         }
       }
-    for (const [k, v] of this.victims)
-      if (v.rest) this.victims.delete(k)
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
       if (this.arest > 0 && this.frame.itr?.length) {
@@ -1534,8 +1548,8 @@ export class Entity {
     const { next_frame, key_list } = this.ctrl.update();
     if (
       key_list === "dja" &&
-      this.transform_datas &&
-      this.transform_datas[1] === this._data &&
+      this.transforms &&
+      this.transforms[1] === this._data.id &&
       this._position.y === this.ground_y
     ) {
       this.transfrom_to_another();
@@ -1568,12 +1582,11 @@ export class Entity {
             if (result) this.enter_frame(result.which);
           }
           this._position.y = this._prev_position.y = ground_y;
-          this._landing_velocity.x = this._velocity.x
-          this._landing_velocity.y = this._velocity.y
-          this._landing_velocity.z = this._velocity.z
+          const v = this._velocity.clone();
           this._velocity.y = 0;
           this._prev_velocity.y = 0;
-          this._state?.on_landing?.(this);
+          this._state?.on_landing?.(this, v);
+
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {
             this.hp -= this.throwinjury;
@@ -1843,27 +1856,29 @@ export class Entity {
   }
 
   transfrom_to_another(data?: IEntityData) {
-    const datas = this.transform_datas = data ?
-      [this._data, data] :
-      this.transform_datas;
+    const datas = this.transforms = data ?
+      [this._data.id, data.id] :
+      this.transforms;
     if (!datas?.length) return;
-    const curr_idx = datas.indexOf(this._data)
+    const curr_idx = datas.indexOf(this._data.id)
     const next_idx = (curr_idx + 1) % datas.length;
-    const next_data = datas[next_idx]
+    const next_data_id = datas[next_idx]
+    const next_data = this.lf2.datas.find_entity(new_id);
+    if (!next_data) return;
     this.transform(next_data);
     if (next_idx === 0) {
       const nf = this.get_next_frame({ id: "245" })?.frame ?? this.find_auto_frame()
       this.next_frame = nf;
     }
     if (this.copies.size) {
-      const gones = []
-      for (const d of this.copies) {
-        if (!d.is_attach) gones.push(d)
-        else d.transform(next_data)
+      const gones: string[] = []
+      for (const id of this.copies) {
+        const copy = this.world.entity_map.get(id);
+        if (!copy?.mounted) gones.push(id)
+        else copy.transform(next_data)
       }
-      for (const d of gones) {
+      for (const d of gones)
         this.copies.delete(d)
-      }
     }
   }
 
@@ -1920,8 +1935,8 @@ export class Entity {
   }
 
   release(): void {
-    if (!this._is_attach) return;
-    this._is_attach = false;
+    if (!this._mounted) return;
+    this._mounted = false;
     this.world.del_entity(this);
     this.ctrl.dispose();
     this.callbacks.emit("on_disposed")(this);
@@ -2119,13 +2134,6 @@ export class Entity {
     }
 
     this.next_frame = null;
-    if (flags.id === Builtin_FrameId.Auto) {
-      this.arest = 0;
-      for (const [_, v] of this.victims)
-        v.rest = 0;
-      this.victims.clear()
-    }
-
     if (flags.facing !== void 0) {
       this.facing = this.handle_facing_flag(flags.facing);
     }
@@ -2215,6 +2223,7 @@ export class Entity {
     const judger = which.judger;
     const use_hp = which.hp;
     const use_mp = which.mp;
+    const { mp_mode } = which;
     if (judger && !judger.run(this)) {
       return void 0;
     }
@@ -2232,7 +2241,7 @@ export class Entity {
         if (use_hp && this._hp <= use_hp)
           return this.get_next_frame(frame.hit?.d ?? Defines.NEXT_FRAME_AUTO);
       } else {
-        if (use_mp && this._mp < use_mp) return void 0;
+        if (use_mp && this._mp < use_mp && mp_mode != 1) return void 0;
         if (use_hp && this._hp <= use_hp) return void 0;
       }
     }
@@ -2357,10 +2366,10 @@ export class Entity {
   get_v_rest(a_id: string): number {
     return this.vrests.get(a_id)?.rest || 0;
   }
-  add_v_rest(c: ICollision) {
-    this.vrests.set(c.a_id, c);
-    if (c.itr.kind === ItrKind.Block) this.blockers.set(c.a_id, c);
-    if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.a_id, c);
+  add_v_rest(c: Collision) {
+    this.vrests.set(c.aid, c);
+    if (c.itr.kind === ItrKind.Block) this.blockers.set(c.aid, c);
+    if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.aid, c);
   }
   del_v_rest(a_id: string) {
     this.vrests.delete(a_id);
@@ -2377,6 +2386,74 @@ export class Entity {
   }
   itr_fall(itr: IItrInfo): number {
     return itr.fall ?? this.dataset('itr_fall')
+  }
+  aabb_x1: number = 0;
+  aabb_x2: number = 0;
+
+  to_snapshot(): IEntitySnapshot {
+    const ret: IEntitySnapshot = {
+      id: this.id,
+      oid: this._data.id,
+      fid: this.frame.id,
+      wait: this.wait,
+      reserve: this._reserve,
+      ghosted: this._ghosted,
+      outline_color: this._outline_color || void 0,
+      outline_alpha: this._outline_alpha || void 0,
+      copies: this.copies.size ? Array.from(this.copies) : void 0,
+      emitters: this._emitters.length ? [...this._emitters] : void 0,
+      variant: this.variant,
+      transforms: this.transforms?.length ? this.transforms : void 0,
+      p0: {
+        x: this._prev_position.x,
+        y: this._prev_position.y,
+        z: this._prev_position.z,
+      },
+      p1: {
+        x: this._position.x,
+        y: this._position.y,
+        z: this._position.z,
+      },
+      v0: {
+        x: this._prev_velocity.x,
+        y: this._prev_velocity.y,
+        z: this._prev_velocity.z,
+      },
+      v1: {
+        x: this._velocity.x,
+        y: this._velocity.y,
+        z: this._velocity.z,
+      }
+    }
+    return ret;
+  }
+
+  read_snapshot(s: IEntitySnapshot) {
+    // oid: this.data.id
+    // fid: this.frame.id
+    this._data = this.lf2.datas.find_entity(s.oid)!;
+    if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
+    this.frame = this.data.frames[s.fid];
+    if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
+    this._outline_color = s.outline_color || ''
+    this._outline_alpha = s.outline_alpha || 0
+
+    this.variant = s.variant;
+    this._reserve = s.reserve
+    this._ghosted = s.ghosted;
+
+    this.copies.clear();
+    s.copies?.forEach(v => this.copies.add(v));
+
+    this._emitters.length = 0;
+    if (s.emitters) this._emitters.push(...s.emitters);
+
+    this.transforms = s.transforms ?? null;
+    this.wait = this.wait;
+    this._prev_position.copy(s.p0)
+    this._position.copy(s.p1)
+    this._prev_velocity.copy(s.v0)
+    this._velocity.copy(s.v1)
   }
 }
 

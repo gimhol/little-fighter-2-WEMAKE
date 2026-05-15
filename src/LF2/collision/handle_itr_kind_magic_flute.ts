@@ -1,4 +1,4 @@
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 import { SpeedMode, StateEnum } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { calc_v, is_fighter } from "../entity";
@@ -7,7 +7,7 @@ import { summary_mgr } from "../entity/SummaryMgr";
 import { round_float } from "../utils";
 import { handle_rest } from "./handle_rest";
 
-export function handle_itr_kind_magic_flute(collision: ICollision): void {
+export function handle_itr_kind_magic_flute(collision: Collision): void {
   handle_rest(collision)
   const { victim, attacker, world } = collision;
   const y = calc_v(

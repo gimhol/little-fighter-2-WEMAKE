@@ -1,4 +1,4 @@
-import { StateEnum, WeaponType, type IFrameInfo } from "../defines";
+import { IVector3, StateEnum, WeaponType, type IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
 import find_direction from "../entity/find_frame_direction";
 import { abs } from "../utils";
@@ -75,7 +75,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
     e.defend_value = e.defend_value_max;
     e.resting = e.resting_max
   }
-  override on_landing(e: Entity): void {
+  override on_landing(e: Entity, velocity: IVector3): void {
     const {
       facing,
       data: { indexes },
@@ -86,7 +86,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
       find_direction(f, indexes?.falling) ||
       find_direction(f, indexes?.critical_hit) ||
       facing;
-    const { y: vy, x: vx } = e.landing_velocity;
+    const { y: vy, x: vx } = velocity;
     if (
       !this._bouncings.has(e) && (
         vy <= e.world.cha_bc_tst_spd_y ||

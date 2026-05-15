@@ -132,6 +132,9 @@
         },
         "z": {
           "type": "number"
+        },
+        "w": {
+          "type": "number"
         }
       },
       "required": [

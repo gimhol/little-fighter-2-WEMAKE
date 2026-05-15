@@ -1,7 +1,6 @@
-import { ICollision, ICollisionHandler } from "../base";
-import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, EntityEnum, EntityGroup, ItrKind, StateEnum, TEntityEnum } from "../defines";
+import { Collision, ICollisionHandler } from "../base";
+import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, EntityEnum, ItrKind, StateEnum, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
-import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
 import { handle_ball_frozen } from "./handle_ball_frozen";
 import { handle_ball_hit_other } from "./handle_ball_hit_other";
@@ -26,7 +25,7 @@ import { handle_weapon_is_picked_secretly } from "./handle_weapon_is_picked_secr
 
 
 export class CollisionKeeper {
-  protected pair_map: Map<string, ((collision: ICollision) => void)[]> = new Map();
+  protected pair_map: Map<string, ((collision: Collision) => void)[]> = new Map();
 
   /**
    * 添加一个碰撞处理器
@@ -44,7 +43,7 @@ export class CollisionKeeper {
     itr_kind_list: ItrKind[],
     v_type_list: TEntityEnum[],
     bdy_kind_list: BdyKind[],
-    fn: (collision: ICollision) => void,
+    fn: (collision: Collision) => void,
     a_state_list: StateEnum[] = ALL_STATES,
     v_state_list: StateEnum[] = ALL_STATES,
   ) {
@@ -89,7 +88,7 @@ export class CollisionKeeper {
     }
     return this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}_${a_state}_${b_state}`);
   }
-  handler(collision: ICollision) {
+  handler(collision: Collision) {
     return this.get(
       collision.attacker.data.type,
       collision.itr.kind,
@@ -100,8 +99,8 @@ export class CollisionKeeper {
     )
   }
 
-  handle(collision: ICollision) {
-    const { handlers } = collision;
+  handle(collision: Collision) {
+    const handlers = this.handler(collision);
     if (Ditto.DEV && handlers) {
       const collision_desc =
         `[${collision.attacker.data.type}]#${ItrKind[collision.itr.kind]} => ` +

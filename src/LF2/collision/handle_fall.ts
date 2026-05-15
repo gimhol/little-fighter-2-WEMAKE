@@ -1,11 +1,11 @@
 
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 import { Defines, ItrEffect, SparkEnum, TFace, WeaponType } from "../defines";
 import { turn_face } from "../entity";
 import { is_fighter } from "../entity/type_check";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 
-export function handle_fall(collision: ICollision) {
+export function handle_fall(collision: Collision) {
   const { itr, victim, a_cube, b_cube } = collision;
   victim.toughness = 0;
   victim.fall_value = 0;

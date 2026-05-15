@@ -21,7 +21,7 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.LF2_NET_ON]: e => e.lf2.is_cheat(CheatType.LF2_NET) ? 1 : 0,
   [E_Val.HERO_FT_ON]: e => e.lf2.is_cheat(CheatType.HERO_FT) ? 1 : 0,
   [E_Val.GIM_INK_ON]: e => e.lf2.is_cheat(CheatType.GIM_INK) ? 1 : 0,
-  [E_Val.HAS_TRANSFORM_DATA]: e => e.transform_datas ? 1 : 0,
+  [E_Val.HAS_TRANSFORM_DATA]: e => e.transforms ? 1 : 0,
   [E_Val.Catching]: e => e.catching ? 1 : 0,
   [E_Val.CAUGHT]: e => e.catcher ? 1 : 0,
   [E_Val.RequireSuperPunch]: e => {

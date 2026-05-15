@@ -21,7 +21,6 @@ export interface INextFrame extends IVelocityInfo {
    * @see {IFrameInfo.wait} 下一帧自带的wait
    * 
    * @type {?(string | number)}
-   * @memberof INextFrame
    */
   wait?: string | number;
 
@@ -29,7 +28,6 @@ export interface INextFrame extends IVelocityInfo {
    * 下帧转向
    *
    * @type {?FacingFlag}
-   * @memberof INextFrame
    */
   facing?: number | FacingFlag;
 
@@ -39,7 +37,6 @@ export interface INextFrame extends IVelocityInfo {
    * 当不满足表达式时，将无法进入该帧
    * 
    * @type {string}
-   * @memberof INextFrame
    */
   expression?: string;
 
@@ -48,12 +45,12 @@ export interface INextFrame extends IVelocityInfo {
    * @see {expression}
    * 
    * @type {IExpression<any>}
-   * @memberof INextFrame
    */
   judger?: IExpression<any>;
 
   /**
    * 进入此帧消耗的蓝量
+   * MP不足时，将
    *
    * @note 原版中，消耗mp放在frame后面，```mp: N```
    *       从一个frame进入另一个frame有两种方式，其消耗mp的判断也不一致，如下
@@ -68,9 +65,15 @@ export interface INextFrame extends IVelocityInfo {
    *       这与Wemake内部逻辑的八字不合。提取至INextFrame中可以方便我同时实现以上的需求
    *
    * @type {?number}
-   * @memberof INextFrame
    */
   mp?: number;
+
+  /**
+   * - mp_mode == 1:
+   *    - mp不足时，仍允许进入下一帧，mp归0
+   * @type {?number}
+   */
+  mp_mode?: number;
 
   /**
    * 进入此帧消耗的血量
@@ -79,7 +82,6 @@ export interface INextFrame extends IVelocityInfo {
    *
    * @see {mp}
    * @type {?number}
-   * @memberof INextFrame
    */
   hp?: number;
 
@@ -87,7 +89,6 @@ export interface INextFrame extends IVelocityInfo {
    * 进入帧时，播放声音
    *
    * @type {?string[]}
-   * @memberof INextFrame
    */
   sounds?: string[];
 
@@ -95,7 +96,6 @@ export interface INextFrame extends IVelocityInfo {
    * 进入帧时，闪烁时长
    *
    * @type {?number}
-   * @memberof INextFrame
    */
   blink_time?: number;
 }
