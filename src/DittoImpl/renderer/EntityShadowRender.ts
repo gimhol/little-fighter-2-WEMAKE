@@ -25,6 +25,7 @@ export class EntityShadowRender {
       get_geometry(0, 0),
       get_img_material(),
     );
+    this.mesh.visible = false;
     this.mesh.name = EntityShadowRender.name;
     this.mesh.renderOrder = 0;
   }
