@@ -150,9 +150,9 @@ export function collision_new(o: ICollisionInits): Collision {
 
   do {
     if (o.itr.kind !== ItrKind.WeaponSwing) break;
-    const prefab_id = o.attacker.bearer?.frame.wpoint?.attacking;
+    const prefab_id = a.bearer?.frame.wpoint?.attacking;
     if (!prefab_id) break;
-    const itr_prefab = o.attacker.data.itr_prefabs?.[prefab_id];
+    const itr_prefab = a.data.itr_prefabs?.[prefab_id];
     if (!itr_prefab) break;
     itr = { ...o.itr, ...itr_prefab };
   } while (0);
