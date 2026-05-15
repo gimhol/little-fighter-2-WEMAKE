@@ -139,9 +139,6 @@ export function collision_new(o: ICollisionInits): Collision {
   const dz = vz - az;
   const a_cube = world.get_bounding(a, aframe, itr);
   const b_cube = world.get_bounding(v, bframe, bdy);
-  let rest = 0;
-  if (!o.itr.arest && o.itr.vrest)
-    rest = max(a.world.min_vrest, o.itr.vrest + a.world.vrest_offset)
 
   do {
     if (o.itr.kind !== ItrKind.WeaponSwing) break;
@@ -151,6 +148,11 @@ export function collision_new(o: ICollisionInits): Collision {
     if (!itr_prefab) { itr_index = -1; break; }
     itr = { ...o.itr, ...itr_prefab };
   } while (0);
+
+  let rest = 0;
+  if (!o.itr.arest && o.itr.vrest) {
+    rest = max(a.world.min_vrest, o.itr.vrest + a.world.vrest_offset)
+  }
 
   const c: Collision = {
     lf2: a.lf2,
