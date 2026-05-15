@@ -51,10 +51,15 @@ export class BotState_Idle extends BotState_Base {
         me.state === SE.Running ||
         me.state === SE.Standing ||
         me.state === SE.Walking
-      )
+      ) {
         c.click(GK.a);
-      else
+      } else if (
+        me.state !== SE.Drink &&
+        me.state !== SE.Defend &&
+        me.state !== SE.Rowing
+      ) {
         c.click(GK.d);
+      }
     }
 
     const closest = this.closest(en, av)
