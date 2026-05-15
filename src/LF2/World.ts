@@ -1,4 +1,4 @@
-import { Callbacks, Collision, FPS } from "./base";
+import { Callbacks, Collision, collision_get, FPS } from "./base";
 import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
@@ -687,8 +687,8 @@ export class World extends WorldDataset {
           divider = j + 1;
           continue;
         }
-        const collision1 = Collision.test(a, b);
-        const collision2 = Collision.test(b, a);
+        const collision1 = collision_get(a, b);
+        const collision2 = collision_get(b, a);
         if (collision1?.handlers && collision2?.handlers) {
           const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
           const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
@@ -956,5 +956,9 @@ export class World extends WorldDataset {
 
   reset_game_time(): void {
     this._game_time.reset()
+  }
+
+  find_entity(id: string) {
+    return this.entity_map.get(id);
   }
 }

@@ -2,7 +2,7 @@ import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { Callbacks, Collision, new_id, new_team } from "../base";
+import { Callbacks, collision_clone, Collision, new_id, new_team } from "../base";
 import { sus_cases } from "../cases_instances";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
@@ -37,7 +37,6 @@ import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
 import { is_fighter, is_human_ctrl } from "./type_check";
-
 
 export class Entity {
   static readonly TAG: string = 'Entity';
@@ -1055,7 +1054,7 @@ export class Entity {
     entity.key_role = false;
     entity.dead_gone = true;
     /* Note: 继承v_rests，避免重复反弹ball... */
-    for (const [, v] of this.vrests) entity.add_v_rest(v.clone())
+    for (const [, v] of this.vrests) entity.add_v_rest(collision_clone(v))
     return entity;
   }
 
@@ -1325,8 +1324,17 @@ export class Entity {
   drop_holding(): void {
     if (!this.holding) return;
     this.lf2.mt.mark = 'dh_1'
-    this.holding.enter_frame({ id: this.lf2.mt.pick(this.holding.data.indexes?.in_the_skys) });
-    this.holding.bearer = null;
+    const w = this.holding;
+    const nf = this.find_align_frame(
+      w.frame.id,
+      w.data.indexes?.on_hands,
+      w.data.indexes?.in_the_skys
+    ) ?? {
+      id: w.data.indexes?.in_the_skys?.[0] ?? Builtin_FrameId.Auto,
+    }
+    w.enter_frame(nf);
+    if (w.position.y < w.ground_y) w.set_position_y(w.ground_y);
+    w.bearer = null;
     this.holding = null;
   }
 
