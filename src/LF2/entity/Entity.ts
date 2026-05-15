@@ -937,6 +937,7 @@ export class Entity {
     }
     this._prev_frame = this.frame;
     this.frame = v;
+    if (!v.itr?.length) this.arest = 0
     const prev_state_code = this._prev_frame.state;
     const next_state_code = this.state;
     if (prev_state_code !== next_state_code) {
@@ -1443,7 +1444,7 @@ export class Entity {
       }
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
-      if (this.arest > 0 && this.frame.itr?.length) {
+      if (this.arest > 0) {
         this.arest = round_float(this.arest - this.world.atom_time);
         if (this.arest < 0) this.arest = 0;
       } else {
@@ -1470,6 +1471,7 @@ export class Entity {
         if (this._after_blink === Builtin_FrameId.Gone) {
           this.next_frame = null;
           this.frame = GONE_FRAME_INFO;
+          this.arest = 0;
         } else if (this._after_blink === Builtin_FrameId.Respawn) {
           this.hp = this.hp_r = this.hp_max;
 
@@ -2430,6 +2432,7 @@ export class Entity {
     this._data = this.lf2.datas.find_entity(s.oid)!;
     if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
     this.frame = this.data.frames[s.fid];
+
     if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
     this._outline_color = s.outline_color || ''
     this._outline_alpha = s.outline_alpha || 0
