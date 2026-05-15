@@ -12,6 +12,11 @@
       type: "bg",
       file: "bg/ash_forest/ash_forest.bg.json5",
     },
+    {
+      id: "leeonroad",
+      type: "bg",
+      file: "bg/leeonroad/leeonroad.bg.json5",
+    },
   ],
   stages: [
     {

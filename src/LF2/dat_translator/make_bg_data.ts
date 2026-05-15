@@ -1,8 +1,9 @@
 import { BackgroundGroup } from "../defines";
-import { IBgData } from "../defines/IBgData";
-import { IBgLayerInfo } from "../defines/IBgLayerInfo";
+import { bg_data_field_orders, IBgData } from "../defines/IBgData";
+import { bg_layer_field_orders, IBgLayerInfo } from "../defines/IBgLayerInfo";
 import { IDatIndex } from "../defines/IDatIndex";
 import { Defines } from "../defines/defines";
+import { sort_key_value } from "../utils/container_help/sort_key_value";
 import { min } from "../utils/math/base";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";
 import { take_blocks } from "../utils/string_parser/take_blocks";
@@ -116,6 +117,7 @@ export function make_bg_data(
       layer.c1 = c1 * 2;
       layer.c2 = c2 * 2 + 1;
     }
+    sort_key_value(layer, bg_layer_field_orders);
     ret.layers.push(layer);
   }
 
@@ -124,5 +126,6 @@ export function make_bg_data(
   } else {
     ret.base.group = [BackgroundGroup.Regular]
   }
+  sort_key_value(ret, bg_data_field_orders);
   return ret;
 }

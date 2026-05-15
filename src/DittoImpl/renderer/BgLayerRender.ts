@@ -17,8 +17,8 @@ export class BgLayerRender {
     const { info } = layer;
     const { x, y, z, file, id, name } = info;
     const pic = file ? this.layer.bg.world.lf2.images.find(file)?.pic : null
-    const w = pic?.w ?? info.width;
-    const h = pic?.h ?? info.height;
+    const w = pic?.w ?? info.w ?? info.width;
+    const h = pic?.h ?? info.h ?? info.height;
     this.mesh = new T.Mesh(
       get_geometry(w, h, w / 2, -h / 2),
       get_bg_layer_material(info, layer.bg.world.lf2)

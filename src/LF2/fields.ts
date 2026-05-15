@@ -1,7 +1,8 @@
+type FieldType = '' | 'int' | 'float' | 'boolean' | 'string'
 interface IFieldInfo<T extends object> {
   key: keyof T;
   title?: string;
-  type: '' | 'int' | 'float' | 'boolean';
+  type: FieldType;
   desc?: string;
   min?: number;
   max?: number;
@@ -22,9 +23,10 @@ function w<T extends object>(type: IFieldInfo<T>['type'], ...args: IArg<T>[]): I
   }
   return ret
 }
+export const str = assign(<T extends object>(...p: IArg<T>[]): IRet<T> => w('string', ...p), w('string'))
 export const float = assign(<T extends object>(...p: IArg<T>[]): IRet<T> => w('float', ...p), w('float'))
 export const int = assign(<T extends object>(...p: IArg<T>[]): IRet<T> => w('int', ...p), w('int'))
-export const invalid = assign(<T extends object>(...p: IArg<T>[]): IRet<T> => w('', ...p), w(''))
+export const any = assign(<T extends object>(...p: IArg<T>[]): IRet<T> => w('', ...p), w(''))
 export function fields<T extends object>(fields: Record<keyof T, IRet<T>>) {
   const ret = new Map<keyof T, IFieldInfo<T>>();
   for (const k in fields) {
