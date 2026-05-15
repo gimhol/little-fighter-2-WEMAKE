@@ -67,7 +67,7 @@ export class Entity {
 
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
-  protected _outline_alpha: number = 0;
+  protected _outline_alpha: number = 0.8;
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
@@ -719,7 +719,7 @@ export class Entity {
     this._catcher = null
     this._wakeup_invuln = null;
     this._name_visible = null;
-    this._outline_alpha = 0;
+    this._outline_alpha = 0.8;
     this._velocity.set(0, 0, 0)
     this._prev_velocity.set(0, 0, 0);
     this.callbacks.clear();

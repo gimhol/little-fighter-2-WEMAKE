@@ -850,11 +850,12 @@ export class World extends WorldDataset {
    * @memberof World
    */
   spark(x: number, y: number, z: number, f: string): void {
+    const oid = Defines.BuiltIn_Dats.Spark
     if (!this._spark_data)
-      this._spark_data = this.lf2.datas.find(Defines.BuiltIn_Dats.Spark);
+      this._spark_data = this.lf2.datas.find(oid);
     const data = this._spark_data
     if (!data) {
-      Ditto.warn(`[${World.TAG}::spark] "${Defines.BuiltIn_Dats.Spark}" data not found!`);
+      Ditto.warn(`[${World.TAG}::spark] "${oid}" data not found!`);
       return;
     }
     const e = this.lf2.factory.create_entity(this, data);
@@ -863,7 +864,8 @@ export class World extends WorldDataset {
       return;
     }
     e.outline_alpha = 0;
-    e.position.set(round(x), round(y), round(z));
+    e.outline_color = '';
+    e.set_position(x, y, z);
     e.enter_frame({ id: f });
     e.attach(false);
   }
