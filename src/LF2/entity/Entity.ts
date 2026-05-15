@@ -2349,9 +2349,9 @@ export class Entity {
     return this.vrests.get(a_id)?.rest || 0;
   }
   add_v_rest(c: Collision) {
-    this.vrests.set(c.a_id, c);
-    if (c.itr.kind === ItrKind.Block) this.blockers.set(c.a_id, c);
-    if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.a_id, c);
+    this.vrests.set(c.aid, c);
+    if (c.itr.kind === ItrKind.Block) this.blockers.set(c.aid, c);
+    if (c.itr.kind === ItrKind.SuperPunchMe) this.superpunchs.set(c.aid, c);
   }
   del_v_rest(a_id: string) {
     this.vrests.delete(a_id);

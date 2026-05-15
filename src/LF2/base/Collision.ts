@@ -59,8 +59,8 @@ export interface ICollisionInits {
 }
 
 export interface ICollisionSnapshot {
-  readonly a_id: string;
-  readonly v_id: string;
+  readonly aid: string;
+  readonly vid: string;
   readonly adata_id: string;
   readonly vdata_id: string;
   readonly aframe_id: string;
@@ -84,8 +84,8 @@ export interface ICollisionSnapshot {
 export interface Collision extends ICollisionInits, ICollisionSnapshot {
   readonly lf2: LF2;
   readonly world: World;
-  readonly a_id: string;
-  readonly v_id: string;
+  readonly aid: string;
+  readonly vid: string;
   readonly attacker: Entity;
   readonly victim: Entity;
   readonly itr: Readonly<IItrInfo>;
@@ -160,23 +160,18 @@ export function collision_new(o: ICollisionInits): Collision {
   const c: Collision = {
     lf2: a.lf2,
     world: a.world,
-    a_id: a.id,
-    v_id: v.id,
-    attacker: o.attacker,
-    victim: o.victim,
-    itr: o.itr,
-    bdy: o.bdy,
-    aframe: o.aframe,
-    bframe: o.bframe,
-    ax, ay, az,
-    vx, vy, vz,
-    dx, dy, dz,
+    aid: a.id,
+    vid: v.id,
+    attacker: a,
+    victim: v,
+    itr, bdy, aframe, bframe,
+    ax, ay, az, vx, vy, vz, dx, dy, dz,
     adata_id: a.data.id,
     vdata_id: v.data.id,
     aframe_id: aframe.id,
     bframe_id: bframe.id,
-    itr_index: aframe.itr?.indexOf(itr) ?? -1,
-    bdy_index: bframe.bdy?.indexOf(bdy) ?? -1,
+    itr_index: o.itr_index,
+    bdy_index: o.bdy_index,
     m_distance: abs(dx) + abs(dy) + abs(dz),
     a_cube,
     b_cube,
@@ -210,8 +205,8 @@ export function collision_get(attacker: Entity, victim: Entity): Collision | nul
 
 export function collision_to_snapshot(c: Collision): ICollisionSnapshot {
   return {
-    a_id: c.a_id,
-    v_id: c.v_id,
+    aid: c.aid,
+    vid: c.vid,
     adata_id: c.adata_id,
     vdata_id: c.vdata_id,
     aframe_id: c.aframe_id,
@@ -234,9 +229,9 @@ export function collision_to_snapshot(c: Collision): ICollisionSnapshot {
 }
 
 export function collision_from_snapshot(lf2: LF2, snapshot: ICollisionSnapshot): Collision | null {
-  const attacker = lf2.world.find_entity(snapshot.a_id)
+  const attacker = lf2.world.find_entity(snapshot.aid)
   if (!attacker) return null;
-  const victim = lf2.world.find_entity(snapshot.v_id)
+  const victim = lf2.world.find_entity(snapshot.vid)
   if (!victim) return null;
 
   const adata = lf2.datas.find_entity(snapshot.adata_id)
