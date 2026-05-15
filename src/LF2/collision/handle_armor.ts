@@ -31,7 +31,7 @@ export function handle_armor(collision: Collision): boolean {
 
   /* 护甲耐久为0 */
   victim.toughness -= decrease_value;
-  if (victim.toughness < 0)
+  if (victim.toughness <= 0)
     return false;
 
   const {
