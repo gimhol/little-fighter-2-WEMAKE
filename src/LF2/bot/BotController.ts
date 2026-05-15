@@ -309,8 +309,8 @@ export class BotController extends BaseController {
    */
   should_chase(e: Entity): boolean {
     const { entity: me } = this;
-    if (!me.is_attach) return false
-    if (!e.is_attach) return false
+    if (!me.mounted) return false
+    if (!e.mounted) return false
 
     if (me.hp <= 0) return false;
     if (me.holding?.base_type == WT.Drink) return false;
@@ -381,8 +381,8 @@ export class BotController extends BaseController {
    */
   should_avoid(av: Entity): boolean {
     const { me } = this;
-    if (!me.is_attach) return false
-    if (!av.is_attach) return false
+    if (!me.mounted) return false
+    if (!av.mounted) return false
     if (me.hp <= 0) return false
     if (av.hp <= 0) return false;
 
@@ -445,8 +445,8 @@ export class BotController extends BaseController {
    */
   should_defend(e: Entity): 0 | 1 | 2 {
     const { entity: me } = this;
-    if (!me.is_attach) return 0
-    if (!e.is_attach) return 0
+    if (!me.mounted) return 0
+    if (!e.mounted) return 0
     if (
       e.invisible ||
       this.entity.toughness ||
@@ -512,7 +512,7 @@ export class BotController extends BaseController {
 
   look_other(other: Entity) {
     const { entity: me } = this;
-    if (!me.is_attach || !other.is_attach) {
+    if (!me.mounted || !other.mounted) {
       this.avoidings.clear();
       this.chasings.clear();
       this.defends.clear()
@@ -648,7 +648,7 @@ export class BotController extends BaseController {
   }
 
   override update() {
-    if (!this.following?.is_attach || this.following.hp <= 0)
+    if (!this.following?.mounted || this.following.hp <= 0)
       this.following = null;
     this.check_bot();
     if (this.dummy) {

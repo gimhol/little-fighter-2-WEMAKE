@@ -1,4 +1,4 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { BuiltIn_OID, Defines, I_K, SparkEnum, WT } from "../defines";
 import { is_fighter, is_weapon } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
@@ -6,7 +6,7 @@ import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 
-export function handle_weapon_is_hit(collision: ICollision): void {
+export function handle_weapon_is_hit(collision: Collision): void {
   handle_rest(collision)
   handle_stiffness(collision)
   handle_injury(collision)

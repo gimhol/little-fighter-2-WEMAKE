@@ -1,4 +1,4 @@
-import { Callbacks, FPS, ICollision } from "./base";
+import { Callbacks, Collision, FPS } from "./base";
 import { Background } from "./bg/Background";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
@@ -10,10 +10,8 @@ import {
   ENTITY_PRIORITY_MAP,
   EntityGroup,
   GONE_FRAME_INFO,
-  HitFlag,
   IBdyInfo, IBgData, IBounding, IEntityData,
   IFrameInfo, IItrInfo,
-  ItrKind,
   IVector3,
   O_ID,
   SE,
@@ -37,7 +35,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, between, clamp, floor, is_num, max, min, round, Times } from "./utils";
+import { abs, between, clamp, floor, is_num, min, round, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355
@@ -91,8 +89,8 @@ export class World extends WorldDataset {
   readonly puppets = new Map<string, Entity>();
   readonly puppet_teams = new Set<string>();
 
-  readonly v_collisions: ICollision[] = [];
-  readonly a_collisions = new Map<Entity, ICollision>();
+  readonly v_collisions: Collision[] = [];
+  readonly a_collisions = new Map<Entity, Collision>();
   public has_players_alive: boolean = false;
 
   get bg() { return this._bg; }
@@ -671,7 +669,7 @@ export class World extends WorldDataset {
       if (!this.has_players_alive && a.hp > 0 && is_human_ctrl(a.ctrl))
         this.has_players_alive = true;
       a.update();
-      if (a.is_ghost) continue;
+      if (a.ghosted) continue;
       if (update_chasing && this._chasers.size)
         for (const c of this._chasers)
           c.update_chasing(a)
@@ -818,7 +816,7 @@ export class World extends WorldDataset {
     }
   }
 
-  add_collisions(...cs: ICollision[]) {
+  add_collisions(...cs: Collision[]) {
     for (const c of cs) {
       if (c.itr.vrest) {
         this.v_collisions.push(c);
@@ -830,119 +828,26 @@ export class World extends WorldDataset {
     }
   }
 
-  collision_detection(a: Entity, b: Entity): ICollision | undefined {
-    const af = a.frame;
-    const bf = b.frame;
-    if (!af.itr?.length || !bf.bdy?.length) return;
-    const l0 = af.itr.length;
-    const l1 = bf.bdy.length;
+  collision_detection(attacker: Entity, victim: Entity): Collision | undefined {
+    const aframe = attacker.frame;
+    const bframe = victim.frame;
+    if (!aframe.itr?.length || !bframe.bdy?.length) return;
+    const l0 = aframe.itr.length;
+    const l1 = bframe.bdy.length;
     for (let i = 0; i < l0; ++i) {
       for (let j = 0; j < l1; ++j) {
-        const itr = af.itr[i]!
-        const bdy = bf.bdy[j]!
-        const collision = this.collision_test(a, af, itr, b, bf, bdy);
-        if (!collision) continue;
+        const itr = aframe.itr[i]!
+        const bdy = bframe.bdy[j]!
+        const collision = new Collision({
+          victim, attacker, itr, bdy, aframe, bframe
+        });
+        if (!collision.test()) continue;
         collision.handlers = collisions_keeper.handler(collision)
         return collision
       }
     }
   }
 
-  collision_test(
-    attacker: Entity,
-    aframe: IFrameInfo,
-    itr: IItrInfo,
-    victim: Entity,
-    bframe: IFrameInfo,
-    bdy: IBdyInfo,
-  ): ICollision | undefined {
-
-    if (!itr.vrest && attacker.arest) return;
-    if (itr.kind !== ItrKind.Heal) {
-      const b_catcher = victim.catcher;
-      if (victim.blinking || victim.invisible || victim.invulnerable) return;
-      if (b_catcher && b_catcher.frame.cpoint?.hurtable !== 1) return;
-    }
-    if (itr.kind === ItrKind.WeaponSwing) {
-      const prefab_id = attacker.bearer?.frame.wpoint?.attacking;
-      if (!prefab_id) return;
-      const itr_prefab = attacker.data.itr_prefabs?.[prefab_id];
-      if (!itr_prefab) return;
-      itr = { ...itr, ...itr_prefab };
-    }
-
-    const a_cube = this.get_bounding(attacker, aframe, itr);
-    const b_cube = this.get_bounding(victim, bframe, bdy);
-    if (!(
-      a_cube.left <= b_cube.right &&
-      a_cube.right >= b_cube.left &&
-      a_cube.bottom <= b_cube.top &&
-      a_cube.top >= b_cube.bottom &&
-      a_cube.far <= b_cube.near &&
-      a_cube.near >= b_cube.far
-    )) return;
-
-    const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
-    const bdy_flag = bdy.hit_flag ?? HitFlag.AllEnemy;
-    const itr_flag = itr.hit_flag ?? HitFlag.AllEnemy;
-    if (
-      !(itr_flag & victim.data.type) ||
-      !(bdy_flag & attacker.data.type) ||
-      !(itr_flag & ally_flag) &&
-      !(bdy_flag & ally_flag)
-    ) return;
-    if (
-      victim.team === attacker.team && victim.pre_emitter &&
-      victim.pre_emitter === attacker.pre_emitter &&
-      victim.spawn_time === attacker.spawn_time
-    ) return;
-
-    if (!itr.vrest && attacker.arest) return;
-    if (itr.vrest && victim.get_v_rest(attacker.id) > 0) return;
-    const ax = attacker.position.x;
-    const ay = attacker.position.y;
-    const az = attacker.position.z;
-    const vx = victim.position.x;
-    const vy = victim.position.y;
-    const vz = victim.position.z;
-    const dx = vx - ax;
-    const dy = vy - ay;
-    const dz = vz - az;
-    let rest = 0;
-    if (!itr.arest && itr.vrest)
-      rest = max(this.min_vrest, itr.vrest + this.vrest_offset)
-    const collision: ICollision = {
-      lf2: this.lf2,
-      world: this,
-      rest,
-      v_id: victim.id,
-      a_id: attacker.id,
-      victim,
-      attacker,
-      itr,
-      bdy,
-      aframe,
-      bframe,
-      a_cube,
-      b_cube,
-      ax,
-      ay,
-      az,
-      vx,
-      vy,
-      vz,
-      dx,
-      dy,
-      dz,
-      m_distance: abs(dx) + abs(dy) + abs(dz),
-      duration: 0,
-    };
-
-    if (bdy.tester?.run(collision) === false) return void 0;
-    if (itr.tester?.run(collision) === false) return void 0;
-
-    return collision
-  }
 
   /**
    * 火花特效

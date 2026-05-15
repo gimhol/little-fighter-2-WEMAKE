@@ -1,4 +1,4 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { StateEnum, ItrEffect, Defines } from "../defines";
 
 /**
@@ -6,7 +6,7 @@ import { StateEnum, ItrEffect, Defines } from "../defines";
  * @param collision
  * @returns
  */
-export function is_armor_work(collision: ICollision): boolean {
+export function is_armor_work(collision: Collision): boolean {
   const { victim } = collision;
   const { armor } = victim;
 

@@ -1,9 +1,9 @@
-import type { ICollision } from "../base/ICollision";
+import type { Collision } from "../base/Collision";
 import type { TFace } from "../defines";
 import { ItrEffect as IE } from "../defines/ItrEffect";
 import { is_fall } from "./is_fall";
 
-export function calc_itr_velocity(collision: ICollision): [number, number, number, TFace] {
+export function calc_itr_velocity(collision: Collision): [number, number, number, TFace] {
   const { itr, attacker, victim } = collision;
   const { dvx = 0, dvy = attacker.dataset('ivy_d'), dvz = 0 } = itr;
   const diff_x = victim.position.x - attacker.position.x;

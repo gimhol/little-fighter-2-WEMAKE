@@ -1,10 +1,10 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { Defines, SparkEnum, StateEnum } from "../defines";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 
 
-export function handle_ball_is_hit_a(collision: ICollision): void {
+export function handle_ball_is_hit_a(collision: Collision): void {
   const { victim, attacker, itr, a_cube, b_cube, aframe } = collision;
   handle_rest(collision);
   handle_stiffness(collision);
@@ -26,7 +26,7 @@ export function handle_ball_is_hit_a(collision: ICollision): void {
   victim.play_sound(victim.data.base.hit_sounds)
 }
 
-export function handle_ball_is_hit_b(collision: ICollision): void {
+export function handle_ball_is_hit_b(collision: Collision): void {
   const { victim, itr, a_cube, b_cube } = collision;
   handle_rest(collision);
   handle_stiffness(collision);

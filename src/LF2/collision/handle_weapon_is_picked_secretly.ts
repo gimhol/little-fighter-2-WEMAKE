@@ -1,8 +1,8 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { GameKey as GK, is_independent, WeaponType } from "../defines";
 import { summary_mgr } from "../entity/SummaryMgr";
 
-export function handle_weapon_is_picked_secretly(collision: ICollision): void {
+export function handle_weapon_is_picked_secretly(collision: Collision): void {
   const { victim, attacker } = collision;
   if (!attacker.ctrl.is_hit(GK.Attack)) return;
   if (victim.bearer) return;

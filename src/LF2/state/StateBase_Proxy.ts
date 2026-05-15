@@ -1,4 +1,4 @@
-import { ICollision } from "../base/ICollision";
+import { Collision } from "../base/Collision";
 import { IFrameInfo, INextFrame } from "../defines";
 import { Entity } from "../entity/Entity";
 import { is_ball, is_fighter, is_weapon } from "../entity/type_check";
@@ -58,7 +58,7 @@ export class StateBase_Proxy extends State_Base implements Required<State_Base> 
   override get_auto_frame(e: Entity): IFrameInfo | undefined {
     return this.get_proxy(e).get_auto_frame?.(e);
   }
-  override on_be_collided(collision: ICollision): void {
+  override on_be_collided(collision: Collision): void {
     this.get_proxy(collision.victim).on_be_collided?.(collision);
   }
   override get_sudden_death_frame(target: Entity): INextFrame | undefined {

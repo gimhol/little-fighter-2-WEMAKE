@@ -1,4 +1,4 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { Defines, ItrEffect, SparkEnum, StateEnum, TFace } from "../defines";
 import { is_fighter } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
@@ -9,7 +9,7 @@ import { handle_itr_effect_freeze, handle_itr_kind_freeze } from "./handle_itr_k
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";
 import { is_fall } from "./is_fall";
-export function handle_itr_normal_bdy_normal(collision: ICollision) {
+export function handle_itr_normal_bdy_normal(collision: Collision) {
   const { itr, attacker, victim, a_cube, b_cube } = collision;
   if (itr.effect == ItrEffect.Ignore) return;
   if (handle_armor(collision)) return;

@@ -1,7 +1,7 @@
-import { ICollision } from "../base";
+import { Collision } from "../base";
 import { StateEnum, WT } from "../defines";
 
-export function handle_weapon_hit_other(collision: ICollision): void {
+export function handle_weapon_hit_other(collision: Collision): void {
   const { attacker } = collision;
   if (attacker.state === StateEnum.Weapon_OnHand) {
     return;

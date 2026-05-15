@@ -245,7 +245,7 @@ export class EntityMainRender {
   }
   private render_outline() {
     const { main_mesh: main_mesh } = this;
-    if (this.entity.is_ghost) return;
+    if (this.entity.ghosted) return;
     const { material: m } = main_mesh;
     if (m instanceof T.ShaderMaterial) {
       const { outline_color, outline_alpha } = this.entity;

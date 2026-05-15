@@ -55,7 +55,7 @@ export class CameraCtrl extends UIComponent {
     }
     if (this.keys.U.is_start()) this.focus_next(-1);
     if (this.keys.D.is_start()) this.focus_next(1);
-    if (this.staring && (this.staring.hp <= 0 || !this.staring.is_attach))
+    if (this.staring && (this.staring.hp <= 0 || !this.staring.mounted))
       this.focus_next(1)
 
     if (this.free && this.staring) {
