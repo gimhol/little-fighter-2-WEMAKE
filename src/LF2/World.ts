@@ -127,6 +127,8 @@ export class World extends WorldDataset {
       this.start_update();
     }
   };
+  get player_l() { return this.stage.player_l; }
+  get player_r() { return this.stage.player_r; }
   get left() { return this.stage.left; }
   get right() { return this.stage.right; }
   get near() { return this.stage.near; }

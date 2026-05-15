@@ -321,6 +321,10 @@ export class BotController extends BaseController {
     if (!me.mounted) return false
     if (!e.mounted) return false
 
+    const { x: en_x } = e.position;
+    const { player_l, player_r } = this.world;
+    if (en_x < player_l || en_x > player_r) return false
+
     if (me.hp <= 0) return false;
     if (me.holding?.base_type == WT.Drink) return false;
     if (e.hp <= 0) return false;
@@ -329,10 +333,10 @@ export class BotController extends BaseController {
     const e_state = e.state;
     const [l, r] = this.world.fighter_bound(me)
     /* 对方的位置，我方无法抵达，故不追之 */
-    if (!between(e.position.x, l, r))
+    if (!between(en_x, l, r))
       return false;
 
-    const abs_dx = abs(me.position.x - e.position.x)
+    const abs_dx = abs(me.position.x - en_x)
     if (is_weapon(e)) {
       if (me.holding)
         return false;
