@@ -3,33 +3,20 @@ import Easing from "../../animation/Easing";
 import { Sequence } from "../../animation/Sequence";
 import { Stage } from "../../stage/Stage";
 import { UITextLoader } from "../UITextLoader";
-import { UIComponent } from "./UIComponent";
+import { Label } from "./Label";
 
-export class StageTitleShow extends UIComponent {
+export class StageTitleShow extends Label {
   static override readonly TAGS: string[] = ["StageTitleShow"];
   private _opactiy: Sequence = new Sequence(
     new Easing(0, 1).set_duration(500),
-    new Delay(1)
-      .set_duration(1500),
+    new Delay(1).set_duration(1500),
     new Easing(1, 0).set_duration(500),
   );
-  private _txt_loader = new UITextLoader(() => this.node).set_style({
-    fill_style: "white",
-    font: `46px "Arial Black", Arial`,
-  })
-  override on_resume(): void {
-    Object.assign(this.node, {
-      outlineColor: "#005A8E",
-      outlineWidth: 5,
-      outlineAlpha: 1,
-    })
-  }
-  set_text(text: string) {
-    this.node.visible = false;
-    this._txt_loader.set_text(text).then(() => {
-      this.node.visible = true;
-    })
+
+  override set_text(text: string): this {
+    super.set_text(text);
     this._opactiy.start(false);
+    return this;
   }
   on_chapter_finish() {
     this.set_text("STAGE CLEAR!")
