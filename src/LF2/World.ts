@@ -88,8 +88,8 @@ export class World extends WorldDataset {
    */
   readonly puppets = new Map<string, Entity>();
   readonly puppet_teams = new Set<string>();
-
-  readonly collisions: Collision[] = [];
+  readonly v_collisions: Collision[] = []
+  readonly a_collisions = new Map<Entity, Collision>()
   public has_players_alive: boolean = false;
 
   get bg() { return this._bg; }
@@ -614,7 +614,8 @@ export class World extends WorldDataset {
     if (this.stage.world_pause) return;
     if (this.entities.length > MAX_DEBUG_ENTITIES)
       Ditto.debug(`[World::update_once]entities.size = ${this.entities.length}`)
-    this.collisions.length = 0;
+    this.v_collisions.length = 0;
+    this.a_collisions.clear()
     const temp_entities: Entity[] = [];
     const update_chasing = this._game_time.value % CHASING_UPDATE_INTERVAL === 0;
     const dead_buffs: [string, Buff][] = []
@@ -695,22 +696,27 @@ export class World extends WorldDataset {
           const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
           const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
           if (priority1 < priority2) {
-            this.collisions.push(collision1)
+            this.add_collision(collision1)
           } else if (priority1 > priority2) {
-            this.collisions.push(collision2)
+            this.add_collision(collision2)
           } else {
-            this.collisions.push(collision1)
-            this.collisions.push(collision2)
+            this.add_collision(collision1)
+            this.add_collision(collision2)
           }
         }
-        else if (collision1) this.collisions.push(collision1)
-        else if (collision2) this.collisions.push(collision2)
+        else if (collision1) {
+          this.add_collision(collision1)
+        } else if (collision2) {
+          this.add_collision(collision2)
+        }
       }
       temp_entities.push(a);
     }
     this.entities.length = this.entities.length - offset
 
-    for (const c of this.collisions)
+    for (const c of this.v_collisions)
+      collisions_keeper.handle(c);
+    for (const [, c] of this.a_collisions)
       collisions_keeper.handle(c);
 
     for (const entity of this._gones) {
@@ -741,6 +747,16 @@ export class World extends WorldDataset {
       this.ticker_pool.push(ticker)
     }
     this._released_tickers.clear()
+  }
+  protected add_collision(collision: Collision) {
+    if (collision.rest) {
+      this.v_collisions.push(collision)
+      return;
+    }
+    const prev = this.a_collisions.get(collision.attacker)
+    if (!prev || prev.m_distance > collision.m_distance) {
+      this.a_collisions.set(collision.attacker, collision)
+    }
   }
 
   render_once(dt: number) {
