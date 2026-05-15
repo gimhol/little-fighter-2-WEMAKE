@@ -24,11 +24,14 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     game_mode: String
   }
 
+  override on_start(): void {
+    super.on_start?.();
+    this.lf2.callbacks.add(this._lf2_callbacks)
+  }
   override on_resume(): void {
     const background_row = this.node.search_node("background_row")!;
     const stage_row = this.node.search_node("stage_row")!;
     const char_menu_logic = this.node.search_component(CharMenuLogic)
-
     if (this.props.game_mode === GAME_MODE_STAGE) {
       stage_row.set_visible(true).set_disabled(false);
       background_row.set_visible(false).set_disabled(true);
@@ -45,10 +48,6 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     on_broadcast: (message) => {
       if (message === 'start_game') return this.start_game();
     }
-  }
-  override on_start(): void {
-    super.on_start?.();
-    this.lf2.callbacks.add(this._lf2_callbacks)
   }
   override on_stop(): void {
     this.lf2.change_stage('')

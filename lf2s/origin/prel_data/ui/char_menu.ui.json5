@@ -3,6 +3,7 @@
   name: "UI: 八人框",
   component: [
     {
+      id: "CharMenuLogic",
       cls: "CharMenuLogic",
       properties: {
         max_player: 8,
