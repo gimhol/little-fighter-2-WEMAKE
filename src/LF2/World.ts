@@ -708,7 +708,6 @@ export class World extends WorldDataset {
 
     for (const c of this.collisions)
       collisions_keeper.handle(c);
-    this.collisions.length = 0;
 
     for (const entity of this._gones) {
       this.entity_map.delete(entity.id)
