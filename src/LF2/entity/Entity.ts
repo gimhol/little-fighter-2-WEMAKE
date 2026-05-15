@@ -1055,7 +1055,7 @@ export class Entity {
     entity.key_role = false;
     entity.dead_gone = true;
     /* Note: 继承v_rests，避免重复反弹ball... */
-    for (const [, v] of this.vrests) entity.add_v_rest(v)
+    for (const [, v] of this.vrests) entity.add_v_rest(v.clone())
     return entity;
   }
 
