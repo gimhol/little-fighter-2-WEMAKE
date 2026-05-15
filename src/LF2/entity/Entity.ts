@@ -1577,10 +1577,6 @@ export class Entity {
       if (this.frame.landable) {
         // 落地
         if (just_land) {
-          if (this.frame.on_landing) {
-            const result = this.get_next_frame(this.frame.on_landing);
-            if (result) this.enter_frame(result.which);
-          }
           this._position.y = this._prev_position.y = ground_y;
           const v = this._velocity.clone();
           this._velocity.y = 0;

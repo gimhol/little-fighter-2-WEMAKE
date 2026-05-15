@@ -21,6 +21,11 @@ export class CharacterState_Rowing extends CharacterState_Base {
     e.set_velocity(next_vx, next_vy);
   }
   override on_landing(e: Entity): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    }
     e.enter_frame({ id: e.data.indexes?.landing_1 });
   }
 }

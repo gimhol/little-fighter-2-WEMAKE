@@ -35,6 +35,11 @@ export default class CharacterState_Frozen extends CharacterState_Base {
     super.leave?.(e, next_frame);
   }
   override on_landing(e: Entity, velocity: IVector3): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    }
     const {
       data: { indexes },
     } = e;

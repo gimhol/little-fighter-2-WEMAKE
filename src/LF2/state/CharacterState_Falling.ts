@@ -76,6 +76,11 @@ export default class CharacterState_Falling extends CharacterState_Base {
     e.resting = e.resting_max
   }
   override on_landing(e: Entity, velocity: IVector3): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    } 
     const {
       facing,
       data: { indexes },

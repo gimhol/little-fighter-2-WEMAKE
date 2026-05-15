@@ -20,6 +20,11 @@ export default class CharacterState_Base extends State_Base {
     e.handle_ground_velocity_decay();
   }
   override on_landing(e: Entity, velocity: IVector3): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    } 
     e.enter_frame({ id: e.data.indexes?.landing_2 });
   }
   override get_auto_frame(e: Entity): IFrameInfo | undefined {
