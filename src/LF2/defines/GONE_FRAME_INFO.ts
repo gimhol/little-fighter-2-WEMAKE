@@ -10,4 +10,5 @@ export const GONE_FRAME_INFO: IFrameInfo = {
   next: { id: Builtin_FrameId.Gone },
   centerx: 0,
   centery: 0,
+  no_shadow: 1
 };
