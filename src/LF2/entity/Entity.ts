@@ -41,25 +41,42 @@ import { is_fighter, is_human_ctrl } from "./type_check";
 
 interface IEntitySnapshot {
   nums: number[];
+  str: string[];
 }
-function entity_to_snapshot(e: Entity): IEntitySnapshot {
+export function entity_to_snapshot(e: Entity): IEntitySnapshot {
   const ret: IEntitySnapshot = {
     nums: [
       e._prev_position.x, e._prev_position.y, e._prev_position.z,
       e._position.x, e._position.y, e._position.z,
       e._prev_velocity.x, e._prev_velocity.y, e._prev_velocity.z,
       e._velocity.x, e._velocity.y, e._velocity.z,
-    ]
+    ],
+    str: [],
   }
   return ret;
 }
+export function entity_read_snapshot(e: Entity, s: IEntitySnapshot) {
+  e._prev_position.x = s.nums[0]
+  e._prev_position.y = s.nums[1]
+  e._prev_position.z = s.nums[2]
+  e._position.x = s.nums[3]
+  e._position.y = s.nums[4]
+  e._position.z = s.nums[5]
+  e._prev_velocity.x = s.nums[6]
+  e._prev_velocity.y = s.nums[7]
+  e._prev_velocity.z = s.nums[8]
+  e._velocity.x = s.nums[9]
+  e._velocity.y = s.nums[10]
+  e._velocity.z = s.nums[11]
+}
+
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
 
   protected _spawn_time: number = 0;
   protected _outline_color: string | undefined = void 0;
-  protected _outline_alpha: number | undefined = void 0;
+  protected outline_alpha: number | undefined = void 0;
   readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
   readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
@@ -241,14 +258,10 @@ export class Entity {
 
   renderer: any;
 
-
-
   get outline_color(): string | undefined {
     return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
   };
   set outline_color(v: string | undefined) { this._outline_color = v; }
-  get outline_alpha(): number | undefined { return this._outline_alpha };
-  set outline_alpha(v: number | undefined) { this._outline_alpha = v; }
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 
@@ -256,7 +269,6 @@ export class Entity {
   get prev_ground_y(): number { return this._prev_ground_y }
 
   get velocity(): Readonly<IVector3> { return this._velocity }
-  /** 落地一刻的速度 */
   get data(): IEntityData { return this._data };
   get group() { return this._data.base.group };
   get mounted() { return this._mounted }
@@ -714,7 +726,7 @@ export class Entity {
     this._catcher = null
     this._wakeup_invuln = null;
     this._name_visible = null;
-    this._outline_alpha = void 0;
+    this.outline_alpha = void 0;
     this._velocity.set(0, 0, 0)
     this._prev_velocity.set(0, 0, 0);
     this.callbacks.clear();
@@ -1580,7 +1592,7 @@ export class Entity {
           this._state?.on_landing?.(this);
           this._velocity.y = 0;
           this._prev_velocity.y = 0;
-          
+
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {
             this.hp -= this.throwinjury;
