@@ -20,7 +20,6 @@ import {
   get_next_frame_by_raw_id,
 } from "./get_the_next";
 import { hit_next_frame } from "./hit_next_frame";
-import { make_fighter_special } from "./make_fighter_special";
 import { make_frame_state } from "./make_frame_state";
 import { take } from "./take";
 import { take_raw_frame_mp } from "./take_raw_frame_mp";

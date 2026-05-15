@@ -68,12 +68,11 @@ export class BotState_Chasing extends BotState_Base {
     /** 敌人与自己的距离Z */
     const abs_dz = round_float(abs(my_z - en_z))
 
-    /** abs_dx <= c.stand_atk_f_x */
-    const x_reach = absx <= c.stand_atk_f_x;
-    const z_reach = between(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
+    const x_ok = between(rx, c.stand_atk_b_x, c.stand_atk_f_x)
+    const z_ok = between(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
 
     // 随机跳
-    if (!x_reach || !z_reach) this.random_jumping();
+    if (!x_ok || !z_ok) this.random_jumping();
 
     /** 持有武器的类型 */
     const wt = me.holding?.base_type;
@@ -88,51 +87,39 @@ export class BotState_Chasing extends BotState_Base {
     switch (state) {
       case StateEnum.Running: return this.update_running();
       case StateEnum.Dash: return this.update_dash();
+      case StateEnum.Jump: return this.update_jump();
       case StateEnum.Catching:
         // shit, louisEx air-push frame's state is StateEnum.Catching...
         if (me.catching) c.click(GK.a)
         break;
       case StateEnum.Standing:
       case StateEnum.Walking: {
+        if (!c.en_out_of_range) {
+          const r_desire = c.should_run(en.position);
+          if (!r_desire) break;
+          if (r_desire > 0) c.db_hit(GK.R).end(GK.R).key_up(GK.L);
+          else if (r_desire < 0) c.db_hit(GK.L).end(GK.L).key_up(GK.R);
+          return;
+        }
+
         if (wt && between(abs_dz, 0, 30)) {
           if (wt == WeaponType.Knife) {
             if (this.ctrl.desire('rtwd') < 400) {
               c.key_down(GK_F).click(GK.a)
+              return;
             }
-          }
-        }
-        if (!c.en_out_of_range) {
-          const r_desire = c.should_run(en.position);
-          if (r_desire > 0) {
-            c.db_hit(GK.R).end(GK.R);
-          } else if (r_desire < 0) {
-            c.db_hit(GK.L).end(GK.L);
-          } else {
-            break;
           }
         }
         break;
       }
-      case StateEnum.Jump: return this.update_jump()
-
       default:
         c.key_up(...AGK);
     }
 
-    if (
-      between(rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
-      between(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
-    ) {
-      c.click(GK.a)
-    }
+    if (x_ok && z_ok) c.click(GK.a)
 
-    this.hold_ud(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
-
-    /** 回头 */
-    if (rx < 0 && absx > 10)
-      c.key_down(GK_B).key_up(GK_F);
-    else
-      c.key_up(GK.L, GK.R)
+    this.hold_UD(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
+    this.hold_LR(rx, c.stand_atk_b_x, c.stand_atk_f_x)
 
     const { team, player_l, player_r } = this.stage
     if (team === me.team) {
@@ -212,7 +199,7 @@ export class BotState_Chasing extends BotState_Base {
       return;
     }
 
-    this.hold_ud(rz, c.dataset.r_atk_min_z, c.dataset.r_atk_max_z);
+    this.hold_UD(rz, c.dataset.r_atk_min_z, c.dataset.r_atk_max_z);
 
     /* 
       避免跑过头停下
@@ -242,11 +229,21 @@ export class BotState_Chasing extends BotState_Base {
     }
   }
 
-  hold_ud(rz: number, min_z: number, max_z: number): void {
+  hold_UD(rz: number, min_z: number, max_z: number): void {
     const { c } = this;
     if (rz < min_z) c.key_down(GK.U).key_up(GK.D)
     else if (rz > max_z) c.key_down(GK.D).key_up(GK.U)
     else c.key_up(GK.D, GK.U)
+  }
+
+  hold_LR(rx: number, min_x: number, max_x: number): void {
+    const { c, me } = this;
+    const { facing: me_facing } = me;
+    const GK_F = me_facing > 0 ? GK.R : GK.L;
+    const GK_B = me_facing > 0 ? GK.L : GK.R;
+    if (rx < min_x) c.key_down(GK_B).key_up(GK_F)
+    else if (rx > max_x) c.key_down(GK_F).key_up(GK_B)
+    else c.key_up(GK_F, GK_B)
   }
 
   update_jump(): BotStateEnum | undefined {
@@ -294,7 +291,7 @@ export class BotState_Chasing extends BotState_Base {
     if (rx < 0) c.key_down(GK_B).key_up(GK_F);
     else c.key_up(GK_B, GK_F);
 
-    this.hold_ud(rz, c.dataset.j_atk_min_z, c.dataset.j_atk_max_z)
+    this.hold_UD(rz, c.dataset.j_atk_min_z, c.dataset.j_atk_max_z)
 
     /* 
       概率丢武器

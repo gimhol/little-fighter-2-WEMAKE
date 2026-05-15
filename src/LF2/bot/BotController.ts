@@ -83,7 +83,7 @@ export class BotController extends BaseController {
     const en = this.chasings.get()?.entity;
     if (!en) return 0;
     if (is_weapon(en)) return this.dataset.pick_weapon_b_x;
-    return -5; // TODO?
+    return -8; // TODO?
   }
 
   /** 地面攻击触发范围X */
