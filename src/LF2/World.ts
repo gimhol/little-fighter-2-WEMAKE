@@ -689,7 +689,7 @@ export class World extends WorldDataset {
         }
         const collision1 = collision_get(a, b);
         const collision2 = collision_get(b, a);
-        if (collision1?.handlers && collision2?.handlers) {
+        if (collision1 && collision2) {
           const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
           const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
           if (priority1 < priority2) {
@@ -701,8 +701,8 @@ export class World extends WorldDataset {
             this.add_collision(collision2)
           }
         }
-        else if (collision1?.handlers) this.add_collision(collision1)
-        else if (collision2?.handlers) this.add_collision(collision2)
+        else if (collision1) this.add_collision(collision1)
+        else if (collision2) this.add_collision(collision2)
       }
       temp_entities.push(a);
     }

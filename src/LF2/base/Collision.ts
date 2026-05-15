@@ -1,7 +1,6 @@
 import { Ditto } from "..";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { collisions_keeper } from "../collision";
 import { HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo } from "../defines";
 import type { Entity } from "../entity";
 import { abs, max } from "../utils/math/base";
@@ -77,7 +76,6 @@ export interface ICollisionSnapshot {
   readonly dy: number;
   readonly dz: number;
   readonly m_distance: number;
-  readonly duration: number;
   readonly rest: number;
 }
 
@@ -124,9 +122,6 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   readonly bframe_id: string;
   readonly itr_index: number;
   readonly bdy_index: number;
-
-  handlers?: ((collision: Collision) => void)[];
-  duration: number;
   rest: number;
 }
 
@@ -175,7 +170,6 @@ export function collision_new(o: ICollisionInits): Collision {
     m_distance: abs(dx) + abs(dy) + abs(dz),
     a_cube,
     b_cube,
-    duration: 0,
     rest
   }
   if (c.itr_index < 0) Ditto.warn(`[Collision] itr_index < 0`);
@@ -196,7 +190,6 @@ export function collision_get(attacker: Entity, victim: Entity): Collision | nul
         itr_index: i, bdy_index: j,
       });
       if (!collision_test(collision)) continue;
-      collision.handlers = collisions_keeper.handler(collision)
       return collision
     }
   }
@@ -223,7 +216,6 @@ export function collision_to_snapshot(c: Collision): ICollisionSnapshot {
     dy: c.dy,
     dz: c.dz,
     m_distance: c.m_distance,
-    duration: c.duration,
     rest: c.rest
   }
 }
