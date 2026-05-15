@@ -12,6 +12,7 @@ import {
   GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3,
+  IVector3Like,
   IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
 } from "../defines";
@@ -40,53 +41,43 @@ import { turn_face } from "./face_helper";
 import { is_fighter, is_human_ctrl } from "./type_check";
 
 interface IEntitySnapshot {
-  nums: number[];
-  str: string[];
-}
-export function entity_to_snapshot(e: Entity): IEntitySnapshot {
-  const ret: IEntitySnapshot = {
-    nums: [
-      e._prev_position.x, e._prev_position.y, e._prev_position.z,
-      e._position.x, e._position.y, e._position.z,
-      e._prev_velocity.x, e._prev_velocity.y, e._prev_velocity.z,
-      e._velocity.x, e._velocity.y, e._velocity.z,
-    ],
-    str: [],
-  }
-  return ret;
-}
-export function entity_read_snapshot(e: Entity, s: IEntitySnapshot) {
-  e._prev_position.x = s.nums[0]
-  e._prev_position.y = s.nums[1]
-  e._prev_position.z = s.nums[2]
-  e._position.x = s.nums[3]
-  e._position.y = s.nums[4]
-  e._position.z = s.nums[5]
-  e._prev_velocity.x = s.nums[6]
-  e._prev_velocity.y = s.nums[7]
-  e._prev_velocity.z = s.nums[8]
-  e._velocity.x = s.nums[9]
-  e._velocity.y = s.nums[10]
-  e._velocity.z = s.nums[11]
+  id: string,
+  oid: string,
+  fid: string,
+  wait: number,
+  reserve: number,
+  variant: number,
+  ghosted: boolean,
+  p0: IVector3Like,
+  p1: IVector3Like,
+  v0: IVector3Like,
+  v1: IVector3Like,
+  outline_color: string | undefined;
+  outline_alpha: number | undefined;
+  copies: string[] | undefined;
+  emitters: string[] | undefined;
+  transforms: [string, string] | undefined;
 }
 
 export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
 
+  readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
+
   protected _spawn_time: number = 0;
-  protected _outline_color: string | undefined = void 0;
-  protected outline_alpha: number | undefined = void 0;
-  readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected _outline_color: string = '';
+  protected _outline_alpha: number = 0;
+  protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
 
   /**
    * 影分身
    */
-  readonly copies = new Set<string>();
-  readonly vrests = new Map<string, Collision>();
+  protected readonly copies = new Set<string>();
+  protected readonly vrests = new Map<string, Collision>();
   readonly blockers = new Map<string, Collision>();
   readonly superpunchs = new Map<string, Collision>();
   readonly callbacks = new Callbacks<IEntityCallbacks>()
@@ -94,9 +85,8 @@ export class Entity {
 
   id!: string;
   wait!: number;
-  readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
   variant!: number;
-  transform_datas!: [IEntityData, IEntityData] | null;
+  transforms!: [string, string] | null;
   protected _data!: IEntityData;
   protected _reserve!: number;
   protected _mounted!: boolean;
@@ -258,10 +248,13 @@ export class Entity {
 
   renderer: any;
 
-  get outline_color(): string | undefined {
-    return this._outline_color ?? Defines.TeamInfoMap[this.team]?.outline_color
+  get outline_color(): string {
+    return this._outline_color || Defines.TeamInfoMap[this.team]?.outline_color || ''
   };
-  set outline_color(v: string | undefined) { this._outline_color = v; }
+  set outline_color(v: string) { this._outline_color = v; }
+  get outline_alpha(): number { return this._outline_alpha; }
+  set outline_alpha(v: number) { this._outline_alpha = v; }
+
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 
@@ -695,7 +688,7 @@ export class Entity {
     this.fallinjury = 0;
     this._ground_y = 0;
     this.variant = 0;
-    this.transform_datas = null;
+    this.transforms = null;
     this._reserve = 0
     this._mounted = false;
     this._ghosted = false;
@@ -726,7 +719,7 @@ export class Entity {
     this._catcher = null
     this._wakeup_invuln = null;
     this._name_visible = null;
-    this.outline_alpha = void 0;
+    this._outline_alpha = 0;
     this._velocity.set(0, 0, 0)
     this._prev_velocity.set(0, 0, 0);
     this.callbacks.clear();
@@ -781,7 +774,7 @@ export class Entity {
     this.collided_list.length = 0;
     this.lastest_collision = null;
     this.lastest_collided = null;
-    this._outline_color = void 0;
+    this._outline_color = '';
 
     let buffs = Array.from(this.buff.values())
     for (const buf of buffs) buf.del(this)
@@ -1555,8 +1548,8 @@ export class Entity {
     const { next_frame, key_list } = this.ctrl.update();
     if (
       key_list === "dja" &&
-      this.transform_datas &&
-      this.transform_datas[1] === this._data &&
+      this.transforms &&
+      this.transforms[1] === this._data.id &&
       this._position.y === this.ground_y
     ) {
       this.transfrom_to_another();
@@ -1862,13 +1855,15 @@ export class Entity {
   }
 
   transfrom_to_another(data?: IEntityData) {
-    const datas = this.transform_datas = data ?
-      [this._data, data] :
-      this.transform_datas;
+    const datas = this.transforms = data ?
+      [this._data.id, data.id] :
+      this.transforms;
     if (!datas?.length) return;
-    const curr_idx = datas.indexOf(this._data)
+    const curr_idx = datas.indexOf(this._data.id)
     const next_idx = (curr_idx + 1) % datas.length;
-    const next_data = datas[next_idx]
+    const next_data_id = datas[next_idx]
+    const next_data = this.lf2.datas.find_entity(new_id);
+    if (!next_data) return;
     this.transform(next_data);
     if (next_idx === 0) {
       const nf = this.get_next_frame({ id: "245" })?.frame ?? this.find_auto_frame()
@@ -2393,6 +2388,72 @@ export class Entity {
   }
   aabb_x1: number = 0;
   aabb_x2: number = 0;
+
+  to_snapshot(): IEntitySnapshot {
+    const ret: IEntitySnapshot = {
+      id: this.id,
+      oid: this._data.id,
+      fid: this.frame.id,
+      wait: this.wait,
+      reserve: this._reserve,
+      ghosted: this._ghosted,
+      outline_color: this._outline_color || void 0,
+      outline_alpha: this._outline_alpha || void 0,
+      copies: this.copies.size ? Array.from(this.copies) : void 0,
+      emitters: this._emitters.length ? [...this._emitters] : void 0,
+      variant: this.variant,
+      transforms: this.transforms?.length ? this.transforms : void 0,
+      p0: {
+        x: this._prev_position.x,
+        y: this._prev_position.y,
+        z: this._prev_position.z,
+      },
+      p1: {
+        x: this._position.x,
+        y: this._position.y,
+        z: this._position.z,
+      },
+      v0: {
+        x: this._prev_velocity.x,
+        y: this._prev_velocity.y,
+        z: this._prev_velocity.z,
+      },
+      v1: {
+        x: this._velocity.x,
+        y: this._velocity.y,
+        z: this._velocity.z,
+      }
+    }
+    return ret;
+  }
+
+  read_snapshot(s: IEntitySnapshot) {
+    // oid: this.data.id
+    // fid: this.frame.id
+    this._data = this.lf2.datas.find_entity(s.oid)!;
+    if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
+    this.frame = this.data.frames[s.fid];
+    if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
+    this._outline_color = s.outline_color || ''
+    this._outline_alpha = s.outline_alpha || 0
+
+    this.variant = s.variant;
+    this._reserve = s.reserve
+    this._ghosted = s.ghosted;
+
+    this.copies.clear();
+    s.copies?.forEach(v => this.copies.add(v));
+
+    this._emitters.length = 0;
+    if (s.emitters) this._emitters.push(...s.emitters);
+
+    this.transforms = s.transforms ?? null;
+    this.wait = this.wait;
+    this._prev_position.copy(s.p0)
+    this._position.copy(s.p1)
+    this._prev_velocity.copy(s.v0)
+    this._velocity.copy(s.v1)
+  }
 }
 
 const common_creator = (world: World, data: IEntityData, states?: States) => {
