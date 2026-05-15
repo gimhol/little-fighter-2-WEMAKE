@@ -18,6 +18,9 @@ export default defineConfig({
     }),
     glsl()
   ],
+  define: {
+    VERSION_NAME: JSON.stringify(json.version)
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
