@@ -120,13 +120,13 @@ export class BotState_Chasing extends BotState_Base {
 
     this.hold_UD(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
     this.hold_LR(rx, c.stand_atk_b_x, c.stand_atk_f_x)
-
     const { team, player_l, player_r } = this.stage
     if (team === me.team) {
       if (my_x < player_l) c.click(GK.R)
       if (my_x > player_r) c.click(GK.L)
     }
   }
+
   update_dash(): BotStateEnum | undefined {
     const { me, en, c } = this;
     if (!en) return;
