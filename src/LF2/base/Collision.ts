@@ -4,10 +4,60 @@ import { collisions_keeper } from "../collision";
 import { HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo } from "../defines";
 import type { Entity } from "../entity";
 import { abs, max } from "../utils/math/base";
-import type { ICollisionInits } from "./ICollisionInits";
+
+export interface ICollisionInits {
+  /**
+   * 攻击方
+   *
+   * @type {Entity}
+   * @memberof Collision
+   */
+  readonly attacker: Entity;
+
+  /**
+   * 被攻击方
+   *
+   * @type {Entity}
+   * @memberof Collision
+   */
+  readonly victim: Entity;
+
+  /**
+   * 攻击方的itr
+   *
+   * @type {IItrInfo}
+   * @memberof Collision
+   */
+  readonly itr: Readonly<IItrInfo>;
+
+  /**
+   * 被攻击方的bdy
+   *
+   * @type {IBdyInfo}
+   * @memberof Collision
+   */
+  readonly bdy: Readonly<IBdyInfo>;
+
+  /**
+   * 攻击方的frame
+   *
+   * @type {IFrameInfo}
+   * @memberof Collision
+   */
+  readonly aframe: Readonly<IFrameInfo>;
+
+  /**
+   * 被攻击方的frame
+   *
+   * @type {IFrameInfo}
+   * @memberof Collision
+   */
+  readonly bframe: Readonly<IFrameInfo>;
+}
+
+
 
 export class Collision implements ICollisionInits {
-
   readonly lf2: LF2;
   readonly world: World;
   readonly a_id: string;
@@ -93,7 +143,6 @@ export class Collision implements ICollisionInits {
       a_cube.near >= b_cube.far
     )) return;
   }
-
 
   test(): boolean {
     const { itr, attacker, victim, a_cube, b_cube, bdy } = this
