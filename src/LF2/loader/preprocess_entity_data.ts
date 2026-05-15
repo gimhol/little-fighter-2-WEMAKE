@@ -29,6 +29,12 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
   if (jobs.length) await Promise.all(jobs);
 
   traversal(portraits, (k, v, o) => o[k] = preprocess_pic(lf2, data, v));
+
+  if (data.processed != false) { }
+  if (is_ball_data(data)) make_ball_special(data)
+  else if (is_weapon_data(data)) make_weapon_special(data)
+  else if (is_fighter_data(data)) make_fighter_special(data)
+
   traversal(frames, (k, v, o) => o[k] = preprocess_frame(lf2, data, v, jobs));
   traversal(frames, (_, v) => {
     const errors: string[] = []
@@ -39,10 +45,8 @@ export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: 
     data.base.bot = preprocess_bot_data(data.base.bot)
 
 
-  if (data.processed != false) { }
-  if (is_ball_data(data)) make_ball_special(data)
-  else if (is_weapon_data(data)) make_weapon_special(data)
-  else if (is_fighter_data(data)) make_fighter_special(data)
+
+
 
   else make_entity_special(data);
   data.processed = true;

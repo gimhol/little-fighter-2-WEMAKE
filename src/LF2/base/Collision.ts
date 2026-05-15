@@ -174,8 +174,8 @@ export function collision_new(o: ICollisionInits): Collision {
     b_cube,
     rest
   }
-  if (c.itr_index < 0) Ditto.warn(`[Collision] itr_index < 0`);
-  if (c.bdy_index < 0) Ditto.warn(`[Collision] bdy_index < 0`);
+  // if (c.itr_index < 0) Ditto.warn(`[Collision] itr_index < 0`);
+  // if (c.bdy_index < 0) Ditto.warn(`[Collision] bdy_index < 0`);
   return c;
 }
 
