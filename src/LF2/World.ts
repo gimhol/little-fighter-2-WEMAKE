@@ -687,19 +687,23 @@ export class World extends WorldDataset {
           divider = j + 1;
           continue;
         }
-        const collision1 = this.collision_detection(a, b);
-        const collision2 = this.collision_detection(b, a);
+        const collision1 = Collision.test(a, b);
+        const collision2 = Collision.test(b, a);
         if (collision1?.handlers && collision2?.handlers) {
           const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
           const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
-          if (priority1 < priority2) this.add_collisions(collision1)
-          else if (priority1 > priority2) this.add_collisions(collision2)
-          else this.add_collisions(collision1, collision2)
+          if (priority1 < priority2) {
+            this.add_collision(collision1)
+          } else if (priority1 > priority2) {
+            this.add_collision(collision2)
+          } else {
+            this.add_collision(collision1)
+            this.add_collision(collision2)
+          }
         }
-        else if (collision1?.handlers) this.add_collisions(collision1)
-        else if (collision2?.handlers) this.add_collisions(collision2)
+        else if (collision1?.handlers) this.add_collision(collision1)
+        else if (collision2?.handlers) this.add_collision(collision2)
       }
-
       temp_entities.push(a);
     }
     this.entities.length = this.entities.length - offset
@@ -816,36 +820,15 @@ export class World extends WorldDataset {
     }
   }
 
-  add_collisions(...cs: Collision[]) {
-    for (const c of cs) {
-      if (c.itr.vrest) {
-        this.v_collisions.push(c);
-      } else {
-        const prev = this.a_collisions.get(c.attacker);
-        if (!prev || prev.m_distance > c.m_distance)
-          this.a_collisions.set(c.attacker, c);
-      }
+  add_collision(c: Collision) {
+    if (c.itr.vrest) {
+      this.v_collisions.push(c);
+      return;
     }
-  }
+    const prev = this.a_collisions.get(c.attacker);
+    if (!prev || prev.m_distance > c.m_distance)
+      this.a_collisions.set(c.attacker, c);
 
-  collision_detection(attacker: Entity, victim: Entity): Collision | undefined {
-    const aframe = attacker.frame;
-    const bframe = victim.frame;
-    if (!aframe.itr?.length || !bframe.bdy?.length) return;
-    const l0 = aframe.itr.length;
-    const l1 = bframe.bdy.length;
-    for (let i = 0; i < l0; ++i) {
-      for (let j = 0; j < l1; ++j) {
-        const itr = aframe.itr[i]!
-        const bdy = bframe.bdy[j]!
-        const collision = new Collision({
-          victim, attacker, itr, bdy, aframe, bframe
-        });
-        if (!collision.test()) continue;
-        collision.handlers = collisions_keeper.handler(collision)
-        return collision
-      }
-    }
   }
 
 

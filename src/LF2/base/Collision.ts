@@ -1,11 +1,13 @@
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
+import { collisions_keeper } from "../collision";
 import { HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo } from "../defines";
 import type { Entity } from "../entity";
 import { abs, max } from "../utils/math/base";
 import type { ICollisionInits } from "./ICollisionInits";
 
 export class Collision implements ICollisionInits {
+
   readonly lf2: LF2;
   readonly world: World;
   readonly a_id: string;
@@ -90,8 +92,9 @@ export class Collision implements ICollisionInits {
       a_cube.far <= b_cube.near &&
       a_cube.near >= b_cube.far
     )) return;
-
   }
+
+
   test(): boolean {
     const { itr, attacker, victim, a_cube, b_cube, bdy } = this
     if (!itr.vrest && attacker.arest) return false;
@@ -134,5 +137,25 @@ export class Collision implements ICollisionInits {
     const ret = new Collision(this);
     Object.assign(ret, this);
     return ret;
+  }
+
+
+  static test(attacker: Entity, victim: Entity): Collision | null {
+    const aframe = attacker.frame;
+    const bframe = victim.frame;
+    const { itr } = aframe;
+    const { bdy } = bframe;
+    if (!itr?.length || !bdy?.length) return null;
+    for (let i = 0; i < itr.length; ++i) {
+      for (let j = 0; j < bdy.length; ++j) {
+        const collision = new Collision({
+          victim, attacker, itr: itr[i], bdy: bdy[j], aframe, bframe
+        });
+        if (!collision.test()) continue;
+        collision.handlers = collisions_keeper.handler(collision)
+        return collision
+      }
+    }
+    return null
   }
 }
