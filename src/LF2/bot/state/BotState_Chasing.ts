@@ -79,52 +79,10 @@ export class BotState_Chasing extends BotState_Base {
     const GK_F = me_facing > 0 ? GK.R : GK.L;
     const GK_B = me_facing > 0 ? GK.L : GK.R;
     switch (state) {
-      case StateEnum.Running: {
-        /** 目标已在攻击范围内 */
-        const en_in_range = (
-          between(en_rx, c.stand_atk_b_x, c.stand_atk_f_x) &&
-          between(abs_dz, -c.dataset.r_atk_z, c.dataset.r_atk_z)
-        )
-
-        if (!en_in_range) {
-          // 避免跑过头停下 || 概率刹车
-          if (
-            my_x > en_x && me_facing > 0 ||
-            my_x < en_x && me_facing < 0 ||
-            c.desire("chasing_stop_running_1") < c.dataset.r_stop_desire
-          ) {
-            c.click(GK_B).key_up(GK_F);
-            return
-          }
-          // 概率丢武器
-          if (wt && between(abs_dz, 0, 30)) {
-            if (wt == WeaponType.Knife && this.ctrl.desire('rtwd_1') < 400) {
-              c.key_down(GK_F).click(GK.a)
-              return;
-            } else if (wt === WeaponType.Stick && this.ctrl.desire('rtwd_2') < 100) {
-              c.key_down(GK_F).click(GK.a)
-              return;
-            } else if (wt === WeaponType.Drink && this.ctrl.desire('rtwd_3') < 50) {
-              c.key_down(GK_F).click(GK.a)
-              return;
-            }
-          }
-          return
-        }
-
-        if (en_in_range && is_weapon(en)) {
-          if (en.base_type == WT.Heavy) {
-            c.click(GK_B).key_up(GK_F);
-          } else {
-            c.click(GK.d, GK.a)
-          }
-          return;
-        }
-        if (en_in_range && is_fighter(en) && c.desire("chasing_1") < c.dataset.r_atk_desire) {
-          c.click(GK.a);
-        }
+      case StateEnum.Running:
+        this.update_running();
         return;
-      }
+
       case StateEnum.Catching:
         // shit, louisEx air-push frame's state is StateEnum.Catching...
         if (me.catching) c.click(GK.a)
@@ -232,6 +190,92 @@ export class BotState_Chasing extends BotState_Base {
       if (my_x < player_l) c.click(GK.R)
       if (my_x > player_r) c.click(GK.L)
     }
+  }
+
+  private update_running() {
+    const { me, en, c } = this;
+    if (!en) return;
+
+    const wt = me.holding?.base_type;
+
+    const { facing: me_facing } = me
+    const { x: my_x, z: my_z, y: my_y } = me.position;
+    const { next_x: en_x, next_z: en_z, next_y: en_y } = c.guess_entity_pos(en);
+
+    const GK_F = me_facing > 0 ? GK.R : GK.L;
+    const GK_B = me_facing > 0 ? GK.L : GK.R;
+
+    /** 
+     * 敌人与自己的距离Z
+     * 敌人在上时为负数
+     * 敌人在下时为正数
+     */
+    const rz = round(en_z - my_z)
+
+    /** 
+     * 敌人与自己的距离X
+     * 敌人在背后时为负数
+     * 敌人在正面时为正数
+     */
+    const rx = round(me_facing * (en_x - my_x))
+
+    /** 目标已在攻击范围内 */
+    const x_ok = between(rx, c.stand_atk_b_x, c.stand_atk_f_x);
+    const z_ok = between(rz, -c.dataset.r_atk_z, c.dataset.r_atk_z);
+
+    if (x_ok && z_ok) {
+      if (is_weapon(en)) {
+        if (en.base_type == WT.Heavy) {
+          c.click(GK_B).key_up(GK_F);
+        } else {
+          c.click(GK.d, GK.a)
+        }
+      } else if (is_fighter(en)) {
+        if (c.desire("chasing_1") < c.dataset.r_atk_desire)
+          c.click(GK.a);
+      } else {
+        c.click(GK.a);
+      }
+      return;
+    }
+
+    /* 
+      避免跑过头停下
+      概率刹车 
+    */
+    if (!x_ok) {
+      if (
+        my_x > en_x && me_facing > 0 ||
+        my_x < en_x && me_facing < 0 ||
+        c.desire("chasing_stop_running_1") < c.dataset.r_stop_desire
+      ) {
+        c.click(GK_B).key_up(GK_F);
+        return
+      }
+    }
+
+    /* 
+      概率丢武器
+      这里暂时不考虑X距离
+    */
+    if (z_ok && wt) {
+      if (wt == WeaponType.Knife && this.ctrl.desire('rtwd_1') < 400) {
+        c.click(GK_F).click(GK.a)
+        return;
+      }
+      if (wt === WeaponType.Stick && this.ctrl.desire('rtwd_2') < 100) {
+        c.click(GK_F).click(GK.a)
+        return;
+      }
+      if (wt === WeaponType.Drink && this.ctrl.desire('rtwd_3') < 50) {
+        c.click(GK_F).click(GK.a)
+        return;
+      }
+      return
+    }
+
+
+    return;
   }
 }
 

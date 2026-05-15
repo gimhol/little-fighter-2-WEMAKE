@@ -30,7 +30,7 @@ export default class WeaponState_Base extends State_Base {
   }
 
   hit_ground_rebouncing(e: Entity, nf: string | undefined) {
-    const { y: vy, x: vx, z: vz } = e.landing_velocity;
+    const { y: vy, x: vx, z: vz } = e.velocity;
     const { base, indexes } = e.data;
     const is_base_ball =
       e.base_type === WT.Baseball ||

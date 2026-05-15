@@ -104,7 +104,7 @@ export default class Item {
       outline_color
     } = this.info;
     if (this.times) this.times--;
-    e.outline_color = outline_color
+    e.outline_color = outline_color ?? ''
     if (is_fighter(e)) {
       e.outline_color = outline_color ?? '#FF0000'
       e.stat_bar_type = StatBarType.None;
