@@ -150,8 +150,8 @@ export function collision_new(o: ICollisionInits): Collision {
   } while (0);
 
   let rest = 0;
-  if (!o.itr.arest && o.itr.vrest) {
-    rest = max(a.world.min_vrest, o.itr.vrest + a.world.vrest_offset)
+  if (!itr.arest && itr.vrest) {
+    rest = max(a.world.min_vrest, itr.vrest + a.world.vrest_offset)
   }
 
   const c: Collision = {
