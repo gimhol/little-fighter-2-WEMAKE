@@ -27,7 +27,9 @@ export interface IZipResult {
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
-  static readonly VERSION_NAME: string = 'v' + VERSION_NAME;
+  static readonly VERSION_NAME: string = `v${VERSION_NAME} ${BUILD_TIME}`;
+
+
   static readonly DATA_VERSION: number = 19;
   static readonly DATA_TYPE: string = 'DataZip';
 
@@ -238,7 +240,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       on_pop: (curr, poppeds) => this.callbacks.emit("on_ui_changed")(curr, poppeds[0]),
     })
     this.ui_stacks.push(ui_stack)
-    this._i18n.add({ '': { VERSION_NAME: LF2.VERSION_NAME } })
+    this._i18n.add({
+      '': {
+        VERSION_NAME: LF2.VERSION_NAME
+      }
+    })
     this.update_zip_names()
   }
 

@@ -10,3 +10,4 @@ interface Window {
   }
 }
 declare const VERSION_NAME: string;
+declare const BUILD_TIME: string;

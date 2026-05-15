@@ -88,6 +88,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "baseline-browser-mapping": "^2.10.0",
     "classnames": "^2.5.1",
+    "dayjs": "^1.11.20",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
