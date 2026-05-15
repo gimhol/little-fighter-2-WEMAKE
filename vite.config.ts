@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import glsl from 'vite-plugin-glsl';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import json from "./package.json";
+import dayjs from "dayjs"
 
 export default defineConfig({
   base: './',
@@ -18,6 +19,10 @@ export default defineConfig({
     }),
     glsl()
   ],
+  define: {
+    VERSION_NAME: JSON.stringify(json.version),
+    BUILD_TIME: JSON.stringify(dayjs().format(`YYYY-MM-DD HH:mm:ss`)),
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),

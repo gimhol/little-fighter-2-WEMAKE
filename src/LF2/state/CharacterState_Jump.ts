@@ -60,6 +60,11 @@ export default class CharacterState_Jump extends CharacterState_Base {
     this._jumpings.add(e);
   }
   override on_landing(e: Entity): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    }
     e.enter_frame({ id: e.data.indexes?.landing_1 });
     e.update_velocity({ dvz: 4, ctrl_z: SpeedCtrl.Control })
   }

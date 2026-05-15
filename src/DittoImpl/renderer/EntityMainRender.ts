@@ -149,13 +149,10 @@ export class EntityMainRender {
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
-    if (this._facing !== facing) {
-      this._facing = facing;
-      const { material: m } = main_mesh;
-      m.uniforms.flipX.value = entity.facing;
-    }
-    if (this._frame !== frame) {
+    if (this._frame !== frame || this._facing !== facing) {
+      // NOTE: flipX 与纹理必须一起设置，否则会有快速切换左右方向会有奇怪的表现
       this._frame = frame;
+      this._facing = facing;
       const { pic } = frame
       const { variant } = entity;
       const { images } = this
@@ -183,6 +180,7 @@ export class EntityMainRender {
           m.uniforms.y.value = y;
           m.uniforms.w.value = w;
           m.uniforms.h.value = h;
+          m.uniforms.flipX.value = entity.facing;
         }
       }
       const { centerx, centery, state } = frame;

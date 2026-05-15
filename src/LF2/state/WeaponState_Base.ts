@@ -21,6 +21,11 @@ export default class WeaponState_Base extends State_Base {
   }
 
   override on_landing(e: Entity, velocity: IVector3): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    }
     const { indexes } = e.data;
     e.enter_frame({ id: indexes?.on_ground });
   }

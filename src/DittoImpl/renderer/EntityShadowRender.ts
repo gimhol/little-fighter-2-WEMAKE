@@ -31,6 +31,7 @@ export class EntityShadowRender {
   }
 
   on_mount() {
+    this.mesh.visible = false;
     (this.entity.world.renderer as WorldRenderer).world_node.add(this.mesh);
   }
 

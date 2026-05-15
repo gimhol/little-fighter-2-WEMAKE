@@ -23,6 +23,11 @@ export default class CharacterState_Burning extends CharacterState_Base {
     this._bouncings.delete(e)
   }
   override on_landing(e: Entity, velocity: IVector3): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    }
     const { y: vy, x: vx } = velocity;
     const {
       data: { indexes },

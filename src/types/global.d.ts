@@ -9,3 +9,5 @@ interface Window {
     WindowIsFullscreen?(): Promise<boolean>;
   }
 }
+declare const VERSION_NAME: string;
+declare const BUILD_TIME: string;

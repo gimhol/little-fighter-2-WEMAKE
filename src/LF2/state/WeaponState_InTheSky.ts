@@ -11,6 +11,11 @@ export default class WeaponState_InTheSky extends WeaponState_Base {
     this._hit_ground_weapons.delete(e);
   }
   override on_landing(e: Entity, velocity: IVector3): void {
+    const { on_landing } = e.frame;
+    if (on_landing) {
+      e.enter_frame(on_landing);
+      return;
+    }
     const { indexes } = e.data;
     this.hit_ground_rebouncing(e, indexes?.just_on_ground, velocity)
   }
