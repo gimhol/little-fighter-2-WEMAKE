@@ -1,4 +1,4 @@
-import { SpeedCtrl } from "@/LF2/defines/SpeedCtrl";
+import { SpeedCtrl } from "../../defines/SpeedCtrl";
 import { ChaseLost } from "../../defines/ChaseLost";
 import { HitFlag } from "../../defines/HitFlag";
 import { IFrameInfo } from "../../defines/IFrameInfo";
