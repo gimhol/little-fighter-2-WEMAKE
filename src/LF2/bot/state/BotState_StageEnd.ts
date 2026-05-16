@@ -12,6 +12,7 @@ export class BotState_StageEnd extends BotState_Base {
     this.ctrl.key_up(...AGK);
   }
   override update(dt: number): BSE | undefined {
+    if (this.me.hp <= 0) return BSE.Dead;
     const c = this.ctrl;
     const me = c.entity;
     this.handle_block();

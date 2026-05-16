@@ -23,6 +23,7 @@ import { abs, between, clamp, max, round, round_float } from "../utils";
 import { dummy_updaters, DummyEnum } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
 import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
+import { BotState_Dead } from "./state/BotState_Dead";
 import { BotState_Following } from "./state/BotState_Following";
 import { BotState_StageEnd } from "./state/BotState_StageEnd";
 import { is_ray_hit } from "./utils/is_ray_hit";
@@ -39,7 +40,8 @@ export class BotController extends BaseController {
       new BotState_Chasing(this),
       new BotState_Avoiding(this),
       new BotState_Following(this),
-      new BotState_StageEnd(this)
+      new BotState_StageEnd(this),
+      new BotState_Dead(this)
     )
     .use(BSE.Idle)
 

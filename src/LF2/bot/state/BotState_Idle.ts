@@ -13,6 +13,7 @@ export class BotState_Idle extends BotState_Base {
     if (me.state === SE.Drink) c.click(GK.d)
   }
   override update(dt: number) {
+    if (this.me.hp <= 0) return BSE.Dead;
     if (this.stage.is_stage_finish)
       return BSE.StageEnd;
     const { c, me } = this;
