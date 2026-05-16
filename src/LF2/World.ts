@@ -1,5 +1,6 @@
-import { Callbacks, Collision, collision_get, FPS } from "./base";
+import { Callbacks, FPS } from "./base";
 import { Background } from "./bg/Background";
+import { Collision, collision_get } from "./collision/Collision";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   BFID,
@@ -694,6 +695,7 @@ export class World extends WorldDataset {
         }
         const collision1 = collision_get(a, b);
         const collision2 = collision_get(b, a);
+
         if (collision1 && collision2) {
           const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
           const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]

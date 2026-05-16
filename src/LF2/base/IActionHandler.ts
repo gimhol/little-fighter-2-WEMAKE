@@ -1,4 +1,4 @@
-import type { Collision } from "./Collision";
+import type { Collision } from "../collision/Collision";
 import type { IAction_SetProp, IAction_Sound, TNextFrame } from "../defines";
 import type { ActionType } from "../defines/ActionType";
 import type { IAction_Broadcast } from "../defines/IAction_Broadcast";

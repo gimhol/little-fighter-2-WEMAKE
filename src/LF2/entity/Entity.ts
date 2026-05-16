@@ -2,8 +2,9 @@ import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { Callbacks, Collision, collision_clone, new_id, new_team } from "../base";
+import { Callbacks, new_id, new_team } from "../base";
 import { sus_cases } from "../cases_instances";
+import { Collision, collision_clone } from "../collision/Collision";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {

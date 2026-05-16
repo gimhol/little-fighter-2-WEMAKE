@@ -1,4 +1,4 @@
-import { Collision } from "../base/Collision";
+import { Collision } from "./Collision";
 
 export function handle_itr_kind_catch(c: Collision) {
   if (c.attacker.catching) return;

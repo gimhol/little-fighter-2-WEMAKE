@@ -1,13 +1,13 @@
-import { Collision } from "../base";
-import { IActionHandler } from "../base/IActionHandler";
+import type { IActionHandler } from "../base/IActionHandler";
+import type { Collision } from "../collision/Collision";
 import { ActionType } from "../defines/ActionType";
-import { IAction_Broadcast } from "../defines/IAction_Broadcast";
-import { IAction_Fusion } from "../defines/IAction_Fusion";
-import { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
-import { IAction_TurnFace } from "../defines/IAction_TurnFace";
-import { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
+import type { IAction_Broadcast } from "../defines/IAction_Broadcast";
+import type { IAction_Fusion } from "../defines/IAction_Fusion";
+import type { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
+import type { IAction_TurnFace } from "../defines/IAction_TurnFace";
+import type { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
 import { ensure, max, min } from "../utils";
-import { Entity } from "./Entity";
+import type { Entity } from "./Entity";
 import { turn_face } from "./face_helper";
 import { is_bot_ctrl } from "./type_check";
 

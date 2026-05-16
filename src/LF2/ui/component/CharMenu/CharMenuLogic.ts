@@ -279,6 +279,7 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
   }
   add_com() {
     if (this.max_player <= this.players.size) return;
+    
     let com: PlayerInfo | null = null
     for (const [_, p] of this.lf2.players) {
       if (!p.is_com) continue;

@@ -1,4 +1,4 @@
-import { Collision } from "../base/Collision";
+import { Collision } from "./Collision";
 import { StateEnum } from "../defines";
 import { is_ball, is_weapon } from "../entity";
 import { round } from "../utils/math/base";

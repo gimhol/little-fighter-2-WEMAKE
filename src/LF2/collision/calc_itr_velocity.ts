@@ -1,4 +1,4 @@
-import type { Collision } from "../base/Collision";
+import type { Collision } from "./Collision";
 import type { TFace } from "../defines";
 import { ItrEffect as IE } from "../defines/ItrEffect";
 import { is_fall } from "./is_fall";
