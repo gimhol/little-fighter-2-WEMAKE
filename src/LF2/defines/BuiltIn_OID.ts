@@ -1,4 +1,4 @@
-export enum BuiltIn_OID {
+export enum OID {
   Template = "0",
   Julian = "52",
   Firzen = "51",
@@ -77,7 +77,7 @@ export enum BuiltIn_OID {
   Etc = "998",
   BrokenWeapon = "999"
 }
-export const O_ID = BuiltIn_OID;
-export type O_ID = BuiltIn_OID;
-export const OID = BuiltIn_OID;
-export type OID = BuiltIn_OID;
+export const O_ID = OID;
+export type O_ID = OID;
+export const BuiltIn_OID = OID;
+export type BuiltIn_OID = OID;

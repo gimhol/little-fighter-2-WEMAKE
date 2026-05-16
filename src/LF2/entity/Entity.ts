@@ -819,7 +819,7 @@ export class Entity {
       this.team = attacker.team;
       this.facing = emitter.facing;
     } else {
-      this._emitters.push(emitter.id);
+      this._emitters.push(...emitter.emitters, emitter.id);
       this.team = emitter.team;
       this.facing = emitter.facing;
     }

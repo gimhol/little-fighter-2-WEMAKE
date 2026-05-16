@@ -36,7 +36,7 @@ export enum ActionType {
 
   /** 广播 */
   BROADCAST = 'broadcast',
-  
+
   /** 吸血 */
-  LIFE_STEAL = 'lifesteal',
+  VALUE_STEAL = 'VALUE_STEAL',
 }

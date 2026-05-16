@@ -4,9 +4,10 @@ import { ActionType } from "../defines/ActionType";
 import type { IAction_Broadcast } from "../defines/IAction_Broadcast";
 import type { IAction_Fusion } from "../defines/IAction_Fusion";
 import type { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
+import { IAction_StealValue } from "../defines/IAction_StealValue";
 import type { IAction_TurnFace } from "../defines/IAction_TurnFace";
 import type { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
-import { ensure, max, min } from "../utils";
+import { ensure, max, min, round } from "../utils";
 import type { Entity } from "./Entity";
 import { turn_face } from "./face_helper";
 import { is_bot_ctrl } from "./type_check";
@@ -88,6 +89,40 @@ export const collision_action_handlers: IActionHandler = {
       fighter_1.next_frame = fighter_1.get_next_frame(act)?.frame ?? null;
     }
   },
-  [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: Collision) => lf2.broadcast(action.data)
+  [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: Collision) => {
+    lf2.broadcast(action.data)
+  },
+  [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => {
+    const { injury } = collision;
+    if (!injury) return;
 
+    let t: Entity | undefined | null;
+    const { attacker: a } = collision;
+    switch (action.data.target) {
+      case 1: t = a.src_emitter; break;
+      case 2: t = a.pre_emitter; break;
+      case 3: t = a.bearer; break;
+      case 0: default: t = a; break;
+    }
+    if (!t) return;
+
+    const { data: d } = action;
+    if (!d) return;
+    if (!d.revive && t.hp <= 0) return;
+
+    if (d.mp) t.mp = min(t.mp + d.mp, t.mp_max);
+    if (d.itr_mp_ratio) t.mp = min(t.mp + round(injury * d.itr_mp_ratio), t.mp_max);
+
+    if (d.hp_r) t.hp_r = min(t.hp_r + d.hp_r, t.hp_max);
+    if (d.itr_hp_r_ratio) t.hp_r = min(t.hp_r + round(injury * d.itr_hp_r_ratio), t.hp_max);
+
+    if (d.over_hp_r) {
+      if (d.hp) t.hp = min(t.hp + d.hp, t.hp_r);
+      if (d.itr_hp_r_ratio) t.hp = min(t.hp + round(injury * d.itr_hp_r_ratio), t.hp_r);
+    } else {
+      if (d.hp) t.hp = min(t.hp + d.hp, t.hp_max);
+      if (d.itr_hp_ratio) t.hp = min(t.hp + round(injury * d.itr_hp_ratio), t.hp_max);
+    }
+    t.hp_r = max(t.hp_r, t.hp);
+  }
 };
