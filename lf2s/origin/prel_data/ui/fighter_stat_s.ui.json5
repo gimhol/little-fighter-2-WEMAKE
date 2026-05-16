@@ -185,7 +185,7 @@
     {
       i18n: "Template(com)",
       outlineColor: "#005A8E",
-      outlineWidth: 1,
+      outlineWidth: 2,
       outlineAlpha: 1,
       style: {
         fill_style: "white",

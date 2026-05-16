@@ -315,11 +315,9 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.material.bgAlpha = backgroundAlpha;
     this.mesh.material.fgColor = foreground;
     this.mesh.material.fgAlpha = foregroundAlpha;
-
-
-    this.mesh.material.outlineWidth = this.ui.data.outlineWidth || 0;
-    this.mesh.material.outlineColor = this.ui.data.outlineColor || 0
-    this.mesh.material.outlineAlpha = this.ui.data.outlineAlpha || 0
+    this.mesh.material.outlineWidth = this.ui.outlineWidth || 0;
+    this.mesh.material.outlineColor = this.ui.outlineColor || 0
+    this.mesh.material.outlineAlpha = this.ui.outlineAlpha || 0
 
     const t = 0.5;
     if (this._old_pos) {
