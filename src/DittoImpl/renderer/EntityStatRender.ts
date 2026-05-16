@@ -113,11 +113,11 @@ export class EntityStatRender implements IEntityCallbacks {
       this.bars_node
     );
     this.bars_node.visible = e.key_role
-    this.on_hp_changed(e)
     this.on_hp_max_changed(e)
-    this.on_mp_changed(e)
-    this.on_mp_max_changed(e)
     this.on_hp_r_changed(e)
+    this.on_hp_changed(e)
+    this.on_mp_max_changed(e)
+    this.on_mp_changed(e)
     this.on_fall_value_changed(e)
     this.on_fall_value_max_changed(e)
     this.on_defend_value_changed(e)
