@@ -35,5 +35,8 @@ export enum ActionType {
   FUSION = 'fusion',
 
   /** 广播 */
-  BROADCAST = 'broadcast'
+  BROADCAST = 'broadcast',
+  
+  /** 吸血 */
+  LIFE_STEAL = 'lifesteal',
 }
