@@ -12,6 +12,7 @@ export function make_fighter_data_firen(data: IEntityData) {
     data.frames["running_2"],
     data.frames["running_3"]
   ].filter(Boolean).map(frame => {
+
     frame.itr = ensure(frame.itr, {
       ...set_hit_flag({}, HitFlag.AllyFighter),
       code: 123,

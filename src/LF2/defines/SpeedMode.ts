@@ -30,4 +30,6 @@ export enum SpeedMode {
   Extra = 5,
 
   Fixed = 6,
+
+  FixedAccTo = 7,
 }
