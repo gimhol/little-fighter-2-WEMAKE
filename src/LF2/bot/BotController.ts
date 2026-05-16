@@ -664,22 +664,25 @@ export class BotController extends BaseController {
   }
 
   override update() {
-    if (!this.following?.mounted || this.following.hp <= 0)
-      this.following = null;
     this.check_bot();
     if (this.dummy) {
       dummy_updaters[this.dummy]?.update(this);
-    } else if (this.world.stage.is_chapter_finish) {
-      this.key_up(...AGK)
-    } else if (this.entity.hp <= 0) {
-      this.key_up(...AGK)
     } else {
-      this.chasings.del(({ entity }) => !this.should_chase(entity))
-      this.chasings.sort(this.entity)
-      this.avoidings.del(({ entity }) => !this.should_avoid(entity))
-      this.avoidings.sort(this.entity)
-      this.defends.del(({ entity }) => 1 != this.should_defend(entity))
-      this.defends.sort(this.entity)
+      if (this.entity.hp > 0) {
+        if (!this.following?.mounted || this.following.hp <= 0)
+          this.following = null;
+        this.chasings.del(({ entity }) => !this.should_chase(entity))
+        this.chasings.sort(this.entity)
+        this.avoidings.del(({ entity }) => !this.should_avoid(entity))
+        this.avoidings.sort(this.entity)
+        this.defends.del(({ entity }) => 1 != this.should_defend(entity))
+        this.defends.sort(this.entity)
+      } else {
+        this.following = null;
+        this.chasings.clear()
+        this.avoidings.clear()
+        this.defends.clear()
+      }
       this.fsm.update(1)
     }
     return super.update();

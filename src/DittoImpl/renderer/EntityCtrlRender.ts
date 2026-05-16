@@ -92,13 +92,12 @@ export class EntityCtrlRender {
     keys?.set_text(lf2, this.entity.ctrl.key_list)
 
     do {
+      const ctrl = this.entity.ctrl;
+      if (!is_bot_ctrl(ctrl)) break;
       const bot = this.ctrls.get('bot');
       if (!bot) break;
       bot.visible = false;
-      const ctrl = this.entity.ctrl;
-      if (!is_bot_ctrl(ctrl)) break;
-      const k = ctrl.fsm.state?.key;
-      if (!k) break;
+      const k = ctrl.fsm.state?.key ?? 'ERROR';
       bot.set_text(lf2, k);
       bot.visible = true;
     } while (0);
