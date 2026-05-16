@@ -10,8 +10,8 @@ export function make_fb_boomerang(frame: IFrameInfo) {
   frame.dvz = 1.8;
   frame.acc_z = 0.1;
   frame.vzm = SpeedMode.AccTo;
-  frame.dvy = -0.2;
-  frame.vym = SpeedMode.FixedAccTo;
+  frame.dvy = -2;
+  frame.vym = SpeedMode.AccTo;
   frame.ctrl_x = SpeedCtrl.Control;
   frame.ctrl_y = SpeedCtrl.Control;
   frame.ctrl_z = SpeedCtrl.Control;

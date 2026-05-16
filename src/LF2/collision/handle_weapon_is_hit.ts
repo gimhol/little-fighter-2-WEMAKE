@@ -50,6 +50,8 @@ export function handle_weapon_is_hit(collision: Collision): void {
   }
 
   if (is_fighter(attacker) || (is_weapon(attacker) && itr.kind == I_K.WeaponSwing)) {
-    victim.team = attacker.team;
+    if (victim.position.y > 0 || is_fly) {
+      victim.team = attacker.team;
+    }
   }
 }
