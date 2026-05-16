@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { BuiltIn_OID, Defines, I_K, SparkEnum, WT } from "../defines";
 import { is_fighter, is_weapon } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";

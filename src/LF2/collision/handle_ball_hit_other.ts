@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { BdyKind, Defines, FrameBehavior } from "../defines";
 import { is_fighter } from "../entity";
 import { handle_rest } from "./handle_rest";

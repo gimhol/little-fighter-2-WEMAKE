@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { StateEnum, ItrEffect, Defines } from "../defines";
 
 /**

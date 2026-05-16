@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { is_independent, WeaponType } from "../defines";
 import { summary_mgr } from "../entity/SummaryMgr";
 

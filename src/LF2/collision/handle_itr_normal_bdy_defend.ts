@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { Defines, ItrEffect, SparkEnum } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { collision_action_handlers } from "../entity/collision_action_handlers";

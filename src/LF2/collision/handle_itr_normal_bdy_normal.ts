@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { Defines, ItrEffect, SparkEnum, StateEnum, TFace } from "../defines";
 import { is_fighter } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
