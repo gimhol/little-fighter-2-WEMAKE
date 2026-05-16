@@ -1038,6 +1038,12 @@ export class Entity {
             if (e.frame.chase) e.chasing = allies[i % allies.length];
             break;
         }
+        if (opoint.inherit_speed_x)
+          e.set_velocity_x(e.velocity.x + this.velocity.x * opoint.inherit_speed_x)
+        if (opoint.inherit_speed_y)
+          e.set_velocity_y(e.velocity.y + this.velocity.y * opoint.inherit_speed_y)
+        if (opoint.inherit_speed_z)
+          e.set_velocity_z(e.velocity.z + this.velocity.z * opoint.inherit_speed_z)
       }
     }
   }
