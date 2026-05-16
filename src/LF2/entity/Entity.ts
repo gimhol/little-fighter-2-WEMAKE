@@ -1874,12 +1874,14 @@ export class Entity {
     const curr_idx = datas.indexOf(this._data.id)
     const next_idx = (curr_idx + 1) % datas.length;
     const next_data_id = datas[next_idx]
-    const next_data = this.lf2.datas.find_entity(new_id);
+    const next_data = this.lf2.datas.find_entity(next_data_id);
     if (!next_data) return;
     this.transform(next_data);
     if (next_idx === 0) {
-      const nf = this.get_next_frame({ id: "245" })?.frame ?? this.find_auto_frame()
-      this.next_frame = nf;
+      // TODO: 这个逻辑感觉怪怪的，后续可以改成直接在数据里写死变身后的帧
+      let nf = this.get_next_frame({ id: "245" })?.frame
+      if (!nf) nf = this.find_auto_frame();
+      this.enter_frame(nf);
     }
     if (this.copies.size) {
       const gones: string[] = []

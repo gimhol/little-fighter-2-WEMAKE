@@ -1,4 +1,4 @@
-import { FacingFlag as FF, IFrameInfo, ItrKind, StateEnum, TNextFrame, WeaponType as WT } from "../defines";
+import { FacingFlag as FF, IFrameInfo, ItrKind, SE, StateEnum, TNextFrame, WeaponType as WT } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { BdyKind } from "../defines/BdyKind";
 import { EntityEnum } from "../defines/EntityEnum";
@@ -7,7 +7,7 @@ import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
 import { IFrameIndexes } from "../defines/IFrameIndexes";
 import { INextFrame } from "../defines/INextFrame";
-import { ensure } from "../utils";
+import { ensure, foreach } from "../utils";
 import { take_number } from "../utils/container_help/take_number";
 import { traversal } from "../utils/container_help/traversal";
 import { is_num, is_str } from "../utils/type_check";
@@ -572,41 +572,33 @@ function add_key_down_jump_atk(frame: IFrameInfo) {
     ...hit_next_frame.jump_atk());
 }
 
-function cook_transform_begin_expression_to_hit<
-  F extends IFrameInfo = IFrameInfo,
->(frames: Record<string, F>) {
-  const transform_begin_frame_id_list: string[] = [];
-  for (const k in frames) {
-    const { state, id } = frames[k];
-    if (state === StateEnum.TransformToCatching_Begin) {
-      transform_begin_frame_id_list.push(id);
+function cook_transform_begin_expression_to_hit(frames: Record<string, IFrameInfo>) {
+  const tframes = new Map<string, IFrameInfo>();
+  foreach(frames, (frame) => {
+    if (frame.state == SE.TransformToCatching_Begin) {
+      tframes.set(frame.id, frame);
     }
-  }
-  if (transform_begin_frame_id_list.length) {
-    const hit_next_frame_to_transform = (n: TNextFrame | undefined) => {
-      if (
-        !n ||
-        Array.isArray(n) ||
-        !n.id ||
-        Array.isArray(n.id) ||
-        transform_begin_frame_id_list.indexOf(n.id) < 0
-      )
-        return;
-      n.expression = new CondMaker()
+  })
+
+  if (!tframes.size) return;
+
+  const edit_next_frame = (n: TNextFrame | undefined) => {
+    if (!n) return;
+    n = Array.isArray(n) ? n : [n];
+    for (const i of n) {
+      if (!i.id) continue;
+      if (Array.isArray(i.id)) continue;
+      if (!tframes.has(i.id)) continue;
+      i.expression = new CondMaker()
         .add(EV.HAS_TRANSFORM_DATA, "==", 1)
         .done();
-    };
-    for (const k in frames) {
-      const frame = frames[k];
-      const { hit } = frame;
-      if (!hit) continue;
-      hit_next_frame_to_transform(hit.a);
-      hit_next_frame_to_transform(hit.j);
-      hit_next_frame_to_transform(hit.d);
-      if (frame.seqs)
-        for (const k2 in frame.seqs)
-          hit_next_frame_to_transform(frame.seqs[k2]);
     }
-  }
+  };
+  foreach(frames, (frame) => {
+    foreach(frame.key_down, (n) => edit_next_frame(n));
+    foreach(frame.key_up, (n) => edit_next_frame(n));
+    foreach(frame.hit, (n) => edit_next_frame(n));
+    foreach(frame.seqs, (n) => edit_next_frame(n));
+  })
 }
 
