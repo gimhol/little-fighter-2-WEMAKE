@@ -1593,7 +1593,10 @@ export class Entity {
           this._state?.on_landing?.(this, v);
 
           this.play_sound(this._data.base.drop_sounds);
-          if (this.throwinjury) {
+          if (this.throwinjury && (
+            this.state == StateEnum.Falling ||
+            this.state == StateEnum.Lying
+          )) {
             this.hp -= this.throwinjury;
             this.hp_r -= round(this.throwinjury * (1 - this.dataset('hp_recoverability')))
             this.throwinjury = 0;
