@@ -1601,7 +1601,10 @@ export class Entity {
             this.hp_r -= round(this.throwinjury * (1 - this.dataset('hp_recoverability')))
             this.throwinjury = 0;
           }
-          if (this.fallinjury) {
+          if (this.fallinjury && (
+            this.state == StateEnum.Falling ||
+            this.state == StateEnum.Lying
+          )) {
             this.hp -= this.fallinjury;
             this.hp_r -= round(this.fallinjury * (1 - this.dataset('hp_recoverability')))
             this.fallinjury = 0;

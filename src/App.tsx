@@ -293,6 +293,7 @@ function App() {
     const lf2 = ref_lf2.current = new LF2(dev == '1');
     if (
       location.pathname.endsWith('demo') ||
+      location.pathname.endsWith('demo/') ||
       location.search.indexOf('demo=0') > 0 ||
       location.hash.indexOf('demo=0') > 0
     ) {
