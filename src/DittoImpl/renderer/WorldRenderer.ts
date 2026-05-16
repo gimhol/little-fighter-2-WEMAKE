@@ -1,17 +1,12 @@
 import { Defines, floor, random_in } from "@/LF2";
-import { BuiltIn_OID } from "@/LF2/defines";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
-import { is_fighter, type Entity } from "@/LF2/entity";
+import { type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { Camera, Object3D, OrthographicCamera, Scene, Vector3, WebGLRenderer } from "../_t";
 import { BgRender } from "./BgRender";
-import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityRenderer } from "./EntityRenderer";
-import { EntityStatRender } from "./EntityStatRender";
-import { FrameIndicators } from "./FrameIndicators";
-import { INDICATINGS } from "./INDICATINGS";
 import csses from "./styles.module.scss";
 
 export class WorldRenderer implements IWorldRenderer {
@@ -122,11 +117,11 @@ export class WorldRenderer implements IWorldRenderer {
   }
 
   add_entity(entity: Entity): void {
-    const pack: EntityRenderer = entity.renderer ? entity.renderer : (
-      entity.renderer = new EntityRenderer(entity)
-    );
-    pack.mount();
-    this.entity_renderers.add(pack)
+    let renderer: EntityRenderer = entity.renderer;
+    if(!renderer) renderer = entity.renderer = new EntityRenderer(entity)
+
+    renderer.mount();
+    this.entity_renderers.add(renderer)
   }
   del_entity(e: Entity): void {
     const renderer: EntityRenderer = e.renderer;
