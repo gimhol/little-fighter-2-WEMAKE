@@ -1,4 +1,4 @@
-import { type Entity, GameKey, IVector3Like, GKLabels, round, is_bot_ctrl, clamp } from "@/LF2";
+import { clamp, type Entity, GameKey, GKLabels, is_bot_ctrl, IVector3Like, round } from "@/LF2";
 import { Object3D } from "three";
 import * as T from "../_t";
 import { BAR_BG_W } from "./EntityStatRender";
@@ -88,19 +88,24 @@ export class EntityCtrlRender {
 
     this.ctrl_node.position.set(_x, _y, _z);
 
-    const keys = this.ctrls.get('keys');
-    keys?.set_text(lf2, this.entity.ctrl.key_list)
 
-    do {
-      const bot = this.ctrls.get('bot');
-      if (!bot) break;
-      bot.visible = false;
-      const ctrl = this.entity.ctrl;
-      if (!is_bot_ctrl(ctrl)) break;
-      const k = ctrl.fsm.state?.key;
-      if (!k) break;
-      bot.set_text(lf2, k);
+    const ctrl = this.entity.ctrl;
+    const bot = this.ctrls.get('bot');
+    const keys = this.ctrls.get('keys');
+
+    if (!is_bot_ctrl(ctrl)) {
+      if (keys) keys.visible = false
+      if (bot) bot.visible = false
+      return;
+    }
+    if (keys) {
+      keys.visible = true
+      keys.set_text(lf2, this.entity.ctrl.key_list)
+    }
+    if (bot) {
       bot.visible = true;
-    } while (0);
+      const text = ctrl.fsm.state?.key ?? 'ERROR';
+      bot.set_text(lf2, text);
+    }
   }
 }

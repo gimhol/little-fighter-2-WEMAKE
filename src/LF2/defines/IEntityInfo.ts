@@ -85,7 +85,15 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
    *
    * @type {number}
    */
-  bounce?: number;
+  bounce_y?: number;
+  bounce_x?: number;
+  bounce_z?: number;
+  bounce_min_y?: number;
+  bounce_min_x?: number;
+  bounce_min_z?: number;
+  fast_vy?: number;
+  fast_vx?: number;
+  fast_vz?: number;
 
   /**
    * 物体的碎片信息（目前仅用于武器）

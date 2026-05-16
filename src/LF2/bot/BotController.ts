@@ -23,6 +23,7 @@ import { abs, between, clamp, max, round, round_float } from "../utils";
 import { dummy_updaters, DummyEnum } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
 import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
+import { BotState_Dead } from "./state/BotState_Dead";
 import { BotState_Following } from "./state/BotState_Following";
 import { BotState_StageEnd } from "./state/BotState_StageEnd";
 import { is_ray_hit } from "./utils/is_ray_hit";
@@ -39,7 +40,8 @@ export class BotController extends BaseController {
       new BotState_Chasing(this),
       new BotState_Avoiding(this),
       new BotState_Following(this),
-      new BotState_StageEnd(this)
+      new BotState_StageEnd(this),
+      new BotState_Dead(this)
     )
     .use(BSE.Idle)
 
@@ -321,6 +323,10 @@ export class BotController extends BaseController {
     if (!me.mounted) return false
     if (!e.mounted) return false
 
+    const { x: en_x } = e.position;
+    const { player_l, player_r } = this.world;
+    if (en_x < player_l || en_x > player_r) return false
+
     if (me.hp <= 0) return false;
     if (me.holding?.base_type == WT.Drink) return false;
     if (e.hp <= 0) return false;
@@ -329,10 +335,10 @@ export class BotController extends BaseController {
     const e_state = e.state;
     const [l, r] = this.world.fighter_bound(me)
     /* 对方的位置，我方无法抵达，故不追之 */
-    if (!between(e.position.x, l, r))
+    if (!between(en_x, l, r))
       return false;
 
-    const abs_dx = abs(me.position.x - e.position.x)
+    const abs_dx = abs(me.position.x - en_x)
     if (is_weapon(e)) {
       if (me.holding)
         return false;
@@ -658,22 +664,25 @@ export class BotController extends BaseController {
   }
 
   override update() {
-    if (!this.following?.mounted || this.following.hp <= 0)
-      this.following = null;
     this.check_bot();
     if (this.dummy) {
       dummy_updaters[this.dummy]?.update(this);
-    } else if (this.world.stage.is_chapter_finish) {
-      this.key_up(...AGK)
-    } else if (this.entity.hp <= 0) {
-      this.key_up(...AGK)
     } else {
-      this.chasings.del(({ entity }) => !this.should_chase(entity))
-      this.chasings.sort(this.entity)
-      this.avoidings.del(({ entity }) => !this.should_avoid(entity))
-      this.avoidings.sort(this.entity)
-      this.defends.del(({ entity }) => 1 != this.should_defend(entity))
-      this.defends.sort(this.entity)
+      if (this.entity.hp > 0) {
+        if (!this.following?.mounted || this.following.hp <= 0)
+          this.following = null;
+        this.chasings.del(({ entity }) => !this.should_chase(entity))
+        this.chasings.sort(this.entity)
+        this.avoidings.del(({ entity }) => !this.should_avoid(entity))
+        this.avoidings.sort(this.entity)
+        this.defends.del(({ entity }) => 1 != this.should_defend(entity))
+        this.defends.sort(this.entity)
+      } else {
+        this.following = null;
+        this.chasings.clear()
+        this.avoidings.clear()
+        this.defends.clear()
+      }
       this.fsm.update(1)
     }
     return super.update();

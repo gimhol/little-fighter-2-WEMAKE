@@ -1,3 +1,4 @@
+import { SpeedCtrl } from "../../defines/SpeedCtrl";
 import { ChaseLost } from "../../defines/ChaseLost";
 import { HitFlag } from "../../defines/HitFlag";
 import { IFrameInfo } from "../../defines/IFrameInfo";
@@ -9,9 +10,11 @@ export function make_fb_boomerang(frame: IFrameInfo) {
   frame.dvz = 1.8;
   frame.acc_z = 0.1;
   frame.vzm = SpeedMode.AccTo;
-  frame.dvy = -0.4;
-  frame.acc_y = 0.125;
+  frame.dvy = -2;
   frame.vym = SpeedMode.AccTo;
-  frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
+  frame.ctrl_x = SpeedCtrl.Control;
+  frame.ctrl_y = SpeedCtrl.Control;
+  frame.ctrl_z = SpeedCtrl.Control;
+
   frame.chase = { flag: HitFlag.EnemyFighter, lost: ChaseLost.Leave };
 }

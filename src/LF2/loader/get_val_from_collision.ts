@@ -1,4 +1,4 @@
-import { Collision } from "../base/Collision";
+import { Collision } from "../collision/Collision";
 import { is_armor_work } from "../collision/is_armor_work";
 import { CheatType, EntityGroup, HitFlag } from "../defines";
 import { CollisionVal } from "../defines/CollisionVal";

@@ -1,7 +1,7 @@
-import { Collision, ICollisionHandler } from "../base";
 import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, EntityEnum, ItrKind, StateEnum, TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
+import type { Collision, ICollisionFunc } from "./Collision";
 import { handle_ball_frozen } from "./handle_ball_frozen";
 import { handle_ball_hit_other } from "./handle_ball_hit_other";
 import { handle_ball_is_hit_a, handle_ball_is_hit_b } from "./handle_ball_is_hit";
@@ -21,11 +21,10 @@ import { handle_weapon_hit_other } from "./handle_weapon_hit_other";
 import { handle_weapon_is_hit } from "./handle_weapon_is_hit";
 import { handle_weapon_is_picked } from "./handle_weapon_is_picked";
 import { handle_weapon_is_picked_secretly } from "./handle_weapon_is_picked_secretly";
-
-
+import { ICollisionHandler } from "./ICollisionHandler";
 
 export class CollisionKeeper {
-  protected pair_map: Map<string, ((collision: Collision) => void)[]> = new Map();
+  protected pair_map: Map<string, ICollisionFunc[]> = new Map();
 
   /**
    * 添加一个碰撞处理器
@@ -43,7 +42,7 @@ export class CollisionKeeper {
     itr_kind_list: ItrKind[],
     v_type_list: TEntityEnum[],
     bdy_kind_list: BdyKind[],
-    fn: (collision: Collision) => void,
+    fn: ICollisionFunc,
     a_state_list: StateEnum[] = ALL_STATES,
     v_state_list: StateEnum[] = ALL_STATES,
   ) {
@@ -88,6 +87,7 @@ export class CollisionKeeper {
     }
     return this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}_${a_state}_${b_state}`);
   }
+
   handler(collision: Collision) {
     return this.get(
       collision.attacker.data.type,

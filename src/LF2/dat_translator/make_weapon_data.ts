@@ -48,7 +48,6 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
   info.name = datIndex.hash ?? datIndex.file.split('/').slice(-1)[0].replace(/[^a-z|A-Z|0-9|_]/g, "-").replace(/-obj-json5$/, '');
   switch ('' + datIndex.type) {
     case "1":
-      info.bounce = 0.2;
       info.type = {
         "120": WeaponType.Knife, // Knife
         "124": WeaponType.Knife, // Boomerang
@@ -56,15 +55,12 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
       break;
     case "2":
       info.type = WeaponType.Heavy;
-      info.bounce = 0.2;
       break;
     case "4":
       info.type = WeaponType.Baseball;
-      info.bounce = 0.45;
       break;
     case "6":
       info.type = WeaponType.Drink;
-      info.bounce = 0.45;
       break;
   }
 

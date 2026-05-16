@@ -174,5 +174,8 @@ export interface IOpointInfo {
   /** 运行时生成 */
   __spreading_random_z?: { take(): number };
 
-  
+  /* 从发射者继承多少速度 */
+  inherit_speed_x?: number;
+  inherit_speed_y?: number;
+  inherit_speed_z?: number;
 }

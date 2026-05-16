@@ -1,5 +1,5 @@
 
-import { Collision } from "../base/Collision";
+import { Collision } from "./Collision";
 import { Defines, ItrEffect, SparkEnum, TFace, WeaponType } from "../defines";
 import { turn_face } from "../entity";
 import { is_fighter } from "../entity/type_check";

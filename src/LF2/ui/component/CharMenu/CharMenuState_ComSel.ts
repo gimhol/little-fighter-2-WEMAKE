@@ -31,18 +31,22 @@ export class CharMenuState_ComSel extends CharMenuState_Base {
     this.owner.add_com();
   }
   override on_key_down(e: IUIKeyEvent) {
-    const pair = this.owner.last_com();
+
     if (e.game_key === GameKey.a) {
+
+      const pair = this.owner.last_com();
       if (!pair) { this.owner.add_com(); return; }
       const [player, state] = pair;
-      if (!player.is_com) { this.owner.add_com(); return; }
-      if (state.step === SlotStep.Ready) { this.owner.add_com(); return; }
+      if (!player.is_com) { this.owner.add_com(); return }
       this.owner.press_a(player);
-      // if (state.step === SlotStep.Ready)
-      //   if (this.com_count < this.owner.com_num)
-      //     this.owner.add_com();
+      if (state.step != SlotStep.Ready) return
+      if (this.all_com_ready) return;
+      this.owner.add_com();
       return;
+
     }
+
+    const pair = this.owner.last_com();
     if (!pair) return;
     const [com] = pair;
     switch (e.game_key) {

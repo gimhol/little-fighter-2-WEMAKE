@@ -1,5 +1,6 @@
-import { Callbacks, Collision, collision_get, FPS } from "./base";
+import { Callbacks, FPS } from "./base";
 import { Background } from "./bg/Background";
+import { Collision, collision_get } from "./collision/Collision";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import {
   BFID,
@@ -127,6 +128,8 @@ export class World extends WorldDataset {
       this.start_update();
     }
   };
+  get player_l() { return this.stage.player_l; }
+  get player_r() { return this.stage.player_r; }
   get left() { return this.stage.left; }
   get right() { return this.stage.right; }
   get near() { return this.stage.near; }
@@ -692,6 +695,7 @@ export class World extends WorldDataset {
         }
         const collision1 = collision_get(a, b);
         const collision2 = collision_get(b, a);
+
         if (collision1 && collision2) {
           const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
           const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
@@ -848,11 +852,12 @@ export class World extends WorldDataset {
    * @memberof World
    */
   spark(x: number, y: number, z: number, f: string): void {
+    const oid = Defines.BuiltIn_Dats.Spark
     if (!this._spark_data)
-      this._spark_data = this.lf2.datas.find(Defines.BuiltIn_Dats.Spark);
+      this._spark_data = this.lf2.datas.find(oid);
     const data = this._spark_data
     if (!data) {
-      Ditto.warn(`[${World.TAG}::spark] "${Defines.BuiltIn_Dats.Spark}" data not found!`);
+      Ditto.warn(`[${World.TAG}::spark] "${oid}" data not found!`);
       return;
     }
     const e = this.lf2.factory.create_entity(this, data);
@@ -861,7 +866,8 @@ export class World extends WorldDataset {
       return;
     }
     e.outline_alpha = 0;
-    e.position.set(round(x), round(y), round(z));
+    e.outline_color = '';
+    e.set_position(x, y, z);
     e.enter_frame({ id: f });
     e.attach(false);
   }

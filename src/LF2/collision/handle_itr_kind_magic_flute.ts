@@ -1,4 +1,4 @@
-import { Collision } from "../base/Collision";
+import { Collision } from "./Collision";
 import { SpeedMode, StateEnum } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { calc_v, is_fighter } from "../entity";

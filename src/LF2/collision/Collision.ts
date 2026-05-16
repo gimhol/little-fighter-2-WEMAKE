@@ -1,9 +1,9 @@
-import { Ditto, I_K, SE, StateEnum } from "..";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo } from "../defines";
+import { HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo, } from "../defines";
 import type { Entity } from "../entity";
 import { abs, max } from "../utils/math/base";
+import { collisions_keeper } from "./CollisionKeeper";
 
 export interface ICollisionInits {
   /**
@@ -79,6 +79,9 @@ export interface ICollisionSnapshot {
   readonly rest: number;
 }
 
+export interface ICollisionFunc {
+  (collision: Collision): void
+}
 export interface Collision extends ICollisionInits, ICollisionSnapshot {
   readonly lf2: LF2;
   readonly world: World;
@@ -122,6 +125,7 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   readonly bframe_id: string;
   readonly itr_index: number;
   readonly bdy_index: number;
+  handlers?: Readonly<ICollisionFunc>
   rest: number;
 }
 
@@ -172,7 +176,8 @@ export function collision_new(o: ICollisionInits): Collision {
     m_distance: abs(dx) + abs(dy) + abs(dz),
     a_cube,
     b_cube,
-    rest
+    rest,
+    handlers: []
   }
   // if (c.itr_index < 0) Ditto.warn(`[Collision] itr_index < 0`);
   // if (c.bdy_index < 0) Ditto.warn(`[Collision] bdy_index < 0`);
@@ -187,7 +192,6 @@ export function collision_get(attacker: Entity, victim: Entity): Collision | nul
   if (!itr?.length || !bdy?.length) return null;
   for (let i = 0; i < itr.length; ++i) {
     for (let j = 0; j < bdy.length; ++j) {
-
       const collision = collision_new({
         victim, attacker, itr: itr[i], bdy: bdy[j], aframe, bframe,
         itr_index: i, bdy_index: j,
@@ -295,5 +299,6 @@ export function collision_test(c: Collision): boolean {
 
   if (bdy.tester?.run(c) === false) return false;
   if (itr.tester?.run(c) === false) return false;
-  return true;
+  c.handlers = collisions_keeper.handler(c)
+  return !!c.handlers;
 }

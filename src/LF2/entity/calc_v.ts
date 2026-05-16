@@ -36,6 +36,14 @@ export function calc_v(
       if (current <= target && acc < 0) return current;
       return current + acc;
     }
+    case SpeedMode.FixedAccTo: {
+      /** 目标速度 */
+      const target = value;
+      if (!acc) return current;
+      if (current >= target && acc > 0) return current;
+      if (current <= target && acc < 0) return current;
+      return current + acc;
+    }
     case SpeedMode.LF2: default: {
       const target = (value *= direction);
       if (current < target && target > 0) return target

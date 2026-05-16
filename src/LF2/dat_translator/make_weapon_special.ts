@@ -30,6 +30,9 @@ const broken_pieces_opoints = (...frame_ids: (string | string[])[]): IOpointInfo
       action: { id: frame_id },
       oid: "999",
       unimportant: 1,
+      inherit_speed_x: 0.5,
+      inherit_speed_y: 0.5,
+      inherit_speed_z: 0.5,
       ...aa[idx % aa.length],
     };
   });

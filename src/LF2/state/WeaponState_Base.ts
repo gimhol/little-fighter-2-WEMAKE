@@ -1,5 +1,5 @@
 import { is_ball_ctrl } from "../entity/type_check";
-import { FrameBehavior, HitFlag, IFrameInfo, IVector3, WT } from "../defines";
+import { Defines, FrameBehavior, HitFlag, IFrameInfo, IVector3, WT } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
 import State_Base from "./State_Base";
@@ -35,15 +35,27 @@ export default class WeaponState_Base extends State_Base {
   }
 
   hit_ground_rebouncing(e: Entity, nf: string | undefined, velocity: IVector3) {
+
     const { y: vy, x: vx, z: vz } = velocity;
     const { base, indexes } = e.data;
-    const is_base_ball =
-      e.base_type === WT.Baseball ||
-      e.base_type === WT.Drink;
-    const dvy = round_float(-vy * (base.bounce ?? 0.5));
-    const dvx = round_float(vx * 0.5);
-    const dvz = round_float(vz * 0.5);
-    const min_bounce_vy = 2;
+    const wt = e.base_type as WT
+
+    const bounce_x = base.bounce_x ?? Defines.WT_BOUNCE_X[wt] ?? 0.5;
+    const bounce_y = base.bounce_y ?? Defines.WT_BOUNCE_Y[wt] ?? 0.5;
+    const bounce_z = base.bounce_z ?? Defines.WT_BOUNCE_Z[wt] ?? 0.5;
+
+    const bounce_min_x = base.bounce_min_x ?? Defines.WT_BOUNCE_MIN_X[wt] ?? 99;
+    const bounce_min_y = base.bounce_min_y ?? Defines.WT_BOUNCE_MIN_Y[wt] ?? 0.5;
+    const bounce_min_z = base.bounce_min_z ?? Defines.WT_BOUNCE_MIN_Z[wt] ?? 99;
+
+    const fast_x = base.fast_vx ?? Defines.WT_FAST_X[wt] ?? 99;
+    const fast_y = base.fast_vy ?? Defines.WT_FAST_Y[wt] ?? 99;
+    const fast_z = base.fast_vz ?? Defines.WT_FAST_Z[wt] ?? 99;
+
+    const dvy = round_float(-vy * bounce_y);
+    const dvx = round_float(vx * bounce_x);
+    const dvz = round_float(vz * bounce_z);
+
     if (this._hit_ground_weapons.has(e)) {
       this._hit_ground_weapons.delete(e);
       if (base.drop_hurt) {
@@ -51,17 +63,31 @@ export default class WeaponState_Base extends State_Base {
         e.hp_r = e.hp_r - base.drop_hurt;
       }
     }
-    if (dvy < min_bounce_vy) {
+    const is_bounce =
+      dvy >= bounce_min_y ||
+      dvx >= bounce_min_x || dvx < -bounce_min_x ||
+      dvx >= bounce_min_z || dvx < -bounce_min_z
+
+    if (!is_bounce) { // 非反弹
       e.enter_frame({ id: nf });
-    } else {
-      e.set_velocity(dvx, dvy, dvz);
-      if (!is_base_ball || (dvx > -6 && dvx < 6)) {
-        e.enter_frame(e.find_align_frame(
-          e.frame.id,
-          indexes?.throwings,
-          indexes?.in_the_skys
-        ));
-      }
+      return;
+    }
+
+    // 反弹
+    e.set_velocity(dvx, dvy, dvz);
+
+    if (
+      dvy > -fast_y && dvy < fast_y &&
+      dvx > -fast_x && dvx < fast_x &&
+      dvz > -fast_z && dvz < fast_z
+    ) {
+      // 从throwing帧 进入 对应in_the_sky帧
+      const nf = e.find_align_frame(
+        e.frame.id,
+        indexes?.throwings,
+        indexes?.in_the_skys
+      )
+      if (nf) e.enter_frame(nf);
     }
   }
 }

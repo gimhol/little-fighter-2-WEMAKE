@@ -1,4 +1,4 @@
-import { Collision } from "../base/Collision";
+import { Collision } from "./Collision";
 import { Defines, WeaponType } from "../defines";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";

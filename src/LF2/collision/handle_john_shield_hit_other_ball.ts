@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { FrameBehavior } from "../defines";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";

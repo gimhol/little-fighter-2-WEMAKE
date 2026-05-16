@@ -8,6 +8,7 @@ export class BotState_Following extends BotState_Base {
     this.ctrl.key_up(...AGK);
   }
   override update(dt: number) {
+    if (this.me.hp <= 0) return BSE.Dead;
     if (this.stage.is_stage_finish) return BSE.StageEnd;
     if (this.handle_defends()) return;
     if (this.handle_block()) return;

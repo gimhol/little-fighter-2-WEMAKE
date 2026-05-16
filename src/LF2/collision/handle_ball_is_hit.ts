@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { Defines, SparkEnum, StateEnum } from "../defines";
 import { handle_rest } from "./handle_rest";
 import { handle_stiffness } from "./handle_stiffness";

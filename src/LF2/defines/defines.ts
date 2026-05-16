@@ -10,6 +10,7 @@ import type { IPairByFace } from "./IPairByFace";
 import type { IStageInfo } from "./IStageInfo";
 import { StageGroup as SG } from "./StageGroup";
 import { TeamEnum as _TeamEnum } from "./TeamEnum";
+import { WT } from "./WeaponType";
 export interface TFrameIdPair extends IPairByFace<string> { }
 export interface TFrameIdListPair extends IPairByFace<string[]> { }
 export type TTODO = any;
@@ -25,7 +26,78 @@ export namespace Defines {
   export const MODERN_SCREEN_HEIGHT = 450;
   export const DEFAULT_OPOINT_SPEED_Z = 3.5;
   export const DEFAULT_FIREN_FLAME_SPEED_Z = 0.5;
-
+  export const WT_BOUNCE_MIN_Y: Record<WT, number> = {
+    [WT.None]:     /**/ 2,
+    [WT.Stick]:    /**/ 2,
+    [WT.Heavy]:    /**/ 2,
+    [WT.Knife]:    /**/ 2,
+    [WT.Baseball]: /**/ 2,
+    [WT.Drink]:    /**/ 2,
+  }
+  export const WT_BOUNCE_MIN_X: Record<WT, number> = {
+    [WT.None]:     /**/ 99,
+    [WT.Stick]:    /**/ 99,
+    [WT.Heavy]:    /**/ 2,
+    [WT.Knife]:    /**/ 99,
+    [WT.Baseball]: /**/ 2,
+    [WT.Drink]:    /**/ 2,
+  }
+  export const WT_BOUNCE_MIN_Z: Record<WT, number> = {
+    [WT.None]:     /**/ 99,
+    [WT.Stick]:    /**/ 99,
+    [WT.Heavy]:    /**/ 99,
+    [WT.Knife]:    /**/ 99,
+    [WT.Baseball]: /**/ 99,
+    [WT.Drink]:    /**/ 99,
+  }
+  export const WT_BOUNCE_Y: Record<WT, number> = {
+    [WT.None]:     /**/ 0.5,
+    [WT.Stick]:    /**/ 0.2,
+    [WT.Heavy]:    /**/ 0.3,
+    [WT.Knife]:    /**/ 0.2,
+    [WT.Baseball]: /**/ 0.45,
+    [WT.Drink]:    /**/ 0.45,
+  }
+  export const WT_BOUNCE_X: Record<WT, number> = {
+    [WT.None]:     /**/ 0.5,
+    [WT.Stick]:    /**/ 0.5,
+    [WT.Heavy]:    /**/ 0.75,
+    [WT.Knife]:    /**/ 0.5,
+    [WT.Baseball]: /**/ 0.75,
+    [WT.Drink]:    /**/ 0.75,
+  }
+  export const WT_BOUNCE_Z: Record<WT, number> = {
+    [WT.None]:     /**/ 0.5,
+    [WT.Stick]:    /**/ 0.5,
+    [WT.Heavy]:    /**/ 0.75,
+    [WT.Knife]:    /**/ 0.5,
+    [WT.Baseball]: /**/ 0.75,
+    [WT.Drink]:    /**/ 0.75,
+  }
+  export const WT_FAST_Y: Record<WT, number> = {
+    [WT.None]:     /**/ 99,
+    [WT.Stick]:    /**/ 99,
+    [WT.Heavy]:    /**/ 99,
+    [WT.Knife]:    /**/ 99,
+    [WT.Baseball]: /**/ 99,
+    [WT.Drink]:    /**/ 99,
+  }
+  export const WT_FAST_X: Record<WT, number> = {
+    [WT.None]:      /**/ 99,
+    [WT.Stick]:     /**/ 99,
+    [WT.Heavy]:     /**/ 99,
+    [WT.Knife]:     /**/ 99,
+    [WT.Baseball]:  /**/ 4,
+    [WT.Drink]:     /**/ 4,
+  }
+  export const WT_FAST_Z: Record<WT, number> = {
+    [WT.None]:     /**/ 99,
+    [WT.Stick]:    /**/ 99,
+    [WT.Heavy]:    /**/ 99,
+    [WT.Knife]:    /**/ 99,
+    [WT.Baseball]: /**/ 99,
+    [WT.Drink]:    /**/ 99,
+  }
   /**
    * 默认值：当角色fall_value低于DEFAULT_FALL_VALUE_DIZZY时，角色应当进入眩晕状态
    *

@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 
 export function handle_healing(collision: Collision): void {
   const { itr, victim } = collision;

@@ -184,10 +184,11 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
       this.prev_players.delete(player)
       this.players.set(player, slot_state);
     } else if (state.step < SlotStep.Ready) {
-      if (state.step + 1 === SlotStep.TeamSel && this.teams.length < 1)
-        state.step = SlotStep.Ready
-      else
+      if (state.step + 1 === SlotStep.TeamSel && this.teams.length <= 1) {
+        state.step = SlotStep.Ready;
+      } else {
         state.step = min(state.step + 1, SlotStep.Ready)
+      }
     } else return;
 
     this.lf2.sounds.play_preset("join");
@@ -278,6 +279,7 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
   }
   add_com() {
     if (this.max_player <= this.players.size) return;
+    
     let com: PlayerInfo | null = null
     for (const [_, p] of this.lf2.players) {
       if (!p.is_com) continue;

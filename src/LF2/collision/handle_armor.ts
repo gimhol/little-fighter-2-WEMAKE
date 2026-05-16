@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { ArmorEnum, Defines, SparkEnum } from "../defines";
 import { round } from "../utils";
 import { handle_injury } from "./handle_injury";

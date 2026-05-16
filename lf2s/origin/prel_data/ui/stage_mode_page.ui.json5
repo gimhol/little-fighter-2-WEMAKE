@@ -11,7 +11,7 @@
     },
     {
       pos: "0, 20",
-      template: "ui/fn_key_counts_row.ui.json5"
+      template: "ui/fn_key_counts_row.ui.json5",
     },
     "ui/gogogo.ui.json5",
     "ui/gogogo_loop.ui.json5",
@@ -22,6 +22,12 @@
       center: "0.5,0.5",
       pos: "397, 225",
       component: ["StageTitleShow()"],
+      style: {
+        font: '46px "Arial Black", Arial',
+      },
+      outlineColor: "#005A8E",
+      outlineWidth: 5,
+      outlineAlpha: 1,
     },
     {
       pos: "397,10",

@@ -8,6 +8,7 @@ import { BotState_Base } from "./BotState";
 export class BotState_Chasing extends BotState_Base {
   readonly key = BSE.Chasing;
   override update(dt: number): BSE | undefined {
+    if (this.me.hp <= 0) return BSE.Dead;
     if (this.stage.is_stage_finish) return BSE.StageEnd;
     const { ctrl: c } = this;
     const me = c.entity;

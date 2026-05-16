@@ -9,6 +9,8 @@ export class BotState_Avoiding extends BotState_Base {
     this.c.key_up(...AGK);
   }
   override update(dt: number): BSE | undefined {
+    if (this.me.hp <= 0) return BSE.Dead;
+    if (this.stage.is_stage_finish) return BSE.StageEnd;
     const { s } = this;
     if (s.is_stage_finish)
       return BSE.StageEnd;

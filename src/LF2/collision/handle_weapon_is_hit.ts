@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { BuiltIn_OID, Defines, I_K, SparkEnum, WT } from "../defines";
 import { is_fighter, is_weapon } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
@@ -50,6 +50,8 @@ export function handle_weapon_is_hit(collision: Collision): void {
   }
 
   if (is_fighter(attacker) || (is_weapon(attacker) && itr.kind == I_K.WeaponSwing)) {
-    victim.team = attacker.team;
+    if (victim.position.y > 0 || is_fly) {
+      victim.team = attacker.team;
+    }
   }
 }

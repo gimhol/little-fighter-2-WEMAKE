@@ -149,6 +149,19 @@ export class EntityMainRender {
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
+
+    const { centerx, centery, state, pic: { w = 0 } = {} } = frame;
+    const offset_x = facing === 1 ? centerx : w - centerx;
+    if (state === StateEnum.Message) {
+      let { cam_x: l } = this.entity.world.renderer;
+      let r = l + this.entity.world.screen_w;
+      r -= w - offset_x
+      l += offset_x
+      x = clamp(x, l, r)
+    }
+    this.offset_x = -offset_x;
+    this.offset_y = centery;
+
     if (this._frame !== frame || this._facing !== facing) {
       // NOTE: flipX 与纹理必须一起设置，否则会有快速切换左右方向会有奇怪的表现
       this._frame = frame;
@@ -183,17 +196,7 @@ export class EntityMainRender {
           m.uniforms.flipX.value = entity.facing;
         }
       }
-      const { centerx, centery, state } = frame;
-      const offset_x = entity.facing === 1 ? centerx : main_mesh.scale.x - centerx;
-      if (state === StateEnum.Message) {
-        let { cam_x: l } = this.entity.world.renderer;
-        let r = l + this.entity.world.screen_w;
-        r -= main_mesh.scale.x - offset_x
-        l += offset_x
-        x = clamp(x, l, r)
-      }
-      this.offset_x = -offset_x;
-      this.offset_y = centery;
+
       if (pic?.r) {
         const c1x = vec2.x = pic.ox ?? (pic.w / 2)
         const c1y = vec2.y = -(pic.oy ?? (pic.h / 2))
@@ -223,7 +226,7 @@ export class EntityMainRender {
     const { invisible, blinking } = entity;
     if (invisible) {
       main_mesh.visible = false;
-    } if (blinking) {
+    } else if (blinking) {
       main_mesh.visible = 0 === floor(blinking / 4) % 2;
     } else {
       main_mesh.visible = true;

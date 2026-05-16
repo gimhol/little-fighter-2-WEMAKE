@@ -55,6 +55,7 @@ export class SchemaValidator {
           const prop_type = prop_schema?.type
           if (
             typeof prop_type === 'function' &&
+            prop_type !== Array &&
             prop_type !== Boolean &&
             prop_type !== String &&
             prop_type !== Number
@@ -88,6 +89,7 @@ export class SchemaValidator {
           const prop_type = prop_schema.type
           if (
             typeof prop_type === 'function' &&
+            prop_type !== Array &&
             prop_type !== Boolean &&
             prop_type !== String &&
             prop_type !== Number

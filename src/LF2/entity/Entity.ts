@@ -2,8 +2,9 @@ import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { Callbacks, Collision, collision_clone, new_id, new_team } from "../base";
+import { Callbacks, new_id, new_team } from "../base";
 import { sus_cases } from "../cases_instances";
+import { Collision, collision_clone } from "../collision/Collision";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
@@ -67,7 +68,7 @@ export class Entity {
 
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
-  protected _outline_alpha: number = 0;
+  protected _outline_alpha: number = 0.8;
   protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
   protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
@@ -719,7 +720,7 @@ export class Entity {
     this._catcher = null
     this._wakeup_invuln = null;
     this._name_visible = null;
-    this._outline_alpha = 0;
+    this._outline_alpha = 0.8;
     this._velocity.set(0, 0, 0)
     this._prev_velocity.set(0, 0, 0);
     this.callbacks.clear();
@@ -1037,6 +1038,12 @@ export class Entity {
             if (e.frame.chase) e.chasing = allies[i % allies.length];
             break;
         }
+        if (opoint.inherit_speed_x)
+          e.set_velocity_x(e.velocity.x + this.velocity.x * opoint.inherit_speed_x)
+        if (opoint.inherit_speed_y)
+          e.set_velocity_y(e.velocity.y + this.velocity.y * opoint.inherit_speed_y)
+        if (opoint.inherit_speed_z)
+          e.set_velocity_z(e.velocity.z + this.velocity.z * opoint.inherit_speed_z)
       }
     }
   }
@@ -1203,9 +1210,9 @@ export class Entity {
 
 
     // 此处不要 * atom_time
-    if (vxm == SpeedMode.AccTo && acc_x == void 0 && dvx) acc_x = dvx;
-    if (vym == SpeedMode.AccTo && acc_y == void 0 && dvy) acc_y = dvy;
-    if (vzm == SpeedMode.AccTo && acc_z == void 0 && dvz) acc_z = dvz;
+    if ((vxm == SpeedMode.AccTo || vxm == SpeedMode.FixedAccTo) && acc_x == void 0 && dvx) acc_x = dvx;
+    if ((vym == SpeedMode.AccTo || vym == SpeedMode.FixedAccTo) && acc_y == void 0 && dvy) acc_y = dvy;
+    if ((vzm == SpeedMode.AccTo || vzm == SpeedMode.FixedAccTo) && acc_z == void 0 && dvz) acc_z = dvz;
     if (acc_x) acc_x = round_float(acc_x * atom_time)
     if (acc_y) acc_y = round_float(acc_y * atom_time)
     if (acc_z) acc_z = round_float(acc_z * atom_time)
@@ -1586,12 +1593,18 @@ export class Entity {
           this._state?.on_landing?.(this, v);
 
           this.play_sound(this._data.base.drop_sounds);
-          if (this.throwinjury) {
+          if (this.throwinjury && (
+            this.state == StateEnum.Falling ||
+            this.state == StateEnum.Lying
+          )) {
             this.hp -= this.throwinjury;
             this.hp_r -= round(this.throwinjury * (1 - this.dataset('hp_recoverability')))
             this.throwinjury = 0;
           }
-          if (this.fallinjury) {
+          if (this.fallinjury && (
+            this.state == StateEnum.Falling ||
+            this.state == StateEnum.Lying
+          )) {
             this.hp -= this.fallinjury;
             this.hp_r -= round(this.fallinjury * (1 - this.dataset('hp_recoverability')))
             this.fallinjury = 0;

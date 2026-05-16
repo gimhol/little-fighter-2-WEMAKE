@@ -1,4 +1,4 @@
-import { Collision } from "../base/Collision";
+import { Collision } from "./Collision";
 import { Defines as D, StateEnum as SE } from "../defines";
 import { is_fighter } from "../entity/type_check";
 

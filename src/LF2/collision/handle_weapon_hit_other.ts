@@ -1,4 +1,4 @@
-import { Collision } from "../base";
+import type { Collision } from "../collision/Collision";
 import { StateEnum, WT } from "../defines";
 
 export function handle_weapon_hit_other(collision: Collision): void {
