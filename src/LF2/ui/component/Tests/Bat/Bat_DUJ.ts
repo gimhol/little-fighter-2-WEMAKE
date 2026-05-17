@@ -80,7 +80,10 @@ export class Bat_DUJ_3 extends TestCase {
     .wait(500)
     .times(1000)
     .sort();
-    
+
+  override update(dt: number): number | void | undefined {
+    this.director.update(dt);
+  }
   override enter(): void {
     do {
       const fighter = this.bat = this.spawn(O_ID.Bat)
