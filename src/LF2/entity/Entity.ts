@@ -248,6 +248,7 @@ export class Entity {
   readonly buff = new Map<string, Buff>()
 
   renderer: any;
+  puppet: boolean = false;
 
   get outline_color(): string {
     return this._outline_color || Defines.TeamInfoMap[this.team]?.outline_color || ''
