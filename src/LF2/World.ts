@@ -74,6 +74,7 @@ export class World extends WorldDataset {
   private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
   private _cam_speed: number = 0;
+  private _cam_x: number = 0;
   private _lock_cam_x: number | undefined = void 0;
   public renderer: IWorldRenderer;
   readonly tickers = new Set<Ticker>();
@@ -658,6 +659,13 @@ export class World extends WorldDataset {
 
     let divider = 0;
     let offset = 0;
+
+    let local_cam_x_sum = 0;
+    let human_cam_x_sum = 0;
+    let fighter_cam_x_sum = 0;
+    let local_cam_x_count = 0;
+    let human_cam_x_count = 0;
+    let fighter_cam_x_count = 0;
     for (let i = 0; i < this.entities.length; i++) {
       const a = this.entities[i];
       if (offset) this.entities[i - offset] = a;
@@ -679,6 +687,21 @@ export class World extends WorldDataset {
       if (update_chasing && this._chasers.size)
         for (const c of this._chasers)
           c.update_chasing(a)
+
+      if (is_fighter(a)) {
+        const x = a.position.x - this.screen_w / 2 + (a.facing * this.screen_w) / 6;
+        fighter_cam_x_sum += x;
+        fighter_cam_x_count++;
+        if (is_human_ctrl(a.ctrl) && a.hp > 0) {
+          if (a.ctrl.player.mine) {
+            local_cam_x_sum += x;
+            local_cam_x_count++;
+          } else {
+            human_cam_x_sum += x;
+            human_cam_x_count++;
+          }
+        }
+      }
 
       const a_ctrl = a.ctrl
       for (let j = 0; j < temp_entities.length; j++) {
@@ -717,6 +740,20 @@ export class World extends WorldDataset {
       temp_entities.push(a);
     }
     this.entities.length = this.entities.length - offset
+
+    if (local_cam_x_count) {
+      this._cam_x = round(local_cam_x_sum / local_cam_x_count);
+    } else if (human_cam_x_count) {
+      this._cam_x = round(human_cam_x_sum / human_cam_x_count);
+    } else if (fighter_cam_x_count) {
+      this._cam_x = round(fighter_cam_x_sum / fighter_cam_x_count);
+    } else {
+      this.renderer.cam_x = this._cam_x = round(
+        (this.player_r + this.player_l) / 2 - this.screen_w / 2
+      )
+    }
+
+
 
     for (const c of this.v_collisions)
       collisions_keeper.handle(c);
@@ -780,58 +817,31 @@ export class World extends WorldDataset {
     const { cam_l, left, cam_r, right } = this.stage;
     const max_cam_left = is_num(this._lock_cam_x) ? left : cam_l;
     const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
-    let new_x = this.renderer.cam_x;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    if (is_num(this._lock_cam_x)) {
-      new_x = this._lock_cam_x;
-    } else if (this.puppets.size) {
-      let l = 0;
-      new_x = 0;
-      /** 存活的本地人类玩家角色 */
-      const mines: Entity[] = [];
-      /** 存活的人类玩家角色 */
-      const humans: Entity[] = [];
-      /** 槽中角色 */
-      const fighters: Entity[] = []
-      for (const [, p] of this.puppets) {
-        if (is_human_ctrl(p.ctrl) && p.hp > 0) {
-          if (p.ctrl.player.mine) {
-            mines.push(p)
-          } else {
-            humans.push(p)
-          }
-        }
-        else fighters.push(p)
-      }
-      const follows = mines.length ? mines : humans.length ? humans : fighters
-      for (const p of follows) {
-        new_x += p.position.x - this.screen_w / 2 + (p.facing * this.screen_w) / 6;
-        ++l;
-      }
-      new_x = round(new_x / l);
-    }
-    if (new_x < max_cam_left) new_x = max_cam_left;
-    if (new_x > max_cam_right - this.screen_w) new_x = max_cam_right - this.screen_w;
+    if (is_num(this._lock_cam_x))
+      this._cam_x = this._lock_cam_x;
+
+    this._cam_x = clamp(this._cam_x, max_cam_left, max_cam_right - this.screen_w);
     let cur_x = this.renderer.cam_x;
     const acc = min(
       this.atom_time * acc_ratio,
-      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
+      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - this._cam_x)) / this.screen_w,
     );
     const max_speed = max_speed_ratio * acc;
 
-    if (cur_x > new_x) {
+    if (cur_x > this._cam_x) {
       if (this._cam_speed > 0) this._cam_speed = 0;
       else if (this._cam_speed > -max_speed) this._cam_speed -= acc;
       else this._cam_speed = -max_speed;
       this.renderer.cam_x += this._cam_speed;
-      if (this.renderer.cam_x < new_x) this.renderer.cam_x = new_x;
-    } else if (cur_x < new_x) {
+      if (this.renderer.cam_x < this._cam_x) this.renderer.cam_x = this._cam_x;
+    } else if (cur_x < this._cam_x) {
       if (this._cam_speed < 0) this._cam_speed = 0;
       else if (this._cam_speed < max_speed) this._cam_speed += acc;
       else this._cam_speed = max_speed;
       this.renderer.cam_x += this._cam_speed;
-      if (this.renderer.cam_x > new_x) this.renderer.cam_x = new_x;
+      if (this.renderer.cam_x > this._cam_x) this.renderer.cam_x = this._cam_x;
     }
 
     const new_cam_x = round(this.renderer.cam_x);
