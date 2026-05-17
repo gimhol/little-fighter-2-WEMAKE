@@ -74,10 +74,10 @@ export class Bat_DUJ_3 extends TestCase {
   override name: string = 'Bat D^J (Many Enemies)'
   bat: Entity | null = null
   director = new ActionDirector()
-    .offset(500, () => {
+    .offset(0, () => {
       this.bat?.ctrl.click(GK.d, GK.U, GK.j);
     })
-    .wait(500)
+    .wait(300)
     .times(1000)
     .sort();
 
@@ -91,13 +91,15 @@ export class Bat_DUJ_3 extends TestCase {
       fighter.set_position(this.midX, 0, this.midZ);
       fighter.team = TeamEnum.Team_1;
       fighter.attach();
+      fighter.blinking = 99999
       fighter.hp = 1;
-      fighter.hp_r = 200;
+      fighter.hp_r = 1;
       fighter.stat_bar_type = StatBarType.Float
       fighter.mp = fighter.mp_max = 1000000;
     } while (0);
 
-    this.circle(OID.Bandit, this.midX, this.midZ, this.bg.width / 2, this.bg.depth / 2, 80).forEach(v => {
+    this.circle(OID.Bandit, this.midX, this.midZ, this.bg.width / 2, this.bg.depth / 2, 40).forEach(v => {
+      v.ctrl = this.lf2.factory.create_ctrl(OID.Bandit, v.ctrl.player_id, v)
       v.team = TeamEnum.Team_2;
       v.hp = 100
     })
