@@ -102,7 +102,7 @@
           center: "0.5, 0.5",
           template: "builtin_data/launch/main_text_button.ui.json5",
           values: {
-            text: "ctrl_settings",
+            text: "settings",
           },
           component: [ "Reachable(main)" ],
           actions: {

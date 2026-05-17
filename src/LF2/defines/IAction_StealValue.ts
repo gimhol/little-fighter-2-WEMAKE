@@ -35,5 +35,8 @@ export interface IAction_StealValue extends IAction_Base {
     itr_hp_r_ratio?: number;
 
     itr_mp_ratio?: number;
+
+    /** */
+    over_injury?: number;
   }
 }

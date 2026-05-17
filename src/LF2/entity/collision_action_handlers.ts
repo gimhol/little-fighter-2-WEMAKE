@@ -93,8 +93,12 @@ export const collision_action_handlers: IActionHandler = {
     lf2.broadcast(action.data)
   },
   [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => {
-    const { injury } = collision;
-    if (!injury) return;
+    const { data: d } = action;
+    if (!d) return;
+    const { real_injury, injury } = collision;
+    const { over_injury } = d
+    const itr_value = over_injury ? injury : real_injury;
+    if (!itr_value) return;
 
     let t: Entity | undefined | null;
     const { attacker: a } = collision;
@@ -106,22 +110,20 @@ export const collision_action_handlers: IActionHandler = {
     }
     if (!t) return;
 
-    const { data: d } = action;
-    if (!d) return;
     if (!d.revive && t.hp <= 0) return;
 
     if (d.mp) t.mp = min(t.mp + d.mp, t.mp_max);
-    if (d.itr_mp_ratio) t.mp = min(t.mp + round(injury * d.itr_mp_ratio), t.mp_max);
+    if (d.itr_mp_ratio) t.mp = min(t.mp + round(itr_value * d.itr_mp_ratio), t.mp_max);
 
     if (d.hp_r) t.hp_r = min(t.hp_r + d.hp_r, t.hp_max);
-    if (d.itr_hp_r_ratio) t.hp_r = min(t.hp_r + round(injury * d.itr_hp_r_ratio), t.hp_max);
+    if (d.itr_hp_r_ratio) t.hp_r = min(t.hp_r + round(itr_value * d.itr_hp_r_ratio), t.hp_max);
 
     if (d.over_hp_r) {
       if (d.hp) t.hp = min(t.hp + d.hp, t.hp_r);
-      if (d.itr_hp_r_ratio) t.hp = min(t.hp + round(injury * d.itr_hp_r_ratio), t.hp_r);
+      if (d.itr_hp_r_ratio) t.hp = min(t.hp + round(itr_value * d.itr_hp_r_ratio), t.hp_r);
     } else {
       if (d.hp) t.hp = min(t.hp + d.hp, t.hp_max);
-      if (d.itr_hp_ratio) t.hp = min(t.hp + round(injury * d.itr_hp_ratio), t.hp_max);
+      if (d.itr_hp_ratio) t.hp = min(t.hp + round(itr_value * d.itr_hp_ratio), t.hp_max);
     }
     t.hp_r = max(t.hp_r, t.hp);
   }

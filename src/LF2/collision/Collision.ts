@@ -129,6 +129,8 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   handlers?: Readonly<ICollisionFunc>;
   injury?: number;
   injury_r?: number;
+  real_injury?: number;
+  real_injury_r?: number;
   rest: number;
 }
 
