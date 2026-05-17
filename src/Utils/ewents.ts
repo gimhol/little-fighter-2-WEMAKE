@@ -91,12 +91,9 @@ export class Ewents {
   }
 
   submit_visit() {
-    debugger
     const curr_location = location.toString();
     if (this._location == curr_location) return;
     this._location = curr_location;
-    if (curr_location.endsWith(`/#/`)) return;
-    if (curr_location.indexOf('#') < 0) return
     this.submit_any('visit', { uri: curr_location });
   }
 
