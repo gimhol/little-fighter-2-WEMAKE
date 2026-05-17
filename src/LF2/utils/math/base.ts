@@ -11,5 +11,6 @@ export const cos = Math['cos'];
 export const sin = Math['sin'];
 export const acos = Math['acos'];
 export const pow = Math['pow'];
+export const sign = Math['sign'];
 export const tan = Math['tan'];
 export const PI = Math['PI'];

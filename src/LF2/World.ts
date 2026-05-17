@@ -36,7 +36,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, between, clamp, floor, is_num, min, round, Times } from "./utils";
+import { abs, between, clamp, floor, is_num, max, min, round, sign, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355
@@ -753,8 +753,6 @@ export class World extends WorldDataset {
       )
     }
 
-
-
     for (const c of this.v_collisions)
       collisions_keeper.handle(c);
     for (const [, c] of this.a_collisions)
@@ -806,50 +804,35 @@ export class World extends WorldDataset {
 
   update_camera() {
     const old_cam_x = round(this.renderer.cam_x);
-    if (this.bg.id === Defines.VOID_BG.id) {
-      this.renderer.cam_x = 0
-      if (old_cam_x !== 0) {
-        this.callbacks.emit("on_cam_move")(0);
-      }
-      return;
-    }
-
     const { cam_l, left, cam_r, right } = this.stage;
     const max_cam_left = is_num(this._lock_cam_x) ? left : cam_l;
     const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    if (is_num(this._lock_cam_x))
-      this._cam_x = this._lock_cam_x;
-
-    this._cam_x = clamp(this._cam_x, max_cam_left, max_cam_right - this.screen_w);
+    this._cam_x = clamp(this._lock_cam_x ?? this._cam_x, max_cam_left, max_cam_right - this.screen_w);
     let cur_x = this.renderer.cam_x;
     const acc = min(
       this.atom_time * acc_ratio,
       this.atom_time * 0.7 * (acc_ratio * abs(cur_x - this._cam_x)) / this.screen_w,
     );
-    const max_speed = max_speed_ratio * acc;
+    const direction = cur_x > this._cam_x ? -1 : 1;
+    const max_speed = direction * max_speed_ratio * acc;
+    if (sign(this._cam_speed) !== direction)
+      this._cam_speed = 0;
+    if (abs(this._cam_speed) < abs(max_speed))
+      this._cam_speed += acc * direction;
+    else
+      this._cam_speed = max_speed;
 
-    if (cur_x > this._cam_x) {
-      if (this._cam_speed > 0) this._cam_speed = 0;
-      else if (this._cam_speed > -max_speed) this._cam_speed -= acc;
-      else this._cam_speed = -max_speed;
-      this.renderer.cam_x += this._cam_speed;
-      if (this.renderer.cam_x < this._cam_x) this.renderer.cam_x = this._cam_x;
-    } else if (cur_x < this._cam_x) {
-      if (this._cam_speed < 0) this._cam_speed = 0;
-      else if (this._cam_speed < max_speed) this._cam_speed += acc;
-      else this._cam_speed = max_speed;
-      this.renderer.cam_x += this._cam_speed;
-      if (this.renderer.cam_x > this._cam_x) this.renderer.cam_x = this._cam_x;
-    }
-
+    if (direction < 0)
+      this.renderer.cam_x = max(this._cam_x, this.renderer.cam_x + this._cam_speed)
+    else
+      this.renderer.cam_x = min(this._cam_x, this.renderer.cam_x + this._cam_speed);
     const new_cam_x = round(this.renderer.cam_x);
     if (old_cam_x !== new_cam_x) {
       this.callbacks.emit("on_cam_move")(new_cam_x);
     }
   }
-
 
   /**
    * 火花特效
