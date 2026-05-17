@@ -852,6 +852,7 @@ export class World extends WorldDataset {
    * @memberof World
    */
   spark(x: number, y: number, z: number, f: string): void {
+    if (this.entities.length > MAX_DEBUG_ENTITIES) return;
     const oid = Defines.BuiltIn_Dats.Spark
     if (!this._spark_data)
       this._spark_data = this.lf2.datas.find(oid);
