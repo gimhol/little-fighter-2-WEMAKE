@@ -1,3 +1,4 @@
+import { l, R } from "react-router/dist/development/index-react-server-client-Da3kmxNd";
 import { IState } from "../../../base";
 import { O_ID } from "../../../defines/BuiltIn_OID";
 import { CMD } from "../../../defines/CMD";
@@ -73,6 +74,21 @@ export class TestCase implements IState<number> {
     }
     return ret;
   }
+  circle(oid: string, ox: number, oy: number, rw: number, rh: number, count: number): Entity[] {
+    const ret: Entity[] = [];
+    const d = Math.PI * 2 / count;
+    for (let i = 0; i < count; i++) {
+      const a = round_float(d * i);
+      const x = round_float(ox + Math.cos(a) * rw);
+      const z = round_float(oy + Math.sin(a) * rh);
+      const e = this.spawn(oid);
+      if (!e) break;
+      ret.push(e);
+      e.set_position(x, 0, z);
+      e.attach();
+    }
+    return ret;
+  }
   bandits_mid_8(x = 100, z = 50): Entity[] {
     return this.mid_8(O_ID.Bandit, x, z)
   }
@@ -97,37 +113,50 @@ export class TestCase implements IState<number> {
     }
     return ret;
   }
-  hori_3(oid: string, x = 250, z = this.midZ): Entity[] {
+
+  hori(oid: string, ox: number, oz: number, w: number, count: number): Entity[] {
     const ret: Entity[] = [];
-    [this.midX - x, this.midX, this.midX + x].forEach(x => {
+    const x_list: number[] = [];
+    const d = w / (count - 1);
+    for (let i = 0; i < count; i++) {
+      x_list.push(round_float(ox - w / 2 + d * i))
+    }
+    x_list.forEach(x => {
       const o = this.spawn(oid);
       if (!o) return;
-      o.set_position(x, 0, z);
+      o.set_position(x, 0, oz);
       o.attach();
       ret.push(o)
     })
     return ret;
   }
-  hori_2(oid: string, x = 250, z = this.midZ): Entity[] {
+
+  hori_3(oid: string, rx: number = 250, z = this.midZ): Entity[] {
+    return this.hori(oid, this.midX, z, rx * 2, 3);
+  }
+
+  hori_2(oid: string, rx: number = 250, z = this.midZ): Entity[] {
+    return this.hori(oid, this.midX, z, rx * 2, 2);
+  }
+
+  verti(oid: string, ox: number, oz: number, h: number, count: number): Entity[] {
     const ret: Entity[] = [];
-    [this.midX - x, this.midX + x].forEach(x => {
+    const z_list: number[] = [];
+    const d = h / (count - 1);
+    for (let i = 0; i < count; i++) {
+      z_list.push(round_float(oz - h / 2 + d * i))
+    }
+    z_list.forEach(z => {
       const o = this.spawn(oid);
       if (!o) return;
-      o.set_position(x, 0, z);
+      o.set_position(ox, 0, z);
       o.attach();
       ret.push(o)
     })
     return ret;
   }
-  verti_3(oid: string, x = this.midX, z = 100): Entity[] {
-    const ret: Entity[] = [];
-    [this.midZ - z, this.midZ, this.midZ + z].forEach(z => {
-      const o = this.spawn(oid);
-      if (!o) return;
-      o.set_position(x, 0, z);
-      o.attach();
-      ret.push(o)
-    })
-    return ret;
+
+  verti_3(oid: string, x = this.midX, h = 200): Entity[] {
+    return this.verti(oid, x, this.midZ, h, 3);
   }
 }

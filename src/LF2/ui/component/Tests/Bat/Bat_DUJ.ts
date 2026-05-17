@@ -1,4 +1,4 @@
-import { GK, O_ID, TeamEnum } from "@/LF2/defines";
+import { GK, O_ID, OID, TeamEnum } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity/Entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { ActionDirector } from "../ActionDirector";
@@ -66,6 +66,26 @@ export class Bat_DUJ_2 extends TestCase {
     this.hori_2(O_ID.Bandit, 200).forEach(v => {
       v.team = TeamEnum.Team_2;
       v.hp = 50
+    })
+  }
+}
+
+export class Bat_DUJ_3 extends TestCase {
+  override name: string = 'Bat D^J (Many Enemies)'
+  override enter(): void {
+    do {
+      const fighter = this.spawn(O_ID.Bat)
+      if (!fighter) return;
+      fighter.set_position(this.midX, 0, this.midZ);
+      fighter.team = TeamEnum.Team_1;
+      fighter.key_role = false;
+      fighter.attach();
+      fighter.ctrl.click(GK.d, GK.U, GK.j);
+    } while (0);
+
+    this.circle(OID.Bandit, this.midX, this.midZ, this.bg.width / 2, this.bg.depth / 2, 80).forEach(v => {
+      v.team = TeamEnum.Team_2;
+      v.hp = 100
     })
   }
 }
