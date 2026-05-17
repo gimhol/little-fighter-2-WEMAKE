@@ -142,7 +142,7 @@ export class DanmuGameLogic extends SummaryLogic {
       const max_cam_right = right;
       if (cam_x < max_cam_left) cam_x = max_cam_left;
       if (cam_x > max_cam_right - this.world.screen_w) cam_x = max_cam_right - this.world.screen_w;
-      this.lf2.cmds.push(CMD.LOCK_CAM, `${cam_x}`)
+      this.lf2.cmds.push(CMD.DIST_CAM, `${cam_x}`)
       this.world.renderer.cam_x = cam_x;
     }
   }
@@ -159,7 +159,7 @@ export class DanmuGameLogic extends SummaryLogic {
 
     const staring = this._cam_ctrl?.staring;
     if (staring && this._cam_ctrl?.free != false) {
-      this.lf2.cmds.push(CMD.LOCK_CAM, `${staring.position.x - this.world.screen_w / 2}`)
+      this.lf2.cmds.push(CMD.DIST_CAM, `${staring.position.x - this.world.screen_w / 2}`)
     }
     else if (!staring)
       this.update_staring()

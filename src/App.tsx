@@ -23,7 +23,7 @@ import { Indicating } from "./DittoImpl/renderer/FrameIndicators";
 import { INDICATINGS } from "./DittoImpl/renderer/INDICATINGS";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
-import { GameOverlay } from "./GameOverlay";
+import { BgScrollerOverlay, FPSOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
 import { Difficulty, IWorldDataset, WorldDataset } from "./LF2";
 import { LF2 } from "./LF2/LF2";
@@ -72,7 +72,8 @@ type sync_render = 0 | 1 | 2;
 const ele_root = document.firstElementChild;
 const low_device = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
 const init_app_state = () => ({
-  game_overlay: false,
+  show_fps: false,
+  show_bg_scroll: false,
   showing_panel: "" as showing_panel,
   dev_ui_open: false,
   cheat_1: false,
@@ -185,11 +186,16 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (!lf2 || !ele_game_overlay) return;
-    const ele = new GameOverlay(lf2.world, ele_game_overlay);
+    if (!lf2 || !ele_game_overlay || !app_state.show_fps) return;
+    const ele = new FPSOverlay(lf2.world, ele_game_overlay);
     return () => ele.release()
+  }, [lf2, ele_game_overlay, app_state.show_fps])
 
-  }, [lf2, ele_game_overlay])
+  useEffect(() => {
+    if (!lf2 || !ele_game_overlay || !app_state.show_bg_scroll) return;
+    const ele = new BgScrollerOverlay(lf2.world, ele_game_overlay);
+    return () => ele.release()
+  }, [lf2, ele_game_overlay, app_state.show_bg_scroll])
 
   useCallbacks(fullscreen?.callbacks, {
     onChange: (e) => _set_is_fullscreen(!!e),
@@ -256,7 +262,7 @@ function App() {
           break;
         case CheatType.GIM_INK:
           set_app_state(d => {
-            d.cheat_3 = d.dev_ui_open = d.game_overlay = enabled
+            d.cheat_3 = d.dev_ui_open = d.show_fps = enabled
           })
           break;
       }
@@ -494,7 +500,9 @@ function App() {
   useShortcut("F10", 0, () => lf2?.cmds.push(CMD.F10));
   useShortcut("F11", 0, () => toggle_fullscreen());
   useShortcut("ctrl+F1", 0, () => lf2?.is_cheat(CheatType.GIM_INK) && set_app_state(d => { d.dev_ui_open = !d.dev_ui_open }));
-  useShortcut("ctrl+F3", 0, () => lf2?.is_cheat(CheatType.GIM_INK) && set_app_state(d => { d.game_overlay = !d.game_overlay }));
+  useShortcut("ctrl+F3", 0, () => lf2?.is_cheat(CheatType.GIM_INK) && set_app_state(d => {
+    d.show_fps = !d.show_fps;
+  }));
   useEffect(() => {
     const ele = ele_game_canvas;
     if (!ele) return;
@@ -609,7 +617,8 @@ function App() {
         onDragOver={e => { if (lf2?.ui?.id === 'entry') e.preventDefault() }}
         onDrop={on_drop}
       />
-      <div ref={set_ele_game_overlay} className={classNames(csses.game_overlay, { [csses.gone]: !app_state.game_overlay })} />
+      <div ref={set_ele_game_overlay}
+        className={classNames(csses.game_overlay, { [csses.gone]: !app_state.show_fps })} />
       <DanmuOverlay lf2={lf2} />
       <GamePad
         id='game_pad'
@@ -903,18 +912,24 @@ function App() {
         <Combine>
           <ToggleButton
             title="ctrl+F3"
-            value={app_state.game_overlay}
-            onChange={v => set_app_state(d => { d.game_overlay = v })}
-          >
-            <>游戏覆盖</>
-            <>游戏覆盖✓</>
+            value={app_state.show_fps}
+            onChange={v => set_app_state(d => { d.show_fps = v })}>
+            <>FPS</>
+            <>FPS ✓</>
+          </ToggleButton>
+          <ToggleButton
+            title="ctrl+F4"
+            value={app_state.show_bg_scroll}
+            onChange={v => set_app_state(d => { d.show_bg_scroll = v })}>
+            <>BG_SCROLLER</>
+            <>BG_SCROLLER ✓</>
           </ToggleButton>
           <ToggleButton
             onClick={toggle_fullscreen}
             value={fullscreen.is_fullscreen}
           >
             <>全屏</>
-            <>全屏✓</>
+            <>全屏 ✓</>
           </ToggleButton>
         </Combine>
       </div>

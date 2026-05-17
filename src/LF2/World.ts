@@ -75,6 +75,7 @@ export class World extends WorldDataset {
   private _released_tickers = new Set<Ticker>();
   private _cam_speed: number = 0;
   private _cam_x: number = 0;
+  private _dist_cam_x: number | undefined = void 0;
   private _lock_cam_x: number | undefined = void 0;
   public renderer: IWorldRenderer;
   readonly tickers = new Set<Ticker>();
@@ -579,6 +580,20 @@ export class World extends WorldDataset {
         case CMD.KILL_OTHERS:
           if (!stage_limit()) this.stage.kill_others()
           continue;
+        case CMD.DIST_CAM: {
+          const value = cmds[i += 1]
+          if (value === '') {
+            this._dist_cam_x = void 0;
+            continue;
+          }
+          const x = Number(value);
+          if (Number.isNaN(x)) {
+            Ditto.warn(`DIST_CAM failed, value got ${value}.`)
+            continue;
+          }
+          this._dist_cam_x = x
+          continue;
+        }
         case CMD.LOCK_CAM: {
           const value = cmds[i += 1]
           if (value === '') {
@@ -820,7 +835,7 @@ export class World extends WorldDataset {
     const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    this._cam_x = clamp(this._lock_cam_x ?? this._cam_x, max_cam_left, max_cam_right - this.screen_w);
+    this._cam_x = clamp(this._lock_cam_x ?? this._dist_cam_x ?? this._cam_x, max_cam_left, max_cam_right - this.screen_w);
     let cur_x = this.renderer.cam_x;
     const acc = min(
       this.atom_time * acc_ratio,
