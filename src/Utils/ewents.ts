@@ -91,6 +91,7 @@ export class Ewents {
   }
 
   submit_visit() {
+    debugger
     const curr_location = location.toString();
     if (this._location == curr_location) return;
     this._location = curr_location;
