@@ -125,7 +125,6 @@ export class WorldRenderer implements IWorldRenderer {
   private _t = 0;
   private _update_time = 0;
   render(dt: number): void {
-
     const tu = this.world.TU;
     this._t = min(this._t + dt, tu);
 
@@ -136,7 +135,7 @@ export class WorldRenderer implements IWorldRenderer {
       this.cam_p1.x = this.world.current_cam_x;
     }
 
-    if (this.world.sync_render == 0) {
+    if (this.world.sync_render == -1) {
       const f = this._t / tu;
       this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, f)
       const { x, y } = this.camera.position;

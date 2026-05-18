@@ -840,11 +840,11 @@ export class World extends WorldDataset {
     let acc_ratio = 1;
     this.target_cam_x = clamp(this._lock_cam_x ?? this._dist_cam_x ?? this.target_cam_x,
       max_cam_left,
-      max_cam_right - (this.screen_w / this.transform.scale_x)
+      max_cam_right - this.screen_w
     );
     const acc = min(
       this.atom_time * acc_ratio,
-      this.atom_time * 0.7 * (acc_ratio * abs(this.current_cam_x - this.target_cam_x)) / (this.screen_w / this.transform.scale_x),
+      this.atom_time * 0.7 * (acc_ratio * abs(this.current_cam_x - this.target_cam_x)) / this.screen_w,
     );
     const direction = this.current_cam_x > this.target_cam_x ? -1 : 1;
     const max_speed = direction * max_speed_ratio * acc;
