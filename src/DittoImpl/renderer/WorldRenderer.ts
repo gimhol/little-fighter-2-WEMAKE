@@ -124,39 +124,35 @@ export class WorldRenderer implements IWorldRenderer {
     renderer.unmount();
     this.entity_renderers.delete(renderer);
   }
-  private _t = 0;
-  private _update_time = 0;
+  private _utime = 0;
+
+  dtime: number = 1;
+  dfactor: number = 1;
+  tu: number = 1;
+
   render(dt: number): void {
-    const tu = this.world.TU;
-    this._t = min(this._t + dt, tu);
+    this.tu = this.world.TU;
+    this.dtime = min(this.dtime + dt, this.tu);
 
     const update_time = this.world.update_time
-    if (this._update_time != update_time) {
-      this._update_time = update_time;
-      this._t = 0;
+    if (this._utime != update_time) {
+      this._utime = update_time;
+      this.dtime = 0;
       this.cam_p0.copy(this.cam_p1)
       this.cam_p1.x = this.world.current_cam_x;
     }
 
-    if (this.world.sync_render == 0) {
-      const f = this._t / tu;
-      this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, f)
-      const { x, y } = this.camera.position;
-      this.ui_container.position.set(
-        x + this.ui_offset.x,
-        y + this.world.screen_h + this.ui_offset.y,
-        this.ui_offset.z
-      )
-    } else {
-      this.camera.position.copy(this.cam_p1)
-      const { x, y } = this.camera.position;
-      this.ui_container.position.set(
-        x + this.ui_offset.x,
-        y + this.world.screen_h + this.ui_offset.y,
-        this.ui_offset.z
-      )
-    }
+    if (this.world.sync_render == 0)
+      this.dfactor = this.dtime / this.tu;
+    else
+      this.dfactor = 1;
 
+    this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, this.dfactor)
+    this.ui_container.position.set(
+      this.camera.position.x + this.ui_offset.x,
+      this.camera.position.y + this.world.screen_h + this.ui_offset.y,
+      this.ui_offset.z
+    )
 
 
     const { indicator_flags, transform } = this.world;

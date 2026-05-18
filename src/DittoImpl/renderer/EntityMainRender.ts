@@ -1,5 +1,5 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
-import { Builtin_FrameId, clamp, floor, LF2, min, random_in, StateEnum, World } from "@/LF2";
+import { clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import * as T from "../_t";
 import { MeshBasicMaterial, Vector3 } from "../_t";
@@ -43,8 +43,6 @@ export class EntityMainRender {
 
   protected _p0 = new Vector3()
   protected _p1 = new Vector3()
-  protected _t = 0;
-
   protected offset_x: number = 0;
   protected offset_y: number = 0;
   protected world!: World;
@@ -55,7 +53,7 @@ export class EntityMainRender {
   protected models: Record<string, IModelInfo> = {};
 
   protected model_variants = new Map<string, string[]>();
-  private _update_id: number = -1;
+  private _utime: number = -1;
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
     this.reset(entity)
@@ -148,18 +146,14 @@ export class EntityMainRender {
     }
   }
   render(dt: number) {
-    const tu = this.world.TU;
-    this._t = min(this._t + dt, tu);
 
-    const update_id = this.entity.lifetime;
+    const update_time = this.world.update_time;
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
 
-    if (this._update_id != update_id) {
-      this._t = 0;
-      this._update_id = update_id;
-      this.update_position()
-
+    if (this._utime != update_time) {
+      this._utime = update_time;
+      this.update_position();
       const { centerx, centery, pic: { w = 0 } = {} } = frame;
       const offset_x = facing === 1 ? centerx : w - centerx;
       this.offset_x = -offset_x;
@@ -214,12 +208,7 @@ export class EntityMainRender {
     }
 
     this.update_shaking(dt)
-    if (this.world.sync_render == 0) {
-      const f = this._t / tu;
-      this.node.position.lerpVectors(this._p0, this._p1, f)
-    } else {
-      this.node.position.copy(this._p1)
-    }
+    this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
     main_mesh.position.set(
       this.offset_x + this.shaking_x,
       this.offset_y,

@@ -68,7 +68,7 @@ export class EntityRenderer {
       this.ensure_ctrl()
     }
     this.main.render(dt);
-    this.shad.render(dt);
+    this.shad.render();
     const update_id = this.entity.lifetime
     if (this.update_id === update_id) return;
     this.update_id = update_id;
