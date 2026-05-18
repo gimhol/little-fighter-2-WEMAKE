@@ -10,9 +10,9 @@ export interface IFramePictureInfo {
   /** 高度（像素） */
   h: number;
   /** 旋转 */
-  r?: number;
+  // r?: number;
   /** 旋转中心x */
-  ox?: number;
+  // ox?: number;
   /** 旋转中心y */
-  oy?: number;
+  // oy?: number;
 }

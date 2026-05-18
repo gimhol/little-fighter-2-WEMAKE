@@ -148,9 +148,8 @@ export class EntityMainRender {
   render(dt: number) {
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
-    let wtf = false
     if (this.owner.owner.dirty) {
-      this.update_position();
+      this.update_position(!!(this.entity.bearer || this.entity.catcher));
       const { centerx, centery, pic: { w = 0 } = {} } = frame;
       const offset_x = facing === 1 ? centerx : w - centerx;
       this.offset_x = -offset_x;
@@ -160,7 +159,6 @@ export class EntityMainRender {
         this.reset(entity);
 
       if (this._frame !== frame || this._facing !== facing) {
-        wtf = !!(this.entity.bearer || this.entity.catcher);
         this._frame = frame;
         this._facing = facing;
         const { pic } = frame
@@ -194,23 +192,19 @@ export class EntityMainRender {
           }
         }
 
-        if (pic?.r) {
-          const c1x = vec2.x = pic.ox ?? (pic.w / 2)
-          const c1y = vec2.y = -(pic.oy ?? (pic.h / 2))
-          const cc = vec2.rotateAround(vec001, pic.r)
-          this.offset_x -= (cc.x - c1x)
-          this.offset_y -= (cc.y - c1y)
-          main_mesh.setRotationFromAxisAngle(vec001, pic.r)
-        }
+        // if (pic?.r) {
+        //   const c1x = vec2.x = pic.ox ?? (pic.w / 2)
+        //   const c1y = vec2.y = -(pic.oy ?? (pic.h / 2))
+        //   const cc = vec2.rotateAround(vec001, pic.r)
+        //   this.offset_x -= (cc.x - c1x)
+        //   this.offset_y -= (cc.y - c1y)
+        //   main_mesh.setRotationFromAxisAngle(vec001, pic.r)
+        // }
       }
     }
 
     this.update_shaking(dt)
-    if (wtf) {
-      this.node.position.lerpVectors(this._p0, this._p1, 1)
-    } else {
-      this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
-    }
+    this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
     main_mesh.position.set(
       this.offset_x + this.shaking_x,
       this.offset_y,
