@@ -1,6 +1,7 @@
 import { clamp, max } from "@/LF2";
 import type { LF2 } from "@/LF2/LF2";
 import * as T from "../_t";
+import { MeshBasicMaterial } from "../_t";
 import { get_geometry } from "./GeometryKeeper";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 
@@ -16,10 +17,9 @@ export class Bar {
     this.set(v, this._max);
   }
   set color(color: string) {
-    this.mesh.material = MaterialFactory.get(
-      MaterialKind.Color, T.MeshBasicMaterial,
-      m => m.color = new T.Color(color)
-    )
+    const m = MaterialFactory.get(MaterialKind.Color, MeshBasicMaterial)
+    m.color = new T.Color(color)
+    this.mesh.material = m
   }
   constructor(
     lf2: LF2,
@@ -29,13 +29,11 @@ export class Bar {
     ax: number,
     ay: number
   ) {
-    this.mesh = new T.Mesh(
-      get_geometry(w, h, ax * w, ay * h),
-      MaterialFactory.get(
-        MaterialKind.Color, T.MeshBasicMaterial,
-        m => m.color = new T.Color(color)
-      )
-    );
+
+    const m = MaterialFactory.get(MaterialKind.Color, MeshBasicMaterial)
+    m.color = new T.Color(color)
+    const g = get_geometry(w, h, ax * w, ay * h)
+    this.mesh = new T.Mesh(g, m,);
   }
 
   set(val: number, _max: number) {

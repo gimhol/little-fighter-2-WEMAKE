@@ -2,6 +2,7 @@ import type { Entity, IEntityData, IFrameInfo, IPictureInfo, IVector3, TFace } f
 import { Builtin_FrameId, clamp, floor, LF2, random_in, round, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import * as T from "../_t";
+import { MeshBasicMaterial } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
@@ -86,15 +87,15 @@ export class EntityMainRender {
     this.images = get_img_map(lf2, entity.data);
 
     const texture = this.images.get("0")?.pic?.texture;
-    const material = MaterialFactory.get(MaterialKind.Outline, OutlineMaterial, m => {
-      m.uniforms.tex = { value: texture }
-    });
-    material.uniforms.outlineWidth.value = 1;
-    const mesh = this.main_mesh = this.main_mesh || new T.Mesh(
-      BODY_GEOMETRY, material
-    )
-    mesh.material = material;
 
+    if (!this.main_mesh) {
+      const material = MaterialFactory.get(MaterialKind.Outline, OutlineMaterial);
+      material.texture = texture;
+      material.outlineWidth = 1;
+      this.main_mesh = new T.Mesh(BODY_GEOMETRY, material)
+    }
+
+    const mesh = this.main_mesh;
     if (texture) texture.onUpdate = () => mesh.material.needsUpdate = true;
     mesh.visible = false;
     mesh.name = "Entity:" + data.id;
@@ -105,10 +106,11 @@ export class EntityMainRender {
     if (typeof data.base.render_order === "number")
       mesh.renderOrder = data.base.render_order;
 
-    this.blood_mesh = this.blood_mesh || new T.Mesh(
-      BLOOD_GEOMETRY,
-      MaterialFactory.get(MaterialKind.Color, T.MeshBasicMaterial, m => m.color = new T.Color(1, 0, 0))
-    )
+    if (!this.blood_mesh) {
+      const m = MaterialFactory.get(MaterialKind.Color, MeshBasicMaterial);
+      m.color = new T.Color(1, 0, 0)
+      this.blood_mesh = new T.Mesh(BLOOD_GEOMETRY, m)
+    }
     this.blood_mesh.visible = false;
     this.node = this.node || new T.Object3D();
     this.prev_position = this.entity.position.clone()
