@@ -393,8 +393,11 @@ export class World extends WorldDataset {
   restrict_ball(e: Entity): void {
     const { left, right, near, far } = this.stage;
     const { x, z } = e.position;
-    if (x < left - 200) e.enter_frame(Defines.NEXT_FRAME_GONE);
-    else if (x > right + 200) e.enter_frame(Defines.NEXT_FRAME_GONE);
+    if (x < left - 200 || x > right + 200) {
+      e.enter_frame(Defines.NEXT_FRAME_GONE);
+      return;
+    }
+
     if (z < far) e.set_position_z(far);
     else if (z > near) e.set_position_z(near);
   }

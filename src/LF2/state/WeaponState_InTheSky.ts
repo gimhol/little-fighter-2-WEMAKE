@@ -31,9 +31,11 @@ export default class WeaponState_InTheSky extends WeaponState_Base {
 
     // 速度太快的，变为throwing
     if (
+      wt != WT.Heavy && (
       vy < -fast_y || vy > fast_y ||
       vx < -fast_x || vx > fast_x ||
       vz < -fast_z || vz > fast_z
+    )
     ) {
       const nf = e.find_align_frame(
         e.frame.id,

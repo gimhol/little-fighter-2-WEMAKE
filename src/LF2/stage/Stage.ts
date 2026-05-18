@@ -205,7 +205,8 @@ export class Stage {
       for (const [, f] of this.world.puppets)
         teams.add(f.team)
       for (const f of this.world.entities) {
-        if (!is_fighter(f) && !teams.has(f.team)) continue;
+        if (!is_fighter(f) || !teams.has(f.team)) 
+          continue;
         if (f.hp <= 0 && hp_respawn) {
           const hp = hp_respawn < 1 ?
             min(f.hp_max * hp_respawn, f.hp_max) :
