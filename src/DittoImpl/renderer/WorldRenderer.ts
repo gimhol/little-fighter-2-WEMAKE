@@ -86,6 +86,8 @@ export class WorldRenderer implements IWorldRenderer {
       camera.near = 0.1;
       camera.far = 2000;
       camera.position.set(0, 0, 100)
+      this.cam_p1.copy(camera.position)
+      this.cam_p0.copy(camera.position)
       camera.name = "default_orthographic_camera"
       this.add_camera(camera);
       camera.updateProjectionMatrix();
@@ -135,7 +137,7 @@ export class WorldRenderer implements IWorldRenderer {
       this.cam_p1.x = this.world.current_cam_x;
     }
 
-    if (this.world.sync_render == -1) {
+    if (this.world.sync_render == 0) {
       const f = this._t / tu;
       this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, f)
       const { x, y } = this.camera.position;
