@@ -1,4 +1,5 @@
-import { floor, ISoundsCallback, IWorldCallbacks, round, round_float, SliderHandle, UIComponent } from "@/LF2";
+import { ISoundsCallback, IWorldCallbacks, round_float, SliderHandle, UIComponent } from "@/LF2";
+import { SyncRenderEnum } from "@/LF2/defines/SyncRenderEnum";
 export class MiscSettingsLogic extends UIComponent {
   static override readonly TAGS: string[] = ["MiscSettingsLogic"];
   bgm_toggle: SliderHandle | undefined;
@@ -78,11 +79,17 @@ export class MiscSettingsLogic extends UIComponent {
       }
     })
 
+    const rr = [
+      SyncRenderEnum.Sync,
+      SyncRenderEnum.FPS_60,
+      SyncRenderEnum.FPS_120,
+      SyncRenderEnum.Unlimited
+    ]
     this.render_rate = this.node.search_node("render_rate_row")?.search_component(SliderHandle)
-    if (this.render_rate) this.render_rate.set_value(2 - this.world.sync_render);
+    if (this.render_rate) this.render_rate.set_value(rr.indexOf(this.world.sync_render));
     this.render_rate?.callbacks.add({
       on_value_changed: (v) => {
-        this.world.sync_render = floor(2 - v);
+        this.world.sync_render = rr[v];
         this.lf2.sounds.play_preset('ok')
       }
     })

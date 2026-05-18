@@ -37,7 +37,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, between, clamp, floor, is_num, max, min, round, sign, Times } from "./utils";
+import { abs, between, clamp, is_num, max, min, round, sign, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355
@@ -254,22 +254,29 @@ export class World extends WorldDataset {
     this._render_worker_id && Ditto.Render.del(this._render_worker_id);
     this._render_worker_id = 0;
   }
+  get FPS() {
+    switch (this.sync_render as SyncRenderEnum) {
+      case SyncRenderEnum.Unlimited: return 1000
+      case SyncRenderEnum.FPS_60: return 60
+      case SyncRenderEnum.FPS_120: return 120
+      case SyncRenderEnum.Sync: return this.UPS
+    }
+  }
   start_render() {
     if (this._render_worker_id) Ditto.Render.del(this._render_worker_id);
-    if (
-      this.sync_render != SyncRenderEnum.Unlimited
-    ) return;
-    let _r_prev_time = 0;
+    let prev_time = 0;
+    let fix_radio = 1;
+    let ideally_dt = 1000 / this.FPS;
+    let fps = this.FPS
+
     const on_render = (time: number) => {
-      const dt = time - _r_prev_time;
-      if (_r_prev_time !== 0) {
-        this.render_once(dt);
-      }
-      if (_r_prev_time !== 0 && this._need_FPS) {
-        this._FPS.update(dt);
-        this.callbacks.emit("on_fps_update")(this._FPS.value);
-      }
-      _r_prev_time = time;
+      const real_dt = time - prev_time;
+      if (real_dt < fix_radio * ideally_dt) return;
+      this.render_once(real_dt);
+      this._FPS.update(real_dt);
+      if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._FPS.value);
+      fix_radio = 1 - clamp(6 * (fps - this._FPS.value) / fps, 0, 1);
+      prev_time = time;
     };
     this._render_worker_id && Ditto.Render.del(this._render_worker_id);
     this._render_worker_id = Ditto.Render.add(on_render);
@@ -299,17 +306,16 @@ export class World extends WorldDataset {
     }
 
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
-    let _prev_update_time = Date.now();
-    let _prev_render_time = Date.now();
-    let _fix_radio = 1;
+    let prev_time = Date.now();
+    let fix_radio = 1;
     this._update_time = 0;
     this.TU = 1000 / UPS;
     const ideally_dt = round(this.TU / playrate)
     const on_update = () => {
       try {
         const time = Date.now();
-        const real_update_dt = time - _prev_update_time;
-        if (real_update_dt < _fix_radio * ideally_dt) return;
+        const real_dt = time - prev_time;
+        if (real_dt < fix_radio * ideally_dt) return;
         if (this._sleeping) return;
         this.before_update?.();
         this.update_once();
@@ -318,22 +324,18 @@ export class World extends WorldDataset {
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
 
-        if (sync_render == SyncRenderEnum.Sync || sync_render == SyncRenderEnum.SyncHalf) {
-          if (0 === floor(this._update_time / playrate) % sync_render) {
-            const real_render_dt = time - _prev_render_time;
-            this.render_once(real_render_dt);
-            if (this._need_FPS) {
-              this._FPS.update(real_render_dt);
-              this.callbacks.emit("on_fps_update")(this._FPS.value);
-            }
-            _prev_render_time = time;
+        if (sync_render == SyncRenderEnum.Sync) {
+          this.render_once(real_dt);
+          if (this._need_FPS) {
+            this._FPS.update(real_dt);
+            this.callbacks.emit("on_fps_update")(this._FPS.value);
           }
         }
         if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
         this.after_update?.();
-        this._UPS.update(real_update_dt);
-        _fix_radio = 1 - clamp(6 * (UPS - this._UPS.value) / UPS, 0, 1);
-        _prev_update_time = time;
+        this._UPS.update(real_dt);
+        fix_radio = 1 - clamp(6 * (UPS - this._UPS.value) / UPS, 0, 1);
+        prev_time = time;
       } catch (e: any) {
         Ditto.warn(e)
         if (e.errors) Ditto.warn(e.errors)
