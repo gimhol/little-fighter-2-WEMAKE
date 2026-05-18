@@ -31,16 +31,12 @@ export class WorldRenderer implements IWorldRenderer {
   protected renderer_h: number = 0;
   indicators: number = 0;
   get cam_x() { return this.cam_p1.x }
-  set cam_x(v) { this.cam_p1.x = v }
+  set cam_x(v) { this.cam_p1.x = max(0, v) }
   get cam_y() { return this.cam_p1.y }
   set cam_y(v) { this.cam_p1.y = v }
 
   private cam_p0 = new Vector3()
   private cam_p1 = new Vector3()
-  set_cam_pos(x: number, y: number): void {
-    this.cam_x = max(0, x)
-    this.cam_y = y
-  }
 
   set_renderer_size(w: number, h: number): this {
     this.renderer_w = w;
@@ -136,21 +132,29 @@ export class WorldRenderer implements IWorldRenderer {
     const update_time = this.world.update_time
     if (this._update_time != update_time) {
       this._update_time = update_time;
+      this.cam_p0.copy(this.cam_p1)
+      this.cam_p1.x = this.world.current_cam_x;
     }
 
     if (this.world.sync_render == 0) {
-
+      const f = this._t / tu;
+      this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, f)
+      const { x, y } = this.camera.position;
+      this.ui_container.position.set(
+        x + this.ui_offset.x,
+        y + this.world.screen_h + this.ui_offset.y,
+        this.ui_offset.z
+      )
     } else {
-      const x = Math.max(0, this.cam_x)
-      const y = this.cam_y
-      this.camera.position.x = x;
-      this.camera.position.y = y;
+      this.camera.position.copy(this.cam_p1)
+      const { x, y } = this.camera.position;
       this.ui_container.position.set(
         x + this.ui_offset.x,
         y + this.world.screen_h + this.ui_offset.y,
         this.ui_offset.z
       )
     }
+
 
 
     const { indicator_flags, transform } = this.world;

@@ -74,7 +74,8 @@ export class World extends WorldDataset {
   private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
   private _cam_speed: number = 0;
-  cam_x: number = 0;
+  target_cam_x: number = 0;
+  current_cam_x: number = 0;
   private _dist_cam_x: number | undefined = void 0;
   private _lock_cam_x: number | undefined = void 0;
   public renderer: IWorldRenderer;
@@ -767,15 +768,15 @@ export class World extends WorldDataset {
     this.entities.length = this.entities.length - offset
 
     if (local_cam_x_count) {
-      this.cam_x = round(local_cam_x_sum / local_cam_x_count);
+      this.target_cam_x = round(local_cam_x_sum / local_cam_x_count);
     } else if (human_cam_x_count) {
-      this.cam_x = round(human_cam_x_sum / human_cam_x_count);
+      this.target_cam_x = round(human_cam_x_sum / human_cam_x_count);
     } else if (puppet_cam_x_count) {
-      this.cam_x = round(puppet_cam_x_sum / puppet_cam_x_count);
+      this.target_cam_x = round(puppet_cam_x_sum / puppet_cam_x_count);
     } else if (fighter_cam_x_count) {
-      this.cam_x = round(fighter_cam_x_sum / fighter_cam_x_count);
+      this.target_cam_x = round(fighter_cam_x_sum / fighter_cam_x_count);
     } else {
-      this.renderer.cam_x = this.cam_x = round(
+      this.renderer.cam_x = this.current_cam_x = this.target_cam_x = round(
         (this.player_r + this.player_l) / 2 - this.screen_w / 2
       )
     }
@@ -837,16 +838,15 @@ export class World extends WorldDataset {
     const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    this.cam_x = clamp(this._lock_cam_x ?? this._dist_cam_x ?? this.cam_x,
+    this.target_cam_x = clamp(this._lock_cam_x ?? this._dist_cam_x ?? this.target_cam_x,
       max_cam_left,
       max_cam_right - (this.screen_w / this.transform.scale_x)
     );
-    let cur_x = this.renderer.cam_x;
     const acc = min(
       this.atom_time * acc_ratio,
-      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - this.cam_x)) / (this.screen_w / this.transform.scale_x),
+      this.atom_time * 0.7 * (acc_ratio * abs(this.current_cam_x - this.target_cam_x)) / (this.screen_w / this.transform.scale_x),
     );
-    const direction = cur_x > this.cam_x ? -1 : 1;
+    const direction = this.current_cam_x > this.target_cam_x ? -1 : 1;
     const max_speed = direction * max_speed_ratio * acc;
     if (sign(this._cam_speed) !== direction)
       this._cam_speed = 0;
@@ -856,10 +856,10 @@ export class World extends WorldDataset {
       this._cam_speed = max_speed;
 
     if (direction < 0)
-      this.renderer.cam_x = max(this.cam_x, this.renderer.cam_x + this._cam_speed)
+      this.current_cam_x = max(this.target_cam_x, this.current_cam_x + this._cam_speed)
     else
-      this.renderer.cam_x = min(this.cam_x, this.renderer.cam_x + this._cam_speed);
-    const new_cam_x = round(this.renderer.cam_x);
+      this.current_cam_x = min(this.target_cam_x, this.current_cam_x + this._cam_speed);
+    const new_cam_x = round(this.current_cam_x);
     if (old_cam_x !== new_cam_x) {
       this.callbacks.emit("on_cam_move")(new_cam_x);
     }
