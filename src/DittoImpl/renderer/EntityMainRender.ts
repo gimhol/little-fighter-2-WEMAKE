@@ -1,16 +1,16 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
-import { clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
+import { Builtin_FrameId, clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import * as T from "../_t";
 import { MeshBasicMaterial, Vector3 } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
+import type { EntityRenderer } from "./EntityRenderer";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_static_plane_geometry } from "./GeometryKeeper";
 import { OutlineMaterial } from "./materials/OutlineMaterial";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
-import type { EntityRenderer } from "./EntityRenderer";
 
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
@@ -146,7 +146,6 @@ export class EntityMainRender {
     }
   }
   render(dt: number) {
-
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
 
@@ -217,7 +216,9 @@ export class EntityMainRender {
       main_mesh.visible = false;
     } else if (blinking) {
       main_mesh.visible = 0 === floor(blinking / 4) % 2;
-    } else {
+    } else if (frame.id == Builtin_FrameId.Gone) {
+      main_mesh.visible = false;
+    } else if (frame.state == StateEnum.Gone) {
       main_mesh.visible = true;
     }
 

@@ -1,5 +1,5 @@
 
-import { clamp, type Entity } from "@/LF2";
+import { Builtin_FrameId, clamp, StateEnum, type Entity } from "@/LF2";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Vector3 } from "../_t";
 import { get_static_plane_geometry } from "./GeometryKeeper";
 import { get_static_img_material } from "./MaterialKeeper";
@@ -91,7 +91,13 @@ export class EntityShadowRender {
       const { frame, invisible } = entity;
       this.update_position();
       this.update_scale_opacity();
-      this.mesh.visible = !invisible && !frame.no_shadow;
+      if (frame.id == Builtin_FrameId.Gone) {
+        this.mesh.visible = false;
+      } else if (frame.state == StateEnum.Gone) {
+        this.mesh.visible = true;
+      } else {
+        this.mesh.visible = !invisible && !frame.no_shadow;
+      }
     }
 
     const f = this.world_renderer.dfactor;

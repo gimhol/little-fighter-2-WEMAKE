@@ -1,12 +1,10 @@
-import { EntityGroup, FrameBehavior as FB, ItrKind, OID, OpointKind, SpeedMode, StateEnum } from "../defines";
+import { EntityGroup, FrameBehavior as FB, OID, OpointKind, SpeedMode } from "../defines";
 import { ActionType } from "../defines/ActionType";
-import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { HitFlag } from "../defines/HitFlag";
 import { IEntityData } from "../defines/IEntityData";
 import { ensure, find, floor } from "../utils";
 import { foreach } from "../utils/container_help/foreach";
 import { traversal } from "../utils/container_help/traversal";
-import { CondMaker } from "./CondMaker";
 import { set_hit_flag } from "./set_hit_flag";
 export function make_ball_special(data: IEntityData) {
   switch (data.id as OID) {
@@ -135,41 +133,7 @@ export function make_ball_special(data: IEntityData) {
       break;
     }
 
-    case OID.JohnBiscuit: {
-      foreach(data.frames, (frame) => {
-        foreach(frame.bdy, bdy => {
-          bdy.actions = ensure([], {
-            type: ActionType.V_REBOUND_VX,
-            test: new CondMaker<C_Val>()
-              .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
-              .done(),
-            data: ''
-          }, {
-            type: ActionType.V_TURN_FACE,
-            test: new CondMaker<C_Val>()
-              .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
-              .done(),
-            data: ''
-          }, {
-            type: ActionType.V_TURN_TEAM,
-            test: new CondMaker<C_Val>()
-              .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
-              .done(),
-            data: ''
-          }, {
-            type: ActionType.V_NextFrame,
-            test: new CondMaker<C_Val>()
-              .one_of(C_Val.AttackerState, StateEnum.Ball_3005, StateEnum.Ball_3006)
-              .and(C_Val.ItrKind, "!=", ItrKind.JohnShield)
-              .done(),
-            data: {
-              id: "20"
-            }
-          })
-        })
-      })
-      break;
-    }
+    case OID.JohnBiscuit: break;
     case OID.FreezeBall:
       data.base.group = ensure(data.base.group, EntityGroup.Freezer);
       break;
