@@ -667,32 +667,6 @@ export class World extends WorldDataset {
     }
 
     this.has_players_alive = false
-    // for (const e of this._freshs) {
-    //   if (this.entity_map.has(e.id)) continue;
-    //   if (is_fighter(e)) {
-    //     this.callbacks.emit("on_fighter_add")(e);
-    //     const player = this.lf2.players.get(e.ctrl.player_id)
-    //     if (player) {
-    //       player.fighter = e;
-    //       e.puppet = true
-    //       this.puppets.set(e.ctrl.player_id, e);
-    //       this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
-    //     }
-    //   }
-    //   this.entities.push(e);
-    //   this.entity_map.set(e.id, e)
-    //   this.renderer.add_entity(e);
-    // }
-    // this._freshs.clear()
-
-    // this.entities.forEach((a) => {
-    //   const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
-    //   a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
-    //   a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
-    // })
-    // this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
-
-    // let divider = 0;
     let offset = 0;
     let puppet_cam_x_sum = 0;
     let puppet_cam_x_count = 0;
@@ -720,9 +694,6 @@ export class World extends WorldDataset {
         this.has_players_alive = true;
       a.update();
       if (a.ghosted) continue;
-      if (update_chasing && this._chasers.size)
-        for (const c of this._chasers)
-          c.update_chasing(a)
 
       if (is_fighter(a)) {
         const x = a.position.x - this.screen_w / 2 + (a.facing * this.screen_w) / 6;
@@ -743,20 +714,41 @@ export class World extends WorldDataset {
         }
       }
 
-      const a_ctrl = a.ctrl
+      if (update_chasing) {
+        for (const c of this._chasers)
+          c.update_chasing(a)
+
+        const a_ctrl = a.ctrl
+        for (let j = 0; j < temp_entities.length; j++) {
+          const b = temp_entities[j];
+          const b_ctrl = b.ctrl;
+          if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
+          if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
+        }
+        temp_entities.push(a);
+      }
+    }
+    this.entities.length = this.entities.length - offset
+
+    let divider = 0;
+    this.entities.forEach((a) => {
+      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
+      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+    })
+    this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
+    temp_entities.length = 0;
+    for (let i = 0; i < this.entities.length; i++) {
+      const a = this.entities[i];
+      if (a.ghosted) continue;
       for (let j = 0; j < temp_entities.length; j++) {
         const b = temp_entities[j];
-        const b_ctrl = b.ctrl;
-        if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
-        if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
-
-        // FIXME: 可恶啊，update有速度和位移，这导致这个逻辑不对了
-        // if (j < divider) continue; //
-        // if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
-        //   // 分割，前面的不会与此后的碰撞了
-        //   divider = j + 1;
-        //   continue;
-        // }
+        if (j < divider) continue; //
+        if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
+          // 分割，前面的不会与此后的碰撞了
+          divider = j + 1;
+          continue;
+        }
         const collision1 = collision_get(a, b);
         const collision2 = collision_get(b, a);
 
@@ -780,8 +772,6 @@ export class World extends WorldDataset {
       }
       temp_entities.push(a);
     }
-    this.entities.length = this.entities.length - offset
-
     if (local_cam_x_count) {
       this.target_cam_x = round(local_cam_x_sum / local_cam_x_count);
     } else if (human_cam_x_count) {
