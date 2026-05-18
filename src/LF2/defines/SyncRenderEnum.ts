@@ -1,6 +1,7 @@
 export enum SyncRenderEnum {
   Unlimited = 0,
-  Sync = 1,
-  FPS_60 = 2,
-  FPS_120 = 3,
+  Half = 1,
+  Sync = 2,
+  FPS_60 = 3,
+  FPS_120 = 4,
 }

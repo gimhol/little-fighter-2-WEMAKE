@@ -63,6 +63,7 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
+import { SyncRenderEnum } from "./LF2/defines/SyncRenderEnum";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
@@ -100,7 +101,7 @@ const init_app_state = () => ({
 })
 const init_world_dataset = (): IWorldDataset => {
   const ret = new WorldDataset(true).dump_dataset();
-  ret.sync_render = low_device ? 1 : 1;
+  ret.sync_render = SyncRenderEnum.Sync;
   ret.UPS = low_device ? 30 : 60;
   return ret;
 }

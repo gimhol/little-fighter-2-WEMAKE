@@ -80,13 +80,14 @@ export class MiscSettingsLogic extends UIComponent {
     })
 
     const rr = [
+      SyncRenderEnum.Half,
       SyncRenderEnum.Sync,
       SyncRenderEnum.FPS_60,
       SyncRenderEnum.FPS_120,
       SyncRenderEnum.Unlimited
     ]
     this.render_rate = this.node.search_node("render_rate_row")?.search_component(SliderHandle)
-    if (this.render_rate) this.render_rate.set_value(rr.indexOf(this.world.sync_render));
+    this.render_rate?.set_value(rr.indexOf(this.world.sync_render));
     this.render_rate?.callbacks.add({
       on_value_changed: (v) => {
         this.world.sync_render = rr[v];
@@ -101,7 +102,7 @@ export class MiscSettingsLogic extends UIComponent {
     const key_hit_duration_arr = ups_arr.map(v => 10 * v / 60)
     const fvy_f_arr = [-0.5, -0.5, -0.5324, -0.678];
     const wait_offset_arr = [-1, 0, 0, 0.5]
-    if (this.ups) this.ups.set_value(ups_arr.indexOf(this.world.UPS));
+    this.ups?.set_value(ups_arr.indexOf(this.world.UPS));
     this.ups?.callbacks.add({
       on_value_changed: (v) => {
         this.world.UPS = ups_arr[v];

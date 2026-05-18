@@ -127,7 +127,7 @@ export class WorldRenderer implements IWorldRenderer {
   dirty: boolean = false;
   render(dt: number): void {
     this.tu = this.world.TU;
-    const utime = this.world.update_time
+    const utime = this.world.lifetime
     if (this.world.FPS <= this.world.UPS) {
       this.utime = utime;
       this.dtime = this.tu;

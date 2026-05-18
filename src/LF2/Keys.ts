@@ -6,7 +6,7 @@ import { World } from "./World";
 export class Keys {
   readonly lf2: LF2;
   readonly world: World;
-  get time() { return this.lf2.world.update_time; }
+  get time() { return this.lf2.world.lifetime; }
   readonly [GK.L] = new KeyStatus(this);
   readonly [GK.R] = new KeyStatus(this);
   readonly [GK.U] = new KeyStatus(this);

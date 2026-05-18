@@ -37,7 +37,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, between, clamp, is_num, max, min, round, sign, Times } from "./utils";
+import { abs, between, clamp, floor, is_num, max, min, round, sign, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355
@@ -54,7 +54,7 @@ export class World extends WorldDataset {
   private _need_UPS: boolean = true;
   private _FPS = new FPS(0.9);
   private _UPS = new FPS(0.9);
-  private _update_time: number = 0;
+  private _lifetime: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   /** 
@@ -148,7 +148,7 @@ export class World extends WorldDataset {
 
   get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time.value }
-  get update_time() { return this._update_time }
+  get lifetime() { return this._lifetime }
   get lock_cam_x() { return this._lock_cam_x }
 
   constructor(lf2: LF2) {
@@ -260,10 +260,15 @@ export class World extends WorldDataset {
       case SyncRenderEnum.FPS_60: return 60
       case SyncRenderEnum.FPS_120: return 120
       case SyncRenderEnum.Sync: return this.UPS
+      case SyncRenderEnum.Half: return floor(this.UPS / 2)
     }
   }
   start_render() {
     if (this._render_worker_id) Ditto.Render.del(this._render_worker_id);
+    if (this.sync_render == SyncRenderEnum.Sync) return;
+    if (this.sync_render == SyncRenderEnum.Half) return;
+
+
     let prev_time = 0;
     let fix_radio = 1;
     let ideally_dt = 1000 / this.FPS;
@@ -308,7 +313,6 @@ export class World extends WorldDataset {
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
     let prev_time = Date.now();
     let fix_radio = 1;
-    this._update_time = 0;
     this.TU = 1000 / UPS;
     const ideally_dt = round(this.TU / playrate)
     const on_update = () => {
@@ -319,17 +323,19 @@ export class World extends WorldDataset {
         if (this._sleeping) return;
         this.before_update?.();
         this.update_once();
-        this._update_time++;
+        this._lifetime++;
         this.lf2.events.length = 0;
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
 
         if (sync_render == SyncRenderEnum.Sync) {
           this.render_once(real_dt);
-          if (this._need_FPS) {
-            this._FPS.update(real_dt);
-            this.callbacks.emit("on_fps_update")(this._FPS.value);
-          }
+          this._FPS.update(real_dt);
+          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._FPS.value);
+        } else if (sync_render == SyncRenderEnum.Half && floor(this._lifetime / playrate) % 2) {
+          this.render_once(real_dt * 2);
+          this._FPS.update(real_dt * 2);
+          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._FPS.value);
         }
         if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
         this.after_update?.();
