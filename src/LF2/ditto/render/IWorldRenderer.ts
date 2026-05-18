@@ -5,7 +5,6 @@ export interface IWorldRenderer {
   set cam_x(v: number);
   get cam_y(): number;
   set cam_y(v: number);
-  set_cam_pos(x: number, y: number): void;
   
   indicators: number;
   add_entity(entity: Entity): void;

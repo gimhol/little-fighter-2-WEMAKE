@@ -78,7 +78,7 @@ export class EntityShadowRender {
   }
 
   render(dt: number) {
-    const d = 1000 / this.world.UPS;
+    const d = this.world.TU;
     this._t = min(this._t + dt, d);
     const { entity } = this;
     const update_id = entity.update_id.value;

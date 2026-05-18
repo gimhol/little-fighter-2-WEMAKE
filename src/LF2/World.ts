@@ -94,7 +94,7 @@ export class World extends WorldDataset {
   readonly v_collisions: Collision[] = []
   readonly a_collisions = new Map<Entity, Collision>()
   public has_players_alive: boolean = false;
-
+  TU: number = 1;
   get bg() { return this._bg; }
   set bg(v: Background) {
     if (v === this._bg) return;
@@ -300,7 +300,8 @@ export class World extends WorldDataset {
     let _prev_render_time = Date.now();
     let _fix_radio = 1;
     this._update_time = 0;
-    const ideally_dt = round(1000 / UPS / playrate)
+    this.TU = 1000 / UPS;
+    const ideally_dt = round(this.TU / playrate)
     const on_update = () => {
       try {
         const time = Date.now();

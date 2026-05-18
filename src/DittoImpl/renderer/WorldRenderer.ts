@@ -1,4 +1,4 @@
-import { Defines, floor, random_in } from "@/LF2";
+import { Defines, floor, max, min, random_in } from "@/LF2";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
@@ -30,21 +30,18 @@ export class WorldRenderer implements IWorldRenderer {
   protected renderer_w: number = 0;
   protected renderer_h: number = 0;
   indicators: number = 0;
+  get cam_x() { return this.cam_p1.x }
+  set cam_x(v) { this.cam_p1.x = v }
+  get cam_y() { return this.cam_p1.y }
+  set cam_y(v) { this.cam_p1.y = v }
 
-  get cam_x(): number { return this.camera.position.x }
-  set cam_x(v: number) { this.set_cam_pos(v, this.cam_y) }
-  get cam_y(): number { return this.camera.position.y }
-  set cam_y(v: number) { this.set_cam_pos(this.cam_x, v) }
+  private cam_p0 = new Vector3()
+  private cam_p1 = new Vector3()
   set_cam_pos(x: number, y: number): void {
-    x = Math.max(0, x)
-    this.camera.position.x = x;
-    this.camera.position.y = y;
-    this.ui_container.position.set(
-      x + this.ui_offset.x,
-      y + this.world.screen_h + this.ui_offset.y,
-      this.ui_offset.z
-    )
+    this.cam_x = max(0, x)
+    this.cam_y = y
   }
+
   set_renderer_size(w: number, h: number): this {
     this.renderer_w = w;
     this.renderer_h = h;
@@ -118,7 +115,7 @@ export class WorldRenderer implements IWorldRenderer {
 
   add_entity(entity: Entity): void {
     let renderer: EntityRenderer = entity.renderer;
-    if(!renderer) renderer = entity.renderer = new EntityRenderer(entity)
+    if (!renderer) renderer = entity.renderer = new EntityRenderer(entity)
 
     renderer.mount();
     this.entity_renderers.add(renderer)
@@ -129,7 +126,33 @@ export class WorldRenderer implements IWorldRenderer {
     renderer.unmount();
     this.entity_renderers.delete(renderer);
   }
+  private _t = 0;
+  private _update_time = 0;
   render(dt: number): void {
+
+    const tu = this.world.TU;
+    this._t = min(this._t + dt, tu);
+
+    const update_time = this.world.update_time
+    if (this._update_time != update_time) {
+      this._update_time = update_time;
+    }
+
+    if (this.world.sync_render == 0) {
+
+    } else {
+      const x = Math.max(0, this.cam_x)
+      const y = this.cam_y
+      this.camera.position.x = x;
+      this.camera.position.y = y;
+      this.ui_container.position.set(
+        x + this.ui_offset.x,
+        y + this.world.screen_h + this.ui_offset.y,
+        this.ui_offset.z
+      )
+    }
+
+
     const { indicator_flags, transform } = this.world;
     let { x, y, z, earthquake, earthquake_level, scale_x, scale_y, scale_z } = transform
     if (earthquake) x += random_in(-earthquake_level, earthquake_level)

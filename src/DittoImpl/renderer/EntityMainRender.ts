@@ -148,8 +148,8 @@ export class EntityMainRender {
     }
   }
   render(dt: number) {
-    const d = 1000 / this.world.UPS;
-    this._t = min(this._t + dt, d);
+    const tu = this.world.TU;
+    this._t = min(this._t + dt, tu);
 
     const update_id = this.entity.update_id.value;
     const { entity, main_mesh } = this;
@@ -215,7 +215,7 @@ export class EntityMainRender {
 
     this.update_shaking(dt)
     if (this.world.sync_render == 0) {
-      const f = this._t / d;
+      const f = this._t / tu;
       this.node.position.lerpVectors(this._p0, this._p1, f)
     } else {
       this.node.position.copy(this._p1)
