@@ -64,4 +64,7 @@ export class CameraCtrl extends UIComponent {
     }
     this.time += dt;
   }
+  override on_stop(): void {
+    this.lf2.cmds.push(CMD.DIST_CAM, ``)
+  }
 }
