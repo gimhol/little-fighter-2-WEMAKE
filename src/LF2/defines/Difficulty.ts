@@ -4,7 +4,7 @@ export enum Difficulty {
   Normal = 2,
   Difficult = 3,
   Crazy = 4,
-  
+
   MIN = 1,
   MAX = 4,
 }

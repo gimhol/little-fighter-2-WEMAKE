@@ -14,7 +14,6 @@ export class EntityShadowRender {
   protected _w: number = 0;
   protected _h: number = 0;
   protected _img: string = '';
-  protected _utime: number = -1;
   private _p0 = new Vector3()
   private _p1 = new Vector3()
   private _s0 = new Vector3(1, 1, 1)
@@ -80,9 +79,7 @@ export class EntityShadowRender {
 
   render() {
     const { entity } = this;
-    const update_time = entity.world.update_time;
-    if (update_time !== this._utime) {
-      this._utime = update_time;
+    if (this.owner.owner.updated) {
       const { bg, lf2 } = this;
       const { shadowsize: [sw, sh], shadow } = bg.data.base;
       if (sw !== this._w || sh !== this._h) {

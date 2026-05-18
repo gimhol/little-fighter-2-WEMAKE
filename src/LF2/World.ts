@@ -19,6 +19,7 @@ import {
   WeaponType
 } from "./defines";
 import { CMD } from "./defines/CMD";
+import { SyncRenderEnum } from "./defines/SyncRenderEnum";
 import { Ditto } from "./ditto";
 import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
@@ -253,10 +254,12 @@ export class World extends WorldDataset {
     this._render_worker_id && Ditto.Render.del(this._render_worker_id);
     this._render_worker_id = 0;
   }
-
   start_render() {
     if (this._render_worker_id) Ditto.Render.del(this._render_worker_id);
-    if (this.sync_render) return;
+    if (
+      this.sync_render != SyncRenderEnum.Unlimited &&
+      this.sync_render != SyncRenderEnum.FPS_60
+    ) return;
     let _r_prev_time = 0;
     const on_render = (time: number) => {
       const dt = time - _r_prev_time;
@@ -316,14 +319,16 @@ export class World extends WorldDataset {
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
 
-        if (0 === floor(this._update_time / playrate) % sync_render) {
-          const real_render_dt = time - _prev_render_time;
-          this.render_once(real_render_dt);
-          if (this._need_FPS) {
-            this._FPS.update(real_render_dt);
-            this.callbacks.emit("on_fps_update")(this._FPS.value);
+        if (sync_render == SyncRenderEnum.Sync || sync_render == SyncRenderEnum.SyncHalf) {
+          if (0 === floor(this._update_time / playrate) % sync_render) {
+            const real_render_dt = time - _prev_render_time;
+            this.render_once(real_render_dt);
+            if (this._need_FPS) {
+              this._FPS.update(real_render_dt);
+              this.callbacks.emit("on_fps_update")(this._FPS.value);
+            }
+            _prev_render_time = time;
           }
-          _prev_render_time = time;
         }
         if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
         this.after_update?.();
@@ -607,7 +612,7 @@ export class World extends WorldDataset {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-          if (this.current_cam_x != x) 
+          if (this.current_cam_x != x)
             this.callbacks.emit("on_cam_move")(x);
           this._lock_cam_x = x;
           this.target_cam_x = x;

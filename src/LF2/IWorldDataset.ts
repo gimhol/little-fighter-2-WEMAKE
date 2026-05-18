@@ -1,5 +1,6 @@
 import { CheatType } from "./defines/CheatType";
 import { Difficulty } from "./defines/Difficulty";
+import { SyncRenderEnum } from "./defines/SyncRenderEnum";
 import { fields, float, int, any } from "./fields";
 
 export interface IWorldDataset {
@@ -148,13 +149,13 @@ export interface IWorldDataset {
   gravity_d: number;
   weapon_throwing_gravity: number;
 
-  
+
   /**
    * 0 = 无限制
    *
-   * @type {number}
+   * @type {SyncRenderEnum}
    */
-  sync_render: number;
+  sync_render: number | SyncRenderEnum;
 
   /** 难度 */
   difficulty: Difficulty;

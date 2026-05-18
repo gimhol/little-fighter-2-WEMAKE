@@ -1,4 +1,4 @@
-import { Defines, floor, max, min, random_in } from "@/LF2";
+import { Defines, floor, min, random_in } from "@/LF2";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
@@ -125,23 +125,22 @@ export class WorldRenderer implements IWorldRenderer {
   dtime: number = 1;
   dfactor: number = 1;
   tu: number = 1;
-
+  updated = false;
   render(dt: number): void {
     this.tu = this.world.TU;
-    this.dtime = min(this.dtime + dt, this.tu);
-
-    const update_time = this.world.update_time
-    if (this._utime != update_time) {
-      this._utime = update_time;
-      this.dtime = 0;
+    const utime = this.world.update_time
+    if (this._utime != utime) {
+      this._utime = utime;
+      this.dtime = this.tu;
+      this.dfactor = 1;
+    } else {
+      this.dtime = min(this.dtime + dt, this.tu);
+      this.dfactor = min(this.dtime / this.tu, 1);
+    }
+    if (this.updated) {
       this.cam_p0.copy(this.cam_p1)
       this.cam_p1.x = this.world.current_cam_x;
     }
-
-    if (this.world.sync_render == 0)
-      this.dfactor = this.dtime / this.tu;
-    else
-      this.dfactor = 1;
 
     this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, this.dfactor)
     this.ui_container.position.set(
@@ -149,8 +148,6 @@ export class WorldRenderer implements IWorldRenderer {
       this.camera.position.y + this.world.screen_h + this.ui_offset.y,
       this.ui_offset.z
     )
-
-
     const { indicator_flags, transform } = this.world;
     let { x, y, z, earthquake, earthquake_level, scale_x, scale_y, scale_z } = transform
     if (earthquake) x += random_in(-earthquake_level, earthquake_level)
@@ -169,11 +166,11 @@ export class WorldRenderer implements IWorldRenderer {
       ui_stack.ui?.renderer.render(dt)
 
     const { scene } = this;
-    if (!this._renderer) return;
     for (const camera of this._cameras) {
-      this._renderer.render(scene, camera);
+      this._renderer?.render(scene, camera);
       this._css_renderer?.render(scene, camera);
     }
+    this.updated = false;
   }
   set_canvas(canvas: HTMLCanvasElement | null | undefined) {
     if (this._renderer) {

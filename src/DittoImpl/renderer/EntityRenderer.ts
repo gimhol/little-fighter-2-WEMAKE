@@ -19,7 +19,6 @@ export class EntityRenderer {
   ctrl: EntityCtrlRender | null = null;
   readonly owner: WorldRenderer;
   protected _indicators: number = 0;
-  protected _utime = -1;
   readonly p0 = new Vector3()
   readonly p1 = new Vector3()
   readonly position = new Vector3();
@@ -71,9 +70,7 @@ export class EntityRenderer {
       this.ensure_indi()
       this.ensure_ctrl()
     }
-    const utime = this.entity.world.update_time
-    if (this._utime !== utime) {
-      this._utime = utime;
+    if (this.owner.updated) {
       this.p0.copy(this.p1)
       this.p1.copy(this.entity.position)
     }

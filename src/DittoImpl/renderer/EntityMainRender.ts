@@ -53,7 +53,6 @@ export class EntityMainRender {
   protected files: Record<string, IPictureInfo> = {};
   protected models: Record<string, IModelInfo> = {};
   protected model_variants = new Map<string, string[]>();
-  private _utime: number = -1;
   constructor(owner: EntityRenderer) {
     this.owner = owner;
     this.world_renderer = owner.owner;
@@ -148,12 +147,10 @@ export class EntityMainRender {
   }
   render(dt: number) {
 
-    const update_time = this.world.update_time;
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
 
-    if (this._utime != update_time) {
-      this._utime = update_time;
+    if (this.owner.owner.updated) {
       this.update_position();
       const { centerx, centery, pic: { w = 0 } = {} } = frame;
       const offset_x = facing === 1 ? centerx : w - centerx;
