@@ -1,4 +1,4 @@
-import type { Entity, IEntityData, IFrameInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
+import type { Entity, IEntityData, IFrameInfo, IPictureInfo, TFace } from "@/LF2";
 import { clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import * as T from "../_t";
@@ -9,7 +9,6 @@ import type { EntityRenderer } from "./EntityRenderer";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_static_plane_geometry } from "./GeometryKeeper";
 import { OutlineMaterial } from "./materials/OutlineMaterial";
-import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
 
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
@@ -48,8 +47,6 @@ export class EntityMainRender {
   protected offset_y: number = 0;
   protected world!: World;
   protected lf2!: LF2;
-  protected prev_position!: IVector3;
-  protected position!: IVector3;
   protected files: Record<string, IPictureInfo> = {};
   protected models: Record<string, IModelInfo> = {};
   protected model_variants = new Map<string, string[]>();
@@ -115,8 +112,6 @@ export class EntityMainRender {
     }
     this.blood_mesh.visible = false;
     this.node = this.node || new T.Object3D();
-    this.prev_position = this.entity.position.clone()
-    this.position = this.entity.position.clone()
   }
 
   on_mount() {
@@ -149,7 +144,7 @@ export class EntityMainRender {
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
     if (this.owner.owner.dirty) {
-      this.update_position(!!(this.entity.bearer || this.entity.catcher));
+      this.update_position();
       const { centerx, centery, pic: { w = 0 } = {} } = frame;
       const offset_x = facing === 1 ? centerx : w - centerx;
       this.offset_x = -offset_x;
@@ -204,7 +199,20 @@ export class EntityMainRender {
     }
 
     this.update_shaking(dt)
-    this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
+
+    const holder = (
+      this.entity.bearer?.renderer ?? this.entity.catcher?.renderer
+    ) as EntityRenderer
+
+    if (!holder) {
+      this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
+    } else {
+      this.node.position.copy(this._p1)
+      this.node.position.x -= holder.main._p1.x - holder.main.node.position.x
+      this.node.position.y -= holder.main._p1.y - holder.main.node.position.y
+      this.node.position.z -= holder.main._p1.z - holder.main.node.position.z
+    }
+
     main_mesh.position.set(
       this.offset_x + this.shaking_x,
       this.offset_y,
