@@ -1,8 +1,8 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
-import { Builtin_FrameId, clamp, floor, LF2, random_in, round, StateEnum, World } from "@/LF2";
+import { Builtin_FrameId, clamp, floor, LF2, min, random_in, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import * as T from "../_t";
-import { MeshBasicMaterial } from "../_t";
+import { MeshBasicMaterial, Vector3 } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
@@ -39,9 +39,12 @@ export class EntityMainRender {
   protected _data?: IEntityData;
   protected _frame?: IFrameInfo;
   protected _facing?: TFace;
-  protected _x?: number;
-  protected _y?: number;
-  protected _z?: number;
+
+
+  protected _p0 = new Vector3()
+  protected _p1 = new Vector3()
+  protected _t = 0;
+
   protected offset_x: number = 0;
   protected offset_y: number = 0;
   protected world!: World;
@@ -52,6 +55,7 @@ export class EntityMainRender {
   protected models: Record<string, IModelInfo> = {};
 
   protected model_variants = new Map<string, string[]>();
+  private _update_id: number = -1;
   constructor(entity: Entity) {
     this.world_renderer = entity.world.renderer as WorldRenderer;
     this.reset(entity)
@@ -62,11 +66,11 @@ export class EntityMainRender {
     this.lf2 = entity.lf2;
     this._frame = void 0;
     this._facing = void 0;
-    this._x = void 0;
-    this._y = void 0;
-    this._z = void 0;
+    this._p0.set(0, 0, 0)
+    this._p1.set(0, 0, 0)
     this.shaking = 0;
     this.shaking_x = 0;
+
     const { lf2, data } = entity;
     this.file_variants.clear();
     const files = this.files = data.base.files ?? {}
@@ -125,6 +129,7 @@ export class EntityMainRender {
     )
     this.blood_mesh.position.z = 1;
     this.world_renderer.world_node.add(this.node);
+    this.update_position(true)
   }
 
   on_unmount(): void {
@@ -143,24 +148,26 @@ export class EntityMainRender {
     }
   }
   render(dt: number) {
+    const d = 1000 / this.world.UPS;
+    this._t = min(this._t + dt, d);
+
+    const update_id = this.entity.update_id.value;
+    if (this._update_id != update_id) {
+      this._update_id = update_id;
+      this.update_position()
+    }
+
     // const game_time = this.world.game_time.value
     const { entity, main_mesh } = this;
-    let { x, y, z } = this.entity.position;
+
     if (entity.frame.id === Builtin_FrameId.Gone) return;
     this.update_shaking(dt)
     const { frame, facing } = entity;
     if (entity.data !== this._data)
       this.reset(entity);
 
-    const { centerx, centery, state, pic: { w = 0 } = {} } = frame;
+    const { centerx, centery, pic: { w = 0 } = {} } = frame;
     const offset_x = facing === 1 ? centerx : w - centerx;
-    if (state === StateEnum.Message) {
-      let { cam_x: l } = this.entity.world.renderer;
-      let r = l + this.entity.world.screen_w;
-      r -= w - offset_x
-      l += offset_x
-      x = clamp(x, l, r)
-    }
     this.offset_x = -offset_x;
     this.offset_y = centery;
 
@@ -209,17 +216,14 @@ export class EntityMainRender {
       }
     }
 
-    if (this._x !== x || this._y !== y || this._z !== z) {
-      this._x = x;
-      this._y = y;
-      this._z = z;
-      this.node.position.set(
-        round(x),
-        round(y - z / 2),
-        round(z),
-      )
-    }
 
+
+    if (this.world.sync_render == 0) {
+      const f = this._t / d;
+      this.node.position.lerpVectors(this._p0, this._p1, f)
+    } else {
+      this.node.position.copy(this._p1)
+    }
     main_mesh.position.set(
       this.offset_x + this.shaking_x,
       this.offset_y,
@@ -244,6 +248,25 @@ export class EntityMainRender {
       m.uniforms.outlineWidth.value = 1
       m.uniforms.outlineAlpha.value = 1
       m.uniforms.outlineColor.value = new T.Color('#131C47')
+    }
+  }
+  update_position(immidiate: boolean = false) {
+    let { x, y, z } = this.entity.position;
+    const { facing, state } = this.entity;
+    if (state === StateEnum.Message) {
+      const { centerx, pic: { w = 0 } = {} } = this.entity.frame;
+      let { cam_x: l } = this.entity.world.renderer;
+      let r = l + this.entity.world.screen_w;
+      const offset_x = facing === 1 ? centerx : w - centerx;
+      r -= w - offset_x
+      l += offset_x
+      x = clamp(x, l, r)
+    }
+
+    this._p0.copy(this._p1);
+    this._p1.set(x, y - z / 2, z);
+    if (immidiate) {
+      this.node.position.copy(this._p1)
     }
   }
   private render_outline() {
