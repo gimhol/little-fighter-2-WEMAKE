@@ -59,6 +59,7 @@ export class EntityShadowRender {
     this._p1.y = ground_y - z / 2
     this._p1.z = z - 550
     if (immidiate) {
+      this._p0.copy(this._p1);
       this.mesh.position.copy(this._p1);
     }
   }
@@ -69,6 +70,8 @@ export class EntityShadowRender {
     this._o0 = this._o1;
     this._o1 = 0.3 + 0.7 * clamp(250 - (y - ground_y), 0, 250) / 250
     if (immidiate) {
+      this._s0.copy(this._s1)
+      this._o0 = this._o1;
       this.mesh.scale.copy(this._s1)
       this.mesh.material.opacity = this._o1;
     }

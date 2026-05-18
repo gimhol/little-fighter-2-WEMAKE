@@ -1,5 +1,5 @@
 import { new_team } from "@/LF2/base";
-import { Defines, type IEntityData } from "@/LF2/defines";
+import { CMD, Defines, type IEntityData } from "@/LF2/defines";
 import { IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { Ticker } from "@/LF2/Ticker";
@@ -31,6 +31,7 @@ export class LittleFunnyAutoGame extends UIComponent {
         t.release();
       }
     })
+    this.lf2.cmds.push(CMD.LOCK_CAM, '0')
   }
 
   override on_pause(): void {
@@ -38,6 +39,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     this.world.clear();
     this._ticker?.release();
     this._ticker = null
+    this.lf2.cmds.push(CMD.LOCK_CAM, '')
   }
 
   add_fighter() {

@@ -266,6 +266,7 @@ export class EntityMainRender {
     this._p0.copy(this._p1);
     this._p1.set(x, y - z / 2, z);
     if (immidiate) {
+      this._p0.copy(this._p1);
       this.node.position.copy(this._p1)
     }
   }

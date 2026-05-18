@@ -605,7 +605,8 @@ export class World extends WorldDataset {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-          this._lock_cam_x = x
+          this._lock_cam_x = x;
+          this.renderer.cam_x = x;
           continue;
         }
         case CMD.CHANGE_BG:
@@ -835,11 +836,14 @@ export class World extends WorldDataset {
     const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    this._cam_x = clamp(this._lock_cam_x ?? this._dist_cam_x ?? this._cam_x, max_cam_left, max_cam_right - this.screen_w);
+    this._cam_x = clamp(this._lock_cam_x ?? this._dist_cam_x ?? this._cam_x,
+      max_cam_left,
+      max_cam_right - (this.screen_w / this.transform.scale_x)
+    );
     let cur_x = this.renderer.cam_x;
     const acc = min(
       this.atom_time * acc_ratio,
-      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - this._cam_x)) / this.screen_w,
+      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - this._cam_x)) / (this.screen_w / this.transform.scale_x),
     );
     const direction = cur_x > this._cam_x ? -1 : 1;
     const max_speed = direction * max_speed_ratio * acc;
