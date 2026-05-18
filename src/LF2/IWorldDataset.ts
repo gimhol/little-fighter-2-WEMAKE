@@ -147,6 +147,13 @@ export interface IWorldDataset {
   /** 重力加速度（按着防御时） */
   gravity_d: number;
   weapon_throwing_gravity: number;
+
+  
+  /**
+   * 0 = 无限制
+   *
+   * @type {number}
+   */
   sync_render: number;
 
   /** 难度 */

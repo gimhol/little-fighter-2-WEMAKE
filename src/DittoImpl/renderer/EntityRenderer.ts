@@ -25,7 +25,7 @@ export class EntityRenderer {
     this._indicators = this.world_renderer.indicators
     this.entity = e;
     this.main = new EntityMainRender(e);
-    this.shad = new EntityShadowRender(e);
+    this.shad = new EntityShadowRender(e, this.world_renderer);
     this.name = new EntityNameRender(e, this.world_renderer);
   }
   ensure_ctrl() {
@@ -72,7 +72,7 @@ export class EntityRenderer {
     this.update_id = update_id;
     this.main.render(dt);
     this.name.render();
-    this.shad.render();
+    this.shad.render(dt);
     this.stat?.render();
     this.indi?.render();
     this.ctrl?.render()
