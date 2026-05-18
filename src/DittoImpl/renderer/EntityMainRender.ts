@@ -123,6 +123,16 @@ export class EntityMainRender {
     this.blood_mesh.position.z = 1;
     this.world_renderer.world_node.add(this.node);
     this.update_position(true)
+    this.render_outline();
+    if (this.lf2.ui?.id == "main_page") {
+      const { material: m } = this.main_mesh;
+      m.gray = 0.3
+      m.mixColor = new T.Color('#364791')
+      m.mixStength = 0.3
+      m.outlineWidth = 1
+      m.outlineAlpha = 1
+      m.outlineColor = new T.Color('#131C47')
+    }
   }
 
   on_unmount(): void {
@@ -230,19 +240,6 @@ export class EntityMainRender {
 
     this.render_bpoint();
     this.render_outline();
-    if (this.lf2.ui?.id == "main_page") {
-      const { material: m } = main_mesh;
-      m.gray = 0.3
-      m.mixColor = new T.Color('#364791')
-      m.mixStength = 0.3
-      m.outlineWidth = 1
-      m.outlineAlpha = 1
-      m.outlineColor = new T.Color('#131C47')
-    } else {
-      const { material: m } = main_mesh;
-      m.gray = 0;
-      m.mixStength = 0;
-    }
   }
   update_position(immidiate: boolean = false) {
     let { x, y, z } = this.entity.position;
@@ -268,16 +265,17 @@ export class EntityMainRender {
     const { main_mesh: main_mesh } = this;
     if (this.entity.ghosted) return;
     const { material: m } = main_mesh;
-    if (m instanceof T.ShaderMaterial) {
-      const { outline_color, outline_alpha } = this.entity;
-      const enabled = this.entity.dataset('teamoutline_enabled')
-      if (outline_color && outline_alpha && enabled) {
-        m.uniforms.outlineColor.value = new T.Color(outline_color);
-        m.uniforms.outlineAlpha.value = outline_alpha ?? 0.7
-      } else {
-        m.uniforms.outlineAlpha.value = 0
-      }
+    const { outline_color, outline_alpha } = this.entity;
+    const enabled = this.entity.dataset('teamoutline_enabled')
+    if (outline_color && outline_alpha && enabled) {
+      m.outlineColor = new T.Color(outline_color);
+      m.outlineAlpha = outline_alpha ?? 0.7
+    } else {
+      m.outlineAlpha = 0
     }
+    m.gray = 0;
+    m.mixColor = ''
+    m.mixStength = 0;
   }
   private render_bpoint() {
     const { entity, main_mesh: main_mesh } = this;
