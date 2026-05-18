@@ -238,12 +238,16 @@ export class EntityMainRender {
     this.render_outline();
     if (this.lf2.ui?.id == "main_page") {
       const { material: m } = main_mesh;
-      m.uniforms.gray.value = 0.3
-      m.uniforms.mixColor.value = new T.Color('#364791')
-      m.uniforms.mixStength.value = 0.3
-      m.uniforms.outlineWidth.value = 1
-      m.uniforms.outlineAlpha.value = 1
-      m.uniforms.outlineColor.value = new T.Color('#131C47')
+      m.gray = 0.3
+      m.mixColor = new T.Color('#364791')
+      m.mixStength = 0.3
+      m.outlineWidth = 1
+      m.outlineAlpha = 1
+      m.outlineColor = new T.Color('#131C47')
+    } else {
+      const { material: m } = main_mesh;
+      m.gray = 0;
+      m.mixStength = 0;
     }
   }
   update_position(immidiate: boolean = false) {
