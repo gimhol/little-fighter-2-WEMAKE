@@ -685,16 +685,15 @@ export class World extends WorldDataset {
     // }
     // this._freshs.clear()
 
-    this.entities.forEach((a) => {
-      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
-      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
-      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
-    })
-    this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
+    // this.entities.forEach((a) => {
+    //   const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
+    //   a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+    //   a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+    // })
+    // this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
 
-    let divider = 0;
+    // let divider = 0;
     let offset = 0;
-
     let puppet_cam_x_sum = 0;
     let puppet_cam_x_count = 0;
     let local_cam_x_sum = 0;
@@ -751,12 +750,13 @@ export class World extends WorldDataset {
         if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
         if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
 
-        if (j < divider) continue; //
-        if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
-          // 分割，前面的不会与此后的碰撞了
-          divider = j + 1;
-          continue;
-        }
+        // FIXME: 可恶啊，update有速度和位移，这导致这个逻辑不对了
+        // if (j < divider) continue; //
+        // if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
+        //   // 分割，前面的不会与此后的碰撞了
+        //   divider = j + 1;
+        //   continue;
+        // }
         const collision1 = collision_get(a, b);
         const collision2 = collision_get(b, a);
 
