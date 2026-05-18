@@ -607,8 +607,11 @@ export class World extends WorldDataset {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
+          if (this.current_cam_x != x) 
+            this.callbacks.emit("on_cam_move")(x);
           this._lock_cam_x = x;
-          this.renderer.cam_x = x;
+          this.target_cam_x = x;
+          this.current_cam_x = x;
           continue;
         }
         case CMD.CHANGE_BG:
@@ -776,7 +779,7 @@ export class World extends WorldDataset {
     } else if (fighter_cam_x_count) {
       this.target_cam_x = round(fighter_cam_x_sum / fighter_cam_x_count);
     } else {
-      this.renderer.cam_x = this.current_cam_x = this.target_cam_x = round(
+      this.current_cam_x = this.target_cam_x = round(
         (this.player_r + this.player_l) / 2 - this.screen_w / 2
       )
     }
@@ -832,7 +835,7 @@ export class World extends WorldDataset {
   }
 
   update_camera() {
-    const old_cam_x = round(this.renderer.cam_x);
+    const old_cam_x = round(this.current_cam_x);
     const { cam_l, left, cam_r, right } = this.stage;
     const max_cam_left = is_num(this._lock_cam_x) ? left : cam_l;
     const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
@@ -860,9 +863,7 @@ export class World extends WorldDataset {
     else
       this.current_cam_x = min(this.target_cam_x, this.current_cam_x + this._cam_speed);
     const new_cam_x = round(this.current_cam_x);
-    if (old_cam_x !== new_cam_x) {
-      this.callbacks.emit("on_cam_move")(new_cam_x);
-    }
+    if (old_cam_x !== new_cam_x) this.callbacks.emit("on_cam_move")(new_cam_x);
   }
 
   /**

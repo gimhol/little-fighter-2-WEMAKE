@@ -143,7 +143,8 @@ export class DanmuGameLogic extends SummaryLogic {
       if (cam_x < max_cam_left) cam_x = max_cam_left;
       if (cam_x > max_cam_right - this.world.screen_w) cam_x = max_cam_right - this.world.screen_w;
       this.lf2.cmds.push(CMD.DIST_CAM, `${cam_x}`)
-      this.world.renderer.cam_x = cam_x;
+      this.world.current_cam_x = cam_x;
+      this.world.target_cam_x = cam_x;
     }
   }
   update_staring() {

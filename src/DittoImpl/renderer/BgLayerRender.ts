@@ -42,7 +42,7 @@ export class BgLayerRender {
     const { world } = bg;
     const { screen_w } = world;
     const { width: bg_width } = world;
-    const { cam_x } = world.renderer;
+    const { cam_x } = this.bg_render.world_renderer;
     const _x = bg_width > screen_w ?
       x + (bg_width - layer_width) * cam_x / (bg_width - screen_w) :
       x + (bg_width - layer_width) * cam_x
