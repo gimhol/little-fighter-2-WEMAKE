@@ -12,10 +12,10 @@ export class State_Base {
   update(e: Entity): void {
     switch (e.state) {
       case StateEnum.Burning:
-        if (e.update_id.value % 2) e.apply_opoints([spawn_buring_smoke(e, 1)]);
+        if (e.lifetime % 2) e.apply_opoints([spawn_buring_smoke(e, 1)]);
         break;
       case StateEnum.BurnRun:
-        if (e.update_id.value % 2) e.apply_opoints([spawn_buring_smoke(e, 2)]);
+        if (e.lifetime % 2) e.apply_opoints([spawn_buring_smoke(e, 2)]);
         break;
     }
   }

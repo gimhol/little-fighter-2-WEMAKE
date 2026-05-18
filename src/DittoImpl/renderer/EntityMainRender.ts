@@ -151,7 +151,7 @@ export class EntityMainRender {
     const tu = this.world.TU;
     this._t = min(this._t + dt, tu);
 
-    const update_id = this.entity.update_id.value;
+    const update_id = this.entity.lifetime;
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
 

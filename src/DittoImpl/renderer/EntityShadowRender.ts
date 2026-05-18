@@ -81,7 +81,7 @@ export class EntityShadowRender {
     const d = this.world.TU;
     this._t = min(this._t + dt, d);
     const { entity } = this;
-    const update_id = entity.update_id.value;
+    const update_id = entity.lifetime;
     if (update_id !== this._update_id) {
       this._update_id = update_id;
       const { bg, lf2 } = this;

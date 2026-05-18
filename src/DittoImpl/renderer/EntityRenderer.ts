@@ -69,7 +69,7 @@ export class EntityRenderer {
     }
     this.main.render(dt);
     this.shad.render(dt);
-    const update_id = this.entity.update_id.value
+    const update_id = this.entity.lifetime
     if (this.update_id === update_id) return;
     this.update_id = update_id;
     this.name.render();

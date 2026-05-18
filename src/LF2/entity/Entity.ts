@@ -64,8 +64,7 @@ export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
 
-  readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
-
+  protected _lifetime: number = 0;
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
   protected _outline_alpha: number = 0.8;
@@ -250,6 +249,9 @@ export class Entity {
   renderer: any;
   puppet: boolean = false;
 
+  get lifetime() {
+    return this._lifetime
+  }
   get outline_color(): string {
     return this._outline_color || Defines.TeamInfoMap[this.team]?.outline_color || ''
   };
@@ -685,7 +687,7 @@ export class Entity {
     this.world = world;
     this.id = new_id();
     this.wait = 0;
-    this.update_id.reset()
+    this._lifetime = 0;
     this._prev_ground_y = 0;
     this.fallinjury = 0;
     this._ground_y = 0;
@@ -1432,7 +1434,7 @@ export class Entity {
   }
 
   update(): void {
-    this.update_id.add()
+    this._lifetime += 1;
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
     if (this.check_fusion_dismissing()) return;

@@ -188,7 +188,7 @@ export class EntityStatRender implements IEntityCallbacks {
     this.update_reverse(this.entity)
 
     if (this.entity.healing) {
-      const heading = (this.entity.update_id.value % 8) < 4;
+      const heading = (this.entity.lifetime % 8) < 4;
       if (this._heading != heading) {
         this.hp_bar.color = heading ? "rgb(255, 130, 130)" : "rgb(255,0,0)"
         this._heading = heading
