@@ -7,15 +7,13 @@ MaterialFactory.register({
   create: (): MeshBasicMaterial => {
     return new MeshBasicMaterial({
       transparent: true,
-      opacity: 0,
-      map: void 0,
+      opacity: 0
     })
   },
   reset: (c: MeshBasicMaterial): void => {
     c.setValues({
       transparent: true,
-      opacity: 0,
-      map: void 0,
+      opacity: 0
     })
   }
 })
