@@ -80,7 +80,7 @@ export class EntityCtrlRender {
     }
 
     const hw = 40;
-    const min_x = this.world_renderer.cam_x + hw;
+    const min_x = this.world_renderer.camera.position.x + hw;
     const max_x = min_x + (world.screen_w / world.transform.scale_x) - 2 * hw;
     const _x = clamp(x, min_x, max_x);
     let _y = round(25 + y - z / 2 + centery);

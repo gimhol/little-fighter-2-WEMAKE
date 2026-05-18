@@ -244,7 +244,7 @@ export class EntityMainRender {
     const { facing, state } = this.entity;
     if (state === StateEnum.Message) {
       const { centerx, pic: { w = 0 } = {} } = this.entity.frame;
-      let { cam_x: l } = this.world_renderer;
+      let l = this.world_renderer.camera.position.x;
       let r = l + this.entity.world.screen_w;
       const offset_x = facing === 1 ? centerx : w - centerx;
       r -= w - offset_x

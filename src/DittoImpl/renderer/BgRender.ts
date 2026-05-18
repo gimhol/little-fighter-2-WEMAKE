@@ -53,7 +53,7 @@ export class BgRender {
   }
 
   render(dt: number): void {
-    const { cam_x } = this.world_renderer;
+    const cam_x = this.world_renderer.camera.position.x;
     const { root_node, layers, cam_node } = this;
     const { bg } = this.world
     if (this.bg !== bg) this.set_bg(bg)

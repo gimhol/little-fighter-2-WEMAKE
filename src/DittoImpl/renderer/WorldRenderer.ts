@@ -30,10 +30,6 @@ export class WorldRenderer implements IWorldRenderer {
   protected renderer_w: number = 0;
   protected renderer_h: number = 0;
   indicators: number = 0;
-  get cam_x() { return this.cam_p1.x }
-  set cam_x(v) { this.cam_p1.x = max(0, v) }
-  get cam_y() { return this.cam_p1.y }
-  set cam_y(v) { this.cam_p1.y = v }
 
   private cam_p0 = new Vector3()
   private cam_p1 = new Vector3()
