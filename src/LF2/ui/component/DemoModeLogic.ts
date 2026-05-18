@@ -437,8 +437,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
 
   override on_key_down(e: IUIKeyEvent): void {
     switch (e.game_key) {
-      case GameKey.a:
-      case GameKey.j: {
+      case GameKey.a: {
         this.clearup()
         this.startup()
         break;

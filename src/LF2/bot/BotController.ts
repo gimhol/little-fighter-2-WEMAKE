@@ -416,7 +416,7 @@ export class BotController extends BaseController {
     if (me.ground_y != me.position.y) return false;
 
     if (bot_state === BSE.Avoiding)
-      return !this.w_atk_too_far(av)
+      return this.atk_r_x > 0 && !this.w_atk_too_far(av)
     return this.w_atk_too_close(av)
   }
 

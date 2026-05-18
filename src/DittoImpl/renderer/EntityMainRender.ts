@@ -124,15 +124,7 @@ export class EntityMainRender {
     this.world_renderer.world_node.add(this.node);
     this.update_position(true)
     this.render_outline();
-    if (this.lf2.ui?.id == "main_page") {
-      const { material: m } = this.main_mesh;
-      m.gray = 0.3
-      m.mixColor = new T.Color('#364791')
-      m.mixStength = 0.3
-      m.outlineWidth = 1
-      m.outlineAlpha = 1
-      m.outlineColor = new T.Color('#131C47')
-    }
+
   }
 
   on_unmount(): void {
@@ -273,9 +265,19 @@ export class EntityMainRender {
     } else {
       m.outlineAlpha = 0
     }
-    m.gray = 0;
-    m.mixColor = ''
-    m.mixStength = 0;
+    if (this.lf2.ui?.id == "main_page") {
+      const { material: m } = this.main_mesh;
+      m.gray = 0.3
+      m.mixColor = new T.Color('#364791')
+      m.mixStength = 0.3
+      m.outlineWidth = 1
+      m.outlineAlpha = 1
+      m.outlineColor = new T.Color('#131C47')
+    } else {
+      m.gray = 0;
+      m.mixColor = ''
+      m.mixStength = 0;
+    }
   }
   private render_bpoint() {
     const { entity, main_mesh: main_mesh } = this;

@@ -77,7 +77,7 @@ export namespace Defines {
   export const WT_FAST_Y: Record<WT, number> = {
     [WT.None]:     /**/ 99,
     [WT.Stick]:    /**/ 99,
-    [WT.Heavy]:    /**/ 99,
+    [WT.Heavy]:    /**/ 1,
     [WT.Knife]:    /**/ 99,
     [WT.Baseball]: /**/ 99,
     [WT.Drink]:    /**/ 99,
@@ -85,7 +85,7 @@ export namespace Defines {
   export const WT_FAST_X: Record<WT, number> = {
     [WT.None]:      /**/ 99,
     [WT.Stick]:     /**/ 99,
-    [WT.Heavy]:     /**/ 99,
+    [WT.Heavy]:     /**/ 1,
     [WT.Knife]:     /**/ 99,
     [WT.Baseball]:  /**/ 4,
     [WT.Drink]:     /**/ 4,
@@ -93,7 +93,7 @@ export namespace Defines {
   export const WT_FAST_Z: Record<WT, number> = {
     [WT.None]:     /**/ 99,
     [WT.Stick]:    /**/ 99,
-    [WT.Heavy]:    /**/ 99,
+    [WT.Heavy]:    /**/ 1,
     [WT.Knife]:    /**/ 99,
     [WT.Baseball]: /**/ 99,
     [WT.Drink]:    /**/ 99,
