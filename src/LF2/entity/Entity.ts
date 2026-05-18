@@ -2161,8 +2161,8 @@ export class Entity {
     if (flags.sounds?.length) this.play_sound(flags.sounds);
 
     if (flags.blink_time) this.blinking = flags.blink_time;
-    if (this.bearer) this.follow_bearer()
-    if (this.catcher) this.follow_catcher()
+    // if(this.bearer) this.follow_bearer()
+    // if(this.catcher) this.follow_catcher()
   }
 
   handle_wait_flag(wait: string | number, frame?: IFrameInfo): number {
