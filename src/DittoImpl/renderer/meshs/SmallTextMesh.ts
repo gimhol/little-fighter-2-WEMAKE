@@ -2,8 +2,8 @@ import type { IStyle, LF2 } from "@/LF2";
 import { BufferGeometry, Mesh, ShaderMaterial } from "three";
 import * as T from "../../_t";
 import { IInstCreator, MaterialFactory, MaterialKind, MeshFactory } from "../factory";
-import { get_geometry } from "../GeometryKeeper";
-const TEXT_GEOMETRY = get_geometry(1, 1);
+import { get_static_plane_geometry } from "../GeometryKeeper";
+const TEXT_GEOMETRY = get_static_plane_geometry(1, 1);
 const TEXT_STYLE: IStyle = {
   fill_style: 'white',
   font: "9px Arial",

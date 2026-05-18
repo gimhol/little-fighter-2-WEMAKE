@@ -1,7 +1,7 @@
 import type { Layer } from "@/LF2/bg/Layer";
 import * as T from "../_t";
 import type { BgRender } from "./BgRender";
-import { get_geometry } from "./GeometryKeeper";
+import { get_static_plane_geometry } from "./GeometryKeeper";
 import { get_bg_layer_material } from "./MaterialKeeper";
 
 
@@ -20,7 +20,7 @@ export class BgLayerRender {
     const w = pic?.w ?? info.w ?? info.width;
     const h = pic?.h ?? info.h ?? info.height;
     this.mesh = new T.Mesh(
-      get_geometry(w, h, w / 2, -h / 2),
+      get_static_plane_geometry(w, h, w / 2, -h / 2),
       get_bg_layer_material(info, layer.bg.world.lf2)
     );
     this.mesh.name = `bg layer ${name ?? id ?? 'unnamed'}`;

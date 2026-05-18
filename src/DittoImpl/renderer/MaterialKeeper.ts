@@ -18,7 +18,7 @@ export const get_bg_layer_material = (info: IBgLayerInfo, lf2: LF2) => {
   })
 }
 
-export function get_img_material(file?: string, lf2?: LF2) {
+export function get_static_img_material(lf2: LF2, file: string) {
   const key = file || `empty`;
   return MaterialKeeper.get(key, () => {
     const ret = MaterialFactory.get(MaterialKind.Basic, MeshBasicMaterial)

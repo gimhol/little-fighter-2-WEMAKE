@@ -2,7 +2,7 @@ import { clamp, max } from "@/LF2";
 import type { LF2 } from "@/LF2/LF2";
 import * as T from "../_t";
 import { MeshBasicMaterial } from "../_t";
-import { get_geometry } from "./GeometryKeeper";
+import { get_static_plane_geometry } from "./GeometryKeeper";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 
 export class Bar {
@@ -32,7 +32,7 @@ export class Bar {
 
     const m = MaterialFactory.get(MaterialKind.Color, MeshBasicMaterial)
     m.color = new T.Color(color)
-    const g = get_geometry(w, h, ax * w, ay * h)
+    const g = get_static_plane_geometry(w, h, ax * w, ay * h)
     this.mesh = new T.Mesh(g, m,);
   }
 

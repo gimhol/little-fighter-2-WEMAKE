@@ -2,8 +2,8 @@
 import { clamp, round, type Entity } from "@/LF2";
 import * as T from "../_t";
 import { BufferGeometry, Mesh, MeshBasicMaterial } from "../_t";
-import { get_geometry } from "./GeometryKeeper";
-import { get_img_material } from "./MaterialKeeper";
+import { get_static_plane_geometry } from "./GeometryKeeper";
+import { get_static_img_material } from "./MaterialKeeper";
 import { WorldRenderer } from "./WorldRenderer";
 
 export class EntityShadowRender {
@@ -12,7 +12,7 @@ export class EntityShadowRender {
   protected _w: number = 0;
   protected _h: number = 0;
   protected _img: string = '';
-  
+
   get lf2() { return this.entity.lf2 }
   get world() { return this.entity.world }
   get bg() { return this.world.bg }
@@ -27,8 +27,8 @@ export class EntityShadowRender {
     this._w = sw;
     this._img = shadow;
     this.mesh = new T.Mesh(
-      get_geometry(sw, sh),
-      get_img_material(shadow, lf2),
+      get_static_plane_geometry(sw, sh),
+      get_static_img_material(lf2, shadow),
     );
     this.mesh.visible = false;
     this.mesh.name = EntityShadowRender.name;
@@ -45,13 +45,10 @@ export class EntityShadowRender {
     const { entity, bg, lf2 } = this;
     const { shadowsize: [sw, sh], shadow } = bg.data.base;
     if (sw !== this._w || sh !== this._h) {
-      this._h = sh;
-      this._w = sw;
-      this.mesh.geometry = get_geometry(sw, sh);
+      this.mesh.geometry = get_static_plane_geometry(this._w = sw, this._h = sh);
     }
     if (shadow !== this._img) {
-      this._img = shadow;
-      this.mesh.material = get_img_material(shadow, lf2)
+      this.mesh.material = get_static_img_material(lf2, this._img = shadow)
     }
     const {
       frame,

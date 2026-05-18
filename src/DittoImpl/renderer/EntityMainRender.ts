@@ -6,7 +6,7 @@ import { MeshBasicMaterial } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
-import { get_geometry } from "./GeometryKeeper";
+import { get_static_plane_geometry } from "./GeometryKeeper";
 import { OutlineMaterial } from "./materials/OutlineMaterial";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -21,8 +21,8 @@ function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   }
   return ret;
 }
-const BODY_GEOMETRY = get_geometry(1, 1, 0.5, -0.5);
-const BLOOD_GEOMETRY = get_geometry(1, 3, 0, -1.25);
+const BODY_GEOMETRY = get_static_plane_geometry(1, 1, 0.5, -0.5);
+const BLOOD_GEOMETRY = get_static_plane_geometry(1, 3, 0, -1.25);
 
 export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
