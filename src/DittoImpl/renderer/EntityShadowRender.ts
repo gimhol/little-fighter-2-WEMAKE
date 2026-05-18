@@ -1,5 +1,5 @@
 
-import { clamp, type Entity } from "@/LF2";
+import { clamp, min, type Entity } from "@/LF2";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Vector3 } from "../_t";
 import { get_static_plane_geometry } from "./GeometryKeeper";
 import { get_static_img_material } from "./MaterialKeeper";
@@ -75,10 +75,12 @@ export class EntityShadowRender {
   }
 
   render(dt: number) {
-    this._t += dt;
+    const d = 1000 / this.world.UPS;
+    this._t = min(this._t + dt, d);
     const { entity } = this;
     const update_id = entity.update_id.value;
     if (update_id !== this._update_id) {
+      this._update_id = update_id;
       const { bg, lf2 } = this;
       const { shadowsize: [sw, sh], shadow } = bg.data.base;
       if (sw !== this._w || sh !== this._h) {
@@ -94,7 +96,6 @@ export class EntityShadowRender {
       this._t = 0;
     }
     if (this.world.sync_render == 0) {
-      const d = 1000 / this.world.UPS;
       const f = this._t / d;
       this.mesh.position.lerpVectors(this._p0, this._p1, f);
       this.mesh.scale.lerpVectors(this._s0, this._s1, f);
