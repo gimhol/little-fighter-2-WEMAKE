@@ -1,5 +1,5 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, IVector3, TFace } from "@/LF2";
-import { Builtin_FrameId, clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
+import { clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import * as T from "../_t";
 import { MeshBasicMaterial, Vector3 } from "../_t";
@@ -148,7 +148,7 @@ export class EntityMainRender {
   render(dt: number) {
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
-
+    let wtf = false
     if (this.owner.owner.dirty) {
       this.update_position();
       const { centerx, centery, pic: { w = 0 } = {} } = frame;
@@ -160,6 +160,7 @@ export class EntityMainRender {
         this.reset(entity);
 
       if (this._frame !== frame || this._facing !== facing) {
+        wtf = !!(this.entity.bearer || this.entity.catcher);
         this._frame = frame;
         this._facing = facing;
         const { pic } = frame
@@ -205,7 +206,7 @@ export class EntityMainRender {
     }
 
     this.update_shaking(dt)
-    if (entity.bearer || entity.catcher) {
+    if (wtf) {
       this.node.position.lerpVectors(this._p0, this._p1, 1)
     } else {
       this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
