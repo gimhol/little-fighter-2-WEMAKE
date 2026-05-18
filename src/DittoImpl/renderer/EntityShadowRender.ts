@@ -79,7 +79,7 @@ export class EntityShadowRender {
 
   render() {
     const { entity } = this;
-    if (this.owner.owner.updated) {
+    if (this.owner.owner.dirty) {
       const { bg, lf2 } = this;
       const { shadowsize: [sw, sh], shadow } = bg.data.base;
       if (sw !== this._w || sh !== this._h) {

@@ -125,7 +125,7 @@ export class WorldRenderer implements IWorldRenderer {
   dtime: number = 1;
   dfactor: number = 1;
   tu: number = 1;
-  updated = false;
+  dirty: boolean = false;
   render(dt: number): void {
     this.tu = this.world.TU;
     const utime = this.world.update_time
@@ -133,11 +133,12 @@ export class WorldRenderer implements IWorldRenderer {
       this._utime = utime;
       this.dtime = this.tu;
       this.dfactor = 1;
+      this.dirty = false;
     } else {
       this.dtime = min(this.dtime + dt, this.tu);
       this.dfactor = min(this.dtime / this.tu, 1);
     }
-    if (this.updated) {
+    if (this.dirty) {
       this.cam_p0.copy(this.cam_p1)
       this.cam_p1.x = this.world.current_cam_x;
     }
@@ -170,7 +171,7 @@ export class WorldRenderer implements IWorldRenderer {
       this._renderer?.render(scene, camera);
       this._css_renderer?.render(scene, camera);
     }
-    this.updated = false;
+    this.dirty = false;
   }
   set_canvas(canvas: HTMLCanvasElement | null | undefined) {
     if (this._renderer) {

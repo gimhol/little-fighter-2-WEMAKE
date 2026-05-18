@@ -150,7 +150,7 @@ export class EntityMainRender {
     const { entity, main_mesh } = this;
     const { frame, facing } = entity;
 
-    if (this.owner.owner.updated) {
+    if (this.owner.owner.dirty) {
       this.update_position();
       const { centerx, centery, pic: { w = 0 } = {} } = frame;
       const offset_x = facing === 1 ? centerx : w - centerx;

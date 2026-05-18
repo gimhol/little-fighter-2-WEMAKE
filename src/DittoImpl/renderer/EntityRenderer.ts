@@ -70,7 +70,7 @@ export class EntityRenderer {
       this.ensure_indi()
       this.ensure_ctrl()
     }
-    if (this.owner.updated) {
+    if (this.owner.dirty) {
       this.p0.copy(this.p1)
       this.p1.copy(this.entity.position)
     }
