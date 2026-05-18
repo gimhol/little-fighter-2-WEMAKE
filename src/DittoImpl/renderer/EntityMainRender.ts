@@ -205,20 +205,23 @@ export class EntityMainRender {
     }
 
     this.update_shaking(dt)
-    this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
+    if (entity.bearer || entity.catcher) {
+      this.node.position.lerpVectors(this._p0, this._p1, 1)
+    } else {
+      this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
+    }
     main_mesh.position.set(
       this.offset_x + this.shaking_x,
       this.offset_y,
       0
     );
-    const { invisible, blinking } = entity;
+    const { invisible } = this.owner;
+    const { blinking } = entity;
     if (invisible) {
       main_mesh.visible = false;
     } else if (blinking) {
       main_mesh.visible = 0 === floor(blinking / 4) % 2;
-    } else if (frame.id == Builtin_FrameId.Gone) {
-      main_mesh.visible = false;
-    } else if (frame.state == StateEnum.Gone) {
+    } else {
       main_mesh.visible = true;
     }
 

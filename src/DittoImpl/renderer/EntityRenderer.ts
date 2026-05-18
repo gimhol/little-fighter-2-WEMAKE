@@ -1,4 +1,4 @@
-import { BuiltIn_OID, is_fighter, type Entity } from "@/LF2";
+import { BFID, BuiltIn_OID, is_fighter, SE, type Entity } from "@/LF2";
 import { Vector3 } from "../_t";
 import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityMainRender } from "./EntityMainRender";
@@ -22,7 +22,12 @@ export class EntityRenderer {
   readonly p0 = new Vector3()
   readonly p1 = new Vector3()
   readonly position = new Vector3();
-
+  get invisible() {
+    const { invisible, frame } = this.entity;
+    if (frame.id == BFID.Gone) return true
+    if (frame.state == SE.Gone) return true
+    return invisible;
+  }
   constructor(e: Entity) {
     this.owner = e.world.renderer as WorldRenderer
     this._indicators = this.owner.indicators
