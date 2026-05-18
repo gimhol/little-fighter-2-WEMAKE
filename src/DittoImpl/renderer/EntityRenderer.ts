@@ -1,4 +1,5 @@
 import { BuiltIn_OID, is_fighter, type Entity } from "@/LF2";
+import { Vector3 } from "../_t";
 import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityMainRender } from "./EntityMainRender";
 import { EntityNameRender } from "./EntityNameRender";
@@ -9,7 +10,6 @@ import { INDICATINGS } from "./INDICATINGS";
 import type { WorldRenderer } from "./WorldRenderer";
 
 export class EntityRenderer {
-  update_id = -1;
   entity: Entity;
   main: EntityMainRender;
   name: EntityNameRender;
@@ -17,20 +17,24 @@ export class EntityRenderer {
   stat: EntityStatRender | null = null;
   indi: FrameIndicators | null = null;
   ctrl: EntityCtrlRender | null = null;
-  readonly world_renderer: WorldRenderer;
+  readonly owner: WorldRenderer;
   protected _indicators: number = 0;
+  protected _utime = -1;
+  readonly p0 = new Vector3()
+  readonly p1 = new Vector3()
+  readonly position = new Vector3();
 
   constructor(e: Entity) {
-    this.world_renderer = e.world.renderer as WorldRenderer
-    this._indicators = this.world_renderer.indicators
+    this.owner = e.world.renderer as WorldRenderer
+    this._indicators = this.owner.indicators
     this.entity = e;
-    this.main = new EntityMainRender(e);
-    this.shad = new EntityShadowRender(e, this.world_renderer);
-    this.name = new EntityNameRender(e, this.world_renderer);
+    this.main = new EntityMainRender(this);
+    this.shad = new EntityShadowRender(this);
+    this.name = new EntityNameRender(this);
   }
   ensure_ctrl() {
     if (!this.ctrl && this._indicators & INDICATINGS.ctrl) {
-      this.ctrl = new EntityCtrlRender(this.entity, this.world_renderer)
+      this.ctrl = new EntityCtrlRender(this)
       this.ctrl.on_mount();
     } else if (this.ctrl) {
       this.ctrl.on_unmount();
@@ -44,7 +48,7 @@ export class EntityRenderer {
       this.entity.data.id === BuiltIn_OID.Criminal
     ) {
       if (!this.stat) {
-        this.stat = new EntityStatRender(this.entity, this.world_renderer);
+        this.stat = new EntityStatRender(this);
         this.stat.on_mount()
       }
     } else if (this.stat) {
@@ -62,16 +66,21 @@ export class EntityRenderer {
     }
   }
   render(dt: number) {
-    if (this._indicators !== this.world_renderer.indicators) {
-      this._indicators = this.world_renderer.indicators
+    if (this._indicators !== this.owner.indicators) {
+      this._indicators = this.owner.indicators
       this.ensure_indi()
       this.ensure_ctrl()
     }
+    const utime = this.entity.world.update_time
+    if (this._utime !== utime) {
+      this._utime = utime;
+      this.p0.copy(this.p1)
+      this.p1.copy(this.entity.position)
+    }
+    this.position.lerpVectors(this.p0, this.p1, this.owner.dfactor)
+
     this.main.render(dt);
     this.shad.render();
-    const update_id = this.entity.lifetime
-    if (this.update_id === update_id) return;
-    this.update_id = update_id;
     this.name.render();
     this.stat?.render();
     this.indi?.render();
@@ -84,6 +93,8 @@ export class EntityRenderer {
     this.ensure_stat()
     this.ensure_indi()
     this.ensure_ctrl()
+    this.p1.copy(this.entity.position)
+    this.p0.copy(this.entity.position)
   }
   unmount() {
     this.main.on_unmount();

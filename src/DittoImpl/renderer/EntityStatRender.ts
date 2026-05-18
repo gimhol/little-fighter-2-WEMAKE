@@ -5,6 +5,7 @@ import { StatBarType } from "@/LF2/entity/StatBarType";
 import { floor, round } from "@/LF2/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
+import type { EntityRenderer } from "./EntityRenderer";
 import { WorldRenderer } from "./WorldRenderer";
 import { SmallTextMesh } from "./meshs/SmallTextMesh";
 
@@ -13,6 +14,7 @@ const BAR_H = 3;
 export const BAR_BG_W = BAR_W + 2;
 const BAR_BG_H = 1 + (BAR_H + 1) * 2 + 4;
 export class EntityStatRender implements IEntityCallbacks {
+  readonly owner: EntityRenderer;
   protected _reserve_mesh: SmallTextMesh | null = null;
   protected bars_node = new T.Object3D();
   protected bars_bg: Bar;
@@ -40,9 +42,11 @@ export class EntityStatRender implements IEntityCallbacks {
     this.world_renderer.world_node.add(ret)
     return ret
   }
-  constructor(entity: Entity, world_renderer: WorldRenderer) {
-    this.world_renderer = world_renderer;
-    const { lf2 } = entity.world;
+  constructor(owner: EntityRenderer) {
+    this.owner = owner;
+    const entity = this.entity = owner.entity;
+    this.world_renderer = owner.owner;
+    const { lf2 } = owner.entity.world;
     this.bars_bg = new Bar(lf2, "rgb(0,0,0)", BAR_BG_W, BAR_BG_H, 0.5, 0);
     this.self_healing_hp_bar = new Bar(
       lf2,
@@ -67,7 +71,6 @@ export class EntityStatRender implements IEntityCallbacks {
     this.fall_value_bar = new Bar(lf2, "rgb(216, 115, 0)", BAR_W, 1, 0.5, 1);
     this.defend_value_bar = new Bar(lf2, "rgb(0, 122, 71)", BAR_W, 1, 0.5, 1);
     this.toughness_value_bar = new Bar(lf2, "rgba(0, 204, 255, 1)", BAR_W, 1, 0.5, 1);
-    this.entity = entity;
 
     let y = -1;
     this.bars_bg.mesh.position.x = -1;
@@ -179,8 +182,9 @@ export class EntityStatRender implements IEntityCallbacks {
   }
 
   render() {
+    const { x, z, y } = this.owner.position;
     const {
-      invisible, position: { x, z, y }, frame: { centery }, hp, key_role,
+      invisible, frame: { centery }, hp, key_role,
       stat_bar_type
     } = this.entity;
     const _is_fighter = is_fighter(this.entity)

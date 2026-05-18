@@ -4,8 +4,10 @@ import { BufferGeometry, Mesh, MeshBasicMaterial, Vector3 } from "../_t";
 import { get_static_plane_geometry } from "./GeometryKeeper";
 import { get_static_img_material } from "./MaterialKeeper";
 import type { WorldRenderer } from "./WorldRenderer";
+import type { EntityRenderer } from "./EntityRenderer";
 
 export class EntityShadowRender {
+  readonly owner: EntityRenderer;
   readonly mesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   readonly entity: Entity;
   readonly world_renderer: WorldRenderer;
@@ -25,12 +27,13 @@ export class EntityShadowRender {
   get bg() { return this.world.bg }
   get visible() { return this.mesh.visible; }
   set visible(v) { this.mesh.visible = v; }
-  constructor(entity: Entity, world_renderer: WorldRenderer) {
-    this.entity = entity;
-    const { lf2, world } = entity;
+  constructor(owner: EntityRenderer) {
+    this.owner = owner;
+    this.entity = owner.entity;
+    this.world_renderer = owner.owner;
+    const { lf2, world } = owner.entity;
     const { base } = world.bg.data
     const { shadow, shadowsize: [sw, sh] } = base;
-    this.world_renderer = world_renderer;
     this._h = sh;
     this._w = sw;
     this._img = shadow;

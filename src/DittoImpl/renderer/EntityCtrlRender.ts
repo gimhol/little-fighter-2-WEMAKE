@@ -5,15 +5,18 @@ import { BAR_BG_W } from "./EntityStatRender";
 import { INDICATINGS } from "./INDICATINGS";
 import { SmallTextMesh } from "./meshs";
 import { WorldRenderer } from "./WorldRenderer";
+import type { EntityRenderer } from "./EntityRenderer";
 
 export class EntityCtrlRender {
+  readonly owner: EntityRenderer;
   entity: Entity;
   world_renderer: WorldRenderer;
   protected _ctrl_node: Object3D | null = null;
   protected _ctrls: Map<GameKey | 'bot' | 'keys', SmallTextMesh> | null = null;
-  constructor(entity: Entity, world_renderer: WorldRenderer) {
-    this.world_renderer = world_renderer;
-    this.entity = entity;
+  constructor(owner: EntityRenderer) {
+    this.owner = owner;
+    this.entity = owner.entity;
+    this.world_renderer = owner.owner;
   }
   get ctrl_node(): Object3D {
     if (this._ctrl_node) return this._ctrl_node;
@@ -66,8 +69,10 @@ export class EntityCtrlRender {
     this._ctrls = null;
   }
   render() {
+
+    const { x, z, y } = this.owner.position;
     const {
-      lf2, world, position: { x, z, y }, ctrl_visible, frame: { centery }
+      lf2, world, ctrl_visible, frame: { centery }
     } = this.entity;
 
     const _ctrl_visible = ctrl_visible || world.indicator_flags & INDICATINGS.ctrl;

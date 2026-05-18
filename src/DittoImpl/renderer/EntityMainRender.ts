@@ -10,6 +10,7 @@ import { get_static_plane_geometry } from "./GeometryKeeper";
 import { OutlineMaterial } from "./materials/OutlineMaterial";
 import { vec001, vec2 } from "./Mess";
 import type { WorldRenderer } from "./WorldRenderer";
+import type { EntityRenderer } from "./EntityRenderer";
 
 function get_img_map(lf2: LF2, data: IEntityData): Map<string, RImageInfo> {
   const ret = new Map<string, RImageInfo>();
@@ -26,6 +27,7 @@ const BLOOD_GEOMETRY = get_static_plane_geometry(1, 3, 0, -1.25);
 
 export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
+  readonly owner: EntityRenderer;
   protected _game_time: number = -1;
   protected _time: number = 0;
   protected images!: Map<string, RImageInfo>;
@@ -40,7 +42,6 @@ export class EntityMainRender {
   protected _frame?: IFrameInfo;
   protected _facing?: TFace;
 
-
   protected _p0 = new Vector3()
   protected _p1 = new Vector3()
   protected offset_x: number = 0;
@@ -51,12 +52,12 @@ export class EntityMainRender {
   protected position!: IVector3;
   protected files: Record<string, IPictureInfo> = {};
   protected models: Record<string, IModelInfo> = {};
-
   protected model_variants = new Map<string, string[]>();
   private _utime: number = -1;
-  constructor(entity: Entity) {
-    this.world_renderer = entity.world.renderer as WorldRenderer;
-    this.reset(entity)
+  constructor(owner: EntityRenderer) {
+    this.owner = owner;
+    this.world_renderer = owner.owner;
+    this.reset(owner.entity)
   }
   reset(entity: Entity) {
     this.entity = entity
