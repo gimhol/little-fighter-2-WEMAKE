@@ -67,12 +67,12 @@ export class EntityRenderer {
       this.ensure_indi()
       this.ensure_ctrl()
     }
+    this.main.render(dt);
+    this.shad.render(dt);
     const update_id = this.entity.update_id.value
     if (this.update_id === update_id) return;
     this.update_id = update_id;
-    this.main.render(dt);
     this.name.render();
-    this.shad.render(dt);
     this.stat?.render();
     this.indi?.render();
     this.ctrl?.render()
