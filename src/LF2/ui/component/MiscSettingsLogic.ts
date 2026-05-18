@@ -1,5 +1,12 @@
 import { ISoundsCallback, IWorldCallbacks, round_float, SliderHandle, UIComponent } from "@/LF2";
 import { SyncRenderEnum } from "@/LF2/defines/SyncRenderEnum";
+const render_rate_options = [
+  SyncRenderEnum.Half,
+  SyncRenderEnum.Sync,
+  SyncRenderEnum.FPS_60,
+  SyncRenderEnum.FPS_120,
+  SyncRenderEnum.Unlimited
+]
 export class MiscSettingsLogic extends UIComponent {
   static override readonly TAGS: string[] = ["MiscSettingsLogic"];
   bgm_toggle: SliderHandle | undefined;
@@ -18,8 +25,8 @@ export class MiscSettingsLogic extends UIComponent {
     on_sound_muted_changed: (muted) => this.sfx_toggle?.set_value(muted ? 0 : 1),
   }
   cbs2: IWorldCallbacks = {
-    on_dataset_change: (key, value, prev, zworld) => {
-      if (key === 'sync_render') this.render_rate?.set_value(2 - value)
+    on_dataset_change: (key, value) => {
+      if (key === 'sync_render') this.render_rate?.set_value(render_rate_options.indexOf(value))
     },
   }
   override on_start(): void {
@@ -79,18 +86,12 @@ export class MiscSettingsLogic extends UIComponent {
       }
     })
 
-    const rr = [
-      SyncRenderEnum.Half,
-      SyncRenderEnum.Sync,
-      SyncRenderEnum.FPS_60,
-      SyncRenderEnum.FPS_120,
-      SyncRenderEnum.Unlimited
-    ]
+
     this.render_rate = this.node.search_node("render_rate_row")?.search_component(SliderHandle)
-    this.render_rate?.set_value(rr.indexOf(this.world.sync_render));
+    this.render_rate?.set_value(render_rate_options.indexOf(this.world.sync_render));
     this.render_rate?.callbacks.add({
       on_value_changed: (v) => {
-        this.world.sync_render = rr[v];
+        this.world.sync_render = render_rate_options[v];
         this.lf2.sounds.play_preset('ok')
       }
     })
