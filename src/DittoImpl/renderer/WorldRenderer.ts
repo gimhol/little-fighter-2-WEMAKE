@@ -128,15 +128,21 @@ export class WorldRenderer implements IWorldRenderer {
   render(dt: number): void {
     this.tu = this.world.TU;
     const utime = this.world.update_time
-    if (this.utime != utime) {
+    if (this.world.sync_render) {
       this.utime = utime;
       this.dtime = this.tu;
       this.dfactor = 1;
+      this.dirty = true;
+    } else if (this.utime != utime) {
+      this.utime = utime;
+      this.dtime = 0;
+      this.dfactor = 0;
       this.dirty = true;
     } else {
       this.dtime = min(this.dtime + dt, this.tu);
       this.dfactor = min(this.dtime / this.tu, 1);
     }
+
     if (this.dirty) {
       this.cam_p0.copy(this.cam_p1)
       this.cam_p1.x = this.world.current_cam_x;

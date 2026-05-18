@@ -257,8 +257,7 @@ export class World extends WorldDataset {
   start_render() {
     if (this._render_worker_id) Ditto.Render.del(this._render_worker_id);
     if (
-      this.sync_render != SyncRenderEnum.Unlimited &&
-      this.sync_render != SyncRenderEnum.FPS_60
+      this.sync_render != SyncRenderEnum.Unlimited
     ) return;
     let _r_prev_time = 0;
     const on_render = (time: number) => {
