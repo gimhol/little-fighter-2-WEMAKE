@@ -120,20 +120,19 @@ export class WorldRenderer implements IWorldRenderer {
     renderer.unmount();
     this.entity_renderers.delete(renderer);
   }
-  private _utime = 0;
-
-  dtime: number = 1;
-  dfactor: number = 1;
   tu: number = 1;
+  utime: number = 0;
+  dtime: number = 0;
+  dfactor: number = 1;
   dirty: boolean = false;
   render(dt: number): void {
     this.tu = this.world.TU;
     const utime = this.world.update_time
-    if (this._utime != utime) {
-      this._utime = utime;
+    if (this.utime != utime) {
+      this.utime = utime;
       this.dtime = this.tu;
       this.dfactor = 1;
-      this.dirty = false;
+      this.dirty = true;
     } else {
       this.dtime = min(this.dtime + dt, this.tu);
       this.dfactor = min(this.dtime / this.tu, 1);
