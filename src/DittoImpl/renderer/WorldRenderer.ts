@@ -133,6 +133,7 @@ export class WorldRenderer implements IWorldRenderer {
     const update_time = this.world.update_time
     if (this._update_time != update_time) {
       this._update_time = update_time;
+      this._t = 0;
       this.cam_p0.copy(this.cam_p1)
       this.cam_p1.x = this.world.current_cam_x;
     }
