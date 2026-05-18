@@ -1,8 +1,8 @@
-import { BuiltIn_OID, Builtin_FrameId, EntityGroup, IItrInfo, ItrKind, StateEnum } from "../defines";
+import { BuiltIn_OID, Builtin_FrameId, EntityGroup, GONE_FRAME_INFO, IItrInfo, IOpointInfo, ItrKind, StateEnum } from "../defines";
 import { Entity, is_ball, is_fighter, turn_face } from "../entity";
 import { round } from "../utils";
 
-const freeze_ball_opoint = {
+const freeze_ball_opoint: IOpointInfo = {
   oid: BuiltIn_OID.FreezeBall,
   kind: 0,
   x: 0,
@@ -37,18 +37,15 @@ export function handle_ball_frozen(attacker: Entity, victim: Entity, itr: IItrIn
   } while (0)
 
   // stupid?
+  const p1 = attacker.position;
+  const p2 = victim.position;
+  freeze_ball_opoint.x = 0.5 * (p1.x + p2.x) - (p1.x - attacker.frame.centerx)
+  freeze_ball_opoint.y = p2.y - (p1.y + attacker.frame.centery)
+  freeze_ball_opoint.z = 0.5 * (p1.z + p2.z) - p1.z
   const freeze_ball = attacker.spawn_entity(
     freeze_ball_opoint, void 0, turn_face(victim.facing)
   )
-
   if (!freeze_ball) return false;
-  const p1 = attacker.position;
-  const p2 = victim.position;
-  freeze_ball.position.set(
-    round(0.5 * (p1.x + p2.x)),
-    round(p2.y),
-    round(0.5 * (p1.z + p2.z))
-  );
-  victim.enter_frame({ id: '20' })
+  victim.enter_frame(GONE_FRAME_INFO)
   return true
 }
