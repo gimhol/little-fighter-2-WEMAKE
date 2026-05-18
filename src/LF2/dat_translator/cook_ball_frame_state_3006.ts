@@ -1,4 +1,4 @@
-import { FrameBehavior } from "../defines";
+import { FrameBehavior, OID } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { IEntityData } from "../defines/IEntityData";
@@ -13,7 +13,8 @@ export function cook_ball_frame_state_3006(e: IEntityData, frame: IFrameInfo) {
   foreach(frame.bdy, bdy => {
     if (
       frame.behavior == FrameBehavior.JohnChase ||
-      frame.behavior == FrameBehavior.JohnBiscuitLeaving
+      frame.behavior == FrameBehavior.JohnBiscuitLeaving ||
+      e.id == OID.JohnBiscuit
     ) {
       bdy.actions = ensure([], {
         type: ActionType.V_REBOUND_VX,
