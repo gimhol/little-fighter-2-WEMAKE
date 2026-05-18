@@ -152,72 +152,68 @@ export class EntityMainRender {
     this._t = min(this._t + dt, d);
 
     const update_id = this.entity.update_id.value;
+    const { entity, main_mesh } = this;
+    const { frame, facing } = entity;
+
     if (this._update_id != update_id) {
+      this._t = 0;
       this._update_id = update_id;
       this.update_position()
-    }
 
-    // const game_time = this.world.game_time.value
-    const { entity, main_mesh } = this;
+      const { centerx, centery, pic: { w = 0 } = {} } = frame;
+      const offset_x = facing === 1 ? centerx : w - centerx;
+      this.offset_x = -offset_x;
+      this.offset_y = centery;
 
-    if (entity.frame.id === Builtin_FrameId.Gone) return;
-    this.update_shaking(dt)
-    const { frame, facing } = entity;
-    if (entity.data !== this._data)
-      this.reset(entity);
+      if (entity.data !== this._data)
+        this.reset(entity);
 
-    const { centerx, centery, pic: { w = 0 } = {} } = frame;
-    const offset_x = facing === 1 ? centerx : w - centerx;
-    this.offset_x = -offset_x;
-    this.offset_y = centery;
+      if (this._frame !== frame || this._facing !== facing) {
+        this._frame = frame;
+        this._facing = facing;
+        const { pic } = frame
+        const { variant } = entity;
+        const { images } = this
+        if (pic) {
+          let { tex } = pic;
+          if (variant) do {
+            const variants = this.file_variants.get(tex);
+            if (!variants?.length) break;
+            const real_tex = variants[variant];
+            if (!real_tex) continue;
+            tex = real_tex
+          } while (0);
 
-    if (this._frame !== frame || this._facing !== facing) {
-      // NOTE: flipX 与纹理必须一起设置，否则会有快速切换左右方向会有奇怪的表现
-      this._frame = frame;
-      this._facing = facing;
-      const { pic } = frame
-      const { variant } = entity;
-      const { images } = this
-      if (pic) {
-        let { tex } = pic;
-        if (variant) do {
-          const variants = this.file_variants.get(tex);
-          if (!variants?.length) break;
-          const real_tex = variants[variant];
-          if (!real_tex) continue;
-          tex = real_tex
-        } while (0);
+          const img = images.get(tex);
+          if (img?.pic) {
+            const { x, y, w, h } = pic;
+            main_mesh.scale.set(w, h, 0);
+            const { material: m } = main_mesh;
+            m.uniforms.tex.value = img.pic.texture;
+            m.uniforms.tw.value = img.w;
+            m.uniforms.th.value = img.h;
+            m.uniforms.tsw.value = img.scale;
+            m.uniforms.tsh.value = img.scale;
+            m.uniforms.x.value = x;
+            m.uniforms.y.value = y;
+            m.uniforms.w.value = w;
+            m.uniforms.h.value = h;
+            m.uniforms.flipX.value = entity.facing;
+          }
+        }
 
-        const img = images.get(tex);
-        if (img?.pic) {
-          const { x, y, w, h } = pic;
-          main_mesh.scale.set(w, h, 0);
-          const { material: m } = main_mesh;
-          m.uniforms.tex.value = img.pic.texture;
-          m.uniforms.tw.value = img.w;
-          m.uniforms.th.value = img.h;
-          m.uniforms.tsw.value = img.scale;
-          m.uniforms.tsh.value = img.scale;
-          m.uniforms.x.value = x;
-          m.uniforms.y.value = y;
-          m.uniforms.w.value = w;
-          m.uniforms.h.value = h;
-          m.uniforms.flipX.value = entity.facing;
+        if (pic?.r) {
+          const c1x = vec2.x = pic.ox ?? (pic.w / 2)
+          const c1y = vec2.y = -(pic.oy ?? (pic.h / 2))
+          const cc = vec2.rotateAround(vec001, pic.r)
+          this.offset_x -= (cc.x - c1x)
+          this.offset_y -= (cc.y - c1y)
+          main_mesh.setRotationFromAxisAngle(vec001, pic.r)
         }
       }
-
-      if (pic?.r) {
-        const c1x = vec2.x = pic.ox ?? (pic.w / 2)
-        const c1y = vec2.y = -(pic.oy ?? (pic.h / 2))
-        const cc = vec2.rotateAround(vec001, pic.r)
-        this.offset_x -= (cc.x - c1x)
-        this.offset_y -= (cc.y - c1y)
-        main_mesh.setRotationFromAxisAngle(vec001, pic.r)
-      }
     }
 
-
-
+    this.update_shaking(dt)
     if (this.world.sync_render == 0) {
       const f = this._t / d;
       this.node.position.lerpVectors(this._p0, this._p1, f)
