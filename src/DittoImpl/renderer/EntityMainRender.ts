@@ -61,8 +61,8 @@ export class EntityMainRender {
 
   reset(entity: Entity): void {
     this.lf2 = entity.lf2;
-    this._frame = undefined;
-    this._facing = undefined;
+    this._frame = entity.frame;
+    this._facing = entity.facing;
     this._p0.set(0, 0, 0);
     this._p1.set(0, 0, 0);
     this.shaking = 0;
@@ -113,12 +113,13 @@ export class EntityMainRender {
       this.node.add(this.blood_mesh);
     }
     this.blood_mesh.visible = false;
+    this.update_texture();
+    this.render_outline();
+    this.update_position(true);
   }
 
   on_mount(): void {
     this.world_renderer.world_node.add(this.node);
-    this.update_position(true);
-    this.render_outline();
   }
 
   on_unmount(): void {
@@ -138,14 +139,13 @@ export class EntityMainRender {
       const { frame, facing, data } = entity;
       if (data != this._data) {
         this.reset(entity);
-        this.update_position(true);
       } else {
         this.update_position();
-      }
-      if (this._frame !== frame || this._facing !== facing) {
-        this._frame = frame;
-        this._facing = facing;
-        this.update_texture(frame, facing, entity, main_mesh);
+        if (this._frame !== frame || this._facing !== facing) {
+          this._frame = frame;
+          this._facing = facing;
+          this.update_texture();
+        }
       }
     }
 
