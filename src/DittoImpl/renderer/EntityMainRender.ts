@@ -32,7 +32,7 @@ export class EntityMainRender {
   protected _time = 0;
   protected images!: Map<string, RImageInfo>;
   protected entity!: Entity;
-  protected node!: T.Object3D;
+  protected node = new T.Object3D();
   protected main_mesh!: T.Mesh<T.BufferGeometry, OutlineMaterial>;
   protected blood_mesh!: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
   protected file_variants = new Map<string, string[]>();
@@ -54,12 +54,12 @@ export class EntityMainRender {
   constructor(owner: EntityRenderer) {
     this.owner = owner;
     this.world_renderer = owner.owner;
+    this.entity = owner.entity;
+    this.world = owner.entity.world;
     this.reset(owner.entity);
   }
 
   reset(entity: Entity): void {
-    this.entity = entity;
-    this.world = entity.world;
     this.lf2 = entity.lf2;
     this._frame = undefined;
     this._facing = undefined;
@@ -94,6 +94,7 @@ export class EntityMainRender {
       material.texture = texture;
       material.outlineWidth = 1;
       this.main_mesh = new T.Mesh(BODY_GEOMETRY, material);
+      this.node.add(this.main_mesh);
 
     }
 
@@ -108,23 +109,19 @@ export class EntityMainRender {
       const m = MaterialFactory.get(MaterialKind.Color, MeshBasicMaterial);
       m.color = new T.Color(1, 0, 0);
       this.blood_mesh = new T.Mesh(BLOOD_GEOMETRY, m);
+      this.blood_mesh.position.z = 1;
+      this.node.add(this.blood_mesh);
     }
     this.blood_mesh.visible = false;
-    this.node ||= new T.Object3D();
   }
 
   on_mount(): void {
-    this.reset(this.entity);
-    this.node.add(this.main_mesh, this.blood_mesh);
-    this.blood_mesh.position.z = 1;
     this.world_renderer.world_node.add(this.node);
     this.update_position(true);
     this.render_outline();
   }
 
   on_unmount(): void {
-    this.main_mesh.removeFromParent();
-    this.blood_mesh.removeFromParent();
     this.node.removeFromParent();
   }
 
@@ -145,43 +142,10 @@ export class EntityMainRender {
       } else {
         this.update_position();
       }
-      const { centerx, centery, pic: { w = 0 } = {} } = frame;
-      const offset_x = facing === 1 ? centerx : w - centerx;
-      this.offset_x = -offset_x;
-      this.offset_y = centery;
-
-
       if (this._frame !== frame || this._facing !== facing) {
         this._frame = frame;
         this._facing = facing;
-        const { pic } = frame;
-        const { variant } = entity;
-        const { images } = this;
-
-        if (pic) {
-          let { tex } = pic;
-          if (variant) {
-            const variants = this.file_variants.get(tex);
-            variants?.length && (tex = variants[variant]);
-          }
-
-          const img = images.get(tex);
-          if (img?.pic) {
-            const { x, y, w, h } = pic;
-            main_mesh.scale.set(w, h, 0);
-            const { material: m } = main_mesh;
-            m.uniforms.tex.value = img.pic.texture;
-            m.uniforms.tw.value = img.w;
-            m.uniforms.th.value = img.h;
-            m.uniforms.tsw.value = img.scale;
-            m.uniforms.tsh.value = img.scale;
-            m.uniforms.x.value = x;
-            m.uniforms.y.value = y;
-            m.uniforms.w.value = w;
-            m.uniforms.h.value = h;
-            m.uniforms.flipX.value = entity.facing;
-          }
-        }
+        this.update_texture(frame, facing, entity, main_mesh);
       }
     }
 
@@ -213,6 +177,43 @@ export class EntityMainRender {
 
     this.render_bpoint();
     this.render_outline();
+  }
+
+  private update_texture() {
+    const { main_mesh, entity } = this;
+    const { frame, facing } = entity;
+    const { centerx, centery, pic: { w = 0 } = {} } = frame;
+    const offset_x = facing === 1 ? centerx : w - centerx;
+    this.offset_x = -offset_x;
+    this.offset_y = centery;
+    const { pic } = frame;
+    const { variant } = entity;
+    const { images } = this;
+
+    if (!pic) return;
+
+    let { tex } = pic;
+    if (variant) {
+      const variants = this.file_variants.get(tex);
+      variants?.length && (tex = variants[variant]);
+    }
+
+    const img = images.get(tex);
+    if (!img?.pic) return;
+
+    main_mesh.scale.set(pic.w, pic.h, 0);
+    const { material: m } = main_mesh;
+    m.uniforms.tex.value = img.pic.texture;
+    m.uniforms.tw.value = img.w;
+    m.uniforms.th.value = img.h;
+    m.uniforms.tsw.value = img.scale;
+    m.uniforms.tsh.value = img.scale;
+    m.uniforms.x.value = pic.x;
+    m.uniforms.y.value = pic.y;
+    m.uniforms.w.value = pic.w;
+    m.uniforms.h.value = pic.h;
+    m.uniforms.flipX.value = entity.facing;
+
   }
 
   update_position(immediate = false): void {
