@@ -1,6 +1,5 @@
-import { l, R } from "react-router/dist/development/index-react-server-client-Da3kmxNd";
 import { IState } from "../../../base";
-import { O_ID } from "../../../defines/BuiltIn_OID";
+import { OID } from "../../../defines/BuiltIn_OID";
 import { CMD } from "../../../defines/CMD";
 import { Entity } from "../../../entity";
 import { round_float } from "../../../utils/math/round_float";
@@ -22,6 +21,10 @@ export class TestCase implements IState<number> {
   get near() { return this.world.bg.near; }
   get midX() { return round_float((this.left + this.right) / 2); }
   get midZ() { return round_float((this.near + this.far) / 2); }
+
+  readonly hori_3 = (oid: string, rx: number = 250, z: number = this.midZ): Entity[] => this.hori(oid, this.midX, z, rx * 2, 3);
+  readonly hori_2 = (oid: string, rx: number = 250, z: number = this.midZ): Entity[] => this.hori(oid, this.midX, z, rx * 2, 2);
+  readonly verti_3 = (oid: string, x: number = this.midX, z: number = 200): Entity[] => this.verti(oid, x, this.midZ, z, 3);
 
   constructor(owner: Tests) {
     this.owner = owner;
@@ -50,37 +53,23 @@ export class TestCase implements IState<number> {
     }
     return ret;
   }
-  bandits_8(px: number = 50, pz: number = 20): Entity[] {
-    return this.around_8(O_ID.Bandit, px, pz)
+  bandits_8(): Entity[] {
+    return this.circle(OID.Bandit, this.midX, this.midZ, this.bg.width / 2, this.bg.depth / 2, 8);
   }
-  around_8(oid: string, px: number = 50, pz: number = 20): Entity[] {
-    const ret: Entity[] = []
-    const x1 = this.left + px;
-    const x2 = this.midX;
-    const x3 = this.right - px;
-    const z1 = this.near - pz;
-    const z2 = this.midZ;
-    const z3 = this.far + pz;
-    const pos = [
-      [x1, z1], [x2, z1], [x3, z1], [x3, z2],
-      [x3, z3], [x2, z3], [x1, z3], [x1, z2],
-    ];
-    for (const [x, z] of pos) {
-      const e = this.spawn(oid)
-      if (!e) break;
-      ret.push(e)
-      e.set_position(x, 0, z);
-      e.attach();
-    }
-    return ret;
+  bandits_mid_8(x = 100, z = 50): Entity[] {
+    return this.circle(OID.Bandit, this.midX, this.midZ, x, z, 8);
   }
-  circle(oid: string, ox: number, oy: number, rw: number, rh: number, count: number): Entity[] {
+  circle(oid: string | string[], ox: number, oz: number, r1: number, r2: number, count?: number): Entity[] {
+    if (!oid.length) return [];
+    const oids = typeof oid === 'string' ? [oid] : oid;
+    count = count ?? oids.length;
     const ret: Entity[] = [];
     const d = Math.PI * 2 / count;
     for (let i = 0; i < count; i++) {
+      const oid = oids[i % oids.length];
       const a = round_float(d * i);
-      const x = round_float(ox + Math.cos(a) * rw);
-      const z = round_float(oy + Math.sin(a) * rh);
+      const x = round_float(ox + Math.cos(a) * r1);
+      const z = round_float(oz + Math.sin(a) * r2);
       const e = this.spawn(oid);
       if (!e) break;
       ret.push(e);
@@ -89,74 +78,41 @@ export class TestCase implements IState<number> {
     }
     return ret;
   }
-  bandits_mid_8(x = 100, z = 50): Entity[] {
-    return this.mid_8(O_ID.Bandit, x, z)
-  }
-  mid_8(oid: string, x = 100, z = 50): Entity[] {
-    const ret: Entity[] = []
-    const x1 = this.midX + x;
-    const x2 = this.midX;
-    const x3 = this.midX - x;
-    const z1 = this.midZ - z;
-    const z2 = this.midZ;
-    const z3 = this.midZ + z;
-    const pos = [
-      [x1, z1], [x2, z1], [x3, z1], [x3, z2],
-      [x3, z3], [x2, z3], [x1, z3], [x1, z2],
-    ];
-    for (const [x, z] of pos) {
-      const e = this.spawn(oid)
-      if (!e) break;
-      ret.push(e)
-      e.set_position(x, 0, z);
-      e.attach();
-    }
-    return ret;
-  }
 
-  hori(oid: string, ox: number, oz: number, w: number, count: number): Entity[] {
+  verti(oid: string | string[], ox: number, oz: number, h: number, count?: number): Entity[] {
+    if (!oid.length) return [];
+    const oids = typeof oid === 'string' ? [oid] : oid;
+    count = count ?? oids.length;
     const ret: Entity[] = [];
-    const x_list: number[] = [];
-    const d = w / (count - 1);
-    for (let i = 0; i < count; i++) {
-      x_list.push(round_float(ox - w / 2 + d * i))
-    }
-    x_list.forEach(x => {
-      const o = this.spawn(oid);
-      if (!o) return;
-      o.set_position(x, 0, oz);
-      o.attach();
-      ret.push(o)
-    })
-    return ret;
-  }
-
-  hori_3(oid: string, rx: number = 250, z = this.midZ): Entity[] {
-    return this.hori(oid, this.midX, z, rx * 2, 3);
-  }
-
-  hori_2(oid: string, rx: number = 250, z = this.midZ): Entity[] {
-    return this.hori(oid, this.midX, z, rx * 2, 2);
-  }
-
-  verti(oid: string, ox: number, oz: number, h: number, count: number): Entity[] {
-    const ret: Entity[] = [];
-    const z_list: number[] = [];
     const d = h / (count - 1);
     for (let i = 0; i < count; i++) {
-      z_list.push(round_float(oz - h / 2 + d * i))
-    }
-    z_list.forEach(z => {
+      const z = round_float(oz - h / 2 + d * i)
+      const oid = oids[i % oids.length];
       const o = this.spawn(oid);
-      if (!o) return;
+      if (!o) continue;
       o.set_position(ox, 0, z);
       o.attach();
       ret.push(o)
-    })
+    }
     return ret;
   }
 
-  verti_3(oid: string, x = this.midX, h = 200): Entity[] {
-    return this.verti(oid, x, this.midZ, h, 3);
+  hori(oid: string | string[], ox: number, oz: number, w: number, count?: number): Entity[] {
+    if (!oid.length) return [];
+    const oids = typeof oid === 'string' ? [oid] : oid;
+    count = count ?? oids.length;
+    const ret: Entity[] = [];
+    const d = w / (count - 1);
+    for (let i = 0; i < count; i++) {
+      const x = round_float(ox - w / 2 + d * i);
+      const oid = oids[i % oids.length];
+      const o = this.spawn(oid);
+      if (!o) continue;
+      o.set_position(x, 0, oz);
+      o.attach();
+      ret.push(o)
+    }
+    return ret;
   }
+
 }

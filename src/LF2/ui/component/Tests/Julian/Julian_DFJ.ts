@@ -32,24 +32,11 @@ export class Julian_DFJ extends TestCase {
       julian.attach();
     } while (0);
 
-    do {
-      const l = this.midX + 100;
-      const r = this.midX - 100;
-      const m = this.midX;
-      const o = this.midZ;
-      const n = this.midZ - 50;
-      const f = this.midZ + 50;
-      const pos = [
-        [l, n], [m, n], [r, n], [r, o], [r, f], [m, f], [l, f], [l, o],
-      ];
-      for (const [x, z] of pos) {
-        const bandit = this.spawn(O_ID.Bandit);
-        if (!bandit) return;
-        bandit.set_position(x, 0, z);
-        bandit.team = TeamEnum.Team_2;
-        bandit.attach();
-        bandit.ctrl.click(GK.Defend);
-      }
-    } while (0);
+
+    this.bandits_8().forEach(bandit => {
+      bandit.team = TeamEnum.Team_2;
+      bandit.hp = bandit.hp_r = bandit.hp_max = 75
+      bandit.attach();
+    })
   }
 }

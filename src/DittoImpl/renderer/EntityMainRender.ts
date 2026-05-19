@@ -207,7 +207,9 @@ export class EntityMainRender {
     ) as EntityRenderer
 
     if (!holder) {
-      this.node.position.lerpVectors(this._p0, this._p1, this.world_renderer.dfactor)
+      let { dfactor } = this.world_renderer;
+      if (this.entity.lifetime == 0) dfactor = 1;
+      this.node.position.lerpVectors(this._p0, this._p1, dfactor)
     } else {
       this.node.position.copy(this._p1)
       this.node.position.x -= holder.main._p1.x - holder.main.node.position.x
