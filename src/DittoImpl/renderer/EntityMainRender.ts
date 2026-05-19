@@ -134,16 +134,16 @@ export class EntityMainRender {
 
   render(dt: number): void {
     const { entity, main_mesh } = this;
-    const { frame, facing } = entity;
 
     if (this.owner.owner.dirty) {
+      entity.data !== this._data && this.reset(entity);
+      const { frame, facing } = entity;
       this.update_position();
       const { centerx, centery, pic: { w = 0 } = {} } = frame;
       const offset_x = facing === 1 ? centerx : w - centerx;
       this.offset_x = -offset_x;
       this.offset_y = centery;
 
-      entity.data !== this._data && this.reset(entity);
 
       if (this._frame !== frame || this._facing !== facing) {
         this._frame = frame;
