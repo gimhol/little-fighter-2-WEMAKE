@@ -84,17 +84,20 @@ export class EntityMainRender {
 
     this._data = data;
     this.images = get_img_map(this.lf2, data);
-    const texture = this.images.get("0")?.pic?.texture;
 
+    for (const img of this.images.values()) {
+      img.pic?.texture && (img.pic.texture.needsUpdate = true);
+    }
     if (!this.main_mesh) {
       const material = MaterialFactory.get(MaterialKind.Outline, OutlineMaterial);
+      const texture = this.images.get("0")?.pic?.texture;
       material.texture = texture;
       material.outlineWidth = 1;
       this.main_mesh = new T.Mesh(BODY_GEOMETRY, material);
+
     }
 
     const mesh = this.main_mesh;
-    texture && (texture.onUpdate = () => mesh.material.needsUpdate = true);
     mesh.visible = false;
     mesh.name = `Entity:${data.id}`;
     typeof data.base.depth_test === "boolean" && (mesh.material.depthTest = data.base.depth_test);
