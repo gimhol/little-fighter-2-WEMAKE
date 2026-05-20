@@ -195,6 +195,8 @@ const default_value: IFrameInfo = {
   name: "",
   state: 0,
   wait: 0,
+  width: 0,
+  height: 0,
   next: {},
   centerx: 0,
   centery: 0
