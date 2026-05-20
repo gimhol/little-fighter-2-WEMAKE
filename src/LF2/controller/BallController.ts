@@ -59,10 +59,9 @@ export class BallController extends BaseController {
     const { chase, behavior } = frame;
 
     if (hp > 0 && this._frame != frame) {
-      const pre_chase = this._frame.chase;
-      if (pre_chase && !chase) {
+      if (this._frame.chase && !chase) {
         this.world.del_chaser(this)
-      } else if (chase && !pre_chase) {
+      } else if (chase && !this._frame.chase) {
         this.world.add_chaser(this)
       }
     } else if (hp <= 0 && chase) {
