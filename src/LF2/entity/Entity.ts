@@ -9,22 +9,24 @@ import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId,
-  Defines, EntityEnum, EntityGroup, FacingFlag,
-  GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  Defines,
+  EMPTY_FRAME_INFO,
+  EntityEnum, EntityGroup, FacingFlag,
+  GK,
+  GONE_FRAME_INFO,
+  HitFlag,
+  IArmorInfo,
+  IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3,
   IVector3Like,
   IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
-  OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
+  OpointSpreading,
+  SpeedCtrl,
+  SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame,
+  WpointKind
 } from "../defines";
-import { ChaseStratedy } from "../defines/ChaseStratedy";
-import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
-import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
-import { IArmorInfo } from "../defines/IArmorInfo";
-import { SpeedCtrl } from "../defines/SpeedCtrl";
-import { WpointKind } from "../defines/WpointKind";
 import { Ditto } from "../ditto";
-import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
@@ -39,7 +41,7 @@ import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_fighter, is_human_ctrl } from "./type_check";
+import { is_ball_ctrl, is_fighter, is_human_ctrl } from "./type_check";
 
 interface IEntitySnapshot {
   id: string,
@@ -241,7 +243,6 @@ export class Entity {
    */
   readonly collided_list: Collision[] = [];
 
-  protected _chasing!: Entity | null;
   protected _ground_y: number = 0;
   protected _prev_ground_y: number = 0;
   readonly buff = new Map<string, Buff>()
@@ -480,7 +481,6 @@ export class Entity {
 
     this.callbacks.emit("on_hp_changed")(this, v, o);
     if (o > 0 && v <= 0) {
-      this.world.del_chaser(this);
       this.callbacks.emit("on_dead")(this);
       this._state?.on_dead?.(this);
       if (
@@ -641,8 +641,6 @@ export class Entity {
     this._dead_join = v
   }
 
-  get chasing(): Entity | null { return this._chasing; }
-  set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
   get gravity(): number {
     const g1 = this._state?.get_gravity?.(this);
@@ -773,7 +771,6 @@ export class Entity {
     this.drink = d.base.drink ? new DrinkInfo(d.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
-    this._chasing = null;
     this.collision_list.length = 0;
     this.collided_list.length = 0;
     this.lastest_collision = null;
@@ -949,15 +946,6 @@ export class Entity {
     }
     if (this._prev_frame !== this.frame) {
       this._state?.on_frame_changed?.(this, this.frame, this._prev_frame);
-
-      if (this.hp > 0) {
-        const pre_chase = this._prev_frame.chase?.flag;
-        const cur_chase = this.frame.chase?.flag;
-        if (pre_chase && !cur_chase)
-          this.world.del_chaser(this)
-        else if (cur_chase && pre_chase != cur_chase)
-          this.world.add_chaser(this)
-      }
     }
     if (v.invisible) this.invisibility(v.invisible);
     if (v.opoint) this.apply_opoints(v.opoint);
@@ -1035,10 +1023,10 @@ export class Entity {
         }
         switch (multi_type) {
           case OpointMultiEnum.AccordingEnemies:
-            if (e.frame.chase) e.chasing = enemies[i % enemies.length]
+            if (e.frame.chase && is_ball_ctrl(e.ctrl)) e.ctrl.chasing = enemies[i % enemies.length]
             break;
           case OpointMultiEnum.AccordingAllies:
-            if (e.frame.chase) e.chasing = allies[i % allies.length];
+            if (e.frame.chase && is_ball_ctrl(e.ctrl)) e.ctrl.chasing = allies[i % allies.length];
             break;
         }
         if (opoint.inherit_speed_x)
@@ -1977,44 +1965,7 @@ export class Entity {
     this._invisible_duration = duration;
   }
 
-  update_chasing(lookup: Entity) {
-    const a = this.chasing;
-    const b = this.should_chase(a) ? a : this.chasing = null;
-    if (a && this.frame.chase?.stratedy === ChaseStratedy.TillLost) {
-      this.ctrl.set_chase_pos(
-        a.position.x,
-        a.position.y,
-        a.position.z
-      )
-      return
-    }
-    const c = this.should_chase(lookup) ? lookup : null;
-    const d = this.chasing = closer_one(this, b, c);
-    // lost
-    if (!d && a) this.ctrl.set_chase_pos(
-      this.position.x,
-      this.position.y,
-      this.position.z
-    )
-    // follow
-    if (d) this.ctrl.set_chase_pos(
-      d.position.x,
-      d.position.y,
-      d.position.z
-    )
-  }
-  should_chase(other: Entity | null): boolean {
-    if (!other) return false;
-    if (
-      other.frame.id === Builtin_FrameId.Gone ||
-      other.frame.id === Builtin_FrameId.None
-    ) return false;
-    const { chase } = this.frame;
-    if (!chase) return false;
-    const { flag } = chase
-    const target = other.get_flag(this)
-    return (target & flag) == target
-  }
+
   get_flag(other: Entity): number {
     let ret = this.team === other.team ? HitFlag.Ally : HitFlag.Enemy;
     if (this.hp <= 0) ret |= HitFlag.Dead;

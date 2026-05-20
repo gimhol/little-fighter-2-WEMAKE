@@ -1,5 +1,5 @@
 import { is_ball_ctrl } from "../entity/type_check";
-import { Defines, FrameBehavior, HitFlag, IFrameInfo, IVector3, WT } from "../defines";
+import { Defines, FrameBehavior, HitFlag, IFrameInfo, IVector3, SE, WT } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
 import State_Base from "./State_Base";
@@ -77,6 +77,7 @@ export default class WeaponState_Base extends State_Base {
     e.set_velocity(dvx, dvy, dvz);
 
     if (
+      e.state == SE.Weapon_Throwing &&
       dvy > -fast_y && dvy < fast_y &&
       dvx > -fast_x && dvx < fast_x &&
       dvz > -fast_z && dvz < fast_z

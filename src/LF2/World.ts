@@ -2,6 +2,7 @@ import { Callbacks, FPS } from "./base";
 import { Background } from "./bg/Background";
 import { Collision, collision_get } from "./collision/Collision";
 import { collisions_keeper } from "./collision/CollisionKeeper";
+import { BallController } from "./controller/BallController";
 import {
   BFID,
   BGG,
@@ -70,7 +71,7 @@ export class World extends WorldDataset {
   /** 待移除实体 */
   private _gones = new Set<Entity>();
   // private _freshs = new Set<Entity>();
-  private _chasers = new Set<Entity>();
+  private _chasers = new Set<BallController>();
   private _paused: 0 | 1 | 2 = 0;
   private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
@@ -444,13 +445,13 @@ export class World extends WorldDataset {
     }
   }
 
-  add_chaser(entity: Entity) {
-    this._chasers.add(entity);
+  add_chaser(ctrl: BallController) {
+    this._chasers.add(ctrl);
   }
-  del_chaser(entity: Entity) {
-    this._chasers.delete(entity);
-    entity.ctrl.chase_pos.copy(entity.position);
-    entity.chasing = null;
+  del_chaser(ctrl: BallController) {
+    this._chasers.delete(ctrl);
+    ctrl.chase_pos.copy(ctrl.entity.position);
+    ctrl.chasing = null;
   }
 
   protected update_ui() {
@@ -719,7 +720,7 @@ export class World extends WorldDataset {
 
       if (update_chasing) {
         for (const c of this._chasers)
-          c.update_chasing(a)
+          c.lookup(a)
 
         const a_ctrl = a.ctrl
         for (let j = 0; j < temp_entities.length; j++) {
