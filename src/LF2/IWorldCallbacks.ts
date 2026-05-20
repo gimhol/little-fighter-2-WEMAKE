@@ -18,8 +18,9 @@ export interface IWorldCallbacks {
    *
    * @todo 这个回调比较高频似乎不应该放在此处
    * @param {number} x
+   * @param {number} y
    */
-  on_cam_move?(x: number): void;
+  on_cam_move?(x: number, y: number): void;
 
   on_pause_change?(pause: boolean): void;
 

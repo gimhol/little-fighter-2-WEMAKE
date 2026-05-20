@@ -9,5 +9,6 @@ export interface IBgInfo {
   right: number;
   far: number;
   near: number;
+  top: number;
   zoom?: [number, number, number];
 }

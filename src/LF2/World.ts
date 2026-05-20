@@ -76,7 +76,7 @@ export class World extends WorldDataset {
   private _paused: 0 | 1 | 2 = 0;
   private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
-  private _cam_speed: number = 0;
+  private _cam_v: IVector2;
   readonly target_cam_pos: IVector2;
   readonly current_cam_pos: IVector2;
 
@@ -161,6 +161,7 @@ export class World extends WorldDataset {
     this.lf2 = lf2;
     this.target_cam_pos = Ditto.vec2();
     this.current_cam_pos = Ditto.vec2();
+    this._cam_v = Ditto.vec2();
     this._bg = new Background(this, Defines.VOID_BG);
     this.transform.scale_to(...this._bg.zoom)
     this._stage = new Stage(this, Defines.VOID_STAGE);
@@ -630,7 +631,7 @@ export class World extends WorldDataset {
             continue;
           }
           if (this.current_cam_pos.x != x)
-            this.callbacks.emit("on_cam_move")(x);
+            this.callbacks.emit("on_cam_move")(x, y);
           this._lock_cam_pos = Ditto.vec2(x, y);
           this.target_cam_pos.x = x;
           this.current_cam_pos.x = x;
@@ -793,16 +794,21 @@ export class World extends WorldDataset {
     }
     if (local_count) {
       this.target_cam_pos.x = round(local_x_sum / local_count);
+      this.target_cam_pos.y = -round(local_z_sum / local_count);
     } else if (human_count) {
       this.target_cam_pos.x = round(human_x_sum / human_count);
+      this.target_cam_pos.y = -round(human_z_sum / human_count);
     } else if (puppet_count) {
       this.target_cam_pos.x = round(puppet_x_sum / puppet_count);
+      this.target_cam_pos.y = -round(puppet_z_sum / puppet_count);
     } else if (fighter_count) {
       this.target_cam_pos.x = round(fighter_x_sum / fighter_count);
+      this.target_cam_pos.y = -round(fighter_z_sum / fighter_count);
     } else {
       this.current_cam_pos.x = this.target_cam_pos.x = round(
         (this.player_r + this.player_l) / 2 - this.screen_w / 2
       )
+      this.current_cam_pos.y = this.target_cam_pos.y = 0
     }
 
     for (const c of this.v_collisions)
@@ -857,34 +863,65 @@ export class World extends WorldDataset {
 
   update_camera() {
     const old_cam_x = round(this.current_cam_pos.x);
-    const { cam_l, left, cam_r, right } = this.stage;
-    const min_cam_l = is_num(this._lock_cam_pos?.x) ? left : cam_l;
-    const max_cam_r = is_num(this._lock_cam_pos?.x) ? right : cam_r;
-    let max_speed_ratio = 50;
-    let acc_ratio = 1;
-    this.target_cam_pos.x = clamp(this._lock_cam_pos?.x ?? this._dist_cam_pos?.x ?? this.target_cam_pos.x,
-      min_cam_l,
-      max_cam_r - this.screen_w
-    );
-    const acc = min(
-      this.atom_time * acc_ratio,
-      this.atom_time * 0.7 * (acc_ratio * abs(this.current_cam_pos.x - this.target_cam_pos.x)) / this.screen_w,
-    );
-    const direction = this.current_cam_pos.x > this.target_cam_pos.x ? -1 : 1;
-    const max_speed = direction * max_speed_ratio * acc;
-    if (sign(this._cam_speed) !== direction)
-      this._cam_speed = 0;
-    if (abs(this._cam_speed) < abs(max_speed))
-      this._cam_speed += acc * direction;
-    else
-      this._cam_speed = max_speed;
+    const old_cam_y = round(this.current_cam_pos.y);
+    {
+      const { cam_l, left, cam_r, right } = this.stage;
+      const min_cam_l = is_num(this._lock_cam_pos?.x) ? left : cam_l;
+      const max_cam_r = is_num(this._lock_cam_pos?.x) ? right : cam_r;
+      let max_vx_ratio = 50;
+      let acc_x_ratio = 1;
+      this.target_cam_pos.x = clamp(this._lock_cam_pos?.x ?? this._dist_cam_pos?.x ?? this.target_cam_pos.x,
+        min_cam_l,
+        max_cam_r - this.screen_w
+      );
+      const acc_x = min(
+        this.atom_time * acc_x_ratio,
+        this.atom_time * 0.7 * (acc_x_ratio * abs(this.current_cam_pos.x - this.target_cam_pos.x)) / this.screen_w,
+      );
+      const direction_x = this.current_cam_pos.x > this.target_cam_pos.x ? -1 : 1;
+      const max_vx = direction_x * max_vx_ratio * acc_x;
+      if (sign(this._cam_v.x) !== direction_x)
+        this._cam_v.x = 0;
+      if (abs(this._cam_v.x) < abs(max_vx))
+        this._cam_v.x += acc_x * direction_x;
+      else
+        this._cam_v.x = max_vx;
+      if (direction_x < 0)
+        this.current_cam_pos.x = max(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_v.x)
+      else
+        this.current_cam_pos.x = min(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_v.x);
+    }
 
-    if (direction < 0)
-      this.current_cam_pos.x = max(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_speed)
-    else
-      this.current_cam_pos.x = min(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_speed);
+    {
+      const { far, near } = this.stage;
+      let max_vy_ratio = 50;
+      let acc_y_ratio = 1;
+      this.target_cam_pos.y = clamp(this._lock_cam_pos?.y ?? this._dist_cam_pos?.y ?? this.target_cam_pos.y,
+        far,
+        0
+      );
+      const acc_y = min(
+        this.atom_time * acc_y_ratio,
+        this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
+      );
+      const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
+      const max_vy = direction_y * max_vy_ratio * acc_y;
+      if (sign(this._cam_v.y) !== direction_y)
+        this._cam_v.y = 0;
+      if (abs(this._cam_v.x) < abs(max_vy))
+        this._cam_v.y += acc_y * direction_y;
+      else
+        this._cam_v.x = max_vy;
+      if (direction_y < 0)
+        this.current_cam_pos.y = max(this.target_cam_pos.x, this.current_cam_pos.y + this._cam_v.y)
+      else
+        this.current_cam_pos.y = min(this.target_cam_pos.x, this.current_cam_pos.y + this._cam_v.y);
+    }
+
     const new_cam_x = round(this.current_cam_pos.x);
-    if (old_cam_x !== new_cam_x) this.callbacks.emit("on_cam_move")(new_cam_x);
+    const new_cam_y = round(this.current_cam_pos.y);
+    if (old_cam_x !== new_cam_x || old_cam_y !== new_cam_y)
+      this.callbacks.emit("on_cam_move")(new_cam_x, new_cam_y);
   }
 
   /**
