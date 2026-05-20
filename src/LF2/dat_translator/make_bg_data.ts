@@ -66,14 +66,13 @@ export function make_bg_data(
   const [a, b] = take(fields, "zboundary");
   fields.left = 0;
   fields.right = width;
-  fields.top = Defines.CLASSIC_SCREEN_HEIGHT
   fields.far = 2 * (a - fields.top); // 转为Z轴的远坐标
   fields.near = 2 * (b - fields.top); // 转为Z轴的近坐标
 
   const ret: IBgData = {
     type: "background",
     id: datIndex.id ?? fields.name,
-    base: fields,
+    base: { ...fields },
     layers: [],
   };
   ret.base.name = ret.base.name.replace(/_/g, " ");

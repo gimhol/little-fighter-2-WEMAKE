@@ -892,31 +892,36 @@ export class World extends WorldDataset {
         this.current_cam_pos.x = min(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_v.x);
     }
 
-    {
-      // const { far } = this.stage;
-      // let max_vy_ratio = 50;
-      // let acc_y_ratio = 1;
-      // this.target_cam_pos.y = clamp(this._lock_cam_pos?.y ?? this._dist_cam_pos?.y ?? this.target_cam_pos.y,
-      //   0,
-      //   -0.5 * far
-      // );
-      // const acc_y = min(
-      //   this.atom_time * acc_y_ratio,
-      //   this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
-      // );
-      // const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
-      // const max_vy = direction_y * max_vy_ratio * acc_y;
-      // if (sign(this._cam_v.y) !== direction_y)
-      //   this._cam_v.y = 0;
-      // if (abs(this._cam_v.y) < abs(max_vy))
-      //   this._cam_v.y += acc_y * direction_y;
-      // else
-      //   this._cam_v.y = max_vy;
-      // if (direction_y < 0)
-      //   this.current_cam_pos.y = max(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y)
-      // else
-      //   this.current_cam_pos.y = min(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y);
-    }
+    do {
+      const { height } = this.bg.data.base;
+      if (height <= Defines.MODERN_SCREEN_HEIGHT) {
+        this.current_cam_pos.y = this.target_cam_pos.y = 0;
+        break;
+      }
+      const { far } = this.stage;
+      let max_vy_ratio = 50;
+      let acc_y_ratio = 1;
+      const cam_y = this._lock_cam_pos?.y ?? this._dist_cam_pos?.y ?? this.target_cam_pos.y
+      const cam_min_y = 0;
+      const cam_max_y = min(-0.5 * far, height - Defines.MODERN_SCREEN_HEIGHT)
+      this.target_cam_pos.y = clamp(cam_y, 0, cam_max_y);
+      const acc_y = min(
+        this.atom_time * acc_y_ratio,
+        this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
+      );
+      const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
+      const max_vy = direction_y * max_vy_ratio * acc_y;
+      if (sign(this._cam_v.y) !== direction_y)
+        this._cam_v.y = 0;
+      if (abs(this._cam_v.y) < abs(max_vy))
+        this._cam_v.y += acc_y * direction_y;
+      else
+        this._cam_v.y = max_vy;
+      if (direction_y < 0)
+        this.current_cam_pos.y = max(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y)
+      else
+        this.current_cam_pos.y = min(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y);
+    } while (0)
 
     const new_cam_x = round(this.current_cam_pos.x);
     const new_cam_y = round(this.current_cam_pos.y);
