@@ -109,6 +109,9 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    */
   centery: number;
 
+  width: number;
+  height: number;
+  
   /**
    * 进入此帧时播放的声音
    *
@@ -138,7 +141,6 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   opoint?: IOpointInfo[];
   cpoint?: ICpointInfo;
   indicator_info?: IQubePair;
-
   /**
    * 隐身多少帧
    * 
@@ -201,7 +203,7 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
 
   facing?: FacingFlag;
 
-  
+
   /**
    * 决定了帧的落地行为
    * 

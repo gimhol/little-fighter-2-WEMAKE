@@ -18,8 +18,6 @@ import { preprocess_opoint } from "./preprocess_opoint";
 
 
 export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
-
-
   if (data.processed != false) { }
   else if (is_ball_data(data)) preprocess_ball_frame(frame, data);
   else if (is_weapon_data(data)) {
@@ -54,6 +52,9 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
     if (throwings.length) data.indexes.throwings = throwings
     if (on_hands.length) data.indexes.on_hands = on_hands
   }
+
+  frame.width = frame.width ?? frame.pic?.w ?? 0
+  frame.height = frame.height ?? frame.pic?.h ?? 0
 
   cook_frame_indicator_info(frame);
   if (is_weapon_data(data) || is_ball_data(data))
