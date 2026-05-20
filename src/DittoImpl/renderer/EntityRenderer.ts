@@ -81,7 +81,7 @@ export class EntityRenderer {
     }
     this.position.lerpVectors(this.p0, this.p1, this.owner.dfactor)
 
-    this.main.render(dt);
+    this.main.render();
     this.shad.render();
     this.name.render();
     this.stat?.render();

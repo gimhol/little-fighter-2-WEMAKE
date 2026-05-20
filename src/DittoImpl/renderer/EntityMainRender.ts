@@ -105,14 +105,14 @@ export class EntityMainRender {
     this.node.removeFromParent();
   }
 
-  update_shaking(dt: number): void {
+  update_shaking(): void {
     const { shaking, facing } = this.entity;
     if (shaking === this.shaking) return;
     this.shaking = shaking;
     this.shaking_x = shaking ? facing * random_in(0, 2) * (floor(shaking / 2) % 2 ? 1 : -1) : 0;
   }
 
-  render(dt: number): void {
+  render(): void {
     const { entity, main_mesh } = this;
     if (this.owner.owner.dirty) {
       const { frame, facing, data } = entity;
@@ -131,9 +131,8 @@ export class EntityMainRender {
       }
     }
 
-    this.update_shaking(dt);
+    this.update_shaking();
     const holder = (this.entity.bearer?.renderer ?? this.entity.catcher?.renderer) as EntityRenderer;
-
     if (!holder) {
       let { dfactor } = this.world_renderer;
       entity.lifetime === 0 && (dfactor = 1);
@@ -144,7 +143,6 @@ export class EntityMainRender {
       this.node.position.y -= holder.main.p1.y - holder.main.node.position.y;
       this.node.position.z -= holder.main.p1.z - holder.main.node.position.z;
     }
-
     main_mesh.position.set(this.centerx + this.shaking_x, this.centery, 0);
     const { invisible } = this.owner;
     const { blinking } = entity;
