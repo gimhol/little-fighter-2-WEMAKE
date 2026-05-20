@@ -84,7 +84,7 @@ export class Stage {
   drink_l: number;
   /** 饮料右边界 */
   drink_r: number;
-
+  
   change_bg(data: Readonly<IBgData>): Background {
     // FIXME: so messed up here...
     const prev_bg = this.world.bg;

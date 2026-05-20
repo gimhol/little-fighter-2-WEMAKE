@@ -127,6 +127,7 @@ export namespace Defines {
     base: {
       name: "VOID_BG",
       shadow: "",
+      top: CLASSIC_SCREEN_HEIGHT,
       shadowsize: [0, 0],
       left: 0,
       right: MODERN_SCREEN_WIDTH * 2,
@@ -143,6 +144,7 @@ export namespace Defines {
     base: {
       name: "Random",
       shadow: "",
+      top: CLASSIC_SCREEN_HEIGHT,
       shadowsize: [0, 0],
       left: 0,
       right: 794,

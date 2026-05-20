@@ -794,16 +794,16 @@ export class World extends WorldDataset {
     }
     if (local_count) {
       this.target_cam_pos.x = round(local_x_sum / local_count);
-      this.target_cam_pos.y = -round(local_z_sum / local_count);
+      this.target_cam_pos.y = -0.5 * round(local_z_sum / local_count) - this.screen_h / 2;
     } else if (human_count) {
       this.target_cam_pos.x = round(human_x_sum / human_count);
-      this.target_cam_pos.y = -round(human_z_sum / human_count);
+      this.target_cam_pos.y = -0.5 * round(human_z_sum / human_count) - this.screen_h / 2;
     } else if (puppet_count) {
       this.target_cam_pos.x = round(puppet_x_sum / puppet_count);
-      this.target_cam_pos.y = -round(puppet_z_sum / puppet_count);
+      this.target_cam_pos.y = -0.5 * round(puppet_z_sum / puppet_count) - this.screen_h / 2;
     } else if (fighter_count) {
       this.target_cam_pos.x = round(fighter_x_sum / fighter_count);
-      this.target_cam_pos.y = -round(fighter_z_sum / fighter_count);
+      this.target_cam_pos.y = -0.5 * round(fighter_z_sum / fighter_count) - this.screen_h / 2;
     } else {
       this.current_cam_pos.x = this.target_cam_pos.x = round(
         (this.player_r + this.player_l) / 2 - this.screen_w / 2
@@ -893,29 +893,29 @@ export class World extends WorldDataset {
     }
 
     {
-      const { far, near } = this.stage;
-      let max_vy_ratio = 50;
-      let acc_y_ratio = 1;
-      this.target_cam_pos.y = clamp(this._lock_cam_pos?.y ?? this._dist_cam_pos?.y ?? this.target_cam_pos.y,
-        far,
-        0
-      );
-      const acc_y = min(
-        this.atom_time * acc_y_ratio,
-        this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
-      );
-      const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
-      const max_vy = direction_y * max_vy_ratio * acc_y;
-      if (sign(this._cam_v.y) !== direction_y)
-        this._cam_v.y = 0;
-      if (abs(this._cam_v.x) < abs(max_vy))
-        this._cam_v.y += acc_y * direction_y;
-      else
-        this._cam_v.x = max_vy;
-      if (direction_y < 0)
-        this.current_cam_pos.y = max(this.target_cam_pos.x, this.current_cam_pos.y + this._cam_v.y)
-      else
-        this.current_cam_pos.y = min(this.target_cam_pos.x, this.current_cam_pos.y + this._cam_v.y);
+      // const { far } = this.stage;
+      // let max_vy_ratio = 50;
+      // let acc_y_ratio = 1;
+      // this.target_cam_pos.y = clamp(this._lock_cam_pos?.y ?? this._dist_cam_pos?.y ?? this.target_cam_pos.y,
+      //   0,
+      //   -0.5 * far
+      // );
+      // const acc_y = min(
+      //   this.atom_time * acc_y_ratio,
+      //   this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
+      // );
+      // const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
+      // const max_vy = direction_y * max_vy_ratio * acc_y;
+      // if (sign(this._cam_v.y) !== direction_y)
+      //   this._cam_v.y = 0;
+      // if (abs(this._cam_v.y) < abs(max_vy))
+      //   this._cam_v.y += acc_y * direction_y;
+      // else
+      //   this._cam_v.y = max_vy;
+      // if (direction_y < 0)
+      //   this.current_cam_pos.y = max(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y)
+      // else
+      //   this.current_cam_pos.y = min(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y);
     }
 
     const new_cam_x = round(this.current_cam_pos.x);
