@@ -4,8 +4,6 @@
   is_game_obj_data: true,
   is_base_data: true,
   base: {
-    // depth_test: false,
-    // render_order: 2,
     name: "spark",
     files: {
       "0": {

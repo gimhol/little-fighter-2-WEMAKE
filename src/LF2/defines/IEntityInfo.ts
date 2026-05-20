@@ -51,12 +51,6 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
 
   models?: Record<string, IModelInfo>;
 
-  depth_test?: boolean;
-
-  depth_write?: boolean;
-
-  render_order?: number;
-
   fall_value?: number;
 
   defend_value?: number;

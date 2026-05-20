@@ -87,13 +87,11 @@ export class EntityMainRender {
       img.pic?.texture && (img.pic.texture.needsUpdate = true);
     }
 
-    const mesh = this.main_mesh;
-    mesh.visible = false;
-    mesh.name = `Entity: ${this.entity.name}`;
-    typeof data.base.depth_test === "boolean" && (mesh.material.depthTest = data.base.depth_test);
-    typeof data.base.depth_write === "boolean" && (mesh.material.depthWrite = data.base.depth_write);
-    typeof data.base.render_order === "number" && (mesh.renderOrder = data.base.render_order);
+    this.main_mesh.visible = false;
+    this.main_mesh.name = `Entity: ${this.entity.name}`;
+
     this.blood_mesh.visible = false;
+    this.blood_mesh.name = `Blood: ${this.entity.name}`;
   }
 
   on_mount(): void {
@@ -246,8 +244,10 @@ export class EntityMainRender {
   private render_bpoint(): void {
     const { entity, main_mesh } = this;
     const { bpoint } = entity.frame;
+
     const visible = !!bpoint && main_mesh.visible && entity.hp < entity.hp_max * 0.33;
     this.blood_mesh.visible = visible;
+
     if (!bpoint || !visible) return;
 
     let { x: bx, y: by, z: bz = 0.1, r = 0 } = bpoint;
