@@ -25,7 +25,6 @@ export class EntityMainRender {
   readonly owner: EntityRenderer;
   readonly world: World;
   readonly lf2: LF2;
-  protected game_time = -1;
   protected images = new Map<string, RImageInfo>();
   protected entity: Entity;
   protected node = new Object3D();
@@ -162,12 +161,13 @@ export class EntityMainRender {
   private update_texture() {
     const { main_mesh, entity } = this;
     const { frame, facing, variant } = entity;
-    const { centerx, centery, width } = frame;
+    const { centerx, centery, width, height } = frame;
     this.centerx = facing === 1 ? -centerx : centerx - width;
     this.centery = centery;
     const { pic } = frame;
     const { images } = this;
-
+    main_mesh.scale.set(width, height, 0);
+    
     if (!pic) return;
 
     let { tex } = pic;
@@ -179,11 +179,10 @@ export class EntityMainRender {
     const img = images.get(tex);
     if (!img?.pic) return;
 
-    main_mesh.scale.set(pic.w, pic.h, 0);
     const { material: m } = main_mesh;
     m.uniforms.tex.value = img.pic.texture;
-    m.uniforms.tw.value = img.w;
-    m.uniforms.th.value = img.h;
+    m.uniforms.tw.value = img.pic.w;
+    m.uniforms.th.value = img.pic.h;
     m.uniforms.tsw.value = img.scale;
     m.uniforms.tsh.value = img.scale;
     m.uniforms.x.value = pic.x;
