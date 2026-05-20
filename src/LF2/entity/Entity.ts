@@ -44,19 +44,8 @@ import { turn_face } from "./face_helper";
 import { is_ball_ctrl, is_fighter, is_human_ctrl } from "./type_check";
 
 interface IEntitySnapshot {
-  id: string,
-  oid: string,
-  fid: string,
-  wait: number,
-  reserve: number,
-  variant: number,
-  ghosted: boolean,
-  p0: IVector3Like,
-  p1: IVector3Like,
-  v0: IVector3Like,
-  v1: IVector3Like,
-  outline_color: string | undefined;
-  outline_alpha: number | undefined;
+  strs: string[],
+  nums: number[],
   copies: string[] | undefined;
   emitters: string[] | undefined;
   transforms: [string, string] | undefined;
@@ -91,8 +80,8 @@ export class Entity {
   transforms!: [string, string] | null;
   protected _data!: IEntityData;
   protected _reserve!: number;
-  protected _mounted!: boolean;
-  protected _ghosted!: boolean;
+  protected _mounted!: number;
+  protected _ghosted!: number;
   protected _landing_frame!: IFrameInfo | null;
   protected _hp_r_tick!: Times;
   protected _mp_r_tick!: Times;
@@ -149,7 +138,6 @@ export class Entity {
   protected _hp_max?: number;
   protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
-  protected _emitter_opoint!: IOpointInfo | null;
   protected _arest!: number;
   public motionless!: number;
   public shaking!: number;
@@ -160,7 +148,7 @@ export class Entity {
    * 当抓住一个被击晕的人时，此值充满。
    */
   protected _catch_time!: number;
-  protected _catch_time_max?: number;
+  protected _catch_time_max!: number;
 
   /**
    * 隐身计数，每帧-1
@@ -692,8 +680,8 @@ export class Entity {
     this.variant = 0;
     this.transforms = null;
     this._reserve = 0
-    this._mounted = false;
-    this._ghosted = false;
+    this._mounted = 0;
+    this._ghosted = 0;
     this._position.set(0, 0, 0)
     this._prev_position.set(0, 0, 0)
     this.fuse_bys = null;
@@ -711,7 +699,7 @@ export class Entity {
     this._defend_value_max = d.base.defend_value;
     this._defend_ratio = d.base.defend_ratio;
     this._healing = 0;
-    this._catch_time_max = d.base.catch_time;
+    this._catch_time_max = d.base.catch_time ?? this.world.catch_time_max;
     this.throwinjury = 0;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
@@ -731,7 +719,6 @@ export class Entity {
     this._bearer = null;
     this._holding = null;
     this._emitters.length = 0;
-    this._emitter_opoint = null;
     this._arest = 0;
     this.next_frame = null;
     this.vrests.clear()
@@ -810,7 +797,6 @@ export class Entity {
     offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
     facing: TFace = emitter.facing,
   ) {
-    this._emitter_opoint = opoint;
     const emitter_frame = emitter.frame;
     if (emitter.state === StateEnum.Ball_Rebounding) {
       const attacker = emitter.lastest_collided?.attacker ?? emitter;
@@ -1076,8 +1062,8 @@ export class Entity {
 
   attach(is_entity = true): this {
     this._spawn_time = this.world.game_time;
-    this._mounted = true
-    this._ghosted = !is_entity
+    this._mounted = 1
+    this._ghosted = is_entity ? 0 : 1
     this.world.add_entities(this);
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
@@ -1934,7 +1920,7 @@ export class Entity {
 
   release(): void {
     if (!this._mounted) return;
-    this._mounted = false;
+    this._mounted = 0;
     this.world.del_entity(this);
     this.ctrl.dispose();
     this.callbacks.emit("on_disposed")(this);
@@ -2355,38 +2341,52 @@ export class Entity {
 
   to_snapshot(): IEntitySnapshot {
     const ret: IEntitySnapshot = {
-      id: this.id,
-      oid: this._data.id,
-      fid: this.frame.id,
-      wait: this.wait,
-      reserve: this._reserve,
-      ghosted: this._ghosted,
-      outline_color: this._outline_color || void 0,
-      outline_alpha: this._outline_alpha || void 0,
+      strs: [
+        this.id,
+        this._data.id,
+        this.frame.id,
+        this._landing_frame?.id || '',
+        this._outline_color,
+        this._team,
+        this._bearer?.id || '',
+        this._holding?.id || '',
+      ],
       copies: this.copies.size ? Array.from(this.copies) : void 0,
       emitters: this._emitters.length ? [...this._emitters] : void 0,
-      variant: this.variant,
       transforms: this.transforms?.length ? this.transforms : void 0,
-      p0: {
-        x: this._prev_position.x,
-        y: this._prev_position.y,
-        z: this._prev_position.z,
-      },
-      p1: {
-        x: this._position.x,
-        y: this._position.y,
-        z: this._position.z,
-      },
-      v0: {
-        x: this._prev_velocity.x,
-        y: this._prev_velocity.y,
-        z: this._prev_velocity.z,
-      },
-      v1: {
-        x: this._velocity.x,
-        y: this._velocity.y,
-        z: this._velocity.z,
-      }
+      nums: [
+        this._mounted,
+        this._ghosted,
+        this._outline_alpha,
+        this.wait,
+        this.variant,
+        this._reserve,
+        this._prev_position.x,
+        this._prev_position.y,
+        this._prev_position.z,
+        this._position.x,
+        this._position.y,
+        this._position.z,
+        this._prev_velocity.x,
+        this._prev_velocity.y,
+        this._prev_velocity.z,
+        this._velocity.x,
+        this._velocity.y,
+        this._velocity.z,
+        this.hp,
+        this.hp_r,
+        this.hp_max,
+        this.mp,
+        this.mp_max,
+        this.invisible,
+        this.invulnerable,
+        this.blinking,
+        this.arest,
+        this.motionless,
+        this.shaking,
+        this._catch_time,
+        this._catch_time_max,
+      ],
     }
     return ret;
   }
@@ -2394,30 +2394,30 @@ export class Entity {
   read_snapshot(s: IEntitySnapshot) {
     // oid: this.data.id
     // fid: this.frame.id
-    this._data = this.lf2.datas.find_entity(s.oid)!;
-    if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
-    this.frame = this.data.frames[s.fid];
+    // this._data = this.lf2.datas.find_entity(s.oid)!;
+    // if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
+    // this.frame = this.data.frames[s.fid];
 
-    if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
-    this._outline_color = s.outline_color || ''
-    this._outline_alpha = s.outline_alpha || 0
+    // if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
+    // this._outline_color = s.outline_color || ''
+    // this._outline_alpha = s.outline_alpha || 0
 
-    this.variant = s.variant;
-    this._reserve = s.reserve
-    this._ghosted = s.ghosted;
+    // this.variant = s.variant;
+    // this._reserve = s.reserve
+    // this._ghosted = s.ghosted;
 
-    this.copies.clear();
-    s.copies?.forEach(v => this.copies.add(v));
+    // this.copies.clear();
+    // s.copies?.forEach(v => this.copies.add(v));
 
-    this._emitters.length = 0;
-    if (s.emitters) this._emitters.push(...s.emitters);
+    // this._emitters.length = 0;
+    // if (s.emitters) this._emitters.push(...s.emitters);
 
-    this.transforms = s.transforms ?? null;
-    this.wait = this.wait;
-    this._prev_position.copy(s.p0)
-    this._position.copy(s.p1)
-    this._prev_velocity.copy(s.v0)
-    this._velocity.copy(s.v1)
+    // this.transforms = s.transforms ?? null;
+    // this.wait = this.wait;
+    // this._prev_position.copy(s.p0)
+    // this._position.copy(s.p1)
+    // this._prev_velocity.copy(s.v0)
+    // this._velocity.copy(s.v1)
   }
 }
 
