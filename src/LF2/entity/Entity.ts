@@ -2128,11 +2128,11 @@ export class Entity {
       if (frame.sound) {
         let { x, y, z } = this._position;
         if (frame.state === StateEnum.Message) {
-          let { centerx, pic: { w = 0 } = {} } = frame;
+          let { centerx, width } = frame;
           let { current_cam_x: cam_x } = this.world;
           let cam_r = cam_x + this.world.screen_w;
-          const offset_x = this.facing === 1 ? centerx : w - centerx;
-          cam_r -= w - offset_x
+          const offset_x = this.facing === 1 ? centerx : width - centerx;
+          cam_r -= width - offset_x
           cam_x += offset_x
           x = clamp(x, cam_x, cam_r)
         }
