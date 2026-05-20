@@ -752,7 +752,7 @@ export class BotController extends BaseController {
     this.following = null;
   }
   goto(x: number, y: number, z: number): void {
-    this.goingto = new Ditto.Vector3(x, y, z)
+    this.goingto = Ditto.vec3(x, y, z)
     this.following = null
   }
   cancel_goto(): void {

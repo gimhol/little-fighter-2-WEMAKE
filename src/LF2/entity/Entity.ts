@@ -70,10 +70,10 @@ export class Entity {
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
   protected _outline_alpha: number = 0.8;
-  protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected readonly _prev_position: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _position: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _velocity: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _prev_velocity: IVector3 = Ditto.vec3(0, 0, 0);
 
   /**
    * 影分身
@@ -807,7 +807,7 @@ export class Entity {
   on_spawn(
     emitter: Entity,
     opoint: IOpointInfo,
-    offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
+    offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
     facing: TFace = emitter.facing,
   ) {
     this._emitter_opoint = opoint;
@@ -991,7 +991,7 @@ export class Entity {
       }
       let facing = this.facing;
       for (let i = 0; i < count; ++i) {
-        const v = new Ditto.Vector3(0, 0, 0);
+        const v = Ditto.vec3(0, 0, 0);
         switch (opoint.spreading) {
           case void 0:
           case OpointSpreading.Normal:
@@ -1041,7 +1041,7 @@ export class Entity {
 
   spawn_entity(
     opoint: IOpointInfo,
-    offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
+    offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
     facing: TFace = this.facing
   ): Entity | undefined {
     if (opoint.unimportant && this.world.entities.length > 355)
@@ -2080,7 +2080,7 @@ export class Entity {
         let { x, y, z } = this._position;
         if (frame.state === StateEnum.Message) {
           let { centerx, width } = frame;
-          let { current_cam_x: cam_x } = this.world;
+          let { current_cam_pos: { x: cam_x } } = this.world;
           let cam_r = cam_x + this.world.screen_w;
           const offset_x = this.facing === 1 ? centerx : width - centerx;
           cam_r -= width - offset_x

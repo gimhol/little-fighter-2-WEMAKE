@@ -41,12 +41,12 @@ export class CameraCtrl extends UIComponent {
     const { lr } = this;
     if (lr) {
       this.free = false
-      const { current_cam_x: cam_x } = this.world;
+      const { current_cam_pos: { x: cam_x } } = this.world;
       this.lf2.cmds.push(CMD.DIST_CAM, `${cam_x + 10 * dt * lr}`)
     }
-    if (!this.keys.j.is_end()) 
+    if (!this.keys.j.is_end())
       this.free = true
-  
+
     if (!this.keys.d.is_end()) {
       this.lf2.cmds.push(CMD.DIST_CAM, ``)
       this.staring = void 0;

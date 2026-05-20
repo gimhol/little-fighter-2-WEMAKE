@@ -323,8 +323,8 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     }
     this.lf2.world.callbacks.add(this.world_callbacks);
     this.props.cam_ctrl?.focus_next(1);
-    this.world.target_cam_x = cam_x;
-    this.world.current_cam_x = cam_x;
+    this.world.target_cam_pos.x = cam_x;
+    this.world.current_cam_pos.x = cam_x;
   }
   clearup() {
     this.lf2.world.stage.callbacks.del(this.stage_callbacks)

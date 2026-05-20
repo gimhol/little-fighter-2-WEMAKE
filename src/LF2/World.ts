@@ -14,6 +14,7 @@ import {
   GONE_FRAME_INFO,
   IBdyInfo, IBgData, IBounding, IEntityData,
   IFrameInfo, IItrInfo,
+  IVector2,
   IVector3,
   O_ID,
   SE,
@@ -76,10 +77,13 @@ export class World extends WorldDataset {
   private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
   private _cam_speed: number = 0;
-  target_cam_x: number = 0;
-  current_cam_x: number = 0;
-  private _dist_cam_x: number | undefined = void 0;
-  private _lock_cam_x: number | undefined = void 0;
+  readonly target_cam_pos: IVector2;
+  readonly current_cam_pos: IVector2;
+
+  private _dist_cam_pos: IVector2 | null = null
+  private _lock_cam_pos: IVector2 | null = null
+
+
   public renderer: IWorldRenderer;
   readonly tickers = new Set<Ticker>();
   readonly ticker_pool: Ticker[] = [];
@@ -150,11 +154,13 @@ export class World extends WorldDataset {
   get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time.value }
   get lifetime() { return this._lifetime }
-  get lock_cam_x() { return this._lock_cam_x }
+  get lock_cam_x() { return this._lock_cam_pos?.x }
 
   constructor(lf2: LF2) {
     super()
     this.lf2 = lf2;
+    this.target_cam_pos = Ditto.vec2();
+    this.current_cam_pos = Ditto.vec2();
     this._bg = new Background(this, Defines.VOID_BG);
     this.transform.scale_to(...this._bg.zoom)
     this._stage = new Stage(this, Defines.VOID_STAGE);
@@ -601,33 +607,33 @@ export class World extends WorldDataset {
         case CMD.DIST_CAM: {
           const value = cmds[i += 1]
           if (value === '') {
-            this._dist_cam_x = void 0;
+            this._dist_cam_pos = null;
             continue;
           }
-          const x = Number(value);
-          if (Number.isNaN(x)) {
+          const [x, y = 0] = value.split(',').map(Number);
+          if (isNaN(x) || isNaN(y)) {
             Ditto.warn(`DIST_CAM failed, value got ${value}.`)
             continue;
           }
-          this._dist_cam_x = x
+          this._dist_cam_pos = Ditto.vec2(x, y);
           continue;
         }
         case CMD.LOCK_CAM: {
           const value = cmds[i += 1]
           if (value === '') {
-            this._lock_cam_x = void 0;
+            this._lock_cam_pos = null;
             continue;
           }
-          const x = Number(value);
-          if (Number.isNaN(x)) {
+          const [x, y = 0] = value.split(',').map(Number);
+          if (isNaN(x) || isNaN(y)) {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-          if (this.current_cam_x != x)
+          if (this.current_cam_pos.x != x)
             this.callbacks.emit("on_cam_move")(x);
-          this._lock_cam_x = x;
-          this.target_cam_x = x;
-          this.current_cam_x = x;
+          this._lock_cam_pos = Ditto.vec2(x, y);
+          this.target_cam_pos.x = x;
+          this.current_cam_pos.x = x;
           continue;
         }
         case CMD.CHANGE_BG:
@@ -672,14 +678,18 @@ export class World extends WorldDataset {
 
     this.has_players_alive = false
     let offset = 0;
-    let puppet_cam_x_sum = 0;
-    let puppet_cam_x_count = 0;
-    let local_cam_x_sum = 0;
-    let human_cam_x_sum = 0;
-    let fighter_cam_x_sum = 0;
-    let local_cam_x_count = 0;
-    let human_cam_x_count = 0;
-    let fighter_cam_x_count = 0;
+    let puppet_x_sum = 0;
+    let puppet_z_sum = 0;
+    let puppet_count = 0;
+    let local_x_sum = 0;
+    let local_z_sum = 0;
+    let human_x_sum = 0;
+    let human_z_sum = 0;
+    let fighter_x_sum = 0;
+    let fighter_z_sum = 0;
+    let local_count = 0;
+    let human_count = 0;
+    let fighter_count = 0;
     for (let i = 0; i < this.entities.length; i++) {
       const a = this.entities[i];
       if (offset) this.entities[i - offset] = a;
@@ -701,20 +711,25 @@ export class World extends WorldDataset {
 
       if (is_fighter(a)) {
         const x = a.position.x - this.screen_w / 2 + (a.facing * this.screen_w) / 6;
-        fighter_cam_x_sum += x;
-        fighter_cam_x_count++;
+        const z = a.position.z;
+        fighter_x_sum += x;
+        fighter_z_sum += x;
+        fighter_count++;
         if (is_human_ctrl(a.ctrl) && a.hp > 0) {
           if (a.ctrl.player.mine) {
-            local_cam_x_sum += x;
-            local_cam_x_count++;
+            local_x_sum += x;
+            local_z_sum += z;
+            local_count++;
           } else {
-            human_cam_x_sum += x;
-            human_cam_x_count++;
+            human_x_sum += x;
+            human_z_sum += z;
+            human_count++;
           }
         }
         if (a.puppet == true) {
-          puppet_cam_x_sum += x;
-          puppet_cam_x_count++;
+          puppet_x_sum += x;
+          puppet_z_sum += z;
+          puppet_count++;
         }
       }
 
@@ -776,16 +791,16 @@ export class World extends WorldDataset {
       }
       temp_entities.push(a);
     }
-    if (local_cam_x_count) {
-      this.target_cam_x = round(local_cam_x_sum / local_cam_x_count);
-    } else if (human_cam_x_count) {
-      this.target_cam_x = round(human_cam_x_sum / human_cam_x_count);
-    } else if (puppet_cam_x_count) {
-      this.target_cam_x = round(puppet_cam_x_sum / puppet_cam_x_count);
-    } else if (fighter_cam_x_count) {
-      this.target_cam_x = round(fighter_cam_x_sum / fighter_cam_x_count);
+    if (local_count) {
+      this.target_cam_pos.x = round(local_x_sum / local_count);
+    } else if (human_count) {
+      this.target_cam_pos.x = round(human_x_sum / human_count);
+    } else if (puppet_count) {
+      this.target_cam_pos.x = round(puppet_x_sum / puppet_count);
+    } else if (fighter_count) {
+      this.target_cam_pos.x = round(fighter_x_sum / fighter_count);
     } else {
-      this.current_cam_x = this.target_cam_x = round(
+      this.current_cam_pos.x = this.target_cam_pos.x = round(
         (this.player_r + this.player_l) / 2 - this.screen_w / 2
       )
     }
@@ -841,21 +856,21 @@ export class World extends WorldDataset {
   }
 
   update_camera() {
-    const old_cam_x = round(this.current_cam_x);
+    const old_cam_x = round(this.current_cam_pos.x);
     const { cam_l, left, cam_r, right } = this.stage;
-    const max_cam_left = is_num(this._lock_cam_x) ? left : cam_l;
-    const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
+    const min_cam_l = is_num(this._lock_cam_pos?.x) ? left : cam_l;
+    const max_cam_r = is_num(this._lock_cam_pos?.x) ? right : cam_r;
     let max_speed_ratio = 50;
     let acc_ratio = 1;
-    this.target_cam_x = clamp(this._lock_cam_x ?? this._dist_cam_x ?? this.target_cam_x,
-      max_cam_left,
-      max_cam_right - this.screen_w
+    this.target_cam_pos.x = clamp(this._lock_cam_pos?.x ?? this._dist_cam_pos?.x ?? this.target_cam_pos.x,
+      min_cam_l,
+      max_cam_r - this.screen_w
     );
     const acc = min(
       this.atom_time * acc_ratio,
-      this.atom_time * 0.7 * (acc_ratio * abs(this.current_cam_x - this.target_cam_x)) / this.screen_w,
+      this.atom_time * 0.7 * (acc_ratio * abs(this.current_cam_pos.x - this.target_cam_pos.x)) / this.screen_w,
     );
-    const direction = this.current_cam_x > this.target_cam_x ? -1 : 1;
+    const direction = this.current_cam_pos.x > this.target_cam_pos.x ? -1 : 1;
     const max_speed = direction * max_speed_ratio * acc;
     if (sign(this._cam_speed) !== direction)
       this._cam_speed = 0;
@@ -865,10 +880,10 @@ export class World extends WorldDataset {
       this._cam_speed = max_speed;
 
     if (direction < 0)
-      this.current_cam_x = max(this.target_cam_x, this.current_cam_x + this._cam_speed)
+      this.current_cam_pos.x = max(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_speed)
     else
-      this.current_cam_x = min(this.target_cam_x, this.current_cam_x + this._cam_speed);
-    const new_cam_x = round(this.current_cam_x);
+      this.current_cam_pos.x = min(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_speed);
+    const new_cam_x = round(this.current_cam_pos.x);
     if (old_cam_x !== new_cam_x) this.callbacks.emit("on_cam_move")(new_cam_x);
   }
 
@@ -985,7 +1000,8 @@ export class World extends WorldDataset {
     if (this.stage.bg.id !== Defines.VOID_BG.id)
       this.stage.change_bg(Defines.VOID_BG)
     this.paused = false;
-    this._lock_cam_x = void 0;
+    this._lock_cam_pos = null;
+    this._dist_cam_pos = null;
     this.callbacks.emit('on_counts')();
     this._counts.clear()
   }

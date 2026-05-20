@@ -221,7 +221,7 @@ export class BgScrollerOverlay {
         this.ele_cam_bar.style.display = this.ele_btn_free_cam.style.display =
           "unset";
       }
-      this._w_listener.on_cam_move?.(this.world.current_cam_x);
+      this._w_listener.on_cam_move?.(this.world.current_cam_pos.x);
     },
     on_cam_move: (cam_x) => {
       const { width, height } = this.ele_cam_bar.getBoundingClientRect();

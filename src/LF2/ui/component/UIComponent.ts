@@ -163,7 +163,7 @@ export class UIComponent<
       return null
     }
     const [x, y, z] = nums;
-    const ret = new Ditto.Vector3(x, y, z);
+    const ret = Ditto.vec3(x, y, z);
     this._args_caches.set(key, ret)
     return ret;
   }
