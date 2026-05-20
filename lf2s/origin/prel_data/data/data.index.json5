@@ -17,6 +17,11 @@
       type: "bg",
       file: "bg/leeonroad/leeonroad.bg.json5",
     },
+    {
+      id: "football_field",
+      type: "bg",
+      file: "bg/football_field/football_field.bg.json5",
+    },
   ],
   stages: [
     {
