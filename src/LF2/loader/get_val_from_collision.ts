@@ -3,6 +3,7 @@ import { is_armor_work } from "../collision/is_armor_work";
 import { CheatType, EntityGroup, HitFlag } from "../defines";
 import { CollisionVal } from "../defines/CollisionVal";
 import { IValGetter, IValGetterGetter } from "../defines/IExpression";
+import { is_ball_ctrl } from "../entity";
 import { round } from "../utils";
 
 const map: Record<CollisionVal, IValGetter<Collision>> = {
@@ -26,7 +27,9 @@ const map: Record<CollisionVal, IValGetter<Collision>> = {
   [CollisionVal.ItrFall]: c => c.itr.fall,
   [CollisionVal.AttackerThrew]: c => c.attacker.throwinjury ? 1 : 0,
   [CollisionVal.VictimThrew]: c => c.victim.throwinjury ? 1 : 0,
-  [CollisionVal.VictimIsChasing]: c => c.victim === c.attacker.chasing ? 1 : 0,
+  [CollisionVal.VictimIsChasing]: c => {
+    return is_ball_ctrl(c.attacker.ctrl) && c.victim === c.attacker.ctrl.chasing ? 1 : 0
+  },
   [CollisionVal.VictimIsFreezableBall]: c => c.victim.group?.some(v => v === EntityGroup.FreezableBall) ? 1 : 0,
   [CollisionVal.AttackerIsFreezableBall]: c => c.attacker.group?.some(v => v === EntityGroup.FreezableBall) ? 1 : 0,
   [CollisionVal.ArmorWork]: (collision: Collision) => is_armor_work(collision) ? 1 : 0,
