@@ -1,6 +1,6 @@
+import { cos, round } from "@/LF2/utils";
 import { CMD } from "../../defines/CMD";
 import { Entity } from "../../entity";
-import { IUIKeyEvent } from "../IUIKeyEvent";
 import { UIComponent } from "./UIComponent";
 /**
  * 按键的相机控制
@@ -11,59 +11,83 @@ import { UIComponent } from "./UIComponent";
  */
 export class CameraCtrl extends UIComponent {
   static override readonly TAGS: string[] = ["CameraCtrl"];
-  time: number = 0;
-  free: boolean = true;
-  staring?: Entity;
-  get lr() {
-    const r = this.keys.R.is_end() ? 0 : 1;
-    const l = this.keys.L.is_end() ? 0 : 1;
-    return r - l;
+  auto: boolean = true;
+  private _staring?: Entity;
+  get staring() {
+    return this._staring;
   }
-  override on_key_down(e: IUIKeyEvent): void {
-    this.keys[e.game_key].hit();
-  }
-  override on_key_up(e: IUIKeyEvent): void {
-    this.keys[e.game_key].end();
-  }
-  focus_next(d: -1 | 1) {
-    const fighters = this.lf2.fighters.all.filter(v => v.hp > 0)
-    fighters.sort((a, b) => a.position.x - b.position.x);
-    if (!this.staring) {
-      this.staring = fighters.at(d < 0 ? fighters.length - 1 : 0)
-    } else {
-      const idx = fighters.indexOf(this.staring!)
-      const len = fighters.length
-      this.staring = fighters.at((idx + len + d) % len)
+  set staring(v) {
+    if (v == this._staring) return;
+    if (this._staring) {
+      this._staring.outline_width = 1;
+      this._staring.outline_color = '';
     }
-    this.free = !!this.staring;
+    this._staring = v;
+    if (this._staring) {
+      this._staring.outline_color = this._staring.outline_color ?? 'rgb(255, 0, 0)';
+    }
   }
   override update(dt: number): void {
-    const { lr } = this;
-    if (lr) {
-      this.free = false
-      const { current_cam_pos: { x: cam_x } } = this.world;
-      this.lf2.cmds.push(CMD.DIST_CAM, `${cam_x + 10 * dt * lr}`)
-    }
-    if (!this.keys.j.is_end())
-      this.free = true
-
-    if (!this.keys.d.is_end()) {
+    const { LR, UD } = this;
+    if (!this.keys.j.is_end()) {
+      this.auto = true
+      if (this.keys.L.is_start()) { this.focus_lr(-1); }
+      if (this.keys.R.is_start()) { this.focus_lr(+1); }
+      if (this.keys.U.is_start()) { this.focus_ud(-1); }
+      if (this.keys.D.is_start()) { this.focus_ud(+1); }
+    } else if (!this.keys.d.is_end()) {
       this.lf2.cmds.push(CMD.DIST_CAM, ``)
       this.staring = void 0;
-      this.free = true
+      this.auto = true
+    } else if (LR || UD) {
+      this.auto = false
+      let { current_cam_pos: { x, y } } = this.world;
+      x += 5 * dt * LR;
+      y += 5 * dt * UD;
+      this.lf2.cmds.push(CMD.DIST_CAM, `${x},${y}`)
     }
-    if (this.keys.U.is_start()) this.focus_next(-1);
-    if (this.keys.D.is_start()) this.focus_next(1);
+    if (this._staring) {
+      this._staring.outline_width = round((cos(this.world.lifetime) + 1) * 2.5);
+      
+    }
     if (this.staring && (this.staring.hp <= 0 || !this.staring.mounted))
-      this.focus_next(1)
+      this.focus_lr(1)
 
-    if (this.free && this.staring) {
+    if (this.auto && this.staring) {
       const cam_x = this.staring.position.x - this.world.screen_w / 2
       this.lf2.cmds.push(CMD.DIST_CAM, `${cam_x}`)
     }
-    this.time += dt;
   }
   override on_stop(): void {
     this.lf2.cmds.push(CMD.DIST_CAM, ``)
+    if (this._staring) {
+      this._staring.outline_width = 1;
+      this._staring.outline_color = '';
+    }
+  }
+
+  focus_lr(direction: number) {
+    const fighters = this.lf2.fighters.all.filter(v => v.hp > 0)
+    fighters.sort((a, b) => a.position.x - b.position.x);
+    if (!this.staring) {
+      this.staring = fighters.at(direction < 0 ? fighters.length - 1 : 0)
+    } else {
+      const idx = fighters.indexOf(this.staring!)
+      const len = fighters.length
+      this.staring = fighters.at((idx + len + direction) % len)
+    }
+    this.auto = !!this.staring;
+  }
+  focus_ud(direction: number) {
+    const fighters = this.lf2.fighters.all.filter(v => v.hp > 0)
+    fighters.sort((a, b) => a.position.z - b.position.z);
+    if (!this.staring) {
+      this.staring = fighters.at(direction < 0 ? fighters.length - 1 : 0)
+    } else {
+      const idx = fighters.indexOf(this.staring!)
+      const len = fighters.length
+      this.staring = fighters.at((idx + len + direction) % len)
+    }
+    this.auto = !!this.staring;
   }
 }

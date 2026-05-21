@@ -59,6 +59,7 @@ export class Entity {
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
   protected _outline_alpha: number = 0.8;
+  protected _outline_width: number = 1;
   protected readonly _prev_position: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _position: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _velocity: IVector3 = Ditto.vec3(0, 0, 0);
@@ -247,7 +248,9 @@ export class Entity {
   set outline_color(v: string) { this._outline_color = v; }
   get outline_alpha(): number { return this._outline_alpha; }
   set outline_alpha(v: number) { this._outline_alpha = v; }
-
+  get outline_width(): number { return this._outline_width; }
+  set outline_width(v: number) { this._outline_width = v; }
+  
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 

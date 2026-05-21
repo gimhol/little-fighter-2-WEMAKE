@@ -30,16 +30,6 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   }
   time: number = 0;
   get direction() { return this.props.direction ?? 'row' }
-  get lr() {
-    const r = this.keys.R.is_end() ? 0 : 1;
-    const l = this.keys.L.is_end() ? 0 : 1;
-    return r - l;
-  }
-  get ud() {
-    const u = this.keys.U.is_end() ? 0 : 1;
-    const d = this.keys.D.is_end() ? 0 : 1;
-    return u - d;
-  }
   private _on_me = false;
   private _factor: number = 0;
   private p: IUICallback = {
@@ -170,7 +160,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       !this.node?.focused
     ) return;
     if (!this.props.switcher) {
-      const { lr, ud } = this;
+      const { LR: lr, UD: ud } = this;
       if (this.direction == 'row' && lr) {
         this.value += this.step * lr;
       } else if (this.direction == 'col' && ud) {
@@ -187,7 +177,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       return;
     }
     if (!this.props.switcher) return;
-    const { lr, ud } = this;
+    const { LR: lr, UD: ud } = this;
     if (this.direction == 'row' && lr) {
       const prev = this.value
       let curr = this.value + this.step * lr

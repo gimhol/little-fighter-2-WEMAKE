@@ -214,12 +214,13 @@ export class EntityMainRender {
     const { main_mesh } = this;
     if (this.entity.ghosted) return;
     const { material: m } = main_mesh;
-    const { outline_color, outline_alpha } = this.entity;
+    const { outline_color, outline_alpha, outline_width } = this.entity;
     const enabled = this.entity.dataset('teamoutline_enabled');
 
     if (outline_color && outline_alpha && enabled) {
       m.outlineColor = new Color(outline_color);
       m.outlineAlpha = outline_alpha ?? 0.7;
+      m.outlineWidth = outline_width
     } else {
       m.outlineAlpha = 0;
     }

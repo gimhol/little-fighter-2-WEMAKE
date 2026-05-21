@@ -49,5 +49,12 @@
       height: 1360,
       color: "#308300",
     },
+    {
+      x: 20,
+      y: 20,
+      w: 4360,
+      height: 5,
+      color: "white",
+    },
   ],
 }

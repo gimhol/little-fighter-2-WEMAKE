@@ -651,8 +651,8 @@ export class World extends WorldDataset {
   update_once() {
     this._entities_map.clear();
     this.transform.update();
-    this.update_ui();
     this.handle_keys();
+    this.update_ui();
     this.handle_cmds();
     this.update_camera();
     this.bg.update();
@@ -804,11 +804,6 @@ export class World extends WorldDataset {
     } else if (fighter_count) {
       this.target_cam_pos.x = round(fighter_x_sum / fighter_count);
       this.target_cam_pos.y = -0.5 * round(fighter_z_sum / fighter_count) - this.screen_h / 2;
-    } else {
-      this.current_cam_pos.x = this.target_cam_pos.x = round(
-        (this.player_r + this.player_l) / 2 - this.screen_w / 2
-      )
-      this.current_cam_pos.y = this.target_cam_pos.y = 0
     }
 
     for (const c of this.v_collisions)
@@ -864,7 +859,7 @@ export class World extends WorldDataset {
   update_camera() {
     const old_cam_x = round(this.current_cam_pos.x);
     const old_cam_y = round(this.current_cam_pos.y);
-    {
+    do {
       const { cam_l, left, cam_r, right } = this.stage;
       const min_cam_l = is_num(this._lock_cam_pos?.x) ? left : cam_l;
       const max_cam_r = is_num(this._lock_cam_pos?.x) ? right : cam_r;
@@ -874,6 +869,8 @@ export class World extends WorldDataset {
         min_cam_l,
         max_cam_r - this.screen_w
       );
+      if (round(this.current_cam_pos.x) == round(this.target_cam_pos.x)) break
+
       const acc_x = min(
         this.atom_time * acc_x_ratio,
         this.atom_time * 0.7 * (acc_x_ratio * abs(this.current_cam_pos.x - this.target_cam_pos.x)) / this.screen_w,
@@ -890,7 +887,7 @@ export class World extends WorldDataset {
         this.current_cam_pos.x = max(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_v.x)
       else
         this.current_cam_pos.x = min(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_v.x);
-    }
+    } while (0)
 
     do {
       const { height } = this.bg.data.base;
@@ -902,13 +899,13 @@ export class World extends WorldDataset {
       let max_vy_ratio = 50;
       let acc_y_ratio = 1;
       const cam_y = this._lock_cam_pos?.y ?? this._dist_cam_pos?.y ?? this.target_cam_pos.y
-      const cam_min_y = 0;
       const cam_max_y = min(-0.5 * far, height - Defines.MODERN_SCREEN_HEIGHT)
       this.target_cam_pos.y = clamp(cam_y, 0, cam_max_y);
       const acc_y = min(
         this.atom_time * acc_y_ratio,
         this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
       );
+      if (round(this.current_cam_pos.y) == round(this.target_cam_pos.y)) break
       const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
       const max_vy = direction_y * max_vy_ratio * acc_y;
       if (sign(this._cam_v.y) !== direction_y)
@@ -955,6 +952,7 @@ export class World extends WorldDataset {
       return;
     }
     e.outline_alpha = 0;
+    e.outline_width = 0;
     e.outline_color = '';
     e.set_position(x, y, z);
     e.enter_frame({ id: f });

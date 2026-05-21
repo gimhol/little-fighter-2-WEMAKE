@@ -80,7 +80,7 @@ export class WorldRenderer implements IWorldRenderer {
       camera.top = h;
       camera.bottom = 0;
       camera.near = 0.1;
-      camera.far = 2000;
+      camera.far = 1000000;
       camera.position.set(0, 0, 100)
       this.cam_p1.copy(camera.position)
       this.cam_p0.copy(camera.position)

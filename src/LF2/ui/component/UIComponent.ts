@@ -68,6 +68,16 @@ export class UIComponent<
 
   get disabled() { return !this.enabled }
   set disabled(v: boolean) { this.set_enabled(!v); }
+  get LR(): -1 | 0 | 1 {
+    const r = this.keys.R.is_end() ? 0 : 1;
+    const l = this.keys.L.is_end() ? 0 : 1;
+    return r - l as (-1 | 0 | 1);
+  }
+  get UD(): -1 | 0 | 1 {
+    const u = this.keys.U.is_end() ? 0 : 1;
+    const d = this.keys.D.is_end() ? 0 : 1;
+    return u - d as (-1 | 0 | 1);
+  }
 
   /**
    * 组件基类构造函数
