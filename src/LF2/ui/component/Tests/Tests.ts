@@ -1,4 +1,4 @@
-import { Bat_DUJ_3, BotAvoiding, BotFollow, FasterSlowerStandUp, Firzen_DUA_0, Firzen_DUA_2, WeaponPicking1, WeaponPicking2 } from "@/LF2";
+import { Bat_DUJ_3, BotAvoiding, BotFollow, FasterSlowerStandUp, Firzen_DUA_0, Firzen_DUA_2, Henry_DUJ, WeaponPicking1, WeaponPicking2 } from "@/LF2";
 import { FSM } from "../../../base/FSM";
 import { GK, IClazz } from "../../../defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
@@ -26,6 +26,8 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   ], [
     Jan_DUA,
     Jan_DUJ
+  ], [
+    Henry_DUJ
   ], [
     Rudolf_DFJ
   ], [
