@@ -14,8 +14,7 @@ export function handle_itr_kind_magic_flute(collision: Collision): void {
     victim.velocity.y,
     3,
     SpeedMode.AccTo,
-    round_float(3),
-    1
+    3, 1
   )
   victim.set_velocity_y(y)
   victim.toughness = 0;
