@@ -31,11 +31,11 @@ export class BgRender {
     if (!this.bg) return
 
     this.cam_node = new T.Object3D();
-    this.cam_node.position.z = 2 * this.bg.data.base.far;
+    this.cam_node.position.z = -this.bg.data.base.height * 2;
     this.cam_node.name = "Background(Cam Follower):" + this.bg.data.base.name;
 
     this.root_node = new T.Object3D();
-    this.root_node.position.z = 2 * this.bg.data.base.far;
+    this.root_node.position.z = -this.bg.data.base.height * 2;
     this.root_node.name = "Background:" + this.bg.data.base.name;
 
     for (const layer of this.bg.layers) {
