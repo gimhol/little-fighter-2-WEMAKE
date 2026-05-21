@@ -660,7 +660,7 @@ export class World extends WorldDataset {
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
-    
+
     if (this.stage.world_pause) return;
     if (this.entities.length > MAX_DEBUG_ENTITIES)
       Ditto.debug(`[World::update_once]entities.size = ${this.entities.length}`)
@@ -764,12 +764,16 @@ export class World extends WorldDataset {
       if (a.ghosted) continue;
       for (let j = 0; j < temp_entities.length; j++) {
         const b = temp_entities[j];
-        if (j < divider) continue; //
-        if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
-          // 分割，前面的不会与此后的碰撞了
+
+        // 只处理可能碰撞的（divider 之后的）
+        if (j < divider) continue;
+
+        // 已经不可能碰撞的实体：直接跳过，并且把 divider 往后推
+        if (a.aabb_x2 < b.aabb_x2) {
           divider = j + 1;
           continue;
         }
+
         const collision1 = collision_get(a, b);
         const collision2 = collision_get(b, a);
 
