@@ -769,7 +769,7 @@ export class World extends WorldDataset {
         if (j < divider) continue;
 
         // 已经不可能碰撞的实体：直接跳过，并且把 divider 往后推
-        if (a.aabb_x2 < b.aabb_x2) {
+        if (a.aabb_x2 < b.aabb_x1) {
           divider = j + 1;
           continue;
         }
