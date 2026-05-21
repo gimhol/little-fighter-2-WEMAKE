@@ -14,10 +14,9 @@ export interface INextFrame extends IVelocityInfo {
   /**
    * 下一帧的持续时间策略
    *
-   * 'i': 继承上一帧剩余事件;
-   * 'd': 
-   *
-   * 正数: 将会覆盖下一帧自带的wait
+   * - i:    this.wait = this.wait
+   * - d:    this.wait = frame.wait - this.frame.wait + this.wait
+   * - 正数: this.wait = nf.wait
    * @see {IFrameInfo.wait} 下一帧自带的wait
    * 
    * @type {?(string | number)}
