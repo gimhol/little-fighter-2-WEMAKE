@@ -541,8 +541,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   async load_ui(zip: I.IZip): Promise<ReadonlyArray<UI.ICookedUIInfo>> {
     this._dispose_check('load_ui')
-    if (this.uis.all.length) return this.uis.all;
-
     const files = zip.file(/^ui\/.*?\.ui\.json5?$/)
     const ret: UI.ICookedUIInfo[] = []
     for (const file of files) {
