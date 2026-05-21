@@ -13,11 +13,11 @@ export function make_fb_dennis_chase(frame: IFrameInfo) {
   frame.vxm = SpeedMode.AccTo;
 
   frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-  frame.acc_z = 0.125;
+  frame.acc_z = 0.25;
   frame.vzm = SpeedMode.AccTo;
 
   frame.dvy = -0.5;
-  frame.acc_y = 0.125;
+  frame.acc_y = 0.25;
   frame.vym = SpeedMode.AccTo;
 
   frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
