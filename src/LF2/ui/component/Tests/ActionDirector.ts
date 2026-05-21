@@ -11,45 +11,38 @@ export class ActionDirector {
 
   private _action_idx = 0;
   private _actions: IAction[] = [];
-  private _time: number = 0;
+  private _lifetime: number = 0;
   private _times: number = 1;
   private _curr: number = 0;
-  get time() { return this._time; }
+  get lifetime() { return this._lifetime; }
+  get end_time() {
+    return this._actions.at(this._actions.length - 1)?.time ?? 0
+  }
   reset(): this {
-    this._time = 0;
+    this._lifetime = 0;
     this._curr = 0;
     this._action_idx = 0;
     return this;
   }
-  get end_time() {
-    return this._actions.at(this._actions.length - 1)?.time ?? 0
-  }
-  repeat(times: number, offset: number, ...works: IWork[]): this {
+  repeat(times: number, delay: number, ...works: IWork[]): this {
     let time = this.end_time
-    while (times >= 0) {
+    do {
       for (const work of works) {
-        time += offset
-        this._actions.push({ time, work });
+        this.insert(time += delay, work)
       }
       --times;
-    }
+    } while (times > 0)
     return this;
   }
-  offset(offset: number, ...works: IWork[]): this {
-    let time = this.end_time
-    for (const work of works) {
-      time += offset;
-      this._actions.push({ time, work });
-    }
-    return this;
+  offset(delay: number, ...works: IWork[]): this {
+    return this.repeat(0, delay, ...works);
   }
-  add(time: number, work: IWork): this {
+  insert(time: number, work: IWork): this {
     this._actions.push({ time, work });
     return this;
   }
-  wait(time: number) {
-    this._actions.push({ time: this.end_time + time, work() { } });
-    return this;
+  wait(duration: number) {
+    return this.insert(this.end_time + duration, () => { });
   }
   sort(): this {
     this._actions.sort((a, b) => a.time > b.time ? 1 : -1);
@@ -63,7 +56,7 @@ export class ActionDirector {
       ++this._curr;
     }
 
-    const time = this._time + dt;
+    const time = this._lifetime + dt;
     if (this._curr < this._times && this._times > 0) {
       const actions: IAction[] = [];
       const t = end_time ? min(end_time, time) : time
@@ -75,7 +68,7 @@ export class ActionDirector {
       actions.forEach(v => v.work());
     }
 
-    this._time = end_time ? time % end_time : time;
+    this._lifetime = end_time ? time % end_time : time;
   }
   times(times: number) {
     this._times = times

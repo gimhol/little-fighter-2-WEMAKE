@@ -167,8 +167,11 @@ export class WorldRenderer implements IWorldRenderer {
     if (indicator_flags != this.indicators)
       this.indicators = indicator_flags;
     this.bg_render.render(dt);
-    for (const renderer of this.entity_renderers)
+    for (const renderer of this.entity_renderers) {
+      if (renderer.entity.bearer || renderer.entity.catcher)
+        continue;
       renderer.render(dt)
+    }
     for (const ui_stack of this.lf2.ui_stacks)
       ui_stack.ui?.renderer.render(dt)
 

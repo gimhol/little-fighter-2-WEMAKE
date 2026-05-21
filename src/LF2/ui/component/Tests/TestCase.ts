@@ -5,11 +5,13 @@ import { Entity } from "../../../entity";
 import { round_float } from "../../../utils/math/round_float";
 import type { Tests } from "./Tests";
 
-let KEY: number = -1;
 export class TestCase implements IState<number> {
-  readonly key: number = ++KEY;
+  static key = -1;
+  readonly key: number = ++TestCase.key;
   readonly owner: Tests;
   entities: Entity[] = [];
+  fighters: Entity[] = [];
+  weapons: Entity[] = [];
   name: string = 'None';
   get lf2() { return this.owner.lf2 }
   get world() { return this.owner.world }

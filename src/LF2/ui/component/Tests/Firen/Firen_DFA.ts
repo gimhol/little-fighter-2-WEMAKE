@@ -6,7 +6,7 @@ import { TestCase } from "../TestCase";
 export class Firen_DFA extends TestCase {
   override name: string = 'Firen D>A+A+A';
   director = new ActionDirector()
-    .add(50, () => {
+    .insert(50, () => {
       this.entities[0]?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Attack).key_down(GK.Down);
       this.entities[1]?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Attack);
       this.entities[2]?.ctrl.key_up(...AGK).click(GK.Defend, GK.Right, GK.Attack).key_down(GK.Up);

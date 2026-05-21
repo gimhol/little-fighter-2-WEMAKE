@@ -55,7 +55,6 @@ export class EntityMainRender {
     this.frame = entity.frame;
     this.facing = entity.facing;
     this.node.add(this.main_mesh, this.blood_mesh)
-    this.reset();
   }
 
   reset(): void {
@@ -94,6 +93,7 @@ export class EntityMainRender {
   }
 
   on_mount(): void {
+    this.reset()
     this.update_texture();
     this.update_outline();
     this.update_position(true);
@@ -167,24 +167,27 @@ export class EntityMainRender {
     const { pic } = frame;
     const { images } = this;
     main_mesh.scale.set(width, height, 0);
-    
+
     if (!pic) return;
+
+    const { material: m } = main_mesh;
 
     let { tex } = pic;
     if (variant) {
       const variants = this.file_variants.get(tex);
-      variants?.length && (tex = variants[variant]);
+      variants?.length && (tex = variants[variant] ?? tex);
     }
 
     const img = images.get(tex);
-    if (!img?.pic) return;
-
-    const { material: m } = main_mesh;
-    m.uniforms.tex.value = img.pic.texture;
-    m.uniforms.tw.value = img.pic.w;
-    m.uniforms.th.value = img.pic.h;
-    m.uniforms.tsw.value = img.scale;
-    m.uniforms.tsh.value = img.scale;
+    if (img?.pic) {
+      m.uniforms.tex.value = img.pic.texture;
+      m.uniforms.tw.value = img.pic.w;
+      m.uniforms.th.value = img.pic.h;
+      m.uniforms.tsw.value = img.scale;
+      m.uniforms.tsh.value = img.scale;
+    } else {
+      m.uniforms.tex.value = void 0;
+    }
     m.uniforms.x.value = pic.x;
     m.uniforms.y.value = pic.y;
     m.uniforms.w.value = pic.w;

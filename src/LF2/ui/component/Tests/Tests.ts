@@ -1,4 +1,4 @@
-import { Bat_DUJ_3, BotAvoiding, BotFollow, FasterSlowerStandUp, Firzen_DUA_0, Firzen_DUA_2 } from "@/LF2";
+import { Bat_DUJ_3, BotAvoiding, BotFollow, FasterSlowerStandUp, Firzen_DUA_0, Firzen_DUA_2, WeaponPicking1, WeaponPicking2 } from "@/LF2";
 import { FSM } from "../../../base/FSM";
 import { GK, IClazz } from "../../../defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
@@ -38,7 +38,7 @@ const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
     MoonTest
   ], [BottomsUp, MoveStayCome, BotCome, BotFollow, FasterSlowerStandUp,
   ], [
-    BotAvoiding
+    BotAvoiding, WeaponPicking1, WeaponPicking2
   ]
 ]
 export class Tests extends UIComponent {
@@ -47,6 +47,7 @@ export class Tests extends UIComponent {
   groups: TestCase[][] = []
   override init(): void { }
   override on_start(): void {
+    TestCase.key = -1;
     this.groups = CASE_GROUPS.map((cases, x) => cases.map((C, y) => {
       const r = new C(this)
       r.name = `${x}-${y} ${r.name}`

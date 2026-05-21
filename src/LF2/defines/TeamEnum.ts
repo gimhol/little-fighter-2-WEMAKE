@@ -13,3 +13,5 @@ export enum TeamEnum {
 export const is_independent = (team: string) => team.length !== 1;
 export const T_E = TeamEnum;
 export type T_E = TeamEnum;
+export const TE = TeamEnum;
+export type TE = TeamEnum;

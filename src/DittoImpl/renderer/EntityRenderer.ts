@@ -87,6 +87,8 @@ export class EntityRenderer {
     this.stat?.render();
     this.indi?.render();
     this.ctrl?.render()
+    this.entity.holding?.renderer.render(dt)
+    this.entity.catching?.renderer.render(dt)
   }
   mount() {
     this.main.on_mount();
