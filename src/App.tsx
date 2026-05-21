@@ -241,9 +241,9 @@ function App() {
         id: l.id,
         name: l.name,
       }));
+      console.log('on_ui_loaded', ui)
       layout_data_list.unshift({ id: "", name: "无页面" });
       set_uis(layout_data_list);
-
       if (layout_data_list.length > 1)
         _set_ui((v) => v || layout_data_list[1].id);
     },
