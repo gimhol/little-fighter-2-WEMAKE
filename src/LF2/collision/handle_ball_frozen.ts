@@ -41,13 +41,13 @@ export function handle_ball_frozen(attacker: Entity, victim: Entity, itr: IItrIn
   const { x: x1, y: y1, z: z1 } = attacker.position;
   const { x: x2, y: y2, z: z2 } = victim.position;
   const cx1 = (x1 - attacker.frame.centerx) + attacker.frame.width / 2;
-  const cy1 = (y1 + attacker.frame.height - attacker.frame.centery) + attacker.frame.height / 2;
+  const cy1 = (y1 + attacker.frame.height - attacker.frame.centery) - attacker.frame.height / 2;
   const cx2 = (x2 - victim.frame.centerx) + victim.frame.width / 2;
-  const cy2 = (y2 + victim.frame.height - victim.frame.centery) + victim.frame.height / 2;
+  const cy2 = (y2 + victim.frame.height - victim.frame.centery) - victim.frame.height / 2;
 
-  freeze_ball_opoint.x = round(0.5 * (cx2 - cx1) + (x1 - attacker.frame.centerx))
-  freeze_ball_opoint.y = round(0.5 * (cy2 - cy1) + (y1 + attacker.frame.height - attacker.frame.centery))
-  freeze_ball_opoint.z = round(0.5 * (z2 - z1) - (z1))
+  freeze_ball_opoint.x = round(0.5 * (cx2 - cx1))
+  freeze_ball_opoint.y = round(0.5 * (cy2 - cy1))
+  freeze_ball_opoint.z = round(0.5 * (z2 - z1))
   const freeze_ball = attacker.spawn_entity(
     freeze_ball_opoint, void 0, turn_face(victim.facing)
   )
