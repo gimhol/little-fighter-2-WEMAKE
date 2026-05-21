@@ -372,17 +372,21 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       this._i18n.add(obj)
     }
     this._dispose_check('load')
+
+    if (is_first) {
+      await this.load_builtin_ui()
+      this._dispose_check('load_ui')
+      const ui = this.uis.all.find(v => v.id === this.first_ui)
+      this.set_ui({ id: ui?.id! })
+    }
+
     try {
       for (const a of arg1) {
         const [zip, md5] = is_str(a) ? await this.load_zip_from_info_url(a) : [a, 'unknown'];
         await this.load_data(zip, md5);
         await this.load_ui(zip);
       }
-      if (is_first) {
-        const ui = this.uis.all.find(v => v.id === this.first_ui)
-        this.set_ui({ id: ui?.id! })
-        this.callbacks.emit("on_prel_loaded")(this);
-      }
+      if (is_first) this.callbacks.emit("on_prel_loaded")(this);
       this._playable = true;
       this.callbacks.emit("on_loading_end")();
     } catch (e) {
@@ -531,6 +535,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       this._dispose_check('load_builtin_ui')
       ret.unshift(cooked_ui_info);
     }
+    this.uis.add(...ret);
     return ret
   }
 
@@ -540,10 +545,6 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
     const files = zip.file(/^ui\/.*?\.ui\.json5?$/)
     const ret: UI.ICookedUIInfo[] = []
-    if (!this.uis.all.length) {
-      ret.unshift(...await this.load_builtin_ui())
-      this._dispose_check('load_ui')
-    }
     for (const file of files) {
       const json = await file.json().catch(() => null);
       this._dispose_check('load_ui')
