@@ -108,6 +108,8 @@ export function cook_frames(ctx: IDatContext): Record<string, IFrameInfo> {
       pic: frame_pic_info,
       wait,
       next,
+      width: frame_pic_info?.w ?? 0,
+      height: frame_pic_info?.h ?? 0,
       ...fields,
     };
 

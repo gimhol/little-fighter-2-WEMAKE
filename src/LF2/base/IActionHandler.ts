@@ -5,6 +5,7 @@ import type { IAction_Broadcast } from "../defines/IAction_Broadcast";
 import type { IAction_BrokenDefend } from "../defines/IAction_BrokenDefend";
 import type { IAction_Defend } from "../defines/IAction_Defend";
 import type { IAction_Fusion } from "../defines/IAction_Fusion";
+import type { IAction_StealValue } from "../defines/IAction_StealValue";
 import type { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
 import type { IAction_TurnFace } from "../defines/IAction_TurnFace";
 import type { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
@@ -26,4 +27,5 @@ export interface IActionHandler {
   [ActionType.V_TURN_TEAM]: (action: IAction_TurnTeam, collision: Collision) => any;
   [ActionType.FUSION]: (action: IAction_Fusion, collision: Collision) => any;
   [ActionType.BROADCAST]: (action: IAction_Broadcast, collision: Collision) => any;
+  [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => any;
 }

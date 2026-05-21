@@ -1,6 +1,7 @@
 import { Entity, IEntityCallbacks } from "@/LF2/entity";
-import { StatBarType } from "@/LF2/entity/StatBarType";
-import { IPropsMeta } from "@/LF2/utils/schema/make_schema";
+import { Defines, T_E } from "../../defines";
+import { StatBarType } from "../../entity/StatBarType";
+import { IPropsMeta } from "../../utils/schema/make_schema";
 import { UINode } from "../UINode";
 import { Label } from "./Label";
 import { Picture } from "./Picture";
@@ -32,17 +33,17 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     name_txt: Label,
   };
   protected entity?: Entity;
-  protected defend_value_max = new SmoothNumber().on_change(() => this.update_defend_value())
-  protected defend_value = new SmoothNumber().on_change(() => this.update_defend_value())
-  protected fall_value_max = new SmoothNumber().on_change(() => this.update_fall_value())
-  protected fall_value = new SmoothNumber().on_change(() => this.update_fall_value())
-  protected toughness = new SmoothNumber().on_change(() => this.update_toughness())
-  protected toughness_max = new SmoothNumber().on_change(() => this.update_toughness())
-  protected hp_max = new SmoothNumber().on_change(() => { this.update_hp(); this.update_hp_r() })
-  protected hp_r = new SmoothNumber().on_change(() => this.update_hp_r())
-  protected hp = new SmoothNumber().on_change(() => this.update_hp())
-  protected mp_max = new SmoothNumber().on_change(() => this.update_mp())
-  protected mp = new SmoothNumber().on_change(() => this.update_mp())
+  protected defend_value_max = new SmoothNumber().handler(() => this.update_defend_value())
+  protected defend_value = new SmoothNumber().handler(() => this.update_defend_value())
+  protected fall_value_max = new SmoothNumber().handler(() => this.update_fall_value())
+  protected fall_value = new SmoothNumber().handler(() => this.update_fall_value())
+  protected toughness = new SmoothNumber().handler(() => this.update_toughness())
+  protected toughness_max = new SmoothNumber().handler(() => this.update_toughness())
+  protected hp_max = new SmoothNumber().handler(() => { this.update_hp(); this.update_hp_r() })
+  protected hp_r = new SmoothNumber().handler(() => this.update_hp_r())
+  protected hp = new SmoothNumber().handler(() => this.update_hp())
+  protected mp_max = new SmoothNumber().handler(() => { this.update_mp_max(); this.update_mp() })
+  protected mp = new SmoothNumber().handler(() => this.update_mp())
   protected dark_hp_bar_w: number = 200;
   protected hp_bar_w: number = 200;
   protected dark_mp_bar_w: number = 200;
@@ -87,17 +88,28 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     }
     this.entity = entity
     if (entity) {
-      this.hp_max.target = entity.hp_max
-      this.hp_r.target = entity.hp_r
-      this.hp.target = entity.hp
-      this.mp_max.target = entity.mp_max
-      this.mp.target = entity.mp
-      this.defend_value_max.target = entity.defend_value_max
-      this.defend_value.target = entity.defend_value
-      this.fall_value_max.target = entity.fall_value_max
-      this.fall_value.target = entity.fall_value
-      this.toughness_max.target = entity.toughness_max || 1
-      this.toughness.target = entity.toughness;
+      this.hp_max.target           /**/ = entity.hp_max
+      this.hp_max.handle()
+      this.hp_r.target             /**/ = entity.hp_r
+      this.hp_r.handle()
+      this.hp.target               /**/ = entity.hp
+      this.hp.handle()
+      this.mp_max.target           /**/ = entity.mp_max
+      this.mp_max.handle()
+      this.mp.target               /**/ = entity.mp
+      this.mp.handle()
+      this.defend_value_max.target /**/ = entity.defend_value_max
+      this.defend_value_max.handle()
+      this.defend_value.target     /**/ = entity.defend_value
+      this.defend_value.handle()
+      this.fall_value_max.target   /**/ = entity.fall_value_max
+      this.fall_value_max.handle()
+      this.fall_value.target       /**/ = entity.fall_value
+      this.fall_value.handle()
+      this.toughness_max.target    /**/ = entity.toughness_max || 1
+      this.toughness_max.handle()
+      this.toughness.target        /**/ = entity.toughness;
+      this.toughness.handle()
       entity.callbacks.add(this.cbs)
       entity.stat_bar_type = entity.stat_bar_type | StatBarType.UI;
     }
@@ -143,6 +155,11 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     if (!node || max === 0) return;
     node.set_scale(val / max, 1, 1);
   }
+  update_mp_max() {
+    const node = this.props.dark_mp_bar;
+    if (!node) return;
+    node.set_scale(1, 1, 1);
+  }
   update_head(): void {
     const { entity } = this;
     if (entity) {
@@ -153,19 +170,30 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     }
   }
   update_name() {
+    const { name_txt } = this.props;
+    if (!name_txt) return;
     const name0 = this.entity?.name.trim() ?? ''
     const name1 = this.entity?.data.base.name.trim() ?? ''
     let name = name0 || name1;
     if (name0 !== name1 && name0 && name1)
       name = `${name1} (${name0})`
-    this.props.name_txt?.set_text(name)
+    name_txt.set_text(name)
+  }
+  update_team() {
+    const { name_txt } = this.props;
+    if (!name_txt) return;
+    const team = this.entity?.team ?? 0;
+    const { txt_color, txt_outline_color } = Defines.TeamInfoMap[team] || Defines.TeamInfoMap[T_E.Independent]
+    name_txt.node.outlineColor = txt_outline_color;
+    name_txt.node.background = txt_outline_color;
+    name_txt.node.color = txt_color;
   }
   override update(): void {
     this.update_name();
-
+    this.update_team();
     const { entity, props: { hp_bar } } = this
     if (hp_bar) {
-      this.healing = !!entity?.healing && (entity.update_id.value % 8) < 4;
+      this.healing = !!entity?.healing && (entity.lifetime % 8) < 4;
       hp_bar.children[0].color = this.healing ? 'rgb(255,130,130)' : 'rgb(255,0,0)'
     }
     this.defend_value_max.update()

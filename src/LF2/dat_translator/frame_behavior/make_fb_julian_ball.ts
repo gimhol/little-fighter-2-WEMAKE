@@ -12,10 +12,10 @@ export function make_fb_julian_ball(frame: IFrameInfo) {
   frame.acc_x = 0.25;
   frame.vxm = SpeedMode.AccTo;
   frame.dvz = D.DEFAULT_OPOINT_SPEED_Z;
-  frame.acc_z = 0.125;
+  frame.acc_z = 0.1;
   frame.vzm = SpeedMode.AccTo;
   frame.dvy = -0.5;
-  frame.acc_y = 0.125;
+  frame.acc_y = 0.1;
   frame.vym = SpeedMode.AccTo;
   frame.ctrl_x = frame.ctrl_y = frame.ctrl_z = 1;
   const fid = Number(frame.id);

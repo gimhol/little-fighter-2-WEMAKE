@@ -5,4 +5,6 @@ export class Keeper<K, V> {
     if (!ret) this.pool.set(key, ret = f());
     return ret;
   }
+  readonly find = this.pool.get.bind(this.pool)
+  readonly set = this.pool.set.bind(this.pool)
 }

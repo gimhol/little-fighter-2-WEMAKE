@@ -1,17 +1,73 @@
 
-import { FrameBehavior, GK, IChaseInfo } from "../defines";
+import { BFID, ChaseStratedy, EMPTY_FRAME_INFO, FrameBehavior, GK, IChaseInfo } from "../defines";
 import { ChaseLost } from "../defines/ChaseLost";
 import type { Entity } from "../entity/Entity";
+import { closer_one } from "../helper";
 import { round_float } from "../utils";
 import { BaseController } from "./BaseController";
 import { type ControllerUpdateResult } from "./ControllerUpdateResult";
 const { L, R, U, D, j, d } = GK
 export class BallController extends BaseController {
   readonly __is_ball_ctrl__ = true;
-  private _chasing: Entity | null | undefined = void 0;
+  private _chasing: Entity | null = null;
+  private _frame = EMPTY_FRAME_INFO;
+  get chasing(): Entity | null { return this._chasing; }
+  set chasing(e: Entity | null) { this._chasing = e || null; }
+
+  lookup(lookup: Entity) {
+    const a = this.chasing;
+    const b = this.should_chase(a) ? a : this.chasing = null;
+    if (a && this.entity.frame.chase?.stratedy === ChaseStratedy.TillLost) {
+      this.set_chase_pos(
+        a.position.x,
+        a.position.y,
+        a.position.z
+      )
+      return
+    }
+    const c = this.should_chase(lookup) ? lookup : null;
+    const d = this.chasing = closer_one(this.entity, b, c);
+    // lost
+    if (!d && a) this.set_chase_pos(
+      this.entity.position.x,
+      this.entity.position.y,
+      this.entity.position.z
+    )
+    // follow
+    if (d) this.set_chase_pos(
+      d.position.x,
+      d.position.y,
+      d.position.z
+    )
+  }
+
+  should_chase(other: Entity | null): boolean {
+    if (!other) return false;
+    if (
+      other.frame.id === BFID.Gone ||
+      other.frame.id === BFID.None
+    ) return false;
+    const { chase } = this.entity.frame;
+    if (!chase) return false;
+    const { flag } = chase
+    const target = other.get_flag(this.entity)
+    return (target & flag) == target
+  }
 
   override update(): ControllerUpdateResult {
-    const { frame: { chase, behavior }, facing } = this.entity;
+    const { frame, facing, hp } = this.entity;
+    const { chase, behavior } = frame;
+
+    if (hp > 0 && this._frame != frame) {
+      if (this._frame.chase && !chase) {
+        this.world.del_chaser(this)
+      } else if (chase && !this._frame.chase) {
+        this.world.add_chaser(this)
+      }
+    } else if (hp <= 0 && chase) {
+      this.world.del_chaser(this)
+    }
+
     if (behavior === FrameBehavior.JohnBiscuitLeaving) {
       const p1 = this.entity.position;
       this.key_down(facing < 0 ? L : R).key_up(facing < 0 ? R : L, U, D);
@@ -20,10 +76,12 @@ export class BallController extends BaseController {
       else this.key_up(j, d);
     }
     if (chase) this.update_chasing(chase)
+    this._frame = frame;
     return super.update();
   }
   private update_chasing(chase: IChaseInfo) {
-    const { chasing, facing, hp } = this.entity;
+    const { chasing } = this;
+    const { facing, hp } = this.entity;
     if (!this._chasing && chasing) this.start_chasing(chase)
     const me = this.entity.position;
 
@@ -54,7 +112,6 @@ export class BallController extends BaseController {
     this._chasing = chasing;
   }
   private start_chasing(chase: IChaseInfo) {
-
   }
   private end_chasing(chase: IChaseInfo) {
     this.set_chase_pos(

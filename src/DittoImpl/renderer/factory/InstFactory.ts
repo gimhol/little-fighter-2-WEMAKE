@@ -14,7 +14,17 @@ export abstract class InstFactory<T> {
   register(creator: IInstCreator<T>): void {
     this.creators.set(creator.kind, creator);
   }
-  get<C extends T = T>(kind: Kind, cls: new (...args: any) => C, handler?: (c: C) => void): C {
+  
+  
+  /**
+   * Description placeholder
+   *
+   * @template {T} [C=T] 类
+   * @param {Kind} kind 枚举
+   * @param {new (...args: any) => C} cls 用于TS类型推导以及类型检查
+   * @returns {C} 
+   */
+  get<C extends T = T>(kind: Kind, cls: new (...args: any) => C): C {
     const { TAG } = this;
     const creator = this.creators.get(kind);
     if (!creator)
@@ -27,7 +37,6 @@ export abstract class InstFactory<T> {
       throw new Error(`[${TAG}::get] failed! cls incorrect ${kind.toString()}`);
     creator.reset(ret);
     this.set_kind(ret, kind);
-    handler?.(ret);
     return ret;
   }
   recycle(inst: T): void {

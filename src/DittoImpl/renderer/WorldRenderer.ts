@@ -1,4 +1,4 @@
-import { Defines, floor, random_in } from "@/LF2";
+import { Defines, floor, min, random_in } from "@/LF2";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
@@ -31,20 +31,9 @@ export class WorldRenderer implements IWorldRenderer {
   protected renderer_h: number = 0;
   indicators: number = 0;
 
-  get cam_x(): number { return this.camera.position.x }
-  set cam_x(v: number) { this.set_cam_pos(v, this.cam_y) }
-  get cam_y(): number { return this.camera.position.y }
-  set cam_y(v: number) { this.set_cam_pos(this.cam_x, v) }
-  set_cam_pos(x: number, y: number): void {
-    x = Math.max(0, x)
-    this.camera.position.x = x;
-    this.camera.position.y = y;
-    this.ui_container.position.set(
-      x + this.ui_offset.x,
-      y + this.world.screen_h + this.ui_offset.y,
-      this.ui_offset.z
-    )
-  }
+  private cam_p0 = new Vector3()
+  private cam_p1 = new Vector3()
+
   set_renderer_size(w: number, h: number): this {
     this.renderer_w = w;
     this.renderer_h = h;
@@ -91,8 +80,10 @@ export class WorldRenderer implements IWorldRenderer {
       camera.top = h;
       camera.bottom = 0;
       camera.near = 0.1;
-      camera.far = 2000;
+      camera.far = 1000000;
       camera.position.set(0, 0, 100)
+      this.cam_p1.copy(camera.position)
+      this.cam_p0.copy(camera.position)
       camera.name = "default_orthographic_camera"
       this.add_camera(camera);
       camera.updateProjectionMatrix();
@@ -118,7 +109,7 @@ export class WorldRenderer implements IWorldRenderer {
 
   add_entity(entity: Entity): void {
     let renderer: EntityRenderer = entity.renderer;
-    if(!renderer) renderer = entity.renderer = new EntityRenderer(entity)
+    if (!renderer) renderer = entity.renderer = new EntityRenderer(entity)
 
     renderer.mount();
     this.entity_renderers.add(renderer)
@@ -129,7 +120,41 @@ export class WorldRenderer implements IWorldRenderer {
     renderer.unmount();
     this.entity_renderers.delete(renderer);
   }
+  tu: number = 1;
+  utime: number = 0;
+  dtime: number = 0;
+  dfactor: number = 1;
+  dirty: boolean = false;
   render(dt: number): void {
+    this.tu = this.world.TU;
+    const utime = this.world.lifetime
+    if (this.world.FPS <= this.world.UPS) {
+      this.utime = utime;
+      this.dtime = this.tu;
+      this.dfactor = 1;
+      this.dirty = true;
+    } else if (this.utime != utime) {
+      this.utime = utime;
+      this.dtime = 0;
+      this.dfactor = 0;
+      this.dirty = true;
+    } else {
+      this.dtime = min(this.dtime + dt, this.tu);
+      this.dfactor = min(this.dtime / this.tu, 1);
+    }
+
+    if (this.dirty) {
+      this.cam_p0.copy(this.cam_p1)
+      this.cam_p1.x = this.world.current_cam_pos.x;
+      this.cam_p1.y = this.world.current_cam_pos.y;
+    }
+
+    this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, this.dfactor)
+    this.ui_container.position.set(
+      this.camera.position.x + this.ui_offset.x,
+      this.camera.position.y + this.world.screen_h + this.ui_offset.y,
+      this.ui_offset.z
+    )
     const { indicator_flags, transform } = this.world;
     let { x, y, z, earthquake, earthquake_level, scale_x, scale_y, scale_z } = transform
     if (earthquake) x += random_in(-earthquake_level, earthquake_level)
@@ -142,17 +167,20 @@ export class WorldRenderer implements IWorldRenderer {
     if (indicator_flags != this.indicators)
       this.indicators = indicator_flags;
     this.bg_render.render(dt);
-    for (const renderer of this.entity_renderers)
+    for (const renderer of this.entity_renderers) {
+      if (renderer.entity.bearer || renderer.entity.catcher)
+        continue;
       renderer.render(dt)
+    }
     for (const ui_stack of this.lf2.ui_stacks)
       ui_stack.ui?.renderer.render(dt)
 
     const { scene } = this;
-    if (!this._renderer) return;
     for (const camera of this._cameras) {
-      this._renderer.render(scene, camera);
+      this._renderer?.render(scene, camera);
       this._css_renderer?.render(scene, camera);
     }
+    this.dirty = false;
   }
   set_canvas(canvas: HTMLCanvasElement | null | undefined) {
     if (this._renderer) {

@@ -252,7 +252,9 @@ export class BaseController {
         this.end(k);
     return this;
   }
-
+  readonly ku = this.key_up.bind(this);
+  readonly kd = this.key_down.bind(this);
+  readonly ck = this.click.bind(this);
   constructor(player_id: string, entity: Entity) {
     this.player_id = player_id;
     const { lf2 } = entity

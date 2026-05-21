@@ -1,6 +1,8 @@
+import { clamp, max } from "@/LF2";
 import type { LF2 } from "@/LF2/LF2";
 import * as T from "../_t";
-import { get_geometry } from "./GeometryKeeper";
+import { MeshBasicMaterial } from "../_t";
+import { get_static_plane_geometry } from "./GeometryKeeper";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 
 export class Bar {
@@ -9,18 +11,15 @@ export class Bar {
   protected _val: number = 1;
 
   set max(v: number) {
-    this._max = v;
-    this.mesh.scale.x = (this._max ? this._val / this._max : 0);
+    this.set(this._val, v);
   }
   set val(v: number) {
-    this._val = Math.max(0, v);
-    this.mesh.scale.x = (this._max ? this._val / this._max : 0);
+    this.set(v, this._max);
   }
   set color(color: string) {
-    this.mesh.material = MaterialFactory.get(
-      MaterialKind.Color, T.MeshBasicMaterial,
-      m => m.color = new T.Color(color)
-    )
+    const m = MaterialFactory.get(MaterialKind.Color, MeshBasicMaterial)
+    m.color = new T.Color(color)
+    this.mesh.material = m
   }
   constructor(
     lf2: LF2,
@@ -30,18 +29,20 @@ export class Bar {
     ax: number,
     ay: number
   ) {
-    this.mesh = new T.Mesh(
-      get_geometry(w, h, ax * w, ay * h),
-      MaterialFactory.get(
-        MaterialKind.Color, T.MeshBasicMaterial,
-        m => m.color = new T.Color(color)
-      )
-    );
+
+    const m = MaterialFactory.get(MaterialKind.Color, MeshBasicMaterial)
+    m.color = new T.Color(color)
+    const g = get_static_plane_geometry(w, h, ax * w, ay * h)
+    this.mesh = new T.Mesh(g, m,);
   }
 
-  set(val: number, max: number) {
-    this._max = max;
-    this._val = val;
-    this.mesh.scale.x = this._max ? this._val / this._max : 0;
+  set(val: number, _max: number) {
+    this._max = max(_max, 0);
+    this._val = clamp(val, 0, _max);
+    if (this._max <= 0) {
+      this.mesh.scale.x = 0;
+      return
+    }
+    this.mesh.scale.x = this._val / this._max;
   }
 }

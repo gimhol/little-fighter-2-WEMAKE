@@ -2,6 +2,7 @@ import { Callbacks, FPS } from "./base";
 import { Background } from "./bg/Background";
 import { Collision, collision_get } from "./collision/Collision";
 import { collisions_keeper } from "./collision/CollisionKeeper";
+import { BallController } from "./controller/BallController";
 import {
   BFID,
   BGG,
@@ -13,12 +14,14 @@ import {
   GONE_FRAME_INFO,
   IBdyInfo, IBgData, IBounding, IEntityData,
   IFrameInfo, IItrInfo,
+  IVector2,
   IVector3,
   O_ID,
   SE,
   WeaponType
 } from "./defines";
 import { CMD } from "./defines/CMD";
+import { SyncRenderEnum } from "./defines/SyncRenderEnum";
 import { Ditto } from "./ditto";
 import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
@@ -36,7 +39,7 @@ import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
-import { abs, between, clamp, floor, is_num, min, round, Times } from "./utils";
+import { abs, between, clamp, floor, is_num, max, min, round, sign, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355
@@ -53,7 +56,7 @@ export class World extends WorldDataset {
   private _need_UPS: boolean = true;
   private _FPS = new FPS(0.9);
   private _UPS = new FPS(0.9);
-  private _update_time: number = 0;
+  private _lifetime: number = 0;
   private _render_worker_id?: ReturnType<typeof Ditto.Render.add>;
   private _update_worker_id?: ReturnType<typeof Ditto.Interval.add>;
   /** 
@@ -68,13 +71,19 @@ export class World extends WorldDataset {
   private _counts = new Map<string, number>()
   /** 待移除实体 */
   private _gones = new Set<Entity>();
-  private _freshs = new Set<Entity>();
-  private _chasers = new Set<Entity>();
+  // private _freshs = new Set<Entity>();
+  private _chasers = new Set<BallController>();
   private _paused: 0 | 1 | 2 = 0;
   private _fn_locked: 0 | 1 = 0;
   private _released_tickers = new Set<Ticker>();
-  private _cam_speed: number = 0;
-  private _lock_cam_x: number | undefined = void 0;
+  private _cam_v: IVector2;
+  readonly target_cam_pos: IVector2;
+  readonly current_cam_pos: IVector2;
+
+  private _dist_cam_pos: IVector2 | null = null
+  private _lock_cam_pos: IVector2 | null = null
+
+
   public renderer: IWorldRenderer;
   readonly tickers = new Set<Ticker>();
   readonly ticker_pool: Ticker[] = [];
@@ -92,7 +101,7 @@ export class World extends WorldDataset {
   readonly v_collisions: Collision[] = []
   readonly a_collisions = new Map<Entity, Collision>()
   public has_players_alive: boolean = false;
-
+  TU: number = 1;
   get bg() { return this._bg; }
   set bg(v: Background) {
     if (v === this._bg) return;
@@ -144,12 +153,15 @@ export class World extends WorldDataset {
 
   get counts(): ReadonlyMap<string, number> { return this._counts }
   get game_time() { return this._game_time.value }
-  get update_time() { return this._update_time }
-  get lock_cam_x() { return this._lock_cam_x }
+  get lifetime() { return this._lifetime }
+  get lock_cam_x() { return this._lock_cam_pos?.x }
 
   constructor(lf2: LF2) {
     super()
     this.lf2 = lf2;
+    this.target_cam_pos = Ditto.vec2();
+    this.current_cam_pos = Ditto.vec2();
+    this._cam_v = Ditto.vec2();
     this._bg = new Background(this, Defines.VOID_BG);
     this.transform.scale_to(...this._bg.zoom)
     this._stage = new Stage(this, Defines.VOID_STAGE);
@@ -197,6 +209,7 @@ export class World extends WorldDataset {
         if (player) {
           player.fighter = e;
           this.puppets.set(e.ctrl.player_id, e);
+          e.puppet = true
           this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
         }
       }
@@ -235,7 +248,7 @@ export class World extends WorldDataset {
 
   del_entity(entity: Entity): this {
     this._gones.add(entity)
-    this._freshs.delete(entity)
+    // this._freshs.delete(entity)
     return this
   }
 
@@ -249,21 +262,34 @@ export class World extends WorldDataset {
     this._render_worker_id && Ditto.Render.del(this._render_worker_id);
     this._render_worker_id = 0;
   }
-
+  get FPS() {
+    switch (this.sync_render as SyncRenderEnum) {
+      case SyncRenderEnum.Unlimited: return 1000
+      case SyncRenderEnum.FPS_60: return 60
+      case SyncRenderEnum.FPS_120: return 120
+      case SyncRenderEnum.Sync: return this.UPS
+      case SyncRenderEnum.Half: return floor(this.UPS / 2)
+    }
+  }
   start_render() {
     if (this._render_worker_id) Ditto.Render.del(this._render_worker_id);
-    if (this.sync_render) return;
-    let _r_prev_time = 0;
+    if (this.sync_render == SyncRenderEnum.Sync) return;
+    if (this.sync_render == SyncRenderEnum.Half) return;
+
+
+    let prev_time = 0;
+    let fix_radio = 1;
+    let ideally_dt = 1000 / this.FPS;
+    let fps = this.FPS
+
     const on_render = (time: number) => {
-      const dt = time - _r_prev_time;
-      if (_r_prev_time !== 0) {
-        this.render_once(dt);
-      }
-      if (_r_prev_time !== 0 && this._need_FPS) {
-        this._FPS.update(dt);
-        this.callbacks.emit("on_fps_update")(this._FPS.value);
-      }
-      _r_prev_time = time;
+      const real_dt = time - prev_time;
+      if (real_dt < fix_radio * ideally_dt) return;
+      this.render_once(real_dt);
+      this._FPS.update(real_dt);
+      if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._FPS.value);
+      fix_radio = 1 - clamp(6 * (fps - this._FPS.value) / fps, 0, 1);
+      prev_time = time;
     };
     this._render_worker_id && Ditto.Render.del(this._render_worker_id);
     this._render_worker_id = Ditto.Render.add(on_render);
@@ -293,38 +319,37 @@ export class World extends WorldDataset {
     }
 
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
-    let _prev_update_time = Date.now();
-    let _prev_render_time = Date.now();
-    let _fix_radio = 1;
-    this._update_time = 0;
-    const ideally_dt = round(1000 / UPS / playrate)
+    let prev_time = Date.now();
+    let fix_radio = 1;
+    this.TU = 1000 / UPS;
+    const ideally_dt = round(this.TU / playrate)
     const on_update = () => {
       try {
         const time = Date.now();
-        const real_update_dt = time - _prev_update_time;
-        if (real_update_dt < _fix_radio * ideally_dt) return;
+        const real_dt = time - prev_time;
+        if (real_dt < fix_radio * ideally_dt) return;
         if (this._sleeping) return;
         this.before_update?.();
         this.update_once();
-        this._update_time++;
+        this._lifetime++;
         this.lf2.events.length = 0;
         this.lf2.cmds.length = 0;
         this.lf2.broadcasts.length = 0;
 
-        if (0 === floor(this._update_time / playrate) % sync_render) {
-          const real_render_dt = time - _prev_render_time;
-          this.render_once(real_render_dt);
-          if (this._need_FPS) {
-            this._FPS.update(real_render_dt);
-            this.callbacks.emit("on_fps_update")(this._FPS.value);
-          }
-          _prev_render_time = time;
+        if (sync_render == SyncRenderEnum.Sync) {
+          this.render_once(real_dt);
+          this._FPS.update(real_dt);
+          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._FPS.value);
+        } else if (sync_render == SyncRenderEnum.Half && floor(this._lifetime / playrate) % 2) {
+          this.render_once(real_dt * 2);
+          this._FPS.update(real_dt * 2);
+          if (this._need_FPS) this.callbacks.emit("on_fps_update")(this._FPS.value);
         }
         if (this._need_UPS) this.callbacks.emit("on_ups_update")(this._UPS.value, 0);
         this.after_update?.();
-        this._UPS.update(real_update_dt);
-        _fix_radio = 1 - clamp(6 * (UPS - this._UPS.value) / UPS, 0, 1);
-        _prev_update_time = time;
+        this._UPS.update(real_dt);
+        fix_radio = 1 - clamp(6 * (UPS - this._UPS.value) / UPS, 0, 1);
+        prev_time = time;
       } catch (e: any) {
         Ditto.warn(e)
         if (e.errors) Ditto.warn(e.errors)
@@ -376,8 +401,11 @@ export class World extends WorldDataset {
   restrict_ball(e: Entity): void {
     const { left, right, near, far } = this.stage;
     const { x, z } = e.position;
-    if (x < left - 200) e.enter_frame(Defines.NEXT_FRAME_GONE);
-    else if (x > right + 200) e.enter_frame(Defines.NEXT_FRAME_GONE);
+    if (x < left - 200 || x > right + 200) {
+      e.enter_frame(Defines.NEXT_FRAME_GONE);
+      return;
+    }
+
     if (z < far) e.set_position_z(far);
     else if (z > near) e.set_position_z(near);
   }
@@ -424,13 +452,13 @@ export class World extends WorldDataset {
     }
   }
 
-  add_chaser(entity: Entity) {
-    this._chasers.add(entity);
+  add_chaser(ctrl: BallController) {
+    this._chasers.add(ctrl);
   }
-  del_chaser(entity: Entity) {
-    this._chasers.delete(entity);
-    entity.ctrl.chase_pos.copy(entity.position);
-    entity.chasing = null;
+  del_chaser(ctrl: BallController) {
+    this._chasers.delete(ctrl);
+    ctrl.chase_pos.copy(ctrl.entity.position);
+    ctrl.chasing = null;
   }
 
   protected update_ui() {
@@ -577,18 +605,36 @@ export class World extends WorldDataset {
         case CMD.KILL_OTHERS:
           if (!stage_limit()) this.stage.kill_others()
           continue;
+        case CMD.DIST_CAM: {
+          const value = cmds[i += 1]
+          if (value === '') {
+            this._dist_cam_pos = null;
+            continue;
+          }
+          const [x, y = 0] = value.split(',').map(Number);
+          if (isNaN(x) || isNaN(y)) {
+            Ditto.warn(`DIST_CAM failed, value got ${value}.`)
+            continue;
+          }
+          this._dist_cam_pos = Ditto.vec2(x, y);
+          continue;
+        }
         case CMD.LOCK_CAM: {
           const value = cmds[i += 1]
           if (value === '') {
-            this._lock_cam_x = void 0;
+            this._lock_cam_pos = null;
             continue;
           }
-          const x = Number(value);
-          if (Number.isNaN(x)) {
+          const [x, y = 0] = value.split(',').map(Number);
+          if (isNaN(x) || isNaN(y)) {
             Ditto.warn(`LOCK_CAM failed, value got ${value}.`)
             continue;
           }
-          this._lock_cam_x = x
+          if (this.current_cam_pos.x != x)
+            this.callbacks.emit("on_cam_move")(x, y);
+          this._lock_cam_pos = Ditto.vec2(x, y);
+          this.target_cam_pos.x = x;
+          this.current_cam_pos.x = x;
           continue;
         }
         case CMD.CHANGE_BG:
@@ -605,8 +651,8 @@ export class World extends WorldDataset {
   update_once() {
     this._entities_map.clear();
     this.transform.update();
-    this.update_ui();
     this.handle_keys();
+    this.update_ui();
     this.handle_cmds();
     this.update_camera();
     this.bg.update();
@@ -614,6 +660,7 @@ export class World extends WorldDataset {
     if (this._paused == 1) return;
     if (this._paused == 2) this._paused = 1
     this._game_time.add();
+    
     if (this.stage.world_pause) return;
     if (this.entities.length > MAX_DEBUG_ENTITIES)
       Ditto.debug(`[World::update_once]entities.size = ${this.entities.length}`)
@@ -632,32 +679,19 @@ export class World extends WorldDataset {
     }
 
     this.has_players_alive = false
-    for (const e of this._freshs) {
-      if (this.entity_map.has(e.id)) continue;
-      if (is_fighter(e)) {
-        this.callbacks.emit("on_fighter_add")(e);
-        const player = this.lf2.players.get(e.ctrl.player_id)
-        if (player) {
-          player.fighter = e;
-          this.puppets.set(e.ctrl.player_id, e);
-          this.callbacks.emit("on_puppet_add")(e.ctrl.player_id);
-        }
-      }
-      this.entities.push(e);
-      this.entity_map.set(e.id, e)
-      this.renderer.add_entity(e);
-    }
-    this._freshs.clear()
-
-    this.entities.forEach((a) => {
-      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
-      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
-      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
-    })
-    this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
-
-    let divider = 0;
     let offset = 0;
+    let puppet_x_sum = 0;
+    let puppet_z_sum = 0;
+    let puppet_count = 0;
+    let local_x_sum = 0;
+    let local_z_sum = 0;
+    let human_x_sum = 0;
+    let human_z_sum = 0;
+    let fighter_x_sum = 0;
+    let fighter_z_sum = 0;
+    let local_count = 0;
+    let human_count = 0;
+    let fighter_count = 0;
     for (let i = 0; i < this.entities.length; i++) {
       const a = this.entities[i];
       if (offset) this.entities[i - offset] = a;
@@ -676,17 +710,60 @@ export class World extends WorldDataset {
         this.has_players_alive = true;
       a.update();
       if (a.ghosted) continue;
-      if (update_chasing && this._chasers.size)
-        for (const c of this._chasers)
-          c.update_chasing(a)
 
-      const a_ctrl = a.ctrl
+      if (is_fighter(a)) {
+        const x = a.position.x - this.screen_w / 2 + (a.facing * this.screen_w) / 6;
+        const z = a.position.z;
+        fighter_x_sum += x;
+        fighter_z_sum += x;
+        fighter_count++;
+        if (is_human_ctrl(a.ctrl) && a.hp > 0) {
+          if (a.ctrl.player.mine) {
+            local_x_sum += x;
+            local_z_sum += z;
+            local_count++;
+          } else {
+            human_x_sum += x;
+            human_z_sum += z;
+            human_count++;
+          }
+        }
+        if (a.puppet == true) {
+          puppet_x_sum += x;
+          puppet_z_sum += z;
+          puppet_count++;
+        }
+      }
+
+      if (update_chasing) {
+        for (const c of this._chasers)
+          c.lookup(a)
+
+        const a_ctrl = a.ctrl
+        for (let j = 0; j < temp_entities.length; j++) {
+          const b = temp_entities[j];
+          const b_ctrl = b.ctrl;
+          if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
+          if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
+        }
+        temp_entities.push(a);
+      }
+    }
+    this.entities.length = this.entities.length - offset
+
+    let divider = 0;
+    this.entities.forEach((a) => {
+      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
+      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+    })
+    this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
+    temp_entities.length = 0;
+    for (let i = 0; i < this.entities.length; i++) {
+      const a = this.entities[i];
+      if (a.ghosted) continue;
       for (let j = 0; j < temp_entities.length; j++) {
         const b = temp_entities[j];
-        const b_ctrl = b.ctrl;
-        if (is_bot_ctrl(b_ctrl)) b_ctrl.look_other(a)
-        if (is_bot_ctrl(a_ctrl)) a_ctrl.look_other(b)
-
         if (j < divider) continue; //
         if (a.aabb_x1 > b.aabb_x2 || a.aabb_x2 < b.aabb_x1) {
           // 分割，前面的不会与此后的碰撞了
@@ -716,7 +793,19 @@ export class World extends WorldDataset {
       }
       temp_entities.push(a);
     }
-    this.entities.length = this.entities.length - offset
+    if (local_count) {
+      this.target_cam_pos.x = round(local_x_sum / local_count);
+      this.target_cam_pos.y = -0.5 * round(local_z_sum / local_count) - this.screen_h / 2;
+    } else if (human_count) {
+      this.target_cam_pos.x = round(human_x_sum / human_count);
+      this.target_cam_pos.y = -0.5 * round(human_z_sum / human_count) - this.screen_h / 2;
+    } else if (puppet_count) {
+      this.target_cam_pos.x = round(puppet_x_sum / puppet_count);
+      this.target_cam_pos.y = -0.5 * round(puppet_z_sum / puppet_count) - this.screen_h / 2;
+    } else if (fighter_count) {
+      this.target_cam_pos.x = round(fighter_x_sum / fighter_count);
+      this.target_cam_pos.y = -0.5 * round(fighter_z_sum / fighter_count) - this.screen_h / 2;
+    }
 
     for (const c of this.v_collisions)
       collisions_keeper.handle(c);
@@ -731,6 +820,7 @@ export class World extends WorldDataset {
       if (player) player.fighter = void 0
       const puppet = this.puppets.get(entity.ctrl.player_id)
       if (puppet === entity) this.puppets.delete(entity.ctrl.player_id);
+      entity.puppet = false
       this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
       this.renderer.del_entity(entity);
       entity.release();
@@ -768,78 +858,74 @@ export class World extends WorldDataset {
   }
 
   update_camera() {
-    const old_cam_x = round(this.renderer.cam_x);
-    if (this.bg.id === Defines.VOID_BG.id) {
-      this.renderer.cam_x = 0
-      if (old_cam_x !== 0) {
-        this.callbacks.emit("on_cam_move")(0);
-      }
-      return;
-    }
+    const old_cam_x = round(this.current_cam_pos.x);
+    const old_cam_y = round(this.current_cam_pos.y);
+    do {
+      const { cam_l, left, cam_r, right } = this.stage;
+      const min_cam_l = is_num(this._lock_cam_pos?.x) ? left : cam_l;
+      const max_cam_r = is_num(this._lock_cam_pos?.x) ? right : cam_r;
+      let max_vx_ratio = 50;
+      let acc_x_ratio = 1;
+      this.target_cam_pos.x = clamp(this._lock_cam_pos?.x ?? this._dist_cam_pos?.x ?? this.target_cam_pos.x,
+        min_cam_l,
+        max_cam_r - this.screen_w
+      );
+      if (round(this.current_cam_pos.x) == round(this.target_cam_pos.x)) break
 
-    const { cam_l, left, cam_r, right } = this.stage;
-    const max_cam_left = is_num(this._lock_cam_x) ? left : cam_l;
-    const max_cam_right = is_num(this._lock_cam_x) ? right : cam_r;
-    let new_x = this.renderer.cam_x;
-    let max_speed_ratio = 50;
-    let acc_ratio = 1;
-    if (is_num(this._lock_cam_x)) {
-      new_x = this._lock_cam_x;
-    } else if (this.puppets.size) {
-      let l = 0;
-      new_x = 0;
-      /** 存活的本地人类玩家角色 */
-      const mines: Entity[] = [];
-      /** 存活的人类玩家角色 */
-      const humans: Entity[] = [];
-      /** 槽中角色 */
-      const fighters: Entity[] = []
-      for (const [, p] of this.puppets) {
-        if (is_human_ctrl(p.ctrl) && p.hp > 0) {
-          if (p.ctrl.player.mine) {
-            mines.push(p)
-          } else {
-            humans.push(p)
-          }
-        }
-        else fighters.push(p)
-      }
-      const follows = mines.length ? mines : humans.length ? humans : fighters
-      for (const p of follows) {
-        new_x += p.position.x - this.screen_w / 2 + (p.facing * this.screen_w) / 6;
-        ++l;
-      }
-      new_x = round(new_x / l);
-    }
-    if (new_x < max_cam_left) new_x = max_cam_left;
-    if (new_x > max_cam_right - this.screen_w) new_x = max_cam_right - this.screen_w;
-    let cur_x = this.renderer.cam_x;
-    const acc = min(
-      this.atom_time * acc_ratio,
-      this.atom_time * 0.7 * (acc_ratio * abs(cur_x - new_x)) / this.screen_w,
-    );
-    const max_speed = max_speed_ratio * acc;
+      const acc_x = min(
+        this.atom_time * acc_x_ratio,
+        this.atom_time * 0.7 * (acc_x_ratio * abs(this.current_cam_pos.x - this.target_cam_pos.x)) / this.screen_w,
+      );
+      const direction_x = this.current_cam_pos.x > this.target_cam_pos.x ? -1 : 1;
+      const max_vx = direction_x * max_vx_ratio * acc_x;
+      if (sign(this._cam_v.x) !== direction_x)
+        this._cam_v.x = 0;
+      if (abs(this._cam_v.x) < abs(max_vx))
+        this._cam_v.x += acc_x * direction_x;
+      else
+        this._cam_v.x = max_vx;
+      if (direction_x < 0)
+        this.current_cam_pos.x = max(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_v.x)
+      else
+        this.current_cam_pos.x = min(this.target_cam_pos.x, this.current_cam_pos.x + this._cam_v.x);
+    } while (0)
 
-    if (cur_x > new_x) {
-      if (this._cam_speed > 0) this._cam_speed = 0;
-      else if (this._cam_speed > -max_speed) this._cam_speed -= acc;
-      else this._cam_speed = -max_speed;
-      this.renderer.cam_x += this._cam_speed;
-      if (this.renderer.cam_x < new_x) this.renderer.cam_x = new_x;
-    } else if (cur_x < new_x) {
-      if (this._cam_speed < 0) this._cam_speed = 0;
-      else if (this._cam_speed < max_speed) this._cam_speed += acc;
-      else this._cam_speed = max_speed;
-      this.renderer.cam_x += this._cam_speed;
-      if (this.renderer.cam_x > new_x) this.renderer.cam_x = new_x;
-    }
+    do {
+      const { height } = this.bg.data.base;
+      if (height <= Defines.MODERN_SCREEN_HEIGHT) {
+        this.current_cam_pos.y = this.target_cam_pos.y = 0;
+        break;
+      }
+      const { far } = this.stage;
+      let max_vy_ratio = 50;
+      let acc_y_ratio = 1;
+      const cam_y = this._lock_cam_pos?.y ?? this._dist_cam_pos?.y ?? this.target_cam_pos.y
+      const cam_max_y = min(-0.5 * far, height - Defines.MODERN_SCREEN_HEIGHT)
+      this.target_cam_pos.y = clamp(cam_y, 0, cam_max_y);
+      const acc_y = min(
+        this.atom_time * acc_y_ratio,
+        this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
+      );
+      if (round(this.current_cam_pos.y) == round(this.target_cam_pos.y)) break
+      const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
+      const max_vy = direction_y * max_vy_ratio * acc_y;
+      if (sign(this._cam_v.y) !== direction_y)
+        this._cam_v.y = 0;
+      if (abs(this._cam_v.y) < abs(max_vy))
+        this._cam_v.y += acc_y * direction_y;
+      else
+        this._cam_v.y = max_vy;
+      if (direction_y < 0)
+        this.current_cam_pos.y = max(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y)
+      else
+        this.current_cam_pos.y = min(this.target_cam_pos.y, this.current_cam_pos.y + this._cam_v.y);
+    } while (0)
 
-    const new_cam_x = round(this.renderer.cam_x);
-    if (old_cam_x !== new_cam_x) {
-      this.callbacks.emit("on_cam_move")(new_cam_x);
-    }
+    const new_cam_x = round(this.current_cam_pos.x);
+    const new_cam_y = round(this.current_cam_pos.y);
+    if (old_cam_x !== new_cam_x || old_cam_y !== new_cam_y)
+      this.callbacks.emit("on_cam_move")(new_cam_x, new_cam_y);
   }
-
 
   /**
    * 火花特效
@@ -852,6 +938,7 @@ export class World extends WorldDataset {
    * @memberof World
    */
   spark(x: number, y: number, z: number, f: string): void {
+    if (this.entities.length > MAX_DEBUG_ENTITIES) return;
     const oid = Defines.BuiltIn_Dats.Spark
     if (!this._spark_data)
       this._spark_data = this.lf2.datas.find(oid);
@@ -866,6 +953,7 @@ export class World extends WorldDataset {
       return;
     }
     e.outline_alpha = 0;
+    e.outline_width = 0;
     e.outline_color = '';
     e.set_position(x, y, z);
     e.enter_frame({ id: f });
@@ -953,7 +1041,8 @@ export class World extends WorldDataset {
     if (this.stage.bg.id !== Defines.VOID_BG.id)
       this.stage.change_bg(Defines.VOID_BG)
     this.paused = false;
-    this._lock_cam_x = void 0;
+    this._lock_cam_pos = null;
+    this._dist_cam_pos = null;
     this.callbacks.emit('on_counts')();
     this._counts.clear()
   }

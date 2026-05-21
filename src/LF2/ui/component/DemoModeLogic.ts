@@ -322,8 +322,9 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       this.lf2.world.stage.callbacks.add(this.stage_callbacks);
     }
     this.lf2.world.callbacks.add(this.world_callbacks);
-    this.props.cam_ctrl?.focus_next(1);
-    this.world.renderer.cam_x = cam_x;
+    this.props.cam_ctrl?.focus_lr(1);
+    this.world.target_cam_pos.x = cam_x;
+    this.world.current_cam_pos.x = cam_x;
   }
   clearup() {
     this.lf2.world.stage.callbacks.del(this.stage_callbacks)
@@ -409,7 +410,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     const { cam_ctrl } = this.props;
     do {
       if (!cam_ctrl) break;
-      const { staring, free } = cam_ctrl
+      const { staring, auto: free } = cam_ctrl
       if (this._staring == staring && this._free == free)
         break;
       this._staring = staring
@@ -436,8 +437,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
 
   override on_key_down(e: IUIKeyEvent): void {
     switch (e.game_key) {
-      case GameKey.a:
-      case GameKey.j: {
+      case GameKey.a: {
         this.clearup()
         this.startup()
         break;

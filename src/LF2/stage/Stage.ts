@@ -84,7 +84,7 @@ export class Stage {
   drink_l: number;
   /** 饮料右边界 */
   drink_r: number;
-
+  
   change_bg(data: Readonly<IBgData>): Background {
     // FIXME: so messed up here...
     const prev_bg = this.world.bg;
@@ -205,7 +205,8 @@ export class Stage {
       for (const [, f] of this.world.puppets)
         teams.add(f.team)
       for (const f of this.world.entities) {
-        if (!is_fighter(f) && !teams.has(f.team)) continue;
+        if (!is_fighter(f) || !teams.has(f.team)) 
+          continue;
         if (f.hp <= 0 && hp_respawn) {
           const hp = hp_respawn < 1 ?
             min(f.hp_max * hp_respawn, f.hp_max) :
@@ -237,7 +238,8 @@ export class Stage {
       this.spawn_object(object, ce);
     }
     if (is_num(phase.cam_jump_to_x)) {
-      this.world.renderer.cam_x = phase.cam_jump_to_x;
+      this.world.current_cam_pos.x = phase.cam_jump_to_x;
+      this.world.target_cam_pos.x = phase.cam_jump_to_x;
     }
 
     this.player_l = phase.player_l ?? 0

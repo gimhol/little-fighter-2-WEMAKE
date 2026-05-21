@@ -1,4 +1,4 @@
-import { BotAvoiding, BotFollow, FasterSlowerStandUp } from "@/LF2";
+import { Bat_DUJ_3, BotAvoiding, BotFollow, FasterSlowerStandUp, Firzen_DUA_0, Firzen_DUA_2, WeaponPicking1, WeaponPicking2 } from "@/LF2";
 import { FSM } from "../../../base/FSM";
 import { GK, IClazz } from "../../../defines";
 import { IUIKeyEvent } from "../../IUIKeyEvent";
@@ -6,7 +6,7 @@ import { Label } from "../Label";
 import { UIComponent } from "../UIComponent";
 import { MoonTest } from "./Bg/Moon";
 import { Firen_DFA, Firen_DFJ, Firen_DUJ, Firen_DVJ } from "./Firen";
-import { Firzen_DUA, Firzen_FUSION } from "./Firezen";
+import { Firzen_DUA_1, Firzen_FUSION } from "./Firezen";
 import { Freeze_DFA, Freeze_DFJ, Freeze_DUJ, Freeze_DVJ } from "./Freeze";
 import { Jan_DUA, Jan_DUJ } from "./Jan";
 import { Julian_DFA, Julian_DFJ, Julian_DUJ } from "./Julian";
@@ -18,39 +18,27 @@ import { TestCase } from "./TestCase";
 
 const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
   [TestCase], [
-    Julian_DUJ,
-    Julian_DFJ,
-    Julian_DFA
+    Julian_DUJ, Julian_DFJ, Julian_DFA
   ], [
-    Firzen_DUA,
-    Firzen_FUSION
-  ], [Bat_DUJ_0, Bat_DUJ_1, Bat_DUJ_2], [
+    Firzen_DUA_0, Firzen_DUA_1, Firzen_DUA_2, Firzen_FUSION
+  ], [
+    Bat_DUJ_0, Bat_DUJ_1, Bat_DUJ_2, Bat_DUJ_3
+  ], [
     Jan_DUA,
     Jan_DUJ
   ], [
     Rudolf_DFJ
   ], [
-    Firen_DUJ,
-    Firen_DFA,
-    Firen_DFJ,
-    Firen_DVJ,
+    Firen_DUJ, Firen_DFA, Firen_DFJ, Firen_DVJ,
   ], [
-    Freeze_DUJ,
-    Freeze_DFA,
-    Freeze_DFJ,
-    Freeze_DVJ,
+    Freeze_DUJ, Freeze_DFA, Freeze_DFJ, Freeze_DVJ,
   ], [
     LOUIS_JUMP_ATTACK
   ], [
     MoonTest
+  ], [BottomsUp, MoveStayCome, BotCome, BotFollow, FasterSlowerStandUp,
   ], [
-    BottomsUp,
-    MoveStayCome,
-    BotCome,
-    BotFollow,
-    FasterSlowerStandUp,
-  ], [
-    BotAvoiding
+    BotAvoiding, WeaponPicking1, WeaponPicking2
   ]
 ]
 export class Tests extends UIComponent {
@@ -59,6 +47,7 @@ export class Tests extends UIComponent {
   groups: TestCase[][] = []
   override init(): void { }
   override on_start(): void {
+    TestCase.key = -1;
     this.groups = CASE_GROUPS.map((cases, x) => cases.map((C, y) => {
       const r = new C(this)
       r.name = `${x}-${y} ${r.name}`

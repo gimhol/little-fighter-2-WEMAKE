@@ -1,7 +1,4 @@
-import States from "./States";
 import { StateEnum } from "../defines/StateEnum";
-import { Entity } from "../entity/Entity";
-import BallState_Base from "./BallState_Base";
 import CharacterState_Base from "./CharacterState_Base";
 import { CharacterState_Caught } from "./CharacterState_Caught";
 import CharacterState_Dash from "./CharacterState_Dash";
@@ -24,12 +21,13 @@ import { State_Burning } from "./State_Burning";
 import State_TransformTo8XXX from "./State_TransformTo8XXX";
 import { State_TransformToCatching } from "./State_TransformToCatching";
 import { State_WeaponBroken } from "./State_WeaponBroken";
+import { StateBase_Proxy } from "./StateBase_Proxy";
+import States from "./States";
 import WeaponState_Base from "./WeaponState_Base";
 import WeaponState_InTheSky from "./WeaponState_InTheSky";
 import WeaponState_OnGround from "./WeaponState_OnGround";
 import WeaponState_OnHand from "./WeaponState_OnHand";
 import WeaponState_Throwing from "./WeaponState_Throwing";
-import { StateBase_Proxy } from "./StateBase_Proxy";
 export const ENTITY_STATES = new States();
 ENTITY_STATES.set_in_range(
   StateEnum.TransformTo_Min,

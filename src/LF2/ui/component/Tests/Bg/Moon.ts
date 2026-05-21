@@ -37,7 +37,7 @@ export class MoonTest extends TestCase {
   override enter(): void {
     this.owner.world.clear();
     this.owner.lf2.change_bg('bg_moon');
-    this.lf2.cmds.push(CMD.LOCK_CAM, `${this.midX - Defines.MODERN_SCREEN_WIDTH / 2}`)
+    this.lf2.cmds.push(CMD.DIST_CAM, `${this.midX - Defines.MODERN_SCREEN_WIDTH / 2}`)
     this.director.reset();
     const louiss = this.hori_3(O_ID.LouisEX, 100)
     louiss.forEach(o => {

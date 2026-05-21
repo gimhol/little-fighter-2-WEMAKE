@@ -125,7 +125,12 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   readonly bframe_id: string;
   readonly itr_index: number;
   readonly bdy_index: number;
-  handlers?: Readonly<ICollisionFunc>
+
+  handlers?: Readonly<ICollisionFunc>;
+  injury?: number;
+  injury_r?: number;
+  real_injury?: number;
+  real_injury_r?: number;
   rest: number;
 }
 

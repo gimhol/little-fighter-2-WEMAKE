@@ -4,8 +4,7 @@ import { round } from "../utils";
 
 export function spawn_ice_piece(entity: Entity, id: string): IOpointInfo {
   const { frame, lf2: { mt } } = entity;
-  const w = frame.pic?.w || 0;
-  const h = frame.pic?.h || 0;
+  const { width: w, height: h } = frame;
   const facing = mt.pick([-1, 1])
 
   const x = round(entity.frame.centerx + mt.range(-round(w / 4), round(w / 4)))

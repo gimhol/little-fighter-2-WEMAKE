@@ -18,6 +18,8 @@ import type { IUIInputHandle } from "./ui/IEventHandle";
 import type { IZip } from "./zip";
 export interface IDitto extends IDittoPack {
   setup(pack: IDittoPack): void;
+  vec3(x?: number, y?: number, z?: number): IVector3;
+  vec2(x?: number, y?: number): IVector2;
 }
 
 export interface IDittoPack {
@@ -57,5 +59,13 @@ const _Ditto: Partial<IDitto> = {
   setup(pack: IDittoPack) {
     Object.assign(this, pack);
   },
+  vec3(x?: number, y?: number, z?: number): IVector3 {
+    const C = this.Vector3!
+    return new C(x, y, z)
+  },
+  vec2(x?: number, y?: number): IVector2 {
+    const C = this.Vector2!
+    return new C(x, y)
+  }
 };
 export const Ditto = _Ditto as IDitto

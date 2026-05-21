@@ -31,11 +31,11 @@ export class BgRender {
     if (!this.bg) return
 
     this.cam_node = new T.Object3D();
-    this.cam_node.position.z = -2 * Defines.CLASSIC_SCREEN_HEIGHT;
+    this.cam_node.position.z = 2 * this.bg.data.base.far;
     this.cam_node.name = "Background(Cam Follower):" + this.bg.data.base.name;
 
     this.root_node = new T.Object3D();
-    this.root_node.position.z = -2 * Defines.CLASSIC_SCREEN_HEIGHT;
+    this.root_node.position.z = 2 * this.bg.data.base.far;
     this.root_node.name = "Background:" + this.bg.data.base.name;
 
     for (const layer of this.bg.layers) {
@@ -53,7 +53,7 @@ export class BgRender {
   }
 
   render(dt: number): void {
-    const { cam_x } = this.world_renderer;
+    const cam_x = this.world_renderer.camera.position.x;
     const { root_node, layers, cam_node } = this;
     const { bg } = this.world
     if (this.bg !== bg) this.set_bg(bg)

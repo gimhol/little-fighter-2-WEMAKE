@@ -10,7 +10,7 @@ import * as T from "../_t";
 import { SRGBColorSpace } from "../_t";
 import { ImageMgr } from "../ImageMgr";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
-import { get_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
+import { get_static_plane_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
 import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -30,7 +30,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _css_obj: CSS2DObject | undefined;
   protected _dom: HTMLDivElement | undefined;
   protected _ui_img?: IUIImgInfo;
-  protected _geo = get_geometry(0, 0, 0, 0, 0);
+  protected _geo = get_static_plane_geometry(0, 0, 0, 0, 0);
   protected _color: string | null = null;
   protected _input: HTMLInputElement | undefined;
   protected _txt: TextInfo<any> | null = null;
@@ -315,11 +315,9 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.material.bgAlpha = backgroundAlpha;
     this.mesh.material.fgColor = foreground;
     this.mesh.material.fgAlpha = foregroundAlpha;
-
-
-    this.mesh.material.outlineWidth = this.ui.data.outlineWidth || 0;
-    this.mesh.material.outlineColor = this.ui.data.outlineColor || 0
-    this.mesh.material.outlineAlpha = this.ui.data.outlineAlpha || 0
+    this.mesh.material.outlineWidth = this.ui.outlineWidth || 0;
+    this.mesh.material.outlineColor = this.ui.outlineColor || 0
+    this.mesh.material.outlineAlpha = this.ui.outlineAlpha || 0
 
     const t = 0.5;
     if (this._old_pos) {

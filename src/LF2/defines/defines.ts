@@ -77,7 +77,7 @@ export namespace Defines {
   export const WT_FAST_Y: Record<WT, number> = {
     [WT.None]:     /**/ 99,
     [WT.Stick]:    /**/ 99,
-    [WT.Heavy]:    /**/ 99,
+    [WT.Heavy]:    /**/ 1,
     [WT.Knife]:    /**/ 99,
     [WT.Baseball]: /**/ 99,
     [WT.Drink]:    /**/ 99,
@@ -85,7 +85,7 @@ export namespace Defines {
   export const WT_FAST_X: Record<WT, number> = {
     [WT.None]:      /**/ 99,
     [WT.Stick]:     /**/ 99,
-    [WT.Heavy]:     /**/ 99,
+    [WT.Heavy]:     /**/ 1,
     [WT.Knife]:     /**/ 99,
     [WT.Baseball]:  /**/ 4,
     [WT.Drink]:     /**/ 4,
@@ -93,7 +93,7 @@ export namespace Defines {
   export const WT_FAST_Z: Record<WT, number> = {
     [WT.None]:     /**/ 99,
     [WT.Stick]:    /**/ 99,
-    [WT.Heavy]:    /**/ 99,
+    [WT.Heavy]:    /**/ 1,
     [WT.Knife]:    /**/ 99,
     [WT.Baseball]: /**/ 99,
     [WT.Drink]:    /**/ 99,
@@ -127,6 +127,7 @@ export namespace Defines {
     base: {
       name: "VOID_BG",
       shadow: "",
+      height: CLASSIC_SCREEN_HEIGHT,
       shadowsize: [0, 0],
       left: 0,
       right: MODERN_SCREEN_WIDTH * 2,
@@ -143,6 +144,7 @@ export namespace Defines {
     base: {
       name: "Random",
       shadow: "",
+      height: CLASSIC_SCREEN_HEIGHT,
       shadowsize: [0, 0],
       left: 0,
       right: 794,
@@ -274,7 +276,7 @@ export namespace Defines {
     CHARACTER_THUMB = "sprite/CHARACTER_THUMB.png",
   }
   export enum BuiltIn_Dats {
-    Spark = "data/spark.json5"
+    Spark = "data/spark.obj.json5"
   }
   export enum BuiltIn_Broadcast {
     ResetGPL = "reset_gpl",

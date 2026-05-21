@@ -1,0 +1,36 @@
+<html>
+
+<head>
+  <title>redirecting to latest version...</title>
+  <style>
+    html {
+      background-color: black;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="msg">
+  </div>
+  <script>
+    function append_msg(msg) {
+      const el_container = document.getElementById('msg');
+      const el_msg_row = document.createElement('div')
+      el_msg_row.innerHTML = msg;
+      el_container.append(el_msg_row);
+    }
+    const url = `https://gim.ink/api/lfwm/find?id=1`
+    append_msg(`loading: ${url}`)
+    fetch(url)
+      .then(r => r.json())
+      .then(r => {
+        const url = `https://lfwm.gim.ink/${r.data.oss_name}?time=${Date.now()}`
+        append_msg(`loading: ${url}`)
+        return fetch(url)
+      })
+      .then(r => r.json())
+      .then(r => location.replace(r.url))
+  </script>
+</body>
+</html>

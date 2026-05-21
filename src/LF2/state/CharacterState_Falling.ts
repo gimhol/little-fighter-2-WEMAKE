@@ -40,6 +40,7 @@ export default class CharacterState_Falling extends CharacterState_Base {
     }
     if (e.catcher) e.catcher.drop_catching()
   }
+
   is_bouncing_frame(e: Entity) {
     return !!this._bouncing_frames_map.get(e.data.id)?.has(e.frame.id);
   }
@@ -74,13 +75,15 @@ export default class CharacterState_Falling extends CharacterState_Base {
     e.fall_value = e.fall_value_max;
     e.defend_value = e.defend_value_max;
     e.resting = e.resting_max
+    e.fallinjury = 0;
+    e.throwinjury = 0;
   }
   override on_landing(e: Entity, velocity: IVector3): void {
     const { on_landing } = e.frame;
     if (on_landing) {
       e.enter_frame(on_landing);
       return;
-    } 
+    }
     const {
       facing,
       data: { indexes },

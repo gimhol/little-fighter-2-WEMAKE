@@ -236,7 +236,7 @@ export class __Modern extends BaseSounds {
     const scale = (this.lf2.world.renderer as WorldRenderer).world_node.scale.x
     const full_w = Defines.CLASSIC_SCREEN_WIDTH / scale
     const half_w = full_w / 2;
-    const viewer_x = this.lf2.world.renderer.cam_x + half_w;
+    const viewer_x = this.lf2.world.current_cam_pos.x + half_w;
     const sound_x = x ?? viewer_x;
     const playings = this._playings.size + 1;
 

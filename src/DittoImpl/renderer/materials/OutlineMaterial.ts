@@ -61,6 +61,8 @@ export class OutlineMaterial extends ShaderMaterial {
   set outlineColor(v: ColorRepresentation) { this.uniforms.outlineColor.value = new Color(v) }
   get outlineAlpha(): number { return this.uniforms.outlineAlpha.value }
   set outlineAlpha(v: number) { this.uniforms.outlineAlpha.value = v }
+  get gray(): number { return this.uniforms.gray.value }
+  set gray(v: number) { this.uniforms.gray.value = v }
   get outlineWidth(): number { return this.uniforms.outlineWidth.value }
   set outlineWidth(v: number) { this.uniforms.outlineWidth.value = v }
   get coverColor(): Color { return this.uniforms.coverColor.value }

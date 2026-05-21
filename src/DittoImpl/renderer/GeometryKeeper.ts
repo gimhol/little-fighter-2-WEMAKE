@@ -12,13 +12,12 @@ export interface IPlaneGeometryParams {
   w?: number,
   h?: number,
 }
-export const get_geometry = (w: number = 1, h: number = 1, tx: number = 0, ty: number = 0, tz: number = 0) =>
+export const get_static_plane_geometry = (w: number = 1, h: number = 1, tx: number = 0, ty: number = 0, tz: number = 0) =>
   GeometryKeeper.get(`pg_${w}_${h}_${tx}_${ty}_${tz}`, () => new PlaneGeometry(w, h).translate(tx, ty, tz))
 
 export const get_plane_geometry = (opts: IPlaneGeometryParams & IGeoOpts) => {
-  const { tx = 0, ty = 0, tz = 0, w = 1, h = 1 } = opts
-  const key = `npg_` + JSON.stringify(opts)
-  return GeometryKeeper.get(key, () => new PlaneGeometry(w, h).translate(tx, ty, tz))
+  const { tx = 0, ty = 0, tz = 0, w = 1, h = 1 } = opts;
+  return get_static_plane_geometry(w, h, tx, ty, tz)
 }
 
 export const get_ninepatch_geometry = (opts: INinePatchGeometryParams & IGeoOpts) => {

@@ -1,3 +1,4 @@
+import { FrameBehavior, OID } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { IEntityData } from "../defines/IEntityData";
@@ -9,18 +10,53 @@ import { foreach } from "../utils/container_help/foreach";
 import { CondMaker } from "./CondMaker";
 
 export function cook_ball_frame_state_3006(e: IEntityData, frame: IFrameInfo) {
-  for (const bdy of frame.bdy || []) {
-    bdy.actions = ensure(bdy.actions, {
-      type: ActionType.V_NextFrame,
-      test: new CondMaker<C_Val>()
-        .one_of(C_Val.AttackerState, StateEnum.Ball_3005, StateEnum.Ball_3006)
-        .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
-        .done(),
-      data: {
-        id: "20"
-      }
-    })
-  }
+  foreach(frame.bdy, bdy => {
+    if (
+      frame.behavior == FrameBehavior.JohnChase ||
+      frame.behavior == FrameBehavior.JohnBiscuitLeaving ||
+      e.id == OID.JohnBiscuit
+    ) {
+      bdy.actions = ensure([], {
+        type: ActionType.V_REBOUND_VX,
+        test: new CondMaker<C_Val>()
+          .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
+          .done(),
+        data: ''
+      }, {
+        type: ActionType.V_TURN_FACE,
+        test: new CondMaker<C_Val>()
+          .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
+          .done(),
+        data: ''
+      }, {
+        type: ActionType.V_TURN_TEAM,
+        test: new CondMaker<C_Val>()
+          .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
+          .done(),
+        data: ''
+      }, {
+        type: ActionType.V_NextFrame,
+        test: new CondMaker<C_Val>()
+          .one_of(C_Val.AttackerState, StateEnum.Ball_3005, StateEnum.Ball_3006)
+          .and(C_Val.ItrKind, "!=", ItrKind.JohnShield)
+          .done(),
+        data: {
+          id: "20"
+        }
+      })
+    } else {
+      bdy.actions = ensure(bdy.actions, {
+        type: ActionType.V_NextFrame,
+        test: new CondMaker<C_Val>()
+          .one_of(C_Val.AttackerState, StateEnum.Ball_3005, StateEnum.Ball_3006)
+          .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
+          .done(),
+        data: {
+          id: "20"
+        }
+      })
+    }
+  })
   foreach(frame.itr, itr => {
     if (itr.kind === ItrKind.Normal)
       itr.actions = ensure(itr.actions, {

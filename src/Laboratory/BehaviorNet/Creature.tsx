@@ -5,7 +5,7 @@ import { Ground } from "./Ground";
 
 export class Creature {
   ground?: Ground;
-  pos = new Ditto.Vector2(0, 0);
+  pos = Ditto.vec2(0, 0);
   name = "Creature";
   color = "red";
   actor = new Behavior.Actor();

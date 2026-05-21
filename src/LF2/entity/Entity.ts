@@ -9,22 +9,24 @@ import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
   Builtin_FrameId,
-  Defines, EntityEnum, EntityGroup, FacingFlag,
-  GK, HitFlag, IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
+  Defines,
+  EMPTY_FRAME_INFO,
+  EntityEnum, EntityGroup, FacingFlag,
+  GK,
+  GONE_FRAME_INFO,
+  HitFlag,
+  IArmorInfo,
+  IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3,
   IVector3Like,
   IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
-  OpointSpreading, SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame
+  OpointSpreading,
+  SpeedCtrl,
+  SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame,
+  WpointKind
 } from "../defines";
-import { ChaseStratedy } from "../defines/ChaseStratedy";
-import { EMPTY_FRAME_INFO } from "../defines/EMPTY_FRAME_INFO";
-import { GONE_FRAME_INFO } from "../defines/GONE_FRAME_INFO";
-import { IArmorInfo } from "../defines/IArmorInfo";
-import { SpeedCtrl } from "../defines/SpeedCtrl";
-import { WpointKind } from "../defines/WpointKind";
 import { Ditto } from "../ditto";
-import { closer_one } from "../helper/closer_one";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
@@ -39,22 +41,11 @@ import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_fighter, is_human_ctrl } from "./type_check";
+import { is_ball_ctrl, is_fighter, is_human_ctrl } from "./type_check";
 
 interface IEntitySnapshot {
-  id: string,
-  oid: string,
-  fid: string,
-  wait: number,
-  reserve: number,
-  variant: number,
-  ghosted: boolean,
-  p0: IVector3Like,
-  p1: IVector3Like,
-  v0: IVector3Like,
-  v1: IVector3Like,
-  outline_color: string | undefined;
-  outline_alpha: number | undefined;
+  strs: string[],
+  nums: number[],
   copies: string[] | undefined;
   emitters: string[] | undefined;
   transforms: [string, string] | undefined;
@@ -64,15 +55,15 @@ export class Entity {
   static readonly TAG: string = 'Entity';
   world!: World;
 
-  readonly update_id = new Times(0, Number.MAX_SAFE_INTEGER);
-
+  protected _lifetime: number = 0;
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
   protected _outline_alpha: number = 0.8;
-  protected readonly _prev_position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _position: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
-  protected readonly _prev_velocity: IVector3 = new Ditto.Vector3(0, 0, 0);
+  protected _outline_width: number = 1;
+  protected readonly _prev_position: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _position: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _velocity: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _prev_velocity: IVector3 = Ditto.vec3(0, 0, 0);
 
   /**
    * 影分身
@@ -90,8 +81,8 @@ export class Entity {
   transforms!: [string, string] | null;
   protected _data!: IEntityData;
   protected _reserve!: number;
-  protected _mounted!: boolean;
-  protected _ghosted!: boolean;
+  protected _mounted!: number;
+  protected _ghosted!: number;
   protected _landing_frame!: IFrameInfo | null;
   protected _hp_r_tick!: Times;
   protected _mp_r_tick!: Times;
@@ -148,7 +139,6 @@ export class Entity {
   protected _hp_max?: number;
   protected _bearer!: Entity | null;
   protected _holding!: Entity | null;
-  protected _emitter_opoint!: IOpointInfo | null;
   protected _arest!: number;
   public motionless!: number;
   public shaking!: number;
@@ -159,7 +149,7 @@ export class Entity {
    * 当抓住一个被击晕的人时，此值充满。
    */
   protected _catch_time!: number;
-  protected _catch_time_max?: number;
+  protected _catch_time_max!: number;
 
   /**
    * 隐身计数，每帧-1
@@ -242,20 +232,25 @@ export class Entity {
    */
   readonly collided_list: Collision[] = [];
 
-  protected _chasing!: Entity | null;
   protected _ground_y: number = 0;
   protected _prev_ground_y: number = 0;
   readonly buff = new Map<string, Buff>()
 
   renderer: any;
+  puppet: boolean = false;
 
+  get lifetime() {
+    return this._lifetime
+  }
   get outline_color(): string {
     return this._outline_color || Defines.TeamInfoMap[this.team]?.outline_color || ''
   };
   set outline_color(v: string) { this._outline_color = v; }
   get outline_alpha(): number { return this._outline_alpha; }
   set outline_alpha(v: number) { this._outline_alpha = v; }
-
+  get outline_width(): number { return this._outline_width; }
+  set outline_width(v: number) { this._outline_width = v; }
+  
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 
@@ -477,7 +472,6 @@ export class Entity {
 
     this.callbacks.emit("on_hp_changed")(this, v, o);
     if (o > 0 && v <= 0) {
-      this.world.del_chaser(this);
       this.callbacks.emit("on_dead")(this);
       this._state?.on_dead?.(this);
       if (
@@ -638,8 +632,6 @@ export class Entity {
     this._dead_join = v
   }
 
-  get chasing(): Entity | null { return this._chasing; }
-  set chasing(e: Entity | null) { this._chasing = e || null; }
   get spawn_time() { return this._spawn_time }
   get gravity(): number {
     const g1 = this._state?.get_gravity?.(this);
@@ -684,15 +676,15 @@ export class Entity {
     this.world = world;
     this.id = new_id();
     this.wait = 0;
-    this.update_id.reset()
+    this._lifetime = 0;
     this._prev_ground_y = 0;
     this.fallinjury = 0;
     this._ground_y = 0;
     this.variant = 0;
     this.transforms = null;
     this._reserve = 0
-    this._mounted = false;
-    this._ghosted = false;
+    this._mounted = 0;
+    this._ghosted = 0;
     this._position.set(0, 0, 0)
     this._prev_position.set(0, 0, 0)
     this.fuse_bys = null;
@@ -710,7 +702,7 @@ export class Entity {
     this._defend_value_max = d.base.defend_value;
     this._defend_ratio = d.base.defend_ratio;
     this._healing = 0;
-    this._catch_time_max = d.base.catch_time;
+    this._catch_time_max = d.base.catch_time ?? this.world.catch_time_max;
     this.throwinjury = 0;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
@@ -730,7 +722,6 @@ export class Entity {
     this._bearer = null;
     this._holding = null;
     this._emitters.length = 0;
-    this._emitter_opoint = null;
     this._arest = 0;
     this.next_frame = null;
     this.vrests.clear()
@@ -770,7 +761,6 @@ export class Entity {
     this.drink = d.base.drink ? new DrinkInfo(d.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
-    this._chasing = null;
     this.collision_list.length = 0;
     this.collided_list.length = 0;
     this.lastest_collision = null;
@@ -807,10 +797,9 @@ export class Entity {
   on_spawn(
     emitter: Entity,
     opoint: IOpointInfo,
-    offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
+    offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
     facing: TFace = emitter.facing,
   ) {
-    this._emitter_opoint = opoint;
     const emitter_frame = emitter.frame;
     if (emitter.state === StateEnum.Ball_Rebounding) {
       const attacker = emitter.lastest_collided?.attacker ?? emitter;
@@ -819,7 +808,7 @@ export class Entity {
       this.team = attacker.team;
       this.facing = emitter.facing;
     } else {
-      this._emitters.push(emitter.id);
+      this._emitters.push(...emitter.emitters, emitter.id);
       this.team = emitter.team;
       this.facing = emitter.facing;
     }
@@ -946,15 +935,6 @@ export class Entity {
     }
     if (this._prev_frame !== this.frame) {
       this._state?.on_frame_changed?.(this, this.frame, this._prev_frame);
-
-      if (this.hp > 0) {
-        const pre_chase = this._prev_frame.chase?.flag;
-        const cur_chase = this.frame.chase?.flag;
-        if (pre_chase && !cur_chase)
-          this.world.del_chaser(this)
-        else if (cur_chase && pre_chase != cur_chase)
-          this.world.add_chaser(this)
-      }
     }
     if (v.invisible) this.invisibility(v.invisible);
     if (v.opoint) this.apply_opoints(v.opoint);
@@ -1000,7 +980,7 @@ export class Entity {
       }
       let facing = this.facing;
       for (let i = 0; i < count; ++i) {
-        const v = new Ditto.Vector3(0, 0, 0);
+        const v = Ditto.vec3(0, 0, 0);
         switch (opoint.spreading) {
           case void 0:
           case OpointSpreading.Normal:
@@ -1032,10 +1012,10 @@ export class Entity {
         }
         switch (multi_type) {
           case OpointMultiEnum.AccordingEnemies:
-            if (e.frame.chase) e.chasing = enemies[i % enemies.length]
+            if (e.frame.chase && is_ball_ctrl(e.ctrl)) e.ctrl.chasing = enemies[i % enemies.length]
             break;
           case OpointMultiEnum.AccordingAllies:
-            if (e.frame.chase) e.chasing = allies[i % allies.length];
+            if (e.frame.chase && is_ball_ctrl(e.ctrl)) e.ctrl.chasing = allies[i % allies.length];
             break;
         }
         if (opoint.inherit_speed_x)
@@ -1050,7 +1030,7 @@ export class Entity {
 
   spawn_entity(
     opoint: IOpointInfo,
-    offset_velocity: IVector3 = new Ditto.Vector3(0, 0, 0),
+    offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
     facing: TFace = this.facing
   ): Entity | undefined {
     if (opoint.unimportant && this.world.entities.length > 355)
@@ -1085,8 +1065,8 @@ export class Entity {
 
   attach(is_entity = true): this {
     this._spawn_time = this.world.game_time;
-    this._mounted = true
-    this._ghosted = !is_entity
+    this._mounted = 1
+    this._ghosted = is_entity ? 0 : 1
     this.world.add_entities(this);
     if (EMPTY_FRAME_INFO === this.frame)
       this.enter_frame(Defines.NEXT_FRAME_AUTO);
@@ -1431,7 +1411,7 @@ export class Entity {
   }
 
   update(): void {
-    this.update_id.add()
+    this._lifetime += 1;
     if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
     if (this.check_fusion_dismissing()) return;
@@ -1593,18 +1573,12 @@ export class Entity {
           this._state?.on_landing?.(this, v);
 
           this.play_sound(this._data.base.drop_sounds);
-          if (this.throwinjury && (
-            this.state == StateEnum.Falling ||
-            this.state == StateEnum.Lying
-          )) {
+          if (this.throwinjury) {
             this.hp -= this.throwinjury;
             this.hp_r -= round(this.throwinjury * (1 - this.dataset('hp_recoverability')))
             this.throwinjury = 0;
           }
-          if (this.fallinjury && (
-            this.state == StateEnum.Falling ||
-            this.state == StateEnum.Lying
-          )) {
+          if (this.fallinjury) {
             this.hp -= this.fallinjury;
             this.hp_r -= round(this.fallinjury * (1 - this.dataset('hp_recoverability')))
             this.fallinjury = 0;
@@ -1874,12 +1848,14 @@ export class Entity {
     const curr_idx = datas.indexOf(this._data.id)
     const next_idx = (curr_idx + 1) % datas.length;
     const next_data_id = datas[next_idx]
-    const next_data = this.lf2.datas.find_entity(new_id);
+    const next_data = this.lf2.datas.find_entity(next_data_id);
     if (!next_data) return;
     this.transform(next_data);
     if (next_idx === 0) {
-      const nf = this.get_next_frame({ id: "245" })?.frame ?? this.find_auto_frame()
-      this.next_frame = nf;
+      // TODO: 这个逻辑感觉怪怪的，后续可以改成直接在数据里写死变身后的帧
+      let nf = this.get_next_frame({ id: "245" })?.frame
+      if (!nf) nf = this.find_auto_frame();
+      this.enter_frame(nf);
     }
     if (this.copies.size) {
       const gones: string[] = []
@@ -1947,7 +1923,7 @@ export class Entity {
 
   release(): void {
     if (!this._mounted) return;
-    this._mounted = false;
+    this._mounted = 0;
     this.world.del_entity(this);
     this.ctrl.dispose();
     this.callbacks.emit("on_disposed")(this);
@@ -1978,44 +1954,7 @@ export class Entity {
     this._invisible_duration = duration;
   }
 
-  update_chasing(lookup: Entity) {
-    const a = this.chasing;
-    const b = this.should_chase(a) ? a : this.chasing = null;
-    if (a && this.frame.chase?.stratedy === ChaseStratedy.TillLost) {
-      this.ctrl.set_chase_pos(
-        a.position.x,
-        a.position.y,
-        a.position.z
-      )
-      return
-    }
-    const c = this.should_chase(lookup) ? lookup : null;
-    const d = this.chasing = closer_one(this, b, c);
-    // lost
-    if (!d && a) this.ctrl.set_chase_pos(
-      this.position.x,
-      this.position.y,
-      this.position.z
-    )
-    // follow
-    if (d) this.ctrl.set_chase_pos(
-      d.position.x,
-      d.position.y,
-      d.position.z
-    )
-  }
-  should_chase(other: Entity | null): boolean {
-    if (!other) return false;
-    if (
-      other.frame.id === Builtin_FrameId.Gone ||
-      other.frame.id === Builtin_FrameId.None
-    ) return false;
-    const { chase } = this.frame;
-    if (!chase) return false;
-    const { flag } = chase
-    const target = other.get_flag(this)
-    return (target & flag) == target
-  }
+
   get_flag(other: Entity): number {
     let ret = this.team === other.team ? HitFlag.Ally : HitFlag.Enemy;
     if (this.hp <= 0) ret |= HitFlag.Dead;
@@ -2129,11 +2068,11 @@ export class Entity {
       if (frame.sound) {
         let { x, y, z } = this._position;
         if (frame.state === StateEnum.Message) {
-          let { centerx, pic: { w = 0 } = {} } = frame;
-          let { cam_x } = this.world.renderer;
+          let { centerx, width } = frame;
+          let { current_cam_pos: { x: cam_x } } = this.world;
           let cam_r = cam_x + this.world.screen_w;
-          const offset_x = this.facing === 1 ? centerx : w - centerx;
-          cam_r -= w - offset_x
+          const offset_x = this.facing === 1 ? centerx : width - centerx;
+          cam_r -= width - offset_x
           cam_x += offset_x
           x = clamp(x, cam_x, cam_r)
         }
@@ -2156,6 +2095,8 @@ export class Entity {
     if (flags.sounds?.length) this.play_sound(flags.sounds);
 
     if (flags.blink_time) this.blinking = flags.blink_time;
+    // if(this.bearer) this.follow_bearer()
+    // if(this.catcher) this.follow_catcher()
   }
 
   handle_wait_flag(wait: string | number, frame?: IFrameInfo): number {
@@ -2403,38 +2344,52 @@ export class Entity {
 
   to_snapshot(): IEntitySnapshot {
     const ret: IEntitySnapshot = {
-      id: this.id,
-      oid: this._data.id,
-      fid: this.frame.id,
-      wait: this.wait,
-      reserve: this._reserve,
-      ghosted: this._ghosted,
-      outline_color: this._outline_color || void 0,
-      outline_alpha: this._outline_alpha || void 0,
+      strs: [
+        this.id,
+        this._data.id,
+        this.frame.id,
+        this._landing_frame?.id || '',
+        this._outline_color,
+        this._team,
+        this._bearer?.id || '',
+        this._holding?.id || '',
+      ],
       copies: this.copies.size ? Array.from(this.copies) : void 0,
       emitters: this._emitters.length ? [...this._emitters] : void 0,
-      variant: this.variant,
       transforms: this.transforms?.length ? this.transforms : void 0,
-      p0: {
-        x: this._prev_position.x,
-        y: this._prev_position.y,
-        z: this._prev_position.z,
-      },
-      p1: {
-        x: this._position.x,
-        y: this._position.y,
-        z: this._position.z,
-      },
-      v0: {
-        x: this._prev_velocity.x,
-        y: this._prev_velocity.y,
-        z: this._prev_velocity.z,
-      },
-      v1: {
-        x: this._velocity.x,
-        y: this._velocity.y,
-        z: this._velocity.z,
-      }
+      nums: [
+        this._mounted,
+        this._ghosted,
+        this._outline_alpha,
+        this.wait,
+        this.variant,
+        this._reserve,
+        this._prev_position.x,
+        this._prev_position.y,
+        this._prev_position.z,
+        this._position.x,
+        this._position.y,
+        this._position.z,
+        this._prev_velocity.x,
+        this._prev_velocity.y,
+        this._prev_velocity.z,
+        this._velocity.x,
+        this._velocity.y,
+        this._velocity.z,
+        this.hp,
+        this.hp_r,
+        this.hp_max,
+        this.mp,
+        this.mp_max,
+        this.invisible,
+        this.invulnerable,
+        this.blinking,
+        this.arest,
+        this.motionless,
+        this.shaking,
+        this._catch_time,
+        this._catch_time_max,
+      ],
     }
     return ret;
   }
@@ -2442,30 +2397,30 @@ export class Entity {
   read_snapshot(s: IEntitySnapshot) {
     // oid: this.data.id
     // fid: this.frame.id
-    this._data = this.lf2.datas.find_entity(s.oid)!;
-    if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
-    this.frame = this.data.frames[s.fid];
+    // this._data = this.lf2.datas.find_entity(s.oid)!;
+    // if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
+    // this.frame = this.data.frames[s.fid];
 
-    if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
-    this._outline_color = s.outline_color || ''
-    this._outline_alpha = s.outline_alpha || 0
+    // if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
+    // this._outline_color = s.outline_color || ''
+    // this._outline_alpha = s.outline_alpha || 0
 
-    this.variant = s.variant;
-    this._reserve = s.reserve
-    this._ghosted = s.ghosted;
+    // this.variant = s.variant;
+    // this._reserve = s.reserve
+    // this._ghosted = s.ghosted;
 
-    this.copies.clear();
-    s.copies?.forEach(v => this.copies.add(v));
+    // this.copies.clear();
+    // s.copies?.forEach(v => this.copies.add(v));
 
-    this._emitters.length = 0;
-    if (s.emitters) this._emitters.push(...s.emitters);
+    // this._emitters.length = 0;
+    // if (s.emitters) this._emitters.push(...s.emitters);
 
-    this.transforms = s.transforms ?? null;
-    this.wait = this.wait;
-    this._prev_position.copy(s.p0)
-    this._position.copy(s.p1)
-    this._prev_velocity.copy(s.v0)
-    this._velocity.copy(s.v1)
+    // this.transforms = s.transforms ?? null;
+    // this.wait = this.wait;
+    // this._prev_position.copy(s.p0)
+    // this._position.copy(s.p1)
+    // this._prev_velocity.copy(s.v0)
+    // this._velocity.copy(s.v1)
   }
 }
 

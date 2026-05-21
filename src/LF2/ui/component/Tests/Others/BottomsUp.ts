@@ -1,7 +1,7 @@
-import { AGK, GK, O_ID, TeamEnum } from "@/LF2/defines";
+import { GK, O_ID } from "@/LF2/defines";
 import { Entity } from "@/LF2/entity";
-import { TestCase } from "../TestCase";
 import { ActionDirector } from "../ActionDirector";
+import { TestCase } from "../TestCase";
 
 export class BottomsUp extends TestCase {
   override name: string = 'Bottoms Up Drop Test (Alcohol Abuse Results in Harm to Your Health)'
@@ -23,10 +23,10 @@ export class BottomsUp extends TestCase {
   override enter(): void {
     this.director.reset();
     this.figters = [
-      ...this.mid_8(O_ID.Bandit),
-      ...this.around_8(O_ID.Bandit),
+      ...this.circle(O_ID.Bandit, this.midX, this.midZ, 100, 100, 8),
+      ...this.circle(O_ID.Bandit, this.midX, this.midZ, 200, 200, 8),
     ]
-    this.mid_8(O_ID.Weapon_Beer)
-    this.around_8(O_ID.Weapon_milk)
+    this.circle(O_ID.Weapon_Beer, this.midX, this.midZ, 100, 100, 8)
+    this.circle(O_ID.Weapon_milk, this.midX, this.midZ, 200, 200, 8)
   }
 }

@@ -34,6 +34,7 @@ export * from "./IAction_NextFrame";
 export * from "./IAction_ReboundVX";
 export * from "./IAction_SetProp";
 export * from "./IAction_Sound";
+export * from "./IAction_StealValue";
 export * from "./IAction_TurnFace";
 export * from "./IAction_TurnTeam";
 export * from "./IArmorInfo";

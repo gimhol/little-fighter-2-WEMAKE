@@ -1,79 +1,103 @@
 
-import { Background } from "@/LF2/bg/Background";
-import type { Entity } from "@/LF2/entity/Entity";
-import { clamp, floor } from "@/LF2/utils";
-import * as T from "../_t";
-import { get_geometry } from "./GeometryKeeper";
-import { get_img_material } from "./MaterialKeeper";
-import { WorldRenderer } from "./WorldRenderer";
+import { clamp, type Entity } from "@/LF2";
+import { BufferGeometry, Mesh, MeshBasicMaterial, Vector3 } from "../_t";
+import type { EntityRenderer } from "./EntityRenderer";
+import { get_static_plane_geometry } from "./GeometryKeeper";
+import { get_static_img_material } from "./MaterialKeeper";
+import type { WorldRenderer } from "./WorldRenderer";
 
 export class EntityShadowRender {
-  readonly mesh: T.Mesh<T.BufferGeometry, T.MeshBasicMaterial>;
+  readonly owner: EntityRenderer;
+  readonly mesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   readonly entity: Entity;
-  get world() { return this.entity.world }
+  readonly world_renderer: WorldRenderer;
+  protected _w: number = 0;
+  protected _h: number = 0;
+  protected _img: string = '';
+  private _p0 = new Vector3()
+  private _p1 = new Vector3()
+  private _s0 = new Vector3(1, 1, 1)
+  private _s1 = new Vector3(1, 1, 1)
+  private _o0: number = 0
+  private _o1: number = 0
+
   get lf2() { return this.entity.lf2 }
-  bg: Readonly<Background> | undefined = void 0
-  get visible() {
-    return this.mesh.visible;
-  }
-  set visible(v) {
-    this.mesh.visible = v;
-  }
-  constructor(entity: Entity) {
-    this.entity = entity
-    this.mesh = new T.Mesh(
-      get_geometry(0, 0),
-      get_img_material(),
+  get world() { return this.entity.world }
+  get bg() { return this.world.bg }
+  get visible() { return this.mesh.visible; }
+  set visible(v) { this.mesh.visible = v; }
+  constructor(owner: EntityRenderer) {
+    this.owner = owner;
+    this.entity = owner.entity;
+    this.world_renderer = owner.owner;
+    const { lf2, world } = owner.entity;
+    const { base } = world.bg.data
+    const { shadow, shadowsize: [sw, sh] } = base;
+    this._h = sh;
+    this._w = sw;
+    this._img = shadow;
+    this.mesh = new Mesh(
+      get_static_plane_geometry(sw, sh),
+      get_static_img_material(lf2, shadow).clone(),
     );
     this.mesh.visible = false;
     this.mesh.name = EntityShadowRender.name;
     this.mesh.renderOrder = 0;
   }
-
   on_mount() {
-    this.mesh.visible = false;
-    (this.entity.world.renderer as WorldRenderer).world_node.add(this.mesh);
+    this.world_renderer.world_node.add(this.mesh);
+    this.update_position(true);
+    this.update_scale_opacity(true);
   }
-
   on_unmount() {
     this.mesh.removeFromParent();
   }
-
-  protected _shadow_w: number = 0;
-  protected _shadow_h: number = 0;
-  protected _shadow_img: string = '';
+  update_position(immidiate: boolean = false): void {
+    const { position: { x, z }, ground_y } = this.entity;
+    this._p0.copy(this._p1);
+    this._p1.x = x
+    this._p1.y = ground_y - z / 2
+    this._p1.z = z - 550
+    if (immidiate) {
+      this._p0.copy(this._p1);
+      this.mesh.position.copy(this._p1);
+    }
+  }
+  update_scale_opacity(immidiate: boolean = false): void {
+    const { position: { y }, ground_y } = this.entity;
+    this._s0.copy(this._s1)
+    this._s1.x = this._s1.y = 0.5 + 0.5 * clamp(250 - (y - ground_y), 0, 250) / 250
+    this._o0 = this._o1;
+    this._o1 = 0.3 + 0.7 * clamp(250 - (y - ground_y), 0, 250) / 250
+    if (immidiate) {
+      this._s0.copy(this._s1)
+      this._o0 = this._o1;
+      this.mesh.scale.copy(this._s1)
+      this.mesh.material.opacity = this._o1;
+    }
+  }
 
   render() {
     const { entity } = this;
-    const { bg, lf2 } = this.world;
-    const [sw, sh] = bg.data.base.shadowsize || [30, 30];
-    if (sw !== this._shadow_w || sh !== this._shadow_h) {
-      this._shadow_h = sh;
-      this._shadow_w = sw;
-      this.mesh.geometry = get_geometry(sw, sh);
-    }
-    const { shadow } = bg.data.base;
-    if (shadow !== this._shadow_img) {
-      this._shadow_img = shadow;
-      this.mesh.material = get_img_material(shadow, lf2).clone()
-      this.mesh.material.needsUpdate = true;
+    if (this.owner.owner.dirty) {
+      const { bg, lf2 } = this;
+      const { shadowsize: [sw, sh], shadow } = bg.data.base;
+      if (sw !== this._w || sh !== this._h) {
+        this.mesh.geometry = get_static_plane_geometry(this._w = sw, this._h = sh);
+      }
+      if (shadow !== this._img) {
+        this.mesh.material = get_static_img_material(lf2, this._img = shadow).clone()
+      }
+      const { invisible } = this.owner;
+      const { frame } = entity;
+      this.update_position();
+      this.update_scale_opacity();
+      this.mesh.visible = !(invisible || frame.no_shadow);
     }
 
-    const {
-      frame,
-      position: { x, z, y },
-      invisible,
-      ground_y
-    } = entity;
-    this.mesh.position.set(
-      floor(x),
-      floor(ground_y - z / 2),
-      floor(z - 550),
-    );
-    const scale = 0.5 + 0.5 * clamp(250 - (y - ground_y), 0, 250) / 250
-    const opacity = 0.3 + 0.7 * clamp(250 - (y - ground_y), 0, 250) / 250
-    this.mesh.scale.set(scale, scale, 1)
-    this.mesh.material.opacity = opacity;
-    this.mesh.visible = !invisible && !frame.no_shadow;
+    const f = this.world_renderer.dfactor;
+    this.mesh.position.lerpVectors(this._p0, this._p1, f);
+    this.mesh.scale.lerpVectors(this._s0, this._s1, f);
+    this.mesh.material.opacity = this._o0 + (this._o1 - this._o0) * f;
   }
 }

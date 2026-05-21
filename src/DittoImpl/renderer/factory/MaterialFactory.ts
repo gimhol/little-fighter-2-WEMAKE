@@ -6,7 +6,9 @@ export enum MaterialKind {
   Color = 'Color',
   Image = 'Image',
   BgLayer = 'BgLayer',
-  Text = "Text"
+  Text = "Text",
+  Basic = "Basic",
+  Red = 'Red',
 }
 export const MaterialFactory = new class MaterialFactory extends InstFactory<Material> {
   override readonly TAG = 'MaterialFactory'

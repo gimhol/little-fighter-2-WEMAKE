@@ -1,4 +1,4 @@
-import { clamp, Defines, GameKey, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, KeyStatus, Label, LF2PointerEvent, round_float, UIComponent, UINode } from "@/LF2";
+import { clamp, Defines, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, round_float, UIComponent, UINode } from "@/LF2";
 export interface ISliderHandleProps {
   min?: number;
   max?: number;
@@ -28,18 +28,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     switcher: Boolean,
     direction: { type: String, oneof: ["row", "col"], nullable: true }
   }
-  time: number = 0;
   get direction() { return this.props.direction ?? 'row' }
-  get lr() {
-    const r = this.keys.R.is_end() ? 0 : 1;
-    const l = this.keys.L.is_end() ? 0 : 1;
-    return r - l;
-  }
-  get ud() {
-    const u = this.keys.U.is_end() ? 0 : 1;
-    const d = this.keys.D.is_end() ? 0 : 1;
-    return u - d;
-  }
   private _on_me = false;
   private _factor: number = 0;
   private p: IUICallback = {
@@ -146,7 +135,6 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     this.lf2.pointings.callback.del(this.b)
   }
   override update(dt: number): void {
-    this.time += dt;
     const { container, responser } = this;
     if (!container) return;
     const { cross } = this.node;
@@ -169,26 +157,18 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       !container?.focused &&
       !this.node?.focused
     ) return;
+
     if (!this.props.switcher) {
-      const { lr, ud } = this;
+      const { LR: lr, UD: ud } = this;
       if (this.direction == 'row' && lr) {
         this.value += this.step * lr;
       } else if (this.direction == 'col' && ud) {
         this.value -= this.step * ud;
       }
-    }
-  }
-  override on_key_up(e: IUIKeyEvent): void {
-    if (
-      !this.responser?.focused &&
-      !this.container?.focused &&
-      !this.node?.focused
-    ) {
-      return;
-    }
-    if (!this.props.switcher) return;
-    const { lr, ud } = this;
-    if (this.direction == 'row' && lr) {
+    } else if (this.direction == 'row') {
+      const lr =
+        (this.keys.R.is_start() ? 1 : 0) -
+        (this.keys.L.is_start() ? 1 : 0);
       const prev = this.value
       let curr = this.value + this.step * lr
       if (curr < this.min_value) curr = this.max_value;
@@ -196,7 +176,10 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       this.value = curr;
       if (prev != curr)
         this.callbacks.emit('on_value_changed')(this.value, this)
-    } else if (this.direction == 'col' && ud) {
+    } else if (this.direction == 'col') {
+      const ud =
+        (this.keys.D.is_start() ? 1 : 0) -
+        (this.keys.U.is_start() ? 1 : 0);
       const prev = this.value
       let curr = this.value - this.step * ud
       if (curr < this.min_value) curr = this.max_value;

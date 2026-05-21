@@ -162,8 +162,8 @@ export class BotDataSet implements Required<IBotDataSet> {
 
   avoid_in_x = 180;
   avoid_in_z = 100;
-  avoid_out_x = 250;
-  avoid_out_z = 150;
+  avoid_out_x = 200;
+  avoid_out_z = 200;
 
   pick_weapon_f_x: number = 25;
   pick_weapon_b_x: number = -25;

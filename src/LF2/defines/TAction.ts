@@ -6,6 +6,7 @@ import type { IAction_NextFrame } from "./IAction_NextFrame";
 import type { IAction_ReboundVX } from "./IAction_ReboundVX";
 import type { IAction_SetProp } from "./IAction_SetProp";
 import type { IAction_Sound } from "./IAction_Sound";
+import type { IAction_StealValue } from "./IAction_StealValue";
 import type { IAction_TurnFace } from "./IAction_TurnFace";
 import type { IAction_TurnTeam } from "./IAction_TurnTeam";
 
@@ -20,4 +21,5 @@ export type TAction =
   IAction_TurnFace |
   IAction_TurnTeam |
   IAction_Fusion |
-  IAction_Broadcast;
+  IAction_Broadcast | 
+  IAction_StealValue;

@@ -1,8 +1,10 @@
 import { clamp, Entity, get_team_outline_color, get_team_text_color, round } from "@/LF2";
 import { WorldRenderer } from "./WorldRenderer";
 import { SmallTextMesh } from "./meshs/SmallTextMesh";
+import type { EntityRenderer } from "./EntityRenderer";
 
 export class EntityNameRender {
+  readonly owner: EntityRenderer;
   protected _mesh: SmallTextMesh | null = null;
   protected readonly world_renderer: WorldRenderer;
   protected entity: Entity;
@@ -13,9 +15,10 @@ export class EntityNameRender {
     this.world_renderer.world_node.add(ret)
     return ret
   }
-  constructor(entity: Entity, world_renderer: WorldRenderer) {
-    this.world_renderer = world_renderer;
-    this.entity = entity;
+  constructor(owner: EntityRenderer) {
+    this.owner = owner;
+    this.entity = owner.entity;
+    this.world_renderer = owner.owner;
   }
   on_mount() { }
   on_unmount() {
@@ -35,7 +38,8 @@ export class EntityNameRender {
       if (this._mesh) this._mesh.visible = false;
       return;
     }
-    const { lf2, team, position, ground_y, world } = e;
+    const { lf2, team, ground_y, world } = e;
+    const { position } = this.owner;
     const { mesh } = this;
     mesh.set_text(lf2, name)
     mesh.visible = true;
@@ -45,7 +49,7 @@ export class EntityNameRender {
       mesh.strokeStyle = get_team_outline_color(team);
     }
     const hw = (mesh.scale.x + 10) / 2;
-    const min_x = this.world_renderer.cam_x + hw;
+    const min_x = this.world_renderer.camera.position.x + hw;
     const max_x = min_x + (world.screen_w / world.transform.scale_x) - 2 * hw;
     const x = clamp(position.x, min_x, max_x);
     const z = position.z;

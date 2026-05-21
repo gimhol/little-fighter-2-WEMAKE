@@ -115,7 +115,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     } else {
       this.lf2.push_ui({ id: "vs_mode_page" });
     }
-    this.world.renderer.cam_x = cam_x
+    this.world.target_cam_pos.x = this.world.current_cam_pos.x = cam_x
   }
 }
 
