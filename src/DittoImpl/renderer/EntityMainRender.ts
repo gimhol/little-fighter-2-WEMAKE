@@ -173,10 +173,7 @@ export class EntityMainRender {
     const { material: m } = main_mesh;
 
     let { tex } = pic;
-    if (variant) {
-      const variants = this.file_variants.get(tex);
-      variants?.length && (tex = variants[variant] ?? tex);
-    }
+    if (variant) tex = this.file_variants.get(tex)?.at(variant) ?? tex;
 
     const img = images.get(tex);
     if (img?.pic) {
