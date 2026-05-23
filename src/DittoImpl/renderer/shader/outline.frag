@@ -100,6 +100,16 @@ vec4 apply(vec4 color) {
   return color;
 }
 
+// 输入：rgb 0.0~1.0
+// 输出：0.0~1.0，值越大越接近黑色
+float getBlackRatio(vec3 rgb) {
+    // 人眼感知亮度公式（标准）
+    float luminance = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+    // 1 - 亮度 = 黑色接近度
+    return 1.0f - luminance;
+}
+
+
 void main() {
   /** 原图像素宽 */
   float ow = tw / tsw;
