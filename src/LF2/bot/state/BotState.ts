@@ -160,5 +160,37 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     if (bot_cases && keys) bot_cases.push(keys.join())
     return true
   }
+
+  /**
+   * 在距离不足时长按上或下
+   * 
+   * @param rz 相对z距离 
+   * @param min_z 最小z值
+   * @param max_z 最大z值
+   */
+  hold_UD(rz: number, min_z: number, max_z: number): void {
+    const { c } = this;
+    if (rz < min_z) c.key_down(GK.U).key_up(GK.D)
+    else if (rz > max_z) c.key_down(GK.D).key_up(GK.U)
+    else c.key_up(GK.D, GK.U)
+  }
+
+  /**
+   * 在距离不足时长按左或右
+   * 
+   * @param rx 相对x距离
+   * @param min_x 最小x值
+   * @param max_x 最大x值
+   */
+  hold_LR(rx: number, min_x: number, max_x: number): void {
+    const { c, me } = this;
+    const { facing: me_facing } = me;
+    const GK_F = me_facing > 0 ? GK.R : GK.L;
+    const GK_B = me_facing > 0 ? GK.L : GK.R;
+    if (rx < min_x) c.key_down(GK_B).key_up(GK_F)
+    else if (rx > max_x) c.key_down(GK_F).key_up(GK_B)
+    else c.key_up(GK_F, GK_B)
+  }
+
 }
 

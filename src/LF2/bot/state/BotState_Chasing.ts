@@ -118,7 +118,6 @@ export class BotState_Chasing extends BotState_Base {
     }
 
     if (x_ok && z_ok) c.click(GK.a)
-
     this.hold_UD(rz, c.dataset.w_atk_min_z, c.dataset.w_atk_max_z)
     this.hold_LR(rx, c.stand_atk_b_x, c.stand_atk_f_x)
     const { team, player_l, player_r } = this.stage
@@ -230,23 +229,6 @@ export class BotState_Chasing extends BotState_Base {
     }
   }
 
-  hold_UD(rz: number, min_z: number, max_z: number): void {
-    const { c } = this;
-    if (rz < min_z) c.key_down(GK.U).key_up(GK.D)
-    else if (rz > max_z) c.key_down(GK.D).key_up(GK.U)
-    else c.key_up(GK.D, GK.U)
-  }
-
-  hold_LR(rx: number, min_x: number, max_x: number): void {
-    const { c, me } = this;
-    const { facing: me_facing } = me;
-    const GK_F = me_facing > 0 ? GK.R : GK.L;
-    const GK_B = me_facing > 0 ? GK.L : GK.R;
-    if (rx < min_x) c.key_down(GK_B).key_up(GK_F)
-    else if (rx > max_x) c.key_down(GK_F).key_up(GK_B)
-    else c.key_up(GK_F, GK_B)
-  }
-
   update_jump(): BotStateEnum | undefined {
     const { me, en, c } = this;
     if (!en) return;
@@ -255,6 +237,7 @@ export class BotState_Chasing extends BotState_Base {
     const { facing: me_facing } = me
     const { x: my_x, z: my_z, y: my_y } = me.position;
     const { x: en_x, z: en_z, y: en_y } = en.position;
+
 
     /** 
      * 敌人与自己的距离Z
@@ -270,6 +253,8 @@ export class BotState_Chasing extends BotState_Base {
      */
     const rx = round(me_facing * (en_x - my_x))
 
+    this.hold_UD(rz, -40, 40)
+    this.hold_LR(rx, -80, 80)
     /** 
      * 敌人与自己的距离y
      * 敌人在高时为正数
