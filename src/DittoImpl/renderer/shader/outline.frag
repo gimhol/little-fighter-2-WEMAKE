@@ -123,7 +123,8 @@ void main() {
 
   if(!keepout && (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)) {
     // 超出纹理图的部分将不显示
-    discard;
+    gl_FragColor = vec4(0, 0, 0, 0);
+    return;
   }
   vec4 color = texture2D(tex, uv);
   color.rgb = gamma_correct(color.rgb);
@@ -139,6 +140,7 @@ void main() {
   vec2 texel = vec2(outlineWidth) / vec2(textureSize(tex, 0));
   float center = texture2D(tex, uv).a;
 
+  // TODO 描边宽度大于1像素时，应该检查更多的周围像素
   vec2 coord_up = uv + vec2(0, -texel.y);
   vec2 coord_down = uv + vec2(0, texel.y);
   vec2 coord_left = uv + vec2(-texel.x, 0);
