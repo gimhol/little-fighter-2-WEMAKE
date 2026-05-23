@@ -102,11 +102,12 @@ vec4 apply(vec4 color) {
 
 // 输入：rgb 0.0~1.0
 // 输出：0.0~1.0，值越大越接近黑色
-float getBlackRatio(vec3 rgb) {
+float getBlackRatio(vec4 rgba) {
     // 人眼感知亮度公式（标准）
-    float luminance = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+    float luminance = 0.299 * rgba.r + 0.587 * rgba.g + 0.114 * rgba.b;
     // 1 - 亮度 = 黑色接近度
-    return 1.0f - luminance;
+     // 同时考虑透明度，越不透明越接近黑色
+    return (1.0f - luminance) * rgba.a;
 }
 
 
@@ -127,11 +128,11 @@ void main() {
   vec4 color = texture2D(tex, uv);
   color.rgb = gamma_correct(color.rgb);
 
-  /* 无需描边时，仅处理颜色 */
-  if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
-    gl_FragColor = apply(color);
-    return;
-  }
+  // /* 无需描边时，仅处理颜色 */
+  // if(outlineAlpha <= 0.0 || outlineWidth <= 0.0) {
+  //   gl_FragColor = apply(color);
+  //   return;
+  // }
 
   /* 检查中心与四周颜色 */
   float outline = 0.0;
@@ -157,18 +158,31 @@ void main() {
 
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
   
-  if(outline <= 0.1 || center >= 0.5) {
+  if(outline > 0.1 && center < 0.5) {
+    // 描边
+    // 颜色与原图混合
+    if(outlineAlpha > 0.0)
+      color = vec4(gamma_correct(outlineColor), outlineAlpha);
+    if(bgAlpha > 0.0)
+      color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
+    if(fgAlpha > 0.0)
+      color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
+    color.a *= opacity;
+    gl_FragColor = color;
+  } else if(outline > 0.1 && center >= 0.5) {
+    // 内边缘去毛刺
+    float blackRatio = getBlackRatio(color);
+    color.a *= smoothstep(0.9, 0.75, blackRatio);
+    if(outlineAlpha > 0.0)
+      color = bgfg(gamma_correct(outlineColor), outlineAlpha, color.rgb, color.a);
+    if(bgAlpha > 0.0)
+      color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
+    if(fgAlpha > 0.0)
+      color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
+    color.a *= opacity;
+    gl_FragColor = color;
+  } else  { 
+    // 非边缘的像素
     gl_FragColor = apply(color);
-    return;
   }
-
-  // 描边
-  color = vec4(gamma_correct(outlineColor), outlineAlpha);
-  if(bgAlpha > 0.0)
-    color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
-  if(fgAlpha > 0.0)
-    color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
-  color.a *= opacity;
-  gl_FragColor = color;
-
 }
