@@ -175,12 +175,7 @@ void main() {
     color.a *= smoothstep(0.9, 0.75, blackRatio);
     if(outlineAlpha > 0.0)
       color = bgfg(gamma_correct(outlineColor), outlineAlpha, color.rgb, color.a);
-    if(bgAlpha > 0.0)
-      color = bgfg(bgColor, bgAlpha, color.rgb, color.a);
-    if(fgAlpha > 0.0)
-      color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
-    color.a *= opacity;
-    gl_FragColor = color;
+    gl_FragColor = apply(color);
   } else  { 
     // 非边缘的像素
     gl_FragColor = apply(color);

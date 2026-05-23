@@ -8,7 +8,7 @@ export enum TeamEnum {
   Team_6 = "6",
   Team_7 = "7",
   Team_8 = "8",
-  Max = '10',
+  Max = '8',
 }
 export const is_independent = (team: string) => team.length !== 1;
 export const T_E = TeamEnum;

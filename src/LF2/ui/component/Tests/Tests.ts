@@ -15,9 +15,10 @@ import { LOUIS_JUMP_ATTACK } from "./Louis";
 import { BottomsUp, BotCome, MoveStayCome } from "./Others";
 import { Rudolf_DFJ } from "./Rudolf";
 import { TestCase } from "./TestCase";
+import { AllFighters } from "./Others/AllFighters";
 
 const CASE_GROUPS: IClazz<TestCase, [Tests]>[][] = [
-  [TestCase], [
+  [TestCase, AllFighters], [
     Julian_DUJ, Julian_DFJ, Julian_DFA
   ], [
     Firzen_DUA_0, Firzen_DUA_1, Firzen_DUA_2, Firzen_FUSION
