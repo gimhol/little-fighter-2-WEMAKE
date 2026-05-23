@@ -43,6 +43,7 @@ export class EntityMainRender {
   protected files: Record<string, IPictureInfo> = {};
   protected models: Record<string, IModelInfo> = {};
   protected model_variants = new Map<string, string[]>();
+  protected img: RImageInfo | undefined;
 
   constructor(owner: EntityRenderer) {
     this.owner = owner;
@@ -175,11 +176,11 @@ export class EntityMainRender {
     let { tex } = pic;
     if (variant) tex = this.file_variants.get(tex)?.at(variant) ?? tex;
 
-    const img = images.get(tex);
+    const img = this.img = images.get(tex);
     if (img?.pic) {
       m.uniforms.tex.value = img.pic.texture;
-      m.uniforms.tw.value = img.pic.w;
-      m.uniforms.th.value = img.pic.h;
+      m.uniforms.tw.value = img.w;
+      m.uniforms.th.value = img.h;
       m.uniforms.tsw.value = img.scale;
       m.uniforms.tsh.value = img.scale;
     } else {
@@ -220,7 +221,7 @@ export class EntityMainRender {
     if (outline_color && outline_alpha && enabled) {
       m.outlineColor = new Color(outline_color);
       m.outlineAlpha = outline_alpha ?? 0.7;
-      m.outlineWidth = outline_width
+      m.outlineWidth = outline_width * (this.img?.scale ?? 1)
     } else {
       m.outlineAlpha = 0;
     }
