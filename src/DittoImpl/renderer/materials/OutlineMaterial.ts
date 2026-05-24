@@ -52,7 +52,8 @@ export class OutlineMaterial extends ShaderMaterial {
       fgAlpha: { value: 0 },
 
       deburrMin: { value: 0.75 },
-      deburrMax: { value: 0.9 }
+      deburrMax: { value: 0.95 },
+      deburrJudge: { value: 0.75 },
     }
   }
   get texture(): Texture | undefined { return this.uniforms.tex.value }

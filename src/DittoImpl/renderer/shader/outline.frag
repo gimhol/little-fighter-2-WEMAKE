@@ -54,6 +54,7 @@ uniform float fgAlpha;
 
 uniform float deburrMin;
 uniform float deburrMax;
+uniform float deburrJudge;
 
 // 灰度权重
 const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
@@ -163,7 +164,7 @@ void main() {
 
   outline = max(max(abs(center - up), abs(center - down)), max(abs(center - left), abs(center - right)));
   
-  if(outline > 0.1 && center < 0.5) {
+  if(outline > 0.5 && center < 0.5) {
     // 描边
     // 颜色与原图混合
     if(outlineAlpha > 0.0)
@@ -174,12 +175,13 @@ void main() {
       color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
     color.a *= opacity;
     gl_FragColor = color;
-  } else if(outline > 0.1 && center >= 0.5 && deburrMax > deburrMin) {
+  } else if(outline > 0.5 && center >= 0.5 && deburrMax > deburrMin && deburrJudge < 1.0) {
     // 内边缘去毛刺
     float blackRatio = getBlackRatio(color);
-    color.a *= smoothstep(deburrMax, deburrMin, blackRatio);
-    if(outlineAlpha > 0.0)
-      color = bgfg(gamma_correct(outlineColor), outlineAlpha, color.rgb, color.a);
+    if(blackRatio > deburrJudge)
+      color.a *= smoothstep(deburrMax, deburrMin, (blackRatio - deburrJudge) / (1.0 - deburrJudge));
+    if(outlineAlpha > 0.0) 
+        color = bgfg(gamma_correct(outlineColor), outlineAlpha, color.rgb, color.a);
     gl_FragColor = apply(color);
   } else  { 
     // 非边缘的像素
