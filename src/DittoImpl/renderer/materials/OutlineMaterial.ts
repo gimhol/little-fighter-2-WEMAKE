@@ -50,6 +50,9 @@ export class OutlineMaterial extends ShaderMaterial {
 
       fgColor: { value: BLACK },
       fgAlpha: { value: 0 },
+
+      deburrMin: { value: 0.75 },
+      deburrMax: { value: 0.9 }
     }
   }
   get texture(): Texture | undefined { return this.uniforms.tex.value }

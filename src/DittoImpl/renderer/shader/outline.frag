@@ -52,6 +52,9 @@ uniform vec3 fgColor;
 /** 前景色透明度 */
 uniform float fgAlpha;
 
+uniform float deburrMin;
+uniform float deburrMax;
+
 // 灰度权重
 const vec3 GRAY_WEIGHT = vec3(0.299, 0.587, 0.114);
 
@@ -171,10 +174,10 @@ void main() {
       color = bgfg(color.rgb, color.a, fgColor, fgAlpha);
     color.a *= opacity;
     gl_FragColor = color;
-  } else if(outline > 0.1 && center >= 0.5) {
+  } else if(outline > 0.1 && center >= 0.5 && deburrMax > deburrMin) {
     // 内边缘去毛刺
     float blackRatio = getBlackRatio(color);
-    color.a *= smoothstep(0.9, 0.75, blackRatio);
+    color.a *= smoothstep(deburrMax, deburrMin, blackRatio);
     if(outlineAlpha > 0.0)
       color = bgfg(gamma_correct(outlineColor), outlineAlpha, color.rgb, color.a);
     gl_FragColor = apply(color);
