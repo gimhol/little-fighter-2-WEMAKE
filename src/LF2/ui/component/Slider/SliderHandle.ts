@@ -16,6 +16,7 @@ export interface ISliderHandleProps {
 enum SliderHandleMode {
   Default = "default",
   Switcher = "switcher",
+  ItemsScrollBar = "items_scroll_bar",
 }
 export interface ISliderHandleCallbacks extends IUICompnentCallbacks {
   on_value_changed?(value: number, component: SliderHandle): void

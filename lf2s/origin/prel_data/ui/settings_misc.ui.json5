@@ -16,30 +16,6 @@
     },
   ],
   templates: {
-    scrollbar: {
-      size: "36,300",
-      color: "black",
-      center: "0.5,0.5",
-      items: [
-        {
-          size: "36,36",
-          color: "white",
-          center: "0.5,0.5",
-          component: [
-            {
-              cls: "SliderHandle",
-              properties: {
-                direction: "col",
-                min: 0,
-                max: 100,
-                step: 1,
-                precision: 1,
-              },
-            },
-          ],
-        },
-      ],
-    },
     percentage_slider_row: {
       size: "600,36",
       center: "0.5,0.5",
@@ -534,10 +510,56 @@
           },
           template: "five_switcher_row",
         },
+        {
+          id: "render_rate_row2",
+          visible: false,
+          values: {
+            prefix: "render_fps",
+            item0: "sync_1",
+            item1: "sync_2",
+            item2: "sync_3",
+            item3: "sync_4",
+            item4: "sync_0",
+            items: "sync_1,sync_2,sync_3,sync_4,sync_0",
+          },
+          template: "five_switcher_row",
+        },
+        {
+          id: "render_rate_row3",
+          visible: false,
+          values: {
+            prefix: "render_fps",
+            item0: "sync_1",
+            item1: "sync_2",
+            item2: "sync_3",
+            item3: "sync_4",
+            item4: "sync_0",
+            items: "sync_1,sync_2,sync_3,sync_4,sync_0",
+          },
+          template: "five_switcher_row",
+        },
       ],
     },
     {
-      template: "scrollbar",
+      size: "36,300",
+      color: "black",
+      center: "0.5,0.5",
+      items: [
+        {
+          size: "36,36",
+          color: "white",
+          center: "0.5,0.5",
+          component: [
+            {
+              cls: "SliderHandle",
+              properties: {
+                mode: "items_scroll_bar",
+                direction: "col",
+              },
+            },
+          ],
+        },
+      ],
     },
   ],
 }
