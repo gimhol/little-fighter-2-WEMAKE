@@ -1,15 +1,21 @@
-import { clamp, Defines, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, round_float, UIComponent, UINode } from "@/LF2";
+import { clamp, Defines, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, max, round, round_float, UIComponent, UINode } from "@/LF2";
 export interface ISliderHandleProps {
+  mode?: string;
+  items?: string;
+
   min?: number;
   max?: number;
   step?: number;
   precision?: number;
+
   container?: UINode;
   responser?: UINode;
   handle_label?: Label;
-  items?: string;
   direction?: 'row' | 'col';
-  switcher?: boolean;
+}
+enum SliderHandleMode {
+  Default = "default",
+  Switcher = "switcher",
 }
 export interface ISliderHandleCallbacks extends IUICompnentCallbacks {
   on_value_changed?(value: number, component: SliderHandle): void
@@ -17,6 +23,7 @@ export interface ISliderHandleCallbacks extends IUICompnentCallbacks {
 export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleCallbacks> {
   static override readonly TAGS: string[] = ["SliderHandle"];
   static override readonly PROPS: IPropsMeta<ISliderHandleProps> = {
+    mode: String,
     min: Number,
     max: Number,
     precision: Number,
@@ -25,10 +32,14 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     responser: UINode,
     handle_label: Label,
     items: String,
-    switcher: Boolean,
     direction: { type: String, oneof: ["row", "col"], nullable: true }
   }
   get direction() { return this.props.direction ?? 'row' }
+  get mode() { return this.props.mode ?? SliderHandleMode.Default }
+  set mode(v) { this.props.mode = v; }
+  get items() { return this.props.items?.split(',') ?? [] }
+  set items(v) { this.props.items = v.join(); }
+
   private _on_me = false;
   private _factor: number = 0;
   private p: IUICallback = {
@@ -74,17 +85,23 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     return this.props.responser ?? this.container;
   }
   get step(): number { return this.props.step ?? 10 }
+  set step(v: number) { this.props.step = v }
   get precision(): number { return this.props.precision ?? 1 }
+  set precision(v: number) { this.props.precision = v }
   get min_value(): number { return this.props.min ?? 0 }
+  set min_value(v: number) { this.props.min = v }
   get max_value(): number { return this.props.max ?? 100 }
+  set max_value(v: number) { this.props.max = v }
   get factor(): number { return clamp(this._factor, 0, 1) }
   set factor(v: number) { this.set_factor(v) }
+  on_value_changed(cb: (value: number, component: SliderHandle) => void) {
+    this.callbacks.add({ on_value_changed: cb })
+  }
   set_factor(v: number): this {
     this._factor = clamp(v, 0, 1);
-    const { min_value, precision, step } = this;
-    if (min_value == 0 && precision == 1 && step == 1) {
-      const items = this.props.items?.split(',')
-      if (items?.length) {
+    if (SliderHandleMode.Switcher == this.mode) {
+      const { items } = this
+      if (items.length) {
         this.props.handle_label?.set_text('' + (items.at(this.value) ?? this.value))
       } else {
         this.props.handle_label?.set_text('' + this.value)
@@ -129,6 +146,12 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   override on_start(): void {
     this.container?.callbacks.add(this.p)
     this.lf2.pointings.callback.add(this.b)
+    if (SliderHandleMode.Switcher == this.mode) {
+      this.max_value = max(this.items.length - 1, 0)
+      this.min_value = 0;
+      this.precision = 1;
+      this.step = 1;
+    }
   }
   override on_stop(): void {
     this.container?.callbacks.del(this.p)
@@ -139,18 +162,33 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     if (!container) return;
     const { cross } = this.node;
     const { geo } = container;
+
+    do {
+      if (SliderHandleMode.Switcher != this.mode) break;
+      const { parent } = this.node
+      if (!parent) break;
+      const { size } = parent;
+      const { items: { length } } = this
+      if (!length) break;
+      if (this.direction == 'row') {
+        this.node.resize(size.x / length, size.y)
+      } else {
+        this.node.resize(size.x, size.y / length,)
+      }
+    } while (0)
+
     if (this.direction == 'row') {
       const min_num = geo.left - geo.pos.x - cross.left;
       const max_num = geo.right - geo.pos.x - cross.right;
       const dist = min_num + (max_num - min_num) * this.factor;
       const curr = this.node.x + (dist - this.node.x) * 0.25
-      this.node.x = round_float(clamp(curr, min_num, max_num));
+      this.node.x = round(clamp(curr, min_num, max_num));
     } else {
       const min_num = geo.top - geo.pos.y - cross.top;
       const max_num = geo.bottom - geo.pos.y - cross.bottom;
       const dist = min_num + (max_num - min_num) * this.factor;
       const curr = this.node.y + (dist - this.node.y) * 0.25
-      this.node.y = round_float(clamp(curr, min_num, max_num))
+      this.node.y = round(clamp(curr, min_num, max_num))
     }
     if (
       !responser?.focused &&
@@ -158,7 +196,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       !this.node?.focused
     ) return;
 
-    if (!this.props.switcher) {
+    if (SliderHandleMode.Default == this.mode) {
       const { LR: lr, UD: ud } = this;
       if (this.direction == 'row' && lr) {
         this.value += this.step * lr;

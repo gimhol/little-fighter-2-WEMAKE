@@ -1,11 +1,11 @@
 import { LF2 } from "../LF2";
 import { Callbacks } from "../base";
-import { IStyle, IVector3 } from "../defines";
-import { Ditto as D, Ditto, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
+import { IStyle, IVector3, IVector3Like } from "../defines";
+import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../entity";
 import { is_num, round, Times } from "../utils";
 import { ICookedUIInfo } from "./ICookedUIInfo";
-import { ICrossInfo } from "./ICrossInfo";
+import { ICrossInfo, IGeoInfo, IRectInfo } from "./ICrossInfo";
 import { IUICallback } from "./IUICallback";
 import { IUIKeyEvent } from "./IUIKeyEvent";
 import { LF2PointerEvent } from "./LF2PointerEvent";
@@ -71,14 +71,22 @@ export class UINode implements IDebugging {
   protected _parent?: UINode;
   protected _children: UINode[] = [];
 
-  get cross(): ICrossInfo {
+  protected _prev_size: IVector3 = new D.Vector3();
+  protected _prev_center: IVector3 = new D.Vector3();
+  protected _prev_pos: IVector3 = new D.Vector3();
+  protected _cache_cross: ICrossInfo | undefined;
+  protected _cache_rect: IRectInfo | undefined;
+  protected _cache_geo: IGeoInfo | undefined;
+  protected _cache_global_pos: IVector3Like | undefined;
+  get cross(): Readonly<ICrossInfo> {
+    if (this._cache_cross) return this._cache_cross;
     const { x: w, y: h } = this.size
     const { x: a, y: b } = this.center
     const left = -a * w
     const top = -b * h
     const right = (1 - a) * w
     const bottom = (1 - b) * h
-    return {
+    return this._cache_cross = {
       left,
       top,
       right,
@@ -87,20 +95,23 @@ export class UINode implements IDebugging {
       mid_y: (top + bottom) / 2
     }
   }
-  get rect() {
+
+  get rect(): Readonly<IRectInfo> {
+    if (this._cache_rect) return this._cache_rect;
     const c = this.cross
     const { x, y } = this.pos
-    return {
+    return this._cache_rect = {
       left: x + c.left,
       top: y + c.top,
       right: x + c.right,
       bottom: y + c.bottom
     }
   }
-  get geo() {
+  get geo(): Readonly<IGeoInfo> {
+    if (this._cache_geo) return this._cache_geo;
     const c = this.cross
     const { x, y } = this.global_pos
-    return {
+    return this._cache_geo = {
       pos: { x, y },
       left: x + c.left,
       top: y + c.top,
@@ -222,6 +233,10 @@ export class UINode implements IDebugging {
     this.size.x = x;
     this.size.y = y;
     this.size.z = z;
+    this._cache_cross = void 0;
+    this._cache_rect = void 0;
+    this._cache_geo = void 0;
+    this._cache_global_pos = void 0;
     return this;
   }
 
@@ -242,6 +257,10 @@ export class UINode implements IDebugging {
     this.pos.x = x;
     this.pos.y = y;
     this.pos.z = z;
+    this._cache_cross = void 0;
+    this._cache_rect = void 0;
+    this._cache_geo = void 0;
+    this._cache_global_pos = void 0;
     return this;
   }
 
@@ -262,6 +281,10 @@ export class UINode implements IDebugging {
     this.center.x = x;
     this.center.y = y;
     this.center.z = z;
+    this._cache_cross = void 0;
+    this._cache_rect = void 0;
+    this._cache_geo = void 0;
+    this._cache_global_pos = void 0;
     return this;
   }
 
@@ -283,6 +306,23 @@ export class UINode implements IDebugging {
     this.scale.y = y;
     this.scale.z = z;
     return this;
+  }
+
+  get global_pos(): Readonly<IVector3Like> {
+    if (this._cache_global_pos) return this._cache_global_pos;
+    let { x, y, z } = this.pos
+    if (this.parent) {
+      const g = this.parent.global_pos
+      x += g.x;
+      y += g.y;
+      z += g.z;
+    }
+    return this._cache_global_pos = { x, y, z };
+  }
+  set global_pos(v: Readonly<IVector3Like>) {
+    if (!this.parent) { this.move_to(v.x, v.y, v.z); return; }
+    const { x, y, z } = this.parent.global_pos
+    this.move_to(v.x - x, v.y - y, v.z - z);
   }
 
   get components(): ReadonlyArray<UIComponent> {
@@ -318,17 +358,6 @@ export class UINode implements IDebugging {
     this.outlineAlpha = this.data.outlineAlpha
     this.style = this.data.style ? { ...this.data.style } : {}
     make_debugging(this)
-  }
-  get global_pos(): IVector3 {
-    const ret = this.pos.clone()
-    if (!this.parent) return ret;
-    ret.add(this.parent.global_pos)
-    return ret;
-  }
-  set global_pos(v: IVector3) {
-    if (!this.parent) { this.move_to(v.x, v.y, v.z); return; }
-    const { x, y, z } = this.parent.global_pos
-    this.move_to(v.x - x, v.y - y, v.z - z);
   }
   move_to_global(x: number, y: number, z: number): this {
     if (!this.parent) { this.move_to(x, y, z); return this; }
@@ -557,8 +586,31 @@ export class UINode implements IDebugging {
   }
 
   update(dt: number) {
-    this._update_times.add();
+    if (
+      this._prev_size.x !== this.size.x ||
+      this._prev_size.y !== this.size.y ||
+      this._prev_center.x !== this.center.y ||
+      this._prev_center.y !== this.center.y ||
+      this._prev_pos.x !== this.pos.x ||
+      this._prev_pos.y !== this.pos.y ||
+      this._prev_pos.z !== this.pos.z
+    ) {
+      this._cache_cross = void 0;
+      this._cache_rect = void 0;
+      this._cache_geo = void 0;
+      this._cache_global_pos = void 0;
 
+      this._prev_size.x = this.size.x
+      this._prev_size.y = this.size.y
+      this._prev_center.x = this.center.y
+      this._prev_center.y = this.center.y
+      this._prev_pos.x = this.pos.x
+      this._prev_pos.y = this.pos.y
+      this._prev_pos.z = this.pos.z
+    }
+
+
+    this._update_times.add();
     this._components_updating = true;
     for (const c of this._components) if (c.enabled) c.update?.(dt);
     this._components_updating = false;

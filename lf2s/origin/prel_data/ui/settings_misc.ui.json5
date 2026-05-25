@@ -152,18 +152,13 @@
             },
             {
               id: "slider_handle_node",
-              size: "220,36",
               color: "white",
               center: "0.5,0.5",
               component: [
                 {
                   cls: "SliderHandle",
                   properties: {
-                    min: 0,
-                    max: 1,
-                    step: 1,
-                    precision: 1,
-                    switcher: true,
+                    mode: "switcher",
                     responser: "parent:1",
                     handle_label: "handle_label",
                     items: "$val:items",
@@ -238,18 +233,13 @@
             },
             {
               id: "slider_handle_node",
-              size: "146,36",
               color: "white",
               center: "0.5,0.5",
               component: [
                 {
                   cls: "SliderHandle",
                   properties: {
-                    min: 0,
-                    max: 2,
-                    step: 1,
-                    precision: 1,
-                    switcher: true,
+                    mode: "switcher",
                     responser: "parent:1",
                     handle_label: "handle_label",
                     items: "$val:items",
@@ -333,18 +323,13 @@
             },
             {
               id: "slider_handle_node",
-              size: "110,36",
               color: "white",
               center: "0.5,0.5",
               component: [
                 {
                   cls: "SliderHandle",
                   properties: {
-                    min: 0,
-                    max: 3,
-                    step: 1,
-                    precision: 1,
-                    switcher: true,
+                    mode: "switcher",
                     responser: "parent:1",
                     handle_label: "handle_label",
                     items: "$val:items",
@@ -435,18 +420,13 @@
             },
             {
               id: "slider_handle_node",
-              size: "88,36",
               color: "white",
               center: "0.5,0.5",
               component: [
                 {
                   cls: "SliderHandle",
                   properties: {
-                    min: 0,
-                    max: 4,
-                    step: 1,
-                    precision: 1,
-                    switcher: true,
+                    mode: "switcher",
                     responser: "parent:1",
                     handle_label: "handle_label",
                     items: "$val:items",
