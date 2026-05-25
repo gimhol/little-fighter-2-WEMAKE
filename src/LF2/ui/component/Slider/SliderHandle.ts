@@ -1,4 +1,4 @@
-import { clamp, Defines, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, max, round, round_float, UIComponent, UINode } from "@/LF2";
+import { clamp, Defines, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, max, min, round, round_float, UIComponent, UINode } from "@/LF2";
 export interface ISliderHandleProps {
   mode?: string;
   items?: string;
@@ -11,8 +11,11 @@ export interface ISliderHandleProps {
   container?: UINode;
   responser?: UINode;
   handle_label?: Label;
-  items_container?: UINode;
   direction?: 'row' | 'col';
+
+  items_container?: UINode;
+  visible_items?: number;
+
 }
 enum SliderHandleMode {
   Default = "default",
@@ -35,6 +38,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     items_container: UINode,
     handle_label: Label,
     items: String,
+    visible_items: Number,
     direction: { type: String, oneof: ["row", "col"], nullable: true }
   }
   get direction() { return this.props.direction ?? 'row' }
@@ -130,6 +134,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     if (!container) return;
     const { geo } = container;
     const { cross } = this.node;
+
     if (this.direction == 'row') {
       const fx = Defines.MODERN_SCREEN_WIDTH * (e.scene_x + 1) / 2
       const min_num = geo.left - geo.pos.x - cross.left;
@@ -190,12 +195,12 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
       }
       case SliderHandleMode.ItemsScrollBar: {
         const { size } = parent;
-        
-        console.log(this.props.items_container?.children.length)
+        const length = this.props.items_container?.children.length || 1
+        const visibles = min(this.props.visible_items ?? length, length)
         if (this.direction == 'row') {
-          this.node.set_h(size.y)
+          this.node.resize(size.x * visibles / length, size.y)
         } else {
-          this.node.set_w(size.x)
+          this.node.resize(size.x, size.y * visibles / length)
         }
         break;
       }

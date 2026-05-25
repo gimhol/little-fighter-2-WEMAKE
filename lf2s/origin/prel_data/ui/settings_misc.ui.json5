@@ -541,7 +541,7 @@
       ],
     },
     {
-      size: "36,300",
+      size: "36,323",
       color: "black",
       center: "0.5,0.5",
       items: [
@@ -555,6 +555,7 @@
               properties: {
                 mode: "items_scroll_bar",
                 direction: "col",
+                visible_items: 8,
                 items_container: "id:settings_misc_view"
               },
             },
