@@ -555,6 +555,7 @@
               properties: {
                 mode: "items_scroll_bar",
                 direction: "col",
+                items_container: "id:settings_misc_view"
               },
             },
           ],

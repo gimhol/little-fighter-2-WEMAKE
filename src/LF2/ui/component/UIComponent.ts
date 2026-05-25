@@ -265,7 +265,7 @@ export class UIComponent<
 
     if (which.startsWith('id:')) {
       const v = which.substring(3).trim();
-      return this.node.root?.find_child(v) || null
+      return this.node.root?.search_node(v) || null
     }
     if (which.startsWith('name:')) {
       const v = which.substring(5).trim();

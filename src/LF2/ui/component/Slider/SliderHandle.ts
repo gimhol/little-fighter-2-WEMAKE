@@ -11,6 +11,7 @@ export interface ISliderHandleProps {
   container?: UINode;
   responser?: UINode;
   handle_label?: Label;
+  items_container?: UINode;
   direction?: 'row' | 'col';
 }
 enum SliderHandleMode {
@@ -31,6 +32,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     step: Number,
     container: UINode,
     responser: UINode,
+    items_container: UINode,
     handle_label: Label,
     items: String,
     direction: { type: String, oneof: ["row", "col"], nullable: true }
@@ -163,20 +165,41 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
     if (!container) return;
     const { cross } = this.node;
     const { geo } = container;
+    const { parent } = this.node
 
-    do {
-      if (SliderHandleMode.Switcher != this.mode) break;
-      const { parent } = this.node
-      if (!parent) break;
-      const { size } = parent;
-      const { items: { length } } = this
-      if (!length) break;
-      if (this.direction == 'row') {
-        this.node.resize(size.x / length, size.y)
-      } else {
-        this.node.resize(size.x, size.y / length,)
+    if (parent) switch (this.mode) {
+      case SliderHandleMode.Switcher: {
+        const { size } = parent;
+        const { items: { length } } = this
+        if (!length) break;
+        if (this.direction == 'row') {
+          this.node.resize(size.x / length, size.y)
+        } else {
+          this.node.resize(size.x, size.y / length,)
+        }
+        break;
       }
-    } while (0)
+      case SliderHandleMode.Default: {
+        const { size } = parent;
+        if (this.direction == 'row') {
+          this.node.set_h(size.y)
+        } else {
+          this.node.set_w(size.x)
+        }
+        break;
+      }
+      case SliderHandleMode.ItemsScrollBar: {
+        const { size } = parent;
+        
+        console.log(this.props.items_container?.children.length)
+        if (this.direction == 'row') {
+          this.node.set_h(size.y)
+        } else {
+          this.node.set_w(size.x)
+        }
+        break;
+      }
+    }
 
     if (this.direction == 'row') {
       const min_num = geo.left - geo.pos.x - cross.left;
