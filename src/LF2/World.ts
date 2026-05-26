@@ -709,6 +709,11 @@ export class World extends WorldDataset {
       if (!this.has_players_alive && a.hp > 0 && is_human_ctrl(a.ctrl))
         this.has_players_alive = true;
       a.update();
+
+      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
+      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+
       if (a.ghosted) continue;
 
       if (is_fighter(a)) {
@@ -752,11 +757,6 @@ export class World extends WorldDataset {
     this.entities.length = this.entities.length - offset
 
     let divider = 0;
-    this.entities.forEach((a) => {
-      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
-      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
-      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
-    })
     this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
     temp_entities.length = 0;
     for (let i = 0; i < this.entities.length; i++) {
@@ -774,26 +774,12 @@ export class World extends WorldDataset {
           continue;
         }
 
-        const collision1 = collision_get(a, b);
-        const collision2 = collision_get(b, a);
-
-        if (collision1 && collision2) {
-          const priority1 = ENTITY_PRIORITY_MAP[collision1.attacker.type]
-          const priority2 = ENTITY_PRIORITY_MAP[collision2.attacker.type]
-          if (priority1 < priority2) {
-            this.add_collision(collision1)
-          } else if (priority1 > priority2) {
-            this.add_collision(collision2)
-          } else {
-            this.add_collision(collision1)
-            this.add_collision(collision2)
-          }
-        }
-        else if (collision1) {
-          this.add_collision(collision1)
-        } else if (collision2) {
-          this.add_collision(collision2)
-        }
+        const c1 = collision_get(a, b);
+        const c2 = collision_get(b, a);
+        const p1 = c1?.priority || Infinity;
+        const p2 = c2?.priority ?? Infinity;
+        if (c1 && p1 <= p2) this.add_collision(c1)
+        if (c2 && p2 <= p1) this.add_collision(c2)
       }
       temp_entities.push(a);
     }

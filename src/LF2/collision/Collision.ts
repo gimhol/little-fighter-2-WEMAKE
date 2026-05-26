@@ -1,6 +1,6 @@
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo, } from "../defines";
+import { ENTITY_PRIORITY_MAP, HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo, } from "../defines";
 import type { Entity } from "../entity";
 import { abs, max } from "../utils/math/base";
 import { collisions_keeper } from "./CollisionKeeper";
@@ -125,6 +125,7 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   readonly bframe_id: string;
   readonly itr_index: number;
   readonly bdy_index: number;
+  readonly priority: number;
 
   handlers?: Readonly<ICollisionFunc>;
   injury?: number;
@@ -182,7 +183,8 @@ export function collision_new(o: ICollisionInits): Collision {
     a_cube,
     b_cube,
     rest,
-    handlers: []
+    handlers: [],
+    priority: ENTITY_PRIORITY_MAP[a.data.type],
   }
   // if (c.itr_index < 0) Ditto.warn(`[Collision] itr_index < 0`);
   // if (c.bdy_index < 0) Ditto.warn(`[Collision] bdy_index < 0`);
