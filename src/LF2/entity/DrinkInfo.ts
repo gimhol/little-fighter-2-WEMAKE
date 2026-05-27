@@ -1,5 +1,6 @@
 import { IDrinkInfo } from "../defines";
 import { Times } from "../utils/Times";
+import { IDrinkInfoSnapshot } from "./IDrinkInfoSnapshot";
 
 /**
  * 饮料数据类
@@ -140,7 +141,7 @@ export class DrinkInfo {
     return this.hp_r >= this.hp_r_total || !this.hp_r_value
   }
 
-  
+
   /**
    * 是否以消耗完毕（MP）
    *
@@ -151,4 +152,39 @@ export class DrinkInfo {
   get mp_h_empty() {
     return this.mp_h >= this.mp_h_total || !this.mp_h_value
   }
+
+  to_snapshot(): IDrinkInfoSnapshot {
+    const ret: IDrinkInfoSnapshot = {
+      hp_h_ticks: this.hp_h_ticks.to_snapshot(),
+      hp_h_value: this.hp_h_value,
+      hp_h_total: this.hp_h_total,
+      hp_h: this.hp_h,
+      hp_r_ticks: this.hp_r_ticks.to_snapshot(),
+      hp_r_total: this.hp_r_total,
+      hp_r_value: this.hp_r_value,
+      hp_r: this.hp_r,
+      mp_h_ticks: this.mp_h_ticks.to_snapshot(),
+      mp_h_value: this.mp_h_value,
+      mp_h_total: this.mp_h_total,
+      mp_h: this.mp_h,
+    }
+    return ret;
+  }
+
+  from_snapshot(s: IDrinkInfoSnapshot) {
+    this.hp_h_ticks.read_snapshot(s.hp_h_ticks)
+    this.hp_h_value = this.hp_h_value
+    this.hp_h_total = this.hp_h_total
+    this.hp_h = this.hp_h
+    this.hp_r_ticks.read_snapshot(s.hp_r_ticks)
+    this.hp_r_total = this.hp_r_total
+    this.hp_r_value = this.hp_r_value
+    this.hp_r = this.hp_r
+    this.mp_h_ticks.read_snapshot(s.mp_h_ticks)
+    this.mp_h_value = this.mp_h_value
+    this.mp_h_total = this.mp_h_total
+    this.mp_h = this.mp_h
+  }
 }
+
+

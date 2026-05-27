@@ -1,5 +1,7 @@
+import { ITimesSnapshot } from "./ITimesSnapshot";
 import { round_float } from "./math";
 import { floor, max, min } from "./math/base";
+
 /**
  * 次数
  */
@@ -85,6 +87,3 @@ export class Times {
   }
 }
 
-export interface ITimesSnapshot {
-  nums: number[]
-}

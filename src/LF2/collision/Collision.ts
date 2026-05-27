@@ -4,6 +4,7 @@ import { ENTITY_PRIORITY_MAP, HitFlag, ItrKind, type IBdyInfo, type IBounding, t
 import type { Entity } from "../entity";
 import { abs, max } from "../utils/math/base";
 import { collisions_keeper } from "./CollisionKeeper";
+import { ICollisionSnapshot } from "./ICollisionSnapshot";
 
 export interface ICollisionInits {
   /**
@@ -55,28 +56,6 @@ export interface ICollisionInits {
   readonly bframe: Readonly<IFrameInfo>;
   readonly itr_index: number;
   readonly bdy_index: number;
-}
-
-export interface ICollisionSnapshot {
-  readonly aid: string;
-  readonly vid: string;
-  readonly adata_id: string;
-  readonly vdata_id: string;
-  readonly aframe_id: string;
-  readonly bframe_id: string;
-  readonly itr_index: number;
-  readonly bdy_index: number;
-  readonly ax: number;
-  readonly ay: number;
-  readonly az: number;
-  readonly vx: number;
-  readonly vy: number;
-  readonly vz: number;
-  readonly dx: number;
-  readonly dy: number;
-  readonly dz: number;
-  readonly m_distance: number;
-  readonly rest: number;
 }
 
 export interface ICollisionFunc {

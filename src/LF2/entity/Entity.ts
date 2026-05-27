@@ -19,7 +19,6 @@ import {
   IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3,
-  IVector3Like,
   IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
   OpointSpreading,
   SpeedCtrl,
@@ -37,24 +36,20 @@ import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
 import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
 import type IEntityCallbacks from "./IEntityCallbacks";
+import { IEntitySnapshot } from "./IEntitySnapshot";
 import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
 import { is_ball_ctrl, is_fighter, is_human_ctrl } from "./type_check";
 
-interface IEntitySnapshot {
-  strs: string[],
-  nums: number[],
-  copies: string[] | undefined;
-  emitters: string[] | undefined;
-  transforms: [string, string] | undefined;
-}
-
 export class Entity {
   static readonly TAG: string = 'Entity';
-  world!: World;
-
+  world      !: World;
+  id         !: string;
+  wait       !: number;
+  variant    !: number;
+  transforms !: [string, string] | null;
   protected _lifetime: number = 0;
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
@@ -62,8 +57,8 @@ export class Entity {
   protected _outline_width: number = 1;
   protected readonly _prev_position: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _position: IVector3 = Ditto.vec3(0, 0, 0);
-  protected readonly _velocity: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _prev_velocity: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _velocity: IVector3 = Ditto.vec3(0, 0, 0);
 
   /**
    * 影分身
@@ -75,10 +70,6 @@ export class Entity {
   readonly callbacks = new Callbacks<IEntityCallbacks>()
   protected readonly _emitters: string[] = [];
 
-  id!: string;
-  wait!: number;
-  variant!: number;
-  transforms!: [string, string] | null;
   protected _data!: IEntityData;
   protected _reserve!: number;
   protected _mounted!: number;
@@ -90,6 +81,7 @@ export class Entity {
   public fuse_bys!: Entity[] | null;
   public dismiss_time!: number | null;
   public dismiss_data!: IEntityData | null;
+
   protected _stat_bar_type!: StatBarType | null;
   protected _resting!: number;
   protected _resting_max?: number; // fallback from world
@@ -116,6 +108,8 @@ export class Entity {
   protected _catching!: Entity | null;
   protected _catcher!: Entity | null;
   protected states!: States;
+  aabb_x1: number = 0;
+  aabb_x2: number = 0;
 
   /**
    * 实体名称
@@ -250,7 +244,7 @@ export class Entity {
   set outline_alpha(v: number) { this._outline_alpha = v; }
   get outline_width(): number { return this._outline_width; }
   set outline_width(v: number) { this._outline_width = v; }
-  
+
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
 
@@ -2339,88 +2333,69 @@ export class Entity {
   itr_fall(itr: IItrInfo): number {
     return itr.fall ?? this.dataset('itr_fall')
   }
-  aabb_x1: number = 0;
-  aabb_x2: number = 0;
 
   to_snapshot(): IEntitySnapshot {
     const ret: IEntitySnapshot = {
-      strs: [
-        this.id,
-        this._data.id,
-        this.frame.id,
-        this._landing_frame?.id || '',
-        this._outline_color,
-        this._team,
-        this._bearer?.id || '',
-        this._holding?.id || '',
-      ],
-      copies: this.copies.size ? Array.from(this.copies) : void 0,
-      emitters: this._emitters.length ? [...this._emitters] : void 0,
-      transforms: this.transforms?.length ? this.transforms : void 0,
-      nums: [
-        this._mounted,
-        this._ghosted,
-        this._outline_alpha,
-        this.wait,
-        this.variant,
-        this._reserve,
-        this._prev_position.x,
-        this._prev_position.y,
-        this._prev_position.z,
-        this._position.x,
-        this._position.y,
-        this._position.z,
-        this._prev_velocity.x,
-        this._prev_velocity.y,
-        this._prev_velocity.z,
-        this._velocity.x,
-        this._velocity.y,
-        this._velocity.z,
-        this.hp,
-        this.hp_r,
-        this.hp_max,
-        this.mp,
-        this.mp_max,
-        this.invisible,
-        this.invulnerable,
-        this.blinking,
-        this.arest,
-        this.motionless,
-        this.shaking,
-        this._catch_time,
-        this._catch_time_max,
-      ],
+      id: this.id,
+      wait: this.wait,
+      variant: this.variant,
+      transforms: this.transforms ? [...this.transforms] : null,
+      lifetime: this._lifetime,
+      spawn_time: this._spawn_time,
+      outline_color: this._outline_color,
+      outline_alpha: this._outline_alpha,
+      outline_width: this._outline_width,
+      prev_position: { x: this._prev_position.x, y: this._prev_position.y, z: this._prev_position.z },
+      position: { x: this._position.x, y: this._position.y, z: this._position.z },
+      prev_velocity: { x: this._prev_velocity.x, y: this._prev_velocity.y, z: this._prev_velocity.z },
+      velocity: { x: this._velocity.x, y: this._velocity.y, z: this._velocity.z },
+      copies: Array.from(this.copies),
+      vrests: Array.from(this.vrests.entries()),
+      emitters: [...this.emitters],
+      data: this._data.id,
+      reserve: this._reserve,
+      mounted: this._mounted,
+      ghosted: this._ghosted,
+      landing_frame: this._landing_frame?.id,
+      hp_r_tick: this._hp_r_tick.to_snapshot(),
+      mp_r_tick: this._mp_r_tick.to_snapshot(),
+      drink: this.drink?.to_snapshot(),
+      fuse_bys: this.fuse_bys?.map(v => v.id),
+      dismiss_time: this.dismiss_time,
+      dismiss_data: this.dismiss_data?.id,
+
+      stat_bar_type: this._stat_bar_type,
+      resting: this._resting,
+      resting_max: this._resting_max,
+      toughness: this._toughness,
+      toughness_max: this._toughness_max,
+      toughness_resting: this._toughness_resting,
+      toughness_resting_max: this._toughness_resting_max,
+      fall_value: this._fall_value,
+      fall_value_max: this._fall_value_max,
+      fall_r_tick: this._fall_r_tick.to_snapshot(),
+      fall_r_value: this._fall_r_value,
+      defend_value: this._defend_value,
+      defend_value_max: this._defend_value_max,
+      defend_r_tick: this._defend_r_tick.to_snapshot(),
+      defend_r_value: this._defend_r_value,
+      healing: this._healing,
+      defend_ratio: this._defend_ratio,
+      fallinjury: this.fallinjury,
+      throwinjury: this.throwinjury,
+      facing: this.facing,
+      frame: this.frame.id,
+      // next_frame: Readonly<INextFrame> | null;
+      prev_frame: this._prev_frame.id,
+      catching: this._catching?.id,
+      catcher: this._catcher?.id,
+      aabb_x1: this.aabb_x1,
+      aabb_x2: this.aabb_x2,
     }
     return ret;
   }
 
   read_snapshot(s: IEntitySnapshot) {
-    // oid: this.data.id
-    // fid: this.frame.id
-    // this._data = this.lf2.datas.find_entity(s.oid)!;
-    // if (!this._data) throw new Error(`data not found! oid=${s.oid}`)
-    // this.frame = this.data.frames[s.fid];
-
-    // if (!this.frame) throw new Error(`frame not found! fid=${s.fid}`)
-    // this._outline_color = s.outline_color || ''
-    // this._outline_alpha = s.outline_alpha || 0
-
-    // this.variant = s.variant;
-    // this._reserve = s.reserve
-    // this._ghosted = s.ghosted;
-
-    // this.copies.clear();
-    // s.copies?.forEach(v => this.copies.add(v));
-
-    // this._emitters.length = 0;
-    // if (s.emitters) this._emitters.push(...s.emitters);
-
-    // this.transforms = s.transforms ?? null;
-    // this.wait = this.wait;
-    // this._prev_position.copy(s.p0)
-    // this._position.copy(s.p1)
-    // this._prev_velocity.copy(s.v0)
-    // this._velocity.copy(s.v1)
   }
 }
 
