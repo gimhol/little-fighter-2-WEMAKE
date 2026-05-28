@@ -1,15 +1,15 @@
-import { Collision } from "./Collision";
-import { SpeedMode, StateEnum } from "../defines";
+import { Buff } from "../buff/Buff";
+import { Buff_MagicFlute } from "../buff/Buff_MagicFlute";
+import { ItrKind, SpeedMode, StateEnum } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { calc_v, is_fighter } from "../entity";
-import { Buff } from "../entity/Buff";
 import { summary_mgr } from "../entity/SummaryMgr";
-import { round_float } from "../utils";
+import { Collision } from "./Collision";
 import { handle_rest } from "./handle_rest";
 
 export function handle_itr_kind_magic_flute(collision: Collision): void {
   handle_rest(collision)
-  const { victim, attacker, world } = collision;
+  const { victim, attacker, world, lf2 } = collision;
   const y = calc_v(
     victim.velocity.y,
     3,
@@ -19,26 +19,21 @@ export function handle_itr_kind_magic_flute(collision: Collision): void {
   victim.set_velocity_y(y)
   victim.toughness = 0;
 
-  const bid = `magic_flute_to_${victim.id}`
+  const bid = `magic_flute_from_${attacker.id}`
   let buf = world.buffs.get(bid)
   if (!buf) {
-    const injury = 1;
-    const injury_r = 0.5;
-    buf = new Buff(bid)
-    buf.tick.max = 3;
-    buf.life.max = 16;
-    buf.life.set_lifes(1)
-    buf.job = () => {
-      if (!is_fighter(victim)) return
-      const prev_hp = victim.hp;
-      victim.hp_r -= injury_r
-      victim.hp -= injury
-      summary_mgr.apply_damage(attacker, injury, victim, prev_hp)
+    buf = lf2.factory.create_buff(ItrKind.MagicFlute, lf2, bid)
+    if (buf) {
+      buf.attacker = attacker.id;
+      buf.add(victim.id)
+      world.buffs.set(bid, buf);
     }
-    world.buffs.set(bid, buf)
-    victim.fallinjury = 20
   }
-  buf.life.value = 0
+  if (!buf?.targets.some(v => v == victim.id))
+    buf?.targets.push(victim.id);
+
+  if (buf) buf.lifetime = 0
+
   switch (victim.data.type) {
     case EntityEnum.Fighter:
       if (victim.state !== StateEnum.Falling) {

@@ -32,7 +32,7 @@ import {
   is_human_ctrl,
   is_weapon
 } from "./entity";
-import { Buff } from "./entity/Buff";
+import { Buff } from "./buff/Buff";
 import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";

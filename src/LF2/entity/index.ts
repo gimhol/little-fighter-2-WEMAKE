@@ -1,8 +1,9 @@
 /*** AUTO EXPORT START ***/
-export * from "./Buff";
 export * from "./DrinkInfo";
 export * from "./Entity";
+export * from "./IDrinkInfoSnapshot";
 export * from "./IEntityCallbacks";
+export * from "./IEntitySnapshot";
 export * from "./StatBarType";
 export * from "./Summary";
 export * from "./SummaryMgr";

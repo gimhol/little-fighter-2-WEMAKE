@@ -16,6 +16,7 @@ import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import * as UI from "./ui";
 import { regist_components } from './ui/component/_';
+import { regist_buffs } from './buff/_';
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
 export interface IZipResult {
@@ -216,6 +217,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   constructor(dev = false) {
     regist_components()
+    regist_buffs();
     this.dev = dev;
     make_debugging(this)
     this.debug(`constructor`)

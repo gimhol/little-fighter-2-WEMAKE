@@ -19,6 +19,7 @@ export * from "./animation";
 export * from "./base";
 export * from "./bg";
 export * from "./bot";
+export * from "./buff";
 export * from "./cases_instances";
 export * from "./collision";
 export * from "./controller";

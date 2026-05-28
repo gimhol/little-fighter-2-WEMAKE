@@ -3,6 +3,7 @@ import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks, new_id, new_team } from "../base";
+import { Buff } from "../buff/Buff";
 import { sus_cases } from "../cases_instances";
 import { Collision, collision_clone } from "../collision/Collision";
 import { BaseController } from "../controller/BaseController";
@@ -33,7 +34,6 @@ import { abs, clamp, clamp_add, find, float_equal, floor, max, min, pow, round, 
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
-import { Buff } from "./Buff";
 import { DrinkInfo } from "./DrinkInfo";
 import type IEntityCallbacks from "./IEntityCallbacks";
 import { IEntitySnapshot } from "./IEntitySnapshot";
@@ -665,6 +665,10 @@ export class Entity {
     this.reset(world, data, states)
   }
   reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
+    let buffs = Array.from(this.buff.values())
+    for (const buf of buffs) buf.del(this.id)
+    this.buff.clear();
+
     this._data = d;
     this.world = world;
     this.id = new_id();
@@ -758,9 +762,6 @@ export class Entity {
     this.lastest_collided = null;
     this._outline_color = '';
 
-    let buffs = Array.from(this.buff.values())
-    for (const buf of buffs) buf.del(this)
-    this.buff.clear();
   }
 
   set_bearer(v: Entity | null): this {

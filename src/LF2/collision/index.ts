@@ -2,6 +2,7 @@
 export * from "./Collision";
 export * from "./CollisionKeeper";
 export * from "./ICollisionHandler";
+export * from "./ICollisionSnapshot";
 export * from "./calc_itr_velocity";
 export * from "./handle_armor";
 export * from "./handle_ball_frozen";

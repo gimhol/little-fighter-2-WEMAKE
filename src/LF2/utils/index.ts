@@ -1,4 +1,5 @@
 /*** AUTO EXPORT START ***/
+export * from "./ITimesSnapshot";
 export * from "./Times";
 export * from "./array";
 export * from "./container_help";
