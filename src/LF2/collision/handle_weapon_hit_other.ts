@@ -27,7 +27,7 @@ export function handle_weapon_hit_other(collision: Collision): void {
         attacker.data.indexes?.throwings,
         attacker.data.indexes?.in_the_skys
       )
-      attacker.next_frame = nf
+      attacker.enter_frame(nf);
       break;
   }
 }
