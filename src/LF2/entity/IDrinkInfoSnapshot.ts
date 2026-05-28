@@ -1,4 +1,4 @@
-import { ITimesSnapshot } from "../utils";
+import { ITimesSnapshot } from "../utils/ITimesSnapshot";
 
 export interface IDrinkInfoSnapshot {
   hp_h_ticks: ITimesSnapshot;
