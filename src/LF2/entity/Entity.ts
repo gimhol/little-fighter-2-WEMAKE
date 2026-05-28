@@ -172,9 +172,9 @@ export class Entity {
    * 闪烁完毕后下一动作
    *
    * @protected
-   * @type {string | TNextFrame}
+   * @type {string}
    */
-  protected _after_blink!: string | TNextFrame | null;
+  protected _after_blink!: string | null;
 
   protected _state!: State_Base | null;
   protected _key_role!: boolean | null;
@@ -2042,7 +2042,7 @@ export class Entity {
 
     const result = this.get_next_frame(which);
     if (!result) return;
-    
+
     const { frame, which: flags } = result;
     if (!this.world.infinity_mp) {
       const { mp, hp } = flags;
@@ -2353,7 +2353,6 @@ export class Entity {
       fuse_bys: this.fuse_bys?.map(v => v.id),
       dismiss_time: this.dismiss_time,
       dismiss_data: this.dismiss_data?.id,
-
       stat_bar_type: this._stat_bar_type,
       resting: this._resting,
       resting_max: this._resting_max,
@@ -2375,12 +2374,34 @@ export class Entity {
       throwinjury: this.throwinjury,
       facing: this.facing,
       frame: this.frame.id,
-      // next_frame: Readonly<INextFrame> | null;
       prev_frame: this._prev_frame.id,
       catching: this._catching?.id,
       catcher: this._catcher?.id,
       aabb_x1: this.aabb_x1,
       aabb_x2: this.aabb_x2,
+      name: this._name,
+      team: this._team,
+      mp: this._mp,
+      mp_max: this._mp_max,
+      hp: this._hp,
+      hp_r: this._hp_r,
+      hp_max: this._hp_max,
+      bearer: this._bearer?.id,
+      holding: this._holding?.id,
+      arest: this._arest,
+      motionless: this.motionless,
+      shaking: this.shaking,
+      catch_time: this._catch_time,
+      catch_time_max: this._catch_time_max,
+      invisible_duration: this._invisible_duration,
+      invulnerable_duration: this._invulnerable_duration,
+      blinking_duration: this._blinking_duration,
+      after_blink: this._after_blink,
+      key_role: this._key_role,
+      name_visible: this._name_visible,
+      wakeup_invuln: this._wakeup_invuln,
+      dead_gone: this._dead_gone,
+      ctrl_visible: this._ctrl_visible,
     }
     return ret;
   }
