@@ -41,7 +41,7 @@ export abstract class Buff {
 
   update(d: number) {
     if (this.tick.add(d)) this.job();
-    this.life.add()
+    this.life.add();
   }
 
   unmount() {
