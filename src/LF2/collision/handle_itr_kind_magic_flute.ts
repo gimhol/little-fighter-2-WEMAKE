@@ -6,16 +6,17 @@ export function handle_itr_kind_magic_flute(collision: Collision): void {
   const { victim, attacker, world, lf2, itr } = collision;
   const bid = `magic_flute_to_${victim.id}`
   let buf = world.buffs.get(bid)
-  if (!buf) {
-    buf = lf2.factory.create_buff(itr.kind, lf2, bid)
-    if (buf) {
-      buf.attacker = attacker.id;
-      buf.add(victim.id)
-      world.buffs.set(bid, buf);
-    }
-  } else {
+
+  if (buf) {
     buf.lifetime = 0;
-    if (!buf.targets.some(v => v == victim.id))
-      buf.targets.push(victim.id);
+    buf.targets = [victim.id];
+    return;
   }
+
+  buf = lf2.factory.create_buff(itr.kind, lf2, bid)
+  if (!buf) return;
+  buf.attacker = attacker.id;
+  buf.targets = [victim.id];
+  world.buffs.set(bid, buf);
+
 }

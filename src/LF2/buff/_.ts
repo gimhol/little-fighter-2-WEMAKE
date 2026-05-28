@@ -9,5 +9,4 @@ export function regist_buffs() {
   _registed = true;
   Factory.register_buff(ItrKind.MagicFlute, Buff_MagicFlute)
   Factory.register_buff(ItrKind.MagicFlute2, Buff_MagicFlute2)
-  
 }
