@@ -3,8 +3,7 @@ import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
 import { type Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
-import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
-import { Camera, Object3D, OrthographicCamera, Scene, Vector3, WebGLRenderer } from "../_t";
+import { CSS2DRenderer, Camera, Object3D, OrthographicCamera, Scene, Vector3, WebGLRenderer } from "../_t";
 import { BgRender } from "./BgRender";
 import { EntityRenderer } from "./EntityRenderer";
 import csses from "./styles.module.scss";
@@ -193,7 +192,10 @@ export class WorldRenderer implements IWorldRenderer {
     if (canvas) {
       const { renderer_w, renderer_h } = this;
       this._canvas_ob.observe(canvas, { attributes: true, attributeFilter: ['style'] })
-      this._renderer = new WebGLRenderer({ canvas, premultipliedAlpha: false });
+      this._renderer = new WebGLRenderer({
+        canvas,
+        // premultipliedAlpha: false 
+      });
       this._renderer.setSize(renderer_w, renderer_h, false);
       this._css_renderer = new CSS2DRenderer();
       this._css_renderer.domElement.className = csses.css_2d_renderer
