@@ -103,7 +103,6 @@ export class Entity {
   public throwinjury: number = 0;
   public facing!: TFace;
   public frame!: IFrameInfo;
-  public next_frame!: Readonly<INextFrame> | null;
   protected _prev_frame!: IFrameInfo;
   protected _catching!: Entity | null;
   protected _catcher!: Entity | null;
@@ -700,7 +699,6 @@ export class Entity {
     this.throwinjury = 0;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
-    this.next_frame = null;
     this._prev_frame = EMPTY_FRAME_INFO;
     this._catching = null
     this._catcher = null
@@ -717,7 +715,6 @@ export class Entity {
     this._holding = null;
     this._emitters.length = 0;
     this._arest = 0;
-    this.next_frame = null;
     this.vrests.clear()
     this.blockers.clear()
     this.superpunchs.clear()
@@ -1233,18 +1230,20 @@ export class Entity {
       fighter.mp = mp
       fighter.hp_r = hp_r
       fighter.facing = facing = turn_face(facing)
-      fighter.next_frame =
+      fighter.enter_frame(
         fighter.get_next_frame({ id: frame_id })?.frame ??
         fighter.find_auto_frame()
+      )
       fighter.invisible =
         fighter.motionless =
         fighter.invulnerable = 0;
     }
     if (this.dismiss_data)
       this.transform(this.dismiss_data)
-    this.next_frame =
+    this.enter_frame(
       this.get_next_frame({ id: frame_id })?.frame ??
       this.find_auto_frame()
+    )
     this.dismiss_time = null;
     this.dismiss_data = null;
     this.fuse_bys = null
@@ -1406,7 +1405,6 @@ export class Entity {
 
   update(): void {
     this._lifetime += 1;
-    if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
     if (this.check_fusion_dismissing()) return;
     this.hp_recovering()
@@ -1450,7 +1448,6 @@ export class Entity {
       if (this._blinking_duration <= 0) {
         this._blinking_duration = 0;
         if (this._after_blink === Builtin_FrameId.Gone) {
-          this.next_frame = null;
           this.frame = GONE_FRAME_INFO;
           this.arest = 0;
         } else if (this._after_blink === Builtin_FrameId.Respawn) {
@@ -1482,7 +1479,7 @@ export class Entity {
           } else {
             this.set_position_y(550)
           }
-          this.next_frame = Defines.NEXT_FRAME_AUTO;
+          this.enter_frame(Defines.NEXT_FRAME_AUTO)
         }
       }
     }
@@ -1496,7 +1493,6 @@ export class Entity {
       }
     }
     this._state?.pre_update?.(this);
-    if (this.next_frame) this.enter_frame(this.next_frame);
     if (this.wait > 0) {
       if (
         this.motionless <= 0 &&
@@ -1508,10 +1504,10 @@ export class Entity {
         if (this.wait < 0) this.wait = 0;
       }
     } else {
-      const nf = this.get_next_frame(this.frame.next);
-      if (nf) this.next_frame = { ...nf.which, judger: void 0 }
-      else this.next_frame = this.find_auto_frame()
-      this.enter_frame(this.next_frame)
+      let nf = this.get_next_frame(this.frame.next)?.which;
+      if (nf) nf = { ...nf, judger: void 0 }
+      else nf = { id: this.find_auto_frame().id }
+      this.enter_frame(nf)
     }
     this.handle_gravity();
     this.update_velocity(this.frame);
@@ -1539,7 +1535,7 @@ export class Entity {
       this.ctrl.reset_key_list();
     } else if (next_frame) {
       const result = this.get_next_frame(next_frame)?.which;
-      if (result) this.next_frame = result;
+      if (result) this.enter_frame(result);
     }
 
     if (!this.shaking && !this.motionless) {
@@ -1674,7 +1670,7 @@ export class Entity {
     if (!cer._catch_time) {
       this._catcher = null;
       this.prev_cpoint_a = null;
-      this.next_frame = this.get_caught_end_frame();
+      this.enter_frame(this.get_caught_end_frame());
       return true;
     }
 
@@ -1684,7 +1680,7 @@ export class Entity {
       this._catcher = null;
       this.prev_cpoint_a = null;
       this.set_velocity_y(3);
-      this.next_frame = this.get_caught_cancel_frame();
+      this.enter_frame(this.get_caught_cancel_frame());
       return true;
     }
 
@@ -1713,7 +1709,7 @@ export class Entity {
     }
     if (cp_a.vaction) {
       const nf = this.get_next_frame(cp_a.vaction)?.which
-      if (nf) this.next_frame = nf;
+      if (nf) this.enter_frame(nf);
       return !!nf
     };
     return false
@@ -1723,14 +1719,14 @@ export class Entity {
     if (this._catching._catcher === this)
       this._catching._catcher = null;
     this._catching = null;
-    this.next_frame = this.get_catching_end_frame();
+    this.enter_frame(this.get_catching_end_frame());
     return true;
   }
   update_catching(): boolean {
     if (!this._catching) return false;
     if (!this._catch_time) {
       this._catching = null;
-      this.next_frame = this.get_catching_end_frame();
+      this.enter_frame(this.get_catching_end_frame());
       return true;
     }
     const { cpoint: cpoint_a } = this.frame;
@@ -1744,7 +1740,7 @@ export class Entity {
     if (!cpoint_a) {
       this._catching = null;
       this._catch_time = this.catch_time_max;
-      this.next_frame = this.get_catching_cancel_frame();
+      this.enter_frame(this.get_catching_cancel_frame());
       return true;
     }
 
@@ -1754,14 +1750,13 @@ export class Entity {
         // TODO：丢出后，被丢的人落地后的受到的伤害
         // return;
       } else if (throwinjury === -1) {
-        // TODO：变成抓住的人
         if (is_fighter(this) && is_fighter(this._catching)) {
           this.transfrom_to_another(this._catching._data);
-          this.next_frame = this.find_auto_frame();
+          this.enter_frame(this.find_auto_frame())
           return true;
         }
       } else {
-        this.next_frame = GONE_FRAME_INFO;
+        this.enter_frame(GONE_FRAME_INFO);
         return true;
       }
     }
@@ -1872,7 +1867,6 @@ export class Entity {
     this._catching = target;
     const next_frame = this.get_next_frame(itr.catchingact)?.which || null;
     if (next_frame) this.enter_frame(next_frame)
-    this.next_frame = null
   }
 
   start_caught(attacker: Entity, itr: IItrInfo) {
@@ -1886,7 +1880,6 @@ export class Entity {
     this.defend_value = this.defend_value_max;
     const next_frame = this.get_next_frame(itr.caughtact)?.which || null;
     if (next_frame) this.enter_frame(next_frame)
-    this.next_frame = null
   }
 
   spark_point(r0: IBounding, r1: IBounding) {
@@ -2048,10 +2041,8 @@ export class Entity {
       return;
 
     const result = this.get_next_frame(which);
-    if (!result) {
-      this.next_frame = null;
-      return;
-    }
+    if (!result) return;
+    
     const { frame, which: flags } = result;
     if (!this.world.infinity_mp) {
       const { mp, hp } = flags;
@@ -2077,7 +2068,6 @@ export class Entity {
       this.set_frame(this.find_auto_frame());
     }
 
-    this.next_frame = null;
     if (flags.facing !== void 0) {
       this.facing = this.handle_facing_flag(flags.facing);
     }

@@ -36,7 +36,6 @@ export default class CharacterState_Falling extends CharacterState_Base {
         fighter.set_velocity(next_vx, vy, vz)
       }
       e.dismiss_fusion(e.frame.id)
-      if (e.next_frame) e.enter_frame(e.next_frame)
     }
     if (e.catcher) e.catcher.drop_catching()
   }
