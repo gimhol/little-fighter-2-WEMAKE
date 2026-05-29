@@ -4,13 +4,15 @@ import { Times } from "../utils/Times";
 import { World } from "../World";
 
 export abstract class Buff {
-  static readonly KEY: string | number = '';
+  static readonly KIND: string | number = '';
   readonly lf2: LF2;
   readonly world: World;
   readonly id: string
+  kind: string | number;
   attacker: string = '';
-  targets: string[] = [];
+  victims: string[] = [];
   level: number = 0;
+  _mounted = false;
   readonly tick = new Times();
   readonly life = new Times(0, 1).set_lifes(1);
 
@@ -23,22 +25,22 @@ export abstract class Buff {
     this.lf2 = lf2;
     this.world = lf2.world;
     this.id = id;
+    this.kind = '';
   }
   abstract job(): void;
-
   add(target: string): this {
     const e = this.world.entity_map.get(target)
     if (!e) return this;
-    this.targets.push(target)
+    this.victims.push(target)
     e.buff.set(this.id, this)
     return this;
   }
-
+  
   del(target: string): this {
-    this.targets = this.targets.filter(v => v != target);
+    this.victims = this.victims.filter(v => v != target);
     const e = this.world.entity_map.get(target)
     if (!e) return this;
-    this.targets.push(target)
+    this.victims.push(target)
     e.buff.delete(this.id)
     return this;
   }
@@ -47,13 +49,20 @@ export abstract class Buff {
     if (this.tick.add(d)) this.job();
     this.life.add();
   }
-
+  mount(): void {
+    if (this._mounted) return;
+    this._mounted = true;
+    this.world.buffs.set(this.id, this);
+    
+  }
   unmount() {
-    for (const target of this.targets) {
-      const e = this.world.entity_map.get(target)
+    if(!this._mounted) return;
+    this._mounted = false;
+    for (const victim of this.victims) {
+      const e = this.world.entity_map.get(victim)
       if (!e) continue;
       e.buff.delete(this.id)
     }
-    this.targets = []
+    this.victims = []
   }
 }

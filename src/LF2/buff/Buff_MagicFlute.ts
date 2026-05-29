@@ -4,7 +4,7 @@ import { Buff } from "./Buff";
 
 
 export class Buff_MagicFlute extends Buff {
-  static override  readonly KEY: string | number = ItrKind.MagicFlute;
+  static override  readonly KIND: string | number = ItrKind.MagicFlute;
   constructor(lf2: LF2, id: string) {
     super(lf2, id);
     this.tick.max = 3;
@@ -16,11 +16,11 @@ export class Buff_MagicFlute extends Buff {
     const injury_r = 0.5;
     const attacker = this.world.entity_map.get(this.attacker);
     let slow = 0;
-    for (let fast = 0; fast < this.targets.length; ++fast) {
-      const vid = this.targets[fast];
+    for (let fast = 0; fast < this.victims.length; ++fast) {
+      const vid = this.victims[fast];
       const victim = this.world.entity_map.get(vid);
       if (!victim) continue;
-      if (slow !== fast) this.targets[slow] = this.targets[fast];
+      if (slow !== fast) this.victims[slow] = this.victims[fast];
       slow++;
       const prev_hp = victim.hp;
       victim.hp_r -= injury_r;
@@ -29,7 +29,7 @@ export class Buff_MagicFlute extends Buff {
       victim.toughness = 0;
       if (attacker) summary_mgr.apply_damage(attacker, injury, victim, prev_hp);
     }
-    this.targets.length = slow;
+    this.victims.length = slow;
   }
 
   override update(d: number): void {
@@ -38,11 +38,11 @@ export class Buff_MagicFlute extends Buff {
     const attacker = this.world.entity_map.get(this.attacker);
 
     let slow = 0;
-    for (let fast = 0; fast < this.targets.length; ++fast) {
-      const vid = this.targets[fast];
+    for (let fast = 0; fast < this.victims.length; ++fast) {
+      const vid = this.victims[fast];
       const victim = this.world.entity_map.get(vid);
       if (!victim) continue;
-      if (slow !== fast) this.targets[slow] = this.targets[fast];
+      if (slow !== fast) this.victims[slow] = this.victims[fast];
       slow++;
 
       const vy = calc_v(victim.velocity.y, 3, SpeedMode.AccTo, 3, 1)
@@ -66,12 +66,12 @@ export class Buff_MagicFlute extends Buff {
           }
       }
     }
-    this.targets.length = slow;
+    this.victims.length = slow;
   }
 }
 
 export class Buff_MagicFlute2 extends Buff {
-  static override  readonly KEY: string | number = ItrKind.MagicFlute2;
+  static override  readonly KIND: string | number = ItrKind.MagicFlute2;
   constructor(lf2: LF2, id: string) {
     super(lf2, id);
     this.tick.max = 3;
@@ -83,11 +83,11 @@ export class Buff_MagicFlute2 extends Buff {
     const injury_r = 0.5;
     const attacker = this.world.entity_map.get(this.attacker);
     let slow = 0;
-    for (let fast = 0; fast < this.targets.length; ++fast) {
-      const vid = this.targets[fast];
+    for (let fast = 0; fast < this.victims.length; ++fast) {
+      const vid = this.victims[fast];
       const victim = this.world.entity_map.get(vid);
       if (!victim) continue;
-      if (slow !== fast) this.targets[slow] = this.targets[fast];
+      if (slow !== fast) this.victims[slow] = this.victims[fast];
       slow++;
       const prev_hp = victim.hp;
       victim.hp_r -= injury_r;
@@ -96,7 +96,7 @@ export class Buff_MagicFlute2 extends Buff {
       victim.toughness = 0;
       if (attacker) summary_mgr.apply_damage(attacker, injury, victim, prev_hp);
     }
-    this.targets.length = slow;
+    this.victims.length = slow;
   }
 
   override update(d: number): void {
@@ -105,11 +105,11 @@ export class Buff_MagicFlute2 extends Buff {
     const attacker = this.world.entity_map.get(this.attacker);
 
     let slow = 0;
-    for (let fast = 0; fast < this.targets.length; ++fast) {
-      const vid = this.targets[fast];
+    for (let fast = 0; fast < this.victims.length; ++fast) {
+      const vid = this.victims[fast];
       const victim = this.world.entity_map.get(vid);
       if (!victim) continue;
-      if (slow !== fast) this.targets[slow] = this.targets[fast];
+      if (slow !== fast) this.victims[slow] = this.victims[fast];
       slow++;
 
       const vy = calc_v(victim.velocity.y, 1.5, SpeedMode.AccTo, 1.5, 1)
@@ -133,7 +133,7 @@ export class Buff_MagicFlute2 extends Buff {
           }
       }
     }
-    this.targets.length = slow;
+    this.victims.length = slow;
   }
 }
 

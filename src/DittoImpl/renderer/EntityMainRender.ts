@@ -1,5 +1,5 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, TFace } from "@/LF2";
-import { clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
+import { Buff_Electroshock, clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
 import { BufferGeometry, Color, Mesh, MeshBasicMaterial, Object3D, Vector3 } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
@@ -106,10 +106,19 @@ export class EntityMainRender {
   }
 
   update_shaking(): void {
-    const { shaking, facing } = this.entity;
-    if (shaking === this.shaking) return;
-    this.shaking = shaking;
-    this.shaking_x = shaking ? facing * random_in(0, 2) * (floor(shaking / 2) % 2 ? 1 : -1) : 0;
+    let { shaking, facing, buff } = this.entity;
+
+    if (!shaking) {
+      for (const [, b] of buff) {
+        if (b.kind === Buff_Electroshock.KIND) {
+          shaking = b.duration - b.lifetime;
+        }
+      }
+    }
+    if (shaking != this.shaking) {
+      this.shaking = shaking;
+      this.shaking_x = shaking ? facing * random_in(0, 2) * (floor(shaking / 2) % 2 ? 1 : -1) : 0;
+    }
   }
 
   render(): void {

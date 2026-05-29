@@ -9,14 +9,14 @@ export function handle_itr_kind_magic_flute(collision: Collision): void {
 
   if (buf) {
     buf.lifetime = 0;
-    buf.targets = [victim.id];
+    buf.victims = [victim.id];
     return;
   }
 
   buf = lf2.factory.create_buff(itr.kind, lf2, bid)
   if (!buf) return;
   buf.attacker = attacker.id;
-  buf.targets = [victim.id];
-  world.buffs.set(bid, buf);
-
+  buf.victims = [victim.id];
+  victim.buff.set(buf.id, buf);
+  buf.mount();
 }

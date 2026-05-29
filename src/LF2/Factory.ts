@@ -17,7 +17,7 @@ export interface ICtrlCreator {
   (player_id: string, entity: Entity): BaseController | undefined
 }
 export interface IBuffCreator {
-  readonly KEY: string | number;
+  readonly KIND: string | number;
   new(...args: ConstructorParameters<typeof Buff>): Buff;
 }
 export type Key = string | number | symbol
@@ -52,15 +52,17 @@ export class Factory {
     Factory.ctrl_creators.set(oid, creator);
   }
   static register_buff(creator: IBuffCreator): void {
-    const { KEY } = creator;
-    if (Factory.buff_creators.has(KEY))
-      Ditto.warn(`[${Factory.TAG}::register_buff] key already exists, ${KEY.toString()}`)
-    Factory.buff_creators.set(KEY, creator);
+    const { KIND } = creator;
+    if (Factory.buff_creators.has(KIND))
+      Ditto.warn(`[${Factory.TAG}::register_buff] kind already exists, ${KIND.toString()}`)
+    Factory.buff_creators.set(KIND, creator);
   }
   create_buff(kind: Key, lf2: LF2, id: string): Buff | undefined {
     const B = Factory.buff_creators.get(kind);
     if (!B) return void 0;
-    return new B(lf2, id)
+    const ret = new B(lf2, id)
+    ret.kind = B.KIND;
+    return ret;
   }
   recycle_entity(e: Entity): this {
     let graves = this.graves_maps.get(e.data.type);

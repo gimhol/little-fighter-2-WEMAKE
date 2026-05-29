@@ -132,31 +132,33 @@ export const collision_action_handlers: IActionHandler = {
   [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => {
     const { lf2, world, victim, attacker } = collision;
     const id = action.data.buff + '_' + victim.id;
-    let buff = world.buffs.get(id);
-    if (!buff) {
-      buff = lf2.factory.create_buff(action.data.buff, lf2, id);
-      if (!buff) return;
-      world.buffs.set(id, buff);
-      buff.attacker = attacker.id;
-      buff.targets = [victim.id];
+    let buf = world.buffs.get(id);
+    if (!buf) {
+      buf = lf2.factory.create_buff(action.data.buff, lf2, id);
+      if (!buf) return;
+      world.buffs.set(id, buf);
+      buf.attacker = attacker.id;
+      buf.victims = [victim.id];
+      victim.buff.set(buf.id, buf);
     }
-    buff.lifetime = 0;
-    buff.duration = action.data.duration;
-    buff.level += 1;
+    buf.lifetime = 0;
+    buf.duration = action.data.duration;
+    buf.level += 1;
   },
   [ActionType.A_BUFF]: (action: IAction_ABuff, collision: Collision) => {
     const { lf2, world, attacker } = collision;
     const id = action.data.buff + '_' + attacker.id;
-    let buff = world.buffs.get(id);
-    if (!buff) {
-      buff = lf2.factory.create_buff(action.data.buff, lf2, id);
-      if (!buff) return;
-      world.buffs.set(id, buff);
-      buff.attacker = attacker.id;
-      buff.targets = [attacker.id];
+    let buf = world.buffs.get(id);
+    if (!buf) {
+      buf = lf2.factory.create_buff(action.data.buff, lf2, id);
+      if (!buf) return;
+      world.buffs.set(id, buf);
+      buf.attacker = attacker.id;
+      buf.victims = [attacker.id];
+      attacker.buff.set(buf.id, buf);
     }
-    buff.lifetime = 0;
-    buff.duration = action.data.duration;
-    buff.level += 1;
+    buf.lifetime = 0;
+    buf.duration = action.data.duration;
+    buf.level += 1;
   }
 };
