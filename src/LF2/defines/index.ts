@@ -25,6 +25,7 @@ export * from "./FrameBehavior";
 export * from "./GONE_FRAME_INFO";
 export * from "./GameKey";
 export * from "./HitFlag";
+export * from "./IAction_ABuff";
 export * from "./IAction_Base";
 export * from "./IAction_Broadcast";
 export * from "./IAction_BrokenDefend";
