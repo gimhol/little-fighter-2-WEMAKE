@@ -138,7 +138,7 @@ export const collision_action_handlers: IActionHandler = {
       if (!buff) return;
       world.buffs.set(id, buff);
       buff.attacker = attacker.id;
-      buff.targets;
+      buff.targets = [victim.id];
     }
     buff.lifetime = 0;
     buff.duration = action.data.duration;
@@ -153,7 +153,7 @@ export const collision_action_handlers: IActionHandler = {
       if (!buff) return;
       world.buffs.set(id, buff);
       buff.attacker = attacker.id;
-      buff.targets;
+      buff.targets = [attacker.id];
     }
     buff.lifetime = 0;
     buff.duration = action.data.duration;

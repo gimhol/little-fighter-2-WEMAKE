@@ -23,9 +23,9 @@ export function make_figther_data_louis(data: IEntityData): IEntityData {
         if (itr.kind !== 0) return;
         if (itr.effect) return;
         itr.actions = ensure(itr.actions, {
-          type: ActionType.A_BUFF,
+          type: ActionType.V_BUFF,
           data: {
-            duration: 60,
+            duration: 200,
             buff: "Electroshock"
           }
         });
