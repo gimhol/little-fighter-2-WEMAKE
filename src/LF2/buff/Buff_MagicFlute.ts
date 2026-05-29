@@ -134,3 +134,4 @@ export class Buff_MagicFlute2 extends Buff {
     this.targets.length = slow;
   }
 }
+

@@ -39,4 +39,8 @@ export enum ActionType {
 
   /** 吸血 */
   VALUE_STEAL = 'VALUE_STEAL',
+
+  A_BUFF = "abuff",
+
+  V_BUFF = "vbuff",
 }

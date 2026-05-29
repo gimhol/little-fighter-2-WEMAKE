@@ -9,6 +9,7 @@ import type { IAction_StealValue } from "../defines/IAction_StealValue";
 import type { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
 import type { IAction_TurnFace } from "../defines/IAction_TurnFace";
 import type { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
+import type { IAction_ABuff, IAction_VBuff } from "../defines/IAction_ABuff";
 
 export interface IActionHandler {
   [ActionType.A_Sound]: (action: IAction_Sound, collision: Collision) => any;
@@ -28,4 +29,6 @@ export interface IActionHandler {
   [ActionType.FUSION]: (action: IAction_Fusion, collision: Collision) => any;
   [ActionType.BROADCAST]: (action: IAction_Broadcast, collision: Collision) => any;
   [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => any;
+  [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => any;
+  [ActionType.A_BUFF]: (action: IAction_ABuff, collision: Collision) => any;
 }

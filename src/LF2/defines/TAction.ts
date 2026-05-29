@@ -1,3 +1,4 @@
+import type { IAction_ABuff,IAction_VBuff } from "./IAction_ABuff";
 import type { IAction_Broadcast } from "./IAction_Broadcast";
 import type { IAction_BrokenDefend } from "./IAction_BrokenDefend";
 import type { IAction_Defend } from "./IAction_Defend";
@@ -21,5 +22,7 @@ export type TAction =
   IAction_TurnFace |
   IAction_TurnTeam |
   IAction_Fusion |
-  IAction_Broadcast | 
-  IAction_StealValue;
+  IAction_Broadcast |
+  IAction_StealValue |
+  IAction_ABuff |
+  IAction_VBuff;

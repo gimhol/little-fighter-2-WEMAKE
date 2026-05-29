@@ -9,12 +9,15 @@ export abstract class Buff {
   readonly id: string
   attacker: string = '';
   targets: string[] = [];
+  level: number = 0;
   readonly tick = new Times();
   readonly life = new Times(0, 1).set_lifes(1);
 
   get dead() { return this.life.remains == 0 }
   get lifetime() { return this.life.value }
   set lifetime(v) { this.life.value = v }
+  get duration() { return this.life.max }
+  set duration(v) { this.life.max = v }
   constructor(lf2: LF2, id: string) {
     this.lf2 = lf2;
     this.world = lf2.world;
