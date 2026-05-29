@@ -2,6 +2,7 @@ import { LF2 } from "../LF2";
 import { Buff } from "./Buff";
 
 export class Buff_Electroshock extends Buff {
+  static override  readonly KEY = "Electroshock";
   constructor(lf2: LF2, id: string) {
     super(lf2, id);
     this.tick.max = 2;

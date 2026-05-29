@@ -4,6 +4,7 @@ import { Times } from "../utils/Times";
 import { World } from "../World";
 
 export abstract class Buff {
+  static readonly KEY: string | number = '';
   readonly lf2: LF2;
   readonly world: World;
   readonly id: string

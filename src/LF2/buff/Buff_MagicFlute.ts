@@ -1,9 +1,10 @@
-import { EntityEnum, SpeedMode, StateEnum, type LF2 } from "..";
+import { EntityEnum, ItrKind, SpeedMode, StateEnum, type LF2 } from "..";
 import { calc_v, summary_mgr } from "../entity";
 import { Buff } from "./Buff";
 
 
 export class Buff_MagicFlute extends Buff {
+  static override  readonly KEY: string | number = ItrKind.MagicFlute;
   constructor(lf2: LF2, id: string) {
     super(lf2, id);
     this.tick.max = 3;
@@ -70,6 +71,7 @@ export class Buff_MagicFlute extends Buff {
 }
 
 export class Buff_MagicFlute2 extends Buff {
+  static override  readonly KEY: string | number = ItrKind.MagicFlute2;
   constructor(lf2: LF2, id: string) {
     super(lf2, id);
     this.tick.max = 3;

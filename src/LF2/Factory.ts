@@ -1,14 +1,14 @@
+import type { Buff } from "./buff/Buff";
 import type { BaseController } from "./controller/BaseController";
 import type { IEntityData } from "./defines/IEntityData";
 import { Ditto } from "./ditto/Instance";
-import type { Buff } from "./buff/Buff";
 import type { Entity } from "./entity/Entity";
+import type { LF2 } from "./LF2";
 import type { States } from "./state/States";
 import type { UIComponent } from "./ui/component/UIComponent";
 import type { IComponentInfo } from "./ui/IComponentInfo";
 import type { UINode } from "./ui/UINode";
 import type { World } from "./World";
-import type { LF2 } from "./LF2";
 
 export interface IEntityCreators {
   (world: World, data: IEntityData, states?: States): Entity | undefined
@@ -17,6 +17,7 @@ export interface ICtrlCreator {
   (player_id: string, entity: Entity): BaseController | undefined
 }
 export interface IBuffCreator {
+  readonly KEY: string | number;
   new(...args: ConstructorParameters<typeof Buff>): Buff;
 }
 export type Key = string | number | symbol
@@ -50,10 +51,11 @@ export class Factory {
       Ditto.warn(`[${Factory.TAG}::register_ctrl] oid already exists, ${oid.toString()}`)
     Factory.ctrl_creators.set(oid, creator);
   }
-  static register_buff(kind: Key, creator: IBuffCreator): void {
-    if (Factory.buff_creators.has(kind))
-      Ditto.warn(`[${Factory.TAG}::register_buff] key already exists, ${kind.toString()}`)
-    Factory.buff_creators.set(kind, creator);
+  static register_buff(creator: IBuffCreator): void {
+    const { KEY } = creator;
+    if (Factory.buff_creators.has(KEY))
+      Ditto.warn(`[${Factory.TAG}::register_buff] key already exists, ${KEY.toString()}`)
+    Factory.buff_creators.set(KEY, creator);
   }
   create_buff(kind: Key, lf2: LF2, id: string): Buff | undefined {
     const B = Factory.buff_creators.get(kind);
