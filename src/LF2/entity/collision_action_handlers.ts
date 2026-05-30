@@ -1,6 +1,7 @@
 import type { IActionHandler } from "../base/IActionHandler";
 import type { Collision } from "../collision/Collision";
 import { ActionType } from "../defines/ActionType";
+import { HitFlag } from "../defines/HitFlag";
 import { IAction_ABuff, IAction_VBuff } from "../defines/IAction_ABuff";
 import type { IAction_Broadcast } from "../defines/IAction_Broadcast";
 import type { IAction_Fusion } from "../defines/IAction_Fusion";
@@ -131,6 +132,13 @@ export const collision_action_handlers: IActionHandler = {
   },
   [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => {
     const { lf2, world, victim, attacker } = collision;
+
+    const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
+    if (
+      !(action.data.hitflag & victim.data.type) ||
+      !(action.data.hitflag & ally_flag)
+    ) return;
+
     const id = action.data.buff + '_' + victim.id;
     let buf = world.buffs.get(id);
     if (!buf) {

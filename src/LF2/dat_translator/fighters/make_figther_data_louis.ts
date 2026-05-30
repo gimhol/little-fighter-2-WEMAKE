@@ -1,4 +1,4 @@
-import { ActionType, ArmorEnum, EntityVal, IEntityData } from "../../defines";
+import { ActionType, ArmorEnum, EntityVal, HitFlag, IAction_VBuff, IEntityData } from "../../defines";
 import { CondMaker } from "../CondMaker";
 import { ensure, traversal } from "../../utils";
 
@@ -19,16 +19,20 @@ export function make_figther_data_louis(data: IEntityData): IEntityData {
   traversal(data.frames, (k, frame) => {
     const n = Number(k);
     if (n >= 85 && n <= 95) {
+      // run-atk ~ dash-atk
       frame.itr?.forEach(itr => {
         if (itr.kind !== 0) return;
         if (itr.effect) return;
-        itr.actions = ensure(itr.actions, {
+        const action: IAction_VBuff = {
           type: ActionType.V_BUFF,
           data: {
+            hitflag: HitFlag.Fighter,
             duration: 200,
             buff: "Electroshock"
           }
-        });
+        }
+        itr.actions ||= []
+        itr.actions.push(action)
       })
     }
 

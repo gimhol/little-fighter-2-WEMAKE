@@ -274,8 +274,10 @@ export function collision_test(c: Collision): boolean {
   if (
     !(itr_flag & victim.data.type) ||
     !(bdy_flag & attacker.data.type) ||
-    !(itr_flag & ally_flag) &&
-    !(bdy_flag & ally_flag)
+    (
+      !(itr_flag & ally_flag) &&
+      !(bdy_flag & ally_flag)
+    )
   ) return false;
   if (
     victim.team === attacker.team && victim.pre_emitter &&
