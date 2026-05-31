@@ -1788,9 +1788,9 @@ export class Entity {
       const vz = tz * this.dataset('tvz_f') * (a.ctrl.UD || 0)
       this.set_velocity(vx, vy, vz)
       this.set_position(
-        vx + ax - a_face * (afx - acx),
-        vy + ay + afy - acy,
-        vz + az + acz,
+        (2 * vx) + ax - a_face * (afx - acx),
+        (2 * vy) + ay + afy - acy,
+        (2 * vz) + az + acz,
       )
       return;
     }
