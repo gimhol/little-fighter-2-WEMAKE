@@ -7,7 +7,8 @@ import json5 from "json5";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import styles from "./styles.module.scss";
+import csses from "./styles.module.scss";
+import { IFullGameZipInfo } from "@/LF2/defines/IFullGameZipInfo";
 
 export default function CustomGamePage() {
   const { t } = useTranslation();
@@ -17,7 +18,35 @@ export default function CustomGamePage() {
       const zip = await Ditto.Zip.read_file(file)
       const index_json = zip.file('index.json') || zip.file('index.json5')
       if (!index_json) throw new Error(t('custom_game_load_file_err_0'))
-      const paths = await index_json.text().then(str => json5.parse(str))
+
+      const raw_json = await index_json.text().then(str => json5.parse(str))
+      if (!raw_json) throw new Error(t('custom_game_load_file_err_0'))
+
+      const info: IFullGameZipInfo = {
+        type: "FULL",
+        title: file.name,
+        version: 0,
+        description: file.name,
+        author: "",
+        paths: [],
+      }
+
+      if (Array.isArray(raw_json)) { // old
+        info.paths = raw_json;
+      } else if (typeof raw_json == 'object') {
+        const { type, version, title, description, author, paths } = raw_json
+        if (type != 'FULL')
+          throw new Error(t('custom_game_load_file_err_4'))
+        if (typeof version != 'number')
+          throw new Error(t('custom_game_load_file_err_5'))
+        if (typeof title == 'string') info.title = title
+        if (typeof description == 'string') info.description = description
+        if (typeof author == 'string') info.author = author
+        if (Array.isArray(paths)) info.paths = paths
+      }
+      console.log(raw_json, info)
+      const { paths } = info;
+
       if (!Array.isArray(paths) || paths.length < 2 || paths.some(path => typeof path !== 'string'))
         throw new Error(t('custom_game_load_file_err_1'))
 
@@ -30,8 +59,9 @@ export default function CustomGamePage() {
         datas.push(z);
       }
       if (datas.length < 2) throw new Error(`datas got empty!`)
+      LF2.INFO = info
       LF2.ZIPS = datas;
-      nav(Paths.All.game)
+      nav(Paths.All.game, { replace: true })
     } catch (e) {
       alert('' + e)
     }
@@ -69,14 +99,17 @@ export default function CustomGamePage() {
       alert('' + e)
     }
   }
+  const return_to_game = () => {
+    nav(Paths.All.game, { replace: true })
+  }
   return (
     <div
-      className={styles.custom_game_page}
+      className={csses.custom_game_page}
       onDragOver={e => e.preventDefault()}
       onDrop={e => e.preventDefault()}>
       <Button
         _ref={ref_hello_world}
-        className={styles.hello_world}
+        className={csses.hello_world}
         onClick={on_click}
         onDragEnter={e => {
           if (ref_hello_world.current && get_zip_file(e)) {
@@ -93,11 +126,16 @@ export default function CustomGamePage() {
         onDragOver={e => e.preventDefault()}
         onDrop={on_drop}>
         <h1>{t("custom_game")}</h1>
-        <div>{t("pls_drag_game_zip_in_here")}</div>
+        <div style={{ whiteSpace: 'pre-wrap' }}>{t("pls_drag_game_zip_in_here")}</div>
       </Button>
-      <Button onClick={() => download('lfw.full.zip')}>
-        {t("download_origin_full_zip_here")}
-      </Button>
+      <div className={csses.bottom_row}>
+        <Button onClick={return_to_game}>
+          {t("return_to_game")}
+        </Button>
+        <Button onClick={() => download('lfw.full.zip')}>
+          {t("download_origin_full_zip_here")}
+        </Button>
+      </div>
     </div >
   )
 }

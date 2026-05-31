@@ -29,8 +29,8 @@ const zh_hans = {
   "dont_need_password": "任意人可加入",
   "pls_enter_pwd": "输入房间密码",
   "custom_game": "自定义游戏",
-  "pls_drag_game_zip_in_here": "点击此处选择“游戏数据包”\n或\n将“游戏数据包”拖拽至此以加载自定义游戏",
-  "download_origin_full_zip_here": "下载原始“「游戏数据包」",
+  "pls_drag_game_zip_in_here": "点击此处选择「游戏数据包」\n或 将「游戏数据包」拖拽至此以加载自定义游戏",
+  "download_origin_full_zip_here": "下载原始「游戏数据包」",
   "bgm_volume": "BGM 音量",
   "sfx_volume": "SFX 音量",
   "sync_0": "無限",
@@ -40,6 +40,7 @@ const zh_hans = {
   "team_outline": "队伍描边",
   "enabled": "已启用",
   "disabled": "已禁用",
+  "return_to_game": "回到游戏页",
 }
 const zh_hant = {
   "game_running": "已開始",
@@ -69,13 +70,14 @@ const zh_hant = {
   "dont_need_password": "任意人可加入",
   "pls_enter_pwd": "輸入房間密碼",
   "custom_game": "自訂遊戲",
-  "pls_drag_game_zip_in_here": "點擊此處選擇「遊戲數據包」\n或\n將「遊戲數據包」拖曳至此以加載自定義遊戲",
+  "pls_drag_game_zip_in_here": "點擊此處選擇「遊戲數據包」\n或 將「遊戲數據包」拖曳至此以加載自定義遊戲",
   "download_origin_full_zip_here": "下载原始「遊戲數據包」",
   "bgm_volume": "BGM 音量",
   "sfx_volume": "SFX 音量",
   "team_outline": "隊伍輪廓",
   "enabled": "已啟用",
   "disabled": "已禁用",
+  "return_to_game": "回到游戏页",
 }
 const en = {
   "game_running": "Started",
@@ -105,7 +107,7 @@ const en = {
   "dont_need_password": "Anyone can join.",
   "pls_enter_pwd": "Enter password",
   "custom_game": "Custom Game",
-  "pls_drag_game_zip_in_here": "Click here to select the \"Game Data Zip File\".\nOr\nDrag the \"Game Data Zip File\" here to load the custom game.",
+  "pls_drag_game_zip_in_here": "Click here to select the \"Game Data Zip\".\nOr drag the \"Game Data Zip\" here to load the custom game.",
   "custom_game_drop_err_0": "multiple files are not supported",
   "custom_game_drop_err_1": "what you dragged in is not a file",
   "custom_game_drop_err_2": "file got %1, why?",
@@ -113,7 +115,10 @@ const en = {
   "custom_game_load_file_err_1": 'content of "index.json" should be a string array with a length more than 2',
   "custom_game_load_file_err_2": '$1 not found',
   "custom_game_load_file_err_3": 'datas not ',
-  "download_origin_full_zip_here": "Download origin \"Game Data Zip File\"",
+  "custom_game_load_file_err_4": '"type" should be "FULL"',
+  "custom_game_load_file_err_5": '"version" should be "number"',
+  "custom_game_load_file_err_6": 'wrong version',
+  "download_origin_full_zip_here": "Download origin \"Game Data Zip\"",
   "bgm_volume": "BGM Volume",
   "sfx_volume": "SFX Volume",
   "sync_0": "Unsafed",
@@ -122,6 +127,7 @@ const en = {
   "team_outline": "Team Outline",
   "enabled": "Enabled",
   "disabled": "Disabled",
+  "return_to_game": "Return to Game",
 }
 const resources = {
   "zh": { translation: zh_hans },

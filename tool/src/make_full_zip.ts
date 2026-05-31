@@ -5,7 +5,8 @@ import { pipeline } from "stream/promises";
 import { conf } from "./conf";
 import { debug, info } from "./utils/log";
 import { write_file } from "./utils/write_file";
-
+import { IFullGameZipInfo } from "../../src/LF2/defines/IFullGameZipInfo"
+import { Defines } from "../../src/LF2/defines";
 export async function make_full_zip() {
   debug(`make_full_zip()`)
   const {
@@ -29,11 +30,17 @@ export async function make_full_zip() {
     return
   }
 
+  const index_info: IFullGameZipInfo = {
+    // TODO: allow rewrite it.
+    type: "FULL",
+    version: Defines.DATA_VERSION,
+    title: "Little Fighter Wemake Origin (DEMO)",
+    description: "Little Fighter Wemake Origin Full Game Data",
+    author: "Gim",
+    paths: [OUT_PREL_NAME, OUT_DATA_NAME]
+  }
   const index_path = join(OUT_DIR, 'index.json');
-  const index_str = JSON.stringify([
-    OUT_PREL_NAME,
-    OUT_DATA_NAME
-  ]);
+  const index_str = JSON.stringify(index_info);
   await write_file(index_path, index_str);
   const zip_stream = new zip.Stream();
   zip_stream.addEntry(prel_zip_path);
