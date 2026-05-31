@@ -29,17 +29,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
   static readonly VERSION_NAME: string = `v${VERSION_NAME} ${BUILD_TIME}`;
-
-
   static readonly DATA_VERSION: number = 19;
   static readonly DATA_TYPE: string = 'DataZip';
 
-  static get PREL_ZIPS() { return this._PREL_ZIPS }
-  static get DATA_ZIPS() { return this._DATA_ZIPS }
-  static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
-  static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
-  private static _PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
-  private static _DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
+  static get ZIPS() { return this._ZIPS }
+  static set ZIPS(v: (I.IZip | string)[]) { this._ZIPS = v; this.instances.forEach(v => v.update_extra_zip_names()) }
+  private static _ZIPS: (I.IZip | string)[] = ["prel.zip.json", "data.zip.json"];
   static get instance() { return LF2.instances[0] }
   static get world() { return this.instance?.world }
   static get objects() { return this.instance?.entities }
@@ -247,7 +242,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         VERSION_NAME: LF2.VERSION_NAME
       }
     })
-    this.update_zip_names()
+    this.update_extra_zip_names()
   }
 
   random_entity_info(e: Entity) {
@@ -631,11 +626,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const next = loop_offset(list, this.world.difficulty, offset)
     this.cmds.push(CMD.SET_DIFFICULTY, '' + next)
   }
-  private update_zip_names() {
-    const DATA_LIST = [
-      ...LF2._PREL_ZIPS.filter(v => v != 'prel.zip.json').map(v => typeof v === 'string' ? v : v.name),
-      ...LF2._DATA_ZIPS.filter(v => v != 'data.zip.json').map(v => typeof v === 'string' ? v : v.name)
-    ]
+  private update_extra_zip_names() {
+    const DATA_LIST = LF2._ZIPS.slice(2).map(v => typeof v === 'string' ? v : v.name)
     this._i18n.add({ '': { DATA_LIST } })
     this.callbacks.emit('on_extra_zips_changed')(this)
   }

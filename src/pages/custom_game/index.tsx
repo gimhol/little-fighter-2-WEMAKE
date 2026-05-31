@@ -1,13 +1,13 @@
 import { Button } from "@/Component/Buttons/Button";
 import { Ditto, IZip, LF2 } from "@/LF2";
 import { Paths } from "@/Paths";
+import { download } from "@/Utils/download";
 import { open_file } from "@/Utils/open_file";
 import json5 from "json5";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import styles from "./styles.module.scss";
-import { useRef } from "react";
-import { download } from "@/Utils/download";
 
 export default function CustomGamePage() {
   const { t } = useTranslation();
@@ -30,8 +30,7 @@ export default function CustomGamePage() {
         datas.push(z);
       }
       if (datas.length < 2) throw new Error(`datas got empty!`)
-      LF2.PREL_ZIPS = [datas[0]];
-      LF2.DATA_ZIPS = datas.slice(1);
+      LF2.ZIPS = datas;
       nav(Paths.All.game)
     } catch (e) {
       alert('' + e)
