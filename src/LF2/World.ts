@@ -711,8 +711,8 @@ export class World extends WorldDataset {
       a.update();
 
       const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
-      a.aabb_x1 = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
-      a.aabb_x2 = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+      a.aabb_min = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+      a.aabb_max = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
 
       if (a.ghosted) continue;
 
@@ -757,20 +757,24 @@ export class World extends WorldDataset {
     this.entities.length = this.entities.length - offset
 
     let divider = 0;
-    this.entities.sort((a, b) => a.aabb_x1 - b.aabb_x1)
+    // 先按大包围盒left的排序，这个递增 -Gim
+    this.entities.sort((a, b) => a.aabb_min - b.aabb_min)
     temp_entities.length = 0;
     for (let i = 0; i < this.entities.length; i++) {
       const a = this.entities[i];
       if (a.ghosted) continue;
+
+      // divider以前的 不可能aabb碰撞，所以忽略掉 -Gim
       for (let j = divider; j < temp_entities.length; j++) {
         const b = temp_entities[j];
 
         // 已经不可能碰撞的实体：直接跳过，并且把 divider 往后推
-        if (a.aabb_x2 < b.aabb_x1) {
+        if (a.aabb_max < b.aabb_min) {
           divider = j + 1;
           continue;
         }
 
+        // 细致的碰撞判定
         const c1 = collision_get(a, b);
         const c2 = collision_get(b, a);
         const p1 = c1?.priority ?? Infinity;

@@ -107,8 +107,8 @@ export class Entity {
   protected _catching!: Entity | null;
   protected _catcher!: Entity | null;
   protected states!: States;
-  aabb_x1: number = 0;
-  aabb_x2: number = 0;
+  aabb_min: number = 0;
+  aabb_max: number = 0;
 
   /**
    * 实体名称
@@ -2378,8 +2378,8 @@ export class Entity {
       prev_frame: this._prev_frame.id,
       catching: this._catching?.id,
       catcher: this._catcher?.id,
-      aabb_x1: this.aabb_x1,
-      aabb_x2: this.aabb_x2,
+      aabb_x1: this.aabb_min,
+      aabb_x2: this.aabb_max,
       name: this._name,
       team: this._team,
       mp: this._mp,
