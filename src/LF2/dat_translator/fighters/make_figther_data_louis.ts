@@ -26,7 +26,7 @@ export function make_figther_data_louis(data: IEntityData): IEntityData {
         const action: IAction_VBuff = {
           type: ActionType.V_BUFF,
           data: {
-            hitflag: HitFlag.Fighter,
+            hitflag: HitFlag.EnemyFighter | HitFlag.AllyFighter,
             duration: 200,
             buff: "Electroshock"
           }
