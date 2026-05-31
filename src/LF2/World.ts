@@ -762,11 +762,8 @@ export class World extends WorldDataset {
     for (let i = 0; i < this.entities.length; i++) {
       const a = this.entities[i];
       if (a.ghosted) continue;
-      for (let j = 0; j < temp_entities.length; j++) {
+      for (let j = divider; j < temp_entities.length; j++) {
         const b = temp_entities[j];
-
-        // 只处理可能碰撞的（divider 之后的）
-        if (j < divider) continue;
 
         // 已经不可能碰撞的实体：直接跳过，并且把 divider 往后推
         if (a.aabb_x2 < b.aabb_x1) {
@@ -776,7 +773,7 @@ export class World extends WorldDataset {
 
         const c1 = collision_get(a, b);
         const c2 = collision_get(b, a);
-        const p1 = c1?.priority || Infinity;
+        const p1 = c1?.priority ?? Infinity;
         const p2 = c2?.priority ?? Infinity;
         if (c1 && p1 <= p2) this.add_collision(c1)
         if (c2 && p2 <= p1) this.add_collision(c2)
