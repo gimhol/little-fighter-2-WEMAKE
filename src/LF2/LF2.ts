@@ -54,7 +54,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static get ZIPS() { return this._ZIPS }
   static set ZIPS(v: (I.IZip | string)[]) {
     this._ZIPS = v;
-    this.instances.forEach(v => v.update_extra_zip_names())
+    this.instances.forEach(v => v.update_zip_names())
   }
   static get instance() { return LF2.instances[0] }
   static get world() { return this.instance?.world }
@@ -260,10 +260,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.ui_stacks.push(ui_stack)
     this._i18n.add({
       '': {
-        VERSION_NAME: LF2.VERSION_NAME
+        VERSION_NAME: LF2.VERSION_NAME,
+        DATA_LIST: '',
       }
     })
-    this.update_extra_zip_names()
+    this.update_zip_names()
   }
 
   random_entity_info(e: Entity) {
@@ -648,11 +649,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const next = loop_offset(list, this.world.difficulty, offset)
     this.cmds.push(CMD.SET_DIFFICULTY, '' + next)
   }
-  private update_extra_zip_names() {
+  private update_zip_names() {
     const DATA_LIST = LF2._ZIPS.slice(2).map(v => typeof v === 'string' ? v : v.name)
     if (!LF2.IS_DEFAULT_INFO)
       DATA_LIST.unshift(LF2.INFO?.title)
-
     this._i18n.add({ '': { DATA_LIST } })
     this.callbacks.emit('on_extra_zips_changed')(this)
   }

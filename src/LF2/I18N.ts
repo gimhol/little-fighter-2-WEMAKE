@@ -73,7 +73,7 @@ export class I18N {
     const m = this._words.get(this._lang);
     if (m) {
       let ret = m[name]
-      if (ret == void 0) ret = m[name] = name
+      if (ret == void 0) ret = m[name] = (this.base_words[name] ?? name)
       return ret
     }
 
@@ -83,7 +83,7 @@ export class I18N {
       this._words.set(this._lang, words);
       return this.string(name);
     }
-    this._words.set(this._lang, { [name]: name });
+    this._words.set(this._lang, { [name]: (this.base_words[name] ?? name) });
     return name;
   }
 
@@ -91,7 +91,7 @@ export class I18N {
     const m = this._lists.get(this._lang);
     if (m) {
       let ret = m[name]
-      if (ret == void 0) ret = m[name] = [name]
+      if (ret == void 0) ret = m[name] = (this.base_lists[name] ?? [name])
       return ret
     }
 
@@ -101,7 +101,8 @@ export class I18N {
       this._lists.set(this._lang, lists);
       return this.strings(name);
     }
-    this._lists.set(this._lang, { [name]: [name] });
+    const ret = (this.base_lists[name] ?? [name])
+    this._lists.set(this._lang, { [name]: ret });
     return [name];
   }
 }
