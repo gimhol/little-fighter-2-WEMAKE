@@ -24,7 +24,7 @@ export interface ICache {
   list(): Promise<ICacheData[] | undefined>;
 
   /**
-   * 移除指定类型指定版本后的全部数据
+   * 移除指定类型指定版本以外的全部数据
    *
    * @param {ICacheData['type']} type 缓存类型
    * @param {number} version 版本号
