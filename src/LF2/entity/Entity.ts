@@ -107,8 +107,8 @@ export class Entity {
   protected _catching!: Entity | null;
   protected _catcher!: Entity | null;
   protected states!: States;
-  aabb_x1: number = 0;
-  aabb_x2: number = 0;
+  aabb_min: number = 0;
+  aabb_max: number = 0;
 
   /**
    * 实体名称
@@ -1788,9 +1788,9 @@ export class Entity {
       const vz = tz * this.dataset('tvz_f') * (a.ctrl.UD || 0)
       this.set_velocity(vx, vy, vz)
       this.set_position(
-        vx + ax - a_face * (afx - acx),
-        vy + ay + afy - acy,
-        vz + az + acz,
+        (2 * vx) + ax - a_face * (afx - acx),
+        (2 * vy) + ay + afy - acy,
+        (2 * vz) + az + acz,
       )
       return;
     }
@@ -2378,8 +2378,8 @@ export class Entity {
       prev_frame: this._prev_frame.id,
       catching: this._catching?.id,
       catcher: this._catcher?.id,
-      aabb_x1: this.aabb_x1,
-      aabb_x2: this.aabb_x2,
+      aabb_x1: this.aabb_min,
+      aabb_x2: this.aabb_max,
       name: this._name,
       team: this._team,
       mp: this._mp,

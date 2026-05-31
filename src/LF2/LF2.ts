@@ -1,8 +1,10 @@
 import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
+import { regist_buffs } from './buff/_';
 import { LocalController } from "./controller";
 import * as D from "./defines";
 import { AGK } from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
+import { IFullGameZipInfo } from "./defines/IFullGameZipInfo";
 import * as I from "./ditto";
 import { Entity, is_fighter } from "./entity";
 import { IDebugging, make_debugging } from "./entity/make_debugging";
@@ -16,7 +18,6 @@ import get_import_fallbacks from "./loader/get_import_fallbacks";
 import { PlayerInfo } from "./PlayerInfo";
 import * as UI from "./ui";
 import { regist_components } from './ui/component/_';
-import { regist_buffs } from './buff/_';
 import { is_str, loop_offset, MersenneTwister } from "./utils";
 import { World } from "./World";
 export interface IZipResult {
@@ -24,22 +25,37 @@ export interface IZipResult {
   file: I.IZipObject;
   zip: I.IZip;
 }
-
+const DEFAULT_INFO: Readonly<IFullGameZipInfo> = {
+  type: "FULL",
+  version: 0,
+  title: "Little Fighter Wemake Origin Full Game",
+  description: "Little Fighter Wemake Origin Full Game Zip",
+  author: "Gim",
+  paths: ["prel.zip.json", "data.zip.json"],
+}
 export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LF2";
   static readonly instances: LF2[] = []
   static readonly VERSION_NAME: string = `v${VERSION_NAME} ${BUILD_TIME}`;
-
-
-  static readonly DATA_VERSION: number = 19;
+  static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
+  private static _INFO: Readonly<IFullGameZipInfo> = DEFAULT_INFO;
+  private static _ZIPS: (I.IZip | string)[] = ["prel.zip.json", "data.zip.json"];
+  static get IS_DEFAULT_INFO() { return this._INFO == DEFAULT_INFO; }
+  static get INFO(): Readonly<IFullGameZipInfo> { return this._INFO }
+  static set INFO(v: Readonly<IFullGameZipInfo> | null | undefined) {
+    // NOTE: is it stupid? - Gim
+    const next = v ?? DEFAULT_INFO;
+    if (next == this._INFO) return;
+    this._INFO = next;
+    this._ZIPS = this._INFO.paths;
+  }
 
-  static get PREL_ZIPS() { return this._PREL_ZIPS }
-  static get DATA_ZIPS() { return this._DATA_ZIPS }
-  static set PREL_ZIPS(v: (I.IZip | string)[]) { this._PREL_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
-  static set DATA_ZIPS(v: (I.IZip | string)[]) { this._DATA_ZIPS = v; this.instances.forEach(v => v.update_zip_names()) }
-  private static _PREL_ZIPS: (I.IZip | string)[] = ["prel.zip.json"];
-  private static _DATA_ZIPS: (I.IZip | string)[] = ["data.zip.json"];
+  static get ZIPS() { return this._ZIPS }
+  static set ZIPS(v: (I.IZip | string)[]) {
+    this._ZIPS = v;
+    this.instances.forEach(v => v.update_extra_zip_names())
+  }
   static get instance() { return LF2.instances[0] }
   static get world() { return this.instance?.world }
   static get objects() { return this.instance?.entities }
@@ -247,7 +263,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         VERSION_NAME: LF2.VERSION_NAME
       }
     })
-    this.update_zip_names()
+    this.update_extra_zip_names()
   }
 
   random_entity_info(e: Entity) {
@@ -631,11 +647,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     const next = loop_offset(list, this.world.difficulty, offset)
     this.cmds.push(CMD.SET_DIFFICULTY, '' + next)
   }
-  private update_zip_names() {
-    const DATA_LIST = [
-      ...LF2._PREL_ZIPS.filter(v => v != 'prel.zip.json').map(v => typeof v === 'string' ? v : v.name),
-      ...LF2._DATA_ZIPS.filter(v => v != 'data.zip.json').map(v => typeof v === 'string' ? v : v.name)
-    ]
+  private update_extra_zip_names() {
+    const DATA_LIST = LF2._ZIPS.slice(2).map(v => typeof v === 'string' ? v : v.name)
+    if (!LF2.IS_DEFAULT_INFO)
+      DATA_LIST.unshift(LF2.INFO?.title)
+
     this._i18n.add({ '': { DATA_LIST } })
     this.callbacks.emit('on_extra_zips_changed')(this)
   }

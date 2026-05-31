@@ -227,7 +227,7 @@ function App() {
             const zips: IZip[] = []
             for (const file of files)
               zips.push(await Ditto.Zip.read_file(file))
-            LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
+            LF2.ZIPS = [...LF2.ZIPS, ...zips]
           });
           break;
         case 'custom_game':
@@ -326,7 +326,7 @@ function App() {
       configurable: true
     })
 
-    lf2.load(...LF2.PREL_ZIPS).catch(LF2.IgnoreDisposed);
+    lf2.load(LF2.ZIPS[0]).catch(LF2.IgnoreDisposed);
     set_lf2(lf2)
     lf2.sounds.set_volume(app_state.volume);
     lf2.sounds.set_bgm_muted(app_state.bgm_muted);
@@ -405,7 +405,7 @@ function App() {
   const on_click_load_builtin = async () => {
     if (!lf2) return;
     lf2
-      .load(...LF2.PREL_ZIPS, ...LF2.DATA_ZIPS)
+      .load(...LF2.ZIPS)
       .catch((e) => Log.print("App -> on_click_load_builtin", e));
   };
 
@@ -582,7 +582,7 @@ function App() {
           if (!zip) continue;
           zips.push(zip);
         }
-        const set = new Set(LF2.DATA_ZIPS.map(v => typeof v === 'string' ? v : v.name))
+        const set = new Set(LF2.ZIPS.map(v => typeof v === 'string' ? v : v.name))
         return zips.filter(z => !set.has(z.name))
       } catch (e) {
         alert('' + e)
@@ -593,12 +593,12 @@ function App() {
       e.preventDefault();
       const zips = await read_zips()
       if (!zips.length) return
-      LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
+      LF2.ZIPS = [...LF2.ZIPS, ...zips]
     } else if (lf2.ui?.id?.toLowerCase().indexOf('loading') == -1 && !networking) {
       e.preventDefault();
       const zips = await read_zips()
       if (!zips.length) return
-      LF2.DATA_ZIPS = [...LF2.DATA_ZIPS, ...zips]
+      LF2.ZIPS = [...LF2.ZIPS, ...zips]
       lf2.load(...zips)
       lf2.set_ui({ id: 'loading' })
     }
