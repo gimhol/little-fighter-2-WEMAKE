@@ -1,12 +1,11 @@
 
-type WordMap = { [x in string]?: string | string[] }
-type LangMap = { [x in string]?: string | WordMap }
-type LangKey = string;
 type WordKey = string;
+type WordMap = { [x in WordKey]?: string | string[] }
+type LangKey = string;
+type LangMap = { [x in LangKey]?: string | WordMap }
 
 export class I18N {
   static readonly TAG = 'I18N'
-  protected _collections = new Map<string, WordMap>([['', {}]])
   protected _words = new Map<LangKey, { [x in WordKey]?: string }>([['', {}]])
   protected _lists = new Map<LangKey, { [x in WordKey]?: string[] }>([['', {}]]);
   protected _alias_map = new Map<LangKey, LangKey>();
@@ -19,17 +18,14 @@ export class I18N {
   set lang(v: string) { this.set_lang(v) }
   set_lang(lang: string) {
     if (typeof lang !== 'string')
-      throw new Error(`[${I18N.TAG}::set_lang] lang should be string, bu got ${lang}`)
+      throw new Error(`[${I18N.TAG}::set_lang] lang should be string, but got ${lang}`)
     this._lang = lang
-    if (!this._words.has(lang)) this._words.set(lang, this._words.get('')!)
-    if (!this._lists.has(lang)) this._lists.set(lang, this._lists.get('')!)
   }
 
   add(langs: LangMap): void {
     if (!langs) return;
     if (typeof langs !== 'object') return;
     if (Array.isArray(langs)) return;
-
     for (const lang_name in langs) {
       let new_words = langs[lang_name]
       if (typeof new_words === 'string') {
@@ -39,9 +35,6 @@ export class I18N {
       if (!new_words) continue;
       if (typeof new_words != 'object') continue;
       if (Array.isArray(new_words)) continue;
-
-      let words = this._collections.get(lang_name);
-      if (!words) this._collections.set(lang_name, words = {})
 
       let strings = this._words.get(lang_name)
       if (!strings) this._words.set(lang_name, strings = {})
@@ -76,11 +69,11 @@ export class I18N {
     return ret;
   }
 
-  string(word_name: string): string {
+  string(name: string): string {
     const m = this._words.get(this._lang);
     if (m) {
-      let ret = m[word_name]
-      if (ret == void 0) ret = m[word_name] = word_name
+      let ret = m[name]
+      if (ret == void 0) ret = m[name] = name
       return ret
     }
 
@@ -88,10 +81,10 @@ export class I18N {
     const words = this._words.get(alias);
     if (words) {
       this._words.set(this._lang, words);
-      return this.string(word_name);
+      return this.string(name);
     }
-    this._words.set(this._lang, { [word_name]: word_name });
-    return word_name;
+    this._words.set(this._lang, { [name]: name });
+    return name;
   }
 
   strings(name: string): string[] {

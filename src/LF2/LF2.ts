@@ -384,11 +384,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load')
     this._loading = true;
     this.callbacks.emit("on_loading_start")();
-    this.set_ui({ id: "loading" });
     if (is_first) {
       const [obj] = await this.import_json("builtin_data/launch/strings.json5")
       this._i18n.add(obj)
     }
+
+
     this._dispose_check('load')
 
     if (is_first) {
