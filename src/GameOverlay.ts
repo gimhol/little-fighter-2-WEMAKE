@@ -1,5 +1,4 @@
 import { Button } from "./Component/Buttons/Button";
-import { ILf2Callback } from "./LF2/ILf2Callback";
 import type { IWorldCallbacks } from "./LF2/IWorldCallbacks";
 import type { World } from "./LF2/World";
 import { CMD } from "./LF2/defines/CMD";
@@ -7,96 +6,6 @@ import { Defines } from "./LF2/defines/defines";
 import { is_num } from "./LF2/utils/type_check";
 import csses from "./game_overlay.module.scss";
 const ele = document.createElement.bind(document);
-export class FPSOverlay {
-  release(): void {
-    this.ele_fps.remove();
-    this.ele_ups.remove();
-    this.ele_sps.remove();
-    this.ele_loading.remove();
-  }
-  readonly world: World;
-  protected ele: HTMLElement | null | undefined;
-  protected ele_fps: HTMLElement;
-  protected ele_ups: HTMLElement;
-  protected ele_sps: HTMLElement;
-  protected ele_loading: HTMLSpanElement;
-  constructor(world: World, container: HTMLElement | null | undefined) {
-    this.world = world;
-    this.ele = container;
-    this.ele_fps = ele("span");
-    this.ele_fps.className = csses.txt_game_overlay;
-    this.ele_ups = ele("span");
-    this.ele_ups.className = csses.txt_game_overlay;
-    this.ele_sps = ele("span");
-    this.ele_sps.className = csses.txt_game_overlay;
-    this.ele_loading = ele("span");
-    this.ele_loading.className = csses.txt_game_overlay;
-    world.lf2.callbacks.add(this._l_listener);
-    world.callbacks.add(this._w_listener);
-
-    if (!container) return;
-    container.append(
-      this.ele_fps,
-      this.ele_ups,
-      this.ele_loading,
-    );
-  }
-
-  set FPS(v: number) {
-    this.ele_fps.innerText = "FPS:" + v.toFixed(0);
-  }
-
-  set UPS(v: number) {
-    this.ele_ups.innerText = "UPS:" + v.toFixed(0);
-  }
-
-  set SPS(v: number) {
-    this.ele_sps.innerText = "SPS:" + v.toFixed(0);
-  }
-  private ele_loading_tid: number = 0;
-  set loading(v: string) {
-    this.ele_loading.innerText = v;
-    this.ele_loading.style.transition = ''
-    this.ele_loading.style.opacity = '1'
-    window.clearTimeout(this.ele_loading_tid)
-    this.ele_loading_tid = window.setTimeout(() => {
-      this.ele_loading.style.transition = 'opacity 150ms'
-      this.ele_loading.style.opacity = '0'
-    }, 1000)
-  }
-
-  private update_timer: ReturnType<typeof setInterval> | undefined;
-
-  update_camera = () => {
-    this.world.update_camera();
-    this.world.stage.bg.update();
-  };
-
-  private _l_listener: Partial<ILf2Callback> = {
-    on_progress: (content, progress) =>
-      (this.loading = `${content}, ${progress}%`),
-  };
-  private _w_listener: Partial<IWorldCallbacks> = {
-    on_ups_update: (ups, sps) => {
-      this.UPS = ups;
-      this.SPS = sps;
-    },
-    on_fps_update: (fps) => (this.FPS = fps),
-    on_pause_change: (pause) => {
-      if (pause) {
-        this.update_timer = setInterval(this.update_camera, 1000 / 60);
-      } else {
-        clearInterval(this.update_timer);
-      }
-    },
-    on_disposed: () => {
-      clearInterval(this.update_timer);
-      this.update_timer = void 0;
-      this.world.lf2.callbacks.del(this._l_listener);
-      this.world.callbacks.del(this._w_listener);
-    },
-  };
-}
 
 export class BgScrollerOverlay {
   release(): void {

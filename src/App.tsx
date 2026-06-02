@@ -23,12 +23,13 @@ import { Indicating } from "./DittoImpl/renderer/FrameIndicators";
 import { INDICATINGS } from "./DittoImpl/renderer/INDICATINGS";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
-import { BgScrollerOverlay, FPSOverlay } from "./GameOverlay";
+import { BgScrollerOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
 import { Difficulty, IWorldDataset, WorldDataset } from "./LF2";
 import { LF2 } from "./LF2/LF2";
 import { CheatType, CtrlDevice } from "./LF2/defines";
 import { CMD } from "./LF2/defines/CMD";
+import { SyncRenderEnum } from "./LF2/defines/SyncRenderEnum";
 import { Defines } from "./LF2/defines/defines";
 import { Ditto, IZip } from "./LF2/ditto";
 import { IUIInfo } from "./LF2/ui/IUIInfo.dat";
@@ -63,12 +64,11 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
-import { SyncRenderEnum } from "./LF2/defines/SyncRenderEnum";
+import { DevStatsView } from "./DevStatsView";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
 type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
-type sync_render = 0 | 1 | 2;
 
 const ele_root = document.firstElementChild;
 const low_device = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
@@ -123,7 +123,7 @@ function App() {
   const ref_lf2 = useRef<LF2 | undefined>(void 0)
   const [lf2, set_lf2] = useState<LF2 | undefined>()
   const [ele_game_canvas, set_ele_game_canvas] = useState<HTMLCanvasElement | null>(null)
-  const [ele_game_overlay, set_ele_game_overlay] = useState<HTMLElement | null>(null)
+  // const [ele_game_overlay, set_ele_game_overlay] = useState<HTMLElement | null>(null)
   const [ele_root, set_ele_root] = useState<HTMLDivElement | null>(null)
   const [[workspace, , game_cell, pannel_cell], set_workspace] = useState<
     [Workspaces | null, DomAdapter | null, HTMLElement | null, HTMLElement | null]
@@ -186,17 +186,17 @@ function App() {
     { id: "", name: "无页面" },
   ]);
 
-  useEffect(() => {
-    if (!lf2 || !ele_game_overlay || !app_state.show_fps) return;
-    const ele = new FPSOverlay(lf2.world, ele_game_overlay);
-    return () => ele.release()
-  }, [lf2, ele_game_overlay, app_state.show_fps])
+  // useEffect(() => {
+  //   if (!lf2 || !ele_game_overlay || !app_state.show_fps) return;
+  //   const ele = new FPSOverlay(lf2.world, ele_game_overlay);
+  //   return () => ele.release()
+  // }, [lf2, ele_game_overlay, app_state.show_fps])
 
-  useEffect(() => {
-    if (!lf2 || !ele_game_overlay || !app_state.show_bg_scroll) return;
-    const ele = new BgScrollerOverlay(lf2.world, ele_game_overlay);
-    return () => ele.release()
-  }, [lf2, ele_game_overlay, app_state.show_bg_scroll])
+  // useEffect(() => {
+  //   if (!lf2 || !ele_game_overlay || !app_state.show_bg_scroll) return;
+  //   const ele = new BgScrollerOverlay(lf2.world, ele_game_overlay);
+  //   return () => ele.release()
+  // }, [lf2, ele_game_overlay, app_state.show_bg_scroll])
 
   useCallbacks(fullscreen?.callbacks, {
     onChange: (e) => _set_is_fullscreen(!!e),
@@ -617,8 +617,9 @@ function App() {
         onDragOver={e => { if (lf2?.ui?.id === 'entry') e.preventDefault() }}
         onDrop={on_drop}
       />
-      <div ref={set_ele_game_overlay}
-        className={classNames(csses.game_overlay, { [csses.gone]: !app_state.show_fps })} />
+      <div className={classNames(csses.game_overlay, { [csses.gone]: !app_state.show_fps })} >
+        {app_state.show_fps && <DevStatsView lf2={lf2} />}
+      </div>
       <DanmuOverlay lf2={lf2} />
       <GamePad
         id='game_pad'

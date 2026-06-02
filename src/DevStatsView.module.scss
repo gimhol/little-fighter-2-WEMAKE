@@ -1,0 +1,13 @@
+.dev_stats_view {
+
+  .dev_stats_view_fps,
+  .dev_stats_view_ups,
+  .dev_stats_view_sps,
+  .dev_stats_view_loading {
+    color              : white;
+    text-align         : start;
+    -webkit-text-stroke: 0.3px black;
+    text-stroke        : 0.3px black;
+    display            : block;
+  }
+}
