@@ -106,10 +106,10 @@ export class EntityMainRender {
   }
 
   update_shaking(): void {
-    let { shaking, facing, buffs: buff } = this.entity;
+    let { shaking, facing, buffs } = this.entity;
 
     if (!shaking) {
-      for (const [, b] of buff) {
+      for (const [, b] of buffs) {
         if (b.kind === Buff_Electroshock.KIND) {
           shaking = b.duration - b.lifetime;
         }
