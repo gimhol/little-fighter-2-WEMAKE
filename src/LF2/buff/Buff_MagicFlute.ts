@@ -1,7 +1,7 @@
-import { Entity, EntityEnum, ItrKind, SpeedMode, StateEnum, type LF2 } from "..";
+import { EntityEnum, ItrKind, SpeedMode, StateEnum } from "../defines";
 import { calc_v, summary_mgr } from "../entity";
+import { Entity } from "../entity/Entity";
 import { Buff } from "./Buff";
-
 
 export class Buff_MagicFlute extends Buff {
   static override  readonly KIND: string | number = ItrKind.MagicFlute;
