@@ -1,6 +1,7 @@
 import { Factory } from "../Factory";
 import { Buff_Electroshock } from "./Buff_Electroshock";
-import { Buff_MagicFlute, Buff_MagicFlute2 } from "./Buff_MagicFlute";
+import { Buff_MagicFlute } from "./Buff_MagicFlute";
+import { Buff_MagicFlute2 } from "./Buff_MagicFlute2";
 
 let _registed = false
 export function regist_buffs() {

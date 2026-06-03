@@ -1,12 +1,13 @@
-import { Entity, EntityEnum, ItrKind, SpeedMode, StateEnum, type LF2 } from "..";
-import { calc_v, summary_mgr } from "../entity";
-import { Buff } from "./Buff";
+import { Buff } from ".";
+import { Entity } from "..";
+import { ItrKind, SpeedMode, EntityEnum, StateEnum } from "../defines";
+import { summary_mgr, calc_v } from "../entity";
 
-
-export class Buff_MagicFlute extends Buff {
-  static override  readonly KIND: string | number = ItrKind.MagicFlute;
+export class Buff_MagicFlute2 extends Buff {
+  static override readonly KIND: string | number = ItrKind.MagicFlute2;
   injury = 1;
   injury_r = 0.5;
+
   override init(): void {
     this.ticks = 3;
     this.duration = 2;
@@ -19,17 +20,18 @@ export class Buff_MagicFlute extends Buff {
     victim.fallinjury = 20;
     victim.toughness = 0;
     if (attacker) summary_mgr.apply_damage(attacker, this.injury, victim, prev_hp);
-    return 'keep'
+    return 'keep';
   }
+
   override on_update(attacker?: Entity, victim?: Entity): "keep" | "del" {
     if (!victim) return 'del';
-    const vy = calc_v(victim.velocity.y, 3, SpeedMode.AccTo, 3, 1)
-    victim.set_velocity_y(vy)
+    const vy = calc_v(victim.velocity.y, 1.5, SpeedMode.AccTo, 1.5, 1);
+    victim.set_velocity_y(vy);
     victim.handle_velocity_decay(0.25);
     switch (victim.data.type) {
       case EntityEnum.Fighter:
         if (victim.state !== StateEnum.Falling) {
-          victim.enter_frame({ id: victim.data.indexes?.falling?.[-1][0] })
+          victim.enter_frame({ id: victim.data.indexes?.falling?.[-1][0] });
         }
         break;
       case EntityEnum.Weapon:
@@ -43,8 +45,6 @@ export class Buff_MagicFlute extends Buff {
             break;
         }
     }
-    return 'keep'
+    return 'keep';
   }
 }
-
-
