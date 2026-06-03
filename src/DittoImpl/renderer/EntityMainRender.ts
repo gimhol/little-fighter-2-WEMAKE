@@ -106,7 +106,7 @@ export class EntityMainRender {
   }
 
   update_shaking(): void {
-    let { shaking, facing, buff } = this.entity;
+    let { shaking, facing, buffs: buff } = this.entity;
 
     if (!shaking) {
       for (const [, b] of buff) {

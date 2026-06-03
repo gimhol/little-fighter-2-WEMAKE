@@ -227,7 +227,7 @@ export class Entity {
 
   protected _ground_y: number = 0;
   protected _prev_ground_y: number = 0;
-  readonly buff = new Map<string, Buff>()
+  readonly buffs = new Map<string, Buff>()
 
   renderer: any;
   puppet: boolean = false;
@@ -665,9 +665,9 @@ export class Entity {
     this.reset(world, data, states)
   }
   reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
-    let buffs = Array.from(this.buff.values())
-    for (const buf of buffs) buf.del(this.id)
-    this.buff.clear();
+    let buffs = Array.from(this.buffs.values())
+    for (const buf of buffs) buf.del_victims(this.id)
+    this.buffs.clear();
 
     this._data = d;
     this.world = world;

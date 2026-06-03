@@ -132,38 +132,36 @@ export const collision_action_handlers: IActionHandler = {
   },
   [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => {
     const { lf2, world, victim, attacker } = collision;
-
     const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
     if (
       !(action.data.hitflag & victim.data.type) ||
       !(action.data.hitflag & ally_flag)
     ) return;
-
     const id = action.data.buff + '_' + victim.id;
     let buf = world.buffs.get(id);
     if (!buf) {
       buf = lf2.factory.create_buff(action.data.buff, lf2, id);
       if (!buf) return;
       world.buffs.set(id, buf);
-      buf.attacker = attacker.id;
-      buf.victims = [victim.id];
-      victim.buff.set(buf.id, buf);
+      buf.set_attacker(attacker);
+      buf.set_victims(victim);
+      victim.buffs.set(buf.id, buf);
     }
     buf.lifetime = 0;
     buf.duration = action.data.duration;
     buf.level += 1;
   },
   [ActionType.A_BUFF]: (action: IAction_ABuff, collision: Collision) => {
-    const { lf2, world, attacker } = collision;
+    const { lf2, world, attacker, victim } = collision;
     const id = action.data.buff + '_' + attacker.id;
     let buf = world.buffs.get(id);
     if (!buf) {
       buf = lf2.factory.create_buff(action.data.buff, lf2, id);
       if (!buf) return;
       world.buffs.set(id, buf);
-      buf.attacker = attacker.id;
-      buf.victims = [attacker.id];
-      attacker.buff.set(buf.id, buf);
+      buf.set_attacker(victim);
+      buf.set_victims(attacker);
+      attacker.buffs.set(buf.id, buf);
     }
     buf.lifetime = 0;
     buf.duration = action.data.duration;

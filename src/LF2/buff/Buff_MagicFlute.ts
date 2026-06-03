@@ -1,139 +1,95 @@
-import { EntityEnum, ItrKind, SpeedMode, StateEnum, type LF2 } from "..";
+import { Entity, EntityEnum, ItrKind, SpeedMode, StateEnum, type LF2 } from "..";
 import { calc_v, summary_mgr } from "../entity";
 import { Buff } from "./Buff";
 
 
 export class Buff_MagicFlute extends Buff {
   static override  readonly KIND: string | number = ItrKind.MagicFlute;
-  constructor(lf2: LF2, id: string) {
-    super(lf2, id);
-    this.tick.max = 3;
-    this.life.max = 2;
-    this.life.set_lifes(1);
+  injury = 1;
+  injury_r = 0.5;
+  override init(): void {
+    this.ticks = 3;
+    this.duration = 2;
   }
-  override job(): void {
-    const injury = 1;
-    const injury_r = 0.5;
-    const attacker = this.world.entity_map.get(this.attacker);
-    let slow = 0;
-    for (let fast = 0; fast < this.victims.length; ++fast) {
-      const vid = this.victims[fast];
-      const victim = this.world.entity_map.get(vid);
-      if (!victim) continue;
-      if (slow !== fast) this.victims[slow] = this.victims[fast];
-      slow++;
-      const prev_hp = victim.hp;
-      victim.hp_r -= injury_r;
-      victim.hp -= injury;
-      victim.fallinjury = 20;
-      victim.toughness = 0;
-      if (attacker) summary_mgr.apply_damage(attacker, injury, victim, prev_hp);
-    }
-    this.victims.length = slow;
+  override on_tick(attacker?: Entity, victim?: Entity): "keep" | "del" {
+    if (!victim) return 'del';
+    const prev_hp = victim.hp;
+    victim.hp_r -= this.injury_r;
+    victim.hp -= this.injury;
+    victim.fallinjury = 20;
+    victim.toughness = 0;
+    if (attacker) summary_mgr.apply_damage(attacker, this.injury, victim, prev_hp);
+    return 'keep'
   }
-
-  override update(d: number): void {
-    super.update(d);
-
-    const attacker = this.world.entity_map.get(this.attacker);
-
-    let slow = 0;
-    for (let fast = 0; fast < this.victims.length; ++fast) {
-      const vid = this.victims[fast];
-      const victim = this.world.entity_map.get(vid);
-      if (!victim) continue;
-      if (slow !== fast) this.victims[slow] = this.victims[fast];
-      slow++;
-
-      const vy = calc_v(victim.velocity.y, 3, SpeedMode.AccTo, 3, 1)
-      victim.set_velocity_y(vy)
-      victim.handle_velocity_decay(0.25);
-      switch (victim.data.type) {
-        case EntityEnum.Fighter:
-          if (victim.state !== StateEnum.Falling) {
-            victim.enter_frame({ id: victim.data.indexes?.falling?.[-1][0] })
-          }
-          break;
-        case EntityEnum.Weapon:
-          switch (victim.state) {
-            case StateEnum.Weapon_InTheSky:
-            case StateEnum.HeavyWeapon_InTheSky:
-              break;
-            default:
-              if (attacker) victim.team = attacker.team;
-              victim.enter_frame({ id: victim.data.indexes?.in_the_skys?.[0] });
-              break;
-          }
-      }
+  override on_update(attacker?: Entity, victim?: Entity): "keep" | "del" {
+    if (!victim) return 'del';
+    const vy = calc_v(victim.velocity.y, 3, SpeedMode.AccTo, 3, 1)
+    victim.set_velocity_y(vy)
+    victim.handle_velocity_decay(0.25);
+    switch (victim.data.type) {
+      case EntityEnum.Fighter:
+        if (victim.state !== StateEnum.Falling) {
+          victim.enter_frame({ id: victim.data.indexes?.falling?.[-1][0] })
+        }
+        break;
+      case EntityEnum.Weapon:
+        switch (victim.state) {
+          case StateEnum.Weapon_InTheSky:
+          case StateEnum.HeavyWeapon_InTheSky:
+            break;
+          default:
+            if (attacker) victim.team = attacker.team;
+            victim.enter_frame({ id: victim.data.indexes?.in_the_skys?.[0] });
+            break;
+        }
     }
-    this.victims.length = slow;
+    return 'keep'
   }
 }
 
 export class Buff_MagicFlute2 extends Buff {
   static override  readonly KIND: string | number = ItrKind.MagicFlute2;
-  constructor(lf2: LF2, id: string) {
-    super(lf2, id);
-    this.tick.max = 3;
-    this.life.max = 2;
-    this.life.set_lifes(1);
+  injury = 1;
+  injury_r = 0.5;
+
+  override init(): void {
+    this.ticks = 3;
+    this.duration = 2;
   }
-  override job(): void {
-    const injury = 1;
-    const injury_r = 0.5;
-    const attacker = this.world.entity_map.get(this.attacker);
-    let slow = 0;
-    for (let fast = 0; fast < this.victims.length; ++fast) {
-      const vid = this.victims[fast];
-      const victim = this.world.entity_map.get(vid);
-      if (!victim) continue;
-      if (slow !== fast) this.victims[slow] = this.victims[fast];
-      slow++;
-      const prev_hp = victim.hp;
-      victim.hp_r -= injury_r;
-      victim.hp -= injury;
-      victim.fallinjury = 20;
-      victim.toughness = 0;
-      if (attacker) summary_mgr.apply_damage(attacker, injury, victim, prev_hp);
-    }
-    this.victims.length = slow;
+  override on_tick(attacker?: Entity, victim?: Entity): "keep" | "del" {
+    if (!victim) return 'del';
+    const prev_hp = victim.hp;
+    victim.hp_r -= this.injury_r;
+    victim.hp -= this.injury;
+    victim.fallinjury = 20;
+    victim.toughness = 0;
+    if (attacker) summary_mgr.apply_damage(attacker, this.injury, victim, prev_hp);
+    return 'keep'
   }
 
-  override update(d: number): void {
-    super.update(d);
-
-    const attacker = this.world.entity_map.get(this.attacker);
-
-    let slow = 0;
-    for (let fast = 0; fast < this.victims.length; ++fast) {
-      const vid = this.victims[fast];
-      const victim = this.world.entity_map.get(vid);
-      if (!victim) continue;
-      if (slow !== fast) this.victims[slow] = this.victims[fast];
-      slow++;
-
-      const vy = calc_v(victim.velocity.y, 1.5, SpeedMode.AccTo, 1.5, 1)
-      victim.set_velocity_y(vy)
-      victim.handle_velocity_decay(0.25);
-      switch (victim.data.type) {
-        case EntityEnum.Fighter:
-          if (victim.state !== StateEnum.Falling) {
-            victim.enter_frame({ id: victim.data.indexes?.falling?.[-1][0] })
-          }
-          break;
-        case EntityEnum.Weapon:
-          switch (victim.state) {
-            case StateEnum.Weapon_InTheSky:
-            case StateEnum.HeavyWeapon_InTheSky:
-              break;
-            default:
-              if (attacker) victim.team = attacker.team;
-              victim.enter_frame({ id: victim.data.indexes?.in_the_skys?.[0] });
-              break;
-          }
-      }
+  override on_update(attacker?: Entity, victim?: Entity): "keep" | "del" {
+    if (!victim) return 'del';
+    const vy = calc_v(victim.velocity.y, 1.5, SpeedMode.AccTo, 1.5, 1)
+    victim.set_velocity_y(vy)
+    victim.handle_velocity_decay(0.25);
+    switch (victim.data.type) {
+      case EntityEnum.Fighter:
+        if (victim.state !== StateEnum.Falling) {
+          victim.enter_frame({ id: victim.data.indexes?.falling?.[-1][0] })
+        }
+        break;
+      case EntityEnum.Weapon:
+        switch (victim.state) {
+          case StateEnum.Weapon_InTheSky:
+          case StateEnum.HeavyWeapon_InTheSky:
+            break;
+          default:
+            if (attacker) victim.team = attacker.team;
+            victim.enter_frame({ id: victim.data.indexes?.in_the_skys?.[0] });
+            break;
+        }
     }
-    this.victims.length = slow;
+    return 'keep'
   }
 }
 

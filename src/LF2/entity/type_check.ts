@@ -1,3 +1,4 @@
+import type { Entity } from "./Entity";
 import type { BotController } from "../bot/BotController";
 import type { BallController } from "../controller/BallController";
 import type { BaseController } from "../controller/BaseController";
@@ -11,6 +12,7 @@ export const is_ball_data = (v: any) => v?.type === EntityEnum.Ball;
 export const is_fighter = (v: any) => is_fighter_data(v?.data);
 export const is_ball = (v: any) => is_ball_data(v?.data);
 export const is_weapon = (v: any) => is_weapon_data(v?.data);
+export const is_entity = (v: any): v is Entity => is_entity_data(v?.data);
 export const is_base_ctrl = (v: any): v is BaseController =>
   v?.__is_base_ctrl__ === true;
 export const is_bot_ctrl = (v: any): v is BotController =>

@@ -60,8 +60,8 @@ export class Factory {
   create_buff(kind: Key, lf2: LF2, id: string): Buff | undefined {
     const B = Factory.buff_creators.get(kind);
     if (!B) return void 0;
-    const ret = new B(lf2, id)
-    ret.kind = B.KIND;
+    const ret = new B(lf2, id, B.KIND);
+    ret.init();
     return ret;
   }
   recycle_entity(e: Entity): this {

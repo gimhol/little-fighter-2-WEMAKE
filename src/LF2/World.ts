@@ -1026,7 +1026,7 @@ export class World extends WorldDataset {
     this.infinity_mp = 0;
     this.playrate = 1;
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
-    this.buffs.forEach(v => v.life.set_lifes(v.life.max = v.life.min = 0))
+    this.buffs.forEach(v => v.duration = 0)
     if (this.stage.id !== Defines.VOID_STAGE.id)
       this.stage = new Stage(this, Defines.VOID_STAGE)
     if (this.stage.bg.id !== Defines.VOID_BG.id)
