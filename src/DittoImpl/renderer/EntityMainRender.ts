@@ -237,11 +237,11 @@ export class EntityMainRender {
 
     if (this.lf2.ui?.id === "main_page") {
       m.gray = 0.3;
-      m.mixColor = new Color('#364791');
+      m.mixColor.set('#364791');
       m.mixStength = 0.3;
       m.outlineWidth = 1;
       m.outlineAlpha = 1;
-      m.outlineColor = new Color('#131C47');
+      m.outlineColor.set('#131C47')
     } else {
       m.gray = 0;
       m.mixColor = '';
