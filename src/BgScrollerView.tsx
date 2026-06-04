@@ -26,15 +26,13 @@ function from_world_cam_x(world_x: number, lf2: LF2, canvas: HTMLCanvasElement):
 
 export function BgScrollerView(props: { lf2?: LF2 }) {
   const { lf2 } = props;
+  const world = lf2?.world
   const ref_cavnas = useRef<HTMLCanvasElement>(null)
 
   const draw_cam_bar = useCallback((x: number) => {
     const canvas = ref_cavnas.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return;
-    const world = lf2?.world
-    if (!world) return;
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx || !world) return;
     const background_w = world.stage.width;
     const screen_w = Defines.CLASSIC_SCREEN_WIDTH;
     const { width, height } = canvas;
@@ -57,16 +55,13 @@ export function BgScrollerView(props: { lf2?: LF2 }) {
   }, [lf2])
 
   useEffect(() => {
-    draw_cam_bar(lf2?.world.current_cam_pos.x ?? 0)
-  }, [draw_cam_bar, lf2])
+    draw_cam_bar(world?.current_cam_pos.x ?? 0)
+  }, [draw_cam_bar, world])
 
-  useCallbacks(lf2?.world.callbacks, {
+  useCallbacks(world?.callbacks, {
     on_cam_move: (cam_x) => {
-      const world = lf2?.world
-      if (!world) return;
       const canvas = ref_cavnas.current;
-      if (!canvas) return;
-
+      if (!world || !canvas) return;
       const { width, height } = canvas.getBoundingClientRect();
       canvas.width = width;
       canvas.height = height;
