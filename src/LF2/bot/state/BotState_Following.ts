@@ -9,7 +9,11 @@ export class BotState_Following extends BotState_Base {
   }
   override update(dt: number) {
     if (this.me.hp <= 0) return BSE.Dead;
-    if (this.stage.is_stage_finish) return BSE.StageEnd;
+    const { s } = this;
+    if (s.is_chapter_finish)
+      return BSE.Idle;
+    if (s.is_stage_finish)
+      return BSE.StageEnd;
     if (this.handle_defends()) return;
     if (this.handle_block()) return;
     this.random_jumping();

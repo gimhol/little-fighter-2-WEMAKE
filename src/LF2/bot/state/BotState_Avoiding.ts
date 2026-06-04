@@ -11,8 +11,9 @@ export class BotState_Avoiding extends BotState_Base {
   }
   override update(dt: number): BSE | undefined {
     if (this.me.hp <= 0) return BSE.Dead;
-    if (this.stage.is_stage_finish) return BSE.StageEnd;
     const { s } = this;
+    if (s.is_chapter_finish)
+      return BSE.Idle;
     if (s.is_stage_finish)
       return BSE.StageEnd;
     const { c, me } = this;
