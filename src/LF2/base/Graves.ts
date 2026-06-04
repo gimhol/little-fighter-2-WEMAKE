@@ -11,7 +11,7 @@ export class Graves<T> {
   }
   take(): T | undefined {
     const ret = this.l[this.i]
-    if (!ret) return ret;
+    if (ret == void 0) return ret;
     this.l[this.i] = void 0;
     ++this.i;
     return ret
