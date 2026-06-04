@@ -1,6 +1,5 @@
 import { O_ID, OID, TeamEnum } from "@/LF2/defines";
 import { TestCase } from "../TestCase";
-import { new_id } from "@/LF2/base";
 import { ActionDirector, Entity, GK, T_E, TE } from "@/LF2";
 
 export class BotAvoiding extends TestCase {
@@ -12,7 +11,7 @@ export class BotAvoiding extends TestCase {
       e.blinking = i ? Number.MAX_SAFE_INTEGER : 0;
       e.key_role = true;
       e.name = i ? 'Chasing' : 'Avoiding'
-      e.ctrl = this.lf2.factory.create_ctrl(e.data.id, new_id(), e)
+      e.ctrl = this.lf2.factory.create_ctrl(e.data.id, this.lf2.new_id, e)
     })
   }
 }

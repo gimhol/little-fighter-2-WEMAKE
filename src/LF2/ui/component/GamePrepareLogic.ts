@@ -2,7 +2,6 @@ import { Ditto } from "@/LF2/ditto";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { ILf2Callback } from "@/LF2/ILf2Callback";
 import { IPropsMeta } from "@/LF2/utils";
-import { new_team } from "../../base";
 import LocalController from "../../controller/LocalController";
 import { Defines, FacingFlag, TeamEnum } from "../../defines";
 import { BackgroundSwitcher } from "./BackgroundSwitcher";
@@ -84,7 +83,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
         debugger;
         continue;
       }
-      fighter.team = slot_info.team || new_team();
+      fighter.team = slot_info.team || this.lf2.new_team;
       fighter.stat_bar_type = StatBarType.UI;
       fighter.facing = is_stage_mode ?
         FacingFlag.Right :

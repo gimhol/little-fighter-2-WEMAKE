@@ -1,4 +1,3 @@
-import { new_team } from "../base";
 import { IEntityData } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import { Entity } from "../entity/Entity";
@@ -34,7 +33,7 @@ export class EntitiesHelper {
       const entity = this.lf2.factory.create_entity(this.lf2.world, data);
       if (!entity) continue;
       entity.ctrl = this.lf2.factory.create_ctrl(entity.data.id, "", entity)
-      entity.team = team === '?' ? this.team_randoming.take() : (team || new_team())
+      entity.team = team === '?' ? this.team_randoming.take() : (team || this.lf2.new_team)
       this.lf2.random_entity_info(entity)
       entity.attach();
       ret.push(entity);

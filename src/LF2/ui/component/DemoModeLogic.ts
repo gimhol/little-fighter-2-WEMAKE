@@ -8,19 +8,18 @@ import { Entity } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
 import { Times } from "@/LF2/utils/Times";
-import { new_team } from "../../base";
 import { Defines, EntityGroup, GameKey } from "../../defines";
 import IEntityCallbacks from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
 import { IPropsMeta, traversal } from "../../utils";
 import { IUIKeyEvent } from "../IUIKeyEvent";
+import { UINode } from "../UINode";
 import { CameraCtrl } from "./CameraCtrl";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
+import { Jalousie } from "./Jalousie";
+import { Label } from "./Label";
 import { UIComponent } from "./UIComponent";
-import { Jalousie } from "./Jalousie"
-import { Label } from "./Label"
-import { UINode } from "../UINode"
 
 
 enum StateKey {
@@ -274,7 +273,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
 
       const fighter = this.lf2.factory.create_entity(this.world, fighter_data);
       if (!fighter) return;
-      fighter.team = team ?? new_team();
+      fighter.team = team ?? this.lf2.new_team;
       fighter.facing = is_stage_mode ?
         FacingFlag.Right :
         this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;

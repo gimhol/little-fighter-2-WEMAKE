@@ -1,4 +1,4 @@
-import { Callbacks, get_short_file_size_txt, new_id, new_team, PIO } from "./base";
+import { Callbacks, get_short_file_size_txt, PIO } from "./base";
 import { regist_buffs } from './buff/_';
 import { LocalController } from "./controller";
 import * as D from "./defines";
@@ -82,6 +82,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   readonly factory: Factory = new Factory();
   readonly bgms: string[] = []
 
+  protected __id = 100;
+  protected __team = Number(D.TeamEnum.Max);
+
+
   protected _disposed: boolean = false;
   protected _ui_stacks: UI.UIStack[] = [];
   protected _loading: boolean = false;
@@ -123,6 +127,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   get ui_loaded(): boolean {
     return this._ui_loaded;
   }
+  get new_id() { return `${++this.__id}` }
+  get new_team() { return `team_${++this.__team}` }
   readonly world: World;
 
   /**
@@ -269,7 +275,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   random_entity_info(e: Entity) {
     const { left: l, right: r, near: n, far: f } = this.world;
-    e.id = new_id();
+    e.id = this.new_id;
     e.facing = this.mt.range(0, 100) % 2 ? -1 : 1;
     e.position.set(
       this.mt.range(l, r),
@@ -496,7 +502,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       fighter = this.factory.create_entity(this.world, data)
       if (!fighter) return void 0;
       fighter.name = player_info.name;
-      fighter.team = team || new_team();
+      fighter.team = team || this.new_team;
       fighter.ctrl = new LocalController(player_id, fighter);
       fighter.attach();
       this.random_entity_info(fighter);

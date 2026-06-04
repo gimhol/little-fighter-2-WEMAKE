@@ -2,7 +2,7 @@ import { Factory } from "../Factory";
 import { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
-import { Callbacks, new_id, new_team } from "../base";
+import { Callbacks } from "../base";
 import { Buff } from "../buff/Buff";
 import { sus_cases } from "../cases_instances";
 import { Collision, collision_clone } from "../collision/Collision";
@@ -671,7 +671,7 @@ export class Entity {
 
     this._data = d;
     this.world = world;
-    this.id = new_id();
+    this.id = world.lf2.new_id;
     this.wait = 0;
     this._lifetime = 0;
     this._prev_ground_y = 0;
@@ -713,7 +713,7 @@ export class Entity {
     this._prev_velocity.set(0, 0, 0);
     this.callbacks.clear();
     this._name = null
-    this._team = new_team();
+    this._team = world.lf2.new_team;
     this._landing_frame = null;
     this._bearer = null;
     this._holding = null;

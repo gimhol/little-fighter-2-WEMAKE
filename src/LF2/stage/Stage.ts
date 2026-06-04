@@ -1,7 +1,6 @@
 import type { World } from "../World";
 import Callbacks from "../base/Callbacks";
 import FSM from "../base/FSM";
-import { new_team } from "../base/new_id";
 import { Background } from "../bg/Background";
 import { Defines, Difficulty, IBgData, IStageInfo, IStageObjectInfo, IStagePhaseInfo } from "../defines";
 import { IDialogInfo } from "../defines/IDialogInfo";
@@ -130,7 +129,7 @@ export class Stage {
     this.drink_r = this.bg.width + 1200
     if (this.data.next)
       this.next_stage = this.lf2.datas.stages.find(v => v.id === this.data.next);
-    this.team = new_team();
+    this.team = this.lf2.new_team;
   }
 
   readonly fsm = new FSM<Status>().add({

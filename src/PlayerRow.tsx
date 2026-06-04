@@ -9,7 +9,7 @@ import { Input } from "./Component/Input";
 import Select from "./Component/Select";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
-import { BaseController, Entity, new_team, TeamEnum } from "./LF2";
+import { BaseController, Entity, TeamEnum } from "./LF2";
 import { DummyEnum } from "./LF2/bot/DummyEnum";
 import LocalController from "./LF2/controller/LocalController";
 import { GameKey } from "./LF2/defines/GameKey";
@@ -148,7 +148,7 @@ export function PlayerRow(props: Props) {
             onChange={(v) => {
               set_team(v)
               if (!puppet) return;
-              puppet.team = v || new_team();
+              puppet.team = v || lf2.new_team;
             }}
           />
           <Button onClick={on_click_toggle}>{t(puppet ? "Del" : "Add")}</Button>

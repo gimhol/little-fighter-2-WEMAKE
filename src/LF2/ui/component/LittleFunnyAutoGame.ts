@@ -1,5 +1,4 @@
-import { new_team } from "@/LF2/base";
-import { CMD, Defines, type IEntityData } from "@/LF2/defines";
+import { CMD, type IEntityData } from "@/LF2/defines";
 import { IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { Ticker } from "@/LF2/Ticker";
@@ -50,7 +49,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     const fighter = this.lf2.factory.create_entity(this.world, data)
     if (!fighter) return;
     fighter.ctrl = this.lf2.factory.create_ctrl(data.id, '', fighter);
-    fighter.team = new_team();
+    fighter.team = this.lf2.new_team;
     fighter.set_position_x(this._lr * this.world.bg.width)
     fighter.facing = this._lr ? -1 : 1;
     fighter.callbacks.add(this._fighter_cbs)

@@ -1,7 +1,6 @@
 import { IPropsMeta } from "@/LF2";
 import { ILf2Callback } from "../../../ILf2Callback";
 import { PlayerInfo } from "../../../PlayerInfo";
-import { new_id } from "../../../base";
 import { FSM } from "../../../base/FSM";
 import { CheatType, EntityGroup as EG, IEntityData, TeamEnum } from "../../../defines";
 import { Defines } from "../../../defines/defines";
@@ -287,7 +286,7 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
       com = p;
     }
     if (!com) {
-      com = new PlayerInfo(`com_` + new_id(), "com", false)
+      com = new PlayerInfo(`com_` + this.lf2.new_id, "com", false)
       com.set_is_com(true, false);
       this.lf2.players.set(com.id, com)
     }
