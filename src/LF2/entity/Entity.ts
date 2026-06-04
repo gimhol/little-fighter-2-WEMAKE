@@ -572,17 +572,19 @@ export class Entity {
     const prev = this._ctrl
     this._ctrl = v;
     this.callbacks.emit('on_ctrl_changed')(v, prev, this)
-    prev.dispose();
   }
   get key_role(): boolean {
     if (this._key_role !== null) return this._key_role;
-    const is_key = [
-      EntityGroup.Regular,
-      EntityGroup.Boss
-    ].some(a => {
-      return this._data.base.group?.some(b => a == b)
-    })
-    return this._key_role = !!this.ctrl.player || is_key;
+    if (this.ctrl.player) return this._key_role = true;
+    const { group } = this._data.base
+    if (!group?.length) return false;
+    for (let i = 0; i < group.length; ++i) {
+      if (
+        group[i] == EntityGroup.Regular ||
+        group[i] == EntityGroup.Boss
+      ) return this._key_role = true
+    }
+    return this._key_role = false;
   }
   set key_role(v: boolean | null) {
     if (this._key_role === v) return;
@@ -1904,7 +1906,6 @@ export class Entity {
     if (!this._mounted) return;
     this._mounted = 0;
     this.world.del_entity(this);
-    this.ctrl.dispose();
     this.callbacks.emit("on_disposed")(this);
     this.callbacks.clear()
     this.reset(this.world, this.data, this.states);

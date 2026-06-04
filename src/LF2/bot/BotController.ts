@@ -64,7 +64,7 @@ export class BotController extends BaseController {
   en_out_of_range: boolean = false;
   protected _bot_id: string | undefined;
   protected _bot: IBotData | undefined;
-  protected _dataset: Required<IBotDataSet>;
+  protected _dataset = new BotDataSet();
 
   get dummy(): DummyEnum {
     return this._dummy;
@@ -200,7 +200,6 @@ export class BotController extends BaseController {
 
   constructor(player_id: string, entity: Entity) {
     super(player_id, entity);
-    this._dataset = new BotDataSet();
   }
 
   w_atk_too_far(o: Entity) {

@@ -16,17 +16,69 @@ enum Status {
   HOLD = 2,
 }
 
+class CtrlKeyStatus {
+  readonly owner: BaseController;
+  L: KeyStatus;
+  R: KeyStatus;
+  U: KeyStatus;
+  D: KeyStatus;
+  d: KeyStatus;
+  j: KeyStatus;
+  a: KeyStatus;
+  get F() { return this.L }
+  get B() { return this.L }
+  constructor(owner: BaseController) {
+    this.owner = owner;
+    this.L = new KeyStatus(this.owner)
+    this.R = new KeyStatus(this.owner)
+    this.U = new KeyStatus(this.owner)
+    this.D = new KeyStatus(this.owner)
+    this.d = new KeyStatus(this.owner)
+    this.j = new KeyStatus(this.owner)
+    this.a = new KeyStatus(this.owner)
+  }
+}
+
+class CtrlDoubleClicks {
+  readonly owner: BaseController;
+  L: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+  R: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+  U: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+  D: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+  d: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+  j: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+  a: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
+  get F() { return this.L }
+  get B() { return this.L }
+  constructor(owner: BaseController) {
+    this.owner = owner;
+    this.L = new DoubleClick("d")
+    this.R = new DoubleClick("a")
+    this.U = new DoubleClick("j")
+    this.D = new DoubleClick("L")
+    this.d = new DoubleClick("R")
+    this.j = new DoubleClick("U")
+    this.a = new DoubleClick("D")
+  }
+}
 /**
  * @link https://www.processon.com/view/link/6765125f16640e2a68b21418?cid=6764eb96c3e02b46ac818e40
  */
 export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
-  readonly player_id: string;
+  readonly keys = new CtrlKeyStatus(this);
+  readonly dbc = new CtrlDoubleClicks(this);
+  private readonly _time = new Times(10, Number.MAX_SAFE_INTEGER);
+
+  player_id: string;
   player: PlayerInfo | undefined;
   private _chase_pos: IVector3 | null = null;
-  private _time = new Times(10, Number.MAX_SAFE_INTEGER);
-  private _disposers = new Set<() => void>();
+  entity: Entity;
+
+  private _key_list: string = '';
+  private _readable_key_list: string = '';
+
 
   get world() {
     return this.entity.world;
@@ -36,10 +88,6 @@ export class BaseController {
   }
   get time() {
     return this._time.value;
-  }
-  set disposer(f: (() => void)[] | (() => void)) {
-    if (Array.isArray(f)) for (const i of f) this._disposers.add(i);
-    else this._disposers.add(f);
   }
   get chase_pos(): Readonly<IVector3> {
     if (!this._chase_pos)
@@ -54,53 +102,6 @@ export class BaseController {
       round_float(z)
     )
   }
-  entity: Entity;
-  keys: Record<LGK, KeyStatus> = new (class _ {
-    readonly owner: BaseController;
-    L: KeyStatus;
-    R: KeyStatus;
-    U: KeyStatus;
-    D: KeyStatus;
-    d: KeyStatus;
-    j: KeyStatus;
-    a: KeyStatus;
-    get F() { return this.L }
-    get B() { return this.L }
-    constructor(owner: BaseController) {
-      this.owner = owner;
-      this.L = new KeyStatus(this.owner)
-      this.R = new KeyStatus(this.owner)
-      this.U = new KeyStatus(this.owner)
-      this.D = new KeyStatus(this.owner)
-      this.d = new KeyStatus(this.owner)
-      this.j = new KeyStatus(this.owner)
-      this.a = new KeyStatus(this.owner)
-    }
-  })(this);
-
-  readonly dbc: Record<LGK, DoubleClick<{ frame: IFrameInfo, facing: TFace }>> = new (class _ {
-    readonly owner: BaseController;
-    L: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-    R: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-    U: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-    D: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-    d: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-    j: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-    a: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-    get F() { return this.L }
-    get B() { return this.L }
-    constructor(owner: BaseController) {
-      this.owner = owner;
-      this.L = new DoubleClick("d")
-      this.R = new DoubleClick("a")
-      this.U = new DoubleClick("j")
-      this.D = new DoubleClick("L")
-      this.d = new DoubleClick("R")
-      this.j = new DoubleClick("U")
-      this.a = new DoubleClick("D")
-    }
-  })(this);
-
   get LR(): 0 | 1 | -1 {
     const L = !this.keys.L.is_end() || this.keys.L.is_start();
     const R = !this.keys.R.is_end() || this.keys.R.is_start();
@@ -122,8 +123,6 @@ export class BaseController {
   }
   get dj(): 0 | 1 | -1 { return -this.jd as 0 | 1 | -1 }
 
-  private _key_list: string = '';
-  private _readable_key_list: string = '';
   get key_list() { return this._readable_key_list; }
   reset_key_list() {
     this._key_list = ''
@@ -260,9 +259,6 @@ export class BaseController {
     const { lf2 } = entity
     this.player = lf2.players.get(player_id);
     this.entity = entity;
-  }
-  dispose(): void {
-    for (const f of this._disposers) f();
   }
   tst(type: "hit" | "hld" | "dbl" | "kd" | 'ku', key: GK) {
     const conflict_key = CONFLICTS_KEY_MAP[key];
