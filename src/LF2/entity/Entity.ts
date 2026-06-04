@@ -190,14 +190,6 @@ export class Entity {
 
 
   /**
-   * 最近一次攻击信息
-   *
-   * @type {Collision}
-   * @memberof Entity
-   */
-  lastest_collision!: Collision | null;
-
-  /**
    * 最近一次被攻击信息
    *
    * @type {Collision}
@@ -758,7 +750,6 @@ export class Entity {
     this.prev_cpoint_a = null;
     this.collision_list.length = 0;
     this.collided_list.length = 0;
-    this.lastest_collision = null;
     this.lastest_collided = null;
     this._outline_color = '';
 

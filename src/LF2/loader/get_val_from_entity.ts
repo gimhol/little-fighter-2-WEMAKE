@@ -54,7 +54,13 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.Shaking]: e => e.shaking,
   [E_Val.Holding]: e => e.holding ? 1 : 0,
   [E_Val.HpRecoverable]: e => e.hp_r - e.hp,
-  [E_Val.LastestCollidedItrKind]: e => e.lastest_collided?.itr.kind
+  [E_Val.HitByMagicFlute]: e => {
+    for (const [, { itr }] of e.superpunchs) {
+      if (itr.kind == ItrKind.MagicFlute || itr.kind == ItrKind.MagicFlute2)
+        return 1;
+    }
+    return 0;
+  }
 }
 export const entity_world_val_getters = new Map<string, undefined | IValGetter<Entity>>();
 

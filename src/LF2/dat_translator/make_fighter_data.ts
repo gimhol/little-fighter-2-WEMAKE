@@ -286,14 +286,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         break;
       case 181:
       case 182:
-        editing.hit('j', {
-          id: "100",
-          expression: new CondMaker<EV>()
-            .add(EV.HP, ">", 0)
-            .and(EV.LastestCollidedItrKind, "!=", ItrKind.MagicFlute)
-            .and(EV.LastestCollidedItrKind, "!=", ItrKind.MagicFlute2)
-            .done(),
-        });
+        // 受身，预加载时会用，参见preprocess_frame.ts
+        if (!frame.hit?.j) editing.hit('j', { id: "100" });
         break;
       case 183:
       case 184:
@@ -303,12 +297,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
       case 186: break;
       case 187:
       case 188:
-        editing.hit('j', {
-          id: "108",
-          expression: new CondMaker<EV>()
-            .add(EV.HP, ">", 0)
-            .done(),
-        });
+        // 受身，预加载时会用，参见preprocess_frame.ts
+        if (!frame.hit?.j) editing.hit('j', { id: "108" });
         break;
       case 189:
       case 190:

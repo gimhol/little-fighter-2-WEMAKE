@@ -1,8 +1,9 @@
 import { LF2 } from "../LF2";
+import { CondMaker } from "../dat_translator";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
 import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
 import { set_hit_flag } from "../dat_translator/set_hit_flag";
-import { EntityEnum, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, StateEnum } from "../defines";
+import { EntityEnum, EntityVal as EV, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, SE, StateEnum } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
 import read_nums from "../ui/utils/read_nums";
@@ -16,6 +17,11 @@ import { preprocess_next_frame } from "./preprocess_next_frame";
 import { preprocess_opoint } from "./preprocess_opoint";
 
 
+const breakfall_j_expression = new CondMaker<EV>()
+  .add(EV.HP, ">", 0)
+  .and(EV.HitByMagicFlute, "!=", 1)
+  .and(EV.CAUGHT, "!=", 1)
+  .done()
 
 export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
   if (data.processed != false) { }
@@ -71,6 +77,24 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
       frame.seq_map!.set(k, o[k] = nf)
     });
   }
+
+  /*
+    NOTE: 
+      这是对按键受身的限制
+      突然觉得可能有更好的做法：
+        我应该通过Buff与Ctrl来限制响应按键的功能
+        但目前就这样吧
+        - Gim 2026年6月4日
+  */
+  if (
+    frame.state === SE.Falling &&
+    frame.hit?.j &&
+    !Array.isArray(frame.hit.j) &&
+    !frame.hit.j.expression
+  ) {
+    frame.hit.j.expression = breakfall_j_expression;
+  }
+
   traversal(frame.hit, (k, v, o) => { if (v) o[k] = preprocess_next_frame(o[k]!) });
   traversal(frame.hold, (k, v, o) => { if (v) o[k] = preprocess_next_frame(v) });
   traversal(frame.key_down, (k, v, o) => { if (v) o[k] = preprocess_next_frame(v) });
