@@ -1,3 +1,4 @@
+import { Graves } from "./base/Graves";
 import type { Buff } from "./buff/Buff";
 import type { BaseController } from "./controller/BaseController";
 import type { IEntityData } from "./defines/IEntityData";
@@ -24,7 +25,7 @@ export type Key = string | number | symbol
 
 export class Factory {
   static readonly TAG = `Factory`;
-  readonly graves_maps = new Map<Key, Entity[]>();
+  readonly graves_maps = new Map<Key, Graves<Entity>>();
   static readonly entity_creators = new Map<Key, IEntityCreators>();
   static readonly ctrl_creators = new Map<Key, ICtrlCreator>();
   static readonly buff_creators = new Map<Key, IBuffCreator>();
@@ -66,12 +67,12 @@ export class Factory {
   }
   recycle_entity(e: Entity): this {
     let graves = this.graves_maps.get(e.data.type);
-    if (!graves) this.graves_maps.set(e.data.type, graves = []);
-    graves.push(e);
+    if (!graves) this.graves_maps.set(e.data.type, graves = new Graves());
+    graves.add(e);
     return this;
   }
   acquire_entity(type: Key): Entity | undefined {
-    return this.graves_maps.get(type)?.pop()
+    return this.graves_maps.get(type)?.take()
   }
   create_entity(...args: Parameters<IEntityCreators>): Entity | undefined {
     return Factory.entity_creators.get(args[1].type)?.(...args);

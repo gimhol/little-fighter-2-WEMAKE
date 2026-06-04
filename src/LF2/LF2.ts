@@ -1,4 +1,5 @@
 import { Callbacks, get_short_file_size_txt, PIO } from "./base";
+import { Graves } from "./base/Graves";
 import { regist_buffs } from './buff/_';
 import { LocalController } from "./controller";
 import * as D from "./defines";
@@ -98,7 +99,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   protected _cheat_keys = ''
   protected _cheat_gkeys = new Map<string, string>()
   protected _cheat_gkeys_matchs = new Set<string>()
-  protected _keys_pool: Keys[] = [];
+  protected _keys_graves: Graves<Keys> = new Graves();
   first_ui: string = 'init';
   readonly _keys: Keys[] = [];
 
@@ -664,8 +665,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   create_keys(): Keys {
-    let r = this._keys_pool.pop();
-    if (!r) r = new Keys(this)
+    const r = this._keys_graves.take() ?? new Keys(this);
     r.mount();
     return r
   }
@@ -679,7 +679,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   recycle_keys(keys: Keys): void {
     const idx = this._keys.indexOf(keys);
     if (idx >= 0) this._keys.splice(idx, 1);
-    this._keys_pool.push(keys);
+    this._keys_graves.add(keys);
   }
 }
 
