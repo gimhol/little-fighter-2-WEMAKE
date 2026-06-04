@@ -1,3 +1,5 @@
+import { Graves } from "@/LF2/base/Graves";
+
 export type Kind = string | number | symbol;
 export interface IInstCreator<C> {
   kind: Kind,
@@ -7,15 +9,15 @@ export interface IInstCreator<C> {
 }
 export abstract class InstFactory<T> {
   readonly abstract TAG: string;
-  readonly graves_maps = new Map<Kind, T[]>();
+  readonly graves_maps = new Map<Kind, Graves<T>>();
   abstract get_kind(inst: T): Kind;
   abstract set_kind(inst: T, kind: Kind): void;
   readonly creators = new Map<Kind, IInstCreator<T>>();
   register(creator: IInstCreator<T>): void {
     this.creators.set(creator.kind, creator);
   }
-  
-  
+
+
   /**
    * Description placeholder
    *
@@ -32,7 +34,7 @@ export abstract class InstFactory<T> {
     if (cls !== creator.cls)
       throw new Error(`[${TAG}::get] failed! cls incorrect ${kind.toString()}`);
     const graves = this.graves_maps.get(kind);
-    const ret: C = (graves?.pop() ?? creator.create()) as C;
+    const ret: C = (graves?.take() ?? creator.create()) as C;
     if (!(ret instanceof creator.cls))
       throw new Error(`[${TAG}::get] failed! cls incorrect ${kind.toString()}`);
     creator.reset(ret);
@@ -44,7 +46,7 @@ export abstract class InstFactory<T> {
     const kind = this.get_kind(inst);
     if (!kind) throw new Error(`[${TAG}::recycle] failed! invalid kind ${kind.toString()}`);
     let graves = this.graves_maps.get(kind);
-    if (!graves) this.graves_maps.set(kind, [inst]);
-    else graves.push(inst);
+    if (!graves) this.graves_maps.set(kind, graves = new Graves());
+    graves.add(inst);
   }
 }
