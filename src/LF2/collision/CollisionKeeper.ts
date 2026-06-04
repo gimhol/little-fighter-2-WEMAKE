@@ -69,38 +69,23 @@ export class CollisionKeeper {
       this.add(i.a_type, i.itr, i.v_type, i.bdy, i.run.bind(i));
     }
   }
-  get(
-    a_type: TEntityEnum,
-    itr_kind: ItrKind,
-    v_type: TEntityEnum,
-    bdy_kind: BdyKind,
-    a_state: StateEnum,
-    b_state: StateEnum,
-  ) {
-    if (itr_kind === void 0) {
-      console.warn("[CollisionHandler] itr.kind got", itr_kind);
-      debugger;
-    }
-    if (bdy_kind === void 0) {
-      console.warn("[CollisionHandler] bdy.kind got", bdy_kind);
-      debugger;
-    }
-    return this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}_${a_state}_${b_state}`);
-  }
 
-  handler(collision: Collision) {
-    return this.get(
-      collision.attacker.data.type,
-      collision.itr.kind,
-      collision.victim.data.type,
-      collision.bdy.kind,
-      collision.attacker.state,
-      collision.victim.state,
-    )
+  load_handlers(collision: Collision): boolean {
+    collision.handlers.length = 0;
+    const a_type = collision.attacker.data.type
+    const itr_kind = collision.itr.kind
+    const v_type = collision.victim.data.type
+    const bdy_kind = collision.bdy.kind
+    const a_state = collision.attacker.state
+    const b_state = collision.victim.state
+    const l = this.pair_map.get(`${a_type}_${itr_kind}_${v_type}_${bdy_kind}_${a_state}_${b_state}`);
+    if (!l?.length) return false;
+    collision.handlers.push(...l);
+    return true;
   }
 
   handle(collision: Collision) {
-    const handlers = this.handler(collision);
+    const { handlers } = collision;
     if (Ditto.DEV && handlers) {
       const collision_desc =
         `[${collision.attacker.data.type}]#${ItrKind[collision.itr.kind]} => ` +

@@ -107,7 +107,7 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   bdy_index: number;
   priority: number;
 
-  handlers: Readonly<ICollisionFunc> | null;
+  handlers: ICollisionFunc[];
   injury: number | null;
   injury_r: number | null;
   real_injury: number | null;
@@ -174,14 +174,13 @@ export function collision_new(o: Readonly<ICollisionInits>): Collision {
   c.a_cube = a_cube
   c.b_cube = b_cube
   c.rest = rest;
-  c.handlers = [];
+  if (c.handlers) c.handlers.length = 0;
+  else c.handlers = [];
   c.priority = ENTITY_PRIORITY_MAP[a.data.type];
   c.injury = null;
   c.injury_r = null;
   c.real_injury = null;
   c.real_injury_r = null;
-
-
   return c as Collision; // 虽然有个as.... 但是...
 }
 
@@ -313,6 +312,5 @@ export function collision_test(c: Collision): boolean {
 
   if (bdy.tester?.run(c) === false) return false;
   if (itr.tester?.run(c) === false) return false;
-  c.handlers = collisions_keeper.handler(c) || null
-  return !!c.handlers;
+  return collisions_keeper.load_handlers(c);
 }
