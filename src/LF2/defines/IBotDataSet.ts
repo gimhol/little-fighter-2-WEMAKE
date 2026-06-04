@@ -137,8 +137,8 @@ export class BotDataSet implements Required<IBotDataSet> {
   j_atk_min_z = -60;
   j_atk_max_z = 60;
   /** 跳攻触发范围Y */
-  j_atk_min_y = -160;
-  j_atk_max_y = 160;
+  j_atk_min_y = -260;
+  j_atk_max_y = 260;
   /** 跳越欲望 */
   jump_desire = 50;
 

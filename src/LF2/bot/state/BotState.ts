@@ -109,14 +109,14 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
     const dx = target.x - me.position.x;
     const en_facing = target.facing;
 
-    // TODO: 是否会存在倒着飞的玩意?
-    if (dx >= 0 && en_facing < 0 && me.facing < 0)
-      c.click(GK.R);
-
-    if (dx <= 0 && en_facing > 0 && me.facing > 0)
-      c.click(GK.L)
-
     if (c.desire('handle_defends') >= c.defend_desire) {
+      // TODO: 是否会存在倒着飞的玩意?
+      if (dx >= 0 && en_facing < 0 && me.facing < 0)
+        c.click(GK.R);
+
+      if (dx <= 0 && en_facing > 0 && me.facing > 0)
+        c.click(GK.L)
+
       c.click(GK.d)
       return true
     }
