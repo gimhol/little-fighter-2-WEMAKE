@@ -1,6 +1,5 @@
 import type { IStyle, LF2 } from "@/LF2";
 import { BufferGeometry, Mesh, ShaderMaterial } from "three";
-import * as T from "../../_t";
 import { IInstCreator, MaterialFactory, MaterialKind, MeshFactory } from "../factory";
 import { get_static_plane_geometry } from "../GeometryKeeper";
 const TEXT_GEOMETRY = get_static_plane_geometry(1, 1);
@@ -31,14 +30,14 @@ export class SmallTextMesh extends Mesh<BufferGeometry, ShaderMaterial> {
   set fillStyle(v: string) {
     this._fillStyle = v
     this.material.uniforms.mixStength.value = v ? 1 : 0;
-    this.material.uniforms.mixColor.value = new T.Color(v ? v : void 0);
+    this.material.uniforms.mixColor.value.set(v ? v : 0)
   }
   get strokeStyle() { return this._strokeStyle }
   set strokeStyle(v: string) {
     this._strokeStyle = v
     this.material.uniforms.outlineAlpha.value = v ? 1 : 0;
     this.material.uniforms.outlineWidth.value = v ? 1 : 0;
-    this.material.uniforms.outlineColor.value = new T.Color(v ? v : void 0);
+    this.material.uniforms.outlineColor.value.set(v ? v : 0);
   }
   async set_text(lf2: LF2, text: string): Promise<this> {
     if (this._text == text) return this;

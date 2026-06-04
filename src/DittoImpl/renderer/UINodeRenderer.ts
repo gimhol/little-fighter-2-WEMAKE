@@ -6,10 +6,10 @@ import { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { is_num, is_str, round } from "@/LF2/utils";
 import * as T from "../_t";
-import { SRGBColorSpace, CSS2DObject } from "../_t";
+import { CSS2DObject, SRGBColorSpace } from "../_t";
 import { ImageMgr } from "../ImageMgr";
 import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
-import { get_static_plane_geometry, get_ninepatch_geometry, get_plane_geometry } from "./GeometryKeeper";
+import { get_ninepatch_geometry, get_plane_geometry, get_static_plane_geometry } from "./GeometryKeeper";
 import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
 import type { WorldRenderer } from "./WorldRenderer";
@@ -278,7 +278,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._css_obj.center.set(this.ui.center.x, this.ui.center.y);
   }
   update_texture_attributes(dt: number) {
-    const t: T.Texture = this.mesh.material.uniforms.tex.value;
+    const t = this.mesh.material.texture;
     if (!t || !this._ui_img) return;
     const { offsetAnimX = 0, offsetAnimY = 0, offsetAnimR = 0 } = this._ui_img;
     const { wrapS, wrapT, repeatX, repeatY } = this._ui_img;
