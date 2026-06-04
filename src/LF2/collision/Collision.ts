@@ -268,7 +268,7 @@ export function collision_from_snapshot(lf2: LF2, snapshot: ICollisionSnapshot):
 }
 
 export function collision_clone(src: Collision): Collision {
-  return Object.assign({}, src, { id: src.lf2.new_id });
+  return { ...src, id: src.lf2.new_id }
 }
 
 export function collision_test(c: Collision): boolean {
