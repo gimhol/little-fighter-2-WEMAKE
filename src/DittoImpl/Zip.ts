@@ -82,7 +82,8 @@ export class __Zip implements IZip {
   file(path: string | RegExp): ZipObject | null | ZipObject[] {
     const { files } = this;
     if (is_str(path)) return files[path] ?? null;
-    const k = '' + path
+    const flags = [...path.flags].sort().join('');
+    const k = path.source + '|' + flags;
     if (this._caches[k]) return this._caches[k];
     const ret: ZipObject[] = this._caches[k] = [];
     for (const key in files) {
