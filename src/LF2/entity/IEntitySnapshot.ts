@@ -20,9 +20,9 @@ export interface IEntitySnapshot {
   prev_velocity: IVector3Like,
   velocity: IVector3Like,
   copies: string[],
-  vrests: [string, ICollisionSnapshot][],
-  // blockers: [string, ICollisionSnapshot][],    // read it from vrests
-  // superpunchs: [string, ICollisionSnapshot][], // read it from vrests
+  vrests: [string, string][],
+  blockers: [string, string][]
+  superpunchs: [string, string][]
 
   emitters: string[],
   data: string,

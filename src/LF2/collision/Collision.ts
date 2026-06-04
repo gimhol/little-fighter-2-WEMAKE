@@ -62,16 +62,17 @@ export interface ICollisionFunc {
   (collision: Collision): void
 }
 export interface Collision extends ICollisionInits, ICollisionSnapshot {
-  readonly lf2: LF2;
-  readonly world: World;
-  readonly aid: string;
-  readonly vid: string;
-  readonly attacker: Entity;
-  readonly victim: Entity;
-  readonly itr: Readonly<IItrInfo>;
-  readonly bdy: Readonly<IBdyInfo>;
-  readonly aframe: Readonly<IFrameInfo>;
-  readonly bframe: Readonly<IFrameInfo>;
+  id: string;
+  lf2: LF2;
+  world: World;
+  aid: string;
+  vid: string;
+  attacker: Entity;
+  victim: Entity;
+  itr: Readonly<IItrInfo>;
+  bdy: Readonly<IBdyInfo>;
+  aframe: Readonly<IFrameInfo>;
+  bframe: Readonly<IFrameInfo>;
 
   /**
    * 攻击方判定框
@@ -106,11 +107,11 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   readonly bdy_index: number;
   readonly priority: number;
 
-  handlers?: Readonly<ICollisionFunc>;
-  injury?: number;
-  injury_r?: number;
-  real_injury?: number;
-  real_injury_r?: number;
+  handlers: Readonly<ICollisionFunc> | null;
+  injury: number | null;
+  injury_r: number | null;
+  real_injury: number | null;
+  real_injury_r: number | null;
   rest: number;
 }
 
@@ -144,6 +145,7 @@ export function collision_new(o: ICollisionInits): Collision {
   }
 
   const c: Collision = {
+    id: rest ? a.lf2.new_id : a.id,
     lf2: a.lf2,
     world: a.world,
     aid: a.id,
@@ -164,6 +166,10 @@ export function collision_new(o: ICollisionInits): Collision {
     rest,
     handlers: [],
     priority: ENTITY_PRIORITY_MAP[a.data.type],
+    injury: null,
+    injury_r: null,
+    real_injury: null,
+    real_injury_r: null
   }
   // if (c.itr_index < 0) Ditto.warn(`[Collision] itr_index < 0`);
   // if (c.bdy_index < 0) Ditto.warn(`[Collision] bdy_index < 0`);
@@ -287,6 +293,6 @@ export function collision_test(c: Collision): boolean {
 
   if (bdy.tester?.run(c) === false) return false;
   if (itr.tester?.run(c) === false) return false;
-  c.handlers = collisions_keeper.handler(c)
+  c.handlers = collisions_keeper.handler(c) || null
   return !!c.handlers;
 }

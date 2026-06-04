@@ -1,5 +1,6 @@
 import { Callbacks, FPS } from "./base";
 import { Background } from "./bg/Background";
+import { Buff } from "./buff/Buff";
 import { Collision, collision_get } from "./collision/Collision";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import { BallController } from "./controller/BallController";
@@ -9,7 +10,6 @@ import {
   CheatType,
   Defines,
   Difficulty,
-  ENTITY_PRIORITY_MAP,
   EntityGroup,
   GONE_FRAME_INFO,
   IBdyInfo, IBgData, IBounding, IEntityData,
@@ -32,7 +32,6 @@ import {
   is_human_ctrl,
   is_weapon
 } from "./entity";
-import { Buff } from "./buff/Buff";
 import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
@@ -98,8 +97,7 @@ export class World extends WorldDataset {
    */
   readonly puppets = new Map<string, Entity>();
   readonly puppet_teams = new Set<string>();
-  readonly v_collisions: Collision[] = []
-  readonly a_collisions = new Map<Entity, Collision>()
+  readonly collisions = new Map<string, Collision>()
   public has_players_alive: boolean = false;
   TU: number = 1;
   get bg() { return this._bg; }
@@ -664,8 +662,7 @@ export class World extends WorldDataset {
     if (this.stage.world_pause) return;
     if (this.entities.length > MAX_DEBUG_ENTITIES)
       Ditto.debug(`[World::update_once]entities.size = ${this.entities.length}`)
-    this.v_collisions.length = 0;
-    this.a_collisions.clear()
+    this.collisions.clear();
     const temp_entities: Entity[] = [];
     const update_chasing = this._game_time.value % CHASING_UPDATE_INTERVAL === 0;
     const dead_buffs: [string, Buff][] = []
@@ -798,9 +795,7 @@ export class World extends WorldDataset {
       this.target_cam_pos.y = -0.5 * round(fighter_z_sum / fighter_count) - this.screen_h / 2;
     }
 
-    for (const c of this.v_collisions)
-      collisions_keeper.handle(c);
-    for (const [, c] of this.a_collisions)
+    for (const [, c] of this.collisions)
       collisions_keeper.handle(c);
 
     for (const entity of this._gones) {
@@ -833,14 +828,11 @@ export class World extends WorldDataset {
     }
     this._released_tickers.clear()
   }
+  
   protected add_collision(collision: Collision) {
-    if (collision.rest) {
-      this.v_collisions.push(collision)
-      return;
-    }
-    const prev = this.a_collisions.get(collision.attacker)
+    const prev = this.collisions.get(collision.id)
     if (!prev || prev.m_distance > collision.m_distance) {
-      this.a_collisions.set(collision.attacker, collision)
+      this.collisions.set(collision.id, collision);
     }
   }
 

@@ -2326,6 +2326,15 @@ export class Entity {
   }
 
   to_snapshot(): IEntitySnapshot {
+
+    const vrests: [string, string][] = []
+    this.vrests.entries().forEach(([k, v]) => vrests.push([k, v.id]))
+
+    const blockers: [string, string][] = []
+    this.blockers.entries().forEach(([k, v]) => blockers.push([k, v.id]))
+
+    const superpunchs: [string, string][] = []
+    this.superpunchs.entries().forEach(([k, v]) => superpunchs.push([k, v.id]))
     const ret: IEntitySnapshot = {
       id: this.id,
       wait: this.wait,
@@ -2341,7 +2350,9 @@ export class Entity {
       prev_velocity: { x: this._prev_velocity.x, y: this._prev_velocity.y, z: this._prev_velocity.z },
       velocity: { x: this._velocity.x, y: this._velocity.y, z: this._velocity.z },
       copies: Array.from(this.copies),
-      vrests: Array.from(this.vrests.entries()),
+      vrests,
+      blockers,
+      superpunchs,
       emitters: [...this.emitters],
       data: this._data.id,
       reserve: this._reserve,
