@@ -13,7 +13,7 @@ export interface ICollisionInits {
    * @type {Entity}
    * @memberof Collision
    */
-  readonly attacker: Entity;
+  attacker: Entity;
 
   /**
    * 被攻击方
@@ -21,7 +21,7 @@ export interface ICollisionInits {
    * @type {Entity}
    * @memberof Collision
    */
-  readonly victim: Entity;
+  victim: Entity;
 
   /**
    * 攻击方的itr
@@ -29,7 +29,7 @@ export interface ICollisionInits {
    * @type {IItrInfo}
    * @memberof Collision
    */
-  readonly itr: Readonly<IItrInfo>;
+  itr: Readonly<IItrInfo>;
 
   /**
    * 被攻击方的bdy
@@ -37,7 +37,7 @@ export interface ICollisionInits {
    * @type {IBdyInfo}
    * @memberof Collision
    */
-  readonly bdy: Readonly<IBdyInfo>;
+  bdy: Readonly<IBdyInfo>;
 
   /**
    * 攻击方的frame
@@ -45,7 +45,7 @@ export interface ICollisionInits {
    * @type {IFrameInfo}
    * @memberof Collision
    */
-  readonly aframe: Readonly<IFrameInfo>;
+  aframe: Readonly<IFrameInfo>;
 
   /**
    * 被攻击方的frame
@@ -53,9 +53,9 @@ export interface ICollisionInits {
    * @type {IFrameInfo}
    * @memberof Collision
    */
-  readonly bframe: Readonly<IFrameInfo>;
-  readonly itr_index: number;
-  readonly bdy_index: number;
+  bframe: Readonly<IFrameInfo>;
+  itr_index: number;
+  bdy_index: number;
 }
 
 export interface ICollisionFunc {
@@ -80,7 +80,7 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
    * @type {IBounding}
    * @memberof Collision
    */
-  readonly a_cube: Readonly<IBounding>;
+  a_cube: Readonly<IBounding>;
 
   /**
    * 被攻击方的判定框
@@ -88,24 +88,24 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
    * @type {IBounding}
    * @memberof Collision
    */
-  readonly b_cube: Readonly<IBounding>;
-  readonly ax: number;
-  readonly ay: number;
-  readonly az: number;
-  readonly vx: number;
-  readonly vy: number;
-  readonly vz: number;
-  readonly dx: number;
-  readonly dy: number;
-  readonly dz: number;
-  readonly m_distance: number;
-  readonly adata_id: string;
-  readonly vdata_id: string;
-  readonly aframe_id: string;
-  readonly bframe_id: string;
-  readonly itr_index: number;
-  readonly bdy_index: number;
-  readonly priority: number;
+  b_cube: Readonly<IBounding>;
+  ax: number;
+  ay: number;
+  az: number;
+  vx: number;
+  vy: number;
+  vz: number;
+  dx: number;
+  dy: number;
+  dz: number;
+  m_distance: number;
+  adata_id: string;
+  vdata_id: string;
+  aframe_id: string;
+  bframe_id: string;
+  itr_index: number;
+  bdy_index: number;
+  priority: number;
 
   handlers: Readonly<ICollisionFunc> | null;
   injury: number | null;
@@ -115,7 +115,7 @@ export interface Collision extends ICollisionInits, ICollisionSnapshot {
   rest: number;
 }
 
-export function collision_new(o: ICollisionInits): Collision {
+export function collision_new(o: Readonly<ICollisionInits>): Collision {
   let { attacker: a, victim: v, aframe, bframe, itr, bdy, itr_index, bdy_index } = o;
   const world = a.world;
   const ax = a.position.x;
@@ -143,39 +143,49 @@ export function collision_new(o: ICollisionInits): Collision {
   if (!itr.arest && itr.vrest) {
     rest = max(a.world.min_vrest, itr.vrest + a.world.vrest_offset)
   }
+  const c: Partial<Collision> = a.lf2.acquire_collision() || {}
+  c.id = rest ? a.lf2.new_id : a.id;
+  c.lf2 = a.lf2;
+  c.world = a.world;
+  c.aid = a.id;
+  c.vid = v.id;
+  c.attacker = a;
+  c.victim = v;
+  c.itr = itr;
+  c.bdy = bdy;
+  c.aframe = aframe;
+  c.bframe = bframe;
+  c.ax = ax;
+  c.ay = ay;
+  c.az = az;
+  c.vx = vx;
+  c.vy = vy;
+  c.vz = vz;
+  c.dx = dx;
+  c.dy = dy;
+  c.dz = dz;
+  c.adata_id = a.data.id;
+  c.vdata_id = v.data.id;
+  c.aframe_id = aframe.id;
+  c.bframe_id = bframe.id;
+  c.itr_index = itr_index;
+  c.bdy_index = bdy_index;
+  c.m_distance = abs(dx) + abs(dy) + abs(dz);
+  c.a_cube = a_cube
+  c.b_cube = b_cube
+  c.rest = rest;
+  c.handlers = [];
+  c.priority = ENTITY_PRIORITY_MAP[a.data.type];
+  c.injury = null;
+  c.injury_r = null;
+  c.real_injury = null;
+  c.real_injury_r = null;
 
-  const c: Collision = {
-    id: rest ? a.lf2.new_id : a.id,
-    lf2: a.lf2,
-    world: a.world,
-    aid: a.id,
-    vid: v.id,
-    attacker: a,
-    victim: v,
-    itr, bdy, aframe, bframe,
-    ax, ay, az, vx, vy, vz, dx, dy, dz,
-    adata_id: a.data.id,
-    vdata_id: v.data.id,
-    aframe_id: aframe.id,
-    bframe_id: bframe.id,
-    itr_index,
-    bdy_index,
-    m_distance: abs(dx) + abs(dy) + abs(dz),
-    a_cube,
-    b_cube,
-    rest,
-    handlers: [],
-    priority: ENTITY_PRIORITY_MAP[a.data.type],
-    injury: null,
-    injury_r: null,
-    real_injury: null,
-    real_injury_r: null
-  }
-  // if (c.itr_index < 0) Ditto.warn(`[Collision] itr_index < 0`);
-  // if (c.bdy_index < 0) Ditto.warn(`[Collision] bdy_index < 0`);
-  return c;
+
+  return c as Collision; // 虽然有个as.... 但是...
 }
 
+const inits: ICollisionInits = {} as ICollisionInits
 export function collision_get(attacker: Entity, victim: Entity): Collision | null {
   const aframe = attacker.frame;
   const bframe = victim.frame;
@@ -184,10 +194,15 @@ export function collision_get(attacker: Entity, victim: Entity): Collision | nul
   if (!itr?.length || !bdy?.length) return null;
   for (let i = 0; i < itr.length; ++i) {
     for (let j = 0; j < bdy.length; ++j) {
-      const collision = collision_new({
-        victim, attacker, itr: itr[i], bdy: bdy[j], aframe, bframe,
-        itr_index: i, bdy_index: j,
-      });
+      inits.victim = victim;
+      inits.attacker = attacker;
+      inits.itr = itr[i]
+      inits.bdy = bdy[j]
+      inits.aframe = aframe;
+      inits.bframe = bframe;
+      inits.itr_index = i;
+      inits.bdy_index = j;
+      const collision = collision_new(inits);
       if (!collision_test(collision)) continue;
       return collision
     }
@@ -240,10 +255,15 @@ export function collision_from_snapshot(lf2: LF2, snapshot: ICollisionSnapshot):
   const bdy = aframe.bdy?.[snapshot.bdy_index];
   if (!bdy) return null;
 
-  const ret = collision_new({
-    attacker, victim, aframe, bframe, itr, bdy,
-    itr_index: snapshot.itr_index, bdy_index: snapshot.bdy_index
-  })
+  inits.attacker = attacker;
+  inits.victim = victim;
+  inits.aframe = aframe;
+  inits.bframe = bframe;
+  inits.itr = itr;
+  inits.bdy = bdy;
+  inits.itr_index = snapshot.itr_index;
+  inits.bdy_index = snapshot.bdy_index;
+  const ret = collision_new(inits)
   Object.assign(ret, snapshot)
   return ret;
 }
