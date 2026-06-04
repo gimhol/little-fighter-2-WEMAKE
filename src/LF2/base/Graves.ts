@@ -10,6 +10,7 @@ export class Graves<T> {
     }
   }
   take(): T | undefined {
+  if (this.i >= this.l.length) return void 0;
     const ret = this.l[this.i]
     if (ret == void 0) return ret;
     this.l[this.i] = void 0;
