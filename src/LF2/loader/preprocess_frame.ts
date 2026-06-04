@@ -82,7 +82,7 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
     NOTE: 
       这是对按键受身的限制
       突然觉得可能有更好的做法：
-        我应该通过Buff与Ctrl来限制响应按键的功能
+        通过Buff与Ctrl来限制响应按键的功能
         但目前就这样吧
         - Gim 2026年6月4日
   */
