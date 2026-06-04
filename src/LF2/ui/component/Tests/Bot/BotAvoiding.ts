@@ -1,6 +1,6 @@
-import { O_ID, OID, TeamEnum } from "@/LF2/defines";
+import { ActionDirector, GK, TE } from "@/LF2";
+import { O_ID, OID } from "@/LF2/defines";
 import { TestCase } from "../TestCase";
-import { ActionDirector, Entity, GK, T_E, TE } from "@/LF2";
 
 export class BotAvoiding extends TestCase {
   override name: string = 'Bot Chasing/Avoiding';
