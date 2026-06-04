@@ -277,7 +277,7 @@ export class BaseController {
     ['djjj', new SeqKeys([GK.d, GK.j, GK.j, GK.j].join(''), { etc: "8" })],
   ])
 
-  protected result = new ControllerUpdateResult();
+  protected readonly result = new ControllerUpdateResult();
   readonly queue: (readonly [Status, LGK])[] = []
 
   update(): ControllerUpdateResult {
