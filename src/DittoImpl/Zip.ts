@@ -37,16 +37,15 @@ export class __Zip implements IZip {
   static async read_file(file: File): Promise<IZip> {
     const buf = await file.arrayBuffer().then((raw) => new Uint8Array(raw));
     const jszip = await JSZIP.loadAsync(buf);
-    return new __Zip(file.name, jszip, buf);
+    return new __Zip(file.name, jszip);
   }
   static async read_buf(name: string, buf: Uint8Array): Promise<IZip> {
     const jszip = await JSZIP.loadAsync(buf);
-    return new __Zip(name, jszip, buf);
+    return new __Zip(name, jszip);
   }
   static async read_blob(name: string, blob: Blob): Promise<IZip> {
-    const buf = await blob.arrayBuffer().then((raw) => new Uint8Array(raw));
     const jszip = await JSZIP.loadAsync(blob);
-    return new __Zip(name, jszip, buf);
+    return new __Zip(name, jszip);
   }
   static async download(
     url: string,
@@ -65,27 +64,34 @@ export class __Zip implements IZip {
       })
       .then((resp) => new Uint8Array(resp.data));
     const jszip = await JSZIP.loadAsync(buf);
-    return new __Zip(url, jszip, buf);
+    return new __Zip(url, jszip);
   }
 
-  readonly buf: Uint8Array;
   readonly name: string;
   private inner: JSZIP;
-  private constructor(name: string, inner: JSZIP, buf: Uint8Array) {
+  private _files: { [key in string]?: ZipObject } | null = null;
+  private _caches: { [key in string]?: ZipObject[] } = {};
+
+  private constructor(name: string, inner: JSZIP) {
     this.inner = inner;
-    this.buf = buf;
     this.name = name;
   }
 
   file(path: string): ZipObject | null;
   file(path: RegExp): ZipObject[];
   file(path: string | RegExp): ZipObject | null | ZipObject[] {
-    if (is_str(path)) {
-      const obj = this.inner.file(path);
-      return obj ? new ZipObject(obj) : null;
-    } else {
-      return this.inner.file(path).map((v) => new ZipObject(v));
+    const { files } = this;
+    if (is_str(path)) return files[path] ?? null;
+    const k = '' + path
+    if (this._caches[k]) return this._caches[k];
+    const ret: ZipObject[] = this._caches[k] = [];
+    for (const key in files) {
+      const file = files[key];
+      if (!file || !path.test(key)) continue;
+      ret.push(file)
     }
+    return ret
+
   }
   set(path: string, data: string): void {
     this.inner.file(path, data);
@@ -94,10 +100,10 @@ export class __Zip implements IZip {
     return this.inner.generateAsync({ type: 'blob' });
   }
   get files(): { [key in string]?: ZipObject } {
-    const ret: { [key in string]?: ZipObject } = {};
-    for (const key in this.inner.files) {
-      ret[key] = new ZipObject(this.inner.files[key])
-    }
-    return ret;
+    if (this._files) return this._files;
+    this._files = {}
+    for (const key in this.inner.files)
+      this._files[key] = new ZipObject(this.inner.files[key])
+    return this._files;
   }
 }
