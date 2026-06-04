@@ -1046,7 +1046,7 @@ function App() {
       <div className={csses.app} ref={set_ele_root} />
       {game_cell_view}
       {pannel_cell_view}
-      {dat_viewer_open ? <DatViewer open={dat_viewer_open} onClose={() => set_dat_viewer_open(false)} /> : void 0}
+      <DatViewer open={dat_viewer_open} onClose={() => set_dat_viewer_open(false)} />
       <EditorView
         open={editor_open}
         onClose={() => set_editor_open(false)}

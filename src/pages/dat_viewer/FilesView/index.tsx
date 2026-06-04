@@ -54,7 +54,7 @@ export function FilesView(props: IFilesViewProps) {
                 e.stopPropagation();
                 e.preventDefault();
               }}>
-              {file.name}
+              {file.webkitRelativePath}
             </Button>
           )}
         </List>
