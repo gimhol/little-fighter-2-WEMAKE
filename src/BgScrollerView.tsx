@@ -6,11 +6,11 @@ import { LF2 } from "./LF2/LF2";
 import { Defines } from "./LF2/defines/defines";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 
-function to_world_cam_x(input_x: number, lf2: LF2, canvas: HTMLCanvasElement) {
+function to_world_cam_x(screen_x: number, lf2: LF2, canvas: HTMLCanvasElement) {
   const { left, width } = canvas.getBoundingClientRect();
   const s_width = lf2.world.stage.width;
   const w = floor((width * Defines.CLASSIC_SCREEN_WIDTH) / s_width);
-  const x = min(width - w - 3, max(0, floor(input_x - left - w / 2)));
+  const x = min(width - w - 3, max(0, floor(screen_x - left - w / 2)));
   return (s_width * x) / width;
 }
 
