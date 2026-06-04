@@ -8,9 +8,9 @@ import { frames } from "./frames";
 export function make_bot_data_bat(): BotMaker {
   return new BotMaker(O_ID.Bat).set_actions(
     // laser_eyes
-    bot_ball_dfa(25, void 0),
+    bot_ball_dfa(25, void 0, 80),
     // fast_punch
-    bot_ball_dfj(50, void 0, 50, 120),
+    bot_ball_dfj(50, void 0, 0, 120),
     // bats
     bot_chasing_skill_action('d^j', void 0, 200, 0.05),
     // catching + fast_punch
