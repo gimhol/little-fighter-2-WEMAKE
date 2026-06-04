@@ -1,0 +1,31 @@
+.bg_scroller_view {
+  display       : flex;
+  position      : absolute;
+  pointer-events: all;
+  align-items   : stretch;
+  left          : 0px;
+  right         : 0px;
+  bottom        : 0px;
+  box-sizing    : border-box;
+
+  .canvas {
+    height                    : 30px;
+    width                     : calc(100% - 50px);
+    border-top-right-radius   : 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius : 0px;
+  }
+
+  .btn_free:hover,
+  .canvas:hover {
+    z-index: 1;
+  }
+
+  .btn_free {
+    width                     : 52px;
+    border-top-left-radius    : 0px;
+    border-bottom-left-radius : 0px;
+    border-bottom-right-radius: 0px;
+    margin-left               : -2px;
+  }
+}

@@ -181,7 +181,7 @@ export class Stage {
 
   private set_phase(phase: IStagePhaseInfo | undefined) {
     if (phase === this.phase) return;
-    Ditto.debug('set_phase', phase)
+    // Ditto.debug('set_phase', phase)
     this.phase_time = 0;
     this.phase_end_tester.reset(phase?.end_testers ?? [])
 

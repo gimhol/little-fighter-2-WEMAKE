@@ -18,12 +18,12 @@ import Select from "./Component/Select";
 import Show from "./Component/Show";
 import Titled from "./Component/Titled";
 import { DanmuOverlay } from "./DanmuOverlay";
+import { DevStatsView } from "./DevStatsView";
 import { __Pointings, md5 } from "./DittoImpl";
 import { Indicating } from "./DittoImpl/renderer/FrameIndicators";
 import { INDICATINGS } from "./DittoImpl/renderer/INDICATINGS";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
-import { BgScrollerOverlay } from "./GameOverlay";
 import GamePad from "./GamePad";
 import { Difficulty, IWorldDataset, WorldDataset } from "./LF2";
 import { LF2 } from "./LF2/LF2";
@@ -64,7 +64,7 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
-import { DevStatsView } from "./DevStatsView";
+import { BgScrollerView } from "./BgScrollerView";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
@@ -619,6 +619,7 @@ function App() {
       />
       <div className={classNames(csses.game_overlay, { [csses.gone]: !app_state.show_fps })} >
         {app_state.show_fps && <DevStatsView lf2={lf2} />}
+        {app_state.show_bg_scroll && <BgScrollerView lf2={lf2} />}
       </div>
       <DanmuOverlay lf2={lf2} />
       <GamePad
