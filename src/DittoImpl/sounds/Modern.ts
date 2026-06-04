@@ -1,9 +1,10 @@
 import AsyncValuesKeeper from "@/LF2/base/AsyncValuesKeeper";
+import { Graves } from "@/LF2/base/Graves";
 import { Defines } from "@/LF2/defines/defines";
 import { BaseSounds } from "@/LF2/ditto/sounds/BaseSounds";
 import { Randoming } from "@/LF2/helper/Randoming";
 import { LF2 } from "@/LF2/LF2";
-import { abs, max, min, sqrt } from "@/LF2/utils/math/base";
+import { abs, max } from "@/LF2/utils/math/base";
 import { clamp } from "@/LF2/utils/math/clamp";
 import float_equal from "@/LF2/utils/math/float_equal";
 import type { WorldRenderer } from "../renderer/WorldRenderer";
@@ -29,6 +30,10 @@ export class __Modern extends BaseSounds {
       sound_x: number;
     }
   >();
+  protected _splitter_node_graves = new Graves<ChannelSplitterNode>();
+  protected _merger_node_graves = new Graves<ChannelMergerNode>();
+  protected _l_gain_node_graves = new Graves<GainNode>();
+  protected _r_gain_node_graves = new Graves<GainNode>();
   protected _muted: boolean = false;
   protected _volume: number = 0.3;
   protected _bgm_volume: number = 0.5;
@@ -239,9 +244,7 @@ export class __Modern extends BaseSounds {
     const viewer_x = this.lf2.world.current_cam_pos.x + half_w;
     const sound_x = x ?? viewer_x;
     const playings = this._playings.size + 1;
-
     const attenuation = 1 / Math.sqrt(playings);
-
     const baseVol = this._volume * this._sound_volume;
     const muted = this._muted || this._sound_muted;
 
@@ -276,26 +279,26 @@ export class __Modern extends BaseSounds {
     const src_node = ctx.createBufferSource();
     src_node.buffer = buf;
 
-    const splitter_node = this.ctx.createChannelSplitter(1);
+    const splitter_node = this._splitter_node_graves.take() ?? this.ctx.createChannelSplitter(1);
     src_node.connect(splitter_node);
 
-    const merger_node = this.ctx.createChannelMerger(2);
+    const merger_node = this._merger_node_graves.take() ?? this.ctx.createChannelMerger(2);
 
-    const l_gain_node = this.ctx.createGain();
+    const l_gain_node = this._l_gain_node_graves.take() ?? this.ctx.createGain();
 
     if (Number.isFinite(l_vol) && !Number.isNaN(l_vol))
       l_gain_node.gain.value = l_vol;
     else
-      debugger;
+      l_gain_node.gain.value = 0
+
     l_gain_node.connect(merger_node, 0, 0);
     splitter_node.connect(l_gain_node, 0);
 
-    const r_gain_node = this.ctx.createGain();
-
+    const r_gain_node = this._r_gain_node_graves.take() ?? this.ctx.createGain();
     if (Number.isFinite(r_vol) && !Number.isNaN(r_vol))
       r_gain_node.gain.value = r_vol;
     else
-      debugger;
+      r_gain_node.gain.value = 0
 
 
     r_gain_node.connect(merger_node, 0, 1);
@@ -310,7 +313,18 @@ export class __Modern extends BaseSounds {
       r_gain_node,
       sound_x,
     });
-    src_node.onended = () => this._playings.delete(id);
+    src_node.onended = () => {
+      src_node.disconnect();
+      splitter_node.disconnect();
+      l_gain_node.disconnect();
+      r_gain_node.disconnect();
+      merger_node.disconnect();
+      this._splitter_node_graves.add(splitter_node);
+      this._merger_node_graves.add(merger_node);
+      this._l_gain_node_graves.add(l_gain_node);
+      this._r_gain_node_graves.add(r_gain_node);
+      this._playings.delete(id)
+    };
     return id;
   }
 
