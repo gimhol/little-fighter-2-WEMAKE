@@ -63,7 +63,9 @@ export class LittleFunnyAutoGame extends UIComponent {
       freeguys.push(freeguy)
     }
     while (this._teams[1].soldiers.length < ce2) {
-      const newguy = freeguys.pop() ?? this.add_random_fighter(this._lr, '2', this.lf2.mt.pick(_3000))
+      const newguy = freeguys.pop() ?? this.add_random_fighter(
+        this._lr = (this._lr + 1) % 2, '2', this.lf2.mt.pick(_3000)
+      )
       if (!newguy) break;
       if (newguy.team !== '1') {
         this.world.etc(newguy.position.x, newguy.position.y, newguy.position.z, '6')
@@ -72,7 +74,9 @@ export class LittleFunnyAutoGame extends UIComponent {
       this._teams[1].soldiers.push(newguy)
     }
     while (this._teams[2].soldiers.length < ce1) {
-      const newguy = freeguys.pop() ?? this.add_random_fighter(this._lr, '2', this.lf2.mt.pick(_3000))
+      const newguy = freeguys.pop() ?? this.add_random_fighter(
+        this._lr = (this._lr + 1) % 2, '2', this.lf2.mt.pick(_3000)
+      )
       if (!newguy) break;
       if (newguy.team !== '2') {
         this.world.etc(newguy.position.x, newguy.position.y, newguy.position.z, '6')
