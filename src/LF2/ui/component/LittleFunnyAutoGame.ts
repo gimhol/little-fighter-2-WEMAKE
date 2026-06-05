@@ -43,8 +43,6 @@ export class LittleFunnyAutoGame extends UIComponent {
   override on_pause(): void {
     super.on_pause?.();
     this.world.clear();
-    this._ticker?.release();
-    this._ticker = null
     this.lf2.cmds.push(CMD.LOCK_CAM, '')
   }
   add_random_fighter(lr: number, team: string) {
