@@ -1,46 +1,93 @@
 import { ActionDirector, EntityGroup, OID, TeamEnum } from "@/LF2";
 import { CMD, type IEntityData } from "@/LF2/defines";
-import { IEntityCallbacks, is_fighter } from "@/LF2/entity";
+import { Entity, IEntityCallbacks, is_fighter } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { UIComponent } from "./UIComponent";
 
+interface ITeamInfo {
+  boss?: Entity;
+  soldiers: Entity[];
+}
 export class LittleFunnyAutoGame extends UIComponent {
   static override TAGS: string[] = ["LittleFunnyAutoGame"];
   private _datas: IEntityData[] = [];
   private _lr: number = 0 | 1;
   private _ox: number = 0 | 1;
+  private _teams: {
+    ['1']: ITeamInfo,
+    ['2']: ITeamInfo,
+  } = {
+      1: { soldiers: [] },
+      2: { soldiers: [] }
+    }
 
   private _fighter_cbs: IEntityCallbacks = {
     on_dead: (e) => {
       e.callbacks.del(this._fighter_cbs);
       if (this.stopped || this.paused) return;
-      let allies_count = 0;
-      let enemies_count = 0;
-      for (const f of e.world.entities) {
-        if (!is_fighter(f) || e == f) continue;
-        if (f.name == 'solider') continue;
-        const ce = f.data.base.ce ?? 1
-        if (f.team == e.team) allies_count += ce;
-        else enemies_count += ce;
-      }
-      const f = this.add_random_fighter(this._lr = (this._lr + 1) % 2, e.team);
-      if (f) allies_count += (f.data.base.ce ?? 1)
-      if (enemies_count <= allies_count) return;
-
-      const _3000 = this.lf2.datas.get_fighters_of_group(EntityGroup._3000)
-      if (!_3000.length) return;
-      while (enemies_count > allies_count) {
-        const data = this.lf2.mt.pick(_3000)
-        const f = this.add_random_fighter(this._lr = (this._lr + 1) % 2, e.team, data);
-        if (!f) break;
-        f.name = 'solider'
-        allies_count += 1
+      const lr = this._lr = (this._lr + 1) % 2;
+      const team = e.team
+      if (team == '1' || team == '2') {
+        if (this._teams[team].boss == e) {
+          const fighter = this.add_random_fighter(lr, team);
+          if (!fighter) return;
+          this._teams[team].boss = fighter;
+        } else if (this._teams[team].soldiers.includes(e)) {
+          this._teams[team].soldiers = this._teams[team].soldiers.filter(v => v != e);
+        }
+        this._handle_soldiers();
+      } else {
+        // 不必管
       }
     }
   }
+  private _handle_soldiers = () => {
+    /*
+    简单的来说就是让敌方士兵数量与我方BOSS的强度匹配
+    */
+    const boss1 = this._teams[1].boss;
+    const boss2 = this._teams[2].boss;
+    if (!boss1 || !boss2) return;
+    const ce1 = (boss1?.data.base.ce ?? 1) - 1;
+    const ce2 = (boss2?.data.base.ce ?? 1) - 1;
+    const _3000 = this.lf2.datas.get_fighters_of_group(EntityGroup._3000);
+    const freeguys: Entity[] = []
+    while (this._teams[1].soldiers.length > ce2) {
+      const freeguy = this._teams[1].soldiers.pop();
+      if (!freeguy) break;
+      freeguys.push(freeguy)
+    }
+    while (this._teams[2].soldiers.length > ce1) {
+      const freeguy = this._teams[2].soldiers.pop();
+      if (!freeguy) break;
+      freeguys.push(freeguy)
+    }
+    while (this._teams[1].soldiers.length < ce2) {
+      const newguy = freeguys.pop() ?? this.add_random_fighter(this._lr, '2', this.lf2.mt.pick(_3000))
+      if (!newguy) break;
+      if (newguy.team !== '1') {
+        this.world.etc(newguy.position.x, newguy.position.y, newguy.position.z, '6')
+        newguy.team = '1'
+      }
+      this._teams[1].soldiers.push(newguy)
+    }
+    while (this._teams[2].soldiers.length < ce1) {
+      const newguy = freeguys.pop() ?? this.add_random_fighter(this._lr, '2', this.lf2.mt.pick(_3000))
+      if (!newguy) break;
+      if (newguy.team !== '2') {
+        this.world.etc(newguy.position.x, newguy.position.y, newguy.position.z, '6')
+        newguy.team = '2'
+      }
+      this._teams[2].soldiers.push(newguy)
+    }
+    for (const guy of freeguys) {
+      guy.team = '3';
+    }
+  }
   private _director = new ActionDirector().offset(5000, () => {
-    this.add_random_fighter(0, '1')
-    this.add_random_fighter(1, '2')
+    this._teams[1].boss = this.add_random_fighter(0, '1')
+    this._teams[2].boss = this.add_random_fighter(1, '2')
+    this._handle_soldiers();
   })
   override update(dt: number): void {
     this._director.update(dt);
@@ -48,6 +95,10 @@ export class LittleFunnyAutoGame extends UIComponent {
   override on_resume(): void {
     super.on_resume?.()
     this._lr = 0;
+    this._teams[1].boss = void 0;
+    this._teams[1].soldiers.length = 0
+    this._teams[2].boss = void 0;
+    this._teams[2].soldiers.length = 0
     this.world.paused = false;
     this.lf2.change_bg('')
     this.lf2.cmds.push(CMD.LOCK_CAM, '0')
@@ -55,9 +106,13 @@ export class LittleFunnyAutoGame extends UIComponent {
   override on_pause(): void {
     super.on_pause?.();
     this.world.clear();
+    this._teams[1].boss = void 0;
+    this._teams[1].soldiers.length = 0
+    this._teams[2].boss = void 0;
+    this._teams[2].soldiers.length = 0
     this.lf2.cmds.push(CMD.LOCK_CAM, '')
   }
-  add_random_fighter(lr: number, team: string, data?: IEntityData) {
+  add_random_fighter(lr: number, team: '1' | '2', data?: IEntityData) {
     if (!data) {
       if (!this._datas.length)
         this._datas.push(...this.lf2.datas.fighters)
