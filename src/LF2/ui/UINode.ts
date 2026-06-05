@@ -2,27 +2,21 @@ import { LF2 } from "../LF2";
 import { Callbacks } from "../base";
 import { IStyle, IVector3, IVector3Like } from "../defines";
 import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
-import { IDebugging, make_debugging } from "../entity";
-import { is_num, round, Times } from "../utils";
-import { ICookedUIInfo } from "./ICookedUIInfo";
-import { ICrossInfo, IGeoInfo, IRectInfo } from "./ICrossInfo";
-import { IUICallback } from "./IUICallback";
-import { IUIKeyEvent } from "./IUIKeyEvent";
+import { IDebugging, make_debugging } from "../base";
+import { is_num, round, round_float, Times } from "../utils";
+import type { ICookedUIInfo } from "./ICookedUIInfo";
+import type { ICrossInfo, IGeoInfo, IRectInfo } from "./ICrossInfo";
+import type { IUICallback } from "./IUICallback";
+import type { IUIKeyEvent } from "./IUIKeyEvent";
 import { LF2PointerEvent } from "./LF2PointerEvent";
 import { actor } from "./action";
 import { UIComponent } from "./component";
 export class UINode implements IDebugging {
-
   static readonly TAG: string = 'UINode';
   debug!: (_0: string, ..._1: any[]) => void;
   warn!: (_0: string, ..._1: any[]) => void;
   log!: (_0: string, ..._1: any[]) => void;
-
   readonly lf2: LF2;
-
-  outlineColor: string | undefined;
-  outlineWidth: number | undefined;
-  outlineAlpha: number | undefined;
 
   /**
    * 原始UI数据
@@ -33,7 +27,9 @@ export class UINode implements IDebugging {
    * @memberof UINode
    */
   readonly data: Readonly<ICookedUIInfo>;
-
+  protected _outlineColor: string | undefined;
+  protected _outlineWidth: number | undefined;
+  protected _outlineAlpha: number | undefined;
   protected _callbacks = new Callbacks<IUICallback>();
   protected _pointer_over: 0 | 1 = 0;
   protected _pointer_down: 0 | 1 = 0;
@@ -70,7 +66,6 @@ export class UINode implements IDebugging {
 
   protected _parent?: UINode;
   protected _children: UINode[] = [];
-
   protected _prev_size: IVector3 = new D.Vector3();
   protected _prev_center: IVector3 = new D.Vector3();
   protected _prev_pos: IVector3 = new D.Vector3();
@@ -78,6 +73,11 @@ export class UINode implements IDebugging {
   protected _cache_rect: IRectInfo | undefined;
   protected _cache_geo: IGeoInfo | undefined;
   protected _cache_global_pos: IVector3Like | undefined;
+  protected _background: string | null = null;
+  protected _backgroundAlpha: number | null = null;
+  protected _foreground: string | null = null;
+  protected _foregroundAlpha: number | null = null;
+
   get cross(): Readonly<ICrossInfo> {
     if (this._cache_cross) return this._cache_cross;
     const { x: w, y: h } = this.size
@@ -178,10 +178,6 @@ export class UINode implements IDebugging {
   set visible(v: boolean) {
     this.set_visible(v);
   }
-  private _background: string | null = null;
-  private _backgroundAlpha: number | null = null;
-  private _foreground: string | null = null;
-  private _foregroundAlpha: number | null = null;
   get background(): string { return this._background ?? this.data.background ?? '#000000' }
   set background(v: string | null) { this._background = v; }
   get foreground(): string { return this._foreground ?? this.data.foreground ?? '#000000' }
@@ -190,13 +186,12 @@ export class UINode implements IDebugging {
   set backgroundAlpha(v: number | null) { this._backgroundAlpha = v; }
   get foregroundAlpha(): number { return this._foregroundAlpha ?? this.data.foregroundAlpha ?? 0 }
   set foregroundAlpha(v: number | null) { this._foregroundAlpha = v; }
-  set_visible(v: boolean): this {
-    const prev = this.visible;
-    this._visible = v;
-    if (prev !== this.visible) this.invoke_all_visible()
-    if (!v && !this.focused_node?.visible) this.focused_node = void 0
-    return this;
-  }
+  get outlineColor(): string | undefined { return this._outlineColor }
+  get outlineWidth(): number | undefined { return this._outlineWidth }
+  get outlineAlpha(): number | undefined { return this._outlineAlpha }
+  set outlineColor(v: string | undefined) { this._outlineColor = v };
+  set outlineWidth(v: number | undefined) { this._outlineWidth = v };
+  set outlineAlpha(v: number | undefined) { this._outlineAlpha = v };
 
   get disabled(): boolean {
     if (!this.parent) return this._disabled;
@@ -205,109 +200,37 @@ export class UINode implements IDebugging {
   set disabled(v: boolean) {
     this.set_disabled(v);
   }
-  set_disabled(v: boolean): this {
-    this._disabled = v;
-    if (v && this.focused_node?.disabled) this.focused_node = void 0
-    return this;
-  }
   get self_disabled() { return this._disabled }
-
   get global_opacity(): number {
     if (!this.parent) return this._opacity
     return this._opacity * this.parent._opacity;
   }
   get opacity(): number { return this._opacity; }
   set opacity(v: number) { this.set_opacity(v); }
-  set_opacity(v: number): this { this._opacity = v; return this; }
-
   get parent(): UINode | undefined { return this._parent; }
   get children(): Readonly<UINode[]> { return this._children; }
-
   get w(): number { return this.size.x; }
-  set w(v: number) { this.set_w(v); }
   get h(): number { return this.size.y; }
+  set w(v: number) { this.set_w(v); }
   set h(v: number) { this.set_h(v); }
-  set_w(v: number): this { return this.resize(v, this.h); }
-  set_h(v: number): this { return this.resize(this.w, v); }
-  resize(x: number, y: number, z: number = this.size.z): this {
-    this.size.x = x;
-    this.size.y = y;
-    this.size.z = z;
-    this._cache_cross = void 0;
-    this._cache_rect = void 0;
-    this._cache_geo = void 0;
-    this._cache_global_pos = void 0;
-    return this;
-  }
-
   get x(): number { return this.pos.x; }
   get y(): number { return this.pos.y; }
   get z(): number { return this.pos.z; }
-  set x(v: number) { this.pos.x = v; }
-  set y(v: number) { this.pos.y = v; }
-  set z(v: number) { this.pos.z = v; }
-  set_x(v: number): this { this.pos.x = v; return this; }
-  set_y(v: number): this { this.pos.y = v; return this; }
-  set_z(v: number): this { this.pos.z = v; return this; }
-  move_to(
-    x: number = this.pos.x,
-    y: number = this.pos.y,
-    z: number = this.pos.z
-  ): this {
-    this.pos.x = x;
-    this.pos.y = y;
-    this.pos.z = z;
-    this._cache_cross = void 0;
-    this._cache_rect = void 0;
-    this._cache_geo = void 0;
-    this._cache_global_pos = void 0;
-    return this;
-  }
-
+  set x(v: number) { this.set_x(v) }
+  set y(v: number) { this.set_y(v) }
+  set z(v: number) { this.set_z(v) }
   get cx(): number { return this.center.x; }
   get cy(): number { return this.center.y; }
   get cz(): number { return this.center.z; }
-  set cx(v: number) { this.center.x = v; }
-  set cy(v: number) { this.center.y = v; }
-  set cz(v: number) { this.center.z = v; }
-  set_cx(v: number): this { this.center.x = v; return this }
-  set_cy(v: number): this { this.center.y = v; return this }
-  set_cz(v: number): this { this.center.z = v; return this }
-  set_center(
-    x: number = this.center.x,
-    y: number = this.center.y,
-    z: number = this.center.z
-  ): this {
-    this.center.x = x;
-    this.center.y = y;
-    this.center.z = z;
-    this._cache_cross = void 0;
-    this._cache_rect = void 0;
-    this._cache_geo = void 0;
-    this._cache_global_pos = void 0;
-    return this;
-  }
-
+  set cx(v: number) { this.set_cx(v); }
+  set cy(v: number) { this.set_cy(v); }
+  set cz(v: number) { this.set_cz(v); }
   get sx(): number { return this.scale.x; }
   get sy(): number { return this.scale.y; }
   get sz(): number { return this.scale.z; }
-  set sx(v: number) { this.scale.x = v; }
-  set sy(v: number) { this.scale.y = v; }
-  set sz(v: number) { this.scale.z = v; }
-  set_sx(v: number): this { this.scale.x = v; return this; }
-  set_sy(v: number): this { this.scale.y = v; return this; }
-  set_sz(v: number): this { this.scale.z = v; return this; }
-  set_scale(
-    x: number = this.scale.x,
-    y: number = this.scale.y,
-    z: number = this.scale.z
-  ): this {
-    this.scale.x = x;
-    this.scale.y = y;
-    this.scale.z = z;
-    return this;
-  }
-
+  set sx(v: number) { this.set_sx(v); }
+  set sy(v: number) { this.set_sy(v); }
+  set sz(v: number) { this.set_sz(v); }
   get global_pos(): Readonly<IVector3Like> {
     if (this._cache_global_pos) return this._cache_global_pos;
     let { x, y, z } = this.pos
@@ -334,7 +257,88 @@ export class UINode implements IDebugging {
   /** 光标是否在本节点中按下 */
   get pointer_down() { return this._pointer_down }
   get click_flag() { return this._click_flag }
-  get update_times() { return this._update_times.value }
+  get lifetime() { return this._update_times.value }
+
+  set_visible(v: boolean): this {
+    const prev = this.visible;
+    this._visible = v;
+    if (prev !== this.visible) this.invoke_all_visible()
+    if (!v && !this.focused_node?.visible) this.focused_node = void 0
+    return this;
+  }
+  set_disabled(v: boolean): this {
+    this._disabled = v;
+    if (v && this.focused_node?.disabled) this.focused_node = void 0
+    return this;
+  }
+  set_opacity(v: number): this { this._opacity = v; return this; }
+  set_w(v: number): this { return this.resize(v, this.h); }
+  set_h(v: number): this { return this.resize(this.w, v); }
+  resize(
+    x: number = this.size.x,
+    y: number = this.size.y,
+    z: number = this.size.z
+  ): this {
+    this.size.x = round_float(x);
+    this.size.y = round_float(y);
+    this.size.z = round_float(z);
+    this._cache_cross = void 0;
+    this._cache_rect = void 0;
+    this._cache_geo = void 0;
+    this._cache_global_pos = void 0;
+    return this;
+  }
+  set_x(v: number): this { return this.move_to(v); }
+  set_y(v: number): this { return this.move_to(void 0, v); }
+  set_z(v: number): this { return this.move_to(void 0, void 0, v); }
+  move_to(
+    x: number = this.pos.x,
+    y: number = this.pos.y,
+    z: number = this.pos.z
+  ): this {
+    this.pos.x = round_float(x);
+    this.pos.y = round_float(y);
+    this.pos.z = round_float(z);
+    this._cache_cross = void 0;
+    this._cache_rect = void 0;
+    this._cache_geo = void 0;
+    this._cache_global_pos = void 0;
+    return this;
+  }
+
+  set_cx(v: number): this { return this.set_center(v); }
+  set_cy(v: number): this { return this.set_center(void 0, v); }
+  set_cz(v: number): this { return this.set_center(void 0, void 0, v); }
+  set_center(
+    x: number = this.center.x,
+    y: number = this.center.y,
+    z: number = this.center.z
+  ): this {
+    this.center.x = round_float(x);
+    this.center.y = round_float(y);
+    this.center.z = round_float(z);
+    this._cache_cross = void 0;
+    this._cache_rect = void 0;
+    this._cache_geo = void 0;
+    this._cache_global_pos = void 0;
+    return this;
+  }
+
+  set_sx(v: number): this { return this.set_scale(v); }
+  set_sy(v: number): this { return this.set_scale(void 0, v); }
+  set_sz(v: number): this { return this.set_scale(void 0, void 0, v); }
+  set_scale(
+    x: number = this.scale.x,
+    y: number = this.scale.y,
+    z: number = this.scale.z
+  ): this {
+    this.scale.x = round_float(x);
+    this.scale.y = round_float(y);
+    this.scale.z = round_float(z);
+    return this;
+  }
+
+
   renderer: IUINodeRenderer;
 
   constructor(lf2: LF2, data: ICookedUIInfo, parent?: UINode) {
@@ -353,9 +357,9 @@ export class UINode implements IDebugging {
     this.image = this.data.img_info ?? null;
     this.color = this.data.color ?? '';
     this.renderer = new D.UINodeRenderer(this);
-    this.outlineColor = this.data.outlineColor
-    this.outlineWidth = this.data.outlineWidth
-    this.outlineAlpha = this.data.outlineAlpha
+    this._outlineColor = this.data.outlineColor
+    this._outlineWidth = this.data.outlineWidth
+    this._outlineAlpha = this.data.outlineAlpha
     this.style = this.data.style ? { ...this.data.style } : {}
     make_debugging(this)
   }
@@ -417,6 +421,7 @@ export class UINode implements IDebugging {
   }
 
   on_start() {
+    this._update_times.reset();
     this._state = {};
     for (const c of this._components) {
       c.stopped = false;

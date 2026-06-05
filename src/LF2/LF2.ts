@@ -9,7 +9,7 @@ import { CMD, CMD_NAMES } from "./defines/CMD";
 import { IFullGameZipInfo } from "./defines/IFullGameZipInfo";
 import * as I from "./ditto";
 import { Entity, is_fighter } from "./entity";
-import { IDebugging, make_debugging } from "./entity/make_debugging";
+import { IDebugging, make_debugging } from "./base/Debugging";
 import { Factory } from "./Factory";
 import * as Helper from "./helper";
 import { I18N } from "./I18N";

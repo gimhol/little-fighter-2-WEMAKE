@@ -65,6 +65,7 @@ export * from "./IExpression";
 export * from "./IFrameIndexes";
 export * from "./IFrameInfo";
 export * from "./IFramePictureInfo";
+export * from "./IFullGameZipInfo";
 export * from "./IHitKeyCollection";
 export * from "./IHoldKeyCollection";
 export * from "./IItrInfo";

@@ -11,7 +11,6 @@ export * from "./IWorldDataset";
 export * from "./Keys";
 export * from "./LF2";
 export * from "./PlayerInfo";
-export * from "./Ticker";
 export * from "./Transform";
 export * from "./World";
 export * from "./WorldDataset";

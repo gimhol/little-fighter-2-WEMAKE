@@ -11,6 +11,5 @@ export * from "./calc_v";
 export * from "./collision_action_handlers";
 export * from "./face_helper";
 export * from "./find_frame_direction";
-export * from "./make_debugging";
 export * from "./type_check";
 /*** AUTO EXPORT END ***/

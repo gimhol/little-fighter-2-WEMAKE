@@ -1,4 +1,5 @@
 import { Callbacks, FPS } from "./base";
+import { Graves } from "./base/Graves";
 import { Background } from "./bg/Background";
 import { Buff } from "./buff/Buff";
 import { Collision, collision_get } from "./collision/Collision";
@@ -36,7 +37,6 @@ import { Ground } from "./Ground";
 import { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
-import { Ticker } from "./Ticker";
 import { Transform } from "./Transform";
 import { abs, between, clamp, floor, is_num, max, min, round, sign, Times } from "./utils";
 import { WorldDataset } from "./WorldDataset";
@@ -74,7 +74,6 @@ export class World extends WorldDataset {
   private _chasers = new Set<BallController>();
   private _paused: 0 | 1 | 2 = 0;
   private _fn_locked: 0 | 1 = 0;
-  private _released_tickers = new Set<Ticker>();
   private _cam_v: IVector2;
   readonly target_cam_pos: IVector2;
   readonly current_cam_pos: IVector2;
@@ -84,8 +83,6 @@ export class World extends WorldDataset {
 
 
   public renderer: IWorldRenderer;
-  readonly tickers = new Set<Ticker>();
-  readonly ticker_pool: Ticker[] = [];
 
   readonly transform: Transform = new Transform()
   readonly entity_map = new Map<string, Entity>();
@@ -814,21 +811,8 @@ export class World extends WorldDataset {
     }
     this._gones.clear()
     this.stage.update();
-
-    this._released_tickers.clear()
-    for (const ticker of this.tickers) {
-      if (ticker.released)
-        this._released_tickers.add(ticker)
-      else
-        ticker.add()
-    }
-    for (const ticker of this._released_tickers) {
-      this.tickers.delete(ticker);
-      this.ticker_pool.push(ticker)
-    }
-    this._released_tickers.clear()
   }
-  
+
   protected add_collision(collision: Collision) {
     const prev = this.collisions.get(collision.id)
     if (!prev || prev.m_distance > collision.m_distance) {
@@ -1028,13 +1012,6 @@ export class World extends WorldDataset {
     this._dist_cam_pos = null;
     this.callbacks.emit('on_counts')();
     this._counts.clear()
-  }
-
-  ticker(): Ticker {
-    let ret = this.ticker_pool.pop();
-    if (!ret) this.tickers.add(ret = new Ticker(this.lf2));
-    else this.tickers.add(ret.reborn())
-    return ret;
   }
 
   reset_game_time(): void {

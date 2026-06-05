@@ -41,7 +41,7 @@ export class SummaryLogic extends UIComponent {
       const team_sum = this.team_sum(e.team);
       team_sum.deads++;
       team_sum.lives--;
-      team_sum.latest_dead_time = this.node.update_times;
+      team_sum.latest_dead_time = this.node.lifetime;
       if (team_sum.deads === team_sum.spawns)
         this.losing_teams.add(team_sum)
       this.fighter_sum(e).deads++;
@@ -138,7 +138,7 @@ export class SummaryLogic extends UIComponent {
 
     if (this.losing_teams.size) {
       for (const losing_team of this.losing_teams) {
-        const is_waiting = this.node.update_times - losing_team.latest_dead_time < 180;
+        const is_waiting = this.node.lifetime - losing_team.latest_dead_time < 180;
         if (is_waiting) continue;
         losing_team.loses++;
         this._temps.push(losing_team);
