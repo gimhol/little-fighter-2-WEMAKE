@@ -64,7 +64,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     }
     while (this._teams[1].soldiers.length < ce2) {
       const newguy = freeguys.pop() ?? this.add_random_fighter(
-        this._lr = (this._lr + 1) % 2, '2', this.lf2.mt.pick(_3000)
+        this._lr = (this._lr + 1) % 2, '1', this.lf2.mt.pick(_3000)
       )
       if (!newguy) break;
       if (newguy.team !== '1') {
