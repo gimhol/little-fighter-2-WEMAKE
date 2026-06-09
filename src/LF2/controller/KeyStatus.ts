@@ -3,6 +3,7 @@ export interface IKeyStatusCtrl {
   readonly time: number;
   readonly world: World;
 }
+
 export class KeyStatus {
   readonly ctrl: IKeyStatusCtrl;
   /**
@@ -15,6 +16,19 @@ export class KeyStatus {
   private _d_time: number = 0;
   private _u_time: number = 0;
   private _used: 0 | 1 = 0;
+
+  to_snapshot(): number[] {
+    return [
+      this._d_time,
+      this._u_time,
+      this._used
+    ]
+  }
+  from_snapshot(s: number[]): void {
+    this._d_time = s[0];
+    this._u_time = s[1];
+    this._used = s[2] ? 1 : 0;
+  }
 
   /**
    * 按键按下的时间

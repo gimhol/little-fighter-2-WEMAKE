@@ -1,9 +1,11 @@
+import type { IDoubleClickSnapshot } from "./IDoubleClickSnapshot";
+
 export class DoubleClick<D> {
   data: [D | undefined, D | undefined] = [void 0, void 0];
   time: number = 0;
   used: boolean = false;
   fired: boolean = false;
-  readonly name: string;
+  name: string;
   constructor(name: string) {
     this.name = name;
   }
@@ -30,6 +32,24 @@ export class DoubleClick<D> {
     this.time = 0;
     this.data = [void 0, void 0];
     this.fired = false;
+  }
+
+  to_snapshot(): IDoubleClickSnapshot<D> {
+    return {
+      data: [...this.data],
+      time: this.time,
+      used: this.used,
+      fired: this.fired,
+      name: this.name,
+    };
+  }
+
+  from_snapshot(s: IDoubleClickSnapshot<D>) {
+    this.data = [...s.data];
+    this.time = s.time;
+    this.used = s.used;
+    this.fired = s.fired;
+    this.name = s.name;
   }
 }
 export default DoubleClick;

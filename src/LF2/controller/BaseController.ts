@@ -1,13 +1,13 @@
-import type { IFrameInfo, IHitKeyCollection, IVector3, LGK, TFace, TNextFrame } from "../defines";
+import type { IHitKeyCollection, IVector3, LGK, TNextFrame } from "../defines";
 import { AGK, CONFLICTS_KEY_MAP, GK, GKLabels, StateEnum as SE } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
 import type { PlayerInfo } from "../PlayerInfo";
 import { is_f_num, round_float } from "../utils";
 import { Times } from "../utils/Times";
+import { ControllerDoubleClicks } from "./ControllerDoubleClicks";
+import { ControllerKeyStatus } from "./ControllerKeyStatus";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
-import DoubleClick from "./DoubleClick";
-import { KeyStatus } from "./KeyStatus";
 import { SeqKeys } from "./SeqKeys";
 export type TKeys = Record<GK, string>;
 enum Status {
@@ -16,59 +16,14 @@ enum Status {
   HOLD = 2,
 }
 
-class CtrlKeyStatus {
-  readonly owner: BaseController;
-  L: KeyStatus;
-  R: KeyStatus;
-  U: KeyStatus;
-  D: KeyStatus;
-  d: KeyStatus;
-  j: KeyStatus;
-  a: KeyStatus;
-  get F() { return this.L }
-  get B() { return this.L }
-  constructor(owner: BaseController) {
-    this.owner = owner;
-    this.L = new KeyStatus(this.owner)
-    this.R = new KeyStatus(this.owner)
-    this.U = new KeyStatus(this.owner)
-    this.D = new KeyStatus(this.owner)
-    this.d = new KeyStatus(this.owner)
-    this.j = new KeyStatus(this.owner)
-    this.a = new KeyStatus(this.owner)
-  }
-}
-
-class CtrlDoubleClicks {
-  readonly owner: BaseController;
-  L: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-  R: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-  U: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-  D: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-  d: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-  j: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-  a: DoubleClick<{ frame: IFrameInfo, facing: TFace }>;
-  get F() { return this.L }
-  get B() { return this.L }
-  constructor(owner: BaseController) {
-    this.owner = owner;
-    this.L = new DoubleClick("d")
-    this.R = new DoubleClick("a")
-    this.U = new DoubleClick("j")
-    this.D = new DoubleClick("L")
-    this.d = new DoubleClick("R")
-    this.j = new DoubleClick("U")
-    this.a = new DoubleClick("D")
-  }
-}
 /**
  * @link https://www.processon.com/view/link/6765125f16640e2a68b21418?cid=6764eb96c3e02b46ac818e40
  */
 export class BaseController {
   static readonly TAG: string = 'BaseController';
   readonly __is_base_ctrl__ = true;
-  readonly keys = new CtrlKeyStatus(this);
-  readonly dbc = new CtrlDoubleClicks(this);
+  readonly keys = new ControllerKeyStatus(this);
+  readonly dbc = new ControllerDoubleClicks(this);
   private readonly _time = new Times(10, Number.MAX_SAFE_INTEGER);
 
   player_id: string;
@@ -191,8 +146,8 @@ export class BaseController {
     if (!d0 || !d1) return true;
     // stupid...
     if (
-      (d0.frame.state == SE.Standing || d0.frame.state == SE.Walking) &&
-      (d0.frame.state == SE.Standing || d0.frame.state == SE.Walking)
+      (d0.fstate == SE.Standing || d0.fstate == SE.Walking) &&
+      (d0.fstate == SE.Standing || d0.fstate == SE.Walking)
     ) {
       return true;
     }
@@ -310,7 +265,7 @@ export class BaseController {
 
             const dbc = this.dbc[gk]
             if (!dbc.fired) dbc.press(this.time, {
-              frame: me.frame, facing: me.facing
+              fstate: me.frame.state, facing: me.facing
             }, me.world.double_click_interval);
 
             break;
