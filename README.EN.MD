@@ -14,13 +14,20 @@ Think this project is pretty good? Consider starring it!
 
 **The original author, Marti Wong, has now launched "[Little Fighter 2 Remastered](https://lf2.net/)". Please purchase it on [Steam](https://store.steampowered.com/app/3249650) to support the original author.**
 
-## 快捷链接
+## Links
 
 - [CHANGELOG](./CHANGELOG.EN.MD)
 - [Multiplayer Online Game](./docs/Multiplayer%20Online%20Game/README.EN.MD)
 - [Building and Running](./docs/Build%20Instructions/README.EN.MD)
 - [Custom Game](./docs/Custom%20Game/README.MD)
 - [Feedback & Discussions](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
+
+## Screenshots
+
+![入口页](./docs/image/custom_game_guide_0.en.png)
+![主页](./docs/image/main_page_small_fighting.gif)
+![闯关模式(生存)](./docs/image/team_outline_effect_stage_mode.png)
+![对战模式](./docs/image/team_outline_effect_vs_mode.png)
 
 ## What's next?
 
