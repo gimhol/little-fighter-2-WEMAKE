@@ -1,13 +1,12 @@
 import json5 from "json5";
 import { Callbacks } from "./base";
-import type { TKeys } from "./controller/BaseController";
-import { Defines, GameKey } from "./defines";
+import { Defines, type GameKey } from "./defines";
 import { CtrlDevice } from "./defines/CtrlDevice";
-import { IPurePlayerInfo } from "./defines/IPurePlayerInfo";
+import type { IPurePlayerInfo } from "./defines/IPurePlayerInfo";
 import { Ditto } from "./ditto";
-import { IPlayerInfoCallback } from "./IPlayerInfoCallback";
-import { is_str, Unsafe } from "./utils/type_check";
-import { Entity } from "./entity";
+import type { Entity } from "./entity";
+import type { IPlayerInfoCallback } from "./IPlayerInfoCallback";
+import { is_str, type Unsafe } from "./utils/type_check";
 
 export class PlayerInfo {
   static readonly TAG = "PlayerInfo";
@@ -23,7 +22,7 @@ export class PlayerInfo {
   get storage_key() { return "player_info_" + this.id; }
   get name(): string { return this._info.name; }
   set name(v: string) { this._info.name = v; }
-  get keys(): TKeys { return this._info.keys; }
+  get keys() { return this._info.keys; }
   get is_com(): boolean { return this._is_com; }
   set is_com(v: boolean) { this._is_com = v; }
   get ctrl(): CtrlDevice { return this._info.ctrl; }

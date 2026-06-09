@@ -9,7 +9,6 @@ import { ControllerDoubleClicks } from "./ControllerDoubleClicks";
 import { ControllerKeyStatus } from "./ControllerKeyStatus";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
 import { SeqKeys } from "./SeqKeys";
-export type TKeys = Record<GK, string>;
 enum Status {
   UP = 0,
   DOWN = 1,
@@ -34,6 +33,19 @@ export class BaseController {
   private _key_list: string = '';
   private _readable_key_list: string = '';
 
+  protected seqKeyMap = new Map<string, SeqKeys<{ etc: string }>>([
+    ['djdj', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''), { etc: "0" })],
+    ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join(''), { etc: "2" })],
+    ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join(''), { etc: "4" })],
+    ['djjj', new SeqKeys([GK.d, GK.j, GK.j, GK.j].join(''), { etc: "8" })],
+  ])
+
+  protected readonly result = new ControllerUpdateResult();
+  readonly queue: (readonly [Status, LGK])[] = []
+
+  readonly ku = this.key_up.bind(this);
+  readonly kd = this.key_down.bind(this);
+  readonly ck = this.click.bind(this);
 
   get world() {
     return this.entity.world;
@@ -48,14 +60,6 @@ export class BaseController {
     if (!this._chase_pos)
       this._chase_pos = this.entity.position.clone()
     return this._chase_pos
-  }
-  set_chase_pos(x: number, y: number, z: number) {
-    if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
-    this.chase_pos.set(
-      round_float(x),
-      round_float(y),
-      round_float(z)
-    )
   }
   get LR(): 0 | 1 | -1 {
     const L = !this.keys.L.is_end() || this.keys.L.is_start();
@@ -79,6 +83,23 @@ export class BaseController {
   get dj(): 0 | 1 | -1 { return -this.jd as 0 | 1 | -1 }
 
   get key_list() { return this._readable_key_list; }
+
+  set_chase_pos(x: number, y: number, z: number) {
+    if (is_f_num(x) || is_f_num(y) || is_f_num(z)) debugger;
+    this.chase_pos.set(
+      round_float(x),
+      round_float(y),
+      round_float(z)
+    )
+  }
+
+  constructor(player_id: string, entity: Entity) {
+    this.player_id = player_id;
+    const { lf2 } = entity
+    this.player = lf2.players.get(player_id);
+    this.entity = entity;
+  }
+
   reset_key_list() {
     this._key_list = ''
     this._readable_key_list = ''
@@ -206,15 +227,6 @@ export class BaseController {
         this.end(k);
     return this;
   }
-  readonly ku = this.key_up.bind(this);
-  readonly kd = this.key_down.bind(this);
-  readonly ck = this.click.bind(this);
-  constructor(player_id: string, entity: Entity) {
-    this.player_id = player_id;
-    const { lf2 } = entity
-    this.player = lf2.players.get(player_id);
-    this.entity = entity;
-  }
   tst(type: "hit" | "hld" | "dbl" | "kd" | 'ku', key: GK) {
     const conflict_key = CONFLICTS_KEY_MAP[key];
     if (conflict_key && !this.is_end(conflict_key)) return false;
@@ -224,16 +236,6 @@ export class BaseController {
     if (type === "hit") return this.keys[key].is_hit() && !this.keys[key].used;
     else return this.keys[key].is_hld();
   }
-
-  protected seqKeyMap = new Map<string, SeqKeys<{ etc: string }>>([
-    ['djdj', new SeqKeys([GK.d, GK.j, GK.d, GK.j].join(''), { etc: "0" })],
-    ['dddd', new SeqKeys([GK.d, GK.d, GK.d, GK.d].join(''), { etc: "2" })],
-    ['dada', new SeqKeys([GK.d, GK.a, GK.d, GK.a].join(''), { etc: "4" })],
-    ['djjj', new SeqKeys([GK.d, GK.j, GK.j, GK.j].join(''), { etc: "8" })],
-  ])
-
-  protected readonly result = new ControllerUpdateResult();
-  readonly queue: (readonly [Status, LGK])[] = []
 
   update(): ControllerUpdateResult {
     this._time.add()
