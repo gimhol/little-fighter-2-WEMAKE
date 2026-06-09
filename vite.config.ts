@@ -39,11 +39,24 @@ export default defineConfig({
   },
 
   build: {
+    cssCodeSplit: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
             return 'vendor';
+          }
+          if (id.includes('/src/Component/') || id.includes('/src/Utils/') || id.includes('/src/Utils/hooks')) {
+            return 'common';
+          }
+          if (id.includes('/src/Editor/') || id.includes('/src/EditorView/')) {
+            return 'editor';
+          }
+          if (id.includes('/src/LF2/') || id.includes('/src/DittoImpl/') || id.includes('/src/Net/')) {
+            return 'lf2-dom'
+          }
+          if (id.match('/src/pages/')) {
+            return 'other-pages'
           }
         },
         chunkFileNames: 'assets/js/[name].[hash].js',
