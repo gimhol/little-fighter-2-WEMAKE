@@ -20,6 +20,13 @@
 - [自定义游戏](./docs/Custom%20Game/README.MD)
 - [功能建议、体验反馈](https://github.com/gimhol/little-fighter-2-WEMAKE/discussions)
 
+## 截图
+
+![入口页](./docs/image/custom_game_guide_0.en.png)
+![主页](./docs/image/main_page_small_fighting.gif)
+![闯关模式(生存)](./docs/image/team_outline_effect_stage_mode.png)
+![对战模式](./docs/image/team_outline_effect_vs_mode.png)
+
 ## 接下来是？
 
 - 支持3d模型与动画?
