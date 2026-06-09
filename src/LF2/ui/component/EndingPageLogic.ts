@@ -31,7 +31,6 @@ export class EndingPageLogic extends UIComponent<IEndingPageLogicProps> {
   }
   override on_start(): void {
     super.on_start?.();
-    alert('shit!')
     this.texts_idx = -1
     this.props.label?.preload(this.texts)
     this.props.jalousie?.callbacks.add(this.jalousie_cbs)
