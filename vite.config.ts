@@ -36,5 +36,21 @@ export default defineConfig({
         './server/**', './script/**', './release/**'
       ]
     }
+  },
+
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+        chunkFileNames: 'assets/js/[name].[hash].js',
+        entryFileNames: 'assets/js/[name].[hash].js',
+        assetFileNames: 'assets/[ext]/[name].[hash].[ext]'
+      }
+    },
+    assetsInlineLimit: 16384
   }
 })
