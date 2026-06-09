@@ -9,7 +9,7 @@
   },
   component: [
     {
-      name: "EndingPageLogic",
+      cls: "EndingPageLogic",
       properties: { label: "label", jalousie: "jalousie" },
     },
   ],

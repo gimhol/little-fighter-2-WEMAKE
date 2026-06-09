@@ -92,7 +92,13 @@ export async function cook_ui_info(
   const id = raw.id || `no_id_${new_id()}`;
   const name = raw.name || id;
   const components = raw.component?.map(t => {
-    if (typeof t !== 'string') return t;
+    if (typeof t !== 'string') {
+      if (!t.cls) debugger; // my bad -Gim
+      if (!t.cls && t.name) t.cls = t.name;
+      t.id ||= `${t.cls}_${new_id()}`
+      t.name ||= `${t.cls}_no_name`
+      return t;
+    }
     const result = parse_call_func_expression(t);
     const ret: IComponentInfo = result ? {
       ...result,

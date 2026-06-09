@@ -22,7 +22,6 @@ export class UIHelper {
         ['switch_' + id]: (stack_idx = 0) => this.lf2.set_ui({ id }, stack_idx),
       })
     }
-
     return this;
   }
 }
