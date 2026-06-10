@@ -924,9 +924,6 @@ export class Entity {
     if (prev_state_code !== next_state_code) {
       this.set_state(next_state_code)
     }
-    if (this._prev_frame !== this.frame) {
-      this._state?.on_frame_changed?.(this, this.frame, this._prev_frame);
-    }
     if (v.invisible) this.invisibility(v.invisible);
     if (v.opoint) this.apply_opoints(v.opoint);
     if (!v.cpoint) {

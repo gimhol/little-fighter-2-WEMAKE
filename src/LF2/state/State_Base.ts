@@ -1,21 +1,21 @@
 import { Collision } from "../collision/Collision";
 import { Defines, INextFrame, IVector3, StateEnum, type IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
+import { round } from "../utils";
 import { spawn_buring_smoke } from "./spawn_buring_smoke";
 export class State_Base {
   readonly state: number | string;
   constructor(state: number | string) {
     this.state = state
   }
-  on_frame_changed?(e: Entity, frame: IFrameInfo, prev_frame: IFrameInfo): void;
   pre_update?(e: Entity): void;
   update(e: Entity): void {
     switch (e.state) {
       case StateEnum.Burning:
-        if (e.lifetime % 2) e.apply_opoints([spawn_buring_smoke(e, 1)]);
+        if (round(e.lifetime % 2)) e.apply_opoints([spawn_buring_smoke(e, 1)]);
         break;
       case StateEnum.BurnRun:
-        if (e.lifetime % 2) e.apply_opoints([spawn_buring_smoke(e, 2)]);
+        if (round(e.lifetime % 2)) e.apply_opoints([spawn_buring_smoke(e, 2)]);
         break;
     }
   }
@@ -30,7 +30,6 @@ export class State_Base {
   on_dead?(e: Entity): void;
   on_landing?(e: Entity, velocity: IVector3): void;
   get_gravity?(e: Entity): number | undefined | null;
-  on_be_collided?(collision: Collision): void;
 
   get_auto_frame?(e: Entity): IFrameInfo | undefined;
 

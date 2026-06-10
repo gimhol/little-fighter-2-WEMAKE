@@ -34,9 +34,6 @@ export class StateBase_Proxy extends State_Base implements Required<State_Base> 
     if (is_ball(e)) return this.ball_proxy;
     return this.proxy;
   }
-  override on_frame_changed(e: Entity, frame: IFrameInfo, prev_frame: IFrameInfo): void {
-    return this.get_proxy(e).on_frame_changed?.(e, frame, prev_frame);
-  }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     return this.get_proxy(e).enter?.(e, prev_frame);
   }
@@ -57,9 +54,6 @@ export class StateBase_Proxy extends State_Base implements Required<State_Base> 
   }
   override get_auto_frame(e: Entity): IFrameInfo | undefined {
     return this.get_proxy(e).get_auto_frame?.(e);
-  }
-  override on_be_collided(collision: Collision): void {
-    this.get_proxy(collision.victim).on_be_collided?.(collision);
   }
   override get_sudden_death_frame(target: Entity): INextFrame | undefined {
     return this.get_proxy(target)?.get_sudden_death_frame?.(target);
