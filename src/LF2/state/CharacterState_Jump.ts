@@ -32,8 +32,8 @@ export default class CharacterState_Jump extends CharacterState_Base {
     if (!jump_flag) return;
     const { LR, UD } = e.ctrl;
     let vy = e.dataset('jump_height') * e.dataset('jump_h_f')
-    let vz = e.dataset('jump_distancez') * UD * e.dataset('jump_z_f')
-    let vx = LR * (e.dataset('jump_distance') * e.dataset('jump_x_f') - abs(vz / 4));
+    const vz = e.dataset('jump_distancez') * UD * e.dataset('jump_z_f')
+    const vx = LR * (e.dataset('jump_distance') * e.dataset('jump_x_f') - abs(vz / 4));
     const min = 4;
     vy = e.jumping.t ? min + (vy - min) * e.jumping.y / e.jumping.t : min;
     e.set_velocity(vx, vy, vz);
