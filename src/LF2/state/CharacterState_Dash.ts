@@ -13,11 +13,11 @@ export default class CharacterState_Dash extends CharacterState_Base {
     const dx = e.dataset('dash_distance') * e.dataset('dash_x_f')
     const dz = e.dataset('dash_distancez') * e.dataset('dash_z_f')
     const vy = e.dataset('dash_height') * e.dataset('dash_h_f')
-    const { UD: UD1 = 0, LR: LR1 = 0 } = e.ctrl || {};
-    if (UD1) next_vz = UD1 * dz;
+    const { UD, LR } = e.ctrl;
+    if (UD) next_vz = UD * dz;
     if (prev_frame.state === StateEnum.Running) {
       next_vx = e.facing * dx;
-    } else if (LR1) next_vx = LR1 * dx;
+    } else if (LR) next_vx = LR * dx;
     else if (vx > 0) next_vx = dx;
     else if (vx < 0) next_vx = -dx;
     else next_vx = e.facing * dx;
