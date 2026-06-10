@@ -5,7 +5,6 @@ import { abs, round_float } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
 export default class CharacterState_Jump extends CharacterState_Base {
-
   constructor(state: StateEnum = StateEnum.Jump) {
     super(state)
   }
@@ -34,14 +33,9 @@ export default class CharacterState_Jump extends CharacterState_Base {
     const { LR: LR1 = 0, UD: UD1 = 0 } = e.ctrl || {};
     let vy = e.dataset('jump_height') * e.dataset('jump_h_f')
     let vz = e.dataset('jump_distancez') * UD1 * e.dataset('jump_z_f')
-    let vx = LR1 * (e.dataset('jump_distance') * e.dataset('jump_x_f') - abs(vz / 4))
-    const f = e.jumping;
+    let vx = LR1 * (e.dataset('jump_distance') * e.dataset('jump_x_f') - abs(vz / 4));
     const min = 4;
-    if (f.t) {
-      vy = min + (vy - min) * f.y / f.t
-    } else {
-      vy = min;
-    }
+    vy = e.jumping.t ? min + (vy - min) * e.jumping.y / e.jumping.t : min;
     e.set_velocity(vx, vy, vz);
     e.jumping.s = 1;
   }
