@@ -223,6 +223,7 @@ export class Entity {
 
   renderer: any;
   puppet: boolean = false;
+  jumping = { s: 0, x: 0, y: 0, z: 0, t: 0 }
 
   get lifetime() {
     return this._lifetime
@@ -729,6 +730,11 @@ export class Entity {
     this._ctrl = new InvalidController("", this);
     this._mp_max = d.base.mp_max;
     this._defend_ratio = d.base.defend_ratio
+    this.jumping.s = 0
+    this.jumping.x = 0
+    this.jumping.y = 0
+    this.jumping.z = 0
+    this.jumping.t = 0
 
     const { armor } = this._data.base
     this.armor = armor || null;

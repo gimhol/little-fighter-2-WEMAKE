@@ -1,63 +1,53 @@
 import { GK, IFrameInfo, SpeedCtrl, StateEnum } from "../defines";
 import { is_bot_ctrl } from "../entity";
 import type { Entity } from "../entity/Entity";
-import { abs } from "../utils";
+import { abs, round_float } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
 export default class CharacterState_Jump extends CharacterState_Base {
-  private _jumpings = new Set<Entity>();
-  private _forces = new Map<Entity, { x: number, y: number, z: number, t: number }>();
+
   constructor(state: StateEnum = StateEnum.Jump) {
     super(state)
   }
   override enter(e: Entity, prev_frame: IFrameInfo): void {
-    if (e.position.y === 0) {
-      this._jumpings.delete(e)
-      this._forces.delete(e)
+    if (e.position.y == 0) {
+      e.jumping.s = 0;
+      e.jumping.x = 0
+      e.jumping.y = 0
+      e.jumping.z = 0
+      e.jumping.t = 0
     }
   }
   override update(e: Entity): void {
     e.handle_ground_velocity_decay();
+    if (e.jumping.s) return;
     const { jump_flag } = e.get_prev_frame();
-    if (!jump_flag) {
-      if (!is_bot_ctrl(e.ctrl)) {
-        const force = this._forces.get(e)
-        if (!force) {
-          this._forces.set(e, { x: 0, y: 0, z: 0, t: 0 })
-        } else {
-          force.t += 1;
-          if (!e.ctrl.is_end(GK.R)) force.x += 1;
-          if (!e.ctrl.is_end(GK.L)) force.x -= 1;
-          if (!e.ctrl.is_end(GK.U)) force.z -= 1;
-          if (!e.ctrl.is_end(GK.D)) force.z += 1;
-          if (!e.ctrl.is_end(GK.j)) force.y += 1;
-        }
-      }
-      return;
+    if (!is_bot_ctrl(e.ctrl)) {
+      e.jumping.t = round_float(e.jumping.t + e.world.atom_time);
+      if (!e.ctrl.is_end(GK.R)) e.jumping.x = round_float(e.jumping.x + e.world.atom_time);
+      if (!e.ctrl.is_end(GK.L)) e.jumping.x = round_float(e.jumping.x - e.world.atom_time);
+      if (!e.ctrl.is_end(GK.U)) e.jumping.z = round_float(e.jumping.z - e.world.atom_time);
+      if (!e.ctrl.is_end(GK.D)) e.jumping.z = round_float(e.jumping.z + e.world.atom_time);
+      if (!e.ctrl.is_end(GK.j)) e.jumping.y = round_float(e.jumping.y + e.world.atom_time);
     }
-    if (this._jumpings.has(e)) return;
+    if (!jump_flag) return;
     const { LR: LR1 = 0, UD: UD1 = 0 } = e.ctrl || {};
     let vy = e.dataset('jump_height') * e.dataset('jump_h_f')
     let vz = e.dataset('jump_distancez') * UD1 * e.dataset('jump_z_f')
     let vx = LR1 * (e.dataset('jump_distance') * e.dataset('jump_x_f') - abs(vz / 4))
-    const f = this._forces.get(e);
-    if (f) {
-      const min = 4;
-      if (f.t) {
-        vy = min + (vy - min) * f.y / f.t
-      } else {
-        vy = min;
-      }
+    const f = e.jumping;
+    const min = 4;
+    if (f.t) {
+      vy = min + (vy - min) * f.y / f.t
+    } else {
+      vy = min;
     }
     e.set_velocity(vx, vy, vz);
-    this._jumpings.add(e);
+    e.jumping.s = 1;
   }
   override on_landing(e: Entity): void {
     const { on_landing } = e.frame;
-    if (on_landing) {
-      e.enter_frame(on_landing);
-      return;
-    }
+    if (on_landing) return e.enter_frame(on_landing);
     e.enter_frame({ id: e.data.indexes?.landing_1 });
     e.update_velocity({ dvz: 4, ctrl_z: SpeedCtrl.Control })
   }
