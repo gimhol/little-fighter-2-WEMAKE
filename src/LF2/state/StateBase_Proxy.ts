@@ -1,4 +1,3 @@
-import { Collision } from "../collision/Collision";
 import { IFrameInfo, INextFrame, IVector3 } from "../defines";
 import { Entity } from "../entity/Entity";
 import { is_ball, is_fighter, is_weapon } from "../entity/type_check";
