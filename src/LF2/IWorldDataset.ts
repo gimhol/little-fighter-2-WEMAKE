@@ -176,11 +176,24 @@ export interface IWorldDataset {
   /** 恢复值(每次回多少) */
   defend_r_value: number;
 
-  fall_value: number;
+  fall_value_max: number;
+
+  /**
+   * 角色抓人能抓多久
+   *
+   * @type {number}
+   */
   catch_time_max: number;
+
   defend_value_max: number;
-  /** 防御生效时，仍扣除多少比例的血(0~1) */
+
+  /**
+   * 防御生效时，仍扣除多少比例的血
+   *
+   * @type {number}
+   */
   defend_ratio: number;
+
   mp: number;
   hp: number;
   resting_max: number;
@@ -195,15 +208,48 @@ export interface IWorldDataset {
   dash_h_f: number;
   bfall_x_f: number;
   bfall_h_f: number;
+
+  /**
+   * Description placeholder
+   *
+   * @type {number}
+   */
   jump_height: number;
+
+  /**
+   * Description placeholder
+   *
+   * @type {number}
+   */
   jump_distance: number;
+  
+  /**
+   * Description placeholder
+   *
+   * @type {number}
+   */
   jump_distancez: number;
+
+  /**
+   * 冲跳高度
+   * @type {number}
+   */
   dash_height: number;
+
+  /**
+   * 冲跳X轴速度
+   * @type {number}
+   */
   dash_distance: number;
+
+  /**
+   * 冲跳Z轴速度
+   * @type {number}
+   */
   dash_distancez: number;
-  /** 默认受身速度Y */
+  /** 默认受身速度Y @type {number} */
   rowing_height: number;
-  /** 默认受身速度X */
+  /** 默认受身速度X @type {number} */
   rowing_distance: number;
   wvx_f: number;
   wvy_f: number;
@@ -289,7 +335,7 @@ export const world_dataset_fields = fields<IWorldDataset>({
   fall_r_value: int("摔落值恢复量", "每次恢复多少摔落值"),
   defend_r_ticks: int("防御值恢复周期", "每几帧恢复一次防御值"),
   defend_r_value: int("防御值恢复量", "每次恢复多少防御值"),
-  fall_value: int("摔落值", "默认摔落值"),
+  fall_value_max: int("摔落值", "默认摔落值"),
   catch_time_max: int,
   defend_value_max: int,
   defend_ratio: int,

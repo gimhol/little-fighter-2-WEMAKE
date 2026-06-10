@@ -72,7 +72,7 @@ export class WorldDataset implements IWorldDataset {
   fall_r_value: number = 1;
   defend_r_ticks: number = 1;
   defend_r_value: number = 1;
-  fall_value: number = 140;
+  fall_value_max: number = 140;
   catch_time_max: number = 680;
   defend_value_max: number = 90;
   defend_ratio: number = 0.1;

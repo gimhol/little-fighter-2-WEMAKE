@@ -51,26 +51,7 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
 
   models?: Record<string, IModelInfo>;
 
-  fall_value?: number;
-
-  defend_value?: number;
-
-  resting?: number;
-
-  /**
-   * 是否为隐藏角色
-   * 默认否
-   *
-   * @type {?boolean}
-   */
-  // hidden?: boolean;
-  /**
-   * 角色抓人能抓多久
-   *
-   * @see {Defines.DEFAULT_CATCH_TIME} 默认值
-   * @type {?number}
-   */
-  catch_time?: number;
+  resting_max?: number;
 
   /**
    * 物体的弹性
@@ -155,48 +136,6 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
    */
   dead_sounds?: string[];
 
-  /**
-   * TODO:
-   */
-  jump_height?: number;
-  /**
-   * TODO:
-   */
-  jump_distance?: number;
-  /**
-   * TODO:
-   */
-  jump_distancez?: number;
-
-  /**
-   * 冲跳高度
-   * 
-   * @memberof IEntityInfo
-   */
-  dash_height?: number;
-
-  /**
-   * 冲跳X轴速度
-   * 
-   * @memberof IEntityInfo
-   */
-  dash_distance?: number;
-
-  /**
-   * 冲跳Z轴速度
-   * 
-   * @memberof IEntityInfo
-   */
-  dash_distancez?: number;
-  /**
-   * TODO:
-   */
-  rowing_height?: number;
-  /**
-   * TODO:
-   */
-  rowing_distance?: number;
-
   armor?: IArmorInfo;
 
   /**
@@ -214,7 +153,6 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
    * BOT数据ID
    *
    * @type {string}
-   * @memberof IEntityInfo
    */
   bot_id?: string;
 
@@ -222,16 +160,14 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
    * BOT数据
    *
    * @type {IBotData}
-   * @memberof IEntityInfo
    */
   bot?: IBotData;
 
+  
   /**
-   * 防御生效时，仍扣除多少比例的血
+   * 似乎有点想法，但不多
    *
-   * @type {number}
+   * @type {?Record<string, IFramePictureInfo>}
    */
-  defend_ratio?: number;
-
   portraits?: Record<string, IFramePictureInfo>;
 }

@@ -76,7 +76,7 @@ export interface IEntitySnapshot {
   motionless: number;
   shaking: number;
   catch_time: number;
-  catch_time_max: number;
+  catch_time_max?: number;
   invisible_duration: number;
   invulnerable_duration: number;
   blinking_duration: number;

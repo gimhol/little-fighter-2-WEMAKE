@@ -142,7 +142,7 @@ export class Entity {
    * 当抓住一个被击晕的人时，此值充满。
    */
   protected _catch_time!: number;
-  protected _catch_time_max!: number;
+  protected _catch_time_max?: number;
 
   /**
    * 隐身计数，每帧-1
@@ -321,7 +321,7 @@ export class Entity {
     this._catch_time_max = v;
     this.callbacks.emit("on_catch_time_max_changed")(this, v, o);
   }
-  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value; }
+  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value_max; }
   set fall_value_max(v: number) {
     const o = this.fall_value_max;
     if (o === v) return;
@@ -684,16 +684,16 @@ export class Entity {
     this.copies.clear()
     this._stat_bar_type = null;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
-    this._resting_max = d.base.resting;
+    this._resting_max = d.base.resting_max;
     this._resting = 0;
     this._toughness = 0;
     this._toughness_max = 0;
     this._toughness_resting = 0;
-    this._fall_value_max = d.base.fall_value;
-    this._defend_value_max = d.base.defend_value;
+    this._fall_value_max = d.base.fall_value_max;
+    this._defend_value_max = d.base.defend_value_max;
     this._defend_ratio = d.base.defend_ratio;
     this._healing = 0;
-    this._catch_time_max = d.base.catch_time ?? this.world.catch_time_max;
+    this._catch_time_max = d.base.catch_time_max;
     this.throwinjury = 0;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
