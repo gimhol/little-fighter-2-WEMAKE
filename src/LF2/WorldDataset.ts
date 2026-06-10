@@ -76,8 +76,8 @@ export class WorldDataset implements IWorldDataset {
   catch_time_max: number = 680;
   defend_value_max: number = 90;
   defend_ratio: number = 0.1;
-  mp: number = 500;
-  hp: number = 500;
+  mp_max: number = 500;
+  hp_max: number = 500;
   resting_max: number = 40;
   vrest_after_shaking: number = 1;
   arest_after_motionless: number = 1;

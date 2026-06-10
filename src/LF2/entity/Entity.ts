@@ -476,7 +476,7 @@ export class Entity {
     }
   }
   get mp_max(): number {
-    return this._mp_max ?? this.world.mp;
+    return this._mp_max ?? this.world.mp_max;
   }
   set mp_max(v: number) {
     const o = this.mp_max;
@@ -487,7 +487,7 @@ export class Entity {
   }
 
   get hp_max(): number {
-    return this._hp_max ?? this.world.hp;
+    return this._hp_max ?? this.world.hp_max;
   }
   set hp_max(v: number) {
     const o = this.hp_max;
@@ -725,9 +725,9 @@ export class Entity {
     this._defend_r_tick = new Times(0, world.defend_r_ticks);
     this._defend_r_value = world.defend_r_value;
     this._fall_r_value = world.fall_r_value;
-    this._hp_max = d.base.hp;
+    this._hp_max = d.base.hp_max;
     this._ctrl = new InvalidController("", this);
-    this._mp_max = d.base.mp;
+    this._mp_max = d.base.mp_max;
     this._defend_ratio = d.base.defend_ratio
 
     const { armor } = this._data.base
@@ -1404,7 +1404,7 @@ export class Entity {
     this.hp_recovering()
     this.mp_recovering();
 
-    if (this.frame.hp) this.hp -= this.frame.hp * this.world.atom_time;
+    if (this.frame.hp_max) this.hp -= this.frame.hp_max * this.world.atom_time;
 
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
       for (const [k, v] of this.vrests) {

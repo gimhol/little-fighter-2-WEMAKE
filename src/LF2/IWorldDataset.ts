@@ -194,8 +194,8 @@ export interface IWorldDataset {
    */
   defend_ratio: number;
 
-  mp: number;
-  hp: number;
+  mp_max: number;
+  hp_max: number;
   resting_max: number;
   vrest_after_shaking: number;
   arest_after_motionless: number;
@@ -222,7 +222,7 @@ export interface IWorldDataset {
    * @type {number}
    */
   jump_distance: number;
-  
+
   /**
    * Description placeholder
    *
@@ -329,34 +329,34 @@ export const world_dataset_fields = fields<IWorldDataset>({
   screen_w: any,
   screen_h: any,
   sync_render: any,
-  difficulty: int,
+  difficulty: float('(difficulty)'),
   infinity_mp: int("无限MP", "无限MP, 1=无限, 0=有限(默认)", { min: 0, max: 1 }),
   fall_r_ticks: int("摔落值恢复周期", "每几帧恢复一次摔落值"),
   fall_r_value: int("摔落值恢复量", "每次恢复多少摔落值"),
   defend_r_ticks: int("防御值恢复周期", "每几帧恢复一次防御值"),
   defend_r_value: int("防御值恢复量", "每次恢复多少防御值"),
   fall_value_max: int("摔落值", "默认摔落值"),
-  catch_time_max: int,
-  defend_value_max: int,
-  defend_ratio: int,
-  mp: int,
-  hp: int,
-  resting_max: int,
+  catch_time_max: float('(catch_time_max)'),
+  defend_value_max: float('(defend_value_max)'),
+  defend_ratio: float('(defend_ratio)'),
+  mp_max: float('(mp_max)'),
+  hp_max: float('(hp_max)'),
+  resting_max: float('(resting_max)'),
   vrest_after_shaking: int("vrest是否在shaking后更新", "vrest是否在shaking后更新", { min: 0, max: 1 }),
   arest_after_motionless: int("arest是否在motionless后更新", "arest是否在motionless后更新", { min: 0, max: 1 }),
   invisible_blinking: int("隐身结束后的闪烁时长", "隐身结束后的闪烁时长", { min: 0, max: 9999 }),
-  jump_height: float,
-  jump_distance: float,
-  jump_distancez: float,
-  dash_height: float,
-  dash_distance: float,
-  dash_distancez: float,
-  rowing_height: float,
-  rowing_distance: float,
-  whirlwind_vy_max: float('旋风最大Y速度'),
-  whirlwind_acc_y: float('旋风Y加速度'),
-  whirlwind_acc_x: float('旋风X加速度'),
-  whirlwind_acc_z: float('旋风Z加速度'),
+  jump_height: float('跳越Y速度(jump_height)'),
+  jump_distance: float('跳越X速度(jump_distance)'),
+  jump_distancez: float('跳越Z速度(jump_distancez)'),
+  dash_height: float('(dash_height)'),
+  dash_distance: float('(dash_distance)'),
+  dash_distancez: float('(dash_distancez)'),
+  rowing_height: float('受身Y速度(rowing_height)'),
+  rowing_distance: float('受身X速度(rowing_distance)'),
+  whirlwind_vy_max: float('旋风最大Y速度(whirlwind_vy_max)'),
+  whirlwind_acc_y: float('旋风Y加速度(whirlwind_acc_y)'),
+  whirlwind_acc_x: float('旋风X加速度(whirlwind_acc_x)'),
+  whirlwind_acc_z: float('旋风Z加速度(whirlwind_acc_z)'),
   itr_fall: int,
   teamoutline_enabled: int({ min: 0, max: 1 }),
   indicator_flags: int,

@@ -13,7 +13,7 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
   const { base: info, frames, index: datIndex } = ctx
 
   info.name = datIndex.hash ?? datIndex.file.split('/').slice(-1)[0].replace(/[^a-z|A-Z|0-9|_]/g, "-").replace(/-obj-json5$/, '');
-  info.hp = 500;
+  info.hp_max = 500;
 
   let weapon_broken_sound = take_str(info, "weapon_broken_sound");
   if (weapon_broken_sound) {
@@ -41,7 +41,7 @@ export function make_ball_data(ctx: IDatContext): IEntityData {
       frame.acc_z = round_float((to_num(hit_j, 50) - 50));
     }
     const hit_a = take(frame, "hit_a");
-    if (hit_a) frame.hp = round_float(hit_a / 2, 10);
+    if (hit_a) frame.hp_max = round_float(hit_a / 2, 10);
 
     const hit_d = take(frame, "hit_d");
     if (hit_d && hit_d !== frame.id)

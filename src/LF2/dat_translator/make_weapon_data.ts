@@ -81,7 +81,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
   if (drop_hurt && Number(drop_hurt)) info.drop_hurt = Number(drop_hurt);
 
   const weapon_hp = take(info, "weapon_hp");
-  if (weapon_hp && Number(weapon_hp)) info.hp = Number(weapon_hp);
+  if (weapon_hp && Number(weapon_hp)) info.hp_max = Number(weapon_hp);
 
   traversal(frames, (k, frame) => {
     const hit_j = take(frame, "hit_j");
@@ -90,7 +90,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
       frame.acc_z = round_float((to_num(hit_j, 50) - 50) / 2);
     }
     const hit_a = take(frame, "hit_a");
-    if (hit_a) frame.hp = round_float(hit_a / 2, 10);
+    if (hit_a) frame.hp_max = round_float(hit_a / 2, 10);
 
     const hit_d = take(frame, "hit_d");
     if (hit_d && hit_d !== frame.id)

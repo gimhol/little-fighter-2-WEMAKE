@@ -18,7 +18,6 @@ export default class CharacterState_Jump extends CharacterState_Base {
   }
   override update(e: Entity): void {
     e.handle_ground_velocity_decay();
-
     const { jump_flag } = e.get_prev_frame();
     if (!jump_flag) {
       if (!is_bot_ctrl(e.ctrl)) {
@@ -38,15 +37,9 @@ export default class CharacterState_Jump extends CharacterState_Base {
     }
     if (this._jumpings.has(e)) return;
     const { LR: LR1 = 0, UD: UD1 = 0 } = e.ctrl || {};
-    let {
-      jump_height: vy = e.dataset('jump_height'),
-      jump_distance: vx = e.dataset('jump_distance'),
-      jump_distancez: vz = e.dataset('jump_distancez'),
-    } = e.data.base;
-
-    vz *= UD1 * e.dataset('jump_z_f')
-    vx = LR1 * (vx * e.dataset('jump_x_f') - abs(vz / 4))
-    vy *= e.dataset('jump_h_f')
+    let vy = e.dataset('jump_height') * e.dataset('jump_h_f')
+    let vz = e.dataset('jump_distancez') * UD1 * e.dataset('jump_z_f')
+    let vx = LR1 * (e.dataset('jump_distance') * e.dataset('jump_x_f') - abs(vz / 4))
     const f = this._forces.get(e);
     if (f) {
       const min = 4;
