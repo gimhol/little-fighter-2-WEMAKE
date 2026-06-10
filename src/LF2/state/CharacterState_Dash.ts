@@ -10,15 +10,9 @@ export default class CharacterState_Dash extends CharacterState_Base {
     const { x: vx, z: vz } = e.velocity;
     let next_vx = vx;
     let next_vz = vz;
-    let {
-      dash_distance: dx = e.dataset('dash_distance'),
-      dash_distancez: dz = e.dataset('dash_distancez'),
-      dash_height: vy = e.dataset('dash_height'),
-    } = e.data.base;
-    dx *= e.dataset('dash_x_f')
-    dz *= e.dataset('dash_z_f')
-    vy *= e.dataset('dash_h_f')
-
+    const dx = e.dataset('dash_distance') * e.dataset('dash_x_f')
+    const dz = e.dataset('dash_distancez') * e.dataset('dash_z_f')
+    const vy = e.dataset('dash_height') * e.dataset('dash_h_f')
     const { UD: UD1 = 0, LR: LR1 = 0 } = e.ctrl || {};
     if (UD1) next_vz = UD1 * dz;
     if (prev_frame.state === StateEnum.Running) {
