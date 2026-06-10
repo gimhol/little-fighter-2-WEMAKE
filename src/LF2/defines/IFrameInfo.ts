@@ -198,7 +198,9 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    */
   gravity_enabled?: boolean;
 
-
+  /**
+   * 这个好像不太好
+   */
   broadcasts?: string[];
 
   facing?: FacingFlag;
