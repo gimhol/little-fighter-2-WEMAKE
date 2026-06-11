@@ -1,4 +1,5 @@
-import type { ArmorEnum } from "./ArmorEnum";
+import { any, fields, flt, int } from "../fields";
+import { ALL_ARMOR_ENUM, ARMOR_ENUM_DESC_MAP, ARMOR_ENUM_LABEL_MAP, ArmorEnum } from "./ArmorEnum";
 
 export interface IArmorInfo {
   /**
@@ -87,7 +88,31 @@ export interface IArmorInfo {
    */
   shaking_ratio?: number;
 
-  
+
   motionless_ratio?: number;
 }
 
+export const armor_Info_fields = fields<Partial<IArmorInfo>>({
+  type: int("护甲类型", {
+    options: ALL_ARMOR_ENUM.map(v => ({
+      value: v,
+      label: ARMOR_ENUM_LABEL_MAP[v],
+      desc: ARMOR_ENUM_DESC_MAP[v]
+    }))
+  }),
+  toughness: int('耐久'),
+  fireproof: int("防火", { options: [{ value: 0, label: 'NO' }, { value: 1, label: 'YES' }] }),
+  antifreeze: int("防冻", { options: [{ value: 0, label: 'NO' }, { value: 1, label: 'YES' }] }),
+  fulltime: int("全时生效", { options: [{ value: 0, label: 'NO' }, { value: 1, label: 'YES' }] }),
+  injury_ratio: flt('受伤比例', '默认: 0.1'),
+  shaking_ratio: flt('硬直比例', '默认: 3'),
+  motionless_ratio: flt('??比例', '默认: 0.1'),
+  hit_sounds: any,
+  dead_sounds: any,
+})
+export function armor_Info_new(): IArmorInfo {
+  return {
+    type: ArmorEnum.Times,
+    toughness: 2,
+  }
+}
