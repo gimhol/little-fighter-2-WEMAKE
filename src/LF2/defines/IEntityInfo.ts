@@ -1,4 +1,4 @@
-import { any, fields, IFieldInfo, int, str } from "../fields";
+import { any, fields, flt, IFieldInfo, int, str } from "../fields";
 import { IWorldDataset, world_dataset_fields } from "../IWorldDataset";
 import { ALL_ENTITY_ENUM, ENTITY_ENUM_DESC_MAP, ENTITY_ENUM_LABEL_MAP } from "./EntityEnum";
 import { ALL_ENTITY_GROUP, ENTITY_GROUP_DESC_MAP, ENTITY_GROUP_LABEL_MAP } from "./EntityGroup";
@@ -20,7 +20,7 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
   name: string;
 
   /**
-   * 角色强度系数
+   * 强度
    *
    * 用于闯关模式
    *
@@ -191,15 +191,15 @@ world_dataset_fields.forEach((value, key) => {
   entity_info_fields.set(key, value);
 })
 fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
-  type: int('实体类型', {
+  type: int('类型', {
     options: ALL_ENTITY_ENUM.map(v => ({
       value: v,
       label: ENTITY_ENUM_LABEL_MAP[v],
       desc: ENTITY_ENUM_DESC_MAP[v]
     }))
   }),
-  name: str('实体名称', { maxLength: 16 }),
-  ce: int('角色强度系数', '默认：1， 若一个角色强度等级为3，使用该角色进入闯关，将视此角色为3个人', { min: 0, max: 8 }),
+  name: str('名称', { maxLength: 16 }),
+  ce: int('强度', '默认：1， 若一个角色强度等级为3，使用该角色进入闯关，将视此角色为3个人', { min: 0, max: 8 }),
   head: str('头像'),
   small: str('缩略图'),
   group: str('实体组', '实体组', {
@@ -210,17 +210,18 @@ fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
       desc: ENTITY_GROUP_DESC_MAP[v]
     }))
   }),
+  bounce_y: flt,
+  bounce_x: flt,
+  bounce_z: flt,
+  bounce_min_y: flt,
+  bounce_min_x: flt,
+  bounce_min_z: flt,
+  fast_vy: flt,
+  fast_vx: flt,
+  fast_vz: flt,
+
   files: any,
   models: any,
-  bounce_y: any,
-  bounce_x: any,
-  bounce_z: any,
-  bounce_min_y: any,
-  bounce_min_x: any,
-  bounce_min_z: any,
-  fast_vy: any,
-  fast_vx: any,
-  fast_vz: any,
   brokens: any,
   drink: any,
   drop_hurt: any,
@@ -228,8 +229,8 @@ fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
   drop_sounds: any,
   dead_sounds: any,
   armor: any,
-  weight: any,
-  strength: any,
+  weight: flt('重量', '目前为武器重量'),
+  strength: flt('力气', '目前为角色力气'),
   bot_id: any,
   bot: any,
   portraits: any

@@ -25,7 +25,14 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
     form.setFieldsValue(i_value)
   }, [i_value, o_value, form])
 
-  const render_field_item = (k: keyof IEntityInfo) => {
+  const render_field_item = (k: keyof IEntityInfo | (keyof IEntityInfo)[]) => {
+    if (Array.isArray(k)) {
+      return (
+        <Space vertical={false} item_props={{ style: { flex: 1 } }} >
+          {k.map(v => render_field_item(v))}
+        </Space>
+      )
+    }
     const field = entity_info_fields.get(k)
     if (!field) return null;
     const { key, title = key, type, options } = field
@@ -73,22 +80,21 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
       )
     }
   }
-  const [visible_fields, set_visible_fields] = useState<(keyof IEntityInfo)[]>([
-    'type',
-    'name',
-    "group",
-    'ce',
+  const [visible_fields, set_visible_fields] = useState<(keyof IEntityInfo | (keyof IEntityInfo)[])[]>([
+    ['type', "group", 'name'],
+    ['ce', 'weight', 'strength'],
 
-    'jump_height',
-    'jump_distance',
-    'jump_distancez',
 
-    'dash_height',
-    'dash_distance',
-    'dash_distancez',
 
-    'rowing_height',
-    'rowing_distance',
+    ['jump_height', 'jump_distance', 'jump_distancez'],
+
+    ['dash_height', 'dash_distance', 'dash_distancez'],
+
+    ['rowing_height', 'rowing_distance'],
+
+    ['bounce_y', 'bounce_x', 'bounce_z'],
+    ['bounce_min_y', 'bounce_min_x', 'bounce_min_z'],
+    ['fast_vy', 'fast_vx', 'fast_vz'],
   ])
 
   return (
