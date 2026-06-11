@@ -1,6 +1,6 @@
 import { any, fields, flt, IFieldInfo, int, str } from "../fields";
 import { IWorldDataset, world_dataset_fields } from "../IWorldDataset";
-import { ALL_ENTITY_ENUM, ENTITY_ENUM_DESC_MAP, ENTITY_ENUM_LABEL_MAP } from "./EntityEnum";
+import { ALL_ENTITY_ENUM, ENTITY_ENUM_DESC_MAP, ENTITY_ENUM_LABEL_MAP, EntityEnum } from "./EntityEnum";
 import { ALL_ENTITY_GROUP, ENTITY_GROUP_DESC_MAP, ENTITY_GROUP_LABEL_MAP } from "./EntityGroup";
 import type { IArmorInfo } from "./IArmorInfo";
 import type { IBotData } from "./IBotData";
@@ -11,7 +11,7 @@ import type { IModelInfo } from "./IModelInfo";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IPictureInfo } from "./IPictureInfo";
 export interface IEntityInfo extends Partial<IWorldDataset> {
-  type?: number;
+  type: number;
 
   /**
    * 实体名称
@@ -180,7 +180,8 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
 }
 export function entity_info_new(): IEntityInfo {
   const ret: IEntityInfo = {
-    name: ""
+    name: "",
+    type: EntityEnum.Entity,
   }
   return ret;
 }
@@ -192,33 +193,40 @@ world_dataset_fields.forEach((value, key) => {
 })
 fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
   type: int('类型', {
+    nullable: false,
     options: ALL_ENTITY_ENUM.map(v => ({
       value: v,
       label: ENTITY_ENUM_LABEL_MAP[v],
       desc: ENTITY_ENUM_DESC_MAP[v]
     }))
   }),
-  name: str('名称', { maxLength: 16 }),
-  ce: int('强度', '默认：1， 若一个角色强度等级为3，使用该角色进入闯关，将视此角色为3个人', { min: 0, max: 8 }),
+  name: str('名称', {
+    nullable: true,
+    maxLength: 16
+  }),
+  ce: int('强度', '默认：1， 若一个角色强度等级为3，使用该角色进入闯关，将视此角色为3个人', {
+    nullable: true, min: 0, max: 8, step: 1
+  }),
   head: str('头像'),
   small: str('缩略图'),
   group: str('实体组', '实体组', {
     array: true,
+    nullable: true,
     options: ALL_ENTITY_GROUP.map(v => ({
       value: v,
       label: ENTITY_GROUP_LABEL_MAP[v],
       desc: ENTITY_GROUP_DESC_MAP[v]
     }))
   }),
-  bounce_y: flt('反弹系数Y', '每次反弹速度都会乘此值'),
-  bounce_x: flt('反弹系数X', '每次反弹速度都会乘此值'),
-  bounce_z: flt('反弹系数Z', '每次反弹速度都会乘此值'),
-  bounce_min_y: flt('最低反弹速Y', '速度低于此值时，将不会反弹'),
-  bounce_min_x: flt('最低反弹速X', '速度低于此值时，将不会反弹'),
-  bounce_min_z: flt('最低反弹速Z', '速度低于此值时，将不会反弹'),
-  fast_vy: flt('武器快速Y', '武器速度超过此值时，会变为投掷状态'),
-  fast_vx: flt('武器快速X', '武器速度超过此值时，会变为投掷状态'),
-  fast_vz: flt('武器快速Z', '武器速度超过此值时，会变为投掷状态'),
+  bounce_y: flt('反弹系数Y', '每次反弹速度都会乘此值', { nullable: true }),
+  bounce_x: flt('反弹系数X', '每次反弹速度都会乘此值', { nullable: true }),
+  bounce_z: flt('反弹系数Z', '每次反弹速度都会乘此值', { nullable: true }),
+  bounce_min_y: flt('最低反弹速Y', '速度低于此值时，将不会反弹', { nullable: true }),
+  bounce_min_x: flt('最低反弹速X', '速度低于此值时，将不会反弹', { nullable: true }),
+  bounce_min_z: flt('最低反弹速Z', '速度低于此值时，将不会反弹', { nullable: true }),
+  fast_vy: flt('武器快速Y', '武器速度超过此值时，会变为投掷状态', { nullable: true }),
+  fast_vx: flt('武器快速X', '武器速度超过此值时，会变为投掷状态', { nullable: true }),
+  fast_vz: flt('武器快速Z', '武器速度超过此值时，会变为投掷状态', { nullable: true }),
 
   files: any,
   models: any,
@@ -229,8 +237,8 @@ fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
   drop_sounds: any,
   dead_sounds: any,
   armor: any,
-  weight: flt('重量', '目前为武器重量'),
-  strength: flt('力气', '目前为角色力气'),
+  weight: flt('重量', '目前为武器重量', { nullable: true }),
+  strength: flt('力气', '目前为角色力气', { nullable: true }),
   bot_id: any,
   bot: any,
   portraits: any

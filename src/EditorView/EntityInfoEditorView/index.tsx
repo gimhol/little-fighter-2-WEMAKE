@@ -1,16 +1,15 @@
 
+import { Checkbox } from "@/Component/Checkbox";
 import { Input, InputNumber } from "@/Component/Input";
 import Select from "@/Component/Select";
-import { armor_Info_fields, armor_Info_new, entity_info_fields, IArmorInfo } from "@/LF2";
+import Show from "@/Component/Show";
+import { armor_Info_fields, armor_Info_new, drink_info_new, entity_info_fields, IArmorInfo } from "@/LF2";
 import { entity_info_new, IEntityInfo } from "@/LF2/defines";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IFrameProps } from "../../Component/Frame";
 import { Space } from "../../Component/Space";
 import { Form } from "../FrameEditorView/Form";
 import { WorkspaceColumnView } from "../WorkspaceColumnView";
-import { Checkbox } from "@/Component/Checkbox";
-import Show from "@/Component/Show";
-import Titled from "@/Component/Titled";
 
 export interface IEntityInfoEditorViewProps extends IFrameProps {
   value?: IEntityInfo;
@@ -20,7 +19,7 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
   const { value: o_value, onChange, ..._p } = props;
   const i_value = useMemo(() => o_value ?? entity_info_new(), [o_value])
   const ref_o_value = useRef(o_value);
-  const [form, _Form] = Form.useForm<IEntityInfo>();
+  const [form, _Form] = Form.useForm<IEntityInfo>(i_value);
   useEffect(() => {
     if (o_value == ref_o_value.current) return;
     form.setFieldsValue(i_value)
@@ -29,7 +28,7 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
   const render_field_item = (k: keyof IEntityInfo | (keyof IEntityInfo)[]) => {
     if (Array.isArray(k)) {
       return (
-        <Space vertical={false} item_props={{ style: { flex: 1 } }} >
+        <Space vertical={false} item_props={{ style: { flex: 1 } }} style={{ flexWrap: 'wrap' }} >
           {k.map(v => render_field_item(v))}
         </Space>
       )
@@ -46,12 +45,12 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
           {field.array == true ?
             <Select
               multi
-              clearable
+              clearable={field.nullable == true}
               title={desc}
               options={options}
               parse={i => [i.value, i.label, { title: i.desc }]} /> :
             <Select
-              clearable
+              clearable={field.nullable == true}
               title={desc}
               options={options}
               parse={i => [i.value, i.label, { title: i.desc }]} />
@@ -62,7 +61,7 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
       return (
         <_Form.Item name={key} label={label} key={k}>
           <InputNumber
-            clearable
+            clearable={field.nullable == true}
             title={desc}
             precision={type == 'float' ? void 0 : 0}
             min={field.min}
@@ -74,7 +73,7 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
       return (
         <_Form.Item name={key} label={label} key={k}>
           <Input
-            clearable
+            clearable={field.nullable == true}
             title={desc}
             maxLength={field.maxLength} />
         </_Form.Item>
@@ -97,20 +96,24 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
       <_Form form={form} onChange={(_, value) => onChange?.(value)}>
         <Space direction='column' stretchs style={{ width: '100%', padding: '20px 10px', boxSizing: 'border-box' }}>
           {visible_fields?.map(v => render_field_item(v))}
-          <Space>
-            <Titled label='护甲'>
-              <Checkbox
-                value={!!i_value.armor}
-                onChange={v => onChange?.({
-                  ...i_value, armor: i_value.armor ? void 0 : armor_Info_new()
-                })} />
-            </Titled>
-          </Space>
-          <Show show={!!i_value.armor}>
-            <_Form.Item name='armor' label='armor'>
-              <ArmorInfoForm />
-            </_Form.Item>
-          </Show>
+          <Checkbox
+            prefix='护甲'
+            value={!!i_value.armor}
+            onChange={v => onChange?.({
+              ...i_value, armor: i_value.armor ? void 0 : armor_Info_new()
+            })} />
+          {
+            !i_value.armor ? null :
+              <_Form.Item name='armor' label='armor'>
+                <ArmorInfoForm />
+              </_Form.Item>
+          }
+          <Checkbox
+            prefix='饮料'
+            value={!!i_value.drink}
+            onChange={v => onChange?.({
+              ...i_value, drink: i_value.drink ? void 0 : drink_info_new()
+            })} />
 
         </Space>
       </_Form>
@@ -124,9 +127,9 @@ export interface IArmorInfoFormProps extends IFrameProps {
 }
 export function ArmorInfoForm(props: IArmorInfoFormProps) {
   const { value: o_value, onChange: onChange, ..._p } = props;
-  const i_value = useMemo(() => o_value ?? entity_info_new(), [o_value])
+  const i_value = useMemo<IArmorInfo>(() => o_value ?? armor_Info_new(), [o_value])
   const ref_o_value = useRef(o_value);
-  const [form, _Form] = Form.useForm<IArmorInfo>();
+  const [form, _Form] = Form.useForm<IArmorInfo>(i_value);
 
   useEffect(() => {
     if (o_value == ref_o_value.current) return;
@@ -153,12 +156,12 @@ export function ArmorInfoForm(props: IArmorInfoFormProps) {
           {field.array == true ?
             <Select
               multi
-              clearable
+              clearable={field.nullable == true}
               title={desc}
               options={options}
               parse={i => [i.value, i.label, { title: i.desc }]} /> :
             <Select
-              clearable
+              clearable={field.nullable == true}
               title={desc}
               options={options}
               parse={i => [i.value, i.label, { title: i.desc }]} />
@@ -169,7 +172,7 @@ export function ArmorInfoForm(props: IArmorInfoFormProps) {
       return (
         <_Form.Item name={key} label={label} key={k}>
           <InputNumber
-            clearable
+            clearable={field.nullable == true}
             title={desc}
             precision={type == 'float' ? void 0 : 0}
             min={field.min}
@@ -181,7 +184,7 @@ export function ArmorInfoForm(props: IArmorInfoFormProps) {
       return (
         <_Form.Item name={key} label={label} key={k}>
           <Input
-            clearable
+            clearable={field.nullable == true}
             title={desc}
             maxLength={field.maxLength} />
         </_Form.Item>
@@ -195,7 +198,7 @@ export function ArmorInfoForm(props: IArmorInfoFormProps) {
     ['injury_ratio', 'shaking_ratio', 'motionless_ratio']
   ])
   return (
-    <_Form form={form} onChange={(_, value) => onChange?.(value)}>
+    <_Form form={form} onChange={(_, value) => onChange?.(value)} >
       <Space direction='column' stretchs>
         {visible_fields.map(v => render_field_item(v))}
       </Space>

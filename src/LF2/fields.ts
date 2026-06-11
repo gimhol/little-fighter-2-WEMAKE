@@ -4,6 +4,7 @@ export interface IBaseFieldInfo<T extends object> {
   desc?: string;
   options?: { value: any, label?: string, desc?: string }[]
   array?: boolean;
+  nullable?: boolean;
 }
 
 export interface IIntFieldInfo<T extends object> extends IBaseFieldInfo<T> {

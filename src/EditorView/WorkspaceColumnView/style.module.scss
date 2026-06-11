@@ -1,4 +1,4 @@
-@use "../../styles/lfui_values.module.scss" as *;
+@use "../../styles/lfui_values.module.scss"as *;
 
 .header_main_footer_view {
   flex            : 1;
@@ -17,12 +17,10 @@
     }
   }
 
-  .content_zone {
+  .content_zone_wrapper {
     width   : 100%;
     height  : 100%;
-    overflow: auto;
-    display : flex;
-    position: relative;
+    overflow: hidden;
 
     &.inner_shadow_v {
       z-index       : 1;
@@ -44,5 +42,15 @@
       background: linear-gradient(#00000000, #00000088);
       @extend .inner_shadow_v;
     }
+  }
+
+  .content_zone {
+    width   : 100%;
+    height  : 100%;
+    overflow: auto;
+    display : flex;
+    position: relative;
+
+
   }
 }

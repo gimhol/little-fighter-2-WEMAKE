@@ -25,8 +25,10 @@ export function WorkspaceColumnView(props: IWorkspaceColumnViewProps) {
             </Text>
           </Combine>
       }
-      <div className={styles.content_zone} data-flex={1}>
-        {props.children}
+      <div className={styles.content_zone_wrapper} data-flex={1}>
+        <div className={styles.content_zone} data-flex={1}>
+          {props.children}
+        </div>
       </div>
     </Combine>
   )

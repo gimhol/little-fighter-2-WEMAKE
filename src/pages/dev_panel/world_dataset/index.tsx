@@ -57,7 +57,9 @@ export function WorldDatasetView(props: IWorldDatasetProps) {
   }
   return (
     <div className={csses.world_dataset}>
-      {Array.from(world_dataset_fields.values()).map((v) => {
+      {Array.from(world_dataset_fields.values()).map((v: any) => {
+
+        // fix this 'as'!
         const { key, title = key, desc = title, type, step } = v;
         return (
           <Titled float_label={title} title={`[${key}]${desc}`} key={v.key}>
@@ -68,11 +70,11 @@ export function WorldDatasetView(props: IWorldDatasetProps) {
                 max={v.max}
                 step={type === 'float' ? step : round(step ?? 1)}
                 className={csses.num_input}
-                value={cwds[v.key]}
-                onChange={(v) => { set_cwds(d => { d[key] = v }) }} />
+                value={(cwds as any)[v.key]}
+                onChange={(v) => { set_cwds(d => { (d as any)[key] = v }) }} />
               <Button
                 title="重置"
-                onClick={(_) => set_cwds(d => { d[key] = dwds[key] })}>
+                onClick={(_) => set_cwds(d => { (d as any)[key] = (dwds as any)[key] })}>
                 <Cross />
               </Button>
             </Combine>
