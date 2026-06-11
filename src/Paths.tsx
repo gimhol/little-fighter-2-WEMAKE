@@ -5,6 +5,7 @@ export namespace Paths {
     _ = '',
     game = '/',
     editor = '/editor',
+    EntityInfoEditor = '/EntityInfoEditor',
     bdy_editor = '/bdy_editor',
     itr_editor = '/itr_editor',
     frame_editor = '/frame_editor',
@@ -42,6 +43,7 @@ export namespace Paths {
     [All.frame_editor]: React.lazy(() => import("./EditorView/FrameEditorView")),
     [All.dat_viewer]: React.lazy(() => import("./pages/dat_viewer")),
     [All.custom_game]: React.lazy(() => import("./pages/custom_game")),
+    [All.EntityInfoEditor]: React.lazy(() => import("./EditorView/EntityInfoEditorView/demo")),
   }
   export const Relations: { [x in All]?: All[] } = {
     [All._]: [
@@ -54,7 +56,8 @@ export namespace Paths {
       All.itr_editor,
       All.frame_editor,
       All.dat_viewer,
-      All.custom_game
+      All.custom_game,
+      All.EntityInfoEditor,
     ],
     [All.component_demos]: [
       All.component_demos_InputNumber,

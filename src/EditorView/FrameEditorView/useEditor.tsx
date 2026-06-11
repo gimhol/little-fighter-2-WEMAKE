@@ -17,7 +17,7 @@ interface CommonProps<O extends {}> {
   field: Field<O>;
   foo?: any
 }
-export function useEditor<O extends {}>(value: O, label_style: React.CSSProperties = {}) {
+export function useEditor<O extends {}>(value: O, label_style: React.CSSProperties = {}, on_changed?: (o: O) => void) {
 
   const titled_style: React.CSSProperties = useMemo(() => (
     { display: 'flex' }
@@ -52,6 +52,7 @@ export function useEditor<O extends {}>(value: O, label_style: React.CSSProperti
           (temp as any)[k] = v;
         }
       })
+      on_changed?.(JSON.parse(JSON.stringify(temp)))
     }
     return {
       ImageFile(props: CommonProps<O> & Partial<ISelectProps<IZipObject, string>>) {
@@ -75,13 +76,12 @@ export function useEditor<O extends {}>(value: O, label_style: React.CSSProperti
         );
       },
       Number(props: CommonProps<O> & InputNumberProps) {
-        const { field, title: name, ..._p } = props;
+        const { field, title: name, defaultValue = get_value(field), style, ..._p } = props;
         return (
           <Titled {...t_props(name ?? field)}>
             <InputNumber
-              defaultValue={get_value(field)}
-              on_blur={v => set_value(field, v)}
-              style={{ flex: 1 }}
+              defaultValue={defaultValue}
+              style={style ?? { flex: 1 }}
               clearable
               {..._p} />
           </Titled>
@@ -295,8 +295,7 @@ export function useEditor<O extends {}>(value: O, label_style: React.CSSProperti
                   <Combine>
                     <InputNumber
                       style={{ flex: 1 }}
-                      defaultValue={value}
-                      on_blur={v => on_blur(idx, v)} />
+                      defaultValue={value} />
                     <Button >
                       <Cross onClick={() => on_click_del(idx)} />
                     </Button>
@@ -370,5 +369,5 @@ export function useEditor<O extends {}>(value: O, label_style: React.CSSProperti
         );
       },
     };
-  }, [value, label_style, titled_style]);
+  }, [value, label_style, titled_style, on_changed]);
 }

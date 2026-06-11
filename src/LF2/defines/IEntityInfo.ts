@@ -1,4 +1,5 @@
-import { IWorldDataset } from "../IWorldDataset";
+import { any, fields, IFieldInfo, int, str } from "../fields";
+import { IWorldDataset, world_dataset_fields } from "../IWorldDataset";
 import type { IArmorInfo } from "./IArmorInfo";
 import type { IBotData } from "./IBotData";
 import type { IDrinkInfo } from "./IDrinkInfo";
@@ -163,7 +164,7 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
    */
   bot?: IBotData;
 
-  
+
   /**
    * 似乎有点想法，但不多
    *
@@ -171,3 +172,50 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
    */
   portraits?: Record<string, IFramePictureInfo>;
 }
+export function entity_info_new(): IEntityInfo {
+  const ret: IEntityInfo = {
+    name: ""
+  }
+  return ret;
+}
+
+export const entity_info_fields = new Map<keyof IEntityInfo, IFieldInfo<Partial<IEntityInfo>>>();
+
+world_dataset_fields.forEach((value, key) => {
+  entity_info_fields.set(key, value);
+})
+fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
+  type: any,
+  name: str('实体名称', { maxLength: 16 }),
+  ce: int('角色强度系数', '默认：1， 若一个角色强度等级为3，使用该角色进入闯关，将视此角色为3个人', { min: 0, max: 8 }),
+  head: any,
+  small: any,
+  group: any,
+  files: any,
+  models: any,
+  bounce_y: any,
+  bounce_x: any,
+  bounce_z: any,
+  bounce_min_y: any,
+  bounce_min_x: any,
+  bounce_min_z: any,
+  fast_vy: any,
+  fast_vx: any,
+  fast_vz: any,
+  brokens: any,
+  drink: any,
+  drop_hurt: any,
+  hit_sounds: any,
+  drop_sounds: any,
+  dead_sounds: any,
+  armor: any,
+  weight: any,
+  strength: any,
+  bot_id: any,
+  bot: any,
+  portraits: any
+}).forEach((value, key) => {
+  entity_info_fields.set(key, value);
+})
+
+console.log(entity_info_fields)
