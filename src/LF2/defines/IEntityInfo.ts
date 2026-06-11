@@ -76,7 +76,11 @@ export interface IEntityInfo extends Partial<IWorldDataset> {
   /**
    * 物体的碎片信息（目前仅用于武器）
    * 当物体的血量归0时，将根据brokens创建一系列物品。
-   * 武器的碎片用这个实现。
+   * 
+   * 武器碎片是用这个实现的，
+   * 读取数据时，当武器的data不存在brokens，将会根据oid为其添加对应的碎片opoint
+   * 见: preprocess_entity_data ==> make_weapon_special
+   * 
    * 也许也能用来实现更可怕的效果。
    *
    * @type {?IOpointInfo[]}
