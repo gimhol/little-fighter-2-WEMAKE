@@ -22,12 +22,12 @@ export function EntityBaseDataView(props: IEntityBaseDataViewProps) {
         <Editor.ImageFile field="head" foo={data.base.head} />
         <Editor.ImageFile field="small" foo={data.base.small} />
         <Editor.Number field="ce" foo={data.base.ce} placeholder='1' />
-        <Editor.Number field="fall_value" foo={data.base.fall_value_max} />
-        <Editor.Number field="defend_value" foo={data.base.defend_value_max} />
-        <Editor.Number field="resting" foo={data.base.resting_max} placeholder={''} />
-        <Editor.Number field="hp" foo={data.base.hp_max} placeholder={''} />
-        <Editor.Number field="mp" foo={data.base.mp_max} placeholder={''} />
-        <Editor.Number field="catch_time" foo={data.base.catch_time_max} />
+        <Editor.Number field="fall_value_max" foo={data.base.fall_value_max} />
+        <Editor.Number field="defend_value_max" foo={data.base.defend_value_max} />
+        <Editor.Number field="resting_max" foo={data.base.resting_max} placeholder={''} />
+        <Editor.Number field="hp_max" foo={data.base.hp_max} placeholder={''} />
+        <Editor.Number field="mp_max" foo={data.base.mp_max} placeholder={''} />
+        <Editor.Number field="catch_time_max" foo={data.base.catch_time_max} />
         <Editor.Number field="jump_height" foo={data.base.jump_height} />
         <Editor.Number field="jump_distance" foo={data.base.jump_distance} />
         <Editor.Number field="jump_distancez" foo={data.base.jump_distancez} />

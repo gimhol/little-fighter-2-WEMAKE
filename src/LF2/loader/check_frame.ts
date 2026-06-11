@@ -31,7 +31,7 @@ export function check_frame(data: Readonly<IEntityData>, frame: Readonly<IFrameI
   check_field(frame, frame_name, 'centerx', 'number', my_errors);
   check_field(frame, frame_name, 'centery', 'number', my_errors);
   check_field(frame, frame_name, 'sound', ['string', 'undefined'], my_errors);
-  check_field(frame, frame_name, 'hp', ['number', 'undefined'], my_errors);
+  check_field(frame, frame_name, 'hp_max', ['number', 'undefined'], my_errors);
   // TODO: hold
   // TODO: hit
 

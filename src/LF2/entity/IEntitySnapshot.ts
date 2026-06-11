@@ -23,7 +23,6 @@ export interface IEntitySnapshot {
   vrests: [string, string][],
   blockers: [string, string][]
   superpunchs: [string, string][]
-
   emitters: string[],
   data: string,
   reserve: number,
@@ -32,28 +31,27 @@ export interface IEntitySnapshot {
   landing_frame: string | undefined,
   hp_r_tick: ITimesSnapshot,
   mp_r_tick: ITimesSnapshot,
-  drink?: IDrinkInfoSnapshot,
+  drink: IDrinkInfoSnapshot | null,
   fuse_bys: string[] | undefined,
   dismiss_time: number | null,
   dismiss_data: string | undefined;
-
   stat_bar_type: StatBarType | null;
   resting: number;
-  resting_max?: number;
+  resting_max: number | null;
   toughness: number;
   toughness_max: number;
   toughness_resting: number;
   toughness_resting_max: number;
   fall_value: number;
-  fall_value_max?: number;
+  fall_value_max: number | null;
   fall_r_tick: ITimesSnapshot;
   fall_r_value: number;
   defend_value: number;
-  defend_value_max?: number;
+  defend_value_max: number | null;
   defend_r_tick: ITimesSnapshot;
   defend_r_value: number;
   healing: number;
-  defend_ratio?: number;
+  defend_ratio: number | null;
   fallinjury: number;
   throwinjury: number;
   facing: -1 | 1;
@@ -63,20 +61,20 @@ export interface IEntitySnapshot {
   catcher: string | undefined;
   aabb_x1: number;
   aabb_x2: number;
-  name?: string | null;
+  name: string | null;
   team: string;
   mp: number;
-  mp_max?: number;
+  mp_max: number | null;
   hp: number;
   hp_r: number;
-  hp_max?: number;
-  bearer?: string;
-  holding?: string;
+  hp_max: number | null;
+  bearer: string | null;
+  holding: string | null;
   arest: number;
   motionless: number;
   shaking: number;
   catch_time: number;
-  catch_time_max?: number;
+  catch_time_max: number | null;
   invisible_duration: number;
   invulnerable_duration: number;
   blinking_duration: number;
@@ -86,4 +84,5 @@ export interface IEntitySnapshot {
   wakeup_invuln: boolean | null;
   dead_gone: boolean | null;
   ctrl_visible: boolean | null;
+  jumping: { s: number, x: number, y: number, z: number, t: number }
 }

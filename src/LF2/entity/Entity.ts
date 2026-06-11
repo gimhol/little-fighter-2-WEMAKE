@@ -45,11 +45,11 @@ import { is_ball_ctrl, is_fighter, is_human_ctrl } from "./type_check";
 
 export class Entity {
   static readonly TAG: string = 'Entity';
-  world      !: World;
-  id         !: string;
-  wait       !: number;
-  variant    !: number;
-  transforms !: [string, string] | null;
+  world: World;
+  id: string = '';
+  wait: number = 0;
+  variant: number = 0;
+  transforms: [string, string] | null = null;
   protected _lifetime: number = 0;
   protected _spawn_time: number = 0;
   protected _outline_color: string = '';
@@ -70,43 +70,43 @@ export class Entity {
   readonly callbacks = new Callbacks<IEntityCallbacks>()
   protected readonly _emitters: string[] = [];
 
-  protected _data!: IEntityData;
-  protected _reserve!: number;
-  protected _mounted!: number;
-  protected _ghosted!: number;
+  protected _data: IEntityData;
+  protected _reserve: number = 0;
+  protected _mounted: number = 0;
+  protected _ghosted: number = 0;
   protected _landing_frame!: IFrameInfo | null;
-  protected _hp_r_tick!: Times;
-  protected _mp_r_tick!: Times;
-  public drink!: DrinkInfo | null;
-  public fuse_bys!: Entity[] | null;
-  public dismiss_time!: number | null;
-  public dismiss_data!: IEntityData | null;
+  protected readonly _hp_r_tick: Times = new Times();
+  protected readonly _mp_r_tick: Times = new Times();
+  public drink: DrinkInfo | null = null;
+  public fuse_bys: Entity[] | null = null;
+  public dismiss_time: number | null = null;
+  public dismiss_data: IEntityData | null = null;
 
   protected _stat_bar_type!: StatBarType | null;
-  protected _resting!: number;
-  protected _resting_max?: number; // fallback from world
-  protected _toughness!: number;
-  protected _toughness_max!: number;
-  protected _toughness_resting!: number;
-  protected _toughness_resting_max!: number;
-  protected _fall_value!: number;
-  protected _fall_value_max?: number;
-  protected _fall_r_tick!: Times;
-  protected _fall_r_value!: number;
-  protected _defend_value!: number;
-  protected _defend_value_max?: number; // fallback from world
-  protected _defend_r_tick!: Times;
-  protected _defend_r_value!: number;
-  protected _healing!: number;
-  protected _defend_ratio?: number; // fallback from world
+  protected _resting: number = 0;
+  protected _resting_max: number | null = null
+  protected _toughness: number = 0;
+  protected _toughness_max: number = 0;
+  protected _toughness_resting: number = 0;
+  protected _toughness_resting_max: number = 0;
+  protected _fall_value: number = 0;
+  protected _fall_value_max: number | null = null
+  protected readonly _fall_r_tick: Times = new Times();
+  protected _fall_r_value: number = 0;
+  protected _defend_value: number = 0;
+  protected _defend_value_max: number | null = null
+  protected readonly _defend_r_tick: Times = new Times();
+  protected _defend_r_value: number = 0;
+  protected _healing: number = 0;
+  protected _defend_ratio: number | null = null
   public fallinjury: number = 0;
   public throwinjury: number = 0;
-  public facing!: TFace;
-  public frame!: IFrameInfo;
-  protected _prev_frame!: IFrameInfo;
-  protected _catching!: Entity | null;
-  protected _catcher!: Entity | null;
-  protected states!: States;
+  public facing: TFace = 1;
+  public frame: Readonly<IFrameInfo> = GONE_FRAME_INFO;
+  protected _prev_frame: Readonly<IFrameInfo> = GONE_FRAME_INFO;
+  protected _catching: Entity | null = null;
+  protected _catcher: Entity | null = null;
+  protected _states: States;
   aabb_min: number = 0;
   aabb_max: number = 0;
 
@@ -125,24 +125,24 @@ export class Entity {
    * @type {string}
    */
   protected _team!: string;
-  protected _mp!: number;
-  protected _mp_max?: number;
-  protected _hp!: number;
-  protected _hp_r!: number;
-  protected _hp_max?: number;
-  protected _bearer!: Entity | null;
-  protected _holding!: Entity | null;
-  protected _arest!: number;
-  public motionless!: number;
-  public shaking!: number;
+  protected _mp: number = 0;
+  protected _mp_max: number | null = null;
+  protected _hp: number = 0;
+  protected _hp_r: number = 0;
+  protected _hp_max: number | null = null;
+  protected _bearer: Entity | null = null;
+  protected _holding: Entity | null = null;
+  protected _arest: number = 0;
+  public motionless: number = 0;
+  public shaking: number = 0;
 
   /**
    * 抓人剩余值
    *
    * 当抓住一个被击晕的人时，此值充满。
    */
-  protected _catch_time!: number;
-  protected _catch_time_max?: number;
+  protected _catch_time: number = 0;
+  protected _catch_time_max: number | null = null;
 
   /**
    * 隐身计数，每帧-1
@@ -150,7 +150,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _invisible_duration!: number;
+  protected _invisible_duration: number = 0;
 
   /**
    * 无敌时间计数，每帧-1
@@ -158,7 +158,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _invulnerable_duration!: number;
+  protected _invulnerable_duration: number = 0;
 
   /**
    * 闪烁计数，每帧-1
@@ -166,7 +166,7 @@ export class Entity {
    * @protected
    * @type {number}
    */
-  protected _blinking_duration!: number;
+  protected _blinking_duration: number = 0;
 
   /**
    * 闪烁完毕后下一动作
@@ -657,16 +657,18 @@ export class Entity {
   }
   get state() { return this.frame.state }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
-    this.reset(world, data, states)
+    this.world = world;
+    this._data = data;
+    this._states = states;
+    this.reset(data, states)
   }
-  reset(world: World, d: IEntityData, states: States = ENTITY_STATES) {
+  reset(data: IEntityData, states: States = ENTITY_STATES) {
     let buffs = Array.from(this.buffs.values())
     for (const buf of buffs) buf.del_victims(this.id)
     this.buffs.clear();
-
-    this._data = d;
-    this.world = world;
-    this.id = world.lf2.new_id;
+    const { world } = this;
+    this._data = data;
+    this.id = this.world.lf2.new_id;
     this.wait = 0;
     this._lifetime = 0;
     this._prev_ground_y = 0;
@@ -685,16 +687,16 @@ export class Entity {
     this.copies.clear()
     this._stat_bar_type = null;
     this._toughness_resting_max = Defines.DEFAULT_TOUGHNESS_RESTING_MAX;
-    this._resting_max = d.base.resting_max;
+    this._resting_max = data.base.resting_max ?? null;
     this._resting = 0;
     this._toughness = 0;
     this._toughness_max = 0;
     this._toughness_resting = 0;
-    this._fall_value_max = d.base.fall_value_max;
-    this._defend_value_max = d.base.defend_value_max;
-    this._defend_ratio = d.base.defend_ratio;
+    this._fall_value_max = data.base.fall_value_max ?? null;
+    this._defend_value_max = data.base.defend_value_max ?? null;
+    this._defend_ratio = data.base.defend_ratio ?? null;
     this._healing = 0;
-    this._catch_time_max = d.base.catch_time_max;
+    this._catch_time_max = data.base.catch_time_max ?? null;
     this.throwinjury = 0;
     this.facing = 1;
     this.frame = EMPTY_FRAME_INFO;
@@ -719,17 +721,25 @@ export class Entity {
     this.superpunchs.clear()
     this.motionless = 0;
     this.shaking = 0;
-    this.states = states;
-    this._hp_r_tick = new Times(0, world.hp_r_ticks);
-    this._mp_r_tick = new Times(0, world.mp_r_ticks);
-    this._fall_r_tick = new Times(0, world.fall_r_ticks);
-    this._defend_r_tick = new Times(0, world.defend_r_ticks);
+    this._states = states;
+    this._hp_r_tick.max = world.hp_r_ticks;
+    this._hp_r_tick.value = 0;
+
+    this._mp_r_tick.max = world.mp_r_ticks;
+    this._mp_r_tick.value = 0;
+
+    this._fall_r_tick.max = world.fall_r_ticks;
+    this._fall_r_tick.value = 0;
+
+    this._defend_r_tick.max = world.defend_r_ticks;
+    this._defend_r_tick.value = 0;
+
     this._defend_r_value = world.defend_r_value;
     this._fall_r_value = world.fall_r_value;
-    this._hp_max = d.base.hp_max;
+    this._hp_max = data.base.hp_max ?? null;
     this._ctrl = new InvalidController("", this);
-    this._mp_max = d.base.mp_max;
-    this._defend_ratio = d.base.defend_ratio
+    this._mp_max = data.base.mp_max ?? null;
+    this._defend_ratio = data.base.defend_ratio ?? null
     this.jumping.s = 0
     this.jumping.x = 0
     this.jumping.y = 0
@@ -753,7 +763,7 @@ export class Entity {
     this._dead_gone = null;
     this._dead_join = null;
     this._ctrl_visible = null;
-    this.drink = d.base.drink ? new DrinkInfo(d.base.drink) : null
+    this.drink = data.base.drink ? new DrinkInfo(data.base.drink) : null
     this._opoints = [];
     this.prev_cpoint_a = null;
     this.collision_list.length = 0;
@@ -891,7 +901,7 @@ export class Entity {
     return 0;
   }
   set_state(state_code: number) {
-    const v = this.states.get(state_code) || this.states.fallback(this._data.type, state_code);
+    const v = this._states.get(state_code) || this._states.fallback(this._data.type, state_code);
     if (this._state === v) return;
     this._state?.leave?.(this, this.frame);
     this._state = v || null;
@@ -1911,7 +1921,7 @@ export class Entity {
     this.world.del_entity(this);
     this.callbacks.emit("on_disposed")(this);
     this.callbacks.clear()
-    this.reset(this.world, this.data, this.states);
+    this.reset(this.data, this._states);
   }
 
   /**
@@ -2356,7 +2366,7 @@ export class Entity {
       landing_frame: this._landing_frame?.id,
       hp_r_tick: this._hp_r_tick.to_snapshot(),
       mp_r_tick: this._mp_r_tick.to_snapshot(),
-      drink: this.drink?.to_snapshot(),
+      drink: this.drink?.to_snapshot() ?? null,
       fuse_bys: this.fuse_bys?.map(v => v.id),
       dismiss_time: this.dismiss_time,
       dismiss_data: this.dismiss_data?.id,
@@ -2389,12 +2399,12 @@ export class Entity {
       name: this._name,
       team: this._team,
       mp: this._mp,
-      mp_max: this._mp_max,
+      mp_max: this._mp_max ?? null,
       hp: this._hp,
       hp_r: this._hp_r,
       hp_max: this._hp_max,
-      bearer: this._bearer?.id,
-      holding: this._holding?.id,
+      bearer: this._bearer?.id ?? null,
+      holding: this._holding?.id ?? null,
       arest: this._arest,
       motionless: this.motionless,
       shaking: this.shaking,
@@ -2409,6 +2419,7 @@ export class Entity {
       wakeup_invuln: this._wakeup_invuln,
       dead_gone: this._dead_gone,
       ctrl_visible: this._ctrl_visible,
+      jumping: { ...this.jumping },
     }
     return ret;
   }
@@ -2420,7 +2431,7 @@ export class Entity {
 const common_creator = (world: World, data: IEntityData, states?: States) => {
   let ret = world.lf2.factory.acquire_entity(data.type)
   if (!ret) ret = new Entity(world, data, states)
-  else ret.reset(world, data, states)
+  else ret.reset(data, states)
   return ret
 }
 Factory.register_entity(EntityEnum.Ball, common_creator);
