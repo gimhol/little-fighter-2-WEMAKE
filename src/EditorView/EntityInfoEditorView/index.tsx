@@ -80,18 +80,12 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
       )
     }
   }
-  const [visible_fields, set_visible_fields] = useState<(keyof IEntityInfo | (keyof IEntityInfo)[])[]>([
+  const [visible_fields, set_visible_fields] = useState<(keyof IEntityInfo | (keyof IEntityInfo)[])[]>(() => [
     ['type', "group", 'name'],
     ['ce', 'weight', 'strength'],
-
-
-
     ['jump_height', 'jump_distance', 'jump_distancez'],
-
     ['dash_height', 'dash_distance', 'dash_distancez'],
-
     ['rowing_height', 'rowing_distance'],
-
     ['bounce_y', 'bounce_x', 'bounce_z'],
     ['bounce_min_y', 'bounce_min_x', 'bounce_min_z'],
     ['fast_vy', 'fast_vx', 'fast_vz'],

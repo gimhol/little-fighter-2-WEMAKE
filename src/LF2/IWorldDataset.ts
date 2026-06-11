@@ -130,15 +130,15 @@ export interface IWorldDataset {
    */
   key_hit_duration: number;
   friction_factor: number;
-  /** 地面摩擦X 在地面的物体，每帧X速度将±=此值,向0靠近 */
+  /** 地面摩擦X 在地面的物体，每帧速度X将±=此值,向0靠近 */
   friction_x: number;
-  /** 地面摩擦Z 在地面的物体，每帧Z速度将±=此值,向0靠近 */
+  /** 地面摩擦Z 在地面的物体，每帧速度Z将±=此值,向0靠近 */
   friction_z: number;
 
   land_friction_factor: number,
-  /** 落地帧摩擦X，每帧X速度将±=此值,向0靠近 */
+  /** 落地帧摩擦X，每帧速度X将±=此值,向0靠近 */
   land_friction_x: number;
-  /** 落地帧摩擦Z，每帧Z速度将±=此值,向0靠近 */
+  /** 落地帧摩擦Z，每帧速度Z将±=此值,向0靠近 */
   land_friction_z: number;
 
   screen_w: number;
@@ -271,12 +271,12 @@ export interface IWorldDataset {
 export const world_dataset_fields = fields<Partial<IWorldDataset>>({
   gravity: flt("重力"),
   gravity_d: flt("重力D"),
-  jump_x_f: flt("跳跃X速度系数"),
-  jump_h_f: flt("跳跃Y速度系数"),
-  jump_z_f: flt("跳跃Z速度系数"),
-  dash_x_f: flt("跑跳X速度系数"),
-  dash_h_f: flt("跑跳Y速度系数"),
-  dash_z_f: flt("跑跳Z速度系数"),
+  jump_x_f: flt("跳跃速度系数X"),
+  jump_h_f: flt("跳跃速度系数Y"),
+  jump_z_f: flt("跳跃速度系数Z"),
+  dash_x_f: flt("跑跳速度系数X"),
+  dash_h_f: flt("跑跳速度系数Y"),
+  dash_z_f: flt("跑跳速度系数Z"),
   bfall_x_f: flt("受身速度系数X"),
   bfall_h_f: flt("受身速度系数Y"),
   weapon_throwing_gravity: flt("投掷武器重力"),
@@ -321,11 +321,11 @@ export const world_dataset_fields = fields<Partial<IWorldDataset>>({
   mp_r_ticks: int("回蓝周期", "每几帧回蓝一次"),
   mp_r_ratio: int("回蓝速率系数"),
   friction_factor: flt("地速衰减系数", "在地面的物体，速度将每帧乘以此值"),
-  friction_x: flt("地面摩擦X", "在地面的物体，每帧X速度将±=此值,向0靠近"),
-  friction_z: flt("地面摩擦Z", "在地面的物体，每帧Z速度将±=此值,向0靠近"),
+  friction_x: flt("地面摩擦X", "在地面的物体，每帧速度X将±=此值,向0靠近"),
+  friction_z: flt("地面摩擦Z", "在地面的物体，每帧速度Z将±=此值,向0靠近"),
   land_friction_factor: flt("落地摩擦X", "在物体着地时，当前动作结束前，速度将每帧乘以此值"),
-  land_friction_x: flt("落地摩擦X", "在物体着地时，当前动作结束前，每帧X速度将±=此值,向0靠近"),
-  land_friction_z: flt("落地摩擦Z", "在物体着地时，当前动作结束前，每帧Z速度将±=此值,向0靠近"),
+  land_friction_x: flt("落地摩擦X", "在物体着地时，当前动作结束前，每帧速度X将±=此值,向0靠近"),
+  land_friction_z: flt("落地摩擦Z", "在物体着地时，当前动作结束前，每帧速度Z将±=此值,向0靠近"),
   screen_w: any,
   screen_h: any,
   sync_render: any,
@@ -345,18 +345,18 @@ export const world_dataset_fields = fields<Partial<IWorldDataset>>({
   vrest_after_shaking: int("vrest是否在shaking后更新", "vrest是否在shaking后更新", { min: 0, max: 1 }),
   arest_after_motionless: int("arest是否在motionless后更新", "arest是否在motionless后更新", { min: 0, max: 1 }),
   invisible_blinking: int("隐身结束后的闪烁时长", "隐身结束后的闪烁时长", { min: 0, max: 9999 }),
-  jump_height: flt('跳越Y速度'),
-  jump_distance: flt('跳越X速度'),
-  jump_distancez: flt('跳越Z速度'),
-  dash_height: flt,
-  dash_distance: flt,
-  dash_distancez: flt,
-  rowing_height: flt('受身Y速度'),
-  rowing_distance: flt('受身X速度'),
-  whirlwind_vy_max: flt('旋风最大Y速度'),
-  whirlwind_acc_y: flt('旋风Y加速度'),
-  whirlwind_acc_x: flt('旋风X加速度'),
-  whirlwind_acc_z: flt('旋风Z加速度'),
+  jump_height: flt('跳越速度Y'),
+  jump_distance: flt('跳越速度X'),
+  jump_distancez: flt('跳越速度Z'),
+  dash_height: flt('冲跳速度Y'),
+  dash_distance: flt('冲跳速度X'),
+  dash_distancez: flt('冲跳速度Z'),
+  rowing_height: flt('受身速度Y'),
+  rowing_distance: flt('受身速度X'),
+  whirlwind_vy_max: flt('旋风最大速度Y'),
+  whirlwind_acc_y: flt('旋风加速度Y'),
+  whirlwind_acc_x: flt('旋风加速度X'),
+  whirlwind_acc_z: flt('旋风加速度Z'),
   itr_fall: int,
   teamoutline_enabled: int({ min: 0, max: 1 }),
   indicator_flags: int,
