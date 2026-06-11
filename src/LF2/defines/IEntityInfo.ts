@@ -11,7 +11,7 @@ import type { IModelInfo } from "./IModelInfo";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IPictureInfo } from "./IPictureInfo";
 export interface IEntityInfo extends Partial<IWorldDataset> {
-  type: number;
+  type?: number;
 
   /**
    * 实体名称
