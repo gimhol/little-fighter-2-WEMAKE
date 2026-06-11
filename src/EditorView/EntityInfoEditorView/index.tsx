@@ -1,5 +1,6 @@
 
 import { Input, InputNumber } from "@/Component/Input";
+import Select from "@/Component/Select";
 import { entity_info_fields } from "@/LF2";
 import { entity_info_new, IEntityInfo } from "@/LF2/defines";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -27,11 +28,29 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
   const render_field_item = (k: keyof IEntityInfo) => {
     const field = entity_info_fields.get(k)
     if (!field) return null;
-    const { key, title = key, desc, type } = field
+    const { key, title = key, type, options } = field
     let label = title;
     if (key != title) label += ` (${key})`
-
-    if (type == 'int' || type == 'float') {
+    const desc = field.desc ?? label;
+    if (options) {
+      return (
+        <_Form.Item name={key} label={label} key={k}>
+          {field.array == true ?
+            <Select
+              multi
+              clearable
+              title={desc}
+              options={options}
+              parse={i => [i.value, i.label, { title: i.desc }]} /> :
+            <Select
+              clearable
+              title={desc}
+              options={options}
+              parse={i => [i.value, i.label, { title: i.desc }]} />
+          }
+        </_Form.Item>
+      )
+    } else if (type == 'int' || type == 'float') {
       return (
         <_Form.Item name={key} label={label} key={k}>
           <InputNumber
@@ -52,12 +71,14 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
             maxLength={field.maxLength} />
         </_Form.Item>
       )
-    } 
+    }
   }
   const [visible_fields, set_visible_fields] = useState<(keyof IEntityInfo)[]>([
+    'type',
     'name',
+    "group",
     'ce',
-    
+
     'jump_height',
     'jump_distance',
     'jump_distancez',
@@ -74,8 +95,6 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
     <_Form form={form} onChange={(_, value) => onChange?.(value)}>
       <WorkspaceColumnView {..._p} title='基础信息'>
         <Space direction='column' stretchs style={{ width: '100%', padding: '20px 10px', boxSizing: 'border-box' }}>
-          {/* <Editor.ImageFile field="head" />
-        <Editor.ImageFile field="small" /> */}
           {visible_fields?.map(v => render_field_item(v))}
         </Space>
       </WorkspaceColumnView>

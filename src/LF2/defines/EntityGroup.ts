@@ -54,3 +54,46 @@ export enum EntityGroup {
   Dev = "Dev",
 }
 
+export const E_G = EntityGroup;
+export type E_G = EntityGroup;
+export const EG = EntityGroup;
+export type EG = EntityGroup;
+
+export const ALL_ENTITY_GROUP: EG[] = [
+  EntityGroup.Hidden,
+  EntityGroup.Boss,
+  EntityGroup.Gaint,
+  EntityGroup.Regular,
+  EntityGroup._3000,
+  EntityGroup.VsWeapon,
+  EntityGroup.StageWeapon,
+  EntityGroup.FreezableBall,
+  EntityGroup.Freezer,
+  EntityGroup.Dev,
+];
+
+
+export const ENTITY_GROUP_LABEL_MAP: Record<EG, string> = {
+  [EntityGroup.Hidden]: "Hidden",
+  [EntityGroup.Boss]: "Boss",
+  [EntityGroup.Gaint]: "Gaint",
+  [EntityGroup.Regular]: "Regular",
+  [EntityGroup._3000]: "_3000",
+  [EntityGroup.VsWeapon]: "VsWeapon",
+  [EntityGroup.StageWeapon]: "StageWeapon",
+  [EntityGroup.FreezableBall]: "FreezableBall",
+  [EntityGroup.Freezer]: "Freezer",
+  [EntityGroup.Dev]: "Dev",
+}
+export const ENTITY_GROUP_DESC_MAP: Record<EG, string> = {
+  [EntityGroup.Hidden]: "Hidden",
+  [EntityGroup.Boss]: "Boss",
+  [EntityGroup.Gaint]: "Gaint",
+  [EntityGroup.Regular]: "Regular",
+  [EntityGroup._3000]: "_3000",
+  [EntityGroup.VsWeapon]: "VsWeapon",
+  [EntityGroup.StageWeapon]: "StageWeapon",
+  [EntityGroup.FreezableBall]: "FreezableBall",
+  [EntityGroup.Freezer]: "Freezer",
+  [EntityGroup.Dev]: "Dev",
+}

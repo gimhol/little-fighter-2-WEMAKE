@@ -6,6 +6,11 @@ export enum EntityEnum {
   Weapon  /**/ = HitFlag.Weapon,
   Ball    /**/ = HitFlag.Ball,
 }
+export const E_E = EntityEnum;
+export type E_E = EntityEnum;
+export const EE = EntityEnum;
+export type EE = EntityEnum;
+
 export type TEntityEnum = EntityEnum |
   0b00000100 |
   0b00001000 |
@@ -23,5 +28,15 @@ export const ENTITY_PRIORITY_MAP: Record<EntityEnum, number> = {
   [EntityEnum.Ball]: 2,
   [EntityEnum.Entity]: 3,
 }
-export const E_E = EntityEnum;
-export type E_E = EntityEnum;
+export const ENTITY_ENUM_LABEL_MAP: Record<EntityEnum, string> = {
+  [EntityEnum.Fighter]: 'Fighter',
+  [EntityEnum.Weapon]: 'Weapon',
+  [EntityEnum.Ball]: 'Ball',
+  [EntityEnum.Entity]: 'Entity',
+}
+export const ENTITY_ENUM_DESC_MAP: Record<EntityEnum, string> = {
+  [EntityEnum.Fighter]: 'Fighter',
+  [EntityEnum.Weapon]: 'Weapon',
+  [EntityEnum.Ball]: 'Ball',
+  [EntityEnum.Entity]: 'Entity',
+}

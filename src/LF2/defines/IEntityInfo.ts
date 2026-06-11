@@ -1,5 +1,7 @@
 import { any, fields, IFieldInfo, int, str } from "../fields";
 import { IWorldDataset, world_dataset_fields } from "../IWorldDataset";
+import { ALL_ENTITY_ENUM, ENTITY_ENUM_DESC_MAP, ENTITY_ENUM_LABEL_MAP } from "./EntityEnum";
+import { ALL_ENTITY_GROUP, ENTITY_GROUP_DESC_MAP, ENTITY_GROUP_LABEL_MAP } from "./EntityGroup";
 import type { IArmorInfo } from "./IArmorInfo";
 import type { IBotData } from "./IBotData";
 import type { IDrinkInfo } from "./IDrinkInfo";
@@ -185,12 +187,25 @@ world_dataset_fields.forEach((value, key) => {
   entity_info_fields.set(key, value);
 })
 fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
-  type: any,
+  type: int('实体类型', {
+    options: ALL_ENTITY_ENUM.map(v => ({
+      value: v,
+      label: ENTITY_ENUM_LABEL_MAP[v],
+      desc: ENTITY_ENUM_DESC_MAP[v]
+    }))
+  }),
   name: str('实体名称', { maxLength: 16 }),
   ce: int('角色强度系数', '默认：1， 若一个角色强度等级为3，使用该角色进入闯关，将视此角色为3个人', { min: 0, max: 8 }),
-  head: any,
-  small: any,
-  group: any,
+  head: str('头像'),
+  small: str('缩略图'),
+  group: str('实体组', '实体组', {
+    array: true,
+    options: ALL_ENTITY_GROUP.map(v => ({
+      value: v,
+      label: ENTITY_GROUP_LABEL_MAP[v],
+      desc: ENTITY_GROUP_DESC_MAP[v]
+    }))
+  }),
   files: any,
   models: any,
   bounce_y: any,
