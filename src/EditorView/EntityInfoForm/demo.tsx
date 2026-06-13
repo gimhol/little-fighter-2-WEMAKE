@@ -1,15 +1,14 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
 import { entity_info_new, IEntityInfo } from "@/LF2";
 import { useState } from "react";
-import { EntityInfoEditorView as EntityInfoForm } from "./index";
-
+import { EntityInfoForm } from "./index";
 
 type Data = IEntityInfo;
 const data_new = entity_info_new;
 const TITLE = `EntityInfoForm`;
 const Form = EntityInfoForm;
 
-export default function ArmorInfoFormDemo() {
+export default function EntityInfoFormDemo() {
   const [value, set_value] = useState<Data>(data_new)
   const on_changed = (v: Data) => {
     console.log(`[${TITLE}] on_changed: `, v)

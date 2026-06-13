@@ -7,14 +7,13 @@ import { armor_Info_new, drink_info_new, entity_info_fields } from "@/LF2";
 import { entity_info_new, IEntityInfo } from "@/LF2/defines";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ISpaceProps, Space } from "../../Component/Space";
-import { WorkspaceColumnView } from "../WorkspaceColumnView";
 import { ArmorInfoForm } from "./ArmorInfoForm";
 
-export interface IEntityInfoEditorViewProps extends ISpaceProps {
+export interface IEntityInfoFormProps extends ISpaceProps {
   value?: IEntityInfo;
   onChange?(value: IEntityInfo): void;
 }
-export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
+export function EntityInfoForm(props: IEntityInfoFormProps) {
   const { value: o_value, onChange, stretchs = true, direction = 'column', ..._p } = props;
   const i_value = useMemo(() => o_value ?? entity_info_new(), [o_value])
   const ref_o_value = useRef(o_value);
