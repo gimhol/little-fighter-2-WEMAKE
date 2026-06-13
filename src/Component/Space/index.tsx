@@ -1,10 +1,10 @@
 import classNames from "classnames";
-import React, { ForwardedRef, forwardRef, useMemo } from "react";
+import { ForwardedRef, forwardRef, Fragment, HTMLAttributes, isValidElement, PropsWithChildren, ReactNode, useMemo } from "react";
 import Show, { Div, IShowProps } from "../Show";
 import { Broken } from "./Broken";
 import './styles.scss';
 
-function make_space_children(node: any, item_props: React.HTMLAttributes<HTMLDivElement> | undefined, ret: React.ReactNode[]): React.ReactNode[] {
+function make_space_children(node: any, item_props: HTMLAttributes<HTMLDivElement> | undefined, ret: ReactNode[]): ReactNode[] {
   if (Array.isArray(node)) {
     for (const child of node) {
       make_space_children(child, item_props, ret)
@@ -15,7 +15,7 @@ function make_space_children(node: any, item_props: React.HTMLAttributes<HTMLDiv
     case void 0: case null: case true: case false:
       return ret
   }
-  if (React.isValidElement<{ show: any }>(node)) {
+  if (isValidElement<{ show: any }>(node)) {
     if (node.type === Div && !node.props.show)
       return ret
     if (node.type === Show && !node.props.show)
@@ -24,16 +24,16 @@ function make_space_children(node: any, item_props: React.HTMLAttributes<HTMLDiv
       make_space_children((node.props as IShowProps).children, item_props, ret)
       return ret;
     }
-    if (node.type === React.Fragment) {
-      make_space_children((node.props as React.PropsWithChildren).children, item_props, ret)
+    if (node.type === Fragment) {
+      make_space_children((node.props as PropsWithChildren).children, item_props, ret)
       return ret;
     }
     if (node.type === Space.Item || node.type === Space.Broken) {
-      ret.push(<React.Fragment key={ret.length}>{node}</React.Fragment>);
+      ret.push(<Fragment key={ret.length}>{node}</Fragment>);
       return ret;
     }
   } else if (typeof node === 'object' && 'containerInfo' in node) {
-    ret.push(<React.Fragment key={ret.length}>{node}</React.Fragment>);
+    ret.push(<Fragment key={ret.length}>{node}</Fragment>);
     return ret;
   }
   ret.push(
@@ -43,8 +43,8 @@ function make_space_children(node: any, item_props: React.HTMLAttributes<HTMLDiv
   )
   return ret;
 }
-export interface ISpaceProps extends React.HTMLAttributes<HTMLDivElement> {
-  item_props?: React.HTMLAttributes<HTMLDivElement>;
+export interface ISpaceProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+  item_props?: HTMLAttributes<HTMLDivElement>;
   direction?: 'column' | 'row';
   vertical?: boolean;
   stretchs?: boolean;

@@ -1,7 +1,5 @@
 export class FormInstance<T extends object> {
-
   value: Partial<T> = {};
-
   constructor(o?: Partial<T>) {
     Object.assign(this.value, o);
   }
