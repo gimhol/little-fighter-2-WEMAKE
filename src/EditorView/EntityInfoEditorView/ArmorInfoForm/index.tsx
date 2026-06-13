@@ -5,7 +5,6 @@ import { ISpaceProps, Space } from "@/Component/Space";
 import { armor_Info_fields, armor_Info_new, IArmorInfo } from "@/LF2";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-
 export interface IArmorInfoFormProps extends ISpaceProps {
   value?: IArmorInfo;
   onChange?(value: IArmorInfo): void;

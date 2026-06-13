@@ -11,7 +11,7 @@ const Form = ArmorInfoForm;
 export default function ArmorInfoFormDemo() {
   const [value, set_value] = useState<Data>(data_new)
   const on_changed = (v: Data) => {
-    console.log(`[${ArmorInfoForm}] on_changed: `, v)
+    console.log(`[${TITLE}] on_changed: `, v)
     set_value(v)
   }
   return (

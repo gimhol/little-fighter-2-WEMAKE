@@ -6,17 +6,16 @@ import Select from "@/Component/Select";
 import { armor_Info_new, drink_info_new, entity_info_fields } from "@/LF2";
 import { entity_info_new, IEntityInfo } from "@/LF2/defines";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { IFrameProps } from "../../Component/Frame";
-import { Space } from "../../Component/Space";
+import { ISpaceProps, Space } from "../../Component/Space";
 import { WorkspaceColumnView } from "../WorkspaceColumnView";
 import { ArmorInfoForm } from "./ArmorInfoForm";
 
-export interface IEntityInfoEditorViewProps extends IFrameProps {
+export interface IEntityInfoEditorViewProps extends ISpaceProps {
   value?: IEntityInfo;
   onChange?(value: IEntityInfo): void;
 }
 export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
-  const { value: o_value, onChange, ..._p } = props;
+  const { value: o_value, onChange, stretchs = true, direction = 'column', ..._p } = props;
   const i_value = useMemo(() => o_value ?? entity_info_new(), [o_value])
   const ref_o_value = useRef(o_value);
   const [form, _Form] = Form.useForm<IEntityInfo>(i_value);
@@ -92,32 +91,30 @@ export function EntityInfoEditorView(props: IEntityInfoEditorViewProps) {
   ])
 
   return (
-    <WorkspaceColumnView {..._p} title='基础信息'>
-      <_Form form={form} onChange={(_, value) => onChange?.(value)}>
-        <Space direction='column' stretchs style={{ width: '100%', padding: '20px 10px', boxSizing: 'border-box' }}>
-          {visible_fields?.map(v => render_field_item(v))}
-          <Checkbox
-            prefix='护甲'
-            value={!!i_value.armor}
-            onChange={v => onChange?.({
-              ...i_value, armor: i_value.armor ? void 0 : armor_Info_new()
-            })} />
-          {
-            !i_value.armor ? null :
-              <_Form.Item name='armor' label='armor'>
-                <ArmorInfoForm />
-              </_Form.Item>
-          }
-          <Checkbox
-            prefix='饮料'
-            value={!!i_value.drink}
-            onChange={v => onChange?.({
-              ...i_value, drink: i_value.drink ? void 0 : drink_info_new()
-            })} />
+    <_Form form={form} onChange={(_, value) => onChange?.(value)}>
+      <Space direction={direction} stretchs={stretchs} {..._p}>
+        {visible_fields?.map(v => render_field_item(v))}
+        <Checkbox
+          prefix='护甲'
+          value={!!i_value.armor}
+          onChange={v => onChange?.({
+            ...i_value, armor: i_value.armor ? void 0 : armor_Info_new()
+          })} />
+        {
+          !i_value.armor ? null :
+            <_Form.Item name='armor' label='armor'>
+              <ArmorInfoForm />
+            </_Form.Item>
+        }
+        <Checkbox
+          prefix='饮料'
+          value={!!i_value.drink}
+          onChange={v => onChange?.({
+            ...i_value, drink: i_value.drink ? void 0 : drink_info_new()
+          })} />
 
-        </Space>
-      </_Form>
-    </WorkspaceColumnView>
+      </Space>
+    </_Form>
   );
 }
 
