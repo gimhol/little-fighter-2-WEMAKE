@@ -18,8 +18,8 @@ export const ARMOR_ENUM_LABEL_MAP: Record<ArmorEnum, string> = {
 }
 
 export const ARMOR_ENUM_DESC_MAP: Record<ArmorEnum, string> = {
-  [ArmorEnum.Defend]: "Defend",
-  [ArmorEnum.Fall]: "Fall",
-  [ArmorEnum.Times]: "Times",
-  [ArmorEnum.Injury]: "Injury",
+  [ArmorEnum.Defend]: "护甲耐久将会根据itr的bdefend扣除",
+  [ArmorEnum.Fall]: "护甲耐久将会根据itr的fall扣除",
+  [ArmorEnum.Times]: "护甲耐久将会根据攻击次数扣除",
+  [ArmorEnum.Injury]: "护甲耐久将会根据itr的伤害值扣除",
 }
