@@ -26,8 +26,8 @@ import { is_num } from "../LF2/utils/type_check";
 import { open_file } from "../Utils/open_file";
 import { shared_ctx } from './Context';
 import { EditorShapeEnum } from "./EditorShapeEnum";
-import { EntityInfoEditorView } from "./EntityInfoEditorView";
 import { EntityDataEditorView } from "./EntityDataEditorView";
+import { EntityInfoForm } from "./EntityInfoForm";
 import { FrameDrawer, FrameDrawerData } from "./FrameDrawer";
 import { FrameEditor } from "./FrameEditorView";
 import { ItrPrefabView } from "./FrameEditorView/ItrPrefabView";
@@ -225,7 +225,7 @@ export default function EditorView(props: IEditorViewProps) {
     if (!editing_data) return;
     return (
       <Space.Broken>
-        <EntityInfoEditorView
+        <EntityInfoForm
           value={editing_data.base}
           onChange={() => set_change_flag(change_flag + 1)}
           style={{ flex: 1, overflow: 'auto', flexFlow: 'column' }}

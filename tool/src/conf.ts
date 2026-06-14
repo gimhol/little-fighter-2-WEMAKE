@@ -41,7 +41,16 @@ export interface IConf {
   TMP_DAT_DIR?: string;
 
   /**
-   * 临时数据输出目录（用于make-data）
+   * 临时数据输出目录（用于make-prel）
+   * 
+   * @default `${TMP_DIR}/lf2_prel`
+   * @type {string}
+   * @memberof IConf
+   */
+  TMP_PREL_DIR?: string;
+  TMP_FULL_DIR?: string;
+  /**
+   * 输出目录（用于make-data）
    * 
    * @default `${TMP_DIR}/lf2_data`
    * @type {string}
@@ -118,7 +127,8 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   },
   TMP_TXT_DIR: { type: Path },
   TMP_DAT_DIR: { type: Path },
-
+  TMP_PREL_DIR: { type: Path },
+  TMP_FULL_DIR: { type: Path },
   OUT_DIR: {
     alias: ['-o', '--output'], type: Path, default: './public',
     description: `A path that points to a directory for storing final output files. ${txt_a}`
@@ -272,6 +282,8 @@ function read_conf(file?: string, handle_new_conf?: (conf: IConf) => void): ICon
   }
   if (conf.TMP_DIR && !conf.TMP_TXT_DIR) conf.TMP_TXT_DIR = join(conf.TMP_DIR, 'lf2_txt').replace(/\\/g, '/')
   if (conf.TMP_DIR && !conf.TMP_DAT_DIR) conf.TMP_DAT_DIR = join(conf.TMP_DIR, 'lf2_data').replace(/\\/g, '/')
+  if (conf.TMP_DIR && !conf.TMP_PREL_DIR) conf.TMP_PREL_DIR = join(conf.TMP_DIR, 'lf2_prel').replace(/\\/g, '/')
+  if (conf.TMP_DIR && !conf.TMP_FULL_DIR) conf.TMP_FULL_DIR = join(conf.TMP_DIR, 'lf2_full').replace(/\\/g, '/')
   if (conf.IN_LF2_DIR && !conf.INDEX_FILE) conf.INDEX_FILE = join(conf.IN_LF2_DIR, 'data/data.txt').replace(/\\/g, '/')
 
   i_hate_backslash(conf)

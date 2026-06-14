@@ -70,6 +70,29 @@ type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
 type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
 
+const load_files = async (lf2: LF2, files: File[]) => {
+  const zips: IZip[] = []
+  const set = new Set(LF2.ZIPS.map(v => typeof v === 'string' ? v : v.name))
+  for (const file of files) {
+    const zip = await Ditto.Zip.read_file(file).catch(e => {
+      Ditto.warn('' + e)
+      return null
+    })
+    if (!zip) continue;
+    if (set.has(zip.name)) continue;
+    zips.push(zip);
+  }
+  if (!zips.length) return;
+  // Is it stupid? -Gim
+  if (lf2.ui?.id === 'entry' || lf2.ui?.id === 'launch' || lf2.ui?.id === 'init') {
+    LF2.ZIPS = [...LF2.ZIPS, ...zips]
+  } else if (lf2.ui?.id?.toLowerCase().indexOf('loading') == -1) {
+    LF2.ZIPS = [...LF2.ZIPS, ...zips]
+    lf2.load(...zips)
+    lf2.set_ui({ id: 'loading' })
+  }
+}
+
 const ele_root = document.firstElementChild;
 const low_device = ['mobile', 'tablet'].some(v => ele_root?.classList.contains(v))
 const init_app_state = () => ({
@@ -222,17 +245,14 @@ function App() {
           });
           break;
         case 'select_extra_data':
+        case 'select_mods':
           open_file({ accept: '.zip', multiple: true }).then(async (files) => {
-            if (!files.length) return;
-            const zips: IZip[] = []
-            for (const file of files)
-              zips.push(await Ditto.Zip.read_file(file))
-            LF2.ZIPS = [...LF2.ZIPS, ...zips]
+            if (!files.length || networking) return;
+            load_files(lf2, files)
           });
           break;
         case 'custom_game':
           nav(Paths.All.custom_game)
-          // window.open(location.protocol + '//' + location.host + location.pathname + '#custom_game')
           break;
       }
     },
@@ -565,43 +585,17 @@ function App() {
     workspace.confirm()
   }, [workspace, app_state.dev_ui_pos, app_state.dev_ui_open])
 
+
   const on_drop = async (e: React.DragEvent) => {
-    if (!lf2) return;
-    if (networking) return;
-    const read_zips = async () => {
-      try {
-        const { items } = e.dataTransfer;
-        const zips: IZip[] = []
-        for (let i = 0; i < items.length; i++) {
-          const file = items[i].getAsFile()
-          if (!file) continue;
-          const zip = await Ditto.Zip.read_file(file).catch(e => {
-            Ditto.warn('' + e)
-            return null
-          })
-          if (!zip) continue;
-          zips.push(zip);
-        }
-        const set = new Set(LF2.ZIPS.map(v => typeof v === 'string' ? v : v.name))
-        return zips.filter(z => !set.has(z.name))
-      } catch (e) {
-        alert('' + e)
-        return []
-      }
+    if (!lf2 || networking) return;
+    const { items } = e.dataTransfer;
+    const files: File[] = [];
+    for (let i = 0; i < items.length; i++) {
+      const file = items[i].getAsFile()
+      if (!file) continue;
+      files.push(file);
     }
-    if (lf2.ui?.id === 'entry' || lf2.ui?.id === 'launch') {
-      e.preventDefault();
-      const zips = await read_zips()
-      if (!zips.length) return
-      LF2.ZIPS = [...LF2.ZIPS, ...zips]
-    } else if (lf2.ui?.id?.toLowerCase().indexOf('loading') == -1 && !networking) {
-      e.preventDefault();
-      const zips = await read_zips()
-      if (!zips.length) return
-      LF2.ZIPS = [...LF2.ZIPS, ...zips]
-      lf2.load(...zips)
-      lf2.set_ui({ id: 'loading' })
-    }
+    load_files(lf2, files);
   }
   const game_cell_view = game_cell ? createPortal(
     <div className={csses.game_contiainer}>

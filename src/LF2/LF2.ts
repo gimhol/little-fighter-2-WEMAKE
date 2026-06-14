@@ -6,7 +6,7 @@ import { LocalController } from "./controller";
 import * as D from "./defines";
 import { AGK } from "./defines";
 import { CMD, CMD_NAMES } from "./defines/CMD";
-import { IFullGameZipInfo } from "./defines/IFullGameZipInfo";
+import { IGameZipInfo } from "./defines/IFullGameZipInfo";
 import * as I from "./ditto";
 import { Entity, is_fighter } from "./entity";
 import { IDebugging, make_debugging } from "./base/Debugging";
@@ -27,7 +27,7 @@ export interface IZipResult {
   file: I.IZipObject;
   zip: I.IZip;
 }
-const DEFAULT_INFO: Readonly<IFullGameZipInfo> = {
+const DEFAULT_INFO: Readonly<IGameZipInfo> = {
   type: "FULL",
   version: 0,
   title: "Little Fighter Wemake Origin Full Game",
@@ -41,11 +41,11 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   static readonly VERSION_NAME: string = `v${VERSION_NAME} ${BUILD_TIME}`;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
-  private static _INFO: Readonly<IFullGameZipInfo> = DEFAULT_INFO;
+  private static _INFO: Readonly<IGameZipInfo> = DEFAULT_INFO;
   private static _ZIPS: (I.IZip | string)[] = ["prel.zip.json", "data.zip.json"];
   static get IS_DEFAULT_INFO() { return this._INFO == DEFAULT_INFO; }
-  static get INFO(): Readonly<IFullGameZipInfo> { return this._INFO }
-  static set INFO(v: Readonly<IFullGameZipInfo> | null | undefined) {
+  static get INFO(): Readonly<IGameZipInfo> { return this._INFO }
+  static set INFO(v: Readonly<IGameZipInfo> | null | undefined) {
     // NOTE: is it stupid? - Gim
     const next = v ?? DEFAULT_INFO;
     if (next == this._INFO) return;
@@ -664,6 +664,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!LF2.IS_DEFAULT_INFO)
       DATA_LIST.unshift(LF2.INFO?.title)
     this._i18n.add({ '': { DATA_LIST } })
+    
     this.callbacks.emit('on_extra_zips_changed')(this)
   }
 

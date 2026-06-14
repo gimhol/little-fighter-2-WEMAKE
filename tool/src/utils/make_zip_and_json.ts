@@ -1,13 +1,16 @@
 import { zip } from "compressing";
 import fs from "fs/promises";
+import JSON5 from "json5";
 import { join } from "path";
 import { Defines } from "../../../src/LF2/defines/defines";
+import { IBaseZipInfo } from "../../../src/LF2/defines/IFullGameZipInfo";
 import { file_md5_str } from "./file_md5_str";
 import { is_dir } from "./is_dir";
 import { log } from "./log";
 import { read_full_dir_info_json } from "./read_full_dir_info_json";
 import { write_file } from "./write_file";
 import { write_obj_file } from "./write_obj_file";
+
 export interface IDirInfo {
   info_file_ok: boolean;
   exists?: boolean;
@@ -17,7 +20,7 @@ export interface IDirInfo {
   children?: { [x in string]?: IDirInfo },
   info_file?: string;
 }
-export interface IZipFileInfo {
+export interface IZipFileInfo extends IBaseZipInfo {
   url: string;
   md5: string;
   time: string;
@@ -54,7 +57,7 @@ export async function make_zip_and_json(
   src_dir = src_dir.replace(/\\/g, "/");
   out_dir = out_dir.replace(/\\/g, "/");
   await fs.mkdir(out_dir, { recursive: true }).catch(e => e)
-  log("Zipping", src_dir, "=>\n    "+ join(out_dir, zip_name).replace(/\\/g, "/"));
+  log("Zipping", src_dir, "=>\n    " + join(out_dir, zip_name).replace(/\\/g, "/"));
 
   const layout_dir = src_dir + '/ui'
   const layout_index_file = src_dir + '/ui/_index.json5'
@@ -81,11 +84,27 @@ export async function make_zip_and_json(
   let inf: IZipFileInfo = {
     type: '',
     url: zip_name,
+    time: new Date().toISOString(),
+    version: Defines.DATA_VERSION,
+    title: "Any LFW Zip",
+    description: "Any LFW Zip",
+    author: "Gim",
     md5: await file_md5_str(zip_path),
     info: await read_full_dir_info_json(src_dir),
-    time: new Date().toISOString(),
-    version: Defines.DATA_VERSION
   };
+
   inf = edit_info ? await edit_info(inf) : inf;
+
+
+  try {
+    const buf = await fs.readFile(join(out_dir, "index.json5"));
+    const raw = JSON5.parse(buf.toString())
+    if ('title' in raw && typeof raw.title == 'string') inf.title = raw.title
+    if ('desc' in raw && typeof raw.desc == 'string') inf.description = raw.desc
+    if ('description' in raw && typeof raw.description == 'string') inf.description = raw.description
+    if ('author' in raw && typeof raw.author == 'string') inf.author = raw.author
+  } catch (e) {
+
+  }
   await write_file(inf_path, JSON.stringify(inf));
 }

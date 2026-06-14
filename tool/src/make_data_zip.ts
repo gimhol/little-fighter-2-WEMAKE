@@ -1,8 +1,10 @@
 import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
-import path from "path";
+import path, { join } from "path";
+import { Defines } from "../../src/LF2/defines/defines";
 import type { ITempDataLists } from "../../src/LF2/defines/IDataLists";
 import { suffix_map } from "../../src/LF2/defines/IDatIndex";
+import { IDataZipInfo } from "../../src/LF2/defines/IFullGameZipInfo";
 import type { ILegacyPictureInfo } from "../../src/LF2/defines/ILegacyPictureInfo";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
@@ -112,9 +114,9 @@ export async function make_data() {
           if (arr) {
             file.path = file.path.replace(/.png$/, `_${arr.length}.png`);
             edited = true;
-            arr.push(file);
+            arr.push(file as ILegacyPictureInfo);
           } else {
-            pic_list_map.set(key, [file]);
+            pic_list_map.set(key, [file as ILegacyPictureInfo]);
           }
         }
       }
@@ -202,6 +204,28 @@ export async function make_data() {
   await cache_infos.save();
   await write_index_file(indexes, TMP_DAT_DIR);
 
+  const info: IDataZipInfo = {
+    type: "DATA",
+    title: "Little Fighter Wemake Data Zip",
+    version: Defines.DATA_VERSION,
+    description: "Little Fighter Wemake Data Zip",
+    author: "Gim"
+  }
+  try {
+    const buf =
+      await fs.readFile(join(IN_LF2_DIR, "index.json5")).catch(() => null) ||
+      await fs.readFile(join(IN_LF2_DIR, "index.json")).catch(() => null);
+    if (buf) {
+      const raw: object = JSON5.parse(buf.toString())
+      if ('title' in raw && typeof raw.title == 'string') info.title = raw.title;
+      if ('desc' in raw && typeof raw.desc == 'string') info.description = raw.desc;
+      if ('description' in raw && typeof raw.description == 'string') info.description = raw.description;
+      if ('author' in raw && typeof raw.author == 'string') info.author = raw.author;
+    }
+  } catch (e) {
+    console.error(e)
+  }
+  await write_file(join(TMP_DAT_DIR, "index.json5"), JSON.stringify(info))
 }
 export async function make_data_zip() {
   debug(`make_data_zip()`)

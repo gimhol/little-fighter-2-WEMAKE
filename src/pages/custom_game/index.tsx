@@ -1,66 +1,22 @@
 import { Button } from "@/Component/Buttons/Button";
-import { Ditto, IZip, LF2 } from "@/LF2";
+import { LF2 } from "@/LF2";
 import { Paths } from "@/Paths";
 import { download } from "@/Utils/download";
 import { open_file } from "@/Utils/open_file";
-import json5 from "json5";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { read_as_full_game_zip } from "./read_as_full_game_zip";
 import csses from "./styles.module.scss";
-import { IFullGameZipInfo } from "@/LF2/defines/IFullGameZipInfo";
 
 export default function CustomGamePage() {
   const { t } = useTranslation();
   const nav = useNavigate();
   const load_file = async (file: File) => {
     try {
-      const zip = await Ditto.Zip.read_file(file)
-      const index_json = zip.file('index.json') || zip.file('index.json5')
-      if (!index_json) throw new Error(t('custom_game_load_file_err_0'))
-
-      const raw_json = await index_json.text().then(str => json5.parse(str))
-      if (!raw_json) throw new Error(t('custom_game_load_file_err_0'))
-
-      const info: IFullGameZipInfo = {
-        type: "FULL",
-        title: file.name,
-        version: 0,
-        description: file.name,
-        author: "",
-        paths: [],
-      }
-
-      if (Array.isArray(raw_json)) { // old
-        info.paths = raw_json;
-      } else if (typeof raw_json == 'object') {
-        const { type, version, title, description, author, paths } = raw_json
-        if (type != 'FULL')
-          throw new Error(t('custom_game_load_file_err_4'))
-        if (typeof version != 'number')
-          throw new Error(t('custom_game_load_file_err_5'))
-        if (typeof title == 'string') info.title = title
-        if (typeof description == 'string') info.description = description
-        if (typeof author == 'string') info.author = author
-        if (Array.isArray(paths)) info.paths = paths
-      }
-      console.log(raw_json, info)
-      const { paths } = info;
-
-      if (!Array.isArray(paths) || paths.length < 2 || paths.some(path => typeof path !== 'string'))
-        throw new Error(t('custom_game_load_file_err_1'))
-
-      let datas: IZip[] = []
-      for (const path of paths) {
-        const file = zip.file(path)
-        if (!file) throw new Error(t('custom_game_load_file_err_2').replace('%1', JSON.stringify(path)))
-        const buf = await file.uint8_array();
-        const z = await Ditto.Zip.read_buf(path, buf)
-        datas.push(z);
-      }
-      if (datas.length < 2) throw new Error(`datas got empty!`)
+      const [info, zips] = await read_as_full_game_zip(file)
       LF2.INFO = info
-      LF2.ZIPS = datas;
+      LF2.ZIPS = zips;
       nav(Paths.All.game, { replace: true })
     } catch (e) {
       alert('' + e)
