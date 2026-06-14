@@ -28,6 +28,8 @@ export default class CharacterState_Jump extends CharacterState_Base {
       if (!e.ctrl.is_end(GK.U)) e.jumping.z = round_float(e.jumping.z - e.world.atom_time);
       if (!e.ctrl.is_end(GK.D)) e.jumping.z = round_float(e.jumping.z + e.world.atom_time);
       if (!e.ctrl.is_end(GK.j)) e.jumping.y = round_float(e.jumping.y + e.world.atom_time);
+    } else {
+      e.jumping.t += e.world.atom_time
     }
     if (!jump_flag) return;
     const { LR, UD } = e.ctrl;
