@@ -37,7 +37,6 @@ export abstract class Buff {
     this.kind = kind
     this.world = lf2.world;
     this.id = id;
-    this.kind = '';
   }
   init(): void { };
   on_tick?(attacker?: Entity, victim?: Entity): 'keep' | 'del';
