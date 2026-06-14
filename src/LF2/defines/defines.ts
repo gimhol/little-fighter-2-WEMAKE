@@ -17,7 +17,7 @@ export type TTODO = any;
 export type TFace = -1 | 1;
 export type TTrend = -1 | 0 | 1;
 export namespace Defines {
-  export const DATA_VERSION = 19
+  export const DATA_VERSION = 20
   export const TeamEnum = _TeamEnum;
   export type TeamEnum = _TeamEnum;
   export const CLASSIC_SCREEN_WIDTH = 794;
