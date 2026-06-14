@@ -19,6 +19,6 @@ export * from "./make_fighter_data_monk";
 export * from "./make_fighter_data_rudolf";
 export * from "./make_fighter_data_sorcerer";
 export * from "./make_fighter_data_woody";
-export * from "./make_figther_data_louis";
-export * from "./make_figther_data_louisex";
+export * from "./make_fighter_data_louis";
+export * from "./make_fighter_data_louisex";
 /*** AUTO EXPORT END ***/

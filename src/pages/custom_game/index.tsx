@@ -6,7 +6,7 @@ import { open_file } from "@/Utils/open_file";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { read_as_full_game_zip } from "./read_as_full_game_zip";
+import { read_file_as_full_game_zip } from "./read_as_full_game_zip";
 import csses from "./styles.module.scss";
 
 export default function CustomGamePage() {
@@ -14,7 +14,7 @@ export default function CustomGamePage() {
   const nav = useNavigate();
   const load_file = async (file: File) => {
     try {
-      const [info, zips] = await read_as_full_game_zip(file)
+      const [info, zips] = await read_file_as_full_game_zip(file)
       LF2.INFO = info
       LF2.ZIPS = zips;
       nav(Paths.All.game, { replace: true })

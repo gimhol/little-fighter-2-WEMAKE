@@ -21,8 +21,8 @@ import { make_fighter_data_monk } from "./fighters/make_fighter_data_monk";
 import { make_fighter_data_rudolf } from "./fighters/make_fighter_data_rudolf";
 import { make_fighter_data_sorcerer } from "./fighters/make_fighter_data_sorcerer";
 import { make_fighter_data_woody } from "./fighters/make_fighter_data_woody";
-import { make_figther_data_louis } from "./fighters/make_figther_data_louis";
-import { make_figther_data_louisex } from "./fighters/make_figther_data_louisex";
+import { make_fighter_data_louis } from "./fighters/make_fighter_data_louis";
+import { make_fighter_data_louisex } from "./fighters/make_fighter_data_louisex";
 
 export function make_fighter_special(data: IEntityData): IEntityData {
   const num_id = Number(data.id);
@@ -36,10 +36,10 @@ export function make_fighter_special(data: IEntityData): IEntityData {
   switch ((data.alias_id ?? data.id) as BuiltIn_OID) {
     case BuiltIn_OID.Julian: return make_fighter_data_julian(data)
     case BuiltIn_OID.Firzen: return make_fighter_data_firzen(data);
-    case BuiltIn_OID.LouisEX: return make_figther_data_louisex(data);
+    case BuiltIn_OID.LouisEX: return make_fighter_data_louisex(data);
     case BuiltIn_OID.Bat: return make_fighter_data_bat(data);
     case BuiltIn_OID.Knight: return make_fighter_data_knigt(data);
-    case BuiltIn_OID.Louis: return make_figther_data_louis(data);
+    case BuiltIn_OID.Louis: return make_fighter_data_louis(data);
     case BuiltIn_OID.Rudolf: return make_fighter_data_rudolf(data);
     case BuiltIn_OID.Deep: return make_fighter_data_deep(data);
     case BuiltIn_OID.Davis: return make_fighter_data_davis(data);

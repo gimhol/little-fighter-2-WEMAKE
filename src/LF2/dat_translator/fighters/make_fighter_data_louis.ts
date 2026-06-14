@@ -8,7 +8,7 @@ import { ensure, traversal } from "../../utils";
  * @param {IEntityData} data
  * @return {IEntityData} 
  */
-export function make_figther_data_louis(data: IEntityData): IEntityData {
+export function make_fighter_data_louis(data: IEntityData): IEntityData {
   data.base.armor = {
     hit_sounds: ["data/085.wav.mp3"],
     type: ArmorEnum.Times,

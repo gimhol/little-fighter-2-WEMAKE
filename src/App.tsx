@@ -83,6 +83,8 @@ const load_files = async (lf2: LF2, files: File[]) => {
     zips.push(zip);
   }
   if (!zips.length) return;
+
+
   // Is it stupid? -Gim
   if (lf2.ui?.id === 'entry' || lf2.ui?.id === 'launch' || lf2.ui?.id === 'init') {
     LF2.ZIPS = [...LF2.ZIPS, ...zips]
@@ -208,18 +210,6 @@ function App() {
   const [uis, set_uis] = useState<Readonly<IUIInfo>[]>([
     { id: "", name: "无页面" },
   ]);
-
-  // useEffect(() => {
-  //   if (!lf2 || !ele_game_overlay || !app_state.show_fps) return;
-  //   const ele = new FPSOverlay(lf2.world, ele_game_overlay);
-  //   return () => ele.release()
-  // }, [lf2, ele_game_overlay, app_state.show_fps])
-
-  // useEffect(() => {
-  //   if (!lf2 || !ele_game_overlay || !app_state.show_bg_scroll) return;
-  //   const ele = new BgScrollerOverlay(lf2.world, ele_game_overlay);
-  //   return () => ele.release()
-  // }, [lf2, ele_game_overlay, app_state.show_bg_scroll])
 
   useCallbacks(fullscreen?.callbacks, {
     onChange: (e) => _set_is_fullscreen(!!e),
