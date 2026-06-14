@@ -55,54 +55,32 @@ export class I18N {
     }
   }
 
-  alias(): string | undefined {
-    let ret: string = this._lang;
+  alias(lang = this._lang): string | undefined {
+    let ret: string = lang;
     const visited: string[] = [];
     while (ret !== void 0) {
       if (visited.includes(ret)) return void 0;
       visited.push(ret);
       const next = this._alias_map.get(ret);
-      if (!next) return ret;
+      if (!next) break;
       ret = next;
     }
-    if (this._lang == ret) return void 0;
+    if (lang == ret) return void 0;
     return ret;
   }
 
-  string(name: string): string {
-    const m = this._words.get(this._lang);
-    if (m) {
-      let ret = m[name]
-      if (ret == void 0) ret = m[name] = (this.base_words[name] ?? name)
-      return ret
-    }
+  string(name: string, lang = this._lang): string {
+    const m = this._words.get(lang);
+    if (lang == '') return m?.[name] ?? name;
 
-    const alias = this.alias() ?? '';
-    const words = this._words.get(alias);
-    if (words) {
-      this._words.set(this._lang, words);
-      return this.string(name);
-    }
-    this._words.set(this._lang, { [name]: (this.base_words[name] ?? name) });
-    return name;
+    const alias = this.alias(lang) ?? ''
+    return m?.[name] ?? this.string(name, alias);
   }
 
-  strings(name: string): string[] {
-    const m = this._lists.get(this._lang);
-    if (m) {
-      let ret = m[name]
-      if (ret == void 0) ret = m[name] = (this.base_lists[name] ?? [name])
-      return ret
-    }
-
-    const alias = this.alias() ?? '';
-    const lists = this._lists.get(alias);
-    if (lists) {
-      this._lists.set(this._lang, lists);
-      return this.strings(name);
-    }
-    const ret = (this.base_lists[name] ?? [name])
-    this._lists.set(this._lang, { [name]: ret });
-    return [name];
+  strings(name: string, lang = this._lang): string[] {
+    const m = this._lists.get(lang);
+    if (lang == '') return m?.[name] ?? [name];
+    const alias = this.alias(lang) ?? ''
+    return m?.[name] ?? this.strings(name, alias);
   }
 }
