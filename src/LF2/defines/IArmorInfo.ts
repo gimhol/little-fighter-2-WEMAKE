@@ -93,7 +93,9 @@ export interface IArmorInfo {
 }
 
 export const armor_Info_fields = fields<Partial<IArmorInfo>>({
-  type: int("护甲类型", {
+  type: int("护甲类型", `
+    决定了护甲耐久会根据itr的哪个值来降低
+    `.trim(), {
     options: ALL_ARMOR_ENUM.map(v => ({
       value: v,
       label: ARMOR_ENUM_LABEL_MAP[v],
