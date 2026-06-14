@@ -22,7 +22,7 @@ export namespace Paths {
     dat_viewer = "/dat_viewer",
     custom_game = "/custom_game",
 
-    EntityInfoEditor = '/EntityInfoEditor',
+    EntityInfoFormDemo = '/EntityInfoFormDemo',
     ArmorInfoFormDemo = '/ArmorInfoFormDemo',
   }
   export const Components: Record<All, React.ComponentType | null> = {
@@ -45,8 +45,8 @@ export namespace Paths {
     [All.frame_editor]: React.lazy(() => import("./EditorView/FrameEditorView")),
     [All.dat_viewer]: React.lazy(() => import("./pages/dat_viewer")),
     [All.custom_game]: React.lazy(() => import("./pages/custom_game")),
-    [All.EntityInfoEditor]: React.lazy(() => import("./EditorView/EntityInfoEditorView/demo")),
-    [All.ArmorInfoFormDemo]: React.lazy(() => import("./EditorView/EntityInfoEditorView/ArmorInfoForm/demo")),
+    [All.EntityInfoFormDemo]: React.lazy(() => import("./EditorView/EntityInfoForm/demo")),
+    [All.ArmorInfoFormDemo]: React.lazy(() => import("./EditorView/EntityInfoForm/ArmorInfoForm/demo")),
   }
   export const Relations: { [x in All]?: All[] } = {
     [All._]: [
@@ -60,7 +60,7 @@ export namespace Paths {
       All.frame_editor,
       All.dat_viewer,
       All.custom_game,
-      All.EntityInfoEditor,
+      All.EntityInfoFormDemo,
       All.ArmorInfoFormDemo,
     ],
     [All.component_demos]: [
