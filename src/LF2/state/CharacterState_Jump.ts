@@ -21,15 +21,16 @@ export default class CharacterState_Jump extends CharacterState_Base {
     e.handle_ground_velocity_decay();
     if (e.jumping.s) return;
     const { jump_flag } = e.get_prev_frame();
-    if (!is_bot_ctrl(e.ctrl)) {
+    if (is_bot_ctrl(e.ctrl)) {
+      e.jumping.t = round_float(e.jumping.t + e.world.atom_time);
+      e.jumping.y = round_float(e.jumping.y + e.world.atom_time);
+    } else {
       e.jumping.t = round_float(e.jumping.t + e.world.atom_time);
       if (!e.ctrl.is_end(GK.R)) e.jumping.x = round_float(e.jumping.x + e.world.atom_time);
       if (!e.ctrl.is_end(GK.L)) e.jumping.x = round_float(e.jumping.x - e.world.atom_time);
       if (!e.ctrl.is_end(GK.U)) e.jumping.z = round_float(e.jumping.z - e.world.atom_time);
       if (!e.ctrl.is_end(GK.D)) e.jumping.z = round_float(e.jumping.z + e.world.atom_time);
       if (!e.ctrl.is_end(GK.j)) e.jumping.y = round_float(e.jumping.y + e.world.atom_time);
-    } else {
-      e.jumping.t += e.world.atom_time
     }
     if (!jump_flag) return;
     const { LR, UD } = e.ctrl;
