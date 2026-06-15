@@ -104,6 +104,7 @@ export const bdy_info_fields = fields<Partial<IBdyInfo>>({
   l: int("L"),
   hit_flag: int("碰撞标记", {
     bitFlag: true,
+    nullable: true,
     options: ALL_HIT_FLAG.map(v => ({
       value: v,
       label: HIT_FLAG_NAME_MAP[v],

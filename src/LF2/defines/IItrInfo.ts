@@ -1,4 +1,4 @@
-import type { HitFlag } from "./HitFlag";
+import { ALL_HIT_FLAG, HIT_FLAG_DESC_MAP, HIT_FLAG_NAME_MAP, HitFlag } from "./HitFlag";
 import type { IExpression } from "./IExpression";
 import type { TNextFrame } from "./INextFrame";
 import type { IQube } from "./IQube";
@@ -146,7 +146,15 @@ export const itr_info_fields = fields<Partial<IItrInfo>>({
   h: int("H"),
   z: int("Z"),
   l: int("L"),
-  hit_flag: any,
+  hit_flag: int("碰撞标记", {
+    bitFlag: true,
+    nullable: true,
+    options: ALL_HIT_FLAG.map(v => ({
+      value: v,
+      label: HIT_FLAG_NAME_MAP[v],
+      desc: HIT_FLAG_DESC_MAP[v],
+    })),
+  }),
   hit_flag_name: any,
   motionless: int("自身停顿值"),
   shaking: int("目标停顿值"),

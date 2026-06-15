@@ -14,6 +14,7 @@ const BASE_FIELD_KEYS: FieldKeysRow<Data>[] = [
   ['dvx', 'dvy', 'dvz'],
   ['fall', 'vrest', 'arest'],
   ['motionless', 'shaking'],
+  ['hit_flag'],
   ['test', 'code'],
   ['prefab_id'],
 ];
