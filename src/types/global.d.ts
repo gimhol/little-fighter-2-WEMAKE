@@ -11,3 +11,4 @@ interface Window {
 }
 declare const VERSION_NAME: string;
 declare const BUILD_TIME: string;
+declare type FieldKeysRow<T extends object> = (keyof T | (keyof T)[]);

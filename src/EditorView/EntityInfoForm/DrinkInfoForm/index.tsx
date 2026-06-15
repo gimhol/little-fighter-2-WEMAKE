@@ -1,23 +1,22 @@
 import { Form } from "@/Component/Form";
 import { ISpaceProps, Space } from "@/Component/Space";
-import { armor_Info_fields, armor_Info_new, IArmorInfo } from "@/LF2";
+import { drink_Info_fields, drink_info_new, IDrinkInfo } from "@/LF2";
 import { useEffect, useMemo, useRef } from "react";
 import { FieldsRow } from "../../FieldsRow";
 
-type Data = IArmorInfo;
-const data_new = armor_Info_new;
-const ALL_FIELDS = armor_Info_fields
+type Data = IDrinkInfo;
+const data_new = drink_info_new;
+const ALL_FIELDS = drink_Info_fields
 const BASE_FIELD_KEYS: FieldKeysRow<Data>[] = [
-  ['type', 'toughness'],
-  ['fireproof', 'antifreeze', 'toughness'],
-  ['injury_ratio', 'shaking_ratio', 'motionless_ratio']
+  ['hp_h_value', 'hp_h_ticks', 'hp_h_total'],
+  ['hp_r_value', 'hp_r_ticks', 'hp_r_total'],
+  ['mp_h_value', 'mp_h_ticks', 'mp_h_total'],
 ]
-
-export interface IArmorInfoFormProps extends ISpaceProps {
+export interface IDrinkInfoFormProps extends ISpaceProps {
   value?: Data;
   onChange?(value: Data): void;
 }
-export function ArmorInfoForm(props: IArmorInfoFormProps) {
+export function DrinkInfoForm(props: IDrinkInfoFormProps) {
   const { value: o_value, onChange, stretchs = true, direction = 'column', ..._p } = props;
   const i_value = useMemo<Data>(() => o_value ?? data_new(), [o_value])
   const ref_o_value = useRef(o_value);
