@@ -45,6 +45,8 @@ export class EntityMainRender {
   protected model_variants = new Map<string, string[]>();
   protected img: RImageInfo | undefined;
   protected render_effect_time = -1;
+  protected variant: number = -1;
+
   constructor(owner: EntityRenderer) {
     this.owner = owner;
     this.world_renderer = owner.owner;
@@ -124,15 +126,16 @@ export class EntityMainRender {
   render(): void {
     const { entity, main_mesh } = this;
     if (this.owner.owner.dirty) {
-      const { frame, facing, data } = entity;
+      const { frame, facing, data, variant } = entity;
       if (data != this.data) {
         this.reset();
         this.update_texture();
         this.update_outline();
         this.update_position(true);
-      } else if (this.frame !== frame || this.facing !== facing) {
+      } else if (this.frame !== frame || this.facing !== facing || this.variant !== variant) {
         this.frame = frame;
         this.facing = facing;
+        this.variant = variant;
         this.update_texture();
         this.update_position();
       } else {
