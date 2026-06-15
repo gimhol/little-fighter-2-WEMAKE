@@ -106,6 +106,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     this.world.paused = false;
     this.lf2.change_bg('')
     this.lf2.cmds.push(CMD.LOCK_CAM, '0')
+    this._director.reset();
   }
   override on_pause(): void {
     super.on_pause?.();
