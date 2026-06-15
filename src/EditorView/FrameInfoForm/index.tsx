@@ -11,6 +11,7 @@ import { CpointInfoForm } from "./CpointInfoForm";
 import { ItrInfoForm } from "./ItrInfoForm";
 import { OpointInfoForm } from "./OpointInfoForm";
 import { WpointInfoForm } from "./WpointInfoForm";
+import Frame from "@/Component/Frame";
 
 type Data = IFrameInfo;
 const data_new = frame_info_new;
@@ -28,13 +29,6 @@ const BASE_FIELD_KEYS: FieldKeysRow<Data>[] = [
   ['ctrl_x', 'ctrl_y', 'ctrl_z'],
 ];
 
-const arrayItemBoxStyle: CSSProperties = {
-  position: 'relative',
-  border: '1px solid #444',
-  borderRadius: 4,
-  padding: '8px 8px 4px',
-  marginBottom: 4,
-};
 const arrayItemRemoveBtn: CSSProperties = {
   position: 'absolute',
   right: 4,
@@ -46,6 +40,7 @@ const arrayItemRemoveBtn: CSSProperties = {
   color: '#e44',
   padding: 0,
   lineHeight: 1,
+  zIndex: 1,
 };
 const addBtn: CSSProperties = {
   border: '1px dashed #888',
@@ -171,10 +166,10 @@ export function FrameInfoForm(props: IFrameInfoFormProps) {
           const { onItemChange, onItemRemove } = makeArrayHandlers<IBdyInfo>(i_value, 'bdy', bdy_info_new, onChange);
           return (
             <_Form.Item key={index} name={['bdy', index] as any} label={`碰撞盒 ${index + 1}`}>
-              <div style={arrayItemBoxStyle}>
+              <Frame>
                 <button style={arrayItemRemoveBtn} onClick={() => onItemRemove(index)}>✕</button>
                 <BdyInfoForm value={item} onChange={v => onItemChange(v, index)} />
-              </div>
+              </Frame>
             </_Form.Item>
           );
         })}
@@ -188,10 +183,10 @@ export function FrameInfoForm(props: IFrameInfoFormProps) {
           const { onItemChange, onItemRemove } = makeArrayHandlers<IItrInfo>(i_value, 'itr', itr_info_new, onChange);
           return (
             <_Form.Item key={index} name={['itr', index] as any} label={`攻击盒 ${index + 1}`}>
-              <div style={arrayItemBoxStyle}>
+              <Frame>
                 <button style={arrayItemRemoveBtn} onClick={() => onItemRemove(index)}>✕</button>
                 <ItrInfoForm value={item} onChange={v => onItemChange(v, index)} />
-              </div>
+              </Frame>
             </_Form.Item>
           );
         })}
@@ -205,10 +200,10 @@ export function FrameInfoForm(props: IFrameInfoFormProps) {
           const { onItemChange, onItemRemove } = makeArrayHandlers<IOpointInfo>(i_value, 'opoint', opoint_info_new, onChange);
           return (
             <_Form.Item key={index} name={['opoint', index] as any} label={`发射点 ${index + 1}`}>
-              <div style={arrayItemBoxStyle}>
+              <Frame>
                 <button style={arrayItemRemoveBtn} onClick={() => onItemRemove(index)}>✕</button>
                 <OpointInfoForm value={item} onChange={v => onItemChange(v, index)} />
-              </div>
+              </Frame>
             </_Form.Item>
           );
         })}
