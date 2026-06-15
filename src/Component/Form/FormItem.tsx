@@ -6,7 +6,7 @@ import { FormContext, IFormProps } from "./Form";
 export interface IFormItemProps<T extends object> extends PropsWithChildren {
   style?: CSSProperties;
   label?: ReactNode;
-  name: keyof T;
+  name?: keyof T;
 }
 
 export function FormItem<T extends object>(props: IFormItemProps<T>) {
@@ -14,14 +14,14 @@ export function FormItem<T extends object>(props: IFormItemProps<T>) {
   const { form, onChange } = useContext(FormContext) as IFormProps<T>;
 
   let field_value: any = null;
-  if (!isValidElement(children) || !form) {
+  if (!isValidElement(children) || !form || !name) {
   } else if (children.type === InputNumber || children.type === Input) {
     field_value = form.getFieldValue(name) ?? "";
   } else {
     field_value = form.getFieldValue(name);
   }
   let _children = children;
-  if (isValidElement(children) && form) {
+  if (isValidElement(children) && form && name) {
     const props: any = {
       ...children.props!,
       value: field_value,
