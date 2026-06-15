@@ -1,5 +1,6 @@
 import type { TNextFrame } from "./INextFrame";
 import { IQubePair } from "./IQubePair";
+import { any, fields, int, str } from "../fields";
 
 export interface ICpointInfo {
   kind: 1 | 2;
@@ -28,3 +29,38 @@ export interface ICpointInfo {
   /*dircontrol*/
   indicator_info?: IQubePair;
 }
+
+export function cpoint_info_new(): ICpointInfo {
+  return {
+    kind: 1,
+  };
+}
+
+export const cpoint_info_fields = fields<Partial<ICpointInfo>>({
+  kind: int("类型", {
+    options: [
+      { value: 1, label: "Kind 1" },
+      { value: 2, label: "Kind 2" },
+    ],
+  }),
+  x: int("X"),
+  y: int("Y"),
+  z: int("Z"),
+  vaction: any,
+  injury: int("伤害值"),
+  hurtable: int("可受伤", {
+    options: [
+      { value: 0, label: "否" },
+      { value: 1, label: "是" },
+    ],
+  }),
+  decrease: int("递减值"),
+  throwvx: int("投掷初速度X"),
+  throwvy: int("投掷初速度Y"),
+  throwvz: int("投掷初速度Z"),
+  throwinjury: int("投掷落地受伤量"),
+  fronthurtact: str("正面受伤动作"),
+  backhurtact: str("背面受伤动作"),
+  shaking: int("目标停顿值"),
+  indicator_info: any,
+})

@@ -1,9 +1,10 @@
 import type { FacingFlag } from "./FacingFlag";
 import type { TNextFrame } from "./INextFrame";
 import { IQubePair } from "./IQubePair";
-import type { OpointKind } from "./OpointKind";
-import type { OpointMultiEnum } from "./OpointMultiEnum";
+import { OpointKind } from "./OpointKind";
+import { OpointMultiEnum } from "./OpointMultiEnum";
 import { OpointSpreading } from "./OpointSpreading";
+import { any, fields, flt, int, str } from "../fields";
 export type __KEEP_FacingFlag = FacingFlag;
 export interface IOpointInfo {
   /**
@@ -179,3 +180,69 @@ export interface IOpointInfo {
   inherit_speed_y?: number;
   inherit_speed_z?: number;
 }
+
+const ALL_OPOINT_KIND = Object.values(OpointKind).filter(v => typeof v === 'number') as number[];
+const ALL_OPOINT_SPREADING = Object.values(OpointSpreading).filter(v => typeof v === 'number') as number[];
+const ALL_OPOINT_MULTI_ENUM = Object.values(OpointMultiEnum).filter(v => typeof v === 'number') as number[];
+
+export function opoint_info_new(): IOpointInfo {
+  return {
+    kind: OpointKind.Normal,
+    x: 0,
+    y: 0,
+    oid: "",
+    action: { id: "" },
+  };
+}
+
+export const opoint_info_fields = fields<Partial<IOpointInfo>>({
+  kind: int("类型", {
+    options: ALL_OPOINT_KIND.map(v => ({
+      value: v,
+      label: OpointKind[v],
+    })),
+  }),
+  x: int("X"),
+  y: int("Y"),
+  origin_type: any,
+  z: int("Z"),
+  oid: str("实体数据ID"),
+  action: any,
+  dvx: flt("初速度X"),
+  dvy: flt("初速度Y"),
+  dvz: flt("初速度Z"),
+  multi: any,
+  max_hp: int("最大血量"),
+  hp: int("血量"),
+  max_mp: int("最大蓝量"),
+  mp: int("蓝量"),
+  speedz: flt("额外初速度Z"),
+  spreading: int("扩散模式", {
+    options: ALL_OPOINT_SPREADING.map(v => ({
+      value: v,
+      label: OpointSpreading[v],
+    })),
+  }),
+  is_entity: any,
+  interval: int("间隔帧数"),
+  interval_id: str("间隔ID"),
+  interval_mode: int("间隔模式", {
+    options: [
+      { value: 0, label: "模式0" },
+      { value: 1, label: "模式1" },
+    ],
+  }),
+  motionless: int("停顿值"),
+  spreading_x: any,
+  spreading_y: any,
+  spreading_z: any,
+  unimportant: int("不重要标记"),
+  delay: int("延迟帧数"),
+  __spreading_random_x: any,
+  __spreading_random_y: any,
+  __spreading_random_z: any,
+  inherit_speed_x: flt("继承速度X"),
+  inherit_speed_y: flt("继承速度Y"),
+  inherit_speed_z: flt("继承速度Z"),
+  indicator_info: any,
+})

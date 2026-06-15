@@ -1,10 +1,11 @@
 import { BdyKind } from "./BdyKind";
-import { HitFlag } from "./HitFlag";
+import { ALL_HIT_FLAG, HIT_FLAG_DESC_MAP, HIT_FLAG_NAME_MAP, HitFlag } from "./HitFlag";
 import type { IExpression } from "./IExpression";
 import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
 import { make_field_orders } from "./make_field_orders";
 import type { TAction } from "./TAction";
+import { any, fields, int, str } from "../fields";
 
 export interface IBdyInfo extends Partial<IQube> {
   /**
@@ -77,4 +78,43 @@ export const BdyKeyOrders = make_field_orders({
   code: 0,
   tester: 0,
   indicator_info: 0,
+})
+
+export function bdy_info_new(): IBdyInfo {
+  return {
+    kind: BdyKind.Normal,
+  };
+}
+
+export const bdy_info_fields = fields<Partial<IBdyInfo>>({
+  kind: int("类型", {
+    options: [
+      { value: BdyKind.Normal, label: "Normal" },
+      { value: BdyKind.Criminal, label: "Criminal" },
+      { value: BdyKind.Defend, label: "Defend" },
+      { value: BdyKind.Ignore, label: "Ignore" },
+    ],
+  }),
+  kind_name: any,
+  x: int("X"),
+  y: int("Y"),
+  w: int("W"),
+  h: int("H"),
+  z: int("Z"),
+  l: int("L"),
+  hit_flag: int("碰撞标记", {
+    bitFlag: true,
+    options: ALL_HIT_FLAG.map(v => ({
+      value: v,
+      label: HIT_FLAG_NAME_MAP[v],
+      desc: HIT_FLAG_DESC_MAP[v],
+    })),
+  }),
+  hit_flag_name: any,
+  prefab_id: str("预制信息ID"),
+  actions: any,
+  test: str("测试表达式"),
+  code: str("Code"),
+  tester: any,
+  indicator_info: any,
 })

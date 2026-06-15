@@ -24,8 +24,15 @@ export namespace Paths {
 
     EntityInfoFormDemo = '/EntityInfoFormDemo',
     ArmorInfoFormDemo = '/ArmorInfoFormDemo',
+    DrinkInfoFormDemo = '/DrinkInfoFormDemo',
     FrameInfoFormDemo = '/FrameInfoFormDemo',
     ChaseInfoFormDemo = '/ChaseInfoFormDemo',
+    BdyInfoFormDemo = '/BdyInfoFormDemo',
+    ItrInfoFormDemo = '/ItrInfoFormDemo',
+    WpointInfoFormDemo = '/WpointInfoFormDemo',
+    BpointInfoFormDemo = '/BpointInfoFormDemo',
+    OpointInfoFormDemo = '/OpointInfoFormDemo',
+    CpointInfoFormDemo = '/CpointInfoFormDemo',
   }
   export const Components: Record<All, React.ComponentType | null> = {
     [All._]: null,
@@ -49,8 +56,15 @@ export namespace Paths {
     [All.custom_game]: React.lazy(() => import("./pages/custom_game")),
     [All.EntityInfoFormDemo]: React.lazy(() => import("./EditorView/EntityInfoForm/demo")),
     [All.ArmorInfoFormDemo]: React.lazy(() => import("./EditorView/EntityInfoForm/ArmorInfoForm/demo")),
+    [All.DrinkInfoFormDemo]: React.lazy(() => import("./EditorView/EntityInfoForm/DrinkInfoForm/demo")),
     [All.FrameInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/demo")),
     [All.ChaseInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/ChaseInfoForm/demo")),
+    [All.BdyInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/BdyInfoForm/demo")),
+    [All.ItrInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/ItrInfoForm/demo")),
+    [All.WpointInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/WpointInfoForm/demo")),
+    [All.BpointInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/BpointInfoForm/demo")),
+    [All.OpointInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/OpointInfoForm/demo")),
+    [All.CpointInfoFormDemo]: React.lazy(() => import("./EditorView/FrameInfoForm/CpointInfoForm/demo")),
   }
   export const Relations: { [x in All]?: All[] } = {
     [All._]: [
@@ -66,8 +80,15 @@ export namespace Paths {
       All.custom_game,
       All.EntityInfoFormDemo,
       All.ArmorInfoFormDemo,
+      All.DrinkInfoFormDemo,
       All.FrameInfoFormDemo,
       All.ChaseInfoFormDemo,
+      All.BdyInfoFormDemo,
+      All.ItrInfoFormDemo,
+      All.WpointInfoFormDemo,
+      All.BpointInfoFormDemo,
+      All.OpointInfoFormDemo,
+      All.CpointInfoFormDemo,
     ],
     [All.component_demos]: [
       All.component_demos_InputNumber,

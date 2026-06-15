@@ -3,9 +3,10 @@ import type { IExpression } from "./IExpression";
 import type { TNextFrame } from "./INextFrame";
 import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
-import type { ItrEffect } from "./ItrEffect";
-import type { ItrKind } from "./ItrKind";
+import { ItrEffect, ItrEffectDescriptions } from "./ItrEffect";
+import { ItrKind, ItrKindDescriptions } from "./ItrKind";
 import type { TAction } from "./TAction";
+import { any, fields, flt, int, str } from "../fields";
 
 export interface IItrInfo extends Partial<IQube> {
   /**
@@ -120,3 +121,58 @@ export interface IItrInfo extends Partial<IQube> {
   tester?: IExpression<any>;
   code?: string | number,
 }
+
+const ALL_ITR_KIND = Object.values(ItrKind).filter(v => typeof v === 'number') as number[];
+const ALL_ITR_EFFECT = Object.values(ItrEffect).filter(v => typeof v === 'number') as number[];
+
+export function itr_info_new(): IItrInfo {
+  return {
+    kind: ItrKind.Normal,
+  };
+}
+
+export const itr_info_fields = fields<Partial<IItrInfo>>({
+  kind: int("类型", {
+    options: ALL_ITR_KIND.map(v => ({
+      value: v,
+      label: ItrKind[v],
+      desc: (ItrKindDescriptions as Record<number, string>)[v] || "",
+    })),
+  }),
+  kind_name: any,
+  x: int("X"),
+  y: int("Y"),
+  w: int("W"),
+  h: int("H"),
+  z: int("Z"),
+  l: int("L"),
+  hit_flag: any,
+  hit_flag_name: any,
+  motionless: int("自身停顿值"),
+  shaking: int("目标停顿值"),
+  dvx: flt("初速度X"),
+  dvy: flt("初速度Y"),
+  dvz: flt("初速度Z"),
+  fall: int("Fall"),
+  vrest: int("Vrest"),
+  arest: int("Arest"),
+  bdefend: int("破防值"),
+  injury: int("伤害值"),
+  effect: int("效果", {
+    options: ALL_ITR_EFFECT.map(v => ({
+      value: v,
+      label: ItrEffect[v],
+      desc: (ItrEffectDescriptions as Record<number, string>)[v] || "",
+    })),
+  }),
+  effect_name: any,
+  catchingact: any,
+  caughtact: any,
+  on_hit_ground: any,
+  actions: any,
+  test: str("测试表达式"),
+  tester: any,
+  code: str("Code"),
+  prefab_id: str("预制信息ID"),
+  indicator_info: any,
+})
