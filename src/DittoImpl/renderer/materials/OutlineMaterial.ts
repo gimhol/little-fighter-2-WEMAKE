@@ -99,6 +99,8 @@ export class OutlineMaterial extends ShaderMaterial {
   set w(v: number) { this.uniforms.w.value = v }
   get h(): number { return this.uniforms.h.value }
   set h(v: number) { this.uniforms.h.value = v }
+  get flip_x(): number { return this.uniforms.flipX.value }
+  set flip_x(v: number) { this.uniforms.flipX.value = v }
   set_origin_size(w: number, h: number): void {
     const u = this.uniforms
     u.tw.value = w;

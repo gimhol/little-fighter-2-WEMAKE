@@ -110,7 +110,7 @@ export class EntityMainRender {
   update_shaking(): void {
     let { shaking, facing, buffs } = this.entity;
 
-    if (!shaking || !buffs.size) {
+    if (!shaking && buffs.size) {
       for (const [, b] of buffs) {
         if (b.kind === Buff_Electroshock.KIND) {
           shaking = b.duration - b.lifetime;
@@ -160,13 +160,7 @@ export class EntityMainRender {
     const { invisible } = this.owner;
     const { blinking } = entity;
 
-    if (invisible) {
-      main_mesh.visible = false;
-    } else if (blinking) {
-      main_mesh.visible = floor(blinking / 4) % 2 === 0;
-    } else {
-      main_mesh.visible = true;
-    }
+    main_mesh.visible = !invisible && (!blinking || floor(blinking / 4) % 2 === 0);
 
     this.render_bpoint();
     this.update_outline();
@@ -193,7 +187,7 @@ export class EntityMainRender {
       m.texture = void 0;
     }
     m.set_clip(pic.x, pic.y, pic.w, pic.h)
-    m.uniforms.flipX.value = entity.facing;
+    m.flip_x = entity.facing;
   }
 
   update_position(immediate = false): void {
