@@ -100,18 +100,28 @@ export class OutlineMaterial extends ShaderMaterial {
   get h(): number { return this.uniforms.h.value }
   set h(v: number) { this.uniforms.h.value = v }
   set_origin_size(w: number, h: number): void {
-    this.uniforms.tw.value = w;
-    this.uniforms.th.value = h;
+    const u = this.uniforms
+    u.tw.value = w;
+    u.th.value = h;
   }
   set_origin_scale(x: number, y: number): void {
-    this.uniforms.tsw.value = x;
-    this.uniforms.tsh.value = y;
+    const u = this.uniforms
+    u.tsw.value = x;
+    u.tsh.value = y;
   }
   set_clip(x: number, y: number, w: number, h: number): void {
-    this.uniforms.x.value = x
-    this.uniforms.y.value = y
-    this.uniforms.w.value = w
-    this.uniforms.h.value = h
+    const u = this.uniforms
+    u.x.value = x
+    u.y.value = y
+    u.w.value = w
+    u.h.value = h
+  }
+  set_tex_size(w: number, h: number, scale_x: number = 1, scale_y: number = scale_x) {
+    const u = this.uniforms
+    u.tw.value = w;
+    u.th.value = h;
+    u.tsw.value = scale_x;
+    u.tsh.value = scale_y;
   }
 }
 

@@ -13,8 +13,8 @@ const get_img_map = (lf2: LF2, data: IEntityData, out: Map<string, RImageInfo>):
   out.clear();
   const { base: { files = {} } } = data;
   const images = lf2.images as ImageMgr;
-  for (const key of Object.keys(files)) {
-    const img = images.find_by_pic_info(files[key]);
+  for (const [key, file] of Object.entries(files)) {
+    const img = images.find_by_pic_info(file);
     img && out.set(key, img.clone());
   }
 };
@@ -125,7 +125,7 @@ export class EntityMainRender {
 
   render(): void {
     const { entity, main_mesh } = this;
-    if (this.owner.owner.dirty) {
+    if (this.world_renderer.dirty) {
       const { frame, facing, data, variant } = entity;
       if (data != this.data) {
         this.reset();
@@ -144,7 +144,7 @@ export class EntityMainRender {
     }
 
     this.update_shaking();
-    const holder = (this.entity.bearer?.renderer ?? this.entity.catcher?.renderer) as EntityRenderer;
+    const holder = (entity.bearer?.renderer ?? entity.catcher?.renderer) as EntityRenderer;
     if (!holder) {
       let { dfactor } = this.world_renderer;
       entity.lifetime === 0 && (dfactor = 1);
@@ -186,18 +186,12 @@ export class EntityMainRender {
     if (variant) tex = this.file_variants.get(tex)?.at(variant) ?? tex;
     const img = this.img = images.get(tex);
     if (img?.pic) {
-      m.uniforms.tex.value = img.pic.texture;
-      m.uniforms.tw.value = img.w;
-      m.uniforms.th.value = img.h;
-      m.uniforms.tsw.value = img.scale;
-      m.uniforms.tsh.value = img.scale;
+      m.texture = img.pic.texture;
+      m.set_tex_size(img.w, img.h, img.scale)
     } else {
-      m.uniforms.tex.value = void 0;
+      m.texture = void 0;
     }
-    m.uniforms.x.value = pic.x;
-    m.uniforms.y.value = pic.y;
-    m.uniforms.w.value = pic.w;
-    m.uniforms.h.value = pic.h;
+    m.set_clip(pic.x, pic.y, pic.w, pic.h)
     m.uniforms.flipX.value = entity.facing;
   }
 
@@ -224,7 +218,6 @@ export class EntityMainRender {
     if (ghosted) return;
 
     if (this.render_effect_time == render_effect_time) return;
-
     this.render_effect_time = render_effect_time;
     const { main_mesh } = this;
     const { material: m } = main_mesh;
