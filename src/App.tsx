@@ -126,7 +126,7 @@ const init_app_state = () => ({
 })
 const init_world_dataset = (): IWorldDataset => {
   const ret = new WorldDataset(true).dump_dataset();
-  ret.sync_render = low_device ? SyncRenderEnum.FPS_60 : SyncRenderEnum.Sync;
+  ret.sync_render = SyncRenderEnum.FPS_60;
   ret.UPS = low_device ? 30 : 60;
   return ret;
 }
