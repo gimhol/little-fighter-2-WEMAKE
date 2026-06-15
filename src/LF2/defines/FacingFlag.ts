@@ -96,3 +96,45 @@ export enum FacingFlag {
    */
   OpposingBearer = 5,
 }
+
+export const ALL_FACING_FLAG: FacingFlag[] = [
+  FacingFlag.None,
+  FacingFlag.Left,
+  FacingFlag.Right,
+  FacingFlag.Backward,
+  FacingFlag.Ctrl,
+  FacingFlag.SameAsCatcher,
+  FacingFlag.OpposingCatcher,
+  FacingFlag.AntiCtrl,
+  FacingFlag.VX,
+  FacingFlag.AntiVX,
+  FacingFlag.Trend,
+];
+
+export const FACING_FLAG_LABEL_MAP: Record<FacingFlag, string> = {
+  [FacingFlag.None]: "None",
+  [FacingFlag.Left]: "Left",
+  [FacingFlag.Right]: "Right",
+  [FacingFlag.Backward]: "Backward",
+  [FacingFlag.Ctrl]: "Ctrl",
+  [FacingFlag.SameAsCatcher]: "SameAsCatcher",
+  [FacingFlag.OpposingCatcher]: "OpposingCatcher",
+  [FacingFlag.AntiCtrl]: "AntiCtrl",
+  [FacingFlag.VX]: "VX",
+  [FacingFlag.AntiVX]: "AntiVX",
+  [FacingFlag.Trend]: "Trend",
+};
+
+export const FACING_FLAG_DESC_MAP: Record<FacingFlag, string> = {
+  [FacingFlag.None]: "无",
+  [FacingFlag.Left]: "向左",
+  [FacingFlag.Right]: "向右",
+  [FacingFlag.Backward]: "转向",
+  [FacingFlag.Ctrl]: "跟随控制器方向",
+  [FacingFlag.SameAsCatcher]: "与抓取者/持有者同向",
+  [FacingFlag.OpposingCatcher]: "与抓取者/持有者反向",
+  [FacingFlag.AntiCtrl]: "与控制器方向相反",
+  [FacingFlag.VX]: "跟随X速度方向",
+  [FacingFlag.AntiVX]: "跟随反X速度方向",
+  [FacingFlag.Trend]: "跟随按键与速度趋势",
+};

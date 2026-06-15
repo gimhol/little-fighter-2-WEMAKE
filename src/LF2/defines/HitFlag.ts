@@ -23,9 +23,9 @@ export enum HitFlag {
   AllyBall     /**/ = HitFlag.Ally | HitFlag.Ball,
 }
 
-export const hit_flag_name = (v: any) => {
+export const get_hit_flag_name = (v: any) => {
   const num = Number(v)
-  const name = (hit_flag_name_map as any)[num as HitFlag];
+  const name = (HIT_FLAG_NAME_MAP as any)[num as HitFlag];
   if (name) return name;
   const ret = [
     HitFlag.Enemy, HitFlag.Ally, HitFlag.Ohters, HitFlag.Fighter,
@@ -33,13 +33,13 @@ export const hit_flag_name = (v: any) => {
   ].filter(r => {
     return r & v
   }).map(r => {
-    return hit_flag_name_map[r]
+    return HIT_FLAG_NAME_MAP[r]
   }).join('|') || `unknown_${v}`;
-  return (hit_flag_name_map as any)[v] = ret;
+  return (HIT_FLAG_NAME_MAP as any)[v] = ret;
 }
-export const hit_flag_full_name = (v: any) => `AllyFlag.${hit_flag_name(v)}`
-export const hit_flag_desc = (v: any) => hit_flag_desc_map[v as HitFlag] || hit_flag_full_name(v)
-export const hit_flag_desc_map: Record<HitFlag, string> = {
+export const get_hit_flag_full_name = (v: any) => `AllyFlag.${get_hit_flag_name(v)}`
+export const get_hit_flag_desc = (v: any) => HIT_FLAG_DESC_MAP[v as HitFlag] || get_hit_flag_full_name(v)
+export const HIT_FLAG_DESC_MAP: Record<HitFlag, string> = {
   [HitFlag.Both]: "判定队友与队友",
   [HitFlag.AllEnemy]: "判定全类型敌人",
   [HitFlag.AllAlly]: "判定全类型队友",
@@ -58,7 +58,7 @@ export const hit_flag_desc_map: Record<HitFlag, string> = {
   [HitFlag.AllyBall]: "AllyBall",
   [HitFlag.Dead]: "Dead"
 }
-export const hit_flag_name_map: Record<HitFlag, string> = {
+export const HIT_FLAG_NAME_MAP: Record<HitFlag, string> = {
   [HitFlag.Enemy]: "Enemy",
   [HitFlag.Ally]: "Ally",
   [HitFlag.Ohters]: "Ohters",
@@ -77,7 +77,5 @@ export const hit_flag_name_map: Record<HitFlag, string> = {
   [HitFlag.AllyWeapon]: "AllyWeapon",
   [HitFlag.AllyBall]: "AllyBall",
 }
-const descs: any = hit_flag_desc_map;
-for (const key in descs) {
-  descs[key] = descs[key] || hit_flag_full_name(key)
-}
+
+

@@ -1,5 +1,5 @@
 import { bdy_kind_name } from "../defines";
-import { hit_flag_name } from "../defines/HitFlag";
+import { get_hit_flag_name } from "../defines/HitFlag";
 import { IBdyInfo } from "../defines/IBdyInfo";
 const { parse, stringify } = JSON
 export class EditBdy<T extends Partial<IBdyInfo>> {
@@ -16,7 +16,7 @@ export class EditBdy<T extends Partial<IBdyInfo>> {
   }
   deco(): this {
     if (this.raw.hit_flag !== void 0) {
-      this.raw.hit_flag_name = hit_flag_name(this.raw.hit_flag)
+      this.raw.hit_flag_name = get_hit_flag_name(this.raw.hit_flag)
     } else {
       delete this.raw.hit_flag;
       delete this.raw.hit_flag_name;

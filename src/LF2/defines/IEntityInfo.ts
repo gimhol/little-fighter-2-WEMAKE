@@ -245,5 +245,3 @@ fields<Partial<Omit<IEntityInfo, keyof IWorldDataset>>>({
 }).forEach((value, key) => {
   entity_info_fields.set(key, value);
 })
-
-console.log(entity_info_fields)

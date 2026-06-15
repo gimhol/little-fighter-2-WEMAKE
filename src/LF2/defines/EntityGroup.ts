@@ -72,7 +72,6 @@ export const ALL_ENTITY_GROUP: EG[] = [
   EntityGroup.Dev,
 ];
 
-
 export const ENTITY_GROUP_LABEL_MAP: Record<EG, string> = {
   [EntityGroup.Hidden]: "Hidden",
   [EntityGroup.Boss]: "Boss",

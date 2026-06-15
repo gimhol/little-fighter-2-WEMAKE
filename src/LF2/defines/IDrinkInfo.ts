@@ -84,7 +84,6 @@ export function drink_info_new() {
   return {}
 }
 
-
 export const drink_Info_fields = fields<Partial<IDrinkInfo>>({
   hp_h_total: int('', '最多能恢复多少HP'),
   hp_h_value: int('', '每次恢复多少HP'),

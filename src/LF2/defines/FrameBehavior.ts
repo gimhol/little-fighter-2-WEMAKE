@@ -142,3 +142,54 @@ export enum FrameBehavior {
   JulianBall = 14,
 }
 
+export const ALL_FRAME_BEHAVIOR: FrameBehavior[] = [
+  FrameBehavior.JohnChase,
+  FrameBehavior.DennisChase,
+  FrameBehavior.Boomerang,
+  FrameBehavior.AngelBlessing,
+  FrameBehavior.AngelBlessingStart,
+  FrameBehavior.DevilJudgementStart,
+  FrameBehavior.ChasingSameEnemy,
+  FrameBehavior.BatStart,
+  FrameBehavior.FirzenDisasterStart,
+  FrameBehavior.JohnBiscuitLeaving,
+  FrameBehavior.FirzenVolcanoStart,
+  FrameBehavior.Bat,
+  FrameBehavior.JulianBallStart,
+  FrameBehavior.JulianBall,
+];
+
+export const FRAME_BEHAVIOR_LABEL_MAP: Record<FrameBehavior, string> = {
+  [FrameBehavior.JohnChase]: "JohnChase",
+  [FrameBehavior.DennisChase]: "DennisChase",
+  [FrameBehavior.Boomerang]: "Boomerang",
+  [FrameBehavior.AngelBlessing]: "AngelBlessing",
+  [FrameBehavior.AngelBlessingStart]: "AngelBlessingStart",
+  [FrameBehavior.DevilJudgementStart]: "DevilJudgementStart",
+  [FrameBehavior.ChasingSameEnemy]: "ChasingSameEnemy",
+  [FrameBehavior.BatStart]: "BatStart",
+  [FrameBehavior.FirzenDisasterStart]: "FirzenDisasterStart",
+  [FrameBehavior.JohnBiscuitLeaving]: "JohnBiscuitLeaving",
+  [FrameBehavior.FirzenVolcanoStart]: "FirzenVolcanoStart",
+  [FrameBehavior.Bat]: "Bat",
+  [FrameBehavior.JulianBallStart]: "JulianBallStart",
+  [FrameBehavior.JulianBall]: "JulianBall",
+};
+
+export const FRAME_BEHAVIOR_DESC_MAP: Record<FrameBehavior, string> = {
+  [FrameBehavior.JohnChase]: "追敌人的center（John的d^a）",
+  [FrameBehavior.DennisChase]: "水平追敌（Dennis的d^a）",
+  [FrameBehavior.Boomerang]: "加速法追敌（追纵力较差）",
+  [FrameBehavior.AngelBlessing]: "天使之祝福",
+  [FrameBehavior.AngelBlessingStart]: "天使之祝福的开始",
+  [FrameBehavior.DevilJudgementStart]: "恶魔之审判的开始",
+  [FrameBehavior.ChasingSameEnemy]: "恶魔之审判，殃殒天降",
+  [FrameBehavior.BatStart]: "吸血蝙蝠的开始",
+  [FrameBehavior.FirzenDisasterStart]: "殃殒天降的开始",
+  [FrameBehavior.JohnBiscuitLeaving]: "加速脱离（John盘子失去跟踪）",
+  [FrameBehavior.FirzenVolcanoStart]: "极地火山的开始",
+  [FrameBehavior.Bat]: "吸血蝙蝠",
+  [FrameBehavior.JulianBallStart]: "连环重炮的开始",
+  [FrameBehavior.JulianBall]: "连环重炮",
+};
+

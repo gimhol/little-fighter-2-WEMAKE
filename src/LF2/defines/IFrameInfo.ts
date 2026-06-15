@@ -1,6 +1,6 @@
-import type { IWorldDataset } from "../IWorldDataset";
-import type { FacingFlag } from "./FacingFlag";
-import type { FrameBehavior } from "./FrameBehavior";
+import { IWorldDataset, world_dataset_fields } from "../IWorldDataset";
+import { FacingFlag, ALL_FACING_FLAG, FACING_FLAG_LABEL_MAP, FACING_FLAG_DESC_MAP } from "./FacingFlag";
+import { FrameBehavior, ALL_FRAME_BEHAVIOR, FRAME_BEHAVIOR_LABEL_MAP, FRAME_BEHAVIOR_DESC_MAP } from "./FrameBehavior";
 import type { IBdyInfo } from "./IBdyInfo";
 import type { IBpointInfo } from "./IBpointInfo";
 import type { IChaseInfo } from "./IChaseInfo";
@@ -15,6 +15,7 @@ import type { IQubePair } from "./IQubePair";
 import type { IVelocityInfo } from "./IVelocityInfo";
 import type { IWpointInfo } from "./IWpointInfo";
 import type { StateEnum } from "./StateEnum";
+import { any, fields, flt, IFieldInfo, int, str } from "../fields";
 
 /**
  * 实体的帧信息
@@ -109,7 +110,7 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
 
   width: number;
   height: number;
-  
+
   /**
    * 进入此帧时播放的声音
    *
@@ -145,6 +146,11 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
    * @type {?number}
    */
   invisible?: number;
+  /**
+   * 是否有影子
+   * 
+   * @type {?number} 1=有影子 0=没影子
+   */
   no_shadow?: number;
 
   /**
@@ -231,4 +237,107 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   __aabb_x1?: number;
   __aabb_x2?: number;
 }
+
+export function frame_info_new(): IFrameInfo {
+  const ret: IFrameInfo = {
+    id: "",
+    name: "",
+    state: 0,
+    wait: 0,
+    next: { id: "" },
+    centerx: 0,
+    centery: 0,
+    width: 0,
+    height: 0,
+  };
+  return ret;
+}
+
+export const frame_info_fields = new Map<keyof IFrameInfo, IFieldInfo<Partial<IFrameInfo>>>();
+
+world_dataset_fields.forEach((value, key) => {
+  frame_info_fields.set(key as keyof IFrameInfo, value);
+});
+
+fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
+  id: str("帧ID", { nullable: false, maxLength: 32 }),
+  name: str("帧名", { nullable: false, maxLength: 32 }),
+  pic: any,
+  state: int("状态", { nullable: false }),
+  wait: int("等待帧数", { nullable: false, min: 0 }),
+  next: any,
+  centerx: int("中心X", { nullable: false }),
+  centery: int("中心Y", { nullable: false }),
+  width: int("宽度", { nullable: false, min: 1 }),
+  height: int("高度", { nullable: false, min: 1 }),
+  sound: str("进入音效"),
+  hold: any,
+  hit: any,
+  key_down: any,
+  key_up: any,
+  seqs: any,
+  bdy: any,
+  itr: any,
+  wpoint: any,
+  bpoint: any,
+  opoint: any,
+  cpoint: any,
+  indicator_info: any,
+  invisible: int("隐身帧数"),
+  no_shadow: int("有否影子", "1=有影子 0=没影子", {
+    options: [
+      { value: 0, label: "没影子" },
+      { value: 1, label: "有影子" },
+    ],
+  }),
+  jump_flag: int("起跳标志", "下一帧将拥有向上的跳越速度，仅用于跳越"),
+  on_dead: any,
+  on_exhaustion: any,
+  on_landing: any,
+  behavior: int("行为标志", {
+    options: ALL_FRAME_BEHAVIOR.map(v => ({
+      value: v,
+      label: FRAME_BEHAVIOR_LABEL_MAP[v],
+      desc: FRAME_BEHAVIOR_DESC_MAP[v],
+    })),
+  }),
+  chase: any,
+  gravity_enabled: any,
+  broadcasts: any,
+  facing: int("朝向标志", {
+    options: ALL_FACING_FLAG.map(v => ({
+      value: v,
+      label: FACING_FLAG_LABEL_MAP[v],
+      desc: FACING_FLAG_DESC_MAP[v],
+    })),
+  }),
+  landable: int("落地行为", "0=穿透地面, 1=落地触发", {
+    min: 0, max: 1,
+    options: [
+      { value: 0, label: "穿透地面" },
+      { value: 1, label: "落地触发" },
+    ],
+  }),
+  // IVelocityInfo 字段
+  dvx: flt("默认速度X"),
+  dvy: flt("默认速度Y"),
+  dvz: flt("默认速度Z"),
+  vxm: int("速度模式X"),
+  vym: int("速度模式Y"),
+  vzm: int("速度模式Z"),
+  acc_x: flt("加速度X"),
+  acc_y: flt("加速度Y"),
+  acc_z: flt("加速度Z"),
+  ctrl_x: int("控制模式X"),
+  ctrl_y: int("控制模式Y"),
+  ctrl_z: int("控制模式Z"),
+  // 内部/渲染用字段
+  seq_map: any,
+  __tex: any,
+  likelf2: any,
+  __aabb_x1: any,
+  __aabb_x2: any,
+}).forEach((value, key) => {
+  frame_info_fields.set(key, value);
+});
 
