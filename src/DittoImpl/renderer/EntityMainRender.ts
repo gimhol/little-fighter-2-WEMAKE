@@ -1,7 +1,7 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, TFace } from "@/LF2";
 import { Buff_Electroshock, clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
 import { IModelInfo } from "@/LF2/defines/IModelInfo";
-import { BufferGeometry, Color, Mesh, MeshBasicMaterial, Object3D, Vector3 } from "../_t";
+import { BufferGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";
 import type { EntityRenderer } from "./EntityRenderer";
@@ -44,7 +44,7 @@ export class EntityMainRender {
   protected models: Record<string, IModelInfo> = {};
   protected model_variants = new Map<string, string[]>();
   protected img: RImageInfo | undefined;
-
+  protected render_effect_time = -1;
   constructor(owner: EntityRenderer) {
     this.owner = owner;
     this.world_renderer = owner.owner;
@@ -177,14 +177,10 @@ export class EntityMainRender {
     const { pic } = frame;
     const { images } = this;
     main_mesh.scale.set(width, height, 0);
-
     if (!pic) return;
-
     const { material: m } = main_mesh;
-
     let { tex } = pic;
     if (variant) tex = this.file_variants.get(tex)?.at(variant) ?? tex;
-
     const img = this.img = images.get(tex);
     if (img?.pic) {
       m.uniforms.tex.value = img.pic.texture;
@@ -221,30 +217,37 @@ export class EntityMainRender {
   }
 
   private update_outline(): void {
-    const { main_mesh } = this;
-    if (this.entity.ghosted) return;
-    const { material: m } = main_mesh;
-    const { outline_color, outline_alpha, outline_width } = this.entity;
-    const enabled = this.entity.dataset('teamoutline_enabled');
+    const { ghosted, render_effect_time } = this.entity;
+    if (ghosted) return;
 
-    if (outline_color && outline_alpha && enabled) {
-      m.outlineColor = new Color(outline_color);
-      m.outlineAlpha = outline_alpha ?? 0.7;
+    if (this.render_effect_time == render_effect_time) return;
+
+    this.render_effect_time = render_effect_time;
+    const { main_mesh } = this;
+    const { material: m } = main_mesh;
+    const {
+      outline_color,
+      outline_alpha,
+      outline_width,
+      outline_enabled,
+      greyscale,
+      mix_color,
+      mix_stength
+    } = this.entity;
+
+    if (outline_color && outline_alpha && outline_enabled) {
+      m.outlineColor.set(outline_color);
+      m.outlineAlpha = outline_alpha;
       m.outlineWidth = outline_width * (this.img?.scale ?? 1)
     } else {
+      m.outlineWidth = 0;
       m.outlineAlpha = 0;
     }
-
-    if (this.lf2.ui?.id === "main_page") {
-      m.gray = 0.3;
-      m.mixColor.set('#364791');
-      m.mixStength = 0.3;
-      m.outlineWidth = 1;
-      m.outlineAlpha = 1;
-      m.outlineColor.set('#131C47')
+    m.gray = greyscale;
+    if (mix_stength) {
+      m.mixColor.set(mix_color);
+      m.mixStength = mix_stength;
     } else {
-      m.gray = 0;
-      m.mixColor = '';
       m.mixStength = 0;
     }
   }

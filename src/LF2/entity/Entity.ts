@@ -52,9 +52,16 @@ export class Entity {
   transforms: [string, string] | null = null;
   protected _lifetime: number = 0;
   protected _spawn_time: number = 0;
+
+  protected _render_effect_time: number = 0;
   protected _outline_color: string = '';
   protected _outline_alpha: number = 0.8;
   protected _outline_width: number = 1;
+  protected _outline_enabled: number | null = null;
+  protected _mix_color: string = '';
+  protected _mix_stength: number = 0;
+  protected _greyscale: number = 0;
+
   protected readonly _prev_position: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _position: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _prev_velocity: IVector3 = Ditto.vec3(0, 0, 0);
@@ -228,14 +235,26 @@ export class Entity {
   get lifetime() {
     return this._lifetime
   }
+  get render_effect_time() {
+    return this._render_effect_time
+  }
   get outline_color(): string {
     return this._outline_color || Defines.TeamInfoMap[this.team]?.outline_color || ''
   };
-  set outline_color(v: string) { this._outline_color = v; }
+  set outline_color(v: string) { this._outline_color = v; this._render_effect_time++; }
   get outline_alpha(): number { return this._outline_alpha; }
-  set outline_alpha(v: number) { this._outline_alpha = v; }
+  set outline_alpha(v: number) { this._outline_alpha = v; this._render_effect_time++; }
   get outline_width(): number { return this._outline_width; }
-  set outline_width(v: number) { this._outline_width = v; }
+  set outline_width(v: number) { this._outline_width = v; this._render_effect_time++; }
+  get outline_enabled(): number | null { return this._outline_enabled ?? this.dataset('outline_enabled'); }
+  set outline_enabled(v: number | null) { this._outline_enabled = v; this._render_effect_time++; }
+  get mix_color(): string { return this._mix_color; }
+  set mix_color(v: string) { this._mix_color = v; this._render_effect_time++; }
+  get mix_stength(): number { return this._mix_stength; }
+  set mix_stength(v: number) { this._mix_stength = v; this._render_effect_time++; }
+  get greyscale(): number { return this._greyscale; }
+  set greyscale(v: number) { this._greyscale = v; this._render_effect_time++; }
+
 
   get position(): Readonly<IVector3> { return this._position }
   get prev_position(): Readonly<IVector3> { return this._prev_position }
@@ -519,6 +538,7 @@ export class Entity {
     this._team = v;
     this.variant = Number(this._team) || 0
     this.callbacks.emit("on_team_changed")(this, v, o);
+    ++this._render_effect_time;
   }
 
   get src_emitter(): Entity | undefined { return this.get_emitter(0) }
@@ -770,7 +790,13 @@ export class Entity {
     this.collided_list.length = 0;
     this.lastest_collided = null;
     this._outline_color = '';
-
+    this._outline_alpha = 0.8;
+    this._outline_width = 1;
+    this._outline_enabled = null;
+    this._mix_color = '';
+    this._mix_stength = 0;
+    this._greyscale = 0;
+    this._render_effect_time = 0;
   }
 
   set_bearer(v: Entity | null): this {
@@ -2350,6 +2376,10 @@ export class Entity {
       outline_color: this._outline_color,
       outline_alpha: this._outline_alpha,
       outline_width: this._outline_width,
+      outline_enabled: this._outline_enabled,
+      mix_color: this._mix_color,
+      mix_stength: this._mix_stength,
+      greyscale: this._greyscale,
       prev_position: { x: this._prev_position.x, y: this._prev_position.y, z: this._prev_position.z },
       position: { x: this._position.x, y: this._position.y, z: this._position.z },
       prev_velocity: { x: this._prev_velocity.x, y: this._prev_velocity.y, z: this._prev_velocity.z },

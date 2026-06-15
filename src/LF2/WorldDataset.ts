@@ -106,7 +106,7 @@ export class WorldDataset implements IWorldDataset {
   whirlwind_acc_y: number = 1;
   whirlwind_acc_x: number = 0.5;
   whirlwind_acc_z: number = 0.5;
-  teamoutline_enabled: number = 1;
+  outline_enabled: number = 1;
   indicator_flags: number = 0;
   UPS: number = 60;
   playrate: number = 1;

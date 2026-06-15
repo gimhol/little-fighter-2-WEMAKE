@@ -258,7 +258,7 @@ export interface IWorldDataset {
   whirlwind_acc_y: number;
   whirlwind_acc_x: number;
   whirlwind_acc_z: number;
-  teamoutline_enabled: number;
+  outline_enabled: number;
   indicator_flags: number;
   UPS: number;
   playrate: number;
@@ -358,7 +358,7 @@ export const world_dataset_fields = fields<Partial<IWorldDataset>>({
   whirlwind_acc_x: flt('旋风加速度X'),
   whirlwind_acc_z: flt('旋风加速度Z'),
   itr_fall: int,
-  teamoutline_enabled: int({ min: 0, max: 1 }),
+  outline_enabled: int({ min: 0, max: 1 }),
   indicator_flags: int,
   UPS: int({ min: 1, max: 120 }),
   playrate: flt({ min: 0.01, max: 1000 }),

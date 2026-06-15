@@ -1,6 +1,6 @@
-import { ActionDirector, EntityGroup, OID, TeamEnum } from "@/LF2";
+import { ActionDirector, EntityGroup } from "@/LF2";
 import { CMD, type IEntityData } from "@/LF2/defines";
-import { Entity, IEntityCallbacks, is_fighter } from "@/LF2/entity";
+import { Entity, IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { UIComponent } from "./UIComponent";
 
@@ -139,6 +139,12 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.name_visible = false;
     fighter.enter_frame({ id: "running_0" })
     fighter.attach()
+    fighter.greyscale = 0.3;
+    fighter.mix_color = '#364791';
+    fighter.mix_stength = 0.3;
+    fighter.outline_width = 1;
+    fighter.outline_alpha = 1;
+    fighter.outline_color = '#131C47';
     return fighter;
   }
 }

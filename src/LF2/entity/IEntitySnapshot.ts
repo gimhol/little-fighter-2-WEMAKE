@@ -15,6 +15,10 @@ export interface IEntitySnapshot {
   outline_color: string,
   outline_alpha: number,
   outline_width: number,
+  outline_enabled: number | null,
+  mix_color: string;
+  mix_stength: number;
+  greyscale: number;
   prev_position: IVector3Like,
   position: IVector3Like,
   prev_velocity: IVector3Like,

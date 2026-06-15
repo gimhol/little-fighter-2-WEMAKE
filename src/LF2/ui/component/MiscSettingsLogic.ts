@@ -56,7 +56,7 @@ export class MiscSettingsLogic extends UIComponent {
       this.lf2.sounds.play_preset('cancel')
     })
     this.team_outline?.on_value_changed((v) => {
-      this.world.teamoutline_enabled = v;
+      this.world.outline_enabled = v;
       this.lf2.sounds.play_preset(v ? 'ok' : 'cancel')
     })
     this.render_rate?.on_value_changed((v) => {
@@ -87,7 +87,7 @@ export class MiscSettingsLogic extends UIComponent {
     console.log(this.lf2.sounds.sound_volume())
     this.sfx_volume?.set_factor(this.lf2.sounds.sound_volume())
     this.sfx_toggle?.set_value(this.lf2.sounds.sound_muted() ? 0 : 1)
-    this.team_outline?.set_factor(this.world.teamoutline_enabled)
+    this.team_outline?.set_factor(this.world.outline_enabled)
     this.render_rate?.set_value(render_rate_options.indexOf(this.world.sync_render));
     const ups_arr = [30, 60, 90, 120]
     this.ups?.set_value(ups_arr.indexOf(this.world.UPS));
