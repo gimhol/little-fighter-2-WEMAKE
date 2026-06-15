@@ -3,7 +3,8 @@
  *
  * 通过 prototype 挂载到 Entity 类上。
  */
-import type { Entity } from "./Entity";
+import { sus_cases } from "../cases_instances";
+import { collision_clone } from "../collision/Collision";
 import {
   Defines,
   type IOpointInfo,
@@ -17,8 +18,7 @@ import {
 } from "../defines";
 import { Ditto } from "../ditto";
 import { abs, clamp, is_num, round_float } from "../utils";
-import { collision_clone } from "../collision/Collision";
-import { sus_cases } from "../cases_instances";
+import type { Entity } from "./Entity";
 import { is_ball_ctrl, is_fighter } from "./type_check";
 
 // ============================================================

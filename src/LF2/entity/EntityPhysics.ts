@@ -3,11 +3,11 @@
  *
  * 通过 prototype 挂载到 Entity 类上，使用 `this: Entity` 进行类型标注。
  */
-import type { Entity } from "./Entity";
 import type { IVelocityInfo } from "../defines";
 import { SpeedCtrl, SpeedMode } from "../defines";
 import { pow, round_float } from "../utils";
 import { calc_v } from "./calc_v";
+import type { Entity } from "./Entity";
 
 // ============================================================
 // getter: dvx, dvy, dvz
