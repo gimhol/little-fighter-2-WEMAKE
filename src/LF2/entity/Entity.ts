@@ -45,6 +45,7 @@ import { is_ball_ctrl, is_fighter, is_human_ctrl } from "./type_check";
 
 export class Entity {
   static readonly TAG: string = 'Entity';
+  lf2: LF2;
   world: World;
   id: string = '';
   wait: number = 0;
@@ -231,6 +232,7 @@ export class Entity {
   renderer: any;
   puppet: boolean = false;
   jumping = { s: 0, x: 0, y: 0, z: 0, t: 0 }
+  private _atom_time: number;
 
   get lifetime() {
     return this._lifetime
@@ -398,9 +400,6 @@ export class Entity {
   }
   get catcher() {
     return this._catcher;
-  }
-  get lf2(): LF2 {
-    return this.world.lf2;
   }
   get bearer(): Entity | null {
     return this._bearer;
@@ -678,17 +677,19 @@ export class Entity {
   get state() { return this.frame.state }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.world = world;
+    this.lf2 = world.lf2;
     this._data = data;
     this._states = states;
+    this._atom_time = world.atom_time;
     this.reset(data, states)
   }
   reset(data: IEntityData, states: States = ENTITY_STATES) {
     let buffs = Array.from(this.buffs.values())
     for (const buf of buffs) buf.del_victims(this.id)
     this.buffs.clear();
-    const { world } = this;
+    const { world, lf2 } = this;
     this._data = data;
-    this.id = this.world.lf2.new_id;
+    this.id = lf2.new_id;
     this.wait = 0;
     this._lifetime = 0;
     this._prev_ground_y = 0;
@@ -1065,7 +1066,7 @@ export class Entity {
       Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, opoint: `, opoint);
       return;
     }
-    const data = this.world.lf2.datas.find(oid);
+    const data = this.lf2.datas.find(oid);
     if (!data) {
       Ditto.warn(`[${Entity.TAG}::spawn_object] failed, oid: ${oid}, data: `, data, ` opoint: `, opoint);
       debugger
@@ -1178,7 +1179,7 @@ export class Entity {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     const { gravity_enabled = true } = this.frame;
     if (this._position.y <= this.ground_y || !gravity_enabled) return;
-    this._velocity.y = round_float(this._velocity.y - this.gravity * this.world.atom_time)
+    this._velocity.y = round_float(this._velocity.y - this.gravity * this._atom_time)
   }
   get dvx() {
     const { dvx: v } = this.frame;
@@ -1307,7 +1308,7 @@ export class Entity {
     if (this.resting > 0) {
       this.resting = clamp_add(
         this.resting,
-        -this.world.atom_time,
+        -this._atom_time,
         0,
         this.resting_max
       )
@@ -1316,7 +1317,7 @@ export class Entity {
     if (this.toughness_resting > 0) {
       this.toughness_resting = clamp_add(
         this.toughness_resting,
-        -this.world.atom_time,
+        -this._atom_time,
         0,
         this._toughness_resting_max
       )
@@ -1324,12 +1325,12 @@ export class Entity {
     } else if (this.toughness < this.toughness_max) {
       this.toughness = clamp_add(
         this.toughness,
-        this.world.atom_time,
+        this._atom_time,
         0,
         this._toughness_max
       )
     }
-    if (this.fall_value < this.fall_value_max && this._fall_r_tick.add(this.world.atom_time)) {
+    if (this.fall_value < this.fall_value_max && this._fall_r_tick.add(this._atom_time)) {
       this.fall_value = clamp_add(
         this.fall_value,
         this._fall_r_value,
@@ -1337,7 +1338,7 @@ export class Entity {
         this.fall_value_max
       )
     }
-    if (this.defend_value < this.defend_value_max && this._defend_r_tick.add(this.world.atom_time)) {
+    if (this.defend_value < this.defend_value_max && this._defend_r_tick.add(this._atom_time)) {
       this.defend_value = clamp_add(
         this.defend_value,
         this._defend_r_value,
@@ -1380,7 +1381,7 @@ export class Entity {
     this._hp_r_tick.max = this.healing > 0 ?
       this.dataset('hp_healing_ticks') :
       this.dataset('hp_r_ticks')
-    if (!this._hp_r_tick.add(this.world.atom_time))
+    if (!this._hp_r_tick.add(this._atom_time))
       return;
     const value = this.healing > 0 ?
       this.dataset('hp_healing_value') :
@@ -1399,7 +1400,7 @@ export class Entity {
     if (this._hp <= 0 || this._mp >= this.mp_max || this._blinking_duration || this._invisible_duration)
       return;
     this._mp_r_tick.max = this.dataset('mp_r_ticks');
-    if (!this._mp_r_tick.add(this.world.atom_time))
+    if (!this._mp_r_tick.add(this._atom_time))
       return;
     const r_ratio = this.dataset('mp_r_ratio');
     const value = 1 + floor(round_float((this.hp_max - min(r_ratio * this._hp, this.hp_max)) / 100))
@@ -1421,7 +1422,7 @@ export class Entity {
     }
     if (this.dismiss_time) {
       this.dismiss_time = round_float(
-        this.dismiss_time - this.world.atom_time
+        this.dismiss_time - this._atom_time
       );
     }
 
@@ -1437,18 +1438,19 @@ export class Entity {
   }
 
   update(): void {
+    this._atom_time = this.world.atom_time;
     this._lifetime += 1;
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
     if (this.check_fusion_dismissing()) return;
     this.hp_recovering()
     this.mp_recovering();
 
-    if (this.frame.hp_max) this.hp -= this.frame.hp_max * this.world.atom_time;
+    if (this.frame.hp_max) this.hp -= this.frame.hp_max * this._atom_time;
 
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
       for (const [k, v] of this.vrests) {
         if (v.rest > 0) {
-          v.rest = round_float(v.rest - this.world.atom_time);
+          v.rest = round_float(v.rest - this._atom_time);
           if (v.rest < 0) v.rest = 0;
         } else {
           this.del_v_rest(k)
@@ -1457,7 +1459,7 @@ export class Entity {
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
       if (this.arest > 0) {
-        this.arest = round_float(this.arest - this.world.atom_time);
+        this.arest = round_float(this.arest - this._atom_time);
         if (this.arest < 0) this.arest = 0;
       } else {
         this.arest = 0
@@ -1465,19 +1467,19 @@ export class Entity {
     }
 
     if (this._invisible_duration > 0) {
-      this._invisible_duration = round_float(this._invisible_duration - this.world.atom_time);
+      this._invisible_duration = round_float(this._invisible_duration - this._atom_time);
       if (this._invisible_duration <= 0) {
         this._invisible_duration = 0;
         this._blinking_duration = this.dataset('invisible_blinking');
       }
     }
     if (this._invulnerable_duration > 0) {
-      this._invulnerable_duration = round_float(this._invulnerable_duration - this.world.atom_time);
+      this._invulnerable_duration = round_float(this._invulnerable_duration - this._atom_time);
       if (this._invulnerable_duration < 0) this._invulnerable_duration = 0;
     }
 
     if (this._blinking_duration > 0) {
-      this._blinking_duration = round_float(this._blinking_duration - this.world.atom_time);
+      this._blinking_duration = round_float(this._blinking_duration - this._atom_time);
       if (this._blinking_duration <= 0) {
         this._blinking_duration = 0;
         if (this._after_blink === Builtin_FrameId.Gone) {
@@ -1533,7 +1535,7 @@ export class Entity {
         !this._catcher &&
         !this._bearer
       ) {
-        this.wait = round_float(this.wait - this.world.atom_time)
+        this.wait = round_float(this.wait - this._atom_time)
         if (this.wait < 0) this.wait = 0;
       }
     } else {
@@ -1548,11 +1550,11 @@ export class Entity {
     this.update_position();
 
     if (this.motionless > 0) {
-      this.motionless = round_float(this.motionless - this.world.atom_time);
+      this.motionless = round_float(this.motionless - this._atom_time);
       if (this.motionless < 0) this.motionless = 0
     }
     if (this.shaking > 0) {
-      this.shaking = round_float(this.shaking - this.world.atom_time);
+      this.shaking = round_float(this.shaking - this._atom_time);
       if (this.shaking < 0) this.shaking = 0
     }
     if (this.update_catching()) return;
@@ -1765,7 +1767,7 @@ export class Entity {
     const { cpoint: cpoint_a } = this.frame;
     if (cpoint_a?.decrease) {
       this._catch_time = clamp_add(
-        this._catch_time, cpoint_a.decrease * this.world.atom_time,
+        this._catch_time, cpoint_a.decrease * this._atom_time,
         0,
         this.catch_time_max
       )
@@ -2093,7 +2095,7 @@ export class Entity {
           cam_x += offset_x
           x = clamp(x, cam_x, cam_r)
         }
-        this.world.lf2.sounds.play(frame.sound, x, y, z);
+        this.lf2.sounds.play(frame.sound, x, y, z);
       }
       this.set_frame(frame);
     } else if (this.frame === EMPTY_FRAME_INFO) {
