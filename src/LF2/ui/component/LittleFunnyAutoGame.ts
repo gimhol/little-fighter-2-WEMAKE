@@ -141,7 +141,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.attach()
     fighter.greyscale = 0.3;
     fighter.mix_color = '#364791';
-    fighter.mix_stength = 0.3;
+    fighter.mix_strength = 0.3;
     fighter.outline_width = 1;
     fighter.outline_alpha = 1;
     fighter.outline_color = '#131C47';

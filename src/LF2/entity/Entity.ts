@@ -59,7 +59,7 @@ export class Entity {
   protected _outline_width: number = 1;
   protected _outline_enabled: number | null = null;
   protected _mix_color: string = '';
-  protected _mix_stength: number = 0;
+  protected _mix_strength: number = 0;
   protected _greyscale: number = 0;
 
   protected readonly _prev_position: IVector3 = Ditto.vec3(0, 0, 0);
@@ -250,8 +250,8 @@ export class Entity {
   set outline_enabled(v: number | null) { this._outline_enabled = v; this._render_effect_time++; }
   get mix_color(): string { return this._mix_color; }
   set mix_color(v: string) { this._mix_color = v; this._render_effect_time++; }
-  get mix_stength(): number { return this._mix_stength; }
-  set mix_stength(v: number) { this._mix_stength = v; this._render_effect_time++; }
+  get mix_strength(): number { return this._mix_strength; }
+  set mix_strength(v: number) { this._mix_strength = v; this._render_effect_time++; }
   get greyscale(): number { return this._greyscale; }
   set greyscale(v: number) { this._greyscale = v; this._render_effect_time++; }
 
@@ -794,7 +794,7 @@ export class Entity {
     this._outline_width = 1;
     this._outline_enabled = null;
     this._mix_color = '';
-    this._mix_stength = 0;
+    this._mix_strength = 0;
     this._greyscale = 0;
     this._render_effect_time = 0;
   }
@@ -2378,7 +2378,7 @@ export class Entity {
       outline_width: this._outline_width,
       outline_enabled: this._outline_enabled,
       mix_color: this._mix_color,
-      mix_stength: this._mix_stength,
+      mix_strength: this._mix_strength,
       greyscale: this._greyscale,
       prev_position: { x: this._prev_position.x, y: this._prev_position.y, z: this._prev_position.z },
       position: { x: this._position.x, y: this._position.y, z: this._position.z },

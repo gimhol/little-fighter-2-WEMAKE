@@ -13,8 +13,8 @@ const get_img_map = (lf2: LF2, data: IEntityData, out: Map<string, RImageInfo>):
   out.clear();
   const { base: { files = {} } } = data;
   const images = lf2.images as ImageMgr;
-  for (const [key, file] of Object.entries(files)) {
-    const img = images.find_by_pic_info(file);
+  for (const key in files) {
+    const img = images.find_by_pic_info(files[key]);
     img && out.set(key, img.clone());
   }
 };
@@ -110,10 +110,11 @@ export class EntityMainRender {
   update_shaking(): void {
     let { shaking, facing, buffs } = this.entity;
 
-    if (!shaking) {
+    if (!shaking || !buffs.size) {
       for (const [, b] of buffs) {
         if (b.kind === Buff_Electroshock.KIND) {
           shaking = b.duration - b.lifetime;
+          break;
         }
       }
     }
@@ -196,13 +197,14 @@ export class EntityMainRender {
   }
 
   update_position(immediate = false): void {
-    let { x, y, z } = this.entity.position;
-    const { facing, state } = this.entity;
+    const { entity } = this;
+    const { facing, state, frame, world } = entity;
+    let { x, y, z } = entity.position;
 
     if (state === StateEnum.Message) {
-      const { centerx, width } = this.entity.frame;
+      const { centerx, width } = frame;
       const cameraX = this.world_renderer.camera.position.x;
-      const screenW = this.entity.world.screen_w / (this.entity.world.bg.zoom[0] ?? 1);
+      const screenW = world.screen_w / (world.bg.zoom[0] ?? 1);
       const offsetX = facing === 1 ? centerx : width - centerx;
       const left = cameraX + offsetX;
       const right = cameraX + screenW - (width - offsetX);
@@ -228,7 +230,7 @@ export class EntityMainRender {
       outline_enabled,
       greyscale,
       mix_color,
-      mix_stength
+      mix_strength
     } = this.entity;
 
     if (outline_color && outline_alpha && outline_enabled) {
@@ -240,11 +242,11 @@ export class EntityMainRender {
       m.outlineAlpha = 0;
     }
     m.gray = greyscale;
-    if (mix_stength) {
+    if (mix_strength) {
       m.mixColor.set(mix_color);
-      m.mixStength = mix_stength;
+      m.mixStrength = mix_strength;
     } else {
-      m.mixStength = 0;
+      m.mixStrength = 0;
     }
   }
 
@@ -255,7 +257,7 @@ export class EntityMainRender {
     const visible = !!bpoint && main_mesh.visible && entity.hp < entity.hp_max * 0.33;
     this.blood_mesh.visible = visible;
 
-    if (!bpoint || !visible) return;
+    if (!visible) return;
 
     let { x: bx, y: by, z: bz = 0.1, r = 0 } = bpoint;
     bx = entity.facing === 1 ? bx : main_mesh.scale.x - bx;

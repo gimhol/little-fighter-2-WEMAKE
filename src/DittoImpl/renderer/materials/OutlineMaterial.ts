@@ -81,8 +81,8 @@ export class OutlineMaterial extends ShaderMaterial {
   set cover(v: boolean) { this.uniforms.cover.value = v }
   get mixColor(): Color { return this._mixColor }
   set mixColor(v: ColorRepresentation) { this._mixColor.set(v) }
-  get mixStength(): number { return this.uniforms.mixStength.value }
-  set mixStength(v: number) { this.uniforms.mixStength.value = v }
+  get mixStrength(): number { return this.uniforms.mixStength.value }
+  set mixStrength(v: number) { this.uniforms.mixStength.value = v }
   get bgColor(): Color { return this._bgColor }
   set bgColor(v: ColorRepresentation) { this._bgColor.set(v) }
   get bgAlpha(): number { return this.uniforms.bgAlpha.value }

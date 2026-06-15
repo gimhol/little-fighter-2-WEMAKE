@@ -196,21 +196,21 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.mesh.material.coverStength = 0;
       this.mesh.material.cover = false
       this.mesh.material.mixColor = rgba ? new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace) : BLACK;
-      this.mesh.material.mixStength = rgba?.a ?? 0;
+      this.mesh.material.mixStrength = rgba?.a ?? 0;
     } else if (rgba) {
       this.mesh.material.texture = ImageMgr.WHITE_TEXTURE.clone();
       this.mesh.material.coverColor = new T.Color().setRGB(rgba.r / 255, rgba.g / 255, rgba.b / 255, SRGBColorSpace);
       this.mesh.material.coverStength = rgba.a;
       this.mesh.material.cover = true
       this.mesh.material.mixColor = BLACK;
-      this.mesh.material.mixStength = 0;
+      this.mesh.material.mixStrength = 0;
     } else {
       this.mesh.material.texture = void 0
       this.mesh.material.coverColor = BLACK;
       this.mesh.material.coverStength = 0;
       this.mesh.material.cover = true
       this.mesh.material.mixColor = BLACK;
-      this.mesh.material.mixStength = 0;
+      this.mesh.material.mixStrength = 0;
     }
   }
   get x(): number { return this.mesh.position.x }
