@@ -9,7 +9,6 @@ const data_new = cpoint_info_new;
 const ALL_FIELDS = cpoint_info_fields;
 const BASE_FIELD_KEYS: FieldKeysRow<Data>[] = [
   ['kind', 'x', 'y', 'z'],
-  ['vaction'],
   ['injury', 'decrease', 'shaking'],
   ['throwvx', 'throwvy', 'throwvz', 'throwinjury'],
   ['fronthurtact', 'backhurtact'],

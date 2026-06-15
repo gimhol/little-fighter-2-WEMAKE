@@ -9,9 +9,8 @@ const data_new = opoint_info_new;
 const ALL_FIELDS = opoint_info_fields;
 const BASE_FIELD_KEYS: FieldKeysRow<Data>[] = [
   ['kind', 'x', 'y', 'z'],
-  ['oid', 'action'],
+  ['oid'],
   ['dvx', 'dvy', 'dvz'],
-  ['multi'],
   ['max_hp', 'hp', 'max_mp', 'mp'],
   ['speedz', 'spreading'],
   ['interval', 'interval_id', 'interval_mode'],
