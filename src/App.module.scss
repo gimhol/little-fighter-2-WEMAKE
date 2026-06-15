@@ -102,7 +102,7 @@
   bottom          : 0px;
   display         : flex;
   flex-direction  : column;
-  background-color: #10206c;
+  background-color: #0F1830;
   padding         : 5px;
   gap             : 5px;
 }
@@ -145,7 +145,7 @@
   max-width       : 100%;
   display         : flex;
   flex-direction  : column;
-  background-color: #10206c;
+  background-color: #0F1830;
   padding         : 5px;
   transition      : height 200ms;
   overflow        : auto;
@@ -218,6 +218,6 @@
   .settings_row {
     flex-wrap     : wrap;
     padding-bottom: 3px;
-    border-bottom : #5a73d655 1px solid;
+    border-bottom : #5A88E055 1px solid;
   }
 }

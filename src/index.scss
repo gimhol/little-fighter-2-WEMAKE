@@ -23,7 +23,7 @@ body {
   user-select               : none;
   background-color          : black;
   border                    : white;
-  color                     : #5a73d6;
+  color                     : #5A88E0;
   width                     : 100%;
   height                    : 100%;
   overflow                  : hidden;
@@ -48,12 +48,12 @@ img {
 *::-webkit-scrollbar-thumb {
   cursor          : default;
   border-radius   : 10px;
-  background-color: #5a73d655;
+  background-color: #5A88E055;
   transition      : background-color 200ms;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #5a73d6;
+  background-color: #5A88E0;
 }
 
 *::-webkit-scrollbar-track {
@@ -62,7 +62,7 @@ img {
 }
 
 *::-webkit-scrollbar-track:hover {
-  background-color: #5a73d655;
+  background-color: #5A88E055;
 }
 
 *::-webkit-scrollbar-corner {
@@ -74,15 +74,15 @@ img {
 *::-webkit-resizer {
   // width           : 8px;
   // height          : 8px;
-  // background-color: #5a73d6;
+  // background-color: #5A88E0;
 }
 
 
 
 select,
 textarea {
-  color           : #5a73d6;
-  border          : 1px #5a73d6 solid;
+  color           : #5A88E0;
+  border          : 1px #5A88E0 solid;
   border-radius   : 3px;
   padding         : 2px 4px;
   background-color: transparent;
@@ -97,7 +97,7 @@ textarea {
 }
 
 textarea::selection {
-  color           : #10206c;
+  color           : #0F1830;
   background-color: white;
 }
 
