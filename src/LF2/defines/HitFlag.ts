@@ -78,4 +78,6 @@ export const HIT_FLAG_NAME_MAP: Record<HitFlag, string> = {
   [HitFlag.AllyBall]: "AllyBall",
 }
 
+export const ALL_HIT_FLAG: HitFlag[] = Object.keys(HIT_FLAG_NAME_MAP).map(Number) as HitFlag[];
+
 

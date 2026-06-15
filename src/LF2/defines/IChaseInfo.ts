@@ -1,6 +1,6 @@
-import { ChaseLost } from "./ChaseLost";
-import { ChaseStratedy } from "./ChaseStratedy";
-import { HitFlag } from "./HitFlag";
+import { ALL_CHASE_LOST, CHASE_LOST_DESC_MAP, CHASE_LOST_LABEL_MAP, ChaseLost } from "./ChaseLost";
+import { ALL_CHASE_STRATEDY, CHASE_STRATEDY_DESC_MAP, CHASE_STRATEDY_LABEL_MAP, ChaseStratedy } from "./ChaseStratedy";
+import { ALL_HIT_FLAG, HIT_FLAG_DESC_MAP, HIT_FLAG_NAME_MAP, HitFlag } from "./HitFlag";
 import { fields, int } from "../fields";
 
 export interface IChaseInfo {
@@ -30,8 +30,26 @@ export function chase_info_new(): IChaseInfo {
 }
 
 export const chase_Info_fields = fields<Partial<IChaseInfo>>({
-  stratedy: int("切换跟踪对象的策略"),
-  flag: int("跟踪对象的标志"),
-  lost: int("跟踪对象丢失后的行为"),
+  stratedy: int("切换跟踪对象的策略", {
+    options: ALL_CHASE_STRATEDY.map(v => ({
+      value: v,
+      label: CHASE_STRATEDY_LABEL_MAP[v],
+      desc: CHASE_STRATEDY_DESC_MAP[v],
+    })),
+  }),
+  flag: int("跟踪对象的标志", {
+    options: ALL_HIT_FLAG.map(v => ({
+      value: v,
+      label: HIT_FLAG_NAME_MAP[v],
+      desc: HIT_FLAG_DESC_MAP[v],
+    })),
+  }),
+  lost: int("跟踪对象丢失后的行为", {
+    options: ALL_CHASE_LOST.map(v => ({
+      value: v,
+      label: CHASE_LOST_LABEL_MAP[v],
+      desc: CHASE_LOST_DESC_MAP[v],
+    })),
+  }),
   oy: int("Y 轴偏移"),
 });

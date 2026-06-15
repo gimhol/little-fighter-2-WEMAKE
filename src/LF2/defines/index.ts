@@ -41,6 +41,7 @@ export * from "./IAction_TurnTeam";
 export * from "./IArmorInfo";
 export * from "./IBaseData";
 export * from "./IBdyInfo";
+export * from "./IChaseInfo";
 export * from "./IBdyPrefab";
 export * from "./IBgData";
 export * from "./IBgInfo";
