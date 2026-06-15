@@ -270,7 +270,7 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
   centery: int("中心Y", { nullable: false }),
   width: int("宽度", { nullable: false, min: 1 }),
   height: int("高度", { nullable: false, min: 1 }),
-  sound: str("进入音效"),
+  sound: str("进入音效", { nullable: true }),
   hold: any,
   hit: any,
   key_down: any,
@@ -283,18 +283,20 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
   opoint: any,
   cpoint: any,
   indicator_info: any,
-  invisible: int("隐身帧数"),
+  invisible: int("隐身帧数", { nullable: true }),
   no_shadow: int("有否影子", "1=有影子 0=没影子", {
+    nullable: true,
     options: [
       { value: 0, label: "没影子" },
       { value: 1, label: "有影子" },
     ],
   }),
-  jump_flag: int("起跳标志", "下一帧将拥有向上的跳越速度，仅用于跳越"),
+  jump_flag: int("起跳标志", "下一帧将拥有向上的跳越速度，仅用于跳越", { nullable: true }),
   on_dead: any,
   on_exhaustion: any,
   on_landing: any,
   behavior: int("行为标志", {
+    nullable: true,
     options: ALL_FRAME_BEHAVIOR.map(v => ({
       value: v,
       label: FRAME_BEHAVIOR_LABEL_MAP[v],
@@ -305,6 +307,7 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
   gravity_enabled: any,
   broadcasts: any,
   facing: int("朝向标志", {
+    nullable: true,
     options: ALL_FACING_FLAG.map(v => ({
       value: v,
       label: FACING_FLAG_LABEL_MAP[v],
@@ -312,6 +315,7 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
     })),
   }),
   landable: int("落地行为", "0=穿透地面, 1=落地触发", {
+    nullable: true,
     min: 0, max: 1,
     options: [
       { value: 0, label: "穿透地面" },
@@ -319,18 +323,18 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
     ],
   }),
   // IVelocityInfo 字段
-  dvx: flt("默认速度X"),
-  dvy: flt("默认速度Y"),
-  dvz: flt("默认速度Z"),
-  vxm: int("速度模式X"),
-  vym: int("速度模式Y"),
-  vzm: int("速度模式Z"),
-  acc_x: flt("加速度X"),
-  acc_y: flt("加速度Y"),
-  acc_z: flt("加速度Z"),
-  ctrl_x: int("控制模式X"),
-  ctrl_y: int("控制模式Y"),
-  ctrl_z: int("控制模式Z"),
+  dvx: flt("默认速度X", { nullable: true }),
+  dvy: flt("默认速度Y", { nullable: true }),
+  dvz: flt("默认速度Z", { nullable: true }),
+  vxm: int("速度模式X", { nullable: true }),
+  vym: int("速度模式Y", { nullable: true }),
+  vzm: int("速度模式Z", { nullable: true }),
+  acc_x: flt("加速度X", { nullable: true }),
+  acc_y: flt("加速度Y", { nullable: true }),
+  acc_z: flt("加速度Z", { nullable: true }),
+  ctrl_x: int("控制模式X", { nullable: true }),
+  ctrl_y: int("控制模式Y", { nullable: true }),
+  ctrl_z: int("控制模式Z", { nullable: true }),
   // 内部/渲染用字段
   seq_map: any,
   __tex: any,
