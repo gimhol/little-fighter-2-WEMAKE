@@ -12,6 +12,8 @@ export interface IIntFieldInfo<T extends object> extends IBaseFieldInfo<T> {
   min?: number;
   max?: number;
   step?: number;
+  /** 该整数的不同位表示不同开关，配合options使用，UI将渲染为多选 */
+  bitFlag?: boolean;
   options?: { value: number, label?: string, desc?: string }[]
 }
 export interface IFltFieldInfo<T extends object> extends IBaseFieldInfo<T> {

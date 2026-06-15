@@ -38,6 +38,8 @@ export const chase_Info_fields = fields<Partial<IChaseInfo>>({
     })),
   }),
   flag: int("跟踪对象的标志", {
+    bitFlag: true,
+    nullable: true,
     options: ALL_HIT_FLAG.map(v => ({
       value: v,
       label: HIT_FLAG_NAME_MAP[v],
