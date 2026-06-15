@@ -3,9 +3,9 @@
  *
  * 通过 prototype 挂载到 Entity 类上。
  */
-import type { Entity } from "./Entity";
 import { Builtin_FrameId, type INextFrame } from "../defines";
 import { clamp_add, floor, max, min, round, round_float } from "../utils";
+import type { Entity } from "./Entity";
 import { turn_face } from "./face_helper";
 
 // ============================================================

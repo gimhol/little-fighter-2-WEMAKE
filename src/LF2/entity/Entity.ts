@@ -4,8 +4,7 @@ import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks } from "../base";
 import { Buff } from "../buff/Buff";
-import { sus_cases } from "../cases_instances";
-import { Collision, collision_clone } from "../collision/Collision";
+import { Collision } from "../collision/Collision";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
@@ -20,33 +19,30 @@ import {
   IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
   IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
   is_independent, ItrKind, IVector3,
-  IVelocityInfo, IWpointInfo, OpointKind, OpointMultiEnum,
-  OpointSpreading,
-  SpeedCtrl,
-  SpeedMode, StateEnum, TEntityEnum, TFace, TNextFrame,
+  IVelocityInfo, IWpointInfo,
+  StateEnum, TEntityEnum, TFace, TNextFrame,
   WpointKind
 } from "../defines";
 import { Ditto } from "../ditto";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, clamp_add, find, float_equal, floor, max, min, pow, round, round_float } from "../utils";
+import { abs, clamp, clamp_add, find, float_equal, max, min, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
-import { is_f_num, is_num, is_positive, is_str } from "../utils/type_check";
+import { is_f_num, is_positive, is_str } from "../utils/type_check";
 import { DrinkInfo } from "./DrinkInfo";
 import type IEntityCallbacks from "./IEntityCallbacks";
 import { IEntitySnapshot } from "./IEntitySnapshot";
 import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
-import { calc_v } from "./calc_v";
 import { turn_face } from "./face_helper";
-import { is_ball_ctrl, is_fighter, is_human_ctrl } from "./type_check";
+import { is_fighter, is_human_ctrl } from "./type_check";
 
 // 拆分出的功能模块 — 通过 prototype 挂载
 import * as EntityPhysics from "./EntityPhysics";
-import * as EntitySpawn from "./EntitySpawn";
 import * as EntityRecovery from "./EntityRecovery";
+import * as EntitySpawn from "./EntitySpawn";
 
 export class Entity {
   static readonly TAG: string = 'Entity';
