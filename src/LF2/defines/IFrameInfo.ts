@@ -1,9 +1,9 @@
 import type { IWorldDataset } from "../IWorldDataset";
-import { FacingFlag } from "./FacingFlag";
-import { FrameBehavior } from "./FrameBehavior";
+import type { FacingFlag } from "./FacingFlag";
+import type { FrameBehavior } from "./FrameBehavior";
 import type { IBdyInfo } from "./IBdyInfo";
 import type { IBpointInfo } from "./IBpointInfo";
-import { IChaseInfo } from "./IChaseInfo";
+import type { IChaseInfo } from "./IChaseInfo";
 import type { ICpointInfo } from "./ICpointInfo";
 import type { IFramePictureInfo } from "./IFramePictureInfo";
 import type { IHitKeyCollection } from "./IHitKeyCollection";
