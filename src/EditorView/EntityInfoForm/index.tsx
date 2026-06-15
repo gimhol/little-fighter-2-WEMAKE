@@ -33,7 +33,7 @@ export function EntityInfoForm(props: IEntityInfoFormProps) {
   const [form, _Form] = Form.useForm<Data>(i_value);
   useEffect(() => {
     if (o_value == ref_o_value.current) return;
-    form.setFieldsValue(i_value)
+    form.resetFieldsValue(i_value)
   }, [i_value, o_value, form])
 
   return (

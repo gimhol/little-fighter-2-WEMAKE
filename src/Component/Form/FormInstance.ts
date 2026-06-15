@@ -13,6 +13,12 @@ export class FormInstance<T extends object> {
     if (value == void 0) delete this.value[name]
   }
 
+  resetFieldsValue(value: Partial<T>): void {
+    this.value = { ...value }
+    for (const key in this.value)
+      if (this.value[key] == void 0)
+        delete this.value[key]
+  }
   setFieldsValue(values: Partial<T>): void {
     this.value = { ...this.value, ...values }
     for (const key in values)

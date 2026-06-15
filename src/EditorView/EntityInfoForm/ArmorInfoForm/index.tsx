@@ -25,7 +25,7 @@ export function ArmorInfoForm(props: IArmorInfoFormProps) {
 
   useEffect(() => {
     if (o_value == ref_o_value.current) return;
-    form.setFieldsValue(i_value)
+    form.resetFieldsValue(i_value)
   }, [i_value, o_value, form])
 
   return (
