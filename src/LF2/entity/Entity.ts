@@ -1102,8 +1102,7 @@ export class Entity {
       this.transfrom_to_another();
       this.ctrl.reset_key_list();
     } else if (next_frame) {
-      const result = this.get_next_frame(next_frame)?.which;
-      if (result) this.enter_frame(result);
+      this.enter_frame(next_frame);
     }
 
     if (!this.shaking && !this.motionless) {
@@ -1117,8 +1116,7 @@ export class Entity {
         const { y = 0, h = 0 } = itr;
         if ((this._position.y + this.frame.centery - y - h) > ground_y)
           continue;
-        const result = this.get_next_frame(itr.on_hit_ground)
-        if (result) this.enter_frame(result.which);
+        this.enter_frame(itr.on_hit_ground);
       }
 
       if (this.frame.landable) {
@@ -1401,8 +1399,7 @@ export class Entity {
     }
     this._catch_time = this.catch_time_max;
     this._catching = target;
-    const next_frame = this.get_next_frame(itr.catchingact)?.which || null;
-    if (next_frame) this.enter_frame(next_frame)
+    this.enter_frame(itr.catchingact);
   }
 
   start_caught(attacker: Entity, itr: IItrInfo) {
@@ -1414,8 +1411,7 @@ export class Entity {
     this.resting = 0;
     this.fall_value = this.fall_value_max;
     this.defend_value = this.defend_value_max;
-    const next_frame = this.get_next_frame(itr.caughtact)?.which || null;
-    if (next_frame) this.enter_frame(next_frame)
+    this.enter_frame(itr.caughtact);
   }
 
   spark_point(r0: IBounding, r1: IBounding) {

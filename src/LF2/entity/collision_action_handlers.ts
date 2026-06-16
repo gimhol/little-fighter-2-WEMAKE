@@ -79,10 +79,7 @@ export const collision_action_handlers: IActionHandler = {
     fighter_2.invisible =
       fighter_2.motionless =
       fighter_2.invulnerable = 1000000;
-    if (act) {
-      const nf = fighter_1.get_next_frame(act);
-      if (nf) fighter_1.enter_frame(nf?.which);
-    }
+    if (act) fighter_1.enter_frame(act);
   },
   [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: Collision) => {
     lf2.broadcast(action.data);
