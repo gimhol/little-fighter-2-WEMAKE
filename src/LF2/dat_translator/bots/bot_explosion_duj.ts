@@ -5,7 +5,7 @@ import { DESIRE_RATIO } from "./constants";
 import { IEditBotActionFunc } from "./IEditBotAction";
 const MIN_X = -120 as const;
 const MAX_X = 120 as const;
-const Z_LEN = 100 as const;
+const Z_LEN = 120 as const;
 const ID = 'd^j' as const
 /**
  * 矩形范围，检测成功将会按下D^J
