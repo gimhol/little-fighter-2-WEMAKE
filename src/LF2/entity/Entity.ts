@@ -1252,14 +1252,14 @@ export class Entity {
     if (this._catching._catcher === this)
       this._catching._catcher = null;
     this._catching = null;
-    this.enter_frame(this.get_catching_end_frame());
+    this.enter_frame({ id: Builtin_FrameId.Auto });
     return true;
   }
   update_catching(): boolean {
     if (!this._catching) return false;
     if (!this._catch_time) {
       this._catching = null;
-      this.enter_frame(this.get_catching_end_frame());
+      this.enter_frame({ id: Builtin_FrameId.Auto });
       return true;
     }
     const { cpoint: cpoint_a } = this.frame;
@@ -1273,7 +1273,7 @@ export class Entity {
     if (!cpoint_a) {
       this._catching = null;
       this._catch_time = this.catch_time_max;
-      this.enter_frame(this.get_catching_cancel_frame());
+      this.enter_frame({ id: Builtin_FrameId.Auto });
       return true;
     }
 
@@ -1358,10 +1358,7 @@ export class Entity {
    *
    * @returns 下帧信息
    */
-  get_catching_cancel_frame(): INextFrame {
-    return { id: Builtin_FrameId.Auto };
-  }
-
+  get_catching_cancel_frame(): INextFrame { return { id: Builtin_FrameId.Auto }; }
   transfrom_to_another(data?: IEntityData) {
     const datas = this.transforms = data ?
       [this._data.id, data.id] :
