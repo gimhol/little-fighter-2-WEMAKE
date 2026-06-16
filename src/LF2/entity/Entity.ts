@@ -43,6 +43,7 @@ import { is_fighter, is_human_ctrl } from "./type_check";
 import * as EntityPhysics from "./EntityPhysics";
 import * as EntityRecovery from "./EntityRecovery";
 import * as EntitySpawn from "./EntitySpawn";
+import { EnterFrameResult } from "./EnterFrameResult";
 
 export class Entity {
   static readonly TAG: string = 'Entity';
@@ -1242,9 +1243,7 @@ export class Entity {
       this.prev_cpoint_a = null;
     }
     if (cp_a.vaction) {
-      const nf = this.get_next_frame(cp_a.vaction)?.which
-      if (nf) this.enter_frame(nf);
-      return !!nf
+      return this.enter_frame(cp_a.vaction) >= EnterFrameResult.Entered;
     };
     return false
   }
@@ -1567,12 +1566,12 @@ export class Entity {
 
   }
 
-  enter_frame(which: TNextFrame): void {
+  enter_frame(which: TNextFrame): EnterFrameResult {
     if (this.frame.id === Builtin_FrameId.Gone)
-      return;
+      return EnterFrameResult.Gone;
 
     const result = this.get_next_frame(which);
-    if (!result) return;
+    if (!result) return EnterFrameResult.NotFound;
 
     const { frame, which: flags } = result;
     if (!this.world.infinity_mp) {
@@ -1610,8 +1609,8 @@ export class Entity {
     if (flags.sounds?.length) this.play_sound(flags.sounds);
 
     if (flags.blink_time) this.blinking = flags.blink_time;
-    // if(this.bearer) this.follow_bearer()
-    // if(this.catcher) this.follow_catcher()
+
+    return frame ? EnterFrameResult.Entered : EnterFrameResult.Fallback;
   }
 
   handle_wait_flag(wait: string | number, frame?: IFrameInfo): number {
