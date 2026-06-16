@@ -974,6 +974,7 @@ export class Entity {
 
   update(): void {
     this._atom_time = this.world.atom_time;
+    const rf = round_float;
     this._lifetime += 1;
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
     if (this.check_fusion_dismissing()) return;
@@ -985,7 +986,7 @@ export class Entity {
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
       for (const [k, v] of this.vrests) {
         if (v.rest > 0) {
-          v.rest = round_float(v.rest - this._atom_time);
+          v.rest = rf(v.rest - this._atom_time);
           if (v.rest < 0) v.rest = 0;
         } else {
           this.del_v_rest(k)
@@ -994,7 +995,7 @@ export class Entity {
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
       if (this.arest > 0) {
-        this.arest = round_float(this.arest - this._atom_time);
+        this.arest = rf(this.arest - this._atom_time);
         if (this.arest < 0) this.arest = 0;
       } else {
         this.arest = 0
@@ -1002,19 +1003,19 @@ export class Entity {
     }
 
     if (this._invisible_duration > 0) {
-      this._invisible_duration = round_float(this._invisible_duration - this._atom_time);
+      this._invisible_duration = rf(this._invisible_duration - this._atom_time);
       if (this._invisible_duration <= 0) {
         this._invisible_duration = 0;
         this._blinking_duration = this.dataset('invisible_blinking');
       }
     }
     if (this._invulnerable_duration > 0) {
-      this._invulnerable_duration = round_float(this._invulnerable_duration - this._atom_time);
+      this._invulnerable_duration = rf(this._invulnerable_duration - this._atom_time);
       if (this._invulnerable_duration < 0) this._invulnerable_duration = 0;
     }
 
     if (this._blinking_duration > 0) {
-      this._blinking_duration = round_float(this._blinking_duration - this._atom_time);
+      this._blinking_duration = rf(this._blinking_duration - this._atom_time);
       if (this._blinking_duration <= 0) {
         this._blinking_duration = 0;
         if (this._after_blink === Builtin_FrameId.Gone) {
@@ -1070,7 +1071,7 @@ export class Entity {
         !this._catcher &&
         !this._bearer
       ) {
-        this.wait = round_float(this.wait - this._atom_time)
+        this.wait = rf(this.wait - this._atom_time)
         if (this.wait < 0) this.wait = 0;
       }
     } else {
@@ -1085,11 +1086,11 @@ export class Entity {
     this.update_position();
 
     if (this.motionless > 0) {
-      this.motionless = round_float(this.motionless - this._atom_time);
+      this.motionless = rf(this.motionless - this._atom_time);
       if (this.motionless < 0) this.motionless = 0
     }
     if (this.shaking > 0) {
-      this.shaking = round_float(this.shaking - this._atom_time);
+      this.shaking = rf(this.shaking - this._atom_time);
       if (this.shaking < 0) this.shaking = 0
     }
     if (this.update_catching()) return;
