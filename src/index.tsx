@@ -5,10 +5,13 @@ import "./index.scss";
 import './init';
 import "./LF2/defines/defines";
 import { Paths } from "./Paths";
+import { ConfigProvider } from "./Component/ConfigProvider";
 
 const router = createHashRouter(Paths.Routes);
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ConfigProvider >
+      <RouterProvider router={router} />
+    </ConfigProvider>
   </React.StrictMode>,
 ); 

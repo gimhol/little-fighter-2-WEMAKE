@@ -6,6 +6,7 @@ import { IStyleProps } from "../StyleBase/IStyleProps";
 import { useStyleBase } from "../StyleBase/useStyleBase";
 import { InputNumberProps } from "./_InputNumber";
 import styles from "./styles.module.scss";
+import { useMergedConfig } from "../ConfigProvider";
 
 export type BaseProps = React.InputHTMLAttributes<HTMLInputElement>
 export interface InputProps
@@ -61,11 +62,13 @@ function _Input(props: InputProps, forwarded_Ref: React.ForwardedRef<InputRef>) 
     clearable = false, onChange, variants, precision, size, styles: _styles,
     id, value, ..._p
   } = props;
+
+  // 合并 ConfigProvider 全局配置与组件 props
+  const { variants: mergedVariants, size: mergedSize } = useMergedConfig({ size, variants });
+  const { className: cls_name } = useStyleBase(mergedVariants);
   const { type, step, min, max } = props;
   const need_steppers = !!(step && type === 'number' && !props.readOnly && !props.disabled);
   const need_clearer = !!(clearable && clear_icon && !props.readOnly && !props.disabled);
-
-  const { className: cls_name } = useStyleBase(variants);
 
   const root_cls_name = useMemo(() => classNames(styles.lfui_input, cls_name, className), [className, cls_name])
   const prefix_cls_name = classNames(styles.lfui_input_prefix, clazz?.prefix);
