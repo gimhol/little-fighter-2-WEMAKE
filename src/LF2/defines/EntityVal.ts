@@ -71,6 +71,8 @@ export enum EntityVal {
   FrameState = "frame_state",
   Shaking = "shaking",
   Holding = "holding",
+  HoldingHeavy = "holdingHeavy",
+  HoldingOID = "holdingOID",
   HpRecoverable = "hp_recoverable",
   HitByMagicFlute = 'hit_by_magic_flute',
 }

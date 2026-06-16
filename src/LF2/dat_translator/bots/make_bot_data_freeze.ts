@@ -1,4 +1,4 @@
-import { EntityVal, OID } from "../../defines";
+import { BuiltIn_OID, EntityVal, OID } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
@@ -30,7 +30,10 @@ export function make_bot_data_freeze(): BotMaker {
 
     // dvj
     bot_chasing_skill_action('dvj', void 0, 150, 1 / 180)((action, cond) => {
-      action.expression = cond.and(EntityVal.Holding, '==', 0).done()
+      action.expression = cond
+        .and(EntityVal.HoldingHeavy, '!=', 1)
+        .and(EntityVal.HoldingOID, '!=', BuiltIn_OID.Weapon_IceSword)
+        .done()
       return action
     }),
 

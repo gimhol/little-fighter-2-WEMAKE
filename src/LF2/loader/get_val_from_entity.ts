@@ -1,4 +1,4 @@
-import { CheatType, I_K, ItrKind } from "../defines";
+import { CheatType, I_K, ItrKind, WeaponType } from "../defines";
 import { E_Val } from "../defines/EntityVal";
 import { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { Entity } from "../entity/Entity";
@@ -53,6 +53,8 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.FrameState]: e => e.state,
   [E_Val.Shaking]: e => e.shaking,
   [E_Val.Holding]: e => e.holding ? 1 : 0,
+  [E_Val.HoldingHeavy]: e => e.holding?.base_type == WeaponType.Heavy,
+  [E_Val.HoldingOID]: e => e.holding?.data.id,
   [E_Val.HpRecoverable]: e => e.hp_r - e.hp,
   [E_Val.HitByMagicFlute]: e => {
     for (const [, { itr }] of e.superpunchs) {
