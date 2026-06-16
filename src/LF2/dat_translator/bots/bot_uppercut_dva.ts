@@ -16,13 +16,15 @@ const ID = 'dva' as const
  * @param {number} [desire=0.0666] 欲望值
  * @param {number} [min_x=90] 最小距离 
  * @param {number} [max_x=120] 最大距离
+ * @param {number} [max_d=30] Z距离
  * @return {IBotAction}
  */
 export function bot_uppercut_dva(
   min_mp: number,
   desire: number = DESIRE_RATIO_X_3,
   min_x: number = MIN_X,
-  max_x: number = MAX_X
+  max_x: number = MAX_X,
+  max_d: number = 30,
 ): IEditBotActionFunc {
   return (edit): IBotAction => {
     const cond = new CondMaker<BotVal | EntityVal>()
@@ -31,7 +33,7 @@ export function bot_uppercut_dva(
       action_id: ID,
       desire: Defines.desire(desire),
       status: [BotStateEnum.Chasing],
-      e_ray: [{ x: 1, z: 0, min_x, max_x, max_d: 900 }],
+      e_ray: [{ x: 1, z: 0, min_x, max_x, max_d: max_d * max_d }],
       expression: cond.done(),
       keys: [GK.d, GK.D, GK.a]
     }

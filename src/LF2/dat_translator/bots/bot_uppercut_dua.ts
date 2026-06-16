@@ -12,20 +12,22 @@ const ID = 'd^a' as const
  * @param {number} [desire=0.0666] 欲望值
  * @param {number} [min_x=90] 最小距离 
  * @param {number} [max_x=120] 最大距离
+ * @param {number} [max_d=30] Z距离
  * @return {IBotAction}
  */
 export function bot_uppercut_dua(
   min_mp: number,
   desire: number = DESIRE_RATIO_X_3,
   min_x: number = MIN_X,
-  max_x: number = MAX_X
+  max_x: number = MAX_X,
+  max_d: number = 30,
 ): IBotAction {
   const cond = new CondMaker<BotVal | EntityVal>().add(EntityVal.MP, '>=', min_mp)
   return {
     action_id: ID,
     desire: Defines.desire(desire),
     status: [BotStateEnum.Chasing],
-    e_ray: [{ x: 1, z: 0, min_x, max_x }],
+    e_ray: [{ x: 1, z: 0, min_x, max_x, max_d: max_d * max_d }],
     expression: min_mp > 0 ? cond.done() : void 0,
     keys: [GK.d, GK.U, GK.a]
   };

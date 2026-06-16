@@ -1,4 +1,4 @@
-import { BotVal, GameKey, O_ID, StateEnum } from "../../defines";
+import { BotVal, Defines, GameKey, O_ID, StateEnum } from "../../defines";
 import { arithmetic_progression } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
@@ -7,10 +7,14 @@ import { bot_chasing_action } from "./bot_chasing_action";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { bot_uppercut_dva } from "./bot_uppercut_dva";
 import { BotMaker } from "./BotMaker";
+import { DESIRE_RATIO_X_4 } from "./constants";
 import { frames } from "./frames";
 
 export function make_bot_data_davis(): BotMaker {
   return new BotMaker(O_ID.Davis).set_actions(
+    // ABORT AI PRESSING ANY.
+    { action_id: 'dont_stop_run_attack', keys: [], desire: Defines.MAX_AI_DESIRE },
+
     // d>a
     bot_ball_dfa(50, void 0, 50),
 
@@ -18,10 +22,10 @@ export function make_bot_data_davis(): BotMaker {
     bot_ball_continuation("d>a+a", probability(3, 0.8), 50),
 
     // d^a
-    bot_uppercut_dua(225, void 0, bot_uppercut_dua.MIN_X, bot_uppercut_dua.MAX_X),
+    bot_uppercut_dua(225, DESIRE_RATIO_X_4, bot_uppercut_dua.MIN_X, bot_uppercut_dua.MAX_X),
 
     // dva
-    bot_uppercut_dva(75, void 0, bot_uppercut_dva.MIN_X, bot_uppercut_dva.MAX_X),
+    bot_uppercut_dva(75, DESIRE_RATIO_X_4, bot_uppercut_dva.MIN_X, bot_uppercut_dva.MAX_X),
 
     // dva+j
     bot_uppercut_dva(
@@ -57,7 +61,7 @@ export function make_bot_data_davis(): BotMaker {
   ).set_states(
     [StateEnum.Catching],
     ["d^a", "dva"]
-  ).set_frames(
+  ).set_frames(['87'], ['dont_stop_run_attack']).set_frames(
     [
       ...frames.standings,
       ...frames.walkings,
