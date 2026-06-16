@@ -1,4 +1,4 @@
-import { BuiltIn_OID, Builtin_FrameId, EntityGroup, GONE_FRAME_INFO, IItrInfo, IOpointInfo, ItrKind, StateEnum } from "../defines";
+import { BuiltIn_OID, Builtin_FrameId, Defines, EntityGroup, GONE_FRAME_INFO, IItrInfo, IOpointInfo, ItrKind, StateEnum } from "../defines";
 import { Entity, is_ball, is_fighter, turn_face } from "../entity";
 import { round } from "../utils";
 
@@ -7,7 +7,7 @@ const freeze_ball_opoint: IOpointInfo = {
   kind: 0,
   x: 0,
   y: 0,
-  action: { id: Builtin_FrameId.Auto }
+  action: Defines.NEXT_FRAME_AUTO
 }
 export function handle_ball_frozen(a: Entity, v: Entity, itr: IItrInfo): boolean {
   if (!a.group?.length) return false;

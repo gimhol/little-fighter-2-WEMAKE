@@ -1,4 +1,5 @@
 import { Builtin_FrameId } from "./Builtin_FrameId";
+import { Defines } from "./defines";
 import type { IFrameInfo } from "./IFrameInfo";
 
 export const GONE_FRAME_INFO: IFrameInfo = {
@@ -9,7 +10,7 @@ export const GONE_FRAME_INFO: IFrameInfo = {
   height: 0,
   state: NaN,
   wait: 0,
-  next: { id: Builtin_FrameId.Gone },
+  next: Defines.NEXT_FRAME_GONE,
   centerx: 0,
   centery: 0,
   no_shadow: 1

@@ -1,4 +1,4 @@
-import { Builtin_FrameId, FacingFlag, INextFrame } from "../defines";
+import { Builtin_FrameId, Defines, FacingFlag, INextFrame } from "../defines";
 import { cook_next_frame_cost as cook_next_frame_cost } from "./cook_next_frame_cost";
 
 export const get_next_frame_by_raw_id = (
@@ -7,10 +7,10 @@ export const get_next_frame_by_raw_id = (
   type?: "next" | "hit",
   frame_mp_hp_map?: Map<string, { mp: number, hp: number }>,
 ): INextFrame => {
-  if ("" + id === "1000") return { id: Builtin_FrameId.Gone };
-  if ("" + id === "999") return { id: Builtin_FrameId.Auto };
+  if ("" + id === "1000") return Defines.NEXT_FRAME_GONE;
+  if ("" + id === "999") return Defines.NEXT_FRAME_AUTO;
   if ("" + id === "-999")
-    return { id: Builtin_FrameId.Auto, facing: FacingFlag.Backward };
+    return Defines.NEXT_FRAME_AUTO_BACKWARD;
 
   if ("" + id === "0") {
     if (zero_as == 'frame') // for opoint...
@@ -22,11 +22,11 @@ export const get_next_frame_by_raw_id = (
   if (typeof id === "number") {
     if (id >= 1100 && id <= 1299) {
       // 外部需要处理隐身逻辑。
-      return { id: Builtin_FrameId.Auto };
+      return Defines.NEXT_FRAME_AUTO;
     }
     if (id <= -1100 && id >= -1299) {
       // 外部需要处理隐身逻辑。
-      return { id: Builtin_FrameId.Auto, facing: FacingFlag.Backward };
+      return Defines.NEXT_FRAME_AUTO_BACKWARD;
     }
     if (id < 0) {
       const ret: INextFrame = {

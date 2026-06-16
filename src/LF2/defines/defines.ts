@@ -3,6 +3,7 @@ import { arithmetic_progression } from "../utils/math/arithmetic_progression";
 import { Builtin_FrameId } from "./Builtin_FrameId";
 import { CheatType } from "./CheatType";
 import { Difficulty } from "./Difficulty";
+import { FacingFlag } from "./FacingFlag";
 import { GK, type GameKey } from "./GameKey";
 import type { IBgData } from "./IBgData";
 import type { INextFrame } from "./INextFrame";
@@ -169,6 +170,10 @@ export namespace Defines {
   };
   export const NEXT_FRAME_SELF: Readonly<INextFrame> = {
     id: Builtin_FrameId.Self,
+  };
+  export const NEXT_FRAME_AUTO_BACKWARD: Readonly<INextFrame> = {
+    id: Builtin_FrameId.Auto,
+    facing: FacingFlag.Backward,
   };
   export interface ICheatInfo {
     keys: string;

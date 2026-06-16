@@ -1,6 +1,6 @@
 import { CMD } from "@/LF2/defines/CMD";
 import { StatBarType } from "@/LF2/entity/StatBarType";
-import { Builtin_FrameId, BuiltIn_OID as OID } from "../../defines";
+import { Builtin_FrameId, BuiltIn_OID as OID, Defines } from "../../defines";
 import { TeamEnum as TE } from "../../defines/TeamEnum";
 import { Entity } from "../../entity/Entity";
 import { Times } from "../../utils/Times";
@@ -51,7 +51,7 @@ export class DanmuGameLogic extends SummaryLogic {
 
   update_bg() {
     for (const e of this.world.entities)
-      e.enter_frame({ id: Builtin_FrameId.Gone })
+      e.enter_frame(Defines.NEXT_FRAME_GONE)
     const fighter_enter = (v: Entity) => {
       v.stat_bar_type = StatBarType.Float;
       v.key_role = true;

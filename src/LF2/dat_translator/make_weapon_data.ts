@@ -1,4 +1,4 @@
-import { Builtin_FrameId, FrameBehavior, SpeedMode, WeaponType } from "../defines";
+import { Builtin_FrameId, Defines, FrameBehavior, SpeedMode, WeaponType } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { IDatContext } from "../defines/IDatContext";
 import { IEntityData } from "../defines/IEntityData";
@@ -105,7 +105,7 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
 
   const ret: IEntityData = {
     id: datIndex.id,
-    on_dead: { id: Builtin_FrameId.Gone },
+    on_dead: Defines.NEXT_FRAME_GONE,
     type: EntityEnum.Weapon,
     base: info,
     itr_prefabs,

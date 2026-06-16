@@ -60,7 +60,7 @@ export function make_weapon_special(data: IEntityData) {
           handled.add(itr)
           itr.actions = ensure(itr.actions, {
             type: ActionType.A_NextFrame,
-            data: { id: Builtin_FrameId.Gone },
+            data: Defines.NEXT_FRAME_GONE,
             pretest: true,
             test: new CondMaker<C_Val>()
               .add(C_Val.VictimType, '==', EntityEnum.Fighter)
