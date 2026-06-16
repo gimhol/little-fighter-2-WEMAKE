@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router";
 import { Space } from "../../Component/Space";
-import { ITreeNode, TreeView } from "../../Component/TreeView";
+import { ITreeNode, Tree } from "../../Component/TreeView";
 import { Paths } from "../../Paths";
 import styles from './styles.module.scss'
 
@@ -13,7 +13,7 @@ export default function ComponentDemo() {
   return (
     <Space className={styles.component_demo_root}>
       <Space.Item frame>
-        <TreeView nodes={tree_root} show_icon={false} on_click_item={i => nav(i.key)} />
+        <Tree nodes={tree_root} show_icon={false} on_click_item={i => nav(i.key)} />
       </Space.Item>
       <Space.Item className={styles.right_zone}>
         <Outlet />

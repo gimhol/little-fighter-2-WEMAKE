@@ -13,7 +13,7 @@ import Show from "../Component/Show";
 import { Space } from "../Component/Space";
 import { TabButtons } from "../Component/TabButtons";
 import Titled from "../Component/Titled";
-import { ITreeNode, ITreeNodeGetIcon, TreeView } from "../Component/TreeView";
+import { ITreeNode, ITreeNodeGetIcon, Tree } from "../Component/TreeView";
 import { IBgData, IFrameInfo } from "../LF2/defines";
 import { EntityEnum } from "../LF2/defines/EntityEnum";
 import { IEntityData } from "../LF2/defines/IEntityData";
@@ -394,7 +394,7 @@ export default function EditorView(props: IEditorViewProps) {
                   } />
                 }>
                 <Space.Item space vertical frame className={styles.file_editor_view}>
-                  <TreeView
+                  <Tree
                     node={filters_tree}
                     opens={opens}
                     on_click_item={on_click_item}

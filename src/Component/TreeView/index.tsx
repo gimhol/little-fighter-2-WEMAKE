@@ -43,7 +43,7 @@ export function default_get_icon(data: { node: ITreeNode<any>, depth: number, op
   const suffix = label.substring(lio + 1).toLowerCase()
   return file_suffix_emoji_map[suffix] || '📄'
 }
-export function TreeView<D = any>(props: ITreeNodeViewProps<D>) {
+export function Tree<D = any>(props: ITreeNodeViewProps<D>) {
   const {
     nodes,
     node: _node,
@@ -100,7 +100,7 @@ export function TreeView<D = any>(props: ITreeNodeViewProps<D>) {
           className={styles.tree_item_col_line}
           style={line_style} />
         {node.children?.map((node, idx) => (
-          <TreeView
+          <Tree
             opens={opens}
             get_icon={get_icon}
             key={idx}

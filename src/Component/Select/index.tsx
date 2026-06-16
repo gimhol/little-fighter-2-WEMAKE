@@ -9,7 +9,7 @@ import Show from "../Show";
 import { Space } from "../Space";
 import { Tag } from "../Tag";
 import { Text } from "../Text";
-import { ITreeNode, TreeView } from "../TreeView";
+import { ITreeNode, Tree } from "../TreeView";
 import styles from "./styles.module.scss";
 export type TItemInfo<V> = [V, React.ReactNode] | [V, React.ReactNode, React.HTMLAttributes<HTMLDivElement>]
 export interface IBaseSelectProps<T, V> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'multiply' | 'onChange'> {
@@ -276,7 +276,7 @@ export function Select<T, V>(props: ISelectProps<T, V> | IMultiSelectProps<T, V>
         </Space.Broken>
       </Space>
       {gone ? null : createPortal(
-        <TreeView
+        <Tree
           className={styles.lfui_popover}
           nodes={tree_nodes}
           show_icon={false}
