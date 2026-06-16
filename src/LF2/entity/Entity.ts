@@ -1504,10 +1504,7 @@ export class Entity {
 
     if (wp_a.weaponact !== this.frame.id) {
       // 还原wpoint丢失的情况
-      if (wp_a.weaponact)
-        this.enter_frame_by_id(wp_a.weaponact);
-      else
-        this.enter_frame(this.find_auto_frame());
+      this.enter_frame_by_id(wp_a.weaponact, true);
     }
 
     const {
@@ -1574,6 +1571,12 @@ export class Entity {
       return EnterFrameResult.Gone;
 
     const result = this.get_next_frame(which);
+    if (!result && fallback) {
+      const frame = this.find_auto_frame()
+      this.set_frame(frame);
+      this.wait = this.handle_wait_flag(void 0, frame);
+      return EnterFrameResult.Fallback;
+    }
     if (!result) return EnterFrameResult.NotFound;
 
     const { frame, which: flags } = result;
@@ -1601,22 +1604,15 @@ export class Entity {
       this.set_frame(this.find_auto_frame());
     }
 
-    if (flags.facing !== void 0) {
-      this.facing = this.handle_facing_flag(flags.facing);
-    }
-    if (flags.wait !== void 0) {
-      this.wait = this.handle_wait_flag(flags.wait, frame);
-    } else if (frame) {
-      this.wait = frame.wait + this.world.wait_offset;
-    }
+    if (flags.facing != void 0) this.facing = this.handle_facing_flag(flags.facing);
+    if (frame) this.wait = this.handle_wait_flag(flags.wait, frame);
     if (flags.sounds?.length) this.play_sound(flags.sounds);
-
     if (flags.blink_time) this.blinking = flags.blink_time;
-
     return frame ? EnterFrameResult.Entered : EnterFrameResult.Fallback;
   }
 
-  handle_wait_flag(wait: string | number, frame?: IFrameInfo): number {
+  handle_wait_flag(wait: string | number | undefined, frame?: IFrameInfo): number {
+    if (wait == void 0 && frame) return frame.wait + this.world.wait_offset;
     if (is_positive(wait)) return wait;
     if (wait === "i" || !frame) return this.wait;
     if (wait === "d") return max(0, frame.wait - this.frame.wait + this.wait);
@@ -1631,7 +1627,7 @@ export class Entity {
    * @param frame 帧
    * @returns 返回新的朝向
    */
-  handle_facing_flag(facing: number): -1 | 1 {
+  handle_facing_flag(facing: number | undefined): -1 | 1 {
     switch (facing) {
       case FacingFlag.Ctrl:
         return this.ctrl?.LR || this.facing;
