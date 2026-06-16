@@ -9,6 +9,6 @@ export const enum EnterFrameResult {
   NotFound = 1,
   /** 成功进入目标帧 */
   Entered = 2,
-  /** 目标帧不存在，回退到自动帧（仅在首次初始化时：frame === EMPTY_FRAME_INFO） */
+  /** 回退到自动帧（EMPTY_FRAME_INFO 初始化 或 fallback=true 且帧不存在） */
   Fallback = 3
 }

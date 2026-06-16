@@ -1566,7 +1566,7 @@ export class Entity {
 
   }
 
-  enter_frame(which: TNextFrame): EnterFrameResult {
+  enter_frame(which: TNextFrame, fallback = false): EnterFrameResult {
     if (this.frame.id === Builtin_FrameId.Gone)
       return EnterFrameResult.Gone;
 
@@ -1594,7 +1594,7 @@ export class Entity {
         this.lf2.sounds.play(frame.sound, x, y, z);
       }
       this.set_frame(frame);
-    } else if (this.frame === EMPTY_FRAME_INFO) {
+    } else if (this.frame === EMPTY_FRAME_INFO || fallback) {
       this.set_frame(this.find_auto_frame());
     }
 
