@@ -4,6 +4,7 @@ import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_explosion_duj } from "./bot_explosion_duj";
 import { BotMaker } from "./BotMaker";
+import { DESIRE_RATIO_X_3 } from "./constants";
 import { frames } from "./frames";
 
 
@@ -34,14 +35,14 @@ export function make_bot_data_freeze(): BotMaker {
     }),
 
     // d^j
-    bot_explosion_duj(300, void 0, -110, 150, 1600),
+    bot_explosion_duj(300, DESIRE_RATIO_X_3, -110, 150, 1600),
 
   ).set_frames(
     [
       ...frames.standings,
       ...frames.walkings
     ],
-    ['d>a', 'd>j', 'd^j', 'wa']
+    ['d>a', 'd>j', 'd^j', 'dvj']
   );
 }
 

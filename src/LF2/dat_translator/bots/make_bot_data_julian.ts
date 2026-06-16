@@ -7,6 +7,7 @@ import { bot_chasing_skill_action } from "./bot_chasing_skill_action";
 import { bot_explosion_duj } from "./bot_explosion_duj";
 import { bot_uppercut_dua } from "./bot_uppercut_dua";
 import { BotMaker } from "./BotMaker";
+import { DESIRE_RATIO_X_3 } from "./constants";
 import { frames } from "./frames";
 
 export function make_bot_data_julian(): BotMaker {
@@ -22,7 +23,7 @@ export function make_bot_data_julian(): BotMaker {
     bot_ball_dfj(125, void 0),
 
     // explosion
-    bot_explosion_duj(100, void 0, -120, 120, 100),
+    bot_explosion_duj(100, DESIRE_RATIO_X_3, -120, 120, 100),
 
     // uppercut
     bot_uppercut_dua(0, void 0), {
