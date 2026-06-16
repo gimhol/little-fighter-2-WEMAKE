@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router";
 import { Space } from "../../Component/Space";
-import { ITreeNode, Tree } from "../../Component/TreeView";
+import { ITreeNode, Tree } from "../../Component/Tree";
 import { Paths } from "../../Paths";
 import styles from './styles.module.scss'
 

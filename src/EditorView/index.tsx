@@ -13,7 +13,7 @@ import Show from "../Component/Show";
 import { Space } from "../Component/Space";
 import { TabButtons } from "../Component/TabButtons";
 import Titled from "../Component/Titled";
-import { ITreeNode, ITreeNodeGetIcon, Tree } from "../Component/TreeView";
+import { ITreeNode, ITreeNodeGetIcon, Tree } from "../Component/Tree";
 import { IBgData, IFrameInfo } from "../LF2/defines";
 import { EntityEnum } from "../LF2/defines/EntityEnum";
 import { IEntityData } from "../LF2/defines/IEntityData";
