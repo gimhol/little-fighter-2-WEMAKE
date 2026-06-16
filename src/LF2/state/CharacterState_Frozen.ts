@@ -45,7 +45,7 @@ export default class CharacterState_Frozen extends CharacterState_Base {
     } = e;
     const { y: vy } = velocity;
     if (vy <= e.world.cha_bc_tst_spd_y * 2) {
-      e.enter_frame({ id: indexes?.bouncing?.[-1][0] });
+      e.enter_frame_by_id(indexes?.bouncing?.[-1][0]);
       e.set_velocity_y(e.world.cha_bc_spd)
       e.hp -= 10;
     }

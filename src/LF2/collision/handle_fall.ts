@@ -34,7 +34,7 @@ export function handle_fall(collision: Collision) {
   const normal_fall_act = () => {
     if (!critical_hit) return;
     const direction: TFace = victim.velocity.x / victim.facing >= 0 ? 1 : -1;
-    victim.enter_frame({ id: critical_hit[direction][0] });
+    victim.enter_frame_by_id(critical_hit[direction][0]);
   }
 
   switch (itr.effect) {

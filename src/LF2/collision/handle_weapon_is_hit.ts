@@ -35,7 +35,7 @@ export function handle_weapon_is_hit(collision: Collision): void {
       nid = victim.lf2.mt.pick(victim.data.indexes?.throwings)
     else
       nid = victim.lf2.mt.pick(victim.data.indexes?.in_the_skys)
-    victim.enter_frame({ id: nid });
+    victim.enter_frame_by_id(nid);
   }
 
   if (
@@ -45,7 +45,7 @@ export function handle_weapon_is_hit(collision: Collision): void {
     const s = attacker.strength
     vx = attacker.facing * s * 2 // fast!
     victim.lf2.mt.mark = 'hwih_2'
-    victim.enter_frame({ id: victim.data.indexes?.throwings?.[0] })
+    victim.enter_frame_by_id(victim.data.indexes?.throwings?.[0])
     victim.set_velocity(vx)
   }
 

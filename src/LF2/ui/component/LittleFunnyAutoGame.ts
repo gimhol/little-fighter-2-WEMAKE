@@ -138,7 +138,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     fighter.blinking = 64
     fighter.dead_gone = true;
     fighter.name_visible = false;
-    fighter.enter_frame({ id: "running_0" })
+    fighter.enter_frame_by_id("running_0")
     fighter.attach()
     fighter.greyscale = 0.3;
     fighter.mix_color = '#364791';

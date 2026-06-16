@@ -27,7 +27,7 @@ export default class WeaponState_Base extends State_Base {
       return;
     }
     const { indexes } = e.data;
-    e.enter_frame({ id: indexes?.on_ground });
+    e.enter_frame_by_id(indexes?.on_ground);
   }
 
   override update(e: Entity): void {
@@ -69,7 +69,7 @@ export default class WeaponState_Base extends State_Base {
       dvx >= bounce_min_z || dvx < -bounce_min_z
 
     if (!is_bounce) { // 非反弹
-      e.enter_frame({ id: nf });
+      e.enter_frame_by_id(nf);
       return;
     }
 

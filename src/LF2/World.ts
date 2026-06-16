@@ -923,7 +923,7 @@ export class World extends WorldDataset {
     e.outline_width = 0;
     e.outline_color = '';
     e.set_position(x, y, z);
-    e.enter_frame({ id: f });
+    e.enter_frame_by_id(f);
     e.attach(false);
   }
   etc(x: number, y: number, z: number, f: string): void {
@@ -939,7 +939,7 @@ export class World extends WorldDataset {
       return;
     }
     e.position.set(round(x), round(y), round(z));
-    e.enter_frame({ id: f });
+    e.enter_frame_by_id(f);
     e.attach(false);
   }
   get_bounding(e: Entity, f: IFrameInfo, i: IItrInfo | IBdyInfo): IBounding {

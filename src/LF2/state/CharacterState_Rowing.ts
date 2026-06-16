@@ -22,6 +22,6 @@ export class CharacterState_Rowing extends CharacterState_Base {
       e.enter_frame(on_landing);
       return;
     }
-    e.enter_frame({ id: e.data.indexes?.landing_1 });
+    e.enter_frame_by_id(e.data.indexes?.landing_1);
   }
 }

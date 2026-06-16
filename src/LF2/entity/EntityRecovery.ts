@@ -187,11 +187,11 @@ export function dismiss_fusion(this: Entity, frame_id: string): void {
     fighter.mp = mp;
     fighter.hp_r = hp_r;
     fighter.facing = facing = turn_face(facing);
-    fighter.enter_frame({ id: frame_id }, true);
+    fighter.enter_frame_by_id(frame_id, true);
     fighter.invisible = fighter.motionless = fighter.invulnerable = 0;
   }
   if (this.dismiss_data) this.transform(this.dismiss_data);
-  this.enter_frame({ id: frame_id }, true);
+  this.enter_frame_by_id(frame_id, true);
   this.dismiss_time = null;
   this.dismiss_data = null;
   this.fuse_bys = null;

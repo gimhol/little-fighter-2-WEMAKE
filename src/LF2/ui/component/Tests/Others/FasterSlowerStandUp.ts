@@ -11,7 +11,7 @@ export class FasterSlowerStandUp extends TestCase {
     }).offset(500, () => {
       this.figters.forEach(v => {
         v.set_velocity_y(5)
-        v.enter_frame({ id: v.data.indexes?.falling?.[1] })
+        v.enter_frame_by_id(v.data.indexes?.falling?.[1][0])
       })
     }).offset(10, () => {
       this.figters[0].ctrl.key_down(GK.Attack)

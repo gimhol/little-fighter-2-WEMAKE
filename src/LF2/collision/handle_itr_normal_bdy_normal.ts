@@ -73,7 +73,7 @@ export function handle_itr_normal_bdy_normal(collision: Collision) {
       if (ic) id = sm ? backhurtact : fronthurtact;
       else if (fv <= d) id = dizzy;
       else id = i?.[a(r)];
-      if (id && id.length > 0) victim.enter_frame({ id });
+      if (id && id.length > 0) victim.enter_frame_by_id(id as string);
       break;
     }
   }

@@ -151,8 +151,8 @@ export default class Item {
     e.team = this.stage.team;
     e.attach();
     if (facing) e.facing = facing;
-    if (is_str(act)) e.enter_frame({ id: act });
-    else if (is_fighter(e)) e.enter_frame({ id: "running_0" })
+    if (is_str(act)) e.enter_frame_by_id(act);
+    else if (is_fighter(e)) e.enter_frame_by_id("running_0")
     else e.enter_frame(Defines.NEXT_FRAME_AUTO);
 
     e.callbacks.add(this.entity_callback);

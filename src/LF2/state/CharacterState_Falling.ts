@@ -100,11 +100,11 @@ export default class CharacterState_Falling extends CharacterState_Base {
         abs(vx) > e.world.cha_bc_tst_spd_x
       )
     ) {
-      e.enter_frame({ id: indexes?.bouncing?.[d][1] });
+      e.enter_frame_by_id(indexes?.bouncing?.[d][1]);
       e.set_velocity_y(e.world.cha_bc_spd)
       this._bouncings.add(e)
     } else {
-      e.enter_frame({ id: indexes?.lying?.[d] });
+      e.enter_frame_by_id(indexes?.lying?.[d]);
     }
   }
 }

@@ -25,7 +25,7 @@ export default class CharacterState_Base extends State_Base {
       e.enter_frame(on_landing);
       return;
     } 
-    e.enter_frame({ id: e.data.indexes?.landing_2 });
+    e.enter_frame_by_id(e.data.indexes?.landing_2);
   }
   override get_auto_frame(e: Entity): IFrameInfo | undefined {
     let fid: string | undefined;

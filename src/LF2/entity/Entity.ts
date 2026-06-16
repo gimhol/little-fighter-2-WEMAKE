@@ -1505,7 +1505,7 @@ export class Entity {
     if (wp_a.weaponact !== this.frame.id) {
       // 还原wpoint丢失的情况
       if (wp_a.weaponact)
-        this.enter_frame({ id: wp_a.weaponact });
+        this.enter_frame_by_id(wp_a.weaponact);
       else
         this.enter_frame(this.find_auto_frame());
     }
@@ -1564,7 +1564,7 @@ export class Entity {
 
   }
 
-  enter_frame_by_id(id: string, fallback = false): EnterFrameResult {
+  enter_frame_by_id(id: string | undefined, fallback = false): EnterFrameResult {
     this._next_frame_by_id.id = id;
     return this.enter_frame(this._next_frame_by_id, fallback);
   }

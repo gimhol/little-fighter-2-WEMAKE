@@ -10,9 +10,9 @@ export function handle_weapon_is_picked(collision: Collision): void {
   attacker.holding = victim;
   victim.team = attacker.team;
   if (victim.base_type === WeaponType.Heavy) {
-    attacker.enter_frame({ id: attacker.data.indexes?.picking_heavy })
+    attacker.enter_frame_by_id(attacker.data.indexes?.picking_heavy)
   } else {
-    attacker.enter_frame({ id: attacker.data.indexes?.picking_light })
+    attacker.enter_frame_by_id(attacker.data.indexes?.picking_light)
   }
   victim.follow_bearer()
   summary_mgr.get(attacker.id).picking_sum += 1

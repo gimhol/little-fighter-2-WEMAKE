@@ -29,7 +29,7 @@ export class Buff_MagicFlute extends Buff {
     switch (victim.data.type) {
       case EntityEnum.Fighter:
         if (victim.state !== StateEnum.Falling) {
-          victim.enter_frame({ id: victim.data.indexes?.falling?.[-1][0] })
+          victim.enter_frame_by_id(victim.data.indexes?.falling?.[-1][0])
         }
         break;
       case EntityEnum.Weapon:
@@ -39,7 +39,7 @@ export class Buff_MagicFlute extends Buff {
             break;
           default:
             if (attacker) victim.team = attacker.team;
-            victim.enter_frame({ id: victim.data.indexes?.in_the_skys?.[0] });
+            victim.enter_frame_by_id(victim.data.indexes?.in_the_skys?.[0]);
             break;
         }
     }
