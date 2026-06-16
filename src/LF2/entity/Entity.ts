@@ -117,6 +117,7 @@ export class Entity {
   protected _catching: Entity | null = null;
   protected _catcher: Entity | null = null;
   protected _states: States;
+  protected readonly _next_frame_by_id: INextFrame = { id: '' };
   aabb_min: number = 0;
   aabb_max: number = 0;
 
@@ -1561,6 +1562,11 @@ export class Entity {
       return;
     }
 
+  }
+
+  enter_frame_by_id(id: string, fallback = false): EnterFrameResult {
+    this._next_frame_by_id.id = id;
+    return this.enter_frame(this._next_frame_by_id, fallback);
   }
 
   enter_frame(which: TNextFrame, fallback = false): EnterFrameResult {
