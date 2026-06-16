@@ -9,6 +9,8 @@ import { pow, round_float } from "../utils";
 import { calc_v } from "./calc_v";
 import type { Entity } from "./Entity";
 
+const rf = round_float;
+
 // ============================================================
 // getter: dvx, dvy, dvz
 // ============================================================
@@ -36,7 +38,7 @@ export function handle_gravity(this: Entity): void {
   if (this.bearer || this.catcher || this.shaking || this.motionless) return;
   const { gravity_enabled = true } = this.frame;
   if (this.position.y <= this.ground_y || !gravity_enabled) return;
-  this._velocity.y = round_float(
+  this._velocity.y = rf(
     this._velocity.y - this.gravity * this._atom_time,
   );
 }
@@ -50,9 +52,9 @@ export function update_velocity(this: Entity, vinfo: IVelocityInfo): void {
   const { atom_time } = this.world;
 
   let { dvx, dvy, dvz } = vinfo;
-  if (dvx) dvx = round_float(dvx * this.dataset("fvx_f"));
-  if (dvy) dvy = round_float(dvy * this.dataset("fvy_f"));
-  if (dvz) dvz = round_float(dvz * this.dataset("fvz_f"));
+  if (dvx) dvx = rf(dvx * this.dataset("fvx_f"));
+  if (dvy) dvy = rf(dvy * this.dataset("fvy_f"));
+  if (dvz) dvz = rf(dvz * this.dataset("fvz_f"));
   let {
     vxm = SpeedMode.LF2,
     vym = SpeedMode.AccTo,
@@ -84,9 +86,9 @@ export function update_velocity(this: Entity, vinfo: IVelocityInfo): void {
     dvz
   )
     acc_z = dvz;
-  if (acc_x) acc_x = round_float(acc_x * atom_time);
-  if (acc_y) acc_y = round_float(acc_y * atom_time);
-  if (acc_z) acc_z = round_float(acc_z * atom_time);
+  if (acc_x) acc_x = rf(acc_x * atom_time);
+  if (acc_y) acc_y = rf(acc_y * atom_time);
+  if (acc_z) acc_z = rf(acc_z * atom_time);
 
   let { x: vx, y: vy, z: vz } = this._velocity;
   const { UD, LR, jd } = this._ctrl;
@@ -121,9 +123,9 @@ export function update_velocity(this: Entity, vinfo: IVelocityInfo): void {
   else if (UD == 0 && SpeedCtrl.Disable == ctrl_z)
     vz = calc_v(vz, dvz, vzm, acc_z, 1);
 
-  this._velocity.x = round_float(vx);
-  this._velocity.y = round_float(vy);
-  this._velocity.z = round_float(vz);
+  this._velocity.x = rf(vx);
+  this._velocity.y = rf(vy);
+  this._velocity.z = rf(vz);
 }
 
 // ============================================================
@@ -162,10 +164,10 @@ export function handle_velocity_decay(
 ): void {
   let { x, z } = this.velocity;
   const { atom_time } = this.world;
-  x = round_float(x * pow(factor, atom_time));
-  z = round_float(z * pow(factor, atom_time));
-  accx = round_float(accx * atom_time);
-  accz = round_float(accz * atom_time);
+  x = rf(x * pow(factor, atom_time));
+  z = rf(z * pow(factor, atom_time));
+  accx = rf(accx * atom_time);
+  accz = rf(accz * atom_time);
   const { ctrl_x, ctrl_z } = this.frame;
   let { dvx = 0, dvz = 0 } = this;
   const { UD, LR } = this.ctrl;
