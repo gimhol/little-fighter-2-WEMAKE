@@ -1,43 +1,47 @@
 import classnames from "classnames";
-import React, { ForwardedRef, forwardRef, isValidElement, useMemo, useRef } from "react";
+import React, { Children, ForwardedRef, forwardRef, isValidElement, CSSProperties } from "react";
 import styles from "./style.module.scss";
-import Show from "../Show";
-import { useForwardedRef } from "@fimagine/dom-hooks";
+
 export interface ICombineProps extends React.HTMLAttributes<HTMLDivElement> {
-  direction?: 'row' | 'column',
-  hoverable?: boolean
+  direction?: 'row' | 'column';
+  hoverable?: boolean;
 }
-function _Combine(props: ICombineProps, f_ref: ForwardedRef<HTMLDivElement>) {
-  const { className, direction = 'row',
-    hoverable = true, children, ..._p } = props;
-  const cls_name = classnames(
-    styles.lfui_combine,
-    styles[direction],
-    { [styles.hoverable]: hoverable },
-    className
-  )
-  const [ref, on_ref] = useForwardedRef(f_ref)
-  const _children = useMemo(() => {
-    if (!children || !Array.isArray(children)) return children;
-    return children.map((child, index) => {
-      if (!child) return null;
-      if (!isValidElement<any>(child)) {
-        return <div key={index} className={styles.item}>{child}</div>
-      }
-      if (child.type === Show && !child.props.show)
-        return null;
-      const style: React.CSSProperties = {
-        flex: child.props['data-flex'] ?? void 0
-      }
-      return <div key={index} className={styles.item} style={style}>{child}</div>
-    })
-  }, [children])
+
+function wrap_item(child: React.ReactNode, index: number): React.ReactNode {
+  if (child == null || child === false) return null;
+  const flex = isValidElement(child) ? (child.props as any)['data-flex'] : void 0;
+  const style: CSSProperties = flex != null ? { flex } : {};
   return (
-    <div className={cls_name} {..._p} ref={on_ref}>
-      {_children}
+    <div key={index} className={styles.item} style={style}>
+      {child}
     </div>
   );
 }
-export const Combine = forwardRef<HTMLDivElement, ICombineProps>(_Combine)
-export default Combine
+
+function _Combine(props: ICombineProps, f_ref: ForwardedRef<HTMLDivElement>) {
+  const {
+    className,
+    direction = 'row',
+    hoverable = true,
+    children,
+    style,
+    ...rest
+  } = props;
+
+  const cls = classnames(
+    styles.lfui_combine,
+    styles[direction],
+    { [styles.hoverable]: hoverable },
+    className,
+  );
+
+  return (
+    <div className={cls} style={style} {...rest} ref={f_ref}>
+      {Children.map(children, wrap_item)}
+    </div>
+  );
+}
+
+export const Combine = forwardRef<HTMLDivElement, ICombineProps>(_Combine);
+export default Combine;
 

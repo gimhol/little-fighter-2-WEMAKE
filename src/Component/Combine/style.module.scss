@@ -49,6 +49,13 @@
       border-radius: 0px !important
     }
 
+    // 穿透常见容器，确保内部组件也去除边框以保持合并效果
+    .lfui_frame,
+    .titled {
+      border-width : 0px !important;
+      border-radius: 0px !important;
+    }
+
     &:not(:first-child):before,
     &:not(:last-child):after {
       content         : '';

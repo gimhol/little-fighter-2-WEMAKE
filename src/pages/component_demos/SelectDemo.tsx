@@ -18,20 +18,16 @@ export default function SelectDemo() {
           clearable />
       </Space>
       <Combine style={{ overflow: 'visible' }}>
-        <Titled >
-          <Select
-            options={items}
-            parse={v => [v, v]}
-            placeholder="dropdown"
-            clearable />
-        </Titled>
-        <Titled >
-          <Select
-            options={items}
-            parse={v => [v, v]}
-            placeholder="dropdown"
-            clearable />
-        </Titled>
+        <Select
+          options={items}
+          parse={v => [v, v]}
+          placeholder="dropdown"
+          clearable />
+        <Select
+          options={items}
+          parse={v => [v, v]}
+          placeholder="dropdown"
+          clearable />
       </Combine>
     </Frame>
   );
