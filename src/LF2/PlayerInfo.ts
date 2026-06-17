@@ -49,11 +49,13 @@ export class PlayerInfo {
   }
   load() {
     if (!this.local) return;
-    Ditto.Cache.get(this.storage_key).then((r) => {
+    Ditto.Cache.get(this.storage_key).then(async (r) => {
       if (!r) return
-      const { data } = r
+      const { data, blob } = r
       try {
-        const raw_text = new TextDecoder().decode(data!);
+        const buf = data ?? (blob ? new Uint8Array(await blob.arrayBuffer()) : null);
+        if (!buf) { Ditto.warn("[PlayerInfo::load]", "no data"); return false; }
+        const raw_text = new TextDecoder().decode(buf);
         const raw_info = json5.parse<Partial<IPurePlayerInfo>>(raw_text);
         const { name, keys, ctrl = this.ctrl, version } = raw_info;
         if (version !== this._info.version) {
