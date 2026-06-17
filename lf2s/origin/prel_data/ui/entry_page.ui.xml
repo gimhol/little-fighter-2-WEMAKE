@@ -1,8 +1,5 @@
 <node name="页面：入口(XML)" id="entry" color="rgb(16, 32, 108)">
-  <components>
-    <ReachableGroup args="main,ud"/>
-  </components>
-
+  <ReachableGroup args="main,ud"/>
   <item ref="builtin_data/launch/bg.ui.json5"/>
   <item ref="ui/jalousie_ns.ui.json5"/>
   <item ref="ui/bg_l_face.ui.json5"/>
@@ -28,33 +25,26 @@
     </item>
 
     <item id="btn_extra_data" size="200,22" center="0.5,0.5" template="builtin_data/launch/main_text_button.ui.json5">
-      <components>
-        <Reachable args="main"/>
-      </components>
+      <Reachable args="main"/>
       <values text="add_mods"/>
       <actions click="sound(ok),broadcast(select_extra_data)"/>
     </item>
 
     <item id="btn_custom_game" size="200,22" center="0.5,0.5" template="builtin_data/launch/main_text_button.ui.json5">
-      <components>
-        <Reachable args="main"/>
-      </components>
+      <Reachable args="main"/>
       <values text="entry_page.custom_game"/>
       <actions click="sound(ok),broadcast(custom_game)"/>
     </item>
 
     <item id="btn_network_game" size="200,22" center="0.5,0.5" template="builtin_data/launch/main_text_button.ui.json5">
-      <components>
-        <Reachable args="main"/>
-      </components>
+
+      <Reachable args="main"/>
       <values text="entry_page.network_game"/>
       <actions click="sound(ok),broadcast(network_game)"/>
     </item>
 
     <item id="btn_ctrl_settings" size="200,22" center="0.5,0.5" template="builtin_data/launch/main_text_button.ui.json5">
-      <components>
-        <Reachable args="main"/>
-      </components>
+      <Reachable args="main"/>
       <values text="settings"/>
       <actions click="sound(ok),push_ui(settings,1)"/>
     </item>
