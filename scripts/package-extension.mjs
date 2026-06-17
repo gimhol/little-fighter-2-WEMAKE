@@ -12,7 +12,8 @@
  */
 
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { generateKeyPairSync } from 'crypto';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'fs';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -33,8 +34,6 @@ function generate_key() {
   }
   mkdirSync(KEY_DIR, { recursive: true });
 
-  // 使用 Node.js crypto 生成 RSA 私钥 (PKCS#8)
-  const { generateKeyPairSync } = await_import('crypto');
   const { privateKey } = generateKeyPairSync('rsa', {
     modulusLength: 2048,
     publicKeyEncoding: { type: 'spki', format: 'pem' },
@@ -43,10 +42,6 @@ function generate_key() {
   writeFileSync(KEY_PATH, privateKey);
   console.log(`[pkg] ✅ Private key generated: ${KEY_PATH}`);
   console.log(`[pkg] ⚠️  KEEP THIS FILE SAFE! Do NOT commit to git.`);
-}
-
-function await_import(name) {
-  return import(name);
 }
 
 // --- 查找 Chrome 可执行文件 ---
@@ -90,7 +85,6 @@ async function pack_crx() {
     // Chrome creates dist-extension.crx next to the folder
     const generatedCrx = join(dirname(EXT_DIST), 'dist-extension.crx');
     if (existsSync(generatedCrx)) {
-      const { renameSync } = await import('fs');
       renameSync(generatedCrx, crxPath);
     }
     console.log(`[pkg] ✅ CRX: ${crxPath}`);

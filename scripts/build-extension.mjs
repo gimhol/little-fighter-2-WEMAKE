@@ -45,6 +45,15 @@ if (existsSync(pwamanifest)) {
   rmSync(pwamanifest);
 }
 
+// Remove large files not needed in extension
+for (const f of ['lfw.full.zip']) {
+  const fp = join(EXT_DIST, f);
+  if (existsSync(fp)) {
+    console.log(`[ext] Removing unnecessary ${f}...`);
+    rmSync(fp);
+  }
+}
+
 // Step 5: Copy Chrome extension manifest + background.js + icons
 console.log('[ext] Copying extension files...');
 const extManifestSrc = join(EXT_SRC, 'manifest.json');
