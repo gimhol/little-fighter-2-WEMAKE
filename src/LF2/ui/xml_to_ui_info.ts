@@ -79,7 +79,7 @@ export function xml_to_ui_info(root: Element): IUIInfo {
   const templates: Record<string, IUIInfo> = {};
 
   for (const child of root.children) {
-    const tag = child.tagName.toLowerCase();
+    const tag = child.tagName;
     switch (tag) {
       case 'item': {
         const ref = xml_attr(child, 'ref');

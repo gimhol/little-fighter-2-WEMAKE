@@ -1,7 +1,6 @@
 /*** AUTO EXPORT START ***/
 export * from "./IRender";
 export * from "./ITimeout";
-export * from "./IXML";
 export * from "./Instance";
 export * from "./cache";
 export * from "./fullscreen";

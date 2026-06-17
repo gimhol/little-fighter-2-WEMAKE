@@ -1,6 +1,6 @@
 import type { IStyle, LF2 } from "@/LF2";
-import { BufferGeometry, Mesh, ShaderMaterial } from "three";
-import { IInstCreator, MaterialFactory, MaterialKind, MeshFactory } from "../factory";
+import { BufferGeometry, Mesh } from "three";
+import { MaterialFactory, MaterialKind, MeshFactory } from "../factory";
 import { get_static_plane_geometry } from "../GeometryKeeper";
 import { BLACK, TextMaterial } from "../materials";
 const TEXT_GEOMETRY = get_static_plane_geometry(1, 1);
@@ -14,6 +14,10 @@ export class SmallTextMesh extends Mesh<BufferGeometry, TextMaterial> {
   static get(): SmallTextMesh {
     return MeshFactory.get('SmallText', SmallTextMesh)
   }
+  static KIND = 'SmallText'
+  static create = () => new SmallTextMesh()
+  static reset = (inst: SmallTextMesh) => inst.reset()
+  
   protected _fillStyle: string = '';
   protected _strokeStyle: string = '';
   protected _text: string = ''
@@ -53,11 +57,4 @@ export class SmallTextMesh extends Mesh<BufferGeometry, TextMaterial> {
     return this;
   }
 }
-
-const SmallText: IInstCreator<SmallTextMesh> = {
-  kind: 'SmallText',
-  cls: SmallTextMesh,
-  create: () => new SmallTextMesh(),
-  reset: (inst) => inst.reset(),
-}
-MeshFactory.register(SmallText)
+MeshFactory.register(SmallTextMesh)
