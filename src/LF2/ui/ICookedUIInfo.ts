@@ -2,8 +2,9 @@ import type { IStyle } from "../defines/IStyle";
 import type { ImageInfo } from "../ditto/image/ImageInfo";
 import type { TextInfo } from "../ditto/image/TextInfo";
 import type { IComponentInfo } from "./IComponentInfo";
+import { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
-import type { IUIInfo } from "./IUIInfo.dat";
+import type { IUIInfo, TUIAction, TUIActionPlace } from "./IUIInfo.dat";
 
 export interface ICookedUIInfo extends IUIInfo {
   id: string;
@@ -30,4 +31,5 @@ export interface ICookedUIInfo extends IUIInfo {
   outlineWidth?: number;
   outlineAlpha?: number;
   opacity?: number;
+  actions?: { [x in TUIActionPlace]?: IUIAction[] };
 }

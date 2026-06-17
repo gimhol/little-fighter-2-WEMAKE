@@ -1,77 +1,76 @@
 import { IStyle } from "../defines";
-import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
-import { IComponentInfo } from "./IComponentInfo";
 import { IXMLElement } from "../ditto/IXMLElement";
+import { IComponentInfo } from "./IComponentInfo";
+import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
 
-function parse_nums_attr(v: string | null | undefined): number[] | undefined {
-  if (v == null) return void 0;
-  return v.split(',').map(s => Number(s.trim()));
-}
+const ACTION_PLACES = new Set(['click', 'resume', 'pause', 'start', 'stop']);
 
-function xml_attr(node: IXMLElement, name: string): string | undefined {
-  return node.attr(name) ?? undefined;
-}
-
-function xml_attrs_to_obj(node: IXMLElement): Record<string, any> {
-  const obj: Record<string, any> = {};
-  for (const attr of node.attrs) {
-    obj[attr.name] = attr.value;
+function parse_action_children(place: IXMLElement): string | string[] {
+  const actions = place.children.filter(c => c.tagName === 'action');
+  if (actions.length) {
+    return actions.map(a => a.action_str());
   }
-  return obj;
+  if (place.attr('action') || place.attr('name')) {
+    return place.action_str();
+  }
+  const v = place.text;
+  return v.includes(',') ? v.split(',').map(s => s.trim()) : v.trim();
 }
 
 function parse_component(el: IXMLElement): TComponentInfo {
-  const cls = xml_attr(el, 'cls') || xml_attr(el, 'name') || '';
-  const comp: IComponentInfo = { cls };
-  const args = xml_attr(el, 'args');
-  if (args) comp.args = args.split(',').map(s => s.trim());
-  const id = xml_attr(el, 'id');
-  if (id) comp.id = id;
-  const weight = xml_attr(el, 'weight');
-  if (weight) comp.weight = Number(weight);
-  const propsStr = xml_attr(el, 'props') || xml_attr(el, 'properties');
-  if (propsStr) {
-    try { comp.properties = JSON.parse(propsStr); } catch { comp.properties = propsStr as any; }
+  const cls = el.attr('cls') || el.tagName;
+  const ret: IComponentInfo = { cls: cls };
+  const args = el.attr('args');
+  if (args) ret.args = args.split(',').map(s => s.trim());
+  const id = el.attr('id');
+  if (id) ret.id = id;
+  const weight = el.attr('weight');
+  if (weight) ret.weight = Number(weight);
+
+  // <properties> 子元素
+  const propsEl = el.children.find(c => c.tagName === 'properties');
+  if (propsEl) {
+    ret.properties = propsEl.values();
   }
-  return comp;
+  return ret;
 }
 
-export function xml_to_ui_info(root: IXMLElement): IUIInfo {
+export function xml_to_ui_info(el: IXMLElement): IUIInfo {
   const ret: IUIInfo = {};
 
   // id / name / i18n
-  ret.id = xml_attr(root, 'id');
-  ret.name = xml_attr(root, 'name');
-  ret.i18n = xml_attr(root, 'i18n');
-  ret.color = xml_attr(root, 'color');
-  ret.background = xml_attr(root, 'background');
-  ret.foreground = xml_attr(root, 'foreground');
-  ret.outlineColor = xml_attr(root, 'outlineColor');
-  ret.template = xml_attr(root, 'template');
-  ret.auto_focus = xml_attr(root, 'auto_focus') === 'true' ? true : void 0;
+  ret.id = el.attr('id');
+  ret.name = el.attr('name');
+  ret.i18n = el.attr('i18n');
+  ret.color = el.attr('color');
+  ret.background = el.attr('background');
+  ret.foreground = el.attr('foreground');
+  ret.outlineColor = el.attr('outlineColor');
+  ret.template = el.attr('template');
+  ret.auto_focus = el.attr('auto_focus') === 'true' ? true : void 0;
 
   // number arrays (comma-separated)
-  ret.pos = parse_nums_attr(xml_attr(root, 'pos'));
-  ret.size = parse_nums_attr(xml_attr(root, 'size'));
-  ret.center = parse_nums_attr(xml_attr(root, 'center'));
-  ret.scale = parse_nums_attr(xml_attr(root, 'scale'));
+  ret.pos = el.nums_attr('pos');
+  ret.size = el.nums_attr('size');
+  ret.center = el.nums_attr('center');
+  ret.scale = el.nums_attr('scale');
 
   // number properties
-  const opacity = xml_attr(root, 'opacity');
+  const opacity = el.attr('opacity');
   if (opacity != null) ret.opacity = Number(opacity);
-  const count = xml_attr(root, 'count');
+  const count = el.attr('count');
   if (count != null) ret.count = Number(count);
-  const visible = xml_attr(root, 'visible');
+  const visible = el.attr('visible');
   if (visible != null) ret.visible = visible === 'true';
-  const disabled = xml_attr(root, 'disabled');
+  const disabled = el.attr('disabled');
   if (disabled != null) ret.disabled = disabled === 'true';
-  const bgAlpha = xml_attr(root, 'backgroundAlpha');
+  const bgAlpha = el.attr('backgroundAlpha');
   if (bgAlpha != null) ret.backgroundAlpha = Number(bgAlpha);
-  const fgAlpha = xml_attr(root, 'foregroundAlpha');
+  const fgAlpha = el.attr('foregroundAlpha');
   if (fgAlpha != null) ret.foregroundAlpha = Number(fgAlpha);
-  const olWidth = xml_attr(root, 'outlineWidth');
+  const olWidth = el.attr('outlineWidth');
   if (olWidth != null) ret.outlineWidth = Number(olWidth);
-  const olAlpha = xml_attr(root, 'outlineAlpha');
+  const olAlpha = el.attr('outlineAlpha');
   if (olAlpha != null) ret.outlineAlpha = Number(olAlpha);
 
   // children
@@ -79,12 +78,12 @@ export function xml_to_ui_info(root: IXMLElement): IUIInfo {
   const components: TComponentInfo[] = [];
   const templates: Record<string, IUIInfo> = {};
 
-  for (const child of root.children) {
+  for (const child of el.children) {
     const tag = child.tagName;
     switch (tag) {
       case 'node':
       case 'item': {
-        const ref = xml_attr(child, 'ref');
+        const ref = child.attr('ref');
         if (ref) {
           items.push(ref);
         } else {
@@ -94,29 +93,35 @@ export function xml_to_ui_info(root: IXMLElement): IUIInfo {
       }
       case 'values': {
         if (!ret.values) ret.values = {};
-        Object.assign(ret.values, xml_attrs_to_obj(child));
+        Object.assign(ret.values, child.values());
         break;
       }
       case 'actions': {
         const actions: any = {};
+        // 属性形式: <actions click="sound(ok),set_ui(loading)"/>
         for (const attr of child.attrs) {
           const v = attr.value;
-          actions[attr.name] = v.includes(',') ? v.split(',').map(s => s.trim()) : [v.trim()];
+          actions[attr.name] = v.includes(',') ? v.split(',').map(s => s.trim()) : v.trim();
+        }
+        // 子元素形式: 支持多个同标签子元素自动合并为数组
+        for (const c of child.children) {
+          if (!ACTION_PLACES.has(c.tagName)) continue;
+          const val = parse_action_children(c);
+          const prev = actions[c.tagName];
+          if (prev != null) {
+            actions[c.tagName] = Array.isArray(prev)
+              ? prev.concat(val)
+              : [prev].concat(val);
+          } else {
+            actions[c.tagName] = val;
+          }
         }
         ret.actions = actions;
         break;
       }
       case 'components': {
         for (const c of child.children) {
-          const ctag = c.tagName;
-          if (ctag === 'component') {
-            components.push(parse_component(c));
-          } else {
-            const comp: IComponentInfo = { cls: ctag };
-            const args = xml_attr(c, 'args');
-            if (args) comp.args = args.split(',').map(s => s.trim());
-            components.push(comp);
-          }
+          components.push(parse_component(c));
         }
         break;
       }
@@ -125,55 +130,55 @@ export function xml_to_ui_info(root: IXMLElement): IUIInfo {
         break;
       }
       case 'style': {
-        ret.style = xml_attrs_to_obj(child) as IStyle;
+        ret.style = child.values() as IStyle;
         // 数值属性转换
         const s = ret.style as any;
-        if (xml_attr(child, 'line_width') != null) s.line_width = Number(xml_attr(child, 'line_width'));
-        if (xml_attr(child, 'scale') != null) s.scale = Number(xml_attr(child, 'scale'));
-        if (xml_attr(child, 'padding_l') != null) s.padding_l = Number(xml_attr(child, 'padding_l'));
-        if (xml_attr(child, 'padding_r') != null) s.padding_r = Number(xml_attr(child, 'padding_r'));
-        if (xml_attr(child, 'padding_t') != null) s.padding_t = Number(xml_attr(child, 'padding_t'));
-        if (xml_attr(child, 'padding_b') != null) s.padding_b = Number(xml_attr(child, 'padding_b'));
-        if (xml_attr(child, 'shadow_blur') != null) s.shadow_blur = Number(xml_attr(child, 'shadow_blur'));
-        if (xml_attr(child, 'shadow_offset_x') != null) s.shadow_offset_x = Number(xml_attr(child, 'shadow_offset_x'));
-        if (xml_attr(child, 'shadow_offset_y') != null) s.shadow_offset_y = Number(xml_attr(child, 'shadow_offset_y'));
-        if (xml_attr(child, 'underline_width') != null) s.underline_width = Number(xml_attr(child, 'underline_width'));
-        if (xml_attr(child, 'smoothing') != null) s.smoothing = xml_attr(child, 'smoothing') === 'true';
-        if (xml_attr(child, 'disposable') != null) s.disposable = xml_attr(child, 'disposable') === 'true';
+        if (child.attr('line_width') != null) s.line_width = Number(child.attr('line_width'));
+        if (child.attr('scale') != null) s.scale = Number(child.attr('scale'));
+        if (child.attr('padding_l') != null) s.padding_l = Number(child.attr('padding_l'));
+        if (child.attr('padding_r') != null) s.padding_r = Number(child.attr('padding_r'));
+        if (child.attr('padding_t') != null) s.padding_t = Number(child.attr('padding_t'));
+        if (child.attr('padding_b') != null) s.padding_b = Number(child.attr('padding_b'));
+        if (child.attr('shadow_blur') != null) s.shadow_blur = Number(child.attr('shadow_blur'));
+        if (child.attr('shadow_offset_x') != null) s.shadow_offset_x = Number(child.attr('shadow_offset_x'));
+        if (child.attr('shadow_offset_y') != null) s.shadow_offset_y = Number(child.attr('shadow_offset_y'));
+        if (child.attr('underline_width') != null) s.underline_width = Number(child.attr('underline_width'));
+        if (child.attr('smoothing') != null) s.smoothing = child.attr('smoothing') === 'true';
+        if (child.attr('disposable') != null) s.disposable = child.attr('disposable') === 'true';
         break;
       }
       case 'img': {
         const img: any = {};
-        img.path = xml_attr(child, 'path') || xml_attr(child, 'src');
-        img.x = Number(xml_attr(child, 'x'));
-        img.y = Number(xml_attr(child, 'y'));
-        img.w = Number(xml_attr(child, 'w'));
-        img.h = Number(xml_attr(child, 'h'));
-        img.dw = Number(xml_attr(child, 'dw')) || img.w;
-        img.dh = Number(xml_attr(child, 'dh')) || img.h;
-        if (xml_attr(child, 'flip_x') != null) img.flip_x = Number(xml_attr(child, 'flip_x'));
-        if (xml_attr(child, 'flip_y') != null) img.flip_y = Number(xml_attr(child, 'flip_y'));
-        if (xml_attr(child, 'wrapS') != null) img.wrapS = Number(xml_attr(child, 'wrapS'));
-        if (xml_attr(child, 'wrapT') != null) img.wrapT = Number(xml_attr(child, 'wrapT'));
-        if (xml_attr(child, 'offsetX') != null) img.offsetX = Number(xml_attr(child, 'offsetX'));
-        if (xml_attr(child, 'offsetY') != null) img.offsetY = Number(xml_attr(child, 'offsetY'));
-        if (xml_attr(child, 'offsetAnimX') != null) img.offsetAnimX = Number(xml_attr(child, 'offsetAnimX'));
-        if (xml_attr(child, 'offsetAnimY') != null) img.offsetAnimY = Number(xml_attr(child, 'offsetAnimY'));
-        if (xml_attr(child, 'offsetAnimR') != null) img.offsetAnimR = Number(xml_attr(child, 'offsetAnimR'));
-        if (xml_attr(child, 'repeatX') != null) img.repeatX = Number(xml_attr(child, 'repeatX'));
-        if (xml_attr(child, 'repeatY') != null) img.repeatY = Number(xml_attr(child, 'repeatY'));
+        img.path = child.attr('path') || child.attr('src');
+        img.x = Number(child.attr('x'));
+        img.y = Number(child.attr('y'));
+        img.w = Number(child.attr('w'));
+        img.h = Number(child.attr('h'));
+        img.dw = Number(child.attr('dw')) || img.w;
+        img.dh = Number(child.attr('dh')) || img.h;
+        if (child.attr('flip_x') != null) img.flip_x = Number(child.attr('flip_x'));
+        if (child.attr('flip_y') != null) img.flip_y = Number(child.attr('flip_y'));
+        if (child.attr('wrapS') != null) img.wrapS = Number(child.attr('wrapS'));
+        if (child.attr('wrapT') != null) img.wrapT = Number(child.attr('wrapT'));
+        if (child.attr('offsetX') != null) img.offsetX = Number(child.attr('offsetX'));
+        if (child.attr('offsetY') != null) img.offsetY = Number(child.attr('offsetY'));
+        if (child.attr('offsetAnimX') != null) img.offsetAnimX = Number(child.attr('offsetAnimX'));
+        if (child.attr('offsetAnimY') != null) img.offsetAnimY = Number(child.attr('offsetAnimY'));
+        if (child.attr('offsetAnimR') != null) img.offsetAnimR = Number(child.attr('offsetAnimR'));
+        if (child.attr('repeatX') != null) img.repeatX = Number(child.attr('repeatX'));
+        if (child.attr('repeatY') != null) img.repeatY = Number(child.attr('repeatY'));
         ret.img = img;
         break;
       }
       case 'template': {
-        const tid = xml_attr(child, 'id') || xml_attr(child, 'name') || '';
+        const tid = child.attr('id') || child.attr('name') || '';
         templates[tid] = xml_to_ui_info(child);
         break;
       }
       default: {
         // 其他元素作为 component 简写，如 <Label /> <Reachable args="main"/>
         const comp: IComponentInfo = { cls: tag };
-        const args = xml_attr(child, 'args');
+        const args = child.attr('args');
         if (args) comp.args = args.split(',').map(s => s.trim());
         components.push(comp);
         break;

@@ -3,6 +3,7 @@ import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
 import { floor, is_num_arr, is_str, Unsafe } from "../utils";
 import { IComponentInfo } from "./IComponentInfo";
+import { IUIAction } from "./IUIAction";
 import { ICookedUIInfo } from "./ICookedUIInfo";
 import { INinePatch, IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
@@ -141,8 +142,10 @@ export async function cook_ui_info(
     return ret;
   }).sort((a, b) => (b.weight || 0) - (a.weight || 0)) ?? [];
 
+  const { actions: raw_actions, ...rest_raw } = raw;
+
   const ret: ICookedUIInfo = {
-    ...raw,
+    ...rest_raw,
     values: raw.values ? raw.values : {},
     id, name, parent,
     pos: [0, 0, 0],
@@ -188,6 +191,27 @@ export async function cook_ui_info(
   ret.outlineAlpha    /**/ = parse_num(raw.outlineAlpha);
   ret.i18n            /**/ = parse_str(raw.i18n) ?? void 0;
   ret.style           /**/ = parse_ui_value(ret, unsafe_is_object<IStyle>(), raw.style) ?? void 0
+
+  // actions: 统一转为 IUIAction[]，支持字符串 "sound(ok)" 或 IUIAction 对象
+  if (raw_actions) {
+    const cooked_actions: ICookedUIInfo['actions'] = {};
+    for (const [place, val] of Object.entries(raw_actions)) {
+      if (val == null) continue;
+      const arr = (Array.isArray(val) ? val : [val]) as (string | IUIAction)[];
+      (cooked_actions as Record<string, IUIAction[]>)[place] = arr.map(a => {
+        if (typeof a === 'string') {
+          const parsed = parse_call_func_expression(a);
+          return {
+            name: (parsed ? parsed.name : a) as IUIAction['name'],
+            args: parsed?.args ?? [],
+          } as IUIAction;
+        }
+        return a;
+      });
+    }
+    ret.actions = cooked_actions;
+  }
+
   if (raw.img && typeof raw.img === 'string') {
     ret.img = parse_ui_value<IUIImgInfo>(ret, judger(validate_ui_img_info), raw.img) ?? void 0
   }

@@ -55,7 +55,6 @@ export interface IUIInfo {
   dev_component?: TComponentInfo[];
   component?: TComponentInfo[];
   actions?: { [x in TUIActionPlace]?: TUIAction | TUIAction[] };
-  key_press_actions?: [string, TUIAction][];
   items?: (IUIInfo | string)[];
   auto_focus?: boolean;
 

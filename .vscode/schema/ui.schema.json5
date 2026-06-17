@@ -395,22 +395,6 @@
           },
           type: "array",
         },
-        key_press_actions: {
-          items: {
-            items: [
-              {
-                type: "string",
-              },
-              {
-                $ref: "#/definitions/TUIAction",
-              },
-            ],
-            maxItems: 2,
-            minItems: 2,
-            type: "array",
-          },
-          type: "array",
-        },
         name: {
           description: "节点名",
           type: "string",
