@@ -660,7 +660,7 @@ export class World extends WorldDataset {
     this._game_time.add();
 
     if (this.stage.world_pause) return;
-    if (this.entities.length > MAX_DEBUG_ENTITIES)
+    if (Ditto.DEV && this.entities.length > MAX_DEBUG_ENTITIES)
       Ditto.debug(`[World::update_once]entities.size = ${this.entities.length}`)
     this.collisions.clear();
     const temp_entities: Entity[] = [];
@@ -756,20 +756,20 @@ export class World extends WorldDataset {
     this.entities.length = this.entities.length - offset
 
     let divider = 0;
-    // this._z_pairs.clear();
-    // this.entities.sort(z_sorter);
-    // temp_entities.length = 0;
-    // for (let i = 0; i < this.entities.length; i++) {
-    //   const a = this.entities[i];
-    //   if (a.ghosted) continue;
-    //   for (let j = divider; j < temp_entities.length; j++) {
-    //     const b = temp_entities[j];
-    //     if (a.aabb_max_z < b.aabb_min_z) { divider = j + 1; continue; }
-    //     this._z_pairs.add(pair_key(a, b));
-    //   }
-    //   temp_entities.push(a);
-    // }
-    // divider = 0;
+    this._z_pairs.clear();
+    this.entities.sort(z_sorter);
+    temp_entities.length = 0;
+    for (let i = 0; i < this.entities.length; i++) {
+      const a = this.entities[i];
+      if (a.ghosted) continue;
+      for (let j = divider; j < temp_entities.length; j++) {
+        const b = temp_entities[j];
+        if (a.aabb_max_z < b.aabb_min_z) { divider = j + 1; continue; }
+        this._z_pairs.add(pair_key(a, b));
+      }
+      temp_entities.push(a);
+    }
+    divider = 0;
 
     this.entities.sort(x_sorter);
     temp_entities.length = 0;
@@ -779,7 +779,7 @@ export class World extends WorldDataset {
       for (let j = divider; j < temp_entities.length; j++) {
         const b = temp_entities[j];
         if (a.aabb_max_x < b.aabb_min_x) { divider = j + 1; continue; }
-        // if (!this._z_pairs.has(pair_key(a, b))) continue;
+        if (!this._z_pairs.has(pair_key(a, b))) continue;
         // 细致的碰撞判定
         const c1 = collision_get(a, b);
         const c2 = collision_get(b, a);
