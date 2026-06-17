@@ -8,6 +8,7 @@ import { DomAdapter } from "splittings-dom/dist/es/splittings-dom";
 import "splittings-dom/dist/es/splittings-dom.css";
 import { Workspaces } from "splittings/dist/es/splittings";
 import csses from "./App.module.scss";
+import { BgScrollerView } from "./BgScrollerView";
 import { Button } from "./Component/Buttons/Button";
 import { StatusButton } from "./Component/Buttons/StatusButton";
 import { ToggleButton } from "./Component/Buttons/ToggleButton";
@@ -64,7 +65,6 @@ import { DatViewer } from "./pages/dat_viewer/DatViewer";
 import { useWorkspaces } from "./pages/dat_viewer/useWorkspaces";
 import { Networking } from "./pages/network_test/Networking";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
-import { BgScrollerView } from "./BgScrollerView";
 
 type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
@@ -128,6 +128,7 @@ const init_world_dataset = (): IWorldDataset => {
   const ret = new WorldDataset(true).dump_dataset();
   ret.sync_render = SyncRenderEnum.FPS_60;
   ret.UPS = low_device ? 30 : 60;
+  ret.atom_time= low_device ? 3 : 1;
   return ret;
 }
 const world_dataset_version = md5(JSON.stringify(init_world_dataset()))
