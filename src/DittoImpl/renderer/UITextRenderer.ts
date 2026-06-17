@@ -12,6 +12,11 @@ import { UINodeRenderer } from "./UINodeRenderer";
 
 interface ITextLineInfo { x: number; y: number; t: string; w: number; h: number; }
 
+/** 提取渲染相关属性构建缓存 key，避免 JSON.stringify 开销 */
+function style_key(style: IStyle): string {
+  return `${style.font ?? ''}|${style.fill_style ?? ''}|${style.stroke_style ?? ''}|${style.line_width ?? 0}|${style.text_align ?? ''}|${style.scale ?? 2}|${style.padding_l ?? 2}|${style.padding_t ?? 2}|${style.padding_r ?? 2}|${style.padding_b ?? 2}|${style.shadow_color ?? ''}|${style.shadow_blur ?? 0}|${style.underline_color ?? ''}|${style.underline_width ?? 0}`;
+}
+
 function split_text_to_lines(text: string, ctx: CanvasRenderingContext2D, style: IStyle): [ITextLineInfo[], number, number] {
   let w = 0, h = 0;
   const { padding_l = 2, padding_r = 2, padding_t = 2, padding_b = 2 } = style;
@@ -80,6 +85,10 @@ export class UITextRenderer {
   protected _ctx: CanvasRenderingContext2D;
   protected _texture: T.CanvasTexture;
 
+  /** 缓存上次渲染的文本与样式，避免无变化时重绘 */
+  protected _last_baked: string = '';
+  protected _last_style_key: string = '';
+
   constructor(owner: UINodeRenderer) {
     this.owner = owner;
     this.ui = owner.ui;
@@ -102,18 +111,39 @@ export class UITextRenderer {
   }
 
   /** 重新绘制 Canvas 上的文字（参照 ImageMgr.create_txt_info） */
-  protected _draw_text(): void {
+  protected _draw_text(): boolean {
     const { _canvas, _ctx } = this;
     const txt = this.ui.text;
-    _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
-    if (!txt?.text) return;
+    if (!txt?.text) {
+      if (this._last_baked === '') return false;
+      this._last_baked = '';
+      this._last_style_key = '';
+      _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+      return true;
+    }
 
     // 通过 lf2.string() 解析 i18n 文本
     const text = this.ui.lf2.string(txt.text);
-    if (!text) return;
+    if (!text) {
+      if (this._last_baked === '') return false;
+      this._last_baked = '';
+      this._last_style_key = '';
+      _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+      return true;
+    }
 
     const style: IStyle = txt.style || {};
+    const node = this.ui;
+    const cur_key = style_key(style)
+      + `|oc=${node.outlineColor ?? ''}|ow=${node.outlineWidth ?? 0}|oa=${node.outlineAlpha ?? 1}`;
+
+    // 文本变化则必定重绘；文本相同则比较样式 key
+    if (this._last_baked === text && this._last_style_key === cur_key) return false;
+    this._last_baked = text;
+    this._last_style_key = cur_key;
+
+    _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
     const scale = style.scale || 2;
     const {
       padding_l = 2,
@@ -163,12 +193,13 @@ export class UITextRenderer {
     }
 
     _ctx.restore();
+    return true;
   }
 
   /** 更新文字并刷新贴图 */
   update(): void {
-    this._draw_text();
-    this._texture.needsUpdate = true;
+    if (this._draw_text())
+      this._texture.needsUpdate = true;
     // alpha 跟随父级 UINodeRenderer
     this.mesh.material.alpha = this.owner.mesh.material.alpha;
     // 根据父节点的 center 计算文字 mesh 的位置
