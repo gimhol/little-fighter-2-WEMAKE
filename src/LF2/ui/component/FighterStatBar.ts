@@ -185,8 +185,7 @@ export class FighterStatBar extends UIComponent<IFighterStatBarProps> {
     const team = this.entity?.team ?? 0;
     const { txt_color, txt_outline_color } = Defines.TeamInfoMap[team] || Defines.TeamInfoMap[T_E.Independent]
     name_txt.node.outlineColor = txt_outline_color;
-    name_txt.node.background = txt_outline_color;
-    name_txt.node.color = txt_color;
+    name_txt.node.style.fill_style = txt_color;
   }
   override update(): void {
     this.update_name();

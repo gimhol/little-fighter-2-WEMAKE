@@ -200,8 +200,13 @@ export class UITextRenderer {
   update(): void {
     if (this._draw_text())
       this._texture.needsUpdate = true;
+    const m = this.mesh.material;
     // alpha 跟随父级 UINodeRenderer
-    this.mesh.material.alpha = this.owner.mesh.material.alpha;
+    m.alpha = this.owner.mesh.material.alpha;
+    // 响应 UINode 的 outline 属性，通过 shader 渲染描边
+    if (this.ui.outlineColor != null) m.outlineColor = this.ui.outlineColor;
+    if (this.ui.outlineWidth != null) m.outlineWidth = this.ui.outlineWidth;
+    if (this.ui.outlineAlpha != null) m.outlineAlpha = this.ui.outlineAlpha;
     // 根据父节点的 center 计算文字 mesh 的位置
     const { w: nodeW, h: nodeH } = this.ui;
     const { x: cx, y: cy } = this.ui.center;
