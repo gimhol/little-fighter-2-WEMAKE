@@ -1,8 +1,7 @@
-import classNames from "classnames";
 import React, { useEffect, useMemo, useRef } from "react";
+import { useStyleBase } from "../StyleBase/useStyleBase";
 import { TVariant } from "../StyleBase/Variant";
 import styles from "./styles.module.scss";
-import { useStyleBase } from "../StyleBase/useStyleBase";
 
 export interface ITextAreaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
   onChange?(value: string | undefined): void;

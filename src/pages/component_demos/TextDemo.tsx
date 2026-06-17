@@ -7,7 +7,7 @@ const sizes: UiSize[] = ['ss', 's', 'm', 'l'];
 export default function TextDemo() {
   return (
     <Frame label='Text'>
-      <Space direction='column' gap={8}>
+      <Space direction='column'>
         {sizes.map(size => (
           <Text key={size} size={size}>
             Text size={size} — 敏捷的棕色狐狸跳过懒狗

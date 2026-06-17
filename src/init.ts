@@ -3,7 +3,6 @@ import './DittoImpl';
 import * as dom from "./DittoImpl";
 import { UINodeRenderer } from "./DittoImpl/renderer/UINodeRenderer";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
-import { XML } from "./DittoImpl/xml/XML";
 import { actor, Ditto, UIActionEnum } from "./LF2";
 import { Debug, Log, Warn } from "./Log";
 import { ewents } from './Utils/ewents';
@@ -36,7 +35,7 @@ Ditto.setup({
   warn: Warn.print,
   Log: Log.print,
   debug: Debug.print,
-  XML: XML,
+  DOMParser: dom.DOMParser,
   DEV
 });
 ewents.filter = async (type: string, event: object) => {

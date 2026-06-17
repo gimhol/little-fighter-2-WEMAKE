@@ -6,7 +6,7 @@ import Titled from "../../Component/Titled";
 import { useRef } from "react";
 
 export default function TextAreaDemo() {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState<string>();
   const ref = useRef<ITextAreaRef>(null);
 
   return (

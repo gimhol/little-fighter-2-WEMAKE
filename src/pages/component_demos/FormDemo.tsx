@@ -1,5 +1,5 @@
+import { Form as _Form } from "../../Component/Form";
 import Frame from "../../Component/Frame";
-import { Form } from "../../Component/Form";
 import { Input } from "../../Component/Input";
 import { Space } from "../../Component/Space";
 import Titled from "../../Component/Titled";
@@ -10,7 +10,7 @@ interface FormValues {
 }
 
 export default function FormDemo() {
-  const form = Form.useForm<FormValues>();
+  const [form, Form] = _Form.useForm<FormValues>();
 
   return (
     <Frame label='Form'>
@@ -25,7 +25,7 @@ export default function FormDemo() {
         </Form>
         <Titled label='Values'>
           <pre style={{ color: '#aaa', fontSize: 12 }}>
-            {JSON.stringify(form.values, null, 2)}
+            {JSON.stringify(form.value, null, 2)}
           </pre>
         </Titled>
       </Space>

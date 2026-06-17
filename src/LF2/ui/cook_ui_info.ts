@@ -68,17 +68,29 @@ export async function find_ui_template(
 
   let path = template_name.startsWith('@/') ? template_name.replace('@/', 'builtin_data/launch/') : template_name;
 
-  // 尝试 .ui.json5
+  const is_json = path.endsWith('.ui.json5') || path.endsWith('.ui.json');
+  const is_xml = path.endsWith('.ui.xml');
+
+  if (is_xml) {
+    const [root] = await lf2.import_xml(path, true);
+    return xml_to_ui_info(root);
+  }
+  if (is_json) {
+    const [data] = await lf2.import_json<IUIInfo>(path, true);
+    return data;
+  }
   try {
-    const json5_path = path.endsWith('.ui.json5') || path.endsWith('.ui.xml') ? path : path + '.ui.json5';
-    ret = await lf2.import_json<IUIInfo>(json5_path, true).then(r => r[0]);
+    ret = await lf2.import_json<IUIInfo>(path + '.ui.json5', true).then(r => r[0]);
+    if (ret && Object.keys(ret).length) return ret;
+  } catch { /* fall through */ }
+
+  try {
+    ret = await lf2.import_json<IUIInfo>(path + '.ui.json', true).then(r => r[0]);
     if (ret && Object.keys(ret).length) return ret;
   } catch { /* fall through to xml */ }
 
-  // 尝试 .ui.xml
   try {
-    const xml_path = path.endsWith('.ui.xml') ? path : path + '.ui.xml';
-    const [root] = await lf2.import_xml(xml_path, true);
+    const [root] = await lf2.import_xml(path + '.ui.xml', true);
     if (root) {
       ret = xml_to_ui_info(root);
       if (ret && Object.keys(ret).length) return ret;
