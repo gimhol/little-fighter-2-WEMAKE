@@ -986,14 +986,14 @@ export class Entity {
     if (this.frame.hp_max) this.hp -= this.frame.hp_max * this._atom_time;
 
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
-      this.vrests.forEach((v, k) => {
+      for (const [k, v] of this.vrests) {
         if (v.rest > 0) {
           v.rest = rf(v.rest - this._atom_time);
           if (v.rest < 0) v.rest = 0;
         } else {
           this.del_v_rest(k)
         }
-      })
+      }
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
       if (this.arest > 0) {
