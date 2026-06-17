@@ -78,10 +78,7 @@ export async function find_ui_template(
   // 尝试 .ui.xml
   try {
     const xml_path = path.endsWith('.ui.xml') ? path : path + '.ui.xml';
-    const [blob_url] = await lf2.import_resource(xml_path, true);
-    const text = await fetch(blob_url).then(r => r.text());
-    const doc = new DOMParser().parseFromString(text, 'text/xml');
-    const root = doc.documentElement;
+    const [root] = await lf2.import_xml(xml_path, true);
     if (root) {
       ret = xml_to_ui_info(root);
       if (ret && Object.keys(ret).length) return ret;

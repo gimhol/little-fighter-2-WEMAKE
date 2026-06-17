@@ -241,6 +241,22 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return I.Ditto.Importer.import_as_array_buffer(paths);
   }
 
+  @PIO async import_xml(path: string, exact: boolean = true): Promise<[Element, I.HitUrl, string?]> {
+    const paths = exact ? [path] : get_import_fallbacks(path)[0];
+    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+    let text: string;
+    if (file && tag) {
+      text = await file.text();
+    } else {
+      const [blob_url] = await I.Ditto.Importer.import_as_blob_url(paths);
+      text = await fetch(blob_url).then(r => r.text());
+    }
+    const doc = new DOMParser().parseFromString(text, 'text/xml');
+    const root = doc.documentElement;
+    if (!root) throw new Error(`[LF2::import_xml] failed to parse: ${path}`);
+    return [root, file?.name || paths[0], tag];
+  }
+
   constructor(dev = false) {
     regist_components()
     regist_buffs();
