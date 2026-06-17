@@ -17,12 +17,3 @@ export const get_bg_layer_material = (info: IBgLayerInfo, lf2: LF2) => {
     return new MeshBasicMaterial(params);
   })
 }
-
-export function get_static_img_material(lf2: LF2, file: string) {
-  const key = file || `empty`;
-  return MaterialKeeper.get(key, () => {
-    const ret = MaterialFactory.get(MaterialKind.Basic, MeshBasicMaterial)
-    if (lf2 && file) ret.map = lf2.images.find(file)?.pic?.texture;
-    return ret;
-  });
-}

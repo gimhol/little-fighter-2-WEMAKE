@@ -23,8 +23,25 @@ interface IUserData {
   img?: ImageInfo<T.Texture> | null,
   nine_patch?: INinePatch,
 }
+// export class UITextRenderer {
+//   mesh: T.Mesh<T.BufferGeometry, OutlineMaterial>;
+//   owner: UINodeRenderer;
+//   ui: UINode;
+//   constructor(owner: UINodeRenderer) {
+//     this.owner = owner;
+//     this.ui = owner.ui;
+//     this.mesh = new T.Mesh(
+//       this.next_geometry(),
+//       MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
+//     )
+//     this.mesh.name = `UITextMesh`;
+//     this.mesh.material.alpha = 0;
+//     this.mesh.material.texture = void 0;
+//   }
+// }
 export class UINodeRenderer implements IUINodeRenderer {
   mesh: T.Mesh<T.BufferGeometry, OutlineMaterial>;
+
   ui: UINode;
   protected _css_obj: CSS2DObject | undefined;
   protected _dom: HTMLDivElement | undefined;
@@ -80,8 +97,9 @@ export class UINodeRenderer implements IUINodeRenderer {
       this.next_geometry(),
       MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
     )
+    this.mesh.name = `UINodeMesh`;
     this.mesh.material.alpha = 0;
-    this.mesh.material.texture = void 0//ImageMgr.EMPTY_TEXTURE.clone()
+    this.mesh.material.texture = void 0;
     this.mesh.userData.owner = ui;
   }
   del(child: UINodeRenderer) {
@@ -179,7 +197,11 @@ export class UINodeRenderer implements IUINodeRenderer {
     return this;
   }
 
-  update_texture() {
+  update_txt() {
+    if (this._txt === this.ui.text) return;
+  }
+
+  update_img() {
     if (
       this._txt === this.ui.text &&
       this._img === this.ui.image &&
@@ -307,7 +329,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.visible = this.ui.visible
     this.update_center_and_size()
     this.update_dom();
-    this.update_texture();
+    this.update_img();
     this.update_texture_attributes(dt)
     const { background, backgroundAlpha, foreground, foregroundAlpha } = this.ui
     this.mesh.material.bgColor = background;

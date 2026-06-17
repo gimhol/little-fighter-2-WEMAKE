@@ -4,11 +4,16 @@ import { Shaders } from "../shader";
 export const BLACK = new Color("#000000");
 
 export class OutlineMaterial extends ShaderMaterial {
+  static readonly KIND = MaterialKind.Outline;
+  static create(): OutlineMaterial { return new OutlineMaterial(); }
+  static reset(c: OutlineMaterial) { c.reset(); }
+
   protected _outlineColor = BLACK.clone();
   protected _coverColor = BLACK.clone();
   protected _mixColor = BLACK.clone();
   protected _bgColor = BLACK.clone();
   protected _fgColor = BLACK.clone();
+
   constructor() {
     super({
       vertexShader: Shaders.Vertex.Normal,
@@ -127,9 +132,4 @@ export class OutlineMaterial extends ShaderMaterial {
   }
 }
 
-MaterialFactory.register({
-  kind: MaterialKind.Outline,
-  cls: OutlineMaterial,
-  create: () => new OutlineMaterial(),
-  reset: (c: OutlineMaterial) => c.reset(),
-})
+MaterialFactory.register(OutlineMaterial)

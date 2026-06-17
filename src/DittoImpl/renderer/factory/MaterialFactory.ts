@@ -1,5 +1,5 @@
 import type { Material } from "../../_t";
-import { InstFactory, Kind } from "./InstFactory";
+import { InstFactory, Kind } from "../../../LF2/base/InstFactory";
 export enum MaterialKind {
   Invalid = 0,
   Outline = 'Outline',
