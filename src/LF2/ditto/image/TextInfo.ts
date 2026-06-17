@@ -5,8 +5,13 @@ import type { ITextInfo } from "./ITextInfo";
 export class TextInfo<T = any> extends ImageInfo<T> implements ITextInfo {
   style: IStyle = {};
   text: string = '';
+  constructor(o?: Partial<TextInfo>) {
+    super(o);
+    if (o) Object.assign(this, o);
+  }
   override merge(o: Partial<TextInfo> = {}): this {
-    Object.assign(this, o)
+    super.merge(o);
+    Object.assign(this, o);
     return this;
   }
 }
