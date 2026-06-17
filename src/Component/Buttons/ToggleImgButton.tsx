@@ -1,5 +1,5 @@
 import device from "current-device";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import styles from "./ToggleImgButton.module.scss";
 import classNames from "classnames";
 import { TShortcut, useForwardedRef, useShortcut } from "@fimagine/dom-hooks";
@@ -15,6 +15,7 @@ export interface IToggleImgProps
   show_shortcut?: boolean;
   src?: [string, string] | [string];
   ref?: React.Ref<HTMLButtonElement>;
+  children?:ReactNode;
 }
 export const ToggleImgButton: React.FC<IToggleImgProps> = React.forwardRef<
   HTMLButtonElement,
