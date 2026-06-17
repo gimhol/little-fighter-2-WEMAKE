@@ -31,12 +31,10 @@ export class State_Base {
   on_landing?(e: Entity, velocity: IVector3): void;
   get_gravity?(e: Entity): number | undefined | null;
 
-  get_auto_frame?(e: Entity): IFrameInfo | undefined;
-
+  // TODO: 下面四个，不知为何总觉得有点傻 - Gim
   get_sudden_death_frame?(e: Entity): INextFrame | undefined;
-
   get_caught_end_frame?(e: Entity): INextFrame | undefined;
-
+  get_auto_frame?(e: Entity): IFrameInfo | undefined;
   find_frame_by_id?(e: Entity, id: string | undefined): IFrameInfo | undefined;
 }
 export default State_Base;
