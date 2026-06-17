@@ -14,11 +14,11 @@ export * from "./make_fighter_data_john";
 export * from "./make_fighter_data_julian";
 export * from "./make_fighter_data_justin";
 export * from "./make_fighter_data_knigt";
+export * from "./make_fighter_data_louis";
+export * from "./make_fighter_data_louisex";
 export * from "./make_fighter_data_mark";
 export * from "./make_fighter_data_monk";
 export * from "./make_fighter_data_rudolf";
 export * from "./make_fighter_data_sorcerer";
 export * from "./make_fighter_data_woody";
-export * from "./make_fighter_data_louis";
-export * from "./make_fighter_data_louisex";
 /*** AUTO EXPORT END ***/

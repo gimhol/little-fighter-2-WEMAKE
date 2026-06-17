@@ -8,6 +8,7 @@ import type { IImageMgr } from "./image/IImageMgr";
 import type { IImporter } from "./importer";
 import type { IRender } from "./IRender";
 import type { ITimeout } from "./ITimeout";
+import { IXMLElement } from "./IXMLElement";
 import type { IKeyboard } from "./keyboard";
 import type { IPointings } from "./pointings";
 import type { IUINodeRenderer } from "./render/IUINodeRenderer";
@@ -47,11 +48,7 @@ export interface IDittoPack {
   UINodeRenderer: new (uinode: UINode) => IUINodeRenderer;
   ImageMgr: new (lf2: LF2) => IImageMgr;
   UIInputHandle: new (lf2: LF2) => IUIInputHandle;
-  DOMParser: {
-    new(): {
-      parseFromString(text: string, type: string): Document;
-    };
-  };
+  XML: { parse(text: string): IXMLElement; };
   warn(...args: any[]): unknown;
   Log(...args: any[]): unknown;
   debug(...args: any[]): unknown;

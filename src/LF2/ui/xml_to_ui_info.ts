@@ -1,25 +1,26 @@
 import { IStyle } from "../defines";
 import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
 import { IComponentInfo } from "./IComponentInfo";
+import { IXMLElement } from "../ditto/IXMLElement";
 
 function parse_nums_attr(v: string | null | undefined): number[] | undefined {
   if (v == null) return void 0;
   return v.split(',').map(s => Number(s.trim()));
 }
 
-function xml_attr(node: Element, name: string): string | undefined {
-  return node.getAttribute(name) ?? undefined;
+function xml_attr(node: IXMLElement, name: string): string | undefined {
+  return node.attr(name) ?? undefined;
 }
 
-function xml_attrs_to_obj(node: Element): Record<string, any> {
+function xml_attrs_to_obj(node: IXMLElement): Record<string, any> {
   const obj: Record<string, any> = {};
-  for (const attr of node.attributes) {
+  for (const attr of node.attrs) {
     obj[attr.name] = attr.value;
   }
   return obj;
 }
 
-function parse_component(el: Element): TComponentInfo {
+function parse_component(el: IXMLElement): TComponentInfo {
   const cls = xml_attr(el, 'cls') || xml_attr(el, 'name') || '';
   const comp: IComponentInfo = { cls };
   const args = xml_attr(el, 'args');
@@ -35,7 +36,7 @@ function parse_component(el: Element): TComponentInfo {
   return comp;
 }
 
-export function xml_to_ui_info(root: Element): IUIInfo {
+export function xml_to_ui_info(root: IXMLElement): IUIInfo {
   const ret: IUIInfo = {};
 
   // id / name / i18n
@@ -97,7 +98,7 @@ export function xml_to_ui_info(root: Element): IUIInfo {
       }
       case 'actions': {
         const actions: any = {};
-        for (const attr of child.attributes) {
+        for (const attr of child.attrs) {
           const v = attr.value;
           actions[attr.name] = v.includes(',') ? v.split(',').map(s => s.trim()) : [v.trim()];
         }
@@ -106,11 +107,10 @@ export function xml_to_ui_info(root: Element): IUIInfo {
       }
       case 'components': {
         for (const c of child.children) {
-          const ctag = c.tagName.toLowerCase();
+          const ctag = c.tagName;
           if (ctag === 'component') {
             components.push(parse_component(c));
           } else {
-            // 简写标签：<Label /> <Reachable args="main"/> 等，标签名即 cls
             const comp: IComponentInfo = { cls: ctag };
             const args = xml_attr(c, 'args');
             if (args) comp.args = args.split(',').map(s => s.trim());

@@ -7,6 +7,7 @@ export * from "./FPS";
 export * from "./FSM";
 export * from "./Graves";
 export * from "./IActionHandler";
+export * from "./InstFactory";
 export * from "./NoEmitCallbacks";
 export * from "./PromisesInOne";
 export * from "./get_short_file_size_txt";

@@ -1,4 +1,5 @@
 import { Callbacks, get_short_file_size_txt, PIO } from "./base";
+import { IDebugging, make_debugging } from "./base/Debugging";
 import { Graves } from "./base/Graves";
 import { regist_buffs } from './buff/_';
 import { Collision } from "./collision";
@@ -9,7 +10,6 @@ import { CMD, CMD_NAMES } from "./defines/CMD";
 import { IGameZipInfo } from "./defines/IFullGameZipInfo";
 import * as I from "./ditto";
 import { Entity, is_fighter } from "./entity";
-import { IDebugging, make_debugging } from "./base/Debugging";
 import { Factory } from "./Factory";
 import * as Helper from "./helper";
 import { I18N } from "./I18N";
@@ -241,7 +241,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     return I.Ditto.Importer.import_as_array_buffer(paths);
   }
 
-  @PIO async import_xml(path: string, exact: boolean = true): Promise<[Element, I.HitUrl, string?]> {
+  @PIO async import_xml(path: string, exact: boolean = true): Promise<[I.IXMLElement, I.HitUrl, string?]> {
     const paths = exact ? [path] : get_import_fallbacks(path)[0];
     const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
     let text: string;
@@ -251,8 +251,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
       const [blob_url] = await I.Ditto.Importer.import_as_blob_url(paths);
       text = await fetch(blob_url).then(r => r.text());
     }
-    const doc = new I.Ditto.DOMParser().parseFromString(text, 'text/xml');
-    const root = doc.documentElement;
+    const root = I.Ditto.XML.parse(text);
     if (!root) throw new Error(`[LF2::import_xml] failed to parse: ${path}`);
     return [root, file?.name || paths[0], tag];
   }
@@ -596,8 +595,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         const text = await file.text().catch(() => null);
         this._dispose_check('load_ui')
         if (!text) continue;
-        const doc = new I.Ditto.DOMParser().parseFromString(text, 'text/xml');
-        const root = doc.documentElement;
+        const root = I.Ditto.XML.parse(text);
         if (!root) continue;
         const ui_info = UI.xml_to_ui_info(root);
         if (!ui_info || !Object.keys(ui_info).length) continue;
@@ -697,7 +695,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (!LF2.IS_DEFAULT_INFO)
       DATA_LIST.unshift(LF2.INFO?.title)
     this._i18n.add({ '': { DATA_LIST } })
-    
+
     this.callbacks.emit('on_extra_zips_changed')(this)
   }
 

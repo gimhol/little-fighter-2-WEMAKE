@@ -9,6 +9,7 @@ export * from "./RImageInfo";
 export * from "./RTextInfo";
 export * from "./Render";
 export * from "./Timeout";
+export * from "./XMLElement";
 export * from "./Zip";
 export * from "./__PointingEvent";
 export * from "./_t";

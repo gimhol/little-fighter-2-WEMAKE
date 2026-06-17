@@ -1,6 +1,10 @@
 /*** AUTO EXPORT START ***/
 export * from "./DrinkInfo";
+export * from "./EnterFrameResult";
 export * from "./Entity";
+export * from "./EntityPhysics";
+export * from "./EntityRecovery";
+export * from "./EntitySpawn";
 export * from "./IDrinkInfoSnapshot";
 export * from "./IEntityCallbacks";
 export * from "./IEntitySnapshot";
