@@ -1,6 +1,6 @@
 {
-  name: "页面：入口",
-  id: "entry",
+  name: "页面：入口(JSON5)",
+  id: "entry_json5",
   color: "rgb(16, 32, 108)",
   component: [ "ReachableGroup(main,ud)" ],
   items: [

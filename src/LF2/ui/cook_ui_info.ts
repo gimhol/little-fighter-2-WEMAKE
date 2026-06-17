@@ -34,6 +34,22 @@ function xml_attrs_to_obj(node: Element): Record<string, any> {
   return obj;
 }
 
+function parse_component(el: Element): TComponentInfo {
+  const cls = xml_attr(el, 'cls') || xml_attr(el, 'name') || '';
+  const comp: IComponentInfo = { cls };
+  const args = xml_attr(el, 'args');
+  if (args) comp.args = args.split(',').map(s => s.trim());
+  const id = xml_attr(el, 'id');
+  if (id) comp.id = id;
+  const weight = xml_attr(el, 'weight');
+  if (weight) comp.weight = Number(weight);
+  const propsStr = xml_attr(el, 'props') || xml_attr(el, 'properties');
+  if (propsStr) {
+    try { comp.properties = JSON.parse(propsStr); } catch { comp.properties = propsStr as any; }
+  }
+  return comp;
+}
+
 export function xml_to_ui_info(root: Element): IUIInfo {
   const ret: IUIInfo = {};
   const nodeName = root.tagName.toLowerCase();
@@ -74,34 +90,53 @@ export function xml_to_ui_info(root: Element): IUIInfo {
   if (olAlpha != null) ret.outlineAlpha = Number(olAlpha);
 
   // children
-  const items: IUIInfo[] = [];
+  const items: (IUIInfo | string)[] = [];
   const components: TComponentInfo[] = [];
   const templates: Record<string, IUIInfo> = {};
 
   for (const child of root.children) {
     const tag = child.tagName.toLowerCase();
     switch (tag) {
-      case 'item':
-        items.push(xml_to_ui_info(child));
-        break;
-      case 'component': {
-        const comp: IComponentInfo = { cls: xml_attr(child, 'cls') || xml_attr(child, 'name') || '' };
-        const args = xml_attr(child, 'args');
-        if (args) comp.args = args.split(',').map(s => s.trim());
-        const id = xml_attr(child, 'id');
-        if (id) comp.id = id;
-        const weight = xml_attr(child, 'weight');
-        if (weight) comp.weight = Number(weight);
-        const propsStr = xml_attr(child, 'props') || xml_attr(child, 'properties');
-        if (propsStr) {
-          try { comp.properties = JSON.parse(propsStr); } catch { comp.properties = propsStr as any; }
-        }
-        // 简写：<Label /> 直接作为 component cls
-        if (tag !== 'component') {
-          components.push(tag);
+      case 'item': {
+        const ref = xml_attr(child, 'ref');
+        if (ref) {
+          items.push(ref);
         } else {
-          components.push(comp);
+          items.push(xml_to_ui_info(child));
         }
+        break;
+      }
+      case 'values': {
+        if (!ret.values) ret.values = {};
+        Object.assign(ret.values, xml_attrs_to_obj(child));
+        break;
+      }
+      case 'actions': {
+        const actions: any = {};
+        for (const attr of child.attributes) {
+          const v = attr.value;
+          actions[attr.name] = v.includes(',') ? v.split(',').map(s => s.trim()) : [v.trim()];
+        }
+        ret.actions = actions;
+        break;
+      }
+      case 'components': {
+        for (const c of child.children) {
+          const ctag = c.tagName.toLowerCase();
+          if (ctag === 'component') {
+            components.push(parse_component(c));
+          } else {
+            // 简写标签：<Label /> <Reachable args="main"/> 等，标签名即 cls
+            const comp: IComponentInfo = { cls: ctag };
+            const args = xml_attr(c, 'args');
+            if (args) comp.args = args.split(',').map(s => s.trim());
+            components.push(comp);
+          }
+        }
+        break;
+      }
+      case 'component': {
+        components.push(parse_component(child));
         break;
       }
       case 'style': {
@@ -151,11 +186,11 @@ export function xml_to_ui_info(root: Element): IUIInfo {
         break;
       }
       default: {
-        // 其他元素作为 component 简写，如 <Label /> <FighterName />
-        const compName = tag;
-        if (compName && compName !== 'style' && compName !== 'img') {
-          components.push(compName);
-        }
+        // 其他元素作为 component 简写，如 <Label /> <Reachable args="main"/>
+        const comp: IComponentInfo = { cls: tag };
+        const args = xml_attr(child, 'args');
+        if (args) comp.args = args.split(',').map(s => s.trim());
+        components.push(comp);
         break;
       }
     }
