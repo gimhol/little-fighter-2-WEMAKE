@@ -571,16 +571,33 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
   async load_ui(zip: I.IZip): Promise<ReadonlyArray<UI.ICookedUIInfo>> {
     this._dispose_check('load_ui')
-    const files = zip.file(/^ui\/.*?\.ui\.json5?$/)
+    const files = zip.file(/^ui\/.*?\.ui\.(json5?|xml)$/)
     const ret: UI.ICookedUIInfo[] = []
+
     for (const file of files) {
-      const json = await file.json().catch(() => null);
-      this._dispose_check('load_ui')
-      if (!json || Array.isArray(json)) continue;
-      const cooked_ui_info = await UI.cook_ui_info(this, json);
-      this._dispose_check('load_ui')
-      ret.push(cooked_ui_info);
+      const is_xml = file.name.endsWith('.xml');
+      if (is_xml) {
+        const text = await file.text().catch(() => null);
+        this._dispose_check('load_ui')
+        if (!text) continue;
+        const doc = new DOMParser().parseFromString(text, 'text/xml');
+        const root = doc.documentElement;
+        if (!root) continue;
+        const ui_info = UI.xml_to_ui_info(root);
+        if (!ui_info || !Object.keys(ui_info).length) continue;
+        const cooked_ui_info = await UI.cook_ui_info(this, ui_info);
+        this._dispose_check('load_ui')
+        ret.push(cooked_ui_info);
+      } else {
+        const json = await file.json().catch(() => null);
+        this._dispose_check('load_ui')
+        if (!json || Array.isArray(json)) continue;
+        const cooked_ui_info = await UI.cook_ui_info(this, json);
+        this._dispose_check('load_ui')
+        ret.push(cooked_ui_info);
+      }
     }
+
     if (this._disposed) {
       this.uis.clear()
       return this.uis.all;

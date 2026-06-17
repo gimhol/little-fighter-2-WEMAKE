@@ -14,6 +14,162 @@ import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
 let __new_id = 0;
 const new_id = () => ++__new_id;
+
+// ========== XML → IUIInfo 转换 ==========
+
+function parse_nums_attr(v: string | null | undefined): number[] | undefined {
+  if (v == null) return void 0;
+  return v.split(',').map(s => Number(s.trim()));
+}
+
+function xml_attr(node: Element, name: string): string | undefined {
+  return node.getAttribute(name) ?? undefined;
+}
+
+function xml_attrs_to_obj(node: Element): Record<string, any> {
+  const obj: Record<string, any> = {};
+  for (const attr of node.attributes) {
+    obj[attr.name] = attr.value;
+  }
+  return obj;
+}
+
+export function xml_to_ui_info(root: Element): IUIInfo {
+  const ret: IUIInfo = {};
+  const nodeName = root.tagName.toLowerCase();
+
+  // id / name / i18n
+  ret.id = xml_attr(root, 'id');
+  ret.name = xml_attr(root, 'name');
+  ret.i18n = xml_attr(root, 'i18n');
+  ret.color = xml_attr(root, 'color');
+  ret.background = xml_attr(root, 'background');
+  ret.foreground = xml_attr(root, 'foreground');
+  ret.outlineColor = xml_attr(root, 'outlineColor');
+  ret.template = xml_attr(root, 'template');
+  ret.auto_focus = xml_attr(root, 'auto_focus') === 'true' ? true : void 0;
+
+  // number arrays (comma-separated)
+  ret.pos = parse_nums_attr(xml_attr(root, 'pos'));
+  ret.size = parse_nums_attr(xml_attr(root, 'size'));
+  ret.center = parse_nums_attr(xml_attr(root, 'center'));
+  ret.scale = parse_nums_attr(xml_attr(root, 'scale'));
+
+  // number properties
+  const opacity = xml_attr(root, 'opacity');
+  if (opacity != null) ret.opacity = Number(opacity);
+  const count = xml_attr(root, 'count');
+  if (count != null) ret.count = Number(count);
+  const visible = xml_attr(root, 'visible');
+  if (visible != null) ret.visible = visible === 'true';
+  const disabled = xml_attr(root, 'disabled');
+  if (disabled != null) ret.disabled = disabled === 'true';
+  const bgAlpha = xml_attr(root, 'backgroundAlpha');
+  if (bgAlpha != null) ret.backgroundAlpha = Number(bgAlpha);
+  const fgAlpha = xml_attr(root, 'foregroundAlpha');
+  if (fgAlpha != null) ret.foregroundAlpha = Number(fgAlpha);
+  const olWidth = xml_attr(root, 'outlineWidth');
+  if (olWidth != null) ret.outlineWidth = Number(olWidth);
+  const olAlpha = xml_attr(root, 'outlineAlpha');
+  if (olAlpha != null) ret.outlineAlpha = Number(olAlpha);
+
+  // children
+  const items: IUIInfo[] = [];
+  const components: TComponentInfo[] = [];
+  const templates: Record<string, IUIInfo> = {};
+
+  for (const child of root.children) {
+    const tag = child.tagName.toLowerCase();
+    switch (tag) {
+      case 'item':
+        items.push(xml_to_ui_info(child));
+        break;
+      case 'component': {
+        const comp: IComponentInfo = { cls: xml_attr(child, 'cls') || xml_attr(child, 'name') || '' };
+        const args = xml_attr(child, 'args');
+        if (args) comp.args = args.split(',').map(s => s.trim());
+        const id = xml_attr(child, 'id');
+        if (id) comp.id = id;
+        const weight = xml_attr(child, 'weight');
+        if (weight) comp.weight = Number(weight);
+        const propsStr = xml_attr(child, 'props') || xml_attr(child, 'properties');
+        if (propsStr) {
+          try { comp.properties = JSON.parse(propsStr); } catch { comp.properties = propsStr as any; }
+        }
+        // 简写：<Label /> 直接作为 component cls
+        if (tag !== 'component') {
+          components.push(tag);
+        } else {
+          components.push(comp);
+        }
+        break;
+      }
+      case 'style': {
+        ret.style = xml_attrs_to_obj(child) as IStyle;
+        // 数值属性转换
+        const s = ret.style as any;
+        if (xml_attr(child, 'line_width') != null) s.line_width = Number(xml_attr(child, 'line_width'));
+        if (xml_attr(child, 'scale') != null) s.scale = Number(xml_attr(child, 'scale'));
+        if (xml_attr(child, 'padding_l') != null) s.padding_l = Number(xml_attr(child, 'padding_l'));
+        if (xml_attr(child, 'padding_r') != null) s.padding_r = Number(xml_attr(child, 'padding_r'));
+        if (xml_attr(child, 'padding_t') != null) s.padding_t = Number(xml_attr(child, 'padding_t'));
+        if (xml_attr(child, 'padding_b') != null) s.padding_b = Number(xml_attr(child, 'padding_b'));
+        if (xml_attr(child, 'shadow_blur') != null) s.shadow_blur = Number(xml_attr(child, 'shadow_blur'));
+        if (xml_attr(child, 'shadow_offset_x') != null) s.shadow_offset_x = Number(xml_attr(child, 'shadow_offset_x'));
+        if (xml_attr(child, 'shadow_offset_y') != null) s.shadow_offset_y = Number(xml_attr(child, 'shadow_offset_y'));
+        if (xml_attr(child, 'underline_width') != null) s.underline_width = Number(xml_attr(child, 'underline_width'));
+        if (xml_attr(child, 'smoothing') != null) s.smoothing = xml_attr(child, 'smoothing') === 'true';
+        if (xml_attr(child, 'disposable') != null) s.disposable = xml_attr(child, 'disposable') === 'true';
+        break;
+      }
+      case 'img': {
+        const img: any = {};
+        img.path = xml_attr(child, 'path') || xml_attr(child, 'src');
+        img.x = Number(xml_attr(child, 'x'));
+        img.y = Number(xml_attr(child, 'y'));
+        img.w = Number(xml_attr(child, 'w'));
+        img.h = Number(xml_attr(child, 'h'));
+        img.dw = Number(xml_attr(child, 'dw')) || img.w;
+        img.dh = Number(xml_attr(child, 'dh')) || img.h;
+        if (xml_attr(child, 'flip_x') != null) img.flip_x = Number(xml_attr(child, 'flip_x'));
+        if (xml_attr(child, 'flip_y') != null) img.flip_y = Number(xml_attr(child, 'flip_y'));
+        if (xml_attr(child, 'wrapS') != null) img.wrapS = Number(xml_attr(child, 'wrapS'));
+        if (xml_attr(child, 'wrapT') != null) img.wrapT = Number(xml_attr(child, 'wrapT'));
+        if (xml_attr(child, 'offsetX') != null) img.offsetX = Number(xml_attr(child, 'offsetX'));
+        if (xml_attr(child, 'offsetY') != null) img.offsetY = Number(xml_attr(child, 'offsetY'));
+        if (xml_attr(child, 'offsetAnimX') != null) img.offsetAnimX = Number(xml_attr(child, 'offsetAnimX'));
+        if (xml_attr(child, 'offsetAnimY') != null) img.offsetAnimY = Number(xml_attr(child, 'offsetAnimY'));
+        if (xml_attr(child, 'offsetAnimR') != null) img.offsetAnimR = Number(xml_attr(child, 'offsetAnimR'));
+        if (xml_attr(child, 'repeatX') != null) img.repeatX = Number(xml_attr(child, 'repeatX'));
+        if (xml_attr(child, 'repeatY') != null) img.repeatY = Number(xml_attr(child, 'repeatY'));
+        ret.img = img;
+        break;
+      }
+      case 'template': {
+        const tid = xml_attr(child, 'id') || xml_attr(child, 'name') || '';
+        templates[tid] = xml_to_ui_info(child);
+        break;
+      }
+      default: {
+        // 其他元素作为 component 简写，如 <Label /> <FighterName />
+        const compName = tag;
+        if (compName && compName !== 'style' && compName !== 'img') {
+          components.push(compName);
+        }
+        break;
+      }
+    }
+  }
+
+  if (items.length) ret.items = items;
+  if (components.length) ret.component = components;
+  if (Object.keys(templates).length) ret.templates = templates;
+
+  return ret;
+}
+
+// ========== UI Template 查找 ==========
+
 export async function merge_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICookedUIInfo | undefined): Promise<IUIInfo> {
   const { template: template_name, ...remain_info } = raw_info;
   if (!template_name) return raw_info;
@@ -63,13 +219,31 @@ export async function find_ui_template(
     ptr = ptr.parent;
   }
   if (ret) return ret;
+
+  let path = template_name.startsWith('@/') ? template_name.replace('@/', 'builtin_data/launch/') : template_name;
+
+  // 尝试 .ui.json5
   try {
-    let path = template_name.startsWith('@/') ? template_name.replace('@/', 'builtin_data/launch/') : template_name;
-    if (!path.endsWith('.ui.json5')) path += '.ui.json5';
-    ret = await lf2.import_json<IUIInfo>(path, true).then(r => r[0]);
+    const json5_path = path.endsWith('.ui.json5') || path.endsWith('.ui.xml') ? path : path + '.ui.json5';
+    ret = await lf2.import_json<IUIInfo>(json5_path, true).then(r => r[0]);
+    if (ret && Object.keys(ret).length) return ret;
+  } catch { /* fall through to xml */ }
+
+  // 尝试 .ui.xml
+  try {
+    const xml_path = path.endsWith('.ui.xml') ? path : path + '.ui.xml';
+    const [blob_url] = await lf2.import_resource(xml_path, true);
+    const text = await fetch(blob_url).then(r => r.text());
+    const doc = new DOMParser().parseFromString(text, 'text/xml');
+    const root = doc.documentElement;
+    if (root) {
+      ret = xml_to_ui_info(root);
+      if (ret && Object.keys(ret).length) return ret;
+    }
   } catch (e) {
     Ditto.warn(`[${TAG}] ui template not found! template_name: ${template_name}, e:${e}`);
   }
+
   return ret || {};
 }
 find_ui_template.TAG = 'find_ui_template';
