@@ -171,6 +171,14 @@ export class UITextRenderer {
     this._texture.needsUpdate = true;
     // alpha 跟随父级 UINodeRenderer
     this.mesh.material.alpha = this.owner.mesh.material.alpha;
+    // 根据父节点的 center 计算文字 mesh 的位置
+    const { w: nodeW, h: nodeH } = this.ui;
+    const { x: cx, y: cy } = this.ui.center;
+    this.mesh.position.set(
+      round(nodeW * (0.5 - cx)),
+      round(nodeH * (cy - 0.5)),
+      0
+    );
   }
 
 }
