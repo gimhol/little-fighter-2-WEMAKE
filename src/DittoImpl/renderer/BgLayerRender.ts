@@ -1,8 +1,9 @@
 import type { Layer } from "@/LF2/bg/Layer";
 import * as T from "../_t";
+import { MeshBasicMaterial } from "../_t";
 import type { BgRender } from "./BgRender";
 import { get_static_plane_geometry } from "./GeometryKeeper";
-import { get_bg_layer_material } from "./MaterialKeeper";
+import { MaterialKind as Kind, MaterialFactory } from "./factory";
 
 
 export class BgLayerRender {
@@ -14,14 +15,26 @@ export class BgLayerRender {
   constructor(bg_render: BgRender, layer: Layer) {
     this.layer = layer;
     this.bg_render = bg_render
+    const { lf2 } = this.layer.bg.world
     const { info } = layer;
-    const { x, y, z, file, id, name } = info;
-    const pic = file ? this.layer.bg.world.lf2.images.find(file)?.pic : null
+    const { x, y, z, file, id, name, color } = info;
+    const pic = file ? lf2.images.find(file)?.pic : null
     const w = pic?.w ?? info.w ?? info.width;
     const h = pic?.h ?? info.h ?? info.height;
+
+    const k = `bg_l_${file ?? color}`
+    const m = MaterialFactory.get(Kind.Basic, MeshBasicMaterial, k, (m) => {
+      const texture = file ? lf2.images.find(file)?.pic?.texture : null
+      if (texture) m.map = texture
+      else if (color !== void 0) m.color.set(color)
+      m.transparent = true;
+      m.needsUpdate = true;
+      m.opacity = 1;
+    })
+
     this.mesh = new T.Mesh(
       get_static_plane_geometry(w, h, w / 2, -h / 2),
-      get_bg_layer_material(info, layer.bg.world.lf2)
+      m
     );
     this.mesh.name = `bg layer ${name ?? id ?? 'unnamed'}`;
     this.mesh.position.set(x, y, z);
