@@ -1,4 +1,4 @@
-import { Callbacks, get_short_file_size_txt, PIO } from "./base";
+import { Callbacks, deduped, get_short_file_size_txt } from "./base";
 import { IDebugging, make_debugging } from "./base/Debugging";
 import { Graves } from "./base/Graves";
 import { regist_buffs } from './buff/_';
@@ -211,12 +211,14 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    * @return {Promise<C>}
    * @memberof LF2
    */
-  @PIO
   async import_json<C = any>(path: string, exact: boolean = true): Promise<[C, I.HitUrl, string?]> {
-    const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
-    if (file && tag) return [await file.json<C>(), file.name, tag];
-    return await I.Ditto.Importer.import_as_json<C>(paths);
+    const key = `LF2.import_json.${path}.${exact}`;
+    return deduped(key, async () => {
+      const paths = exact ? [path] : get_import_fallbacks(path)[0];
+      const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+      if (file && tag) return [await file.json<C>(), file.name, tag];
+      return await I.Ditto.Importer.import_as_json<C>(paths);
+    });
   }
 
   /**
@@ -227,32 +229,41 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    * @return {Promise<[I.BlobUrl, I.HitUrl]>}
    * @memberof LF2
    */
-  @PIO async import_resource(path: string, exact: boolean): Promise<[I.BlobUrl, I.HitUrl, string?]> {
-    const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
-    if (file && tag) return [await file.blob_url(), file.name, tag];
-    return I.Ditto.Importer.import_as_blob_url(paths);
+  async import_resource(path: string, exact: boolean): Promise<[I.BlobUrl, I.HitUrl, string?]> {
+    const key = `LF2.import_resource.${path}.${exact}`;
+    return deduped(key, async () => {
+      const paths = exact ? [path] : get_import_fallbacks(path)[0];
+      const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+      if (file && tag) return [await file.blob_url(), file.name, tag];
+      return I.Ditto.Importer.import_as_blob_url(paths);
+    });
   }
 
-  @PIO async import_array_buffer(path: string, exact: boolean): Promise<[ArrayBuffer, I.HitUrl, string?]> {
-    const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
-    if (file && tag) return [await file.array_buffer(), file.name, tag];
-    return I.Ditto.Importer.import_as_array_buffer(paths);
+  async import_array_buffer(path: string, exact: boolean): Promise<[ArrayBuffer, I.HitUrl, string?]> {
+    const key = `LF2.import_array_buffer.${path}.${exact}`;
+    return deduped(key, async () => {
+      const paths = exact ? [path] : get_import_fallbacks(path)[0];
+      const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+      if (file && tag) return [await file.array_buffer(), file.name, tag];
+      return I.Ditto.Importer.import_as_array_buffer(paths);
+    });
   }
 
-  @PIO async import_xml(path: string, exact: boolean = true): Promise<[I.IXMLElement, I.HitUrl, string?]> {
-    const paths = exact ? [path] : get_import_fallbacks(path)[0];
-    const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
-    let text: string;
-    if (file && tag) {
-      text = await file.text();
-    } else {
-      [text] = await I.Ditto.Importer.import_as_text(paths);
-    }
-    const root = I.Ditto.XML.parse(text);
-    if (!root) throw new Error(`[LF2::import_xml] failed to parse: ${path}`);
-    return [root, file?.name || paths[0], tag];
+  async import_xml(path: string, exact: boolean = true): Promise<[I.IXMLElement, I.HitUrl, string?]> {
+    const key = `LF2.import_xml.${path}.${exact}`;
+    return deduped(key, async () => {
+      const paths = exact ? [path] : get_import_fallbacks(path)[0];
+      const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
+      let text: string;
+      if (file && tag) {
+        text = await file.text();
+      } else {
+        [text] = await I.Ditto.Importer.import_as_text(paths);
+      }
+      const root = I.Ditto.XML.parse(text);
+      if (!root) throw new Error(`[LF2::import_xml] failed to parse: ${path}`);
+      return [root, file?.name || paths[0], tag];
+    });
   }
 
   constructor(dev = false) {

@@ -1,6 +1,5 @@
 import axios, { AxiosResponse, RawAxiosRequestHeaders, ResponseType } from "axios";
 import json5 from "json5";
-import { PIO } from "../LF2/base/PromisesInOne";
 import { IImporter } from "../LF2/ditto/importer/IImporter";
 import { ImportError } from "../LF2/ditto/importer/ImportError";
 
@@ -108,37 +107,46 @@ async function import_as<T>(
     }, 5000);
   })
 }
+import { deduped } from "../LF2/base/dedup";
 
 export class __Importer implements IImporter {
 
-  @PIO
   async import_as_json<T = any>(urls: string[]): Promise<[T, string]> {
-    const url_list: string[] = get_possible_url_list(urls);
-    return await import_as<T>("json", url_list).then(([v, url]) => [
-      v.data,
-      url,
-    ]);
+    const key = `__Importer.import_as_json.${urls.join(',')}`;
+    return deduped(key, async () => {
+      const url_list: string[] = get_possible_url_list(urls);
+      return await import_as<T>("json", url_list).then(([v, url]) => [
+        v.data,
+        url,
+      ]);
+    });
   }
-  @PIO
   async import_as_blob_url(urls: string[]): Promise<[string, string]> {
-    const url_list: string[] = get_possible_url_list(urls);
-    const [resp, url] = await import_as<Blob>("blob", url_list);
-    return [URL.createObjectURL(resp.data), url];
+    const key = `__Importer.import_as_blob_url.${urls.join(',')}`;
+    return deduped(key, async () => {
+      const url_list: string[] = get_possible_url_list(urls);
+      const [resp, url] = await import_as<Blob>("blob", url_list);
+      return [URL.createObjectURL(resp.data), url];
+    });
   }
 
-  @PIO
   async import_as_text(urls: string[]): Promise<[string, string]> {
-    const url_list: string[] = get_possible_url_list(urls);
-    const [resp, url] = await import_as<string>("text", url_list);
-    return [resp.data, url];
+    const key = `__Importer.import_as_text.${urls.join(',')}`;
+    return deduped(key, async () => {
+      const url_list: string[] = get_possible_url_list(urls);
+      const [resp, url] = await import_as<string>("text", url_list);
+      return [resp.data, url];
+    });
   }
 
-  @PIO
   async import_as_array_buffer(urls: string[]): Promise<[ArrayBuffer, string]> {
-    const url_list: string[] = get_possible_url_list(urls);
-    return import_as<ArrayBuffer>('arraybuffer', url_list).then(([v, url]) => [
-      v.data,
-      url,
-    ]);
+    const key = `__Importer.import_as_array_buffer.${urls.join(',')}`;
+    return deduped(key, async () => {
+      const url_list: string[] = get_possible_url_list(urls);
+      return import_as<ArrayBuffer>('arraybuffer', url_list).then(([v, url]) => [
+        v.data,
+        url,
+      ]);
+    });
   }
 }
