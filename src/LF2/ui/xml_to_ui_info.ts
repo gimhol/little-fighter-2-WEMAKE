@@ -82,6 +82,7 @@ export function xml_to_ui_info(root: IXMLElement): IUIInfo {
   for (const child of root.children) {
     const tag = child.tagName;
     switch (tag) {
+      case 'node':
       case 'item': {
         const ref = xml_attr(child, 'ref');
         if (ref) {
