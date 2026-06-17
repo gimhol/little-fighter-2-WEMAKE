@@ -11,21 +11,12 @@ export default function CheckboxDemo() {
   return (
     <Frame label='Checkbox'>
       <Space direction='column'>
-        <Titled label='Basic'>
-          <Checkbox value={checked} onChange={setChecked}>
-            {checked ? '已选中' : '未选中'}
-          </Checkbox>
-        </Titled>
-        <Titled label='Disabled'>
-          <Checkbox
-            value={checked}
-            disabled={disabled}
-            onChange={setChecked}>
-            <Checkbox value={disabled} onChange={setDisabled}>
-              禁用
-            </Checkbox>
-          </Checkbox>
-        </Titled>
+        <Checkbox prefix='Example' value={checked} onChange={setChecked} >
+          {checked ? '已选中' : '未选中'}
+        </Checkbox>
+        <Checkbox prefix='Disabled' value={disabled} onChange={setDisabled} disabled>
+          禁用
+        </Checkbox>
       </Space>
     </Frame>
   );
