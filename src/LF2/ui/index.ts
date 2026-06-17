@@ -24,4 +24,5 @@ export * from "./cook_ui_info";
 export * from "./read_info_value";
 export * from "./ui_load_img";
 export * from "./utils";
+export * from "./xml_to_ui_info";
 /*** AUTO EXPORT END ***/
