@@ -12,11 +12,6 @@ import { UINodeRenderer } from "./UINodeRenderer";
 
 interface ITextLineInfo { x: number; y: number; t: string; w: number; h: number; }
 
-/** 提取渲染相关属性构建缓存 key，避免 JSON.stringify 开销 */
-function style_key(style: IStyle): string {
-  return `${style.font ?? ''}|${style.fill_style ?? ''}|${style.stroke_style ?? ''}|${style.line_width ?? 0}|${style.text_align ?? ''}|${style.scale ?? 2}|${style.padding_l ?? 2}|${style.padding_t ?? 2}|${style.padding_r ?? 2}|${style.padding_b ?? 2}|${style.shadow_color ?? ''}|${style.shadow_blur ?? 0}|${style.underline_color ?? ''}|${style.underline_width ?? 0}`;
-}
-
 function split_text_to_lines(text: string, ctx: CanvasRenderingContext2D, style: IStyle): [ITextLineInfo[], number, number] {
   let w = 0, h = 0;
   const { padding_l = 2, padding_r = 2, padding_t = 2, padding_b = 2 } = style;
@@ -85,9 +80,9 @@ export class UITextRenderer {
   protected _ctx: CanvasRenderingContext2D;
   protected _texture: T.CanvasTexture;
 
-  /** 缓存上次渲染的文本与样式，避免无变化时重绘 */
+  /** 缓存上次渲染的文本与样式版本，避免无变化时重绘 */
   protected _last_baked: string = '';
-  protected _last_style_key: string = '';
+  protected _last_style_version: number = -1;
 
   constructor(owner: UINodeRenderer) {
     this.owner = owner;
@@ -118,7 +113,7 @@ export class UITextRenderer {
     if (!txt?.text) {
       if (this._last_baked === '') return false;
       this._last_baked = '';
-      this._last_style_key = '';
+      this._last_style_version = this.ui.style.version;
       _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
       return true;
     }
@@ -128,20 +123,17 @@ export class UITextRenderer {
     if (!text) {
       if (this._last_baked === '') return false;
       this._last_baked = '';
-      this._last_style_key = '';
+      this._last_style_version = this.ui.style.version;
       _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
       return true;
     }
 
-    const style: IStyle = txt.style || {};
-    const node = this.ui;
-    const cur_key = style_key(style)
-      + `|oc=${node.outlineColor ?? ''}|ow=${node.outlineWidth ?? 0}|oa=${node.outlineAlpha ?? 1}`;
-
-    // 文本变化则必定重绘；文本相同则比较样式 key
-    if (this._last_baked === text && this._last_style_key === cur_key) return false;
+    // 文本变化或 style 版本递增时才重绘
+    if (this._last_baked === text && this._last_style_version === this.ui.style.version) return false;
     this._last_baked = text;
-    this._last_style_key = cur_key;
+    this._last_style_version = this.ui.style.version;
+
+    const style: IStyle = txt.style || {};
 
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
     const scale = style.scale || 2;
@@ -169,6 +161,10 @@ export class UITextRenderer {
       this._texture.dispose();
       this._texture = new T.CanvasTexture(_canvas);
       this.mesh.material.texture = this._texture;
+      // 同步 shader 纹理参数：实际像素尺寸、缩放倍数、裁剪区域
+      this.mesh.material.set_origin_size(cw, ch);
+      this.mesh.material.set_origin_scale(scale, scale);
+      this.mesh.material.set_clip(0, 0, w, h);
       // geometry 使用逻辑尺寸（w×h），canvas 使用 HiDPI 尺寸（scale*w × scale*h）
       this._geo = get_static_plane_geometry(w, h, 0, 0, 0);
       this.mesh.geometry = this._geo;
@@ -179,12 +175,13 @@ export class UITextRenderer {
     _ctx.save();
     _ctx.scale(scale, scale);
 
-    style.fill_style = style.fill_style ?? 'white';
+    const fill = style.fill_style ?? 'white';
     const nf = need_fill(style);
     const ns = need_stroke(style);
 
     if (nf || ns) {
-      apply_text_style(style, _ctx);
+      // 确保 fill_style 在应用前设置（不写回原对象）
+      apply_text_style({ ...style, fill_style: fill }, _ctx);
       for (const { x, y, t } of lines) {
         if (nf) _ctx.fillText(t, padding_l + x, padding_t + y);
         if (ns) _ctx.strokeText(t, padding_l + x, padding_t + y);

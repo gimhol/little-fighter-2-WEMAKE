@@ -1,6 +1,6 @@
 import { LF2 } from "../LF2";
 import { Callbacks } from "../base";
-import { IStyle, IVector3, IVector3Like } from "../defines";
+import { IVector3, IVector3Like } from "../defines";
 import { Ditto as D, ImageInfo, IUINodeRenderer, TextInfo } from "../ditto";
 import { IDebugging, make_debugging } from "../base";
 import { is_num, round, round_float, Times } from "../utils";
@@ -11,6 +11,8 @@ import type { IUIKeyEvent } from "./IUIKeyEvent";
 import { LF2PointerEvent } from "./LF2PointerEvent";
 import { actor } from "./action";
 import { UIComponent } from "./component";
+import { Style } from "./Style";
+
 export class UINode implements IDebugging {
   static readonly TAG: string = 'UINode';
   debug!: (_0: string, ..._1: any[]) => void;
@@ -63,6 +65,7 @@ export class UINode implements IDebugging {
   text: TextInfo | null = null
   image: ImageInfo | null = null
   color: string = '';
+  readonly style: Style = new Style();
 
   protected _parent?: UINode;
   protected _children: UINode[] = [];
@@ -247,18 +250,16 @@ export class UINode implements IDebugging {
     const { x, y, z } = this.parent.global_pos
     this.move_to(v.x - x, v.y - y, v.z - z);
   }
-
   get components(): ReadonlyArray<UIComponent> {
     return this._components;
   }
-  style: IStyle = {}
+
   /** 光标是否在本节点上 */
   get pointer_over() { return this._pointer_over }
   /** 光标是否在本节点中按下 */
   get pointer_down() { return this._pointer_down }
   get click_flag() { return this._click_flag }
   get lifetime() { return this._update_times.value }
-
   set_visible(v: boolean): this {
     const prev = this.visible;
     this._visible = v;
@@ -360,7 +361,7 @@ export class UINode implements IDebugging {
     this._outlineColor = this.data.outlineColor
     this._outlineWidth = this.data.outlineWidth
     this._outlineAlpha = this.data.outlineAlpha
-    this.style = this.data.style ? { ...this.data.style } : {}
+    if (this.data.style) this.style.assign(this.data.style)
     make_debugging(this)
   }
   move_to_global(x: number, y: number, z: number): this {
