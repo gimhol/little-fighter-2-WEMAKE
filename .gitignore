@@ -11,6 +11,7 @@ node_modules
 # production
 /build
 /dist
+/dist-extension
 
 # misc
 .DS_Store
@@ -18,6 +19,9 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
+
+# extension keys
+extension/keys/
 
 npm-debug.log*
 yarn-debug.log*
