@@ -13,4 +13,5 @@ export * from "./render";
 export * from "./sounds";
 export * from "./ui";
 export * from "./zip";
+export * from "./IReadable"
 /*** AUTO EXPORT END ***/

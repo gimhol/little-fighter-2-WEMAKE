@@ -19,11 +19,11 @@ export interface IZipObject {
 
 
   /**
-   * 读取为blob
+   * 读取为二进制数据
    *
-   * @returns {Promise<Blob>} 
+   * @returns {Promise<Uint8Array>} 
    */
-  blob(): Promise<Blob>;
+  blob(): Promise<Uint8Array>;
 
 
   /**

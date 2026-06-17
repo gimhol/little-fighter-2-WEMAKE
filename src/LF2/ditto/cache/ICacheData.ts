@@ -39,7 +39,10 @@ export interface ICacheData {
   type: string;
 
   /**
-   * 缓存数据
+   * 缓存数据 (Uint8Array)
+   * 
+   * 跨平台通用字段，注意：浏览器 IndexedDB 存大量 Uint8Array 会导致内存问题，
+   * 浏览器端应优先使用 blob 字段存储
    *
    * @type {Uint8Array}
    * @memberof ICacheData

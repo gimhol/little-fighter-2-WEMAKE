@@ -1,7 +1,7 @@
 import axios from "axios";
 import json5 from "json5";
 import JSZIP from "jszip";
-import { IZip, IZipObject } from "../LF2/ditto";
+import { type IReadable, type IZip, type IZipObject } from "../LF2/ditto";
 import { is_str } from "../LF2/utils/type_check";
 
 export class ZipObject implements IZipObject {
@@ -19,11 +19,11 @@ export class ZipObject implements IZipObject {
   async json(): Promise<any> {
     return this.text().then(json5.parse);
   }
-  async blob(): Promise<Blob> {
-    return this.inner.async("blob");
+  async blob(): Promise<Uint8Array> {
+    return this.inner.async("uint8array");
   }
   async blob_url(): Promise<string> {
-    return URL.createObjectURL(await this.blob());
+    return URL.createObjectURL(new Blob([await this.array_buffer()]));
   }
   async array_buffer(): Promise<ArrayBuffer> {
     return this.inner.async('arraybuffer')
@@ -34,17 +34,13 @@ export class ZipObject implements IZipObject {
 }
 
 export class __Zip implements IZip {
-  static async read_file(file: File): Promise<IZip> {
+  static async read_file(file: IReadable): Promise<IZip> {
     const buf = await file.arrayBuffer().then((raw) => new Uint8Array(raw));
     const jszip = await JSZIP.loadAsync(buf);
     return new __Zip(file.name, jszip);
   }
   static async read_buf(name: string, buf: Uint8Array): Promise<IZip> {
     const jszip = await JSZIP.loadAsync(buf);
-    return new __Zip(name, jszip);
-  }
-  static async read_blob(name: string, blob: Blob): Promise<IZip> {
-    const jszip = await JSZIP.loadAsync(blob);
     return new __Zip(name, jszip);
   }
   static async download(
@@ -97,8 +93,8 @@ export class __Zip implements IZip {
   set(path: string, data: string): void {
     this.inner.file(path, data);
   }
-  blob(): Promise<Blob> {
-    return this.inner.generateAsync({ type: 'blob' });
+  blob(): Promise<Uint8Array> {
+    return this.inner.generateAsync({ type: 'uint8array' });
   }
   get files(): { [key in string]?: ZipObject } {
     if (this._files) return this._files;

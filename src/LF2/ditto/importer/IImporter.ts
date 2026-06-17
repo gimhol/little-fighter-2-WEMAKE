@@ -1,4 +1,4 @@
-/** BlobUrl */
+/** 资源URL类型 */
 export type BlobUrl = string;
 /** 
  * 命中URL 
@@ -17,7 +17,6 @@ export interface IImporter {
    * @memberof IImporter
    */
   import_as_json<T = any>(urls: string[]): Promise<[T, HitUrl]>;
-  import_as_blob(urls: string[]): Promise<[Blob, HitUrl]>;
   import_as_blob_url(urls: string[]): Promise<[BlobUrl, HitUrl]>;
   import_as_array_buffer(urls: string[]): Promise<[ArrayBuffer, HitUrl]>;
 }

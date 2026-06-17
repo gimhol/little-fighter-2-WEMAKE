@@ -23,10 +23,16 @@ export const __Cache: ICache = {
       .catch((_) => void 0);
   },
   async put(data: Omit<ICacheData, 'id' | 'create_date'>): Promise<number | void> {
+    // 浏览器端：将 Uint8Array 转为 Blob 存储，避免 IndexedDB 结构化克隆大数组导致内存问题
+    const record: Omit<ICacheData, 'id' | 'create_date'> = { ...data };
+    if (record.data && !record.blob) {
+      record.blob = new Blob([record.data.buffer as ArrayBuffer]);
+      record.data = null;
+    }
     return db
       .open()
       .then(() => db.tbl_lf2_data.put({
-        ...data,
+        ...record,
         create_date: Date.now(),
       }))
       .catch((_) => void 0);

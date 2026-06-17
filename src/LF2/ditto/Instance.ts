@@ -6,9 +6,10 @@ import type { ICache } from "./cache";
 import type { IFullScreen } from "./fullscreen";
 import type { IImageMgr } from "./image/IImageMgr";
 import type { IImporter } from "./importer";
+import type { IReadable } from "./IReadable";
 import type { IRender } from "./IRender";
 import type { ITimeout } from "./ITimeout";
-import { IXMLElement } from "./IXMLElement";
+import type { IXMLElement } from "./IXMLElement";
 import type { IKeyboard } from "./keyboard";
 import type { IPointings } from "./pointings";
 import type { IUINodeRenderer } from "./render/IUINodeRenderer";
@@ -16,6 +17,7 @@ import type { IWorldRenderer } from "./render/IWorldRenderer";
 import type { ISounds } from "./sounds";
 import type { IUIInputHandle } from "./ui/IEventHandle";
 import type { IZip } from "./zip";
+
 export interface IDitto extends IDittoPack {
   setup(pack: IDittoPack): void;
   vec3(x?: number, y?: number, z?: number): IVector3;
@@ -28,9 +30,8 @@ export interface IDittoPack {
   Render: IRender;
   MD5: (...args: string[]) => string;
   Zip: {
-    read_file(file: File): Promise<IZip>;
+    read_file(file: IReadable): Promise<IZip>;
     read_buf(name: string, buf: Uint8Array): Promise<IZip>;
-    read_blob(name: string, buf: Blob): Promise<IZip>;
     download(
       url: string,
       on_progress: (progress: number, size: number) => void

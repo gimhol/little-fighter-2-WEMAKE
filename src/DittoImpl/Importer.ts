@@ -120,15 +120,10 @@ export class __Importer implements IImporter {
     ]);
   }
   @PIO
-  async import_as_blob(urls: string[]): Promise<[Blob, string]> {
+  async import_as_blob_url(urls: string[]): Promise<[string, string]> {
     const url_list: string[] = get_possible_url_list(urls);
     const [resp, url] = await import_as<Blob>("blob", url_list);
-    return [resp.data, url];
-  }
-  @PIO
-  async import_as_blob_url(urls: string[]): Promise<[string, string]> {
-    const [blob, url] = await this.import_as_blob(urls);
-    return [URL.createObjectURL(blob), url];
+    return [URL.createObjectURL(resp.data), url];
   }
 
   @PIO

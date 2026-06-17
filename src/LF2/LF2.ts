@@ -378,15 +378,16 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._dispose_check('load_zip_from_info_url')
     let ret: I.IZip | null = null;
     if (exists) {
-      const { name, blob, data } = exists
-      if (blob)
-        ret = await I.Ditto.Zip.read_blob(name, blob);
-      else if (data)
-        ret = await I.Ditto.Zip.read_buf(name, data);
-      else
-        throw new Error('load_zip_from_info_url failed!')
-      this._dispose_check('load_zip_from_info_url')
-    } else {
+      if (exists.data) {
+        ret = await I.Ditto.Zip.read_buf(exists.name, exists.data);
+      } else if (exists.blob) {
+        const buf = new Uint8Array(await exists.blob.arrayBuffer());
+        ret = await I.Ditto.Zip.read_buf(exists.name, buf);
+      }
+      if (ret)
+        this._dispose_check('load_zip_from_info_url')
+    }
+    if (!ret) {
       ret = await I.Ditto.Zip.download(zip_url, (progress, full_size) =>
         this.on_loading_file(zip_url, progress, full_size),
       );
@@ -398,7 +399,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         name: md5,
         version: LF2.DATA_VERSION,
         type: LF2.DATA_TYPE,
-        blob: await ret.blob()
+        data: await ret.blob()
       });
     }
     this.emit_progress(`${url}`, 100);
