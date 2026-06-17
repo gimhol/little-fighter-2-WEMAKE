@@ -3,10 +3,10 @@ import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 import { Shaders } from "../shader";
 import { BLACK } from "./OutlineMaterial";
 
-class ShaderTextMaterial extends ShaderMaterial {
+export class TextMaterial extends ShaderMaterial {
   static readonly KIND = MaterialKind.Text;
   static create() {
-    const ret = new ShaderTextMaterial({
+    const ret = new TextMaterial({
       vertexShader: Shaders.Vertex.Normal,
       fragmentShader: Shaders.Fragment.Text,
       transparent: true,
@@ -46,7 +46,7 @@ class ShaderTextMaterial extends ShaderMaterial {
     });
     return ret;
   }
-  static reset(c: ShaderTextMaterial) {
+  static reset(c: TextMaterial) {
     c.uniforms.tex.value = void 0
     c.uniforms.x.value = 0
     c.uniforms.y.value = 0
@@ -78,4 +78,4 @@ class ShaderTextMaterial extends ShaderMaterial {
     c.uniforms.keepout.value = true
   }
 }
-MaterialFactory.register(ShaderTextMaterial)
+MaterialFactory.register(TextMaterial)

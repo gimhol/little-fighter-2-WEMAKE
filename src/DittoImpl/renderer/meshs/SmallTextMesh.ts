@@ -2,7 +2,7 @@ import type { IStyle, LF2 } from "@/LF2";
 import { BufferGeometry, Mesh, ShaderMaterial } from "three";
 import { IInstCreator, MaterialFactory, MaterialKind, MeshFactory } from "../factory";
 import { get_static_plane_geometry } from "../GeometryKeeper";
-import { BLACK } from "../materials";
+import { BLACK, TextMaterial } from "../materials";
 const TEXT_GEOMETRY = get_static_plane_geometry(1, 1);
 const TEXT_STYLE: IStyle = {
   fill_style: 'white',
@@ -10,7 +10,7 @@ const TEXT_STYLE: IStyle = {
   smoothing: false,
   scale: 1,
 }
-export class SmallTextMesh extends Mesh<BufferGeometry, ShaderMaterial> {
+export class SmallTextMesh extends Mesh<BufferGeometry, TextMaterial> {
   static get(): SmallTextMesh {
     return MeshFactory.get('SmallText', SmallTextMesh)
   }
@@ -18,7 +18,7 @@ export class SmallTextMesh extends Mesh<BufferGeometry, ShaderMaterial> {
   protected _strokeStyle: string = '';
   protected _text: string = ''
   constructor() {
-    const m = MaterialFactory.get(MaterialKind.Text, ShaderMaterial);
+    const m = MaterialFactory.get(MaterialKind.Text, TextMaterial);
     super(TEXT_GEOMETRY, m)
   }
   reset(): void {
