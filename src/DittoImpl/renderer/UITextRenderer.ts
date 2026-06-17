@@ -83,6 +83,9 @@ export class UITextRenderer {
   /** 缓存上次渲染的文本与样式版本，避免无变化时重绘 */
   protected _last_baked: string = '';
   protected _last_style_version: number = -1;
+  /** 缓存文字逻辑尺寸，用于 centering 计算 */
+  protected _text_w: number = 0;
+  protected _text_h: number = 0;
 
   constructor(owner: UINodeRenderer) {
     this.owner = owner;
@@ -149,6 +152,8 @@ export class UITextRenderer {
 
     // 分行计算尺寸
     const [lines, w, h] = split_text_to_lines(text, _ctx, style);
+    this._text_w = w;
+    this._text_h = h;
 
     // 缩放后的画布尺寸
     const cw = Math.max(1, scale * w);
@@ -204,8 +209,9 @@ export class UITextRenderer {
     if (this.ui.outlineColor != null) m.outlineColor = this.ui.outlineColor;
     if (this.ui.outlineWidth != null) m.outlineWidth = this.ui.outlineWidth;
     if (this.ui.outlineAlpha != null) m.outlineAlpha = this.ui.outlineAlpha;
-    // 根据父节点的 center 计算文字 mesh 的位置
-    const { w: nodeW, h: nodeH } = this.ui;
+    // 根据 center 计算文字 mesh 的位置，若节点尺寸为 0 则用文字自身尺寸
+    const nodeW = this.ui.w || this._text_w;
+    const nodeH = this.ui.h || this._text_h;
     const { x: cx, y: cy } = this.ui.center;
     this.mesh.position.set(
       round(nodeW * (0.5 - cx)),
