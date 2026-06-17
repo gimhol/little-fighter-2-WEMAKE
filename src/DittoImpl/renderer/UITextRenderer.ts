@@ -180,8 +180,8 @@ export class UITextRenderer {
     const ns = need_stroke(style);
 
     if (nf || ns) {
-      // 确保 fill_style 在应用前设置（不写回原对象）
-      apply_text_style({ ...style, fill_style: fill }, _ctx);
+      apply_text_style(style, _ctx);
+      if (nf) _ctx.fillStyle = fill;
       for (const { x, y, t } of lines) {
         if (nf) _ctx.fillText(t, padding_l + x, padding_t + y);
         if (ns) _ctx.strokeText(t, padding_l + x, padding_t + y);
