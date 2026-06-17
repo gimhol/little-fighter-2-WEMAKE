@@ -67,7 +67,7 @@ async function start_req<T>(url: string, responseType: ResponseType) {
   return await axios.get<T>(url, { responseType, headers });
 };
 async function import_as<T>(
-  responseType: "json" | "blob" | 'arraybuffer',
+  responseType: "json" | "blob" | "text" | 'arraybuffer',
   urls: string[],
 ): Promise<[AxiosResponse<T, any>, string]> {
 
@@ -124,6 +124,13 @@ export class __Importer implements IImporter {
     const url_list: string[] = get_possible_url_list(urls);
     const [resp, url] = await import_as<Blob>("blob", url_list);
     return [URL.createObjectURL(resp.data), url];
+  }
+
+  @PIO
+  async import_as_text(urls: string[]): Promise<[string, string]> {
+    const url_list: string[] = get_possible_url_list(urls);
+    const [resp, url] = await import_as<string>("text", url_list);
+    return [resp.data, url];
   }
 
   @PIO

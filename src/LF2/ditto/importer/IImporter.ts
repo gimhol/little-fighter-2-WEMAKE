@@ -19,4 +19,5 @@ export interface IImporter {
   import_as_json<T = any>(urls: string[]): Promise<[T, HitUrl]>;
   import_as_blob_url(urls: string[]): Promise<[BlobUrl, HitUrl]>;
   import_as_array_buffer(urls: string[]): Promise<[ArrayBuffer, HitUrl]>;
+  import_as_text(urls: string[]): Promise<[string, HitUrl]>;
 }

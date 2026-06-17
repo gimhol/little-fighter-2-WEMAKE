@@ -248,8 +248,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     if (file && tag) {
       text = await file.text();
     } else {
-      const [blob_url] = await I.Ditto.Importer.import_as_blob_url(paths);
-      text = await fetch(blob_url).then(r => r.text());
+      [text] = await I.Ditto.Importer.import_as_text(paths);
     }
     const root = I.Ditto.XML.parse(text);
     if (!root) throw new Error(`[LF2::import_xml] failed to parse: ${path}`);

@@ -152,7 +152,7 @@ export class CollisionKeeper {
     }
   }
 }
-export const collisions_keeper = (window as any).collisions_keeper = new CollisionKeeper();
+export const collisions_keeper = new CollisionKeeper();
 
 
 const HANDLER_CONFIGS: IHandlerConfig[] = [
