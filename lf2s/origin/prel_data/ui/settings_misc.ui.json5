@@ -3,7 +3,9 @@
   name: "settings_misc",
   component: [
     "ReachableGroup(misc_settings,ud)",
-    { cls: "MiscSettingsLogic" },
+    {
+      cls: "MiscSettingsLogic",
+    },
     {
       cls: "Flex",
       properties: {
@@ -22,10 +24,20 @@
       component: [
         {
           cls: "Flex",
-          properties: { direction: "row", align: "center" },
+          properties: {
+            direction: "row",
+            align: "center",
+          },
         },
-        { cls: "FocusBehavior" },
-        { cls: "HoverBehavior", properties: { behavior: "focus" } },
+        {
+          cls: "FocusBehavior",
+        },
+        {
+          cls: "HoverBehavior",
+          properties: {
+            behavior: "focus",
+          },
+        },
         "Reachable(misc_settings)",
       ],
       items: [
@@ -34,11 +46,18 @@
           center: "0.5,0.5",
           items: [
             {
-              color: "#5A73D6",
               center: "0.5,0.5",
               i18n: "$val:prefix",
-              style: { font: "18px Arial" },
-              component: [{ cls: "Label", id: "prefix_label" }],
+              style: {
+                font: "18px Arial",
+                fill_style: "#5A73D6",
+              },
+              component: [
+                {
+                  cls: "Label",
+                  id: "prefix_label",
+                },
+              ],
             },
           ],
         },
@@ -69,10 +88,17 @@
               items: [
                 {
                   center: "0.5,0.5",
-                  color: "black",
                   i18n: "0",
-                  style: { font: "18px Arial" },
-                  component: [{ cls: "Label", id: "handle_label" }],
+                  style: {
+                    font: "18px Arial",
+                    fill_style: "black",
+                  },
+                  component: [
+                    {
+                      cls: "Label",
+                      id: "handle_label",
+                    },
+                  ],
                 },
               ],
             },
@@ -86,10 +112,20 @@
       component: [
         {
           cls: "Flex",
-          properties: { direction: "row", align: "center" },
+          properties: {
+            direction: "row",
+            align: "center",
+          },
         },
-        { cls: "FocusBehavior" },
-        { cls: "HoverBehavior", properties: { behavior: "focus" } },
+        {
+          cls: "FocusBehavior",
+        },
+        {
+          cls: "HoverBehavior",
+          properties: {
+            behavior: "focus",
+          },
+        },
         "Reachable(misc_settings)",
       ],
       items: [
@@ -98,11 +134,18 @@
           center: "0.5,0.5",
           items: [
             {
-              color: "#5A73D6",
               center: "0.5,0.5",
               i18n: "$val:prefix",
-              style: { font: "18px Arial" },
-              component: [{ cls: "Label", id: "prefix_label" }],
+              style: {
+                font: "18px Arial",
+                fill_style: "#5A73D6",
+              },
+              component: [
+                {
+                  cls: "Label",
+                  id: "prefix_label",
+                },
+              ],
             },
           ],
         },
@@ -115,16 +158,20 @@
             {
               pos: "-110,0",
               center: "0.5,0.5",
-              color: "#333333",
               i18n: "$val:item0",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               pos: "110,0",
               center: "0.5,0.5",
-              color: "#333333",
               i18n: "$val:item1",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               id: "slider_handle_node",
@@ -144,10 +191,17 @@
               items: [
                 {
                   center: "0.5,0.5",
-                  color: "black",
                   i18n: "disabled",
-                  style: { font: "18px Arial" },
-                  component: [{ cls: "Label", id: "handle_label" }],
+                  style: {
+                    font: "18px Arial",
+                    fill_style: "black",
+                  },
+                  component: [
+                    {
+                      cls: "Label",
+                      id: "handle_label",
+                    },
+                  ],
                 },
               ],
             },
@@ -161,10 +215,17 @@
       component: [
         {
           cls: "Flex",
-          properties: { direction: "row", align: "center" },
+          properties: {
+            direction: "row",
+            align: "center",
+          },
         },
-        { cls: "FocusBehavior" },
-        { cls: "HoverBehavior" },
+        {
+          cls: "FocusBehavior",
+        },
+        {
+          cls: "HoverBehavior",
+        },
         "Reachable(misc_settings)",
       ],
       items: [
@@ -173,11 +234,18 @@
           center: "0.5,0.5",
           items: [
             {
-              color: "#5A73D6",
               center: "0.5,0.5",
               i18n: "$val:prefix",
-              style: { font: "18px Arial" },
-              component: [{ cls: "Label", id: "prefix_label" }],
+              style: {
+                font: "18px Arial",
+                fill_style: "#5A73D6",
+              },
+              component: [
+                {
+                  cls: "Label",
+                  id: "prefix_label",
+                },
+              ],
             },
           ],
         },
@@ -189,23 +257,29 @@
           items: [
             {
               center: "0.5,0.5",
-              color: "#333333",
               pos: "-146,0",
               i18n: "$val:item0",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
-              color: "#333333",
               i18n: "$val:item1",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
               pos: "146,0",
-              color: "#333333",
               i18n: "$val:item2",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               id: "slider_handle_node",
@@ -225,10 +299,17 @@
               items: [
                 {
                   center: "0.5,0.5",
-                  color: "black",
                   i18n: "$val:item0",
-                  style: { font: "18px Arial" },
-                  component: [{ cls: "Label", id: "handle_label" }],
+                  style: {
+                    font: "18px Arial",
+                    fill_style: "black",
+                  },
+                  component: [
+                    {
+                      cls: "Label",
+                      id: "handle_label",
+                    },
+                  ],
                 },
               ],
             },
@@ -242,10 +323,20 @@
       component: [
         {
           cls: "Flex",
-          properties: { direction: "row", align: "center" },
+          properties: {
+            direction: "row",
+            align: "center",
+          },
         },
-        { cls: "FocusBehavior" },
-        { cls: "HoverBehavior", properties: { behavior: "focus" } },
+        {
+          cls: "FocusBehavior",
+        },
+        {
+          cls: "HoverBehavior",
+          properties: {
+            behavior: "focus",
+          },
+        },
         "Reachable(misc_settings)",
       ],
       items: [
@@ -254,14 +345,26 @@
           center: "0.5,0.5",
           items: [
             {
-              color: "#5A73D6",
               center: "0.5,0.5",
               i18n: "$val:prefix",
-              style: { font: "18px Arial" },
-              component: [{ cls: "Label", id: "prefix_label" }],
+              style: {
+                font: "18px Arial",
+                fill_style: "#5A73D6",
+              },
+              component: [
+                {
+                  cls: "Label",
+                  id: "prefix_label",
+                },
+              ],
             },
           ],
-          component: [{ cls: "Label", id: "handle_label" }],
+          component: [
+            {
+              cls: "Label",
+              id: "handle_label",
+            },
+          ],
         },
         {
           id: "slider_bar_node",
@@ -271,31 +374,39 @@
           items: [
             {
               center: "0.5,0.5",
-              color: "#333333",
               pos: "-161,0",
               i18n: "$val:item0",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
-              color: "#333333",
               pos: "-55,0",
               i18n: "$val:item1",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
               pos: "55,0",
-              color: "#333333",
               i18n: "$val:item2",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
               pos: "161,0",
-              color: "#333333",
               i18n: "$val:item3",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               id: "slider_handle_node",
@@ -315,10 +426,17 @@
               items: [
                 {
                   center: "0.5,0.5",
-                  color: "black",
                   i18n: "$val:item0",
-                  style: { font: "18px Arial" },
-                  component: [{ cls: "Label", id: "handle_label" }],
+                  style: {
+                    font: "18px Arial",
+                    fill_style: "black",
+                  },
+                  component: [
+                    {
+                      cls: "Label",
+                      id: "handle_label",
+                    },
+                  ],
                 },
               ],
             },
@@ -332,10 +450,20 @@
       component: [
         {
           cls: "Flex",
-          properties: { direction: "row", align: "center" },
+          properties: {
+            direction: "row",
+            align: "center",
+          },
         },
-        { cls: "FocusBehavior" },
-        { cls: "HoverBehavior", properties: { behavior: "focus" } },
+        {
+          cls: "FocusBehavior",
+        },
+        {
+          cls: "HoverBehavior",
+          properties: {
+            behavior: "focus",
+          },
+        },
         "Reachable(misc_settings)",
       ],
       items: [
@@ -344,14 +472,26 @@
           center: "0.5,0.5",
           items: [
             {
-              color: "#5A73D6",
               center: "0.5,0.5",
               i18n: "$val:prefix",
-              style: { font: "18px Arial" },
-              component: [{ cls: "Label", id: "prefix_label" }],
+              style: {
+                font: "18px Arial",
+                fill_style: "#5A73D6",
+              },
+              component: [
+                {
+                  cls: "Label",
+                  id: "prefix_label",
+                },
+              ],
             },
           ],
-          component: [{ cls: "Label", id: "handle_label" }],
+          component: [
+            {
+              cls: "Label",
+              id: "handle_label",
+            },
+          ],
         },
         {
           id: "slider_bar_node",
@@ -361,38 +501,48 @@
           items: [
             {
               center: "0.5,0.5",
-              color: "#333333",
               pos: "-176,0",
               i18n: "$val:item0",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
-              color: "#333333",
               pos: "-88,0",
               i18n: "$val:item1",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
-              color: "#333333",
               pos: "0,0",
               i18n: "$val:item2",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
               pos: "88,0",
-              color: "#333333",
               i18n: "$val:item3",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               center: "0.5,0.5",
               pos: "176,0",
-              color: "#333333",
               i18n: "$val:item4",
-              style: { font: "18px Arial" },
+              style: {
+                font: "18px Arial",
+                fill_style: "#333333",
+              },
             },
             {
               id: "slider_handle_node",
@@ -412,10 +562,17 @@
               items: [
                 {
                   center: "0.5,0.5",
-                  color: "black",
                   i18n: "$val:item0",
-                  style: { font: "18px Arial" },
-                  component: [{ cls: "Label", id: "handle_label" }],
+                  style: {
+                    font: "18px Arial",
+                    fill_style: "black",
+                  },
+                  component: [
+                    {
+                      cls: "Label",
+                      id: "handle_label",
+                    },
+                  ],
                 },
               ],
             },
@@ -442,7 +599,9 @@
       items: [
         {
           id: "main_volume_row",
-          values: { prefix: "main_volume" },
+          values: {
+            prefix: "main_volume",
+          },
           template: "percentage_slider_row",
         },
         {
@@ -457,7 +616,9 @@
         },
         {
           id: "bgm_volume_row",
-          values: { prefix: "bgm_volume" },
+          values: {
+            prefix: "bgm_volume",
+          },
           template: "percentage_slider_row",
         },
         {
@@ -472,7 +633,9 @@
         },
         {
           id: "sfx_volume_row",
-          values: { prefix: "sfx_volume" },
+          values: {
+            prefix: "sfx_volume",
+          },
           template: "percentage_slider_row",
         },
         {
@@ -556,7 +719,7 @@
                 mode: "items_scroll_bar",
                 direction: "col",
                 visible_items: 8,
-                items_container: "id:settings_misc_view"
+                items_container: "id:settings_misc_view",
               },
             },
           ],

@@ -109,6 +109,10 @@ export class UITextRenderer {
 
     if (!txt?.text) return;
 
+    // 通过 lf2.string() 解析 i18n 文本
+    const text = this.ui.lf2.string(txt.text);
+    if (!text) return;
+
     const style: IStyle = txt.style || {};
     const scale = style.scale || 2;
     const {
@@ -122,7 +126,7 @@ export class UITextRenderer {
     apply_text_style(style, _ctx);
 
     // 分行计算尺寸
-    const [lines, w, h] = split_text_to_lines(txt.text, _ctx, style);
+    const [lines, w, h] = split_text_to_lines(text, _ctx, style);
 
     // 缩放后的画布尺寸
     const cw = Math.max(1, scale * w);
