@@ -1,12 +1,10 @@
 import { summary_mgr } from "@/LF2/entity/SummaryMgr";
+import { TextInfo } from "@/LF2/ditto/image/TextInfo";
 import { IStyle } from "../../defines/IStyle";
-import { UITextLoader } from "../UITextLoader";
 import { PlayerScore } from "./PlayerScore";
 import { UIComponent } from "./UIComponent";
 export class PlayerScoreCell extends UIComponent {
   static override readonly TAGS: string[] = ["PlayerScoreCell"];
-  private _text_loader = new UITextLoader(() => this.node)
-    .set_style(() => this.get_style())
   get kind() {
     return this.info.args[0];
   }
@@ -16,7 +14,7 @@ export class PlayerScoreCell extends UIComponent {
 
   override update(): void {
     super.on_show?.();
-    this._text_loader.set_text( this.get_txt() )
+    this.node.text = new TextInfo({ text: this.get_txt(), style: this.get_style() })
   }
 
   protected get_style(): IStyle {

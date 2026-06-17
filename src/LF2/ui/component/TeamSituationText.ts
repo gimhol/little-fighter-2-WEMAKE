@@ -1,18 +1,15 @@
 import { get_team_text_color } from "../../base/get_team_text_color";
 import { IStyle } from "../../defines/IStyle";
 import { TeamEnum } from "../../defines/TeamEnum";
+import { TextInfo } from "@/LF2/ditto/image/TextInfo";
 import { Stage } from "../../stage";
 import { floor, max } from "../../utils";
-import { UITextLoader } from "../UITextLoader";
 import { ITeamSumInfo } from "./ITeamSumInfo";
 import { SummaryLogic } from "./SummaryLogic";
 import { UIComponent } from "./UIComponent";
 
 export class TeamSituationText extends UIComponent {
   static override readonly TAGS: string[] = ["TeamSituationText"]
-
-  private _text_loader = new UITextLoader(() => this.node)
-    .set_style(() => this._style)
 
   private _team: string | null = null;
   private _style: IStyle = {
@@ -65,6 +62,7 @@ export class TeamSituationText extends UIComponent {
     let text = `Man: ${this._sum.lives}　HP: ${max(0, floor(this._sum.hp))}`;
     if (this._sum.reserve) text += `　Reserve: ${this._sum.reserve}`;
     if (this._text == text) return;
-    this._text_loader.set_text(text)
+    this._text = text;
+    this.node.text = new TextInfo({ text, style: this._style });
   }
 }

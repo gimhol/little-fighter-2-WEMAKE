@@ -1,18 +1,18 @@
 import { DifficultyNames } from "../../defines";
+import { TextInfo } from "@/LF2/ditto/image/TextInfo";
 import { IWorldCallbacks } from "../../IWorldCallbacks";
 import { IWorldDataset } from "../../IWorldDataset";
-import { UITextLoader } from "../UITextLoader";
 import { UIComponent } from "./UIComponent";
 
 export class PrefixAndDifficultyText extends UIComponent implements IWorldCallbacks {
   static override readonly TAGS: string[] = ["PrefixAndDifficultyText"]
-  private _text_loader = new UITextLoader(() => this.node).set_style({
+  private _prefix: string = '';
+  private _style = {
     fill_style: "white",
     font: "12px Arial",
     line_width: 1,
     disposable: true
-  })
-  private _prefix: string = '';
+  };
 
   override on_start(): void {
     super.on_start?.();
@@ -29,6 +29,6 @@ export class PrefixAndDifficultyText extends UIComponent implements IWorldCallba
     this.world.callbacks.del(this)
   }
   on_dataset_change<K extends keyof IWorldDataset>(key: K): void {
-    if (key === 'difficulty') this._text_loader.set_text(this.text)
+    if (key === 'difficulty') this.node.text = new TextInfo({ text: this.text, style: this._style })
   }
 }

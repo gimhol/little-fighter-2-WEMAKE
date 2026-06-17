@@ -1,8 +1,8 @@
 import { GameKey } from "@/LF2/defines";
 import { ceil, clamp, floor, max, min, round } from "@/LF2/utils";
+import { TextInfo } from "@/LF2/ditto/image/TextInfo";
 import { IUIKeyEvent } from "../IUIKeyEvent";
 import { IUIPointerEvent } from "../IUIPointerEvent";
-import { UITextLoader } from "../UITextLoader";
 import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
 const { MIN_SAFE_INTEGER: MIN, MAX_SAFE_INTEGER: MAX } = Number;
@@ -17,8 +17,6 @@ export class IntegerPicker extends UIComponent<{}, IIntegerPickerCallbacks> {
   protected _min: number = MIN;
   protected _max: number = MAX;
   protected _val: number = this._min;
-  protected _txt = new UITextLoader(() => this.node)
-    .set_style(() => this.node.text?.style ?? {})
   protected _triggers: Set<String> = new Set();
   get val(): number { return this._val }
   set val(v: number) { this.set_val(v) }
@@ -89,6 +87,6 @@ export class IntegerPicker extends UIComponent<{}, IIntegerPickerCallbacks> {
     else v = clamp(round(v), this._min, this._max)
     const p = this._val; if (p === v) return;
     this.callbacks.emit('on_val_changed')(this._val = v, p, this)
-    this._txt.set_text('' + v)
+    this.node.text = new TextInfo({ text: '' + v, style: this.node.text?.style ?? {} })
   }
 }
