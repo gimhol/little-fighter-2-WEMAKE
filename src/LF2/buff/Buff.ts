@@ -126,7 +126,7 @@ export abstract class Buff {
       const vid = this._victims[fast];
       const victim = this.world.find_entity(vid);
       if (slow !== fast) this._victims[slow] = this._victims[fast];
-      const ret = fn(attacker, victim);
+      const ret = fn.call(this, attacker, victim);
       if (ret == 'del') continue;
       ++slow;
     }
