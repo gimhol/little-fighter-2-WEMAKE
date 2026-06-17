@@ -69,6 +69,7 @@ export class Entity {
   protected readonly _position: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _prev_velocity: IVector3 = Ditto.vec3(0, 0, 0);
   protected readonly _velocity: IVector3 = Ditto.vec3(0, 0, 0);
+  protected readonly _temp_v: IVector3 = Ditto.vec3(0, 0, 0);
 
   /**
    * 影分身
@@ -985,14 +986,14 @@ export class Entity {
     if (this.frame.hp_max) this.hp -= this.frame.hp_max * this._atom_time;
 
     if (this.shaking <= 0 || 0 == this.dataset('vrest_after_shaking'))
-      for (const [k, v] of this.vrests) {
+      this.vrests.forEach((v, k) => {
         if (v.rest > 0) {
           v.rest = rf(v.rest - this._atom_time);
           if (v.rest < 0) v.rest = 0;
         } else {
           this.del_v_rest(k)
         }
-      }
+      })
 
     if (0 == this.dataset('arest_after_motionless') || this.motionless <= 0) {
       if (this.arest > 0) {
@@ -1127,10 +1128,12 @@ export class Entity {
         // 落地
         if (just_land) {
           this._position.y = this._prev_position.y = ground_y;
-          const v = this._velocity.clone();
+          this._temp_v.x = this._velocity.x
+          this._temp_v.y = this._velocity.y
+          this._temp_v.z = this._velocity.z
           this._velocity.y = 0;
           this._prev_velocity.y = 0;
-          this._state?.on_landing?.(this, v);
+          this._state?.on_landing?.(this, this._temp_v);
 
           this.play_sound(this._data.base.drop_sounds);
           if (this.throwinjury) {

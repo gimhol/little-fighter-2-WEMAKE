@@ -666,10 +666,10 @@ export class World extends WorldDataset {
     const temp_entities: Entity[] = [];
     const update_chasing = this._game_time.value % CHASING_UPDATE_INTERVAL === 0;
     const dead_buffs: [string, Buff][] = []
-    for (const [key, buff] of this.buffs) {
+    this.buffs.forEach((buff, key) => {
       buff.update(this.atom_time)
       if (buff.dead) dead_buffs.push([key, buff])
-    }
+    })
     for (const [key, buff] of dead_buffs) {
       buff.unmount();
       this.buffs.delete(key);
@@ -804,8 +804,7 @@ export class World extends WorldDataset {
       this.target_cam_pos.y = -0.5 * round(fighter_z_sum / fighter_count) - this.screen_h / 2;
     }
 
-    for (const [, c] of this.collisions)
-      collisions_keeper.handle(c);
+    this.collisions.forEach(c => collisions_keeper.handle(c));
 
     for (const entity of this._gones) {
       this.entity_map.delete(entity.id)
