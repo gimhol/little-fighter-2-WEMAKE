@@ -236,6 +236,8 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
 
   __aabb_x1?: number;
   __aabb_x2?: number;
+  __aabb_z1?: number;
+  __aabb_z2?: number;
 }
 
 export function frame_info_new(): IFrameInfo {
@@ -341,6 +343,8 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
   likelf2: any,
   __aabb_x1: any,
   __aabb_x2: any,
+  __aabb_z1: any,
+  __aabb_z2: any,
 }).forEach((value, key) => {
   frame_info_fields.set(key, value);
 });

@@ -118,9 +118,10 @@ export class Entity {
   protected _catcher: Entity | null = null;
   protected _states: States;
   protected readonly _next_frame_by_id: INextFrame = { id: '' };
-  aabb_min: number = 0;
-  aabb_max: number = 0;
-
+  aabb_min_x: number = 0;
+  aabb_max_x: number = 0;
+  aabb_min_z: number = 0;
+  aabb_max_z: number = 0;
   /**
    * 实体名称
    *
@@ -1922,8 +1923,8 @@ export class Entity {
       prev_frame: this._prev_frame.id,
       catching: this._catching?.id,
       catcher: this._catcher?.id,
-      aabb_x1: this.aabb_min,
-      aabb_x2: this.aabb_max,
+      aabb_x1: this.aabb_min_x,
+      aabb_x2: this.aabb_max_x,
       name: this._name,
       team: this._team,
       mp: this._mp,

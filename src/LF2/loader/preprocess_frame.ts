@@ -3,7 +3,7 @@ import { CondMaker } from "../dat_translator";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
 import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
 import { set_hit_flag } from "../dat_translator/set_hit_flag";
-import { EntityEnum, EntityVal as EV, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, SE, StateEnum } from "../defines";
+import { Defines, EntityEnum, EntityVal as EV, FacingFlag as FF, FrameBehavior, HitFlag, IFrameInfo, SE, StateEnum } from "../defines";
 import { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
 import read_nums from "../ui/utils/read_nums";
@@ -130,17 +130,26 @@ export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo,
     }
   }
 
-  frame.bdy?.forEach(({ x = 0, w = 0 }) => {
+  const DZL = Defines.DAFUALT_QUBE_LENGTH;
+  frame.bdy?.forEach(({ x = 0, w = 0, z = -DZL / 2, l = DZL }) => {
     if (frame.__aabb_x1 == void 0) frame.__aabb_x1 = x - frame.centerx;
     else frame.__aabb_x1 = min(frame.__aabb_x1, x - frame.centerx);
     if (frame.__aabb_x2 == void 0) frame.__aabb_x2 = x + w - frame.centerx;
     else frame.__aabb_x2 = max(frame.__aabb_x2, x + w - frame.centerx);
+    if (frame.__aabb_z1 == void 0) frame.__aabb_z1 = z;
+    else frame.__aabb_z1 = min(frame.__aabb_z1, z);
+    if (frame.__aabb_z2 == void 0) frame.__aabb_z2 = z + l;
+    else frame.__aabb_z2 = max(frame.__aabb_z2, z + l);
   })
-  frame.itr?.forEach(({ x = 0, w = 0 }) => {
+  frame.itr?.forEach(({ x = 0, w = 0, z = -DZL / 2, l = DZL }) => {
     if (frame.__aabb_x1 == void 0) frame.__aabb_x1 = x - frame.centerx;
     else frame.__aabb_x1 = min(frame.__aabb_x1, x - frame.centerx);
     if (frame.__aabb_x2 == void 0) frame.__aabb_x2 = (x + w) - frame.centerx;
     else frame.__aabb_x2 = max(frame.__aabb_x2, (x + w) - frame.centerx);
+    if (frame.__aabb_z1 == void 0) frame.__aabb_z1 = z;
+    else frame.__aabb_z1 = min(frame.__aabb_z1, z);
+    if (frame.__aabb_z2 == void 0) frame.__aabb_z2 = z + l;
+    else frame.__aabb_z2 = max(frame.__aabb_z2, z + l);
   })
   return frame
 }

@@ -1,5 +1,4 @@
 import { Callbacks, FPS } from "./base";
-import { Graves } from "./base/Graves";
 import { Background } from "./bg/Background";
 import { Buff } from "./buff/Buff";
 import { Collision, collision_get } from "./collision/Collision";
@@ -42,6 +41,7 @@ import { abs, between, clamp, floor, is_num, max, min, round, sign, Times } from
 import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355
+const x_sorter = (a: Entity, b: Entity) => a.aabb_min_x - b.aabb_min_x
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
   readonly lf2: LF2;
@@ -704,9 +704,11 @@ export class World extends WorldDataset {
         this.has_players_alive = true;
       a.update();
 
-      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0 } = a.frame;
-      a.aabb_min = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
-      a.aabb_max = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+      const { __aabb_x1: bx1 = 0, __aabb_x2: fx1 = 0, __aabb_z1: bz1 = -12, __aabb_z2: bz2 = 12 } = a.frame;
+      a.aabb_min_x = round(a.position.x + (a.facing > 0 ? bx1 : -fx1))
+      a.aabb_max_x = round(a.position.x + (a.facing > 0 ? fx1 : -bx1))
+      a.aabb_min_z = round(a.position.z + bz1)
+      a.aabb_max_z = round(a.position.z + bz2)
 
       if (a.ghosted) continue;
 
@@ -752,7 +754,7 @@ export class World extends WorldDataset {
 
     let divider = 0;
     // 先按大包围盒left的排序，这个递增 -Gim
-    this.entities.sort((a, b) => a.aabb_min - b.aabb_min)
+    this.entities.sort(x_sorter)
     temp_entities.length = 0;
     for (let i = 0; i < this.entities.length; i++) {
       const a = this.entities[i];
@@ -763,7 +765,7 @@ export class World extends WorldDataset {
         const b = temp_entities[j];
 
         // 已经不可能碰撞的实体：直接跳过，并且把 divider 往后推
-        if (a.aabb_max < b.aabb_min) {
+        if (a.aabb_max_x < b.aabb_min_x) {
           divider = j + 1;
           continue;
         }
