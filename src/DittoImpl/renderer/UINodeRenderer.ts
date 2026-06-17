@@ -12,6 +12,7 @@ import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 import { get_ninepatch_geometry, get_plane_geometry, get_static_plane_geometry } from "./GeometryKeeper";
 import { BLACK, OutlineMaterial } from "./materials/OutlineMaterial";
 import styles from "./ui_node_style.module.scss";
+import { UITextRenderer } from "./UITextRenderer";
 import type { WorldRenderer } from "./WorldRenderer";
 interface IUserData {
   w?: number;
@@ -23,22 +24,6 @@ interface IUserData {
   img?: ImageInfo<T.Texture> | null,
   nine_patch?: INinePatch,
 }
-// export class UITextRenderer {
-//   mesh: T.Mesh<T.BufferGeometry, OutlineMaterial>;
-//   owner: UINodeRenderer;
-//   ui: UINode;
-//   constructor(owner: UINodeRenderer) {
-//     this.owner = owner;
-//     this.ui = owner.ui;
-//     this.mesh = new T.Mesh(
-//       this.next_geometry(),
-//       MaterialFactory.get(MaterialKind.Outline, OutlineMaterial)
-//     )
-//     this.mesh.name = `UITextMesh`;
-//     this.mesh.material.alpha = 0;
-//     this.mesh.material.texture = void 0;
-//   }
-// }
 export class UINodeRenderer implements IUINodeRenderer {
   mesh: T.Mesh<T.BufferGeometry, OutlineMaterial>;
 
@@ -51,6 +36,7 @@ export class UINodeRenderer implements IUINodeRenderer {
   protected _input: HTMLInputElement | undefined;
   protected _txt: TextInfo<any> | null = null;
   protected _img: ImageInfo<T.Texture> | null = null;
+  protected _text_renderer: UITextRenderer | undefined;
   protected _uv_anim_angle: number = 0;
   protected _uv_anim_vec = new T.Vector2(0, 0);
   protected _old_pos: IVector3Like | null = null;
@@ -101,6 +87,11 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.mesh.material.alpha = 0;
     this.mesh.material.texture = void 0;
     this.mesh.userData.owner = ui;
+
+    if (ui.text) {
+      this._text_renderer = new UITextRenderer(this);
+      this.mesh.add(this._text_renderer.mesh);
+    }
   }
   del(child: UINodeRenderer) {
     this.mesh.remove(child.mesh)
@@ -193,12 +184,22 @@ export class UINodeRenderer implements IUINodeRenderer {
       const a = m.alpha + (this.ui.global_opacity - m.alpha) * 0.5
       this._old_alpha = m.alpha = a;
     }
+    if (this._text_renderer)
+      this._text_renderer.mesh.material.alpha = m.alpha;
 
     return this;
   }
 
   update_txt() {
     if (this._txt === this.ui.text) return;
+    this._txt = this.ui.text;
+    if (this.ui.text) {
+      if (!this._text_renderer) {
+        this._text_renderer = new UITextRenderer(this);
+        this.mesh.add(this._text_renderer.mesh);
+      }
+      this._text_renderer.update();
+    }
   }
 
   update_img() {
@@ -208,7 +209,7 @@ export class UINodeRenderer implements IUINodeRenderer {
       this._color === this.ui.color
     ) return;
 
-    const img = this.ui.image || this.ui.text;
+    const img = this.ui.image;
     this._ui_img = this.ui.data.img;
     this._img = img;
     const rgba = parse_rgba(this.ui.color)
@@ -315,10 +316,6 @@ export class UINodeRenderer implements IUINodeRenderer {
       t.offset.x += sec * x;
       t.offset.y += sec * y;
     }
-
-
-
-
     if (wrapS !== void 0) t.wrapS = (wrapS as any);
     if (wrapT !== void 0) t.wrapT = (wrapT as any);
     if (repeatX !== void 0) t.repeat.setX(repeatX);
@@ -330,6 +327,7 @@ export class UINodeRenderer implements IUINodeRenderer {
     this.update_center_and_size()
     this.update_dom();
     this.update_img();
+    this.update_txt();
     this.update_texture_attributes(dt)
     const { background, backgroundAlpha, foreground, foregroundAlpha } = this.ui
     this.mesh.material.bgColor = background;
