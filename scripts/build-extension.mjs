@@ -45,7 +45,7 @@ if (existsSync(pwamanifest)) {
   rmSync(pwamanifest);
 }
 
-// Step 5: Copy Chrome extension manifest + background.js
+// Step 5: Copy Chrome extension manifest + background.js + icons
 console.log('[ext] Copying extension files...');
 const extManifestSrc = join(EXT_SRC, 'manifest.json');
 copyFileSync(extManifestSrc, join(EXT_DIST, 'manifest.json'));
@@ -53,6 +53,12 @@ copyFileSync(extManifestSrc, join(EXT_DIST, 'manifest.json'));
 const bgSrc = join(EXT_SRC, 'background.js');
 if (existsSync(bgSrc)) {
   copyFileSync(bgSrc, join(EXT_DIST, 'background.js'));
+}
+
+// Copy PNG icons if present
+for (const icon of ['icon16.png', 'icon48.png', 'icon128.png']) {
+  const src = join(EXT_SRC, icon);
+  if (existsSync(src)) copyFileSync(src, join(EXT_DIST, icon));
 }
 const manifestOut = JSON.parse(readFileSync(join(EXT_DIST, 'manifest.json'), 'utf-8'));
 manifestOut.version = pkg.version;

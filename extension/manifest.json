@@ -4,16 +4,16 @@
   "version": "0.1.42",
   "description": "Little Fighter Wemake",
   "icons": {
-    "16": "favicon.ico",
-    "48": "favicon.ico",
-    "128": "favicon.ico"
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
   "action": {
     "default_title": "Little Fighter Wemake",
     "default_icon": {
-      "16": "favicon.ico",
-      "48": "favicon.ico",
-      "128": "favicon.ico"
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
     }
   },
   "background": {
