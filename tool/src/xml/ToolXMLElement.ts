@@ -101,7 +101,8 @@ export class ToolXMLElement implements IXMLElement {
   }
 
   set_str_attr(name: string, value: Voidable<string>): void {
-    this.set_attr(name, value);
+    if (value === void 0 || value === null) return this.del_attr(name);
+    this.set_attr(name, String(value));
   }
 
   set_num_attr(name: string, value: Voidable<number>): void {

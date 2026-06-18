@@ -66,7 +66,7 @@ export function xml_from_frame_info(xml: IXMLFactory, id: string, frame: IFrameI
     w.set_num_attr("z", frame.wpoint.z);
     w.set_str_attr("weaponact", frame.wpoint.weaponact);
     w.set_str_attr("attacking", frame.wpoint.attacking);
-    el.set_nums_attr_soft("dv", [frame.wpoint.dvx, frame.wpoint.dvy, frame.wpoint.dvz]);
+    w.set_nums_attr_soft("dv", [frame.wpoint.dvx, frame.wpoint.dvy, frame.wpoint.dvz]);
     el.insert(w);
   }
   if (frame.cpoint) {
@@ -78,7 +78,7 @@ export function xml_from_frame_info(xml: IXMLFactory, id: string, frame: IFrameI
     c.set_num_attr("injury", frame.cpoint.injury);
     c.set_num_attr("hurtable", frame.cpoint.hurtable);
     c.set_num_attr("decrease", frame.cpoint.decrease);
-    el.set_nums_attr_soft("throwv", [frame.cpoint.throwvx, frame.cpoint.throwvy, frame.cpoint.throwvz]);
+    c.set_nums_attr_soft("throwv", [frame.cpoint.throwvx, frame.cpoint.throwvy, frame.cpoint.throwvz]);
     c.set_num_attr("throwinjury", frame.cpoint.throwinjury);
     c.set_str_attr("fronthurtact", frame.cpoint.fronthurtact);
     c.set_str_attr("backhurtact", frame.cpoint.backhurtact);
