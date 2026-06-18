@@ -1,15 +1,15 @@
-import { frame_info_new, type IFrameInfo } from "../defines/IFrameInfo";
-import { bpoint_info_new, type IBpointInfo } from "../defines/IBpointInfo";
-import { chase_info_new, type IChaseInfo } from "../defines/IChaseInfo";
-import { cpoint_info_new, type ICpointInfo } from "../defines/ICpointInfo";
-import type { IFramePictureInfo } from "../defines/IFramePictureInfo";
-import type { IHitKeyCollection } from "../defines/IHitKeyCollection";
-import type { IHoldKeyCollection } from "../defines/IHoldKeyCollection";
-import type { TNextFrame } from "../defines/INextFrame";
-import { wpoint_info_new, type IWpointInfo } from "../defines/IWpointInfo";
-import { IQube } from "../defines/IQube";
-import type { IXMLElement } from "../ditto/xml/IXMLElement";
-import { xml_to_itr_info } from "./xml_to_itr_info";
+import { frame_info_new, type IFrameInfo } from "../../defines/IFrameInfo";
+import { bpoint_info_new, type IBpointInfo } from "../../defines/IBpointInfo";
+import { chase_info_new, type IChaseInfo } from "../../defines/IChaseInfo";
+import { cpoint_info_new, type ICpointInfo } from "../../defines/ICpointInfo";
+import type { IFramePictureInfo } from "../../defines/IFramePictureInfo";
+import type { IHitKeyCollection } from "../../defines/IHitKeyCollection";
+import type { IHoldKeyCollection } from "../../defines/IHoldKeyCollection";
+import type { TNextFrame } from "../../defines/INextFrame";
+import { wpoint_info_new, type IWpointInfo } from "../../defines/IWpointInfo";
+import { IQube } from "../../defines/IQube";
+import type { IXMLElement } from "../../ditto/xml/IXMLElement";
+import { xml_to_itr_info } from "../xml_to_itr_info";
 import { xml_to_bdy_info } from "./xml_to_bdy_info";
 import { xml_to_opoint } from "./xml_to_opoint";
 

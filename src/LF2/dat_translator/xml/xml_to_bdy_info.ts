@@ -1,5 +1,5 @@
-import { type IBdyInfo, bdy_info_new } from "../defines";
-import type { IXMLElement } from "../ditto";
+import { type IBdyInfo, bdy_info_new } from "../../defines";
+import type { IXMLElement } from "../../ditto";
 import { xml_to_qube } from "./xml_to_frame_info";
 
 /**

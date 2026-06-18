@@ -1,5 +1,5 @@
-import { type IOpointInfo, opoint_info_new } from "../defines";
-import type { IXMLElement } from "../ditto";
+import { type IOpointInfo, opoint_info_new } from "../../defines";
+import type { IXMLElement } from "../../ditto";
 import { xml_to_qube, xml_to_next_frame, apply_velocity_shorthand } from "./xml_to_frame_info";
 
 /**

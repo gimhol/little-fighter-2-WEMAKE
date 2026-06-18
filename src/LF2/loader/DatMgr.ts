@@ -15,7 +15,7 @@ import {
 } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
 import { is_non_blank_str, is_str } from "../utils/type_check";
-import { xml_to_bg_data } from "../dat_translator/xml_to_bg_data";
+import { xml_to_bg_data } from "../dat_translator/xml/xml_to_bg_data";
 import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
 import { preprocess_bot_data } from "./preprocess_bot_data";

@@ -1,5 +1,5 @@
-import type { IDrinkInfo } from "../defines/IDrinkInfo";
-import type { IXMLElement } from "../ditto/xml/IXMLElement";
+import type { IDrinkInfo } from "../../defines/IDrinkInfo";
+import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 
 export function xml_to_drink_info(el: IXMLElement): IDrinkInfo {
   const h = (name: string) => {

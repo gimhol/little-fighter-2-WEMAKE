@@ -1,8 +1,8 @@
-import { Defines } from "../defines/defines";
-import { bg_data_field_orders, bg_data_new, type IBgData } from "../defines/IBgData";
-import { bg_layer_field_orders, type IBgLayerInfo } from "../defines/IBgLayerInfo";
-import type { IXMLElement } from "../ditto/xml/IXMLElement";
-import { sort_key_value } from "../utils/container_help/sort_key_value";
+import { Defines } from "../../defines/defines";
+import { bg_data_field_orders, bg_data_new, type IBgData } from "../../defines/IBgData";
+import { bg_layer_field_orders, type IBgLayerInfo } from "../../defines/IBgLayerInfo";
+import type { IXMLElement } from "../../ditto/xml/IXMLElement";
+import { sort_key_value } from "../../utils/container_help/sort_key_value";
 
 /**
  * 解析 `<base>` 元素为 IBgInfo
