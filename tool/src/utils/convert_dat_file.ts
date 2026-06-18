@@ -32,7 +32,8 @@ export async function convert_dat_file(
     const ret = obj_dat_to_json(txt, index_info);
     const bot_data = BotMaker.makers.get(ret.id)?.().bot
     if (bot_data) {
-      const bot_dst_path = dst_path.replace(/(.*)\/(.*?)\.obj\.json5$/, `$1/bots/${ret.id}.bot.json5`)
+      const ext = dst_path.endsWith('.xml') ? 'xml' : 'json5';
+      const bot_dst_path = dst_path.replace(/(.*)\/(.*?)\.obj\.(?:json5|xml)$/, `$1/bots/${ret.id}.bot.${ext}`)
       indexes.bots.push({ id: bot_data.id, type: DatTypeEnum.Bot, file: bot_dst_path.replace(out_dir + "/", "") });
       await write_obj_file(bot_dst_path, bot_data);
     }

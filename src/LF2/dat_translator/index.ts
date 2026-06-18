@@ -3,7 +3,6 @@ export * from "./ColonValueReader";
 export * from "./CondMaker";
 export * from "./EditBdy";
 export * from "./FrameEditing";
-export * from "./bg_data_to_xml";
 export * from "./bots";
 export * from "./broken_piece_frames";
 export * from "./conditions";

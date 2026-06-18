@@ -94,6 +94,17 @@ export interface IConf {
   IN_LFW_INDEX?: string;
   OUT_LFW_INDEX?: string;
   LFW_PICKS?: string;
+
+  /**
+   * 输出格式后缀（*.bg.${OUT_TYPE} / *.obj.${OUT_TYPE} / *.stage.${OUT_TYPE}）
+   * 
+   * 例如：设 `"xml"` 则输出 `*.bg.xml`
+   * 
+   * 默认不设（undefined）时输出 JSON5（*.bg.json5 / *.obj.json5 / *.stage.json5）
+   * 
+   * @type {string}
+   */
+  OUT_TYPE?: string;
 }
 interface IClazz<C extends Object = {}, V extends Object = {}> {
   new(...args: any): C;
@@ -136,6 +147,8 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   OUT_DATA_NAME: { type: String, default: 'data.zip' },
   OUT_PREL_NAME: { type: String, default: 'prel.zip' },
   OUT_FULL_NAME: { type: String, default: 'lfw.full.zip' },
+
+  OUT_TYPE: { type: String },
 
   FFMPEG_CMD: {
     type: String,

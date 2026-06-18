@@ -83,7 +83,8 @@ export async function make_data() {
       TMP_DAT_DIR,
       IN_LF2_DIR,
       src_path,
-      suffix
+      suffix,
+      conf().OUT_TYPE ?? void 0,
     );
     const cache_info = await cache_infos.get_info(src_path, [dst_path]);
     // TODO: 日后将bot文件另外生成吧……
