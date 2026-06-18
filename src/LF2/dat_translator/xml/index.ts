@@ -7,6 +7,7 @@ export * from "./xml_to_entity_data";
 export * from "./xml_to_frame_info";
 export * from "./xml_to_itr_info";
 export * from "./xml_to_opoint";
+export * from "./xml_to_opoint_multi";
 export * from "./xml_to_stage_info";
 
 /*** XML Serializers (data → XML) ***/
@@ -21,6 +22,7 @@ export * from "./xml_from_json";
 export * from "./xml_from_key_collection";
 export * from "./xml_from_next_frame";
 export * from "./xml_from_opoint";
+export * from "./xml_from_opoint_multi";
 export * from "./xml_from_stage_info";
 export * from "./xml_from_write";
 /*** AUTO EXPORT END ***/

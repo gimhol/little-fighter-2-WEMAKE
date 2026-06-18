@@ -1,7 +1,8 @@
-import { type IOpointInfo, IOpointMulti, opoint_info_new } from "../../defines/IOpointInfo";
+import { type IOpointInfo, type IOpointMulti, opoint_info_new } from "../../defines/IOpointInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import { apply_velocity_shorthand, merge_by_tag, xml_to_qube } from "./xml_to_frame_info";
 import { xml_to_next_frame } from "./xml_to_next_frame";
+import { xml_to_opoint_multi } from "./xml_to_opoint_multi";
 
 /**
  * 解析 `<opoint>` 生成点
@@ -18,20 +19,8 @@ export function xml_to_opoint(el: IXMLElement): IOpointInfo {
   }
   const multi = el.num_attr("multi");
   if (multi !== void 0) o.multi = multi;
-
-  const multi2 = merge_by_tag<Partial<IOpointMulti>>(el, 'multi', (el) => {
-    const ret: Partial<IOpointMulti> = {};
-    const type = el.num_attr('type')
-    if (type == void 0) return ret;
-    const skip_zero = el.bool_attr('skip_zero')
-    if (skip_zero !== void 0) ret.skip_zero = skip_zero;
-    const min = el.num_attr('min')
-    if (min !== void 0) ret.min = min;
-    const max = el.num_attr('min')
-    if (max !== void 0) ret.max = max;
-    return ret;
-  })
-  if (multi2 !== void 0) o.multi = multi2 as IOpointMulti; // FIXME
+  const multiEl = el.first_by_tag("multi");
+  if (multiEl) o.multi = xml_to_opoint_multi(multiEl);
 
   const spreading = el.num_attr("spreading");
   if (spreading !== void 0) o.spreading = spreading;
