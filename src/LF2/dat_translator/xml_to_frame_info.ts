@@ -1,22 +1,22 @@
 import { frame_info_new, type IFrameInfo } from "../defines/IFrameInfo";
-import { bdy_info_new, type IBdyInfo } from "../defines/IBdyInfo";
 import { bpoint_info_new, type IBpointInfo } from "../defines/IBpointInfo";
 import { chase_info_new, type IChaseInfo } from "../defines/IChaseInfo";
 import { cpoint_info_new, type ICpointInfo } from "../defines/ICpointInfo";
 import type { IFramePictureInfo } from "../defines/IFramePictureInfo";
 import type { IHitKeyCollection } from "../defines/IHitKeyCollection";
 import type { IHoldKeyCollection } from "../defines/IHoldKeyCollection";
-import { itr_info_new, type IItrInfo } from "../defines/IItrInfo";
 import type { TNextFrame } from "../defines/INextFrame";
-import { opoint_info_new, type IOpointInfo } from "../defines/IOpointInfo";
 import { wpoint_info_new, type IWpointInfo } from "../defines/IWpointInfo";
 import { IQube } from "../defines/IQube";
 import type { IXMLElement } from "../ditto/xml/IXMLElement";
+import { xml_to_itr_info } from "./xml_to_itr_info";
+import { xml_to_bdy_info } from "./xml_to_bdy_info";
+import { xml_to_opoint } from "./xml_to_opoint";
 
 /**
  * 解析 `<next>` / `<on_dead>` 等跳转目标
  */
-function xml_to_next_frame(el: IXMLElement): TNextFrame {
+export function xml_to_next_frame(el: IXMLElement): TNextFrame {
   const nf: TNextFrame = { id: el.str_attr("id") ?? "" };
   const wait = el.num_attr("wait");
   if (wait !== void 0) nf.wait = wait;
@@ -66,7 +66,7 @@ function parse_rect_qube(el: IXMLElement): Partial<IQube> {
 /**
  * 应用 dv/acc/vm/ctrl 快捷属性到目标对象
  */
-function apply_velocity_shorthand(el: IXMLElement, target: Record<string, any>): void {
+export function apply_velocity_shorthand(el: IXMLElement, target: Record<string, any>): void {
   const dv = el.nums_attr_soft("dv");
   if (dv) {
     if (dv[0] !== void 0) target.dvx = dv[0];
@@ -96,7 +96,7 @@ function apply_velocity_shorthand(el: IXMLElement, target: Record<string, any>):
 /**
  * 解析 qube 基类属性（x, y, w, h, z, l），支持 rect/qube 快捷属性
  */
-function xml_to_qube(el: IXMLElement): Partial<IQube> {
+export function xml_to_qube(el: IXMLElement): Partial<IQube> {
   const shortcut = parse_rect_qube(el);
   return {
     x: el.num_attr("x") ?? shortcut.x ?? 0,
@@ -106,62 +106,6 @@ function xml_to_qube(el: IXMLElement): Partial<IQube> {
     z: el.num_attr("z") ?? shortcut.z,
     l: el.num_attr("l") ?? shortcut.l,
   };
-}
-
-/**
- * 解析 `<bdy>` 碰撞体
- */
-function xml_to_bdy(el: IXMLElement): IBdyInfo {
-  return Object.assign(bdy_info_new(), xml_to_qube(el), {
-    kind: el.num_attr("kind") ?? 0,
-    hit_flag: el.num_attr("hit_flag"),
-    prefab_id: el.str_attr("prefab_id"),
-    code: el.str_attr("code"),
-  });
-}
-
-/**
- * 解析 `<itr>` 攻击框
- */
-function xml_to_itr(el: IXMLElement): IItrInfo {
-  const itr = Object.assign(itr_info_new(), xml_to_qube(el), {
-    kind: el.num_attr("kind") ?? 0,
-    injury: el.num_attr("injury"),
-    bdefend: el.num_attr("bdefend"),
-    motionless: el.num_attr("motionless"),
-    shaking: el.num_attr("shaking"),
-    dvx: el.num_attr("dvx"),
-    dvy: el.num_attr("dvy"),
-    dvz: el.num_attr("dvz"),
-    effect: el.num_attr("effect"),
-    catchingact: el.num_attr("catchingact"),
-    caughtact: el.num_attr("caughtact"),
-    hit_flag: el.num_attr("hit_flag"),
-    on_hit_ground: merge_by_tag(el, "on_hit_ground", xml_to_next_frame),
-    actions: void 0,
-  });
-  apply_velocity_shorthand(el, itr);
-  return itr;
-}
-
-/**
- * 解析 `<opoint>` 生成点
- */
-function xml_to_opoint(el: IXMLElement): IOpointInfo {
-  const o = Object.assign(opoint_info_new(), xml_to_qube(el));
-  const oid = el.str_attr("oid");
-  if (oid !== void 0) o.oid = oid;
-  const actionEl = el.first_by_tag("action");
-  if (actionEl) o.action = xml_to_next_frame(actionEl);
-  const multi = el.num_attr("multi");
-  if (multi !== void 0) o.multi = multi;
-  const spreading = el.num_attr("spreading");
-  if (spreading !== void 0) o.spreading = spreading;
-  o.dvx = el.num_attr("dvx") ?? 0;
-  o.dvy = el.num_attr("dvy") ?? 0;
-  o.dvz = el.num_attr("dvz") ?? 0;
-  apply_velocity_shorthand(el, o);
-  return o;
 }
 
 /**
@@ -242,7 +186,7 @@ function xml_to_key_collection(el: IXMLElement): Record<string, TNextFrame> {
  * @param parser  解析函数
  * @return 合并后的解析结果，无匹配时 undefined
  */
-function merge_by_tag<T extends Record<string, any>>(
+export function merge_by_tag<T extends Record<string, any>>(
   el: IXMLElement,
   tag: string,
   parser: (child: IXMLElement) => T,
@@ -314,9 +258,9 @@ export function xml_to_frame_info(el: IXMLElement): IFrameInfo {
   ret.on_exhaustion = merge_by_tag(el, "on_exhaustion", xml_to_next_frame);
 
   // arrays (仅非空时覆盖)
-  const bdys = merge_array_by_tag(el, "bdy", xml_to_bdy);
+  const bdys = merge_array_by_tag(el, "bdy", xml_to_bdy_info);
   if (bdys.length) ret.bdy = bdys;
-  const itrs = merge_array_by_tag(el, "itr", xml_to_itr);
+  const itrs = merge_array_by_tag(el, "itr", xml_to_itr_info);
   if (itrs.length) ret.itr = itrs;
   const opoints = merge_array_by_tag(el, "opoint", xml_to_opoint);
   if (opoints.length) ret.opoint = opoints;

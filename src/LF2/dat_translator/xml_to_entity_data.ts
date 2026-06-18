@@ -5,10 +5,14 @@ import { IEntityData } from "../defines/IEntityData";
 import type { TNextFrame } from "../defines/INextFrame";
 import type { IXMLElement } from "../ditto/xml/IXMLElement";
 import { xml_to_frame_info } from "./xml_to_frame_info";
+import { xml_to_bdy_info } from "./xml_to_bdy_info";
+import { xml_to_itr_info } from "./xml_to_itr_info";
+import { xml_to_drink_info } from "./xml_to_drink_info";
+import { xml_to_armor_info } from "./xml_to_armor_info";
 
 /**
- * 解析 `<info>`（IEntityInfo）
- * @param {IXMLElement} el - 包含 info 属性的元素
+ * 解析 `<base>`（IEntityInfo）
+ * @param {IXMLElement} el - 包含 base 属性的元素
  * @return {IEntityInfo}
  */
 export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
@@ -27,15 +31,27 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   ret.ce = el.num_attr("ce");
   ret.weight = el.num_attr("weight");
   ret.strength = el.num_attr("strength");
-  ret.bounce_y = el.num_attr("bounce_y");
-  ret.bounce_x = el.num_attr("bounce_x");
-  ret.bounce_z = el.num_attr("bounce_z");
-  ret.bounce_min_y = el.num_attr("bounce_min_y");
-  ret.bounce_min_x = el.num_attr("bounce_min_x");
-  ret.bounce_min_z = el.num_attr("bounce_min_z");
-  ret.fast_vy = el.num_attr("fast_vy");
-  ret.fast_vx = el.num_attr("fast_vx");
-  ret.fast_vz = el.num_attr("fast_vz");
+  // bounce / bounce_min / fast 支持 nums_attr_soft 快捷属性 (x,y,z 顺序)
+  const apply3 = (prefix: string, keyX: keyof IEntityInfo, keyY: keyof IEntityInfo, keyZ: keyof IEntityInfo) => {
+    const nums = el.nums_attr_soft(prefix);
+    if (nums) {
+      if (nums[0] !== void 0) (ret as any)[keyY] = nums[0];
+      if (nums[1] !== void 0) (ret as any)[keyX] = nums[1];
+      if (nums[2] !== void 0) (ret as any)[keyZ] = nums[2];
+    }
+  };
+  apply3("bounce", "bounce_x", "bounce_y", "bounce_z");
+  apply3("bounce_min", "bounce_min_x", "bounce_min_y", "bounce_min_z");
+  apply3("fast", "fast_vx", "fast_vy", "fast_vz");
+  ret.bounce_y = el.num_attr("bounce_y") ?? ret.bounce_y;
+  ret.bounce_x = el.num_attr("bounce_x") ?? ret.bounce_x;
+  ret.bounce_z = el.num_attr("bounce_z") ?? ret.bounce_z;
+  ret.bounce_min_y = el.num_attr("bounce_min_y") ?? ret.bounce_min_y;
+  ret.bounce_min_x = el.num_attr("bounce_min_x") ?? ret.bounce_min_x;
+  ret.bounce_min_z = el.num_attr("bounce_min_z") ?? ret.bounce_min_z;
+  ret.fast_vy = el.num_attr("fast_vy") ?? ret.fast_vy;
+  ret.fast_vx = el.num_attr("fast_vx") ?? ret.fast_vx;
+  ret.fast_vz = el.num_attr("fast_vz") ?? ret.fast_vz;
   ret.drop_hurt = el.num_attr("drop_hurt");
   ret.resting_max = el.num_attr("resting_max");
 
@@ -53,8 +69,16 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   if (filesEl) {
     const files: Record<string, any> = {};
     for (const f of filesEl.children_by_tag("file")) {
-      const name = f.str_attr("name") ?? "";
-      files[name] = { tex: f.str_attr("tex") ?? name, x: f.num_attr("x") ?? 0, y: f.num_attr("y") ?? 0, w: f.num_attr("w") ?? 0, h: f.num_attr("h") ?? 0 };
+      const name = f.str_attr("name") ?? f.str_attr("id") ?? "";
+      files[name] = {
+        id: f.str_attr("id") ?? name,
+        path: f.str_attr("path") ?? f.str_attr("src") ?? "",
+        row: f.num_attr("row"),
+        col: f.num_attr("col"),
+        cell_w: f.num_attr("cell_w"),
+        cell_h: f.num_attr("cell_h"),
+        variants: f.strs_attr("variants"),
+      };
     }
     if (Object.keys(files).length) ret.files = files as any;
   }
@@ -70,38 +94,11 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
     if (Object.keys(portraits).length) ret.portraits = portraits as any;
   }
 
-  // drink
+  // drink / armor
   const drinkEl = el.first_by_tag("drink");
-  if (drinkEl) {
-    ret.drink = {
-      hp_h_total: drinkEl.num_attr("hp_h_total"),
-      hp_h_value: drinkEl.num_attr("hp_h_value"),
-      hp_h_ticks: drinkEl.num_attr("hp_h_ticks"),
-      hp_r_total: drinkEl.num_attr("hp_r_total"),
-      hp_r_value: drinkEl.num_attr("hp_r_value"),
-      hp_r_ticks: drinkEl.num_attr("hp_r_ticks"),
-      mp_h_total: drinkEl.num_attr("mp_h_total"),
-      mp_h_value: drinkEl.num_attr("mp_h_value"),
-      mp_h_ticks: drinkEl.num_attr("mp_h_ticks"),
-    };
-  }
-
-  // armor
+  if (drinkEl) ret.drink = xml_to_drink_info(drinkEl);
   const armorEl = el.first_by_tag("armor");
-  if (armorEl) {
-    ret.armor = {
-      type: armorEl.str_attr("type") ?? armorEl.num_attr("type") ?? 0,
-      toughness: armorEl.num_attr("toughness") ?? 1,
-      hit_sounds: armorEl.strs_attr("hit_sounds"),
-      dead_sounds: armorEl.strs_attr("dead_sounds"),
-      fireproof: armorEl.num_attr("fireproof"),
-      antifreeze: armorEl.num_attr("antifreeze"),
-      fulltime: armorEl.bool_attr("fulltime"),
-      injury_ratio: armorEl.num_attr("injury_ratio"),
-      shaking_ratio: armorEl.num_attr("shaking_ratio"),
-      motionless_ratio: armorEl.num_attr("motionless_ratio"),
-    };
-  }
+  if (armorEl) ret.armor = xml_to_armor_info(armorEl);
 
   // dataset overrides
   for (const child of el.children_by_tag("dataset")) {
@@ -121,9 +118,9 @@ export function xml_to_entity_data(el: IXMLElement): IEntityData {
   const id = el.attr("id") ?? "";
   const name = el.str_attr("name");
 
-  // info (优先 <info> 子元素，否则从自身属性）
-  const infoEl = el.first_by_tag("info");
-  const info = infoEl ? xml_to_entity_info(infoEl) : xml_to_entity_info(el);
+  // base (优先 <base> 子元素，否则从自身属性）
+  const baseEl = el.first_by_tag("base");
+  const info = baseEl ? xml_to_entity_info(baseEl) : xml_to_entity_info(el);
   if (name) info.name = name;
 
   // frames
@@ -133,40 +130,19 @@ export function xml_to_entity_data(el: IXMLElement): IEntityData {
     frames[fi.id] = fi;
   }
 
-  // prefabs
+  // prefabs (实体级别的 bdy/itr 自动转为 prefab)
   const bdy_prefabs: Record<string, any> = {};
-  for (const child of el.children_by_tag("bdy_prefab")) {
-    const pid = child.str_attr("id") ?? "";
-    bdy_prefabs[pid] = {
-      id: pid,
-      x: child.num_attr("x"),
-      y: child.num_attr("y"),
-      w: child.num_attr("w"),
-      h: child.num_attr("h"),
-      z: child.num_attr("z"),
-      l: child.num_attr("l"),
-      kind: child.num_attr("kind"),
-      hit_flag: child.num_attr("hit_flag"),
-    };
+  for (const child of el.children_by_tag("bdy")) {
+    const prefab = xml_to_bdy_info(child) as any;
+    prefab.id = child.str_attr("id") ?? "";
+    bdy_prefabs[prefab.id] = prefab;
   }
 
   const itr_prefabs: Record<string, any> = {};
-  for (const child of el.children_by_tag("itr_prefab")) {
-    const pid = child.str_attr("id") ?? "";
-    itr_prefabs[pid] = {
-      id: pid,
-      x: child.num_attr("x"),
-      y: child.num_attr("y"),
-      w: child.num_attr("w"),
-      h: child.num_attr("h"),
-      z: child.num_attr("z"),
-      l: child.num_attr("l"),
-      kind: child.num_attr("kind"),
-      injury: child.num_attr("injury"),
-      dvx: child.num_attr("dvx"),
-      dvy: child.num_attr("dvy"),
-      dvz: child.num_attr("dvz"),
-    };
+  for (const child of el.children_by_tag("itr")) {
+    const prefab = xml_to_itr_info(child) as any;
+    prefab.id = child.str_attr("id") ?? "";
+    itr_prefabs[prefab.id] = prefab;
   }
 
   // indexes
