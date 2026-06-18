@@ -75,10 +75,10 @@ function build_phase(xml: IXMLFactory, p: IStageInfo["phases"][number]): IXMLEle
 }
 
 /**
- * 序列化关卡信息列表为 XML
+ * 序列化关卡信息列表为 XML（<stages> 包裹多个 <stage>）
  */
 export function xml_from_stage_info(xml: IXMLFactory, stages: IStageInfo[]): string {
-  let out = "";
+  const root = xml.create("stages");
   for (const s of stages) {
     const el = xml.create("stage");
     el.set_attr("id", s.id);
@@ -97,7 +97,7 @@ export function xml_from_stage_info(xml: IXMLFactory, stages: IStageInfo[]): str
       el.insert(build_phase(xml, phase));
     }
 
-    out += el.stringify();
+    root.insert(el);
   }
-  return out;
+  return root.stringify();
 }

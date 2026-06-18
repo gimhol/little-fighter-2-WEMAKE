@@ -4,6 +4,7 @@ import { accessSync, mkdirSync, writeFileSync } from "fs";
 import { parase_indexes } from "../../../src/LF2/dat_translator/parase_indexes";
 import type { IDataLists, ITempDataLists } from "../../../src/LF2/defines/IDataLists";
 import { DatTypeEnum } from "../../../src/LF2/defines/IDatIndex";
+import { conf } from "../conf";
 import { is_file } from "./is_file";
 import { debug, info } from "./log";
 import { read_text_file } from "./read_text_file";
@@ -14,7 +15,7 @@ export async function convert_data_txt(src_dir: string, out_dir: string, index_f
   src_dir = ${JSON.stringify(src_dir)},
   out_dir = ${JSON.stringify(out_dir)}, 
 )`)
-  const suffix = 'json5'
+  const suffix = conf().OUT_TYPE ?? 'json5'
   try {
     accessSync(index_file, X_OK)
   } catch (e) {
@@ -40,12 +41,12 @@ export async function convert_data_txt(src_dir: string, out_dir: string, index_f
 
   const text = await read_text_file(index_file);
   debug(`[parse_indexes] text:\n`, text)
-  const indexes = parase_indexes(text, suffix);
+  const indexes = parase_indexes(text, suffix as 'json5' | 'json' | 'xml');
   if (!indexes.stages.length && await is_file(stage_path)) {
     indexes.stages = [{
       id: "default_stages",
       type: DatTypeEnum.Stage,
-      file: "data/stage.stage.json5",
+      file: `data/stage.stage.${suffix}`,
       src: "data/stage.dat"
     }]
   }
@@ -53,7 +54,7 @@ export async function convert_data_txt(src_dir: string, out_dir: string, index_f
   return indexes;
 }
 export async function write_index_file(indexes: IDataLists, out_dir: string) {
-  const suffix = 'json5'
+  const suffix = conf().OUT_TYPE ?? 'json5'
   const dst_path = `${out_dir}/data/data.index.${suffix}`;
   await write_obj_file(dst_path, indexes);
 }

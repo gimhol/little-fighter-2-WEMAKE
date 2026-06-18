@@ -16,6 +16,8 @@ import {
 import { Randoming } from "../helper/Randoming";
 import { is_non_blank_str, is_str } from "../utils/type_check";
 import { xml_to_bg_data } from "../dat_translator/xml/xml_to_bg_data";
+import { xml_to_entity_data } from "../dat_translator/xml/xml_to_entity_data";
+import { xml_to_stage_info_list } from "../dat_translator/xml/xml_to_stage_info";
 import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
 import { preprocess_bot_data } from "./preprocess_bot_data";
@@ -165,7 +167,9 @@ class Inner {
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.emit_progress(`${file}`, 0);
-        const raw = await this.lf2.import_json<IEntityData>(file, true).then(r => r[0])
+        const raw = file.endsWith(".obj.xml") || file.endsWith(".xml")
+          ? xml_to_entity_data((await this.lf2.import_xml(file, true))[0])
+          : await this.lf2.import_json<IEntityData>(file, true).then(r => r[0]);
         const cooked = await this._cook_data(raw) as IEntityData;
         this._add_obj(id, cooked);
         if (id != file) this._add_obj(file, cooked);
@@ -191,9 +195,11 @@ class Inner {
     const stages: IStageInfo[] = []
     for (const stage_file of data.stages) {
       this.lf2.emit_progress(`${stage_file.file}`, 0);
-      const stage_datas = await this.lf2.import_json<IStageInfo[]>(stage_file.file, true)
-        .then(r => r[0])
-        .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
+      const stage_datas = stage_file.file.endsWith(".xml") || stage_file.file.endsWith(".stage.xml")
+        ? xml_to_stage_info_list((await this.lf2.import_xml(stage_file.file, true))[0])
+        : await this.lf2.import_json<IStageInfo[]>(stage_file.file, true)
+          .then(r => r[0])
+          .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
       this.lf2.emit_progress(`${stage_file.file}`, 100);
       for (const stage of stage_datas) {
         stages.push(preprocess_stage(stage))

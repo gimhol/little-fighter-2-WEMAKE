@@ -1,24 +1,11 @@
 import type { IEntityData } from "../../defines/IEntityData";
 import type { IEntityInfo } from "../../defines/IEntityInfo";
-import type { IFrameInfo } from "../../defines/IFrameInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { IXMLFactory } from "./xml_from_bg_data";
-
-/**
- * 将 data 的属性写入 elem 的 XML 属性中
- */
-function writeAttrs(elem: IXMLElement, data: Record<string, unknown>, keys?: string[]): void {
-  const ks = keys ?? Object.keys(data);
-  for (const k of ks) {
-    const v = (data as any)[k];
-    if (v === undefined || v === null || v === "") continue;
-    if (Array.isArray(v)) {
-      elem.set_strs_attr(k, v.map(String));
-    } else {
-      elem.set_str_attr(k, String(v));
-    }
-  }
-}
+import type { IXMLFactory } from "./xml_from_bg_data";
+import { writeXmlAttrs } from "./xml_from_write";
+import { xml_from_frame_info } from "./xml_from_frame_info";
+import { xml_from_drink_info } from "./xml_from_drink_info";
+import { xml_from_armor_info } from "./xml_from_armor_info";
 
 const BASE_NUM_KEYS: (keyof IEntityInfo)[] = [
   "type", "ce", "weight", "strength",
@@ -75,7 +62,7 @@ function build_base(xml: IXMLFactory, base: IEntityInfo): IXMLElement {
     for (const [name, p] of Object.entries(base.portraits)) {
       const pEl = xml.create("portrait");
       pEl.set_str_attr("name", name);
-      writeAttrs(pEl, p as any);
+      writeXmlAttrs(pEl, p as any);
       ptsEl.insert(pEl);
     }
     el.insert(ptsEl);
@@ -83,92 +70,12 @@ function build_base(xml: IXMLFactory, base: IEntityInfo): IXMLElement {
 
   // drink
   if (base.drink) {
-    const d = xml.create("drink");
-    writeAttrs(d, base.drink as any);
-    el.insert(d);
+    el.insert(xml_from_drink_info(xml, base.drink));
   }
 
   // armor
   if (base.armor) {
-    const a = xml.create("armor");
-    writeAttrs(a, base.armor as any);
-    el.insert(a);
-  }
-
-  return el;
-}
-
-function build_frame(xml: IXMLFactory, id: string, frame: IFrameInfo): IXMLElement | null {
-  const el = xml.create("frame");
-  el.set_attr("id", id);
-
-  // pic (required for output)
-  if (!frame.pic) return null;
-  const pic = xml.create("pic");
-  writeAttrs(pic, frame.pic as any, ["tex", "x", "y", "w", "h"]);
-  el.insert(pic);
-
-  // next
-  if (frame.next) {
-    const n = xml.create("next");
-    writeAttrs(n, frame.next as any);
-    el.insert(n);
-  }
-
-  // hit / hold
-  if (frame.hit) {
-    const h = xml.create("hit");
-    writeAttrs(h, frame.hit as any);
-    el.insert(h);
-  }
-  if (frame.hold) {
-    const h = xml.create("hold");
-    writeAttrs(h, frame.hold as any);
-    el.insert(h);
-  }
-
-  // bpoint / wpoint / cpoint (single)
-  if (frame.bpoint) {
-    const b = xml.create("bpoint");
-    writeAttrs(b, frame.bpoint as any);
-    el.insert(b);
-  }
-  if (frame.wpoint) {
-    const w = xml.create("wpoint");
-    writeAttrs(w, frame.wpoint as any);
-    el.insert(w);
-  }
-  if (frame.cpoint) {
-    const c = xml.create("cpoint");
-    writeAttrs(c, frame.cpoint as any);
-    el.insert(c);
-  }
-
-  // bdy[]
-  if (frame.bdy) {
-    for (const b of frame.bdy) {
-      const bEl = xml.create("bdy");
-      writeAttrs(bEl, b as any);
-      el.insert(bEl);
-    }
-  }
-
-  // itr[]
-  if (frame.itr) {
-    for (const i of frame.itr) {
-      const iEl = xml.create("itr");
-      writeAttrs(iEl, i as any);
-      el.insert(iEl);
-    }
-  }
-
-  // opoint[]
-  if (frame.opoint) {
-    for (const o of frame.opoint) {
-      const oEl = xml.create("opoint");
-      writeAttrs(oEl, o as any);
-      el.insert(oEl);
-    }
+    el.insert(xml_from_armor_info(xml, base.armor));
   }
 
   return el;
@@ -177,7 +84,7 @@ function build_frame(xml: IXMLFactory, id: string, frame: IFrameInfo): IXMLEleme
 function build_prefab(xml: IXMLFactory, tag: string, id: string, obj: Record<string, unknown>): IXMLElement {
   const el = xml.create(tag);
   el.set_attr("id", id);
-  writeAttrs(el, obj);
+  writeXmlAttrs(el, obj);
   return el;
 }
 
@@ -194,12 +101,12 @@ export function xml_from_entity_data(xml: IXMLFactory, data: IEntityData): strin
   // on_dead / on_exhaustion
   if (data.on_dead) {
     const n = xml.create("on_dead");
-    writeAttrs(n, data.on_dead as any);
+    writeXmlAttrs(n, data.on_dead as any);
     root.insert(n);
   }
   if (data.on_exhaustion) {
     const n = xml.create("on_exhaustion");
-    writeAttrs(n, data.on_exhaustion as any);
+    writeXmlAttrs(n, data.on_exhaustion as any);
     root.insert(n);
   }
 
@@ -221,7 +128,7 @@ export function xml_from_entity_data(xml: IXMLFactory, data: IEntityData): strin
 
   // frames
   for (const [fid, frame] of Object.entries(data.frames)) {
-    const fEl = build_frame(xml, fid, frame);
+    const fEl = xml_from_frame_info(xml, fid, frame);
     if (fEl) root.insert(fEl);
   }
 

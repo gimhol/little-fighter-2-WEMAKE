@@ -3,6 +3,20 @@ import { ALL_ARMOR_ENUM, ARMOR_ENUM_DESC_MAP, ARMOR_ENUM_LABEL_MAP, ArmorEnum } 
 
 export interface IArmorInfo {
   /**
+   * 护甲 ID（用于引用 / 标识）
+   *
+   * @type {?string}
+   */
+  id?: string;
+
+  /**
+   * 护甲名称（可读名）
+   *
+   * @type {?string}
+   */
+  name?: string;
+
+  /**
    * 护甲被击中的声音
    * 
    * @type {?string[]}
@@ -93,6 +107,8 @@ export interface IArmorInfo {
 }
 
 export const armor_Info_fields = fields<Partial<IArmorInfo>>({
+  id: int('ID'),
+  name: int('名称'),
   type: int("护甲类型", `
     决定了护甲耐久会根据itr的哪个值来降低
     `.trim(), {

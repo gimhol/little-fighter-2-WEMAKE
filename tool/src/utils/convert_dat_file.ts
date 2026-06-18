@@ -24,7 +24,6 @@ export async function convert_dat_file(
 )`)
   dst_path = dst_path.replace(/\\/g, '/');
   out_dir = out_dir.replace(/\\/g, '/');
-
   const index_file_value = dst_path.replace(out_dir + "/", "");
   let index_info = indexes.objects.find((v) => index_file_value === v.file.replace(/\\/g, '/'))
   if (index_info) {

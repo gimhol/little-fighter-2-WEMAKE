@@ -7,7 +7,7 @@ import { match_hash_end } from "../utils/string_parser/match_hash_end";
 
 export function parase_indexes(
   text: string | undefined | null,
-  suffix: 'json5' | 'json'
+  suffix: 'json5' | 'json' | 'xml'
 ): ITempDataLists {
   if (!text)
     throw new Error('[read_indexes] failed, text got empty!')

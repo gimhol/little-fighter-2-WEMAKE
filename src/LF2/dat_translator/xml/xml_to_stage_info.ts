@@ -86,3 +86,20 @@ export function xml_to_stage_info(el: IXMLElement): IStageInfo {
     group: el.strs_attr("group"),
   };
 }
+
+/**
+ * 解析 <stages> → 返回 IStageInfo 列表
+ *
+ * 如果 XML 根是 <stages>，迭代 <stage> 子元素；
+ * 如果根就是 <stage>，回退到单元素解析
+ */
+export function xml_to_stage_info_list(el: IXMLElement): IStageInfo[] {
+  if (el.tagName === "stages") {
+    return el.children_by_tag("stage").map(xml_to_stage_info);
+  }
+  // fallback: 直接就是 <stage> 元素
+  if (el.tagName === "stage") {
+    return [xml_to_stage_info(el)];
+  }
+  return [];
+}

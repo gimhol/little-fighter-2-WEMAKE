@@ -8,6 +8,20 @@ import { fields, int } from "../fields";
  */
 export interface IDrinkInfo {
   /**
+   * 饮料 ID（用于引用 / 标识）
+   *
+   * @type {?string}
+   */
+  id?: string;
+
+  /**
+   * 饮料名称（可读名）
+   *
+   * @type {?string}
+   */
+  name?: string;
+
+  /**
    * 最多能恢复多少HP
    *
    * @type {number}
@@ -85,6 +99,8 @@ export function drink_info_new() {
 }
 
 export const drink_Info_fields = fields<Partial<IDrinkInfo>>({
+  id: int('ID'),
+  name: int('名称'),
   hp_h_total: int('', '最多能恢复多少HP'),
   hp_h_value: int('', '每次恢复多少HP'),
   hp_h_ticks: int('', '间隔多少帧触发一次HP恢复'),
