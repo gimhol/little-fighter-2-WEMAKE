@@ -149,7 +149,8 @@ class Inner {
     }
 
     if (this.cancelled) throw new Error("cancelled");
-    for (const { id, file } of data.bots) {
+    for (const { id, file, skipped} of data.bots) {
+      if(skipped) continue;
       this.lf2.emit_progress(`${file}`, 0);
       const raw = await this.lf2.import_json<IBotData>(file, true)
         .then(r => {
@@ -167,7 +168,8 @@ class Inner {
       if (id != bot_data.id) this.bot_map.set(bot_data.id, bot_data);
     }
 
-    for (const { id, file, alias } of data.objects) {
+    for (const { id, file, alias, skipped } of data.objects) {
+      if(skipped) continue;
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.emit_progress(`${file}`, 0);
@@ -183,7 +185,8 @@ class Inner {
         throw new Error(`fail to load obj: ${file}, reason: ${e}`)
       }
     }
-    for (const { id, file } of data.backgrounds) {
+    for (const { id, file, skipped } of data.backgrounds) {
+      if(skipped) continue;
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.emit_progress(`${file}`, 0);
@@ -198,6 +201,7 @@ class Inner {
     }
     const stages: IStageInfo[] = []
     for (const stage_file of data.stages) {
+        if(stage_file.skipped) continue;
       this.lf2.emit_progress(`${stage_file.file}`, 0);
       const stage_datas = stage_file.file.endsWith(".xml") || stage_file.file.endsWith(".stage.xml")
         ? xml_to_stage_info_list((await this.lf2.import_xml(stage_file.file, true))[0])
