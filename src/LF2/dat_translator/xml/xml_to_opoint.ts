@@ -1,6 +1,6 @@
-import { type IOpointInfo, opoint_info_new } from "../../defines";
-import type { IXMLElement } from "../../ditto";
-import { xml_to_qube, xml_to_next_frame, apply_velocity_shorthand } from "./xml_to_frame_info";
+import { type IOpointInfo, opoint_info_new } from "../../defines/IOpointInfo";
+import type { IXMLElement } from "../../ditto/xml/IXMLElement";
+import { apply_velocity_shorthand, xml_to_next_frame, xml_to_qube } from "./xml_to_frame_info";
 
 /**
  * 解析 `<opoint>` 生成点

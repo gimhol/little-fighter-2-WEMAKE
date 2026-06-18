@@ -1,5 +1,5 @@
-import { armor_Info_new, type IArmorInfo } from "../defines/IArmorInfo";
-import type { IXMLElement } from "../ditto/xml/IXMLElement";
+import { armor_Info_new, type IArmorInfo } from "../../defines/IArmorInfo";
+import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 
 export function xml_to_armor_info(el: IXMLElement): IArmorInfo {
   return Object.assign(armor_Info_new(), {

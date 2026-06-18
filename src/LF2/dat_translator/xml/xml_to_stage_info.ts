@@ -1,7 +1,6 @@
+import type { Difficulty } from "../../defines/Difficulty";
 import type { IStageInfo } from "../../defines/IStageInfo";
 import type { IStagePhaseInfo } from "../../defines/IStagePhaseInfo";
-import type { IStageObjectInfo } from "../../defines/IStageObjectInfo";
-import type { Difficulty } from "../../defines/Difficulty";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 
 /**

@@ -1,14 +1,13 @@
-import { entity_info_new, type IEntityInfo } from "../../defines/IEntityInfo";
 import { EntityEnum, type TEntityEnum } from "../../defines/EntityEnum";
-import type { IFrameInfo } from "../../defines/IFrameInfo";
 import { IEntityData } from "../../defines/IEntityData";
-import type { TNextFrame } from "../../defines/INextFrame";
+import { entity_info_new, type IEntityInfo } from "../../defines/IEntityInfo";
+import type { IFrameInfo } from "../../defines/IFrameInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { xml_to_frame_info } from "./xml_to_frame_info";
-import { xml_to_bdy_info } from "./xml_to_bdy_info";
-import { xml_to_itr_info } from "../xml_to_itr_info";
-import { xml_to_drink_info } from "./xml_to_drink_info";
+import { xml_to_itr_info } from "./xml_to_itr_info";
 import { xml_to_armor_info } from "./xml_to_armor_info";
+import { xml_to_bdy_info } from "./xml_to_bdy_info";
+import { xml_to_drink_info } from "./xml_to_drink_info";
+import { xml_to_frame_info } from "./xml_to_frame_info";
 
 /**
  * 解析 `<base>`（IEntityInfo）
