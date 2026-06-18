@@ -1,3 +1,4 @@
+import { BackgroundGroup as BG } from "../defines";
 import { Defines } from "../defines/defines";
 import { bg_data_field_orders, type IBgData } from "../defines/IBgData";
 import { bg_layer_field_orders, type IBgLayerInfo } from "../defines/IBgLayerInfo";
@@ -7,19 +8,18 @@ import { to_num } from "../utils/type_cast/to_num";
 
 export function xml_to_bg_data(el: IXMLElement): IBgData {
   const baseEl = el.children.find((c) => c.tagName === "base");
-  const baseValues = baseEl?.values() ?? {};
 
   const base: IBgData["base"] = {
-    name: baseValues.name ?? el.attr("id") ?? "",
-    shadow: baseValues.shadow ?? "",
+    name: baseEl?.str_attr("name") ?? el.attr("id") ?? "",
+    shadow: baseEl?.str_attr("shadow") ?? "",
     shadowsize:
       (baseEl?.nums_attr("shadowsize") as [number, number]) ?? [0, 0],
-    group: (baseEl?.strs_attr("group") ?? ["regular"]) as IBgData["base"]["group"],
-    left: to_num(baseValues.left) ?? 0,
-    right: to_num(baseValues.right) ?? 0,
-    far: to_num(baseValues.far) ?? 0,
-    near: to_num(baseValues.near) ?? 0,
-    height: to_num(baseValues.height) ?? Defines.MODERN_SCREEN_HEIGHT,
+    group: (baseEl?.strs_attr("group") as IBgData["base"]["group"]) ?? [BG.Regular],
+    left: baseEl?.num_attr("left") ?? 0,
+    right: baseEl?.num_attr("right") ?? 0,
+    far: baseEl?.num_attr("far") ?? 0,
+    near: baseEl?.num_attr("near") ?? 0,
+    height: baseEl?.num_attr("height") ?? Defines.MODERN_SCREEN_HEIGHT,
   };
 
   if (baseEl) {

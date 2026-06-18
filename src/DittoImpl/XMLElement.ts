@@ -75,7 +75,7 @@ export class XMLElement implements IXMLElement {
   }
 
 
-  value(): any {
+  value(): number | boolean | string | object {
     const type = this.attr('type') || this.tagName;
     switch (type) {
       case 'number':
