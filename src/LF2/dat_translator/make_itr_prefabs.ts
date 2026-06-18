@@ -1,4 +1,4 @@
-import { IItrPrefab } from "../defines/IItrPrefab";
+import { IItrInfo } from "../defines/IItrInfo";
 import { IEntityData } from "../defines/IEntityData";
 import { match_all } from "../utils/string_parser/match_all";
 import { match_block_once } from "../utils/string_parser/match_block";
@@ -18,7 +18,7 @@ export function make_itr_prefabs(full_str: string): IEntityData["itr_prefabs"] {
     weapon_strength_str,
     /entry:\s*(\d+)\s*(\S+)\s*\n?(.*)\n?/g,
   ).map(([, id, name, remain]) => {
-    const entry: IItrPrefab = { id, name };
+    const entry: IItrInfo = { kind: 0, id, name };
     for (const [key, value] of match_colon_value(remain)) {
       (entry as any)[key] = to_num(value) ?? value;
     }
@@ -27,6 +27,6 @@ export function make_itr_prefabs(full_str: string): IEntityData["itr_prefabs"] {
   });
   if (!list.length) return void 0;
   const itr_prefab: IEntityData["itr_prefabs"] = {};
-  for (const item of list) itr_prefab[item.id] = item;
+  for (const item of list) itr_prefab[item.id!] = item;
   return itr_prefab;
 }

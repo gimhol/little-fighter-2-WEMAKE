@@ -9,12 +9,9 @@ import type { TAction } from "./TAction";
 import { any, fields, flt, int, str } from "../fields";
 
 export interface IItrInfo extends Partial<IQube> {
-  /**
-   * 预制信息id
-   *
-   * @see {?string}
-   */
-  prefab_id?: string;
+  id?: string;
+  name?: string;
+  ref?: string;
 
   /**
    *
@@ -120,6 +117,8 @@ export interface IItrInfo extends Partial<IQube> {
    */
   tester?: IExpression<any>;
   code?: string | number,
+  /** @deprecated 改用ref */
+  prefab_id?: string;
 }
 
 const ALL_ITR_KIND = Object.values(ItrKind).filter(v => typeof v === 'number') as number[];
@@ -132,6 +131,8 @@ export function itr_info_new(): IItrInfo {
 }
 
 export const itr_info_fields = fields<Partial<IItrInfo>>({
+  id: str("预制ID"),
+  name: str("预制名"),
   kind: int("类型", {
     options: ALL_ITR_KIND.map(v => ({
       value: v,
@@ -181,6 +182,7 @@ export const itr_info_fields = fields<Partial<IItrInfo>>({
   test: str("测试表达式"),
   tester: any,
   code: str("Code"),
-  prefab_id: str("预制信息ID"),
+  ref: str("预制信息ID"),
   indicator_info: any,
+  prefab_id: str("预制信息ID"),
 })

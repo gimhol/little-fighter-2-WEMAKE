@@ -2,7 +2,7 @@ import Frame from "../../Component/Frame";
 import { Cross } from "../../Component/Icons/Cross";
 import { Space } from "../../Component/Space";
 import { IEntityData } from "@/LF2/defines/IEntityData";
-import { IItrPrefab } from "@/LF2/defines/IItrPrefab";
+import { IItrInfo } from "@/LF2/defines/IItrInfo";
 import { loop_arr } from "@/LF2/utils/array/loop_arr";
 import { traversal } from "@/LF2/utils/container_help/traversal";
 import { ITR_EFFECT_SELECT_PROPS, ITR_KIND_SELECT_PROPS } from "../EntityEditorView";
@@ -10,20 +10,21 @@ import { useEditor } from "./useEditor";
 export interface IItrPrefabViewProps {
   label: string;
   data: IEntityData;
-  value: IItrPrefab;
+  value: IItrInfo;
   on_changed?(): void;
 }
 export function ItrPrefabView(props: IItrPrefabViewProps) {
   const { value, label, data, on_changed } = props;
 
   const on_remove = () => {
-    if (!data.itr_prefabs) return;
+    if (!data.itr_prefabs || !value.id) return;
     delete data.itr_prefabs[value.id];
     on_changed?.();
   }
   const on_input_id_blur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
     if (!data.itr_prefabs) return;
     const prev_id = value.id;
+    if (!prev_id) return;
     const next_id = e.target.value.trim();
     if (prev_id === next_id || !next_id) {
       e.target.value = prev_id;
@@ -31,7 +32,7 @@ export function ItrPrefabView(props: IItrPrefabViewProps) {
     }
     if (next_id in data.itr_prefabs) {
       alert('ID不可重复')
-      e.target.value = value.id;
+      e.target.value = prev_id;
       return;
     }
     delete data.itr_prefabs[prev_id];

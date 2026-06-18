@@ -297,10 +297,10 @@ export default function EditorView(props: IEditorViewProps) {
       if (itr_prefabs) {
         let i = Object.keys(itr_prefabs).length;
         while (('' + i) in itr_prefabs) ++i;
-        itr_prefabs['' + i] = { id: '' + i }
+        itr_prefabs['' + i] = { id: '' + i, kind: 0 }
       } else {
         editing_data.itr_prefabs = {};
-        editing_data.itr_prefabs['0'] = { id: '0' }
+        editing_data.itr_prefabs['0'] = { id: '0', kind: 0 }
       }
       set_change_flag(change_flag + 1);
     }

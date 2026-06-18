@@ -19,6 +19,7 @@ export function xml_to_itr_info(el: IXMLElement): IItrInfo {
     catchingact: el.num_attr("catchingact"),
     caughtact: el.num_attr("caughtact"),
     hit_flag: el.num_attr("hit_flag"),
+    ref: el.str_attr("ref") ?? el.str_attr("prefab_id"),
     on_hit_ground: merge_by_tag(el, "on_hit_ground", xml_to_next_frame),
     actions: void 0,
   });

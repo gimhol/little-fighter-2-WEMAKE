@@ -132,15 +132,15 @@ export function xml_to_entity_data(el: IXMLElement): IEntityData {
   // prefabs (实体级别的 bdy/itr 自动转为 prefab)
   const bdy_prefabs: Record<string, any> = {};
   for (const child of el.children_by_tag("bdy")) {
-    const prefab = xml_to_bdy_info(child) as any;
-    prefab.id = child.str_attr("id") ?? "";
+    const prefab = xml_to_bdy_info(child);
+    prefab.id = child.str_attr("id") ?? prefab.id ?? "";
     bdy_prefabs[prefab.id] = prefab;
   }
 
   const itr_prefabs: Record<string, any> = {};
   for (const child of el.children_by_tag("itr")) {
-    const prefab = xml_to_itr_info(child) as any;
-    prefab.id = child.str_attr("id") ?? "";
+    const prefab = xml_to_itr_info(child);
+    prefab.id = child.str_attr("id") ?? prefab.id ?? "";
     itr_prefabs[prefab.id] = prefab;
   }
 

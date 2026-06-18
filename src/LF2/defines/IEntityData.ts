@@ -1,16 +1,16 @@
 import type { IBaseData } from "./IBaseData";
-import type { IBdyPrefab } from "./IBdyPrefab";
-import type { IItrPrefab } from "./IItrPrefab";
+import type { IBdyInfo } from "./IBdyInfo";
+import type { IItrInfo } from "./IItrInfo";
 import type { IEntityInfo } from "./IEntityInfo";
 import type { IFrameIndexes } from "./IFrameIndexes";
 import type { IFrameInfo } from "./IFrameInfo";
 import type { TNextFrame } from "./INextFrame";
 import type { TEntityEnum } from "./EntityEnum";
 export type TItrPrefabs = {
-  [x in string]?: IItrPrefab;
+  [x in string]?: IItrInfo;
 }
 export type TBdyPrefabs = {
-  [x in string]?: IBdyPrefab;
+  [x in string]?: IBdyInfo;
 }
 export interface IEntityData extends IBaseData<IEntityInfo> {
   type: TEntityEnum;

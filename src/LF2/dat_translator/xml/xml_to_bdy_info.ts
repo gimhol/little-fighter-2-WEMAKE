@@ -9,7 +9,7 @@ export function xml_to_bdy_info(el: IXMLElement): IBdyInfo {
   return Object.assign(bdy_info_new(), xml_to_qube(el), {
     kind: el.num_attr("kind") ?? 0,
     hit_flag: el.num_attr("hit_flag"),
-    prefab_id: el.str_attr("prefab_id"),
+    ref: el.str_attr("ref") ?? el.str_attr("prefab_id"),
     code: el.str_attr("code"),
   });
 }

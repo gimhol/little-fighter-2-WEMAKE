@@ -5,7 +5,8 @@ import { get_val_geter_from_collision } from "./get_val_from_collision";
 import { preprocess_action } from "./preprocess_action";
 
 export function preprocess_bdy(lf2: LF2, bdy: IBdyInfo, data: IEntityData, jobs: Promise<void>[]): IBdyInfo {
-  const prefab = bdy.prefab_id ? data.bdy_prefabs?.[bdy.prefab_id] : void 0;
+  const ref = bdy.ref ?? bdy.prefab_id;
+  const prefab = ref ? data.bdy_prefabs?.[ref] : void 0;
   if (prefab) bdy = { ...prefab, ...bdy };
   bdy.tester = bdy.test ? new Expression(
     bdy.test,

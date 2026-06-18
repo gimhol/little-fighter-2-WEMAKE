@@ -8,12 +8,9 @@ import type { TAction } from "./TAction";
 import { any, fields, int, str } from "../fields";
 
 export interface IBdyInfo extends Partial<IQube> {
-  /**
-   * 预制信息id
-   *
-   * @type {?string}
-   */
-  prefab_id?: string;
+  id?: string;
+  name?: string;
+  ref?: string;
 
   /**
    * 碰撞标记，决定能与哪些对象碰撞
@@ -65,6 +62,8 @@ export interface IBdyInfo extends Partial<IQube> {
    * @memberof IBdyInfo
    */
   code?: string | number,
+  /** @deprecated 改用ref */
+  prefab_id?: string;
 }
 
 export const BdyKeyOrders = make_field_orders({
@@ -72,6 +71,8 @@ export const BdyKeyOrders = make_field_orders({
   x: 0, y: 0, w: 0, h: 0, z: 0, l: 0,
   hit_flag: 0,
   hit_flag_name: 0,
+  id: 0, name: 0,
+  ref: 0,
   prefab_id: 0,
   actions: 0,
   test: 0,
@@ -87,6 +88,8 @@ export function bdy_info_new(): IBdyInfo {
 }
 
 export const bdy_info_fields = fields<Partial<IBdyInfo>>({
+  id: str("预制ID"),
+  name: str("预制名"),
   kind: int("类型", {
     options: [
       { value: BdyKind.Normal, label: "Normal" },
@@ -112,7 +115,8 @@ export const bdy_info_fields = fields<Partial<IBdyInfo>>({
     })),
   }),
   hit_flag_name: any,
-  prefab_id: str("预制信息ID"),
+  ref: str("预制信息ID"),
+  prefab_id: any,
   actions: any,
   test: str("测试表达式"),
   code: str("Code"),

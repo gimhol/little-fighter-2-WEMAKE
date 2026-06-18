@@ -19,7 +19,8 @@ import { preprocess_next_frame } from "./preprocess_next_frame";
  * @returns {IItrInfo} 处理后的itr
  */
 export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs: Promise<void>[]): IItrInfo {
-  const prefab = itr.prefab_id !== void 0 ? data.itr_prefabs?.[itr.prefab_id] : void 0;
+  const ref = itr.ref ?? itr.prefab_id;
+  const prefab = ref !== void 0 ? data.itr_prefabs?.[ref] : void 0;
   if (prefab) itr = { ...prefab, ...itr };
   if (itr.catchingact) preprocess_next_frame(itr.catchingact);
   if (itr.caughtact) preprocess_next_frame(itr.caughtact);
