@@ -15,6 +15,7 @@ import {
 } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
 import { is_non_blank_str, is_str } from "../utils/type_check";
+import { xml_to_bg_data } from "../dat_translator/xml_to_bg_data";
 import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
 import { preprocess_bot_data } from "./preprocess_bot_data";
@@ -178,7 +179,9 @@ class Inner {
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lf2.emit_progress(`${file}`, 0);
-        const raw = await this.lf2.import_json(file, true).then(r => r[0])
+        const raw = file.endsWith(".bg.xml")
+          ? xml_to_bg_data((await this.lf2.import_xml(file, true))[0])
+          : await this.lf2.import_json(file, true).then(r => r[0]);
         const cooked = await this._cook_data(raw) as IBgData;
         this._add_bg(cooked)
       } catch (e) {

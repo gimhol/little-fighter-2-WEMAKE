@@ -1,0 +1,17 @@
+<background id="bg_8">
+  <base
+    name="Brokeback Clif"
+    shadow="bg/sys/bc/s.png"
+    shadowsize="37,9"
+    left="0"
+    right="1500"
+    far="-500"
+    near="-80"
+    group="regular"
+  />
+  <layer file="!bg/sys/bc/bc1@4x.png" width="1379" x="0" y="421" z="-5" />
+  <layer file="!bg/sys/bc/bc2@4x.png" width="1379" x="460" y="421" z="-4" />
+  <layer file="!bg/sys/bc/bc3@4x.png" width="1379" x="920" y="421" z="-3" />
+  <layer file="!bg/sys/bc/bc4@4x.png" width="1500" x="0" y="289" z="-2" loop="800" />
+  <layer file="!bg/sys/bc/bc5@4x.png" width="1500" x="0" y="254" z="-1" loop="600" />
+</background>

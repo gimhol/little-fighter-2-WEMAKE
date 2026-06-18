@@ -3,7 +3,7 @@
     {
       id: "bg_8",
       type: "bg",
-      file: "bg/sys/bc/bg.bg.json5",
+      file: "bg/sys/bc/bg.bg.xml",
     },
     {
       id: "bg_moon",

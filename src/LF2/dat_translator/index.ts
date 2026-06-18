@@ -36,6 +36,7 @@ export * from "./float_scaling_qube";
 export * from "./frame_behavior";
 export * from "./get_the_next";
 export * from "./hit_next_frame";
+export * from "./bg_data_to_xml";
 export * from "./make_ball_data";
 export * from "./make_ball_special";
 export * from "./make_bg_data";
@@ -60,4 +61,5 @@ export * from "./take_not_zero_num";
 export * from "./take_num";
 export * from "./take_positive_num";
 export * from "./take_raw_frame_mp";
+export * from "./xml_to_bg_data";
 /*** AUTO EXPORT END ***/

@@ -1,4 +1,4 @@
-import { IXMLElement } from "../LF2/ditto/IXMLElement";
+import { type Voidable, type IXMLElement } from "../LF2/ditto/IXMLElement";
 
 const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
 
@@ -14,7 +14,66 @@ export class XMLElement implements IXMLElement {
   get text(): string { return this.inner.textContent ?? ''; }
   constructor(inner: Element) { this.inner = inner; }
 
-  attr(name: string): string | undefined { return this.inner.getAttribute(name) ?? undefined; }
+  attr(name: string): string | undefined {
+    return this.inner.getAttribute(name) ?? undefined;
+  }
+  set_attr(name: string, value: Voidable<string>): void {
+    if (value === void 0 || value === null)
+      this.del_attr(name);
+    else
+      this.inner.setAttribute(name, value);
+  }
+  del_attr(name: string): void {
+    this.inner.removeAttribute(name)
+  }
+  str_attr(name: string): string | undefined {
+    return this.attr(name) ?? undefined;
+  }
+  num_attr(name: string): number | undefined {
+    const v = this.attr(name);
+    return v != null ? Number(v) : undefined;
+  }
+  bool_attr(name: string): boolean | undefined {
+    const v = this.attr(name);
+    return v != null ? v === 'true' || v === '1' : undefined;
+  }
+  strs_attr(name: string, sep: string = ','): string[] | undefined {
+    const v = this.attr(name);
+    if (v == null) return void 0;
+    return v.split(sep).map(s => s.trim());
+  }
+  nums_attr(name: string, sep: string = ','): number[] | undefined {
+    const v = this.attr(name);
+    if (v == null) return void 0;
+    return v.split(sep).map(s => Number(s.trim()));
+  }
+  set_strs_attr(name: string, value: Voidable<string[]>, sep: string = ','): void {
+    if (value === void 0 || value === null)
+      return this.del_attr(name);
+    this.set_attr(name, value.join(sep))
+
+  }
+  set_nums_attr(name: string, value: Voidable<number[]>, sep: string = ','): void {
+    if (value === void 0 || value === null)
+      return this.del_attr(name);
+    this.set_attr(name, value.join(sep))
+  }
+  set_str_attr(name: string, value: Voidable<string>): void {
+    if (value === void 0 || value === null)
+      return this.del_attr(name);
+    this.set_attr(name, value);
+  }
+  set_num_attr(name: string, value: Voidable<number>): void {
+    if (value === void 0 || value === null)
+      return this.del_attr(name);
+    this.set_attr(name, value.toString());
+  }
+  set_bool_attr(name: string, value: Voidable<boolean>): void {
+    if (value === void 0 || value === null)
+      return this.del_attr(name);
+    this.set_attr(name, value ? 'true' : 'false');
+  }
+
 
   value(): any {
     const type = this.attr('type') || this.tagName;
@@ -60,11 +119,7 @@ export class XMLElement implements IXMLElement {
     return obj;
   }
 
-  nums_attr(name: string): number[] | undefined {
-    const v = this.attr(name);
-    if (v == null) return void 0;
-    return v.split(',').map(s => Number(s.trim()));
-  }
+
 
   action_str(): string {
     const name = this.attr('action') || this.attr('name');
