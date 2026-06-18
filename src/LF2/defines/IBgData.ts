@@ -1,6 +1,6 @@
 import type { IWorldDataset } from "../IWorldDataset";
 import type { IBaseData } from "./IBaseData";
-import type { IBgInfo } from "./IBgInfo";
+import { bg_info_new, type IBgInfo } from "./IBgInfo";
 import type { IBgLayerInfo } from "./IBgLayerInfo";
 import { make_field_orders } from "./make_field_orders";
 
@@ -17,4 +17,13 @@ export const bg_data_field_orders = make_field_orders<IBgData>({
   base: 0,
   dataset: 0,
   layers: 0,
-})
+});
+
+export function bg_data_new(): IBgData {
+  return {
+    type: "background",
+    id: "",
+    base: bg_info_new(),
+    layers: [],
+  };
+}

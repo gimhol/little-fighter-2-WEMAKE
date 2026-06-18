@@ -12,3 +12,17 @@ export interface IBgInfo {
   height: number;
   zoom?: [number, number, number];
 }
+
+export function bg_info_new(): IBgInfo {
+  return {
+    name: "",
+    shadow: "",
+    shadowsize: [0, 0],
+    group: [],
+    left: 0,
+    right: 0,
+    far: 0,
+    near: 0,
+    height: 0,
+  };
+}

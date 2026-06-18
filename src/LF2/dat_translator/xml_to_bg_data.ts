@@ -1,74 +1,90 @@
-import { BackgroundGroup as BG } from "../defines";
 import { Defines } from "../defines/defines";
-import { bg_data_field_orders, type IBgData } from "../defines/IBgData";
+import { bg_data_field_orders, bg_data_new, type IBgData } from "../defines/IBgData";
 import { bg_layer_field_orders, type IBgLayerInfo } from "../defines/IBgLayerInfo";
 import type { IXMLElement } from "../ditto/IXMLElement";
 import { sort_key_value } from "../utils/container_help/sort_key_value";
-import { to_num } from "../utils/type_cast/to_num";
+
+/**
+ * 解析 `<base>` 元素为 IBgInfo
+ * @param {IXMLElement} el - base 元素
+ * @param {string} fallbackId - 无 name 时的回退 ID
+ * @return {IBgData["base"]}
+ */
+export function xml_to_bg_base(el: IXMLElement, fallbackId: string): IBgData["base"] {
+  const base: IBgData["base"] = {
+    name: el.str_attr("name") ?? fallbackId,
+    shadow: el.str_attr("shadow") ?? "",
+    shadowsize: (el.nums_attr("shadowsize") as [number, number]) ?? [0, 0],
+    group: (el.strs_attr("group") as IBgData["base"]["group"]) ?? ["regular"],
+    left: el.num_attr("left") ?? 0,
+    right: el.num_attr("right") ?? 0,
+    far: el.num_attr("far") ?? 0,
+    near: el.num_attr("near") ?? 0,
+    height: el.num_attr("height") ?? Defines.MODERN_SCREEN_HEIGHT,
+  };
+  const zoom = el.nums_attr("zoom");
+  if (zoom && zoom.length === 3) base.zoom = zoom as [number, number, number];
+  return base;
+}
+
+/**
+ * 解析 `<layer>` 元素为 IBgLayerInfo
+ * @param {IXMLElement} el - layer 元素
+ * @param {number} defaultZ - 默认 z 坐标
+ * @return {IBgLayerInfo}
+ */
+export function xml_to_bg_layer(el: IXMLElement, defaultZ: number): IBgLayerInfo {
+  const layer: IBgLayerInfo = {
+    id: el.str_attr("id"),
+    name: el.str_attr("name"),
+    file: el.str_attr("file"),
+    width: el.num_attr("width") ?? 0,
+    height: el.num_attr("height") ?? 0,
+    x: el.num_attr("x") ?? 0,
+    y: el.num_attr("y") ?? 0,
+    z: el.num_attr("z") ?? defaultZ,
+    w: el.num_attr("w") ?? 0,
+    h: el.num_attr("h") ?? 0,
+  };
+  const loop = el.num_attr("loop");
+  if (loop !== void 0) layer.loop = loop;
+  const absolute = el.num_attr("absolute");
+  if (absolute !== void 0) layer.absolute = absolute;
+  const color = el.str_attr("color");
+  if (color !== void 0) layer.color = color;
+  const cc = el.num_attr("cc");
+  if (cc !== void 0) layer.cc = cc;
+  const c1 = el.num_attr("c1");
+  if (c1 !== void 0) layer.c1 = c1;
+  const c2 = el.num_attr("c2");
+  if (c2 !== void 0) layer.c2 = c2;
+  const oax = el.num_attr("offsetAnimX");
+  if (oax !== void 0) layer.offsetAnimX = oax;
+  const oay = el.num_attr("offsetAnimY");
+  if (oay !== void 0) layer.offsetAnimY = oay;
+  sort_key_value(layer, bg_layer_field_orders);
+  return layer;
+}
 
 export function xml_to_bg_data(el: IXMLElement): IBgData {
-  const baseEl = el.children.find((c) => c.tagName === "base");
+  const ret = bg_data_new();
+  const id = el.attr("id");
+  if (id) ret.id = id;
 
-  const base: IBgData["base"] = {
-    name: baseEl?.str_attr("name") ?? el.attr("id") ?? "",
-    shadow: baseEl?.str_attr("shadow") ?? "",
-    shadowsize:
-      (baseEl?.nums_attr("shadowsize") as [number, number]) ?? [0, 0],
-    group: (baseEl?.strs_attr("group") as IBgData["base"]["group"]) ?? [BG.Regular],
-    left: baseEl?.num_attr("left") ?? 0,
-    right: baseEl?.num_attr("right") ?? 0,
-    far: baseEl?.num_attr("far") ?? 0,
-    near: baseEl?.num_attr("near") ?? 0,
-    height: baseEl?.num_attr("height") ?? Defines.MODERN_SCREEN_HEIGHT,
-  };
-
-  if (baseEl) {
-    const zoom = baseEl.nums_attr("zoom");
-    if (zoom && zoom.length === 3) base.zoom = zoom as [number, number, number];
+  // 允许多个 base 标签，同名属性后者覆盖前者
+  for (const child of el.children) {
+    if (child.tagName !== "base") continue;
+    Object.assign(ret.base, xml_to_bg_base(child, ret.id));
   }
 
   // <dataset> 可选元素
-  const datasetEl = el.children.find((c) => c.tagName === "dataset");
-  const dataset = datasetEl?.values() ?? {};
+  const dsEl = el.children.find((c) => c.tagName === "dataset");
+  if (dsEl) ret.dataset = dsEl.values() as Partial<IBgData["dataset"]>;
 
   // <layer> 子元素
-  const layers: IBgLayerInfo[] = [];
   for (const child of el.children) {
     if (child.tagName !== "layer") continue;
-    const v = child.values();
-    const layer: IBgLayerInfo = {
-      id: v.id,
-      name: v.name,
-      file: v.file,
-      width: to_num(v.width) ?? 0,
-      height: to_num(v.height) ?? 0,
-      x: to_num(v.x) ?? 0,
-      y: to_num(v.y) ?? 0,
-      z: to_num(v.z) ?? layers.length,
-      w: to_num(v.w) ?? 0,
-      h: to_num(v.h) ?? 0,
-    };
-    if (v.loop !== undefined) layer.loop = to_num(v.loop);
-    if (v.absolute !== undefined) layer.absolute = to_num(v.absolute);
-    if (v.color !== undefined) layer.color = v.color;
-    if (v.cc !== undefined) layer.cc = to_num(v.cc);
-    if (v.c1 !== undefined) layer.c1 = to_num(v.c1);
-    if (v.c2 !== undefined) layer.c2 = to_num(v.c2);
-    if (v.offsetAnimX !== undefined) layer.offsetAnimX = to_num(v.offsetAnimX);
-    if (v.offsetAnimY !== undefined) layer.offsetAnimY = to_num(v.offsetAnimY);
-    sort_key_value(layer, bg_layer_field_orders);
-    layers.push(layer);
-  }
-
-  const ret: IBgData = {
-    type: "background",
-    id: el.attr("id") ?? base.name,
-    base,
-    layers,
-  };
-
-  if (Object.keys(dataset).length) {
-    ret.dataset = dataset;
+    ret.layers.push(xml_to_bg_layer(child, ret.layers.length));
   }
 
   sort_key_value(ret, bg_data_field_orders);
