@@ -11,6 +11,5 @@
   FFMPEG_CMD: "ffmpeg",
   MAGICK_CMD: "magick",
   KEEP_MIRROR: "",
-  DEBUG: "",
-  OUT_TYPE: "xml",
+  DEBUG: ""
 }

@@ -2,6 +2,16 @@ import { type Voidable, type IXMLElement } from "../../../src/LF2/ditto/xml/IXML
 
 const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
 
+/** XML 属性值转义 */
+function escAttr(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/** XML 文本内容转义 */
+function escText(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function is_value_child(el: IXMLElement): boolean {
   return VALUE_TAGS.has(el.tagName);
 }
@@ -104,24 +114,24 @@ export class ToolXMLElement implements IXMLElement {
     this.set_attr(name, value ? 'true' : 'false');
   }
 
-  set_strs_attr(name: string, value: Voidable<string[]>, sep: string = ','): void {
+  set_strs_attr(name: string, value: Voidable<string | string[]>, sep: string = ','): void {
     if (value === void 0 || value === null) return this.del_attr(name);
-    this.set_attr(name, value.join(sep));
+    this.set_attr(name, (Array.isArray(value) ? value : [value]).join(sep));
   }
 
-  set_nums_attr(name: string, value: Voidable<number[]>, sep: string = ','): void {
+  set_nums_attr(name: string, value: Voidable<number | number[]>, sep: string = ','): void {
     if (value === void 0 || value === null) return this.del_attr(name);
-    this.set_attr(name, value.join(sep));
+    this.set_attr(name, (Array.isArray(value) ? value : [value]).join(sep));
   }
 
-  set_strs_attr_soft(name: string, value: Voidable<Voidable<string>[]>, sep: string = ','): void {
+  set_strs_attr_soft(name: string, value: Voidable<Voidable<string> | Voidable<string>[]>, sep: string = ','): void {
     if (value === void 0 || value === null) return this.del_attr(name);
-    this.set_attr(name, value.map(s => s ?? '').join(sep));
+    this.set_attr(name, (Array.isArray(value) ? value : [value]).map(s => s ?? '').join(sep));
   }
 
-  set_nums_attr_soft(name: string, value: Voidable<Voidable<number>[]>, sep: string = ','): void {
+  set_nums_attr_soft(name: string, value: Voidable<Voidable<number> | Voidable<number>[]>, sep: string = ','): void {
     if (value === void 0 || value === null) return this.del_attr(name);
-    this.set_attr(name, value.map(n => n === void 0 ? '' : String(n)).join(sep));
+    this.set_attr(name, (Array.isArray(value) ? value : [value]).map(n => n === void 0 ? '' : String(n)).join(sep));
   }
 
   value(): any {
@@ -179,13 +189,13 @@ export class ToolXMLElement implements IXMLElement {
 
   stringify(): string {
     const attrStr = this._attrs
-      .map(a => ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`)
+      .map(a => ` ${a.name}="${escAttr(a.value)}"`)
       .join('');
     if (!this._children.length && !this._text) {
       return `<${this.tagName}${attrStr} />`;
     }
     const childrenStr = this._text
-      ? this._text.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      ? escText(this._text)
       : this._children.map(c => c.stringify()).join('');
     return `<${this.tagName}${attrStr}>${childrenStr}</${this.tagName}>`;
   }

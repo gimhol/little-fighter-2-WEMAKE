@@ -3,15 +3,13 @@ import type { IHoldKeyCollection } from "../../defines/IHoldKeyCollection";
 import type { TNextFrame } from "../../defines/INextFrame";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import type { IXMLFactory } from "./xml_from_bg_data";
-import { writeXmlAttrs } from "./xml_from_write";
+import { xml_from_next_frame } from "./xml_from_next_frame";
 
 /**
  * 将 key→TNextFrame 映射写入父元素
  *
- * 每个非空成员作为独立子标签，TNextFrame 字段作为属性
- *
- * @example
- * `<hit><a id="123" wait="3" /><j id="456" /></hit>`
+ * 每个非空成员作为独立子标签，引用 xml_from_next_frame 序列化
+ * 若值为数组，则每个元素作为一个子标签
  */
 function writeKeyMap(
   parent: IXMLElement,
@@ -20,9 +18,13 @@ function writeKeyMap(
 ): void {
   for (const [key, nf] of Object.entries(map)) {
     if (!nf) continue;
-    const child = xml.create(key);
-    writeXmlAttrs(child, nf as any);
-    parent.insert(child);
+    if (Array.isArray(nf)) {
+      for (const item of nf) {
+        parent.insert(xml_from_next_frame(xml, item, key));
+      }
+    } else {
+      parent.insert(xml_from_next_frame(xml, nf, key));
+    }
   }
 }
 

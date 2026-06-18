@@ -112,35 +112,47 @@ export interface IXMLElement {
 
   /**
    * 设置字符串数组属性，按分隔符合并为字符串，value 为 Voidable 时删除属性
+   *
+   * 可传入单个字符串（自动包装为数组）
+   *
    * @param {string}            name  - 属性名
-   * @param {Voidable<string[]>} value - 值
+   * @param {Voidable<string | string[]>} value - 值
    * @param {string}           [sep=","] - 分隔符
    */
-  set_strs_attr(name: string, value: Voidable<string[]>, sep?: string): void;
+  set_strs_attr(name: string, value: Voidable<string | string[]>, sep?: string): void;
 
   /**
    * 设置数值数组属性，按分隔符合并为字符串，value 为 Voidable 时删除属性
+   *
+   * 可传入单个数字（自动包装为数组）
+   *
    * @param {string}            name  - 属性名
-   * @param {Voidable<number[]>} value - 值
+   * @param {Voidable<number | number[]>} value - 值
    * @param {string}           [sep=","] - 分隔符
    */
-  set_nums_attr(name: string, value: Voidable<number[]>, sep?: string): void;
+  set_nums_attr(name: string, value: Voidable<number | number[]>, sep?: string): void;
 
   /**
    * 设置字符串数组属性（undefined 元素转为空字符串），value 为 Voidable 时删除属性
+   *
+   * 可传入单个字符串（自动包装为数组）
+   *
    * @param {string}                  name  - 属性名
-   * @param {Voidable<Voidable<string>[]>} value - 值
+   * @param {Voidable<Voidable<string> | Voidable<string>[]>} value - 值
    * @param {string}                 [sep=","] - 分隔符
    */
-  set_strs_attr_soft(name: string, value: Voidable<Voidable<string>[]>, sep?: string): void;
+  set_strs_attr_soft(name: string, value: Voidable<Voidable<string> | Voidable<string>[]>, sep?: string): void;
 
   /**
    * 设置数值数组属性（undefined 元素转为空字符串），value 为 Voidable 时删除属性
+   *
+   * 可传入单个数字（自动包装为数组）
+   *
    * @param {string}                  name  - 属性名
-   * @param {Voidable<Voidable<number>[]>} value - 值
+   * @param {Voidable<Voidable<number> | Voidable<number>[]>} value - 值
    * @param {string}                 [sep=","] - 分隔符
    */
-  set_nums_attr_soft(name: string, value: Voidable<Voidable<number>[]>, sep?: string): void;
+  set_nums_attr_soft(name: string, value: Voidable<Voidable<number> | Voidable<number>[]>, sep?: string): void;
 
   /**
    * 解析元素为类型化值（根据 type 属性或 tagName 自动推断类型）

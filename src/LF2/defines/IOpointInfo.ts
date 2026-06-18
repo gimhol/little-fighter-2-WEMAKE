@@ -6,7 +6,43 @@ import { OpointMultiEnum } from "./OpointMultiEnum";
 import { OpointSpreading } from "./OpointSpreading";
 import { any, fields, flt, int, str } from "../fields";
 export type __KEEP_FacingFlag = FacingFlag;
+
+export interface IOpointMulti {
+  /** 生成数量的决定方式 */
+  type: OpointMultiEnum | number;
+  /**
+   * 依据数量零时，将不生成（数量需参见决定方式）
+   * @see {OpointMultiEnum.AccordingEnemies}
+   *
+   * - 当：
+   *   - multi.type == OpointMultiEnum.AccordingEnemies。
+   *   - multi.skip_zero == true
+   *   - 场上无敌人
+   * - 则：
+   *   - 该Opoint将不会生成东西（即使设置了min/max）
+   */
+  skip_zero?: boolean;
+  /** 至少产生多少个 */
+  min?: number;
+  /** 至多产生多少个 */
+  max?: number;
+}
+
 export interface IOpointInfo {
+  /**
+   * opoint ID（用于引用 / 标识）
+   *
+   * @type {?string}
+   */
+  id?: string;
+
+  /**
+   * opoint 名称（可读名）
+   *
+   * @type {?string}
+   */
+  name?: string;
+
   /**
    *
    * @type {number}
@@ -87,27 +123,7 @@ export interface IOpointInfo {
    * @see {FacingFlag}
    * @type {?number}
    */
-  multi?: number | {
-    /** 生成数量的决定方式 */
-    type: OpointMultiEnum | number;
-
-    /** 
-     * 依据数量零时，将不生成（数量需参见决定方式）
-     * @see {OpointMultiEnum.AccordingEnemies}
-     * 
-     * - 当：
-     *   - multi.type == OpointMultiEnum.AccordingEnemies。
-     *   - multi.skip_zero == true
-     *   - 场上无敌人
-     * - 则：
-     *   - 该Opoint将不会生成东西（即使设置了min/max）
-     */
-    skip_zero?: boolean
-    /** 至少产生多少个 */
-    min?: number;
-    /** 至多产生多少个 */
-    max?: number;
-  };
+  multi?: number | IOpointMulti;
 
   /**
    * 最大血量
@@ -196,6 +212,8 @@ export function opoint_info_new(): IOpointInfo {
 }
 
 export const opoint_info_fields = fields<Partial<IOpointInfo>>({
+  id: int('ID'),
+  name: int('名称'),
   kind: int("类型", {
     options: ALL_OPOINT_KIND.map(v => ({
       value: v,

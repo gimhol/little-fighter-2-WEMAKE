@@ -1,6 +1,7 @@
 import { type IItrInfo, itr_info_new } from "../../defines/IItrInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { apply_velocity_shorthand, merge_by_tag, xml_to_next_frame, xml_to_qube } from "./xml_to_frame_info";
+import { apply_velocity_shorthand, merge_by_tag, xml_to_qube } from "./xml_to_frame_info";
+import { xml_to_next_frame } from "./xml_to_next_frame";
 
 /**
  * 解析 `<itr>` 攻击框

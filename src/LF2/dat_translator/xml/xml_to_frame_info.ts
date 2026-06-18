@@ -1,52 +1,18 @@
-import { bpoint_info_new, type IBpointInfo } from "../../defines/IBpointInfo";
-import { chase_info_new, type IChaseInfo } from "../../defines/IChaseInfo";
-import { cpoint_info_new, type ICpointInfo } from "../../defines/ICpointInfo";
 import { frame_info_new, type IFrameInfo } from "../../defines/IFrameInfo";
-import type { IFramePictureInfo } from "../../defines/IFramePictureInfo";
 import type { IHitKeyCollection } from "../../defines/IHitKeyCollection";
 import type { IHoldKeyCollection } from "../../defines/IHoldKeyCollection";
-import type { TNextFrame } from "../../defines/INextFrame";
 import { IQube } from "../../defines/IQube";
-import { wpoint_info_new, type IWpointInfo } from "../../defines/IWpointInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { xml_to_itr_info } from "./xml_to_itr_info";
 import { xml_to_bdy_info } from "./xml_to_bdy_info";
+import { xml_to_bpoint } from "./xml_to_bpoint";
+import { xml_to_chase } from "./xml_to_chase";
+import { xml_to_cpoint } from "./xml_to_cpoint";
+import { xml_to_itr_info } from "./xml_to_itr_info";
+import { xml_to_key_collection } from "./xml_to_key_collection";
+import { xml_to_next_frame } from "./xml_to_next_frame";
 import { xml_to_opoint } from "./xml_to_opoint";
-
-/**
- * 解析 `<next>` / `<on_dead>` 等跳转目标
- */
-export function xml_to_next_frame(el: IXMLElement): TNextFrame {
-  const nf: TNextFrame = { id: el.str_attr("id") ?? "" };
-  const wait = el.num_attr("wait");
-  if (wait !== void 0) nf.wait = wait;
-  const facing = el.num_attr("facing");
-  if (facing !== void 0) nf.facing = facing;
-  const mp = el.num_attr("mp");
-  if (mp !== void 0) nf.mp = mp;
-  const hp = el.num_attr("hp");
-  if (hp !== void 0) nf.hp = hp;
-  const expression = el.str_attr("expression") ?? el.first_by_tag("expression")?.text;
-  if (expression) nf.expression = expression;
-  const blink = el.num_attr("blink_time");
-  if (blink !== void 0) nf.blink_time = blink;
-  apply_velocity_shorthand(el, nf as any);
-  return nf;
-}
-
-/**
- * 解析 `<pic>` 帧切图，支持 rect="x,y,w,h" 快捷属性
- */
-function xml_to_pic(el: IXMLElement): IFramePictureInfo {
-  const rect = el.nums_attr("rect");
-  return {
-    tex: el.str_attr("tex") ?? "0",
-    x: el.num_attr("x") ?? rect?.[0] ?? 0,
-    y: el.num_attr("y") ?? rect?.[1] ?? 0,
-    w: el.num_attr("w") ?? rect?.[2] ?? 0,
-    h: el.num_attr("h") ?? rect?.[3] ?? 0,
-  };
-}
+import { xml_to_pic } from "./xml_to_pic";
+import { xml_to_wpoint } from "./xml_to_wpoint";
 
 /**
  * 解析快捷属性：rect="x,y,w,h" 或 qube="x,y,w,h" 或 qube="x,y,w,h,z,l"
@@ -106,77 +72,6 @@ export function xml_to_qube(el: IXMLElement): Partial<IQube> {
     z: el.num_attr("z") ?? shortcut.z,
     l: el.num_attr("l") ?? shortcut.l,
   };
-}
-
-/**
- * 解析 `<wpoint>` 武器点
- */
-function xml_to_wpoint(el: IXMLElement): IWpointInfo {
-  return Object.assign(wpoint_info_new(), {
-    kind: el.num_attr("kind") ?? 0,
-    x: el.num_attr("x") ?? 0,
-    y: el.num_attr("y") ?? 0,
-    z: el.num_attr("z") ?? 0,
-    weaponact: el.num_attr("weaponact"),
-    attacking: el.num_attr("attacking"),
-    dvx: el.num_attr("dvx"),
-    dvy: el.num_attr("dvy"),
-    dvz: el.num_attr("dvz"),
-  });
-}
-
-/**
- * 解析 `<bpoint>` 灼烧点
- */
-function xml_to_bpoint(el: IXMLElement): IBpointInfo {
-  return Object.assign(bpoint_info_new(), {
-    x: el.num_attr("x") ?? 0,
-    y: el.num_attr("y") ?? 0,
-    z: el.num_attr("z") ?? 0,
-    r: el.num_attr("r") ?? 0,
-  });
-}
-
-/**
- * 解析 `<cpoint>` 抓取点
- */
-function xml_to_cpoint(el: IXMLElement): ICpointInfo {
-  const cp = Object.assign(cpoint_info_new(), {
-    kind: el.num_attr("kind"),
-    x: el.num_attr("x") ?? 0,
-    y: el.num_attr("y") ?? 0,
-    z: el.num_attr("z") ?? 0,
-    vaction: void 0 as TNextFrame | undefined,
-    injury: el.num_attr("injury"),
-    hurtable: el.num_attr("hurtable"),
-    decrease: el.num_attr("decrease"),
-  });
-  const vaction = el.first_by_tag("vaction");
-  if (vaction) cp.vaction = xml_to_next_frame(vaction);
-  return cp;
-}
-
-/**
- * 解析 `<chase>` 跟踪
- */
-function xml_to_chase(el: IXMLElement): IChaseInfo {
-  return Object.assign(chase_info_new(), {
-    stratedy: el.num_attr("stratedy") ?? 0,
-    flag: el.num_attr("flag") ?? 0,
-    lost: el.num_attr("lost"),
-    oy: el.num_attr("oy"),
-  });
-}
-
-/**
- * 解析按键映射集合（hit / hold / key_down / key_up）
- */
-function xml_to_key_collection(el: IXMLElement): Record<string, TNextFrame> {
-  const ret: Record<string, TNextFrame> = {};
-  for (const child of el.children) {
-    ret[child.tagName] = xml_to_next_frame(child);
-  }
-  return ret;
 }
 
 /**
@@ -251,11 +146,14 @@ export function xml_to_frame_info(el: IXMLElement): IFrameInfo {
   // nested elements (多个同名 tag 时以后者覆盖前者)
   ret.pic = merge_by_tag(el, "pic", xml_to_pic);
 
-  const mergedNext = merge_by_tag(el, "next", xml_to_next_frame);
-  if (mergedNext) ret.next = mergedNext;
-  ret.on_dead = merge_by_tag(el, "on_dead", xml_to_next_frame);
-  ret.on_landing = merge_by_tag(el, "on_landing", xml_to_next_frame);
-  ret.on_exhaustion = merge_by_tag(el, "on_exhaustion", xml_to_next_frame);
+  const mergedNext = merge_array_by_tag(el, "next", xml_to_next_frame);
+  ret.next = mergedNext.length === 1 ? mergedNext[0] : mergedNext.length ? mergedNext : { id: "" };
+  const onDead = merge_array_by_tag(el, "on_dead", xml_to_next_frame);
+  ret.on_dead = onDead.length === 1 ? onDead[0] : onDead.length ? onDead : void 0;
+  const onLanding = merge_array_by_tag(el, "on_landing", xml_to_next_frame);
+  ret.on_landing = onLanding.length === 1 ? onLanding[0] : onLanding.length ? onLanding : void 0;
+  const onExhaustion = merge_array_by_tag(el, "on_exhaustion", xml_to_next_frame);
+  ret.on_exhaustion = onExhaustion.length === 1 ? onExhaustion[0] : onExhaustion.length ? onExhaustion : void 0;
 
   // arrays (仅非空时覆盖)
   const bdys = merge_array_by_tag(el, "bdy", xml_to_bdy_info);

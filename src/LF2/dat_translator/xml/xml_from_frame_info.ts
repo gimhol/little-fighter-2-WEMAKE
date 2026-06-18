@@ -5,6 +5,7 @@ import type { IXMLFactory } from "./xml_from_bg_data";
 import { xml_from_itr_info } from "./xml_from_itr_info";
 import { xml_from_opoint } from "./xml_from_opoint";
 import { xml_from_hit_key, xml_from_hold_key } from "./xml_from_key_collection";
+import { xml_from_next_frame } from "./xml_from_next_frame";
 import { writeXmlAttrs } from "./xml_from_write";
 
 /**
@@ -20,11 +21,15 @@ export function xml_from_frame_info(xml: IXMLFactory, id: string, frame: IFrameI
   writeXmlAttrs(pic, frame.pic as any, ["tex", "x", "y", "w", "h"]);
   el.insert(pic);
 
-  // next
+  // next (可能为数组)
   if (frame.next) {
-    const n = xml.create("next");
-    writeXmlAttrs(n, frame.next as any);
-    el.insert(n);
+    if (Array.isArray(frame.next)) {
+      for (const nf of frame.next) {
+        el.insert(xml_from_next_frame(xml, nf));
+      }
+    } else {
+      el.insert(xml_from_next_frame(xml, frame.next));
+    }
   }
 
   // hit / hold / key_down / key_up

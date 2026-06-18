@@ -148,7 +148,7 @@ const key_arg_records: Record<keyof IConf, Omit<IArgInfo, 'key'>> = {
   OUT_PREL_NAME: { type: String, default: 'prel.zip' },
   OUT_FULL_NAME: { type: String, default: 'lfw.full.zip' },
 
-  OUT_TYPE: { type: String },
+  OUT_TYPE: { type: String, default: 'json5' },
 
   FFMPEG_CMD: {
     type: String,

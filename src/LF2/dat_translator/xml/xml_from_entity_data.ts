@@ -6,6 +6,7 @@ import { writeXmlAttrs } from "./xml_from_write";
 import { xml_from_frame_info } from "./xml_from_frame_info";
 import { xml_from_drink_info } from "./xml_from_drink_info";
 import { xml_from_armor_info } from "./xml_from_armor_info";
+import { xml_from_next_frame } from "./xml_from_next_frame";
 
 const BASE_NUM_KEYS: (keyof IEntityInfo)[] = [
   "type", "ce", "weight", "strength",
@@ -98,16 +99,14 @@ export function xml_from_entity_data(xml: IXMLFactory, data: IEntityData): strin
   // base
   root.insert(build_base(xml, data.base));
 
-  // on_dead / on_exhaustion
+  // on_dead / on_exhaustion (可能为数组)
   if (data.on_dead) {
-    const n = xml.create("on_dead");
-    writeXmlAttrs(n, data.on_dead as any);
-    root.insert(n);
+    const list = Array.isArray(data.on_dead) ? data.on_dead : [data.on_dead];
+    for (const nf of list) root.insert(xml_from_next_frame(xml, nf, "on_dead"));
   }
   if (data.on_exhaustion) {
-    const n = xml.create("on_exhaustion");
-    writeXmlAttrs(n, data.on_exhaustion as any);
-    root.insert(n);
+    const list = Array.isArray(data.on_exhaustion) ? data.on_exhaustion : [data.on_exhaustion];
+    for (const nf of list) root.insert(xml_from_next_frame(xml, nf, "on_exhaustion"));
   }
 
   // bdy_prefabs
