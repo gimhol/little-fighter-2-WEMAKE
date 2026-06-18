@@ -130,4 +130,59 @@ export interface IXMLElement {
    * @return {string}
    */
   stringify(): string;
+
+  /**
+   * 插入子元素到指定位置
+   * @param {this}  child - 子元素
+   * @param {number} [index] - 插入位置，默认末尾
+   */
+  insert(child: this, index?: number): void;
+
+  /**
+   * 移除指定子元素
+   * @param {this} child - 子元素
+   * @return {boolean} 是否成功移除
+   */
+  remove(child: this): boolean;
+
+  /**
+   * 从父元素中移除自身
+   * @return {boolean} 是否成功移除
+   */
+  remove_self(): boolean;
+
+  /**
+   * 移除所有子元素
+   */
+  remove_all(): void;
+
+  /** 父元素 */
+  get parent(): IXMLElement | undefined;
+
+  /**
+   * 是否存在指定属性
+   * @param {string} name - 属性名
+   * @return {boolean}
+   */
+  has_attr(name: string): boolean;
+
+  /**
+   * 设置文本内容
+   * @param {string} text - 文本
+   */
+  set_text(text: string): void;
+
+  /**
+   * 按标签名查找子元素列表
+   * @param {string} tag - 标签名
+   * @return {IXMLElement[]}
+   */
+  children_by_tag(tag: string): IXMLElement[];
+
+  /**
+   * 按标签名查找第一个子元素
+   * @param {string} tag - 标签名
+   * @return {IXMLElement | undefined}
+   */
+  first_by_tag(tag: string): IXMLElement | undefined;
 }

@@ -72,18 +72,16 @@ export function xml_to_bg_data(el: IXMLElement): IBgData {
   if (id) ret.id = id;
 
   // 允许多个 base 标签，同名属性后者覆盖前者
-  for (const child of el.children) {
-    if (child.tagName !== "base") continue;
+  for (const child of el.children_by_tag("base")) {
     Object.assign(ret.base, xml_to_bg_base(child, ret.id));
   }
 
   // <dataset> 可选元素
-  const dsEl = el.children.find((c) => c.tagName === "dataset");
+  const dsEl = el.first_by_tag("dataset");
   if (dsEl) ret.dataset = dsEl.values() as Partial<IBgData["dataset"]>;
 
   // <layer> 子元素
-  for (const child of el.children) {
-    if (child.tagName !== "layer") continue;
+  for (const child of el.children_by_tag("layer")) {
     ret.layers.push(xml_to_bg_layer(child, ret.layers.length));
   }
 

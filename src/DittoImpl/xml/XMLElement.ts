@@ -142,6 +142,62 @@ export class XMLElement implements IXMLElement {
     return `<${tag}${attrStr}>${childrenStr}</${tag}>`;
   }
 
+  insert(child: XMLElement, index?: number): void {
+    if (index === void 0 || index >= this.inner.children.length) {
+      this.inner.appendChild(child.inner);
+      if (this._children) this._children.push(child);
+    } else {
+      const ref = this.inner.children[index];
+      this.inner.insertBefore(child.inner, ref);
+      if (this._children) this._children.splice(index, 0, child);
+    }
+  }
+
+  remove(child: XMLElement): boolean {
+    if (!this.inner.contains(child.inner)) return false;
+    this.inner.removeChild(child.inner);
+    if (this._children) {
+      const i = this._children.indexOf(child);
+      if (i >= 0) this._children.splice(i, 1);
+    }
+    return true;
+  }
+
+  remove_self(): boolean {
+    const { parentNode } = this.inner;
+    if (!parentNode) return false;
+    parentNode.removeChild(this.inner);
+    return true;
+  }
+
+  remove_all(): void {
+    while (this.inner.firstChild) {
+      this.inner.removeChild(this.inner.firstChild);
+    }
+    if (this._children) this._children.length = 0;
+  }
+
+  get parent(): XMLElement | undefined {
+    const p = this.inner.parentElement;
+    return p ? new XMLElement(p) : undefined;
+  }
+
+  has_attr(name: string): boolean {
+    return this.inner.hasAttribute(name);
+  }
+
+  set_text(text: string): void {
+    this.inner.textContent = text;
+  }
+
+  children_by_tag(tag: string): XMLElement[] {
+    return this.children.filter(c => c.tagName === tag);
+  }
+
+  first_by_tag(tag: string): XMLElement | undefined {
+    return this.children.find(c => c.tagName === tag);
+  }
+
   get children(): XMLElement[] {
     if (!this._children) {
       this._children = [];
