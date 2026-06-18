@@ -10,6 +10,7 @@ export class XMLElement implements IXMLElement {
   readonly inner: Element;
   private _children: XMLElement[] | null = null;
   private _attrs: { name: string; value: string; }[] | null = null;
+  private _parent: XMLElement | null = null;
   get tagName(): string { return this.inner.tagName; }
   get text(): string { return this.inner.textContent ?? ''; }
   constructor(inner: Element) { this.inner = inner; }
@@ -143,6 +144,7 @@ export class XMLElement implements IXMLElement {
   }
 
   insert(child: XMLElement, index?: number): void {
+    child._parent = this;
     if (index === void 0 || index >= this.inner.children.length) {
       this.inner.appendChild(child.inner);
       if (this._children) this._children.push(child);
@@ -156,6 +158,7 @@ export class XMLElement implements IXMLElement {
   remove(child: XMLElement): boolean {
     if (!this.inner.contains(child.inner)) return false;
     this.inner.removeChild(child.inner);
+    child._parent = null;
     if (this._children) {
       const i = this._children.indexOf(child);
       if (i >= 0) this._children.splice(i, 1);
@@ -167,19 +170,22 @@ export class XMLElement implements IXMLElement {
     const { parentNode } = this.inner;
     if (!parentNode) return false;
     parentNode.removeChild(this.inner);
+    this._parent = null;
     return true;
   }
 
   remove_all(): void {
+    if (this._children) {
+      for (const c of this._children) c._parent = null;
+      this._children.length = 0;
+    }
     while (this.inner.firstChild) {
       this.inner.removeChild(this.inner.firstChild);
     }
-    if (this._children) this._children.length = 0;
   }
 
   get parent(): XMLElement | undefined {
-    const p = this.inner.parentElement;
-    return p ? new XMLElement(p) : undefined;
+    return this._parent ?? undefined;
   }
 
   has_attr(name: string): boolean {
@@ -202,7 +208,9 @@ export class XMLElement implements IXMLElement {
     if (!this._children) {
       this._children = [];
       for (const c of this.inner.children) {
-        this._children.push(new XMLElement(c));
+        const child = new XMLElement(c);
+        child._parent = this;
+        this._children.push(child);
       }
     }
     return this._children;
