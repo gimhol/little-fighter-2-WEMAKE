@@ -48,6 +48,16 @@ export class XMLElement implements IXMLElement {
     if (v == null) return void 0;
     return v.split(sep).map(s => Number(s.trim()));
   }
+  strs_attr_soft(name: string, sep: string = ','): Voidable<string>[] | undefined {
+    const v = this.attr(name);
+    if (v == null) return void 0;
+    return v.split(sep).map(s => s.trim() || void 0);
+  }
+  nums_attr_soft(name: string, sep: string = ','): Voidable<number>[] | undefined {
+    const v = this.attr(name);
+    if (v == null) return void 0;
+    return v.split(sep).map(s => s.trim() === '' ? void 0 : Number(s.trim()));
+  }
   set_strs_attr(name: string, value: Voidable<string[]>, sep: string = ','): void {
     if (value === void 0 || value === null)
       return this.del_attr(name);
@@ -58,6 +68,16 @@ export class XMLElement implements IXMLElement {
     if (value === void 0 || value === null)
       return this.del_attr(name);
     this.set_attr(name, value.join(sep))
+  }
+  set_strs_attr_soft(name: string, value: Voidable<Voidable<string>[]>, sep: string = ','): void {
+    if (value === void 0 || value === null)
+      return this.del_attr(name);
+    this.set_attr(name, value.map(s => s ?? '').join(sep));
+  }
+  set_nums_attr_soft(name: string, value: Voidable<Voidable<number>[]>, sep: string = ','): void {
+    if (value === void 0 || value === null)
+      return this.del_attr(name);
+    this.set_attr(name, value.map(n => n === void 0 ? '' : String(n)).join(sep));
   }
   set_str_attr(name: string, value: Voidable<string>): void {
     if (value === void 0 || value === null)

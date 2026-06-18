@@ -1,6 +1,7 @@
+import { any, fields, flt, IFieldInfo, int, str } from "../fields";
 import { IWorldDataset, world_dataset_fields } from "../IWorldDataset";
-import { FacingFlag, ALL_FACING_FLAG, FACING_FLAG_LABEL_MAP, FACING_FLAG_DESC_MAP } from "./FacingFlag";
-import { FrameBehavior, ALL_FRAME_BEHAVIOR, FRAME_BEHAVIOR_LABEL_MAP, FRAME_BEHAVIOR_DESC_MAP } from "./FrameBehavior";
+import { ALL_FACING_FLAG, FACING_FLAG_DESC_MAP, FACING_FLAG_LABEL_MAP, FacingFlag } from "./FacingFlag";
+import { ALL_FRAME_BEHAVIOR, FRAME_BEHAVIOR_DESC_MAP, FRAME_BEHAVIOR_LABEL_MAP, FrameBehavior } from "./FrameBehavior";
 import type { IBdyInfo } from "./IBdyInfo";
 import type { IBpointInfo } from "./IBpointInfo";
 import type { IChaseInfo } from "./IChaseInfo";
@@ -15,7 +16,6 @@ import type { IQubePair } from "./IQubePair";
 import type { IVelocityInfo } from "./IVelocityInfo";
 import type { IWpointInfo } from "./IWpointInfo";
 import type { StateEnum } from "./StateEnum";
-import { any, fields, flt, IFieldInfo, int, str } from "../fields";
 
 /**
  * 实体的帧信息
@@ -132,14 +132,12 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   key_down?: IHoldKeyCollection;
   key_up?: IHoldKeyCollection;
   seqs?: { [x in string]?: TNextFrame; };
-  seq_map?: Map<string, TNextFrame>;
   bdy?: IBdyInfo[];
   itr?: IItrInfo[];
   wpoint?: IWpointInfo;
   bpoint?: IBpointInfo;
   opoint?: IOpointInfo[];
   cpoint?: ICpointInfo;
-  indicator_info?: IQubePair;
   /**
    * 隐身多少帧
    * 
@@ -226,18 +224,17 @@ export interface IFrameInfo extends Partial<IWorldDataset>, IVelocityInfo {
   landable?: number;
 
 
-  /* 为渲染层预留的玩意 */
+  /* 运行时使用，为Debug预留的玩意 */
+  indicator_info?: IQubePair;
+  /* 运行时使用，为渲染层预留的玩意 */
   __tex?: any;
-
-  /** 
-   * 是否根据lf2逻辑预处理此frame 
-   */
-  likelf2?: boolean;
-
+  /* 运行时使用，为碰撞检测预留的玩意 */
   __aabb_x1?: number;
   __aabb_x2?: number;
   __aabb_z1?: number;
   __aabb_z2?: number;
+  /** 运行时使用，根据seqs生成 */
+  seq_map?: Map<string, TNextFrame>;
 }
 
 export function frame_info_new(): IFrameInfo {
@@ -284,7 +281,6 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
   bpoint: any,
   opoint: any,
   cpoint: any,
-  indicator_info: any,
   invisible: int("隐身帧数", { nullable: true }),
   no_shadow: int("有否影子", "1=有影子 0=没影子", {
     nullable: true,
@@ -337,10 +333,11 @@ fields<Partial<Omit<IFrameInfo, keyof IWorldDataset>>>({
   ctrl_x: int("控制模式X", { nullable: true }),
   ctrl_y: int("控制模式Y", { nullable: true }),
   ctrl_z: int("控制模式Z", { nullable: true }),
+
   // 内部/渲染用字段
   seq_map: any,
+  indicator_info: any,
   __tex: any,
-  likelf2: any,
   __aabb_x1: any,
   __aabb_x2: any,
   __aabb_z1: any,

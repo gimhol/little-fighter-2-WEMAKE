@@ -62,4 +62,5 @@ export * from "./take_num";
 export * from "./take_positive_num";
 export * from "./take_raw_frame_mp";
 export * from "./xml_to_bg_data";
+export * from "./xml_to_frame_info";
 /*** AUTO EXPORT END ***/

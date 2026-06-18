@@ -67,6 +67,22 @@ export interface IXMLElement {
   nums_attr(name: string, sep?: string): number[] | undefined;
 
   /**
+   * 获取字符串数组属性（空段保留为 undefined）
+   * @param {string}  name - 属性名
+   * @param {string} [sep=","] - 分隔符
+   * @return {Voidable<string>[] | undefined}
+   */
+  strs_attr_soft(name: string, sep?: string): Voidable<string>[] | undefined;
+
+  /**
+   * 获取数值数组属性（空段保留为 undefined）
+   * @param {string}  name - 属性名
+   * @param {string} [sep=","] - 分隔符
+   * @return {Voidable<number>[] | undefined}
+   */
+  nums_attr_soft(name: string, sep?: string): Voidable<number>[] | undefined;
+
+  /**
    * 设置属性原始值，value 为 Voidable 时删除属性
    * @param {string}          name  - 属性名
    * @param {Voidable<string>} value - 值
@@ -109,6 +125,22 @@ export interface IXMLElement {
    * @param {string}           [sep=","] - 分隔符
    */
   set_nums_attr(name: string, value: Voidable<number[]>, sep?: string): void;
+
+  /**
+   * 设置字符串数组属性（undefined 元素转为空字符串），value 为 Voidable 时删除属性
+   * @param {string}                  name  - 属性名
+   * @param {Voidable<Voidable<string>[]>} value - 值
+   * @param {string}                 [sep=","] - 分隔符
+   */
+  set_strs_attr_soft(name: string, value: Voidable<Voidable<string>[]>, sep?: string): void;
+
+  /**
+   * 设置数值数组属性（undefined 元素转为空字符串），value 为 Voidable 时删除属性
+   * @param {string}                  name  - 属性名
+   * @param {Voidable<Voidable<number>[]>} value - 值
+   * @param {string}                 [sep=","] - 分隔符
+   */
+  set_nums_attr_soft(name: string, value: Voidable<Voidable<number>[]>, sep?: string): void;
 
   /**
    * 解析元素为类型化值（根据 type 属性或 tagName 自动推断类型）
