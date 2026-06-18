@@ -13,12 +13,7 @@ export function xml_from_itr_info(xml: IXMLFactory, i: IItrInfo, tag: string = "
   el.set_str_attr("ref", i.ref);
   el.set_num_attr("kind", i.kind as number);
   el.set_num_attr("hit_flag", i.hit_flag as number);
-  el.set_num_attr("x", i.x);
-  el.set_num_attr("y", i.y);
-  el.set_num_attr("w", i.w);
-  el.set_num_attr("h", i.h);
-  el.set_num_attr("z", i.z);
-  el.set_num_attr("l", i.l);
+  el.set_nums_attr_soft("qube", [i.x, i.y, i.w, i.h, i.z, i.l]);
   el.set_nums_attr_soft("dv", [i.dvx, i.dvy, i.dvz]);
   el.set_num_attr("effect", i.effect as number);
   el.set_num_attr("injury", i.injury);

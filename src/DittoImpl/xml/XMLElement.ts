@@ -80,13 +80,15 @@ export class XMLElement implements IXMLElement {
     this.set_attr(name, (Array.isArray(value) ? value : [value]).join(sep))
   }
   set_strs_attr_soft(name: string, value: Voidable<Voidable<string> | Voidable<string>[]>, sep: string = ','): void {
-    const arr = (Array.isArray(value) ? value : [value]) as Voidable<string>[];
-    if (arr.every(s => s === void 0 || s === null)) return this.del_attr(name);
+    const arr = (Array.isArray(value) ? [...value] : [value]) as Voidable<string>[];
+    while (arr.length && (arr[arr.length - 1] === void 0 || arr[arr.length - 1] === null)) arr.pop();
+    if (!arr.length) return this.del_attr(name);
     this.set_attr(name, arr.map(s => s ?? '').join(sep));
   }
   set_nums_attr_soft(name: string, value: Voidable<Voidable<number> | Voidable<number>[]>, sep: string = ','): void {
-    const arr = (Array.isArray(value) ? value : [value]) as Voidable<number>[];
-    if (arr.every(n => n === void 0 || n === null)) return this.del_attr(name);
+    const arr = (Array.isArray(value) ? [...value] : [value]) as Voidable<number>[];
+    while (arr.length && (arr[arr.length - 1] === void 0 || arr[arr.length - 1] === null)) arr.pop();
+    if (!arr.length) return this.del_attr(name);
     this.set_attr(name, arr.map(n => n === void 0 ? '' : String(n)).join(sep));
   }
   set_str_attr(name: string, value: Voidable<string>): void {
