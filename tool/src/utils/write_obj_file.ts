@@ -2,8 +2,9 @@ import json5 from "json5";
 import { write_file } from "./write_file";
 import path from "path";
 import { mkdir } from "fs/promises";
-import type { IBgData, IEntityData, IStageInfo } from "../../../src/LF2/defines";
+import type { IBgData, IDataLists, IEntityData, IStageInfo } from "../../../src/LF2/defines";
 import { xml_from_bg_data } from "../../../src/LF2/dat_translator/xml/xml_from_bg_data";
+import { xml_from_data_lists } from "../../../src/LF2/dat_translator/xml/xml_from_data_lists";
 import { xml_from_entity_data } from "../../../src/LF2/dat_translator/xml/xml_from_entity_data";
 import { xml_from_stage_info } from "../../../src/LF2/dat_translator/xml/xml_from_stage_info";
 import { XML } from "../xml/ToolXML";
@@ -30,6 +31,9 @@ function obj_to_xml(dst_path: string, content: any): string {
   }
   if (dst_path.endsWith('.stage.xml') && Array.isArray(content)) {
     return xml_from_stage_info(XML, content as IStageInfo[]);
+  }
+  if (dst_path.endsWith('.index.xml') && content && 'objects' in content) {
+    return xml_from_data_lists(XML, content as IDataLists).stringify();
   }
   // fallback — JSON wrapped in a root tag
   const tag = path.basename(dst_path).replace(/\.xml$/i, "");

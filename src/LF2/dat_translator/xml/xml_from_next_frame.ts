@@ -1,42 +1,6 @@
 import type { INextFrame } from "../../defines/INextFrame";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import type { IXMLFactory } from "./xml_from_bg_data";
-import { writeXmlAttrs } from "./xml_from_write";
-
-/**
- * 将 INextFrame 的属性写入元素中
- *
- * 只写入标量字段，跳过运行时对象（judger 等）
- * expression 作为子元素处理
- */
-function writeNextAttrs(el: IXMLElement, nf: INextFrame): void {
-  const scalarKeys: (keyof INextFrame)[] = [
-    "id", "wait", "facing",
-    "mp", "mp_mode", "hp", "blink_time",
-    "dvx", "dvy", "dvz",
-    "acc_x", "acc_y", "acc_z",
-    "vxm", "vym", "vzm",
-    "ctrl_x", "ctrl_y", "ctrl_z",
-  ];
-  for (const k of scalarKeys) {
-    const v = (nf as any)[k];
-    if (v === undefined || v === null || v === "") continue;
-    if (typeof v === "number") {
-      el.set_num_attr(k, v);
-    } else if (typeof v === "boolean") {
-      el.set_bool_attr(k, v);
-    } else if (Array.isArray(v)) {
-      if (v.length) el.set_strs_attr(k, v.map(String));
-    } else if (typeof v === "string") {
-      el.set_str_attr(k, v);
-    }
-  }
-
-  // sounds
-  if (nf.sounds?.length) {
-    el.set_strs_attr("sounds", nf.sounds);
-  }
-}
 
 /**
  * 序列化 <next> 元素（来自 INextFrame）
@@ -49,7 +13,19 @@ export function xml_from_next_frame(
   tagName: string = "next",
 ): IXMLElement {
   const el = xml.create(tagName);
-  writeNextAttrs(el, nf);
+
+  el.set_str_attr("id", nf.id);
+  el.set_num_attr("wait", nf.wait);
+  el.set_num_attr("facing", nf.facing);
+  el.set_num_attr("mp", nf.mp);
+  el.set_num_attr("hp", nf.hp);
+  el.set_num_attr("blink_time", nf.blink_time);
+  el.set_nums_attr_soft("dv", [nf.dvx, nf.dvy, nf.dvz]);
+  el.set_nums_attr_soft("acc", [nf.acc_x, nf.acc_y, nf.acc_z]);
+  el.set_nums_attr_soft("vm", [nf.vxm, nf.vym, nf.vzm]);
+  el.set_nums_attr_soft("ctrl", [nf.ctrl_x, nf.ctrl_y, nf.ctrl_z]);
+
+  el.set_strs_attr("sounds", nf.sounds);
 
   // expression → <expression>text</expression>
   if (nf.expression) {

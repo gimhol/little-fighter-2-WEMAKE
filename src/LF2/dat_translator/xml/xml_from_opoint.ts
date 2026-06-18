@@ -1,9 +1,8 @@
-import type { IOpointInfo, IOpointMulti } from "../../defines/IOpointInfo";
+import type { IOpointInfo } from "../../defines/IOpointInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import type { IXMLFactory } from "./xml_from_bg_data";
 import { xml_from_next_frame } from "./xml_from_next_frame";
 import { xml_from_opoint_multi } from "./xml_from_opoint_multi";
-import { writeNonZeroAttr } from "./xml_from_write";
 
 /**
  * 序列化 <opoint>
@@ -26,6 +25,11 @@ export function xml_from_opoint(xml: IXMLFactory, o: IOpointInfo): IXMLElement {
     el.set_num_attr("multi", o.multi);
   }
 
-  writeNonZeroAttr(el, o as any, ["x", "y", "z", "dvx", "dvy", "dvz", "facing", "mp"]);
+  el.set_num_attr("x", o.x);
+  el.set_num_attr("y", o.y);
+  el.set_num_attr("z", o.z);
+  el.set_nums_attr_soft("dv", [o.dvx, o.dvy, o.dvz]);
+  el.set_num_attr("facing", o.facing as number);
+  el.set_num_attr("mp", o.mp);
   return el;
 }

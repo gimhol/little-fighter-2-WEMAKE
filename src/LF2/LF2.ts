@@ -476,7 +476,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.md5s.unshift(md5);
     this.callbacks.emit("on_zips_changed")(this.zips);
 
-    const index_files = zip.file(/\.index\.json5$/g).map(v => v.name)
+    const index_files = zip.file(/\.index\.(json5|xml)$/g).map(v => v.name)
     await this.datas.load(index_files);
 
     this._dispose_check('load_data')

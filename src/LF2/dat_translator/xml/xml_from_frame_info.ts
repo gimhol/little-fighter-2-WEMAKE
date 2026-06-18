@@ -6,7 +6,6 @@ import { xml_from_itr_info } from "./xml_from_itr_info";
 import { xml_from_opoint } from "./xml_from_opoint";
 import { xml_from_hit_key, xml_from_hold_key } from "./xml_from_key_collection";
 import { xml_from_next_frame } from "./xml_from_next_frame";
-import { writeXmlAttrs } from "./xml_from_write";
 
 /**
  * 序列化 <frame>
@@ -18,7 +17,11 @@ export function xml_from_frame_info(xml: IXMLFactory, id: string, frame: IFrameI
   // pic (required)
   if (!frame.pic) return null;
   const pic = xml.create("pic");
-  writeXmlAttrs(pic, frame.pic as any, ["tex", "x", "y", "w", "h"]);
+  pic.set_str_attr("tex", frame.pic.tex);
+  pic.set_num_attr("x", frame.pic.x);
+  pic.set_num_attr("y", frame.pic.y);
+  pic.set_num_attr("w", frame.pic.w);
+  pic.set_num_attr("h", frame.pic.h);
   el.insert(pic);
 
   // next (可能为数组)
@@ -49,17 +52,37 @@ export function xml_from_frame_info(xml: IXMLFactory, id: string, frame: IFrameI
   // bpoint / wpoint / cpoint (single)
   if (frame.bpoint) {
     const b = xml.create("bpoint");
-    writeXmlAttrs(b, frame.bpoint as any);
+    b.set_num_attr("x", frame.bpoint.x);
+    b.set_num_attr("y", frame.bpoint.y);
+    b.set_num_attr("z", frame.bpoint.z);
+    b.set_num_attr("r", frame.bpoint.r);
     el.insert(b);
   }
   if (frame.wpoint) {
     const w = xml.create("wpoint");
-    writeXmlAttrs(w, frame.wpoint as any);
+    w.set_num_attr("kind", frame.wpoint.kind as number);
+    w.set_num_attr("x", frame.wpoint.x);
+    w.set_num_attr("y", frame.wpoint.y);
+    w.set_num_attr("z", frame.wpoint.z);
+    w.set_str_attr("weaponact", frame.wpoint.weaponact);
+    w.set_str_attr("attacking", frame.wpoint.attacking);
+    el.set_nums_attr_soft("dv", [frame.wpoint.dvx, frame.wpoint.dvy, frame.wpoint.dvz]);
     el.insert(w);
   }
   if (frame.cpoint) {
     const c = xml.create("cpoint");
-    writeXmlAttrs(c, frame.cpoint as any);
+    c.set_num_attr("kind", frame.cpoint.kind);
+    c.set_num_attr("x", frame.cpoint.x);
+    c.set_num_attr("y", frame.cpoint.y);
+    c.set_num_attr("z", frame.cpoint.z);
+    c.set_num_attr("injury", frame.cpoint.injury);
+    c.set_num_attr("hurtable", frame.cpoint.hurtable);
+    c.set_num_attr("decrease", frame.cpoint.decrease);
+    el.set_nums_attr_soft("throwv", [frame.cpoint.throwvx, frame.cpoint.throwvy, frame.cpoint.throwvz]);
+    c.set_num_attr("throwinjury", frame.cpoint.throwinjury);
+    c.set_str_attr("fronthurtact", frame.cpoint.fronthurtact);
+    c.set_str_attr("backhurtact", frame.cpoint.backhurtact);
+    c.set_num_attr("shaking", frame.cpoint.shaking);
     el.insert(c);
   }
 
