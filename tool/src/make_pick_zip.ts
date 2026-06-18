@@ -106,7 +106,7 @@ export async function make_pick_zip() {
       ...data.base.hit_sounds || [],
       ...data.base.dead_sounds || [],
       ...data.base.drop_sounds || [],
-      ...Object.keys(data.base.files).map(k => data.base.files[k].path),
+      ...Object.keys(data.base.files??[]).map(k => data.base.files![k].path),
       ...Object.keys(data.frames).reduce<string[]>((r, k) => {
         const frame = data.frames[k];
         arraying(frame.sound).forEach(v => r.push(v));
