@@ -9,13 +9,13 @@ import type { IImporter } from "./importer";
 import type { IReadable } from "./IReadable";
 import type { IRender } from "./IRender";
 import type { ITimeout } from "./ITimeout";
-import type { IXMLElement } from "./IXMLElement";
 import type { IKeyboard } from "./keyboard";
 import type { IPointings } from "./pointings";
 import type { IUINodeRenderer } from "./render/IUINodeRenderer";
 import type { IWorldRenderer } from "./render/IWorldRenderer";
 import type { ISounds } from "./sounds";
 import type { IUIInputHandle } from "./ui/IEventHandle";
+import { IXML } from "./xml";
 import type { IZip } from "./zip";
 
 export interface IDitto extends IDittoPack {
@@ -49,7 +49,7 @@ export interface IDittoPack {
   UINodeRenderer: new (uinode: UINode) => IUINodeRenderer;
   ImageMgr: new (lf2: LF2) => IImageMgr;
   UIInputHandle: new (lf2: LF2) => IUIInputHandle;
-  XML: { parse(text: string): IXMLElement; };
+  XML: IXML;
   warn(...args: any[]): unknown;
   Log(...args: any[]): unknown;
   debug(...args: any[]): unknown;

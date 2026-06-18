@@ -35,12 +35,7 @@ Ditto.setup({
   warn: Warn.print,
   Log: Log.print,
   debug: Debug.print,
-  XML: {
-    parse(text: string) {
-      const i = new DOMParser().parseFromString(text, 'text/xml').documentElement
-      return new dom.XMLElement(i)
-    }
-  },
+  XML: dom.XML,
   DEV
 });
 ewents.filter = async (type: string, event: object) => {

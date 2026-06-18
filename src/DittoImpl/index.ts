@@ -9,7 +9,6 @@ export * from "./RImageInfo";
 export * from "./RTextInfo";
 export * from "./Render";
 export * from "./Timeout";
-export * from "./XMLElement";
 export * from "./Zip";
 export * from "./__PointingEvent";
 export * from "./_t";
@@ -18,4 +17,5 @@ export * from "./md5";
 export * from "./renderer";
 export * from "./sounds";
 export * from "./ui";
+export * from "./xml";
 /*** AUTO EXPORT END ***/

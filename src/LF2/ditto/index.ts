@@ -1,7 +1,7 @@
 /*** AUTO EXPORT START ***/
+export * from "./IReadable";
 export * from "./IRender";
 export * from "./ITimeout";
-export * from "./IXMLElement";
 export * from "./Instance";
 export * from "./cache";
 export * from "./fullscreen";
@@ -12,6 +12,6 @@ export * from "./pointings";
 export * from "./render";
 export * from "./sounds";
 export * from "./ui";
+export * from "./xml";
 export * from "./zip";
-export * from "./IReadable"
 /*** AUTO EXPORT END ***/

@@ -1,5 +1,5 @@
 import { IStyle } from "../defines";
-import { IXMLElement } from "../ditto/IXMLElement";
+import { IXMLElement } from "../ditto/xml/IXMLElement";
 import { IComponentInfo } from "./IComponentInfo";
 import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
 

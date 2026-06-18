@@ -1,4 +1,4 @@
-import { type Voidable, type IXMLElement } from "../LF2/ditto/IXMLElement";
+import { type Voidable, type IXMLElement } from "../../LF2/ditto/xml/IXMLElement";
 
 const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
 
@@ -119,8 +119,6 @@ export class XMLElement implements IXMLElement {
     return obj;
   }
 
-
-
   action_str(): string {
     const name = this.attr('action') || this.attr('name');
     if (name) {
@@ -128,6 +126,20 @@ export class XMLElement implements IXMLElement {
       return args ? `${name}(${args})` : `${name}()`;
     }
     return this.text;
+  }
+
+  stringify(): string {
+    const tag = this.tagName;
+    const attrStr = this.attrs
+      .map(a => ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`)
+      .join('');
+    if (!this.children.length && !this.text) {
+      return `<${tag}${attrStr} />`;
+    }
+    const childrenStr = this.text
+      ? this.text.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      : this.children.map(c => c.stringify()).join('');
+    return `<${tag}${attrStr}>${childrenStr}</${tag}>`;
   }
 
   get children(): XMLElement[] {

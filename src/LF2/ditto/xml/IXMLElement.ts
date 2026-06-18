@@ -124,4 +124,10 @@ export interface IXMLElement {
    * 解析为动作字符串（"action(args)" 格式）
    */
   action_str(): string;
+
+  /**
+   * 序列化为 XML 字符串
+   * @return {string}
+   */
+  stringify(): string;
 }
