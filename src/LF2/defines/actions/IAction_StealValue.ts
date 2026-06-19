@@ -1,4 +1,4 @@
-import { ActionType } from "./ActionType";
+import { ActionType } from "../ActionType";
 import { IAction_Base } from "./IAction_Base";
 
 export interface IAction_StealValue extends IAction_Base {

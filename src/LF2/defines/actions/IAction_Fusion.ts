@@ -1,5 +1,5 @@
-import { GK, TNextFrame } from ".";
-import { ActionType } from "./ActionType";
+import { GK, TNextFrame } from "..";
+import { ActionType } from "../ActionType";
 import { IAction_Base } from "./IAction_Base";
 
 

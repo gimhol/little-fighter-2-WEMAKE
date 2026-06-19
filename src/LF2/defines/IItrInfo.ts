@@ -96,7 +96,7 @@ export interface IItrInfo extends Partial<IQube> {
   caughtact?: TNextFrame;
 
   on_hit_ground?: TNextFrame;
-
+  
   actions?: TAction[];
 
   /**

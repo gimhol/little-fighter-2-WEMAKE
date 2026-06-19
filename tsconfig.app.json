@@ -17,6 +17,7 @@
     "useDefineForClassFields": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitThis": true, // FOR PIO
     "noImplicitOverride": true,

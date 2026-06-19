@@ -2,13 +2,14 @@ import type { IActionHandler } from "../base/IActionHandler";
 import type { Collision } from "../collision/Collision";
 import { ActionType } from "../defines/ActionType";
 import { HitFlag } from "../defines/HitFlag";
-import { IAction_ABuff, IAction_VBuff } from "../defines/IAction_ABuff";
-import type { IAction_Broadcast } from "../defines/IAction_Broadcast";
-import type { IAction_Fusion } from "../defines/IAction_Fusion";
-import type { IAction_ReboundVX } from "../defines/IAction_ReboundVX";
-import { IAction_StealValue } from "../defines/IAction_StealValue";
-import type { IAction_TurnFace } from "../defines/IAction_TurnFace";
-import type { IAction_TurnTeam } from "../defines/IAction_TurnTeam";
+import { IAction_ABuff } from "../defines/actions/IAction_ABuff";
+import { IAction_VBuff } from "../defines/actions/IAction_VBuff";
+import type { IAction_Broadcast } from "../defines/actions/IAction_Broadcast";
+import type { IAction_Fusion } from "../defines/actions/IAction_Fusion";
+import type { IAction_ReboundVX } from "../defines/actions/IAction_ReboundVX";
+import { IAction_StealValue } from "../defines/actions/IAction_StealValue";
+import type { IAction_TurnFace } from "../defines/actions/IAction_TurnFace";
+import type { IAction_TurnTeam } from "../defines/actions/IAction_TurnTeam";
 import { ensure, max, min, round } from "../utils";
 import type { Entity } from "./Entity";
 import { turn_face } from "./face_helper";
@@ -82,7 +83,7 @@ export const collision_action_handlers: IActionHandler = {
     if (act) fighter_1.enter_frame(act);
   },
   [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: Collision) => {
-    lf2.broadcast(action.data);
+    lf2.broadcast(action.data.msg);
   },
   [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => {
     const { data: d } = action;
@@ -120,40 +121,41 @@ export const collision_action_handlers: IActionHandler = {
     t.hp_r = max(t.hp_r, t.hp);
   },
   [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => {
-    const { lf2, world, victim, attacker } = collision;
-    const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
-    if (
-      !(action.data.hitflag & victim.data.type) ||
-      !(action.data.hitflag & ally_flag)
-    ) return;
-    const id = action.data.buff + '_' + victim.id;
-    let buf = world.buffs.get(id);
-    if (!buf) {
-      buf = lf2.factory.create_buff(action.data.buff, lf2, id);
-      if (!buf) return;
-      world.buffs.set(id, buf);
-      buf.set_attacker(attacker);
-      buf.set_victims(victim);
-      victim.buffs.set(buf.id, buf);
-    }
-    buf.lifetime = 0;
-    buf.duration = action.data.duration;
-    buf.level += 1;
+    const { victim, attacker } = collision;
+    apply_buff(action, attacker, victim, collision);
   },
   [ActionType.A_BUFF]: (action: IAction_ABuff, collision: Collision) => {
-    const { lf2, world, attacker, victim } = collision;
-    const id = action.data.buff + '_' + attacker.id;
-    let buf = world.buffs.get(id);
-    if (!buf) {
-      buf = lf2.factory.create_buff(action.data.buff, lf2, id);
-      if (!buf) return;
-      world.buffs.set(id, buf);
-      buf.set_attacker(victim);
-      buf.set_victims(attacker);
-      attacker.buffs.set(buf.id, buf);
-    }
-    buf.lifetime = 0;
-    buf.duration = action.data.duration;
-    buf.level += 1;
+    const { attacker, victim } = collision;
+    apply_buff(action, victim, attacker, collision);
   }
 };
+
+function apply_buff(
+  action: IAction_VBuff | IAction_ABuff,
+  attacker: Entity,
+  victim: Entity,
+  collision: Collision
+) {
+  const { data } = action;
+  if (!data) return;
+  const { hitflag = HitFlag.AllEnemy, duration = 0, buff = '' } = data;
+  const { lf2, world } = collision;
+  const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
+  if (
+    !(hitflag & victim.data.type) ||
+    !(hitflag & ally_flag)
+  ) return;
+  const id = data.buff + '_' + victim.id;
+  let buf = world.buffs.get(id);
+  if (!buf) {
+    buf = lf2.factory.create_buff(buff, lf2, id);
+    if (!buf) return;
+    world.buffs.set(id, buf);
+    buf.set_attacker(attacker);
+    buf.set_victims(victim);
+    victim.buffs.set(buf.id, buf);
+  }
+  buf.lifetime = 0;
+  buf.duration = duration;
+  buf.level += 1;
+}

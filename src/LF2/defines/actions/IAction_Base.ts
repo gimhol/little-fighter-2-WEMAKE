@@ -1,4 +1,4 @@
-import type { IExpression } from "./IExpression";
+import type { IExpression } from "../IExpression";
 
 /**
  * 条件动作
@@ -33,5 +33,8 @@ export interface IAction_Base {
    * 
    * @type {?boolean} 默认true
    */
-  pretest?: boolean; 
+  pretest?: boolean;
+
+  /** 子类数据，任意object */
+  data?: object;
 }
