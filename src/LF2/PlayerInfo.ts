@@ -1,12 +1,12 @@
 import json5 from "json5";
-import { Callbacks } from "./base";
-import { Defines, type GameKey } from "./defines";
+import { Callbacks } from '../base/Callbacks';
+import { type GameKey } from '../defines/GameKey';
 import { CtrlDevice } from "./defines/CtrlDevice";
 import type { IPurePlayerInfo } from "./defines/IPurePlayerInfo";
-import { Ditto } from "./ditto";
-import type { Entity } from "./entity";
+import { Ditto } from '../ditto/Instance';
+import type { Entity } from '../entity/Entity';
 import type { IPlayerInfoCallback } from "./IPlayerInfoCallback";
-import { is_str, type Unsafe } from "./utils/type_check";
+import { is_str } from '../utils/type_check/is_str';
 
 export class PlayerInfo {
   static readonly TAG = "PlayerInfo";

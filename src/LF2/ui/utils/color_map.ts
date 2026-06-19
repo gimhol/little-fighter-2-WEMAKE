@@ -1,4 +1,4 @@
-import { hex_to_rgba } from "@/LF2";
+import { hex_to_rgba } from './hex_to_rgba';
 import type { IRGBA } from "./IRGBA";
 
 const COLOR_HEX_MAP = new Map([

@@ -1,5 +1,5 @@
 
-import { is_ball, is_weapon } from "@/LF2/entity";
+import { is_ball, is_weapon } from "../../entity";
 import type { IState } from "../../base/FSM";
 import { bot_cases } from "../../cases_instances";
 import { GK, SE, StateEnum, type LGK } from "../../defines";

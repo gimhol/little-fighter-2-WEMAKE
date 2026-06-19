@@ -1,4 +1,4 @@
-import { floor } from "../../utils";
+import { floor } from '../../utils/math/base';
 import { Label } from "./Label";
 
 export class PlayingTimeText extends Label {

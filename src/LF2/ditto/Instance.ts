@@ -1,22 +1,22 @@
 import type { IVector2, IVector3 } from "../defines";
 import type { LF2 } from "../LF2";
-import type { UINode } from "../ui";
+import type { UINode } from '../ui/UINode';
 import type { World } from "../World";
-import type { ICache } from "./cache";
-import type { IFullScreen } from "./fullscreen";
+import type { ICache } from './cache/ICache';
+import type { IFullScreen } from './fullscreen/IFullScreen';
 import type { IImageMgr } from "./image/IImageMgr";
-import type { IImporter } from "./importer";
+import type { IImporter } from './importer/IImporter';
 import type { IReadable } from "./IReadable";
 import type { IRender } from "./IRender";
 import type { ITimeout } from "./ITimeout";
-import type { IKeyboard } from "./keyboard";
-import type { IPointings } from "./pointings";
+import type { IKeyboard } from './keyboard/IKeyboard';
+import type { IPointings } from './pointings/IPointings';
 import type { IUINodeRenderer } from "./render/IUINodeRenderer";
 import type { IWorldRenderer } from "./render/IWorldRenderer";
-import type { ISounds } from "./sounds";
+import type { ISounds } from './sounds/ISounds';
 import type { IUIInputHandle } from "./ui/IEventHandle";
-import type { IXML } from "./xml";
-import type { IZip } from "./zip";
+import type { IXML } from './xml/IXML';
+import type { IZip } from './zip/IZip';
 
 export interface IDitto extends IDittoPack {
   setup(pack: IDittoPack): void;

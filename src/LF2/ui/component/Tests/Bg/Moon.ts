@@ -1,8 +1,8 @@
-import { AGK, Defines, GK, O_ID, TeamEnum } from "@/LF2/defines";
-import { Entity } from "@/LF2/entity";
+import { AGK, Defines, GK, O_ID, TeamEnum } from "../../../../defines";
+import { Entity } from "../../../../entity";
 import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
-import { CMD } from "@/LF2/defines/CMD";
+import { CMD } from "../../../../defines/CMD";
 
 export class MoonTest extends TestCase {
   override name: string = 'Bg Override Gravity Test, Normal Jump / Jump + Defend / Small Jump';

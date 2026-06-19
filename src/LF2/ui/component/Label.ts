@@ -1,5 +1,5 @@
-import type { IStyle } from "@/LF2/defines";
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import type { IStyle } from "../../defines";
+import { TextInfo } from "../../ditto/image/TextInfo";
 import { UIComponent } from "./UIComponent";
 
 export class Label extends UIComponent {

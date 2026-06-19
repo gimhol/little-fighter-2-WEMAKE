@@ -1,4 +1,4 @@
-import { Entity } from "./entity";
+import { Entity } from '../entity/Entity';
 
 export class Ground {
   static Default: Ground = new Ground()

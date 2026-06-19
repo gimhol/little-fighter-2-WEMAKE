@@ -1,4 +1,4 @@
-import { is_fighter } from "@/LF2/entity";
+import { is_fighter } from "../../entity";
 import { Entity } from "../../entity/Entity";
 import { UIComponent } from "./UIComponent";
 

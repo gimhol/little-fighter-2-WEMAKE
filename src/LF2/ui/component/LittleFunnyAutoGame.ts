@@ -1,7 +1,8 @@
-import { ActionDirector, EntityGroup } from "@/LF2";
-import { CMD, type IEntityData } from "@/LF2/defines";
-import { Entity, type IEntityCallbacks } from "@/LF2/entity";
-import { StatBarType } from "@/LF2/entity/StatBarType";
+import { ActionDirector } from './Tests/ActionDirector';
+import { EntityGroup } from '../../defines/EntityGroup';
+import { CMD, type IEntityData } from "../../defines";
+import { Entity, type IEntityCallbacks } from "../../entity";
+import { StatBarType } from "../../entity/StatBarType";
 import { UIComponent } from "./UIComponent";
 
 interface ITeamInfo {

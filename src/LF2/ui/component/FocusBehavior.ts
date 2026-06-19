@@ -1,4 +1,4 @@
-import { type IPropsMeta, UIComponent } from "@/LF2";
+import { UIComponent } from './UIComponent';
 export interface IFocusBehaviorProps {
   behavior?: string;
 }

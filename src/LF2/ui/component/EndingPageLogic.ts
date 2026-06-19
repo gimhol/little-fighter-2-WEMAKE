@@ -1,4 +1,4 @@
-import { type IPropsMeta, Label } from "@/LF2";
+import { Label } from './Label';
 import { Difficulty } from "../../defines";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { IUIPointerEvent } from "../IUIPointerEvent";

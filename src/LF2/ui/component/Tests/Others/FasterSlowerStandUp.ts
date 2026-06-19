@@ -1,6 +1,8 @@
-import { ActionDirector, AGK, TestCase } from "@/LF2";
-import { GK, O_ID } from "@/LF2/defines";
-import { Entity, StatBarType } from "@/LF2/entity";
+import { ActionDirector } from '../ActionDirector';
+import { AGK } from '../../../../defines/GameKey';
+import { TestCase } from '../TestCase';
+import { GK, O_ID } from "../../../../defines";
+import { Entity, StatBarType } from "../../../../entity";
 
 export class FasterSlowerStandUp extends TestCase {
   override name: string = 'Press A/D faster or slower to stand up';

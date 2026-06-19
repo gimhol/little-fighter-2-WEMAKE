@@ -1,4 +1,4 @@
-import { max } from "../../utils";
+import { max } from '../../utils/math/base';
 import { FlexAlign } from "./FlexAlign";
 import { FlexItem } from "./FlexItem";
 import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";

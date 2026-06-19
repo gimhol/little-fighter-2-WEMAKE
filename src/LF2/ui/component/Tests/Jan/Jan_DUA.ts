@@ -1,4 +1,4 @@
-import { O_ID, TeamEnum, GK } from "@/LF2/defines";
+import { O_ID, TeamEnum, GK } from "../../../../defines";
 import { TestCase } from "../TestCase";
 
 export class Jan_DUA extends TestCase {

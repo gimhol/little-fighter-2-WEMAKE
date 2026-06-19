@@ -1,5 +1,5 @@
-import { GK, O_ID, OID, StateEnum, TeamEnum } from "@/LF2/defines";
-import { Entity } from "@/LF2/entity/Entity";
+import { GK, O_ID, OID, StateEnum, TeamEnum } from "../../../../defines";
+import { Entity } from "../../../../entity/Entity";
 import { TestCase } from "../TestCase";
 
 export class Firzen_DUA_0 extends TestCase {

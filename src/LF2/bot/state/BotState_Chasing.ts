@@ -1,7 +1,8 @@
-import { is_fighter, is_weapon } from "@/LF2/entity";
+import { is_fighter, is_weapon } from "../../entity";
 import { AGK, Defines, GK, StateEnum, WeaponType, WT } from "../../defines";
 import { BotStateEnum, BSE } from "../../defines/BotStateEnum";
-import { abs, between, round, round_float } from "../../utils";
+import { abs, between, round } from '../../utils/math/base';
+import { round_float } from '../../utils/math/round_float';
 import { BotBehavior } from "../BotController";
 import { BotState_Base } from "./BotState";
 

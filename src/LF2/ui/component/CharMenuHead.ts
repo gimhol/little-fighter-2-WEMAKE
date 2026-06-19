@@ -1,5 +1,6 @@
-import { Label, UINode } from "@/LF2";
-import { floor, type IPropsMeta } from "@/LF2/utils";
+import { Label } from './Label';
+import { UINode } from '../UINode';
+import { floor } from '../../utils/math/base';
 import { Sine } from "../../animation/Sine";
 import { GamePrepareLogic } from "./GamePrepareLogic";
 import { Picture } from "./Picture";

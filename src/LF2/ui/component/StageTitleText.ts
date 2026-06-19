@@ -1,7 +1,7 @@
-import type { IStagePhaseInfo } from "@/LF2/defines";
-import type { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
-import type { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import type { IStagePhaseInfo } from "../../defines";
+import type { IWorldCallbacks } from "../../IWorldCallbacks";
+import type { IStageCallbacks } from "../../stage/IStageCallbacks";
+import { TextInfo } from "../../ditto/image/TextInfo";
 import { Stage } from "../../stage";
 import { UIComponent } from "./UIComponent";
 

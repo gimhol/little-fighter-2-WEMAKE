@@ -1,4 +1,4 @@
-import { min } from "@/LF2/utils";
+import { min } from "../../../utils";
 
 export interface IWork {
   (): unknown;

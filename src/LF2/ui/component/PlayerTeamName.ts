@@ -1,5 +1,5 @@
 import { Sine } from "../../animation/Sine";
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import { TextInfo } from "../../ditto/image/TextInfo";
 import { UIComponent } from "./UIComponent";
 
 /**

@@ -1,4 +1,7 @@
-import { type IPropsMeta, type IUICallback, LabelButton, UIComponent, UINode } from "@/LF2";
+import { type IUICallback } from '../IUICallback';
+import { LabelButton } from './LabelButton';
+import { UIComponent } from './UIComponent';
+import { UINode } from '../UINode';
 export interface ISettingsLogicProps {
   btn_misc_settings: UINode,
   btn_ctrl_settings: UINode,

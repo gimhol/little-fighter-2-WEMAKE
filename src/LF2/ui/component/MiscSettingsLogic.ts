@@ -1,8 +1,9 @@
-import { 
-  type ISoundsCallback, type IWorldCallbacks, 
-  round_float, SliderHandle, UIComponent 
-} from "@/LF2";
-import { SyncRenderEnum } from "@/LF2/defines/SyncRenderEnum";
+import type { ISoundsCallback } from "../../ditto/sounds/ISoundsCallback";
+import type { IWorldCallbacks } from "../../IWorldCallbacks";
+import { round_float } from "../../utils/round_float";
+import { SliderHandle } from "./Slider/SliderHandle";
+import { UIComponent } from "./UIComponent";
+import { SyncRenderEnum } from "../../defines/SyncRenderEnum";
 const render_rate_options = [
   SyncRenderEnum.Half,
   SyncRenderEnum.Sync,

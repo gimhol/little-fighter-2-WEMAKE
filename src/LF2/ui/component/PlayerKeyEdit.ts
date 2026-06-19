@@ -1,4 +1,6 @@
-import type { IKeyboardCallback, IPointingsCallback, IUICallback } from "@/LF2";
+import type { IKeyboardCallback } from '../../ditto/keyboard/IKeyboardCallback';
+import type { IPointingsCallback } from '../../ditto/pointings/IPointingsCallback';
+import type { IUICallback } from '../IUICallback';
 import { PlayerKeyText } from "./PlayerKeyText";
 
 export class PlayerKeyEdit extends PlayerKeyText {

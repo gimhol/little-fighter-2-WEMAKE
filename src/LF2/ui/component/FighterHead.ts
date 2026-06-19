@@ -1,4 +1,4 @@
-import { Picture } from "@/LF2";
+import { Picture } from './Picture';
 import { Defines } from "../../defines/defines";
 import { PlayerInfo } from "../../PlayerInfo";
 import { UIComponent } from "./UIComponent";

@@ -1,4 +1,4 @@
-import type { IXMLElement } from "@/LF2";
+import type { IXMLElement } from './IXMLElement';
 
 export interface IXML {
   parse(text: string): IXMLElement;

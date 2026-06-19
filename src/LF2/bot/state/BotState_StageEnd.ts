@@ -1,5 +1,5 @@
 
-import { AGK, GK, StateEnum } from "@/LF2/defines";
+import { AGK, GK, StateEnum } from "../../defines";
 import { BSE } from "../../defines/BotStateEnum";
 import { BotState_Base } from "./BotState";
 

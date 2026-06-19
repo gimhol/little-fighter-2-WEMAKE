@@ -1,4 +1,4 @@
-import { BSE, AGK } from "@/LF2/defines";
+import { BSE, AGK } from "../../defines";
 import { BotState_Base } from "./BotState";
 
 

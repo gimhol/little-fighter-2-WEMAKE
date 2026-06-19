@@ -1,5 +1,5 @@
-import type { INextFrame, TNextFrame } from "@/LF2/defines";
-import type { IXMLElement } from "@/LF2/ditto";
+import type { INextFrame, TNextFrame } from "../../defines";
+import type { IXMLElement } from "../../ditto";
 import { apply_velocity_shorthand } from "./xml_to_frame_info";
 
 /**

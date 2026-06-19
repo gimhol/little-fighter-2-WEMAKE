@@ -1,4 +1,5 @@
-import { type IPropsMeta, UIComponent } from "@/LF2";
+import type { IPropsMeta } from '../../utils/schema/make_schema';
+import { UIComponent } from './UIComponent';
 export interface IPauseHandlingProps {
   reverse?: boolean;
 }

@@ -1,5 +1,5 @@
 import type { ITransform } from "./ITransform";
-import { round_float } from "./utils";
+import { round_float } from '../utils/math/round_float';
 
 export class Transform implements ITransform {
   protected _x: number = 0;

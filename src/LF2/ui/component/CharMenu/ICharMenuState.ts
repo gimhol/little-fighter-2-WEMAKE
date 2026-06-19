@@ -1,4 +1,4 @@
-import type { IState } from "@/LF2/base";
+import type { IState } from "../../../base";
 import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import type { CharMenuState } from "./CharMenuState";
 

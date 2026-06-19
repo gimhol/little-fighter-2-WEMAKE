@@ -1,5 +1,9 @@
-import { ActionDirector, GK, LocalController, O_ID, TestCase } from "@/LF2";
-import { Entity } from "@/LF2/entity";
+import { ActionDirector } from '../ActionDirector';
+import { GK } from '../../../../defines/GameKey';
+import { LocalController } from '../../../../controller/LocalController';
+import { O_ID } from '../../../../defines/OID';
+import { TestCase } from '../TestCase';
+import { Entity } from "../../../../entity";
 
 export class MoveStayCome extends TestCase {
   override name: string = 'MOVE(DADA) / STAY(DDDD) / COME(DJDJ) / FOLLOW(DJJJ)';

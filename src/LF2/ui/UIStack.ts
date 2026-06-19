@@ -1,7 +1,7 @@
 import { Callbacks } from "../base";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
-import { is_str } from "../utils";
+import { is_str } from '../utils/type_check/is_str';
 import { UINode } from "./UINode";
 
 export interface IUIStacksCallback {

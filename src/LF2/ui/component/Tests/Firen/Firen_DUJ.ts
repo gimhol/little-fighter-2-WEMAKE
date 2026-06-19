@@ -1,4 +1,4 @@
-import { AGK, GK, O_ID, TeamEnum } from "@/LF2/defines";
+import { AGK, GK, O_ID, TeamEnum } from "../../../../defines";
 import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
 

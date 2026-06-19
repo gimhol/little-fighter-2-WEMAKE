@@ -1,4 +1,4 @@
-import type { IPropsMeta } from "@/LF2";
+import type { IPropsMeta } from "../../utils/schema/make_schema";
 import FSM, { type IState } from "../../base/FSM";
 import { Ditto } from "../../ditto";
 import type { ILf2Callback } from "../../ILf2Callback";

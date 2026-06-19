@@ -1,4 +1,6 @@
-import { type IPropsMeta, is_num, is_str, make_schema } from "../../utils";
+import { is_num } from '../../utils/type_check/is_num';
+import { is_str } from '../../utils/type_check/is_str';
+import { make_schema } from '../../utils/schema/make_schema';
 import { SchemaValidator } from "../../utils/schema/validate_schema";
 import { parse_ui_value } from "../read_info_value";
 import { isUIComponentClass } from "../utils/isUIComponentClass";

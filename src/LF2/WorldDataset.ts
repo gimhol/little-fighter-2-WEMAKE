@@ -1,7 +1,10 @@
-import { CheatType, Defines, Difficulty } from "./defines";
+import { CheatType } from './defines/CheatType';
+import { Defines } from './defines/defines';
+import { Difficulty } from './defines/Difficulty';
 import { type IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
+
 export class WorldDataset implements IWorldDataset {
   static readonly TAG: string = 'WorldDataset';
   itr_fall: number = 40

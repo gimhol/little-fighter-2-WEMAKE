@@ -1,8 +1,9 @@
-import type { ISummaryCallbacks } from "@/LF2/entity/Summary";
-import { summary_mgr } from "@/LF2/entity/SummaryMgr";
+import type { ISummaryCallbacks } from "../../entity/Summary";
+import { summary_mgr } from "../../entity/SummaryMgr";
 import { Entity, type IEntityCallbacks, is_fighter } from "../../entity";
 import type { IWorldCallbacks } from "../../IWorldCallbacks";
-import { max, Times } from "../../utils";
+import { max } from '../../utils/math/base';
+import { Times } from '../../utils/Times';
 import type { IFighterSumInfo, IPlayerSumInfo } from "./IFighterSumInfo";
 import type { ITeamSumInfo } from "./ITeamSumInfo";
 import { make_fighter_sum } from "./make_fighter_sum";

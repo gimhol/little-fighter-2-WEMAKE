@@ -1,4 +1,4 @@
-import { Easing } from "@/LF2/animation";
+import { Easing } from "../../animation";
 import { UIComponent } from "./UIComponent";
 export class ScaleClickable extends UIComponent {
   static override readonly TAGS: string[] = ["ScaleClickable"];

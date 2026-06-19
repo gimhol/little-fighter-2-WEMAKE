@@ -1,6 +1,7 @@
-import { GameKey } from "@/LF2/defines";
-import { ceil, clamp, floor, max, min, round } from "@/LF2/utils";
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import { GameKey } from "../../defines";
+import { ceil, floor, max, min, round } from '../../utils/math/base';
+import { clamp } from '../../utils/math/clamp';
+import { TextInfo } from "../../ditto/image/TextInfo";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { IUIPointerEvent } from "../IUIPointerEvent";
 import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";

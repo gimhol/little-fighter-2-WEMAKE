@@ -1,5 +1,5 @@
-import type { Entity } from "@/LF2/entity";
-import { round, abs } from "@/LF2/utils";
+import type { Entity } from "../../entity";
+import { round, abs } from '../../utils/math/base';
 
 
 export function closest(me: Entity, ...list: (Entity | undefined)[]): Entity | undefined {

@@ -1,4 +1,8 @@
-import { ActionDirector, round, StatBarType, TE, TeamEnum, TestCase } from "@/LF2";
+import { TE } from '../../../../defines/TeamEnum';
+import { StatBarType } from '../../../../entity/StatBarType';
+import { round } from '../../../../utils/math/base';
+import { ActionDirector } from '../ActionDirector';
+import { TestCase } from '../TestCase';
 
 export class AllFighters extends TestCase {
   override name: string = 'All Fighters';

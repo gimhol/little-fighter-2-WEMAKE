@@ -1,7 +1,7 @@
-import { Ditto } from "@/LF2/ditto";
-import { StatBarType } from "@/LF2/entity/StatBarType";
-import type { ILf2Callback } from "@/LF2/ILf2Callback";
-import type { IPropsMeta } from "@/LF2/utils";
+import { Ditto } from "../../ditto";
+import { StatBarType } from "../../entity/StatBarType";
+import type { ILf2Callback } from "../../ILf2Callback";
+import type { IPropsMeta } from "../../utils";
 import LocalController from "../../controller/LocalController";
 import { Defines, FacingFlag, TeamEnum } from "../../defines";
 import { BackgroundSwitcher } from "./BackgroundSwitcher";

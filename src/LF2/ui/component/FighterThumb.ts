@@ -1,5 +1,5 @@
-import { Picture } from "@/LF2";
-import { Entity } from "@/LF2/entity";
+import { Picture } from './Picture';
+import { Entity } from "../../entity";
 import { Sine } from "../../animation/Sine";
 import { Defines } from "../../defines/defines";
 import { GamePrepareLogic } from "./GamePrepareLogic";

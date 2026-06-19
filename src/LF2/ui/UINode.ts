@@ -2,15 +2,18 @@ import { LF2 } from "../LF2";
 import { Callbacks, type IDebugging, make_debugging } from "../base";
 import type { IVector3, IVector3Like } from "../defines";
 import { Ditto as D, ImageInfo, type IUINodeRenderer, TextInfo } from "../ditto";
-import { is_num, round, round_float, Times } from "../utils";
+import { is_num } from '../utils/type_check/is_num';
+import { round } from '../utils/math/base';
+import { round_float } from '../utils/math/round_float';
+import { Times } from '../utils/Times';
 import type { ICookedUIInfo } from "./ICookedUIInfo";
 import type { ICrossInfo, IGeoInfo, IRectInfo } from "./ICrossInfo";
 import type { IUICallback } from "./IUICallback";
 import type { IUIKeyEvent } from "./IUIKeyEvent";
 import { LF2PointerEvent } from "./LF2PointerEvent";
 import { Style } from "./Style";
-import { actor } from "./action";
-import { UIComponent } from "./component";
+import { actor } from './action/Actor';
+import { UIComponent } from './component/UIComponent';
 
 export class UINode implements IDebugging {
   static readonly TAG: string = 'UINode';

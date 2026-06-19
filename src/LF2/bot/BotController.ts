@@ -18,10 +18,14 @@ import {
 } from "../defines";
 import { Ditto } from "../ditto";
 import { Entity, is_ball, is_fighter, is_weapon } from "../entity";
-import { abs, between, clamp, max, round, round_float } from "../utils";
+import { abs, between, max, round } from '../utils/math/base';
+import { clamp } from '../utils/math/clamp';
+import { round_float } from '../utils/math/round_float';
 import { dummy_updaters, DummyEnum } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
-import { BotState_Avoiding, BotState_Chasing, BotState_Idle } from "./state";
+import { BotState_Avoiding } from './state/BotState_Avoiding';
+import { BotState_Chasing } from './state/BotState_Chasing';
+import { BotState_Idle } from './state/BotState_Idle';
 import { BotState_Dead } from "./state/BotState_Dead";
 import { BotState_Following } from "./state/BotState_Following";
 import { BotState_StageEnd } from "./state/BotState_StageEnd";

@@ -1,4 +1,4 @@
-import type { IZip } from "./ditto";
+import type { IZip } from '../ditto/zip/IZip';
 import type { LF2 } from "./LF2";
 import type { PlayerInfo } from "./PlayerInfo";
 import type { UIComponent } from "./ui/component/UIComponent";

@@ -1,4 +1,4 @@
-import { max } from "../../utils";
+import { max } from '../../utils/math/base';
 import { UIComponent } from "./UIComponent";
 
 export class HorizontalLayout extends UIComponent {

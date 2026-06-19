@@ -1,5 +1,7 @@
-import { ActionDirector, GK, TE } from "@/LF2";
-import { O_ID, OID } from "@/LF2/defines";
+import { ActionDirector } from '../ActionDirector';
+import { GK } from '../../../../defines/GameKey';
+import { TE } from '../../../../defines/TeamEnum';
+import { O_ID, OID } from "../../../../defines";
 import { TestCase } from "../TestCase";
 
 export class BotAvoiding extends TestCase {

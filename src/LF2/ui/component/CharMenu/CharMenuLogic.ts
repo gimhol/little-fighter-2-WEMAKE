@@ -1,4 +1,4 @@
-import type { IPropsMeta } from "@/LF2";
+import type { IPropsMeta } from "../../..";
 import type { ILf2Callback } from "../../../ILf2Callback";
 import { PlayerInfo } from "../../../PlayerInfo";
 import { FSM } from "../../../base/FSM";

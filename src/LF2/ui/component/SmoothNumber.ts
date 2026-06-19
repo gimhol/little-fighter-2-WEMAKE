@@ -1,4 +1,5 @@
-import { abs, float_equal } from "@/LF2/utils";
+import { abs } from '../../utils/math/base';
+import { float_equal } from '../../utils/math/float_equal';
 
 export class SmoothNumber {
   private _v: number = 0;

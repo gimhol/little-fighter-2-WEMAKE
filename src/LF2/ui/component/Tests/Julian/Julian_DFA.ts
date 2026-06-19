@@ -1,5 +1,5 @@
-import { AGK, GK, O_ID, StateEnum, TeamEnum } from "@/LF2/defines";
-import { Entity } from "@/LF2/entity";
+import { AGK, GK, O_ID, StateEnum, TeamEnum } from "../../../../defines";
+import { Entity } from "../../../../entity";
 import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
 

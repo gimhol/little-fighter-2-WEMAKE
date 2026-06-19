@@ -1,5 +1,5 @@
 import { DifficultyNames } from "../../defines";
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import { TextInfo } from "../../ditto/image/TextInfo";
 import type { IWorldCallbacks } from "../../IWorldCallbacks";
 import type { IWorldDataset } from "../../IWorldDataset";
 import { UIComponent } from "./UIComponent";

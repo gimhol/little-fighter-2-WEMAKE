@@ -1,7 +1,10 @@
-import { TestCase, ActionDirector, TeamEnum, Factory } from "@/LF2";
-import { LocalController } from "@/LF2/controller";
-import { GK, O_ID } from "@/LF2/defines";
-import { Entity } from "@/LF2/entity";
+import { TestCase } from '../TestCase';
+import { ActionDirector } from '../ActionDirector';
+import { TeamEnum } from '../../../../defines/defines';
+import { Factory } from '../../../../Factory';
+import { LocalController } from "../../../../controller";
+import { GK, O_ID } from "../../../../defines";
+import { Entity } from "../../../../entity";
 
 
 export class BotFollow extends TestCase {

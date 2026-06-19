@@ -1,4 +1,4 @@
-import type { IVector3 } from "@/LF2";
+import type { IVector3 } from '../../defines/IVector3';
 import { Animation, Delay, Easing, Sequence } from "../../animation";
 import ease_linearity from "../../utils/ease_method/ease_linearity";
 import { UIComponent } from "./UIComponent";

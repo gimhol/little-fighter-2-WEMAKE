@@ -1,4 +1,4 @@
-import { max, min } from "../../utils";
+import { max, min } from '../../utils/math/base';
 import { UIComponent } from "./UIComponent";
 
 export class FitChildren extends UIComponent {

@@ -1,8 +1,11 @@
 
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import { TextInfo } from "../../ditto/image/TextInfo";
 import { UIComponent } from "./UIComponent";
 import { PlayerScore } from "./PlayerScore";
-import { Defines, Entity, is_bot_ctrl, is_human_ctrl, type IStyle, TeamEnum } from "@/LF2";
+import { Entity } from '../../entity/Entity';
+import { is_bot_ctrl, is_human_ctrl } from '../../entity/type_check';
+import { type IStyle } from '../../defines/IStyle';
+import { TeamEnum } from '../../defines/defines';
 
 
 export class PlayerScorePlayerName extends UIComponent {

@@ -1,6 +1,6 @@
-import type { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
-import { UINode } from "@/LF2/ui/UINode";
-import type { IPropsMeta } from "@/LF2/utils/schema";
+import type { IWorldCallbacks } from "../../IWorldCallbacks";
+import { UINode } from "../../ui/UINode";
+import type { IPropsMeta } from "../../utils/schema";
 import { Label } from "./Label";
 import { UIComponent } from "./UIComponent";
 

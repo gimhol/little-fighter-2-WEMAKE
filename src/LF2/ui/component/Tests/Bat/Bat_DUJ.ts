@@ -1,6 +1,6 @@
-import { GK, O_ID, OID, TeamEnum } from "@/LF2/defines";
-import { Entity } from "@/LF2/entity/Entity";
-import { StatBarType } from "@/LF2/entity/StatBarType";
+import { GK, O_ID, OID, TeamEnum } from "../../../../defines";
+import { Entity } from "../../../../entity/Entity";
+import { StatBarType } from "../../../../entity/StatBarType";
 import { ActionDirector } from "../ActionDirector";
 import { TestCase } from "../TestCase";
 

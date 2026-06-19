@@ -1,4 +1,4 @@
-import { Label } from "@/LF2";
+import { Label } from './Label';
 import { Defines } from "../../defines";
 import { GameKey } from "../../defines/GameKey";
 

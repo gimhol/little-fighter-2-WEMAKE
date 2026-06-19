@@ -1,5 +1,5 @@
-import { Randoming } from "@/LF2/helper";
-import { arithmetic_progression } from "@/LF2/utils";
+import { Randoming } from "../../helper";
+import { arithmetic_progression } from '../../utils/math/arithmetic_progression';
 import { UIComponent } from "./UIComponent";
 
 export class RandomVisible extends UIComponent {

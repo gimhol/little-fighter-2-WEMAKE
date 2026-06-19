@@ -1,6 +1,8 @@
 import { Defines, type IBotRay } from "../../defines";
 import type { Entity } from "../../entity";
-import { abs, between, project_to_line, round_float } from "../../utils";
+import { abs, between } from '../../utils/math/base';
+import { project_to_line } from '../../utils/math/project_to_line';
+import { round_float } from '../../utils/math/round_float';
 
 export function is_ray_hit(a: Entity, b: Entity, ray: IBotRay) {
   const p0 = a.position;

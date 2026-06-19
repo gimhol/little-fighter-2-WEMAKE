@@ -1,4 +1,4 @@
-import { cos, round } from "@/LF2/utils";
+import { cos, round } from '../../utils/math/base';
 import { CMD } from "../../defines/CMD";
 import { Entity } from "../../entity";
 import { UIComponent } from "./UIComponent";

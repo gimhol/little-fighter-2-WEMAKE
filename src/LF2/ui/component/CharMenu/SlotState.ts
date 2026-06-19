@@ -1,4 +1,4 @@
-import { type IEntityData, TeamEnum } from "@/LF2/defines";
+import { type IEntityData, TeamEnum } from "../../../defines";
 import { SlotStep } from "./SlotStep";
 
 export interface ISlotState {

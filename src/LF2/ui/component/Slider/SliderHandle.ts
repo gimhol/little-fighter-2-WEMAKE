@@ -2,7 +2,7 @@ import {
   clamp, Defines, type IPointingEvent, type IPointingsCallback, type IPropsMeta,
   type IUICallback, type IUICompnentCallbacks,
   Label, LF2PointerEvent, max, min, round, round_float, UIComponent, UINode
-} from "@/LF2";
+} from "../../..";
 export interface ISliderHandleProps {
   mode?: string;
   items?: string;

@@ -1,6 +1,6 @@
-import { ActionDirector } from "@/LF2";
-import { GK, O_ID, TeamEnum } from "@/LF2/defines";
-import { Entity } from "@/LF2/entity/Entity";
+import { ActionDirector } from '../ActionDirector';
+import { GK, O_ID, TeamEnum } from "../../../../defines";
+import { Entity } from "../../../../entity/Entity";
 import { TestCase } from "../TestCase";
 
 export class Firzen_FUSION extends TestCase {

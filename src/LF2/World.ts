@@ -1,4 +1,6 @@
-import { Callbacks, FPS } from "./base";
+import { Ditto } from './ditto/Instance';
+import { Callbacks } from './base/Callbacks';
+import { FPS } from './base/FPS';
 import { Background } from "./bg/Background";
 import { Buff } from "./buff/Buff";
 import { type Collision, collision_get } from "./collision/Collision";
@@ -22,7 +24,6 @@ import {
 } from "./defines";
 import { CMD } from "./defines/CMD";
 import { SyncRenderEnum } from "./defines/SyncRenderEnum";
-import { Ditto } from "./ditto";
 import type { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
   Entity,
@@ -37,7 +38,10 @@ import type { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Transform } from "./Transform";
-import { abs, between, clamp, floor, is_num, max, min, round, sign, Times } from "./utils";
+import { abs, between, floor, max, min, round, sign } from './utils/math/base';
+import { clamp } from './utils/math/clamp';
+import { Times } from './utils/Times';
+import { is_num } from './utils/type_check/is_num';
 import { WorldDataset } from "./WorldDataset";
 const CHASING_UPDATE_INTERVAL = 8;
 const MAX_DEBUG_ENTITIES = 355

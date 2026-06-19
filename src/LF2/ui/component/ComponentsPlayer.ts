@@ -1,4 +1,4 @@
-import type { IPropsMeta } from "@/LF2/utils/schema";
+import type { IPropsMeta } from "../../utils/schema";
 import { type IPlayable, is_playable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
 

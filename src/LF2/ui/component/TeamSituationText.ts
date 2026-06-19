@@ -1,9 +1,9 @@
 import { get_team_text_color } from "../../base/get_team_text_color";
 import type { IStyle } from "../../defines/IStyle";
 import { TeamEnum } from "../../defines/TeamEnum";
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import { TextInfo } from "../../ditto/image/TextInfo";
 import { Stage } from "../../stage";
-import { floor, max } from "../../utils";
+import { floor, max } from '../../utils/math/base';
 import type { ITeamSumInfo } from "./ITeamSumInfo";
 import { SummaryLogic } from "./SummaryLogic";
 import { UIComponent } from "./UIComponent";
