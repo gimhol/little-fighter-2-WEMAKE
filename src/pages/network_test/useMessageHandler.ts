@@ -1,5 +1,5 @@
-import { TResp } from "@/Net";
-import { DependencyList } from "react";
+import type { TResp } from "@/Net";
+import type { DependencyList } from "react";
 import { Connection } from "./Connection";
 import { useCallbacks } from "./useCallbacks";
 

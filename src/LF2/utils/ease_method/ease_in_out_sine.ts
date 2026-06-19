@@ -1,5 +1,5 @@
 import { acos, cos, max, min, PI } from "../math/base";
-import { IEaseMethod } from "./IEaseMethod";
+import { type IEaseMethod } from "./IEaseMethod";
 
 export function ease_in_out_sine(factor: number, from = 0, to = 1): number {
   return from - ((to - from) * (cos(PI * factor) - 1)) / 2;

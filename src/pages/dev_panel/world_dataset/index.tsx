@@ -3,7 +3,7 @@ import Combine from "@/Component/Combine";
 import { Cross } from "@/Component/Icons/Cross";
 import { InputNumber } from "@/Component/Input";
 import Titled from "@/Component/Titled";
-import { IWorldDataset, LF2, round, world_dataset_fields, WorldDataset } from "@/LF2";
+import { type IWorldDataset, LF2, round, world_dataset_fields, WorldDataset } from "@/LF2";
 import { download } from "@/Utils/download";
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";

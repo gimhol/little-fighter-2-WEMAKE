@@ -1,5 +1,5 @@
 import { make_schema } from "../utils/schema";
-import { IUIImgInfo } from "./IUIImgInfo.dat";
+import { type IUIImgInfo } from "./IUIImgInfo.dat";
 
 export const Schema_IUIImgInfo = make_schema<IUIImgInfo>({
   key: "IUIImgInfo",

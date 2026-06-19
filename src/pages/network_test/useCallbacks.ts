@@ -1,5 +1,5 @@
 import { NoEmitCallbacks } from "@/LF2";
-import { DependencyList, useEffect, useRef } from "react";
+import { type DependencyList, useEffect, useRef } from "react";
 
 
 export function useCallbacks<F extends {}>(

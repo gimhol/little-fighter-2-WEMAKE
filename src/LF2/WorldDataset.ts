@@ -1,5 +1,5 @@
 import { CheatType, Defines, Difficulty } from "./defines";
-import { IWorldDataset, world_dataset_fields } from "./IWorldDataset";
+import { type IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import { make_private_properties } from "./utils/make_private_properties";
 import wdataset from './world.wdataset.json';
 export class WorldDataset implements IWorldDataset {

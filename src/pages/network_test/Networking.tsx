@@ -1,8 +1,8 @@
 
 import { GK, LF2, LF2KeyEvent, PlayerInfo } from "@/LF2";
 import { bot_cases, mt_cases, sus_cases } from "@/LF2/cases_instances";
-import { IKeyEvent, IReqTick, IRespClientInfo, IRespDataset, IRespRoomStart, IRespTick, MsgEnum, TInfo } from "@/Net";
-import { IRespKeyTick } from "@/Net/IMsg_KeyTick";
+import { type IKeyEvent, type IReqTick, type IRespClientInfo, type IRespDataset, type IRespRoomStart, type IRespTick, MsgEnum, type TInfo } from "@/Net";
+import type { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatBox } from "./ChatBox";

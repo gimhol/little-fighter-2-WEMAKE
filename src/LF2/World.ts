@@ -1,7 +1,7 @@
 import { Callbacks, FPS } from "./base";
 import { Background } from "./bg/Background";
 import { Buff } from "./buff/Buff";
-import { Collision, collision_get } from "./collision/Collision";
+import { type Collision, collision_get } from "./collision/Collision";
 import { collisions_keeper } from "./collision/CollisionKeeper";
 import { BallController } from "./controller/BallController";
 import {
@@ -12,10 +12,10 @@ import {
   Difficulty,
   EntityGroup,
   GONE_FRAME_INFO,
-  IBdyInfo, IBgData, IBounding, IEntityData,
-  IFrameInfo, IItrInfo,
-  IVector2,
-  IVector3,
+  type IBdyInfo, type IBgData, type IBounding, type IEntityData,
+  type IFrameInfo, type IItrInfo,
+  type IVector2,
+  type IVector3,
   O_ID,
   SE,
   WeaponType
@@ -23,7 +23,7 @@ import {
 import { CMD } from "./defines/CMD";
 import { SyncRenderEnum } from "./defines/SyncRenderEnum";
 import { Ditto } from "./ditto";
-import { IWorldRenderer } from "./ditto/render/IWorldRenderer";
+import type { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
   Entity,
   is_ball,
@@ -33,7 +33,7 @@ import {
   is_weapon
 } from "./entity";
 import { Ground } from "./Ground";
-import { IWorldCallbacks } from "./IWorldCallbacks";
+import type { IWorldCallbacks } from "./IWorldCallbacks";
 import { LF2 } from "./LF2";
 import { Stage } from "./stage/Stage";
 import { Transform } from "./Transform";

@@ -1,19 +1,19 @@
 import { Button } from "@/Component/Buttons/Button";
-import Combine, { ICombineProps } from "@/Component/Combine";
+import { type ICombineProps } from "@/Component/Combine";
+import { Flex } from "@/Component/Flex";
+import Frame from "@/Component/Frame";
 import { Input } from "@/Component/Input";
 import { Text } from "@/Component/Text";
+import { useForage } from "@/hooks/useForage";
+import { LF2 } from "@/LF2";
 import { useFloating } from "@fimagine/dom-hooks/dist/useFloating";
 import { useForwardedRef } from "@fimagine/dom-hooks/dist/useForwardedRef";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
-import { ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Connection } from "./Connection";
 import { TriState } from "./TriState";
-import { LF2 } from "@/LF2";
 import { useCallbacks } from "./useCallbacks";
-import { useForage } from "@/hooks/useForage";
-import { useTranslation } from 'react-i18next';
-import Frame from "@/Component/Frame";
-import { Flex } from "@/Component/Flex";
 
 export interface IConnectionBoxProps extends ICombineProps {
   on_conn_change?(conn: Connection | null): void;

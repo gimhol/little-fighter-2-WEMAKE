@@ -5,7 +5,7 @@ import { ArrowDown } from "../../Component/Icons/ArrowDown";
 import { ArrowLeft } from "../../Component/Icons/ArrowLeft";
 import { ArrowRight } from "../../Component/Icons/ArrowRight";
 import { ArrowUp } from "../../Component/Icons/ArrowUp";
-import { IIconProps } from "../../Component/Icons/Base";
+import type { IIconProps } from "../../Component/Icons/Base";
 import { CircleCross } from '../../Component/Icons/CircleCross';
 import { Cross } from '../../Component/Icons/Cross';
 import { DropdownArrow } from '../../Component/Icons/DropdownArrow';

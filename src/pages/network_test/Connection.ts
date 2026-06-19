@@ -1,10 +1,10 @@
 import { Callbacks } from "@/LF2/base";
 import {
-  IClientInfo,
-  IConnError, IJob, IMsgReqMap, IMsgRespMap,
-  IReq, IResp,
-  IRespClientInfo, IRoomInfo, ISendOpts, MsgEnum, req_timeout_error,
-  req_unknown_error, resp_error, TInfo, TReq, TResp
+  type IClientInfo,
+  type IConnError, type IJob, type IMsgReqMap, type IMsgRespMap,
+  type IReq, type IResp,
+  type IRespClientInfo, type IRoomInfo, type ISendOpts, MsgEnum, req_timeout_error,
+  req_unknown_error, resp_error, type TInfo, type TReq, type TResp
 } from "../../Net";
 
 export interface IConnectionCallbacks {

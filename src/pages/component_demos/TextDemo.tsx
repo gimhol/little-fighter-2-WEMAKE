@@ -1,6 +1,6 @@
 import Frame from "../../Component/Frame";
 import { Space } from "../../Component/Space";
-import { Text, UiSize } from "../../Component/Text";
+import { Text, type UiSize } from "../../Component/Text";
 
 const sizes: UiSize[] = ['ss', 's', 'm', 'l'];
 

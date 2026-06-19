@@ -1,4 +1,4 @@
-import { IEaseMethod } from "./IEaseMethod";
+import type { IEaseMethod } from "./IEaseMethod";
 
 function ease_linearity(factor: number, from = 0, to = 1): number {
   return from + (to - from) * factor;

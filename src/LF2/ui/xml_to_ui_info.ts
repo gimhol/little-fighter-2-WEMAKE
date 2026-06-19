@@ -1,6 +1,6 @@
-import { IStyle } from "../defines";
-import { IXMLElement } from "../ditto/xml/IXMLElement";
-import { IComponentInfo } from "./IComponentInfo";
+import type { IStyle } from "../defines";
+import type { IXMLElement } from "../ditto/xml/IXMLElement";
+import type { IComponentInfo } from "./IComponentInfo";
 import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
 
 const ACTION_PLACES = new Set(['click', 'resume', 'pause', 'start', 'stop']);

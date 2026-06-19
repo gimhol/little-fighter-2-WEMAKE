@@ -1,4 +1,7 @@
-import { ISoundsCallback, IWorldCallbacks, round_float, SliderHandle, UIComponent } from "@/LF2";
+import { 
+  type ISoundsCallback, type IWorldCallbacks, 
+  round_float, SliderHandle, UIComponent 
+} from "@/LF2";
 import { SyncRenderEnum } from "@/LF2/defines/SyncRenderEnum";
 const render_rate_options = [
   SyncRenderEnum.Half,

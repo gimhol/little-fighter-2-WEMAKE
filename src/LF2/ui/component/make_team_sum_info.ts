@@ -1,4 +1,4 @@
-import { ITeamSumInfo } from "./ITeamSumInfo";
+import type { ITeamSumInfo } from "./ITeamSumInfo";
 import { make_sum_info } from "./make_sum_info";
 
 

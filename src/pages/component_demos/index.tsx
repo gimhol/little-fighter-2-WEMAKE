@@ -1,8 +1,8 @@
 import { Outlet, useNavigate } from "react-router";
 import { Space } from "../../Component/Space";
-import { ITreeNode, Tree } from "../../Component/Tree";
+import { type ITreeNode, Tree } from "../../Component/Tree";
 import { Paths } from "../../Paths";
-import styles from './styles.module.scss'
+import styles from './styles.module.scss';
 
 export const tree_root: ITreeNode[] = Paths.Relations[Paths.All.component_demos]?.map<ITreeNode>(key => {
   return { key, label: key.split('/').findLast(_ => 1) }

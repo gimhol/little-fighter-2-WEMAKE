@@ -1,4 +1,4 @@
-import { IClientInfo } from "./IClientInfo";
+import type { IClientInfo } from "./IClientInfo";
 
 
 export const SystemPlayerInfo: IClientInfo = {

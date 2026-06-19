@@ -1,15 +1,15 @@
 import { Keys } from "@/LF2/Keys";
 import { Callbacks } from "../../base";
-import { IVector3 } from "../../defines";
+import { type IDebugging, make_debugging } from "../../base/Debugging";
+import type { IVector3 } from "../../defines";
 import { Ditto } from "../../ditto";
-import { IDebugging, make_debugging } from "../../base/Debugging";
-import { is_num, Times } from "../../utils";
-import { IPropsMeta } from "../../utils/schema/make_schema";
-import { IComponentInfo } from "../IComponentInfo";
-import { IUIKeyEvent } from "../IUIKeyEvent";
+import { is_num } from "../../utils";
+import type { IPropsMeta } from "../../utils/schema/make_schema";
+import type { IComponentInfo } from "../IComponentInfo";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
 import { LF2PointerEvent } from "../LF2PointerEvent";
 import type { UINode } from "../UINode";
-import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
+import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIProps } from "./UIProps";
 /**
  * 组件

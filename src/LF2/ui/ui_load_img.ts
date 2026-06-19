@@ -1,10 +1,10 @@
-import { ImageOperation } from "../ditto/image/IImageMgr";
-import { IImageOp_Crop } from "../ditto/image/IImageOp_Crop";
-import { IImageOp_Flip } from "../ditto/image/IImageOp_Flip";
+import type { ImageOperation } from "../ditto/image/IImageMgr";
+import type { IImageOp_Crop } from "../ditto/image/IImageOp_Crop";
+import type { IImageOp_Flip } from "../ditto/image/IImageOp_Flip";
 import { ImageInfo } from "../ditto/image/ImageInfo";
 import { Ditto } from "../ditto/Instance";
 import { LF2 } from "../LF2";
-import { IUIImgInfo } from "./IUIImgInfo.dat";
+import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
 export async function ui_load_img(lf2: LF2, img: IUIImgInfo): Promise<ImageInfo> {

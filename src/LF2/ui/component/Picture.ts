@@ -1,4 +1,4 @@
-import { IPropsMeta, IUIImgInfo, UIComponent } from "@/LF2";
+import { type IPropsMeta, type IUIImgInfo, UIComponent } from "@/LF2";
 import { Ditto } from "@/LF2/ditto";
 import { UIImgLoader } from "../UIImgLoader";
 

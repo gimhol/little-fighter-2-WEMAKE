@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { TextArea, ITextAreaRef } from "../../Component/TextArea";
+import { useRef, useState } from "react";
 import Frame from "../../Component/Frame";
 import { Space } from "../../Component/Space";
+import { TextArea, type ITextAreaRef } from "../../Component/TextArea";
 import Titled from "../../Component/Titled";
-import { useRef } from "react";
 
 export default function TextAreaDemo() {
   const [value, setValue] = useState<string>();

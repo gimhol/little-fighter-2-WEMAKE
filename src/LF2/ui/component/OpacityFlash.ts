@@ -1,9 +1,9 @@
 import { Delay, Easing, Sequence } from "@/LF2/animation";
 import { Animation } from "@/LF2/animation/Animation";
 import ease_linearity from "@/LF2/utils/ease_method/ease_linearity";
-import { IPlayable } from "./IPlayable";
+import type { IPlayable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
-import { IPropsMeta } from "@/LF2";
+import type { IPropsMeta } from "@/LF2";
 
 export interface IOpacityFlashProps {
   steps?: number[];

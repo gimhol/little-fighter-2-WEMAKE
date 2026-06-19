@@ -1,5 +1,5 @@
 import { hex_to_rgba } from "@/LF2";
-import { IRGBA } from "./IRGBA";
+import { type IRGBA } from "./IRGBA";
 
 const COLOR_HEX_MAP = new Map([
   ['Black', '#000000'],

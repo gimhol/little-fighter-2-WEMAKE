@@ -1,5 +1,5 @@
 import React from "react"
-import { RouteObject } from "react-router"
+import { type RouteObject } from "react-router"
 export namespace Paths {
   export enum All {
     _ = '',

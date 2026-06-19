@@ -1,23 +1,23 @@
-import { Input, InputRef } from "@/Component/Input";
+import { Input, type InputRef } from "@/Component/Input";
 import { LF2 } from "@/LF2";
 import { useFloating, useForwardedRef, useStateRef } from "@fimagine/dom-hooks";
 import classNames from "classnames";
 import List from "rc-virtual-list";
-import { ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react";
+import { type ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../../Component/Buttons/Button";
 import { Divider } from "../../Component/Divider";
 import { Flex } from "../../Component/Flex";
-import Frame, { IFrameProps } from "../../Component/Frame";
+import Frame, { type IFrameProps } from "../../Component/Frame";
 import Show from "../../Component/Show";
 import { Strong, Text } from "../../Component/Text";
-import { IRoomInfo, MsgEnum } from "../../Net";
+import { type IRoomInfo, MsgEnum } from "../../Net";
 import { Connection } from "./Connection";
 import styles from "./styles.module.scss";
 import { TriState } from "./TriState";
+import { useCallbacks } from "./useCallbacks";
 import { useRoom } from "./useRoom";
 import { useRooms } from "./useRooms";
-import { useCallbacks } from "./useCallbacks";
 
 export interface IRoomsBoxProps extends IFrameProps {
   conn?: Connection | null;

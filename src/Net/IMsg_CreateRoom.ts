@@ -1,5 +1,5 @@
 import type { IReq, IResp } from './_Base';
-import { IClientInfo } from './IClientInfo';
+import { type IClientInfo } from './IClientInfo';
 import type { IRoomInfo } from './IRoomInfo';
 import type { MsgEnum } from './MsgEnum';
 

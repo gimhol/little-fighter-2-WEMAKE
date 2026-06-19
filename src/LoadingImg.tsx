@@ -1,7 +1,7 @@
 import cns from "classnames";
 import {
-  FC, ForwardedRef, forwardRef, ImgHTMLAttributes, RefAttributes,
-  RefCallback, useEffect, useMemo, useRef, useState
+  type FC, type ForwardedRef, forwardRef, type ImgHTMLAttributes, type RefAttributes,
+  type RefCallback, useEffect, useMemo, useRef, useState
 } from "react";
 import styles from "./App.module.scss";
 

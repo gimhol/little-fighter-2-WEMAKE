@@ -1,4 +1,4 @@
-import { Key, ReactNode, useEffect, useMemo, useState } from "react";
+import { type Key, type ReactNode, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { DomAdapter, Styling } from "splittings-dom/dist/es/splittings-dom";
 import "splittings-dom/dist/es/splittings-dom.css";
