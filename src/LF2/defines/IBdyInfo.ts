@@ -31,13 +31,6 @@ export interface IBdyInfo extends Partial<IQube> {
 
   kind_name?: string;
 
-  /**
-   * 代码生成，用于bdy碰撞盒显示
-   * [WEMAKE]
-   * @type {?IQubePair}
-   * @memberof IBdyInfo
-   */
-  indicator_info?: IQubePair;
 
   /**
    * 产生collision时，执行的actions
@@ -58,12 +51,21 @@ export interface IBdyInfo extends Partial<IQube> {
    * [WEMAKE]
    * @file LF2/dat_translator/fighters/make_fighter_data_freeze.ts
    * @file LF2/dat_translator/fighters/make_fighter_data_firen.ts
-   * @type {(string | number)}
+   * @type {(number)}
    * @memberof IBdyInfo
    */
-  code?: string | number,
+  code?: number,
+
   /** @deprecated 改用ref */
   prefab_id?: string;
+  
+  /**
+   * 代码生成，用于bdy碰撞盒显示
+   * [WEMAKE]
+   * @type {?IQubePair}
+   * @memberof IBdyInfo
+   */
+  indicator_info?: IQubePair;
 }
 
 export const BdyKeyOrders = make_field_orders({

@@ -37,6 +37,6 @@ export function xml_from_itr_info(xml: IXML, i: IItrInfo, tag: string = "itr"): 
   el.set_nums_attr_soft("qube", [i.x, i.y, i.w, i.h, i.z, i.l]);
   el.set_nums_attr_soft("dv", [i.dvx, i.dvy, i.dvz]);
   el.set_str_attr("test", i.test);
-  el.set_str_attr("code", i.code != null ? String(i.code) : void 0);
+  el.set_num_attr("code", i.code);
   return el;
 }

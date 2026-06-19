@@ -1,5 +1,6 @@
 import type { IBdyInfo } from "../../defines/IBdyInfo";
-import type { IXMLElement, IXML } from "../../ditto/xml";
+import type { IXML, IXMLElement } from "../../ditto/xml";
+import { xml_from_colli_action } from "./xml_from_colli_action";
 
 /**
  * 序列化 <bdy>
@@ -11,8 +12,11 @@ export function xml_from_bdy_info(xml: IXML, b: IBdyInfo, tag: string = "bdy"): 
   el.set_str_attr("ref", b.ref);
   el.set_num_attr("kind", b.kind as number);
   el.set_num_attr("hit_flag", b.hit_flag as number);
+  b.actions?.map(v => xml_from_colli_action(xml, v, "action")).forEach(v => {
+    el.insert(v);
+  })
   el.set_nums_attr_soft("qube", [b.x, b.y, b.w, b.h, b.z, b.l]);
   el.set_str_attr("test", b.test);
-  el.set_str_attr("code", b.code != null ? String(b.code) : void 0);
+  el.set_num_attr("code", b.code);
   return el;
 }
