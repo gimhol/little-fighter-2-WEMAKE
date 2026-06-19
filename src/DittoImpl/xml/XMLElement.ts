@@ -152,7 +152,7 @@ export class XMLElement implements IXMLElement {
       const key = child.attr('name') || child.tag;
       if (key) ret[key] = child.value();
     }
-    return ret.keys(ret).length ? ret : or;
+    return Object.keys(ret).length ? ret : or;
   }
 
   action_str(): string {
