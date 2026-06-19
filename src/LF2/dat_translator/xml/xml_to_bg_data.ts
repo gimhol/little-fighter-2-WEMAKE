@@ -77,7 +77,7 @@ export function xml_to_bg_data(el: IXMLElement): IBgData {
   }
 
   // <dataset> 可选元素
-  const dsEl = el.first_by_tag("dataset");
+  const dsEl = el.child_by_tag("dataset");
   if (dsEl) ret.dataset = dsEl.as_object() as Partial<IBgData["dataset"]>;
 
   // <layer> 子元素

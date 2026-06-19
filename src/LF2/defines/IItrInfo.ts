@@ -116,7 +116,7 @@ export interface IItrInfo extends Partial<IQube> {
    * @see {IItrInfo.test}
    */
   tester?: IExpression<any>;
-  code?: string | number,
+  code?: number,
   /** @deprecated 改用ref */
   prefab_id?: string;
 }

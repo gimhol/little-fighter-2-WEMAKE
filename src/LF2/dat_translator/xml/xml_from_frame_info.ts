@@ -1,10 +1,10 @@
 import type { IFrameInfo } from "../../defines/IFrameInfo";
-import type { IXMLElement, IXML } from "../../ditto/xml";
+import type { IXML, IXMLElement } from "../../ditto/xml";
 import { xml_from_bdy_info } from "./xml_from_bdy_info";
 import { xml_from_itr_info } from "./xml_from_itr_info";
-import { xml_from_opoint } from "./xml_from_opoint";
 import { xml_from_hit_key, xml_from_hold_key } from "./xml_from_key_collection";
-import { xml_from_next_frame } from "./xml_from_next_frame";
+import { xml_from_t_next_frame } from "./xml_from_next_frame";
+import { xml_from_opoint } from "./xml_from_opoint";
 
 /**
  * 序列化 <frame>
@@ -23,16 +23,9 @@ export function xml_from_frame_info(xml: IXML, id: string, frame: IFrameInfo): I
   pic.set_num_attr("h", frame.pic.h);
   el.insert(pic);
 
-  // next (可能为数组)
-  if (frame.next) {
-    if (Array.isArray(frame.next)) {
-      for (const nf of frame.next) {
-        el.insert(xml_from_next_frame(xml, nf));
-      }
-    } else {
-      el.insert(xml_from_next_frame(xml, frame.next));
-    }
-  }
+  xml_from_t_next_frame(xml, frame.next, 'next')?.forEach(v => {
+    el.insert(v);
+  })
 
   // hit / hold / key_down / key_up
   if (frame.hit) {

@@ -13,6 +13,30 @@ export class XMLElement implements IXMLElement {
   }
   get tag(): string { return this.inner.tagName; }
   get text(): string { return this.inner.textContent ?? ''; }
+
+  get children(): XMLElement[] {
+    if (!this._children) {
+      this._children = [];
+      for (const c of this.inner.children) {
+        const child = new XMLElement(c);
+        child._parent = this;
+        this._children.push(child);
+      }
+    }
+    return this._children;
+  }
+
+  get attrs(): { name: string; value: string; }[] {
+    if (!this._attrs) {
+      this._attrs = [];
+      const map = this.inner.attributes;
+      for (let i = 0; i < map.length; i++) {
+        const a = map.item(i)!;
+        this._attrs.push({ name: a.name, value: a.value });
+      }
+    }
+    return this._attrs;
+  }
   constructor(inner: Element) { this.inner = inner; }
 
   attr(name: string): string | undefined {
@@ -62,7 +86,6 @@ export class XMLElement implements IXMLElement {
     if (value === void 0 || value === null)
       return this.del_attr(name);
     this.set_attr(name, (Array.isArray(value) ? value : [value]).join(sep))
-
   }
   set_nums_attr(name: string, value: Voidable<number | number[]>, sep: string = ','): void {
     if (value === void 0 || value === null)
@@ -98,7 +121,7 @@ export class XMLElement implements IXMLElement {
   }
 
 
-  value(): number | boolean | string | object | undefined {
+  as_value(): number | boolean | string | object | undefined {
     switch (this.type) {
       case 'string': return this.as_string();
       case 'number': return this.as_number();
@@ -138,19 +161,19 @@ export class XMLElement implements IXMLElement {
   as_array(or?: any[]): any[] | undefined {
     if ('array' != this.type) return or;
     const ret: any[] = [];
-    for (const child of this.children) ret.push(child.value());
+    for (const child of this.children) ret.push(child.as_value());
     return ret;
   }
 
   as_object(or: object): object;
-  as_object(or?: object): object | undefined;  
+  as_object(or?: object): object | undefined;
   as_object(or?: object): object | undefined {
     const ret: Record<string, any> = {};
     for (const attr of this.attrs)
       ret[attr.name] = attr.value;
     for (const child of this.children) {
       const key = child.attr('name') || child.tag;
-      if (key) ret[key] = child.value();
+      if (key) ret[key] = child.as_value();
     }
     return Object.keys(ret).length ? ret : or;
   }
@@ -230,31 +253,61 @@ export class XMLElement implements IXMLElement {
     return this.children.filter(c => c.tag === tag);
   }
 
-  first_by_tag(tag: string): XMLElement | undefined {
+  child_by_tag(tag: string): XMLElement | undefined {
     return this.children.find(c => c.tag === tag);
   }
 
-  get children(): XMLElement[] {
-    if (!this._children) {
-      this._children = [];
-      for (const c of this.inner.children) {
-        const child = new XMLElement(c);
-        child._parent = this;
-        this._children.push(child);
-      }
-    }
-    return this._children;
+  get_str(name: string, or: string): string;
+  get_str(name: string, or?: string): string | undefined;
+  get_str(name: string, or?: string): string | undefined {
+    return this.child_by_tag(name)?.as_string() ?? this.attr(name) ?? or;
+  }
+  get_num(name: string, or: number): number;
+  get_num(name: string, or?: number): number | undefined;
+  get_num(name: string, or?: number): number | undefined {
+    return this.child_by_tag(name)?.as_number() ?? this.num_attr(name) ?? or;
+  }
+  get_bool(name: string, or: boolean): boolean;
+  get_bool(name: string, or?: boolean): boolean | undefined;
+  get_bool(name: string, or?: boolean): boolean | undefined {
+    return this.child_by_tag(name)?.as_boolean() ?? this.bool_attr(name) ?? or;
   }
 
-  get attrs(): { name: string; value: string; }[] {
-    if (!this._attrs) {
-      this._attrs = [];
-      const map = this.inner.attributes;
-      for (let i = 0; i < map.length; i++) {
-        const a = map.item(i)!;
-        this._attrs.push({ name: a.name, value: a.value });
+  get_str_arr(name: string, or: string[]): string[];
+  get_str_arr(name: string, or?: string[]): string[] | undefined;
+  get_str_arr(name: string, or?: string[]): string[] | undefined {
+    let ret: string[] | undefined;
+    const a = this.children_by_tag(name).map(v => v.as_string())
+    const b = this.strs_attr(name)
+    for (const i of a) {
+      if (i !== void 0) {
+        ret ||= [];
+        ret.push(i);
       }
     }
-    return this._attrs;
+    if (b) {
+      ret ||= [];
+      ret.push(...b);
+    }
+    return ret
+  }
+
+  get_num_arr(name: string, or: number[]): number[];
+  get_num_arr(name: string, or?: number[]): number[] | undefined;
+  get_num_arr(name: string, or?: number[]): number[] | undefined {
+    let ret: number[] | undefined;
+    const a = this.children_by_tag(name).map(v => v.as_number())
+    const b = this.nums_attr(name)
+    for (const i of a) {
+      if (i !== void 0) {
+        ret ||= [];
+        ret.push(i);
+      }
+    }
+    if (b) {
+      ret ||= [];
+      ret.push(...b);
+    }
+    return ret
   }
 }

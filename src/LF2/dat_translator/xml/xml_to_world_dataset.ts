@@ -21,7 +21,7 @@ export function xml_to_world_dataset(el: IXMLElement | undefined): Partial<IWorl
     } else if (fieldType === 'string') {
       ret[key] = child.as_string();
     } else if (fieldType === 'boolean'){
-      ret[key] = child.value();
+      ret[key] = child.as_value();
     }
   }
   return ret as Partial<IWorldDataset>;

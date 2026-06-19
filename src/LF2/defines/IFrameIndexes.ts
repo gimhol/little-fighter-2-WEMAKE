@@ -65,3 +65,7 @@ export interface IFrameIndexes {
    */
   throw_on_ground?: string;
 }
+
+export function frame_indexes_new(): IFrameIndexes {
+  return {};
+} 

@@ -1,31 +1,27 @@
 import { entity_info_new, type IEntityInfo } from "../../defines/IEntityInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { xml_to_drink_info } from "./xml_to_drink_info";
 import { xml_to_armor_info } from "./xml_to_armor_info";
+import { xml_to_drink_info } from "./xml_to_drink_info";
 import { xml_to_opoint } from "./xml_to_opoint";
 import { xml_to_world_dataset } from "./xml_to_world_dataset";
 
-/**
- * 解析 `<base>`（IEntityInfo）
- * @param {IXMLElement} el - 包含 base 属性的元素
- * @return {IEntityInfo}
- */
-export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
-  const ret = entity_info_new();
 
-  // text / str attributes
-  ret.name = el.str_attr("name") ?? "";
-  ret.head = el.str_attr("head");
-  ret.small = el.str_attr("small");
+export function xml_to_entity_info(el: IXMLElement | undefined): IEntityInfo {
+  const ret = entity_info_new();
+  if (!el) return ret;
+
+  ret.name = el.get_str("name", ret.name);
+  ret.head = el.get_str("head", ret.head);
+  ret.small = el.get_str("small", ret.small);
 
   // type
   const type = el.num_attr("type") ?? el.str_attr("type") as any;
   if (type !== void 0) ret.type = type;
 
-  // numeric attributes
-  ret.ce = el.num_attr("ce");
-  ret.weight = el.num_attr("weight");
-  ret.strength = el.num_attr("strength");
+  ret.ce = el.get_num("ce", ret.ce);
+  ret.weight = el.get_num("weight", ret.weight);
+  ret.strength = el.get_num("strength", ret.strength);
+
   // bounce / bounce_min / fast 支持 nums_attr_soft 快捷属性 (x,y,z 顺序)
   const apply3 = (prefix: string, keyX: keyof IEntityInfo, keyY: keyof IEntityInfo, keyZ: keyof IEntityInfo) => {
     const nums = el.nums_attr_soft(prefix);
@@ -57,10 +53,10 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   ret.dead_sounds = el.strs_attr("dead_sounds");
 
   // bot_id (text attr or child element)
-  ret.bot_id = el.str_attr("bot_id") ?? el.first_by_tag("bot")?.str_attr("id");
+  ret.bot_id = el.str_attr("bot_id") ?? el.child_by_tag("bot")?.str_attr("id");
 
   // files
-  const filesEl = el.first_by_tag("files");
+  const filesEl = el.child_by_tag("files");
   if (filesEl) {
     const files: Record<string, any> = {};
     for (const f of filesEl.children_by_tag("file")) {
@@ -79,7 +75,7 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   }
 
   // portraits
-  const portraitsEl = el.first_by_tag("portraits");
+  const portraitsEl = el.child_by_tag("portraits");
   if (portraitsEl) {
     const portraits: Record<string, any> = {};
     for (const p of portraitsEl.children_by_tag("portrait")) {
@@ -90,13 +86,13 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   }
 
   // drink / armor
-  const drinkEl = el.first_by_tag("drink");
+  const drinkEl = el.child_by_tag("drink");
   if (drinkEl) ret.drink = xml_to_drink_info(drinkEl);
-  const armorEl = el.first_by_tag("armor");
+  const armorEl = el.child_by_tag("armor");
   if (armorEl) ret.armor = xml_to_armor_info(armorEl);
 
   // models
-  const modelsEl = el.first_by_tag("models");
+  const modelsEl = el.child_by_tag("models");
   if (modelsEl) {
     const models: Record<string, any> = {};
     for (const m of modelsEl.children_by_tag("model")) {
@@ -122,7 +118,7 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   }
 
   // dataset overrides
-  const ds = xml_to_world_dataset(el.first_by_tag("dataset"));
+  const ds = xml_to_world_dataset(el.child_by_tag("dataset"));
   for (const k of Object.keys(ds)) (ret as any)[k] = (ds as any)[k];
 
   return ret;

@@ -1,6 +1,6 @@
 import { type IOpointInfo, type IOpointMulti, opoint_info_new } from "../../defines/IOpointInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { apply_velocity_shorthand } from "./xml_to_frame_info";
+import { xml_to_velocity_info } from "./xml_to_velocity_info";
 import { xml_to_next_frame } from "./xml_to_next_frame";
 import { xml_to_opoint_multi } from "./xml_to_opoint_multi";
 
@@ -29,7 +29,7 @@ export function xml_to_opoint(el: IXMLElement): IOpointInfo {
   }
   const multi = el.num_attr("multi");
   if (multi !== void 0) o.multi = multi;
-  const multiEl = el.first_by_tag("multi");
+  const multiEl = el.child_by_tag("multi");
   if (multiEl) o.multi = xml_to_opoint_multi(multiEl);
 
   const max_hp = el.num_attr("max_hp");
@@ -71,6 +71,6 @@ export function xml_to_opoint(el: IXMLElement): IOpointInfo {
   if (dvx !== void 0) o.dvy = dvy;
   const dvz = el.num_attr("dvz");
   if (dvx !== void 0) o.dvz = dvz;
-  apply_velocity_shorthand(el, o);
+  xml_to_velocity_info(el, o);
   return o;
 }

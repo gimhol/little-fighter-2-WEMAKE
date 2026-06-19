@@ -29,7 +29,7 @@ export function xml_to_colli_action(el: IXMLElement): TAction {
     case "v_defend":
     case "a_broken_defend":
     case "v_broken_defend": {
-      const nfEl = el.first_by_tag("nf");
+      const nfEl = el.child_by_tag("nf");
       return {
         type, test, pretest,
         data: nfEl ? xml_to_next_frame(nfEl) : { id: "" },
@@ -49,7 +49,7 @@ export function xml_to_colli_action(el: IXMLElement): TAction {
     case "v_turn_team":
       return { type, test, pretest } as TAction;
     case "fusion": {
-      const actEl = el.first_by_tag("act");
+      const actEl = el.child_by_tag("act");
       const cancelKeys = el.strs_attr("cancel_keys")?.map(k => k.split(",").filter(Boolean));
       return {
         type, test, pretest,

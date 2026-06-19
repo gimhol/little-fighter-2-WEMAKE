@@ -15,6 +15,8 @@ export interface IXMLElement {
   get attrs(): { name: string; value: string; }[];
   /** 文本内容 */
   get text(): string;
+  /** 父元素 */
+  get parent(): IXMLElement | undefined;
 
   /**
    * 获取属性原始字符串值
@@ -157,9 +159,7 @@ export interface IXMLElement {
   /**
    * 解析元素为类型化值（根据 type 属性或 tagName 自动推断类型）
    */
-  value(): number | boolean | string | object | undefined
-
-
+  as_value(): number | boolean | string | object | undefined
   as_string(or: string): string;
   as_string(or?: string): string | undefined;
   as_number(or: number): number;
@@ -169,7 +169,7 @@ export interface IXMLElement {
   as_array(or: any[]): any[];
   as_array(or?: any[]): any[] | undefined;
   as_object(or: object): object;
-  as_object(or?: object): object | undefined;  
+  as_object(or?: object): object | undefined;
 
   /**
    * 将元素解析为普通对象，属性名→值
@@ -281,9 +281,6 @@ export interface IXMLElement {
    */
   remove_all(): void;
 
-  /** 父元素 */
-  get parent(): IXMLElement | undefined;
-
   /**
    * 是否存在指定属性
    * @param {string} name - 属性名
@@ -309,5 +306,17 @@ export interface IXMLElement {
    * @param {string} tag - 标签名
    * @return {IXMLElement | undefined}
    */
-  first_by_tag(tag: string): IXMLElement | undefined;
+  child_by_tag(tag: string): IXMLElement | undefined;
+
+  get_str(name: string, or: string): string;
+  get_str(name: string, or?: string): string | undefined;
+  get_num(name: string, or: number): number;
+  get_num(name: string, or?: number): number | undefined;
+  get_bool(name: string, or: boolean): boolean;
+  get_bool(name: string, or?: boolean): boolean | undefined;
+
+  get_str_arr(name: string, or: string[]): string[];
+  get_str_arr(name: string, or?: string[]): string[] | undefined;
+  get_num_arr(name: string, or: number[]): number[];
+  get_num_arr(name: string, or?: number[]): number[] | undefined;
 }

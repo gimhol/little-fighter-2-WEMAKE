@@ -38,7 +38,7 @@ export function xml_to_stage_phase_info(el: IXMLElement): IStagePhaseInfo {
   ret.weapon_rain_disabled = el.num_attr("weapon_rain_disabled");
 
   // sounds
-  const soundsEl = el.first_by_tag("sounds");
+  const soundsEl = el.child_by_tag("sounds");
   if (soundsEl) {
     const soundEls = soundsEl.children_by_tag("sound");
     if (soundEls.length) {

@@ -16,7 +16,7 @@ export function xml_to_cpoint(el: IXMLElement): ICpointInfo {
     hurtable: el.num_attr("hurtable"),
     decrease: el.num_attr("decrease"),
   });
-  const vaction = el.first_by_tag("vaction");
+  const vaction = el.child_by_tag("vaction");
   if (vaction) cp.vaction = xml_to_next_frame(vaction);
   return cp;
 }

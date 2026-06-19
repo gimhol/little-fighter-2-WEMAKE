@@ -1,5 +1,5 @@
-import type { INextFrame } from "../../defines/INextFrame";
-import type { IXMLElement, IXML } from "../../ditto/xml";
+import type { INextFrame, TNextFrame } from "../../defines/INextFrame";
+import type { IXML, IXMLElement } from "../../ditto/xml";
 /**
  * 序列化 <next> 元素（来自 INextFrame）
  *
@@ -8,9 +8,9 @@ import type { IXMLElement, IXML } from "../../ditto/xml";
 export function xml_from_next_frame(
   xml: IXML,
   nf: INextFrame,
-  tagName: string = "next",
+  tag: string = "next",
 ): IXMLElement {
-  const el = xml.create(tagName);
+  const el = xml.create(tag);
 
   el.set_strs_attr("id", nf.id);
   el.set_attr("wait", nf.wait);
@@ -31,6 +31,16 @@ export function xml_from_next_frame(
     expr.set_text(nf.expression);
     el.insert(expr);
   }
-
   return el;
+}
+
+export function xml_from_t_next_frame(
+  xml: IXML,
+  nf: TNextFrame | undefined,
+  tag: string = "next"
+): IXMLElement[] {
+  if (!nf) return [];
+  const nfs = Array.isArray(nf) ? nf : nf ? [nf] : []
+  if (!nfs.length) return [];
+  return nfs.map(v => xml_from_next_frame(xml, v, tag))
 }

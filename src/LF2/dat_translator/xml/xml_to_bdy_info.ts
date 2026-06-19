@@ -1,6 +1,6 @@
 import { type IBdyInfo, bdy_info_new } from "../../defines/IBdyInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { xml_to_qube } from "./xml_to_frame_info";
+import { xml_to_qube } from "./xml_to_qube";
 
 /**
  * 解析 `<bdy>` 碰撞体

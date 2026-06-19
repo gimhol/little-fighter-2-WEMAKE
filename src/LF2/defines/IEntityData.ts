@@ -1,26 +1,29 @@
-import type { IBaseData } from "./IBaseData";
+import { EntityEnum, type TEntityEnum } from "./EntityEnum";
 import type { IBdyInfo } from "./IBdyInfo";
-import type { IItrInfo } from "./IItrInfo";
-import type { IEntityInfo } from "./IEntityInfo";
+import { entity_info_new, type IEntityInfo } from "./IEntityInfo";
 import type { IFrameIndexes } from "./IFrameIndexes";
 import type { IFrameInfo } from "./IFrameInfo";
+import type { IItrInfo } from "./IItrInfo";
 import type { TNextFrame } from "./INextFrame";
-import type { TEntityEnum } from "./EntityEnum";
 export type TItrPrefabs = {
   [x in string]?: IItrInfo;
 }
 export type TBdyPrefabs = {
   [x in string]?: IBdyInfo;
 }
-export interface IEntityData extends IBaseData<IEntityInfo> {
+export interface IEntityData {
+  id: string;
   type: TEntityEnum;
+  alias_id?: string;
+  base: IEntityInfo;
+  
   on_dead?: TNextFrame;
   on_exhaustion?: TNextFrame;
   indexes?: IFrameIndexes;
   bdy_prefabs?: TBdyPrefabs;
   itr_prefabs?: TItrPrefabs;
   frames: Record<string, IFrameInfo>;
-  
+
   /**
    * 数据是否已处理
    *
@@ -32,4 +35,13 @@ export interface IEntityData extends IBaseData<IEntityInfo> {
    * @type {?boolean} 默认值: true
    */
   processed?: boolean;
+}
+
+export function entity_data_new(): IEntityData {
+  return {
+    type: EntityEnum.Entity,
+    frames: {},
+    id: "",
+    base: entity_info_new()
+  }
 }

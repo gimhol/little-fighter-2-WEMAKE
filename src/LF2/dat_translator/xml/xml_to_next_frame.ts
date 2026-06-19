@@ -1,10 +1,7 @@
 import type { INextFrame, TNextFrame } from "../../defines";
 import type { IXMLElement } from "../../ditto";
-import { apply_velocity_shorthand } from "./xml_to_frame_info";
+import { xml_to_velocity_info } from "./xml_to_velocity_info";
 
-/**
- * 解析 `<next>` / `<on_dead>` 等跳转目标
- */
 
 export function xml_to_next_frame(el: IXMLElement): INextFrame {
   const nf: TNextFrame = { id: el.str_attr("id") ?? "" };
@@ -16,10 +13,16 @@ export function xml_to_next_frame(el: IXMLElement): INextFrame {
   if (mp !== void 0) nf.mp = mp;
   const hp = el.num_attr("hp");
   if (hp !== void 0) nf.hp = hp;
-  const expression = el.str_attr("expression") ?? el.first_by_tag("expression")?.text;
+  const expression = el.str_attr("expression") ?? el.child_by_tag("expression")?.text;
   if (expression) nf.expression = expression;
   const blink = el.num_attr("blink_time");
   if (blink !== void 0) nf.blink_time = blink;
-  apply_velocity_shorthand(el, nf as any);
+  xml_to_velocity_info(el, nf as any);
   return nf;
+}
+
+export function xml_to_t_next_frame(els: IXMLElement[]): TNextFrame | undefined {
+  if (els.length > 1) return els.map(v => xml_to_next_frame(v));
+  if (els.length === 1) return xml_to_next_frame(els[0]);
+  return void 0
 }

@@ -21,20 +21,12 @@ export class ToolXMLElement implements IXMLElement {
     return type;
   }
 
-  constructor(tag: string) {
-    this.tag = tag;
-  }
-
   get text(): string { return this._text; }
   get children(): ToolXMLElement[] { return this._children; }
+  get attrs(): { name: string; value: string }[] { return this._attrs; }
+  get parent(): ToolXMLElement | undefined { return this._parent ?? undefined; }
 
-  get attrs(): { name: string; value: string }[] {
-    return this._attrs;
-  }
-
-  get parent(): ToolXMLElement | undefined {
-    return this._parent ?? undefined;
-  }
+  constructor(tag: string) { this.tag = tag; }
 
   attr(name: string): string | undefined {
     return this._attrs.find(a => a.name === name)?.value;
@@ -130,9 +122,7 @@ export class ToolXMLElement implements IXMLElement {
     this.set_attr(name, arr.map(n => n === void 0 ? '' : String(n)).join(sep));
   }
 
-  // ── 类型化值 ─────────────────────────
-
-  value(): number | boolean | string | object | undefined {
+  as_value(): number | boolean | string | object | undefined {
     switch (this.type) {
       case 'string': return this.as_string();
       case 'number': return this.as_number();
@@ -174,7 +164,7 @@ export class ToolXMLElement implements IXMLElement {
   as_array(or?: any[]): any[] | undefined {
     if ('array' !== this.type) return or;
     const ret: any[] = [];
-    for (const child of this._children) ret.push(child.value());
+    for (const child of this._children) ret.push(child.as_value());
     return ret;
   }
 
@@ -185,7 +175,7 @@ export class ToolXMLElement implements IXMLElement {
     for (const attr of this._attrs) ret[attr.name] = attr.value;
     for (const child of this._children) {
       const key = child.attr('name') || child.tag;
-      if (key) ret[key] = child.value();
+      if (key) ret[key] = child.as_value();
     }
     return Object.keys(ret).length ? ret : or;
   }
@@ -276,7 +266,7 @@ export class ToolXMLElement implements IXMLElement {
     return this._children.filter(c => c.tag === tag);
   }
 
-  first_by_tag(tag: string): ToolXMLElement | undefined {
+  child_by_tag(tag: string): ToolXMLElement | undefined {
     return this._children.find(c => c.tag === tag);
   }
 
@@ -291,5 +281,58 @@ export class ToolXMLElement implements IXMLElement {
 
   _appendText(text: string): void {
     this._text += text;
+  }
+
+  get_str(name: string, or: string): string;
+  get_str(name: string, or?: string): string | undefined;
+  get_str(name: string, or?: string): string | undefined {
+    return this.child_by_tag(name)?.as_string() ?? this.attr(name) ?? or;
+  }
+  get_num(name: string, or: number): number;
+  get_num(name: string, or?: number): number | undefined;
+  get_num(name: string, or?: number): number | undefined {
+    return this.child_by_tag(name)?.as_number() ?? this.num_attr(name) ?? or;
+  }
+  get_bool(name: string, or: boolean): boolean;
+  get_bool(name: string, or?: boolean): boolean | undefined;
+  get_bool(name: string, or?: boolean): boolean | undefined {
+    return this.child_by_tag(name)?.as_boolean() ?? this.bool_attr(name) ?? or;
+  }
+  get_str_arr(name: string, or: string[]): string[];
+  get_str_arr(name: string, or?: string[]): string[] | undefined;
+  get_str_arr(name: string, or?: string[]): string[] | undefined {
+    let ret: string[] | undefined;
+    const a = this.children_by_tag(name).map(v => v.as_string())
+    const b = this.strs_attr(name)
+    for (const i of a) {
+      if (i !== void 0) {
+        ret ||= [];
+        ret.push(i);
+      }
+    }
+    if (b) {
+      ret ||= [];
+      ret.push(...b);
+    }
+    return ret
+  }
+
+  get_num_arr(name: string, or: number[]): number[];
+  get_num_arr(name: string, or?: number[]): number[] | undefined;
+  get_num_arr(name: string, or?: number[]): number[] | undefined {
+    let ret: number[] | undefined;
+    const a = this.children_by_tag(name).map(v => v.as_number())
+    const b = this.nums_attr(name)
+    for (const i of a) {
+      if (i !== void 0) {
+        ret ||= [];
+        ret.push(i);
+      }
+    }
+    if (b) {
+      ret ||= [];
+      ret.push(...b);
+    }
+    return ret
   }
 }
