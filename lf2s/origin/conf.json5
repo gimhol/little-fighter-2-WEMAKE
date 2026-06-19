@@ -12,5 +12,5 @@
   MAGICK_CMD: "magick",
   KEEP_MIRROR: "",
   DEBUG: "",
-  OUT_TYPE: "xml",
+  // OUT_TYPE: "xml",
 }
