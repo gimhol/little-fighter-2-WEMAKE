@@ -1,4 +1,4 @@
-import { type IKeyEvent } from "./IKeyEvent";
+import type { IKeyEvent } from "./IKeyEvent";
 
 export interface IKeyboardCallback {
   /**

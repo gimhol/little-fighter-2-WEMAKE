@@ -1,17 +1,17 @@
 import { useRef, useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
 import { Flex } from "../../Component/Flex";
-import Frame, { IFrameProps } from "../../Component/Frame";
+import Frame, { type IFrameProps } from "../../Component/Frame";
 import Show from "../../Component/Show";
 import { Space } from "../../Component/Space";
 import { TabButtons } from "../../Component/TabButtons";
 import { TextArea } from "../../Component/TextArea";
-import { IFrameInfo, IItrInfo } from "@/LF2/defines";
-import { IEntityData } from "@/LF2/defines/IEntityData";
+import type { IFrameInfo, IItrInfo } from "@/LF2/defines";
+import type { IEntityData } from "@/LF2/defines/IEntityData";
 import { ensure } from "@/LF2/utils";
 import { map_arr } from "@/LF2/utils/array/map_arr";
 import { ItrEditor } from "./ItrEditor";
-import { IFieldProps } from "./make_field_props";
+import type { IFieldProps } from "./make_field_props";
 import { useThrough } from "./useThrough";
 const TAG = 'FrameEditor'
 enum TabEnum {

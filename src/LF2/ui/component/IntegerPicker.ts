@@ -1,9 +1,9 @@
 import { GameKey } from "@/LF2/defines";
 import { ceil, clamp, floor, max, min, round } from "@/LF2/utils";
 import { TextInfo } from "@/LF2/ditto/image/TextInfo";
-import { IUIKeyEvent } from "../IUIKeyEvent";
-import { IUIPointerEvent } from "../IUIPointerEvent";
-import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
+import type { IUIPointerEvent } from "../IUIPointerEvent";
+import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
 const { MIN_SAFE_INTEGER: MIN, MAX_SAFE_INTEGER: MAX } = Number;
 

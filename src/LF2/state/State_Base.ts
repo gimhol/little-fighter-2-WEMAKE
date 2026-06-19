@@ -1,5 +1,5 @@
-import { Collision } from "../collision/Collision";
-import { Defines, INextFrame, IVector3, StateEnum, type IFrameInfo } from "../defines";
+import type { Collision } from "../collision/Collision";
+import { Defines, type INextFrame, type IVector3, StateEnum, type IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round } from "../utils";
 import { spawn_buring_smoke } from "./spawn_buring_smoke";

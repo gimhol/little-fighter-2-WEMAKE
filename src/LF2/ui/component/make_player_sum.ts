@@ -1,5 +1,5 @@
 import { Entity } from "../../entity";
-import { IPlayerSumInfo } from "./IFighterSumInfo";
+import type { IPlayerSumInfo } from "./IFighterSumInfo";
 import { make_fighter_sum } from "./make_fighter_sum";
 
 

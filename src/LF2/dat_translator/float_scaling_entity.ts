@@ -1,4 +1,4 @@
-import { IEntityData } from "../defines";
+import type { IEntityData } from "../defines";
 import { traversal, is_num, floor } from "../utils";
 import { float_scaling_itr } from "./float_scaling_itr";
 import { float_scaling_bdy } from "./float_scaling_bdy";

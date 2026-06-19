@@ -1,7 +1,7 @@
-import { BotStateEnum, BotVal, Defines, EntityVal, IBotAction, LGK } from "../../defines";
+import { BotStateEnum, BotVal, Defines, EntityVal, type IBotAction, type LGK } from "../../defines";
 import { CondMaker } from "../CondMaker";
 import { DESIRE_RATIO } from "./constants";
-import { IEditBotActionFunc } from "./IEditBotAction";
+import type { IEditBotActionFunc } from "./IEditBotAction";
 
 export function bot_chasing_action(
   action_id: string,

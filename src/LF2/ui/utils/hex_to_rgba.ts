@@ -1,4 +1,4 @@
-import { IRGBA } from "./IRGBA";
+import type { IRGBA } from "./IRGBA";
 
 export function hex_to_rgba(hex: string): IRGBA | null {
   hex = hex.trim();

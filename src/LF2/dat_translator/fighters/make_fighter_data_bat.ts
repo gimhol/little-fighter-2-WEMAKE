@@ -1,4 +1,4 @@
-import { EntityGroup, IEntityData } from "../../defines";
+import { EntityGroup, type IEntityData } from "../../defines";
 import { ensure } from "../../utils";
 
 export function make_fighter_data_bat(data: IEntityData) {

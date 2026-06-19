@@ -1,4 +1,4 @@
-import { IFrameInfo, IVector3 } from "../defines";
+import type { IFrameInfo, IVector3 } from "../defines";
 import type { Entity } from "../entity/Entity";
 import WeaponState_Base from "./WeaponState_Base";
 

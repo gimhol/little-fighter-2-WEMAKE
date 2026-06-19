@@ -1,6 +1,6 @@
 import Callbacks from "../LF2/base/Callbacks";
 import { NoEmitCallbacks } from "../LF2/base/NoEmitCallbacks";
-import { IPointings, IPointingsCallback } from "../LF2/ditto";
+import type { IPointings, IPointingsCallback } from "../LF2/ditto";
 import { __PointingEvent } from "./__PointingEvent";
 
 export class __Pointings implements IPointings {

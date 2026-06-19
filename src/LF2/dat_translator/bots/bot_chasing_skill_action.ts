@@ -1,10 +1,10 @@
 
 import {
-  BotStateEnum, BotVal, Defines, EntityVal, GK, GameKey, IBotAction
+  BotStateEnum, BotVal, Defines, EntityVal, GK, GameKey, type IBotAction
 } from "../../defines";
 import { CondMaker } from "../CondMaker";
 import { DESIRE_RATIO } from "./constants";
-import { IEditBotActionFunc } from "./IEditBotAction";
+import type { IEditBotActionFunc } from "./IEditBotAction";
 
 type Key1 = '^' | '>' | 'v' | 'j';
 type Key2 = 'a' | 'j';

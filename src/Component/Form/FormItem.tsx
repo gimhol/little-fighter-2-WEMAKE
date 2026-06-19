@@ -1,7 +1,7 @@
-import { cloneElement, CSSProperties, isValidElement, PropsWithChildren, ReactNode, useContext } from "react";
+import { cloneElement, type CSSProperties, isValidElement, type PropsWithChildren, type ReactNode, useContext } from "react";
 import { Input, InputNumber } from "../Input";
 import Titled from "../Titled";
-import { FormContext, IFormProps } from "./Form";
+import { FormContext, type IFormProps } from "./Form";
 
 export interface IFormItemProps<T extends object> extends PropsWithChildren {
   style?: CSSProperties;

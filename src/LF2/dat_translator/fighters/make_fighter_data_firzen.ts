@@ -1,8 +1,4 @@
-import {
-  Defines,
-  EntityGroup,
-  IEntityData
-} from "../../defines";
+import { Defines, EntityGroup, type IEntityData } from "../../defines";
 import { ensure } from "../../utils";
 
 export function make_fighter_data_firzen(data: IEntityData) {

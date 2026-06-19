@@ -1,7 +1,7 @@
 import { max } from "../../utils";
 import { FlexAlign } from "./FlexAlign";
 import { FlexItem } from "./FlexItem";
-import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
+import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";
 
 export type TFlexDirection = 'row' | 'column'

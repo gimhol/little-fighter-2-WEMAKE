@@ -1,6 +1,6 @@
 import { CheatType, I_K, ItrKind, WeaponType } from "../defines";
 import { E_Val } from "../defines/EntityVal";
-import { IValGetter, IValGetterGetter } from "../defines/IExpression";
+import type { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { Entity } from "../entity/Entity";
 import { is_ball, is_fighter, is_weapon } from "../entity/type_check";
 import { find } from "../utils/container_help";

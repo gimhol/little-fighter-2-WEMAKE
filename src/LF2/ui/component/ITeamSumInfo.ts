@@ -1,4 +1,4 @@
-import { ISumInfo } from "./ISumInfo";
+import type { ISumInfo } from "./ISumInfo";
 
 export interface ITeamSumInfo extends ISumInfo {
   /**

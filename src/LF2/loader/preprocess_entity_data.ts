@@ -1,6 +1,6 @@
 import { make_entity_special, make_fighter_special, make_weapon_special } from "../dat_translator";
 import { make_ball_special } from "../dat_translator/make_ball_special";
-import { IEntityData } from "../defines";
+import type { IEntityData } from "../defines";
 import { Ditto } from "../ditto";
 import { is_ball_data, is_fighter_data, is_weapon_data } from "../entity";
 import { LF2 } from "../LF2";

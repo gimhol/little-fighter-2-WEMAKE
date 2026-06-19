@@ -1,7 +1,7 @@
 import { BackgroundGroup } from "../defines";
-import { bg_data_field_orders, IBgData } from "../defines/IBgData";
-import { bg_layer_field_orders, IBgLayerInfo } from "../defines/IBgLayerInfo";
-import { IDatIndex } from "../defines/IDatIndex";
+import { bg_data_field_orders, type IBgData } from "../defines/IBgData";
+import { bg_layer_field_orders, type IBgLayerInfo } from "../defines/IBgLayerInfo";
+import type { IDatIndex } from "../defines/IDatIndex";
 import { Defines } from "../defines/defines";
 import { sort_key_value } from "../utils/container_help/sort_key_value";
 import { min } from "../utils/math/base";

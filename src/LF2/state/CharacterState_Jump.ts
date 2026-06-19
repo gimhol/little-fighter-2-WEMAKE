@@ -1,4 +1,4 @@
-import { GK, IFrameInfo, SpeedCtrl, StateEnum } from "../defines";
+import { GK, type IFrameInfo, SpeedCtrl, StateEnum } from "../defines";
 import { is_bot_ctrl } from "../entity";
 import type { Entity } from "../entity/Entity";
 import { abs, round_float } from "../utils";

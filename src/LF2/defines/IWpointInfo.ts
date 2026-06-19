@@ -1,4 +1,4 @@
-import { IQubePair } from "./IQubePair";
+import type { IQubePair } from "./IQubePair";
 import { WpointKind, WpointKindDescriptions } from "./WpointKind";
 import { any, fields, flt, int, str } from "../fields";
 

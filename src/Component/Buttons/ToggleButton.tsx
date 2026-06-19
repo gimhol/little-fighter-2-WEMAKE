@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { IStatusButtonProps, StatusButton } from "./StatusButton";
+import { type IStatusButtonProps, StatusButton } from "./StatusButton";
 
 export interface IToggleButtonProps
   extends Omit<IStatusButtonProps<boolean>, "onChange" | "items"> {

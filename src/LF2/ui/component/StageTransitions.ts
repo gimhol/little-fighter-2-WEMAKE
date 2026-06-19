@@ -1,4 +1,4 @@
-import { ILf2Callback } from "../../ILf2Callback";
+import type { ILf2Callback } from "../../ILf2Callback";
 import { UIComponent } from "./UIComponent";
 
 export class StageTransitions extends UIComponent implements ILf2Callback {

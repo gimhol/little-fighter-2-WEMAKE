@@ -1,7 +1,7 @@
-import { GK, IBotAction } from "../../defines";
+import { GK, type IBotAction } from "../../defines";
 import { bot_front_test } from "./bot_front_test";
 import { DESIRE_RATIO_X_2 } from "./constants";
-import { IEditBotActionFunc } from "./IEditBotAction";
+import type { IEditBotActionFunc } from "./IEditBotAction";
 const MIN_X = 120 as const;
 const ID = 'd>j' as const
 /**

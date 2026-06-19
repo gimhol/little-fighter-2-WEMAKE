@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LF2 } from "../LF2/LF2";
 import { EntityGroup } from "../LF2/defines";
-import { type IEntityData } from "../LF2/defines/IEntityData";
+import type { IEntityData } from "../LF2/defines/IEntityData";
 import { is_str } from "../LF2/utils/type_check";
-import Select, { ISelectProps } from "./Select";
+import Select, { type ISelectProps } from "./Select";
 
 export interface CharacterSelectProps
   extends Omit<ISelectProps<IEntityData | "", string>, 'parse'> {

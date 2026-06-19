@@ -1,4 +1,4 @@
-import { Base, IIconProps } from './Base';
+import { Base, type IIconProps } from './Base';
 
 export function ArrowDown(props: IIconProps) {
   return (

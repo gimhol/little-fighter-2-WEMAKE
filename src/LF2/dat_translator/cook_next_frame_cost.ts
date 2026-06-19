@@ -1,4 +1,4 @@
-import { INextFrame } from "../defines";
+import type { INextFrame } from "../defines";
 import { random_get } from "../utils";
 
 export function cook_next_frame_cost(

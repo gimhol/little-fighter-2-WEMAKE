@@ -1,4 +1,4 @@
-import { type ICrossInfo } from "./ICrossInfo";
+import type { ICrossInfo } from "./ICrossInfo";
 
 export class CrossInfo implements ICrossInfo {
   left: number = 0;

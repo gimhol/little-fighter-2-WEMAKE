@@ -1,6 +1,6 @@
-import { BuiltIn_OID as OID } from "../../defines/BuiltIn_OID";
+import { OID as OID } from "../../defines/OID";
 import { FacingFlag as FF } from "../../defines/FacingFlag";
-import { IFrameInfo } from "../../defines/IFrameInfo";
+import type { IFrameInfo } from "../../defines/IFrameInfo";
 import { OpointKind } from "../../defines/OpointKind";
 import { ensure } from "../../utils/container_help/ensure";
 import { make_fb_firzen_disater_start } from "./make_fb_firzen_disater_start";

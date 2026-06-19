@@ -1,4 +1,4 @@
-import { IItrInfo } from "../defines";
+import type { IItrInfo } from "../defines";
 import JSON5 from "json5"
 export function copy_itr_info(
   src: IItrInfo,

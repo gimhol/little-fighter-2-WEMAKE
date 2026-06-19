@@ -1,5 +1,5 @@
 /* eslint-disable eqeqeq */
-import { IFrameInfo, TFrameIdListPair, TFrameIdPair } from "../defines";
+import type { IFrameInfo, TFrameIdListPair, TFrameIdPair } from "../defines";
 
 export default function find_direction(
   f: IFrameInfo,

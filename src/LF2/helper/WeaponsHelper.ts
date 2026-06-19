@@ -1,4 +1,4 @@
-import { IEntityData } from "../defines/IEntityData";
+import type { IEntityData } from "../defines/IEntityData";
 import { Entity } from "../entity/Entity";
 import { is_weapon } from "../entity/type_check";
 import { EntitiesHelper } from "./EntitiesHelper";

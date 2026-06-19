@@ -1,7 +1,7 @@
 import { RGBA_MAP } from "./color_map";
 import { hex_to_rgba } from "./hex_to_rgba";
 import { int_to_rgba } from "./int_to_rgba";
-import { IRGBA } from "./IRGBA";
+import type { IRGBA } from "./IRGBA";
 const rgba_regexp = /^rgba\((.*),(.*),(.*),(.*)\)$/;
 const argb_regexp = /^argb\((.*),(.*),(.*),(.*)\)$/;
 const rgb_regexp = /^rgb\((.*),(.*),(.*)\)$/;

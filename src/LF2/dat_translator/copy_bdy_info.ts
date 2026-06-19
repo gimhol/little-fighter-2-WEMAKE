@@ -1,4 +1,4 @@
-import { IBdyInfo } from "../defines";
+import type { IBdyInfo } from "../defines";
 export function copy_bdy_info(
   src: IBdyInfo,
   edit: Partial<IBdyInfo>,

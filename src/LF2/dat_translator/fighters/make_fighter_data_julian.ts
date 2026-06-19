@@ -1,4 +1,4 @@
-import { ArmorEnum, BuiltIn_OID, Defines, EntityGroup, IEntityData } from "../../defines";
+import { ArmorEnum, OID, Defines, EntityGroup, type IEntityData } from "../../defines";
 import { ensure } from "../../utils";
 
 export function make_fighter_data_julian(data: IEntityData) {
@@ -15,7 +15,7 @@ export function make_fighter_data_julian(data: IEntityData) {
   };
   for (const k in data.frames) {
     data.frames[k].opoint?.forEach((opoint) => {
-      if (opoint.oid === BuiltIn_OID.Julian) {
+      if (opoint.oid === OID.Julian) {
         opoint.hp = opoint.max_hp = 20;
         opoint.mp = opoint.max_mp = 150;
       }

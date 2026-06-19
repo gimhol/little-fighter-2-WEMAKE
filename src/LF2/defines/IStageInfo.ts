@@ -1,4 +1,4 @@
-import { IStagePhaseInfo } from "./IStagePhaseInfo";
+import type { IStagePhaseInfo } from "./IStagePhaseInfo";
 /**
  * 关卡信息
  */

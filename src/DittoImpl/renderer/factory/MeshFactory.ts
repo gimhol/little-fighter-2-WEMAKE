@@ -1,7 +1,7 @@
 import { BufferGeometry, Mesh, MeshBasicMaterial } from "../../_t";
 import { get_static_plane_geometry } from "../GeometryKeeper";
 import { OutlineMaterial } from "../materials/OutlineMaterial";
-import { InstFactory, Kind } from "../../../LF2/base/InstFactory";
+import { InstFactory, type Kind } from "../../../LF2/base/InstFactory";
 import { MaterialFactory, MaterialKind } from "./MaterialFactory";
 export enum MeshKind {
   Invalid = 0,

@@ -1,5 +1,5 @@
 import { acos, max, min, PI, pow } from "../math";
-import { IEaseMethod } from "./IEaseMethod";
+import type { IEaseMethod } from "./IEaseMethod";
 
 function ease_in_out_quint(factor: number, from = 0, to = 1): number {
   const ratio =

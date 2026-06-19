@@ -1,9 +1,9 @@
-import { IPropsMeta } from "@/LF2";
-import FSM, { IState } from "../../base/FSM";
+import type { IPropsMeta } from "@/LF2";
+import FSM, { type IState } from "../../base/FSM";
 import { Ditto } from "../../ditto";
-import { ILf2Callback } from "../../ILf2Callback";
-import { IUIKeyEvent } from "../IUIKeyEvent";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import type { ILf2Callback } from "../../ILf2Callback";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
+import type { IUIPointerEvent } from "../IUIPointerEvent";
 import { UINode } from "../UINode";
 import { FadeOutOpacity } from "./FadeOutOpacity";
 import { ImgLoop } from "./ImgLoop";

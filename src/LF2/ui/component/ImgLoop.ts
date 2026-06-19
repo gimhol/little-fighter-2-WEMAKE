@@ -1,4 +1,4 @@
-import { IPropsMeta, IRect } from "@/LF2";
+import type { IPropsMeta, IRect } from "@/LF2";
 import { Easing } from "../../animation";
 import ease_linearity from "../../utils/ease_method/ease_linearity";
 import { floor } from "../../utils/math/base";

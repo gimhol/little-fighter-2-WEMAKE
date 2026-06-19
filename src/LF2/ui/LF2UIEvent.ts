@@ -1,4 +1,4 @@
-import { IUIEvent } from "./UIEvent";
+import type { IUIEvent } from "./UIEvent";
 
 export class LF2UIEvent implements IUIEvent {
   protected _stopped: number = 0;

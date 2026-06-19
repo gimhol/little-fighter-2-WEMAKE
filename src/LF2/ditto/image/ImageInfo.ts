@@ -1,8 +1,8 @@
-import { IPicture } from "../../defines/IPicture";
+import type { IPicture } from "../../defines/IPicture";
 import { MagnificationTextureFilter } from "../../defines/MagnificationTextureFilter";
 import { MinificationTextureFilter } from "../../defines/MinificationTextureFilter";
 import { TextureWrapping } from "../../defines/TextureWrapping";
-import { IImageInfo } from "./IImageInfo";
+import type { IImageInfo } from "./IImageInfo";
 
 export class ImageInfo<T = any> implements IImageInfo {
   key: string = '';

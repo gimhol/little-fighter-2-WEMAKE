@@ -1,4 +1,4 @@
-import { BuiltIn_OID, IEntityData, StateEnum } from "../../defines";
+import { OID, type IEntityData, StateEnum } from "../../defines";
 
 /**
  *
@@ -11,7 +11,7 @@ export function make_fighter_data_rudolf(data: IEntityData): IEntityData {
   for (const k in data.frames) {
     const frame = data.frames[k]
     frame.opoint?.forEach((opoint) => {
-      if (opoint.oid === BuiltIn_OID.Rudolf) {
+      if (opoint.oid === OID.Rudolf) {
         opoint.hp = opoint.max_hp = 20;
         opoint.mp = opoint.max_mp = 150;
       }

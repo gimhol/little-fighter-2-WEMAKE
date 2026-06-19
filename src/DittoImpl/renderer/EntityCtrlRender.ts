@@ -1,4 +1,4 @@
-import { clamp, type Entity, GameKey, GKLabels, is_bot_ctrl, IVector3Like, round } from "@/LF2";
+import { clamp, type Entity, GameKey, GKLabels, is_bot_ctrl, type IVector3Like, round } from "@/LF2";
 import { Object3D } from "three";
 import * as T from "../_t";
 import { BAR_BG_W } from "./EntityStatRender";

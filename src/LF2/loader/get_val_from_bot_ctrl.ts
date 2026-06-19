@@ -1,7 +1,7 @@
 import { BotController } from "../bot/BotController";
 import { ATTCKING_STATES } from "../defines";
 import { BotVal } from "../defines/BotVal";
-import { IValGetter, IValGetterGetter } from "../defines/IExpression";
+import type { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { abs } from "../utils";
 import { get_val_getter_from_entity } from "./get_val_from_entity";
 export const bot_val_getters: Record<BotVal, (e: BotController) => any> = {

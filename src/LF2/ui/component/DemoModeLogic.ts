@@ -1,18 +1,18 @@
 import {
-  arithmetic_progression, ComponentsPlayer, FacingFlag, IStageInfo,
-  IStagePhaseInfo, IWorldCallbacks, LF2, Randoming, Stage,
+  arithmetic_progression, ComponentsPlayer, FacingFlag, type IStageInfo,
+  type IStagePhaseInfo, type IWorldCallbacks, LF2, Randoming, Stage,
   StageActions, StageGroup
 } from "@/LF2";
 import FSM from "@/LF2/base/FSM";
 import { Entity } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
-import { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
+import type { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
 import { Times } from "@/LF2/utils/Times";
 import { Defines, EntityGroup, GameKey } from "../../defines";
-import IEntityCallbacks from "../../entity/IEntityCallbacks";
+import type { IEntityCallbacks } from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
-import { IPropsMeta, traversal } from "../../utils";
-import { IUIKeyEvent } from "../IUIKeyEvent";
+import { type IPropsMeta, traversal } from "../../utils";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";
 import { CameraCtrl } from "./CameraCtrl";
 import { ComponentFSMState } from "./ComponentFSMState";

@@ -1,10 +1,9 @@
 import {
-  BotStateEnum, BotVal, Defines, EntityVal,
-  IBotAction
+  BotStateEnum, BotVal, Defines, EntityVal, type IBotAction
 } from "../../defines";
 import { CondMaker } from "../CondMaker";
 import { DESIRE_RATIO } from "./constants";
-import { IEditBotActionFunc } from "./IEditBotAction";
+import type { IEditBotActionFunc } from "./IEditBotAction";
 
 export function bot_front_test(
   action_id: IBotAction['action_id'],

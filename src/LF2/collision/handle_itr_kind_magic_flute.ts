@@ -1,4 +1,4 @@
-import { Collision } from "./Collision";
+import type { Collision } from "./Collision";
 import { handle_rest } from "./handle_rest";
 
 export function handle_itr_kind_magic_flute(collision: Collision): void {

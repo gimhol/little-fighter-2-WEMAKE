@@ -1,8 +1,6 @@
-import { BinOp, TBinOp } from "../defines/BinOp";
+import { BinOp, type TBinOp } from "../defines/BinOp";
 import {
-  IExpression,
-  IJudger,
-  IValGetterGetter
+  type IExpression, type IJudger, type IValGetterGetter
 } from "../defines/IExpression";
 export function ALWAY_FALSE<T = unknown>(
   text: string,

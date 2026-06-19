@@ -1,10 +1,10 @@
 import { EntityVal as EV, } from "../defines/EntityVal";
 import { WeaponType as WT } from "../defines/WeaponType";
 import { FacingFlag as FF } from "../defines/FacingFlag";
-import { type IFrameInfo } from "../defines/IFrameInfo";
+import type { IFrameInfo } from "../defines/IFrameInfo";
 import { CondMaker } from "./CondMaker";
 import { assign } from "../utils/container_help/assign";
-import { INextFrame } from "../defines";
+import type { INextFrame } from "../defines";
 export namespace hit_next_frame {
   export function drink(): INextFrame[] {
     return [{

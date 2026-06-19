@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { frame_info_new, IFrameInfo } from "@/LF2";
+import { frame_info_new, type IFrameInfo } from "@/LF2";
 import { useState } from "react";
 import { FrameInfoForm } from "./index";
 

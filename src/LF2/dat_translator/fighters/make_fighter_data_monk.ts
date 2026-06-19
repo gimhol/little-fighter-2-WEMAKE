@@ -1,4 +1,4 @@
-import { IEntityData } from "../../defines";
+import type { IEntityData } from "../../defines";
 
 export function make_fighter_data_monk(data: IEntityData) {
   return data;

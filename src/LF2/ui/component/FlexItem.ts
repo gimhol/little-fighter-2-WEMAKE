@@ -1,5 +1,5 @@
-import { IPropsMeta } from "@/LF2";
-import { TFlexAlign } from "./Flex";
+import type { IPropsMeta } from "@/LF2";
+import type { TFlexAlign } from "./Flex";
 import { ALL_FLEX_ALIGN } from "./FlexAlign";
 import { UIComponent } from "./UIComponent";
 export interface IFlexItemProps {

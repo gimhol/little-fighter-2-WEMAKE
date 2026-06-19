@@ -1,4 +1,4 @@
-import { BdyKind, Defines, HitFlag, IBdyInfo } from "@/LF2/defines";
+import { BdyKind, Defines, HitFlag, type IBdyInfo } from "@/LF2/defines";
 import { floor } from "@/LF2/utils";
 import { useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
@@ -7,7 +7,7 @@ import Frame from "../../Component/Frame";
 import { Input } from "../../Component/Input";
 import Select from "../../Component/Select";
 import { TextArea } from "../../Component/TextArea";
-import Titled, { ITitledProps } from "../../Component/Titled";
+import Titled, { type ITitledProps } from "../../Component/Titled";
 import { BDY_KIND_SELECT_PROPS } from "../EntityEditorView";
 import { HitFlagEditor } from "./HitFlagEditor";
 import { make_field_props } from "./make_field_props";

@@ -1,4 +1,4 @@
-import { Color, ColorRepresentation, ShaderMaterial, Texture } from "../../_t";
+import { Color, type ColorRepresentation, ShaderMaterial, Texture } from "../../_t";
 import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 import { Shaders } from "../shader";
 export const BLACK = new Color("#000000");

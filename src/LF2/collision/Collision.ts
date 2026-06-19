@@ -4,7 +4,7 @@ import { ENTITY_PRIORITY_MAP, HitFlag, ItrKind, type IBdyInfo, type IBounding, t
 import type { Entity } from "../entity";
 import { abs, max } from "../utils/math/base";
 import { collisions_keeper } from "./CollisionKeeper";
-import { ICollisionSnapshot } from "./ICollisionSnapshot";
+import type { ICollisionSnapshot } from "./ICollisionSnapshot";
 
 export interface ICollisionInits {
   /**

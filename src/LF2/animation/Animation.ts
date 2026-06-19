@@ -1,7 +1,7 @@
 
 import { max } from "../utils/math/base";
 import { clamp } from "../utils/math/clamp";
-import { IAnimation } from "./IAnimation";
+import type { IAnimation } from "./IAnimation";
 import { Loop } from "./Loop";
 
 export class Animation implements IAnimation {

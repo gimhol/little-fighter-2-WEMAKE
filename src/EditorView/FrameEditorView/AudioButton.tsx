@@ -1,5 +1,5 @@
-import { IZip } from "@/LF2/ditto/zip/IZip";
-import { Button, IButtonProps } from "../../Component/Buttons/Button";
+import type { IZip } from "@/LF2/ditto/zip/IZip";
+import { Button, type IButtonProps } from "../../Component/Buttons/Button";
 export interface IAudioButtonProps extends IButtonProps {
   zip?: IZip;
   path?: string;

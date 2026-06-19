@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import { ForwardedRef, forwardRef, Fragment, HTMLAttributes, isValidElement, PropsWithChildren, ReactNode, useMemo } from "react";
-import Show, { Div, IShowProps } from "../Show";
+import { type ForwardedRef, forwardRef, Fragment, type HTMLAttributes, isValidElement, type PropsWithChildren, type ReactNode, useMemo } from "react";
+import Show, { Div, type IShowProps } from "../Show";
 import { Broken } from "./Broken";
 import './styles.scss';
 

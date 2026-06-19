@@ -4,7 +4,7 @@ import { Sine } from "../../animation/Sine";
 import { Ditto } from "../../ditto";
 import { LF2PointerEvent } from "../LF2PointerEvent";
 import { Flex } from "./Flex";
-import { IUICompnentCallbacks } from "./IUICompnentCallbacks";
+import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 export interface IJalousieCallbacks extends IUICompnentCallbacks {
   on_anim_end?(v: Jalousie): void;
 }

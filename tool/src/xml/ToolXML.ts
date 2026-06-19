@@ -1,4 +1,4 @@
-import { type IXMLElement } from "../../../src/LF2/ditto/xml/IXMLElement";
+import type { IXMLElement } from "../../../src/LF2/ditto/xml/IXMLElement";
 import { ToolXMLElement } from "./ToolXMLElement";
 
 /**

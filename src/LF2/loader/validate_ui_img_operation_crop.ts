@@ -1,4 +1,4 @@
-import { IImageOp_Crop } from "../ditto/image/IImageOp_Crop";
+import type { IImageOp_Crop } from "../ditto/image/IImageOp_Crop";
 import { is_non_nagative_int, is_positive_int, is_undefined_or_number } from "../utils";
 
 export function validate_ui_img_operation_crop(any: any, errors: string[] = []): any is IImageOp_Crop {

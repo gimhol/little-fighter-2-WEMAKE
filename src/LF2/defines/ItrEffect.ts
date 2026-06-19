@@ -1,5 +1,5 @@
-import { type IBdyInfo } from "./IBdyInfo";
-import { type IItrInfo } from "./IItrInfo";
+import type { IBdyInfo } from "./IBdyInfo";
+import type { IItrInfo } from "./IItrInfo";
 export type __KEEP_IBdyInfo = IBdyInfo;
 export type __KEEP_IItrInfo = IItrInfo;
 /**

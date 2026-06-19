@@ -6,7 +6,7 @@ export * from "./BdyKind";
 export * from "./BinOp";
 export * from "./BotStateEnum";
 export * from "./BotVal";
-export * from "./BuiltIn_OID";
+export * from "./OID";
 export * from "./Builtin_FrameId";
 export * from "./CMD";
 export * from "./CPointKind";

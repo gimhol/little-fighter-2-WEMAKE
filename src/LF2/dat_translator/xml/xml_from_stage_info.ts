@@ -1,6 +1,6 @@
 import type { IStageInfo } from "../../defines/IStageInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLFactory } from "./xml_from_bg_data";
 import { xml_from_stage_phase_info } from "./xml_from_stage_phase_info";
 
 /**

@@ -1,8 +1,8 @@
-import { BotStateEnum, BotVal, Defines, EntityVal, GK, IBotAction } from "../../defines";
+import { BotStateEnum, BotVal, Defines, EntityVal, GK, type IBotAction } from "../../defines";
 import { pow } from "../../utils";
 import { CondMaker } from "../CondMaker";
 import { DESIRE_RATIO } from "./constants";
-import { IEditBotActionFunc } from "./IEditBotAction";
+import type { IEditBotActionFunc } from "./IEditBotAction";
 const MIN_X = -120 as const;
 const MAX_X = 120 as const;
 const Z_LEN = 120 as const;

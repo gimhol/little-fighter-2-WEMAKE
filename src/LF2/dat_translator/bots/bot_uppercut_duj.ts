@@ -1,5 +1,5 @@
 import {
-  BotStateEnum, BotVal, Defines, EntityVal, GK, IBotAction
+  BotStateEnum, BotVal, Defines, EntityVal, GK, type IBotAction
 } from "../../defines";
 import { CondMaker } from "../CondMaker";
 import { DESIRE_RATIO_X_3 } from "./constants";

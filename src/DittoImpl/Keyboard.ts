@@ -1,9 +1,9 @@
 import { CMD } from "@/LF2/defines/CMD";
 import Callbacks from "../LF2/base/Callbacks";
 import { NoEmitCallbacks } from "../LF2/base/NoEmitCallbacks";
-import { IKeyboard } from "../LF2/ditto/keyboard/IKeyboard";
-import { IKeyboardCallback } from "../LF2/ditto/keyboard/IKeyboardCallback";
-import { IKeyEvent } from "../LF2/ditto/keyboard/IKeyEvent";
+import type { IKeyboard } from "../LF2/ditto/keyboard/IKeyboard";
+import type { IKeyboardCallback } from "../LF2/ditto/keyboard/IKeyboardCallback";
+import type { IKeyEvent } from "../LF2/ditto/keyboard/IKeyEvent";
 import { LF2 } from "../LF2/LF2";
 
 class __KeyEvent implements IKeyEvent {

@@ -1,5 +1,5 @@
 import { Expression } from "../base/Expression";
-import { IBdyInfo, IEntityData } from "../defines";
+import type { IBdyInfo, IEntityData } from "../defines";
 import type { LF2 } from "../LF2";
 import { get_val_geter_from_collision } from "./get_val_from_collision";
 import { preprocess_action } from "./preprocess_action";

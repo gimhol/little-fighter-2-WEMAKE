@@ -1,4 +1,4 @@
-import { clamp, ease_in_out_sine, IEaseMethod, is_num } from "../utils";
+import { clamp, ease_in_out_sine, type IEaseMethod, is_num } from "../utils";
 import { Animation } from "./Animation";
 export class Easing extends Animation {
   protected _val_1 = 0;

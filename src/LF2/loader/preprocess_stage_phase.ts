@@ -1,5 +1,5 @@
 import { Expression } from "../base";
-import { IStagePhaseInfo } from "../defines";
+import type { IStagePhaseInfo } from "../defines";
 import { get_val_getter_from_stage } from "./get_val_getter_from_stage";
 
 export function preprocess_stage_phase(v: IStagePhaseInfo): IStagePhaseInfo {

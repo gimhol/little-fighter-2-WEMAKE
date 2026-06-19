@@ -1,4 +1,4 @@
-import { type TNextFrame, LGK } from "../defines";
+import type { TNextFrame, LGK } from "../defines";
 
 export class ControllerUpdateResult {
   next_frame?: TNextFrame;

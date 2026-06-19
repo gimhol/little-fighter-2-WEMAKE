@@ -1,4 +1,4 @@
-import { GameKey as GK, IValGetter, IValGetterGetter } from "../defines";
+import { GameKey as GK, type IValGetter, type IValGetterGetter } from "../defines";
 import { S_Val } from "../defines/StageVal";
 import { Stage } from "../stage";
 import { get_val_from_world } from "./get_val_from_world";

@@ -1,5 +1,5 @@
 import { clamp } from "../../../utils";
-import { IUIKeyEvent } from "../../IUIKeyEvent";
+import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import type { UINode } from "../../UINode";
 import type { CharMenuLogic } from "./CharMenuLogic";
 import { CharMenuState } from "./CharMenuState";

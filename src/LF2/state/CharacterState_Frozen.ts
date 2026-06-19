@@ -1,4 +1,4 @@
-import { IFrameInfo, IVector3, StateEnum } from "../defines";
+import { type IFrameInfo, type IVector3, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";
 import { spawn_ice_piece } from "./spawn_ice_piece";

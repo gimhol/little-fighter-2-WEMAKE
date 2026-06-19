@@ -1,6 +1,6 @@
 import { ActionDirector, EntityGroup } from "@/LF2";
 import { CMD, type IEntityData } from "@/LF2/defines";
-import { Entity, IEntityCallbacks } from "@/LF2/entity";
+import { Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { StatBarType } from "@/LF2/entity/StatBarType";
 import { UIComponent } from "./UIComponent";
 

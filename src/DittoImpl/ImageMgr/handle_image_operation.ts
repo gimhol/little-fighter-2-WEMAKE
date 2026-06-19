@@ -1,6 +1,6 @@
-import { IImageOp_Flip, IImageOp_Resize } from "@/LF2";
-import { IImageOp_Color } from "@/LF2/ditto/image/IImageOp_Color";
-import { IImageOp_Crop } from "@/LF2/ditto/image/IImageOp_Crop";
+import type { IImageOp_Flip, IImageOp_Resize } from "@/LF2";
+import type { IImageOp_Color } from "@/LF2/ditto/image/IImageOp_Color";
+import type { IImageOp_Crop } from "@/LF2/ditto/image/IImageOp_Crop";
 const temp_cavnas = document.createElement("canvas");
 const temp_ctx = temp_cavnas.getContext('2d')!;
 function pre_job(src: HTMLCanvasElement | HTMLImageElement) {

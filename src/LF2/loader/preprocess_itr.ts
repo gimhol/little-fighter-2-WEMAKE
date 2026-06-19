@@ -2,7 +2,7 @@ import { Expression } from "../base/Expression";
 import { CondMaker } from "../dat_translator/CondMaker";
 import { get_next_frame_by_raw_id } from "../dat_translator/get_the_next";
 import { set_hit_flag } from "../dat_translator/set_hit_flag";
-import { ActionType, BdyKind, BuiltIn_OID, CollisionVal as C_Val, EntityEnum, type IEntityData, type IItrInfo, ItrEffect, ItrKind, StateEnum } from "../defines";
+import { ActionType, BdyKind, OID, CollisionVal as C_Val, EntityEnum, type IEntityData, type IItrInfo, ItrEffect, ItrKind, StateEnum } from "../defines";
 import { HitFlag } from "../defines/HitFlag";
 import type { LF2 } from "../LF2";
 import { ensure } from "../utils/container_help/ensure";
@@ -104,8 +104,8 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
         .add(C_Val.VictimType, "==", EntityEnum.Fighter)
         .or(c => c
           .add(C_Val.VictimType, "==", EntityEnum.Weapon)
-          .and(C_Val.VictimOID, "!=", BuiltIn_OID.HenryArrow1)
-          .and(C_Val.VictimOID, "!=", BuiltIn_OID.RudolfWeapon),
+          .and(C_Val.VictimOID, "!=", OID.HenryArrow1)
+          .and(C_Val.VictimOID, "!=", OID.RudolfWeapon),
         )
         .done();
       break;
@@ -192,8 +192,8 @@ export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs:
       itr.test = itr.test ?? new CondMaker<C_Val>()
         .wrap(c => c
           .add(C_Val.VictimType, "==", EntityEnum.Weapon)
-          .and(C_Val.VictimOID, "!=", BuiltIn_OID.HenryArrow1)
-          .and(C_Val.VictimOID, "!=", BuiltIn_OID.Rudolf),
+          .and(C_Val.VictimOID, "!=", OID.HenryArrow1)
+          .and(C_Val.VictimOID, "!=", OID.Rudolf),
         )
         .or(c => c
           .add(C_Val.VictimType, "==", EntityEnum.Fighter)

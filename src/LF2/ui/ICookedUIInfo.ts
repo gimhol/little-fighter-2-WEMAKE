@@ -2,7 +2,7 @@ import type { IStyle } from "../defines/IStyle";
 import type { ImageInfo } from "../ditto/image/ImageInfo";
 import type { TextInfo } from "../ditto/image/TextInfo";
 import type { IComponentInfo } from "./IComponentInfo";
-import { IUIAction } from "./IUIAction";
+import type { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo, TUIAction, TUIActionPlace } from "./IUIInfo.dat";
 

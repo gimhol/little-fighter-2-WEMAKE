@@ -1,8 +1,8 @@
 import Frame from "../../Component/Frame";
 import { Cross } from "../../Component/Icons/Cross";
 import { Space } from "../../Component/Space";
-import { IEntityData } from "@/LF2/defines/IEntityData";
-import { IItrInfo } from "@/LF2/defines/IItrInfo";
+import type { IEntityData } from "@/LF2/defines/IEntityData";
+import type { IItrInfo } from "@/LF2/defines/IItrInfo";
 import { loop_arr } from "@/LF2/utils/array/loop_arr";
 import { traversal } from "@/LF2/utils/container_help/traversal";
 import { ITR_EFFECT_SELECT_PROPS, ITR_KIND_SELECT_PROPS } from "../EntityEditorView";

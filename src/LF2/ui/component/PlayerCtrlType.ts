@@ -1,5 +1,5 @@
 import { CtrlDevice } from "../../defines/CtrlDevice";
-import { IUIPointerEvent } from "../IUIPointerEvent";
+import type { IUIPointerEvent } from "../IUIPointerEvent";
 import { UIComponent } from "./UIComponent";
 
 export class PlayerCtrlType extends UIComponent {

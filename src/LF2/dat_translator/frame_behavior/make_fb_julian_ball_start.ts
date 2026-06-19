@@ -1,5 +1,5 @@
-import { BuiltIn_OID as OID } from "../../defines/BuiltIn_OID";
-import { IFrameInfo } from "../../defines/IFrameInfo";
+import { OID as OID } from "../../defines/OID";
+import type { IFrameInfo } from "../../defines/IFrameInfo";
 import { OpointKind } from "../../defines/OpointKind";
 import { OpointSpreading } from "../../defines/OpointSpreading";
 import { ensure } from "../../utils/container_help/ensure";

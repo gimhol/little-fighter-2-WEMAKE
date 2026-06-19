@@ -1,5 +1,5 @@
 import { EntityEnum, type TEntityEnum } from "../../defines/EntityEnum";
-import { IEntityData } from "../../defines/IEntityData";
+import type { IEntityData } from "../../defines/IEntityData";
 import type { IFrameInfo } from "../../defines/IFrameInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import { xml_to_itr_info } from "./xml_to_itr_info";

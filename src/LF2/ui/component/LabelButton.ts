@@ -1,4 +1,4 @@
-import { Easing, IPropsMeta, Label, UIComponent, UINode } from "@/LF2";
+import { Easing, type IPropsMeta, Label, UIComponent, UINode } from "@/LF2";
 export interface ILabelButtonProps {
   back_label?: Label;
   hover_label?: Label;

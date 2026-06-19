@@ -2,7 +2,7 @@
 import { TextInfo } from "@/LF2/ditto/image/TextInfo";
 import { UIComponent } from "./UIComponent";
 import { PlayerScore } from "./PlayerScore";
-import { Defines, Entity, is_bot_ctrl, is_human_ctrl, IStyle, TeamEnum } from "@/LF2";
+import { Defines, Entity, is_bot_ctrl, is_human_ctrl, type IStyle, TeamEnum } from "@/LF2";
 
 
 export class PlayerScorePlayerName extends UIComponent {

@@ -1,18 +1,18 @@
 import {
   FacingFlag,
-  IBdyInfo,
-  IBpointInfo,
-  ICpointInfo,
-  IFramePictureInfo,
-  IItrInfo,
-  IOpointInfo,
+  type IBdyInfo,
+  type IBpointInfo,
+  type ICpointInfo,
+  type IFramePictureInfo,
+  type IItrInfo,
+  type IOpointInfo,
   ItrKind,
-  IWpointInfo,
+  type IWpointInfo,
   StateEnum
 } from "../defines";
-import { IDatContext } from "../defines/IDatContext";
-import { IFrameInfo } from "../defines/IFrameInfo";
-import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
+import type { IDatContext } from "../defines/IDatContext";
+import type { IFrameInfo } from "../defines/IFrameInfo";
+import type { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
 import { SpeedCtrl } from "../defines/SpeedCtrl";
 import { SpeedMode } from "../defines/SpeedMode";
 import { round_float } from "../utils";

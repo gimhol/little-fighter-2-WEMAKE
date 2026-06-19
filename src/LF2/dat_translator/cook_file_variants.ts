@@ -1,5 +1,5 @@
-import { IEntityData } from "../defines";
-import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
+import type { IEntityData } from "../defines";
+import type { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
 
 const suffix_reg = /\.[^.]*$/
 const get_letter = (offset: number) => String.fromCharCode(98 + offset);

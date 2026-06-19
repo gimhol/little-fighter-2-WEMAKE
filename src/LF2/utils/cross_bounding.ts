@@ -1,4 +1,4 @@
-import { IBounding } from "../defines";
+import type { IBounding } from "../defines";
 import { max, min } from "./math/base";
 
 export function cross_bounding(r0: IBounding, r1: IBounding): IBounding {

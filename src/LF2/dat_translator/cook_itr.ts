@@ -1,4 +1,4 @@
-import { FacingFlag, IFrameInfo, IItrInfo, ItrEffect, ItrKind } from "../defines";
+import { FacingFlag, type IFrameInfo, type IItrInfo, ItrEffect, ItrKind } from "../defines";
 import { is_num, not_zero_num } from "../utils/type_check";
 import { fixed_float } from "./fixed_float";
 import { get_next_frame_by_raw_id } from "./get_the_next";

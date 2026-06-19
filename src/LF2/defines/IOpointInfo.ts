@@ -1,6 +1,6 @@
 import type { FacingFlag } from "./FacingFlag";
 import type { TNextFrame } from "./INextFrame";
-import { IQubePair } from "./IQubePair";
+import type { IQubePair } from "./IQubePair";
 import { OpointKind } from "./OpointKind";
 import { OpointMultiEnum } from "./OpointMultiEnum";
 import { OpointSpreading } from "./OpointSpreading";

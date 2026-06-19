@@ -1,10 +1,10 @@
 import { FSM } from "../../base/FSM";
 import { EntityGroup, GameKey } from "../../defines";
-import type IEntityCallbacks from "../../entity/IEntityCallbacks";
+import type { IEntityCallbacks } from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
 import { traversal } from "../../utils/container_help/traversal";
 import { Times } from "../../utils/Times";
-import { IUIKeyEvent } from "../IUIKeyEvent";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { FighterStatBar } from "./FighterStatBar";
 import { UIComponent } from "./UIComponent";

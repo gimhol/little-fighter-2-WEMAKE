@@ -1,5 +1,5 @@
 import type { Collision } from "../collision/Collision";
-import { BuiltIn_OID, Defines, I_K, SparkEnum, WT } from "../defines";
+import { OID, Defines, I_K, SparkEnum, WT } from "../defines";
 import { is_fighter, is_weapon } from "../entity";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
@@ -39,7 +39,7 @@ export function handle_weapon_is_hit(collision: Collision): void {
   }
 
   if (
-    attacker.data.id === BuiltIn_OID.Weapon_Stick &&
+    attacker.data.id === OID.Weapon_Stick &&
     is_base_ball
   ) {
     const s = attacker.strength

@@ -1,5 +1,5 @@
 import { Entity } from "../entity";
-import { Unsafe } from "../utils";
+import type { Unsafe } from "../utils";
 import { manhattan_xz } from "./manhattan_xz";
 
 export function closer_one(s: Unsafe<Entity>,

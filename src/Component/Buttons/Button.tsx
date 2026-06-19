@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import device from "current-device";
-import React, { Ref, useEffect, useMemo, useState } from "react";
-import { IStyleProps } from "../StyleBase/IStyleProps";
+import React, { type Ref, useEffect, useMemo, useState } from "react";
+import type { IStyleProps } from "../StyleBase/IStyleProps";
 import { useStyleBase } from "../StyleBase/useStyleBase";
 import styles from "./style.module.scss";
 import { Text } from "../Text";
-import { TShortcut, useForwardedRef, useShortcut } from "@fimagine/dom-hooks";
+import { type TShortcut, useForwardedRef, useShortcut } from "@fimagine/dom-hooks";
 const is_desktop = device.desktop();
 
 export interface IButtonProps

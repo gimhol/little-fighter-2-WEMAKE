@@ -1,4 +1,4 @@
-import { IKeyboardCallback, IPointingsCallback, IUICallback } from "@/LF2";
+import type { IKeyboardCallback, IPointingsCallback, IUICallback } from "@/LF2";
 import { PlayerKeyText } from "./PlayerKeyText";
 
 export class PlayerKeyEdit extends PlayerKeyText {

@@ -2,7 +2,7 @@ import { Factory } from "../Factory";
 import { LF2 } from "../LF2";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
-import { IBaseData, IBgData, IBotData, IDataLists, IEntityData, IStageInfo } from "../defines";
+import { type IBaseData, type IBgData, type IBotData, type IDataLists, type IEntityData, type IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { Defines } from "../defines/defines";
 import { Ditto } from "../ditto";

@@ -1,10 +1,10 @@
 import {
   createContext,
-  PropsWithChildren,
-  ReactElement
+  type PropsWithChildren,
+  type ReactElement
 } from "react";
 import { FormInstance } from "./FormInstance";
-import { FormItem, IFormItemProps } from "./FormItem";
+import { FormItem, type IFormItemProps } from "./FormItem";
 import { useForm } from "./useForm";
 
 export interface IFormProps<T extends object> extends PropsWithChildren {

@@ -1,6 +1,6 @@
-import { IFrameInfo } from "../defines";
+import type { IFrameInfo } from "../defines";
 import { FacingFlag } from "../defines/FacingFlag";
-import { ICpointInfo } from "../defines/ICpointInfo";
+import type { ICpointInfo } from "../defines/ICpointInfo";
 import { Defines } from "../defines/defines";
 import { abs } from "../utils";
 import { is_num, is_str } from "../utils/type_check";

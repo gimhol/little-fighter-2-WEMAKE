@@ -1,8 +1,8 @@
 import { Builtin_FrameId, Defines, FrameBehavior, SpeedMode, WeaponType } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
-import { IDatContext } from "../defines/IDatContext";
-import { IEntityData } from "../defines/IEntityData";
-import { IFrameIndexes } from "../defines/IFrameIndexes";
+import type { IDatContext } from "../defines/IDatContext";
+import type { IEntityData } from "../defines/IEntityData";
+import type { IFrameIndexes } from "../defines/IFrameIndexes";
 import { traversal } from "../utils/container_help/traversal";
 import { round_float } from "../utils/math/round_float";
 import { to_num } from "../utils/type_cast/to_num";

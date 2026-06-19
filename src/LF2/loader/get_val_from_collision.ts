@@ -1,8 +1,8 @@
-import { Collision } from "../collision/Collision";
+import type { Collision } from "../collision/Collision";
 import { is_armor_work } from "../collision/is_armor_work";
 import { CheatType, EntityGroup, HitFlag } from "../defines";
 import { CollisionVal } from "../defines/CollisionVal";
-import { IValGetter, IValGetterGetter } from "../defines/IExpression";
+import type { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { is_ball_ctrl } from "../entity";
 import { round } from "../utils";
 

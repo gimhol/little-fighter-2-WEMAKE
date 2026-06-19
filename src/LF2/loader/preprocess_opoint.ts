@@ -1,5 +1,5 @@
 import { LF2 } from "..";
-import { IOpointInfo, OpointSpreading } from "../defines";
+import { type IOpointInfo, OpointSpreading } from "../defines";
 import { Randoming } from "../helper";
 import { round_float } from "../utils";
 

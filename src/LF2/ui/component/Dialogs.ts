@@ -1,7 +1,7 @@
-import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
+import type { IDialogInfo } from "@/LF2/defines/IDialogInfo";
 import { Ditto } from "@/LF2/ditto/Instance";
 import { Transform } from "@/LF2/Transform";
-import { IPropsMeta } from "@/LF2/utils/schema/make_schema";
+import type { IPropsMeta } from "@/LF2/utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
 import { Label } from "./Label";

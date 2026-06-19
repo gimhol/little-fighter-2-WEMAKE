@@ -1,6 +1,6 @@
-import { IFrameInfo } from "@/LF2/defines";
-import { IQube } from "@/LF2/defines/IQube";
-import { IQubePair } from "@/LF2/defines/IQubePair";
+import type { IFrameInfo } from "@/LF2/defines";
+import type { IQube } from "@/LF2/defines/IQube";
+import type { IQubePair } from "@/LF2/defines/IQubePair";
 import type { Entity } from "@/LF2/entity/Entity";
 import { foreach } from "@/LF2/utils/container_help/foreach";
 import * as T from "../_t";

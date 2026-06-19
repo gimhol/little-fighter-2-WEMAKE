@@ -1,4 +1,4 @@
-import { IFrameInfo, INextFrame, IVector3 } from "../defines";
+import type { IFrameInfo, INextFrame, IVector3 } from "../defines";
 import { Entity } from "../entity/Entity";
 import { is_ball, is_fighter, is_weapon } from "../entity/type_check";
 import BallState_Base from "./BallState_Base";

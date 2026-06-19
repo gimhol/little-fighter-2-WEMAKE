@@ -1,4 +1,4 @@
-import { IPointingEvent } from "../LF2/ditto";
+import type { IPointingEvent } from "../LF2/ditto";
 
 export class __PointingEvent implements IPointingEvent {
   readonly is_pointing_event = true;

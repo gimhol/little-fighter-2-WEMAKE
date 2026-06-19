@@ -1,6 +1,6 @@
 import Combine from "../../Component/Combine";
-import { InputNumber, InputNumberProps } from "../../Component/Input";
-import { IQube } from "@/LF2/defines/IQube";
+import { InputNumber, type InputNumberProps } from "../../Component/Input";
+import type { IQube } from "@/LF2/defines/IQube";
 import { make_field_props } from "./make_field_props";
 
 export interface IQubeEditProps {

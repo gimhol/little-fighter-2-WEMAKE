@@ -1,4 +1,4 @@
-import { IEntityData } from "../defines/IEntityData";
+import type { IEntityData } from "../defines/IEntityData";
 import { foreach } from "../utils/container_help/foreach";
 import { take } from "./take";
 

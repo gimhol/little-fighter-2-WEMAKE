@@ -1,7 +1,7 @@
 import axios from "axios";
 import json5 from "json5";
 import JSZIP from "jszip";
-import { type IReadable, type IZip, type IZipObject } from "../LF2/ditto";
+import type { IReadable, IZip, IZipObject } from "../LF2/ditto";
 import { is_str } from "../LF2/utils/type_check";
 
 export class ZipObject implements IZipObject {

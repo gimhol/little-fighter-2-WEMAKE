@@ -1,12 +1,12 @@
-import { IPropsMeta } from "@/LF2";
-import { ILf2Callback } from "../../../ILf2Callback";
+import type { IPropsMeta } from "@/LF2";
+import type { ILf2Callback } from "../../../ILf2Callback";
 import { PlayerInfo } from "../../../PlayerInfo";
 import { FSM } from "../../../base/FSM";
-import { CheatType, EntityGroup as EG, IEntityData, TeamEnum } from "../../../defines";
+import { CheatType, EntityGroup as EG, type IEntityData, TeamEnum } from "../../../defines";
 import { Defines } from "../../../defines/defines";
 import { Randoming } from "../../../helper";
 import { between, max, min } from "../../../utils/math";
-import { IUIKeyEvent } from "../../IUIKeyEvent";
+import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import { CharMenuHead } from "../CharMenuHead";
 import { FighterName as CharMenuFighterName } from "../FighterName";
 import { PlayerName as CharMenuPlayerName } from "../PlayerName";
@@ -18,8 +18,8 @@ import { CharMenuState_ComSel } from "./CharMenuState_ComSel";
 import { CharMenuState_CountingDown } from "./CharMenuState_CountingDown";
 import { CharMenuState_GameSetting } from "./CharMenuState_GameSetting";
 import { CharMenuState_PlayerSel } from "./CharMenuState_PlayerSel";
-import { ICharMenuState } from "./ICharMenuState";
-import { ISlotPack } from "./ISlotPack";
+import type { ICharMenuState } from "./ICharMenuState";
+import type { ISlotPack } from "./ISlotPack";
 import { SlotState } from "./SlotState";
 import { SlotStep } from "./SlotStep";
 export interface ICharMenuLogicProps {

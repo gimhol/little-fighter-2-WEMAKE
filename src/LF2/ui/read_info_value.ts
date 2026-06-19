@@ -1,5 +1,5 @@
-import { Unsafe } from "../utils";
-import { ICookedUIInfo } from "./ICookedUIInfo";
+import type { Unsafe } from "../utils";
+import type { ICookedUIInfo } from "./ICookedUIInfo";
 
 type BaseType = 'string' | 'number' | 'boolean'
 export type Cls<T> = new (...args: any[]) => T

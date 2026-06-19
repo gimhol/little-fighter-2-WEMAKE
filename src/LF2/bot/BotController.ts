@@ -1,20 +1,19 @@
 import FSM from "../base/FSM";
 import { BaseController } from "../controller/BaseController";
 import {
-  AGK,
   ATTCKING_ITR_KINDS,
   ATTCKING_STATES,
   BotDataSet,
   BSE,
-  BuiltIn_OID,
   Defines as D,
-  Defines,
   Difficulty,
   GK,
-  IBotAction, IBotData, IBotDataSet,
-  IVector2Like,
-  IVector3,
-  LGK, StateEnum,
+  type IBotAction, type IBotData,
+  type IVector2Like,
+  type IVector3,
+  type LGK,
+  OID,
+  StateEnum,
   WT
 } from "../defines";
 import { Ditto } from "../ditto";
@@ -240,11 +239,11 @@ export class BotController extends BaseController {
     let offset_x: number = 0;
     let offset_z: number = 0;
     if (this.fsm.state?.key === BSE.Following) {
-      offset_x = Defines.AI_FOLLOWING_RANGE_IN_X
-      offset_z = Defines.AI_FOLLOWING_RANGE_IN_Z
+      offset_x = D.AI_FOLLOWING_RANGE_IN_X
+      offset_z = D.AI_FOLLOWING_RANGE_IN_Z
     } else {
-      offset_x = Defines.AI_COME_RANGE_IN_X
-      offset_z = Defines.AI_COME_RANGE_IN_Z
+      offset_x = D.AI_COME_RANGE_IN_X
+      offset_z = D.AI_COME_RANGE_IN_Z
     }
     const bound_l = round(en_x - offset_x);
     const bound_r = round(en_x + offset_x);
@@ -266,11 +265,11 @@ export class BotController extends BaseController {
     let offset_x: number = 0;
     let offset_z: number = 0;
     if (this.fsm.state?.key === BSE.Following) {
-      offset_x = Defines.AI_FOLLOWING_RANGE_OUT_X
-      offset_z = Defines.AI_FOLLOWING_RANGE_OUT_Z
+      offset_x = D.AI_FOLLOWING_RANGE_OUT_X
+      offset_z = D.AI_FOLLOWING_RANGE_OUT_Z
     } else {
-      offset_x = Defines.AI_COME_RANGE_OUT_X
-      offset_z = Defines.AI_COME_RANGE_OUT_Z
+      offset_x = D.AI_COME_RANGE_OUT_X
+      offset_z = D.AI_COME_RANGE_OUT_Z
     }
 
     const bound_l = round(en_x - offset_x);
@@ -292,14 +291,14 @@ export class BotController extends BaseController {
     let offset_x: number = 0;
     let offset_z: number = 0;
     if (this.fsm.state?.key === BSE.Following) {
-      offset_x = Defines.AI_FOLLOWING_RANGE_OUT_X
-      offset_z = Defines.AI_FOLLOWING_RANGE_OUT_Z
+      offset_x = D.AI_FOLLOWING_RANGE_OUT_X
+      offset_z = D.AI_FOLLOWING_RANGE_OUT_Z
     } else {
-      offset_x = Defines.AI_COME_RANGE_OUT_X
-      offset_z = Defines.AI_COME_RANGE_OUT_Z
+      offset_x = D.AI_COME_RANGE_OUT_X
+      offset_z = D.AI_COME_RANGE_OUT_Z
     }
-    offset_x += Defines.AI_STAY_CHASING_RANGE;
-    offset_z += Defines.AI_STAY_CHASING_RANGE;
+    offset_x += D.AI_STAY_CHASING_RANGE;
+    offset_z += D.AI_STAY_CHASING_RANGE;
     const bound_l = round(en_x - offset_x);
     const bound_r = round(en_x + offset_x);
     const bound_t = round(en_z - offset_z);
@@ -572,7 +571,7 @@ export class BotController extends BaseController {
         return;
       }
     } else if (
-      other.data.id === BuiltIn_OID.Criminal &&
+      other.data.id === OID.Criminal &&
       me.team != this.stage.team &&
       !this.world.has_players_alive
     ) {

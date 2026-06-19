@@ -1,6 +1,6 @@
 import { summary_mgr } from "@/LF2/entity/SummaryMgr";
 import { TextInfo } from "@/LF2/ditto/image/TextInfo";
-import { IStyle } from "../../defines/IStyle";
+import type { IStyle } from "../../defines/IStyle";
 import { PlayerScore } from "./PlayerScore";
 import { UIComponent } from "./UIComponent";
 export class PlayerScoreCell extends UIComponent {

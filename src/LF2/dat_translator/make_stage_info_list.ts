@@ -1,7 +1,7 @@
 import { Difficulty as DF } from "../defines/Difficulty";
-import { IStageInfo } from "../defines/IStageInfo";
-import { IStageObjectInfo } from "../defines/IStageObjectInfo";
-import { IStagePhaseInfo } from "../defines/IStagePhaseInfo";
+import type { IStageInfo } from "../defines/IStageInfo";
+import type { IStageObjectInfo } from "../defines/IStageObjectInfo";
+import type { IStagePhaseInfo } from "../defines/IStagePhaseInfo";
 import { StageActions } from "../defines/StageActions";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";
 import { match_hash_end } from "../utils/string_parser/match_hash_end";

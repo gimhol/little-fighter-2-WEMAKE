@@ -1,6 +1,6 @@
 import { Defines, floor, min, random_in } from "@/LF2";
 import type { IWorldRenderer } from "@/LF2/ditto/render/IWorldRenderer";
-import { type Entity } from "@/LF2/entity";
+import type { Entity } from "@/LF2/entity";
 import type { LF2 } from "@/LF2/LF2";
 import type { World } from "@/LF2/World";
 import { CSS2DRenderer, Camera, Object3D, OrthographicCamera, Scene, Vector3, WebGLRenderer } from "../_t";

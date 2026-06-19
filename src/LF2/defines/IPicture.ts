@@ -4,4 +4,3 @@ export interface IPicture<T = any> {
   h: number;
   texture: T;
 }
-export default IPicture

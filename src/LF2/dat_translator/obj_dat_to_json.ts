@@ -1,7 +1,7 @@
-import { IEntityData } from "../defines";
-import { IDatContext } from "../defines/IDatContext";
-import { IDatIndex } from "../defines/IDatIndex";
-import { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
+import type { IEntityData } from "../defines";
+import type { IDatContext } from "../defines/IDatContext";
+import type { IDatIndex } from "../defines/IDatIndex";
+import type { ILegacyPictureInfo } from "../defines/ILegacyPictureInfo";
 import { set_obj_field } from "../utils/container_help/set_obj_field";
 import { match_block_once } from "../utils/string_parser/match_block";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";

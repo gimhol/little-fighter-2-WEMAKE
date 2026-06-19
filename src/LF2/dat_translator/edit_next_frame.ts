@@ -1,4 +1,4 @@
-import { INextFrame, TNextFrame } from "../defines";
+import type { INextFrame, TNextFrame } from "../defines";
 
 export function edit_next_frame(
   nexts: TNextFrame,

@@ -1,9 +1,9 @@
-import { BuiltIn_OID, Builtin_FrameId, Defines, EntityGroup, GONE_FRAME_INFO, IItrInfo, IOpointInfo, ItrKind, StateEnum } from "../defines";
+import { OID, Builtin_FrameId, Defines, EntityGroup, GONE_FRAME_INFO, type IItrInfo, type IOpointInfo, ItrKind, StateEnum } from "../defines";
 import { Entity, is_ball, is_fighter, turn_face } from "../entity";
 import { round } from "../utils";
 
 const freeze_ball_opoint: IOpointInfo = {
-  oid: BuiltIn_OID.FreezeBall,
+  oid: OID.FreezeBall,
   kind: 0,
   x: 0,
   y: 0,

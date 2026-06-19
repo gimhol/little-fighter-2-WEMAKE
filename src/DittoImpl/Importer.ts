@@ -1,6 +1,6 @@
-import axios, { AxiosResponse, RawAxiosRequestHeaders, ResponseType } from "axios";
+import axios, { type AxiosResponse, type RawAxiosRequestHeaders, type ResponseType } from "axios";
 import json5 from "json5";
-import { IImporter } from "../LF2/ditto/importer/IImporter";
+import type { IImporter } from "../LF2/ditto/importer/IImporter";
 import { ImportError } from "../LF2/ditto/importer/ImportError";
 
 const roots = ["builtin_data"];

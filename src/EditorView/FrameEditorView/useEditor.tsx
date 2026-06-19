@@ -3,12 +3,12 @@ import { Button } from "../../Component/Buttons/Button";
 import Combine from "../../Component/Combine";
 import { Cross } from '../../Component/Icons/Cross';
 import { Plus } from '../../Component/Icons/Plus';
-import { Input, InputProps } from "../../Component/Input";
-import { InputNumber, InputNumberProps } from "../../Component/Input";
-import Select, { ISelectProps } from "../../Component/Select";
+import { Input, type InputProps } from "../../Component/Input";
+import { InputNumber, type InputNumberProps } from "../../Component/Input";
+import Select, { type ISelectProps } from "../../Component/Select";
 import { TextArea } from "../../Component/TextArea";
-import Titled, { ITitledProps } from "../../Component/Titled";
-import { IZipObject } from "@/LF2/ditto";
+import Titled, { type ITitledProps } from "../../Component/Titled";
+import type { IZipObject } from "@/LF2/ditto";
 import { shared_ctx } from "../Context";
 
 type Field<O> = (keyof O) | (string | number)[];

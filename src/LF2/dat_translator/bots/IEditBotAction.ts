@@ -1,4 +1,4 @@
-import { BotVal, EntityVal, IBotAction } from "../../defines";
+import { BotVal, EntityVal, type IBotAction } from "../../defines";
 import { CondMaker } from "../CondMaker";
 
 export interface IEditBotAction {

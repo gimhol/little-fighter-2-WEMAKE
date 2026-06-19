@@ -1,5 +1,5 @@
 import { max } from "../../utils/math/base";
-import { IUIKeyEvent } from "../IUIKeyEvent";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { UINode } from "../UINode";
 import { Reachable } from "./Reachable";
 import { UIComponent } from "./UIComponent";

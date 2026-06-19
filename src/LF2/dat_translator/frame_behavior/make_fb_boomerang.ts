@@ -1,7 +1,7 @@
 import { SpeedCtrl } from "../../defines/SpeedCtrl";
 import { ChaseLost } from "../../defines/ChaseLost";
 import { HitFlag } from "../../defines/HitFlag";
-import { IFrameInfo } from "../../defines/IFrameInfo";
+import type { IFrameInfo } from "../../defines/IFrameInfo";
 import { SpeedMode } from "../../defines/SpeedMode";
 export function make_fb_boomerang(frame: IFrameInfo) {
   frame.dvx = 20;

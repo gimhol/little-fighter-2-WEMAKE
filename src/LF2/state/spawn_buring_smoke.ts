@@ -1,4 +1,4 @@
-import { IOpointInfo, BuiltIn_OID } from "../defines";
+import { type IOpointInfo, OID } from "../defines";
 import { Entity } from "../entity";
 import { round } from "../utils";
 
@@ -9,7 +9,7 @@ export function spawn_buring_smoke(entity: Entity, foo: 1 | 2): IOpointInfo {
   const facing = mt.pick([-1, 1])
   const ret: IOpointInfo = {
     kind: 0, x: 0, y: 0,
-    oid: BuiltIn_OID.BrokenWeapon,
+    oid: OID.BrokenWeapon,
     action: { id: "140", facing },
     speedz: 0,
     is_entity: false,

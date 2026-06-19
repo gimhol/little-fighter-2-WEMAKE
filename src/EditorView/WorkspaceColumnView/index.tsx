@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { Button } from "../../Component/Buttons/Button";
-import Combine, { ICombineProps } from "../../Component/Combine";
+import Combine, { type ICombineProps } from "../../Component/Combine";
 import { Plus } from '../../Component/Icons/Plus';
 import { Text } from "../../Component/Text";
 import styles from "./style.module.scss";

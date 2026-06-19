@@ -1,8 +1,8 @@
-import { IPropsMeta, Label } from "@/LF2";
+import { type IPropsMeta, Label } from "@/LF2";
 import { Difficulty } from "../../defines";
-import { IUIKeyEvent } from "../IUIKeyEvent";
-import { IUIPointerEvent } from "../IUIPointerEvent";
-import { IJalousieCallbacks, Jalousie } from "./Jalousie";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
+import type { IUIPointerEvent } from "../IUIPointerEvent";
+import { type IJalousieCallbacks, Jalousie } from "./Jalousie";
 import { UIComponent } from "./UIComponent";
 export interface IEndingPageLogicProps {
   label: Label | undefined;

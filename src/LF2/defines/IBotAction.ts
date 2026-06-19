@@ -2,9 +2,9 @@ import { CondMaker } from "../dat_translator/CondMaker";
 import { BotStateEnum } from "./BotStateEnum";
 import { BotVal } from "./BotVal";
 import { EntityVal } from "./EntityVal";
-import { LGK } from "./GameKey";
-import { IBotRay } from "./IBotRay";
-import { IExpression } from "./IExpression";
+import type { LGK } from "./GameKey";
+import type { IBotRay } from "./IBotRay";
+import type { IExpression } from "./IExpression";
 
 /**
  * BOT动作

@@ -1,7 +1,7 @@
 import { FrameBehavior } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
-import { IDatContext } from "../defines/IDatContext";
-import { IEntityData } from "../defines/IEntityData";
+import type { IDatContext } from "../defines/IDatContext";
+import type { IEntityData } from "../defines/IEntityData";
 import { SpeedMode } from "../defines/SpeedMode";
 import { round_float } from "../utils";
 import { traversal } from "../utils/container_help/traversal";

@@ -1,4 +1,4 @@
-import { Indicating } from "./FrameIndicators";
+import type { Indicating } from "./FrameIndicators";
 
 export const INDICATINGS: Record<Indicating, number> = {
   frame: 1,

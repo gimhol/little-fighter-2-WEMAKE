@@ -1,5 +1,5 @@
-import { IEntityData } from "../../defines";
-import { ISumInfo } from "./ISumInfo";
+import type { IEntityData } from "../../defines";
+import type { ISumInfo } from "./ISumInfo";
 
 export interface IFighterSumInfo extends ISumInfo {
   data: IEntityData;

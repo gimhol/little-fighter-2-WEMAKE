@@ -1,5 +1,5 @@
-import { IStyle } from "../../defines/IStyle";
-import { IImageInfo } from "./IImageInfo";
+import type { IStyle } from "../../defines/IStyle";
+import type { IImageInfo } from "./IImageInfo";
 
 export interface ITextInfo extends IImageInfo {
   text: string;

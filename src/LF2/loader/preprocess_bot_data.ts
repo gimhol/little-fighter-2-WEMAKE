@@ -1,5 +1,5 @@
 import { Expression } from "../base";
-import { IBotData } from "../defines";
+import type { IBotData } from "../defines";
 import { traversal } from "../utils";
 import { get_val_from_bot_ctrl } from "./get_val_from_bot_ctrl";
 

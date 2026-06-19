@@ -1,4 +1,4 @@
-import { IFrameInfo, StateEnum } from "../defines";
+import { type IFrameInfo, StateEnum } from "../defines";
 import { Entity } from "../entity/Entity";
 import State_Base from "./State_Base";
 

@@ -1,4 +1,4 @@
-import { IRGBA } from "./IRGBA";
+import type { IRGBA } from "./IRGBA";
 export function int_to_rgba(num: number): IRGBA | null {
   if (!Number.isInteger(num) || num < 0) return null;
   const a = ((num >> 24) & 0xff) / 255;

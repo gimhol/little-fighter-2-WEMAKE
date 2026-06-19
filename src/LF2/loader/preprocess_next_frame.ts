@@ -1,5 +1,5 @@
 import { Expression } from "../base/Expression";
-import { INextFrame, TNextFrame } from "../defines";
+import type { INextFrame, TNextFrame } from "../defines";
 import { get_val_getter_from_entity } from "./get_val_from_entity";
 
 

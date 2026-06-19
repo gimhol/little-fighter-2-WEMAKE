@@ -1,4 +1,4 @@
-import { IStyle } from "@/LF2/defines";
+import type { IStyle } from "@/LF2/defines";
 import { TextInfo } from "@/LF2/ditto/image/TextInfo";
 import { UIComponent } from "./UIComponent";
 

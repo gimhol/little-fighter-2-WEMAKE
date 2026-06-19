@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ForwardedRef, forwardRef } from "react";
+import { type ForwardedRef, forwardRef } from "react";
 import styles from "./styles.module.scss";
 export type UiSize = 'ss' | 's' | 'm' | 'l'
 export interface ITextProps extends React.HTMLAttributes<HTMLSpanElement> {

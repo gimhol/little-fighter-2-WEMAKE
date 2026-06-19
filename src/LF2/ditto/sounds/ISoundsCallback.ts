@@ -1,4 +1,4 @@
-import { ISounds } from "./ISounds";
+import type { ISounds } from "./ISounds";
 
 export interface ISoundsCallback {
   on_muted_changed?(muted: boolean, mgr: ISounds): void;

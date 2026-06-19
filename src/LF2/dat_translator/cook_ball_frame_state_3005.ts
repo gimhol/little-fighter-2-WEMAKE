@@ -1,7 +1,7 @@
-import { IFrameInfo } from "../defines/IFrameInfo";
+import type { IFrameInfo } from "../defines/IFrameInfo";
 import { ItrKind } from "../defines/ItrKind";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
-import { IEntityData } from "../defines/IEntityData";
+import type { IEntityData } from "../defines/IEntityData";
 import { StateEnum } from "../defines/StateEnum";
 import { CondMaker } from "./CondMaker";
 import { ensure } from "../utils";

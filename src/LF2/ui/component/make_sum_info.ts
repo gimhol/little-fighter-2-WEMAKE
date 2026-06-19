@@ -1,4 +1,4 @@
-import { ISumInfo } from "./ISumInfo";
+import type { ISumInfo } from "./ISumInfo";
 
 export const make_sum_info = (team: string): ISumInfo => ({
   wins: 0,

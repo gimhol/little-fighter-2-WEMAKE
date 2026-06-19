@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useMemo } from "react";
 import styles from "../../styles/lfui_border.module.scss";
-import { TVariant } from "./Variant";
+import type { TVariant } from "./Variant";
 
 export function useStyleBase(variants?: TVariant[] | string, ...classnames: (string | undefined)[]) {
   return {

@@ -1,6 +1,6 @@
 import { Defines } from "../../defines/defines";
-import { IWorldCallbacks } from "../../IWorldCallbacks";
-import { IWorldDataset } from "../../IWorldDataset";
+import type { IWorldCallbacks } from "../../IWorldCallbacks";
+import type { IWorldDataset } from "../../IWorldDataset";
 import { Label } from "./Label";
 
 export class DifficultyText extends Label implements IWorldCallbacks {

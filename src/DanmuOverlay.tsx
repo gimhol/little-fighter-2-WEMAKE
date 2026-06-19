@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { get_team_text_color } from "./LF2/base/get_team_text_color";
-import { ILf2Callback } from "./LF2/ILf2Callback";
+import type { ILf2Callback } from "./LF2/ILf2Callback";
 import { LF2 } from "./LF2/LF2";
 import { DanmuGameLogic } from "./LF2/ui/component/DanmuGameLogic";
-import { IFighterSumInfo } from "./LF2/ui/component/IFighterSumInfo";
+import type { IFighterSumInfo } from "./LF2/ui/component/IFighterSumInfo";
 import { UIComponent } from "./LF2/ui/component/UIComponent";
 import { Times } from "./LF2/utils/Times";
 import { floor } from "./LF2/utils";

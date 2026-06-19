@@ -1,5 +1,5 @@
-import { any, fields, flt, IFieldInfo, int, str } from "../fields";
-import { IWorldDataset, world_dataset_fields } from "../IWorldDataset";
+import { any, fields, flt, type IFieldInfo, int, str } from "../fields";
+import { type IWorldDataset, world_dataset_fields } from "../IWorldDataset";
 import { ALL_FACING_FLAG, FACING_FLAG_DESC_MAP, FACING_FLAG_LABEL_MAP, FacingFlag } from "./FacingFlag";
 import { ALL_FRAME_BEHAVIOR, FRAME_BEHAVIOR_DESC_MAP, FRAME_BEHAVIOR_LABEL_MAP, FrameBehavior } from "./FrameBehavior";
 import type { IBdyInfo } from "./IBdyInfo";

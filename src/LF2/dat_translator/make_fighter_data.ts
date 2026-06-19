@@ -1,12 +1,12 @@
-import { FacingFlag as FF, IFrameInfo, ItrKind, SE, StateEnum, TNextFrame, WeaponType as WT } from "../defines";
+import { FacingFlag as FF, type IFrameInfo, ItrKind, SE, StateEnum, type TNextFrame, WeaponType as WT } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { BdyKind } from "../defines/BdyKind";
 import { EntityEnum } from "../defines/EntityEnum";
 import { EntityVal as EV } from "../defines/EntityVal";
-import { IDatContext } from "../defines/IDatContext";
-import { IEntityData } from "../defines/IEntityData";
-import { IFrameIndexes } from "../defines/IFrameIndexes";
-import { INextFrame } from "../defines/INextFrame";
+import type { IDatContext } from "../defines/IDatContext";
+import type { IEntityData } from "../defines/IEntityData";
+import type { IFrameIndexes } from "../defines/IFrameIndexes";
+import type { INextFrame } from "../defines/INextFrame";
 import { ensure, foreach } from "../utils";
 import { take_number } from "../utils/container_help/take_number";
 import { traversal } from "../utils/container_help/traversal";

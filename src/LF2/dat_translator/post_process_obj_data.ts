@@ -1,4 +1,4 @@
-import { IDatContext } from "../defines/IDatContext";
+import type { IDatContext } from "../defines/IDatContext";
 import { make_frames_special } from "./make_frames_special";
 
 export function post_process_obj_data(ctx: IDatContext): void {

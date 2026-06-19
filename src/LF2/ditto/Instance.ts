@@ -15,7 +15,7 @@ import type { IUINodeRenderer } from "./render/IUINodeRenderer";
 import type { IWorldRenderer } from "./render/IWorldRenderer";
 import type { ISounds } from "./sounds";
 import type { IUIInputHandle } from "./ui/IEventHandle";
-import { IXML } from "./xml";
+import type { IXML } from "./xml";
 import type { IZip } from "./zip";
 
 export interface IDitto extends IDittoPack {

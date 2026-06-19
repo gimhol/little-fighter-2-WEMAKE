@@ -1,4 +1,4 @@
-import { ITransform } from "./ITransform";
+import type { ITransform } from "./ITransform";
 import { round_float } from "./utils";
 
 export class Transform implements ITransform {

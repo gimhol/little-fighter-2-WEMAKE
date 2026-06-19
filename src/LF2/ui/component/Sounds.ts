@@ -1,6 +1,6 @@
 import { Loop } from "../../animation/Loop";
 import { Defines } from "../../defines";
-import { IPlayable } from "./IPlayable";
+import type { IPlayable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
 
 export class Sounds extends UIComponent implements IPlayable {

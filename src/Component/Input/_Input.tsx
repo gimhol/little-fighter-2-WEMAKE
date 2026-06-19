@@ -2,9 +2,9 @@ import classNames from "classnames";
 import React, { useEffect, useMemo, useRef } from "react";
 import { is_positive } from "@/LF2/utils/type_check";
 import { CircleCross } from '../Icons/CircleCross';
-import { IStyleProps } from "../StyleBase/IStyleProps";
+import type { IStyleProps } from "../StyleBase/IStyleProps";
 import { useStyleBase } from "../StyleBase/useStyleBase";
-import { InputNumberProps } from "./_InputNumber";
+import type { InputNumberProps } from "./_InputNumber";
 import styles from "./styles.module.scss";
 import { useMergedConfig } from "../ConfigProvider";
 

@@ -1,4 +1,4 @@
-import { IXML } from "@/LF2"
+import type { IXML } from "@/LF2"
 import { XMLElement } from "./XMLElement"
 
 class _XML implements IXML {

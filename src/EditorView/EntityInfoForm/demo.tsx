@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { entity_info_new, IEntityInfo } from "@/LF2";
+import { entity_info_new, type IEntityInfo } from "@/LF2";
 import { useState } from "react";
 import { EntityInfoForm } from "./index";
 

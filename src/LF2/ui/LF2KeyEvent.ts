@@ -1,5 +1,5 @@
 import { GK } from "../defines";
-import { IUIKeyEvent } from "./IUIKeyEvent";
+import type { IUIKeyEvent } from "./IUIKeyEvent";
 import { LF2UIEvent } from "./LF2UIEvent";
 
 export class LF2KeyEvent extends LF2UIEvent implements IUIKeyEvent {

@@ -1,7 +1,7 @@
 import { EntityGroup, FrameBehavior as FB, OID, OpointKind, SpeedMode } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { HitFlag } from "../defines/HitFlag";
-import { IEntityData } from "../defines/IEntityData";
+import type { IEntityData } from "../defines/IEntityData";
 import { ensure, find, floor } from "../utils";
 import { foreach } from "../utils/container_help/foreach";
 import { traversal } from "../utils/container_help/traversal";

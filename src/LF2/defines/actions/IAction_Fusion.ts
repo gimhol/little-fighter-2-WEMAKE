@@ -1,6 +1,6 @@
-import { GK, TNextFrame } from "..";
+import { GK, type TNextFrame } from "..";
 import { ActionType } from "../ActionType";
-import { IAction_Base } from "./IAction_Base";
+import type { IAction_Base } from "./IAction_Base";
 
 
 export interface IAction_Fusion extends IAction_Base {

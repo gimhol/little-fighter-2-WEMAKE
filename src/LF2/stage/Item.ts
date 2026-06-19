@@ -1,7 +1,7 @@
-import { Defines, Difficulty, IEntityData, IStageObjectInfo } from "../defines";
+import { Defines, Difficulty, type IEntityData, type IStageObjectInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import { Entity } from "../entity/Entity";
-import IEntityCallbacks from "../entity/IEntityCallbacks";
+import type { IEntityCallbacks } from "../entity/IEntityCallbacks";
 import { StatBarType } from "../entity/StatBarType";
 import { is_fighter, is_fighter_data, is_weapon } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";

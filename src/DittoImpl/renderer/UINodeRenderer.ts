@@ -1,8 +1,8 @@
-import { IVector3Like, parse_rgba, TextInfo } from "@/LF2";
+import { type IVector3Like, parse_rgba, TextInfo } from "@/LF2";
 import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
 import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
 import { TextInput } from "@/LF2/ui/component/TextInput";
-import { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
+import type { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
 import type { UINode } from "@/LF2/ui/UINode";
 import { is_num, is_str, round } from "@/LF2/utils";
 import * as T from "../_t";

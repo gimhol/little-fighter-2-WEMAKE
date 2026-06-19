@@ -1,4 +1,4 @@
-import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, EntityEnum, ItrKind, StateEnum, TEntityEnum } from "../defines";
+import { ALL_ENTITY_ENUM, ALL_STATES, BdyKind, EntityEnum, ItrKind, StateEnum, type TEntityEnum } from "../defines";
 import { Ditto } from "../ditto";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
 import type { Collision, ICollisionFunc } from "./Collision";
@@ -21,7 +21,7 @@ import { handle_weapon_hit_other } from "./handle_weapon_hit_other";
 import { handle_weapon_is_hit } from "./handle_weapon_is_hit";
 import { handle_weapon_is_picked } from "./handle_weapon_is_picked";
 import { handle_weapon_is_picked_secretly } from "./handle_weapon_is_picked_secretly";
-import { ICollisionHandler } from "./ICollisionHandler";
+import type { ICollisionHandler } from "./ICollisionHandler";
 
 export interface IHandlerConfig {
   /** 攻击方实体类型 */

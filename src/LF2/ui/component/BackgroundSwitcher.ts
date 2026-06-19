@@ -1,4 +1,4 @@
-import { BGG, Defines, IBgData } from "../../defines";
+import { BGG, Defines, type IBgData } from "../../defines";
 import { Label } from "./Label";
 
 export class BackgroundSwitcher extends Label {

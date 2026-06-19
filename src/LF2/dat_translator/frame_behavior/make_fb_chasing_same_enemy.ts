@@ -1,9 +1,9 @@
-import { BuiltIn_OID as OID } from "../../defines/BuiltIn_OID";
+import { OID as OID } from "../../defines/OID";
 import { ChaseLost } from "../../defines/ChaseLost";
 import { Defines as D } from "../../defines/defines";
 import { FacingFlag as FF } from "../../defines/FacingFlag";
 import { HitFlag } from "../../defines/HitFlag";
-import { IFrameInfo } from "../../defines/IFrameInfo";
+import type { IFrameInfo } from "../../defines/IFrameInfo";
 import { SpeedMode } from "../../defines/SpeedMode";
 import { ChaseStratedy } from "../../defines/ChaseStratedy";
 export function make_fb_chasing_same_enemy(frame: IFrameInfo, oid: string) {

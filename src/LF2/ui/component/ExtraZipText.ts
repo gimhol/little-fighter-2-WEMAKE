@@ -1,4 +1,4 @@
-import { ILf2Callback } from "@/LF2";
+import type { ILf2Callback } from "@/LF2";
 import { Label } from "./Label";
 
 

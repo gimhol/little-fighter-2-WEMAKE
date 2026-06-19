@@ -1,4 +1,4 @@
-import { IFrameInfo, IWpointInfo } from "../defines";
+import type { IFrameInfo, IWpointInfo } from "../defines";
 import { not_zero_num } from "../utils/type_check";
 import { take } from "./take";
 import { take_not_zero_num } from "./take_not_zero_num";

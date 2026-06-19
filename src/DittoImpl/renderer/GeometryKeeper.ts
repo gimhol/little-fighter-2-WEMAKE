@@ -1,6 +1,6 @@
 import { BufferGeometry, PlaneGeometry } from "../_t";
 import { Keeper } from "./Keeper";
-import { INinePatchGeometryParams, NinePatchGeometry } from "./NinePatchGeometry";
+import { type INinePatchGeometryParams, NinePatchGeometry } from "./NinePatchGeometry";
 
 export const GeometryKeeper = new Keeper<string, BufferGeometry>();
 export interface IGeoOpts {

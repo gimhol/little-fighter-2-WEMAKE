@@ -1,12 +1,12 @@
-import { BuiltIn_OID } from "../defines";
+import { OID } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { EntityEnum } from "../defines/EntityEnum";
 import { HitFlag } from "../defines/HitFlag";
-import { IBdyInfo } from "../defines/IBdyInfo";
-import { IEntityData } from "../defines/IEntityData";
-import { IFrameInfo } from "../defines/IFrameInfo";
-import { IItrInfo } from "../defines/IItrInfo";
+import type { IBdyInfo } from "../defines/IBdyInfo";
+import type { IEntityData } from "../defines/IEntityData";
+import type { IFrameInfo } from "../defines/IFrameInfo";
+import type { IItrInfo } from "../defines/IItrInfo";
 import { ItrEffect } from "../defines/ItrEffect";
 import { ItrKind } from "../defines/ItrKind";
 import { ensure } from "../utils";
@@ -39,7 +39,7 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
         ItrEffect.Ice2,
         ItrEffect.MFire1
       )
-    if (e.id === BuiltIn_OID.FreezeBall)
+    if (e.id === OID.FreezeBall)
       cond.and(C_Val.AttackerIsFreezableBall, '!=', 1)
     EditBdy.edit(bdy, {
       /* 受攻击判定 */

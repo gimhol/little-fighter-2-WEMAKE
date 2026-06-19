@@ -1,4 +1,4 @@
-import { IItrInfo } from "../defines";
+import type { IItrInfo } from "../defines";
 import { is_num, floor } from "../utils";
 
 export function float_scaling_itr(v: Partial<IItrInfo>) {

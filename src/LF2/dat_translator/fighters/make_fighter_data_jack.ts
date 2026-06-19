@@ -1,5 +1,5 @@
 
-import { IEntityData } from "../../defines";
+import type { IEntityData } from "../../defines";
 
 export function make_fighter_data_jack(data: IEntityData) {
   return data;

@@ -1,4 +1,4 @@
-import { BotStateEnum, BotVal, EntityVal as E_Val, GK, IEntityData, OID, StateEnum } from "../../defines";
+import { BotStateEnum, BotVal, EntityVal as E_Val, GK, type IEntityData, OID, StateEnum } from "../../defines";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_action } from "./bot_chasing_action";

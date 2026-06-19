@@ -1,5 +1,5 @@
 import { ActionType } from "../ActionType";
-import { IAction_NextFrame } from "./IAction_NextFrame";
+import type { IAction_NextFrame } from "./IAction_NextFrame";
 import type { TNextFrame } from "../INextFrame";
 
 export interface IAction_BrokenDefend extends Omit<IAction_NextFrame, 'type'> {

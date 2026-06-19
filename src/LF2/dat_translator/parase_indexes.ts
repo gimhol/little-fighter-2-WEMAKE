@@ -1,4 +1,4 @@
-import { DatTypeEnum, BuiltIn_OID as OID, suffix_map } from "../defines";
+import { DatTypeEnum, OID as OID, suffix_map } from "../defines";
 import type { ITempDataLists } from "../defines/IDataLists";
 import type { ITempDatIndex } from "../defines/IDatIndex";
 import { match_block_once } from "../utils/string_parser/match_block";

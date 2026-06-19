@@ -1,4 +1,4 @@
-import { IEntityData } from "../defines";
+import type { IEntityData } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import { Entity } from "../entity/Entity";
 import { LF2 } from "../LF2";

@@ -2,7 +2,7 @@ import { ItrEffect, ItrEffectDescriptions, ItrKind, ItrKindDescriptions, StateEn
 import { BdyKind, BdyKindDescriptions } from "@/LF2/defines/BdyKind";
 import { EntityEnum } from "@/LF2/defines/EntityEnum";
 import { SpeedMode } from "@/LF2/defines/SpeedMode";
-import { IBaseSelectProps } from "../../Component/Select";
+import type { IBaseSelectProps } from "../../Component/Select";
 import './style.scss';
 function make_num_enum_select_props<T extends number = number>(enum_obj: any, value_title_map?: any): IBaseSelectProps<string, T> {
   return ({

@@ -1,4 +1,4 @@
-import { ArmorEnum, Defines, IEntityData } from "../../defines";
+import { ArmorEnum, Defines, type IEntityData } from "../../defines";
 /**
  *
  * @todo

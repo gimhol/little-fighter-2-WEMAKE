@@ -1,4 +1,4 @@
-import { HitFlag, IBdyInfo, IItrInfo, get_hit_flag_name } from "../defines";
+import { HitFlag, type IBdyInfo, type IItrInfo, get_hit_flag_name } from "../defines";
 
 export function set_hit_flag(info: Partial<IItrInfo>, value: HitFlag | number): Partial<IItrInfo> & Pick<IItrInfo, 'hit_flag' | 'hit_flag_name'>
 export function set_hit_flag(info: Partial<IBdyInfo>, value: HitFlag | number): Partial<IBdyInfo> & Pick<IItrInfo, 'hit_flag' | 'hit_flag_name'>

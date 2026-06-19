@@ -1,4 +1,4 @@
-import { CheatType, Defines, IStageInfo, StageGroup as SG } from "../../defines";
+import { CheatType, Defines, type IStageInfo, StageGroup as SG } from "../../defines";
 import { Label } from "./Label";
 
 export class StageSwitcher extends Label {

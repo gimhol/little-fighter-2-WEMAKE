@@ -1,4 +1,4 @@
-import { type Voidable, type IXMLElement } from "../../../src/LF2/ditto/xml/IXMLElement";
+import type { Voidable, IXMLElement } from "../../../src/LF2/ditto/xml/IXMLElement";
 
 const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
 

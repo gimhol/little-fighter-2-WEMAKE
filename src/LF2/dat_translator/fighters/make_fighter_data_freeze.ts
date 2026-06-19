@@ -1,4 +1,4 @@
-import { BdyKind, BuiltIn_OID, EntityGroup, HitFlag, IEntityData } from "../../defines";
+import { BdyKind, OID, EntityGroup, HitFlag, type IEntityData } from "../../defines";
 import { ActionType } from "../../defines/ActionType";
 import { C_Val } from "../../defines/CollisionVal";
 import { ensure } from "../../utils";
@@ -29,11 +29,11 @@ export function make_fighter_data_freeze(data: IEntityData): IEntityData {
       h: 60,
       actions: [{
         type: ActionType.FUSION,
-        data: { oid: BuiltIn_OID.Firzen, act: { id: "290" }, time: 9000 }//
+        data: { oid: OID.Firzen, act: { id: "290" }, time: 9000 }//
       }],
       test: new CondMaker<C_Val>()
         .add(C_Val.ItrCode, '==', 123)
-        .and(C_Val.AttackerOID, '==', BuiltIn_OID.Firen)
+        .and(C_Val.AttackerOID, '==', OID.Firen)
         .and(C_Val.ItrHitFlag, '==', HitFlag.Fighter | HitFlag.Ally)
         .and(C_Val.SameFacing, '==', 0)
         .and(c => c

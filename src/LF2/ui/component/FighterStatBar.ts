@@ -1,7 +1,7 @@
-import { Entity, IEntityCallbacks } from "@/LF2/entity";
+import { Entity, type IEntityCallbacks } from "@/LF2/entity";
 import { Defines, T_E } from "../../defines";
 import { StatBarType } from "../../entity/StatBarType";
-import { IPropsMeta } from "../../utils/schema/make_schema";
+import type { IPropsMeta } from "../../utils/schema/make_schema";
 import { UINode } from "../UINode";
 import { Label } from "./Label";
 import { Picture } from "./Picture";

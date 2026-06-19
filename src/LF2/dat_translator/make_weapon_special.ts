@@ -1,7 +1,7 @@
-import { BdyKind, Builtin_FrameId, BuiltIn_OID, Defines, EntityEnum, EntityGroup, IOpointInfo, StateEnum } from "../defines";
+import { BdyKind, Builtin_FrameId, OID, Defines, EntityEnum, EntityGroup, type IOpointInfo, StateEnum } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
-import { IEntityData } from "../defines/IEntityData";
+import type { IEntityData } from "../defines/IEntityData";
 import { OpointKind } from "../defines/OpointKind";
 import { ensure, make_arr } from "../utils";
 import { foreach } from "../utils/container_help/foreach";
@@ -47,7 +47,7 @@ export function make_weapon_special(data: IEntityData) {
     );
   }
   switch (data.id) {
-    case BuiltIn_OID.HenryArrow1:
+    case OID.HenryArrow1:
       data.base.weight = Defines.WEAPON_WEIGHT_ARROW;
       delete data.base.group
       foreach(data.frames, frame => {
@@ -75,7 +75,7 @@ export function make_weapon_special(data: IEntityData) {
         })
       })
       break;
-    case BuiltIn_OID.RudolfWeapon:
+    case OID.RudolfWeapon:
       data.base.weight = Defines.WEAPON_WEIGHT_ARROW
       delete data.base.group
       foreach(data.frames, frame => {
@@ -85,28 +85,28 @@ export function make_weapon_special(data: IEntityData) {
         }
       })
       break;
-    case BuiltIn_OID.Weapon_Stick:
+    case OID.Weapon_Stick:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_NOMRAL;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(
         stick, stick,
         sstick, sstick, sstick
       );
       break;
-    case BuiltIn_OID.Weapon_Hoe:
+    case OID.Weapon_Hoe:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_HOE;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(k_hoe, k_hoe, hoe, hoe, s_hoe, s_hoe);
       break;
-    case BuiltIn_OID.Weapon_Knife:
+    case OID.Weapon_Knife:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_LIGHT;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(k_hoe, k_hoe, s_hoe, s_hoe);
       break;
-    case BuiltIn_OID.Weapon_baseball:
+    case OID.Weapon_baseball:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_BASEBALL;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(
         ...make_arr(5, () => baseball)
       );
       break;
-    case BuiltIn_OID.Weapon_milk:
+    case OID.Weapon_milk:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_LIGHT;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(
         milk1,
@@ -126,15 +126,15 @@ export function make_weapon_special(data: IEntityData) {
         mp_h_ticks: 6,
       }
       break;
-    case BuiltIn_OID.Weapon_Stone:
+    case OID.Weapon_Stone:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_HEAVY;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(stone, stone, sstone, sstone, sstone);
       break;
-    case BuiltIn_OID.Weapon_WoodenBox:
+    case OID.Weapon_WoodenBox:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_HEAVY;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(box0, box1, box2, box3, box3);
       break;
-    case BuiltIn_OID.Weapon_Beer:
+    case OID.Weapon_Beer:
       data.base.group = [EntityGroup.VsWeapon];
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_LIGHT;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(
@@ -147,21 +147,21 @@ export function make_weapon_special(data: IEntityData) {
         mp_h_ticks: 1,
       }
       break;
-    case BuiltIn_OID.Weapon_Boomerang:
+    case OID.Weapon_Boomerang:
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_LIGHT;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(boomerang, boomerang, boomerang);
       break;
-    case BuiltIn_OID.Weapon_LouisArmourA:
+    case OID.Weapon_LouisArmourA:
       delete data.base.group
       data.base.weight = Defines.WEAPON_WEIGHT_HEAVY;
       data.base.brokens = broken_pieces_opoints(armour, armour, armour, armour, armour);
       break;
-    case BuiltIn_OID.Weapon_LouisArmourB:
+    case OID.Weapon_LouisArmourB:
       delete data.base.group
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_HEAVY;
       data.base.brokens = data.base.brokens ?? broken_pieces_opoints(armour, armour, armour, armour, armour);
       break;
-    case BuiltIn_OID.Weapon_IceSword:
+    case OID.Weapon_IceSword:
       delete data.base.group
       data.base.group = ensure(data.base.group, EntityGroup.Freezer);
       data.base.weight = data.base.weight ?? Defines.WEAPON_WEIGHT_NOMRAL;

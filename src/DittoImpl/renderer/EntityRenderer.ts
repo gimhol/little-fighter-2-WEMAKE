@@ -1,4 +1,4 @@
-import { BFID, BuiltIn_OID, is_fighter, SE, type Entity } from "@/LF2";
+import { BFID, OID, is_fighter, SE, type Entity } from "@/LF2";
 import { Vector3 } from "../_t";
 import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityMainRender } from "./EntityMainRender";
@@ -49,7 +49,7 @@ export class EntityRenderer {
     // Criminal...?
     if (
       is_fighter(this.entity) ||
-      this.entity.data.id === BuiltIn_OID.Criminal
+      this.entity.data.id === OID.Criminal
     ) {
       if (!this.stat) {
         this.stat = new EntityStatRender(this);

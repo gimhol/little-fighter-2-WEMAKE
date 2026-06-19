@@ -1,6 +1,6 @@
 import {
-  Defines as D, FacingFlag, IFrameInfo, IOpointInfo,
-  BuiltIn_OID as OID,
+  Defines as D, FacingFlag, type IFrameInfo, type IOpointInfo,
+  OID as OID,
   StateEnum as S_E
 } from "../defines";
 import { round } from "../utils/math/base";

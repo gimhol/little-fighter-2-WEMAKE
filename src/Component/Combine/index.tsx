@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import React, { Children, ForwardedRef, forwardRef, isValidElement, CSSProperties } from "react";
+import React, { Children, type ForwardedRef, forwardRef, isValidElement, type CSSProperties } from "react";
 import styles from "./style.module.scss";
 
 export interface ICombineProps extends React.HTMLAttributes<HTMLDivElement> {

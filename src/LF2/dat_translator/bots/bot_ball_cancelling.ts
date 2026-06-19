@@ -1,7 +1,7 @@
-import { BotStateEnum, Defines, GK, IBotAction, LGK } from "../../defines";
+import { BotStateEnum, Defines, GK, type IBotAction, type LGK } from "../../defines";
 import { CondMaker } from "../CondMaker";
 import { DESIRE_RATIO } from "./constants";
-import { IEditBotActionFunc } from "./IEditBotAction";
+import type { IEditBotActionFunc } from "./IEditBotAction";
 /**
  * 停止循环的动作（BALL类）
  * 

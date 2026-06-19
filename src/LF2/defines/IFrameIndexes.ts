@@ -1,4 +1,4 @@
-import { TFrameIdListPair, TFrameIdPair } from "./defines";
+import type { TFrameIdListPair, TFrameIdPair } from "./defines";
 
 export interface IFrameIndexes {
   standing?: string;

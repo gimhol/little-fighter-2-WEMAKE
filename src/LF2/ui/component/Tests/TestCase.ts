@@ -1,5 +1,5 @@
-import { IState } from "../../../base";
-import { OID } from "../../../defines/BuiltIn_OID";
+import type { IState } from "../../../base";
+import { OID } from "../../../defines/OID";
 import { CMD } from "../../../defines/CMD";
 import { Entity } from "../../../entity";
 import { round_float } from "../../../utils/math/round_float";

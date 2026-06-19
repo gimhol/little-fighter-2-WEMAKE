@@ -1,4 +1,4 @@
-import { type Client } from './Client';
+import type { Client } from './Client';
 import type { Context } from "./Context";
 import {
   ErrCode,

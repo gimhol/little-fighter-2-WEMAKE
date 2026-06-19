@@ -1,14 +1,14 @@
 import FSM from "@/LF2/base/FSM";
 import { EntityGroup, GameKey, StageActions, type IStagePhaseInfo } from "../../defines";
 import type { Entity } from "../../entity";
-import type IEntityCallbacks from "../../entity/IEntityCallbacks";
+import type { IEntityCallbacks } from "../../entity/IEntityCallbacks";
 import { is_fighter } from "../../entity/type_check";
-import { IWorldCallbacks } from "../../IWorldCallbacks";
+import type { IWorldCallbacks } from "../../IWorldCallbacks";
 import type { Stage } from "../../stage";
 import type { IStageCallbacks } from "../../stage/IStageCallbacks";
 import { traversal } from "../../utils/container_help/traversal";
 import { Times } from "../../utils/Times";
-import { IUIKeyEvent } from "../IUIKeyEvent";
+import type { IUIKeyEvent } from "../IUIKeyEvent";
 import { ComponentFSMState } from "./ComponentFSMState";
 import { ComponentsPlayer } from "./ComponentsPlayer";
 import { FighterStatBar } from "./FighterStatBar";

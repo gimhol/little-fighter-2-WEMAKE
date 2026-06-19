@@ -1,7 +1,7 @@
-import { IRect, Resizable, Shape, ShapeData } from "@fimagine/writeboard";
-import { IBdyInfo, ICpointInfo, IFrameInfo, IFramePictureInfo, IItrInfo, IOpointInfo, IWpointInfo } from "../LF2/defines";
-import { IEntityData } from "../LF2/defines/IEntityData";
-import { IZip } from "../LF2/ditto";
+import { type IRect, Resizable, Shape, ShapeData } from "@fimagine/writeboard";
+import { type IBdyInfo, type ICpointInfo, type IFrameInfo, type IFramePictureInfo, type IItrInfo, type IOpointInfo, type IWpointInfo } from "../LF2/defines";
+import type { IEntityData } from "../LF2/defines/IEntityData";
+import type { IZip } from "../LF2/ditto";
 import { loop_arr } from "../LF2/utils/array/loop_arr";
 import { EditorShapeEnum } from "./EditorShapeEnum";
 import { img_map } from "./FrameEditorView";

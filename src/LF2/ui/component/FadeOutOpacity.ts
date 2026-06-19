@@ -1,5 +1,5 @@
 import { Delay, Easing, Sequence } from "../../animation";
-import { Unsafe } from "../../utils";
+import type { Unsafe } from "../../utils";
 import { UIComponent } from "./UIComponent";
 import { UIComponentExpressionBuilder } from "./UIComponentExpressionBuilder";
 export class FadeOutOpacity extends UIComponent {

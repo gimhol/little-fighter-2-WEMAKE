@@ -1,8 +1,8 @@
 import { GameKey as GK } from "../../defines";
-import { IBotAction } from "../../defines/IBotAction";
+import type { IBotAction } from "../../defines/IBotAction";
 import { bot_front_test } from "./bot_front_test";
 import { DESIRE_RATIO_X_2 } from "./constants";
-import { IEditBotActionFunc } from "./IEditBotAction";
+import type { IEditBotActionFunc } from "./IEditBotAction";
 
 const MIN_X = 120 as const;
 const ID = 'd>a' as const

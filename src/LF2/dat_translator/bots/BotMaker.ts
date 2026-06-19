@@ -1,6 +1,6 @@
-import { IBotData, IEntityData, StateEnum } from "../../defines";
-import { IBotAction } from "../../defines/IBotAction";
-import { IBotDataSet } from "../../defines/IBotDataSet";
+import { type IBotData, type IEntityData, StateEnum } from "../../defines";
+import type { IBotAction } from "../../defines/IBotAction";
+import type { IBotDataSet } from "../../defines/IBotDataSet";
 import { find } from "../../utils/container_help/find";
 import { traversal } from "../../utils/container_help/traversal";
 

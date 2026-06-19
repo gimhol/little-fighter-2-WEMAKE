@@ -1,12 +1,12 @@
-import { Board, IFactory } from "@fimagine/writeboard";
+import { Board, type IFactory } from "@fimagine/writeboard";
 import VirtualList from "rc-virtual-list";
 import { useRef } from "react";
 import { Input } from "../../Component/Input";
 import { Space } from "../../Component/Space";
 import { Text } from "../../Component/Text";
-import { IFrameInfo } from "@/LF2/defines";
-import { IEntityData } from "@/LF2/defines/IEntityData";
-import { IZip } from "@/LF2/ditto";
+import type { IFrameInfo } from "@/LF2/defines";
+import type { IEntityData } from "@/LF2/defines/IEntityData";
+import type { IZip } from "@/LF2/ditto";
 import { EditorShapeEnum } from "../EditorShapeEnum";
 import { FrameDrawer, FrameDrawerData } from "../FrameDrawer";
 import { WorkspaceColumnView } from "../WorkspaceColumnView";

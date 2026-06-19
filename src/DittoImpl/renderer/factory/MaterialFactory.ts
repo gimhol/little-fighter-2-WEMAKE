@@ -1,4 +1,4 @@
-import { InstFactory, Kind } from "../../../LF2/base/InstFactory";
+import { InstFactory, type Kind } from "../../../LF2/base/InstFactory";
 import { Material } from "../../_t";
 export enum MaterialKind {
   Invalid = 0,

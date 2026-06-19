@@ -1,10 +1,10 @@
 import { Factory } from "../Factory";
-import { IWorldDataset } from "../IWorldDataset";
+import type { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
 import type { World } from "../World";
 import { Callbacks } from "../base";
 import { Buff } from "../buff/Buff";
-import { Collision } from "../collision/Collision";
+import type { Collision } from "../collision/Collision";
 import { BaseController } from "../controller/BaseController";
 import { InvalidController } from "../controller/InvalidController";
 import {
@@ -15,12 +15,12 @@ import {
   GK,
   GONE_FRAME_INFO,
   HitFlag,
-  IArmorInfo,
-  IBdyInfo, IBounding, ICpointInfo, IDeadJoin, IEntityData,
-  IFrameInfo, IItrInfo, INextFrame, INextFrameResult, IOpointInfo, IPos,
-  is_independent, ItrKind, IVector3,
-  IVelocityInfo, IWpointInfo,
-  StateEnum, TEntityEnum, TFace, TNextFrame,
+  type IArmorInfo,
+  type IBdyInfo, type IBounding, type ICpointInfo, type IDeadJoin, type IEntityData,
+  type IFrameInfo, type IItrInfo, type INextFrame, type INextFrameResult, type IOpointInfo, type IPos,
+  is_independent, ItrKind, type IVector3,
+  type IVelocityInfo, type IWpointInfo,
+  StateEnum, type TEntityEnum, type TFace, type TNextFrame,
   WpointKind
 } from "../defines";
 import { Ditto } from "../ditto";
@@ -32,18 +32,18 @@ import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_positive, is_str } from "../utils/type_check";
 import { DrinkInfo } from "./DrinkInfo";
-import type IEntityCallbacks from "./IEntityCallbacks";
-import { IEntitySnapshot } from "./IEntitySnapshot";
+import type { IEntityCallbacks } from "./IEntityCallbacks";
+import type { IEntitySnapshot } from "./IEntitySnapshot";
 import { StatBarType } from "./StatBarType";
 import { summary_mgr } from "./SummaryMgr";
 import { turn_face } from "./face_helper";
 import { is_fighter, is_human_ctrl } from "./type_check";
 
 // 拆分出的功能模块 — 通过 prototype 挂载
+import { EnterFrameResult } from "./EnterFrameResult";
 import * as EntityPhysics from "./EntityPhysics";
 import * as EntityRecovery from "./EntityRecovery";
 import * as EntitySpawn from "./EntitySpawn";
-import { EnterFrameResult } from "./EnterFrameResult";
 
 export class Entity {
   static readonly TAG: string = 'Entity';

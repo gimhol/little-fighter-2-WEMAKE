@@ -1,4 +1,4 @@
-import { EntityEnum, TEntityEnum } from "../defines";
+import { EntityEnum, type TEntityEnum } from "../defines";
 import BallState_Base from "./BallState_Base";
 import CharacterState_Base from "./CharacterState_Base";
 import State_Base from "./State_Base";

@@ -1,4 +1,4 @@
-import { BuiltIn_OID, IOpointInfo } from "../defines";
+import { OID, type IOpointInfo } from "../defines";
 import type { Entity } from "../entity";
 import { round } from "../utils";
 
@@ -12,7 +12,7 @@ export function spawn_ice_piece(entity: Entity, id: string): IOpointInfo {
   const ret: IOpointInfo = {
     kind: 0,
     x, y,
-    oid: BuiltIn_OID.BrokenWeapon,
+    oid: OID.BrokenWeapon,
     action: { id, facing },
     dvx: mt.range(-4, 4),
     dvz: mt.range(-4, 4),

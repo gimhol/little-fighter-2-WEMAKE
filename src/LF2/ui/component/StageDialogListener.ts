@@ -1,7 +1,7 @@
-import { IDialogInfo } from "@/LF2/defines/IDialogInfo";
-import { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
+import type { IDialogInfo } from "@/LF2/defines/IDialogInfo";
+import type { IWorldCallbacks } from "@/LF2/IWorldCallbacks";
 import { Stage } from "@/LF2/stage";
-import { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
+import type { IStageCallbacks } from "@/LF2/stage/IStageCallbacks";
 import { UIComponent } from "./UIComponent";
 
 export class StageDialogListener {

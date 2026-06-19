@@ -1,4 +1,4 @@
-import { Base, IIconProps } from "./Base";
+import { Base, type IIconProps } from "./Base";
 export function Cross(props: IIconProps) {
   return (
     <Base {...props}>

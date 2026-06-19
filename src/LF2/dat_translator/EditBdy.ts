@@ -1,6 +1,6 @@
 import { bdy_kind_name } from "../defines";
 import { get_hit_flag_name } from "../defines/HitFlag";
-import { IBdyInfo } from "../defines/IBdyInfo";
+import type { IBdyInfo } from "../defines/IBdyInfo";
 const { parse, stringify } = JSON
 export class EditBdy<T extends Partial<IBdyInfo>> {
   readonly raw: T;

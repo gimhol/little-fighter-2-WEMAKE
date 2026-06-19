@@ -1,5 +1,5 @@
 
-import { Defines, IFrameInfo, IVector3, WT } from "../defines";
+import { Defines, type IFrameInfo, type IVector3, WT } from "../defines";
 import type { Entity } from "../entity/Entity";
 import WeaponState_Base from "./WeaponState_Base";
 

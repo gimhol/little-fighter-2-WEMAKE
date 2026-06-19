@@ -1,7 +1,7 @@
 import { frame_info_new, type IFrameInfo } from "../../defines/IFrameInfo";
 import type { IHitKeyCollection } from "../../defines/IHitKeyCollection";
 import type { IHoldKeyCollection } from "../../defines/IHoldKeyCollection";
-import { IQube } from "../../defines/IQube";
+import type { IQube } from "../../defines/IQube";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import { xml_to_bdy_info } from "./xml_to_bdy_info";
 import { xml_to_bpoint } from "./xml_to_bpoint";

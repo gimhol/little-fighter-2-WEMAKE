@@ -1,5 +1,5 @@
-import { BuiltIn_OID, EntityGroup } from "../defines";
-import { IEntityData } from "../defines/IEntityData";
+import { OID, EntityGroup } from "../defines";
+import type { IEntityData } from "../defines/IEntityData";
 import { ensure } from "../utils";
 import { make_fighter_data_bat } from "./fighters/make_fighter_data_bat";
 import { make_fighter_data_davis } from "./fighters/make_fighter_data_davis";
@@ -33,74 +33,74 @@ export function make_fighter_special(data: IEntityData): IEntityData {
   if (num_id >= 1 && num_id <= 29) {
     data.base.group = ensure(data.base.group, EntityGroup.Regular);
   }
-  switch ((data.alias_id ?? data.id) as BuiltIn_OID) {
-    case BuiltIn_OID.Julian: return make_fighter_data_julian(data)
-    case BuiltIn_OID.Firzen: return make_fighter_data_firzen(data);
-    case BuiltIn_OID.LouisEX: return make_fighter_data_louisex(data);
-    case BuiltIn_OID.Bat: return make_fighter_data_bat(data);
-    case BuiltIn_OID.Knight: return make_fighter_data_knigt(data);
-    case BuiltIn_OID.Louis: return make_fighter_data_louis(data);
-    case BuiltIn_OID.Rudolf: return make_fighter_data_rudolf(data);
-    case BuiltIn_OID.Deep: return make_fighter_data_deep(data);
-    case BuiltIn_OID.Davis: return make_fighter_data_davis(data);
-    case BuiltIn_OID.Dennis: return make_fighter_data_dennis(data);
-    case BuiltIn_OID.Woody: return make_fighter_data_woody(data);
-    case BuiltIn_OID.Firen: return make_fighter_data_firen(data);
-    case BuiltIn_OID.Freeze: return make_fighter_data_freeze(data);
-    case BuiltIn_OID.Jack: return make_fighter_data_jack(data);
-    case BuiltIn_OID.Mark: return make_fighter_data_mark(data);
-    case BuiltIn_OID.Monk: return make_fighter_data_monk(data);
-    case BuiltIn_OID.Henry: return make_fighter_data_henry(data);
-    case BuiltIn_OID.Hunter: return make_fighter_data_henter(data);
-    case BuiltIn_OID.Justin: return make_fighter_data_justin(data);
-    case BuiltIn_OID.Jan: return make_fighter_data_jan(data);
-    case BuiltIn_OID.Sorcerer: return make_fighter_data_sorcerer(data);
-    case BuiltIn_OID.John: return make_fighter_data_john(data);
-    case BuiltIn_OID.Template: break;
-    case BuiltIn_OID.Bandit: data.base.group = ensure(data.base.group, EntityGroup._3000); break;
+  switch ((data.alias_id ?? data.id) as OID) {
+    case OID.Julian: return make_fighter_data_julian(data)
+    case OID.Firzen: return make_fighter_data_firzen(data);
+    case OID.LouisEX: return make_fighter_data_louisex(data);
+    case OID.Bat: return make_fighter_data_bat(data);
+    case OID.Knight: return make_fighter_data_knigt(data);
+    case OID.Louis: return make_fighter_data_louis(data);
+    case OID.Rudolf: return make_fighter_data_rudolf(data);
+    case OID.Deep: return make_fighter_data_deep(data);
+    case OID.Davis: return make_fighter_data_davis(data);
+    case OID.Dennis: return make_fighter_data_dennis(data);
+    case OID.Woody: return make_fighter_data_woody(data);
+    case OID.Firen: return make_fighter_data_firen(data);
+    case OID.Freeze: return make_fighter_data_freeze(data);
+    case OID.Jack: return make_fighter_data_jack(data);
+    case OID.Mark: return make_fighter_data_mark(data);
+    case OID.Monk: return make_fighter_data_monk(data);
+    case OID.Henry: return make_fighter_data_henry(data);
+    case OID.Hunter: return make_fighter_data_henter(data);
+    case OID.Justin: return make_fighter_data_justin(data);
+    case OID.Jan: return make_fighter_data_jan(data);
+    case OID.Sorcerer: return make_fighter_data_sorcerer(data);
+    case OID.John: return make_fighter_data_john(data);
+    case OID.Template: break;
+    case OID.Bandit: data.base.group = ensure(data.base.group, EntityGroup._3000); break;
 
     // not charctor, ignore it;
-    case BuiltIn_OID.Weapon0:
-    case BuiltIn_OID.Weapon2:
-    case BuiltIn_OID.Weapon4:
-    case BuiltIn_OID.Weapon5:
-    case BuiltIn_OID.Weapon6:
-    case BuiltIn_OID.Weapon1:
-    case BuiltIn_OID.Weapon3:
-    case BuiltIn_OID.Weapon8:
-    case BuiltIn_OID.Weapon9:
-    case BuiltIn_OID.Weapon10:
-    case BuiltIn_OID.Weapon11:
-    case BuiltIn_OID.Criminal:
-    case BuiltIn_OID.JohnBall:
-    case BuiltIn_OID.HenryArrow1:
-    case BuiltIn_OID.RudolfWeapon:
-    case BuiltIn_OID.DeepBall:
-    case BuiltIn_OID.HenryWind:
-    case BuiltIn_OID.DennisBall:
-    case BuiltIn_OID.WoodyBall:
-    case BuiltIn_OID.DavisBall:
-    case BuiltIn_OID.HenryArrow2:
-    case BuiltIn_OID.FreezeBall:
-    case BuiltIn_OID.FirenBall:
-    case BuiltIn_OID.FirenFlame:
-    case BuiltIn_OID.FreezeColumn:
-    case BuiltIn_OID.Weapon7:
-    case BuiltIn_OID.JohnBiscuit:
-    case BuiltIn_OID.DennisChase:
-    case BuiltIn_OID.JackBall:
-    case BuiltIn_OID.JanChaseh:
-    case BuiltIn_OID.JanChase:
-    case BuiltIn_OID.FirzenChasef:
-    case BuiltIn_OID.FirzenChasei:
-    case BuiltIn_OID.FirzenBall:
-    case BuiltIn_OID.BatBall:
-    case BuiltIn_OID.BatChase:
-    case BuiltIn_OID.JustinBall:
-    case BuiltIn_OID.JulianBall:
-    case BuiltIn_OID.JulianBall2:
-    case BuiltIn_OID.Etc:
-    case BuiltIn_OID.BrokenWeapon:
+    case OID.Weapon0:
+    case OID.Weapon2:
+    case OID.Weapon4:
+    case OID.Weapon5:
+    case OID.Weapon6:
+    case OID.Weapon1:
+    case OID.Weapon3:
+    case OID.Weapon8:
+    case OID.Weapon9:
+    case OID.Weapon10:
+    case OID.Weapon11:
+    case OID.Criminal:
+    case OID.JohnBall:
+    case OID.HenryArrow1:
+    case OID.RudolfWeapon:
+    case OID.DeepBall:
+    case OID.HenryWind:
+    case OID.DennisBall:
+    case OID.WoodyBall:
+    case OID.DavisBall:
+    case OID.HenryArrow2:
+    case OID.FreezeBall:
+    case OID.FirenBall:
+    case OID.FirenFlame:
+    case OID.FreezeColumn:
+    case OID.Weapon7:
+    case OID.JohnBiscuit:
+    case OID.DennisChase:
+    case OID.JackBall:
+    case OID.JanChaseh:
+    case OID.JanChase:
+    case OID.FirzenChasef:
+    case OID.FirzenChasei:
+    case OID.FirzenBall:
+    case OID.BatBall:
+    case OID.BatChase:
+    case OID.JustinBall:
+    case OID.JulianBall:
+    case OID.JulianBall2:
+    case OID.Etc:
+    case OID.BrokenWeapon:
       break;
   }
   return data;

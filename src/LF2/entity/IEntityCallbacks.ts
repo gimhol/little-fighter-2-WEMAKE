@@ -1,5 +1,5 @@
 import { BaseController } from "../controller";
-import { IEntityData } from "../defines";
+import type { IEntityData } from "../defines";
 import type { Unsafe } from "../utils/type_check/Unsafe";
 import type { Entity } from "./Entity";
 
@@ -157,4 +157,3 @@ export interface IEntityCallbacks<E extends Entity = Entity> {
 
   on_data_changed?(value: IEntityData, prev: IEntityData, e: E): void;
 }
-export default IEntityCallbacks

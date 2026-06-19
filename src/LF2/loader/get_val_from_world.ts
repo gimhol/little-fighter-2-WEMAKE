@@ -1,5 +1,5 @@
 import { WorldVal } from "../defines/WorldVal";
-import { IValGetterGetter, IValGetter } from "../defines/IExpression";
+import type { IValGetterGetter, IValGetter } from "../defines/IExpression";
 import { World } from "../World";
 import { get_val_from_lf2 } from "./get_val_from_lf2";
 

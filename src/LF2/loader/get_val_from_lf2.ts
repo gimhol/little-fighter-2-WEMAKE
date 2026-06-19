@@ -1,4 +1,4 @@
-import { IValGetter, IValGetterGetter } from "../defines/IExpression";
+import type { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { LF2Val } from "../defines/LF2Val";
 import { LF2 } from "../LF2";
 

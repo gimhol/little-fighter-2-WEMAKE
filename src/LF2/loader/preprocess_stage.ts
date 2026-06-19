@@ -1,4 +1,4 @@
-import { IStageInfo } from "../defines";
+import type { IStageInfo } from "../defines";
 import { preprocess_stage_phase } from "./preprocess_stage_phase";
 
 export function preprocess_stage(v: IStageInfo): IStageInfo {

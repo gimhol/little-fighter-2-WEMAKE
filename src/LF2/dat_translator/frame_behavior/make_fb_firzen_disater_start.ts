@@ -1,7 +1,7 @@
-import { BuiltIn_OID as OID } from "../../defines/BuiltIn_OID";
+import { OID as OID } from "../../defines/OID";
 import { Defines as D } from "../../defines/defines";
 import { FacingFlag as FF } from "../../defines/FacingFlag";
-import { IFrameInfo } from "../../defines/IFrameInfo";
+import type { IFrameInfo } from "../../defines/IFrameInfo";
 import { OpointKind } from "../../defines/OpointKind";
 import { OpointMultiEnum } from "../../defines/OpointMultiEnum";
 import { OpointSpreading } from "../../defines/OpointSpreading";

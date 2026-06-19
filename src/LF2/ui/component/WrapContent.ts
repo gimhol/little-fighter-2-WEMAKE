@@ -1,4 +1,4 @@
-import { IPropsMeta } from "@/LF2";
+import type { IPropsMeta } from "@/LF2";
 import { max, min } from "../../utils/math";
 import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";

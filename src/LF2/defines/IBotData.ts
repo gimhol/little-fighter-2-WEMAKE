@@ -1,5 +1,5 @@
 import type { IBotAction } from "./IBotAction";
-import { IBotDataSet } from "./IBotDataSet";
+import type { IBotDataSet } from "./IBotDataSet";
 import type { IFrameInfo } from "./IFrameInfo";
 import { StateEnum } from "./StateEnum";
 

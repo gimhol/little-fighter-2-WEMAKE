@@ -1,6 +1,6 @@
 import { EntityEnum } from "../defines/EntityEnum";
-import { IDatContext } from "../defines/IDatContext";
-import { IEntityData } from "../defines/IEntityData";
+import type { IDatContext } from "../defines/IDatContext";
+import type { IEntityData } from "../defines/IEntityData";
 import { make_entity_special } from "./make_entity_special";
 
 export function make_entity_data(ctx: IDatContext): IEntityData {

@@ -1,4 +1,4 @@
-import { type ITimesSnapshot } from "./ITimesSnapshot";
+import type { ITimesSnapshot } from "./ITimesSnapshot";
 import { round_float } from "./math";
 import { floor, max, min } from "./math/base";
 

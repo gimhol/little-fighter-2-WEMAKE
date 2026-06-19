@@ -1,4 +1,4 @@
-import { IAction_Base } from "./IAction_Base";
+import type { IAction_Base } from "./IAction_Base";
 import { ActionType } from "../ActionType";
 import type { TNextFrame } from "../INextFrame";
 

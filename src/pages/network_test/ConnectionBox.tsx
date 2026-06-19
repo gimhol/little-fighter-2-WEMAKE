@@ -1,5 +1,5 @@
 import { Button } from "@/Component/Buttons/Button";
-import { type ICombineProps } from "@/Component/Combine";
+import type { ICombineProps } from "@/Component/Combine";
 import { Flex } from "@/Component/Flex";
 import Frame from "@/Component/Frame";
 import { Input } from "@/Component/Input";

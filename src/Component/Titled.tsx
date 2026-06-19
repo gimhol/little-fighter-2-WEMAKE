@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Titled.module.scss";
 import classnames from "classnames";
 import Show from "./Show";
-import { Flex, IFlexProps } from "./Flex";
+import { Flex, type IFlexProps } from "./Flex";
 export interface IClassnames {
   label?: string
   float_label?: string

@@ -1,5 +1,5 @@
-import { IItrInfo } from "../defines/IItrInfo";
-import { IEntityData } from "../defines/IEntityData";
+import type { IItrInfo } from "../defines/IItrInfo";
+import type { IEntityData } from "../defines/IEntityData";
 import { match_all } from "../utils/string_parser/match_all";
 import { match_block_once } from "../utils/string_parser/match_block";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";

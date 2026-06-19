@@ -1,4 +1,4 @@
-import { IEntityData } from "../../defines";
+import type { IEntityData } from "../../defines";
 
 /**
  *

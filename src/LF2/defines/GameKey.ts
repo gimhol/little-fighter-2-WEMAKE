@@ -1,4 +1,4 @@
-export enum GameKey {
+export enum GK {
   /** Left */
   L = "L",
   Left = "L",
@@ -27,8 +27,8 @@ export enum GameKey {
   d = "d",
   Defend = "d",
 }
-export type GK = GameKey;
-export const GK = GameKey;
+export type GameKey = GK;
+export const GameKey = GK;
 export type LGK = GK | "L" | "R" | "U" | "D" | "a" | "j" | "d";
 export const GKLabels: Record<LGK, string> = {
   [GK.L]: "<",

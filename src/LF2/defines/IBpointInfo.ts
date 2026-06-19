@@ -1,4 +1,4 @@
-import { IQubePair } from "./IQubePair";
+import type { IQubePair } from "./IQubePair";
 import { any, fields, int } from "../fields";
 
 export interface IBpointInfo {

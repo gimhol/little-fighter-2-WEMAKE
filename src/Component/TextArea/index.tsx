@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useStyleBase } from "../StyleBase/useStyleBase";
-import { TVariant } from "../StyleBase/Variant";
+import type { TVariant } from "../StyleBase/Variant";
 import styles from "./styles.module.scss";
 
 export interface ITextAreaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {

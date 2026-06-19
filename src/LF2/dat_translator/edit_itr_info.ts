@@ -1,4 +1,4 @@
-import { IItrInfo } from "../defines";
+import type { IItrInfo } from "../defines";
 
 export function edit_itr_info(
   src: IItrInfo,

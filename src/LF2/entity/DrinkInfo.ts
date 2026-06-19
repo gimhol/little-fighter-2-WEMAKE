@@ -1,6 +1,6 @@
-import { IDrinkInfo } from "../defines";
+import type { IDrinkInfo } from "../defines";
 import { Times } from "../utils/Times";
-import { IDrinkInfoSnapshot } from "./IDrinkInfoSnapshot";
+import type { IDrinkInfoSnapshot } from "./IDrinkInfoSnapshot";
 
 /**
  * 饮料数据类

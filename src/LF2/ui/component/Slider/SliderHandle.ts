@@ -1,4 +1,8 @@
-import { clamp, Defines, IPointingEvent, IPointingsCallback, IPropsMeta, IUICallback, IUICompnentCallbacks, IUIKeyEvent, Label, LF2PointerEvent, max, min, round, round_float, UIComponent, UINode } from "@/LF2";
+import {
+  clamp, Defines, type IPointingEvent, type IPointingsCallback, type IPropsMeta,
+  type IUICallback, type IUICompnentCallbacks,
+  Label, LF2PointerEvent, max, min, round, round_float, UIComponent, UINode
+} from "@/LF2";
 export interface ISliderHandleProps {
   mode?: string;
   items?: string;

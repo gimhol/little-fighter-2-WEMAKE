@@ -1,11 +1,11 @@
-import { IFrameInfo, StateEnum } from "../defines";
+import { type IFrameInfo, StateEnum } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { B_K, OLD_BDY_KIND_GOTO_MAX, OLD_BDY_KIND_GOTO_MIN } from "../defines/BdyKind";
-import { O_ID } from "../defines/BuiltIn_OID";
+import { O_ID } from "../defines/OID";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { E_E } from "../defines/EntityEnum";
 import { HitFlag } from "../defines/HitFlag";
-import { BdyKeyOrders, IBdyInfo } from "../defines/IBdyInfo";
+import { BdyKeyOrders, type IBdyInfo } from "../defines/IBdyInfo";
 import { I_K } from "../defines/ItrKind";
 import { between, ensure, sort_key_value } from "../utils";
 import { CondMaker } from "./CondMaker";
@@ -43,7 +43,7 @@ export function cook_bdy(bdy: Partial<IBdyInfo>, frame: IFrameInfo): void {
       data: { id: `${kind - 1000}` },
     }, {
       type: ActionType.V_TURN_TEAM,
-      data: ""
+      data: { team: "" }
     })
   }
   sort_key_value(bdy, BdyKeyOrders)

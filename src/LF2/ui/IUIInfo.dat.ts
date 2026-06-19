@@ -1,4 +1,4 @@
-import { IStyle } from "../defines/IStyle";
+import type { IStyle } from "../defines/IStyle";
 import type { IComponentInfo } from "./IComponentInfo";
 import type { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";

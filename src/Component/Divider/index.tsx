@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { HTMLAttributes } from "react";
+import type { HTMLAttributes } from "react";
 import styles from "./styles.module.scss";
 export interface IDividerProps extends HTMLAttributes<HTMLDivElement> {
 

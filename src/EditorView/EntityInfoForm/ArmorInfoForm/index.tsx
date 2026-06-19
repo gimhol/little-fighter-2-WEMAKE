@@ -1,6 +1,6 @@
 import { Form } from "@/Component/Form";
-import { ISpaceProps, Space } from "@/Component/Space";
-import { armor_Info_fields, armor_Info_new, IArmorInfo } from "@/LF2";
+import { type ISpaceProps, Space } from "@/Component/Space";
+import { armor_Info_fields, armor_Info_new, type IArmorInfo } from "@/LF2";
 import { useEffect, useMemo, useRef } from "react";
 import { FieldsRow } from "../../FieldsRow";
 

@@ -1,4 +1,4 @@
-import { IFrameInfo, SpeedMode, StateEnum } from "../defines";
+import { type IFrameInfo, SpeedMode, StateEnum } from "../defines";
 import { calc_v } from "../entity/calc_v";
 import { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";

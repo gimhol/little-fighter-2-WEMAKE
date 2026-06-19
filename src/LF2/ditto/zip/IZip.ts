@@ -1,4 +1,4 @@
-import { type IZipObject } from "./IZipObject";
+import type { IZipObject } from "./IZipObject";
 
 export interface IZip {
   readonly files: { [key in string]?: IZipObject }

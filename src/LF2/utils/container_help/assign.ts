@@ -1,4 +1,4 @@
-import { Unsafe } from "../type_check";
+import type { Unsafe } from "../type_check";
 
 
 export function assign<T extends {}>(output: Unsafe<T>, item: Partial<T>, ...items: T[]): T {

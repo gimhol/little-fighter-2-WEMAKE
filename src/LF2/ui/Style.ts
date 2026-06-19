@@ -1,4 +1,4 @@
-import { IStyle } from "../defines";
+import type { IStyle } from "../defines";
 
 export class Style implements IStyle {
   private _version = 0;

@@ -1,5 +1,5 @@
 
-import { IFrameInfo, IVector3, StateEnum } from "../defines";
+import { type IFrameInfo, type IVector3, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { abs } from "../utils/math";
 import CharacterState_Base from "./CharacterState_Base";

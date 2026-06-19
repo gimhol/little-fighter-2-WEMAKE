@@ -1,5 +1,5 @@
 
-import { IEntityData } from "../defines";
+import type { IEntityData } from "../defines";
 import { Entity } from "../entity/Entity";
 import { is_fighter } from "../entity/type_check";
 import { EntitiesHelper } from "./EntitiesHelper";

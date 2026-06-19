@@ -1,4 +1,4 @@
-import { IQube } from "../defines";
+import type { IQube } from "../defines";
 import { is_num, floor } from "../utils";
 
 function float_scaling_qube(v: Partial<IQube>) {

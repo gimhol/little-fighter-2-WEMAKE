@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { Cross } from "../Icons/Cross";
-import { ISpaceProps, Space } from "../Space";
+import { type ISpaceProps, Space } from "../Space";
 import { Text } from "../Text";
 import styles from "./style.module.scss";
 

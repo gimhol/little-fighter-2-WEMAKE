@@ -1,4 +1,4 @@
-import { BdyKind, BuiltIn_OID, Defines, FacingFlag, IFrameInfo, ItrKind, OpointKind, StateEnum } from "../defines";
+import { BdyKind, OID, Defines, FacingFlag, type IFrameInfo, ItrKind, OpointKind, StateEnum } from "../defines";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { HitFlag } from "../defines/HitFlag";
 import { ensure } from "../utils";
@@ -35,7 +35,7 @@ export function make_frame_state(frame: IFrameInfo) {
         kind: OpointKind.Normal,
         x: 39,
         y: 79,
-        oid: BuiltIn_OID.Weapon_LouisArmourB,
+        oid: OID.Weapon_LouisArmourB,
         dvy: dvy_a,
         action: { id: "auto" },
         speedz: 0
@@ -44,7 +44,7 @@ export function make_frame_state(frame: IFrameInfo) {
         x: 39 + offset_z,
         y: y_b,
         z: 30,
-        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        oid: OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
         dvz: dvx_z,
@@ -55,7 +55,7 @@ export function make_frame_state(frame: IFrameInfo) {
         x: 39 + offset_z,
         y: y_b,
         z: -30,
-        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        oid: OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
         dvz: -dvx_z,
@@ -66,7 +66,7 @@ export function make_frame_state(frame: IFrameInfo) {
         x: 39 - offset_z,
         y: y_b,
         z: 30,
-        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        oid: OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
         dvz: dvx_z,
@@ -77,7 +77,7 @@ export function make_frame_state(frame: IFrameInfo) {
         x: 39 - offset_z,
         y: y_b,
         z: -30,
-        oid: BuiltIn_OID.Weapon_LouisArmourA,
+        oid: OID.Weapon_LouisArmourA,
         dvy: dvy_b,
         dvx: -dvx_b,
         dvz: -dvx_z,

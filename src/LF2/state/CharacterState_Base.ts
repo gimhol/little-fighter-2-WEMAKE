@@ -1,4 +1,4 @@
-import { IFrameInfo, INextFrame, IVector3, StateEnum, WeaponType } from "../defines";
+import { type IFrameInfo, type INextFrame, type IVector3, StateEnum, WeaponType } from "../defines";
 import type { Entity } from "../entity/Entity";
 import State_Base from "./State_Base";
 

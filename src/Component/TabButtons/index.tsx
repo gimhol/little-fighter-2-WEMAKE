@@ -1,5 +1,5 @@
 import { Button } from "../Buttons/Button";
-import Combine, { ICombineProps } from "../Combine";
+import Combine, { type ICombineProps } from "../Combine";
 
 export interface ITabButtonsProps<V extends number | string, I> extends Omit<ICombineProps, 'children' | 'onChange'> {
   value?: V;

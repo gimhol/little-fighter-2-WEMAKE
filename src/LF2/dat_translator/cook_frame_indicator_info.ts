@@ -1,5 +1,5 @@
-import { IFrameInfo } from "../defines/IFrameInfo";
-import { IQube } from "../defines/IQube";
+import type { IFrameInfo } from "../defines/IFrameInfo";
+import type { IQube } from "../defines/IQube";
 
 export function cook_frame_indicator_info(frame: IFrameInfo) {
   const { pic, bdy, itr, opoint, cpoint, bpoint, wpoint } = frame;

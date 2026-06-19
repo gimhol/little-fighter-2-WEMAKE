@@ -1,11 +1,11 @@
 
-import { BFID, ChaseStratedy, EMPTY_FRAME_INFO, FrameBehavior, GK, IChaseInfo } from "../defines";
+import { BFID, ChaseStratedy, EMPTY_FRAME_INFO, FrameBehavior, GK, type IChaseInfo } from "../defines";
 import { ChaseLost } from "../defines/ChaseLost";
 import type { Entity } from "../entity/Entity";
 import { closer_one } from "../helper";
 import { round_float } from "../utils";
 import { BaseController } from "./BaseController";
-import { type ControllerUpdateResult } from "./ControllerUpdateResult";
+import type { ControllerUpdateResult } from "./ControllerUpdateResult";
 const { L, R, U, D, j, d } = GK
 export class BallController extends BaseController {
   readonly __is_ball_ctrl__ = true;

@@ -1,11 +1,11 @@
-import { IStyle } from "../defines";
+import type { IStyle } from "../defines";
 import { Ditto } from "../ditto";
 import { LF2 } from "../LF2";
-import { floor, is_num_arr, is_str, Unsafe } from "../utils";
-import { type IComponentInfo } from "./IComponentInfo";
-import { ICookedUIInfo } from "./ICookedUIInfo";
-import { IUIAction } from "./IUIAction";
-import { INinePatch, IUIImgInfo } from "./IUIImgInfo.dat";
+import { floor, is_num_arr, is_str, type Unsafe } from "../utils";
+import type { IComponentInfo } from "./IComponentInfo";
+import type { ICookedUIInfo } from "./ICookedUIInfo";
+import type { IUIAction } from "./IUIAction";
+import type { INinePatch, IUIImgInfo } from "./IUIImgInfo.dat";
 import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
 import { is_0_or_1, judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
 import { ui_load_img } from "./ui_load_img";

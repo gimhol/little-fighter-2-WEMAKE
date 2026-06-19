@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import React, { ReactNode, useState } from "react";
-import { Button, IButtonProps } from "./Buttons/Button";
+import React, { type ReactNode, useState } from "react";
+import { Button, type IButtonProps } from "./Buttons/Button";
 import styles from "./Checkbox.module.scss";
 import { Tick } from "./Icons/Tick";
 export interface ICheckboxProps extends Omit<IButtonProps, "value" | "prefix" | "onChange"> {

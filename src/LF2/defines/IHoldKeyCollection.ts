@@ -1,4 +1,4 @@
-import { TNextFrame } from ".";
+import type { TNextFrame } from ".";
 export interface IHoldKeyCollection {
   a?: TNextFrame;
   d?: TNextFrame;

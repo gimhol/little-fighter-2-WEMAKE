@@ -1,5 +1,5 @@
-import { FacingFlag as FF, IFrameInfo, IHitKeyCollection, INextFrame } from "../defines";
-import { IHoldKeyCollection } from "../defines/IHoldKeyCollection";
+import { FacingFlag as FF, type IFrameInfo, type IHitKeyCollection, type INextFrame } from "../defines";
+import type { IHoldKeyCollection } from "../defines/IHoldKeyCollection";
 import { is_num, is_str } from "../utils";
 import { cook_next_frame_cost } from "./cook_next_frame_cost";
 import { add_next_frame } from "./edit_next_frame";

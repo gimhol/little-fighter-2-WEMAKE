@@ -1,5 +1,5 @@
 import type { IPointingEvent } from "@/LF2/ditto/pointings";
-import { IUIInputHandle } from "@/LF2/ditto/ui/IEventHandle";
+import type { IUIInputHandle } from "@/LF2/ditto/ui/IEventHandle";
 import type { LF2 } from "@/LF2/LF2";
 import { LF2PointerEvent } from "@/LF2/ui/LF2PointerEvent";
 import { UINode } from "@/LF2/ui/UINode";

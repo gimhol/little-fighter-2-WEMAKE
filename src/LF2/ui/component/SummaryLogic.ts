@@ -1,10 +1,10 @@
-import { ISummaryCallbacks } from "@/LF2/entity/Summary";
+import type { ISummaryCallbacks } from "@/LF2/entity/Summary";
 import { summary_mgr } from "@/LF2/entity/SummaryMgr";
-import { Entity, IEntityCallbacks, is_fighter } from "../../entity";
-import { IWorldCallbacks } from "../../IWorldCallbacks";
+import { Entity, type IEntityCallbacks, is_fighter } from "../../entity";
+import type { IWorldCallbacks } from "../../IWorldCallbacks";
 import { max, Times } from "../../utils";
-import { IFighterSumInfo, IPlayerSumInfo } from "./IFighterSumInfo";
-import { ITeamSumInfo } from "./ITeamSumInfo";
+import type { IFighterSumInfo, IPlayerSumInfo } from "./IFighterSumInfo";
+import type { ITeamSumInfo } from "./ITeamSumInfo";
 import { make_fighter_sum } from "./make_fighter_sum";
 import { make_player_sum } from "./make_player_sum";
 import { make_team_sum_info } from "./make_team_sum_info";

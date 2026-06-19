@@ -1,8 +1,8 @@
 import { FrameBehavior, OID } from "../defines";
 import { ActionType } from "../defines/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
-import { IEntityData } from "../defines/IEntityData";
-import { IFrameInfo } from "../defines/IFrameInfo";
+import type { IEntityData } from "../defines/IEntityData";
+import type { IFrameInfo } from "../defines/IFrameInfo";
 import { ItrKind } from "../defines/ItrKind";
 import { StateEnum } from "../defines/StateEnum";
 import { ensure } from "../utils";
@@ -21,19 +21,16 @@ export function cook_ball_frame_state_3006(e: IEntityData, frame: IFrameInfo) {
         test: new CondMaker<C_Val>()
           .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
           .done(),
-        data: ''
       }, {
         type: ActionType.V_TURN_FACE,
         test: new CondMaker<C_Val>()
           .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
           .done(),
-        data: ''
       }, {
         type: ActionType.V_TURN_TEAM,
         test: new CondMaker<C_Val>()
           .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
           .done(),
-        data: ''
       }, {
         type: ActionType.V_NextFrame,
         test: new CondMaker<C_Val>()

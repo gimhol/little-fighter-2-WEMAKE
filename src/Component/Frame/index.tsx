@@ -1,7 +1,7 @@
-import { ForwardedRef, forwardRef } from "react";
+import { type ForwardedRef, forwardRef } from "react";
 import styles from "./style.module.scss";
 import classnames from "classnames";
-import { IStyleProps } from "../StyleBase/IStyleProps";
+import type { IStyleProps } from "../StyleBase/IStyleProps";
 import { useStyleBase } from "../StyleBase/useStyleBase";
 export interface IFrameProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'>, IStyleProps {
   label?: React.ReactNode;

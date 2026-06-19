@@ -1,6 +1,6 @@
 import {
   FrameBehavior,
-  IFrameInfo
+  type IFrameInfo
 } from "../defines";
 import { make_fb_bat_chase } from "./frame_behavior/make_fb_bat_chase";
 import { make_fb_bat_chase_start } from "./frame_behavior/make_fb_bat_chase_start";

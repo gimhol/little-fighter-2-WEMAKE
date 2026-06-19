@@ -1,5 +1,5 @@
 import type { TNextFrame } from "./INextFrame";
-import { IQubePair } from "./IQubePair";
+import type { IQubePair } from "./IQubePair";
 import { any, fields, int, str } from "../fields";
 
 export interface ICpointInfo {
