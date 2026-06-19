@@ -4,8 +4,8 @@ import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 export function xml_to_qube(el: IXMLElement, out: IQube): IQube;
 export function xml_to_qube(el: IXMLElement, out?: Partial<IQube>): Partial<IQube>;
 export function xml_to_qube(el: IXMLElement, out: Partial<IQube> = {}): Partial<IQube> {
-  const a = el.nums_attr("rect");
-  const b = el.nums_attr("qube");
+  const a = el.nums_attr_soft("rect");
+  const b = el.nums_attr_soft("qube");
   out.x = el.get_num("x", a?.[0] ?? b?.[0] ?? out.x);
   out.y = el.get_num("y", a?.[1] ?? b?.[1] ?? out.y);
   out.w = el.get_num("w", a?.[2] ?? b?.[2] ?? out.w);
