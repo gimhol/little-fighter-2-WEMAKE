@@ -7,7 +7,6 @@ import { xml_to_velocity_info } from "./xml_to_velocity_info";
 
 export function xml_to_itr_info(el: IXMLElement): IItrInfo {
   const ret = itr_info_new();
-
   ret.id = el.get_str("id", ret.id);
   ret.name = el.get_str("name", ret.name);
   ret.ref = el.get_str("ref") ?? el.get_str("prefab_id") ?? ret.ref;
