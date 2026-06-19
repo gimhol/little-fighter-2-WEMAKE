@@ -87,7 +87,7 @@ export interface IXMLElement {
    * @param {string}          name  - 属性名
    * @param {Voidable<string>} value - 值
    */
-  set_attr(name: string, value: Voidable<string>): void;
+  set_attr(name: string, value: Voidable<string | number | boolean>): void;
 
   /**
    * 设置字符串属性，value 为 Voidable 时删除属性

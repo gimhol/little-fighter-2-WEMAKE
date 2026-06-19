@@ -14,8 +14,8 @@ export function xml_from_next_frame(
 ): IXMLElement {
   const el = xml.create(tagName);
 
-  el.set_str_attr("id", nf.id);
-  el.set_num_attr("wait", nf.wait);
+  el.set_strs_attr("id", nf.id);
+  el.set_attr("wait", nf.wait);
   el.set_num_attr("facing", nf.facing);
   el.set_num_attr("mp", nf.mp);
   el.set_num_attr("hp", nf.hp);

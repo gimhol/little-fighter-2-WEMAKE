@@ -1,4 +1,4 @@
-import type { Voidable, IXMLElement } from "../../../src/LF2/ditto/xml/IXMLElement";
+import type { IXMLElement, Voidable } from "../../../src/LF2/ditto/xml/IXMLElement";
 
 const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
 
@@ -90,13 +90,13 @@ export class ToolXMLElement implements IXMLElement {
     return v.split(sep).map(s => s.trim() === '' ? void 0 : Number(s.trim()));
   }
 
-  set_attr(name: string, value: Voidable<string>): void {
+  set_attr(name: string, value: Voidable<string | number | boolean>): void {
     if (value === void 0 || value === null) return this.del_attr(name);
     const existing = this._attrs.find(a => a.name === name);
     if (existing) {
-      existing.value = value;
+      existing.value = '' + value;
     } else {
-      this._attrs.push({ name, value });
+      this._attrs.push({ name, value: '' + value });
     }
   }
 

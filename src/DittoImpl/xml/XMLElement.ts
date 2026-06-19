@@ -28,11 +28,11 @@ export class XMLElement implements IXMLElement {
   attr(name: string): string | undefined {
     return this.inner.getAttribute(name) ?? undefined;
   }
-  set_attr(name: string, value: Voidable<string>): void {
+  set_attr(name: string, value: Voidable<string | number | boolean>): void {
     if (value === void 0 || value === null)
       this.del_attr(name);
     else
-      this.inner.setAttribute(name, value);
+      this.inner.setAttribute(name, String(value));
   }
   del_attr(name: string): void {
     this.inner.removeAttribute(name)

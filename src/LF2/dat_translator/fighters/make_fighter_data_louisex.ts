@@ -1,4 +1,4 @@
-import { ActionType, Defines, EntityGroup, HitFlag, IAction_VBuff, type IEntityData } from "../../defines";
+import { ActionType, Defines, EntityGroup, HitFlag, type IAction_VBuff, type IEntityData } from "../../defines";
 import { ensure, traversal } from "../../utils";
 
 /**
