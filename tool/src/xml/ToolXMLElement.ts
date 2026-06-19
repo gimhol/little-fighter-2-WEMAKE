@@ -1,39 +1,32 @@
+import { XMLBuilder } from "fast-xml-parser";
 import type { IXMLElement, Voidable } from "../../../src/LF2/ditto/xml/IXMLElement";
 
 const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
 
-/** XML 属性值转义 */
-function escAttr(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-/** XML 文本内容转义 */
-function escText(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function is_value_child(el: IXMLElement): boolean {
-  return VALUE_TAGS.has(el.tagName);
-}
-
 /**
  * LF2 工具使用的 XML 元素实现
  *
- * 纯 TypeScript 实现，不依赖浏览器 DOM API
+ * 基于 fast-xml-parser 进行 XML 序列化
  */
 export class ToolXMLElement implements IXMLElement {
-  readonly tagName: string;
+  readonly tag: string;
   private _attrs: { name: string; value: string }[] = [];
   private _children: ToolXMLElement[] = [];
   private _parent: ToolXMLElement | null = null;
   private _text: string = '';
 
+  get type(): string | undefined {
+    let type: string | undefined = this.tag.toLowerCase();
+    if (type === 'value') type = this.attr('type')?.toLowerCase();
+    return type;
+  }
+
   constructor(tag: string) {
-    this.tagName = tag;
+    this.tag = tag;
   }
 
   get text(): string { return this._text; }
-  get children(): IXMLElement[] { return this._children; }
+  get children(): ToolXMLElement[] { return this._children; }
 
   get attrs(): { name: string; value: string }[] {
     return this._attrs;
@@ -93,11 +86,9 @@ export class ToolXMLElement implements IXMLElement {
   set_attr(name: string, value: Voidable<string | number | boolean>): void {
     if (value === void 0 || value === null) return this.del_attr(name);
     const existing = this._attrs.find(a => a.name === name);
-    if (existing) {
-      existing.value = '' + value;
-    } else {
-      this._attrs.push({ name, value: '' + value });
-    }
+    const sv = String(value);
+    if (existing) existing.value = sv;
+    else this._attrs.push({ name, value: sv });
   }
 
   set_str_attr(name: string, value: Voidable<string>): void {
@@ -139,48 +130,64 @@ export class ToolXMLElement implements IXMLElement {
     this.set_attr(name, arr.map(n => n === void 0 ? '' : String(n)).join(sep));
   }
 
-  value(): any {
-    const type = this.attr('type') || this.tagName;
-    switch (type) {
-      case 'number':
-        return Number(this._text);
-      case 'boolean':
-        return this._text === 'true';
-      case 'object': {
-        const obj: Record<string, any> = {};
-        for (const child of this._children) {
-          if (is_value_child(child)) {
-            const k = child.attr('name');
-            if (k) obj[k] = child.value();
-          }
-        }
-        return Object.keys(obj).length ? obj : JSON.parse(this._text);
-      }
-      case 'array': {
-        const arr: any[] = [];
-        for (const child of this._children) {
-          if (is_value_child(child)) {
-            arr.push(child.value());
-          }
-        }
-        return arr;
-      }
-      default:
-        return this._text;
+  // ── 类型化值 ─────────────────────────
+
+  value(): number | boolean | string | object | undefined {
+    switch (this.type) {
+      case 'string': return this.as_string();
+      case 'number': return this.as_number();
+      case 'boolean': return this.as_boolean();
+      case 'array': return this.as_array();
+      default: return this.as_object();
     }
   }
 
-  values(): Record<string, any> {
-    const obj: Record<string, any> = {};
-    for (const attr of this._attrs) {
-      obj[attr.name] = attr.value;
-    }
+  as_string(or: string): string;
+  as_string(or?: string): string | undefined;
+  as_string(or?: string): string | undefined {
+    if ('string' !== this.type) return or;
+    return this.attr('value') ?? this._text;
+  }
+
+  as_number(or: number): number;
+  as_number(or?: number): number | undefined;
+  as_number(or?: number): number | undefined {
+    if ('number' !== this.type) return or;
+    const txt = this.as_string();
+    if (txt == null) return or;
+    const ret = Number(txt);
+    return isNaN(ret) ? or : ret;
+  }
+
+  as_boolean(or: boolean): boolean;
+  as_boolean(or?: boolean): boolean | undefined;
+  as_boolean(or?: boolean): boolean | undefined {
+    if ('boolean' !== this.type) return or;
+    const txt = this.as_string()?.toLowerCase();
+    if (txt === '1' || txt === 'true') return true;
+    if (txt === '0' || txt === 'false') return false;
+    return or;
+  }
+
+  as_array(or: any[]): any[];
+  as_array(or?: any[]): any[] | undefined;
+  as_array(or?: any[]): any[] | undefined {
+    if ('array' !== this.type) return or;
+    const ret: any[] = [];
+    for (const child of this._children) ret.push(child.value());
+    return ret;
+  }
+
+  as_object(or: object): object;
+  as_object(or?: object): object | undefined;
+  as_object(or?: object): object | undefined {
+    const ret: Record<string, any> = {};
+    for (const attr of this._attrs) ret[attr.name] = attr.value;
     for (const child of this._children) {
-      if (!is_value_child(child)) continue;
-      const key = child.attr('name');
-      if (key) obj[key] = child.value();
+      const key = child.attr('name') || child.tag;
+      if (key) ret[key] = child.value();
     }
-    return obj;
+    return Object.keys(ret).length ? ret : or;
   }
 
   action_str(): string {
@@ -193,16 +200,41 @@ export class ToolXMLElement implements IXMLElement {
   }
 
   stringify(): string {
-    const attrStr = this._attrs
-      .map(a => ` ${a.name}="${escAttr(a.value)}"`)
-      .join('');
-    if (!this._children.length && !this._text) {
-      return `<${this.tagName}${attrStr} />`;
+    const builder = new XMLBuilder({
+      format: true,
+      ignoreAttributes: false,
+      attributeNamePrefix: '@_',
+      suppressEmptyNode: false,
+    });
+    const obj = this._toFXPObject();
+    const xml = builder.build(obj);
+    return typeof xml === 'string' ? xml : '';
+  }
+
+  private _toFXPObject(): any {
+    const attrObj: Record<string, any> = {};
+    for (const a of this._attrs) attrObj[`@_${a.name}`] = a.value;
+
+    if (this._children.length) {
+      const childObj: Record<string, any> = {};
+      for (const child of this._children) {
+        const co = child._toFXPObject();
+        const key = Object.keys(co)[0]; // tag name as key
+        if (childObj[key]) {
+          if (!Array.isArray(childObj[key])) childObj[key] = [childObj[key]];
+          childObj[key].push(co[key]);
+        } else {
+          childObj[key] = co[key];
+        }
+      }
+      return { [this.tag]: { ...attrObj, ...childObj } };
     }
-    const childrenStr = this._text
-      ? escText(this._text)
-      : this._children.map(c => c.stringify()).join('');
-    return `<${this.tagName}${attrStr}>${childrenStr}</${this.tagName}>`;
+
+    if (this._text) {
+      return { [this.tag]: { ...attrObj, '#text': this._text } };
+    }
+
+    return { [this.tag]: Object.keys(attrObj).length ? attrObj : undefined };
   }
 
   insert(child: ToolXMLElement, index?: number): void {
@@ -241,14 +273,13 @@ export class ToolXMLElement implements IXMLElement {
   }
 
   children_by_tag(tag: string): ToolXMLElement[] {
-    return this._children.filter(c => c.tagName === tag);
+    return this._children.filter(c => c.tag === tag);
   }
 
   first_by_tag(tag: string): ToolXMLElement | undefined {
-    return this._children.find(c => c.tagName === tag);
+    return this._children.find(c => c.tag === tag);
   }
 
-  // --- 内部方法供 XML 解析器使用 ---
   _addChild(child: ToolXMLElement): void {
     child._parent = this;
     this._children.push(child);

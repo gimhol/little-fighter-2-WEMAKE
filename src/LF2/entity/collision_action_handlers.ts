@@ -4,12 +4,6 @@ import { ActionType } from "../defines/ActionType";
 import { HitFlag } from "../defines/HitFlag";
 import type { IAction_ABuff } from "../defines/actions/IAction_ABuff";
 import type { IAction_VBuff } from "../defines/actions/IAction_VBuff";
-import type { IAction_Broadcast } from "../defines/actions/IAction_Broadcast";
-import type { IAction_Fusion } from "../defines/actions/IAction_Fusion";
-import type { IAction_ReboundVX } from "../defines/actions/IAction_ReboundVX";
-import type { IAction_StealValue } from "../defines/actions/IAction_StealValue";
-import type { IAction_TurnFace } from "../defines/actions/IAction_TurnFace";
-import type { IAction_TurnTeam } from "../defines/actions/IAction_TurnTeam";
 import { ensure, max, min, round } from "../utils";
 import type { Entity } from "./Entity";
 import { turn_face } from "./face_helper";
@@ -28,26 +22,22 @@ export const collision_action_handlers: IActionHandler = {
   v_broken_defend: () => 0,
   v_defend: () => 0,
 
-  [ActionType.A_REBOUND_VX]: function (action: IAction_ReboundVX, collision: Collision) {
-    const { attacker } = collision;
+  [ActionType.A_REBOUND_VX]: (a, { attacker }) => {
     attacker.set_velocity_x(-attacker.velocity.x);
   },
-  [ActionType.V_REBOUND_VX]: function (action: IAction_ReboundVX, collision: Collision) {
-    const { victim } = collision;
+  [ActionType.V_REBOUND_VX]: (a, { victim }) => {
     victim.set_velocity_x(-victim.velocity.x);
   },
-  [ActionType.V_TURN_FACE]: function (action: IAction_TurnFace, collision: Collision) {
-    const { victim } = collision;
+  [ActionType.V_TURN_FACE]: (a, { victim }) => {
     victim.facing = turn_face(victim.facing);
   },
-  [ActionType.V_TURN_TEAM]: function (action: IAction_TurnTeam, collision: Collision) {
-    const { victim, attacker } = collision;
-    victim.team = attacker.team;
+  [ActionType.V_TURN_TEAM]: (a, { victim, attacker }) => {
+    victim.team = a.data?.team || attacker.team;
   },
-  [ActionType.FUSION]: function (action: IAction_Fusion, collision: Collision) {
-    const { data: { oid, act, time } } = action;
-    const { attacker, victim } = collision;
-    const lf2 = collision.attacker.lf2;
+  [ActionType.FUSION]: (a, c) => {
+    const { data: { oid, act, time } } = a;
+    const { attacker, victim } = c;
+    const lf2 = c.attacker.lf2;
     const data = lf2.datas.find(oid);
     if (!data) return;
 
@@ -82,24 +72,24 @@ export const collision_action_handlers: IActionHandler = {
       fighter_2.invulnerable = 1000000;
     if (act) fighter_1.enter_frame(act);
   },
-  [ActionType.BROADCAST]: (action: IAction_Broadcast, { lf2 }: Collision) => {
-    lf2.broadcast(action.data.msg);
+  [ActionType.BROADCAST]: (a, { lf2 }) => {
+    lf2.broadcast(a.data.msg);
   },
-  [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => {
-    const { data: d } = action;
+  [ActionType.VALUE_STEAL]: (a, c) => {
+    const { data: d } = a;
     if (!d) return;
-    const { real_injury, injury } = collision;
+    const { real_injury, injury } = c;
     const { over_injury } = d;
     const itr_value = over_injury ? injury : real_injury;
     if (!itr_value) return;
 
     let t: Entity | undefined | null;
-    const { attacker: a } = collision;
-    switch (action.data.target) {
-      case 1: t = a.src_emitter; break;
-      case 2: t = a.pre_emitter; break;
-      case 3: t = a.bearer; break;
-      case 0: default: t = a; break;
+    const { attacker } = c;
+    switch (a.data.target) {
+      case 1: t = attacker.src_emitter; break;
+      case 2: t = attacker.pre_emitter; break;
+      case 3: t = attacker.bearer; break;
+      case 0: default: t = attacker; break;
     }
     if (!t) return;
 
@@ -120,13 +110,11 @@ export const collision_action_handlers: IActionHandler = {
     }
     t.hp_r = max(t.hp_r, t.hp);
   },
-  [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => {
-    const { victim, attacker } = collision;
-    apply_buff(action, attacker, victim, collision);
+  [ActionType.V_BUFF]: (a, c) => {
+    apply_buff(a, c.attacker, c.victim, c);
   },
-  [ActionType.A_BUFF]: (action: IAction_ABuff, collision: Collision) => {
-    const { attacker, victim } = collision;
-    apply_buff(action, victim, attacker, collision);
+  [ActionType.A_BUFF]: (a, c) => {
+    apply_buff(a, c.victim, c.attacker, c);
   }
 };
 

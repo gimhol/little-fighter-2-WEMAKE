@@ -18,6 +18,7 @@ export * from "./xml_from_opoint_multi";
 export * from "./xml_from_stage_info";
 export * from "./xml_from_stage_object_info";
 export * from "./xml_from_stage_phase_info";
+export * from "./xml_from_world_dataset";
 export * from "./xml_from_write";
 export * from "./xml_to_armor_info";
 export * from "./xml_to_bdy_info";
@@ -41,5 +42,6 @@ export * from "./xml_to_pic";
 export * from "./xml_to_stage_info";
 export * from "./xml_to_stage_object_info";
 export * from "./xml_to_stage_phase_info";
+export * from "./xml_to_world_dataset";
 export * from "./xml_to_wpoint";
 /*** AUTO EXPORT END ***/

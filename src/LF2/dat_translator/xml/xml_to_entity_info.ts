@@ -3,6 +3,7 @@ import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import { xml_to_drink_info } from "./xml_to_drink_info";
 import { xml_to_armor_info } from "./xml_to_armor_info";
 import { xml_to_opoint } from "./xml_to_opoint";
+import { xml_to_world_dataset } from "./xml_to_world_dataset";
 
 /**
  * 解析 `<base>`（IEntityInfo）
@@ -101,10 +102,8 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   }
 
   // dataset overrides
-  for (const child of el.children_by_tag("dataset")) {
-    const v = child.values();
-    for (const k of Object.keys(v)) (ret as any)[k] = v[k];
-  }
+  const ds = xml_to_world_dataset(el.first_by_tag("dataset"));
+  for (const k of Object.keys(ds)) (ret as any)[k] = (ds as any)[k];
 
   return ret;
 }

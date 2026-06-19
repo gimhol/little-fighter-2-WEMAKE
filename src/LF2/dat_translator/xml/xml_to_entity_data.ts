@@ -54,7 +54,7 @@ export function xml_to_entity_data(el: IXMLElement): IEntityData {
   const indexes: Record<string, any> = {};
   if (idxEl) {
     for (const child of idxEl.children) {
-      const tag = child.tagName;
+      const tag = child.tag;
       const v = child.strs_attr("ids") ?? child.strs_attr("list");
       if (v) {
         indexes[tag] = v;

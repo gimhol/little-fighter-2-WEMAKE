@@ -1,17 +1,16 @@
 import type { IEntityData } from "../../defines/IEntityData";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
-import { xml_from_frame_info } from "./xml_from_frame_info";
-import { xml_from_entity_info } from "./xml_from_entity_info";
-import { xml_from_next_frame } from "./xml_from_next_frame";
+import type { IXML } from "../../ditto/xml";
 import { xml_from_bdy_info } from "./xml_from_bdy_info";
+import { xml_from_entity_info } from "./xml_from_entity_info";
+import { xml_from_frame_info } from "./xml_from_frame_info";
 import { xml_from_itr_info } from "./xml_from_itr_info";
+import { xml_from_next_frame } from "./xml_from_next_frame";
 export { xml_from_entity_info };
 
 /**
  * 序列化实体数据为 XML 元素树，再 stringify 输出
  */
-export function xml_from_entity_data(xml: IXMLFactory, data: IEntityData): string {
+export function xml_from_entity_data(xml: IXML, data: IEntityData): string {
   const root = xml.create("entity");
   root.set_attr("id", data.id);
 

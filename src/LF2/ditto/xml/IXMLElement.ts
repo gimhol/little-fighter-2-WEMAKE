@@ -8,7 +8,7 @@ export type Voidable<T> = T | undefined | null | void;
  */
 export interface IXMLElement {
   /** 标签名 */
-  get tagName(): string;
+  get tag(): string;
   /** 子元素列表 */
   get children(): IXMLElement[];
   /** 属性列表 */
@@ -157,12 +157,93 @@ export interface IXMLElement {
   /**
    * 解析元素为类型化值（根据 type 属性或 tagName 自动推断类型）
    */
-  value(): any;
+  value(): number | boolean | string | object | undefined
+
+
+  as_string(or: string): string;
+  as_string(or?: string): string | undefined;
+  as_number(or: number): number;
+  as_number(or?: number): number | undefined;
+  as_boolean(or: boolean): boolean;
+  as_boolean(or?: boolean): boolean | undefined;
+  as_array(or: any[]): any[];
+  as_array(or?: any[]): any[] | undefined;
+  as_object(or: object): object;
+  as_object(or?: object): object | undefined;  
 
   /**
-   * 获取所有属性和子元素值的扁平对象
+   * 将元素解析为普通对象，属性名→值
+   *
+   * 遍历所有直接属性（attrs）和全部子元素，子元素取其 `name` 属性为 key、
+   * `value()` 为 value。结果为空时返回 `or` 回退值。
+   *
+   * 注意：来自 {@link attrs} 的值始终为 **字符串**（XML 属性原始值），
+   * 而来自子元素的值通过 `value()` 解析，可为 number / boolean / object / array 等类型。
+   *
+   * 非 value 型标签（如 `<frame>`、`<phase>` 等）的 `value()` 最终回退到
+   * `as_object()` 递归调用，因此只要带有子属性或文本，就会被视为嵌套对象。
+   *
+   * @example
+   * // 非 value 型标签也会被视为对象
+   * // <entity>
+   * //   <frame name="standing">
+   * //     <pic tex="sprite/0.png" x="0" y="0" w="79" h="79"/>
+   * //     <next id="1" wait="3"/>
+   * //   </frame>
+   * // </entity>
+   *
+   * el.as_object({});
+   * // {
+   * //   standing: {
+   * //     // <pic> 和 <next> 也被递归解析为对象
+   * //   }
+   * // }
+   *
+   * @overload
+   * @param  {object} or - 结果为空时回退到此值
+   * @return {object}
+   *
+   * @overload
+   * @param  {object} [or] - 可选回退
+   * @return {object | undefined}
+   *
+   * @example
+   * // 混合类型
+   * // <dataset>
+   * //   <number name="gravity">1.5</number>
+   * //   <boolean name="pvp">true</boolean>
+   * //   <string name="mode">ranked</string>
+   * // </dataset>
+   *
+   * el.as_object({});
+   * // { gravity: 1.5, pvp: true, mode: "ranked" }
+   *
+   * @example
+   * // 嵌套对象（`<object>` 子元素递归解析）
+   * // <dataset>
+   * //   <object name="bounds">
+   * //     <number name="left">0</number>
+   * //     <number name="right">800</number>
+   * //   </object>
+   * //   <array name="tags">
+   * //     <string>fast</string>
+   * //     <string>flying</string>
+   * //   </array>
+   * // </dataset>
+   *
+   * el.as_object({});
+   * // {
+   * //   bounds: { left: 0, right: 800 },
+   * //   tags: ["fast", "flying"],
+   * // }
+   *
+   * @example
+   * // 空元素回退
+   * el.as_object();        // undefined（无参重载）
+   * el.as_object({});      // {}（有参重载）
    */
-  values(): Record<string, any>;
+  as_object(or: object): object;
+  as_object(or?: object): object | undefined;
 
   /**
    * 解析为动作字符串（"action(args)" 格式）

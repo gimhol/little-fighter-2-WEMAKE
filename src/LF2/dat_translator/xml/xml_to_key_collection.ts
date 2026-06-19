@@ -8,7 +8,7 @@ import { xml_to_next_frame } from "./xml_to_next_frame";
 export function xml_to_key_collection(el: IXMLElement): Record<string, TNextFrame> {
   const ret: Record<string, TNextFrame> = {};
   for (const child of el.children) {
-    ret[child.tagName] = xml_to_next_frame(child);
+    ret[child.tag] = xml_to_next_frame(child);
   }
   return ret;
 }

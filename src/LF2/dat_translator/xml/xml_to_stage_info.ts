@@ -27,11 +27,11 @@ export function xml_to_stage_info(el: IXMLElement): IStageInfo {
  * 如果根就是 <stage>，回退到单元素解析
  */
 export function xml_to_stage_info_list(el: IXMLElement): IStageInfo[] {
-  if (el.tagName === "stages") {
+  if (el.tag === "stages") {
     return el.children_by_tag("stage").map(xml_to_stage_info);
   }
   // fallback: 直接就是 <stage> 元素
-  if (el.tagName === "stage") {
+  if (el.tag === "stage") {
     return [xml_to_stage_info(el)];
   }
   return [];

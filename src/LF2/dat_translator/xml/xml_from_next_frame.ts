@@ -1,14 +1,12 @@
 import type { INextFrame } from "../../defines/INextFrame";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
-
+import type { IXMLElement, IXML } from "../../ditto/xml";
 /**
  * 序列化 <next> 元素（来自 INextFrame）
  *
  * tagName 可指定标签名，默认 "next"
  */
 export function xml_from_next_frame(
-  xml: IXMLFactory,
+  xml: IXML,
   nf: INextFrame,
   tagName: string = "next",
 ): IXMLElement {

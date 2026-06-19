@@ -1,11 +1,10 @@
 import type { IStageObjectInfo } from "../../defines/IStageObjectInfo";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 
 /**
  * 序列化 <object>（关卡物件）
  */
-export function xml_from_stage_object_info(xml: IXMLFactory, o: IStageObjectInfo): IXMLElement {
+export function xml_from_stage_object_info(xml: IXML, o: IStageObjectInfo): IXMLElement {
   const el = xml.create("object");
 
   el.set_strs_attr("id", o.id);

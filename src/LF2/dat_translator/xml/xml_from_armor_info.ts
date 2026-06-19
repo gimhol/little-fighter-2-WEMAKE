@@ -1,11 +1,10 @@
 import type { IArmorInfo } from "../../defines/IArmorInfo";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 
 /**
  * 序列化 <armor>
  */
-export function xml_from_armor_info(xml: IXMLFactory, a: IArmorInfo): IXMLElement {
+export function xml_from_armor_info(xml: IXML, a: IArmorInfo): IXMLElement {
   const el = xml.create("armor");
   el.set_str_attr("id", a.id);
   el.set_str_attr("name", a.name);

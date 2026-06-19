@@ -1,12 +1,5 @@
 import type { IBgData } from "../../defines/IBgData";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-
-/**
- * XML 工厂：只需 create(tag) 即可构建元素树
- */
-export interface IXMLFactory {
-  create(tag: string): IXMLElement;
-}
+import type { IXMLElement, IXML } from "../../ditto/xml";
 
 /**
  * 将 data 的属性写入 elem 的 XML 属性中
@@ -27,7 +20,7 @@ function writeAttrs(elem: IXMLElement, data: Record<string, unknown>, keys?: str
 /**
  * 序列化背景数据为 XML 元素树，再 stringify 输出
  */
-export function xml_from_bg_data(xml: IXMLFactory, data: IBgData): string {
+export function xml_from_bg_data(xml: IXML, data: IBgData): string {
   const root = xml.create("background");
   root.set_attr("id", data.id);
 

@@ -1,11 +1,10 @@
 import type { IDatIndex } from "../../defines/IDatIndex";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 
 /**
  * 序列化 <dat_index>（标签名可由 tag 参数覆盖）
  */
-export function xml_from_dat_index(xml: IXMLFactory, idx: IDatIndex, tag: string = "dat_index"): IXMLElement {
+export function xml_from_dat_index(xml: IXML, idx: IDatIndex, tag: string = "dat_index"): IXMLElement {
   const el = xml.create(tag);
   el.set_str_attr("id", idx.id);
   el.set_str_attr("type", idx.type);

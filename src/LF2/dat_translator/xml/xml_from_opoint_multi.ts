@@ -1,11 +1,9 @@
 import type { IOpointMulti } from "../../defines/IOpointInfo";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
-
+import type { IXMLElement, IXML } from "../../ditto/xml";
 /**
  * 序列化 <multi>（来自 IOpointMulti）
  */
-export function xml_from_opoint_multi(xml: IXMLFactory, m: IOpointMulti): IXMLElement {
+export function xml_from_opoint_multi(xml: IXML, m: IOpointMulti): IXMLElement {
   const el = xml.create("multi");
   el.set_num_attr("type", m.type);
   if (m.skip_zero !== undefined) el.set_bool_attr("skip_zero", m.skip_zero);

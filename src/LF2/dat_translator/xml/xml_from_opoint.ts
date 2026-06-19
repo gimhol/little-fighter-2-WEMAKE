@@ -1,13 +1,12 @@
 import type { IOpointInfo } from "../../defines/IOpointInfo";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXML, IXMLElement } from "../../ditto/xml";
 import { xml_from_next_frame } from "./xml_from_next_frame";
 import { xml_from_opoint_multi } from "./xml_from_opoint_multi";
 
 /**
  * 序列化 <opoint>
  */
-export function xml_from_opoint(xml: IXMLFactory, o: IOpointInfo): IXMLElement {
+export function xml_from_opoint(xml: IXML, o: IOpointInfo): IXMLElement {
   const el = xml.create("opoint");
   el.set_str_attr("id", o.id);
   el.set_str_attr("name", o.name);

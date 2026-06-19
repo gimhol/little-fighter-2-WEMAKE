@@ -1,27 +1,17 @@
-import type { Voidable, IXMLElement } from "../../LF2/ditto/xml/IXMLElement";
-
-const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
-
-/** XML 属性值转义 */
-function escAttr(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-/** XML 文本内容转义 */
-function escText(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function is_value_child(el: IXMLElement): boolean {
-  return VALUE_TAGS.has(el.tagName);
-}
+import type { IXMLElement, Voidable } from "../../LF2/ditto/xml/IXMLElement";
 
 export class XMLElement implements IXMLElement {
   readonly inner: Element;
   private _children: XMLElement[] | null = null;
   private _attrs: { name: string; value: string; }[] | null = null;
   private _parent: XMLElement | null = null;
-  get tagName(): string { return this.inner.tagName; }
+
+  get type(): string | undefined {
+    let type: string | undefined = this.tag.toLowerCase();
+    if (type == 'value') type = this.attr('type')?.toLowerCase();
+    return type;
+  }
+  get tag(): string { return this.inner.tagName; }
   get text(): string { return this.inner.textContent ?? ''; }
   constructor(inner: Element) { this.inner = inner; }
 
@@ -108,48 +98,61 @@ export class XMLElement implements IXMLElement {
   }
 
 
-  value(): number | boolean | string | object {
-    const type = this.attr('type') || this.tagName;
-    switch (type) {
-      case 'number':
-        return Number(this.text);
-      case 'boolean':
-        return this.text === 'true';
-      case 'object': {
-        const obj: Record<string, any> = {};
-        for (const child of this.children) {
-          if (is_value_child(child)) {
-            const k = child.attr('name');
-            if (k) obj[k] = child.value();
-          }
-        }
-        return Object.keys(obj).length ? obj : JSON.parse(this.text);
-      }
-      case 'array': {
-        const arr: any[] = [];
-        for (const child of this.children) {
-          if (is_value_child(child)) {
-            arr.push(child.value());
-          }
-        }
-        return arr;
-      }
-      default: // string
-        return this.text;
+  value(): number | boolean | string | object | undefined {
+    switch (this.type) {
+      case 'string': return this.as_string();
+      case 'number': return this.as_number();
+      case 'boolean': return this.as_boolean();
+      case 'array': return this.as_array();
+      default: return this.as_object();
     }
   }
 
-  values(): Record<string, any> {
-    const obj: Record<string, any> = {};
-    for (const attr of this.attrs) {
-      obj[attr.name] = attr.value;
-    }
+
+  as_string(or: string): string;
+  as_string(or?: string): string | undefined;
+  as_string(or?: string): string | undefined {
+    if ('string' != this.type) return or;
+    return this.attr('value') ?? this.text;
+  }
+  as_number(or: number): number;
+  as_number(or?: number): number | undefined;
+  as_number(or?: number): number | undefined {
+    if ('number' != this.type) return or;
+    const txt = this.as_string();
+    const ret = Number(txt);
+    if (isNaN(ret)) return or;
+    return ret;
+  }
+  as_boolean(or: boolean): boolean;
+  as_boolean(or?: boolean): boolean | undefined;
+  as_boolean(or?: boolean): boolean | undefined {
+    if ('boolean' != this.type) return or;
+    const txt = this.as_string()?.toLowerCase();
+    if (txt === '1' || txt === 'true') return true;
+    if (txt === '0' || txt === 'false') return false;
+    return or;
+  }
+  as_array(or: any[]): any[];
+  as_array(or?: any[]): any[] | undefined;
+  as_array(or?: any[]): any[] | undefined {
+    if ('array' != this.type) return or;
+    const ret: any[] = [];
+    for (const child of this.children) ret.push(child.value());
+    return ret;
+  }
+
+  as_object(or: object): object;
+  as_object(or?: object): object | undefined;  
+  as_object(or?: object): object | undefined {
+    const ret: Record<string, any> = {};
+    for (const attr of this.attrs)
+      ret[attr.name] = attr.value;
     for (const child of this.children) {
-      if (!is_value_child(child)) continue;
-      const key = child.attr('name');
-      if (key) obj[key] = child.value();
+      const key = child.attr('name') || child.tag;
+      if (key) ret[key] = child.value();
     }
-    return obj;
+    return ret.keys(ret).length ? ret : or;
   }
 
   action_str(): string {
@@ -161,18 +164,13 @@ export class XMLElement implements IXMLElement {
     return this.text;
   }
 
+  /**
+   * 将当前元素及其子元素序列化为 XML 字符串
+   * @return {string}
+   * @memberof XMLElement
+   */
   stringify(): string {
-    const tag = this.tagName;
-    const attrStr = this.attrs
-      .map(a => ` ${a.name}="${escAttr(a.value)}"`)
-      .join('');
-    if (!this.children.length && !this.text) {
-      return `<${tag}${attrStr} />`;
-    }
-    const childrenStr = this.text
-      ? escText(this.text)
-      : this.children.map(c => c.stringify()).join('');
-    return `<${tag}${attrStr}>${childrenStr}</${tag}>`;
+    return this.inner.outerHTML;
   }
 
   insert(child: XMLElement, index?: number): void {
@@ -229,11 +227,11 @@ export class XMLElement implements IXMLElement {
   }
 
   children_by_tag(tag: string): XMLElement[] {
-    return this.children.filter(c => c.tagName === tag);
+    return this.children.filter(c => c.tag === tag);
   }
 
   first_by_tag(tag: string): XMLElement | undefined {
-    return this.children.find(c => c.tagName === tag);
+    return this.children.find(c => c.tag === tag);
   }
 
   get children(): XMLElement[] {

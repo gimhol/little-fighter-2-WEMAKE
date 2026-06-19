@@ -1,12 +1,11 @@
 import type { IItrInfo } from "../../defines/IItrInfo";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 import { xml_from_next_frame } from "./xml_from_next_frame";
 
 /**
  * 序列化 <itr>
  */
-export function xml_from_itr_info(xml: IXMLFactory, i: IItrInfo, tag: string = "itr"): IXMLElement {
+export function xml_from_itr_info(xml: IXML, i: IItrInfo, tag: string = "itr"): IXMLElement {
   const el = xml.create(tag);
   el.set_str_attr("id", i.id);
   el.set_str_attr("name", i.name);

@@ -1,6 +1,5 @@
 import type { IStagePhaseInfo } from "../../defines/IStagePhaseInfo";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 import { xml_from_stage_object_info } from "./xml_from_stage_object_info";
 
 /**
@@ -19,7 +18,7 @@ function write_diff_map(el: IXMLElement, attr: string, map: Record<number, numbe
 /**
  * 序列化 <phase>
  */
-export function xml_from_stage_phase_info(xml: IXMLFactory, p: IStagePhaseInfo): IXMLElement {
+export function xml_from_stage_phase_info(xml: IXML, p: IStagePhaseInfo): IXMLElement {
   const el = xml.create("phase");
 
   el.set_str_attr("title", p.title);

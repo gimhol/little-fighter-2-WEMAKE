@@ -2,7 +2,7 @@ import { frame_info_new, type IFrameInfo } from "../../defines/IFrameInfo";
 import type { IHitKeyCollection } from "../../defines/IHitKeyCollection";
 import type { IHoldKeyCollection } from "../../defines/IHoldKeyCollection";
 import type { IQube } from "../../defines/IQube";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
+import type { IXMLElement } from "../../ditto/xml";
 import { xml_to_bdy_info } from "./xml_to_bdy_info";
 import { xml_to_bpoint } from "./xml_to_bpoint";
 import { xml_to_chase } from "./xml_to_chase";
@@ -13,6 +13,7 @@ import { xml_to_next_frame } from "./xml_to_next_frame";
 import { xml_to_opoint } from "./xml_to_opoint";
 import { xml_to_pic } from "./xml_to_pic";
 import { xml_to_wpoint } from "./xml_to_wpoint";
+import { xml_to_world_dataset } from "./xml_to_world_dataset";
 
 /**
  * 解析快捷属性：rect="x,y,w,h" 或 qube="x,y,w,h" 或 qube="x,y,w,h,z,l"
@@ -177,10 +178,8 @@ export function xml_to_frame_info(el: IXMLElement): IFrameInfo {
   ret.seqs = merge_by_tag(el, "seqs", xml_to_key_collection);
 
   // dataset overrides
-  for (const child of el.children_by_tag("dataset")) {
-    const v = child.values();
-    for (const k of Object.keys(v)) (ret as any)[k] = v[k];
-  }
+  const ds = xml_to_world_dataset(el.first_by_tag("dataset"));
+  for (const k of Object.keys(ds)) (ret as any)[k] = (ds as any)[k];
 
   return ret;
 }

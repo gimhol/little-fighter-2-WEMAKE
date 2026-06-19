@@ -1,8 +1,7 @@
 import type { IHitKeyCollection } from "../../defines/IHitKeyCollection";
 import type { IHoldKeyCollection } from "../../defines/IHoldKeyCollection";
 import type { TNextFrame } from "../../defines/INextFrame";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 import { xml_from_next_frame } from "./xml_from_next_frame";
 
 /**
@@ -13,7 +12,7 @@ import { xml_from_next_frame } from "./xml_from_next_frame";
  */
 function writeKeyMap(
   parent: IXMLElement,
-  xml: IXMLFactory,
+  xml: IXML,
   map: Record<string, TNextFrame | undefined>,
 ): void {
   for (const [key, nf] of Object.entries(map)) {
@@ -31,7 +30,7 @@ function writeKeyMap(
 /**
  * 序列化 <hit>（来自 IHitKeyCollection）
  */
-export function xml_from_hit_key(xml: IXMLFactory, hit: IHitKeyCollection): IXMLElement {
+export function xml_from_hit_key(xml: IXML, hit: IHitKeyCollection): IXMLElement {
   const el = xml.create("hit");
   writeKeyMap(el, xml, hit as Record<string, TNextFrame | undefined>);
   return el;
@@ -40,7 +39,7 @@ export function xml_from_hit_key(xml: IXMLFactory, hit: IHitKeyCollection): IXML
 /**
  * 序列化 <hold>（来自 IHoldKeyCollection）
  */
-export function xml_from_hold_key(xml: IXMLFactory, hold: IHoldKeyCollection): IXMLElement {
+export function xml_from_hold_key(xml: IXML, hold: IHoldKeyCollection): IXMLElement {
   const el = xml.create("hold");
   writeKeyMap(el, xml, hold as Record<string, TNextFrame | undefined>);
   return el;

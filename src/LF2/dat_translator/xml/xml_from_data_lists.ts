@@ -1,6 +1,5 @@
 import type { IDataLists } from "../../defines/IDataLists";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 import { xml_from_dat_index } from "./xml_from_dat_index";
 
 /**
@@ -34,7 +33,7 @@ import { xml_from_dat_index } from "./xml_from_dat_index";
  *   <bot .../>
  * </data>
  */
-export function xml_from_data_lists(xml: IXMLFactory, lists: IDataLists): IXMLElement {
+export function xml_from_data_lists(xml: IXML, lists: IDataLists): IXMLElement {
   const root = xml.create("data");
 
   const groups: [string, IDataLists[keyof IDataLists]][] = [

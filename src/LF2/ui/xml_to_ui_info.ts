@@ -6,7 +6,7 @@ import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
 const ACTION_PLACES = new Set(['click', 'resume', 'pause', 'start', 'stop']);
 
 function parse_action_children(place: IXMLElement): string | string[] {
-  const actions = place.children.filter(c => c.tagName === 'action');
+  const actions = place.children.filter(c => c.tag === 'action');
   if (actions.length) {
     return actions.map(a => a.action_str());
   }
@@ -18,7 +18,7 @@ function parse_action_children(place: IXMLElement): string | string[] {
 }
 
 function parse_component(el: IXMLElement): TComponentInfo {
-  const cls = el.attr('cls') || el.tagName;
+  const cls = el.attr('cls') || el.tag;
   const ret: IComponentInfo = { cls: cls };
   const args = el.attr('args');
   if (args) ret.args = args.split(',').map(s => s.trim());
@@ -28,9 +28,9 @@ function parse_component(el: IXMLElement): TComponentInfo {
   if (weight) ret.weight = Number(weight);
 
   // <properties> 子元素
-  const propsEl = el.children.find(c => c.tagName === 'properties');
+  const propsEl = el.children.find(c => c.tag === 'properties');
   if (propsEl) {
-    ret.properties = propsEl.values();
+    ret.properties = propsEl.as_object();
   }
   return ret;
 }
@@ -79,7 +79,7 @@ export function xml_to_ui_info(el: IXMLElement): IUIInfo {
   const templates: Record<string, IUIInfo> = {};
 
   for (const child of el.children) {
-    const tag = child.tagName;
+    const tag = child.tag;
     switch (tag) {
       case 'node':
       case 'item': {
@@ -93,7 +93,7 @@ export function xml_to_ui_info(el: IXMLElement): IUIInfo {
       }
       case 'values': {
         if (!ret.values) ret.values = {};
-        Object.assign(ret.values, child.values());
+        Object.assign(ret.values, child.as_object());
         break;
       }
       case 'actions': {
@@ -105,15 +105,15 @@ export function xml_to_ui_info(el: IXMLElement): IUIInfo {
         }
         // 子元素形式: 支持多个同标签子元素自动合并为数组
         for (const c of child.children) {
-          if (!ACTION_PLACES.has(c.tagName)) continue;
+          if (!ACTION_PLACES.has(c.tag)) continue;
           const val = parse_action_children(c);
-          const prev = actions[c.tagName];
+          const prev = actions[c.tag];
           if (prev != null) {
-            actions[c.tagName] = Array.isArray(prev)
+            actions[c.tag] = Array.isArray(prev)
               ? prev.concat(val)
               : [prev].concat(val);
           } else {
-            actions[c.tagName] = val;
+            actions[c.tag] = val;
           }
         }
         ret.actions = actions;
@@ -130,7 +130,7 @@ export function xml_to_ui_info(el: IXMLElement): IUIInfo {
         break;
       }
       case 'style': {
-        ret.style = child.values() as IStyle;
+        ret.style = child.as_object() as IStyle;
         // 数值属性转换
         const s = ret.style as any;
         if (child.attr('line_width') != null) s.line_width = Number(child.attr('line_width'));

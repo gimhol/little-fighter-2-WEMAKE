@@ -1,11 +1,10 @@
 import type { IBdyInfo } from "../../defines/IBdyInfo";
-import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import type { IXMLFactory } from "./xml_from_bg_data";
+import type { IXMLElement, IXML } from "../../ditto/xml";
 
 /**
  * 序列化 <bdy>
  */
-export function xml_from_bdy_info(xml: IXMLFactory, b: IBdyInfo, tag: string = "bdy"): IXMLElement {
+export function xml_from_bdy_info(xml: IXML, b: IBdyInfo, tag: string = "bdy"): IXMLElement {
   const el = xml.create(tag);
   el.set_str_attr("id", b.id);
   el.set_str_attr("name", b.name);
