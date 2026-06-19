@@ -1,6 +1,6 @@
 import type { IWorldDataset } from "./IWorldDataset";
 import type { World } from "./World";
-import { Entity } from '../entity/Entity';
+import type { Entity } from './entity/Entity';
 import type { Stage } from "./stage/Stage";
 
 export interface IWorldCallbacks {

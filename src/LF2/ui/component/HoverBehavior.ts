@@ -1,3 +1,4 @@
+import type { IPropsMeta } from '../../utils/schema/make_schema';
 import { UIComponent } from './UIComponent';
 
 export interface IHoverBehaviorProps {

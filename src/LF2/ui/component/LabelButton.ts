@@ -1,7 +1,9 @@
 import { Easing } from '../../animation/Easing';
+import type { IPropsMeta } from '../../utils/schema/make_schema';
+import { UINode } from '../UINode';
 import { Label } from './Label';
 import { UIComponent } from './UIComponent';
-import { UINode } from '../UINode';
+
 export interface ILabelButtonProps {
   back_label?: Label;
   hover_label?: Label;

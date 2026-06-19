@@ -1,9 +1,9 @@
+import { SyncRenderEnum } from "../../defines/SyncRenderEnum";
 import type { ISoundsCallback } from "../../ditto/sounds/ISoundsCallback";
 import type { IWorldCallbacks } from "../../IWorldCallbacks";
-import { round_float } from "../../utils/round_float";
+import { round_float } from "../../utils/math/round_float";
 import { SliderHandle } from "./Slider/SliderHandle";
 import { UIComponent } from "./UIComponent";
-import { SyncRenderEnum } from "../../defines/SyncRenderEnum";
 const render_rate_options = [
   SyncRenderEnum.Half,
   SyncRenderEnum.Sync,

@@ -4,6 +4,8 @@ import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { IUIPointerEvent } from "../IUIPointerEvent";
 import { type IJalousieCallbacks, Jalousie } from "./Jalousie";
 import { UIComponent } from "./UIComponent";
+import type { IPropsMeta } from '../../utils/schema/make_schema';
+
 export interface IEndingPageLogicProps {
   label: Label | undefined;
   jalousie: Jalousie | undefined;

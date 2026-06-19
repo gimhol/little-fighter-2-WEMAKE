@@ -3,7 +3,7 @@ import { Easing } from "../../animation";
 import ease_linearity from "../../utils/ease_method/ease_linearity";
 import { floor } from "../../utils/math/base";
 import { UIComponent } from "./UIComponent";
-import type { IPropsMeta } from '../../stage';
+import type { IPropsMeta } from '../../utils/schema/make_schema';
 export interface IImgLoopProps {
   w: number,
   h: number,

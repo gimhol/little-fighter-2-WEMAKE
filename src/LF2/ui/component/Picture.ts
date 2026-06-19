@@ -1,7 +1,8 @@
-import { type IUIImgInfo } from '../IUIImgInfo.dat';
-import { UIComponent } from './UIComponent';
 import { Ditto } from "../../ditto";
+import { type IPropsMeta } from '../../utils/schema/make_schema';
+import { type IUIImgInfo } from '../IUIImgInfo.dat';
 import { UIImgLoader } from "../UIImgLoader";
+import { UIComponent } from './UIComponent';
 
 export interface IPictureProps {
   width?: number;

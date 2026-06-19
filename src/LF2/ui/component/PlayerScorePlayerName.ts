@@ -1,11 +1,12 @@
 
+import type { IStyle } from '../../defines/IStyle';
+import { TeamEnum } from '../../defines/TeamEnum';
+import { Defines } from '../../defines/defines';
 import { TextInfo } from "../../ditto/image/TextInfo";
-import { UIComponent } from "./UIComponent";
-import { PlayerScore } from "./PlayerScore";
 import { Entity } from '../../entity/Entity';
 import { is_bot_ctrl, is_human_ctrl } from '../../entity/type_check';
-import { type IStyle } from '../../defines/IStyle';
-import { TeamEnum } from '../../defines/defines';
+import { PlayerScore } from "./PlayerScore";
+import { UIComponent } from "./UIComponent";
 
 
 export class PlayerScorePlayerName extends UIComponent {

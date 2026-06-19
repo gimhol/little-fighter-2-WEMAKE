@@ -1,10 +1,12 @@
-import { Label } from './Label';
-import { UINode } from '../UINode';
-import { floor } from '../../utils/math/base';
 import { Sine } from "../../animation/Sine";
+import { floor } from '../../utils/math/base';
+import type { IPropsMeta } from '../../utils/schema/make_schema';
+import { UINode } from '../UINode';
 import { GamePrepareLogic } from "./GamePrepareLogic";
+import { Label } from './Label';
 import { Picture } from "./Picture";
 import { UIComponent } from "./UIComponent";
+
 export interface ICharMenuHeadProps {
   countdown_label?: Label,
   hints_node?: UINode,

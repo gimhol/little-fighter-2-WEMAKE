@@ -1,10 +1,9 @@
-import { TestCase } from '../TestCase';
-import { ActionDirector } from '../ActionDirector';
-import { TeamEnum } from '../../../../defines/defines';
-import { Factory } from '../../../../Factory';
 import { LocalController } from "../../../../controller";
 import { GK, O_ID } from "../../../../defines";
+import { TeamEnum } from '../../../../defines/TeamEnum';
 import { Entity } from "../../../../entity";
+import { ActionDirector } from '../ActionDirector';
+import { TestCase } from '../TestCase';
 
 
 export class BotCome extends TestCase {

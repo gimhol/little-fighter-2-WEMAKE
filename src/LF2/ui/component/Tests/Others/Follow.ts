@@ -1,7 +1,6 @@
 import { TestCase } from '../TestCase';
 import { ActionDirector } from '../ActionDirector';
-import { TeamEnum } from '../../../../defines/defines';
-import { Factory } from '../../../../Factory';
+import { TeamEnum } from '../../../../defines/TeamEnum';
 import { LocalController } from "../../../../controller";
 import { GK, O_ID } from "../../../../defines";
 import { Entity } from "../../../../entity";

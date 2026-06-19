@@ -1,12 +1,13 @@
+import { make_schema, type IPropsMeta } from '../../utils/schema/make_schema';
+import { SchemaValidator } from "../../utils/schema/validate_schema";
 import { is_num } from '../../utils/type_check/is_num';
 import { is_str } from '../../utils/type_check/is_str';
-import { make_schema } from '../../utils/schema/make_schema';
-import { SchemaValidator } from "../../utils/schema/validate_schema";
 import { parse_ui_value } from "../read_info_value";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
 import { isUINodeClass } from "../utils/isUINodeClass";
 import read_nums from "../utils/read_nums";
 import type { UIComponent } from "./UIComponent";
+
 export interface IUIPropsCallback { }
 export class UIProps {
   readonly raw: { [x in string]?: any };

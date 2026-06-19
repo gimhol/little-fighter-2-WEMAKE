@@ -1,6 +1,6 @@
 
-import type { CtrlDevice } from '../defines/CtrlDevice';
-import type { GameKey } from '../defines/GameKey';
+import type { CtrlDevice } from './defines/CtrlDevice';
+import type { GameKey } from './defines/GameKey';
 import type { PlayerInfo } from "./PlayerInfo";
 
 export interface IPlayerInfoCallback {
