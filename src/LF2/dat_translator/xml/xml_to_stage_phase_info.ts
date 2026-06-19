@@ -1,24 +1,8 @@
-import type { Difficulty } from "../../defines/Difficulty";
 import type { IStagePhaseInfo } from "../../defines/IStagePhaseInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
+import { parse_diff_map } from "./diff_map_utils";
+import { xml_to_dialog_info } from "./xml_to_dialog_info";
 import { xml_to_stage_object_info } from "./xml_to_stage_object_info";
-
-function parse_diff_map(el: IXMLElement, attr: string): { [x in Difficulty]?: number } | undefined {
-  const v = el.strs_attr(attr, ",");
-  if (!v) {
-    const num = el.num_attr(attr);
-    return num !== void 0 ? { 1: num, 2: num, 3: num, 4: num } : void 0;
-  }
-  const ret: Record<number, number> = {};
-  for (const pair of v) {
-    const [d, n] = pair.split(":").map(s => s.trim());
-    if (d && n) {
-      const dn = Number(d);
-      if (!isNaN(dn)) ret[dn] = Number(n);
-    }
-  }
-  return Object.keys(ret).length ? ret : void 0;
-}
 
 /**
  * 解析 <phase> → IStagePhaseInfo
@@ -43,11 +27,40 @@ export function xml_to_stage_phase_info(el: IXMLElement): IStagePhaseInfo {
   ret.cam_jump_to_x = el.num_attr("cam_jump_to_x");
   ret.player_jump_to_x = el.num_attr("player_jump_to_x");
   ret.player_jump_to_z = el.num_attr("player_jump_to_z");
+  ret.player_facing = el.num_attr("player_facing") as (1 | -1) | undefined;
+
+  ret.end_test = el.strs_attr("end_test");
+  ret.on_start = el.strs_attr("on_start");
+  ret.on_end = el.strs_attr("on_end");
+  ret.hide_stats = el.num_attr("hide_stats");
+  ret.world_pause = el.num_attr("world_pause");
+  ret.control_disabled = el.num_attr("control_disabled");
+  ret.weapon_rain_disabled = el.num_attr("weapon_rain_disabled");
+
+  // sounds
+  const soundsEl = el.first_by_tag("sounds");
+  if (soundsEl) {
+    const soundEls = soundsEl.children_by_tag("sound");
+    if (soundEls.length) {
+      ret.sounds = soundEls.map(s => ({
+        path: s.str_attr("path") ?? "",
+        x: s.num_attr("x"),
+        y: s.num_attr("y"),
+        z: s.num_attr("z"),
+      }));
+    }
+  }
 
   // objects
   const objs = el.children_by_tag("object");
   if (objs.length) {
     ret.objects = objs.map(o => xml_to_stage_object_info(o));
+  }
+
+  // dialogs
+  const dialogEls = el.children_by_tag("dialog");
+  if (dialogEls.length) {
+    ret.dialogs = dialogEls.map(d => xml_to_dialog_info(d));
   }
 
   // difficulty maps

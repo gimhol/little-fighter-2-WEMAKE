@@ -34,9 +34,9 @@
 | | | drink → `<drink>` | ✅ | ✅ | 子函数 |
 | | | armor → `<armor>` | ✅ | ✅ | 子函数 |
 | | | brokens → `<opoint>` | ✅ | ✅ | IOpointInfo[] |
-| | | models | ❌ | ❌ | IModelInfo 待实现 |
+| | | models | ✅ | ✅ | |
 | | | bot | — | — | 运行时 |
-| | | dataset (IWorldDataset) | ❌ | ✅ `<dataset>` | 写入待实现 |
+| | | dataset (IWorldDataset) | ✅ | ✅ | xml_from/to_world_dataset |
 | `IEntityData` | `xml_from/to_entity_data` | id, base | ✅ | ✅ | 复用 IEntityInfo |
 | | | frames → `<frame>` | ✅ | ✅ | 复用 IFrameInfo |
 | | | on_dead, on_exhaustion → `<on_dead>` `<on_exhaustion>` | ✅ | ✅ | TNextFrame, 支持数组 |
@@ -169,12 +169,12 @@
 | | | cam_jump_to_x, player_jump_to_x/z | ✅ | ✅ | |
 | | | respawn, respawn_r, respawn_x, health_up, mp_up | ✅ | ✅ | diff_map 格式 |
 | | | objects → `<object>` | ✅ | ✅ | 复用 IStageObjectInfo |
-| | | sounds | ❌ | ❌ | 待实现 |
-| | | end_test | ❌ | ❌ | 待实现 |
-| | | on_start, on_end | ❌ | ❌ | 待实现 |
-| | | dialogs | ❌ | ❌ | IDialogInfo 待实现 |
-| | | hide_stats, world_pause, control_disabled, weapon_rain_disabled | ❌ | ❌ | 待实现 |
-| | | player_facing | ❌ | ❌ | 待实现 |
+| | | sounds | ✅ | ✅ | |
+| | | end_test | ✅ | ✅ | |
+| | | on_start, on_end | ✅ | ✅ | |
+| | | dialogs | ✅ | ✅ | |
+| | | hide_stats, world_pause, control_disabled, weapon_rain_disabled | ✅ | ✅ | |
+| | | player_facing | ✅ | ✅ | |
 | | | end_testers | — | — | 运行时 |
 | `IStageObjectInfo` | `xml_from/to_stage_object_info` | id, x | ✅ | ✅ | |
 | | | y, z, act, facing | ✅ | ✅ | |
@@ -182,8 +182,8 @@
 | | | times, ratio | ✅ | ✅ | |
 | | | is_boss, is_soldier (bool) | ✅ | ✅ | |
 | | | reserve, join, join_team, outline_color | ✅ | ✅ | |
-| | | id_method | ❌ | ❌ | TODO |
-| | | hp_map, mp_map | ❌ | ❌ | diff_map 待实现 |
+| | | id_method | ✅ | ✅ | |
+| | | hp_map, mp_map | ✅ | ✅ | diff_map |
 
 ---
 
@@ -192,4 +192,4 @@
 - ✅ = 读写齐全
 - ❌ = 缺失（需补全）
 - — = 运行时字段，不参与序列化
-- *(soft)* = 使用 `xxx_attr_soft` 简写格式（尾部 void 自动裁剪）
+- _(soft)_ = 使用 `xxx_attr_soft` 简写格式（尾部 void 自动裁剪）

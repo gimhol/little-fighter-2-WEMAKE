@@ -1,5 +1,6 @@
 import type { IStageObjectInfo } from "../../defines/IStageObjectInfo";
 import type { IXMLElement, IXML } from "../../ditto/xml";
+import { write_diff_map } from "./diff_map_utils";
 
 /**
  * 序列化 <object>（关卡物件）
@@ -8,6 +9,7 @@ export function xml_from_stage_object_info(xml: IXML, o: IStageObjectInfo): IXML
   const el = xml.create("object");
 
   el.set_strs_attr("id", o.id);
+  el.set_str_attr("id_method", o.id_method);
   el.set_num_attr("x", o.x);
   el.set_num_attr("y", o.y);
   el.set_num_attr("z", o.z);
@@ -15,6 +17,8 @@ export function xml_from_stage_object_info(xml: IXML, o: IStageObjectInfo): IXML
   el.set_num_attr("facing", o.facing as number);
   el.set_num_attr("hp", o.hp);
   el.set_num_attr("mp", o.mp);
+  write_diff_map(el, "hp", o.hp_map as Record<number, number>);
+  write_diff_map(el, "mp", o.mp_map as Record<number, number>);
   el.set_num_attr("times", o.times);
   el.set_num_attr("ratio", o.ratio);
   el.set_bool_attr("is_boss", o.is_boss);

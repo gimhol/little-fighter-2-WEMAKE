@@ -1,12 +1,19 @@
 import { Difficulty } from "./Difficulty";
 
 export interface IStageObjectInfo {
+  /** 物件ID的生成方式（TODO: 待实现） */
   id_method?: string; // TODO
+  /** 物件类型ID列表，可为具体角色/物品ID或随机组ID */
   id: string[];
+  /** 生成位置的X坐标（水平） */
   x: number;
+  /** 生成位置的Y坐标（垂直） */
   y?: number;
+  /** 生成位置的Z坐标（深度） */
   z?: number;
+  /** 生成时的初始动作 */
   act?: string;
+  /** 生成时的朝向：-1为左，1为右 */
   facing?: -1 | 1;
   /** 血量 */
   hp?: number;
@@ -42,9 +49,17 @@ export interface IStageObjectInfo {
    * @memberof IStageObjectInfo
    */
   times?: number;
+  /**
+   * 生成比例系数。
+   * 最终生成数量 = ceil(玩家数量 × 难度系数 × ratio)。
+   * 未设置时默认生成1个。
+   */
   ratio?: number;
-  is_boss?: true;
-  is_soldier?: true;
+  /** 是否为Boss，Boss存在时士兵可无限重生 */
+  is_boss?: boolean;
+  /** 是否为士兵，士兵在Boss存活时可无限重生 */
+  is_soldier?: boolean;
+  /** 备用数量，显示为 xN 标识 */
   reserve?: number;
 
   /**
@@ -54,6 +69,8 @@ export interface IStageObjectInfo {
    * @type {?number}
    */
   join?: number;
+  /** 归降后加入的队伍，默认为Team_1 */
   join_team?: string;
+  /** 自定义描边颜色，如 '#FF0000'。未设置时使用队伍默认颜色 */
   outline_color?: string;
 }

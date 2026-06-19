@@ -62,6 +62,20 @@ export function xml_from_entity_info(xml: IXML, info: IEntityInfo, tag: string =
   if (info.armor) {
     el.insert(xml_from_armor_info(xml, info.armor));
   }
+  if (info.models && Object.keys(info.models).length) {
+    const modelsEl = xml.create("models");
+    for (const [name, m] of Object.entries(info.models)) {
+      const mEl = xml.create("model");
+      mEl.set_str_attr("name", name);
+      mEl.set_str_attr("id", m.id);
+      mEl.set_str_attr("path", m.path);
+      mEl.set_strs_attr("variants", m.variants);
+      if (m.scale) mEl.set_nums_attr_soft("scale", [m.scale.x, m.scale.y, m.scale.z]);
+      if (m.quaternion) mEl.set_nums_attr_soft("quaternion", [m.quaternion.x, m.quaternion.y, m.quaternion.z, m.quaternion.w]);
+      modelsEl.insert(mEl);
+    }
+    el.insert(modelsEl);
+  }
   if (info.brokens?.length) {
     for (const broken of info.brokens) {
       el.insert(xml_from_opoint(xml, broken));

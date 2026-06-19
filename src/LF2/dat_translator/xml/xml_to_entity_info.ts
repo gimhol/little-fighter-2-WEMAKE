@@ -95,6 +95,26 @@ export function xml_to_entity_info(el: IXMLElement): IEntityInfo {
   const armorEl = el.first_by_tag("armor");
   if (armorEl) ret.armor = xml_to_armor_info(armorEl);
 
+  // models
+  const modelsEl = el.first_by_tag("models");
+  if (modelsEl) {
+    const models: Record<string, any> = {};
+    for (const m of modelsEl.children_by_tag("model")) {
+      const name = m.str_attr("name") ?? m.str_attr("id") ?? "";
+      const model: any = {
+        id: m.str_attr("id") ?? name,
+        path: m.str_attr("path") ?? "",
+        variants: m.strs_attr("variants"),
+      };
+      const scale = m.nums_attr_soft("scale");
+      if (scale?.some(v => v !== void 0)) model.scale = { x: scale[0], y: scale[1], z: scale[2] };
+      const quat = m.nums_attr_soft("quaternion");
+      if (quat?.some(v => v !== void 0)) model.quaternion = { x: quat[0], y: quat[1], z: quat[2], w: quat[3] };
+      models[name] = model;
+    }
+    if (Object.keys(models).length) ret.models = models as any;
+  }
+
   // brokens (<opoint> children)
   const opointEls = el.children_by_tag("opoint");
   if (opointEls.length) {
