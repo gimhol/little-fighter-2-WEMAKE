@@ -1,6 +1,6 @@
-import { ActionType, ArmorEnum, EntityVal, HitFlag, IAction_VBuff, type IEntityData } from "../../defines";
+import { ActionType, ArmorEnum, EntityVal, HitFlag, type IAction_VBuff, type IEntityData } from "../../defines";
+import { traversal } from "../../utils";
 import { CondMaker } from "../CondMaker";
-import { ensure, traversal } from "../../utils";
 
 /**
  *

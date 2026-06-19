@@ -1,5 +1,5 @@
 import {
-  BotStateEnum, BotVal, Defines, EntityVal, GK, IBotAction
+  BotStateEnum, BotVal, Defines, EntityVal, GK, type IBotAction
 } from "../../defines";
 import { pow } from "../../utils";
 import { CondMaker } from "../CondMaker";

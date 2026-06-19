@@ -1,5 +1,4 @@
-import { ArmorEnum, BotVal, OID, Defines, EntityGroup, EntityVal, GK, type IEntityData, OID, StateEnum } from "../../defines";
-import { ensure } from "../../utils";
+import { BotVal, Defines, EntityVal, GK, OID, StateEnum } from "../../defines";
 import { CondMaker } from "../CondMaker";
 import { bot_ball_dfj } from "./bot_ball_dfj";
 import { bot_chasing_action } from "./bot_chasing_action";
