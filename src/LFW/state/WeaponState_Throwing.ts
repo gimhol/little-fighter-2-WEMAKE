@@ -1,6 +1,6 @@
 import type { IFrameInfo, IVector3 } from "../defines";
 import type { Entity } from "../entity/Entity";
-import WeaponState_Base from "./WeaponState_Base";
+import { WeaponState_Base } from "./WeaponState_Base";
 
 export class WeaponState_Throwing extends WeaponState_Base {
   override get_gravity(e: Entity) {

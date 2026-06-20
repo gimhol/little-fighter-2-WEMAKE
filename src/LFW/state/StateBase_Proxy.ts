@@ -1,10 +1,10 @@
 import type { IFrameInfo, INextFrame, IVector3 } from "../defines";
 import { Entity } from "../entity/Entity";
 import { is_ball, is_fighter, is_weapon } from "../entity/type_check";
-import BallState_Base from "./BallState_Base";
-import CharacterState_Base from "./CharacterState_Base";
-import State_Base from "./State_Base";
-import WeaponState_Base from "./WeaponState_Base";
+import { BallState_Base } from "./BallState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
+import { State_Base } from "./State_Base";
+import { WeaponState_Base } from "./WeaponState_Base";
 
 export class StateBase_Proxy extends State_Base implements Required<State_Base> {
   character_proxy: CharacterState_Base;

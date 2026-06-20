@@ -1,6 +1,6 @@
 import { type IFrameInfo, type INextFrame, type IVector3, StateEnum, WeaponType } from "../defines";
 import type { Entity } from "../entity/Entity";
-import State_Base from "./State_Base";
+import { State_Base } from "./State_Base";
 
 export class CharacterState_Base extends State_Base {
   override pre_update(e: Entity): void {
@@ -24,7 +24,7 @@ export class CharacterState_Base extends State_Base {
     if (on_landing) {
       e.enter_frame(on_landing);
       return;
-    } 
+    }
     e.enter_frame_by_id(e.data.indexes?.landing_2);
   }
   override get_auto_frame(e: Entity): IFrameInfo | undefined {
