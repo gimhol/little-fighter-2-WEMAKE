@@ -55,7 +55,7 @@ class Inner {
   randomings = new Map<string, Randoming<IEntityData>>();
   bg_randomings = new Map<string, Randoming<IBgData>>();
 
-  get lf2() {
+  get lfw() {
     return this.mgr.lfw;
   }
 
@@ -66,7 +66,7 @@ class Inner {
 
   private async _cook_data(data: IBaseData): Promise<IBaseData> {
     const jobs: Promise<any>[] = [];
-    if (is_bg_data(data)) data = preprocess_bg_data(this.lf2, data, jobs)
+    if (is_bg_data(data)) data = preprocess_bg_data(this.lfw, data, jobs)
     if (is_ball_data(data))
       Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
     else if (is_weapon_data(data))
@@ -75,7 +75,7 @@ class Inner {
       Factory.register_ctrl(data.id, (a, b) => new BotController(a, b));
     if (is_entity_data(data)) {
       data.base.bot = data.base.bot ?? this.bot_map.get(data.id ?? data.base.bot_id)
-      data = await preprocess_entity_data(this.lf2, data, jobs);
+      data = await preprocess_entity_data(this.lfw, data, jobs);
     }
     return data;
   }
@@ -124,22 +124,22 @@ class Inner {
     for (const k of Object.keys(Defines.BuiltIn_Imgs)) {
       const src = (Defines.BuiltIn_Imgs as any)[k];
       if (!is_non_blank_str(src)) continue;
-      this.lf2.emit_progress(`${src}`, 0);
-      await this.lf2.images.load_img(src, src);
+      this.lfw.emit_progress(`${src}`, 0);
+      await this.lfw.images.load_img(src, src);
     }
     for (const k of Object.keys(Defines.BuiltIn_Dats)) {
       const src = (Defines.BuiltIn_Dats as any)[k];
       if (!is_non_blank_str(src)) continue;
-      this.lf2.emit_progress(`${src}`, 0);
-      const raw = await this.lf2.import_json<IBaseData>(src).then(r => r[0])
+      this.lfw.emit_progress(`${src}`, 0);
+      const raw = await this.lfw.import_json<IBaseData>(src).then(r => r[0])
       const cooked = await this._cook_data(raw) as IEntityData;
       this._add_obj(src, cooked);
     }
     const data: IDataLists = { objects: [], backgrounds: [], stages: [], bots: [] }
     for (const file of index_files) {
       const partial: Partial<IDataLists> = file.endsWith(".xml")
-        ? xml_to_data_lists((await this.lf2.import_xml(file, true))[0])
-        : await this.lf2.import_json<Partial<IDataLists>>(file, true)
+        ? xml_to_data_lists((await this.lfw.import_xml(file, true))[0])
+        : await this.lfw.import_json<Partial<IDataLists>>(file, true)
           .then(r => r[0]).catch(e => { Ditto.warn(`FAIL TO LOAD DAT INDEX ${file}, ` + e); return {} as Partial<IDataLists> });
       const { objects = [], backgrounds = [], stages = [], bots = [] } = partial;
       data.objects.push(...objects)
@@ -151,8 +151,8 @@ class Inner {
     if (this.cancelled) throw new Error("cancelled");
     for (const { id, file, skipped} of data.bots) {
       if(skipped) continue;
-      this.lf2.emit_progress(`${file}`, 0);
-      const raw = await this.lf2.import_json<IBotData>(file, true)
+      this.lfw.emit_progress(`${file}`, 0);
+      const raw = await this.lfw.import_json<IBotData>(file, true)
         .then(r => {
           return r[0]
         }).catch(e => {
@@ -172,10 +172,10 @@ class Inner {
       if(skipped) continue;
       if (this.cancelled) throw new Error("cancelled");
       try {
-        this.lf2.emit_progress(`${file}`, 0);
+        this.lfw.emit_progress(`${file}`, 0);
         const raw = file.endsWith(".obj.xml") || file.endsWith(".xml")
-          ? xml_to_entity_data((await this.lf2.import_xml(file, true))[0])
-          : await this.lf2.import_json<IEntityData>(file, true).then(r => r[0]);
+          ? xml_to_entity_data((await this.lfw.import_xml(file, true))[0])
+          : await this.lfw.import_json<IEntityData>(file, true).then(r => r[0]);
         const cooked = await this._cook_data(raw) as IEntityData;
         this._add_obj(id, cooked);
         if (id != file) this._add_obj(file, cooked);
@@ -189,10 +189,10 @@ class Inner {
       if(skipped) continue;
       if (this.cancelled) throw new Error("cancelled");
       try {
-        this.lf2.emit_progress(`${file}`, 0);
+        this.lfw.emit_progress(`${file}`, 0);
         const raw = file.endsWith(".bg.xml")
-          ? xml_to_bg_data((await this.lf2.import_xml(file, true))[0])
-          : await this.lf2.import_json(file, true).then(r => r[0]);
+          ? xml_to_bg_data((await this.lfw.import_xml(file, true))[0])
+          : await this.lfw.import_json(file, true).then(r => r[0]);
         const cooked = await this._cook_data(raw) as IBgData;
         this._add_bg(cooked)
       } catch (e) {
@@ -202,13 +202,13 @@ class Inner {
     const stages: IStageInfo[] = []
     for (const stage_file of data.stages) {
         if(stage_file.skipped) continue;
-      this.lf2.emit_progress(`${stage_file.file}`, 0);
+      this.lfw.emit_progress(`${stage_file.file}`, 0);
       const stage_datas = stage_file.file.endsWith(".xml") || stage_file.file.endsWith(".stage.xml")
-        ? xml_to_stage_info_list((await this.lf2.import_xml(stage_file.file, true))[0])
-        : await this.lf2.import_json<IStageInfo[]>(stage_file.file, true)
+        ? xml_to_stage_info_list((await this.lfw.import_xml(stage_file.file, true))[0])
+        : await this.lfw.import_json<IStageInfo[]>(stage_file.file, true)
           .then(r => r[0])
           .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
-      this.lf2.emit_progress(`${stage_file.file}`, 100);
+      this.lfw.emit_progress(`${stage_file.file}`, 100);
       for (const stage of stage_datas) {
         stages.push(preprocess_stage(stage))
       }
