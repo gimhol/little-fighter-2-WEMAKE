@@ -46,7 +46,7 @@ export class EntityStatRender implements IEntityCallbacks {
     this.owner = owner;
     const entity = this.entity = owner.entity;
     this.world_renderer = owner.owner;
-    const { lf2 } = owner.entity.world;
+    const { lfw: lf2 } = owner.entity.world;
     this.bars_bg = new Bar(lf2, "rgb(0,0,0)", BAR_BG_W, BAR_BG_H, 0.5, 0);
     this.self_healing_hp_bar = new Bar(
       lf2,
@@ -162,7 +162,7 @@ export class EntityStatRender implements IEntityCallbacks {
       }
       return;
     }
-    const { lf2, team } = e;
+    const { lfw: lf2, team } = e;
     const mesh = this.reserve_mesh;
     mesh.set_text(lf2, `x${reserve}`)
     mesh.visible = true;

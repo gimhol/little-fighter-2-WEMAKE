@@ -5,7 +5,7 @@ export default class State_TransformTo8XXX extends State_Base {
   override leave(e: Entity): void {
     if (typeof this.state !== "number") return;
     const oid = "" + (this.state - 8000);
-    const data = e.lf2.datas.find(oid);
+    const data = e.lfw.datas.find(oid);
     const old_data = e.data
     if (data) e.transform(data);
     e.enter_frame(e.find_auto_frame());

@@ -52,7 +52,7 @@ export function handle_armor(collision: Collision): boolean {
     SparkEnum.SilentHit;
   victim.world.spark(x, y, z, spark_type);
   const sounds = victim.toughness > 0 ? hit_sounds : dead_sounds;
-  if (sounds) for (const s of sounds) victim.lf2.sounds.play(s, x, y, z);
+  if (sounds) for (const s of sounds) victim.lfw.sounds.play(s, x, y, z);
   const {
     shaking = victim.world.itr_shaking,
     motionless = victim.itr_motionless

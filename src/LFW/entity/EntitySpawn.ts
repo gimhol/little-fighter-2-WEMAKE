@@ -205,11 +205,11 @@ export function apply_opoints(this: Entity, opoints: IOpointInfo[]): void {
       switch (opoint.spreading) {
         case OpointSpreading.FloatRange: {
           const { x, y, z } = e.velocity;
-          this.lf2.mt.mark = "ao_x";
+          this.lfw.mt.mark = "ao_x";
           const xx = opoint.__spreading_random_x?.take() ?? x;
-          this.lf2.mt.mark = "ao_y";
+          this.lfw.mt.mark = "ao_y";
           const yy = opoint.__spreading_random_y?.take() ?? y;
-          this.lf2.mt.mark = "ao_z";
+          this.lfw.mt.mark = "ao_z";
           const zz = opoint.__spreading_random_z?.take() ?? z;
           e.set_velocity(xx, yy, zz);
           break;
@@ -246,8 +246,8 @@ export function spawn_entity(
   facing: TFace = this.facing,
 ): Entity | undefined {
   if (opoint.unimportant && this.world.entities.length > 355) return void 0;
-  this.lf2.mt.mark = "se_1";
-  const oid = this.lf2.mt.pick(opoint.oid);
+  this.lfw.mt.mark = "se_1";
+  const oid = this.lfw.mt.pick(opoint.oid);
   if (!oid) {
     Ditto.warn(
       `[Entity::spawn_object] failed, oid: ${oid}, opoint: `,
@@ -255,7 +255,7 @@ export function spawn_entity(
     );
     return;
   }
-  const data = this.lf2.datas.find(oid);
+  const data = this.lfw.datas.find(oid);
   if (!data) {
     Ditto.warn(
       `[Entity::spawn_object] failed, oid: ${oid}, data: `,
@@ -266,7 +266,7 @@ export function spawn_entity(
     debugger;
     return;
   }
-  const entity = this.lf2.factory.create_entity(this.world, data);
+  const entity = this.lfw.factory.create_entity(this.world, data);
   if (!entity) {
     Ditto.warn(
       `[Entity::spawn_object] failed, oid: ${oid}, data: `,
@@ -278,7 +278,7 @@ export function spawn_entity(
     return;
   }
   entity.ctrl =
-    this.lf2.factory.create_ctrl(entity._data.id, "", entity) ?? entity.ctrl;
+    this.lfw.factory.create_ctrl(entity._data.id, "", entity) ?? entity.ctrl;
   entity
     .on_spawn(this, opoint, offset_velocity, facing)
     .attach(opoint.is_entity);

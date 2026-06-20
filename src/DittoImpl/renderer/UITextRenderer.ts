@@ -122,7 +122,7 @@ export class UITextRenderer {
     }
 
     // 通过 lf2.string() 解析 i18n 文本
-    const text = this.ui.lf2.string(txt.text);
+    const text = this.ui.lfw.string(txt.text);
     if (!text) {
       if (this._last_baked === '') return false;
       this._last_baked = '';

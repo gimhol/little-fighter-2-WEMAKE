@@ -16,7 +16,7 @@ export class CharMenuState_CountingDown extends CharMenuState_Base {
   override on_key_down(e: IUIKeyEvent): void {
     this._count_down = max(0, this._count_down - 500);
     if (this.owner.max_player <= this.owner.players.size) return;
-    const player = this.lf2.players.get(e.player);
+    const player = this.lfw.players.get(e.player);
     if (!player || e.game_key !== GameKey.a || this.owner.players.has(player)) return;
     this.owner.press_a(player);
     this.owner.fsm.use(CharMenuState.PlayerSel);

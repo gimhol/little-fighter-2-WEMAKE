@@ -4,9 +4,9 @@ import { LFW } from "./LFW";
 import { World } from "./World";
 
 export class Keys {
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   readonly world: World;
-  get time() { return this.lf2.world.lifetime; }
+  get time() { return this.lfw.world.lifetime; }
   readonly [GK.L] = new KeyStatus(this);
   readonly [GK.R] = new KeyStatus(this);
   readonly [GK.U] = new KeyStatus(this);
@@ -14,14 +14,14 @@ export class Keys {
   readonly [GK.a] = new KeyStatus(this);
   readonly [GK.j] = new KeyStatus(this);
   readonly [GK.d] = new KeyStatus(this);
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
-    this.world = lf2.world;
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
+    this.world = lfw.world;
   }
   mount(): void {
-    this.lf2.regist_keys(this);
+    this.lfw.regist_keys(this);
   }
   unmount(): void {
-    this.lf2.recycle_keys(this);
+    this.lfw.recycle_keys(this);
   }
 }

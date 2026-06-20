@@ -154,17 +154,17 @@ export class __Modern extends BaseSounds {
 
   override load(name: string, src: string): Promise<AudioBuffer> {
     return this._r.fetch(name, async () => {
-      this.lf2.emit_progress(`${name}`, 0);
-      const [dat, , origin] = await this.lf2.import_array_buffer(src, false);
+      this.lfw.emit_progress(`${name}`, 0);
+      const [dat, , origin] = await this.lfw.import_array_buffer(src, false);
       const buf = this.ctx.decodeAudioData(dat);
-      this.lf2.emit_progress(`${name}`, 100);
+      this.lfw.emit_progress(`${name}`, 100);
       if (origin) this.set_origin(name, origin)
       return buf;
     });
   }
   constructor(lf2: LFW) {
     super(lf2);
-    this._bgms = new Randoming(this.lf2.bgms, this.lf2)
+    this._bgms = new Randoming(this.lfw.bgms, this.lfw)
   }
   private _stop_bgm(): void {
     if (!this._bgm_node) return;
@@ -186,7 +186,7 @@ export class __Modern extends BaseSounds {
 
     const prev = this.bgm();
     const real_name = name === '?' ?
-      this._bgms.set_src(this.lf2.bgms).take() :
+      this._bgms.set_src(this.lfw.bgms).take() :
       name;
     this._stop_bgm();
     this._bgm_name = real_name;
@@ -218,7 +218,7 @@ export class __Modern extends BaseSounds {
       this.apply_bgm_volume();
     };
     do {
-      const { file, origin } = this.lf2.find_from_zips([real_name], false).at(0) || {}
+      const { file, origin } = this.lfw.find_from_zips([real_name], false).at(0) || {}
       // 非本地存在资源，说明来自网络，不必重载
       if (!file || !origin) break;
 
@@ -238,10 +238,10 @@ export class __Modern extends BaseSounds {
   }
 
   protected get_l_r_vol(x?: number): [number, number, number] {
-    const scale = (this.lf2.world.renderer as WorldRenderer).world_node.scale.x
+    const scale = (this.lfw.world.renderer as WorldRenderer).world_node.scale.x
     const full_w = Defines.CLASSIC_SCREEN_WIDTH / scale
     const half_w = full_w / 2;
-    const viewer_x = this.lf2.world.current_cam_pos.x + half_w;
+    const viewer_x = this.lfw.world.current_cam_pos.x + half_w;
     const sound_x = x ?? viewer_x;
     const playings = this._playings.size + 1;
     const attenuation = 1 / Math.sqrt(playings);

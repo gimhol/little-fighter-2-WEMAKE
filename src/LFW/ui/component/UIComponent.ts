@@ -56,8 +56,8 @@ export class UIComponent<
 
   id: string = '';
   name: string = ''
-  get lf2() { return this.node.lf2; }
-  get world() { return this.node.lf2.world; }
+  get lf2() { return this.node.lfw; }
+  get world() { return this.node.lfw.world; }
   mounted: boolean = false;
 
   private _enabled: boolean = true;

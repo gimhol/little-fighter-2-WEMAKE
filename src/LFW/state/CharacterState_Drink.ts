@@ -28,9 +28,9 @@ export class CharacterState_Drink extends CharacterState_Base {
     }
     if (hp_h_empty && hp_r_empty && mp_h_empty) {
       holding.hp = holding.hp_r = 1;
-      holding.lf2.mt.mark = 'cs_d_1'
-      holding.enter_frame_by_id(holding.lf2.mt.pick(holding.data.indexes?.in_the_skys));
-      const vx = holding.lf2.mt.range(-6, 6) / 2;
+      holding.lfw.mt.mark = 'cs_d_1'
+      holding.enter_frame_by_id(holding.lfw.mt.pick(holding.data.indexes?.in_the_skys));
+      const vx = holding.lfw.mt.range(-6, 6) / 2;
       const vy = 6;
       holding.set_velocity(vx, vy, 0);
       holding.bearer = null;

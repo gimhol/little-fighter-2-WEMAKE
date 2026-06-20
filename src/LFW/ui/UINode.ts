@@ -20,7 +20,7 @@ export class UINode implements IDebugging {
   debug!: (_0: string, ..._1: any[]) => void;
   warn!: (_0: string, ..._1: any[]) => void;
   log!: (_0: string, ..._1: any[]) => void;
-  readonly lf2: LFW;
+  readonly lfw: LFW;
 
   /**
    * 原始UI数据
@@ -344,8 +344,8 @@ export class UINode implements IDebugging {
 
   renderer: IUINodeRenderer;
 
-  constructor(lf2: LFW, data: ICookedUIInfo, parent?: UINode) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW, data: ICookedUIInfo, parent?: UINode) {
+    this.lfw = lfw;
     this.data = Object.freeze(data);
     this._parent = parent;
     this._root = parent?.root ?? this;
@@ -498,18 +498,18 @@ export class UINode implements IDebugging {
     this.renderer.on_hide?.();
   }
 
-  static create(lf2: LFW, info: ICookedUIInfo, parent?: UINode): UINode {
-    const ret = new UINode(lf2, info, parent);
+  static create(lfw: LFW, info: ICookedUIInfo, parent?: UINode): UINode {
+    const ret = new UINode(lfw, info, parent);
     const { component } = ret.data;
     if (component)
-      for (const c of lf2.factory.create_components(ret, component))
+      for (const c of lfw.factory.create_components(ret, component))
         ret._components.push(c);
 
     if (info.items) {
       for (const item_info of info.items) {
         let count = (is_num(item_info.count) && item_info.count > 0) ? item_info.count : 1
         while (count) {
-          const child = UINode.create(lf2, item_info, ret);
+          const child = UINode.create(lfw, item_info, ret);
           ret.add_child(child)
           --count;
         }

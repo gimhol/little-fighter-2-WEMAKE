@@ -28,15 +28,15 @@ export interface ILf2Callback {
 
   on_dispose?(): void;
   on_ui_loaded?(ui_infos: ICookedUIInfo[]): void;
-  on_prel_loaded?(lf2: LFW): void;
+  on_prel_loaded?(lfw: LFW): void;
 
-  on_broadcast?(message: string, lf2: LFW): void;
+  on_broadcast?(message: string, lfw: LFW): void;
 
   on_zips_changed?(zips: IZip[]): void;
 
   on_component_broadcast?(component: UIComponent, message: string): void;
 
-  on_extra_zips_changed?(lf2: LFW): void;
+  on_extra_zips_changed?(lfw: LFW): void;
 
   controller_detected?(p: PlayerInfo): void;
   keyboard_detected?(p: PlayerInfo): void;

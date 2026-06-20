@@ -7,7 +7,7 @@ import { EntitiesHelper } from "./EntitiesHelper";
 export class CharactersHelper extends EntitiesHelper {
   override get all(): Entity[] {
     const ret: Entity[] = [];
-    this.lf2.world.entities.forEach((v) => is_fighter(v) && ret.push(v));
+    this.lfw.world.entities.forEach((v) => is_fighter(v) && ret.push(v));
     return ret;
   }
   override add(
@@ -16,15 +16,15 @@ export class CharactersHelper extends EntitiesHelper {
     team?: string,
   ): Entity[] {
     if (typeof data === "string")
-      data = this.lf2.datas.find_fighter(data);
+      data = this.lfw.datas.find_fighter(data);
     if (!data) return [];
-    return this.lf2.entities.add(data, num, team);
+    return this.lfw.entities.add(data, num, team);
   }
   add_random(num = 1, team?: string, filter?: (e: IEntityData) => boolean): Entity[] {
     const ret: Entity[] = [];
     while (--num >= 0) {
-      const d = this.lf2.mt.pick(
-        this.lf2.datas.fighters.filter(v => {
+      const d = this.lfw.mt.pick(
+        this.lfw.datas.fighters.filter(v => {
           return filter ? filter(v) : true
         })
       );

@@ -12,16 +12,16 @@ interface IUIActionHandler {
 class UIActor {
   static readonly TAG: string = "Actor";
   private _handler_map = new Map<string, IUIActionHandler>([
-    [UIActionEnum.SetUI, ({ lf2 }, layout_id, index) => lf2.set_ui({ id: layout_id }, Number(index) || 0)],
-    [UIActionEnum.PushUI, ({ lf2 }, layout_id, index) => lf2.push_ui({ id: layout_id }, Number(index) || 0)],
-    [UIActionEnum.PopUI, ({ lf2 }) => lf2.pop_ui_safe()],
-    [UIActionEnum.LoadData, ({ lf2 }, url) => lf2.load(...(url ? [url] : LFW.ZIPS.slice(1))).catch(e => Ditto.warn('Failed to load, reason', e))
+    [UIActionEnum.SetUI, ({ lfw: lf2 }, layout_id, index) => lf2.set_ui({ id: layout_id }, Number(index) || 0)],
+    [UIActionEnum.PushUI, ({ lfw: lf2 }, layout_id, index) => lf2.push_ui({ id: layout_id }, Number(index) || 0)],
+    [UIActionEnum.PopUI, ({ lfw: lf2 }) => lf2.pop_ui_safe()],
+    [UIActionEnum.LoadData, ({ lfw: lf2 }, url) => lf2.load(...(url ? [url] : LFW.ZIPS.slice(1))).catch(e => Ditto.warn('Failed to load, reason', e))
       .catch((e) => Ditto.warn(`[${UIActor.TAG}::load_data] ${url} not exists, err: ${e}`))],
-    [UIActionEnum.Broadcast, ({ lf2 }, msg) => lf2.broadcast(msg)],
-    [UIActionEnum.Sound, ({ lf2 }, name) => lf2.sounds.play_preset(name)],
-    [UIActionEnum.SwitchDifficulty, ({ lf2 }, v) => lf2.switch_difficulty(v ? Number(v) : void 0)],
-    [UIActionEnum.DestoryStage, ({ lf2 }) => lf2.change_stage('')],
-    [UIActionEnum.RemoveAllEntities, ({ lf2 }) => lf2.entities.del_all()]
+    [UIActionEnum.Broadcast, ({ lfw: lf2 }, msg) => lf2.broadcast(msg)],
+    [UIActionEnum.Sound, ({ lfw: lf2 }, name) => lf2.sounds.play_preset(name)],
+    [UIActionEnum.SwitchDifficulty, ({ lfw: lf2 }, v) => lf2.switch_difficulty(v ? Number(v) : void 0)],
+    [UIActionEnum.DestoryStage, ({ lfw: lf2 }) => lf2.change_stage('')],
+    [UIActionEnum.RemoveAllEntities, ({ lfw: lf2 }) => lf2.entities.del_all()]
   ]);
 
   add(key: UIActionEnum, handler: IUIActionHandler): this {

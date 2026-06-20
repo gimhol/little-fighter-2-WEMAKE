@@ -41,7 +41,7 @@ export class EntityCtrlRender {
     ]);
     this._ctrls = new Map();
 
-    const { lf2 } = this.entity;
+    const { lfw: lf2 } = this.entity;
     for (const [k, pos] of map) {
       const mesh = SmallTextMesh.get();
       mesh.name = `key ${k}`;
@@ -72,7 +72,7 @@ export class EntityCtrlRender {
 
     const { x, z, y } = this.owner.position;
     const {
-      lf2, world, ctrl_visible, frame: { centery }
+      lfw: lf2, world, ctrl_visible, frame: { centery }
     } = this.entity;
 
     const _ctrl_visible = ctrl_visible || world.indicator_flags & INDICATINGS.ctrl;

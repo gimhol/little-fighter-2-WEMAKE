@@ -189,7 +189,7 @@ export function PlayerRow(props: Props) {
             <Button
               onClick={() => {
                 if (is_bot_ctrl(ctrl)) puppet.ctrl = new LocalController(info.id, puppet);
-                else puppet.ctrl = puppet.lf2.factory.create_ctrl(puppet.data.id, info.id, puppet);
+                else puppet.ctrl = puppet.lfw.factory.create_ctrl(puppet.data.id, info.id, puppet);
               }}>
               {is_bot_ctrl(ctrl) ? <>Bot√</> : <>Bot</>}
             </Button>

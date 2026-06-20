@@ -52,7 +52,7 @@ export class EntityMainRender {
     this.world_renderer = owner.owner;
     const { entity } = owner;
     this.entity = entity;
-    this.lf2 = entity.lf2;
+    this.lf2 = entity.lfw;
     this.world = entity.world;
     this.data = entity.data;
     this.frame = entity.frame;

@@ -15,7 +15,7 @@ export class BgLayerRender {
   constructor(bg_render: BgRender, layer: Layer) {
     this.layer = layer;
     this.bg_render = bg_render
-    const { lf2 } = this.layer.bg.world
+    const { lfw: lf2 } = this.layer.bg.world
     const { info } = layer;
     const { x, y, z, file, id, name, color } = info;
     const pic = file ? lf2.images.find(file)?.pic : null

@@ -14,7 +14,7 @@ import { turn_face } from "./face_helper";
 
 export function drop_holding(this: Entity): void {
   if (!this.holding) return;
-  this.lf2.mt.mark = "dh_1";
+  this.lfw.mt.mark = "dh_1";
   const w = this.holding;
   const nf =
     this.find_align_frame(

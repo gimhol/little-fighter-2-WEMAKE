@@ -63,7 +63,7 @@ export interface ICollisionFunc {
 }
 export interface Collision extends ICollisionInits, ICollisionSnapshot {
   id: string;
-  lf2: LFW;
+  lfw: LFW;
   world: World;
   aid: string;
   vid: string;
@@ -143,9 +143,9 @@ export function collision_new(o: Readonly<ICollisionInits>): Collision {
   if (!itr.arest && itr.vrest) {
     rest = max(a.world.min_vrest, itr.vrest + a.world.vrest_offset)
   }
-  const c: Partial<Collision> = a.lf2.acquire_collision() || {}
-  c.id = rest ? a.lf2.new_id : a.id;
-  c.lf2 = a.lf2;
+  const c: Partial<Collision> = a.lfw.acquire_collision() || {}
+  c.id = rest ? a.lfw.new_id : a.id;
+  c.lfw = a.lfw;
   c.world = a.world;
   c.aid = a.id;
   c.vid = v.id;
@@ -233,15 +233,15 @@ export function collision_to_snapshot(c: Collision): ICollisionSnapshot {
   }
 }
 
-export function collision_from_snapshot(lf2: LFW, snapshot: ICollisionSnapshot): Collision | null {
-  const attacker = lf2.world.find_entity(snapshot.aid)
+export function collision_from_snapshot(lfw: LFW, snapshot: ICollisionSnapshot): Collision | null {
+  const attacker = lfw.world.find_entity(snapshot.aid)
   if (!attacker) return null;
-  const victim = lf2.world.find_entity(snapshot.vid)
+  const victim = lfw.world.find_entity(snapshot.vid)
   if (!victim) return null;
 
-  const adata = lf2.datas.find_entity(snapshot.adata_id)
+  const adata = lfw.datas.find_entity(snapshot.adata_id)
   if (!adata) return null;
-  const vdata = lf2.datas.find_entity(snapshot.vdata_id)
+  const vdata = lfw.datas.find_entity(snapshot.vdata_id)
   if (!vdata) return null;
 
   const aframe = adata.frames[snapshot.aframe_id]
@@ -268,7 +268,7 @@ export function collision_from_snapshot(lf2: LFW, snapshot: ICollisionSnapshot):
 }
 
 export function collision_clone(src: Collision): Collision {
-  return { ...src, id: src.lf2.new_id }
+  return { ...src, id: src.lfw.new_id }
 }
 
 export function collision_test(c: Collision): boolean {

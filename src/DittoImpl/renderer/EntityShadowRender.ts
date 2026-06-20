@@ -21,7 +21,7 @@ export class EntityShadowRender {
   private _o0: number = 0
   private _o1: number = 0
 
-  get lf2() { return this.entity.lf2 }
+  get lf2() { return this.entity.lfw }
   get world() { return this.entity.world }
   get bg() { return this.world.bg }
   get visible() { return this.mesh.visible; }
@@ -30,7 +30,7 @@ export class EntityShadowRender {
     this.owner = owner;
     this.entity = owner.entity;
     this.world_renderer = owner.owner;
-    const { lf2, world } = owner.entity;
+    const { lfw: lf2, world } = owner.entity;
     const { base } = world.bg.data
     const { shadow, shadowsize: [sw, sh] } = base;
     this._h = sh;

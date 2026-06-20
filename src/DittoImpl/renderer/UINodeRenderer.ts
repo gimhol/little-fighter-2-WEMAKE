@@ -74,8 +74,8 @@ export class UINodeRenderer implements IUINodeRenderer {
     if (this._css_obj.parent) return;
     this.mesh.add(this._css_obj);
   }
-  get world() { return this.ui.lf2.world }
-  get lf2() { return this.ui.lf2 }
+  get world() { return this.ui.lfw.world }
+  get lf2() { return this.ui.lfw }
   get parent() { return this.ui.parent?.renderer || null }
   constructor(ui: UINode) {
     this.ui = ui;

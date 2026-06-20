@@ -5,22 +5,22 @@ import { LFW } from "../LFW";
 import { Randoming } from "./Randoming";
 
 export class EntitiesHelper {
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   readonly team_randoming: Randoming<TeamEnum>;
 
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
     this.team_randoming = new Randoming([
       TeamEnum.Team_1,
       TeamEnum.Team_2,
       TeamEnum.Team_3,
       TeamEnum.Team_4,
-    ], this.lf2)
+    ], this.lfw)
   }
 
   get all(): Entity[] {
     const ret: Entity[] = [];
-    this.lf2.world.entities.forEach((v) => ret.push(v));
+    this.lfw.world.entities.forEach((v) => ret.push(v));
     return ret;
   }
   get a(): Entity | undefined { return this.at(0) }
@@ -30,17 +30,17 @@ export class EntitiesHelper {
   add(data: IEntityData, num: number = 1, team?: string): Entity[] {
     const ret: Entity[] = [];
     while (--num >= 0) {
-      const entity = this.lf2.factory.create_entity(this.lf2.world, data);
+      const entity = this.lfw.factory.create_entity(this.lfw.world, data);
       if (!entity) continue;
-      entity.ctrl = this.lf2.factory.create_ctrl(entity.data.id, "", entity)
-      entity.team = team === '?' ? this.team_randoming.take() : (team || this.lf2.new_team)
-      this.lf2.random_entity_info(entity)
+      entity.ctrl = this.lfw.factory.create_ctrl(entity.data.id, "", entity)
+      entity.team = team === '?' ? this.team_randoming.take() : (team || this.lfw.new_team)
+      this.lfw.random_entity_info(entity)
       entity.attach();
       ret.push(entity);
     }
     return ret;
   }
   del_all() {
-    this.lf2.world.del_entities(this.all);
+    this.lfw.world.del_entities(this.all);
   }
 }

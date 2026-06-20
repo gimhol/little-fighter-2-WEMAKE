@@ -50,7 +50,7 @@ export class StageSwitcher extends Label {
       const curr_idx = stages.findIndex((v) => v.id === state_id);
       const next_idx = (curr_idx + 1) % stages.length;
       this._stage = stages[next_idx]!;
-      const bdt = this.world.lf2.datas.backgrounds.find(v => v.id === this._stage.bg);
+      const bdt = this.world.lfw.datas.backgrounds.find(v => v.id === this._stage.bg);
       this.world.stage.change_bg(bdt ?? Defines.VOID_BG)
     }
     this.set_text(this.stage_text)

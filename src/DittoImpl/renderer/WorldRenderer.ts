@@ -56,10 +56,10 @@ export class WorldRenderer implements IWorldRenderer {
   }
   constructor(world: World) {
     if (!world) debugger;
-    if (!world.lf2) debugger;
+    if (!world.lfw) debugger;
 
     this.world = world;
-    this.lf2 = world.lf2;
+    this.lf2 = world.lfw;
     const w = world.screen_w;
     const h = world.screen_h;
 

@@ -4,7 +4,7 @@ import { round } from "../utils";
 
 
 export function spawn_buring_smoke(entity: Entity, foo: 1 | 2): IOpointInfo {
-  const { frame, lf2: { mt } } = entity;
+  const { frame, lfw: { mt } } = entity;
   const { width: w, height: h } = frame;
   const facing = mt.pick([-1, 1])
   const ret: IOpointInfo = {

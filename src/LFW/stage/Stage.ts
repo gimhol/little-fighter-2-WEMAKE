@@ -46,7 +46,7 @@ export class Stage {
   get id(): string { return this.data.id; }
   get name(): string { return this.data.name; }
 
-  get lf2() { return this.world.lf2; }
+  get lf2() { return this.world.lfw; }
   get time() { return this.fsm.time; }
   set time(v) { this.fsm.time = v; }
 
@@ -112,7 +112,7 @@ export class Stage {
     this.world = world;
     this.data = data;
     const bid = this.data.bg;
-    const bdt = this.world.lf2.datas.backgrounds.find(v => v.id === bid);
+    const bdt = this.world.lfw.datas.backgrounds.find(v => v.id === bid);
     if (!bdt)
       Ditto.warn(Stage.TAG + "::constructor", `bg not found, id: ${bid}`);
     this.change_bg(bdt ?? Defines.VOID_BG);

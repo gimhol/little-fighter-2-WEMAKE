@@ -36,7 +36,7 @@ export class UIImgLoader {
         reject(this._out_of_date());
         return;
       }
-      ui_load_img(node.lf2, uiimg).then(imgs => {
+      ui_load_img(node.lfw, uiimg).then(imgs => {
         if (jid !== this._jid.value) {
           throw this._out_of_date(imgs);
         }

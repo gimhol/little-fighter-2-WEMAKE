@@ -50,7 +50,7 @@ const z_sorter = (a: Entity, b: Entity) => a.aabb_min_z - b.aabb_min_z
 const pair_key = (a: Entity, b: Entity) => a.id < b.id ? a.id + '|' + b.id : b.id + '|' + a.id;
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
   private _sleeping: boolean = false;
   private _spark_data?: IEntityData;
@@ -158,9 +158,9 @@ export class World extends WorldDataset {
   get lifetime() { return this._lifetime }
   get lock_cam_x() { return this._lock_cam_pos?.x }
 
-  constructor(lf2: LFW) {
+  constructor(lfw: LFW) {
     super()
-    this.lf2 = lf2;
+    this.lfw = lfw;
     this.target_cam_pos = Ditto.vec2();
     this.current_cam_pos = Ditto.vec2();
     this._cam_v = Ditto.vec2();
@@ -207,7 +207,7 @@ export class World extends WorldDataset {
       // this.freshs.add(entity)
       if (is_fighter(e)) {
         this.callbacks.emit("on_fighter_add")(e);
-        const player = this.lf2.players.get(e.ctrl.player_id)
+        const player = this.lfw.players.get(e.ctrl.player_id)
         if (player) {
           player.fighter = e;
           this.puppets.set(e.ctrl.player_id, e);
@@ -334,9 +334,9 @@ export class World extends WorldDataset {
         this.before_update?.();
         this.update_once();
         this._lifetime++;
-        this.lf2.events.length = 0;
-        this.lf2.cmds.length = 0;
-        this.lf2.broadcasts.length = 0;
+        this.lfw.events.length = 0;
+        this.lfw.cmds.length = 0;
+        this.lfw.broadcasts.length = 0;
 
         if (sync_render == SyncRenderEnum.Sync) {
           this.render_once(real_dt);
@@ -464,7 +464,7 @@ export class World extends WorldDataset {
   }
 
   protected update_ui() {
-    const { ui_stacks } = this.lf2;
+    const { ui_stacks } = this.lfw;
     const len = ui_stacks.length;
     let flag = true;
 
@@ -473,7 +473,7 @@ export class World extends WorldDataset {
       const { ui } = ui_stack
       if (!ui || ui.disabled) continue;
       if (!flag) continue;
-      for (const e of this.lf2.events) {
+      for (const e of this.lfw.events) {
         if (e.pressed) ui.on_key_down(e)
         else ui.on_key_up(e)
       }
@@ -483,12 +483,12 @@ export class World extends WorldDataset {
   }
 
   protected handle_keys() {
-    if (!this.lf2.events.length) return;
+    if (!this.lfw.events.length) return;
 
-    for (const e of this.lf2.events) {
+    for (const e of this.lfw.events) {
       const gk = e.game_key;
       const fn1 = e.pressed ? 'hit' : 'end';
-      this.lf2._keys.forEach(keys => keys[gk][fn1]())
+      this.lfw._keys.forEach(keys => keys[gk][fn1]())
 
       // WTF.
       if (this.stage.control_disabled) continue;
@@ -509,12 +509,12 @@ export class World extends WorldDataset {
     let bg_data: IBgData | undefined;
     if (bg_id == Defines.RANDOM_BG.id) {
       if (this.LF2_NET) {
-        bg_data = this.lf2.datas.get_random_bg([BGG.Regular, BGG.Hidden])
+        bg_data = this.lfw.datas.get_random_bg([BGG.Regular, BGG.Hidden])
       } else {
-        bg_data = this.lf2.datas.get_random_bg([BGG.Regular])
+        bg_data = this.lfw.datas.get_random_bg([BGG.Regular])
       }
     } else if (bg_id) {
-      bg_data = this.lf2.datas.find_background(bg_id);
+      bg_data = this.lfw.datas.find_background(bg_id);
     }
     if (!bg_data) bg_data = Defines.VOID_BG;
 
@@ -524,14 +524,14 @@ export class World extends WorldDataset {
   }
 
   change_stage(stage_id: string | undefined) {
-    const stage_data = this.lf2.datas.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
+    const stage_data = this.lfw.datas.stages.find((v) => v.id === stage_id) || Defines.VOID_STAGE;
     if (stage_data == this.stage.data) return;
     this.stage = new Stage(this, stage_data);
   }
   protected handle_cmds() {
-    const { cmds } = this.lf2;
+    const { cmds } = this.lfw;
     if (!cmds.length) return;
-    const stage_limit = () => this.stage.id !== Defines.VOID_STAGE.id && !this.lf2.is_cheat(CheatType.HERO_FT)
+    const stage_limit = () => this.stage.id !== Defines.VOID_STAGE.id && !this.lfw.is_cheat(CheatType.HERO_FT)
     for (let i = 0; i < cmds.length; i++) {
       const cmd = cmds[i];
       switch (cmd) {
@@ -556,13 +556,13 @@ export class World extends WorldDataset {
           if (prev == enabled) continue;
           const cheat = Defines.CheatInfos.get(cmd)
           if (!cheat) continue;
-          if (cheat.sound) this.lf2.sounds.play_with_load(cheat.sound);
-          this.lf2.callbacks.emit("on_cheat_changed")(cmd, !!enabled);
+          if (cheat.sound) this.lfw.sounds.play_with_load(cheat.sound);
+          this.lfw.callbacks.emit("on_cheat_changed")(cmd, !!enabled);
           continue;
         case CMD.F1: this.paused = !this.paused; continue;
         case CMD.F2: this.set_paused(2); continue;
         case CMD.F3: this.set_fn_locked(1); continue;
-        case CMD.F4: this.lf2.pop_ui_safe(); continue;
+        case CMD.F4: this.lfw.pop_ui_safe(); continue;
         case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
           if (this.fn_locked || stage_limit()) continue;
@@ -582,8 +582,8 @@ export class World extends WorldDataset {
           if (this.fn_locked || stage_limit()) continue;
           this.add_count(CMD.F8, 1)
           const is_stage = this.stage.id !== Defines.VOID_STAGE.id
-          const weapon_datas = this.lf2.datas.get_weapons_of_group(is_stage ? EntityGroup.StageWeapon : EntityGroup.VsWeapon)
-          for (const wd of weapon_datas) this.lf2.entities.add(wd, 1);
+          const weapon_datas = this.lfw.datas.get_weapons_of_group(is_stage ? EntityGroup.StageWeapon : EntityGroup.VsWeapon)
+          for (const wd of weapon_datas) this.lfw.entities.add(wd, 1);
           continue;
         case CMD.F9:
           if (this.fn_locked || stage_limit()) continue;
@@ -814,7 +814,7 @@ export class World extends WorldDataset {
       this.entity_map.delete(entity.id)
       if (is_fighter(entity))
         this.callbacks.emit("on_fighter_del")(entity);
-      const player = this.lf2.players.get(entity.ctrl.player_id)
+      const player = this.lfw.players.get(entity.ctrl.player_id)
       if (player) player.fighter = void 0
       const puppet = this.puppets.get(entity.ctrl.player_id)
       if (puppet === entity) this.puppets.delete(entity.ctrl.player_id);
@@ -822,7 +822,7 @@ export class World extends WorldDataset {
       this.callbacks.emit("on_puppet_del")(entity.ctrl.player_id);
       this.renderer.del_entity(entity);
       entity.release();
-      this.lf2.factory.recycle_entity(entity)
+      this.lfw.factory.recycle_entity(entity)
     }
     this._gones.clear()
     this.stage.update();
@@ -923,13 +923,13 @@ export class World extends WorldDataset {
     if (this.entities.length > MAX_DEBUG_ENTITIES) return;
     const oid = Defines.BuiltIn_Dats.Spark
     if (!this._spark_data)
-      this._spark_data = this.lf2.datas.find(oid);
+      this._spark_data = this.lfw.datas.find(oid);
     const data = this._spark_data
     if (!data) {
       Ditto.warn(`[${World.TAG}::spark] "${oid}" data not found!`);
       return;
     }
-    const e = this.lf2.factory.create_entity(this, data);
+    const e = this.lfw.factory.create_entity(this, data);
     if (!e) {
       Ditto.warn(`[${World.TAG}::spark] failed`);
       return;
@@ -942,13 +942,13 @@ export class World extends WorldDataset {
     e.attach(false);
   }
   etc(x: number, y: number, z: number, f: string): void {
-    if (!this._etc_data) this._etc_data = this.lf2.datas.find(O_ID.Etc);
+    if (!this._etc_data) this._etc_data = this.lfw.datas.find(O_ID.Etc);
     const data = this._etc_data;
     if (!data) {
       Ditto.warn(`[${World.TAG}::etc] oid "${O_ID.Etc}" data not found!`);
       return;
     }
-    const e = this.lf2.factory.create_entity(this, data)
+    const e = this.lfw.factory.create_entity(this, data)
     if (!e) {
       Ditto.warn(`[${World.TAG}::etc] failed`);
       return;

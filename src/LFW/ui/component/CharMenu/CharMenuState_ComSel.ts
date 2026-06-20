@@ -57,7 +57,7 @@ export class CharMenuState_ComSel extends CharMenuState_Base {
       default: return;
     }
     if (!this.owner.players.has(com)) {
-      this.lf2.players.delete(com.id);
+      this.lfw.players.delete(com.id);
       const [lc] = this.owner.last_com() ?? [];
       if (lc) this.owner.press_j(lc);
     }

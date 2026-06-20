@@ -3,7 +3,7 @@ import type { Entity } from "../entity";
 import { round } from "../utils";
 
 export function spawn_ice_piece(entity: Entity, id: string): IOpointInfo {
-  const { frame, lf2: { mt } } = entity;
+  const { frame, lfw: { mt } } = entity;
   const { width: w, height: h } = frame;
   const facing = mt.pick([-1, 1])
 

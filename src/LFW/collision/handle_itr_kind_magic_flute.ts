@@ -3,7 +3,7 @@ import { handle_rest } from "./handle_rest";
 
 export function handle_itr_kind_magic_flute(collision: Collision): void {
   handle_rest(collision)
-  const { victim, attacker, world, lf2, itr } = collision;
+  const { victim, attacker, world, lfw: lf2, itr } = collision;
   const bid = `magic_flute_to_${victim.id}`
   let buf = world.buffs.get(bid)
 

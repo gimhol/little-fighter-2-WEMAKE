@@ -10,6 +10,6 @@ export const get_val_from_world: IValGetterGetter<World> = (
     default:
       const fallback = get_val_from_lf2(word);
       if (!fallback) return void 0;
-      return (e, ...arg) => fallback(e.lf2, ...arg);
+      return (e, ...arg) => fallback(e.lfw, ...arg);
   }
 };

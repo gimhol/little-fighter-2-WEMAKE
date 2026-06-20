@@ -38,7 +38,7 @@ export class EntityNameRender {
       if (this._mesh) this._mesh.visible = false;
       return;
     }
-    const { lf2, team, ground_y, world } = e;
+    const { lfw: lf2, team, ground_y, world } = e;
     const { position } = this.owner;
     const { mesh } = this;
     mesh.set_text(lf2, name)

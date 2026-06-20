@@ -47,7 +47,7 @@ import * as EntitySpawn from "./EntitySpawn";
 
 export class Entity {
   static readonly TAG: string = 'Entity';
-  lf2: LFW;
+  lfw: LFW;
   world: World;
   id: string = '';
   wait: number = 0;
@@ -684,7 +684,7 @@ export class Entity {
   get state() { return this.frame.state }
   constructor(world: World, data: IEntityData, states: States = ENTITY_STATES) {
     this.world = world;
-    this.lf2 = world.lf2;
+    this.lfw = world.lfw;
     this._data = data;
     this._states = states;
     this._atom_time = world.atom_time;
@@ -694,7 +694,7 @@ export class Entity {
     let buffs = Array.from(this.buffs.values())
     for (const buf of buffs) buf.del_victims(this.id)
     this.buffs.clear();
-    const { world, lf2 } = this;
+    const { world, lfw: lf2 } = this;
     this._data = data;
     this.id = lf2.new_id;
     this.wait = 0;
@@ -738,7 +738,7 @@ export class Entity {
     this._prev_velocity.set(0, 0, 0);
     this.callbacks.clear();
     this._name = null
-    this._team = world.lf2.new_team;
+    this._team = world.lfw.new_team;
     this._landing_frame = null;
     this._bearer = null;
     this._holding = null;
@@ -887,7 +887,7 @@ export class Entity {
     }
     if (v.broadcasts?.length)
       for (const m of v.broadcasts)
-        this.lf2.broadcast(m)
+        this.lfw.broadcast(m)
   }
 
   apply_opoints(_opoints: IOpointInfo[]): void {
@@ -1045,13 +1045,13 @@ export class Entity {
             friend = e;
           }
           if (friend) {
-            this.lf2.mt.mark = 'u_1'
-            const x = this.lf2.mt.range(
+            this.lfw.mt.mark = 'u_1'
+            const x = this.lfw.mt.range(
               max(round(friend.position.x - 100), this.world.stage.player_l),
               min(round(friend.position.x + 100), this.world.stage.player_r)
             )
-            this.lf2.mt.mark = 'u_2'
-            const z = this.lf2.mt.range(
+            this.lfw.mt.mark = 'u_2'
+            const z = this.lfw.mt.range(
               min(round(friend.position.z - 100), this.world.stage.far),
               max(round(friend.position.z + 100), this.world.stage.near)
             )
@@ -1380,7 +1380,7 @@ export class Entity {
     const curr_idx = datas.indexOf(this._data.id)
     const next_idx = (curr_idx + 1) % datas.length;
     const next_data_id = datas[next_idx]
-    const next_data = this.lf2.datas.find_entity(next_data_id);
+    const next_data = this.lfw.datas.find_entity(next_data_id);
     if (!next_data) return;
     this.transform(next_data);
     if (next_idx === 0) {
@@ -1433,8 +1433,8 @@ export class Entity {
       near: n,
       far: f,
     } = cross
-    this.lf2.mt.mark = 'sp_1'
-    const x = this.lf2.mt.range(l, r);
+    this.lfw.mt.mark = 'sp_1'
+    const x = this.lfw.mt.range(l, r);
     const y = 2 + (b + t) / 2//this.lf2.random_in(b, t);
     const z = max(f, n) + 2;
     return [x, y, z] as const;
@@ -1506,10 +1506,10 @@ export class Entity {
 
     if (wp_a.kind === WpointKind.Drop) {
       bearer.drop_holding();
-      this.lf2.mt.mark = 'dh_v'
+      this.lfw.mt.mark = 'dh_v'
       const vy = 3
-      const vx = this.lf2.mt.range(-10, 10) / 10
-      const vz = this.lf2.mt.range(-10, 10) / 20;
+      const vx = this.lfw.mt.range(-10, 10) / 10
+      const vz = this.lfw.mt.range(-10, 10) / 20;
       this.set_velocity(vx, vy, vz)
       return;
     }
@@ -1609,7 +1609,7 @@ export class Entity {
           cam_x += offset_x
           x = clamp(x, cam_x, cam_r)
         }
-        this.lf2.sounds.play(frame.sound, x, y, z);
+        this.lfw.sounds.play(frame.sound, x, y, z);
       }
       this.set_frame(frame);
     } else if (this.frame === EMPTY_FRAME_INFO || fallback) {
@@ -1692,7 +1692,7 @@ export class Entity {
         const f = this.get_next_frame(nf);
         if (f) return f;
       }
-      const next = this.lf2.mt.pick(remains)
+      const next = this.lfw.mt.pick(remains)
       if (!next) return;
       return this.get_next_frame(next);
     }
@@ -1706,8 +1706,8 @@ export class Entity {
     }
     let frame: IFrameInfo | undefined;
     if (id) {
-      this.lf2.mt.mark = 'gnf_1'
-      frame = this.find_frame_by_id(this.lf2.mt.pick(id));
+      this.lfw.mt.mark = 'gnf_1'
+      frame = this.find_frame_by_id(this.lfw.mt.pick(id));
       if (!frame) return void 0;
     }
     if (!this.world.infinity_mp && frame) {
@@ -1808,7 +1808,7 @@ export class Entity {
   }
   transform(data: IEntityData) {
     if (!is_human_ctrl(this.ctrl))
-      this.ctrl = this.lf2.factory.create_ctrl(data.id, this.ctrl.player_id, this);
+      this.ctrl = this.lfw.factory.create_ctrl(data.id, this.ctrl.player_id, this);
     const prev = this._data;
     this._data = data;
     this.reset_armor()
@@ -1817,11 +1817,11 @@ export class Entity {
 
   play_sound(sounds: string[] | undefined, pos: IPos = this._position) {
     if (!sounds?.length) return;
-    this.lf2.mt.mark = 'ps_1'
-    const sound = this.lf2.mt.pick(sounds);
+    this.lfw.mt.mark = 'ps_1'
+    const sound = this.lfw.mt.pick(sounds);
     if (!sound) return;
     const { x, y, z } = pos;
-    this.lf2.sounds.play(sound, x, y, z);
+    this.lfw.sounds.play(sound, x, y, z);
   }
 
   get_emitter(idx: number): Entity | undefined {
@@ -1987,7 +1987,7 @@ Entity.prototype.mp_recovering = EntityRecovery.mp_recovering;
 Entity.prototype.check_fusion_dismissing = EntityRecovery.check_fusion_dismissing;
 
 const common_creator = (world: World, data: IEntityData, states?: States) => {
-  let ret = world.lf2.factory.acquire_entity(data.type)
+  let ret = world.lfw.factory.acquire_entity(data.type)
   if (!ret) ret = new Entity(world, data, states)
   else ret.reset(data, states)
   return ret

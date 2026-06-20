@@ -13,7 +13,7 @@ export class BallsHelper extends EntitiesHelper {
    */
   override get all(): Entity[] {
     const ret: Entity[] = [];
-    this.lf2.world.entities.forEach((v) => is_ball(v) && ret.push(v));
+    this.lfw.world.entities.forEach((v) => is_ball(v) && ret.push(v));
     return ret;
   }
 }

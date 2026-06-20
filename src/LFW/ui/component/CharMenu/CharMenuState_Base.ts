@@ -8,11 +8,11 @@ export class CharMenuState_Base implements Required<ICharMenuState> {
   get name() { return this.key }
   readonly key: CharMenuState;
   readonly owner: CharMenuLogic;
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   constructor(key: CharMenuState, owner: CharMenuLogic) {
     this.key = key;
     this.owner = owner;
-    this.lf2 = owner.lf2;
+    this.lfw = owner.lf2;
   }
   on_key_down(e: IUIKeyEvent): void { }
   update(dt: number): void | CharMenuState | undefined { }

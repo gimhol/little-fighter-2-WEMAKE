@@ -37,7 +37,7 @@ export const collision_action_handlers: IActionHandler = {
   [ActionType.FUSION]: (a, c) => {
     const { data: { oid, act, time } } = a;
     const { attacker, victim } = c;
-    const lf2 = c.attacker.lf2;
+    const lf2 = c.attacker.lfw;
     const data = lf2.datas.find(oid);
     if (!data) return;
 
@@ -72,7 +72,7 @@ export const collision_action_handlers: IActionHandler = {
       fighter_2.invulnerable = 1000000;
     if (act) fighter_1.enter_frame(act);
   },
-  [ActionType.BROADCAST]: (a, { lf2 }) => {
+  [ActionType.BROADCAST]: (a, { lfw: lf2 }) => {
     lf2.broadcast(a.data.msg);
   },
   [ActionType.VALUE_STEAL]: (a, c) => {
@@ -127,7 +127,7 @@ function apply_buff(
   const { data } = action;
   if (!data) return;
   const { hitflag = HitFlag.AllEnemy, duration = 0, buff = '' } = data;
-  const { lf2, world } = collision;
+  const { lfw: lf2, world } = collision;
   const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
   if (
     !(hitflag & victim.data.type) ||

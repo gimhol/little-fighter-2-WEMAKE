@@ -9,7 +9,7 @@ export class WeaponsHelper extends EntitiesHelper {
   readonly random_d_map = new Map<string, Randoming<IEntityData>>()
   override get all(): Entity[] {
     const ret: Entity[] = [];
-    this.lf2.world.entities.forEach((v) => is_weapon(v) && ret.push(v));
+    this.lfw.world.entities.forEach((v) => is_weapon(v) && ret.push(v));
     return ret;
   }
   override add(
@@ -18,18 +18,18 @@ export class WeaponsHelper extends EntitiesHelper {
     team?: string,
   ): Entity[] {
     if (typeof data === "string") 
-      data = this.lf2.datas.find_weapon(data);
+      data = this.lfw.datas.find_weapon(data);
     if (!data) return [];
-    return this.lf2.entities.add(data, num, team);
+    return this.lfw.entities.add(data, num, team);
   }
   randoms(group: string, duplicate: boolean) {
     const map = duplicate ? this.random_d_map : this.random_map
     let ret = map.get(group);
     if (!ret) {
-      let list = this.lf2.datas.weapons;
+      let list = this.lfw.datas.weapons;
       if (group) list = list.filter(v => v.base.group?.some(g => g === group))
       if (!list.length) return void 0;
-      ret = new Randoming(list, this.lf2, duplicate)
+      ret = new Randoming(list, this.lfw, duplicate)
       map.set(group, ret)
     }
     return ret;

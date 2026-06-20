@@ -10,7 +10,7 @@ export class CharMenuState_PlayerSel extends CharMenuState_Base {
     super(CharMenuState.PlayerSel, owner);
   }
   override on_key_down(e: IUIKeyEvent): void {
-    const player = this.lf2.players.get(e.player);
+    const player = this.lfw.players.get(e.player);
     if (!player) return;
     switch (e.game_key) {
       case GameKey.L: this.owner.press_lr(player, -1); break;

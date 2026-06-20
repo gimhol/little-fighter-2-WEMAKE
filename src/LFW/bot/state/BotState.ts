@@ -154,8 +154,8 @@ export abstract class BotState_Base implements IState<BotStateEnum> {
 
     if (!keys_list.length) return false
 
-    me.lf2.mt.mark = 'hba_2'
-    const keys = me.lf2.mt.pick(keys_list)
+    me.lfw.mt.mark = 'hba_2'
+    const keys = me.lfw.mt.pick(keys_list)
     if (keys?.length) {
       this.ctrl.key_up(...keys).start(...keys).end(...keys)
       bot_cases.push(keys.join())

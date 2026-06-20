@@ -5,12 +5,12 @@ import type { ISounds } from "./ISounds";
 import type { ISoundsCallback } from "./ISoundsCallback";
 
 export class BaseSounds implements ISounds {
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   private _origins: { [x in string]?: string } = {};
   get is_random(): boolean { return false };
   set is_random(v: boolean) { };
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
   }
   protected _callbacks = new Callbacks<ISoundsCallback>();
   get callbacks(): NoEmitCallbacks<ISoundsCallback> {
@@ -73,7 +73,7 @@ export class BaseSounds implements ISounds {
         await this.load(src, src);
         break;
       }
-      const { file, origin } = this.lf2.find_from_zips([src], false).at(0) || {}
+      const { file, origin } = this.lfw.find_from_zips([src], false).at(0) || {}
       // 非本地存在资源，说明来自网络，不必重载
       if (!file || !origin) break;
 
