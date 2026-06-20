@@ -1,10 +1,10 @@
 import { CMD } from "@/LFW/defines/CMD";
+import { LFW } from "../LFW";
 import Callbacks from "../LFW/base/Callbacks";
 import { NoEmitCallbacks } from "../LFW/base/NoEmitCallbacks";
 import type { IKeyboard } from "../LFW/ditto/keyboard/IKeyboard";
 import type { IKeyboardCallback } from "../LFW/ditto/keyboard/IKeyboardCallback";
 import type { IKeyEvent } from "../LFW/ditto/keyboard/IKeyEvent";
-import { LFW } from "../LFW";
 
 class __KeyEvent implements IKeyEvent {
   readonly times: number;
@@ -42,7 +42,7 @@ export class __Keyboard implements IKeyboard {
   enabled: boolean = true;
   protected _callback = new Callbacks<__IKeyboardCallback>();
   protected _times_map = new Map<string, number>();
-  protected lf2: LFW;
+  protected lfw: LFW;
   protected _axe_dead_zone = 0.12;
   protected _axe_live_zone = 0.22;
   get callback(): NoEmitCallbacks<__IKeyboardCallback> {
@@ -73,8 +73,8 @@ export class __Keyboard implements IKeyboard {
   protected gamepad_buttons = new Map<string, 0 | 1>();
   protected gamepad_axes: (readonly number[])[] = []
 
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
     window.addEventListener("keydown", this._on_key_down);
     window.addEventListener("keyup", this._on_key_up);
     this.gamepad_timer = setInterval(this.scan_gamepad_buttons.bind(this), 1000 / 60)
@@ -95,8 +95,8 @@ export class __Keyboard implements IKeyboard {
         if (!changed) continue;
         if (!pressed) continue;
         switch (btn_code) {
-          case GPBtnCode.Start: this.lf2.cmds.push(CMD.F1); break;
-          case GPBtnCode.Back: this.lf2.cmds.push(CMD.F4); break;
+          case GPBtnCode.Start: this.lfw.cmds.push(CMD.F1); break;
+          case GPBtnCode.Back: this.lfw.cmds.push(CMD.F4); break;
         }
       }
 

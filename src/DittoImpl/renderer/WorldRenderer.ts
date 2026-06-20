@@ -9,7 +9,7 @@ import { EntityRenderer } from "./EntityRenderer";
 import csses from "./styles.module.scss";
 
 export class WorldRenderer implements IWorldRenderer {
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   readonly world: World;
   readonly bg_render: BgRender;
   readonly camera: Camera;
@@ -59,7 +59,7 @@ export class WorldRenderer implements IWorldRenderer {
     if (!world.lfw) debugger;
 
     this.world = world;
-    this.lf2 = world.lfw;
+    this.lfw = world.lfw;
     const w = world.screen_w;
     const h = world.screen_h;
 
@@ -171,7 +171,7 @@ export class WorldRenderer implements IWorldRenderer {
         continue;
       renderer.render(dt)
     }
-    for (const ui_stack of this.lf2.ui_stacks)
+    for (const ui_stack of this.lfw.ui_stacks)
       ui_stack.ui?.renderer.render(dt)
 
     const { scene } = this;

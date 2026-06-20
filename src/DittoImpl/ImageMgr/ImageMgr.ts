@@ -1,17 +1,17 @@
 import img_error from "@/assets/error.png";
+import img_white from "@/assets/white.png";
 import { parse_rgba } from "@/LFW";
 import { MagnificationTextureFilter } from "@/LFW/defines/MagnificationTextureFilter";
 import { MinificationTextureFilter } from "@/LFW/defines/MinificationTextureFilter";
 import { TextureWrapping } from "@/LFW/defines/TextureWrapping";
 import type { IImageInfo } from "@/LFW/ditto/image/IImageInfo";
-import img_white from "@/assets/white.png"
+import type { LFW } from "../../LFW";
 import AsyncValuesKeeper from "../../LFW/base/AsyncValuesKeeper";
 import type { ILegacyPictureInfo } from "../../LFW/defines/ILegacyPictureInfo";
 import type { IPicture } from "../../LFW/defines/IPicture";
 import type { IPictureInfo } from "../../LFW/defines/IPictureInfo";
 import type { IStyle } from "../../LFW/defines/IStyle";
 import type { IImageMgr, ImageOperation } from "../../LFW/ditto/image/IImageMgr";
-import type { LFW } from "../../LFW";
 import { validate_ui_img_operation_crop } from "../../LFW/loader/validate_ui_img_operation_crop";
 import { is_positive_int, max, round } from "../../LFW/utils";
 import { create_img_ele } from "../../Utils/create_img_ele";
@@ -29,8 +29,8 @@ export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
   protected disposables = new Map<string, RImageInfo>();
-  readonly lf2: LFW;
-  constructor(lf2: LFW) { this.lf2 = lf2; }
+  readonly lfw: LFW;
+  constructor(lfw: LFW) { this.lfw = lfw; }
 
   private async create_img_info(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
     const disposable = src.startsWith('?');
@@ -39,7 +39,7 @@ export class ImageMgr implements IImageMgr {
     const exact = src.startsWith('!');
     if (exact) src = src.substring(1)
 
-    const [blob_url, src_url] = await this.lf2.import_resource(src, exact);
+    const [blob_url, src_url] = await this.lfw.import_resource(src, exact);
     const img = await create_img_ele(blob_url);
     img.setAttribute('src-url', src_url)
 
@@ -172,7 +172,7 @@ export class ImageMgr implements IImageMgr {
 
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
     const fn = async () => {
-      this.lf2.emit_progress(`${key}`, 0);
+      this.lfw.emit_progress(`${key}`, 0);
       const info = await this.create_img_info(key, src, operations);
       info.pic = await this.p_create_picture(info);
       return info;

@@ -23,7 +23,7 @@ const key_names: Record<GameKey, string> = {
 };
 const key_name_arr = Object.keys(key_names) as GameKey[];
 interface Props {
-  lf2: LFW;
+  lfw: LFW;
   visible?: boolean;
   info: PlayerInfo;
   touch_pad_on?: boolean;
@@ -31,7 +31,7 @@ interface Props {
 }
 export function PlayerRow(props: Props) {
   const {
-    lf2, info, visible = true, touch_pad_on, on_click_toggle_touch_pad,
+    lfw, info, visible = true, touch_pad_on, on_click_toggle_touch_pad,
   } = props;
 
   const [keys, set_keys] = useState<Record<GameKey, string>>(info.keys);
@@ -44,10 +44,10 @@ export function PlayerRow(props: Props) {
   const [key_settings_show, set_key_settings_show] = useState(false);
   const [dummy, set_dummy] = useState<DummyEnum>(DummyEnum.None)
 
-  useCallbacks(lf2.world.callbacks, {
+  useCallbacks(lfw.world.callbacks, {
     on_puppet_add: (pid) => {
       if (pid != info.id) return;
-      const p = lf2.world.puppets.get(info.id)
+      const p = lfw.world.puppets.get(info.id)
       set_puppet(p)
       set_ctrl(p?.ctrl)
       set_team(p?.team ?? '')
@@ -64,11 +64,11 @@ export function PlayerRow(props: Props) {
     on_ctrl_changed: (value) => set_ctrl(value),
   })
   useEffect(() => {
-    const p = lf2.world.puppets.get(info.id)
+    const p = lfw.world.puppets.get(info.id)
     set_puppet(p)
     set_team(p?.team ?? '')
     set_ctrl(p?.ctrl)
-  }, [lf2, info])
+  }, [lfw, info])
   useEffect(() => {
     if (!puppet) return;
     const ctrl = puppet?.ctrl;
@@ -84,7 +84,7 @@ export function PlayerRow(props: Props) {
   useEffect(() => {
     set_keys(info.keys);
     set_name(info.name);
-  }, [info, lf2]);
+  }, [info, lfw]);
 
   useEffect(() => {
     if (!editing_key) return;
@@ -102,13 +102,13 @@ export function PlayerRow(props: Props) {
     return () => window.removeEventListener("keydown", on_keydown, true);
   }, [editing_key, info]);
 
-  if (!lf2 || visible === false) return null;
+  if (!lfw || visible === false) return null;
 
   const on_click_toggle = () => {
-    if (puppet) { lf2.del_puppet(info.id) }
-    const _oid = oid ?? random_get(lf2.datas.fighters)?.id;
+    if (puppet) { lfw.del_puppet(info.id) }
+    const _oid = oid ?? random_get(lfw.datas.fighters)?.id;
     if (!_oid) { debugger; return; }
-    lf2.add_puppet(info.id, _oid, team);
+    lfw.add_puppet(info.id, _oid, team);
   }
   const { t } = useTranslation()
   return (
@@ -129,15 +129,15 @@ export function PlayerRow(props: Props) {
             }}
           />
           <CharacterSelect
-            lf2={lf2}
+            lfw={lfw}
             value={oid}
             placeholder={t("Character")}
             onChange={(v) => {
               set_oid(v)
               if (!puppet) return;
-              let _oid = v || random_get(lf2.datas.fighters)?.id
+              let _oid = v || random_get(lfw.datas.fighters)?.id
               if (!_oid) return;
-              const data = lf2.datas.find_fighter(_oid)
+              const data = lfw.datas.find_fighter(_oid)
               if (!data) return;
               puppet.transform(data);
             }}
@@ -148,7 +148,7 @@ export function PlayerRow(props: Props) {
             onChange={(v) => {
               set_team(v)
               if (!puppet) return;
-              puppet.team = v || lf2.new_team;
+              puppet.team = v || lfw.new_team;
             }}
           />
           <Button onClick={on_click_toggle}>{t(puppet ? "Del" : "Add")}</Button>

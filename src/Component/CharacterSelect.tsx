@@ -7,20 +7,20 @@ import Select, { type ISelectProps } from "./Select";
 
 export interface CharacterSelectProps
   extends Omit<ISelectProps<IEntityData | "", string>, 'parse'> {
-  lf2: LFW;
+  lfw: LFW;
 }
 export default function CharacterSelect(props: CharacterSelectProps) {
-  const { lf2, disabled, placeholder, ..._p } = props;
+  const { lfw, disabled, placeholder, ..._p } = props;
   const [characters, set_characters] = useState<IEntityData[]>(
-    lf2.datas.fighters,
+    lfw.datas.fighters,
   );
 
   useEffect(() => {
-    set_characters(lf2.datas.fighters);
-    return lf2.callbacks.add({
-      on_loading_end: () => set_characters(lf2.datas.fighters),
+    set_characters(lfw.datas.fighters);
+    return lfw.callbacks.add({
+      on_loading_end: () => set_characters(lfw.datas.fighters),
     });
-  }, [lf2]);
+  }, [lfw]);
 
   return (
     <Select

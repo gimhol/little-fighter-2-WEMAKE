@@ -603,9 +603,9 @@ function App() {
       />
       <div className={classNames(csses.game_overlay, { [csses.gone]: !app_state.show_fps })} >
         {app_state.show_fps && <DevStatsView lf2={lfw} />}
-        {app_state.show_bg_scroll && <BgScrollerView lf2={lfw} />}
+        {app_state.show_bg_scroll && <BgScrollerView lfw={lfw} />}
       </div>
-      <DanmuOverlay lf2={lfw} />
+      <DanmuOverlay lfw={lfw} />
       <GamePad
         id='game_pad'
         player_id={app_state.touchpad}
@@ -1005,7 +1005,7 @@ function App() {
         {players.map((info, idx) => (
           <PlayerRow
             key={idx}
-            lf2={lfw!}
+            lfw={lfw!}
             info={info}
             touch_pad_on={app_state.touchpad === info.id}
             on_click_toggle_touch_pad={() => {

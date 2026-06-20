@@ -44,10 +44,10 @@ export class SmallTextMesh extends Mesh<BufferGeometry, TextMaterial> {
     this.material.uniforms.outlineWidth.value = v ? 1 : 0;
     this.material.uniforms.outlineColor.value.set(v ? v : BLACK);
   }
-  async set_text(lf2: LFW, text: string): Promise<this> {
+  async set_text(lfw: LFW, text: string): Promise<this> {
     if (this._text == text) return this;
     this._text = text
-    const p = await lf2.images.load_text(text, TEXT_STYLE);
+    const p = await lfw.images.load_text(text, TEXT_STYLE);
     if (this._text != text) return this;
     this.scale.x = p.w / p.scale;
     this.scale.y = p.h / p.scale;

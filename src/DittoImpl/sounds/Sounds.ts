@@ -7,7 +7,7 @@ import { __Modern } from "./Modern";
 export class __Sounds implements ISounds {
   static readonly TAG: string = "__Sounds";
   readonly inner: ISounds;
-  readonly cls_list: (new (lf2: LFW) => ISounds)[] = [__Modern, __Fallback];
+  readonly cls_list: (new (lfw: LFW) => ISounds)[] = [__Modern, __Fallback];
 
   get is_random() { return this.inner.is_random }
   set is_random(v) { this.inner.is_random = v }
@@ -15,11 +15,11 @@ export class __Sounds implements ISounds {
     return this.inner.callbacks;
   }
 
-  constructor(lf2: LFW) {
-    this.inner = new BaseSounds(lf2);
+  constructor(lfw: LFW) {
+    this.inner = new BaseSounds(lfw);
     for (const cls of this.cls_list) {
       try {
-        this.inner = new cls(lf2);
+        this.inner = new cls(lfw);
         break;
       } catch (e) {
         Ditto.warn(

@@ -1,30 +1,29 @@
 import { useEffect, useRef, useState } from "react";
+import { LFW, TeamEnum } from "./LFW";
 import { get_team_text_color } from "./LFW/base/get_team_text_color";
 import type { ILFWCallback } from "./LFW/ILFWCallback";
-import { LFW } from "./LFW";
 import { DanmuGameLogic } from "./LFW/ui/component/DanmuGameLogic";
 import type { IFighterSumInfo } from "./LFW/ui/component/IFighterSumInfo";
 import { UIComponent } from "./LFW/ui/component/UIComponent";
-import { Times } from "./LFW/utils/Times";
 import { floor } from "./LFW/utils";
-import { TeamEnum } from "./LFW";
+import { Times } from "./LFW/utils/Times";
 const n = (nn: number) => nn.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
 
 const t = (name: string, color: string = 'white') => {
   return `<span style="display:inline-block;width:100px;color:${color};">${name}</span>:`
 }
 export class DanmuOverlayLogic implements ILFWCallback {
-  lf2: LFW;
+  lfw: LFW;
   component: DanmuGameLogic | undefined;
   timer: ReturnType<typeof setInterval> | null = null;
   ele: HTMLDivElement | null = null;
   times = new Times(0, Number.MAX_SAFE_INTEGER);
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
-    this.lf2.callbacks.add(this)
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
+    this.lfw.callbacks.add(this)
   }
   release() {
-    this.lf2.callbacks.del(this)
+    this.lfw.callbacks.del(this)
   }
   on_component_broadcast(component: UIComponent, msg: string) {
     if (msg === DanmuGameLogic.BROADCAST_ON_START) {
@@ -151,21 +150,21 @@ function sort_by_kills_per_spawn(a: IFighterSumInfo, b: IFighterSumInfo): number
   return b.kills / b.spawns - a.kills / a.spawns;
 }
 
-export function DanmuOverlay(props: { lf2: LFW | undefined }) {
-  const { lf2 } = props;
+export function DanmuOverlay(props: { lfw: LFW | undefined }) {
+  const { lfw } = props;
   const ref_div = useRef<HTMLDivElement | null>(null);
   const [open, set_open] = useState(false);
 
   useEffect(() => {
-    if (!lf2) return;
+    if (!lfw) return;
     const ele = ref_div.current;
     if (!ele) return;
-    const logic = new DanmuOverlayLogic(lf2)
+    const logic = new DanmuOverlayLogic(lfw)
     logic.ele = ele;
     logic.open = () => set_open(true);
     logic.close = () => set_open(false);
     return () => logic.release()
-  }, [lf2, ref_div])
+  }, [lfw, ref_div])
 
   return (
     <div ref={ref_div} style={{

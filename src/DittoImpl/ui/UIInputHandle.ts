@@ -11,19 +11,19 @@ interface IIntersection {
   point: T.Vector3;
 }
 export class UIInputHandle implements IUIInputHandle {
-  private lf2: LFW;
+  private lfw: LFW;
   private pointer_vec_2 = new T.Vector2();
   private pointer_raycaster = new T.Raycaster();
   private world_renderer: WorldRenderer
   private _pointer_down_uis = new Set<UINode>();
   private _pointer_on_uis = new Set<UINode>();
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
-    this.world_renderer = this.lf2.world.renderer as WorldRenderer
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
+    this.world_renderer = this.lfw.world.renderer as WorldRenderer
   }
 
   on_pointer_down(e: IPointingEvent) {
-    const { ui } = this.lf2; if (!ui) return;
+    const { ui } = this.lfw; if (!ui) return;
     const intersections = this.intersections(e.scene_x, e.scene_y, ui);
     for (const i of intersections) {
       this._pointer_down_uis.add(i.extra)
@@ -33,7 +33,7 @@ export class UIInputHandle implements IUIInputHandle {
     }
   }
   on_pointer_move(e: IPointingEvent) {
-    const { ui } = this.lf2; if (!ui) return;
+    const { ui } = this.lfw; if (!ui) return;
     const intersections = this.intersections(e.scene_x, e.scene_y, ui);
     const leave_ui = this._pointer_on_uis;
     const stay_ui = new Set<UINode>();
@@ -62,7 +62,7 @@ export class UIInputHandle implements IUIInputHandle {
 
   }
   on_pointer_up(e: IPointingEvent) {
-    const { ui } = this.lf2; if (!ui) return;
+    const { ui } = this.lfw; if (!ui) return;
     const intersections = this.intersections(e.scene_x, e.scene_y, ui);
     for (const i of intersections) {
       if (i.extra.pointer_down) {

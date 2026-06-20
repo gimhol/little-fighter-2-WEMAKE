@@ -9,10 +9,10 @@ import { MeshFactory, MeshKind } from "./factory";
 import { OutlineMaterial } from "./materials/OutlineMaterial";
 import type { WorldRenderer } from "./WorldRenderer";
 
-const get_img_map = (lf2: LFW, data: IEntityData, out: Map<string, RImageInfo>): void => {
+const get_img_map = (lfw: LFW, data: IEntityData, out: Map<string, RImageInfo>): void => {
   out.clear();
   const { base: { files = {} } } = data;
-  const images = lf2.images as ImageMgr;
+  const images = lfw.images as ImageMgr;
   for (const key in files) {
     const img = images.find_by_pic_info(files[key]);
     img && out.set(key, img.clone());
@@ -24,7 +24,7 @@ export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
   readonly owner: EntityRenderer;
   readonly world: World;
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   protected images = new Map<string, RImageInfo>();
   protected entity: Entity;
   protected node = new Object3D();
@@ -52,7 +52,7 @@ export class EntityMainRender {
     this.world_renderer = owner.owner;
     const { entity } = owner;
     this.entity = entity;
-    this.lf2 = entity.lfw;
+    this.lfw = entity.lfw;
     this.world = entity.world;
     this.data = entity.data;
     this.frame = entity.frame;
@@ -83,7 +83,7 @@ export class EntityMainRender {
     }
 
     this.data = data;
-    get_img_map(this.lf2, data, this.images);
+    get_img_map(this.lfw, data, this.images);
     for (const img of this.images.values()) {
       img.pic?.texture && (img.pic.texture.needsUpdate = true);
     }

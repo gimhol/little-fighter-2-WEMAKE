@@ -22,7 +22,7 @@ export class Bar {
     this.mesh.material = m
   }
   constructor(
-    lf2: LFW,
+    lfw: LFW,
     color: T.ColorRepresentation,
     w: number,
     h: number,

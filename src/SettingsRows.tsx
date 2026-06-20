@@ -280,7 +280,7 @@ export default function SettingsRows(props: ISettingsRowsProps) {
               }
             />
             <CharacterSelect
-              lf2={lf2} value={c_id} onChange={v => set_character_id(v!)} />
+              lfw={lf2} value={c_id} onChange={v => set_character_id(v!)} />
             <TeamSelect value={team} onChange={v => set_team(v!)} />
             <Select
               value={bot_ctrl}

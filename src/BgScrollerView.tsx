@@ -6,17 +6,17 @@ import { LFW } from "./LFW";
 import { Defines } from "./LFW/defines/defines";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 
-function to_world_cam_x(screen_x: number, lf2: LFW, canvas: HTMLCanvasElement) {
+function to_world_cam_x(screen_x: number, lfw: LFW, canvas: HTMLCanvasElement) {
   const { left, width } = canvas.getBoundingClientRect();
-  const s_width = lf2.world.stage.width;
+  const s_width = lfw.world.stage.width;
   const w = floor((width * Defines.CLASSIC_SCREEN_WIDTH) / s_width);
   const x = min(width - w - 3, max(0, floor(screen_x - left - w / 2)));
   return (s_width * x) / width;
 }
 
-function from_world_cam_x(world_x: number, lf2: LFW, canvas: HTMLCanvasElement): number {
+function from_world_cam_x(world_x: number, lfw: LFW, canvas: HTMLCanvasElement): number {
   const { left, width } = canvas.getBoundingClientRect();
-  const s_width = lf2.world.stage.width;
+  const s_width = lfw.world.stage.width;
   const w = floor((width * Defines.CLASSIC_SCREEN_WIDTH) / s_width);
   const max_x = width - w - 3;
   let x = (world_x * width) / s_width;
@@ -24,9 +24,9 @@ function from_world_cam_x(world_x: number, lf2: LFW, canvas: HTMLCanvasElement):
   return x + left + w / 2;
 }
 
-export function BgScrollerView(props: { lf2?: LFW }) {
-  const { lf2 } = props;
-  const world = lf2?.world
+export function BgScrollerView(props: { lfw?: LFW }) {
+  const { lfw } = props;
+  const world = lfw?.world
   const ref_cavnas = useRef<HTMLCanvasElement>(null)
 
   const draw_cam_bar = useCallback((x: number) => {
@@ -52,7 +52,7 @@ export function BgScrollerView(props: { lf2?: LFW }) {
       ctx.fillStyle = "#FFFFFF88";
       ctx.fillRect(x + hh, hh, w, h);
     }
-  }, [lf2])
+  }, [lfw])
 
   useEffect(() => {
     draw_cam_bar(world?.current_cam_pos.x ?? 0)
@@ -72,16 +72,16 @@ export function BgScrollerView(props: { lf2?: LFW }) {
   })
 
   const _pointer_down = useCallback((e: React.PointerEvent) => {
-    if (!e.isPrimary || !lf2) return;
+    if (!e.isPrimary || !lfw) return;
     const canvas = ref_cavnas.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    const ox = from_world_cam_x(lf2.world.lock_cam_x ?? lf2.world.current_cam_pos.x, lf2, canvas) - e.pageX
+    const ox = from_world_cam_x(lfw.world.lock_cam_x ?? lfw.world.current_cam_pos.x, lfw, canvas) - e.pageX
 
     const handle_pointer_event = (e: React.PointerEvent | PointerEvent) => {
-      const output_x = to_world_cam_x(e.pageX + ox, lf2, canvas);
-      lf2.cmds.push(CMD.LOCK_CAM, `${output_x}`)
+      const output_x = to_world_cam_x(e.pageX + ox, lfw, canvas);
+      lfw.cmds.push(CMD.LOCK_CAM, `${output_x}`)
     }
     handle_pointer_event(e);
 
@@ -98,15 +98,15 @@ export function BgScrollerView(props: { lf2?: LFW }) {
     window.addEventListener("pointermove", _pointer_move);
     window.addEventListener("pointerup", _pointer_up);
     window.addEventListener("pointercancel", _pointer_up);
-  }, [lf2]);
+  }, [lfw]);
 
   const on_click_free_cam = useCallback(() => {
-    if (!lf2) return;
-    const { lock_cam_x } = lf2.world;
+    if (!lfw) return;
+    const { lock_cam_x } = lfw.world;
     if (typeof lock_cam_x != 'number') return;
     draw_cam_bar(lock_cam_x);
-    lf2.cmds.push(CMD.LOCK_CAM, '')
-  }, [lf2, draw_cam_bar])
+    lfw.cmds.push(CMD.LOCK_CAM, '')
+  }, [lfw, draw_cam_bar])
 
   return (
     <div className={csses.bg_scroller_view}>
