@@ -13,7 +13,7 @@ import type { IUIInfo, TComponentInfo } from "./IUIInfo.dat";
 import { is_0_or_1, judger, parse_ui_value, unsafe_is_object } from "./read_info_value";
 import { ui_load_img } from "./ui_load_img";
 import { parse_call_func_expression } from './utils/parse_call_func_expression';
-import read_nums from "./utils/read_nums";
+import { read_nums } from "./utils/read_nums";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 import { xml_to_ui_info } from "./xml_to_ui_info";
 

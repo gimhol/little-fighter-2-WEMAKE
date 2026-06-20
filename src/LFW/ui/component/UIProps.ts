@@ -5,7 +5,7 @@ import { is_str } from '../../utils/type_check/is_str';
 import { parse_ui_value } from "../read_info_value";
 import { isUIComponentClass } from "../utils/isUIComponentClass";
 import { isUINodeClass } from "../utils/isUINodeClass";
-import read_nums from "../utils/read_nums";
+import { read_nums } from "../utils/read_nums";
 import type { UIComponent } from "./UIComponent";
 
 export interface IUIPropsCallback { }

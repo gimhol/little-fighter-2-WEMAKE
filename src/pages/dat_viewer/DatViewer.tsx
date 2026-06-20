@@ -1,5 +1,5 @@
-import decode_lf2_dat from "@/LFW/dat_translator/decode_lf2_dat";
-import obj_dat_to_json from "@/LFW/dat_translator/obj_dat_to_json";
+import { decode_lf2_dat } from "@/LFW/dat_translator/decode_lf2_dat";
+import { obj_dat_to_json } from "@/LFW/dat_translator/obj_dat_to_json";
 import { parase_indexes } from "@/LFW/dat_translator/parase_indexes";
 import type { IDataLists } from "@/LFW/defines";
 import json5 from "json5";

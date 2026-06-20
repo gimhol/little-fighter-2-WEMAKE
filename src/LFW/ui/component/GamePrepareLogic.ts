@@ -1,9 +1,9 @@
+import { LocalController } from "../../controller/LocalController";
+import { Defines, FacingFlag, TeamEnum } from "../../defines";
 import { Ditto } from "../../ditto";
 import { StatBarType } from "../../entity/StatBarType";
 import type { ILFWCallback } from "../../ILFWCallback";
 import type { IPropsMeta } from "../../utils";
-import LocalController from "../../controller/LocalController";
-import { Defines, FacingFlag, TeamEnum } from "../../defines";
 import { BackgroundSwitcher } from "./BackgroundSwitcher";
 import { CharMenuLogic } from "./CharMenu/CharMenuLogic";
 import { StageSwitcher } from "./StageSwitcher";

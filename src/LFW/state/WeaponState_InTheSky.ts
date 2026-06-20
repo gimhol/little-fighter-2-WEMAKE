@@ -1,7 +1,7 @@
 
 import { Defines, type IFrameInfo, type IVector3, WT } from "../defines";
 import type { Entity } from "../entity/Entity";
-import WeaponState_Base from "./WeaponState_Base";
+import { WeaponState_Base } from "./WeaponState_Base";
 
 export class WeaponState_InTheSky extends WeaponState_Base {
   override enter(e: Entity, prev_frame: IFrameInfo): void {
@@ -32,10 +32,10 @@ export class WeaponState_InTheSky extends WeaponState_Base {
     // 速度太快的，变为throwing
     if (
       wt != WT.Heavy && (
-      vy < -fast_y || vy > fast_y ||
-      vx < -fast_x || vx > fast_x ||
-      vz < -fast_z || vz > fast_z
-    )
+        vy < -fast_y || vy > fast_y ||
+        vx < -fast_x || vx > fast_x ||
+        vz < -fast_z || vz > fast_z
+      )
     ) {
       const nf = e.find_align_frame(
         e.frame.id,

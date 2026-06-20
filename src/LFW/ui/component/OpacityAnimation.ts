@@ -1,5 +1,5 @@
 import { Animation, Delay, Easing, Sequence } from "../../animation";
-import ease_linearity from "../../utils/ease_method/ease_linearity";
+import { ease_linearity } from "../../utils/ease_method/ease_linearity";
 import { UIComponent } from "./UIComponent";
 
 export class OpacityAnimation extends UIComponent {

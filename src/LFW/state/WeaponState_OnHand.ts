@@ -1,6 +1,6 @@
 import { Entity } from "../entity";
 import { max } from "../utils";
-import WeaponState_Base from "./WeaponState_Base";
+import { WeaponState_Base } from "./WeaponState_Base";
 
 export class WeaponState_OnHand extends WeaponState_Base {
   override pre_update(e: Entity): void {

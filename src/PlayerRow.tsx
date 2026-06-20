@@ -11,7 +11,7 @@ import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
 import { BaseController, Entity, TeamEnum } from "./LFW";
 import { DummyEnum } from "./LFW/bot/DummyEnum";
-import LocalController from "./LFW/controller/LocalController";
+import { LocalController } from "./LFW/controller/LocalController";
 import { GameKey } from "./LFW/defines/GameKey";
 import { is_bot_ctrl } from "./LFW/entity/type_check";
 import { LFW } from "./LFW";

@@ -1,4 +1,4 @@
-import Easing from "../../animation/Easing";
+import { Easing } from "../../animation/Easing";
 import { UIComponent } from "./UIComponent";
 
 export class OpacityHover extends UIComponent {

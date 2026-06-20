@@ -1,8 +1,7 @@
-import { is_ball_ctrl } from "../entity/type_check";
-import { Defines, FrameBehavior, HitFlag, type IFrameInfo, type IVector3, SE, WT } from "../defines";
+import { Defines, type IFrameInfo, type IVector3, SE, WT } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
-import State_Base from "./State_Base";
+import { State_Base } from "./State_Base";
 
 export class WeaponState_Base extends State_Base {
   /**

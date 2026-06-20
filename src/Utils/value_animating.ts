@@ -1,4 +1,4 @@
-import ease_in_out_quint from "../LFW/utils/ease_method/ease_in_out_quint";
+import { ease_in_out_quint } from "../LFW/utils/ease_method/ease_in_out_quint";
 
 export function value_animating(
   from: number, to: number,

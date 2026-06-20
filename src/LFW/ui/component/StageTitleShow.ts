@@ -1,5 +1,5 @@
 import { Delay } from "../../animation";
-import Easing from "../../animation/Easing";
+import { Easing } from "../../animation/Easing";
 import { Sequence } from "../../animation/Sequence";
 import { Stage } from "../../stage/Stage";
 import { Label } from "./Label";
