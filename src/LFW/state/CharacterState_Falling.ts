@@ -2,7 +2,7 @@ import { type IVector3, StateEnum, WeaponType, type IFrameInfo } from "../define
 import type { Entity } from "../entity/Entity";
 import find_direction from "../entity/find_frame_direction";
 import { abs } from "../utils";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Falling extends CharacterState_Base {
   private _bouncing_frames_map = new Map<string, Set<string>>();

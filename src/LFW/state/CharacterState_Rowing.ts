@@ -1,7 +1,7 @@
 import { type IFrameInfo, SpeedMode, StateEnum } from "../defines";
 import { calc_v } from "../entity/calc_v";
 import { Entity } from "../entity/Entity";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Rowing extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Rowing) {

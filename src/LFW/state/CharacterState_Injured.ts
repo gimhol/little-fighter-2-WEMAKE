@@ -1,6 +1,6 @@
 import { type IFrameInfo, StateEnum, WeaponType } from "../defines";
 import { Entity } from "../entity";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Injured extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Injured) {

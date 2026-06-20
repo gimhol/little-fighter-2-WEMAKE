@@ -1,6 +1,6 @@
 import { type IFrameInfo, type IVector3, StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 import { spawn_ice_piece } from "./spawn_ice_piece";
 
 export class CharacterState_Frozen extends CharacterState_Base {

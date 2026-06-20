@@ -1,6 +1,6 @@
 import { StateEnum, WeaponType } from "../defines";
 import { Entity } from "../entity/Entity";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Caught extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Caught) {

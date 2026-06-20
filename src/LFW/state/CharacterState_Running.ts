@@ -1,7 +1,7 @@
 import { StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { abs } from "../utils/math/base";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Running extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Running) {

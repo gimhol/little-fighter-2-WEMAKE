@@ -1,7 +1,7 @@
 import { Defines, StateEnum } from "../defines";
 import { Entity } from "../entity/Entity";
 import { min } from "../utils";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Drink extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Drink) {

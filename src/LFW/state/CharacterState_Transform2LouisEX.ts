@@ -1,6 +1,6 @@
 import { StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
-import State_Base from "./State_Base";
+import { State_Base } from "./State_Base";
 export class CharacterState_TransformToLouisEX extends State_Base {
   constructor(state: StateEnum = StateEnum.TurnIntoLouisEX) {
     super(state)

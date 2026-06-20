@@ -2,7 +2,7 @@ import { GK, StateEnum, WeaponType, type IFrameInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils/math/round_float";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Lying extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Lying) {

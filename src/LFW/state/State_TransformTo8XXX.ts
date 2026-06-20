@@ -1,6 +1,6 @@
 import { EntityEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
-import State_Base from "./State_Base";
+import { State_Base } from "./State_Base";
 export class State_TransformTo8XXX extends State_Base {
   override leave(e: Entity): void {
     if (typeof this.state !== "number") return;

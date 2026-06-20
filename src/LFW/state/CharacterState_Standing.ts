@@ -1,6 +1,6 @@
 import { StateEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Standing extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Standing) {

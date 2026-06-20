@@ -2,7 +2,7 @@ import { GK, type IFrameInfo, SpeedCtrl, StateEnum } from "../defines";
 import { is_bot_ctrl } from "../entity";
 import type { Entity } from "../entity/Entity";
 import { abs, round_float } from "../utils";
-import CharacterState_Base from "./CharacterState_Base";
+import { CharacterState_Base } from "./CharacterState_Base";
 
 export class CharacterState_Jump extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Jump) {
