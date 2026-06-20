@@ -1,6 +1,6 @@
 import { CMD } from "@/LFW/defines/CMD";
 import { LFW } from "../LFW";
-import Callbacks from "../LFW/base/Callbacks";
+import { Callbacks } from "../LFW/base/Callbacks";
 import { NoEmitCallbacks } from "../LFW/base/NoEmitCallbacks";
 import type { IKeyboard } from "../LFW/ditto/keyboard/IKeyboard";
 import type { IKeyboardCallback } from "../LFW/ditto/keyboard/IKeyboardCallback";

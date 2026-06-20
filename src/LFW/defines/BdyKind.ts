@@ -1,6 +1,6 @@
 /**
  * - [LF2]
- * - [WEMAKE]
+ * - [LFW]
  *
  * - 原版lf2中
  *    - 用于实现被攻击后跳转的逻辑。
@@ -29,12 +29,12 @@ export const OLD_BDY_KIND_GOTO_MAX = 1999;
 export enum BdyKind {
   /**
    * - [LF2] √
-   * - [WEMAKE] √
+   * - [LFW] √
    */
   Normal = 0,
   /**
    * [LF2] ×
-   * [WEMAKE] √
+   * [LFW] √
    */
   Criminal = 1,
 

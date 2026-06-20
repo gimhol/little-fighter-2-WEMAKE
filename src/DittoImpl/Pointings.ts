@@ -1,4 +1,4 @@
-import Callbacks from "../LFW/base/Callbacks";
+import { Callbacks } from "../LFW/base/Callbacks";
 import { NoEmitCallbacks } from "../LFW/base/NoEmitCallbacks";
 import type { IPointings, IPointingsCallback } from "../LFW/ditto";
 import { __PointingEvent } from "./__PointingEvent";

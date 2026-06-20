@@ -1,4 +1,4 @@
-import Callbacks from "../LFW/base/Callbacks";
+import { Callbacks } from "../LFW/base/Callbacks";
 import { NoEmitCallbacks } from "../LFW/base/NoEmitCallbacks";
 import { is_false } from "../LFW/utils/type_check";
 import type { IFullScreen } from "../LFW/ditto/fullscreen/IFullScreen";

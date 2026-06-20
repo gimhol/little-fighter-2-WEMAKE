@@ -1,4 +1,4 @@
-import Callbacks from "../../base/Callbacks";
+import { Callbacks } from "../../base/Callbacks";
 import type { NoEmitCallbacks } from "../../base/NoEmitCallbacks";
 import type { LFW } from "../../LFW";
 import type { ISounds } from "./ISounds";
