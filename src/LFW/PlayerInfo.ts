@@ -9,6 +9,7 @@ import type { Entity } from './entity/Entity';
 import type { IPlayerInfoCallback } from "./IPlayerInfoCallback";
 import { is_str } from './utils/type_check/is_str';
 import type { Unsafe } from "./utils/type_check/Unsafe";
+import { decodeUTF8, encodeUTF8 } from "./utils/utf8";
 
 export class PlayerInfo {
   static readonly TAG = "PlayerInfo";
@@ -45,7 +46,8 @@ export class PlayerInfo {
         name: this.storage_key,
         type: PlayerInfo.DATA_TYPE,
         version: PlayerInfo.DATA_VERSION,
-        data: new TextEncoder().encode(JSON.stringify(this._info)),
+        // DOM!
+        data: encodeUTF8(JSON.stringify(this._info)),
       })
     })
   }
@@ -57,7 +59,7 @@ export class PlayerInfo {
       try {
         const buf = data ?? (blob ? new Uint8Array(await blob.arrayBuffer()) : null);
         if (!buf) { Ditto.warn("[PlayerInfo::load]", "no data"); return false; }
-        const raw_text = new TextDecoder().decode(buf);
+        const raw_text = decodeUTF8(buf);
         const raw_info = json5.parse<Partial<IPurePlayerInfo>>(raw_text);
         const { name, keys, ctrl = this.ctrl, version } = raw_info;
         if (version !== this._info.version) {

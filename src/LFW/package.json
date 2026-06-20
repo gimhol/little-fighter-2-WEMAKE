@@ -1,0 +1,17 @@
+{
+  "name": "little-fighter-wemake-core",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Gim <gimholg1992@foxmail.com> (gimholg1992@gmail.com)",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:js": "node build.mjs --js-only",
+    "build:dts": "node build.mjs --dts-only"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "rollup": "^4.50.0",
+    "rollup-plugin-dts": "^6.2.0"
+  }
+}

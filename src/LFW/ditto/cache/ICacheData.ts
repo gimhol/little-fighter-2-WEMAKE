@@ -5,6 +5,12 @@
  * @export
  * @interface ICacheData
  */
+
+/** 纯 ES 环境下的 Blob 最小声明 */
+interface Blob {
+  arrayBuffer(): Promise<ArrayBuffer>;
+}
+
 export interface ICacheData {
   /**
    * 缓存数据ID

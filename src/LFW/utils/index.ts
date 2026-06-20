@@ -12,4 +12,5 @@ export * from "./schema";
 export * from "./string_parser";
 export * from "./type_cast";
 export * from "./type_check";
+export * from "./utf8";
 /*** AUTO EXPORT END ***/

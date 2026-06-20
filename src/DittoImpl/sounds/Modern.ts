@@ -1,4 +1,4 @@
-import { AsyncValuesKeeper } from "@/LFW/base/AsyncValuesKeeper";
+import { AsyncValuesKeeper } from "@/DittoImpl/AsyncValuesKeeper";
 import { Graves } from "@/LFW/base/Graves";
 import { Defines } from "@/LFW/defines/defines";
 import { BaseSounds } from "@/LFW/ditto/sounds/BaseSounds";
