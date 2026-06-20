@@ -1,4 +1,4 @@
-import list_fn from "../utils/container_help/list_fn";
+import { list_fn } from "../utils/container_help/list_fn";
 
 export const EFUNC = (..._args: any[]) => void 0
 

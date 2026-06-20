@@ -1,5 +1,5 @@
-import ease_linearity from "../utils/ease_method/ease_linearity";
-import Easing from "./Easing"
+import { ease_linearity } from "../utils/ease_method/ease_linearity";
+import { Easing } from "./Easing";
 
 
 test("[Easing] linearity, case 0", () => {

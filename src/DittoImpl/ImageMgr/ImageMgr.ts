@@ -6,7 +6,7 @@ import { MinificationTextureFilter } from "@/LFW/defines/MinificationTextureFilt
 import { TextureWrapping } from "@/LFW/defines/TextureWrapping";
 import type { IImageInfo } from "@/LFW/ditto/image/IImageInfo";
 import type { LFW } from "../../LFW";
-import AsyncValuesKeeper from "../../LFW/base/AsyncValuesKeeper";
+import { AsyncValuesKeeper } from "../../LFW/base/AsyncValuesKeeper";
 import type { ILegacyPictureInfo } from "../../LFW/defines/ILegacyPictureInfo";
 import type { IPicture } from "../../LFW/defines/IPicture";
 import type { IPictureInfo } from "../../LFW/defines/IPictureInfo";

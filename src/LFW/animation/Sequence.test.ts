@@ -1,5 +1,5 @@
 import { Delay } from "./Delay";
-import Easing from "./Easing";
+import { Easing } from "./Easing";
 import { Sequence } from "./Sequence";
 import { Sine } from "./Sine";
 

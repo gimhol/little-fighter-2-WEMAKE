@@ -6,7 +6,7 @@ import { set_hit_flag } from "../dat_translator/set_hit_flag";
 import { Defines, EntityEnum, EntityVal as EV, FacingFlag as FF, FrameBehavior, HitFlag, type IFrameInfo, SE, StateEnum } from "../defines";
 import type { IEntityData } from "../defines/IEntityData";
 import { is_ball_data, is_weapon_data } from "../entity";
-import read_nums from "../ui/utils/read_nums";
+import { read_nums } from "../ui/utils/read_nums";
 import { max, min } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
 import { preprocess_ball_frame } from "./preprocess_ball_frame";

@@ -19,7 +19,7 @@ import { round_float } from "../utils";
 import { abs, floor } from "../utils/math/base";
 import { match_all } from "../utils/string_parser/match_all";
 import { match_colon_value } from "../utils/string_parser/match_colon_value";
-import take_sections from "../utils/string_parser/take_sections";
+import { take_sections } from "../utils/string_parser/take_sections";
 import { to_num } from "../utils/type_cast/to_num";
 import { not_zero_num } from "../utils/type_check";
 import { cook_bdy } from "./cook_bdy";
