@@ -1,4 +1,4 @@
-import FSM from "../base/FSM";
+import { FSM } from "../base/FSM";
 import { BaseController } from "../controller/BaseController";
 import {
   ATTCKING_ITR_KINDS,
@@ -25,9 +25,9 @@ import { dummy_updaters, DummyEnum } from "./DummyEnum";
 import { NearestTargets } from "./NearestTargets";
 import { BotState_Avoiding } from './state/BotState_Avoiding';
 import { BotState_Chasing } from './state/BotState_Chasing';
-import { BotState_Idle } from './state/BotState_Idle';
 import { BotState_Dead } from "./state/BotState_Dead";
 import { BotState_Following } from "./state/BotState_Following";
+import { BotState_Idle } from './state/BotState_Idle';
 import { BotState_StageEnd } from "./state/BotState_StageEnd";
 import { is_ray_hit } from "./utils/is_ray_hit";
 

@@ -1,7 +1,7 @@
-import type { IPropsMeta } from "../../utils/schema/make_schema";
-import FSM, { type IState } from "../../base/FSM";
+import { type IState, FSM } from "../../base/FSM";
 import { Ditto } from "../../ditto";
 import type { ILFWCallback } from "../../ILFWCallback";
+import type { IPropsMeta } from "../../utils/schema/make_schema";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { IUIPointerEvent } from "../IUIPointerEvent";
 import { UINode } from "../UINode";

@@ -1,4 +1,4 @@
-import FSM from "../../base/FSM";
+import { FSM } from "../../base/FSM";
 import { Defines, EntityGroup, GameKey } from "../../defines";
 import { FacingFlag } from "../../defines/FacingFlag";
 import type { IStageInfo } from "../../defines/IStageInfo";

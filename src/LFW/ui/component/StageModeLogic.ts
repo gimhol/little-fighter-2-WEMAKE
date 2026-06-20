@@ -1,4 +1,4 @@
-import FSM from "../../base/FSM";
+import { FSM } from "../../base/FSM";
 import { EntityGroup, GameKey, StageActions, type IStagePhaseInfo } from "../../defines";
 import type { Entity } from "../../entity";
 import type { IEntityCallbacks } from "../../entity/IEntityCallbacks";
