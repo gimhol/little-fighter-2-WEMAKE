@@ -1,4 +1,4 @@
-import { Ditto } from "..";
+import { Ditto } from "../ditto/Instance";
 import { BinOp, type TBinOp } from "../defines/BinOp";
 import {
   type IExpression, type IJudger, type IValGetterGetter
