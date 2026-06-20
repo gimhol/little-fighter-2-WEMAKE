@@ -1,12 +1,12 @@
 import { Expression } from "../base/Expression";
 import type { TAction } from "../defines";
 import { ActionType } from "../defines/ActionType";
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import { is_non_blank_str } from "../utils";
 import { get_val_geter_from_collision } from "./get_val_from_collision";
 import { preprocess_next_frame } from "./preprocess_next_frame";
 
-export function preprocess_action(lf2: LF2, action: TAction, jobs: Promise<void>[]): TAction {
+export function preprocess_action(lf2: LFW, action: TAction, jobs: Promise<void>[]): TAction {
   action.tester = action.test ? new Expression(
     action.test, get_val_geter_from_collision
   ) : void 0

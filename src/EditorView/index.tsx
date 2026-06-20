@@ -20,7 +20,7 @@ import type { IEntityData } from "../LFW/defines/IEntityData";
 import type { ILegacyPictureInfo } from "../LFW/defines/ILegacyPictureInfo";
 import { Ditto, type IZip } from "../LFW/ditto";
 import type { ILf2Callback } from "../LFW/ILf2Callback";
-import { LF2 } from "../LFW/LFW";
+import { LFW } from "../LFW";
 import { traversal } from "../LFW/utils/container_help/traversal";
 import { is_num } from "../LFW/utils/type_check";
 import { open_file } from "../Utils/open_file";
@@ -57,7 +57,7 @@ export interface IEditorViewProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   loading?: boolean;
   open?: boolean;
-  lf2?: LF2;
+  lf2?: LFW;
 }
 type TTreeNode = ITreeNode<IEntityData | IBgData | null>
 

@@ -1,5 +1,5 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, TFace } from "@/LFW";
-import { Buff_Electroshock, clamp, floor, LF2, random_in, StateEnum, World } from "@/LFW";
+import { Buff_Electroshock, clamp, floor, LFW, random_in, StateEnum, World } from "@/LFW";
 import type { IModelInfo } from "@/LFW/defines/IModelInfo";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
@@ -9,7 +9,7 @@ import { MeshFactory, MeshKind } from "./factory";
 import { OutlineMaterial } from "./materials/OutlineMaterial";
 import type { WorldRenderer } from "./WorldRenderer";
 
-const get_img_map = (lf2: LF2, data: IEntityData, out: Map<string, RImageInfo>): void => {
+const get_img_map = (lf2: LFW, data: IEntityData, out: Map<string, RImageInfo>): void => {
   out.clear();
   const { base: { files = {} } } = data;
   const images = lf2.images as ImageMgr;
@@ -24,7 +24,7 @@ export class EntityMainRender {
   readonly world_renderer: WorldRenderer;
   readonly owner: EntityRenderer;
   readonly world: World;
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   protected images = new Map<string, RImageInfo>();
   protected entity: Entity;
   protected node = new Object3D();

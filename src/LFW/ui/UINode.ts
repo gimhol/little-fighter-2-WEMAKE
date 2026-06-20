@@ -1,4 +1,4 @@
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { Callbacks, type IDebugging, make_debugging } from "../base";
 import type { IVector3, IVector3Like } from "../defines";
 import { Ditto as D, ImageInfo, type IUINodeRenderer, TextInfo } from "../ditto";
@@ -20,7 +20,7 @@ export class UINode implements IDebugging {
   debug!: (_0: string, ..._1: any[]) => void;
   warn!: (_0: string, ..._1: any[]) => void;
   log!: (_0: string, ..._1: any[]) => void;
-  readonly lf2: LF2;
+  readonly lf2: LFW;
 
   /**
    * 原始UI数据
@@ -344,7 +344,7 @@ export class UINode implements IDebugging {
 
   renderer: IUINodeRenderer;
 
-  constructor(lf2: LF2, data: ICookedUIInfo, parent?: UINode) {
+  constructor(lf2: LFW, data: ICookedUIInfo, parent?: UINode) {
     this.lf2 = lf2;
     this.data = Object.freeze(data);
     this._parent = parent;
@@ -498,7 +498,7 @@ export class UINode implements IDebugging {
     this.renderer.on_hide?.();
   }
 
-  static create(lf2: LF2, info: ICookedUIInfo, parent?: UINode): UINode {
+  static create(lf2: LFW, info: ICookedUIInfo, parent?: UINode): UINode {
     const ret = new UINode(lf2, info, parent);
     const { component } = ret.data;
     if (component)

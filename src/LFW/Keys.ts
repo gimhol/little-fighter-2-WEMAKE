@@ -1,10 +1,10 @@
-import { GK } from "./defines/GameKey";
 import { KeyStatus } from "./controller/KeyStatus";
-import { LF2 } from "./LFW";
+import { GK } from "./defines/GameKey";
+import { LFW } from "./LFW";
 import { World } from "./World";
 
 export class Keys {
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   readonly world: World;
   get time() { return this.lf2.world.lifetime; }
   readonly [GK.L] = new KeyStatus(this);
@@ -14,7 +14,7 @@ export class Keys {
   readonly [GK.a] = new KeyStatus(this);
   readonly [GK.j] = new KeyStatus(this);
   readonly [GK.d] = new KeyStatus(this);
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
     this.world = lf2.world;
   }

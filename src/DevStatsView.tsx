@@ -1,10 +1,10 @@
 import { useMemo, useRef } from "react";
 import csses from "./DevStatsView.module.scss";
-import type { ILf2Callback, IWorldCallbacks, LF2 } from "./LFW";
+import type { ILf2Callback, IWorldCallbacks, LFW } from "./LFW";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 
 export interface IDevStatsViewProps {
-  lf2?: LF2 | null;
+  lf2?: LFW | null;
 }
 export function DevStatsView(props: IDevStatsViewProps) {
   const { lf2 } = props;

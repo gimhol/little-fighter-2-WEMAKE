@@ -4,7 +4,7 @@ import type { BaseController } from "./controller/BaseController";
 import type { IEntityData } from "./defines/IEntityData";
 import { Ditto } from "./ditto/Instance";
 import type { Entity } from "./entity/Entity";
-import type { LF2 } from "./LFW";
+import type { LFW } from "./LFW";
 import type { States } from "./state/States";
 import type { UIComponent } from "./ui/component/UIComponent";
 import type { IComponentInfo } from "./ui/IComponentInfo";
@@ -58,7 +58,7 @@ export class Factory {
       Ditto.warn(`[${Factory.TAG}::register_buff] kind already exists, ${KIND.toString()}`)
     Factory.buff_creators.set(KIND, creator);
   }
-  create_buff(kind: Key, lf2: LF2, id: string): Buff | undefined {
+  create_buff(kind: Key, lf2: LFW, id: string): Buff | undefined {
     const B = Factory.buff_creators.get(kind);
     if (!B) return void 0;
     const ret = new B(lf2, id, B.KIND);

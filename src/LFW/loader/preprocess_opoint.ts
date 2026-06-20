@@ -1,9 +1,9 @@
-import { LF2 } from '../LFW';
+import { LFW } from '../LFW';
 import { type IOpointInfo, OpointSpreading } from "../defines";
 import { Randoming } from "../helper";
 import { round_float } from "../utils";
 
-export function preprocess_opoint(opoint: IOpointInfo, lf2: LF2): IOpointInfo {
+export function preprocess_opoint(opoint: IOpointInfo, lf2: LFW): IOpointInfo {
   if (opoint.spreading == OpointSpreading.Spreading) {
     if (opoint.spreading_x?.length) opoint.__spreading_random_x = new Randoming(opoint.spreading_x, lf2);
     if (opoint.spreading_y?.length) opoint.__spreading_random_y = new Randoming(opoint.spreading_y, lf2);

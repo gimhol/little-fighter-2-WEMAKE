@@ -1,5 +1,5 @@
 import type { IVector2, IVector3 } from "../defines";
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import type { UINode } from '../ui/UINode';
 import type { World } from "../World";
 import type { ICache } from './cache/ICache';
@@ -38,7 +38,7 @@ export interface IDittoPack {
     ): Promise<IZip>;
   };
   Sounds: new (...args: any[]) => ISounds;
-  Keyboard: new (lf2: LF2, ...args: any[]) => IKeyboard;
+  Keyboard: new (lf2: LFW, ...args: any[]) => IKeyboard;
   Pointings: new (...args: any[]) => IPointings;
   FullScreen: new (...args: any[]) => IFullScreen;
   Importer: IImporter;
@@ -47,8 +47,8 @@ export interface IDittoPack {
   Vector2: new (x?: number, y?: number) => IVector2;
   WorldRender: new (world: World) => IWorldRenderer;
   UINodeRenderer: new (uinode: UINode) => IUINodeRenderer;
-  ImageMgr: new (lf2: LF2) => IImageMgr;
-  UIInputHandle: new (lf2: LF2) => IUIInputHandle;
+  ImageMgr: new (lf2: LFW) => IImageMgr;
+  UIInputHandle: new (lf2: LFW) => IUIInputHandle;
   XML: IXML;
   warn(...args: any[]): unknown;
   Log(...args: any[]): unknown;

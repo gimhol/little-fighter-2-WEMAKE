@@ -1,7 +1,7 @@
 import { Defines, floor, min, random_in } from "@/LFW";
 import type { IWorldRenderer } from "@/LFW/ditto/render/IWorldRenderer";
 import type { Entity } from "@/LFW/entity";
-import type { LF2 } from "@/LFW/LFW";
+import type { LFW } from "@/LFW/LFW";
 import type { World } from "@/LFW/World";
 import { CSS2DRenderer, Camera, Object3D, OrthographicCamera, Scene, Vector3, WebGLRenderer } from "../_t";
 import { BgRender } from "./BgRender";
@@ -9,7 +9,7 @@ import { EntityRenderer } from "./EntityRenderer";
 import csses from "./styles.module.scss";
 
 export class WorldRenderer implements IWorldRenderer {
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   readonly world: World;
   readonly bg_render: BgRender;
   readonly camera: Camera;

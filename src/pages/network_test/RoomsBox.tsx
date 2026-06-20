@@ -1,5 +1,5 @@
 import { Input, type InputRef } from "@/Component/Input";
-import { LF2 } from "@/LFW";
+import { LFW } from "@/LFW";
 import { useFloating, useForwardedRef, useStateRef } from "@fimagine/dom-hooks";
 import classNames from "classnames";
 import List from "rc-virtual-list";
@@ -22,7 +22,7 @@ import { useRooms } from "./useRooms";
 export interface IRoomsBoxProps extends IFrameProps {
   conn?: Connection | null;
   conn_state?: TriState;
-  lf2?: LF2 | null;
+  lf2?: LFW | null;
 }
 function _RoomsBox(props: IRoomsBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
   const { t } = useTranslation()

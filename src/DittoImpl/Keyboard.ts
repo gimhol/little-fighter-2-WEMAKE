@@ -4,7 +4,7 @@ import { NoEmitCallbacks } from "../LFW/base/NoEmitCallbacks";
 import type { IKeyboard } from "../LFW/ditto/keyboard/IKeyboard";
 import type { IKeyboardCallback } from "../LFW/ditto/keyboard/IKeyboardCallback";
 import type { IKeyEvent } from "../LFW/ditto/keyboard/IKeyEvent";
-import { LF2 } from "../LFW/LFW";
+import { LFW } from "../LFW";
 
 class __KeyEvent implements IKeyEvent {
   readonly times: number;
@@ -42,7 +42,7 @@ export class __Keyboard implements IKeyboard {
   enabled: boolean = true;
   protected _callback = new Callbacks<__IKeyboardCallback>();
   protected _times_map = new Map<string, number>();
-  protected lf2: LF2;
+  protected lf2: LFW;
   protected _axe_dead_zone = 0.12;
   protected _axe_live_zone = 0.22;
   get callback(): NoEmitCallbacks<__IKeyboardCallback> {
@@ -73,7 +73,7 @@ export class __Keyboard implements IKeyboard {
   protected gamepad_buttons = new Map<string, 0 | 1>();
   protected gamepad_axes: (readonly number[])[] = []
 
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
     window.addEventListener("keydown", this._on_key_down);
     window.addEventListener("keyup", this._on_key_up);

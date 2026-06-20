@@ -1,13 +1,13 @@
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import type { ICookedUIInfo } from "../ui/ICookedUIInfo";
 
 export class UIHelper {
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   protected _all: ICookedUIInfo[] = []
   get all(): ReadonlyArray<ICookedUIInfo> {
     return this._all
   }
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
   }
   clear(): this {

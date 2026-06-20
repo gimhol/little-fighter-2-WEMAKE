@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { LF2 } from "../LFW/LFW";
+import type { LFW } from "../LFW";
 import { EntityGroup } from "../LFW/defines";
 import type { IEntityData } from "../LFW/defines/IEntityData";
 import { is_str } from "../LFW/utils/type_check";
@@ -7,7 +7,7 @@ import Select, { type ISelectProps } from "./Select";
 
 export interface CharacterSelectProps
   extends Omit<ISelectProps<IEntityData | "", string>, 'parse'> {
-  lf2: LF2;
+  lf2: LFW;
 }
 export default function CharacterSelect(props: CharacterSelectProps) {
   const { lf2, disabled, placeholder, ..._p } = props;

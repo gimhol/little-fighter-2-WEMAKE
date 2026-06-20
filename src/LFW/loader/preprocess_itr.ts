@@ -4,7 +4,7 @@ import { get_next_frame_by_raw_id } from "../dat_translator/get_the_next";
 import { set_hit_flag } from "../dat_translator/set_hit_flag";
 import { ActionType, BdyKind, OID, CollisionVal as C_Val, EntityEnum, type IEntityData, type IItrInfo, ItrEffect, ItrKind, StateEnum } from "../defines";
 import { HitFlag } from "../defines/HitFlag";
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import { ensure } from "../utils/container_help/ensure";
 import { get_val_geter_from_collision } from "./get_val_from_collision";
 import { preprocess_action } from "./preprocess_action";
@@ -18,7 +18,7 @@ import { preprocess_next_frame } from "./preprocess_next_frame";
  * @param {IEntityData} data 
  * @returns {IItrInfo} 处理后的itr
  */
-export function preprocess_itr(lf2: LF2, itr: IItrInfo, data: IEntityData, jobs: Promise<void>[]): IItrInfo {
+export function preprocess_itr(lf2: LFW, itr: IItrInfo, data: IEntityData, jobs: Promise<void>[]): IItrInfo {
   const ref = itr.ref ?? itr.prefab_id;
   const prefab = ref !== void 0 ? data.itr_prefabs?.[ref] : void 0;
   if (prefab) itr = { ...prefab, ...itr };

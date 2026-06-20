@@ -1,14 +1,14 @@
 import type { IEntityData } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import { Entity } from "../entity/Entity";
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { Randoming } from "./Randoming";
 
 export class EntitiesHelper {
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   readonly team_randoming: Randoming<TeamEnum>;
 
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
     this.team_randoming = new Randoming([
       TeamEnum.Team_1,

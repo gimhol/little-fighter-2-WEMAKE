@@ -40,9 +40,9 @@ const DEFAULT_INFO: Readonly<IGameZipInfo> = {
   author: "Gim",
   paths: ["prel.zip.json", "data.zip.json"],
 }
-export class LF2 implements I.IKeyboardCallback, IDebugging {
-  static readonly TAG = "LF2";
-  static readonly instances: LF2[] = []
+export class LFW implements I.IKeyboardCallback, IDebugging {
+  static readonly TAG = "LFW";
+  static readonly instances: LFW[] = []
   static readonly VERSION_NAME: string = `v${VERSION_NAME} ${BUILD_TIME}`;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
@@ -63,7 +63,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this._ZIPS = v;
     this.instances.forEach(v => v.update_zip_names())
   }
-  static get instance() { return LF2.instances[0] }
+  static get instance() { return LFW.instances[0] }
   static get world() { return this.instance?.world }
   static get objects() { return this.instance?.entities }
   static get fighters() { return this.instance?.fighters }
@@ -146,7 +146,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    * 
    * @readonly
    * @type {I.IZip[]}
-   * @memberof LF2
+   * @memberof LFW
    */
   readonly zips: I.IZip[] = [];
   readonly md5s: string[] = [];
@@ -214,10 +214,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    * @param {string} path
    * @param {boolean} exact 准确匹配
    * @return {Promise<C>}
-   * @memberof LF2
+   * @memberof LFW
    */
   async import_json<C = any>(path: string, exact: boolean = true): Promise<[C, I.HitUrl, string?]> {
-    const key = `LF2.import_json.${path}.${exact}`;
+    const key = `LFW.import_json.${path}.${exact}`;
     return deduped(key, async () => {
       const paths = exact ? [path] : get_import_fallbacks(path)[0];
       const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
@@ -232,10 +232,10 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
    * @param {string} path 资源路径
    * @param {boolean} exact 准确匹配
    * @return {Promise<[I.BlobUrl, I.HitUrl]>}
-   * @memberof LF2
+   * @memberof LFW
    */
   async import_resource(path: string, exact: boolean): Promise<[I.BlobUrl, I.HitUrl, string?]> {
-    const key = `LF2.import_resource.${path}.${exact}`;
+    const key = `LFW.import_resource.${path}.${exact}`;
     return deduped(key, async () => {
       const paths = exact ? [path] : get_import_fallbacks(path)[0];
       const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
@@ -245,7 +245,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   async import_array_buffer(path: string, exact: boolean): Promise<[ArrayBuffer, I.HitUrl, string?]> {
-    const key = `LF2.import_array_buffer.${path}.${exact}`;
+    const key = `LFW.import_array_buffer.${path}.${exact}`;
     return deduped(key, async () => {
       const paths = exact ? [path] : get_import_fallbacks(path)[0];
       const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
@@ -255,7 +255,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   }
 
   async import_xml(path: string, exact: boolean = true): Promise<[I.IXMLElement, I.HitUrl, string?]> {
-    const key = `LF2.import_xml.${path}.${exact}`;
+    const key = `LFW.import_xml.${path}.${exact}`;
     return deduped(key, async () => {
       const paths = exact ? [path] : get_import_fallbacks(path)[0];
       const { file, origin: tag } = this.find_from_zips(paths, true).at(0) || {}
@@ -266,7 +266,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
         [text] = await I.Ditto.Importer.import_as_text(paths);
       }
       const root = I.Ditto.XML.parse(text);
-      if (!root) throw new Error(`[LF2::import_xml] failed to parse: ${path}`);
+      if (!root) throw new Error(`[LFW::import_xml] failed to parse: ${path}`);
       return [root, file?.name || paths[0], tag];
     });
   }
@@ -283,12 +283,12 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.keyboard = new I.Ditto.Keyboard(this);
     this.keyboard.callback.add(this);
     this.pointings = new I.Ditto.Pointings();
-    I.Ditto.Cache.forget(LF2.DATA_TYPE, LF2.DATA_VERSION).catch(e => { })
+    I.Ditto.Cache.forget(LFW.DATA_TYPE, LFW.DATA_VERSION).catch(e => { })
     I.Ditto.Cache.forget(PlayerInfo.DATA_TYPE, PlayerInfo.DATA_VERSION).catch(e => { })
     this.world = new World(this);
     this.world.start_update();
     this.world.start_render();
-    LF2.instances.push(this)
+    LFW.instances.push(this)
     this.pointings.callback.add(new I.Ditto.UIInputHandle(this));
 
     const ui_stack = new UI.UIStack(this, 0);
@@ -300,7 +300,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.ui_stacks.push(ui_stack)
     this._i18n.add({
       '': {
-        VERSION_NAME: LF2.VERSION_NAME,
+        VERSION_NAME: LFW.VERSION_NAME,
         DATA_LIST: '',
       }
     })
@@ -412,8 +412,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
 
       await I.Ditto.Cache.put({
         name: md5,
-        version: LF2.DATA_VERSION,
-        type: LF2.DATA_TYPE,
+        version: LFW.DATA_VERSION,
+        type: LFW.DATA_TYPE,
         data: await ret.blob()
       });
     }
@@ -465,7 +465,7 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
   private _dispose_check = (fn: string) => {
     if (!this._disposed) return;
     const error = Object.assign(
-      new Error(`[${LF2.TAG}::${fn}] instance disposed.`),
+      new Error(`[${LFW.TAG}::${fn}] instance disposed.`),
       { is_disposed_error: true }
     )
     throw error;
@@ -524,8 +524,8 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.pointings.dispose();
     this._ui_stacks.forEach(u => u.dispose())
     this._ui_stacks.length = 0;
-    const i = LF2.instances.indexOf(this);
-    if (i >= 0) LF2.instances.splice(i, 1);
+    const i = LFW.instances.indexOf(this);
+    if (i >= 0) LFW.instances.splice(i, 1);
   }
   add_puppet(player_id: string, oid: string, team?: string): Entity | undefined {
     const player_info = this.players.get(player_id);
@@ -707,9 +707,9 @@ export class LF2 implements I.IKeyboardCallback, IDebugging {
     this.cmds.push(CMD.SET_DIFFICULTY, '' + next)
   }
   private update_zip_names() {
-    const DATA_LIST = LF2._ZIPS.slice(2).map(v => typeof v === 'string' ? v : v.name)
-    if (!LF2.IS_DEFAULT_INFO)
-      DATA_LIST.unshift(LF2.INFO?.title)
+    const DATA_LIST = LFW._ZIPS.slice(2).map(v => typeof v === 'string' ? v : v.name)
+    if (!LFW.IS_DEFAULT_INFO)
+      DATA_LIST.unshift(LFW.INFO?.title)
     this._i18n.add({ '': { DATA_LIST } })
 
     this.callbacks.emit('on_extra_zips_changed')(this)

@@ -1,5 +1,5 @@
 import { Factory } from "../Factory";
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
 import { type IBaseData, type IBgData, type IBotData, type IDataLists, type IEntityData, type IStageInfo } from "../defines";
@@ -227,13 +227,13 @@ class Inner {
 
 export default class DatMgr {
   static readonly TAG: string = "DatMgr";
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   private _inner_id: number = 0;
   private _inner = new Inner(this, ++this._inner_id);
   get inner_id(): number {
     return this._inner_id;
   }
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
   }
 

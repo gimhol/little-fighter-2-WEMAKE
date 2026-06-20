@@ -5,7 +5,7 @@ import Frame from "@/Component/Frame";
 import { Input } from "@/Component/Input";
 import { Text } from "@/Component/Text";
 import { useForage } from "@/hooks/useForage";
-import { LF2 } from "@/LFW";
+import { LFW } from "@/LFW";
 import { useFloating } from "@fimagine/dom-hooks/dist/useFloating";
 import { useForwardedRef } from "@fimagine/dom-hooks/dist/useForwardedRef";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";
@@ -18,7 +18,7 @@ import { useCallbacks } from "./useCallbacks";
 export interface IConnectionBoxProps extends ICombineProps {
   on_conn_change?(conn: Connection | null): void;
   on_state_change?(conn_state: TriState): void;
-  lf2?: LF2 | null;
+  lf2?: LFW | null;
 }
 function _ConnectionBox(props: IConnectionBoxProps, f_ref: ForwardedRef<HTMLDivElement>) {
   const { t } = useTranslation();

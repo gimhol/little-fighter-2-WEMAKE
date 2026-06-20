@@ -4,13 +4,13 @@ import { createPortal } from "react-dom";
 import { useImmer } from "use-immer";
 import csses from "./GamePad.module.scss";
 import { pow } from "./LFW";
-import { LF2 } from "./LFW/LFW";
+import { LFW } from "./LFW";
 import { GameKey as GK } from "./LFW/defines/GameKey";
 import { LF2KeyEvent } from "./LFW/ui/LF2KeyEvent";
 import { __Keyboard } from "./DittoImpl";
 
 export interface IGamePadProps extends React.HTMLAttributes<HTMLDivElement> {
-  lf2?: LF2;
+  lf2?: LFW;
   player_id?: string;
   enabled?: boolean;
   container?: () => Element | DocumentFragment | undefined | null

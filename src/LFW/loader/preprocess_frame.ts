@@ -1,4 +1,4 @@
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { CondMaker } from "../dat_translator";
 import { cook_frame_indicator_info } from "../dat_translator/cook_frame_indicator_info";
 import { make_frame_behavior } from "../dat_translator/make_frame_behavior";
@@ -23,7 +23,7 @@ const breakfall_j_expression = new CondMaker<EV>()
   .and(EV.CAUGHT, "!=", 1)
   .done()
 
-export function preprocess_frame(lf2: LF2, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
+export function preprocess_frame(lf2: LFW, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
   if (data.processed != false) { }
   else if (is_ball_data(data)) preprocess_ball_frame(frame, data);
   else if (is_weapon_data(data)) {

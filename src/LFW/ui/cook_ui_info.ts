@@ -1,6 +1,6 @@
 import type { IStyle } from "../defines";
 import { Ditto } from "../ditto";
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { floor } from '../utils/math/base';
 import { is_num_arr } from '../utils/type_check/is_num';
 import { is_str } from '../utils/type_check/is_str';
@@ -20,7 +20,7 @@ import { xml_to_ui_info } from "./xml_to_ui_info";
 let __new_id = 0;
 const new_id = () => ++__new_id;
 
-export async function merge_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICookedUIInfo | undefined): Promise<IUIInfo> {
+export async function merge_ui_template(lf2: LFW, raw_info: IUIInfo, parent: ICookedUIInfo | undefined): Promise<IUIInfo> {
   const { template: template_name, ...remain_info } = raw_info;
   if (!template_name) return raw_info;
   const template_info: Unsafe<IUIInfo> = await find_ui_template(lf2, parent, template_name);
@@ -57,7 +57,7 @@ export async function merge_ui_template(lf2: LF2, raw_info: IUIInfo, parent: ICo
 merge_ui_template.TAG = 'read_ui_template';
 
 export async function find_ui_template(
-  lf2: LF2,
+  lf2: LFW,
   parent: Unsafe<ICookedUIInfo>,
   template_name: string
 ): Promise<IUIInfo> {
@@ -108,7 +108,7 @@ export async function find_ui_template(
 find_ui_template.TAG = 'find_ui_template';
 
 export async function cook_ui_info(
-  lf2: LF2,
+  lf2: LFW,
   info: IUIInfo | string,
   parent?: ICookedUIInfo
 ): Promise<ICookedUIInfo> {

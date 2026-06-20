@@ -1,9 +1,9 @@
 import { Defines, type IBgData } from "../defines";
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import { is_non_blank_str } from "../utils/type_check/is_str";
 import type { ImageInfo } from "../ditto/image/ImageInfo";
 
-export function preprocess_bg_data(lf2: LF2, data: IBgData, jobs: Promise<ImageInfo>[]): IBgData {
+export function preprocess_bg_data(lf2: LFW, data: IBgData, jobs: Promise<ImageInfo>[]): IBgData {
   const { layers, base: { shadow } } = data;
   data.base.height = data.base.height ?? Defines.MODERN_SCREEN_HEIGHT;
   is_non_blank_str(shadow) && jobs.push(lf2.images.load_img(shadow, shadow));

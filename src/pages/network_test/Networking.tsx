@@ -1,5 +1,5 @@
 
-import { GK, LF2, LF2KeyEvent, PlayerInfo } from "@/LFW";
+import { GK, LFW, LF2KeyEvent, PlayerInfo } from "@/LFW";
 import { bot_cases, mt_cases, sus_cases } from "@/LFW/cases_instances";
 import { type IKeyEvent, type IReqTick, type IRespClientInfo, type IRespDataset, type IRespRoomStart, type IRespTick, MsgEnum, type TInfo } from "@/Net";
 import type { IRespKeyTick } from "@/Net/IMsg_KeyTick";
@@ -15,7 +15,7 @@ import { TriState } from "./TriState";
 import { useCallbacks } from "./useCallbacks";
 import { useRoom } from "./useRoom";
 export interface INetworkingProps {
-  lf2?: LF2 | undefined | null;
+  lf2?: LFW | undefined | null;
 }
 
 class Tester<V> {
@@ -45,7 +45,7 @@ class Tester<V> {
 
 class Lf2NetworkDriver {
   conn?: Connection | null;
-  lf2?: LF2 | null;
+  lf2?: LFW | null;
   resp?: IRespTick | IRespKeyTick | null;
   _f: boolean = false;
   _r = new Tester<string | null | undefined>(null);
@@ -77,7 +77,7 @@ class Lf2NetworkDriver {
     this._s.debugging = debugging
     lf2.world.UPS = 30;
     lf2.world.atom_time = 2;
-    lf2.load(...LF2.ZIPS)
+    lf2.load(...LFW.ZIPS)
     lf2.set_ui({ id: "network_loading" })
     lf2.pointings.enabled = false
     lf2.keyboard.enabled = false

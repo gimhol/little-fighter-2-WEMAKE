@@ -1,15 +1,15 @@
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { MersenneTwister } from "../utils/math/MersenneTwister";
 
 export class Randoming<T> {
   static mt = new MersenneTwister(Date.now())
-  protected lf2: LF2 | null;
+  protected lf2: LFW | null;
   protected _src: Readonly<T[]>;
   protected cur: T[]
   protected taken: T | null = null;
   protected duplicate: boolean;
   get src() { return this._src }
-  constructor(src: T[], lf2: LF2 | null, duplicate: boolean = false) {
+  constructor(src: T[], lf2: LFW | null, duplicate: boolean = false) {
     this.lf2 = lf2;
     this._src = src;
     this.cur = [...src];

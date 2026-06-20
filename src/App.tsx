@@ -27,7 +27,7 @@ import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
 import GamePad from "./GamePad";
 import { Difficulty, type IWorldDataset, WorldDataset } from "./LFW";
-import { LF2 } from "./LFW/LFW";
+import { LFW } from "./LFW";
 import { CheatType, CtrlDevice } from "./LFW/defines";
 import { CMD } from "./LFW/defines/CMD";
 import { SyncRenderEnum } from "./LFW/defines/SyncRenderEnum";
@@ -70,9 +70,9 @@ type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
 type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
 
-const load_files = async (lf2: LF2, files: File[]) => {
+const load_files = async (lf2: LFW, files: File[]) => {
   const zips: IZip[] = []
-  const set = new Set(LF2.ZIPS.map(v => typeof v === 'string' ? v : v.name))
+  const set = new Set(LFW.ZIPS.map(v => typeof v === 'string' ? v : v.name))
   for (const file of files) {
     const zip = await Ditto.Zip.read_file(file).catch(e => {
       Ditto.warn('' + e)
@@ -87,9 +87,9 @@ const load_files = async (lf2: LF2, files: File[]) => {
 
   // Is it stupid? -Gim
   if (lf2.ui?.id === 'entry' || lf2.ui?.id === 'launch' || lf2.ui?.id === 'init') {
-    LF2.ZIPS = [...LF2.ZIPS, ...zips]
+    LFW.ZIPS = [...LFW.ZIPS, ...zips]
   } else if (lf2.ui?.id?.toLowerCase().indexOf('loading') == -1) {
-    LF2.ZIPS = [...LF2.ZIPS, ...zips]
+    LFW.ZIPS = [...LFW.ZIPS, ...zips]
     lf2.load(...zips)
     lf2.set_ui({ id: 'loading' })
   }
@@ -146,8 +146,8 @@ function App() {
   }, [l])
 
   const [fullscreen] = useState(() => new Ditto.FullScreen());
-  const ref_lf2 = useRef<LF2 | undefined>(void 0)
-  const [lf2, set_lf2] = useState<LF2 | undefined>()
+  const ref_lf2 = useRef<LFW | undefined>(void 0)
+  const [lf2, set_lf2] = useState<LFW | undefined>()
   const [ele_game_canvas, set_ele_game_canvas] = useState<HTMLCanvasElement | null>(null)
   // const [ele_game_overlay, set_ele_game_overlay] = useState<HTMLElement | null>(null)
   const [ele_root, set_ele_root] = useState<HTMLDivElement | null>(null)
@@ -307,7 +307,7 @@ function App() {
 
     let { lang, dev } = params;
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
-    const lf2 = ref_lf2.current = new LF2(dev == '1');
+    const lf2 = ref_lf2.current = new LFW(dev == '1');
     if (
       location.pathname.endsWith('demo') ||
       location.pathname.endsWith('demo/') ||
@@ -318,10 +318,10 @@ function App() {
     }
     lf2.lang = lang;
     Object.assign(window, {
-      LF2, lf2, world: lf2.world
+      LFW, lf2, world: lf2.world
     })
 
-    function print_ui_tree(node = LF2.ui) {
+    function print_ui_tree(node = LFW.ui) {
       console.group('id: ' + node?.id + ', name: ' + node?.name);
       console.log("node:      ", node);
       if (node?.components.length)
@@ -337,7 +337,7 @@ function App() {
       configurable: true
     })
 
-    lf2.load(LF2.ZIPS[0]).catch(LF2.IgnoreDisposed);
+    lf2.load(LFW.ZIPS[0]).catch(LFW.IgnoreDisposed);
     set_lf2(lf2)
     lf2.sounds.set_volume(app_state.volume);
     lf2.sounds.set_bgm_muted(app_state.bgm_muted);
@@ -396,7 +396,7 @@ function App() {
       del_lf2_callback();
       lf2.dispose()
     };
-  }, [LF2, params, app_state_ready, world_dataset_ready]);
+  }, [LFW, params, app_state_ready, world_dataset_ready]);
 
   const on_click_load_local_zip = () => {
     if (!lf2) return;
@@ -416,7 +416,7 @@ function App() {
   const on_click_load_builtin = async () => {
     if (!lf2) return;
     lf2
-      .load(...LF2.ZIPS)
+      .load(...LFW.ZIPS)
       .catch((e) => Log.print("App -> on_click_load_builtin", e));
   };
 

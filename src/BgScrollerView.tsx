@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef } from "react";
 import csses from "./BgScrollerView.module.scss";
 import { Button } from "./Component/Buttons/Button";
 import { CMD, floor, max, min } from "./LFW";
-import { LF2 } from "./LFW/LFW";
+import { LFW } from "./LFW";
 import { Defines } from "./LFW/defines/defines";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 
-function to_world_cam_x(screen_x: number, lf2: LF2, canvas: HTMLCanvasElement) {
+function to_world_cam_x(screen_x: number, lf2: LFW, canvas: HTMLCanvasElement) {
   const { left, width } = canvas.getBoundingClientRect();
   const s_width = lf2.world.stage.width;
   const w = floor((width * Defines.CLASSIC_SCREEN_WIDTH) / s_width);
@@ -14,7 +14,7 @@ function to_world_cam_x(screen_x: number, lf2: LF2, canvas: HTMLCanvasElement) {
   return (s_width * x) / width;
 }
 
-function from_world_cam_x(world_x: number, lf2: LF2, canvas: HTMLCanvasElement): number {
+function from_world_cam_x(world_x: number, lf2: LFW, canvas: HTMLCanvasElement): number {
   const { left, width } = canvas.getBoundingClientRect();
   const s_width = lf2.world.stage.width;
   const w = floor((width * Defines.CLASSIC_SCREEN_WIDTH) / s_width);
@@ -24,7 +24,7 @@ function from_world_cam_x(world_x: number, lf2: LF2, canvas: HTMLCanvasElement):
   return x + left + w / 2;
 }
 
-export function BgScrollerView(props: { lf2?: LF2 }) {
+export function BgScrollerView(props: { lf2?: LFW }) {
   const { lf2 } = props;
   const world = lf2?.world
   const ref_cavnas = useRef<HTMLCanvasElement>(null)

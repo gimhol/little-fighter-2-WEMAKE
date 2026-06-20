@@ -49,8 +49,8 @@ export interface IBdyInfo extends Partial<IQube> {
    *    firen存在code为123的itr, freeze存在code为123的bdy, 
    *    这个itr与bdy通过对方的code判断能否碰撞，再通过actions来实现合体。
    * [WEMAKE]
-   * @file LF2/dat_translator/fighters/make_fighter_data_freeze.ts
-   * @file LF2/dat_translator/fighters/make_fighter_data_firen.ts
+   * @file LFW/dat_translator/fighters/make_fighter_data_freeze.ts
+   * @file LFW/dat_translator/fighters/make_fighter_data_firen.ts
    * @type {(number)}
    * @memberof IBdyInfo
    */

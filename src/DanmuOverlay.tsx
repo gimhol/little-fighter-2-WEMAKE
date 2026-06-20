@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { get_team_text_color } from "./LFW/base/get_team_text_color";
 import type { ILf2Callback } from "./LFW/ILf2Callback";
-import { LF2 } from "./LFW/LFW";
+import { LFW } from "./LFW";
 import { DanmuGameLogic } from "./LFW/ui/component/DanmuGameLogic";
 import type { IFighterSumInfo } from "./LFW/ui/component/IFighterSumInfo";
 import { UIComponent } from "./LFW/ui/component/UIComponent";
@@ -14,12 +14,12 @@ const t = (name: string, color: string = 'white') => {
   return `<span style="display:inline-block;width:100px;color:${color};">${name}</span>:`
 }
 export class DanmuOverlayLogic implements ILf2Callback {
-  lf2: LF2;
+  lf2: LFW;
   component: DanmuGameLogic | undefined;
   timer: ReturnType<typeof setInterval> | null = null;
   ele: HTMLDivElement | null = null;
   times = new Times(0, Number.MAX_SAFE_INTEGER);
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
     this.lf2.callbacks.add(this)
   }
@@ -151,7 +151,7 @@ function sort_by_kills_per_spawn(a: IFighterSumInfo, b: IFighterSumInfo): number
   return b.kills / b.spawns - a.kills / a.spawns;
 }
 
-export function DanmuOverlay(props: { lf2: LF2 | undefined }) {
+export function DanmuOverlay(props: { lf2: LFW | undefined }) {
   const { lf2 } = props;
   const ref_div = useRef<HTMLDivElement | null>(null);
   const [open, set_open] = useState(false);

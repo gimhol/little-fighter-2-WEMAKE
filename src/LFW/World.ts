@@ -1,4 +1,3 @@
-import { Ditto } from './ditto/Instance';
 import { Callbacks } from './base/Callbacks';
 import { FPS } from './base/FPS';
 import { Background } from "./bg/Background";
@@ -24,6 +23,7 @@ import {
 } from "./defines";
 import { CMD } from "./defines/CMD";
 import { SyncRenderEnum } from "./defines/SyncRenderEnum";
+import { Ditto } from './ditto/Instance';
 import type { IWorldRenderer } from "./ditto/render/IWorldRenderer";
 import {
   Entity,
@@ -35,7 +35,7 @@ import {
 } from "./entity";
 import { Ground } from "./Ground";
 import type { IWorldCallbacks } from "./IWorldCallbacks";
-import { LF2 } from "./LFW";
+import { LFW } from "./LFW";
 import { Stage } from "./stage/Stage";
 import { Transform } from "./Transform";
 import { abs, between, floor, max, min, round, sign } from './utils/math/base';
@@ -50,7 +50,7 @@ const z_sorter = (a: Entity, b: Entity) => a.aabb_min_z - b.aabb_min_z
 const pair_key = (a: Entity, b: Entity) => a.id < b.id ? a.id + '|' + b.id : b.id + '|' + a.id;
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   readonly callbacks = new Callbacks<IWorldCallbacks>();
   private _sleeping: boolean = false;
   private _spark_data?: IEntityData;
@@ -158,7 +158,7 @@ export class World extends WorldDataset {
   get lifetime() { return this._lifetime }
   get lock_cam_x() { return this._lock_cam_pos?.x }
 
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     super()
     this.lf2 = lf2;
     this.target_cam_pos = Ditto.vec2();

@@ -1,6 +1,6 @@
 import type { IPointingEvent } from "@/LFW/ditto/pointings";
 import type { IUIInputHandle } from "@/LFW/ditto/ui/IEventHandle";
-import type { LF2 } from "@/LFW/LFW";
+import type { LFW } from "@/LFW/LFW";
 import { LF2PointerEvent } from "@/LFW/ui/LF2PointerEvent";
 import { UINode } from "@/LFW/ui/UINode";
 import * as T from "../_t";
@@ -11,13 +11,13 @@ interface IIntersection {
   point: T.Vector3;
 }
 export class UIInputHandle implements IUIInputHandle {
-  private lf2: LF2;
+  private lf2: LFW;
   private pointer_vec_2 = new T.Vector2();
   private pointer_raycaster = new T.Raycaster();
   private world_renderer: WorldRenderer
   private _pointer_down_uis = new Set<UINode>();
   private _pointer_on_uis = new Set<UINode>();
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
     this.world_renderer = this.lf2.world.renderer as WorldRenderer
   }

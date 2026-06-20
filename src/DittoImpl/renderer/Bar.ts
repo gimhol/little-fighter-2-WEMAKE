@@ -1,5 +1,5 @@
 import { clamp, max } from "@/LFW";
-import type { LF2 } from "@/LFW/LFW";
+import type { LFW } from "@/LFW/LFW";
 import * as T from "../_t";
 import { MeshBasicMaterial } from "../_t";
 import { get_static_plane_geometry } from "./GeometryKeeper";
@@ -22,7 +22,7 @@ export class Bar {
     this.mesh.material = m
   }
   constructor(
-    lf2: LF2,
+    lf2: LFW,
     color: T.ColorRepresentation,
     w: number,
     h: number,

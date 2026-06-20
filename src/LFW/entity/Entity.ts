@@ -1,6 +1,6 @@
 import { Factory } from "../Factory";
 import type { IWorldDataset } from "../IWorldDataset";
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import { World } from "../World";
 import { Callbacks } from "../base";
 import { Buff } from "../buff/Buff";
@@ -47,7 +47,7 @@ import * as EntitySpawn from "./EntitySpawn";
 
 export class Entity {
   static readonly TAG: string = 'Entity';
-  lf2: LF2;
+  lf2: LFW;
   world: World;
   id: string = '';
   wait: number = 0;

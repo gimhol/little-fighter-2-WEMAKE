@@ -11,7 +11,7 @@ import type { IPicture } from "../../LFW/defines/IPicture";
 import type { IPictureInfo } from "../../LFW/defines/IPictureInfo";
 import type { IStyle } from "../../LFW/defines/IStyle";
 import type { IImageMgr, ImageOperation } from "../../LFW/ditto/image/IImageMgr";
-import type { LF2 } from "../../LFW/LFW";
+import type { LFW } from "../../LFW";
 import { validate_ui_img_operation_crop } from "../../LFW/loader/validate_ui_img_operation_crop";
 import { is_positive_int, max, round } from "../../LFW/utils";
 import { create_img_ele } from "../../Utils/create_img_ele";
@@ -29,8 +29,8 @@ export class ImageMgr implements IImageMgr {
   protected pictures = new Map<string, IPicture>();
   protected infos = new AsyncValuesKeeper<RImageInfo>();
   protected disposables = new Map<string, RImageInfo>();
-  readonly lf2: LF2;
-  constructor(lf2: LF2) { this.lf2 = lf2; }
+  readonly lf2: LFW;
+  constructor(lf2: LFW) { this.lf2 = lf2; }
 
   private async create_img_info(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
     const disposable = src.startsWith('?');

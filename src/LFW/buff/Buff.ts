@@ -1,11 +1,11 @@
 import { Entity } from "../entity";
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import { Times } from "../utils/Times";
 import { World } from "../World";
 
 export abstract class Buff {
   static readonly KIND: string | number = '';
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   readonly world: World;
   readonly id: string
   readonly kind: string | number;
@@ -32,7 +32,7 @@ export abstract class Buff {
       return this._attacker = this.world.find_entity(this._attacker_id);
     return this._attacker;
   }
-  constructor(lf2: LF2, id: string, kind: string | number) {
+  constructor(lf2: LFW, id: string, kind: string | number) {
     this.lf2 = lf2;
     this.kind = kind
     this.world = lf2.world;

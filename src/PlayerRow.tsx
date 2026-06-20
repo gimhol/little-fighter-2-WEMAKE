@@ -14,7 +14,7 @@ import { DummyEnum } from "./LFW/bot/DummyEnum";
 import LocalController from "./LFW/controller/LocalController";
 import { GameKey } from "./LFW/defines/GameKey";
 import { is_bot_ctrl } from "./LFW/entity/type_check";
-import { LF2 } from "./LFW/LFW";
+import { LFW } from "./LFW";
 import { PlayerInfo } from "./LFW/PlayerInfo";
 import { random_get } from "./LFW/utils/math/random";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
@@ -23,7 +23,7 @@ const key_names: Record<GameKey, string> = {
 };
 const key_name_arr = Object.keys(key_names) as GameKey[];
 interface Props {
-  lf2: LF2;
+  lf2: LFW;
   visible?: boolean;
   info: PlayerInfo;
   touch_pad_on?: boolean;

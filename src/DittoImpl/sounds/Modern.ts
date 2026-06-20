@@ -3,7 +3,7 @@ import { Graves } from "@/LFW/base/Graves";
 import { Defines } from "@/LFW/defines/defines";
 import { BaseSounds } from "@/LFW/ditto/sounds/BaseSounds";
 import { Randoming } from "@/LFW/helper/Randoming";
-import { LF2 } from "@/LFW/LFW";
+import { LFW } from "@/LFW/LFW";
 import { abs, max } from "@/LFW/utils/math/base";
 import { clamp } from "@/LFW/utils/math/clamp";
 import float_equal from "@/LFW/utils/math/float_equal";
@@ -162,7 +162,7 @@ export class __Modern extends BaseSounds {
       return buf;
     });
   }
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     super(lf2);
     this._bgms = new Randoming(this.lf2.bgms, this.lf2)
   }

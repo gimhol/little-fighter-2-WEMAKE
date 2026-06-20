@@ -1,4 +1,4 @@
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import type { World } from "../World";
 import { ENTITY_PRIORITY_MAP, HitFlag, ItrKind, type IBdyInfo, type IBounding, type IFrameInfo, type IItrInfo, } from "../defines";
 import type { Entity } from "../entity";
@@ -63,7 +63,7 @@ export interface ICollisionFunc {
 }
 export interface Collision extends ICollisionInits, ICollisionSnapshot {
   id: string;
-  lf2: LF2;
+  lf2: LFW;
   world: World;
   aid: string;
   vid: string;
@@ -233,7 +233,7 @@ export function collision_to_snapshot(c: Collision): ICollisionSnapshot {
   }
 }
 
-export function collision_from_snapshot(lf2: LF2, snapshot: ICollisionSnapshot): Collision | null {
+export function collision_from_snapshot(lf2: LFW, snapshot: ICollisionSnapshot): Collision | null {
   const attacker = lf2.world.find_entity(snapshot.aid)
   if (!attacker) return null;
   const victim = lf2.world.find_entity(snapshot.vid)

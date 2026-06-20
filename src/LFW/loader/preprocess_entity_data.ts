@@ -3,7 +3,7 @@ import { make_ball_special } from "../dat_translator/make_ball_special";
 import type { IEntityData } from "../defines";
 import { Ditto } from "../ditto";
 import { is_ball_data, is_fighter_data, is_weapon_data } from "../entity";
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { is_non_blank_str } from "../utils";
 import { traversal } from "../utils/container_help/traversal";
 import { check_frame } from "./check_frame";
@@ -12,7 +12,7 @@ import { preprocess_frame } from "./preprocess_frame";
 import { preprocess_next_frame } from "./preprocess_next_frame";
 import { preprocess_pic } from "./preprocess_pic";
 
-export async function preprocess_entity_data(lf2: LF2, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
+export async function preprocess_entity_data(lf2: LFW, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
   const { images, sounds } = lf2;
   const { small, head } = data.base;
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));

@@ -1,4 +1,4 @@
-import type { LF2 } from "../../../LFW";
+import type { LFW } from "../../../LFW";
 import type { IUIKeyEvent } from "../../IUIKeyEvent";
 import type { CharMenuLogic } from "./CharMenuLogic";
 import type { CharMenuState } from "./CharMenuState";
@@ -8,7 +8,7 @@ export class CharMenuState_Base implements Required<ICharMenuState> {
   get name() { return this.key }
   readonly key: CharMenuState;
   readonly owner: CharMenuLogic;
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   constructor(key: CharMenuState, owner: CharMenuLogic) {
     this.key = key;
     this.owner = owner;

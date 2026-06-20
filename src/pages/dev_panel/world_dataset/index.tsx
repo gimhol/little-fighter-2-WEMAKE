@@ -3,14 +3,14 @@ import Combine from "@/Component/Combine";
 import { Cross } from "@/Component/Icons/Cross";
 import { InputNumber } from "@/Component/Input";
 import Titled from "@/Component/Titled";
-import { type IWorldDataset, LF2, round, world_dataset_fields, WorldDataset } from "@/LFW";
+import { type IWorldDataset, LFW, round, world_dataset_fields, WorldDataset } from "@/LFW";
 import { download } from "@/Utils/download";
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 import csses from "./index.module.scss";
 
 interface IWorldDatasetProps extends React.HTMLAttributes<HTMLDivElement> {
-  lf2?: LF2 | null;
+  lf2?: LFW | null;
 }
 export function WorldDatasetView(props: IWorldDatasetProps) {
   const { lf2 } = props;

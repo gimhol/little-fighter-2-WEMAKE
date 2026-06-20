@@ -1,4 +1,4 @@
-import type { LF2 } from "../LFW";
+import type { LFW } from "../LFW";
 import type { IEntityData, IFramePictureInfo } from "../defines";
 import { Ditto } from "../ditto/Instance";
 import type { ImageInfo } from "../ditto/image/ImageInfo";
@@ -8,7 +8,7 @@ const cache_key = (a: IFramePictureInfo, b: ImageInfo): string => {
 }
 const cache_map = new Map<string, IFramePictureInfo>();
 
-export function preprocess_pic(lf2: LF2, data: IEntityData, pic: IFramePictureInfo): IFramePictureInfo {
+export function preprocess_pic(lf2: LFW, data: IEntityData, pic: IFramePictureInfo): IFramePictureInfo {
   if (!pic) return pic;
 
   const pic_info = find(data.base.files, ([, v]) => v.id === pic.tex)?.[1];

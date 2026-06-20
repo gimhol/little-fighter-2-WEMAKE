@@ -1,6 +1,6 @@
 import { Callbacks } from "../base";
 import { Ditto } from "../ditto";
-import { LF2 } from "../LFW";
+import { LFW } from "../LFW";
 import { is_str } from '../utils/type_check/is_str';
 import { UINode } from "./UINode";
 
@@ -42,7 +42,7 @@ export interface IPushUIOpts {
   transition?: string;
 }
 export class UIStack {
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   readonly uis: UINode[] = [];
   readonly callback = new Callbacks<IUIStacksCallback>;
   protected _index: number
@@ -50,7 +50,7 @@ export class UIStack {
   get ui(): UINode | undefined {
     return this.uis[this.uis.length - 1];
   }
-  constructor(lf2: LF2, index: number) {
+  constructor(lf2: LFW, index: number) {
     this.lf2 = lf2;
     this._index = index;
   }

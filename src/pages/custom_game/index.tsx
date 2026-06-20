@@ -1,5 +1,5 @@
 import { Button } from "@/Component/Buttons/Button";
-import { LF2 } from "@/LFW";
+import { LFW } from "@/LFW";
 import { Paths } from "@/Paths";
 import { download } from "@/Utils/download";
 import { open_file } from "@/Utils/open_file";
@@ -15,8 +15,8 @@ export default function CustomGamePage() {
   const load_file = async (file: File) => {
     try {
       const [info, zips] = await read_file_as_full_game_zip(file)
-      LF2.INFO = info
-      LF2.ZIPS = zips;
+      LFW.INFO = info
+      LFW.ZIPS = zips;
       nav(Paths.All.game, { replace: true })
     } catch (e) {
       alert('' + e)

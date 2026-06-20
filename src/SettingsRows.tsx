@@ -10,7 +10,7 @@ import Show from "./Component/Show";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
 import { type IWorldDataset, world_dataset_fields } from "./LFW/IWorldDataset";
-import { LF2 } from "./LFW/LFW";
+import { LFW } from "./LFW";
 import { BotController } from "./LFW/bot/BotController";
 import { BaseController } from "./LFW/controller/BaseController";
 import { InvalidController } from "./LFW/controller/InvalidController";
@@ -27,7 +27,7 @@ const bot_controllers: { [x in string]?: (e: Entity) => BaseController } = {
 };
 
 export interface ISettingsRowsProps {
-  lf2?: LF2;
+  lf2?: LFW;
   visible?: boolean;
   show_stage_settings?: boolean;
   show_bg_settings?: boolean;

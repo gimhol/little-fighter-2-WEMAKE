@@ -1,15 +1,15 @@
 import Callbacks from "../../base/Callbacks";
 import type { NoEmitCallbacks } from "../../base/NoEmitCallbacks";
-import type { LF2 } from "../../LFW";
+import type { LFW } from "../../LFW";
 import type { ISounds } from "./ISounds";
 import type { ISoundsCallback } from "./ISoundsCallback";
 
 export class BaseSounds implements ISounds {
-  readonly lf2: LF2;
+  readonly lf2: LFW;
   private _origins: { [x in string]?: string } = {};
   get is_random(): boolean { return false };
   set is_random(v: boolean) { };
-  constructor(lf2: LF2) {
+  constructor(lf2: LFW) {
     this.lf2 = lf2;
   }
   protected _callbacks = new Callbacks<ISoundsCallback>();

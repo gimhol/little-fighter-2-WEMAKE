@@ -1,5 +1,5 @@
 import type { IZip } from './ditto/zip/IZip';
-import type { LF2 } from "./LFW";
+import type { LFW } from "./LFW";
 import type { PlayerInfo } from "./PlayerInfo";
 import type { UIComponent } from "./ui/component/UIComponent";
 import type { ICookedUIInfo } from "./ui/ICookedUIInfo";
@@ -28,15 +28,15 @@ export interface ILf2Callback {
 
   on_dispose?(): void;
   on_ui_loaded?(ui_infos: ICookedUIInfo[]): void;
-  on_prel_loaded?(lf2: LF2): void;
+  on_prel_loaded?(lf2: LFW): void;
 
-  on_broadcast?(message: string, lf2: LF2): void;
+  on_broadcast?(message: string, lf2: LFW): void;
 
   on_zips_changed?(zips: IZip[]): void;
 
   on_component_broadcast?(component: UIComponent, message: string): void;
 
-  on_extra_zips_changed?(lf2: LF2): void;
+  on_extra_zips_changed?(lf2: LFW): void;
 
   controller_detected?(p: PlayerInfo): void;
   keyboard_detected?(p: PlayerInfo): void;
