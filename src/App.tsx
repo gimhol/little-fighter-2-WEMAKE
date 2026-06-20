@@ -26,8 +26,7 @@ import { INDICATINGS } from "./DittoImpl/renderer/INDICATINGS";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
 import GamePad from "./GamePad";
-import { Difficulty, type IWorldDataset, WorldDataset } from "./LFW";
-import { LFW } from "./LFW";
+import { Difficulty, type IWorldDataset, LFW, WorldDataset } from "./LFW";
 import { CheatType, CtrlDevice } from "./LFW/defines";
 import { CMD } from "./LFW/defines/CMD";
 import { SyncRenderEnum } from "./LFW/defines/SyncRenderEnum";
@@ -70,7 +69,7 @@ type render_size_mode = "fixed" | "fill" | "cover" | "contain"
 type debug_ui_pos = "left" | "right" | "top" | "bottom"
 type showing_panel = "world_tuning" | "stage" | "bg" | "weapon" | "bot" | "player" | ""
 
-const load_files = async (lf2: LFW, files: File[]) => {
+const load_files = async (lfw: LFW, files: File[]) => {
   const zips: IZip[] = []
   const set = new Set(LFW.ZIPS.map(v => typeof v === 'string' ? v : v.name))
   for (const file of files) {
@@ -86,12 +85,12 @@ const load_files = async (lf2: LFW, files: File[]) => {
 
 
   // Is it stupid? -Gim
-  if (lf2.ui?.id === 'entry' || lf2.ui?.id === 'launch' || lf2.ui?.id === 'init') {
+  if (lfw.ui?.id === 'entry' || lfw.ui?.id === 'launch' || lfw.ui?.id === 'init') {
     LFW.ZIPS = [...LFW.ZIPS, ...zips]
-  } else if (lf2.ui?.id?.toLowerCase().indexOf('loading') == -1) {
+  } else if (lfw.ui?.id?.toLowerCase().indexOf('loading') == -1) {
     LFW.ZIPS = [...LFW.ZIPS, ...zips]
-    lf2.load(...zips)
-    lf2.set_ui({ id: 'loading' })
+    lfw.load(...zips)
+    lfw.set_ui({ id: 'loading' })
   }
 }
 
@@ -146,8 +145,8 @@ function App() {
   }, [l])
 
   const [fullscreen] = useState(() => new Ditto.FullScreen());
-  const ref_lf2 = useRef<LFW | undefined>(void 0)
-  const [lf2, set_lf2] = useState<LFW | undefined>()
+  const ref_lfw = useRef<LFW | undefined>(void 0)
+  const [lfw, set_lfw] = useState<LFW | undefined>()
   const [ele_game_canvas, set_ele_game_canvas] = useState<HTMLCanvasElement | null>(null)
   // const [ele_game_overlay, set_ele_game_overlay] = useState<HTMLElement | null>(null)
   const [ele_root, set_ele_root] = useState<HTMLDivElement | null>(null)
@@ -192,14 +191,14 @@ function App() {
 
 
   useEffect(() => {
-    if (!lf2) return;
-    lf2.world.indicator_flags = indicator_flags;
+    if (!lfw) return;
+    lfw.world.indicator_flags = indicator_flags;
   }, [indicator_flags]);
 
   const [fast_forward, set_fast_forward] = useState(false);
   useEffect(() => {
-    if (!lf2) return;
-    lf2.world.playrate = fast_forward ? 100 : 1;
+    if (!lfw) return;
+    lfw.world.playrate = fast_forward ? 100 : 1;
   }, [fast_forward]);
 
   const toggle_fullscreen = useCallback(() => {
@@ -216,16 +215,16 @@ function App() {
     onChange: (e) => _set_is_fullscreen(!!e),
   }, [])
 
-  useCallbacks(lf2?.callbacks, {
-    on_broadcast: (message, lf2) => {
+  useCallbacks(lfw?.callbacks, {
+    on_broadcast: (message, lfw) => {
       switch (message) {
         case 'network_game':
           set_networking(prev => {
             const networking = !prev
             // FIXME: ...
             const btns = [
-              lf2.ui?.search_node("btn_game_start"),
-              lf2.ui?.search_node("btn_custom_game")
+              lfw.ui?.search_node("btn_game_start"),
+              lfw.ui?.search_node("btn_custom_game")
             ]
             for (const btn of btns) {
               btn?.blur()
@@ -239,7 +238,7 @@ function App() {
         case 'select_mods':
           open_file({ accept: '.zip', multiple: true }).then(async (files) => {
             if (!files.length || networking) return;
-            load_files(lf2, files)
+            load_files(lfw, files)
           });
           break;
         case 'custom_game':
@@ -284,7 +283,7 @@ function App() {
     },
   })
 
-  useCallbacks(lf2?.world.callbacks, {
+  useCallbacks(lfw?.world.callbacks, {
     on_stage_change: (s) => _set_bg_id(s.bg.id),
     on_pause_change: (v) => _set_paused(v),
     on_dataset_change: (key, value) => {
@@ -292,7 +291,7 @@ function App() {
     },
   })
 
-  useCallbacks(lf2?.sounds.callbacks, {
+  useCallbacks(lfw?.sounds.callbacks, {
     on_muted_changed: v => set_app_state(d => { d.muted = v }),
     on_bgm_muted_changed: v => set_app_state(d => { d.bgm_muted = v }),
     on_sound_muted_changed: v => set_app_state(d => { d.sound_muted = v }),
@@ -307,7 +306,7 @@ function App() {
 
     let { lang, dev } = params;
     if (typeof lang !== 'string') lang = navigator.language.toLowerCase()
-    const lf2 = ref_lf2.current = new LFW(dev == '1');
+    const lf2 = ref_lfw.current = new LFW(dev == '1');
     if (
       location.pathname.endsWith('demo') ||
       location.pathname.endsWith('demo/') ||
@@ -338,7 +337,7 @@ function App() {
     })
 
     lf2.load(LFW.ZIPS[0]).catch(LFW.IgnoreDisposed);
-    set_lf2(lf2)
+    set_lfw(lf2)
     lf2.sounds.set_volume(app_state.volume);
     lf2.sounds.set_bgm_muted(app_state.bgm_muted);
     lf2.sounds.set_bgm_volume(app_state.bgm_volume);
@@ -399,10 +398,10 @@ function App() {
   }, [LFW, params, app_state_ready, world_dataset_ready]);
 
   const on_click_load_local_zip = () => {
-    if (!lf2) return;
+    if (!lfw) return;
     open_file({ accept: ".zip" })
       .then((v) => Ditto.Zip.read_file(v[0]))
-      .then((v) => lf2.load(v))
+      .then((v) => lfw.load(v))
       .catch((e) => Log.print("App -> on_click_load_local_zip", e));
   };
 
@@ -414,8 +413,8 @@ function App() {
   };
 
   const on_click_load_builtin = async () => {
-    if (!lf2) return;
-    lf2
+    if (!lfw) return;
+    lfw
       .load(...LFW.ZIPS)
       .catch((e) => Log.print("App -> on_click_load_builtin", e));
   };
@@ -491,7 +490,7 @@ function App() {
     ele_game_canvas
   ]);
 
-  const player_infos = lf2?.players;
+  const player_infos = lfw?.players;
   const players = useMemo(() => {
     if (!player_infos) return [];
     return Array.from(player_infos.values());
@@ -505,13 +504,13 @@ function App() {
     [players],
   );
 
-  useShortcut("Escape", 0, () => lf2?.cmds.push(CMD.F4));
-  useShortcut("F8", 0, () => lf2?.cmds.push(CMD.F8));
-  useShortcut("F9", 0, () => lf2?.cmds.push(CMD.F9));
-  useShortcut("F10", 0, () => lf2?.cmds.push(CMD.F10));
+  useShortcut("Escape", 0, () => lfw?.cmds.push(CMD.F4));
+  useShortcut("F8", 0, () => lfw?.cmds.push(CMD.F8));
+  useShortcut("F9", 0, () => lfw?.cmds.push(CMD.F9));
+  useShortcut("F10", 0, () => lfw?.cmds.push(CMD.F10));
   useShortcut("F11", 0, () => toggle_fullscreen());
-  useShortcut("ctrl+F1", 0, () => lf2?.is_cheat(CheatType.GIM_INK) && set_app_state(d => { d.dev_ui_open = !d.dev_ui_open }));
-  useShortcut("ctrl+F3", 0, () => lf2?.is_cheat(CheatType.GIM_INK) && set_app_state(d => {
+  useShortcut("ctrl+F1", 0, () => lfw?.is_cheat(CheatType.GIM_INK) && set_app_state(d => { d.dev_ui_open = !d.dev_ui_open }));
+  useShortcut("ctrl+F3", 0, () => lfw?.is_cheat(CheatType.GIM_INK) && set_app_state(d => {
     d.show_fps = !d.show_fps;
   }));
   useEffect(() => {
@@ -526,10 +525,10 @@ function App() {
   }, [ui_id, ele_game_canvas]);
 
   useEffect(() => {
-    if (!lf2) return;
-    (lf2.pointings as __Pointings).set_element(ele_game_canvas);
-    (lf2.world.renderer as WorldRenderer).set_canvas(ele_game_canvas);
-  }, [lf2, ele_game_canvas])
+    if (!lfw) return;
+    (lfw.pointings as __Pointings).set_element(ele_game_canvas);
+    (lfw.world.renderer as WorldRenderer).set_canvas(ele_game_canvas);
+  }, [lfw, ele_game_canvas])
 
   useWorkspaces({ container: ele_root })
 
@@ -578,7 +577,7 @@ function App() {
 
 
   const on_drop = async (e: React.DragEvent) => {
-    if (!lf2 || networking) return;
+    if (!lfw || networking) return;
     const { items } = e.dataTransfer;
     const files: File[] = [];
     for (let i = 0; i < items.length; i++) {
@@ -586,7 +585,7 @@ function App() {
       if (!file) continue;
       files.push(file);
     }
-    load_files(lf2, files);
+    load_files(lfw, files);
   }
   const game_cell_view = game_cell ? createPortal(
     <div className={csses.game_contiainer}>
@@ -599,63 +598,63 @@ function App() {
         draggable={false}
         onContextMenu={e => { e.preventDefault(); e.stopPropagation(); }}
         onContextMenuCapture={e => { e.preventDefault(); e.stopPropagation(); }}
-        onDragOver={e => { if (lf2?.ui?.id === 'entry') e.preventDefault() }}
+        onDragOver={e => { if (lfw?.ui?.id === 'entry') e.preventDefault() }}
         onDrop={on_drop}
       />
       <div className={classNames(csses.game_overlay, { [csses.gone]: !app_state.show_fps })} >
-        {app_state.show_fps && <DevStatsView lf2={lf2} />}
-        {app_state.show_bg_scroll && <BgScrollerView lf2={lf2} />}
+        {app_state.show_fps && <DevStatsView lf2={lfw} />}
+        {app_state.show_bg_scroll && <BgScrollerView lf2={lfw} />}
       </div>
-      <DanmuOverlay lf2={lf2} />
+      <DanmuOverlay lf2={lfw} />
       <GamePad
         id='game_pad'
         player_id={app_state.touchpad}
         enabled={!!app_state.touchpad && app_state.touchpad_enabled}
-        lf2={lf2}
+        lf2={lfw}
         container={() => ele_game_canvas?.parentElement} />
       <Loading loading={!ui_id} big className={csses.loading_img} />
       <div className={csses.top_bar}>
-        <Show show={lf2?.is_cheat(CheatType.GIM_INK)}>
+        <Show show={lfw?.is_cheat(CheatType.GIM_INK)}>
           <ToggleImgButton
             checked={app_state.dev_ui_open}
             onClick={() => set_app_state(d => { d.dev_ui_open = !d.dev_ui_open })}
             src={[img_btn_1_2, img_btn_1_3]} />
         </Show>
-        <Show show={ui_id && Number(lf2?.ui_stacks[0]?.uis?.length) > 1}>
+        <Show show={ui_id && Number(lfw?.ui_stacks[0]?.uis?.length) > 1}>
           <ToggleImgButton
-            onClick={() => lf2?.cmds.push(CMD.F4)}
+            onClick={() => lfw?.cmds.push(CMD.F4)}
             src={[img_btn_2_3]} />
         </Show>
         <ToggleImgButton
           checked={app_state.bgm_muted}
-          onClick={() => lf2?.sounds?.set_bgm_muted(!app_state.bgm_muted)}
+          onClick={() => lfw?.sounds?.set_bgm_muted(!app_state.bgm_muted)}
           src={[img_btn_2_0, img_btn_3_0]} />
         <ToggleImgButton
           checked={app_state.sound_muted}
-          onClick={() => lf2?.sounds?.set_sound_muted(!app_state.sound_muted)}
+          onClick={() => lfw?.sounds?.set_sound_muted(!app_state.sound_muted)}
           src={[img_btn_0_3, img_btn_1_0]} />
 
         <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "settings"}>
           <ToggleImgButton
             checked={paused}
-            onClick={() => lf2?.cmds.push(CMD.F1)}
+            onClick={() => lfw?.cmds.push(CMD.F1)}
             src={[img_btn_2_1, img_btn_2_2]} />
         </Show>
         <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "settings" && (window as any).first_ui == 'init_demo'}>
           <ToggleImgButton
-            checked={lf2?.world.playrate != 1}
-            onClick={() => lf2?.cmds.push(CMD.F5)}
+            checked={lfw?.world.playrate != 1}
+            onClick={() => lfw?.cmds.push(CMD.F5)}
             src={[img_btn_4_3, img_btn_4_3]} />
         </Show>
         <Show show={!networking}>
           <ToggleImgButton
             onClick={() => {
-              if (!lf2) return;
-              lf2.cmds.push(CMD.F2)
-              if (lf2.ui?.id == 'settings')
-                lf2.pop_ui_safe()
+              if (!lfw) return;
+              lfw.cmds.push(CMD.F2)
+              if (lfw.ui?.id == 'settings')
+                lfw.pop_ui_safe()
               else
-                lf2.set_ui({ id: "settings" }, 1);
+                lfw.set_ui({ id: "settings" }, 1);
             }}
             src={[img_btn_1_1, img_btn_1_1]}
           />
@@ -723,7 +722,7 @@ function App() {
       <div className={csses.settings_row}>
         <Combine>
           <ToggleButton
-            onChange={(v) => lf2?.sounds.set_muted(v)}
+            onChange={(v) => lfw?.sounds.set_muted(v)}
             value={app_state.muted} >
             <>音量</>
             <>静音</>
@@ -736,12 +735,12 @@ function App() {
               step={1}
               value={Math.ceil(app_state.volume * 100)}
               onChange={(e) =>
-                lf2?.sounds.set_volume(e! / 100)
+                lfw?.sounds.set_volume(e! / 100)
               }
             />
           </Show>
           <ToggleButton
-            onChange={(v) => lf2?.sounds.set_bgm_muted(v)}
+            onChange={(v) => lfw?.sounds.set_bgm_muted(v)}
             value={app_state.bgm_muted}>
             <>音乐</>
             <>音乐(已禁用)</>
@@ -754,12 +753,12 @@ function App() {
               step={1}
               value={Math.ceil(app_state.bgm_volume * 100)}
               onChange={(e) =>
-                lf2?.sounds.set_bgm_volume(e! / 100)
+                lfw?.sounds.set_bgm_volume(e! / 100)
               }
             />
           </Show>
           <ToggleButton
-            onChange={(v) => lf2?.sounds.set_sound_muted(v)}
+            onChange={(v) => lfw?.sounds.set_sound_muted(v)}
             value={app_state.sound_muted}>
             <>音效</>
             <>音效(已禁用)</>
@@ -772,7 +771,7 @@ function App() {
               step={1}
               value={Math.ceil(app_state.sound_volume * 100)}
               onChange={(e) =>
-                lf2?.sounds.set_sound_volume(e! / 100)
+                lfw?.sounds.set_sound_volume(e! / 100)
               }
             />
           </Show>
@@ -782,7 +781,7 @@ function App() {
         <Select
           placeholder="页面"
           value={ui_id}
-          onChange={v => lf2?.set_ui({ id: v })}
+          onChange={v => lfw?.set_ui({ id: v })}
           options={uis}
           parse={(o) => [o.id!, o.name]}
         />
@@ -864,11 +863,11 @@ function App() {
         <Combine>
           <ToggleButton
             value={paused}
-            onClick={() => lf2?.cmds.push(CMD.F1)}>
+            onClick={() => lfw?.cmds.push(CMD.F1)}>
             <>游戏暂停</>
             <>游戏暂停✓</>
           </ToggleButton>
-          <Button onClick={() => lf2?.cmds.push(CMD.F2)}>
+          <Button onClick={() => lfw?.cmds.push(CMD.F2)}>
             更新一帧
           </Button>
           <ToggleButton
@@ -983,19 +982,19 @@ function App() {
             parse={i => [i.value, i.label]}
             onChange={(v) => set_app_state(d => { d.touchpad = v! })} />
           <ToggleButton
-            onChange={() => lf2?.set_cheat(CheatType.LF2_NET)}
+            onChange={() => lfw?.set_cheat(CheatType.LF2_NET)}
             value={app_state.cheat_1}>
             <>LF2_NET</>
             <>LF2_NET✓</>
           </ToggleButton>
           <ToggleButton
-            onChange={() => lf2?.set_cheat(CheatType.HERO_FT)}
+            onChange={() => lfw?.set_cheat(CheatType.HERO_FT)}
             value={app_state.cheat_2}>
             <>HERO_FT</>
             <>HERO_FT✓</>
           </ToggleButton>
           <ToggleButton
-            onChange={() => lf2?.set_cheat(CheatType.GIM_INK)}
+            onChange={() => lfw?.set_cheat(CheatType.GIM_INK)}
             value={app_state.cheat_3}>
             <>GIM_INK</>
             <>GIM_INK✓</>
@@ -1006,7 +1005,7 @@ function App() {
         {players.map((info, idx) => (
           <PlayerRow
             key={idx}
-            lf2={lf2!}
+            lf2={lfw!}
             info={info}
             touch_pad_on={app_state.touchpad === info.id}
             on_click_toggle_touch_pad={() => {
@@ -1017,7 +1016,7 @@ function App() {
         ))}
       </Show>
       <SettingsRows
-        lf2={lf2}
+        lf2={lfw}
         show_stage_settings={app_state.showing_panel === "stage"}
         show_bg_settings={app_state.showing_panel === "bg"}
         show_weapon_settings={app_state.showing_panel === "weapon"}
@@ -1036,8 +1035,8 @@ function App() {
         open={editor_open}
         onClose={() => set_editor_open(false)}
         style={{ background: 'black', position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, zIndex: 1 }}
-        lf2={lf2} />
-      {networking && <Networking lf2={lf2} />}
+        lf2={lfw} />
+      {networking && <Networking lf2={lfw} />}
     </>
   );
 }
