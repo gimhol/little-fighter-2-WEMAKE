@@ -42,8 +42,10 @@ export interface IEntitySnapshot {
   stat_bar_type: StatBarType | null;
   resting: number;
   resting_max: number | null;
+  resting_tick: ITimesSnapshot;
   toughness: number;
   toughness_max: number;
+  toughness_r_tick: ITimesSnapshot;
   toughness_resting: number;
   toughness_resting_max: number;
   fall_value: number;

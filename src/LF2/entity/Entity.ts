@@ -1,7 +1,7 @@
 import { Factory } from "../Factory";
 import type { IWorldDataset } from "../IWorldDataset";
 import type { LF2 } from "../LF2";
-import type { World } from "../World";
+import { World } from "../World";
 import { Callbacks } from "../base";
 import { Buff } from "../buff/Buff";
 import type { Collision } from "../collision/Collision";
@@ -96,8 +96,10 @@ export class Entity {
   protected _stat_bar_type!: StatBarType | null;
   protected _resting: number = 0;
   protected _resting_max: number | null = null
+  protected readonly _resting_tick: Times = new Times();
   protected _toughness: number = 0;
   protected _toughness_max: number = 0;
+  protected readonly _toughness_r_tick: Times = new Times();
   protected _toughness_resting: number = 0;
   protected _toughness_resting_max: number = 0;
   protected _fall_value: number = 0;
@@ -139,10 +141,10 @@ export class Entity {
    */
   protected _team!: string;
   protected _mp: number = 0;
-  protected _mp_max: number | null = null;
+  protected _mp_max: number = 0;
   protected _hp: number = 0;
   protected _hp_r: number = 0;
-  protected _hp_max: number | null = null;
+  protected _hp_max: number = 0;
   protected _bearer: Entity | null = null;
   protected _holding: Entity | null = null;
   protected _arest: number = 0;
@@ -748,33 +750,32 @@ export class Entity {
     this.motionless = 0;
     this.shaking = 0;
     this._states = states;
-    this._hp_r_tick.max = world.hp_r_ticks;
+    this._hp_r_tick.max = this.dataset('hp_r_ticks')
     this._hp_r_tick.value = 0;
 
-    this._mp_r_tick.max = world.mp_r_ticks;
+    this._mp_r_tick.max = this.dataset('mp_r_ticks')
     this._mp_r_tick.value = 0;
 
-    this._fall_r_tick.max = world.fall_r_ticks;
+    this._fall_r_tick.max = this.dataset('fall_r_ticks')
     this._fall_r_tick.value = 0;
 
-    this._defend_r_tick.max = world.defend_r_ticks;
+    this._defend_r_tick.max = this.dataset('defend_r_ticks');
     this._defend_r_tick.value = 0;
 
-    this._defend_r_value = world.defend_r_value;
-    this._fall_r_value = world.fall_r_value;
-    this._hp_max = data.base.hp_max ?? null;
-    this._ctrl = new InvalidController("", this);
-    this._mp_max = data.base.mp_max ?? null;
+    this._defend_r_value = this.dataset('defend_r_value');
+    this._fall_r_value = this.dataset('fall_r_value');
+
+    this._hp_max = this.dataset('hp_max');
+    this._mp_max = this.dataset('mp_max');
     this._defend_ratio = data.base.defend_ratio ?? null
     this.jumping.s = 0
     this.jumping.x = 0
     this.jumping.y = 0
     this.jumping.z = 0
     this.jumping.t = 0
+    this._ctrl = new InvalidController("", this);
+    this.reset_armor();
 
-    const { armor } = this._data.base
-    this.armor = armor || null;
-    if (armor) this.toughness = this.toughness_max = armor.toughness;
     this.fall_value = this.fall_value_max;
     this.defend_value = this.defend_value_max;
     this._hp = this._hp_r = this.hp_max;
@@ -804,7 +805,13 @@ export class Entity {
     this._greyscale = 0;
     this._render_effect_time = 0;
   }
-
+  reset_armor() {
+    const { armor } = this._data.base
+    this.armor = armor || null;
+    this.toughness = this.toughness_max = armor?.toughness || 0;
+    this.toughness_resting = this.toughness_resting_max = 0;
+    this._toughness_r_tick.max = 1;
+  }
   set_bearer(v: Entity | null): this {
     if (this._bearer === v) return this;
     const old = this._bearer;
@@ -1804,17 +1811,7 @@ export class Entity {
       this.ctrl = this.lf2.factory.create_ctrl(data.id, this.ctrl.player_id, this);
     const prev = this._data;
     this._data = data;
-    const { armor } = this._data.base
-    if (armor) {
-      this.armor = armor
-      this.toughness = this.toughness_max = armor.toughness
-    } else {
-      this.armor = null;
-      this.toughness =
-        this.toughness_max =
-        this.toughness_resting =
-        this.toughness_resting_max = 0;
-    }
+    this.reset_armor()
     this.callbacks.emit("on_data_changed")(this._data, prev, this)
   }
 
@@ -1905,8 +1902,10 @@ export class Entity {
       stat_bar_type: this._stat_bar_type,
       resting: this._resting,
       resting_max: this._resting_max,
+      resting_tick: this._resting_tick.to_snapshot(),
       toughness: this._toughness,
       toughness_max: this._toughness_max,
+      toughness_r_tick: this._toughness_r_tick.to_snapshot(),
       toughness_resting: this._toughness_resting,
       toughness_resting_max: this._toughness_resting_max,
       fall_value: this._fall_value,

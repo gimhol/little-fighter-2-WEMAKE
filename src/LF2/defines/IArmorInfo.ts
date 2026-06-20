@@ -16,21 +16,18 @@ export interface IArmorInfo {
    */
   name?: string;
 
-  /**
-   * 护甲被击中的声音
+  /** 
+   * 通过什么值来扣除toughness 
    * 
-   * @type {?string[]}
+   * @type {ArmorEnum | number}
    * @memberof IArmorInfo
    */
-  hit_sounds?: string[];
+  type?: ArmorEnum | number;
 
   /**
-   * 护甲被击破的声音
-   *
-   * @type {?string[]}
-   * @memberof IArmorInfo
+   * 耐久度
    */
-  dead_sounds?: string[];
+  toughness?: number;
 
   /**
    * 护甲是否防火烧
@@ -74,16 +71,6 @@ export interface IArmorInfo {
    */
   fulltime?: boolean;
 
-  /** 
-   * 通过什么值来扣除toughness 
-   * 
-   * @type {ArmorEnum | string}
-   * @memberof IArmorInfo
-   */
-  type: ArmorEnum | string;
-
-  toughness: number;
-
   /**
    * 受伤比例
    * 默认: 0.1
@@ -92,6 +79,7 @@ export interface IArmorInfo {
    * @memberof IArmorInfo
    */
   injury_ratio?: number;
+  
 
   /**
    * 硬直比例
@@ -102,8 +90,24 @@ export interface IArmorInfo {
    */
   shaking_ratio?: number;
 
-
   motionless_ratio?: number;
+
+  /**
+   * 护甲被击中的声音
+   * 
+   * @type {?string[]}
+   * @memberof IArmorInfo
+   */
+  hit_sounds?: string[];
+
+  /**
+   * 护甲被击破的声音
+   *
+   * @type {?string[]}
+   * @memberof IArmorInfo
+   */
+  dead_sounds?: string[];
+
 }
 
 export const armor_Info_fields = fields<Partial<IArmorInfo>>({

@@ -8,7 +8,7 @@ export function xml_from_armor_info(xml: IXML, a: IArmorInfo): IXMLElement {
   const el = xml.create("armor");
   el.set_str_attr("id", a.id);
   el.set_str_attr("name", a.name);
-  el.set_str_attr("type", a.type as string);
+  el.set_num_attr("type", a.type);
   el.set_num_attr("toughness", a.toughness);
   el.set_num_attr("fireproof", a.fireproof);
   el.set_num_attr("antifreeze", a.antifreeze);

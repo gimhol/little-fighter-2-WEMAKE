@@ -60,14 +60,21 @@ export function stat_recovering(this: Entity): void {
     this.resting = clamp_add(this.resting, -this._atom_time, 0, this.resting_max);
     return;
   }
-  if (this.toughness_resting > 0) {
+
+
+  if (
+    this.toughness_resting < this._toughness_resting_max
+  ) {
     this.toughness_resting = clamp_add(
       this.toughness_resting,
       -this._atom_time,
       0,
       this._toughness_resting_max,
     );
-  } else if (this.toughness < this.toughness_max) {
+  } else if (
+    this.toughness < this.toughness_max &&
+    this._toughness_r_tick.add(this._atom_time)
+  ) {
     this.toughness = clamp_add(
       this.toughness,
       this._atom_time,
@@ -75,6 +82,7 @@ export function stat_recovering(this: Entity): void {
       this._toughness_max,
     );
   }
+
   if (
     this.fall_value < this.fall_value_max &&
     this._fall_r_tick.add(this._atom_time)
@@ -86,6 +94,7 @@ export function stat_recovering(this: Entity): void {
       this.fall_value_max,
     );
   }
+  
   if (
     this.defend_value < this.defend_value_max &&
     this._defend_r_tick.add(this._atom_time)
