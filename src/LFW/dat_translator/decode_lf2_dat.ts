@@ -3,7 +3,7 @@ const head_placeholder_length = 123;
 function decode(buf: { [i in number]: number }, len: number) {
   for (let i = 0; i < len; ++i) buf[i] -= pwd.charCodeAt(i % pwd.length);
 }
-export default async function decode_lf2_dat(
+export async function decode_lf2_dat(
   array_buffer: ArrayBuffer,
 ): Promise<string> {
   const buf = new Uint8Array(array_buffer);

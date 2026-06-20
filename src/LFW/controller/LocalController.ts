@@ -11,4 +11,3 @@ export class LocalController
     this.player = this.lfw.player(player_id)
   }
 }
-export default LocalController;

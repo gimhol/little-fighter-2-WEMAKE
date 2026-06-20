@@ -4,7 +4,7 @@ import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils/math/round_float";
 import CharacterState_Base from "./CharacterState_Base";
 
-export default class CharacterState_Lying extends CharacterState_Base {
+export class CharacterState_Lying extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Lying) {
     super(state)
   }

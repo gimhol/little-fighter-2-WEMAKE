@@ -14,7 +14,7 @@ const ignore_keys = new Set<symbol | string>([
   '__proto__',
 ])
 
-export default function list_fn(
+export function list_fn(
   obj: any,
   set: Set<symbol | string> = new Set(),
   protos: Set<unknown> = new Set()

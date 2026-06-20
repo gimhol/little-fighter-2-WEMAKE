@@ -9,7 +9,7 @@ import { PromiseInOne } from "promise-in-one/dist/es/pio";
  * @class ValuesKeeper
  * @template V
  */
-export default class AsyncValuesKeeper<V> {
+export class AsyncValuesKeeper<V> {
 
   readonly values = new Map<string, V>();
   protected _pio = new PromiseInOne<string, string, V>(v => v)

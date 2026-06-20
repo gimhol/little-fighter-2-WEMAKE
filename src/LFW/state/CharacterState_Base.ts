@@ -2,7 +2,7 @@ import { type IFrameInfo, type INextFrame, type IVector3, StateEnum, WeaponType 
 import type { Entity } from "../entity/Entity";
 import State_Base from "./State_Base";
 
-export default class CharacterState_Base extends State_Base {
+export class CharacterState_Base extends State_Base {
   override pre_update(e: Entity): void {
     switch (this.state) {
       case StateEnum.Falling:

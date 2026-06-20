@@ -6,7 +6,7 @@ export interface ITakeSectionsResult<T = any> {
   sections: T[];
   remains: string
 }
-export default function take_sections<T = any>(
+export function take_sections<T = any>(
   text: string,
   start: string,
   end: string,

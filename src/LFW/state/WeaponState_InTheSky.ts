@@ -3,7 +3,7 @@ import { Defines, type IFrameInfo, type IVector3, WT } from "../defines";
 import type { Entity } from "../entity/Entity";
 import WeaponState_Base from "./WeaponState_Base";
 
-export default class WeaponState_InTheSky extends WeaponState_Base {
+export class WeaponState_InTheSky extends WeaponState_Base {
   override enter(e: Entity, prev_frame: IFrameInfo): void {
     this._hit_ground_weapons.add(e);
   }

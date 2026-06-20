@@ -4,7 +4,7 @@ import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils";
 import State_Base from "./State_Base";
 
-export default class WeaponState_Base extends State_Base {
+export class WeaponState_Base extends State_Base {
   /**
    * 用于确保丢出的武器只受一次跌落伤害
    * @protected

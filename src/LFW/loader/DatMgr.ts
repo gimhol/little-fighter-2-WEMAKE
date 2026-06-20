@@ -223,7 +223,7 @@ class Inner {
   }
 }
 
-export default class DatMgr {
+export class DatMgr {
   static readonly TAG: string = "DatMgr";
   readonly lfw: LFW;
   private _inner_id: number = 0;

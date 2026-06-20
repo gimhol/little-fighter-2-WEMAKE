@@ -49,4 +49,3 @@ export class Easing extends Animation {
     return this;
   }
 }
-export default Easing;

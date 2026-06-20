@@ -1,5 +1,4 @@
-import type { Collision } from "../collision/Collision";
-import { Defines, type INextFrame, type IVector3, StateEnum, type IFrameInfo } from "../defines";
+import { Defines, StateEnum, type IFrameInfo, type INextFrame, type IVector3 } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { round } from "../utils";
 import { spawn_buring_smoke } from "./spawn_buring_smoke";
@@ -37,4 +36,3 @@ export class State_Base {
   get_auto_frame?(e: Entity): IFrameInfo | undefined;
   find_frame_by_id?(e: Entity, id: string | undefined): IFrameInfo | undefined;
 }
-export default State_Base;

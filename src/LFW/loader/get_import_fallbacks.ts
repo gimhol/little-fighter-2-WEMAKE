@@ -16,7 +16,7 @@ function split_path(path: string, suffix: string): [string, string, string] | un
  * @param {string} name 引入名
  * @returns {string[]} 备选引入名列表
  */
-export default function get_import_fallbacks(name: string): [string[], string] {
+export function get_import_fallbacks(name: string): [string[], string] {
   const fallbacks = [name];
   let ppp: [string, string, string] | undefined
   if (ppp =

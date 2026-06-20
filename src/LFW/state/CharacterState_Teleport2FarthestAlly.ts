@@ -4,7 +4,7 @@ import { is_fighter } from "../entity/type_check";
 import { abs, round } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
-export default class CharacterState_Teleport2FarthestAlly extends CharacterState_Base {
+export class CharacterState_Teleport2FarthestAlly extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.TeleportToFarthestAlly) {
     super(state)
   }

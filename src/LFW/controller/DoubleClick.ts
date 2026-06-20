@@ -52,4 +52,3 @@ export class DoubleClick<D> {
     this.name = s.name;
   }
 }
-export default DoubleClick;

@@ -123,4 +123,3 @@ export function obj_dat_to_json(text: string, datIndex: IDatIndex): IEntityData 
   post_process_obj_data(ctx)
   return ctx.data;
 }
-export default obj_dat_to_json;

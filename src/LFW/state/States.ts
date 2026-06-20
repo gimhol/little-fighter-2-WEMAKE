@@ -62,4 +62,3 @@ export class States {
     return state
   }
 }
-export default States;

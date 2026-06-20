@@ -4,7 +4,7 @@ import find_direction from "../entity/find_frame_direction";
 import { abs } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
-export default class CharacterState_Falling extends CharacterState_Base {
+export class CharacterState_Falling extends CharacterState_Base {
   private _bouncing_frames_map = new Map<string, Set<string>>();
   private _bouncings = new Set<Entity>()
   constructor(state: StateEnum = StateEnum.Falling) {

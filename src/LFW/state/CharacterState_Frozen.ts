@@ -3,7 +3,7 @@ import type { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";
 import { spawn_ice_piece } from "./spawn_ice_piece";
 
-export default class CharacterState_Frozen extends CharacterState_Base {
+export class CharacterState_Frozen extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Frozen) {
     super(state)
   }

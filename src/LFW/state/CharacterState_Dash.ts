@@ -1,7 +1,7 @@
 import { StateEnum, type IFrameInfo } from "../defines";
 import type { Entity } from "../entity/Entity";
 import CharacterState_Base from "./CharacterState_Base";
-export default class CharacterState_Dash extends CharacterState_Base {
+export class CharacterState_Dash extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Dash) {
     super(state)
   }

@@ -2,7 +2,7 @@ import { type IFrameInfo, StateEnum } from "../defines";
 import { Entity } from "../entity/Entity";
 import State_Base from "./State_Base";
 
-export default class BallState_Base extends State_Base {
+export class BallState_Base extends State_Base {
   override enter(e: Entity, _prev_frame: IFrameInfo): void {
     switch (e.state) {
       case StateEnum.Ball_Hitting:

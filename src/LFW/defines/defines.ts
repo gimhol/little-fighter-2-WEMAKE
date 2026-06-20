@@ -397,5 +397,3 @@ export namespace Defines {
   export const AI_MAX_AVOIDING_ENEMIES = 1;
   export const AI_MAX_DEFENDS_ENEMIES = 3;
 }
-
-export default Defines;

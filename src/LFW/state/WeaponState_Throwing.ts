@@ -2,7 +2,7 @@ import type { IFrameInfo, IVector3 } from "../defines";
 import type { Entity } from "../entity/Entity";
 import WeaponState_Base from "./WeaponState_Base";
 
-export default class WeaponState_Throwing extends WeaponState_Base {
+export class WeaponState_Throwing extends WeaponState_Base {
   override get_gravity(e: Entity) {
     return e.dataset('weapon_throwing_gravity');
   }

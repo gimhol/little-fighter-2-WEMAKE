@@ -4,7 +4,7 @@ import type { Entity } from "../entity/Entity";
 import { abs, round_float } from "../utils";
 import CharacterState_Base from "./CharacterState_Base";
 
-export default class CharacterState_Jump extends CharacterState_Base {
+export class CharacterState_Jump extends CharacterState_Base {
   constructor(state: StateEnum = StateEnum.Jump) {
     super(state)
   }

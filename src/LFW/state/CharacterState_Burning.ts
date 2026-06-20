@@ -4,7 +4,7 @@ import type { Entity } from "../entity/Entity";
 import { abs } from "../utils/math";
 import CharacterState_Base from "./CharacterState_Base";
 
-export default class CharacterState_Burning extends CharacterState_Base {
+export class CharacterState_Burning extends CharacterState_Base {
   private _bouncings = new Set<Entity>()
   constructor() {
     super(StateEnum.Burning)

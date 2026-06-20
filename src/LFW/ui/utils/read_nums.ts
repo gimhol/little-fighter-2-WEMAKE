@@ -8,7 +8,7 @@ import { is_num_arr, is_str } from "../../utils/type_check";
  * @param {number[]|number} [fallbacks]
  * @return {[number, number, number, number]}
  */
-export default function read_nums(
+export function read_nums(
   src: string | number[] | null | undefined,
   len: 4,
   fallbacks?: number[] | number,
@@ -23,7 +23,7 @@ export default function read_nums(
  * @param {number[]|number} [fallbacks]
  * @return {[number, number, number]}
  */
-export default function read_nums(
+export function read_nums(
   src: string | number[] | null | undefined,
   len: 3,
   fallbacks?: number[] | number,
@@ -38,7 +38,7 @@ export default function read_nums(
  * @param {number[]|number} [fallbacks]
  * @return {[number, number]}
  */
-export default function read_nums(
+export function read_nums(
   src: string | number[] | null | undefined,
   len: 2,
   fallbacks?: number[] | number,
@@ -52,13 +52,13 @@ export default function read_nums(
  * @param {number[]|number} [fallbacks]
  * @return {number[]}
  */
-export default function read_nums(
+export function read_nums(
   src: string | number[] | null | undefined,
   len: number,
   fallbacks?: number[] | number,
 ): number[];
 
-export default function read_nums(
+export function read_nums(
   src: string | number[] | null | undefined,
   len: number,
   fallbacks: number[] | number = [],

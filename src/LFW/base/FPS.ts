@@ -65,5 +65,3 @@ export class FPS {
     this._duration = 0;
   }
 }
-
-export default FPS;
