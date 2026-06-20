@@ -42,7 +42,7 @@ export interface IPushUIOpts {
   transition?: string;
 }
 export class UIStack {
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   readonly uis: UINode[] = [];
   readonly callback = new Callbacks<IUIStacksCallback>;
   protected _index: number
@@ -50,8 +50,8 @@ export class UIStack {
   get ui(): UINode | undefined {
     return this.uis[this.uis.length - 1];
   }
-  constructor(lf2: LFW, index: number) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW, index: number) {
+    this.lfw = lfw;
     this._index = index;
   }
   dispose(): void {
@@ -67,8 +67,8 @@ export class UIStack {
     const prev = this.uis.pop();
     prev?.on_pause();
     prev?.on_stop();
-    const info = this.lf2.uis.all?.find((v) => v.id === id)
-    const curr = info && UINode.create(this.lf2, info);
+    const info = this.lfw.uis.all?.find((v) => v.id === id)
+    const curr = info && UINode.create(this.lfw, info);
     if (curr) {
       const { x, y, z } = curr.pos
       curr.z = curr.z + this._index
@@ -83,8 +83,8 @@ export class UIStack {
     const { id } = opts
     const prev = this.ui;
     prev?.on_pause();
-    const info = this.lf2.uis.all?.find((v) => v.id === id)
-    const curr = info && UINode.create(this.lf2, info);
+    const info = this.lfw.uis.all?.find((v) => v.id === id)
+    const curr = info && UINode.create(this.lfw, info);
     if (curr) {
       curr.z = curr.z + this._index
       this.uis.push(curr);

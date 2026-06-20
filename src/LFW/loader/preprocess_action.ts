@@ -6,7 +6,7 @@ import { is_non_blank_str } from "../utils";
 import { get_val_geter_from_collision } from "./get_val_from_collision";
 import { preprocess_next_frame } from "./preprocess_next_frame";
 
-export function preprocess_action(lf2: LFW, action: TAction, jobs: Promise<void>[]): TAction {
+export function preprocess_action(lfw: LFW, action: TAction, jobs: Promise<void>[]): TAction {
   action.tester = action.test ? new Expression(
     action.test, get_val_geter_from_collision
   ) : void 0
@@ -14,8 +14,8 @@ export function preprocess_action(lf2: LFW, action: TAction, jobs: Promise<void>
     case ActionType.A_Sound:
     case ActionType.V_Sound:
       for (const sound of action.data.path) {
-        if (is_non_blank_str(sound) && !lf2.sounds.has(sound))
-          jobs.push(lf2.sounds.load(sound, sound));
+        if (is_non_blank_str(sound) && !lfw.sounds.has(sound))
+          jobs.push(lfw.sounds.load(sound, sound));
       }
       break;
     case ActionType.A_NextFrame:

@@ -138,7 +138,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
   protected static _situations: Randoming<DemoSituation> | null = null
   protected static _situation: DemoSituation | null = null
   protected static _stages: Randoming<IStageInfo> | null = null
-  protected static get_situations(lf2: LFW) {
+  protected static get_situations(lfw: LFW) {
     if (this._situations) return this._situations;
     return this._situations = new Randoming<DemoSituation>([
       /* 闯关 */
@@ -170,26 +170,26 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
 
       /* 四队交战 */
       { title: "4 Teams, 6 Players, VS Mode", stage_mode: false, teams: ['1', '1', '2', '2', '3', '3', '4', '4'] },
-    ], lf2)
+    ], lfw)
   }
-  protected static get_situation(lf2: LFW) {
+  protected static get_situation(lfw: LFW) {
     if (this._situation) return this._situation;
-    return this._situation = this.get_situations(lf2).take();
+    return this._situation = this.get_situations(lfw).take();
   }
   protected static clear_situation() {
     this._situation = null
   }
-  protected static get_stages(lf2: LFW): Randoming<IStageInfo> {
+  protected static get_stages(lfw: LFW): Randoming<IStageInfo> {
     if (this._stages) return this._stages
     return this._stages = new Randoming(
-      lf2.datas.stages.filter(v => {
+      lfw.datas.stages.filter(v => {
         return (
           false != v.group?.some(v => v != StageGroup.Hidden) &&
           false != v.group?.some(v => v != StageGroup.Dev) &&
           v.is_starting
         )
       }),
-      lf2
+      lfw
     )
   }
   get is_stage_mode(): boolean { return DemoModeLogic.get_situation(this.lf2).stage_mode }

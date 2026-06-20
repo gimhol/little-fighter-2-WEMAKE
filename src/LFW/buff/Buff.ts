@@ -5,7 +5,7 @@ import { World } from "../World";
 
 export abstract class Buff {
   static readonly KIND: string | number = '';
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   readonly world: World;
   readonly id: string
   readonly kind: string | number;
@@ -32,10 +32,10 @@ export abstract class Buff {
       return this._attacker = this.world.find_entity(this._attacker_id);
     return this._attacker;
   }
-  constructor(lf2: LFW, id: string, kind: string | number) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW, id: string, kind: string | number) {
+    this.lfw = lfw;
     this.kind = kind
-    this.world = lf2.world;
+    this.world = lfw.world;
     this.id = id;
   }
   init(): void { };

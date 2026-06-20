@@ -2,13 +2,13 @@ import type { LFW } from "../LFW";
 import type { ICookedUIInfo } from "../ui/ICookedUIInfo";
 
 export class UIHelper {
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   protected _all: ICookedUIInfo[] = []
   get all(): ReadonlyArray<ICookedUIInfo> {
     return this._all
   }
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
   }
   clear(): this {
     this._all = [];
@@ -18,8 +18,8 @@ export class UIHelper {
     this._all.push(...uis);
     for (const { id } of uis) {
       Object.assign(this, {
-        ['push_' + id]: (stack_idx = 0) => this.lf2.push_ui({ id }, stack_idx),
-        ['switch_' + id]: (stack_idx = 0) => this.lf2.set_ui({ id }, stack_idx),
+        ['push_' + id]: (stack_idx = 0) => this.lfw.push_ui({ id }, stack_idx),
+        ['switch_' + id]: (stack_idx = 0) => this.lfw.set_ui({ id }, stack_idx),
       })
     }
     return this;

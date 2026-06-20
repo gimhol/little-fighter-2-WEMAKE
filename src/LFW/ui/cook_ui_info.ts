@@ -20,10 +20,10 @@ import { xml_to_ui_info } from "./xml_to_ui_info";
 let __new_id = 0;
 const new_id = () => ++__new_id;
 
-export async function merge_ui_template(lf2: LFW, raw_info: IUIInfo, parent: ICookedUIInfo | undefined): Promise<IUIInfo> {
+export async function merge_ui_template(lfw: LFW, raw_info: IUIInfo, parent: ICookedUIInfo | undefined): Promise<IUIInfo> {
   const { template: template_name, ...remain_info } = raw_info;
   if (!template_name) return raw_info;
-  const template_info: Unsafe<IUIInfo> = await find_ui_template(lf2, parent, template_name);
+  const template_info: Unsafe<IUIInfo> = await find_ui_template(lfw, parent, template_name);
   const component: TComponentInfo[] = [];
   template_info.component?.forEach(c => {
     component.push(c)
@@ -31,7 +31,7 @@ export async function merge_ui_template(lf2: LFW, raw_info: IUIInfo, parent: ICo
   remain_info.component?.forEach(c => {
     component.push(c)
   })
-  if (lf2.dev === true) {
+  if (lfw.dev === true) {
     template_info.dev_component?.forEach(c => {
       component.push(c)
     })
@@ -57,7 +57,7 @@ export async function merge_ui_template(lf2: LFW, raw_info: IUIInfo, parent: ICo
 merge_ui_template.TAG = 'read_ui_template';
 
 export async function find_ui_template(
-  lf2: LFW,
+  lfw: LFW,
   parent: Unsafe<ICookedUIInfo>,
   template_name: string
 ): Promise<IUIInfo> {
@@ -76,25 +76,25 @@ export async function find_ui_template(
   const is_xml = path.endsWith('.ui.xml');
 
   if (is_xml) {
-    const [root] = await lf2.import_xml(path, true);
+    const [root] = await lfw.import_xml(path, true);
     return xml_to_ui_info(root);
   }
   if (is_json) {
-    const [data] = await lf2.import_json<IUIInfo>(path, true);
+    const [data] = await lfw.import_json<IUIInfo>(path, true);
     return data;
   }
   try {
-    ret = await lf2.import_json<IUIInfo>(path + '.ui.json5', true).then(r => r[0]);
+    ret = await lfw.import_json<IUIInfo>(path + '.ui.json5', true).then(r => r[0]);
     if (ret && Object.keys(ret).length) return ret;
   } catch { /* fall through */ }
 
   try {
-    ret = await lf2.import_json<IUIInfo>(path + '.ui.json', true).then(r => r[0]);
+    ret = await lfw.import_json<IUIInfo>(path + '.ui.json', true).then(r => r[0]);
     if (ret && Object.keys(ret).length) return ret;
   } catch { /* fall through to xml */ }
 
   try {
-    const [root] = await lf2.import_xml(path + '.ui.xml', true);
+    const [root] = await lfw.import_xml(path + '.ui.xml', true);
     if (root) {
       ret = xml_to_ui_info(root);
       if (ret && Object.keys(ret).length) return ret;
@@ -108,18 +108,18 @@ export async function find_ui_template(
 find_ui_template.TAG = 'find_ui_template';
 
 export async function cook_ui_info(
-  lf2: LFW,
+  lfw: LFW,
   info: IUIInfo | string,
   parent?: ICookedUIInfo
 ): Promise<ICookedUIInfo> {
   let raw: IUIInfo;
   if (is_str(info)) {
-    raw = await find_ui_template(lf2, parent, info)
+    raw = await find_ui_template(lfw, parent, info)
   } else {
     raw = info
   }
   if (raw.template) {
-    raw = await merge_ui_template(lf2, raw, parent);
+    raw = await merge_ui_template(lfw, raw, parent);
   }
 
   const id = raw.id || `no_id_${new_id()}`;
@@ -261,8 +261,8 @@ export async function cook_ui_info(
     }
     ret.img = img
   }
-  if (ret.img) ret.img_info = await ui_load_img(lf2, ret.img);
-  if (ret.i18n) ret.txt_info = await lf2.images.load_text(lf2.string(ret.i18n), ret.style)
+  if (ret.img) ret.img_info = await ui_load_img(lfw, ret.img);
+  if (ret.i18n) ret.txt_info = await lfw.images.load_text(lfw.string(ret.i18n), ret.style)
 
   const img = ret.img_info || ret.txt_info;
   if (raw.size) {
@@ -272,7 +272,7 @@ export async function cook_ui_info(
     const h = ret.img.dh ?? ret.img.h ?? 0;
     ret.size = [w, h, 0]
   } else if (!parent) {
-    ret.size = [lf2.world.screen_w, lf2.world.screen_h, 0]
+    ret.size = [lfw.world.screen_w, lfw.world.screen_h, 0]
   }
 
   do {
@@ -302,7 +302,7 @@ export async function cook_ui_info(
   if (raw_items?.length) {
     ret.items = [];
     for (const raw_item of raw_items) {
-      const item = await cook_ui_info(lf2, raw_item, ret);
+      const item = await cook_ui_info(lfw, raw_item, ret);
       let { count = 1 } = item;
       while (count) {
         ret.items.push(item);

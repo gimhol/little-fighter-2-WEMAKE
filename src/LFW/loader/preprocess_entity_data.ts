@@ -12,8 +12,8 @@ import { preprocess_frame } from "./preprocess_frame";
 import { preprocess_next_frame } from "./preprocess_next_frame";
 import { preprocess_pic } from "./preprocess_pic";
 
-export async function preprocess_entity_data(lf2: LFW, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
-  const { images, sounds } = lf2;
+export async function preprocess_entity_data(lfw: LFW, data: IEntityData, jobs: Promise<any>[]): Promise<IEntityData> {
+  const { images, sounds } = lfw;
   const { small, head } = data.base;
   is_non_blank_str(small) && jobs.push(images.load_img(small, small));
   is_non_blank_str(head) && jobs.push(images.load_img(head, head));
@@ -28,14 +28,14 @@ export async function preprocess_entity_data(lf2: LFW, data: IEntityData, jobs: 
   traversal(files, (_, v) => jobs.push(images.load_by_pic_info(v)));
   if (jobs.length) await Promise.all(jobs);
 
-  traversal(portraits, (k, v, o) => o[k] = preprocess_pic(lf2, data, v));
+  traversal(portraits, (k, v, o) => o[k] = preprocess_pic(lfw, data, v));
 
   if (data.processed != false) { }
   if (is_ball_data(data)) make_ball_special(data)
   else if (is_weapon_data(data)) make_weapon_special(data)
   else if (is_fighter_data(data)) make_fighter_special(data)
 
-  traversal(frames, (k, v, o) => o[k] = preprocess_frame(lf2, data, v, jobs));
+  traversal(frames, (k, v, o) => o[k] = preprocess_frame(lfw, data, v, jobs));
   traversal(frames, (_, v) => {
     const errors: string[] = []
     check_frame(data, v, errors)

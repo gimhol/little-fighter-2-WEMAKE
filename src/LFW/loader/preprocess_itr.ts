@@ -18,13 +18,13 @@ import { preprocess_next_frame } from "./preprocess_next_frame";
  * @param {IEntityData} data 
  * @returns {IItrInfo} 处理后的itr
  */
-export function preprocess_itr(lf2: LFW, itr: IItrInfo, data: IEntityData, jobs: Promise<void>[]): IItrInfo {
+export function preprocess_itr(lfw: LFW, itr: IItrInfo, data: IEntityData, jobs: Promise<void>[]): IItrInfo {
   const ref = itr.ref ?? itr.prefab_id;
   const prefab = ref !== void 0 ? data.itr_prefabs?.[ref] : void 0;
   if (prefab) itr = { ...prefab, ...itr };
   if (itr.catchingact) preprocess_next_frame(itr.catchingact);
   if (itr.caughtact) preprocess_next_frame(itr.caughtact);
-  itr.actions?.forEach((n, i, l) => l[i] = preprocess_action(lf2, n, jobs));
+  itr.actions?.forEach((n, i, l) => l[i] = preprocess_action(lfw, n, jobs));
   switch (itr.kind) {
     case ItrKind.Normal: {
       switch (itr.effect as ItrEffect) {

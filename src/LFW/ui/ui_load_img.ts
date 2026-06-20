@@ -7,7 +7,7 @@ import { LFW } from "../LFW";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
 import { validate_ui_img_info } from "./utils/validate_ui_img_info";
 
-export async function ui_load_img(lf2: LFW, img: IUIImgInfo): Promise<ImageInfo> {
+export async function ui_load_img(lfw: LFW, img: IUIImgInfo): Promise<ImageInfo> {
   const errors: string[] = [];
   validate_ui_img_info(img, errors);
   if (errors.length) throw new Error(errors.join('\n'));
@@ -30,6 +30,6 @@ export async function ui_load_img(lf2: LFW, img: IUIImgInfo): Promise<ImageInfo>
     }
     ops.push(op)
   }
-  return lf2.images.load_img(img_key, path, ops);
+  return lfw.images.load_img(img_key, path, ops);
 
 }

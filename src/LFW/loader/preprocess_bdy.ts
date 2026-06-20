@@ -4,7 +4,7 @@ import type { LFW } from "../LFW";
 import { get_val_geter_from_collision } from "./get_val_from_collision";
 import { preprocess_action } from "./preprocess_action";
 
-export function preprocess_bdy(lf2: LFW, bdy: IBdyInfo, data: IEntityData, jobs: Promise<void>[]): IBdyInfo {
+export function preprocess_bdy(lfw: LFW, bdy: IBdyInfo, data: IEntityData, jobs: Promise<void>[]): IBdyInfo {
   const ref = bdy.ref ?? bdy.prefab_id;
   const prefab = ref ? data.bdy_prefabs?.[ref] : void 0;
   if (prefab) bdy = { ...prefab, ...bdy };
@@ -12,7 +12,7 @@ export function preprocess_bdy(lf2: LFW, bdy: IBdyInfo, data: IEntityData, jobs:
     bdy.test,
     get_val_geter_from_collision
   ) : void 0;
-  bdy.actions?.forEach((n, i, l) => l[i] = preprocess_action(lf2, n, jobs));
+  bdy.actions?.forEach((n, i, l) => l[i] = preprocess_action(lfw, n, jobs));
   return bdy;
 }
 

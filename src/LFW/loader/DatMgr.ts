@@ -56,7 +56,7 @@ class Inner {
   bg_randomings = new Map<string, Randoming<IBgData>>();
 
   get lf2() {
-    return this.mgr.lf2;
+    return this.mgr.lfw;
   }
 
   constructor(mgr: DatMgr, id: number) {
@@ -227,14 +227,14 @@ class Inner {
 
 export default class DatMgr {
   static readonly TAG: string = "DatMgr";
-  readonly lf2: LFW;
+  readonly lfw: LFW;
   private _inner_id: number = 0;
   private _inner = new Inner(this, ++this._inner_id);
   get inner_id(): number {
     return this._inner_id;
   }
-  constructor(lf2: LFW) {
-    this.lf2 = lf2;
+  constructor(lfw: LFW) {
+    this.lfw = lfw;
   }
 
 
@@ -291,7 +291,7 @@ export default class DatMgr {
     const { entity } = this.find_group(group);
     this._inner.randomings.set(
       group,
-      ret = new Randoming([...entity], this.lf2)
+      ret = new Randoming([...entity], this.lfw)
     );
     return ret
   }
@@ -368,7 +368,7 @@ export default class DatMgr {
         bg_set.add(bg)
       }
     }
-    this._inner.bg_randomings.set(key, ret = new Randoming(Array.from(bg_set), this.lf2));
+    this._inner.bg_randomings.set(key, ret = new Randoming(Array.from(bg_set), this.lfw));
     return ret
   }
   /** @deprecated 我突然觉得这玩意不该由DatMgr负责... */

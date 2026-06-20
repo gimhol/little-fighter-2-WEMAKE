@@ -23,7 +23,7 @@ const breakfall_j_expression = new CondMaker<EV>()
   .and(EV.CAUGHT, "!=", 1)
   .done()
 
-export function preprocess_frame(lf2: LFW, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
+export function preprocess_frame(lfw: LFW, data: IEntityData, frame: IFrameInfo, jobs: Promise<void>[]): IFrameInfo {
   if (data.processed != false) { }
   else if (is_ball_data(data)) preprocess_ball_frame(frame, data);
   else if (is_weapon_data(data)) {
@@ -66,8 +66,8 @@ export function preprocess_frame(lf2: LFW, data: IEntityData, frame: IFrameInfo,
   if (is_weapon_data(data) || is_ball_data(data))
     make_frame_behavior(frame, data.id);
 
-  if (frame.sound && !lf2.sounds.has(frame.sound))
-    jobs.push(lf2.sounds.load(frame.sound, frame.sound))
+  if (frame.sound && !lfw.sounds.has(frame.sound))
+    jobs.push(lfw.sounds.load(frame.sound, frame.sound))
 
   if (frame.seqs) {
     frame.seq_map = new Map();
@@ -105,9 +105,9 @@ export function preprocess_frame(lf2: LFW, data: IEntityData, frame: IFrameInfo,
   if (frame.on_exhaustion) frame.on_exhaustion = preprocess_next_frame(frame.on_exhaustion);
   if (frame.on_landing) frame.on_landing = preprocess_next_frame(frame.on_landing);
 
-  frame.bdy?.forEach((n, i, l) => l[i] = preprocess_bdy(lf2, n, data, jobs))
-  frame.itr?.forEach((n, i, l) => l[i] = preprocess_itr(lf2, n, data, jobs))
-  frame.opoint?.forEach((n, i, l) => l[i] = preprocess_opoint(n, lf2))
+  frame.bdy?.forEach((n, i, l) => l[i] = preprocess_bdy(lfw, n, data, jobs))
+  frame.itr?.forEach((n, i, l) => l[i] = preprocess_itr(lfw, n, data, jobs))
+  frame.opoint?.forEach((n, i, l) => l[i] = preprocess_opoint(n, lfw))
 
   const unchecked_frame = frame as any;
   if (unchecked_frame) {
@@ -117,7 +117,7 @@ export function preprocess_frame(lf2: LFW, data: IEntityData, frame: IFrameInfo,
       frame.centery = y;
     }
   }
-  frame.pic = preprocess_frame_pic(lf2, data, frame);
+  frame.pic = preprocess_frame_pic(lfw, data, frame);
 
   if (frame.landable === void 0)
     frame.landable = data.type === EntityEnum.Ball ? 0 : 1;

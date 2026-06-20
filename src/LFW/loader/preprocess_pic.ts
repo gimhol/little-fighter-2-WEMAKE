@@ -8,7 +8,7 @@ const cache_key = (a: IFramePictureInfo, b: ImageInfo): string => {
 }
 const cache_map = new Map<string, IFramePictureInfo>();
 
-export function preprocess_pic(lf2: LFW, data: IEntityData, pic: IFramePictureInfo): IFramePictureInfo {
+export function preprocess_pic(lfw: LFW, data: IEntityData, pic: IFramePictureInfo): IFramePictureInfo {
   if (!pic) return pic;
 
   const pic_info = find(data.base.files, ([, v]) => v.id === pic.tex)?.[1];
@@ -16,7 +16,7 @@ export function preprocess_pic(lf2: LFW, data: IEntityData, pic: IFramePictureIn
     Ditto.warn(preprocess_pic.TAG, "file info not found, pic:", pic);
     return pic;
   }
-  const p = lf2.images.find_by_pic_info(pic_info);
+  const p = lfw.images.find_by_pic_info(pic_info);
   if (!p) {
     Ditto.warn(preprocess_pic.TAG, "img info not found", pic_info);
     return pic;

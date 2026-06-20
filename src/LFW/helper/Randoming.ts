@@ -3,14 +3,14 @@ import { MersenneTwister } from "../utils/math/MersenneTwister";
 
 export class Randoming<T> {
   static mt = new MersenneTwister(Date.now())
-  protected lf2: LFW | null;
+  protected lfw: LFW | null;
   protected _src: Readonly<T[]>;
   protected cur: T[]
   protected taken: T | null = null;
   protected duplicate: boolean;
   get src() { return this._src }
-  constructor(src: T[], lf2: LFW | null, duplicate: boolean = false) {
-    this.lf2 = lf2;
+  constructor(src: T[], lfw: LFW | null, duplicate: boolean = false) {
+    this.lfw = lfw;
     this._src = src;
     this.cur = [...src];
     this.duplicate = duplicate;
@@ -42,7 +42,7 @@ export class Randoming<T> {
     return a.splice(idx, 1)[0]
   }
   protected random_in(l: number, r: number) {
-    if (this.lf2) return this.lf2.mt.range(l, r)
+    if (this.lfw) return this.lfw.mt.range(l, r)
     return Randoming.mt.range(l, r);
   }
 }
