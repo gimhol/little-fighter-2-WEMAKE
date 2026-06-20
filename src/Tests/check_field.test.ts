@@ -1,4 +1,4 @@
-import { check_field, one_of } from "./check_field"
+import { check_field, one_of } from "../LFW/ui/utils/check_field"
 
 test("check_field: string, str_0: 'world'", () => {
   const key = 'str_0'

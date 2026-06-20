@@ -1,4 +1,4 @@
-import { MersenneTwister } from "./MersenneTwister"
+import { MersenneTwister } from "../LFW/utils/math/MersenneTwister"
 
 test("MersenneTwister", () => {
   const mt = new MersenneTwister(0)

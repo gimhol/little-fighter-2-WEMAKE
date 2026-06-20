@@ -1,4 +1,4 @@
-import { parse_call_func_expression } from "./parse_call_func_expression";
+import { parse_call_func_expression } from "../LFW/ui/utils/parse_call_func_expression";
 
 test(`parse_call_func_expression('func_name()')`, () => {
   const a = parse_call_func_expression('func_name()');
