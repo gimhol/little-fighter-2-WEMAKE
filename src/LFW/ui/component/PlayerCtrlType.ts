@@ -5,7 +5,7 @@ import { UIComponent } from "./UIComponent";
 export class PlayerCtrlType extends UIComponent {
   static override readonly TAGS: string[] = ["PlayerCtrlType"];
   get player_id() { return this.info.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
-  get player() { return this.lf2.players.get(this.player_id)! }
+  get player() { return this.lfw.players.get(this.player_id)! }
   override on_resume(): void {
     this.player.callbacks.add(this)
     this.on_ctrl_changed(this.player.ctrl)
@@ -22,7 +22,7 @@ export class PlayerCtrlType extends UIComponent {
         (this.player.ctrl + 1) % 6
     ) as CtrlDevice;
     if (ctrl === CtrlDevice.TouchScreen) {
-      for (const [, p] of this.lf2.players) {
+      for (const [, p] of this.lfw.players) {
         if (p === this.player)
           continue;
         if (p.ctrl !== CtrlDevice.TouchScreen)

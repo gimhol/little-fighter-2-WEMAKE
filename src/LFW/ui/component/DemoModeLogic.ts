@@ -56,7 +56,7 @@ class DemoFSMState_End extends DemoFSMState_Base {
       return StateKey.Restart;
   }
   override enter(): void {
-    this.lf2.sounds.play_preset("end");
+    this.lfw.sounds.play_preset("end");
     this.owner.props.score_board?.set_visible(true);
   }
   override leave(): void {
@@ -77,7 +77,7 @@ class DemoFSMState_Win extends DemoFSMState_Base {
       return StateKey.Restart;
   }
   override enter(): void {
-    this.lf2.sounds.play_preset("pass");
+    this.lfw.sounds.play_preset("pass");
     const score_board = this.node.find_child("score_board")
     score_board?.set_visible(true);
   }
@@ -192,8 +192,8 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       lfw
     )
   }
-  get is_stage_mode(): boolean { return DemoModeLogic.get_situation(this.lf2).stage_mode }
-  get is_vs_mode(): boolean { return !DemoModeLogic.get_situation(this.lf2).stage_mode }
+  get is_stage_mode(): boolean { return DemoModeLogic.get_situation(this.lfw).stage_mode }
+  get is_vs_mode(): boolean { return !DemoModeLogic.get_situation(this.lfw).stage_mode }
   handle_stage_actions(actions: (string | StageActions)[]) {
     for (const action of actions) {
       switch (action) {
@@ -243,60 +243,60 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     this.props.focus_text_node?.set_visible(false)
     let stage: IStageInfo | undefined
     if (this.is_stage_mode) {
-      stage = DemoModeLogic.get_stages(this.lf2).take()
-      this.lf2.change_bg(stage?.bg ?? '?');
+      stage = DemoModeLogic.get_stages(this.lfw).take()
+      this.lfw.change_bg(stage?.bg ?? '?');
     } else {
-      const bg = this.lf2.mt.pick(this.lf2.datas.backgrounds)
-      this.lf2.change_bg(bg?.id || '?')
+      const bg = this.lfw.mt.pick(this.lfw.datas.backgrounds)
+      this.lfw.change_bg(bg?.id || '?')
     }
-    const fighters_datas = this.lf2.datas.get_fighters_of_group(
+    const fighters_datas = this.lfw.datas.get_fighters_of_group(
       EntityGroup.Regular,
     );
-    const boss_datas = this.lf2.datas.get_fighters_of_group(
+    const boss_datas = this.lfw.datas.get_fighters_of_group(
       EntityGroup.Boss,
     );
 
     this.world.paused = false;
-    const { far, near, left, right } = this.lf2.world.bg;
+    const { far, near, left, right } = this.lfw.world.bg;
     const { is_stage_mode, is_vs_mode } = this;
-    if (is_vs_mode) this.lf2.sounds.play_bgm('?');
+    if (is_vs_mode) this.lfw.sounds.play_bgm('?');
     else fighters_datas.push(...boss_datas)
 
-    let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
+    let cam_x = is_stage_mode ? 0 : this.lfw.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
     const min_x = is_stage_mode ? (cam_x + 40) : (cam_x + 1 * Defines.MODERN_SCREEN_WIDTH / 3)
     const max_x = is_stage_mode ? (80) : (cam_x + 2 * Defines.MODERN_SCREEN_WIDTH / 3)
 
-    const situation = DemoModeLogic.get_situation(this.lf2);
+    const situation = DemoModeLogic.get_situation(this.lfw);
     this.props.situation_name?.set_text(situation.title)
     const { teams } = situation
-    const players = Array.from(this.lf2.players.values());
+    const players = Array.from(this.lfw.players.values());
     for (let i = 0; i < teams.length; i++) {
       const player = players[i]!;
       const team = teams[i]!;
       if (!player) continue;
 
-      const fighter_data = this.lf2.mt.take(fighters_datas);
+      const fighter_data = this.lfw.mt.take(fighters_datas);
       if (!fighter_data) continue;
 
-      const fighter = this.lf2.factory.create_entity(this.world, fighter_data);
+      const fighter = this.lfw.factory.create_entity(this.world, fighter_data);
       if (!fighter) return;
-      fighter.team = team ?? this.lf2.new_team;
+      fighter.team = team ?? this.lfw.new_team;
       fighter.facing = is_stage_mode ?
         FacingFlag.Right :
-        this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
+        this.lfw.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
 
-      fighter.ctrl = this.lf2.factory.create_ctrl(fighter_data.id, player.id, fighter);
+      fighter.ctrl = this.lfw.factory.create_ctrl(fighter_data.id, player.id, fighter);
       fighter.key_role = true;
       fighter.name_visible = true;
       fighter.stat_bar_type = StatBarType.UI;
-      fighter.ctrl = this.lf2.factory.create_ctrl(
+      fighter.ctrl = this.lfw.factory.create_ctrl(
         fighter_data.id,
         player.id,
         fighter,
       );
 
-      const x = this.lf2.mt.range(min_x, max_x)
-      fighter.set_position(x, void 0, this.lf2.mt.range(far, near))
+      const x = this.lfw.mt.range(min_x, max_x)
+      fighter.set_position(x, void 0, this.lfw.mt.range(far, near))
       fighter.blinking = this.world.begin_blink_time;
       if (is_vs_mode) fighter.mp = (fighter.mp_max * 2 / 5)
       fighter.attach();
@@ -324,23 +324,23 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       this.world_callbacks.on_fighter_add?.(f)
     }
     if (is_stage_mode && stage) {
-      this.lf2.change_stage(stage.id);
-      this.lf2.world.stage.callbacks.add(this.stage_callbacks);
+      this.lfw.change_stage(stage.id);
+      this.lfw.world.stage.callbacks.add(this.stage_callbacks);
     }
-    this.lf2.world.callbacks.add(this.world_callbacks);
+    this.lfw.world.callbacks.add(this.world_callbacks);
     this.props.cam_ctrl?.focus_lr(1);
     this.world.target_cam_pos.x = cam_x;
     this.world.current_cam_pos.x = cam_x;
   }
   clearup() {
-    this.lf2.world.stage.callbacks.del(this.stage_callbacks)
-    this.lf2.world.callbacks.del(this.world_callbacks);
+    this.lfw.world.stage.callbacks.del(this.stage_callbacks)
+    this.lfw.world.callbacks.del(this.world_callbacks);
     this.world.clear();
     DemoModeLogic.clear_situation()
   }
   override on_start(): void {
     super.on_start?.();
-    if (this.lf2.first_ui !== 'init_demo')
+    if (this.lfw.first_ui !== 'init_demo')
       this.node.search_node("demo_play_link")?.set_visible(false)
     this.startup();
   }
@@ -403,11 +403,11 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
   override update(dt: number): void {
     if (
       !this.world.paused &&
-      !this.lf2.world.stage.weapon_rain_disabled &&
+      !this.lfw.world.stage.weapon_rain_disabled &&
       this.weapon_drop_timer.add() &&
-      this.lf2.mt.range(0, 10) <= 2
+      this.lfw.mt.range(0, 10) <= 2
     ) {
-      this.lf2.weapons.add_random(1, true,
+      this.lfw.weapons.add_random(1, true,
         this.is_stage_mode ?
           EntityGroup.StageWeapon :
           EntityGroup.VsWeapon
@@ -433,7 +433,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     } while (0)
     if (this.is_stage_mode) {
       if (this.props.jalousie && !this.props.jalousie.open && this.props.jalousie.anim.done) {
-        this.lf2.goto_next_stage()
+        this.lfw.goto_next_stage()
         this.fsm.use(StateKey.Base)
         this.props.jalousie.open = true;
       }

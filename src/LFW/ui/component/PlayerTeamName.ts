@@ -29,7 +29,7 @@ export class PlayerTeamName extends UIComponent {
   quit() {
     this._decided = void 0;
     this._com = void 0;
-    const text = this.lf2.string(" ")
+    const text = this.lfw.string(" ")
     this.node.text = new TextInfo({
       text,
       style: {

@@ -1,13 +1,13 @@
-import type { ILf2Callback } from "../../ILf2Callback";
+import type { ILFWCallback } from "../../ILFWCallback";
 import { UIComponent } from "./UIComponent";
 
-export class StageTransitions extends UIComponent implements ILf2Callback {
+export class StageTransitions extends UIComponent implements ILFWCallback {
   static override readonly TAGS: string[] = ["StageTransitions"];
   override on_resume(): void {
-    this.lf2.callbacks.add(this);
+    this.lfw.callbacks.add(this);
   }
   override on_pause(): void {
-    this.lf2.callbacks.del(this);
+    this.lfw.callbacks.del(this);
   }
   on_enter_next_stage(): void {
   }

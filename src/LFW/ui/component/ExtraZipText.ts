@@ -1,10 +1,10 @@
-import type { ILf2Callback } from '../../ILf2Callback';
+import type { ILFWCallback } from '../../ILFWCallback';
 import { Label } from "./Label";
 
 
 export class ExtraZipText extends Label {
   static override readonly TAGS: string[] = ["ExtraZipText"];
-  private _lf2_cbs: ILf2Callback = {
+  private _lf2_cbs: ILFWCallback = {
     on_extra_zips_changed: (lf2) => {
       const extra_zips = lf2.string('DATA_LIST')
       if (extra_zips) {
@@ -17,11 +17,11 @@ export class ExtraZipText extends Label {
   };
   override on_start(): void {
     super.on_start();
-    this.lf2.callbacks.add(this._lf2_cbs);
-    this._lf2_cbs.on_extra_zips_changed?.(this.lf2);
+    this.lfw.callbacks.add(this._lf2_cbs);
+    this._lf2_cbs.on_extra_zips_changed?.(this.lfw);
   }
   override on_stop(): void {
     super.on_stop?.();
-    this.lf2.callbacks.del(this._lf2_cbs);
+    this.lfw.callbacks.del(this._lf2_cbs);
   }
 }

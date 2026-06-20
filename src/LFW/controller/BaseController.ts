@@ -50,7 +50,7 @@ export class BaseController {
   get world() {
     return this.entity.world;
   }
-  get lf2() {
+  get lfw() {
     return this.world.lfw;
   }
   get time() {
@@ -95,8 +95,8 @@ export class BaseController {
 
   constructor(player_id: string, entity: Entity) {
     this.player_id = player_id;
-    const { lfw: lf2 } = entity
-    this.player = lf2.players.get(player_id);
+    const { lfw } = entity
+    this.player = lfw.players.get(player_id);
     this.entity = entity;
   }
 

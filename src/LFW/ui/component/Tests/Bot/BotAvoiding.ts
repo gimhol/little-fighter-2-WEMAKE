@@ -13,7 +13,7 @@ export class BotAvoiding extends TestCase {
       e.blinking = i ? Number.MAX_SAFE_INTEGER : 0;
       e.key_role = true;
       e.name = i ? 'Chasing' : 'Avoiding'
-      e.ctrl = this.lf2.factory.create_ctrl(e.data.id, this.lf2.new_id, e)
+      e.ctrl = this.lfw.factory.create_ctrl(e.data.id, this.lfw.new_id, e)
     })
   }
 }
@@ -31,7 +31,7 @@ export class WeaponPicking1 extends TestCase {
   }
 
   override enter(): void {
-    this.owner.lf2.change_bg('bg_1');
+    this.owner.lfw.change_bg('bg_1');
     const woids: string[] = [
       OID.Weapon0, OID.Weapon1, OID.Weapon2, OID.Weapon3, OID.Weapon4,
       OID.Weapon5, OID.Weapon6, OID.Weapon7, OID.Weapon8, OID.Weapon9,
@@ -63,7 +63,7 @@ export class WeaponPicking2 extends TestCase {
   }
 
   override enter(): void {
-    this.owner.lf2.change_bg('bg_1');
+    this.owner.lfw.change_bg('bg_1');
     const woids: string[] = [
       OID.Weapon0, OID.Weapon1, OID.Weapon2, OID.Weapon3, OID.Weapon4,
       OID.Weapon5, OID.Weapon6, OID.Weapon7, OID.Weapon8, OID.Weapon9,

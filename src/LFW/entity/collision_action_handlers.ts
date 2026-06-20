@@ -37,8 +37,8 @@ export const collision_action_handlers: IActionHandler = {
   [ActionType.FUSION]: (a, c) => {
     const { data: { oid, act, time } } = a;
     const { attacker, victim } = c;
-    const lf2 = c.attacker.lfw;
-    const data = lf2.datas.find(oid);
+    const { lfw } = c.attacker;
+    const data = lfw.datas.find(oid);
     if (!data) return;
 
     const a_v = is_bot_ctrl(attacker.ctrl) ? 0 : 1;
@@ -51,7 +51,7 @@ export const collision_action_handlers: IActionHandler = {
     } else if (a_v < v_v) {
       fighter_1 = victim;
       fighter_2 = attacker;
-    } else if (lf2.mt.int() % 2) {
+    } else if (lfw.mt.int() % 2) {
       fighter_1 = attacker;
       fighter_2 = victim;
     } else {
@@ -72,8 +72,8 @@ export const collision_action_handlers: IActionHandler = {
       fighter_2.invulnerable = 1000000;
     if (act) fighter_1.enter_frame(act);
   },
-  [ActionType.BROADCAST]: (a, { lfw: lf2 }) => {
-    lf2.broadcast(a.data.msg);
+  [ActionType.BROADCAST]: (a, { lfw }) => {
+    lfw.broadcast(a.data.msg);
   },
   [ActionType.VALUE_STEAL]: (a, c) => {
     const { data: d } = a;
@@ -127,7 +127,7 @@ function apply_buff(
   const { data } = action;
   if (!data) return;
   const { hitflag = HitFlag.AllEnemy, duration = 0, buff = '' } = data;
-  const { lfw: lf2, world } = collision;
+  const { lfw, world } = collision;
   const ally_flag = attacker.is_ally(victim) ? HitFlag.Ally : HitFlag.Enemy;
   if (
     !(hitflag & victim.data.type) ||
@@ -136,7 +136,7 @@ function apply_buff(
   const id = data.buff + '_' + victim.id;
   let buf = world.buffs.get(id);
   if (!buf) {
-    buf = lf2.factory.create_buff(buff, lf2, id);
+    buf = lfw.factory.create_buff(buff, lfw, id);
     if (!buf) return;
     world.buffs.set(id, buf);
     buf.set_attacker(attacker);

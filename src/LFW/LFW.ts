@@ -16,7 +16,7 @@ import { is_fighter } from './entity/type_check';
 import { Factory } from "./Factory";
 import * as Helper from "./helper";
 import { I18N } from "./I18N";
-import type { ILf2Callback } from "./ILf2Callback";
+import type { ILFWCallback } from "./ILFWCallback";
 import { Keys } from "./Keys";
 import DatMgr from "./loader/DatMgr";
 import get_import_fallbacks from "./loader/get_import_fallbacks";
@@ -85,7 +85,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
   warn(..._1: any[]): void { };
   log(..._1: any[]): void { };
 
-  readonly callbacks = new Callbacks<ILf2Callback>();
+  readonly callbacks = new Callbacks<ILFWCallback>();
   readonly factory: Factory = new Factory();
   readonly bgms: string[] = []
 
@@ -112,7 +112,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
   readonly _keys: Keys[] = [];
 
   cmds: (CMD | D.CheatType | string)[] = [];
-  events: UI.LF2KeyEvent[] = [];
+  events: UI.LFWKeyEvent[] = [];
   broadcasts: string[] = [];
 
   get loading(): boolean {
@@ -345,7 +345,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
           if (e.device_type == 'controller') this.callbacks.emit('controller_detected')(player)
           if (e.device_type == 'keyboard') this.callbacks.emit('keyboard_detected')(player)
           this._cheat_gkeys.set(pid, (this._cheat_gkeys.get(pid) || '') + key_name)
-          this.events.push(new UI.LF2KeyEvent(pid, true, key_name, key_code));
+          this.events.push(new UI.LFWKeyEvent(pid, true, key_name, key_code));
         }
       }
     }
@@ -373,7 +373,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
       for (const [pid, player] of this.players) {
         if (!player.local) continue;
         if (player.keys[key_name] !== key_code) continue
-        this.events.push(new UI.LF2KeyEvent(pid, false, key_name, key_code))
+        this.events.push(new UI.LFWKeyEvent(pid, false, key_name, key_code))
       }
     }
   }

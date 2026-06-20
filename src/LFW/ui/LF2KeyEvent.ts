@@ -1,8 +1,8 @@
 import { GK } from "../defines";
 import type { IUIKeyEvent } from "./IUIKeyEvent";
-import { LF2UIEvent } from "./LF2UIEvent";
+import { LFWUIEvent } from "./LFWUIEvent";
 
-export class LF2KeyEvent extends LF2UIEvent implements IUIKeyEvent {
+export class LFWKeyEvent extends LFWUIEvent implements IUIKeyEvent {
   readonly player: string;
   readonly game_key: GK;
   readonly key: string;

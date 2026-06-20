@@ -1,6 +1,6 @@
 import { Ditto } from "../../ditto";
 import { StatBarType } from "../../entity/StatBarType";
-import type { ILf2Callback } from "../../ILf2Callback";
+import type { ILFWCallback } from "../../ILFWCallback";
 import type { IPropsMeta } from "../../utils";
 import LocalController from "../../controller/LocalController";
 import { Defines, FacingFlag, TeamEnum } from "../../defines";
@@ -25,7 +25,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
 
   override on_start(): void {
     super.on_start?.();
-    this.lf2.callbacks.add(this._lf2_callbacks)
+    this.lfw.callbacks.add(this._lf2_callbacks)
   }
   override on_resume(): void {
     const background_row = this.node.search_node("background_row")!;
@@ -43,15 +43,15 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
     }
   }
 
-  protected _lf2_callbacks: ILf2Callback = {
+  protected _lf2_callbacks: ILFWCallback = {
     on_broadcast: (message) => {
       if (message === 'start_game') return this.start_game();
     }
   }
   override on_stop(): void {
-    this.lf2.change_stage('')
-    this.lf2.change_bg('')
-    this.lf2.callbacks.del(this._lf2_callbacks)
+    this.lfw.change_stage('')
+    this.lfw.change_bg('')
+    this.lfw.callbacks.del(this._lf2_callbacks)
   }
   start_game() {
     const char_menu_logic = this.node.search_component(CharMenuLogic)
@@ -59,14 +59,14 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
 
     const { bg_switcher, stage_switcher } = this.props
     if (stage_switcher?.node.visible && !stage_switcher.node.disabled)
-      this.lf2.change_bg(stage_switcher.stage.bg);
+      this.lfw.change_bg(stage_switcher.stage.bg);
     else if (bg_switcher?.node.visible && !bg_switcher.node.disabled)
-      this.lf2.change_bg(bg_switcher.background.id);
+      this.lfw.change_bg(bg_switcher.background.id);
 
-    const { far, near, left, right } = this.lf2.world.bg;
+    const { far, near, left, right } = this.lfw.world.bg;
     const is_stage_mode = this.props.game_mode === GAME_MODE_STAGE
     const is_vs_mode = this.props.game_mode === GAME_MODE_VS
-    let cam_x = is_stage_mode ? 0 : this.lf2.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
+    let cam_x = is_stage_mode ? 0 : this.lfw.mt.range(left, right - Defines.MODERN_SCREEN_WIDTH)
 
 
     for (const [player, slot_info] of char_menu_logic.players) {
@@ -77,31 +77,31 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
         continue;
       }
 
-      const fighter = this.lf2.factory.create_entity(this.world, fighter_data)
+      const fighter = this.lfw.factory.create_entity(this.world, fighter_data)
       if (!fighter) {
         Ditto.warn(`[${GamePrepareLogic.TAG}::start_game] failed to create fighter. figher data: ${fighter_data}`);
         debugger;
         continue;
       }
-      fighter.team = slot_info.team || this.lf2.new_team;
+      fighter.team = slot_info.team || this.lfw.new_team;
       fighter.stat_bar_type = StatBarType.UI;
       fighter.facing = is_stage_mode ?
         FacingFlag.Right :
-        this.lf2.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
+        this.lfw.mt.pick([FacingFlag.Left, FacingFlag.Right])!;
       if (player.is_com) {
-        fighter.ctrl = this.lf2.factory.create_ctrl(fighter_data.id, player.id, fighter);
+        fighter.ctrl = this.lfw.factory.create_ctrl(fighter_data.id, player.id, fighter);
       } else {
         fighter.ctrl = new LocalController(player.id, fighter);
       }
       const x = is_stage_mode ?
-        this.lf2.mt.range(
+        this.lfw.mt.range(
           (cam_x + 40),
           (cam_x + 80)
-        ) : this.lf2.mt.range(
+        ) : this.lfw.mt.range(
           (cam_x + 1 * Defines.MODERN_SCREEN_WIDTH / 3),
           (cam_x + 2 * Defines.MODERN_SCREEN_WIDTH / 3)
         )
-      fighter.set_position(x, void 0, this.lf2.mt.range(far, near))
+      fighter.set_position(x, void 0, this.lfw.mt.range(far, near))
       fighter.blinking = this.world.begin_blink_time;
       if (is_vs_mode) fighter.mp = (fighter.mp_max * 2 / 5)
       fighter.attach();
@@ -109,10 +109,10 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
 
     if (is_stage_mode) {
       if (stage_switcher)
-        this.lf2.change_stage(stage_switcher.stage.id);
-      this.lf2.push_ui({ id: "stage_mode_page" });
+        this.lfw.change_stage(stage_switcher.stage.id);
+      this.lfw.push_ui({ id: "stage_mode_page" });
     } else {
-      this.lf2.push_ui({ id: "vs_mode_page" });
+      this.lfw.push_ui({ id: "vs_mode_page" });
     }
     this.world.target_cam_pos.x = this.world.current_cam_pos.x = cam_x
   }

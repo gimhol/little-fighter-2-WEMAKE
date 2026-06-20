@@ -12,7 +12,7 @@ export class CharMenuState_Base implements Required<ICharMenuState> {
   constructor(key: CharMenuState, owner: CharMenuLogic) {
     this.key = key;
     this.owner = owner;
-    this.lfw = owner.lf2;
+    this.lfw = owner.lfw;
   }
   on_key_down(e: IUIKeyEvent): void { }
   update(dt: number): void | CharMenuState | undefined { }

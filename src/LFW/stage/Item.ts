@@ -16,7 +16,7 @@ export default class Item {
   private _released: boolean = false;
   private _is_fighter: boolean = false;
 
-  get lf2() { return this.stage.lf2; }
+  get lfw() { return this.stage.lfw; }
   get world() { return this.stage.world; }
   get released() { return this._released }
   get is_fighter() { return this._is_fighter }
@@ -42,14 +42,14 @@ export default class Item {
     const data_list: IEntityData[] = [];
     const randoming_list: Randoming<IEntityData>[] = []
     for (const oid of this.info.id) {
-      const data = this.lf2.datas.find(oid);
+      const data = this.lfw.datas.find(oid);
       if (data) {
         if (is_fighter_data(data))
           this._is_fighter = true;
         data_list.push(data);
         continue;
       }
-      const randoming = this.lf2.datas.get_randoming_by_group(oid)
+      const randoming = this.lfw.datas.get_randoming_by_group(oid)
       if (randoming.src.some(data => is_fighter_data(data)))
         this._is_fighter = true;
       if (randoming.src.length) randoming_list.push(randoming);
@@ -57,12 +57,12 @@ export default class Item {
     if (data_list.length === 1 && !randoming_list.length) {
       this.data = data_list[0]
     } else if (data_list.length && !randoming_list.length) {
-      randoming_list.push(new Randoming(data_list, this.lf2))
+      randoming_list.push(new Randoming(data_list, this.lfw))
     } else if (!data_list.length && randoming_list.length) {
-      this.randoming = new Randoming(randoming_list, this.lf2)
+      this.randoming = new Randoming(randoming_list, this.lfw)
     } else if (data_list.length && randoming_list.length) {
-      randoming_list.push(new Randoming(data_list, this.lf2))
-      this.randoming = new Randoming(randoming_list, this.lf2)
+      randoming_list.push(new Randoming(data_list, this.lfw))
+      this.randoming = new Randoming(randoming_list, this.lfw)
     } else {
       debugger;
     }
@@ -97,7 +97,7 @@ export default class Item {
   ): boolean {
     const data = this.data || this.randoming?.take().take();
     if (!data) { debugger; return false; }
-    const e = this.lf2.factory.create_entity(this.world, data);
+    const e = this.lfw.factory.create_entity(this.world, data);
     if (!e) { debugger; return false; }
     let {
       hp, act, facing, x, y, z, reserve, hp_map, mp, mp_map,
@@ -111,15 +111,15 @@ export default class Item {
       e.wakeup_invuln = false;
     }
 
-    e.ctrl = this.lf2.factory.create_ctrl(e.data.id, "", e);
+    e.ctrl = this.lfw.factory.create_ctrl(e.data.id, "", e);
     e.dead_gone = true;
     e.reserve = reserve ?? 0;
     e.set_position(
-      this.lf2.mt.range(x, x + range_x),
+      this.lfw.mt.range(x, x + range_x),
       null,
       is_num(z)
-        ? this.lf2.mt.range(z - range_z, z + range_z)
-        : this.lf2.mt.range(this.stage.near, this.stage.far)
+        ? this.lfw.mt.range(z - range_z, z + range_z)
+        : this.lfw.mt.range(this.stage.near, this.stage.far)
     )
     if (this.info.join)
       e.dead_join = {

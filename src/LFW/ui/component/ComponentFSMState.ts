@@ -4,7 +4,7 @@ export abstract class ComponentFSMState<K extends string | number = string | num
   readonly owner: C;
   abstract key: K;
   name?: string;
-  get lf2() { return this.owner.lf2; }
+  get lfw() { return this.owner.lfw; }
   get world() { return this.owner.world; }
   get node() { return this.owner.node; }
   constructor(owner: C) { this.owner = owner; }

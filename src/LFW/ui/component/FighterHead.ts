@@ -13,7 +13,7 @@ import { UIComponent } from "./UIComponent";
 export class FighterHead extends Picture {
   static override readonly TAGS: string[] = ["FighterHead"];
   get player_id() { return this.info.args[0] || this.node.find_parent(v => v.data.values?.player_id)?.data.values?.player_id || ''; }
-  get player(): PlayerInfo { return this.lf2.players.get(this.player_id)!; }
+  get player(): PlayerInfo { return this.lfw.players.get(this.player_id)!; }
   get head() {
     const fighter_data = this.player?.fighter?.data;
     if (!fighter_data) return Defines.BuiltIn_Imgs.RFACE;

@@ -38,7 +38,7 @@ export class EndingPageLogic extends UIComponent<IEndingPageLogicProps> {
     this.props.jalousie?.callbacks.add(this.jalousie_cbs)
   }
   override on_resume(): void {
-    this.lf2.sounds.stop_bgm()
+    this.lfw.sounds.stop_bgm()
     if (this.props.jalousie?.anim.done) this.props.jalousie.open = !this.props.jalousie.open
   }
   override on_stop(): void {
@@ -61,11 +61,11 @@ export class EndingPageLogic extends UIComponent<IEndingPageLogicProps> {
       else
         this.texts_idx += 1
       if (this.texts_idx >= this.texts.length) {
-        if (this.lf2.ui_stacks[0].uis.length > 1) {
-          this.lf2.pop_ui({ until: (_, i) => i === 0 })
+        if (this.lfw.ui_stacks[0].uis.length > 1) {
+          this.lfw.pop_ui({ until: (_, i) => i === 0 })
         } else {
-          this.lf2.set_ui({ id: "main_page" })
-          this.lf2.sounds.play_bgm("bgm/main.wma.mp3")
+          this.lfw.set_ui({ id: "main_page" })
+          this.lfw.sounds.play_bgm("bgm/main.wma.mp3")
         }
         break;
       }

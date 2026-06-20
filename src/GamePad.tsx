@@ -6,7 +6,7 @@ import csses from "./GamePad.module.scss";
 import { pow } from "./LFW";
 import { LFW } from "./LFW";
 import { GameKey as GK } from "./LFW/defines/GameKey";
-import { LF2KeyEvent } from "./LFW/ui/LF2KeyEvent";
+import { LFWKeyEvent } from "./LFW/ui/LF2KeyEvent";
 import { __Keyboard } from "./DittoImpl";
 
 export interface IGamePadProps extends React.HTMLAttributes<HTMLDivElement> {

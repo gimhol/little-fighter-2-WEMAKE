@@ -36,7 +36,7 @@ export class BotCome extends TestCase {
 
     this.bandits_8().forEach(v => {
       v.team = TeamEnum.Team_1
-      v.ctrl = this.owner.lf2.factory.create_ctrl(O_ID.Bandit, '', v)
+      v.ctrl = this.owner.lfw.factory.create_ctrl(O_ID.Bandit, '', v)
     })
   }
 }

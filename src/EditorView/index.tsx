@@ -19,7 +19,7 @@ import { EntityEnum } from "../LFW/defines/EntityEnum";
 import type { IEntityData } from "../LFW/defines/IEntityData";
 import type { ILegacyPictureInfo } from "../LFW/defines/ILegacyPictureInfo";
 import { Ditto, type IZip } from "../LFW/ditto";
-import type { ILf2Callback } from "../LFW/ILf2Callback";
+import type { ILFWCallback } from "../LFW/ILFWCallback";
 import { LFW } from "../LFW";
 import { traversal } from "../LFW/utils/container_help/traversal";
 import { is_num } from "../LFW/utils/type_check";
@@ -85,7 +85,7 @@ export default function EditorView(props: IEditorViewProps) {
 
   useEffect(() => {
     if (!lf2) return;
-    const cb: ILf2Callback = {
+    const cb: ILFWCallback = {
       on_zips_changed: (zips) => set_zips(zips)
     }
     lf2.callbacks.add(cb);

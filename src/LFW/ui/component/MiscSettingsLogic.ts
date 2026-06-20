@@ -37,35 +37,35 @@ export class MiscSettingsLogic extends UIComponent {
     },
   }
   override on_start(): void {
-    this.lf2.sounds.callbacks.add(this.cbs)
-    this.lf2.world.callbacks.add(this.cbs2)
+    this.lfw.sounds.callbacks.add(this.cbs)
+    this.lfw.world.callbacks.add(this.cbs2)
     this.main_volume?.on_value_changed((_, s) => {
-      this.lf2.sounds.set_volume(s.factor)
-      this.lf2.sounds.play_preset('cancel')
+      this.lfw.sounds.set_volume(s.factor)
+      this.lfw.sounds.play_preset('cancel')
     })
     this.bgm_toggle?.on_value_changed((v) => {
-      this.lf2.sounds.set_bgm_muted(!v)
-      this.lf2.sounds.play_preset(!v ? 'cancel' : 'ok')
+      this.lfw.sounds.set_bgm_muted(!v)
+      this.lfw.sounds.play_preset(!v ? 'cancel' : 'ok')
     })
     this.bgm_volume?.on_value_changed((_, s) => {
-      this.lf2.sounds.set_bgm_volume(s.factor)
-      this.lf2.sounds.play_preset('cancel')
+      this.lfw.sounds.set_bgm_volume(s.factor)
+      this.lfw.sounds.play_preset('cancel')
     })
     this.sfx_toggle?.on_value_changed((v) => {
-      this.lf2.sounds.set_sound_muted(!v)
-      this.lf2.sounds.play_preset(!v ? 'cancel' : 'ok')
+      this.lfw.sounds.set_sound_muted(!v)
+      this.lfw.sounds.play_preset(!v ? 'cancel' : 'ok')
     })
     this.sfx_volume?.on_value_changed((_, s) => {
-      this.lf2.sounds.set_sound_volume(s.factor)
-      this.lf2.sounds.play_preset('cancel')
+      this.lfw.sounds.set_sound_volume(s.factor)
+      this.lfw.sounds.play_preset('cancel')
     })
     this.team_outline?.on_value_changed((v) => {
       this.world.outline_enabled = v;
-      this.lf2.sounds.play_preset(v ? 'ok' : 'cancel')
+      this.lfw.sounds.play_preset(v ? 'ok' : 'cancel')
     })
     this.render_rate?.on_value_changed((v) => {
       this.world.sync_render = render_rate_options[v];
-      this.lf2.sounds.play_preset('ok')
+      this.lfw.sounds.play_preset('ok')
     })
     const ups_arr = [30, 60, 90, 120]
     const atom_time_arr = ups_arr.map(v => round_float(60 / v))
@@ -80,24 +80,24 @@ export class MiscSettingsLogic extends UIComponent {
       this.world.fvy_f = fvy_f_arr[v];
       this.world.double_click_interval = double_click_interval_arr[v];
       this.world.key_hit_duration = key_hit_duration_arr[v];
-      this.lf2.sounds.play_preset('ok')
+      this.lfw.sounds.play_preset('ok')
     })
   }
 
   override on_resume(): void {
-    this.main_volume?.set_factor(this.lf2.sounds.volume())
-    this.bgm_toggle?.set_value(this.lf2.sounds.bgm_muted() ? 0 : 1)
-    this.bgm_volume?.set_factor(this.lf2.sounds.bgm_volume())
-    console.log(this.lf2.sounds.sound_volume())
-    this.sfx_volume?.set_factor(this.lf2.sounds.sound_volume())
-    this.sfx_toggle?.set_value(this.lf2.sounds.sound_muted() ? 0 : 1)
+    this.main_volume?.set_factor(this.lfw.sounds.volume())
+    this.bgm_toggle?.set_value(this.lfw.sounds.bgm_muted() ? 0 : 1)
+    this.bgm_volume?.set_factor(this.lfw.sounds.bgm_volume())
+    console.log(this.lfw.sounds.sound_volume())
+    this.sfx_volume?.set_factor(this.lfw.sounds.sound_volume())
+    this.sfx_toggle?.set_value(this.lfw.sounds.sound_muted() ? 0 : 1)
     this.team_outline?.set_factor(this.world.outline_enabled)
     this.render_rate?.set_value(render_rate_options.indexOf(this.world.sync_render));
     const ups_arr = [30, 60, 90, 120]
     this.ups?.set_value(ups_arr.indexOf(this.world.UPS));
   }
   override on_stop(): void {
-    this.lf2.sounds.callbacks.del(this.cbs)
-    this.lf2.world.callbacks.del(this.cbs2)
+    this.lfw.sounds.callbacks.del(this.cbs)
+    this.lfw.world.callbacks.del(this.cbs2)
   }
 }

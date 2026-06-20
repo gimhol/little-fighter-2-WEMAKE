@@ -46,7 +46,7 @@ export class Stage {
   get id(): string { return this.data.id; }
   get name(): string { return this.data.name; }
 
-  get lf2() { return this.world.lfw; }
+  get lfw() { return this.world.lfw; }
   get time() { return this.fsm.time; }
   set time(v) { this.fsm.time = v; }
 
@@ -128,8 +128,8 @@ export class Stage {
     this.drink_l = -1200;
     this.drink_r = this.bg.width + 1200
     if (this.data.next)
-      this.next_stage = this.lf2.datas.stages.find(v => v.id === this.data.next);
-    this.team = this.lf2.new_team;
+      this.next_stage = this.lfw.datas.stages.find(v => v.id === this.data.next);
+    this.team = this.lfw.new_team;
   }
 
   readonly fsm = new FSM<Status>().add({
@@ -161,15 +161,15 @@ export class Stage {
     const { music, sounds } = phase;
     if (music !== void 0) {
       if (music) {
-        this._stop_bgm = this.lf2.sounds.play_bgm(music);
+        this._stop_bgm = this.lfw.sounds.play_bgm(music);
       } else {
         this._stop_bgm = void 0;
-        this.lf2.sounds.stop_bgm();
+        this.lfw.sounds.stop_bgm();
       }
     }
     if (sounds?.length) {
       for (const { path, x, y, z } of sounds) {
-        this.lf2.sounds.play(path, x, y, z)
+        this.lfw.sounds.play(path, x, y, z)
       }
     }
   }
@@ -255,7 +255,7 @@ export class Stage {
     const player_f = is_num(phase.player_facing) ? phase.player_facing : void 0;
 
     const teams = new Set<string>();
-    for (const [, v] of this.lf2.world.puppets)
+    for (const [, v] of this.lfw.world.puppets)
       teams.add(v.team);
     for (const entity of this.world.entities) {
       if (!is_fighter(entity) || !teams.has(entity.team)) continue;
@@ -264,13 +264,13 @@ export class Stage {
       if (typeof player_x === 'number') {
         const l = max(this.player_l, player_x - 50)
         const r = min(this.player_r, player_x + 50)
-        const x = this.lf2.mt.range(l, r)
+        const x = this.lfw.mt.range(l, r)
         entity.set_position_x(x);
       }
       if (typeof player_z === 'number') {
         const f = max(this.far, player_z - 50)
         const n = min(this.near, player_z + 50)
-        const z = this.lf2.mt.range(f, n)
+        const z = this.lfw.mt.range(f, n)
         entity.set_position_z(z);
       }
     }
@@ -375,7 +375,7 @@ export class Stage {
     for (const item of this.items) item.release();
     const temp: Entity[] = [];
     const player_teams = new Set<string>();
-    for (const [, v] of this.lf2.world.puppets) {
+    for (const [, v] of this.lfw.world.puppets) {
       player_teams.add(v.team);
     }
     for (const e of this.world.entities) {
@@ -441,7 +441,7 @@ export class Stage {
       if (e.hp <= 0) continue; // 无血，不判断
       if (e.position.x >= this.cam_r) continue; // 已达右侧，不判断
       if (is_bot_ctrl(e.ctrl)) continue; // Bot不判断
-      if (this.lf2.players.has(e.ctrl.player_id))
+      if (this.lfw.players.has(e.ctrl.player_id))
         return false;
     }
     return true;

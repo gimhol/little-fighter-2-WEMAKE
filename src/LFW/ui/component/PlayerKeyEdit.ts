@@ -16,15 +16,15 @@ export class PlayerKeyEdit extends PlayerKeyText {
   override on_foucs(): void {
     super.on_foucs?.();
     this.on_key_changed();
-    this.lf2.pointings.callback.add(this.r);
-    this.lf2.keyboard.callback.add(this.l);
+    this.lfw.pointings.callback.add(this.r);
+    this.lfw.keyboard.callback.add(this.l);
 
   }
   override on_blur(): void {
     super.on_blur?.();
     this.on_key_changed();
-    this.lf2.pointings.callback.del(this.r);
-    this.lf2.keyboard.callback.del(this.l);
+    this.lfw.pointings.callback.del(this.r);
+    this.lfw.keyboard.callback.del(this.l);
   }
   private _click_me = false;
   private p: IUICallback = {

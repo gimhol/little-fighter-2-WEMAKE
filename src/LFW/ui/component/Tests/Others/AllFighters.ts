@@ -20,7 +20,7 @@ export class AllFighters extends TestCase {
   override enter(): void {
     super.enter();
 
-    const all_ids = this.lf2.datas.fighters.map(v => v.id);
+    const all_ids = this.lfw.datas.fighters.map(v => v.id);
     const half_len = round(all_ids.length / 2);
     const ids_1 = all_ids.slice(0, half_len);
     const ids_2 = all_ids.slice(half_len);

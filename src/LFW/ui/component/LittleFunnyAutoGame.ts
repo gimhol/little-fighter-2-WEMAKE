@@ -51,7 +51,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     if (!boss1 || !boss2) return;
     const ce1 = (boss1?.data.base.ce ?? 1) - 1;
     const ce2 = (boss2?.data.base.ce ?? 1) - 1;
-    const _3000 = this.lf2.datas.get_fighters_of_group(EntityGroup._3000);
+    const _3000 = this.lfw.datas.get_fighters_of_group(EntityGroup._3000);
     const freeguys: Entity[] = []
     while (this._teams[1].soldiers.length > ce2) {
       const freeguy = this._teams[1].soldiers.pop();
@@ -65,7 +65,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     }
     while (this._teams[1].soldiers.length < ce2) {
       const newguy = freeguys.pop() ?? this.add_random_fighter(
-        this._lr = (this._lr + 1) % 2, '1', this.lf2.mt.pick(_3000)
+        this._lr = (this._lr + 1) % 2, '1', this.lfw.mt.pick(_3000)
       )
       if (!newguy) break;
       if (newguy.team !== '1') {
@@ -76,7 +76,7 @@ export class LittleFunnyAutoGame extends UIComponent {
     }
     while (this._teams[2].soldiers.length < ce1) {
       const newguy = freeguys.pop() ?? this.add_random_fighter(
-        this._lr = (this._lr + 1) % 2, '2', this.lf2.mt.pick(_3000)
+        this._lr = (this._lr + 1) % 2, '2', this.lfw.mt.pick(_3000)
       )
       if (!newguy) break;
       if (newguy.team !== '2') {
@@ -105,8 +105,8 @@ export class LittleFunnyAutoGame extends UIComponent {
     this._teams[2].boss = void 0;
     this._teams[2].soldiers.length = 0
     this.world.paused = false;
-    this.lf2.change_bg('')
-    this.lf2.cmds.push(CMD.LOCK_CAM, '0')
+    this.lfw.change_bg('')
+    this.lfw.cmds.push(CMD.LOCK_CAM, '0')
     this._director.reset();
   }
   override on_pause(): void {
@@ -116,18 +116,18 @@ export class LittleFunnyAutoGame extends UIComponent {
     this._teams[1].soldiers.length = 0
     this._teams[2].boss = void 0;
     this._teams[2].soldiers.length = 0
-    this.lf2.cmds.push(CMD.LOCK_CAM, '')
+    this.lfw.cmds.push(CMD.LOCK_CAM, '')
   }
   add_random_fighter(lr: number, team: '1' | '2', data?: IEntityData) {
     if (!data) {
       if (!this._datas.length)
-        this._datas.push(...this.lf2.datas.fighters)
-      data = this.lf2.mt.take(this._datas)
+        this._datas.push(...this.lfw.datas.fighters)
+      data = this.lfw.mt.take(this._datas)
     }
     if (!data) return;
-    const fighter = this.lf2.factory.create_entity(this.world, data)
+    const fighter = this.lfw.factory.create_entity(this.world, data)
     if (!fighter) return;
-    fighter.ctrl = this.lf2.factory.create_ctrl(data.id, '', fighter);
+    fighter.ctrl = this.lfw.factory.create_ctrl(data.id, '', fighter);
     fighter.team = team;
     const facing = fighter.facing = lr ? -1 : 1;
     const x = (this._ox = (this._ox + 1) % 2) * -facing

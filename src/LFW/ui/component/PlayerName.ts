@@ -30,7 +30,7 @@ export class PlayerName extends UIComponent {
   quit() {
     this._decided = void 0;
     this._com = void 0;
-    const text = this.lf2.string("char_menu.join_q")
+    const text = this.lfw.string("char_menu.join_q")
     this.node.text = new TextInfo({
       text,
       style: {

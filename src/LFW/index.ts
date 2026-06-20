@@ -3,7 +3,7 @@ export * from "./Cases";
 export * from "./Factory";
 export * from "./Ground";
 export * from "./I18N";
-export * from "./ILf2Callback";
+export * from "./ILFWCallback";
 export * from "./IPlayerInfoCallback";
 export * from "./ITransform";
 export * from "./IWorldCallbacks";

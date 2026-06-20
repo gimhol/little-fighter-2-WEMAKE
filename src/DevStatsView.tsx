@@ -1,6 +1,6 @@
 import { useMemo, useRef } from "react";
 import csses from "./DevStatsView.module.scss";
-import type { ILf2Callback, IWorldCallbacks, LFW } from "./LFW";
+import type { ILFWCallback, IWorldCallbacks, LFW } from "./LFW";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 
 export interface IDevStatsViewProps {
@@ -26,7 +26,7 @@ export function DevStatsView(props: IDevStatsViewProps) {
   )
   useCallbacks(
     lf2?.callbacks,
-    useMemo<ILf2Callback>(() => ({
+    useMemo<ILFWCallback>(() => ({
       on_progress: (content, progress) => {
         ref_loading.current!.innerText = `${content}, ${progress}%`;
         ref_loading.current!.style.transition = ''

@@ -99,7 +99,7 @@ export class Bat_DUJ_3 extends TestCase {
     } while (0);
 
     this.circle(OID.Bandit, this.midX, this.midZ, this.bg.width / 2, this.bg.depth / 2, 40).forEach(v => {
-      v.ctrl = this.lf2.factory.create_ctrl(OID.Bandit, v.ctrl.player_id, v)
+      v.ctrl = this.lfw.factory.create_ctrl(OID.Bandit, v.ctrl.player_id, v)
       v.team = TeamEnum.Team_2;
       v.hp = 50
     })

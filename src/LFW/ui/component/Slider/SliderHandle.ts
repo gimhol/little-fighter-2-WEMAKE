@@ -157,7 +157,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   }
   override on_start(): void {
     this.container?.callbacks.add(this.p)
-    this.lf2.pointings.callback.add(this.b)
+    this.lfw.pointings.callback.add(this.b)
     if (SliderHandleMode.Switcher == this.mode) {
       this.max_value = max(this.items.length - 1, 0)
       this.min_value = 0;
@@ -167,7 +167,7 @@ export class SliderHandle extends UIComponent<ISliderHandleProps, ISliderHandleC
   }
   override on_stop(): void {
     this.container?.callbacks.del(this.p)
-    this.lf2.pointings.callback.del(this.b)
+    this.lfw.pointings.callback.del(this.b)
   }
   override update(dt: number): void {
     const { container, responser } = this;

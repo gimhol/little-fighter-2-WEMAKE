@@ -694,9 +694,9 @@ export class Entity {
     let buffs = Array.from(this.buffs.values())
     for (const buf of buffs) buf.del_victims(this.id)
     this.buffs.clear();
-    const { world, lfw: lf2 } = this;
+    const { world, lfw } = this;
     this._data = data;
-    this.id = lf2.new_id;
+    this.id = lfw.new_id;
     this.wait = 0;
     this._lifetime = 0;
     this._prev_ground_y = 0;

@@ -28,7 +28,7 @@ class FSMState_BeforeEnd extends FSMState {
 class FSMState_End extends FSMState {
   override readonly key: number = 2;
   override enter(): void {
-    this.lf2.sounds.play_preset("end");
+    this.lfw.sounds.play_preset("end");
     const score_board = this.node.find_child("score_board")
     score_board?.set_visible(true);
   }
@@ -47,7 +47,7 @@ class FSMState_BeforeWin extends FSMState {
 class FSMState_Win extends FSMState {
   override readonly key: number = 4;
   override enter(): void {
-    this.lf2.sounds.play_preset("pass");
+    this.lfw.sounds.play_preset("pass");
     const score_board = this.node.find_child("score_board")
     score_board?.set_visible(true);
   }
@@ -197,26 +197,26 @@ export class StageModeLogic extends UIComponent {
     this.world.paused = false;
     this.world.playrate = 1;
     this.world.infinity_mp = 0;
-    this.lf2.world.stage.callbacks.add(this.stage_callbacks);
-    this.lf2.world.callbacks.add(this.world_callbacks);
+    this.lfw.world.stage.callbacks.add(this.stage_callbacks);
+    this.lfw.world.callbacks.add(this.world_callbacks);
   }
   override on_stop(): void {
     this.world.clear()
-    this.lf2.world.stage.callbacks.del(this.stage_callbacks)
-    this.lf2.world.callbacks.del(this.world_callbacks);
+    this.lfw.world.stage.callbacks.del(this.stage_callbacks)
+    this.lfw.world.callbacks.del(this.world_callbacks);
   }
 
   override update(dt: number): void {
     if (
       !this.world.paused &&
-      !this.lf2.world.stage.weapon_rain_disabled &&
+      !this.lfw.world.stage.weapon_rain_disabled &&
       this.weapon_drop_timer.add() &&
-      this.lf2.mt.range(0, 10) <= 2
+      this.lfw.mt.range(0, 10) <= 2
     ) {
-      this.lf2.weapons.add_random(1, true, EntityGroup.StageWeapon)
+      this.lfw.weapons.add_random(1, true, EntityGroup.StageWeapon)
     }
     if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
-      this.lf2.goto_next_stage()
+      this.lfw.goto_next_stage()
       this.fsm.use(0)
       this.jalousie.open = true;
     }
@@ -230,13 +230,13 @@ export class StageModeLogic extends UIComponent {
           this.fsm.state?.key === 4 &&
           this.fsm.state_time > 1000
         ) {
-          this.lf2.goto_next_stage();
+          this.lfw.goto_next_stage();
           this.fsm.use(0)
         } else if (
           this.fsm.state?.key === 2 &&
           this.fsm.state_time > 1000
         ) {
-          this.lf2.pop_ui_safe()
+          this.lfw.pop_ui_safe()
         }
         break;
       }

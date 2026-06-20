@@ -8,7 +8,7 @@ export class BackgroundSwitcher extends Label {
     let set = new Set<IBgData>();
     set.add(Defines.RANDOM_BG)
 
-    for (const bg of this.lf2.datas.backgrounds) {
+    for (const bg of this.lfw.datas.backgrounds) {
       if (bg.base.group.includes(BGG.Regular)) {
         set.add(bg)
       } else if (bg.base.group.includes(BGG.Hidden)) {
@@ -27,10 +27,10 @@ export class BackgroundSwitcher extends Label {
   }
   override on_resume(): void {
     this.set_text(this._background.base.name)
-    this.lf2.callbacks.add(this)
+    this.lfw.callbacks.add(this)
   }
   override on_pause(): void {
-    this.lf2.callbacks.del(this);
+    this.lfw.callbacks.del(this);
   }
   override on_show(): void {
     if (this._background === Defines.VOID_BG) this.on_broadcast();

@@ -5,12 +5,12 @@ export class StageSwitcher extends Label {
   static override readonly TAGS: string[] = ["StageSwitcher"];
   private _stage: IStageInfo = Defines.VOID_STAGE;
   get show_all(): boolean {
-    return this.lf2.is_cheat(CheatType.GIM_INK);
+    return this.lfw.is_cheat(CheatType.GIM_INK);
   }
   get stages(): IStageInfo[] {
-    const cheat_0 = this.lf2.is_cheat(CheatType.LF2_NET);
-    const cheat_1 = this.lf2.is_cheat(CheatType.GIM_INK);
-    const all = this.lf2.datas.stages;
+    const cheat_0 = this.lfw.is_cheat(CheatType.LF2_NET);
+    const cheat_1 = this.lfw.is_cheat(CheatType.GIM_INK);
+    const all = this.lfw.datas.stages;
     if (cheat_0 && cheat_1) return all
     const ret = all.filter(v => {
       if (!cheat_0 && v.group?.some(v => v == SG.Hidden))
@@ -31,10 +31,10 @@ export class StageSwitcher extends Label {
     return this._stage.starting_name ?? this._stage.name;
   }
   override on_resume(): void {
-    this.lf2.callbacks.add(this)
+    this.lfw.callbacks.add(this)
   }
   override on_pause(): void {
-    this.lf2.callbacks.del(this);
+    this.lfw.callbacks.del(this);
   }
   override on_show(): void {
     if (this._stage === Defines.VOID_STAGE) this.on_broadcast();

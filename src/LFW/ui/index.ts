@@ -11,7 +11,7 @@ export * from "./IUIKeyEvent";
 export * from "./IUIPointerEvent";
 export * from "./LF2KeyEvent";
 export * from "./LF2PointerEvent";
-export * from "./LF2UIEvent";
+export * from "./LFWUIEvent";
 export * from "./Schema_IUIImgInfo";
 export * from "./Style";
 export * from "./UIActionEnum";

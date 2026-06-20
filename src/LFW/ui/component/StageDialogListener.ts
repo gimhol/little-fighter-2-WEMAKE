@@ -13,18 +13,18 @@ export class StageDialogListener {
   protected readonly _world_cbs: IWorldCallbacks = { on_stage_change: c => this.set_stage(c), };
   protected readonly _stage_cbs: IStageCallbacks = { on_dialogs_changed: (_1, _2, s) => this.set_dialog(s.dialog) };
 
-  get lf2() { return this.owner.lf2; }
+  get lfw() { return this.owner.lfw; }
 
   constructor(owner: UIComponent, handler?: (dialog?: IDialogInfo, prev?: IDialogInfo) => void) {
     this.owner = owner;
     this._handler = handler;
   }
   start(): void {
-    this.set_stage(this.lf2.world.stage);
-    this.lf2.world.callbacks.add(this._world_cbs);
+    this.set_stage(this.lfw.world.stage);
+    this.lfw.world.callbacks.add(this._world_cbs);
   }
   stop(): void {
-    this.lf2.world.callbacks.del(this._world_cbs);
+    this.lfw.world.callbacks.del(this._world_cbs);
     this._stage?.callbacks.del(this._stage_cbs);
   }
   set_handler(handler: (dialog: IDialogInfo | undefined) => void): this {

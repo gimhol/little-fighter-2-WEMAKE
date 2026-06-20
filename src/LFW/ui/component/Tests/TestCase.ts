@@ -13,7 +13,7 @@ export class TestCase implements IState<number> {
   fighters: Entity[] = [];
   weapons: Entity[] = [];
   name: string = 'None';
-  get lf2() { return this.owner.lf2 }
+  get lfw() { return this.owner.lfw }
   get world() { return this.owner.world }
   get bg() { return this.owner.world.bg }
   get fsm() { return this.owner.fsm }
@@ -36,17 +36,17 @@ export class TestCase implements IState<number> {
   }
   enter(): void {
     this.owner.world.clear();
-    this.owner.lf2.change_bg('bg_4');
+    this.owner.lfw.change_bg('bg_4');
   }
   leave(): void {
-    this.lf2.cmds.push(CMD.DIST_CAM, '')
+    this.lfw.cmds.push(CMD.DIST_CAM, '')
     this.owner.world.clear();
-    this.owner.lf2.change_bg('bg_4');
+    this.owner.lfw.change_bg('bg_4');
   }
   spawn(oid: string) {
-    const data = this.lf2.datas.find_entity(oid);
+    const data = this.lfw.datas.find_entity(oid);
     if (!data) return null;
-    return this.lf2.factory.create_entity(this.world, data)!;
+    return this.lfw.factory.create_entity(this.world, data)!;
   }
   spawns(...oids: string[]): Entity[] {
     const ret = [];

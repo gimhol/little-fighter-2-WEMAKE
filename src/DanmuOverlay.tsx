@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { get_team_text_color } from "./LFW/base/get_team_text_color";
-import type { ILf2Callback } from "./LFW/ILf2Callback";
+import type { ILFWCallback } from "./LFW/ILFWCallback";
 import { LFW } from "./LFW";
 import { DanmuGameLogic } from "./LFW/ui/component/DanmuGameLogic";
 import type { IFighterSumInfo } from "./LFW/ui/component/IFighterSumInfo";
@@ -13,7 +13,7 @@ const n = (nn: number) => nn.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
 const t = (name: string, color: string = 'white') => {
   return `<span style="display:inline-block;width:100px;color:${color};">${name}</span>:`
 }
-export class DanmuOverlayLogic implements ILf2Callback {
+export class DanmuOverlayLogic implements ILFWCallback {
   lf2: LFW;
   component: DanmuGameLogic | undefined;
   timer: ReturnType<typeof setInterval> | null = null;

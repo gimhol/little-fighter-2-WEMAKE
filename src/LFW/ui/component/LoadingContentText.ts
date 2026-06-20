@@ -17,7 +17,7 @@ export class LoadingContentText extends Label {
       // TODO: fix it.
       const pr = parse_call_func_expression(expression);
       if (pr) {
-        this.fadeout = this.lf2.factory.create_components(this.node, [{ ...pr, cls: pr.name }])[0] as FadeOutOpacity
+        this.fadeout = this.lfw.factory.create_components(this.node, [{ ...pr, cls: pr.name }])[0] as FadeOutOpacity
         this.node.add_components(this.fadeout)
       }
     }
@@ -25,16 +25,16 @@ export class LoadingContentText extends Label {
   }
 
   override on_resume(): void {
-    this.lf2.callbacks.add(this);
+    this.lfw.callbacks.add(this);
   }
 
   override on_pause(): void {
-    this.lf2.callbacks.del(this);
+    this.lfw.callbacks.del(this);
   }
 
   on_loading_end() {
     const page = this.str(0)
-    if (page) this.lf2.set_ui({ id: page })
+    if (page) this.lfw.set_ui({ id: page })
     else this.on_progress("waiting_others_players", 0)
   }
 

@@ -15,7 +15,7 @@ export class PlayerNameInput extends TextInput {
     this.player?.set_name(this.text, true).save();
   }
   override on_start(): void {
-    this.player = this.lf2.players.get(this.player_id);
+    this.player = this.lfw.players.get(this.player_id);
     this.player?.callbacks.add(this)
   }
   override on_stop(): void {

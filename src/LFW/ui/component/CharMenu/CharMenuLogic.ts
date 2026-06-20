@@ -1,5 +1,5 @@
 import type { IPropsMeta } from "../../..";
-import type { ILf2Callback } from "../../../ILf2Callback";
+import type { ILFWCallback } from "../../../ILFWCallback";
 import { PlayerInfo } from "../../../PlayerInfo";
 import { FSM } from "../../../base/FSM";
 import { CheatType, EntityGroup as EG, type IEntityData, TeamEnum } from "../../../defines";
@@ -60,9 +60,9 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
   set teams(v: string[]) { this.props.teams = v }
 
   get fighters(): readonly IEntityData[] {
-    const cheat_0 = this.lf2.is_cheat(CheatType.LF2_NET);
-    const cheat_1 = this.lf2.is_cheat(CheatType.GIM_INK);
-    const all = this.lf2.datas.fighters;
+    const cheat_0 = this.lfw.is_cheat(CheatType.LF2_NET);
+    const cheat_1 = this.lfw.is_cheat(CheatType.GIM_INK);
+    const all = this.lfw.datas.fighters;
     if (cheat_0 && cheat_1) return all
     const ret = all.filter(v => {
       if (!cheat_0 && v.base.group?.some(v => v == EG.Hidden))
@@ -73,7 +73,7 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
     })
     return ret.length ? ret : all;
   }
-  protected _lf2_callbacks: ILf2Callback = {
+  protected _lf2_callbacks: ILFWCallback = {
     on_cheat_changed: (cheat_name, enabled) => {
       if (cheat_name === CheatType.LF2_NET && !enabled)
         this.handle_fighters_changed();
@@ -86,8 +86,8 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
   slots: ISlotPack[] = []
   override on_start(): void {
     super.on_start?.();
-    this._randoming = new Randoming(this.lf2.datas.find_group(EG.Regular).characters, this.lf2)
-    this.lf2.callbacks.add(this._lf2_callbacks)
+    this._randoming = new Randoming(this.lfw.datas.find_group(EG.Regular).characters, this.lfw)
+    this.lfw.callbacks.add(this._lf2_callbacks)
     const heads = this.node.search_components(CharMenuHead)
     const p_nam = this.node.search_components(CharMenuPlayerName)
     const f_nam = this.node.search_components(CharMenuFighterName)
@@ -111,7 +111,7 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
 
   override on_stop(): void {
     super.on_stop?.();
-    this.lf2.callbacks.del(this._lf2_callbacks)
+    this.lfw.callbacks.del(this._lf2_callbacks)
   }
   override on_key_down(e: IUIKeyEvent): void {
     this.fsm.state?.on_key_down?.(e)
@@ -156,13 +156,13 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
       }
       if (fighter_name) {
         const decided = state.step > SlotStep.FighterSel
-        if (state.random && !random_confirm) fighter_name.join(this.lf2.string('Random'), is_com, decided)
-        else if (state.fighter) fighter_name.join(this.lf2.string(state.fighter.base.name) || "noname", is_com, decided)
+        if (state.random && !random_confirm) fighter_name.join(this.lfw.string('Random'), is_com, decided)
+        else if (state.fighter) fighter_name.join(this.lfw.string(state.fighter.base.name) || "noname", is_com, decided)
       }
       if (team_name) {
         if (state.step >= SlotStep.TeamSel) {
           const team_info = Defines.TeamInfoMap[state.team]
-          const team_txt = this.lf2.string(team_info?.i18n ?? state.team)
+          const team_txt = this.lfw.string(team_info?.i18n ?? state.team)
           team_name.join(team_txt, is_com, state.step > SlotStep.TeamSel)
         } else {
           team_name.quit()
@@ -190,16 +190,16 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
       }
     } else return;
 
-    this.lf2.sounds.play_preset("join");
+    this.lfw.sounds.play_preset("join");
     this.update_slots()
   }
   get is_player_sel(): boolean { return this.fsm.state?.key === CharMenuState.PlayerSel }
   press_j(player: PlayerInfo) {
     const state = this.players.get(player)
-    if (!state) { if (this.is_player_sel) this.lf2.pop_ui(); }
+    if (!state) { if (this.is_player_sel) this.lfw.pop_ui(); }
     else if (state.step <= SlotStep.FighterSel) this.players.delete(player);
     else state.step = max(state.step - 1, SlotStep.FighterSel)
-    this.lf2.sounds.play_preset("cancel");
+    this.lfw.sounds.play_preset("cancel");
     this.update_slots()
   }
 
@@ -280,15 +280,15 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
     if (this.max_player <= this.players.size) return;
     
     let com: PlayerInfo | null = null
-    for (const [_, p] of this.lf2.players) {
+    for (const [_, p] of this.lfw.players) {
       if (!p.is_com) continue;
       if (p.is_com && this.players.has(p)) continue;
       com = p;
     }
     if (!com) {
-      com = new PlayerInfo(`com_` + this.lf2.new_id, "com", false)
+      com = new PlayerInfo(`com_` + this.lfw.new_id, "com", false)
       com.set_is_com(true, false);
-      this.lf2.players.set(com.id, com)
+      this.lfw.players.set(com.id, com)
     }
     this.press_a(com)
   }

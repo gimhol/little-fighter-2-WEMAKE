@@ -23,7 +23,7 @@ export class StageTitleShow extends Label {
   on_stage_change(stage: Stage, prev?: Stage) {
     prev?.callbacks.del(this)
     stage.callbacks.add(this)
-    const title = this.lf2.string(stage.data.title ?? stage.bg.name ?? "")
+    const title = this.lfw.string(stage.data.title ?? stage.bg.name ?? "")
     this.set_text(title)
   }
 

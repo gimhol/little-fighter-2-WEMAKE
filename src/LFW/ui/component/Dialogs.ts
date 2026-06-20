@@ -42,12 +42,12 @@ export class Dialogs extends UIComponent<IDialogsProps> {
   show_dialog(dialog: IDialogInfo) {
     this._transform.scale_to(1, 1, 1, true)
     this.node.visible = true;
-    const text = this.lf2.string(dialog.i18n)
+    const text = this.lfw.string(dialog.i18n)
     this.props.text?.set_text(text);
 
-    const fighter = dialog.fighter ? this.lf2.datas.find_fighter(dialog.fighter) : void 0
+    const fighter = dialog.fighter ? this.lfw.datas.find_fighter(dialog.fighter) : void 0
     if (fighter) {
-      const fighter_name = this.lf2.string(fighter.base.name)
+      const fighter_name = this.lfw.string(fighter.base.name)
       this.props.talker?.set_text(fighter_name)
     } else {
       this.props.talker?.set_text('')

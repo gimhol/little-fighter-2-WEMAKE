@@ -634,15 +634,15 @@ export class BotController extends BaseController {
    *    jump!
    */
   desire(mark: string) {
-    this.lf2.mt.mark = mark
-    return this.lf2.mt.range(0, D.MAX_AI_DESIRE)
+    this.lfw.mt.mark = mark
+    return this.lfw.mt.range(0, D.MAX_AI_DESIRE)
   }
 
   action_desire(mark: string): number {
     let ret = this.desire(mark); // 默认action设置的desire是crazy的好了。
     for (let i = Difficulty.MAX - this.difficulty; i > 0; --i) {
-      this.lf2.mt.mark = mark;
-      ret += this.lf2.mt.range(0, ret);
+      this.lfw.mt.mark = mark;
+      ret += this.lfw.mt.range(0, ret);
     }
     return ret;
   }
@@ -661,7 +661,7 @@ export class BotController extends BaseController {
     this._bot_id = bot_id;
     Object.assign(this.dataset, BotDataSet.Default)
     if (!bot_id) return this._bot = void 0;
-    this._bot = this.lf2.datas.find_bot(bot_id)
+    this._bot = this.lfw.datas.find_bot(bot_id)
     Object.assign(this.dataset, this._bot?.dataset)
   }
 

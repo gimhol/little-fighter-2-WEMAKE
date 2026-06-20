@@ -58,8 +58,8 @@ export class Sounds extends UIComponent implements IPlayable {
     for (; this.idx < l; ++this.idx) {
       const [t, s, b] = this.seq[this.idx]!;
       if (t > this.time) break;
-      if (b) this.lf2.sounds.play_with_load(s)
-      else this.lf2.sounds.play_preset(s)
+      if (b) this.lfw.sounds.play_with_load(s)
+      else this.lfw.sounds.play_preset(s)
     }
 
     if (this.idx >= l) {

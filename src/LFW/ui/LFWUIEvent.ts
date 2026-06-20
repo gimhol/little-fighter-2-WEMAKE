@@ -1,6 +1,6 @@
 import type { IUIEvent } from "./UIEvent";
 
-export class LF2UIEvent implements IUIEvent {
+export class LFWUIEvent implements IUIEvent {
   protected _stopped: number = 0;
   get stopped(): number { return this._stopped; }
   stop_propagation(): void {

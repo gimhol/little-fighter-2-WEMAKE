@@ -56,7 +56,7 @@ export class UIComponent<
 
   id: string = '';
   name: string = ''
-  get lf2() { return this.node.lfw; }
+  get lfw() { return this.node.lfw; }
   get world() { return this.node.lfw.world; }
   mounted: boolean = false;
 
@@ -183,7 +183,7 @@ export class UIComponent<
   }
   get keys(): Keys {
     if (this._keys) return this._keys;
-    return this._keys = this.lf2.create_keys()
+    return this._keys = this.lfw.create_keys()
   }
   recycle_keys() {
     this._keys?.unmount()

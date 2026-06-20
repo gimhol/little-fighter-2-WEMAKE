@@ -1,7 +1,7 @@
 import type { IPropsMeta } from "../../utils/schema/make_schema";
 import FSM, { type IState } from "../../base/FSM";
 import { Ditto } from "../../ditto";
-import type { ILf2Callback } from "../../ILf2Callback";
+import type { ILFWCallback } from "../../ILFWCallback";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { IUIPointerEvent } from "../IUIPointerEvent";
 import { UINode } from "../UINode";
@@ -64,7 +64,7 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     }, {
       key: Status.Introduction,
       enter: () => {
-        Ditto.Timeout.add(() => this.lf2.sounds.play("builtin_data/launch/093.wav.mp3"), 1000);
+        Ditto.Timeout.add(() => this.lfw.sounds.play("builtin_data/launch/093.wav.mp3"), 1000);
         this.props.yeonface.find_component(ScaleAnimation, 'scale_in')?.start(false)
         this.props.yeonface.find_component(PositionAnimation, 'move_in')?.start(false)
         this.props.yeonface.find_component(OpacityAnimation)?.start(false)
@@ -107,11 +107,11 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     }, {
       key: Status.GoToEntry,
       enter: () => {
-        this.lf2.sounds.play_bgm("bgm/main.wma.mp3");
+        this.lfw.sounds.play_bgm("bgm/main.wma.mp3");
       },
       update: (dt) => {
         if (this.props.long_text.find_component(OpacityAnimation)!.done) {
-          this.lf2.set_ui({ id: this.props.entry });
+          this.lfw.set_ui({ id: this.props.entry });
           return Status.End
         }
       }
@@ -124,9 +124,9 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     this._prel_loaded = true;
     this.props.loading_anim.anim.set_times(4).set_count(0)
   }
-  readonly lf2_cb: ILf2Callback = {
+  readonly lf2_cb: ILFWCallback = {
     on_prel_loaded: () => {
-      this.lf2.sounds.load("bgm/main.wma.mp3", "bgm/main.wma.mp3").catch(e => {
+      this.lfw.sounds.load("bgm/main.wma.mp3", "bgm/main.wma.mp3").catch(e => {
         Ditto.warn(e)
       }).then(() => {
         this.on_prel_loaded()
@@ -134,13 +134,13 @@ export class LaunchPage extends UIComponent<ILaunchPageProps> {
     },
   }
   override on_start(): void {
-    this._prel_loaded = this.lf2.ui_loaded;
-    this.lf2.sounds.load("builtin_data/launch/093.wav.mp3", "builtin_data/launch/093.wav.mp3");
-    this.lf2.callbacks.add(this.lf2_cb)
+    this._prel_loaded = this.lfw.ui_loaded;
+    this.lfw.sounds.load("builtin_data/launch/093.wav.mp3", "builtin_data/launch/093.wav.mp3");
+    this.lfw.callbacks.add(this.lf2_cb)
   }
   override on_stop(): void {
     super.on_stop?.();
-    this.lf2.callbacks.del(this.lf2_cb)
+    this.lfw.callbacks.del(this.lf2_cb)
   }
   override on_resume(): void {
     this.props.bearface = this.node.find_child("bearface")!;

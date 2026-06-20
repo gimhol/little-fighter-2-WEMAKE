@@ -23,7 +23,7 @@ class FSMState_BeforeEnd extends FSMState {
 class FSMState_End extends FSMState {
   override readonly key: number = 2;
   override enter(): void {
-    this.lf2.sounds.play_preset("end");
+    this.lfw.sounds.play_preset("end");
     const score_board = this.node.find_child("score_board")
     score_board?.set_visible(true);
   }
@@ -47,7 +47,7 @@ export class VsModeLogic extends UIComponent {
       // 各队伍存活计数
       const player_teams: { [x in string]?: number } = {};
 
-      for (const [, { fighter }] of this.lf2.players)
+      for (const [, { fighter }] of this.lfw.players)
         if (fighter)
           player_teams[fighter.team] = 0 // 玩家队伍
 
@@ -72,7 +72,7 @@ export class VsModeLogic extends UIComponent {
     super.on_start?.();
     this.fsm.use(0)
 
-    for (const [, { fighter: f }] of this.lf2.players)
+    for (const [, { fighter: f }] of this.lfw.players)
       if (f) f.callbacks.add(this.fighter_callbacks)
     this.world.paused = false;
     this.world.playrate = 1;
@@ -81,7 +81,7 @@ export class VsModeLogic extends UIComponent {
     const stat_bars = this.node.search_components(FighterStatBar)
 
     let player_count = 0;
-    for (const [, { fighter: f }] of this.lf2.players)
+    for (const [, { fighter: f }] of this.lfw.players)
       if (f) ++player_count
     for (let i = 0; i < stat_bars.length; i++) {
       const stat_bar = stat_bars[i];
@@ -98,7 +98,7 @@ export class VsModeLogic extends UIComponent {
       --i;
     }
 
-    for (const [, { fighter }] of this.lf2.players) {
+    for (const [, { fighter }] of this.lfw.players) {
       if (!fighter) continue;
       const stat_bar = stat_bars.shift()
       if (!stat_bar) break;
@@ -110,8 +110,8 @@ export class VsModeLogic extends UIComponent {
   }
   override update(dt: number): void {
     this.fsm.update(dt);
-    if (!this.world.paused && this.weapon_drop_timer.add() && this.lf2.mt.range(0, 10) <= 2) {
-      this.lf2.weapons.add_random(1, true, EntityGroup.VsWeapon)
+    if (!this.world.paused && this.weapon_drop_timer.add() && this.lfw.mt.range(0, 10) <= 2) {
+      this.lfw.weapons.add_random(1, true, EntityGroup.VsWeapon)
     }
   }
   override on_key_down(e: IUIKeyEvent): void {
@@ -123,7 +123,7 @@ export class VsModeLogic extends UIComponent {
           this.fsm.state_time > 1000
         ) {
           e.stop_immediate_propagation();
-          this.lf2.pop_ui()
+          this.lfw.pop_ui()
         }
         break;
       }
