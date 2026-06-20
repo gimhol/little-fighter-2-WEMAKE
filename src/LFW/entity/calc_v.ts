@@ -44,7 +44,7 @@ export function calc_v(
       if (current <= target && acc < 0) return current;
       return current + acc;
     }
-    case SpeedMode.LF2: default: {
+    case SpeedMode.Default: default: {
       const target = (value *= direction);
       if (current < target && target > 0) return target
       if (current > target && target < 0) return target

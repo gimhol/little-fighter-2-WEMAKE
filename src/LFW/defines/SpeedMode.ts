@@ -4,7 +4,7 @@ export enum SpeedMode {
    * 或 新旧速度方向不一致 时
    * 用新速度覆盖当前速度。
    */
-  LF2 = 0,
+  Default = 0,
   
   /** 
    * 跟随方向加速度 

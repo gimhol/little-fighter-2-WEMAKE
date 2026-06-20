@@ -56,9 +56,9 @@ export function update_velocity(this: Entity, vinfo: IVelocityInfo): void {
   if (dvy) dvy = rf(dvy * this.dataset("fvy_f"));
   if (dvz) dvz = rf(dvz * this.dataset("fvz_f"));
   let {
-    vxm = SpeedMode.LF2,
+    vxm = SpeedMode.Default,
     vym = SpeedMode.AccTo,
-    vzm = SpeedMode.LF2,
+    vzm = SpeedMode.Default,
     acc_x,
     acc_y,
     acc_z,

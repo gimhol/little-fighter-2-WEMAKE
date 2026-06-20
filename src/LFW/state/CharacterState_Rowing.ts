@@ -13,7 +13,7 @@ export class CharacterState_Rowing extends CharacterState_Base {
     const vy = e.dataset('rowing_height') * e.dataset('bfall_h_f')
     const { x: prev_vx, y: prev_vy } = e.velocity;
     const next_vx = prev_vx >= 0 ? vx : -vx;
-    const next_vy = calc_v(prev_vy, vy, SpeedMode.LF2, 0)
+    const next_vy = calc_v(prev_vy, vy, SpeedMode.Default, 0)
     e.set_velocity(next_vx, next_vy);
   }
   override on_landing(e: Entity): void {
