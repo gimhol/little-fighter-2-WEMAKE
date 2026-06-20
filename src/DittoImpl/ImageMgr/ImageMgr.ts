@@ -141,7 +141,6 @@ export class ImageMgr implements IImageMgr {
       text: text,
       style
     });
-    if (style.disposable) this.add_disposable(ret);
     return ret;
   }
 

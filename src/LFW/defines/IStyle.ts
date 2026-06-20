@@ -39,6 +39,5 @@ export interface IStyle {
   smoothing?: boolean;
   underline_color?: string;
   underline_width?: number;
-  disposable?: boolean;
   scale?: number;
 }
