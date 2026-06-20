@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { armor_Info_new, type IArmorInfo } from "@/LF2";
+import { armor_Info_new, type IArmorInfo } from "@/LFW";
 import { useState } from "react";
 import { ArmorInfoForm } from "./index";
 

@@ -1,4 +1,4 @@
-import type { IWorldDataset } from '@/LF2';
+import type { IWorldDataset } from '@/LFW';
 import type { IReq, IResp } from './_Base';
 import type { IClientInfo } from './IClientInfo';
 import type { MsgEnum } from './MsgEnum';

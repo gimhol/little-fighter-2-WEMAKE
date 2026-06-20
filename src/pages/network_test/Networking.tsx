@@ -1,6 +1,6 @@
 
-import { GK, LF2, LF2KeyEvent, PlayerInfo } from "@/LF2";
-import { bot_cases, mt_cases, sus_cases } from "@/LF2/cases_instances";
+import { GK, LF2, LF2KeyEvent, PlayerInfo } from "@/LFW";
+import { bot_cases, mt_cases, sus_cases } from "@/LFW/cases_instances";
 import { type IKeyEvent, type IReqTick, type IRespClientInfo, type IRespDataset, type IRespRoomStart, type IRespTick, MsgEnum, type TInfo } from "@/Net";
 import type { IRespKeyTick } from "@/Net/IMsg_KeyTick";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";

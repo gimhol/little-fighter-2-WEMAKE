@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import csses from "./BgScrollerView.module.scss";
 import { Button } from "./Component/Buttons/Button";
-import { CMD, floor, max, min } from "./LF2";
-import { LF2 } from "./LF2/LF2";
-import { Defines } from "./LF2/defines/defines";
+import { CMD, floor, max, min } from "./LFW";
+import { LF2 } from "./LFW/LFW";
+import { Defines } from "./LFW/defines/defines";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 
 function to_world_cam_x(screen_x: number, lf2: LF2, canvas: HTMLCanvasElement) {

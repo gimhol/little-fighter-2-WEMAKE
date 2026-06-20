@@ -1,4 +1,4 @@
-import type { IStyle, LF2 } from "@/LF2";
+import type { IStyle, LF2 } from "@/LFW";
 import { BufferGeometry, Mesh } from "three";
 import { MaterialFactory, MaterialKind, MeshFactory } from "../factory";
 import { get_static_plane_geometry } from "../GeometryKeeper";

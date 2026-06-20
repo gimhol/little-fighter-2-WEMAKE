@@ -1,5 +1,5 @@
 import { Button } from "@/Component/Buttons/Button";
-import { LF2 } from "@/LF2";
+import { LF2 } from "@/LFW";
 import { Paths } from "@/Paths";
 import { download } from "@/Utils/download";
 import { open_file } from "@/Utils/open_file";

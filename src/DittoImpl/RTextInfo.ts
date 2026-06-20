@@ -1,4 +1,4 @@
-import { TextInfo } from "@/LF2/ditto/image/TextInfo";
+import { TextInfo } from "@/LFW/ditto/image/TextInfo";
 import * as T from "./_t";
 import { RImageInfo } from "./RImageInfo";
 

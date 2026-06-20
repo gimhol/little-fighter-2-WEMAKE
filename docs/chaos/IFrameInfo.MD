@@ -1,5 +1,5 @@
 # IFrameInfo
 
-[IFrameInfo.ts](../../src/LF2/defines/IFrameInfo.ts)
+[IFrameInfo.ts](../../src/LFW/defines/IFrameInfo.ts)
 
 TODO

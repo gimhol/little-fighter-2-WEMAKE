@@ -1,4 +1,4 @@
-import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
+import { ImageInfo } from "@/LFW/ditto/image/ImageInfo";
 import * as T from "./_t";
 
 export class RImageInfo extends ImageInfo<T.Texture> {

@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { bpoint_info_new, type IBpointInfo } from "@/LF2";
+import { bpoint_info_new, type IBpointInfo } from "@/LFW";
 import { useState } from "react";
 import { BpointInfoForm } from "./index";
 

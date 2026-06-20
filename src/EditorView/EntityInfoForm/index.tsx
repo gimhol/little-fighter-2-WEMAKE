@@ -1,8 +1,8 @@
 
 import { Checkbox } from "@/Component/Checkbox";
 import { Form } from "@/Component/Form";
-import { armor_Info_new, drink_info_new, entity_info_fields } from "@/LF2";
-import { entity_info_new, type IEntityInfo } from "@/LF2/defines";
+import { armor_Info_new, drink_info_new, entity_info_fields } from "@/LFW";
+import { entity_info_new, type IEntityInfo } from "@/LFW/defines";
 import { useEffect, useMemo, useRef } from "react";
 import { type ISpaceProps, Space } from "../../Component/Space";
 import { FieldsRow } from "../FieldsRow";

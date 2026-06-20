@@ -1,10 +1,10 @@
-import { CMD } from "@/LF2/defines/CMD";
-import Callbacks from "../LF2/base/Callbacks";
-import { NoEmitCallbacks } from "../LF2/base/NoEmitCallbacks";
-import type { IKeyboard } from "../LF2/ditto/keyboard/IKeyboard";
-import type { IKeyboardCallback } from "../LF2/ditto/keyboard/IKeyboardCallback";
-import type { IKeyEvent } from "../LF2/ditto/keyboard/IKeyEvent";
-import { LF2 } from "../LF2/LF2";
+import { CMD } from "@/LFW/defines/CMD";
+import Callbacks from "../LFW/base/Callbacks";
+import { NoEmitCallbacks } from "../LFW/base/NoEmitCallbacks";
+import type { IKeyboard } from "../LFW/ditto/keyboard/IKeyboard";
+import type { IKeyboardCallback } from "../LFW/ditto/keyboard/IKeyboardCallback";
+import type { IKeyEvent } from "../LFW/ditto/keyboard/IKeyEvent";
+import { LF2 } from "../LFW/LFW";
 
 class __KeyEvent implements IKeyEvent {
   readonly times: number;

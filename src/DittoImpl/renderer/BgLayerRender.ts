@@ -1,4 +1,4 @@
-import type { Layer } from "@/LF2/bg/Layer";
+import type { Layer } from "@/LFW/bg/Layer";
 import * as T from "../_t";
 import { MeshBasicMaterial } from "../_t";
 import type { BgRender } from "./BgRender";

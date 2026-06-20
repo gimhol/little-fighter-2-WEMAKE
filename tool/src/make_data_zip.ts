@@ -1,11 +1,11 @@
 import fs, { rm } from "fs/promises";
 import JSON5 from "json5";
 import path, { join } from "path";
-import { Defines } from "../../src/LF2/defines/defines";
-import type { ITempDataLists } from "../../src/LF2/defines/IDataLists";
-import { suffix_map } from "../../src/LF2/defines/IDatIndex";
-import { IDataZipInfo } from "../../src/LF2/defines/IFullGameZipInfo";
-import type { ILegacyPictureInfo } from "../../src/LF2/defines/ILegacyPictureInfo";
+import { Defines } from "../../src/LFW/defines/defines";
+import type { ITempDataLists } from "../../src/LFW/defines/IDataLists";
+import { suffix_map } from "../../src/LFW/defines/IDatIndex";
+import { IDataZipInfo } from "../../src/LFW/defines/IFullGameZipInfo";
+import type { ILegacyPictureInfo } from "../../src/LFW/defines/ILegacyPictureInfo";
 import { conf } from "./conf";
 import { CacheInfos } from "./utils/cache_infos";
 import { classify } from "./utils/classify";

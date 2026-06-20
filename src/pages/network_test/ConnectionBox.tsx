@@ -5,7 +5,7 @@ import Frame from "@/Component/Frame";
 import { Input } from "@/Component/Input";
 import { Text } from "@/Component/Text";
 import { useForage } from "@/hooks/useForage";
-import { LF2 } from "@/LF2";
+import { LF2 } from "@/LFW";
 import { useFloating } from "@fimagine/dom-hooks/dist/useFloating";
 import { useForwardedRef } from "@fimagine/dom-hooks/dist/useForwardedRef";
 import { useStateRef } from "@fimagine/dom-hooks/dist/useStateRef";

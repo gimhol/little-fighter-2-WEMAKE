@@ -1,4 +1,4 @@
-import { Callbacks } from "@/LF2/base";
+import { Callbacks } from "@/LFW/base";
 import {
   type IClientInfo,
   type IConnError, type IJob, type IMsgReqMap, type IMsgRespMap,

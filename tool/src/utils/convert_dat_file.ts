@@ -1,6 +1,6 @@
-import { BotMaker, make_bg_data, make_stage_info_list, obj_dat_to_json } from "../../../src/LF2/dat_translator";
-import type { IBgData, IDataLists, IEntityData, IStageInfo } from "../../../src/LF2/defines";
-import { DatTypeEnum } from "../../../src/LF2/defines";
+import { BotMaker, make_bg_data, make_stage_info_list, obj_dat_to_json } from "../../../src/LFW/dat_translator";
+import type { IBgData, IDataLists, IEntityData, IStageInfo } from "../../../src/LFW/defines";
+import { DatTypeEnum } from "../../../src/LFW/defines";
 import { debug, error, info } from "./log";
 import { read_lf2_dat_file } from "./read_lf2_dat_file";
 import { write_obj_file } from "./write_obj_file";

@@ -1,8 +1,8 @@
-import type { IFrameInfo } from "@/LF2/defines";
-import type { IQube } from "@/LF2/defines/IQube";
-import type { IQubePair } from "@/LF2/defines/IQubePair";
-import type { Entity } from "@/LF2/entity/Entity";
-import { foreach } from "@/LF2/utils/container_help/foreach";
+import type { IFrameInfo } from "@/LFW/defines";
+import type { IQube } from "@/LFW/defines/IQube";
+import type { IQubePair } from "@/LFW/defines/IQubePair";
+import type { Entity } from "@/LFW/entity/Entity";
+import { foreach } from "@/LFW/utils/container_help/foreach";
 import * as T from "../_t";
 import { INDICATINGS } from "./INDICATINGS";
 import { INDICATORS_INFO } from "./INDICATORS_INFO";

@@ -1,5 +1,5 @@
 # BdyKind
 
-[BdyKind.ts](../../src/LF2/defines/BdyKind.ts)
+[BdyKind.ts](../../src/LFW/defines/BdyKind.ts)
 
 TODO

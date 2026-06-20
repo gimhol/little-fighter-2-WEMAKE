@@ -3,7 +3,7 @@ import './DittoImpl';
 import * as dom from "./DittoImpl";
 import { UINodeRenderer } from "./DittoImpl/renderer/UINodeRenderer";
 import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
-import { actor, Ditto, UIActionEnum } from "./LF2";
+import { actor, Ditto, UIActionEnum } from "./LFW";
 import { Debug, Log, Warn } from "./Log";
 import { ewents } from './Utils/ewents';
 import './i18n';

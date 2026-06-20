@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, writeFile } from "fs/promises";
 import JSON5 from "json5";
 import { dirname, join } from "path";
-import { ActionType, IBgData, IEntityData, IStageInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LF2/defines";
+import { ActionType, IBgData, IEntityData, IStageInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LFW/defines";
 import { conf } from "./conf";
 import { error, info, log, warn } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";

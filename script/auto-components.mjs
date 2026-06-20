@@ -34,7 +34,7 @@ async function main() {
   const useds = new Set(names)
   while (names.length) {
     const pairs = []
-    await auto_components(`./src/LF2/ui/component`, names, pairs)
+    await auto_components(`./src/LFW/ui/component`, names, pairs)
     if (!pairs.length) break;
     names.length = 0;
     for (const pair of pairs) {
@@ -47,7 +47,7 @@ async function main() {
   }
   let str = `
 /*** AUTO REGISTER COMPONENTS START ***/
-import { Factory } from "@/LF2/Factory";
+import { Factory } from "@/LFW/Factory";
 import * as _ from "./index";
 let _registed = false
 export const regist_components = () => {
@@ -60,6 +60,6 @@ ${outs.map(v => `    _.${v[0]}`).sort().join(',\n')}
 /*** AUTO REGISTER COMPONENTS END ***/
 `.trim();
 
-  await fs.writeFile(`./src/LF2/ui/component/_.ts`, str)
+  await fs.writeFile(`./src/LFW/ui/component/_.ts`, str)
 }
 main();

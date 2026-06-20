@@ -3,8 +3,8 @@ import { createWriteStream, existsSync } from "fs";
 import { mkdir } from "fs/promises"
 import { join } from "path/posix";
 import { pipeline } from "stream/promises";
-import { Defines } from "../../src/LF2/defines";
-import { IGameZipInfo } from "../../src/LF2/defines/IFullGameZipInfo";
+import { Defines } from "../../src/LFW/defines";
+import { IGameZipInfo } from "../../src/LFW/defines/IFullGameZipInfo";
 import { conf } from "./conf";
 import { debug, info } from "./utils/log";
 import { write_file } from "./utils/write_file";

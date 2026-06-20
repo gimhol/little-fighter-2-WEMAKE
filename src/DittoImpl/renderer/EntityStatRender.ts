@@ -1,8 +1,8 @@
-import { get_team_outline_color } from "@/LF2/base/get_team_shadow_color";
-import { get_team_text_color } from "@/LF2/base/get_team_text_color";
-import { is_fighter, type Entity, type IEntityCallbacks } from "@/LF2/entity";
-import { StatBarType } from "@/LF2/entity/StatBarType";
-import { floor, round } from "@/LF2/utils";
+import { get_team_outline_color } from "@/LFW/base/get_team_shadow_color";
+import { get_team_text_color } from "@/LFW/base/get_team_text_color";
+import { is_fighter, type Entity, type IEntityCallbacks } from "@/LFW/entity";
+import { StatBarType } from "@/LFW/entity/StatBarType";
+import { floor, round } from "@/LFW/utils";
 import * as T from "../_t";
 import { Bar } from "./Bar";
 import type { EntityRenderer } from "./EntityRenderer";

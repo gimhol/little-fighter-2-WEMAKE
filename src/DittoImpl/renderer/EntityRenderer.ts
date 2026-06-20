@@ -1,4 +1,4 @@
-import { BFID, OID, is_fighter, SE, type Entity } from "@/LF2";
+import { BFID, OID, is_fighter, SE, type Entity } from "@/LFW";
 import { Vector3 } from "../_t";
 import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityMainRender } from "./EntityMainRender";

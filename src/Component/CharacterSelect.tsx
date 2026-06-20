@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import type { LF2 } from "../LF2/LF2";
-import { EntityGroup } from "../LF2/defines";
-import type { IEntityData } from "../LF2/defines/IEntityData";
-import { is_str } from "../LF2/utils/type_check";
+import type { LF2 } from "../LFW/LFW";
+import { EntityGroup } from "../LFW/defines";
+import type { IEntityData } from "../LFW/defines/IEntityData";
+import { is_str } from "../LFW/utils/type_check";
 import Select, { type ISelectProps } from "./Select";
 
 export interface CharacterSelectProps

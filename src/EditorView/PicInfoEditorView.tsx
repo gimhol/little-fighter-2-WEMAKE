@@ -1,9 +1,9 @@
 import Frame, { type IFrameProps } from "../Component/Frame";
 import { Cross } from "../Component/Icons/Cross";
 import { Space } from "../Component/Space";
-import type { IEntityData } from "../LF2/defines/IEntityData";
-import type { ILegacyPictureInfo } from "../LF2/defines/ILegacyPictureInfo";
-import { traversal } from "../LF2/utils/container_help/traversal";
+import type { IEntityData } from "../LFW/defines/IEntityData";
+import type { ILegacyPictureInfo } from "../LFW/defines/ILegacyPictureInfo";
+import { traversal } from "../LFW/utils/container_help/traversal";
 import { useEditor } from "./FrameEditorView/useEditor";
 export interface IFileEditorViewProps extends IFrameProps {
   data: IEntityData;

@@ -1,7 +1,7 @@
 import axios, { type AxiosResponse, type RawAxiosRequestHeaders, type ResponseType } from "axios";
 import json5 from "json5";
-import type { IImporter } from "../LF2/ditto/importer/IImporter";
-import { ImportError } from "../LF2/ditto/importer/ImportError";
+import type { IImporter } from "../LFW/ditto/importer/IImporter";
+import { ImportError } from "../LFW/ditto/importer/ImportError";
 
 const roots = ["builtin_data"];
 function get_possible_url_list(list: string[]): string[] {
@@ -107,7 +107,7 @@ async function import_as<T>(
     }, 5000);
   })
 }
-import { deduped } from "../LF2/base/dedup";
+import { deduped } from "../LFW/base/dedup";
 
 export class __Importer implements IImporter {
 

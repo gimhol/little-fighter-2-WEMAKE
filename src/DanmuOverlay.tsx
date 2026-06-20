@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { get_team_text_color } from "./LF2/base/get_team_text_color";
-import type { ILf2Callback } from "./LF2/ILf2Callback";
-import { LF2 } from "./LF2/LF2";
-import { DanmuGameLogic } from "./LF2/ui/component/DanmuGameLogic";
-import type { IFighterSumInfo } from "./LF2/ui/component/IFighterSumInfo";
-import { UIComponent } from "./LF2/ui/component/UIComponent";
-import { Times } from "./LF2/utils/Times";
-import { floor } from "./LF2/utils";
-import { TeamEnum } from "./LF2";
+import { get_team_text_color } from "./LFW/base/get_team_text_color";
+import type { ILf2Callback } from "./LFW/ILf2Callback";
+import { LF2 } from "./LFW/LFW";
+import { DanmuGameLogic } from "./LFW/ui/component/DanmuGameLogic";
+import type { IFighterSumInfo } from "./LFW/ui/component/IFighterSumInfo";
+import { UIComponent } from "./LFW/ui/component/UIComponent";
+import { Times } from "./LFW/utils/Times";
+import { floor } from "./LFW/utils";
+import { TeamEnum } from "./LFW";
 const n = (nn: number) => nn.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
 
 const t = (name: string, color: string = 'white') => {

@@ -3,7 +3,7 @@ import { Checkbox } from "@/Component/Checkbox";
 import { Form } from "@/Component/Form";
 import Frame from "@/Component/Frame";
 import { type ISpaceProps, Space } from "@/Component/Space";
-import { bdy_info_new, bpoint_info_new, chase_info_new, cpoint_info_new, frame_info_fields, frame_info_new, type IBdyInfo, type IFrameInfo, type IItrInfo, type IOpointInfo, itr_info_new, opoint_info_new, wpoint_info_new } from "@/LF2";
+import { bdy_info_new, bpoint_info_new, chase_info_new, cpoint_info_new, frame_info_fields, frame_info_new, type IBdyInfo, type IFrameInfo, type IItrInfo, type IOpointInfo, itr_info_new, opoint_info_new, wpoint_info_new } from "@/LFW";
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FieldsRow } from "../FieldsRow";
 import { BdyInfoForm } from "./BdyInfoForm";

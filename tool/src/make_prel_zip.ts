@@ -1,7 +1,7 @@
 
 import { join } from "path";
-import { Defines } from "../../src/LF2/defines/defines";
-import { IPrelZipInfo } from "../../src/LF2/defines/IFullGameZipInfo";
+import { Defines } from "../../src/LFW/defines/defines";
+import { IPrelZipInfo } from "../../src/LFW/defines/IFullGameZipInfo";
 import { conf } from "./conf";
 import { debug, info as log } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";

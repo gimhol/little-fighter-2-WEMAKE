@@ -1,6 +1,6 @@
-import type { Entity, IEntityData, IFrameInfo, IPictureInfo, TFace } from "@/LF2";
-import { Buff_Electroshock, clamp, floor, LF2, random_in, StateEnum, World } from "@/LF2";
-import type { IModelInfo } from "@/LF2/defines/IModelInfo";
+import type { Entity, IEntityData, IFrameInfo, IPictureInfo, TFace } from "@/LFW";
+import { Buff_Electroshock, clamp, floor, LF2, random_in, StateEnum, World } from "@/LFW";
+import type { IModelInfo } from "@/LFW/defines/IModelInfo";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
 import type { RImageInfo } from "../RImageInfo";

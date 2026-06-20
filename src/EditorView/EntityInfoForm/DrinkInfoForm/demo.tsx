@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { drink_info_new, type IDrinkInfo } from "@/LF2";
+import { drink_info_new, type IDrinkInfo } from "@/LFW";
 import { useState } from "react";
 import { DrinkInfoForm } from "./index";
 

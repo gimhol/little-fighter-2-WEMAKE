@@ -1,5 +1,5 @@
 # State
 
-[StateEnum.ts](../../src/LF2/defines/StateEnum.ts)
+[StateEnum.ts](../../src/LFW/defines/StateEnum.ts)
 
 TODO

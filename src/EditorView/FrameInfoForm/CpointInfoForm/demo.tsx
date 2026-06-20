@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { cpoint_info_new, type ICpointInfo } from "@/LF2";
+import { cpoint_info_new, type ICpointInfo } from "@/LFW";
 import { useState } from "react";
 import { CpointInfoForm } from "./index";
 

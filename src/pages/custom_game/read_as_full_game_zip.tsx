@@ -1,4 +1,4 @@
-import { Ditto, type IGameZipInfo, type IZip } from "@/LF2";
+import { Ditto, type IGameZipInfo, type IZip } from "@/LFW";
 import json5 from "json5";
 
 export async function read_file_as_full_game_zip(file: File): Promise<[IGameZipInfo, IZip[]]> {

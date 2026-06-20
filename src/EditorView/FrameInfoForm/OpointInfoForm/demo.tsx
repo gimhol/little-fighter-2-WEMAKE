@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { opoint_info_new, type IOpointInfo } from "@/LF2";
+import { opoint_info_new, type IOpointInfo } from "@/LFW";
 import { useState } from "react";
 import { OpointInfoForm } from "./index";
 

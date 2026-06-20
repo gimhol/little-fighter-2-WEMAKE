@@ -9,14 +9,14 @@ import { Input } from "./Component/Input";
 import Select from "./Component/Select";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
-import { BaseController, Entity, TeamEnum } from "./LF2";
-import { DummyEnum } from "./LF2/bot/DummyEnum";
-import LocalController from "./LF2/controller/LocalController";
-import { GameKey } from "./LF2/defines/GameKey";
-import { is_bot_ctrl } from "./LF2/entity/type_check";
-import { LF2 } from "./LF2/LF2";
-import { PlayerInfo } from "./LF2/PlayerInfo";
-import { random_get } from "./LF2/utils/math/random";
+import { BaseController, Entity, TeamEnum } from "./LFW";
+import { DummyEnum } from "./LFW/bot/DummyEnum";
+import LocalController from "./LFW/controller/LocalController";
+import { GameKey } from "./LFW/defines/GameKey";
+import { is_bot_ctrl } from "./LFW/entity/type_check";
+import { LF2 } from "./LFW/LFW";
+import { PlayerInfo } from "./LFW/PlayerInfo";
+import { random_get } from "./LFW/utils/math/random";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 const key_names: Record<GameKey, string> = {
   U: "上", D: "下", L: "左", R: "右", a: "攻", j: "跳", d: "防",

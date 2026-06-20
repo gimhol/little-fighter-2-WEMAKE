@@ -52,7 +52,7 @@ export default defineConfig({
           if (id.includes('/src/Editor/') || id.includes('/src/EditorView/')) {
             return 'editor';
           }
-          if (id.includes('/src/LF2/') || id.includes('/src/DittoImpl/') || id.includes('/src/Net/')) {
+          if (id.includes('/src/LFW/') || id.includes('/src/DittoImpl/') || id.includes('/src/Net/')) {
             return 'lf2-dom'
           }
           if (id.match('/src/pages/')) {

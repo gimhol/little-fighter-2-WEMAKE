@@ -1,9 +1,9 @@
 import { warn } from "console";
 import { X_OK } from "constants";
 import { accessSync, mkdirSync, writeFileSync } from "fs";
-import { parase_indexes } from "../../../src/LF2/dat_translator/parase_indexes";
-import type { IDataLists, ITempDataLists } from "../../../src/LF2/defines/IDataLists";
-import { DatTypeEnum } from "../../../src/LF2/defines/IDatIndex";
+import { parase_indexes } from "../../../src/LFW/dat_translator/parase_indexes";
+import type { IDataLists, ITempDataLists } from "../../../src/LFW/defines/IDataLists";
+import { DatTypeEnum } from "../../../src/LFW/defines/IDatIndex";
 import { conf } from "../conf";
 import { is_file } from "./is_file";
 import { debug, info } from "./log";

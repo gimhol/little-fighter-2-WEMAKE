@@ -1,6 +1,6 @@
 import { Form } from "@/Component/Form";
 import { type ISpaceProps, Space } from "@/Component/Space";
-import { chase_Info_fields, chase_info_new, type IChaseInfo } from "@/LF2";
+import { chase_Info_fields, chase_info_new, type IChaseInfo } from "@/LFW";
 import { useEffect, useMemo, useRef } from "react";
 import { FieldsRow } from "../../FieldsRow";
 

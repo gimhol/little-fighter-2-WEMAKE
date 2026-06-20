@@ -1,5 +1,5 @@
 
-import { clamp, type Entity } from "@/LF2";
+import { clamp, type Entity } from "@/LFW";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Vector3 } from "../_t";
 import type { EntityRenderer } from "./EntityRenderer";
 import { get_static_plane_geometry } from "./GeometryKeeper";

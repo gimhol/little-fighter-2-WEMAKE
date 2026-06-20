@@ -1,5 +1,5 @@
-import { clamp, max } from "@/LF2";
-import type { LF2 } from "@/LF2/LF2";
+import { clamp, max } from "@/LFW";
+import type { LF2 } from "@/LFW/LFW";
 import * as T from "../_t";
 import { MeshBasicMaterial } from "../_t";
 import { get_static_plane_geometry } from "./GeometryKeeper";

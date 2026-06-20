@@ -1,7 +1,7 @@
-import { Ditto } from "@/LF2/ditto";
-import { BaseSounds } from "@/LF2/ditto/sounds/BaseSounds";
-import { clamp } from "@/LF2/utils/math/clamp";
-import float_equal from "@/LF2/utils/math/float_equal";
+import { Ditto } from "@/LFW/ditto";
+import { BaseSounds } from "@/LFW/ditto/sounds/BaseSounds";
+import { clamp } from "@/LFW/utils/math/clamp";
+import float_equal from "@/LFW/utils/math/float_equal";
 
 export class __Fallback extends BaseSounds {
   static readonly TAG = "__Fallback";

@@ -1,5 +1,5 @@
 import { Input, type InputRef } from "@/Component/Input";
-import { LF2 } from "@/LF2";
+import { LF2 } from "@/LFW";
 import { useFloating, useForwardedRef, useStateRef } from "@fimagine/dom-hooks";
 import classNames from "classnames";
 import List from "rc-virtual-list";

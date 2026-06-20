@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { itr_info_new, type IItrInfo } from "@/LF2";
+import { itr_info_new, type IItrInfo } from "@/LFW";
 import { useState } from "react";
 import { ItrInfoForm } from "./index";
 

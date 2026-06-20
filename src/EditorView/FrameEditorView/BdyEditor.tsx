@@ -1,5 +1,5 @@
-import { BdyKind, Defines, HitFlag, type IBdyInfo } from "@/LF2/defines";
-import { floor } from "@/LF2/utils";
+import { BdyKind, Defines, HitFlag, type IBdyInfo } from "@/LFW/defines";
+import { floor } from "@/LFW/utils";
 import { useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
 import { Flex } from "../../Component/Flex";
@@ -11,8 +11,8 @@ import Titled, { type ITitledProps } from "../../Component/Titled";
 import { BDY_KIND_SELECT_PROPS } from "../EntityEditorView";
 import { HitFlagEditor } from "./HitFlagEditor";
 import { make_field_props } from "./make_field_props";
-import { set_hit_flag } from "@/LF2/dat_translator/set_hit_flag";
-import { set_bdy_kind } from "@/LF2/dat_translator/set_bdy_kind";
+import { set_hit_flag } from "@/LFW/dat_translator/set_hit_flag";
+import { set_bdy_kind } from "@/LFW/dat_translator/set_bdy_kind";
 
 const titled_styles: ITitledProps['styles'] = {
   label: {

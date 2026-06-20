@@ -1,8 +1,8 @@
-import Callbacks from "../LF2/base/Callbacks";
-import { NoEmitCallbacks } from "../LF2/base/NoEmitCallbacks";
-import { is_false } from "../LF2/utils/type_check";
-import type { IFullScreen } from "../LF2/ditto/fullscreen/IFullScreen";
-import type { IFullScreenCallback } from "../LF2/ditto/fullscreen/IFullScreenCallback";
+import Callbacks from "../LFW/base/Callbacks";
+import { NoEmitCallbacks } from "../LFW/base/NoEmitCallbacks";
+import { is_false } from "../LFW/utils/type_check";
+import type { IFullScreen } from "../LFW/ditto/fullscreen/IFullScreen";
+import type { IFullScreenCallback } from "../LFW/ditto/fullscreen/IFullScreenCallback";
 type TAnyFunc = (...args: any[]) => unknown;
 function is_fun<F extends TAnyFunc = TAnyFunc>(v: any): v is F {
   return typeof v === "function";

@@ -1,4 +1,4 @@
-import { clamp, Entity, get_team_outline_color, get_team_text_color, round } from "@/LF2";
+import { clamp, Entity, get_team_outline_color, get_team_text_color, round } from "@/LFW";
 import { WorldRenderer } from "./WorldRenderer";
 import { SmallTextMesh } from "./meshs/SmallTextMesh";
 import type { EntityRenderer } from "./EntityRenderer";

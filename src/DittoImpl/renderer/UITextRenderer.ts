@@ -1,7 +1,7 @@
-import type { UINode } from "@/LF2";
-import { parse_rgba } from "@/LF2";
-import type { IStyle } from "@/LF2/defines/IStyle";
-import { max, round } from "@/LF2/utils";
+import type { UINode } from "@/LFW";
+import { parse_rgba } from "@/LFW";
+import type { IStyle } from "@/LFW/defines/IStyle";
+import { max, round } from "@/LFW/utils";
 import * as T from "../_t";
 import { MaterialFactory, MaterialKind } from "./factory";
 import { get_static_plane_geometry } from "./GeometryKeeper";

@@ -1,7 +1,7 @@
-import decode_lf2_dat from "@/LF2/dat_translator/decode_lf2_dat";
-import obj_dat_to_json from "@/LF2/dat_translator/obj_dat_to_json";
-import { parase_indexes } from "@/LF2/dat_translator/parase_indexes";
-import type { IDataLists } from "@/LF2/defines";
+import decode_lf2_dat from "@/LFW/dat_translator/decode_lf2_dat";
+import obj_dat_to_json from "@/LFW/dat_translator/obj_dat_to_json";
+import { parase_indexes } from "@/LFW/dat_translator/parase_indexes";
+import type { IDataLists } from "@/LFW/defines";
 import json5 from "json5";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Slot } from "splittings/dist/es/splittings";

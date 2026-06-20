@@ -1,5 +1,5 @@
 # ItrEffect
 
-[ItrEffect.ts](../../src/LF2/defines/ItrEffect.ts)
+[ItrEffect.ts](../../src/LFW/defines/ItrEffect.ts)
 
 TODO

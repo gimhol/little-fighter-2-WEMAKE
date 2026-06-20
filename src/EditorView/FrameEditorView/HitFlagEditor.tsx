@@ -1,6 +1,6 @@
 import { Checkbox } from "../../Component/Checkbox";
 import { Flex } from "../../Component/Flex";
-import { HitFlag } from "@/LF2/defines";
+import { HitFlag } from "@/LFW/defines";
 import type { IFieldProps } from "./make_field_props";
 export interface IHitFlagEditorProps extends IFieldProps<number> {
 

@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { chase_info_new, type IChaseInfo } from "@/LF2";
+import { chase_info_new, type IChaseInfo } from "@/LFW";
 import { useState } from "react";
 import { ChaseInfoForm } from "./index";
 

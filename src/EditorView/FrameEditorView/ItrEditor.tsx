@@ -1,6 +1,6 @@
-import { set_hit_flag } from "@/LF2/dat_translator/set_hit_flag";
-import { Defines, HitFlag, type IItrInfo, itr_effect_full_name, itr_kind_full_name, ItrEffect, ItrKind } from "@/LF2/defines";
-import { floor } from "@/LF2/utils";
+import { set_hit_flag } from "@/LFW/dat_translator/set_hit_flag";
+import { Defines, HitFlag, type IItrInfo, itr_effect_full_name, itr_kind_full_name, ItrEffect, ItrKind } from "@/LFW/defines";
+import { floor } from "@/LFW/utils";
 import { useState } from "react";
 import { Button } from "../../Component/Buttons/Button";
 import Combine from "../../Component/Combine";

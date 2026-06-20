@@ -1,4 +1,4 @@
-import type { IDataLists } from "../../../src/LF2/defines/IDataLists";
+import type { IDataLists } from "../../../src/LFW/defines/IDataLists";
 
 export async function merge_data_indexes(indexes: IDataLists, ...extras: Partial<IDataLists>[]): Promise<IDataLists> {
   const ret: IDataLists = JSON.parse(JSON.stringify(indexes));

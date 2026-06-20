@@ -7,7 +7,7 @@
 // import Show from "@/Component/Show";
 // import Titled from "@/Component/Titled";
 // import { Indicating, INDICATINGS } from "@/DittoImpl/renderer/FrameIndicators";
-// import { arithmetic_progression, CheatType, Ditto, LF2 } from "@/LF2";
+// import { arithmetic_progression, CheatType, Ditto, LF2 } from "@/LFW";
 // import { Log } from "@/Log";
 // import { PlayerRow } from "@/PlayerRow";
 // import SettingsRows from "@/SettingsRows";

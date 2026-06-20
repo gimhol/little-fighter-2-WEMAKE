@@ -1,12 +1,12 @@
-import AsyncValuesKeeper from "@/LF2/base/AsyncValuesKeeper";
-import { Graves } from "@/LF2/base/Graves";
-import { Defines } from "@/LF2/defines/defines";
-import { BaseSounds } from "@/LF2/ditto/sounds/BaseSounds";
-import { Randoming } from "@/LF2/helper/Randoming";
-import { LF2 } from "@/LF2/LF2";
-import { abs, max } from "@/LF2/utils/math/base";
-import { clamp } from "@/LF2/utils/math/clamp";
-import float_equal from "@/LF2/utils/math/float_equal";
+import AsyncValuesKeeper from "@/LFW/base/AsyncValuesKeeper";
+import { Graves } from "@/LFW/base/Graves";
+import { Defines } from "@/LFW/defines/defines";
+import { BaseSounds } from "@/LFW/ditto/sounds/BaseSounds";
+import { Randoming } from "@/LFW/helper/Randoming";
+import { LF2 } from "@/LFW/LFW";
+import { abs, max } from "@/LFW/utils/math/base";
+import { clamp } from "@/LFW/utils/math/clamp";
+import float_equal from "@/LFW/utils/math/float_equal";
 import type { WorldRenderer } from "../renderer/WorldRenderer";
 
 export class __Modern extends BaseSounds {

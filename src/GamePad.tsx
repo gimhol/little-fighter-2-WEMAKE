@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useImmer } from "use-immer";
 import csses from "./GamePad.module.scss";
-import { pow } from "./LF2";
-import { LF2 } from "./LF2/LF2";
-import { GameKey as GK } from "./LF2/defines/GameKey";
-import { LF2KeyEvent } from "./LF2/ui/LF2KeyEvent";
+import { pow } from "./LFW";
+import { LF2 } from "./LFW/LFW";
+import { GameKey as GK } from "./LFW/defines/GameKey";
+import { LF2KeyEvent } from "./LFW/ui/LF2KeyEvent";
 import { __Keyboard } from "./DittoImpl";
 
 export interface IGamePadProps extends React.HTMLAttributes<HTMLDivElement> {

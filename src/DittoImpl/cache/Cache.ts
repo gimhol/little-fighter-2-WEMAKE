@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from "dexie";
-import type { ICache } from "@/LF2/ditto/cache";
-import type { ICacheData } from "@/LF2/ditto/cache/ICacheData";
+import type { ICache } from "@/LFW/ditto/cache";
+import type { ICacheData } from "@/LFW/ditto/cache/ICacheData";
 
 export const db = new Dexie("lf2") as Dexie & {
   tbl_lf2_data: EntityTable<ICacheData, "id">;

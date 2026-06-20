@@ -1,6 +1,6 @@
 import { Form } from "@/Component/Form";
 import { type ISpaceProps, Space } from "@/Component/Space";
-import { drink_Info_fields, drink_info_new, type IDrinkInfo } from "@/LF2";
+import { drink_Info_fields, drink_info_new, type IDrinkInfo } from "@/LFW";
 import { useEffect, useMemo, useRef } from "react";
 import { FieldsRow } from "../../FieldsRow";
 

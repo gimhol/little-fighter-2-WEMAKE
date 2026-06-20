@@ -1,5 +1,5 @@
 import { WorkspaceColumnView } from "@/EditorView/WorkspaceColumnView";
-import { bdy_info_new, type IBdyInfo } from "@/LF2";
+import { bdy_info_new, type IBdyInfo } from "@/LFW";
 import { useState } from "react";
 import { BdyInfoForm } from "./index";
 

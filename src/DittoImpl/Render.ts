@@ -1,4 +1,4 @@
-import type { IRender } from "../LF2/ditto";
+import type { IRender } from "../LFW/ditto";
 
 const handle_req_id_map = new Map<number, number>();
 export const __Render: IRender = {

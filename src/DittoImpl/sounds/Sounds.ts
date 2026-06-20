@@ -1,6 +1,6 @@
-import type { LF2 } from "@/LF2/LF2";
-import { Ditto } from "@/LF2/ditto";
-import { BaseSounds, type ISounds } from "@/LF2/ditto/sounds";
+import type { LF2 } from "@/LFW/LFW";
+import { Ditto } from "@/LFW/ditto";
+import { BaseSounds, type ISounds } from "@/LFW/ditto/sounds";
 import { __Fallback } from "./Fallback";
 import { __Modern } from "./Modern";
 

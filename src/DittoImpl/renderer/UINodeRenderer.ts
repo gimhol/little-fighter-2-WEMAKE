@@ -1,10 +1,10 @@
-import { type IVector3Like, parse_rgba, TextInfo } from "@/LF2";
-import { ImageInfo } from "@/LF2/ditto/image/ImageInfo";
-import type { IUINodeRenderer } from "@/LF2/ditto/render/IUINodeRenderer";
-import { TextInput } from "@/LF2/ui/component/TextInput";
-import type { INinePatch, IUIImgInfo } from "@/LF2/ui/IUIImgInfo.dat";
-import type { UINode } from "@/LF2/ui/UINode";
-import { is_num, is_str, round } from "@/LF2/utils";
+import { type IVector3Like, parse_rgba, TextInfo } from "@/LFW";
+import { ImageInfo } from "@/LFW/ditto/image/ImageInfo";
+import type { IUINodeRenderer } from "@/LFW/ditto/render/IUINodeRenderer";
+import { TextInput } from "@/LFW/ui/component/TextInput";
+import type { INinePatch, IUIImgInfo } from "@/LFW/ui/IUIImgInfo.dat";
+import type { UINode } from "@/LFW/ui/UINode";
+import { is_num, is_str, round } from "@/LFW/utils";
 import * as T from "../_t";
 import { CSS2DObject, SRGBColorSpace } from "../_t";
 import { ImageMgr } from "../ImageMgr";

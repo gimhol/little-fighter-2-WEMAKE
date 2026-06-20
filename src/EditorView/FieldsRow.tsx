@@ -2,7 +2,7 @@ import { Form } from "@/Component/Form";
 import { Input, InputNumber } from "@/Component/Input";
 import Select from "@/Component/Select";
 import { Space } from "@/Component/Space";
-import type { IFieldInfo } from "@/LF2";
+import type { IFieldInfo } from "@/LFW";
 import { useCallback, useMemo } from "react";
 
 export interface IFieldsRowProps<T extends object> {

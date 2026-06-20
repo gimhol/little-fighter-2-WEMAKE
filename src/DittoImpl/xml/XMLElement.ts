@@ -1,4 +1,4 @@
-import type { IXMLElement, Voidable } from "../../LF2/ditto/xml/IXMLElement";
+import type { IXMLElement, Voidable } from "../../LFW/ditto/xml/IXMLElement";
 
 export class XMLElement implements IXMLElement {
   readonly inner: Element;

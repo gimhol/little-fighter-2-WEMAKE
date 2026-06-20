@@ -1,5 +1,5 @@
 # ItrKind
 
-[ItrKind.ts](../../src/LF2/defines/ItrKind.ts)
+[ItrKind.ts](../../src/LFW/defines/ItrKind.ts)
 
 TODO

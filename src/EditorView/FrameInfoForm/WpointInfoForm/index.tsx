@@ -1,6 +1,6 @@
 import { Form } from "@/Component/Form";
 import { type ISpaceProps, Space } from "@/Component/Space";
-import { wpoint_info_fields, wpoint_info_new, type IWpointInfo } from "@/LF2";
+import { wpoint_info_fields, wpoint_info_new, type IWpointInfo } from "@/LFW";
 import { useEffect, useMemo, useRef } from "react";
 import { FieldsRow } from "../../FieldsRow";
 

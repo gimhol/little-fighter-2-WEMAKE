@@ -1,6 +1,6 @@
 import { Form } from "@/Component/Form";
 import { type ISpaceProps, Space } from "@/Component/Space";
-import { opoint_info_fields, opoint_info_new, type IOpointInfo } from "@/LF2";
+import { opoint_info_fields, opoint_info_new, type IOpointInfo } from "@/LFW";
 import { useEffect, useMemo, useRef } from "react";
 import { FieldsRow } from "../../FieldsRow";
 

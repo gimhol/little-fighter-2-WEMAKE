@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import type { ILegacyPictureInfo } from "../../../src/LF2/defines/ILegacyPictureInfo";
+import type { ILegacyPictureInfo } from "../../../src/LFW/defines/ILegacyPictureInfo";
 import { _conf, conf } from "../conf";
 import { whoami } from "../show_main_usage";
 import { exec_cmd } from "./exec_cmd";

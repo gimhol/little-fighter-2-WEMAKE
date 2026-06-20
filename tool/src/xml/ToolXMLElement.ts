@@ -1,5 +1,5 @@
 import { XMLBuilder } from "fast-xml-parser";
-import type { IXMLElement, Voidable } from "../../../src/LF2/ditto/xml/IXMLElement";
+import type { IXMLElement, Voidable } from "../../../src/LFW/ditto/xml/IXMLElement";
 
 const VALUE_TAGS = new Set(['number', 'boolean', 'object', 'array', 'string', 'value']);
 

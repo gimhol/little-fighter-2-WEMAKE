@@ -1,6 +1,6 @@
-import type { Background } from "@/LF2/bg/Background";
-import { Defines } from "@/LF2/defines";
-import type { World } from "@/LF2/World";
+import type { Background } from "@/LFW/bg/Background";
+import { Defines } from "@/LFW/defines";
+import type { World } from "@/LFW/World";
 import * as T from "../_t";
 import { Object3D } from "../_t";
 import { BgLayerRender } from "./BgLayerRender";
