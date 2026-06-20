@@ -227,12 +227,15 @@ export class DatMgr {
   static readonly TAG: string = "DatMgr";
   readonly lfw: LFW;
   private _inner_id: number = 0;
-  private _inner = new Inner(this, ++this._inner_id);
+  private _inner: Inner;
+
   get inner_id(): number {
     return this._inner_id;
   }
+  
   constructor(lfw: LFW) {
     this.lfw = lfw;
+    this._inner = new Inner(this, ++this._inner_id);
   }
 
 
