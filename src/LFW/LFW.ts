@@ -43,7 +43,7 @@ const DEFAULT_INFO: Readonly<IGameZipInfo> = {
 export class LFW implements I.IKeyboardCallback, IDebugging {
   static readonly TAG = "LFW";
   static readonly instances: LFW[] = []
-  static readonly VERSION_NAME: string = `v${VERSION_NAME} ${BUILD_TIME}`;
+  static VERSION_NAME: string = `v0.0.0`;
   static readonly DATA_VERSION: number = D.Defines.DATA_VERSION;
   static readonly DATA_TYPE: string = 'DataZip';
   private static _INFO: Readonly<IGameZipInfo> = DEFAULT_INFO;
@@ -458,7 +458,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
     }
   }
   static IgnoreDisposed = (e: any) => {
-    console.warn(e)
+    I.Ditto.warn(e)
     if (e.is_disposed_error === true) return;
     throw e;
   }

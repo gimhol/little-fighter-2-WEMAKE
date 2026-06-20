@@ -1,3 +1,4 @@
+import { Ditto } from "..";
 import { BinOp, type TBinOp } from "../defines/BinOp";
 import {
   type IExpression, type IJudger, type IValGetterGetter
@@ -141,7 +142,7 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
         this.val_1 = val_1,
         this.val_2 = val_2
       );
-      console.warn(
+      Ditto.warn(
         "[Expression] warning,",
         JSON.stringify(text),
         "always got",

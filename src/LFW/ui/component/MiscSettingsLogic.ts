@@ -88,7 +88,6 @@ export class MiscSettingsLogic extends UIComponent {
     this.main_volume?.set_factor(this.lfw.sounds.volume())
     this.bgm_toggle?.set_value(this.lfw.sounds.bgm_muted() ? 0 : 1)
     this.bgm_volume?.set_factor(this.lfw.sounds.bgm_volume())
-    console.log(this.lfw.sounds.sound_volume())
     this.sfx_volume?.set_factor(this.lfw.sounds.sound_volume())
     this.sfx_toggle?.set_value(this.lfw.sounds.sound_muted() ? 0 : 1)
     this.team_outline?.set_factor(this.world.outline_enabled)

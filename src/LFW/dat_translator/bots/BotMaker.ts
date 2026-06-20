@@ -6,6 +6,7 @@ import { traversal } from "../../utils/container_help/traversal";
 
 export class BotMaker {
   static makers = new Map<string, () => BotMaker>();
+  static warn: (...args: any) => unknown = () => { };
   static register(oid: string, func: () => BotMaker) {
     this.makers.set(oid, func);
   }
@@ -56,13 +57,13 @@ export class BotMaker {
       const state_ids = ('' + states).split(',')
       for (const state_id of state_ids) {
         const exists = !!find(entity.frames, ([_, frame]) => state_id == '' + frame.state);
-        if (!exists) console.warn(`[BotBuilder::check] state "${state_id}" is not used in any frames in entity: "${entity.id}(${entity.base.name})" .`)
+        if (!exists) BotMaker.warn(`[BotBuilder::check] state "${state_id}" is not used in any frames in entity: "${entity.id}(${entity.base.name})" .`)
       }
       if (!action_ids?.length) {
-        console.warn(`[BotBuilder::check] actions of states "${states}" should not be empty, but got ${action_ids}, entity: "${entity.id}(${entity.base.name})".`)
+        BotMaker.warn(`[BotBuilder::check] actions of states "${states}" should not be empty, but got ${action_ids}, entity: "${entity.id}(${entity.base.name})".`)
       } else for (const action_id of action_ids) {
         const exists = !!find(actions, ([aid]) => aid == '' + action_id);
-        if (!exists) console.warn(`[BotBuilder::check] action "${action_id}" of states "${states}" is not exists in entity: "${entity.id}(${entity.base.name})".`)
+        if (!exists) BotMaker.warn(`[BotBuilder::check] action "${action_id}" of states "${states}" is not exists in entity: "${entity.id}(${entity.base.name})".`)
       }
       if (exists_action_ids.size > 0) action_ids?.forEach(v => exists_action_ids.delete(v))
     })
@@ -72,19 +73,19 @@ export class BotMaker {
 
       for (const frame_id of frame_ids) {
         const exists = Object.keys(entity.frames).some(v => v === frame_id);
-        if (!exists) console.warn(`[BotBuilder::check] frame "${frame_id}" is not exists in entity: "${entity.id}(${entity.base.name})".`)
+        if (!exists) BotMaker.warn(`[BotBuilder::check] frame "${frame_id}" is not exists in entity: "${entity.id}(${entity.base.name})".`)
       }
       if (!action_ids?.length) {
-        console.warn(`[BotBuilder::check] actions of frame "${frames}" should not be empty, but got ${action_ids}, entity: "${entity.id}(${entity.base.name})" .`)
+        BotMaker.warn(`[BotBuilder::check] actions of frame "${frames}" should not be empty, but got ${action_ids}, entity: "${entity.id}(${entity.base.name})" .`)
       } else for (const action_id of action_ids) {
         const exists = !!find(actions, ([aid]) => aid == '' + action_id);
-        if (!exists) console.warn(`[BotBuilder::check] action "${action_id}" of "${frames}" is not exists in entity: "${entity.id}(${entity.base.name})".`)
+        if (!exists) BotMaker.warn(`[BotBuilder::check] action "${action_id}" of "${frames}" is not exists in entity: "${entity.id}(${entity.base.name})".`)
       }
       if (exists_action_ids.size > 0) action_ids?.forEach(v => exists_action_ids.delete(v))
     })
 
     if (exists_action_ids.size > 0) {
-      console.warn(`[BotBuilder::check] actions "${Array.from(exists_action_ids)}" is not used in entity: "${entity.id}(${entity.base.name})"`)
+      BotMaker.warn(`[BotBuilder::check] actions "${Array.from(exists_action_ids)}" is not used in entity: "${entity.id}(${entity.base.name})"`)
     }
   }
   set_dataset(dataset: IBotDataSet): this {

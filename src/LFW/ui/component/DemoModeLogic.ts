@@ -38,7 +38,6 @@ enum StateKey {
   Restart = "Restart",
 }
 class DemoFSMState_Base extends ComponentFSMState<StateKey, DemoModeLogic> {
-  override name?: string | undefined;
   override readonly key: StateKey = StateKey.Base;
   get fsm(): FSM<StateKey, DemoFSMState_Base> { return this.owner.fsm }
 }
@@ -130,7 +129,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
     new DemoFSMState_BeforeWin(this),
     new DemoFSMState_Win(this),
     new DemoFSMState_Restart(this)
-  )//.logger(console.debug)
+  )
 
   protected _staring?: Entity | undefined;
   protected _free?: boolean

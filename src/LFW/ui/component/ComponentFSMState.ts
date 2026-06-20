@@ -1,5 +1,5 @@
-import type { LFW } from "@/LFW/LFW";
-import type { World } from "@/LFW/World";
+import type { LFW } from "../../LFW";
+import type { World } from "../../World";
 import type { UINode } from "../UINode";
 import type { UIComponent } from "./UIComponent";
 

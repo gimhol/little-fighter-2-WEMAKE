@@ -113,10 +113,6 @@ export function obj_dat_to_json(text: string, datIndex: IDatIndex): IEntityData 
       ctx.data = make_entity_data(ctx);
       break;
     default:
-      console.warn(
-        "[dat_to_json] unknow dat type:",
-        JSON.stringify(datIndex.type),
-      );
       ctx.data = make_entity_data(ctx);
       break;
   }

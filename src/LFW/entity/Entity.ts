@@ -1748,7 +1748,7 @@ export class Entity {
         return GONE_FRAME_INFO;
     }
     if (!this._data.frames[id]) {
-      console.warn(
+      Ditto.warn(
         Entity.TAG + "::find_frame_by_id",
         "frame not find! id:",
         id,
@@ -1858,13 +1858,13 @@ export class Entity {
   to_snapshot(): IEntitySnapshot {
 
     const vrests: [string, string][] = []
-    this.vrests.entries().forEach(([k, v]) => vrests.push([k, v.id]))
+    this.vrests.forEach((v, k) => vrests.push([k, v.id]))
 
     const blockers: [string, string][] = []
-    this.blockers.entries().forEach(([k, v]) => blockers.push([k, v.id]))
+    this.blockers.forEach((v, k) => blockers.push([k, v.id]))
 
     const superpunchs: [string, string][] = []
-    this.superpunchs.entries().forEach(([k, v]) => superpunchs.push([k, v.id]))
+    this.superpunchs.forEach((v, k) => superpunchs.push([k, v.id]))
     const ret: IEntitySnapshot = {
       id: this.id,
       wait: this.wait,
