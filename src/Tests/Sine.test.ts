@@ -1,4 +1,4 @@
-import { Sine } from "./Sine"
+import { Sine } from "@/LFW";
 
 test('sine', () => {
   const sine = new Sine(-1, 2, 0.5).set_duration(500);

@@ -1,7 +1,5 @@
-import { Delay } from "./Delay";
-import { Easing } from "./Easing";
-import { Sequence } from "./Sequence";
-import { Sine } from "./Sine";
+import { Sequence, Easing, Sine, Delay } from "@/LFW";
+
 
 test('Animation: Sequence case 0', () => {
   const anim = new Sequence(

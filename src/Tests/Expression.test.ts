@@ -1,4 +1,4 @@
-import { Expression } from "./Expression";
+import { Expression } from "@/LFW";
 
 const expression_result_pairs: [1 | 0, string, any][] = [
   [0, "!(1==1)&&!(1!=1)", false],
