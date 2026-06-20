@@ -14,4 +14,3 @@ export class Callbacks<F extends {}> extends NoEmitCallbacks<F> {
     return ret;
   }
 }
-export default Callbacks;

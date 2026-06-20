@@ -1,23 +1,25 @@
 import { Defines, Difficulty, type IEntityData, type IStageObjectInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
-import { Entity } from "../entity/Entity";
+import type { Entity } from "../entity/Entity";
 import type { IEntityCallbacks } from "../entity/IEntityCallbacks";
 import { StatBarType } from "../entity/StatBarType";
 import { is_fighter, is_fighter_data, is_weapon } from "../entity/type_check";
 import { Randoming } from "../helper/Randoming";
+import type { LFW } from "../LFW";
 import { round, Times } from "../utils";
 import { is_num, is_str } from "../utils/type_check";
-import { Stage } from "./Stage";
+import type { World } from "../World";
+import type { Stage } from "./Stage";
 
-export default class Item {
+export class Item {
+  readonly lfw: LFW;
+  readonly world: World;
   times: number | undefined;
   data?: IEntityData | undefined;
   randoming?: Randoming<Randoming<IEntityData>>;
   private _released: boolean = false;
   private _is_fighter: boolean = false;
 
-  get lfw() { return this.stage.lfw; }
-  get world() { return this.stage.world; }
   get released() { return this._released }
   get is_fighter() { return this._is_fighter }
   readonly info: Readonly<IStageObjectInfo>;
@@ -38,6 +40,9 @@ export default class Item {
   constructor(stage: Stage, info: IStageObjectInfo) {
     this.stage = stage;
     this.info = info;
+    this.lfw = stage.lfw;
+    this.world = stage.world;
+
     this.times = info.times ? round(info.times) : void 0;
     const data_list: IEntityData[] = [];
     const randoming_list: Randoming<IEntityData>[] = []

@@ -2,9 +2,11 @@ import type { IHitKeyCollection, IVector3, LGK, TNextFrame } from "../defines";
 import { AGK, CONFLICTS_KEY_MAP, GK, GKLabels, StateEnum as SE } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_human_ctrl } from "../entity/type_check";
+import type { LFW } from "../LFW";
 import type { PlayerInfo } from "../PlayerInfo";
 import { is_f_num, round_float } from "../utils";
 import { Times } from "../utils/Times";
+import type { World } from "../World";
 import { ControllerDoubleClicks } from "./ControllerDoubleClicks";
 import { ControllerKeyStatus } from "./ControllerKeyStatus";
 import { ControllerUpdateResult } from "./ControllerUpdateResult";
@@ -46,13 +48,9 @@ export class BaseController {
   readonly ku = this.key_up.bind(this);
   readonly kd = this.key_down.bind(this);
   readonly ck = this.click.bind(this);
+  readonly world: World;
+  readonly lfw: LFW;
 
-  get world() {
-    return this.entity.world;
-  }
-  get lfw() {
-    return this.world.lfw;
-  }
   get time() {
     return this._time.value;
   }
@@ -98,6 +96,8 @@ export class BaseController {
     const { lfw } = entity
     this.player = lfw.players.get(player_id);
     this.entity = entity;
+    this.lfw = entity.lfw;
+    this.world = entity.world;
   }
 
   reset_key_list() {

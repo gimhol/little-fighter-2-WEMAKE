@@ -1,23 +1,24 @@
+import type { LFW } from "../LFW";
 import type { World } from "../World";
-import Callbacks from "../base/Callbacks";
-import FSM from "../base/FSM";
+import { Callbacks } from "../base/Callbacks";
+import { FSM } from "../base/FSM";
 import { Background } from "../bg/Background";
 import { Defines, Difficulty, type IBgData, type IStageInfo, type IStageObjectInfo, type IStagePhaseInfo } from "../defines";
 import type { IDialogInfo } from "../defines/IDialogInfo";
 import { Ditto } from "../ditto";
-import { Entity } from "../entity/Entity";
+import type { Entity } from "../entity/Entity";
 import { is_bot_ctrl, is_fighter, is_weapon } from "../entity/type_check";
 import { floor, max, min, round_float } from "../utils";
 import { is_num } from "../utils/type_check";
 import { Expressions } from "./Expressions";
-import type { IStageCallbacks } from "./IStageCallbacks";
-import type { IDialogState } from "./IStageCallbacks";
-import Item from "./Item";
+import type { IDialogState, IStageCallbacks } from "./IStageCallbacks";
+import { Item } from "./Item";
 import { Status } from "./Status";
 
 export class Stage {
   static readonly TAG: string = "Stage";
   readonly world: World;
+  readonly lfw: LFW;
   readonly data: Readonly<IStageInfo>;
   readonly next_stage?: IStageInfo;
   readonly team: string;
@@ -46,7 +47,6 @@ export class Stage {
   get id(): string { return this.data.id; }
   get name(): string { return this.data.name; }
 
-  get lfw() { return this.world.lfw; }
   get time() { return this.fsm.time; }
   set time(v) { this.fsm.time = v; }
 
@@ -83,7 +83,7 @@ export class Stage {
   drink_l: number;
   /** 饮料右边界 */
   drink_r: number;
-  
+
   change_bg(data: Readonly<IBgData>): Background {
     // FIXME: so messed up here...
     const prev_bg = this.world.bg;
@@ -110,6 +110,7 @@ export class Stage {
 
   constructor(world: World, data: Readonly<IStageInfo>) {
     this.world = world;
+    this.lfw = world.lfw
     this.data = data;
     const bid = this.data.bg;
     const bdt = this.world.lfw.datas.backgrounds.find(v => v.id === bid);
@@ -204,7 +205,7 @@ export class Stage {
       for (const [, f] of this.world.puppets)
         teams.add(f.team)
       for (const f of this.world.entities) {
-        if (!is_fighter(f) || !teams.has(f.team)) 
+        if (!is_fighter(f) || !teams.has(f.team))
           continue;
         if (f.hp <= 0 && hp_respawn) {
           const hp = hp_respawn < 1 ?

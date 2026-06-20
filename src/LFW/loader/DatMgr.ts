@@ -44,6 +44,7 @@ const create_data_list_map = (): IDataListMap => ({
 class Inner {
   readonly mgr: DatMgr;
   readonly id: number;
+  readonly lfw: LFW;
   get cancelled(): boolean {
     return this.mgr.inner_id !== this.id;
   }
@@ -55,13 +56,10 @@ class Inner {
   randomings = new Map<string, Randoming<IEntityData>>();
   bg_randomings = new Map<string, Randoming<IBgData>>();
 
-  get lfw() {
-    return this.mgr.lfw;
-  }
-
   constructor(mgr: DatMgr, id: number) {
-    this.mgr = mgr;
     this.id = id;
+    this.mgr = mgr;
+    this.lfw = mgr.lfw;
   }
 
   private async _cook_data(data: IBaseData): Promise<IBaseData> {
@@ -149,8 +147,8 @@ class Inner {
     }
 
     if (this.cancelled) throw new Error("cancelled");
-    for (const { id, file, skipped} of data.bots) {
-      if(skipped) continue;
+    for (const { id, file, skipped } of data.bots) {
+      if (skipped) continue;
       this.lfw.emit_progress(`${file}`, 0);
       const raw = await this.lfw.import_json<IBotData>(file, true)
         .then(r => {
@@ -169,7 +167,7 @@ class Inner {
     }
 
     for (const { id, file, alias, skipped } of data.objects) {
-      if(skipped) continue;
+      if (skipped) continue;
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lfw.emit_progress(`${file}`, 0);
@@ -186,7 +184,7 @@ class Inner {
       }
     }
     for (const { id, file, skipped } of data.backgrounds) {
-      if(skipped) continue;
+      if (skipped) continue;
       if (this.cancelled) throw new Error("cancelled");
       try {
         this.lfw.emit_progress(`${file}`, 0);
@@ -201,7 +199,7 @@ class Inner {
     }
     const stages: IStageInfo[] = []
     for (const stage_file of data.stages) {
-        if(stage_file.skipped) continue;
+      if (stage_file.skipped) continue;
       this.lfw.emit_progress(`${stage_file.file}`, 0);
       const stage_datas = stage_file.file.endsWith(".xml") || stage_file.file.endsWith(".stage.xml")
         ? xml_to_stage_info_list((await this.lfw.import_xml(stage_file.file, true))[0])

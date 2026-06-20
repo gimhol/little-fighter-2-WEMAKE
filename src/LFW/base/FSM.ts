@@ -1,4 +1,4 @@
-import Callbacks from "./Callbacks";
+import { Callbacks } from "./Callbacks";
 import { NoEmitCallbacks } from "./NoEmitCallbacks";
 
 export interface IState<K extends string | number = string | number> {
@@ -102,4 +102,3 @@ export class FSM<
     this.set_state(next_state);
   }
 }
-export default FSM;
