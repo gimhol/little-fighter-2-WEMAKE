@@ -15,8 +15,7 @@ export class TeamSituationText extends UIComponent {
   private _style: IStyle = {
     fill_style: 'white',
     font: "12px Arial",
-    line_width: 1,
-    disposable: true
+    line_width: 1
   };
   private _sum: ITeamSumInfo | undefined;
   private _text: string = ' ';
@@ -39,8 +38,7 @@ export class TeamSituationText extends UIComponent {
     this._style = {
       fill_style: get_team_text_color(team, get_team_text_color(TeamEnum.Team_2)),
       font: "12px Arial",
-      line_width: 1,
-      disposable: true
+      line_width: 1
     }
     this._sum = this.node.root.search_component(SummaryLogic)?.team_sum(team)
     this.rr();
