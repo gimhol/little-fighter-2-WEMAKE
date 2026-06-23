@@ -33,7 +33,7 @@ import { SyncRenderEnum } from "./LFW/defines/SyncRenderEnum";
 import { Defines } from "./LFW/defines/defines";
 import { Ditto, type IZip } from "./LFW/ditto";
 import type { IUIInfo } from "./LFW/ui/IUIInfo.dat";
-import { arithmetic_progression } from "./LFW/utils/math/arithmetic_progression";
+import { range } from "./LFW/utils/math/range";
 import { Loading } from "./LoadingImg";
 import { Log } from "./Log";
 import { Paths } from "./Paths";
@@ -800,7 +800,7 @@ function App() {
               <Select
                 value={app_state.render_fixed_scale}
                 onChange={(e) => set_app_state(d => { d.render_fixed_scale = e! })}
-                options={arithmetic_progression(0, 4, 0.5)}
+                options={range(0, 4, 0.5)}
                 parse={(i) => [i, "✕" + (i || "?")]}
               />
               <Show show={!app_state.render_fixed_scale}>

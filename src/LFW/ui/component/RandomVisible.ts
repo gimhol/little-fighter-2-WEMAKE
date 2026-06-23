@@ -1,5 +1,5 @@
 import { Randoming } from "../../helper";
-import { arithmetic_progression } from '../../utils/math/arithmetic_progression';
+import { range } from '../../utils/math/range';
 import { UIComponent } from "./UIComponent";
 
 export class RandomVisible extends UIComponent {
@@ -10,7 +10,7 @@ export class RandomVisible extends UIComponent {
     const key = this.group || this;
     let ret = RandomVisible.randomings.get(key);
     if (!ret) {
-      const arr = arithmetic_progression(0, this.node.children.length - 1, 1);
+      const arr = range(0, this.node.children.length - 1, 1);
       RandomVisible.randomings.set(key, ret = new Randoming(arr, null, false));
     }
     return ret;

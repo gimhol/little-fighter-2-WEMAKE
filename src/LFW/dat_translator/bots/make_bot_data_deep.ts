@@ -1,5 +1,5 @@
 import { BotVal, GameKey, O_ID, StateEnum } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
@@ -83,18 +83,18 @@ export function make_bot_data_deep(): BotMaker {
     ],
     [bot_uppercut_dva.ID]
   ).set_frames(
-    arithmetic_progression(235, 250),
+    range(235, 250),
     ["d>a+a"]
   ).set_frames(
     // jump_sword: ground_part
     [
-      ...arithmetic_progression(260, 265),
-      ...arithmetic_progression(277, 282)
+      ...range(260, 265),
+      ...range(277, 282)
     ],
     ["dva+a", "dva+j"]
   ).set_frames(
     // jump_sword: jump_part
-    arithmetic_progression(266, 267),
+    range(266, 267),
     ["d^j+a"]
   );
 }

@@ -1,5 +1,5 @@
 import { BotVal, GameKey, OID, StateEnum } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
@@ -87,10 +87,10 @@ export function make_bot_data_dennis(): BotMaker {
     [88, 89],
     ['run_atk+dva', 'run_atk+d>j']
   ).set_frames(
-    arithmetic_progression(235, 262),
+    range(235, 262),
     ["d>a+a"]
   ).set_frames(
-    arithmetic_progression(280, 290),
+    range(280, 290),
     ["cancel_d>j"]
   );
 }

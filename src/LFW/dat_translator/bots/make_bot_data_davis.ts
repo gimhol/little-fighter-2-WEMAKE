@@ -1,5 +1,5 @@
 import { BotVal, Defines, GameKey, O_ID, StateEnum } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
@@ -72,7 +72,7 @@ export function make_bot_data_davis(): BotMaker {
     frames.punchs,
     ["dva", "d^a"]
   ).set_frames(
-    arithmetic_progression(240, 269),
+    range(240, 269),
     ["d>a+a"]
   ).set_frames(
     // many punch + >>
@@ -80,7 +80,7 @@ export function make_bot_data_davis(): BotMaker {
     ["dva+run"]
   ).set_frames(
     // many punch
-    [...arithmetic_progression(270, 289, 1)],
+    [...range(270, 289, 1)],
     ["dva+j", "d^a"]
   ).set_frames(
     // super punch + j or d^a
@@ -88,7 +88,7 @@ export function make_bot_data_davis(): BotMaker {
     ["dva+j", "d^a"]
   ).set_frames(
     // jumphit
-    arithmetic_progression(290, 292),
+    range(290, 292),
     ["d^j+a"]
   )
 }

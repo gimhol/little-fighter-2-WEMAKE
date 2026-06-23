@@ -1,6 +1,6 @@
 
 import { GK, OID, StateEnum } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { probability } from "../../utils/math/probability";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
@@ -32,7 +32,7 @@ export function make_bot_data_jack(): BotMaker {
     frames.punchs,
     ["d^a"]
   ).set_frames(
-    arithmetic_progression(240, 247),
+    range(240, 247),
     ["d>a+d>a"]
   );
 }

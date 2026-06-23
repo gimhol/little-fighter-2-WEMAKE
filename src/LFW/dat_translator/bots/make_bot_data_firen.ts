@@ -1,5 +1,5 @@
 import { BotVal, GameKey as GK, type IEntityData, OID } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { bot_ball_continuation } from "./bot_ball_continuation";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
@@ -73,13 +73,13 @@ export function make_bot_data_firen(): BotMaker {
     ],
     ['d>a', 'd>j', 'd^j', 'dvj']
   ).set_frames(
-    arithmetic_progression(255, 261),
+    range(255, 261),
     ["cancel_d>j"]
   ).set_frames(
-    arithmetic_progression(267, 275),
+    range(267, 275),
     ["cancel_dvj"]
   ).set_frames(
-    arithmetic_progression(235, 252),
+    range(235, 252),
     ["d>a+a"]
   );
 }

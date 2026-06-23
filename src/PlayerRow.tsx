@@ -15,8 +15,8 @@ import { LocalController } from "./LFW/controller/LocalController";
 import { GameKey } from "./LFW/defines/GameKey";
 import { is_bot_ctrl } from "./LFW/entity/type_check";
 import { LFW } from "./LFW";
+
 import { PlayerInfo } from "./LFW/PlayerInfo";
-import { random_get } from "./LFW/utils/math/random";
 import { useCallbacks } from "./pages/network_test/useCallbacks";
 const key_names: Record<GameKey, string> = {
   U: "上", D: "下", L: "左", R: "右", a: "攻", j: "跳", d: "防",
@@ -106,7 +106,7 @@ export function PlayerRow(props: Props) {
 
   const on_click_toggle = () => {
     if (puppet) { lfw.del_puppet(info.id) }
-    const _oid = oid ?? random_get(lfw.datas.fighters)?.id;
+    const _oid = oid ?? lfw.datas.fighters[Math.floor(Math.random() * lfw.datas.fighters.length)]?.id;
     if (!_oid) { debugger; return; }
     lfw.add_puppet(info.id, _oid, team);
   }
@@ -135,7 +135,7 @@ export function PlayerRow(props: Props) {
             onChange={(v) => {
               set_oid(v)
               if (!puppet) return;
-              let _oid = v || random_get(lfw.datas.fighters)?.id
+              let _oid = v || lfw.datas.fighters[Math.floor(Math.random() * lfw.datas.fighters.length)]?.id
               if (!_oid) return;
               const data = lfw.datas.find_fighter(_oid)
               if (!data) return;

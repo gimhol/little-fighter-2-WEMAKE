@@ -1,5 +1,5 @@
 import type { Entity, IEntityData, IFrameInfo, IPictureInfo, TFace } from "@/LFW";
-import { Buff_Electroshock, clamp, floor, LFW, random_in, StateEnum, World } from "@/LFW";
+import { Buff_Electroshock, clamp, floor, LFW, StateEnum, World } from "@/LFW";
 import type { IModelInfo } from "@/LFW/defines/IModelInfo";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from "../_t";
 import type { ImageMgr } from "../ImageMgr/ImageMgr";
@@ -120,7 +120,7 @@ export class EntityMainRender {
     }
     if (shaking != this.shaking) {
       this.shaking = shaking;
-      this.shaking_x = shaking ? facing * random_in(0, 2) * (floor(shaking / 2) % 2 ? 1 : -1) : 0;
+      this.shaking_x = shaking ? facing * (floor(shaking / 2) % 2 ? 1 : -1) : 0;
     }
   }
 

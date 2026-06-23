@@ -1,11 +1,11 @@
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 
 
 export const frames = {
-  walkings: arithmetic_progression(0, 5, 1).map(v => 'walking_' + v),
-  standings: arithmetic_progression(0, 3, 1).map(v => '' + v),
-  runnings: arithmetic_progression(0, 3, 1).map(v => 'running_' + v),
-  punchs: arithmetic_progression(60, 69),
-  rowings: arithmetic_progression(103, 107),
-  super_punch: arithmetic_progression(70, 79),
+  walkings: range(0, 5, 1).map(v => 'walking_' + v),
+  standings: range(0, 3, 1).map(v => '' + v),
+  runnings: range(0, 3, 1).map(v => 'running_' + v),
+  punchs: range(60, 69),
+  rowings: range(103, 107),
+  super_punch: range(70, 79),
 };

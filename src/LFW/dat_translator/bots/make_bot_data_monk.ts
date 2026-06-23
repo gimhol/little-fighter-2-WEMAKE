@@ -1,5 +1,5 @@
 import { GK, OID } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { BotMaker } from "./BotMaker";
 import { frames } from "./frames";
@@ -23,7 +23,7 @@ export function make_bot_data_monk(): BotMaker {
     frames.punchs,
     ["d>a"]
   ).set_frames(
-    arithmetic_progression(240, 248),
+    range(240, 248),
     ["d>a+d>a"]
   );
 }

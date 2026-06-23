@@ -1,5 +1,5 @@
 import { GK, OID } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_chasing_action } from "./bot_chasing_action";
 import { bot_front_test } from "./bot_front_test";
@@ -27,7 +27,7 @@ export function make_bot_data_justin(): BotMaker {
     frames.punchs,
     ['dva']
   ).set_frames(
-    arithmetic_progression(240, 246),
+    range(240, 246),
     ['d>a+a']
   );
 }

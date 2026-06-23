@@ -1,5 +1,5 @@
 import { BotVal, GK, OID } from "../../defines";
-import { arithmetic_progression } from "../../utils";
+import { range } from "../../utils";
 import { foreach } from "../../utils/container_help/foreach";
 import { bot_ball_dfa } from "./bot_ball_dfa";
 import { bot_ball_dfj } from "./bot_ball_dfj";
@@ -47,10 +47,10 @@ export function make_bot_data_mark(): BotMaker {
     frames.punchs,
     ["d>j", "d>a"]
   ).set_frames(
-    arithmetic_progression(240, 244),
+    range(240, 244),
     ["cancel_d>j"]
   ).set_frames(
-    arithmetic_progression(85, 89),
+    range(85, 89),
     ["d>a+a"]
   );
 }

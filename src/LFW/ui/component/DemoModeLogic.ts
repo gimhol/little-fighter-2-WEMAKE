@@ -15,7 +15,7 @@ import { LFW } from "../../LFW";
 import type { IStageCallbacks } from "../../stage/IStageCallbacks";
 import { Stage } from "../../stage/Stage";
 import { traversal } from '../../utils/container_help/traversal';
-import { arithmetic_progression } from "../../utils/math/arithmetic_progression";
+import { range } from "../../utils/math/range";
 import type { IPropsMeta } from '../../utils/schema/make_schema';
 import { Times } from "../../utils/Times";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
@@ -151,13 +151,13 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
       { title: '8 Players Stage Mode', stage_mode: true, teams: new Array(8).fill('1') },
 
       /* 各自为战 */
-      { title: '2 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 2).map(v => '' + v) },
-      { title: '3 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 3).map(v => '' + v) },
-      { title: '4 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 4).map(v => '' + v) },
-      { title: '5 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 5).map(v => '' + v) },
-      { title: '6 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 6).map(v => '' + v) },
-      { title: '7 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 7).map(v => '' + v) },
-      { title: '8 Players, VS Mode', stage_mode: false, teams: arithmetic_progression(1, 8).map(v => '' + v) },
+      { title: '2 Players, VS Mode', stage_mode: false, teams: range(1, 2).map(v => '' + v) },
+      { title: '3 Players, VS Mode', stage_mode: false, teams: range(1, 3).map(v => '' + v) },
+      { title: '4 Players, VS Mode', stage_mode: false, teams: range(1, 4).map(v => '' + v) },
+      { title: '5 Players, VS Mode', stage_mode: false, teams: range(1, 5).map(v => '' + v) },
+      { title: '6 Players, VS Mode', stage_mode: false, teams: range(1, 6).map(v => '' + v) },
+      { title: '7 Players, VS Mode', stage_mode: false, teams: range(1, 7).map(v => '' + v) },
+      { title: '8 Players, VS Mode', stage_mode: false, teams: range(1, 8).map(v => '' + v) },
 
       /* 两队交战 */
       { title: "2 Teams, 4 Players, VS Mode", stage_mode: false, teams: ['1', '1', '2', '2'] },

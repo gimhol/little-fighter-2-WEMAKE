@@ -1,4 +1,4 @@
-import { Defines, floor, min, random_in } from "@/LFW";
+import { Defines, floor, min } from "@/LFW";
 import type { IWorldRenderer } from "@/LFW/ditto/render/IWorldRenderer";
 import type { Entity } from "@/LFW/entity";
 import type { LFW } from "@/LFW/LFW";
@@ -156,7 +156,7 @@ export class WorldRenderer implements IWorldRenderer {
     )
     const { indicator_flags, transform } = this.world;
     let { x, y, z, earthquake, earthquake_level, scale_x, scale_y, scale_z } = transform
-    if (earthquake) x += random_in(-earthquake_level, earthquake_level)
+    if (earthquake) x += Math.floor(Math.random() * (earthquake_level * 2 + 1)) - earthquake_level
     this.world_node.position.set(
       x + this.world_offset.x,
       y + this.world_offset.y,
