@@ -1,4 +1,4 @@
-import type { IExpression } from "../defines";
+import type { IExpression } from "../defines/IExpression";
 import { min } from "../utils";
 
 export class Expressions<T> {
