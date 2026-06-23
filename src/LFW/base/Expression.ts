@@ -159,18 +159,24 @@ export class Expression<T1, T2 = T1> implements IExpression<T1, T2> {
     }
   }
   run = (e: T1): boolean => {
-    let ret = false;
+    let or_result = false;
+    let and_result: boolean | undefined;
     const len = this.children.length;
     for (let i = 0; i < len; ++i) {
       const child = this.children[i]!;
-      if (!child.before) {
-        ret = child.run(e);
-      } else if (child.before === "|") {
-        ret = ret || child.run(e);
+      const val = child.run(e);
+      if (i === 0 || !child.before) {
+        and_result = val;
       } else if (child.before === "&") {
-        ret = ret && child.run(e);
+        and_result = and_result! && val;
+      } else if (child.before === "|") {
+        or_result = or_result || and_result!;
+        and_result = val;
       }
     }
-    return this.result = this.not ? !ret : ret;
+    if (and_result !== void 0) {
+      or_result = or_result || and_result;
+    }
+    return this.result = this.not ? !or_result : or_result;
   };
 }
