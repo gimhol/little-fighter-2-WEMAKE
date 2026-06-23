@@ -1,8 +1,8 @@
 import { Defines } from "../../defines/defines";
-import { bg_data_field_orders, bg_data_new, type IBgData } from "../../defines/IBgData";
-import { bg_layer_field_orders, type IBgLayerInfo } from "../../defines/IBgLayerInfo";
+import { bg_data_info_fields, bg_data_new, type IBgData } from "../../defines/IBgData";
+import { bg_layer_info_fields, type IBgLayerInfo } from "../../defines/IBgLayerInfo";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
-import { sort_key_value } from "../../utils/container_help/sort_key_value";
+import { reorder_keys } from "../../fields";
 
 /**
  * 解析 `<base>` 元素为 IBgInfo
@@ -62,7 +62,7 @@ export function xml_to_bg_layer(el: IXMLElement, defaultZ: number): IBgLayerInfo
   if (oax !== void 0) layer.offsetAnimX = oax;
   const oay = el.num_attr("offsetAnimY");
   if (oay !== void 0) layer.offsetAnimY = oay;
-  sort_key_value(layer, bg_layer_field_orders);
+  reorder_keys(layer, bg_layer_info_fields);
   return layer;
 }
 
@@ -85,6 +85,6 @@ export function xml_to_bg_data(el: IXMLElement): IBgData {
     ret.layers.push(xml_to_bg_layer(child, ret.layers.length));
   }
 
-  sort_key_value(ret, bg_data_field_orders);
+  reorder_keys(ret, bg_data_info_fields);
   return ret;
 }

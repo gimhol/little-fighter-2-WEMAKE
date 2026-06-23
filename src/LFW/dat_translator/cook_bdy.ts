@@ -5,9 +5,10 @@ import { O_ID } from "../defines/OID";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { E_E } from "../defines/EntityEnum";
 import { HitFlag } from "../defines/HitFlag";
-import { BdyKeyOrders, type IBdyInfo } from "../defines/IBdyInfo";
+import { bdy_info_fields, type IBdyInfo } from "../defines/IBdyInfo";
 import { I_K } from "../defines/ItrKind";
-import { between, ensure, sort_key_value } from "../utils";
+import { between, ensure } from "../utils";
+import { reorder_keys } from "../fields";
 import { CondMaker } from "./CondMaker";
 import { set_bdy_kind } from "./set_bdy_kind";
 import { set_hit_flag } from "./set_hit_flag";
@@ -46,5 +47,5 @@ export function cook_bdy(bdy: Partial<IBdyInfo>, frame: IFrameInfo): void {
       data: { team: "" }
     })
   }
-  sort_key_value(bdy, BdyKeyOrders)
+  reorder_keys(bdy, bdy_info_fields)
 }

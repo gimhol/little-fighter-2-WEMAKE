@@ -3,7 +3,6 @@ import { ALL_HIT_FLAG, HIT_FLAG_DESC_MAP, HIT_FLAG_NAME_MAP, HitFlag } from "./H
 import type { IExpression } from "./IExpression";
 import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
-import { make_field_orders } from "./make_field_orders";
 import type { TAction } from "./TAction";
 import { any, fields, int, str } from "../fields";
 
@@ -67,21 +66,6 @@ export interface IBdyInfo extends Partial<IQube> {
    */
   indicator_info?: IQubePair;
 }
-
-export const BdyKeyOrders = make_field_orders({
-  kind: 0, kind_name: 0,
-  x: 0, y: 0, w: 0, h: 0, z: 0, l: 0,
-  hit_flag: 0,
-  hit_flag_name: 0,
-  id: 0, name: 0,
-  ref: 0,
-  prefab_id: 0,
-  actions: 0,
-  test: 0,
-  code: 0,
-  tester: 0,
-  indicator_info: 0,
-})
 
 export function bdy_info_new(): IBdyInfo {
   return {

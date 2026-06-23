@@ -1,4 +1,4 @@
-import { make_field_orders } from "./make_field_orders";
+import { any, fields, flt, int, str } from "../fields";
 
 export interface IBgLayerInfo {
   /** 预留的 */
@@ -29,23 +29,23 @@ export interface IBgLayerInfo {
   /** UV偏移动画，纵轴(像素/秒) */
   offsetAnimY?: number;
 }
-export const bg_layer_field_orders = make_field_orders<IBgLayerInfo>({
-  id: 0,
-  name: 0,
-  file: 0,
-  absolute: 0,
-  color: 0,
-  width: 0,
-  height: 0,
-  x: 0,
-  y: 0,
-  z: 0,
-  w: 0,
-  h: 0,
-  loop: 0,
-  cc: 0,
-  c1: 0,
-  c2: 0,
-  offsetAnimX: 0,
-  offsetAnimY: 0
+export const bg_layer_info_fields = fields<Partial<IBgLayerInfo>>({
+  id: str("预留ID"),
+  name: str("预留名称"),
+  file: str("文件"),
+  absolute: int("绝对"),
+  color: any,
+  width: int("宽度"),
+  height: int("高度"),
+  x: int("X"),
+  y: int("Y"),
+  z: int("Z"),
+  w: int("W"),
+  h: int("H"),
+  loop: int("循环间隔"),
+  cc: int("CC"),
+  c1: int("C1"),
+  c2: int("C2"),
+  offsetAnimX: flt("UV动画X"),
+  offsetAnimY: flt("UV动画Y"),
 })
