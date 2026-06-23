@@ -4,6 +4,7 @@ import { CtrlDevice } from "./defines/CtrlDevice";
 import { Defines } from "./defines/defines";
 import { type GameKey } from './defines/GameKey';
 import type { IPurePlayerInfo } from "./defines/IPurePlayerInfo";
+import type { ICacheData } from "./ditto/cache/ICacheData";
 import { Ditto } from './ditto/Instance';
 import type { Entity } from './entity/Entity';
 import type { IPlayerInfoCallback } from "./IPlayerInfoCallback";
@@ -39,43 +40,65 @@ export class PlayerInfo {
     this._info = { id, name, keys: Defines.get_default_keys(id), version: 0, ctrl: CtrlDevice.Keyboard };
     this.load();
   }
-  save(): void {
-    if (!this.local) return;
-    Ditto.Cache.del(this.storage_key).then(() => {
+  async save(): Promise<void> {
+    try {
+      if (!this.local) return;
+      await Ditto.Cache.del(this.storage_key)
       Ditto.Cache.put({
         name: this.storage_key,
         type: PlayerInfo.DATA_TYPE,
         version: PlayerInfo.DATA_VERSION,
-        // DOM!
         data: encodeUTF8(JSON.stringify(this._info)),
       })
-    })
+    } catch (e) {
+      Ditto.warn("[PlayerInfo::load]", "load failed, ", e);
+    }
   }
-  load() {
-    if (!this.local) return;
-    Ditto.Cache.get(this.storage_key).then(async (r) => {
-      if (!r) return
-      const { data, blob } = r
-      try {
-        const buf = data ?? (blob ? new Uint8Array(await blob.arrayBuffer()) : null);
-        if (!buf) { Ditto.warn("[PlayerInfo::load]", "no data"); return false; }
-        const raw_text = decodeUTF8(buf);
-        const raw_info = json5.parse<Partial<IPurePlayerInfo>>(raw_text);
-        const { name, keys, ctrl = this.ctrl, version } = raw_info;
-        if (version !== this._info.version) {
-          Ditto.warn("[PlayerInfo::load]", "version changed");
-          return false;
-        }
-        if (is_str(name)) this.set_name(name, true)
-        if (keys) for (const k in keys) this.set_key(k, keys[k as keyof typeof keys], true)
-        if (ctrl !== this.ctrl) this.set_ctrl(ctrl, true)
-        return true;
-      } catch (e) {
-        Ditto.warn("[PlayerInfo::load]", "load failed, ", e);
+  async load(): Promise<boolean> {
+    if (!this.local) return false;
+    let cache: ICacheData | undefined;
+    try {
+      cache = await Ditto.Cache.get(this.storage_key)
+      if (!cache) return false;
+    } catch (e) {
+      Ditto.warn("[PlayerInfo::load] failed to load, reason", e);
+      return false
+    }
+    let { data } = cache;
+
+    if (!data) {
+      const { blob } = cache;
+      if (!blob) {
+        Ditto.warn("[PlayerInfo::load] no data");
         return false;
       }
-    });
+      try {
+        const buf = await blob.arrayBuffer()
+        data = new Uint8Array(buf)
+      } catch (e) {
+        Ditto.warn("[PlayerInfo::load] read blob failed, reason: ", e);
+        return false
+      }
+    }
+
+    try {
+      const raw_text = decodeUTF8(data);
+      const raw_info = json5.parse<Partial<IPurePlayerInfo>>(raw_text);
+      const { name, keys, ctrl = this.ctrl, version } = raw_info;
+      if (version !== this._info.version) {
+        Ditto.warn("[PlayerInfo::load] version changed");
+        return false;
+      }
+      if (is_str(name)) this.set_name(name, true)
+      if (keys) for (const k in keys) this.set_key(k, keys[k as keyof typeof keys], true)
+      if (ctrl !== this.ctrl) this.set_ctrl(ctrl, true)
+      return true;
+    } catch (e) {
+      Ditto.warn("[PlayerInfo::load] load failed, reason", e);
+      return false;
+    }
   }
+
   set_ctrl(ctrl: CtrlDevice, emit: boolean): this {
     const prev = this._info.ctrl;
     if (prev === ctrl) return this;

@@ -1,8 +1,6 @@
-import { Picture } from './Picture';
-import { Entity } from "../../entity";
-import { Sine } from "../../animation/Sine";
 import { Defines } from "../../defines/defines";
-import { GamePrepareLogic } from "./GamePrepareLogic";
+import type { Entity } from "../../entity/Entity";
+import { Picture } from './Picture';
 import { PlayerScore } from "./PlayerScore";
 
 /**
@@ -15,7 +13,6 @@ import { PlayerScore } from "./PlayerScore";
 export class FighterThumb extends Picture {
   static override readonly TAGS: string[] = ["FighterThumb"];
   protected fighter?: Entity;
-  protected _opacity: Sine = new Sine(0.65, 1, 3);
   get thumb_url(): string {
     return (
       this.fighter?.data.base.small ?? Defines.BuiltIn_Imgs.CHARACTER_THUMB

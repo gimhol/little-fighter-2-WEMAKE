@@ -470,12 +470,18 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
     )
     throw error;
   }
+  
   private async load_data(zip: I.IZip, md5: string) {
     this._dispose_check('load_data')
 
-    await zip.file("strings.json")?.json().then(r => this._i18n.add(r))
+    let r = await zip.file("strings.json")?.json();
+    if (r) this._i18n.add(r)
+
     this._dispose_check('load_data')
-    await zip.file("strings.json5")?.json().then(r => this._i18n.add(r))
+    r = await zip.file("strings.json5")?.json()
+    if (r) this._i18n.add(r)
+
+
     this._dispose_check('load_data')
     this.zips.unshift(zip);
     this.md5s.unshift(md5);
