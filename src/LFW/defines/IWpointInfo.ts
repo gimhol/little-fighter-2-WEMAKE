@@ -27,7 +27,7 @@ export function wpoint_info_new(): IWpointInfo {
   };
 }
 
-export const wpoint_info_fields = fields<Partial<IWpointInfo>>({
+export const wpoint_info_fields = fields<IWpointInfo>({
   kind: int("类型", {
     options: ALL_WPOINT_KIND.map(v => ({
       value: v,

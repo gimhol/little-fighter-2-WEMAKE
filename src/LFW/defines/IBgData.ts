@@ -1,8 +1,8 @@
-import type { IWorldDataset } from "./IWorldDataset";
+import { any, fields, str } from "../fields";
 import type { IBaseData } from "./IBaseData";
 import { bg_info_new, type IBgInfo } from "./IBgInfo";
 import type { IBgLayerInfo } from "./IBgLayerInfo";
-import { fields, str, int, any } from "../fields";
+import type { IWorldDataset } from "./IWorldDataset";
 
 export interface IBgData extends IBaseData<IBgInfo> {
   type: "background";
@@ -10,7 +10,7 @@ export interface IBgData extends IBaseData<IBgInfo> {
   layers: IBgLayerInfo[];
 }
 
-export const bg_data_info_fields = fields<Partial<IBgData>>({
+export const bg_data_info_fields = fields<IBgData>({
   id: str("ID"),
   alias_id: str("别名ID"),
   type: str("类型"),

@@ -16,7 +16,7 @@ export function bpoint_info_new(): IBpointInfo {
   };
 }
 
-export const bpoint_info_fields = fields<Partial<IBpointInfo>>({
+export const bpoint_info_fields = fields<IBpointInfo>({
   x: int("X"),
   y: int("Y"),
   z: int("Z"),

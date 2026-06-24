@@ -1,5 +1,4 @@
-import { any, fields, flt, type IFieldInfo, int, str } from "../fields";
-import { type IWorldDataset, world_dataset_fields } from "./IWorldDataset";
+import { any, fields, flt, int, str } from "../fields";
 import { ALL_FACING_FLAG, FACING_FLAG_DESC_MAP, FACING_FLAG_LABEL_MAP, FacingFlag } from "./FacingFlag";
 import { ALL_FRAME_BEHAVIOR, FRAME_BEHAVIOR_DESC_MAP, FRAME_BEHAVIOR_LABEL_MAP, FrameBehavior } from "./FrameBehavior";
 import type { IBdyInfo } from "./IBdyInfo";
@@ -14,6 +13,7 @@ import type { TNextFrame } from "./INextFrame";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IQubePair } from "./IQubePair";
 import type { IVelocityInfo } from "./IVelocityInfo";
+import { type IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import type { IWpointInfo } from "./IWpointInfo";
 import type { StateEnum } from "./StateEnum";
 
@@ -252,7 +252,7 @@ export function frame_info_new(): IFrameInfo {
   return ret;
 }
 
-export const frame_info_fields = fields<Partial<IFrameInfo>>(
+export const frame_info_fields = fields<IFrameInfo>(
   {
     id: str("帧ID", { nullable: false, maxLength: 32 }),
     name: str("帧名", { nullable: false, maxLength: 32 }),

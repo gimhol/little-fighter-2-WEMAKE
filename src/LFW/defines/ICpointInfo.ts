@@ -36,7 +36,7 @@ export function cpoint_info_new(): ICpointInfo {
   };
 }
 
-export const cpoint_info_fields = fields<Partial<ICpointInfo>>({
+export const cpoint_info_fields = fields<ICpointInfo>({
   kind: int("类型", {
     options: [
       { value: 1, label: "Kind 1" },

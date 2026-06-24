@@ -98,7 +98,7 @@ export function drink_info_new() {
   return {}
 }
 
-export const drink_Info_fields = fields<Partial<IDrinkInfo>>({
+export const drink_Info_fields = fields<IDrinkInfo>({
   id: int('ID'),
   name: int('名称'),
   hp_h_total: int('', '最多能恢复多少HP'),

@@ -110,7 +110,7 @@ export interface IArmorInfo {
 
 }
 
-export const armor_Info_fields = fields<Partial<IArmorInfo>>({
+export const armor_Info_fields = fields<IArmorInfo>({
   id: int('ID'),
   name: int('名称'),
   type: int("护甲类型", `

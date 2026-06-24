@@ -130,7 +130,7 @@ export function itr_info_new(): IItrInfo {
   };
 }
 
-export const itr_info_fields = fields<Partial<IItrInfo>>({
+export const itr_info_fields = fields<IItrInfo>({
   id: str("预制ID"),
   name: str("预制名"),
   kind: int("类型", {

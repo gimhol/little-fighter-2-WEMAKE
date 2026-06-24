@@ -211,7 +211,7 @@ export function opoint_info_new(): IOpointInfo {
   };
 }
 
-export const opoint_info_fields = fields<Partial<IOpointInfo>>({
+export const opoint_info_fields = fields<IOpointInfo>({
   id: int('ID'),
   name: int('名称'),
   kind: int("类型", {

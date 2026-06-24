@@ -57,7 +57,7 @@ export const int = assign(<T extends object>(...p: (string | Omit<IIntFieldInfo<
 
 export const any = assign(<T extends object>(...p: (string | Omit<IFieldInfo<T>, 'key' | 'type'>)[]): IRet<T> => w('', ...p), w(''))
 export function fields<T extends object>(
-  source: { [K in keyof T]?: IRet<T> },
+  source: { [K in keyof T]: IRet<T> },
   ...extra_maps: Map<any, any>[]
 ): Map<keyof T, IFieldInfo<T>> {
   const ret = new Map<keyof T, IFieldInfo<T>>();

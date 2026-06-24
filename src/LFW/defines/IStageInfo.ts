@@ -1,3 +1,4 @@
+import { any, fields, str } from "../fields";
 import type { IStagePhaseInfo } from "./IStagePhaseInfo";
 /**
  * 关卡信息
@@ -77,3 +78,18 @@ export interface IStageInfo {
 
   group?: string[];
 }
+
+export const stage_info_fields = fields<IStageInfo>({
+  id: str('关卡ID'),
+  bg: str('背景ID'),
+  name: str('名称'),
+  phases: any('阶段列表', { array: true }),
+  chapter: str('所属章节'),
+  next: str('下一关'),
+  cond_end: str('结束条件', '默认全部阶段结束'),
+  act_of_goto_next: str('通过动作', '默认玩家跑到场景最右边'),
+  is_starting: any('初始关卡', { options: [{ value: true, label: 'YES' }, { value: false, label: 'NO' }] }),
+  starting_name: str('起点名称'),
+  title: str('大标题'),
+  group: str('分组', { array: true }),
+});

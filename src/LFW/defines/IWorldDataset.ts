@@ -268,7 +268,7 @@ export interface IWorldDataset {
   [CheatType.LF2_NET]: number;
 }
 
-export const world_dataset_fields = fields<Partial<IWorldDataset>>({
+export const world_dataset_fields = fields<IWorldDataset>({
   gravity: flt("重力"),
   gravity_d: flt("重力D"),
   jump_x_f: flt("跳跃速度系数X"),

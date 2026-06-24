@@ -29,7 +29,7 @@ export interface IBgLayerInfo {
   /** UV偏移动画，纵轴(像素/秒) */
   offsetAnimY?: number;
 }
-export const bg_layer_info_fields = fields<Partial<IBgLayerInfo>>({
+export const bg_layer_info_fields = fields<IBgLayerInfo>({
   id: str("预留ID"),
   name: str("预留名称"),
   file: str("文件"),
