@@ -1,5 +1,5 @@
 import type { IAction_Base } from "./IAction_Base";
-import { ActionType } from "../ActionType";
+import { ActionType } from "./ActionType";
 import type { TNextFrame } from "../INextFrame";
 
 /**
@@ -7,7 +7,7 @@ import type { TNextFrame } from "../INextFrame";
  */
 
 export interface IAction_NextFrame extends IAction_Base {
-  type: ActionType.A_NextFrame | ActionType.V_NextFrame;
+  type: ActionType.A_NEXT_FRAME | ActionType.V_NEXT_FRAME;
 
   /**
    * 指定帧

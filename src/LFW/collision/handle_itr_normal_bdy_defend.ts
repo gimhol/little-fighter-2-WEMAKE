@@ -1,6 +1,6 @@
 import type { Collision } from "../collision/Collision";
 import { Defines, ItrEffect, SparkEnum } from "../defines";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { collision_action_handlers } from "../entity/collision_action_handlers";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
@@ -34,29 +34,29 @@ export function handle_itr_normal_bdy_defend(collision: Collision) {
     victim.defend_value = 0;
     victim.world.spark(x, y, z, SparkEnum.BrokenDefend);
     itr.actions?.forEach((action) => {
-      if (action.type === ActionType.A_Defend)
+      if (action.type === ActionType.A_DEFEND)
         collision_action_handlers.a_next_frame(action, collision);
-      if (action.type === ActionType.V_Defend)
+      if (action.type === ActionType.V_DEFEND)
         collision_action_handlers.v_next_frame(action, collision);
     })
     bdy.actions?.forEach((action) => {
-      if (action.type === ActionType.A_BrokenDefend)
+      if (action.type === ActionType.A_BROKEN_DEFEND)
         collision_action_handlers.a_next_frame(action, collision);
-      if (action.type === ActionType.V_BrokenDefend)
+      if (action.type === ActionType.V_BROKEN_DEFEND)
         collision_action_handlers.v_next_frame(action, collision);
     })
   } else {
     victim.world.spark(x, y, z, SparkEnum.DefendHit);
     itr.actions?.forEach((action) => {
-      if (action.type === ActionType.A_Defend)
+      if (action.type === ActionType.A_DEFEND)
         collision_action_handlers.a_next_frame(action, collision);
-      if (action.type === ActionType.V_Defend)
+      if (action.type === ActionType.V_DEFEND)
         collision_action_handlers.v_next_frame(action, collision);
     })
     bdy.actions?.forEach((action) => {
-      if (action.type === ActionType.A_Defend)
+      if (action.type === ActionType.A_DEFEND)
         collision_action_handlers.a_next_frame(action, collision);
-      if (action.type === ActionType.V_Defend)
+      if (action.type === ActionType.V_DEFEND)
         collision_action_handlers.v_next_frame(action, collision);
     })
   }

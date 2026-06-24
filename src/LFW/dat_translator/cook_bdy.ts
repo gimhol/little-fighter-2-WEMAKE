@@ -1,5 +1,5 @@
 import { type IFrameInfo, StateEnum } from "../defines";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { B_K, OLD_BDY_KIND_GOTO_MAX, OLD_BDY_KIND_GOTO_MIN } from "../defines/BdyKind";
 import { O_ID } from "../defines/OID";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
@@ -40,7 +40,7 @@ export function cook_bdy(bdy: Partial<IBdyInfo>, frame: IFrameInfo): void {
         ),
       ).done();
     bdy.actions = ensure(bdy.actions, {
-      type: ActionType.V_NextFrame,
+      type: ActionType.V_NEXT_FRAME,
       data: { id: `${kind - 1000}` },
     }, {
       type: ActionType.V_TURN_TEAM,

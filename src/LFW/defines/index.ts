@@ -1,5 +1,5 @@
 /*** AUTO EXPORT START ***/
-export * from "./ActionType";
+export * from "./actions/ActionType";
 export * from "./ArmorEnum";
 export * from "./BackgroundGroup";
 export * from "./BdyKind";

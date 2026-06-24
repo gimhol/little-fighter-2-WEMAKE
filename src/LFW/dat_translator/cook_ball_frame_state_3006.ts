@@ -1,5 +1,5 @@
 import { FrameBehavior, OID } from "../defines";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import type { IEntityData } from "../defines/IEntityData";
 import type { IFrameInfo } from "../defines/IFrameInfo";
@@ -32,7 +32,7 @@ export function cook_ball_frame_state_3006(e: IEntityData, frame: IFrameInfo) {
           .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
           .done(),
       }, {
-        type: ActionType.V_NextFrame,
+        type: ActionType.V_NEXT_FRAME,
         test: new CondMaker<C_Val>()
           .one_of(C_Val.AttackerState, StateEnum.Ball_3005, StateEnum.Ball_3006)
           .and(C_Val.ItrKind, "!=", ItrKind.JohnShield)
@@ -43,7 +43,7 @@ export function cook_ball_frame_state_3006(e: IEntityData, frame: IFrameInfo) {
       })
     } else {
       bdy.actions = ensure(bdy.actions, {
-        type: ActionType.V_NextFrame,
+        type: ActionType.V_NEXT_FRAME,
         test: new CondMaker<C_Val>()
           .one_of(C_Val.AttackerState, StateEnum.Ball_3005, StateEnum.Ball_3006)
           .or(C_Val.ItrKind, "==", ItrKind.JohnShield)
@@ -57,7 +57,7 @@ export function cook_ball_frame_state_3006(e: IEntityData, frame: IFrameInfo) {
   foreach(frame.itr, itr => {
     if (itr.kind === ItrKind.Normal)
       itr.actions = ensure(itr.actions, {
-        type: ActionType.A_NextFrame,
+        type: ActionType.A_NEXT_FRAME,
         test: new CondMaker<C_Val>()
           .one_of(C_Val.VictimState, StateEnum.Ball_3005, StateEnum.Ball_3006)
           .done(),

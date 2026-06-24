@@ -1,5 +1,5 @@
 import { BdyKind, OID, EntityGroup, HitFlag, type IEntityData } from "../../defines";
-import { ActionType } from "../../defines/ActionType";
+import { ActionType } from "../../defines/actions/ActionType";
 import { C_Val } from "../../defines/CollisionVal";
 import { ensure } from "../../utils";
 import { CondMaker } from "../CondMaker";

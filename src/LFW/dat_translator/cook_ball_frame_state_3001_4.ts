@@ -1,5 +1,5 @@
 import { OID } from "../defines";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import { EntityEnum } from "../defines/EntityEnum";
 import { HitFlag } from "../defines/HitFlag";
@@ -45,7 +45,7 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
       /* 受攻击判定 */
       test: cond.done(),
       actions: [{
-        type: ActionType.V_NextFrame,
+        type: ActionType.V_NEXT_FRAME,
         data: {
           id: "20"
         }
@@ -100,7 +100,7 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
           )
           .done(),
         actions: [{
-          type: ActionType.V_NextFrame,
+          type: ActionType.V_NEXT_FRAME,
           data: {
             id: "30"
           }
@@ -117,7 +117,7 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
     switch (itr.kind) {
       case ItrKind.Normal:
         itr.actions = ensure(itr.actions, {
-          type: ActionType.A_NextFrame,
+          type: ActionType.A_NEXT_FRAME,
           test: new CondMaker<C_Val>()
             .add(C_Val.AttackerType, '==', EntityEnum.Ball)
             .done(),
@@ -151,12 +151,12 @@ export function cook_ball_frame_state_3001_4(e: IEntityData, frame: IFrameInfo) 
           w: itr.w,
           h: itr.h,
           actions: [{
-            type: ActionType.V_NextFrame,
+            type: ActionType.V_NEXT_FRAME,
             data: {
               id: "30"
             }
           }, {
-            type: ActionType.V_Sound,
+            type: ActionType.V_SOUND,
             data: { path: e.base.dead_sounds || [] }
           }]
         })

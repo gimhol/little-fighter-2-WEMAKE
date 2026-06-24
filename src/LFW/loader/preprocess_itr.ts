@@ -155,7 +155,7 @@ export function preprocess_itr(lfw: LFW, itr: IItrInfo, data: IEntityData, jobs:
       set_hit_flag(itr, itr.hit_flag ?? HitFlag.AllBoth)
       if (itr.dvx) {
         itr.actions = ensure(itr.actions, {
-          type: ActionType.A_NextFrame,
+          type: ActionType.A_NEXT_FRAME,
           data: get_next_frame_by_raw_id(itr.dvx, 'frame'),
         })
       }

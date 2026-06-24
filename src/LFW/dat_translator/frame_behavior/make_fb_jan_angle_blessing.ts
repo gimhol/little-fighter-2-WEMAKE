@@ -9,7 +9,7 @@ import { ensure } from "../../utils/container_help/ensure";
 import { CondMaker } from "../CondMaker";
 import { set_hit_flag } from "../set_hit_flag";
 import { ItrKind } from "../../defines/ItrKind";
-import { ActionType } from "../../defines/ActionType";
+import { ActionType } from "../../defines/actions/ActionType";
 import { CollisionVal as C_Val } from "../../defines/CollisionVal";
 
 export function make_fb_jan_angle_blessing(frame: IFrameInfo) {
@@ -34,7 +34,7 @@ export function make_fb_jan_angle_blessing(frame: IFrameInfo) {
     ...set_hit_flag({}, HitFlag.AllyFighter),
     actions: [
       {
-        type: ActionType.A_NextFrame,
+        type: ActionType.A_NEXT_FRAME,
         data: {
           id: "60"
         }

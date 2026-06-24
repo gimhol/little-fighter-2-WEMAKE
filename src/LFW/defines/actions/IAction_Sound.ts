@@ -1,5 +1,5 @@
 import type { IAction_Base } from "./IAction_Base";
-import { ActionType } from "../ActionType";
+import { ActionType } from "./ActionType";
 import type { IPos } from "../IPos";
 
 /**
@@ -7,7 +7,7 @@ import type { IPos } from "../IPos";
  */
 
 export interface IAction_Sound extends IAction_Base {
-  type: ActionType.A_Sound | ActionType.V_Sound;
+  type: ActionType.A_SOUND | ActionType.V_SOUND;
   data: {
     /**
      * 声音文件路径

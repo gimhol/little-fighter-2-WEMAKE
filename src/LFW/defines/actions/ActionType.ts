@@ -1,46 +1,46 @@
 export enum ActionType {
   /** '攻方'发出声音 */
-  A_Sound = 'a_sound',
+  A_SOUND = 'A_SOUND',
   /** 修改'攻方'下一帧 */
-  A_NextFrame = 'a_next_frame',
-  A_SetProp = 'a_set_prop',
+  A_NEXT_FRAME = 'A_NEXT_FRAME',
+  A_SET_PROP = 'A_SET_PROP',
   /** 被'受方'防御时，修改'攻方'下一帧 */
-  A_Defend = 'a_defend',
+  A_DEFEND = 'A_DEFEND',
   /** '受方'破防时，修改'攻方'下一帧 */
-  A_BrokenDefend = 'a_broken_defend',
+  A_BROKEN_DEFEND = 'A_BROKEN_DEFEND',
 
   /** '受方'发出声音 */
-  V_Sound = 'v_sound',
+  V_SOUND = 'V_SOUND',
   /** 修改'受方'下一帧 */
-  V_NextFrame = 'v_next_frame',
-  V_SetProp = 'v_set_prop',
+  V_NEXT_FRAME = 'V_NEXT_FRAME',
+  V_SET_PROP = 'V_SET_PROP',
   /** 被'受方'防御时，修改'受方'下一帧 */
-  V_Defend = 'v_defend',
+  V_DEFEND = 'V_DEFEND',
   /** '受方'破防时，修改'受方'下一帧 */
-  V_BrokenDefend = 'v_broken_defend',
+  V_BROKEN_DEFEND = 'V_BROKEN_DEFEND',
 
   /** 反转'攻方'的X轴速度 */
-  A_REBOUND_VX = 'a_rebound_vx',
+  A_REBOUND_VX = 'A_REBOUND_VX',
 
   /** 反转'受方'的X轴速度 */
-  V_REBOUND_VX = 'v_rebound_vx',
+  V_REBOUND_VX = 'V_REBOUND_VX',
 
   /** '受方'转身 */
-  V_TURN_FACE = 'v_turn_face',
+  V_TURN_FACE = 'V_TURN_FACE',
 
   /** '受方'加入'攻方'队伍 */
-  V_TURN_TEAM = "v_turn_team",
+  V_TURN_TEAM = "V_TURN_TEAM",
 
   /** 合体 */
-  FUSION = 'fusion',
+  FUSION = 'FUSION',
 
   /** 广播 */
-  BROADCAST = 'broadcast',
+  BROADCAST = 'BROADCAST',
 
   /** 吸血 */
   VALUE_STEAL = 'VALUE_STEAL',
 
-  A_BUFF = "abuff",
+  A_BUFF = "A_BUFF",
 
-  V_BUFF = "vbuff",
+  V_BUFF = "V_BUFF",
 }

@@ -1,6 +1,6 @@
 import type { IActionHandler } from "../base/IActionHandler";
 import type { Collision } from "../collision/Collision";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { HitFlag } from "../defines/HitFlag";
 import type { IAction_ABuff } from "../defines/actions/IAction_ABuff";
 import type { IAction_VBuff } from "../defines/actions/IAction_VBuff";

@@ -1,6 +1,6 @@
 import { GK } from '../GameKey';
 import { type TNextFrame } from '../INextFrame';
-import { ActionType } from "../ActionType";
+import { ActionType } from "./ActionType";
 import type { IAction_Base } from "./IAction_Base";
 
 

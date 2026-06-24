@@ -8,7 +8,7 @@ export function preprocess_ball_frame(frame: IFrameInfo, data: IEntityData) {
       if (itr.kind === ItrKind.JohnShield) {
         if (frame.on_dead) {
           itr.actions = ensure(itr.actions, {
-            type: ActionType.A_NextFrame,
+            type: ActionType.A_NEXT_FRAME,
             test: new CondMaker<C_Val>()
               .add(C_Val.VictimType, "==", EntityEnum.Fighter)
               .done(),
@@ -23,7 +23,7 @@ export function preprocess_ball_frame(frame: IFrameInfo, data: IEntityData) {
         itr.kind !== ItrKind.Block &&
         itr.kind !== ItrKind.Heal) {
         itr.actions = ensure(itr.actions, {
-          type: ActionType.A_Sound,
+          type: ActionType.A_SOUND,
           data: { path: [hit_sound] }
         });
       }
@@ -52,7 +52,7 @@ export function preprocess_ball_frame(frame: IFrameInfo, data: IEntityData) {
       case ItrKind.WeaponSwing:
         if (data.base.hit_sounds?.length)
           itr.actions = ensure(itr.actions, {
-            type: ActionType.A_Sound,
+            type: ActionType.A_SOUND,
             data: { path: data.base.hit_sounds }
           });
         break;

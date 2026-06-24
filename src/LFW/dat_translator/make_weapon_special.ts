@@ -1,5 +1,5 @@
 import { BdyKind, Builtin_FrameId, OID, Defines, EntityEnum, EntityGroup, type IOpointInfo, StateEnum } from "../defines";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { CollisionVal as C_Val } from "../defines/CollisionVal";
 import type { IEntityData } from "../defines/IEntityData";
 import { OpointKind } from "../defines/OpointKind";
@@ -59,7 +59,7 @@ export function make_weapon_special(data: IEntityData) {
           if (handled.has(itr)) throw new Error('already handle!')
           handled.add(itr)
           itr.actions = ensure(itr.actions, {
-            type: ActionType.A_NextFrame,
+            type: ActionType.A_NEXT_FRAME,
             data: Defines.NEXT_FRAME_GONE,
             pretest: true,
             test: new CondMaker<C_Val>()

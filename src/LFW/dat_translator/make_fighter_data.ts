@@ -1,5 +1,5 @@
 import { FacingFlag as FF, type IFrameInfo, ItrKind, SE, StateEnum, type TNextFrame, WeaponType as WT } from "../defines";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { BdyKind } from "../defines/BdyKind";
 import { EntityEnum } from "../defines/EntityEnum";
 import { EntityVal as EV } from "../defines/EntityVal";
@@ -163,8 +163,8 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
         if (frame.bdy?.length)
           for (const bdy of frame.bdy) {
             bdy.actions = ensure(bdy.actions,
-              { type: ActionType.V_BrokenDefend, data: { id: "112" } },
-              { type: ActionType.V_Defend, data: { id: "111" } }
+              { type: ActionType.V_BROKEN_DEFEND, data: { id: "112" } },
+              { type: ActionType.V_DEFEND, data: { id: "111" } }
             );
           }
         break;
@@ -394,9 +394,9 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
           for (const bdy of frame.bdy) {
             bdy.kind = BdyKind.Defend;
             bdy.kind_name = BdyKind[bdy.kind];
-            if (!bdy.actions?.find(v => v.type === ActionType.V_BrokenDefend)) {
+            if (!bdy.actions?.find(v => v.type === ActionType.V_BROKEN_DEFEND)) {
               bdy.actions = ensure(bdy.actions, {
-                type: ActionType.V_BrokenDefend,
+                type: ActionType.V_BROKEN_DEFEND,
                 data: { id: "112" }
               })
             }

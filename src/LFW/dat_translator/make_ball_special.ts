@@ -1,5 +1,5 @@
 import { EntityGroup, FrameBehavior as FB, OID, OpointKind, SpeedMode } from "../defines";
-import { ActionType } from "../defines/ActionType";
+import { ActionType } from "../defines/actions/ActionType";
 import { HitFlag } from "../defines/HitFlag";
 import type { IEntityData } from "../defines/IEntityData";
 import { ensure, find, floor } from "../utils";
