@@ -1,4 +1,4 @@
-import type { IWorldDataset } from "./IWorldDataset";
+import type { IWorldDataset } from "./defines/IWorldDataset";
 import type { World } from "./World";
 import type { Entity } from './entity/Entity';
 import type { Stage } from "./stage/Stage";

@@ -1,5 +1,5 @@
 
-import { clamp, type Entity } from "@/LFW";
+import { clamp, LFW, World, type Entity } from "@/LFW";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Vector3 } from "../_t";
 import type { EntityRenderer } from "./EntityRenderer";
 import { get_static_plane_geometry } from "./GeometryKeeper";
@@ -9,6 +9,8 @@ import { MaterialFactory, MaterialKind } from "./factory/MaterialFactory";
 export class EntityShadowRender {
   readonly owner: EntityRenderer;
   readonly mesh: Mesh<BufferGeometry, MeshBasicMaterial>;
+  readonly world: World;
+  readonly lfw: LFW;
   readonly entity: Entity;
   readonly world_renderer: WorldRenderer;
   protected _w: number = 0;
@@ -21,23 +23,23 @@ export class EntityShadowRender {
   private _o0: number = 0
   private _o1: number = 0
 
-  get lf2() { return this.entity.lfw }
-  get world() { return this.entity.world }
   get bg() { return this.world.bg }
   get visible() { return this.mesh.visible; }
   set visible(v) { this.mesh.visible = v; }
   constructor(owner: EntityRenderer) {
+    this.lfw = owner.lfw;
+    this.world = owner.world;
     this.owner = owner;
     this.entity = owner.entity;
     this.world_renderer = owner.owner;
-    const { lfw: lf2, world } = owner.entity;
+    const { world } = owner.entity;
     const { base } = world.bg.data
-    const { shadow, shadowsize: [sw, sh] } = base;
-    this._h = sh;
-    this._w = sw;
+    const { shadow, shadow_w, shadow_h } = base;
+    this._h = shadow_h;
+    this._w = shadow_w;
     this._img = shadow;
     this.mesh = new Mesh(
-      get_static_plane_geometry(sw, sh),
+      get_static_plane_geometry(shadow_w, shadow_h),
       this.shadow_material(),
     );
     this.mesh.visible = false;
@@ -77,7 +79,7 @@ export class EntityShadowRender {
     }
   }
   shadow_material() {
-    const { bg, lf2 } = this;
+    const { bg, lfw: lf2 } = this;
     const { shadow } = bg.data.base;
     const m = MaterialFactory.get(MaterialKind.Basic, MeshBasicMaterial);
     if (lf2 && shadow) m.map = lf2.images.find(shadow)?.pic?.texture;
@@ -86,10 +88,10 @@ export class EntityShadowRender {
   render() {
     const { entity } = this;
     if (this.owner.owner.dirty) {
-      const { bg, lf2 } = this;
-      const { shadowsize: [sw, sh], shadow } = bg.data.base;
-      if (sw !== this._w || sh !== this._h) {
-        this.mesh.geometry = get_static_plane_geometry(this._w = sw, this._h = sh);
+      const { bg, lfw: lf2 } = this;
+      const { shadow_w, shadow_h, shadow } = bg.data.base;
+      if (shadow_w !== this._w || shadow_h !== this._h) {
+        this.mesh.geometry = get_static_plane_geometry(this._w = shadow_w, this._h = shadow_h);
       }
       if (shadow !== this._img) this.mesh.material = this.shadow_material()
       const { invisible } = this.owner;

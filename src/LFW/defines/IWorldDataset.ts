@@ -1,7 +1,7 @@
-import { CheatType } from "./defines/CheatType";
-import { Difficulty } from "./defines/Difficulty";
-import { SyncRenderEnum } from "./defines/SyncRenderEnum";
-import { fields, flt, int, any } from "./fields";
+import { CheatType } from "./CheatType";
+import { Difficulty } from "./Difficulty";
+import { SyncRenderEnum } from "./SyncRenderEnum";
+import { fields, flt, int, any } from "../fields";
 
 export interface IWorldDataset {
   itr_fall: number;

@@ -1,7 +1,7 @@
 import { DifficultyNames } from "../../defines";
 import { TextInfo } from "../../ditto/image/TextInfo";
 import type { IWorldCallbacks } from "../../IWorldCallbacks";
-import type { IWorldDataset } from "../../IWorldDataset";
+import type { IWorldDataset } from "../../defines/IWorldDataset";
 import { UIComponent } from "./UIComponent";
 
 export class PrefixAndDifficultyText extends UIComponent implements IWorldCallbacks {

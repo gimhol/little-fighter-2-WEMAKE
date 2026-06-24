@@ -1,4 +1,4 @@
-import { any, fields, flt, int } from "../fields";
+import { any, fields, flt, int, str } from "../fields";
 import { ALL_ARMOR_ENUM, ARMOR_ENUM_DESC_MAP, ARMOR_ENUM_LABEL_MAP, ArmorEnum } from "./ArmorEnum";
 
 export interface IArmorInfo {
@@ -79,7 +79,7 @@ export interface IArmorInfo {
    * @memberof IArmorInfo
    */
   injury_ratio?: number;
-  
+
 
   /**
    * 硬直比例
@@ -129,8 +129,8 @@ export const armor_Info_fields = fields<Partial<IArmorInfo>>({
   injury_ratio: flt('受伤比例', '默认: 0.1'),
   shaking_ratio: flt('硬直比例', '默认: 3'),
   motionless_ratio: flt('??比例', '默认: 0.1'),
-  hit_sounds: any,
-  dead_sounds: any,
+  hit_sounds: str("", { array: true }),
+  dead_sounds: str("", { array: true }),
 })
 export function armor_Info_new(): IArmorInfo {
   return {

@@ -7,7 +7,7 @@ export * from "./ILFWCallback";
 export * from "./IPlayerInfoCallback";
 export * from "./ITransform";
 export * from "./IWorldCallbacks";
-export * from "./IWorldDataset";
+export * from "./defines/IWorldDataset";
 export * from "./Keys";
 export * from "./LFW";
 export * from "./PlayerInfo";

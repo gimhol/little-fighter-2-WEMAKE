@@ -3,13 +3,21 @@ import type { BackgroundGroup } from "./BackgroundGroup";
 export interface IBgInfo {
   name: string;
   shadow: string;
-  shadowsize: [number, number];
+  shadow_w: number;
+  shadow_h: number;
   group: (BackgroundGroup | string)[]
   left: number;
   right: number;
   far: number;
   near: number;
   height: number;
+  zoom_x?: number;
+  zoom_y?: number;
+  zoom_z?: number;
+
+  /** @deprecated shadow_w shadow_h*/
+  shadowsize?: [number, number];
+  /** @deprecated zoom_x zoom_y zoom_z*/
   zoom?: [number, number, number];
 }
 
@@ -17,7 +25,8 @@ export function bg_info_new(): IBgInfo {
   return {
     name: "",
     shadow: "",
-    shadowsize: [0, 0],
+    shadow_w: 0,
+    shadow_h: 0,
     group: [],
     left: 0,
     right: 0,

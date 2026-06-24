@@ -1,4 +1,4 @@
-import { BackgroundGroup } from "../defines";
+import { BackgroundGroup, BGG, type IBgInfo } from "../defines";
 import { bg_data_info_fields, type IBgData } from "../defines/IBgData";
 import { bg_layer_info_fields, type IBgLayerInfo } from "../defines/IBgLayerInfo";
 import type { IDatIndex } from "../defines/IDatIndex";
@@ -62,17 +62,22 @@ export function make_bg_data(
     .int_2("shadowsize")
     .read(full_str, {});
 
-  const width = take(fields, "width");
-  const [a, b] = take(fields, "zboundary");
-  fields.left = 0;
-  fields.right = width;
-  fields.far = 2 * (a - Defines.CLASSIC_SCREEN_HEIGHT); // 转为Z轴的远坐标
-  fields.near = 2 * (b - Defines.CLASSIC_SCREEN_HEIGHT); // 转为Z轴的近坐标
-
+  const info: IBgInfo = {
+    name: fields.name,
+    shadow: fields.shadow,
+    shadow_w: fields.shadowsize[0],
+    shadow_h: fields.shadowsize[1],
+    group: [BGG.Regular],
+    left: 0,
+    right: fields.width,
+    far: 2 * (fields.zboundary[0] - Defines.CLASSIC_SCREEN_HEIGHT), // 转为Z轴的远坐标
+    near: 2 * (fields.zboundary[1] - Defines.CLASSIC_SCREEN_HEIGHT), // 转为Z轴的近坐标,
+    height: 0
+  }
   const ret: IBgData = {
     type: "background",
-    id: datIndex.id ?? fields.name,
-    base: { ...fields },
+    id: datIndex.id ?? info.name,
+    base: info,
     layers: [],
   };
   ret.base.name = ret.base.name.replace(/_/g, " ");

@@ -1,4 +1,4 @@
-import type { IWorldDataset } from "../IWorldDataset";
+import type { IWorldDataset } from "./IWorldDataset";
 import type { IBaseData } from "./IBaseData";
 import { bg_info_new, type IBgInfo } from "./IBgInfo";
 import type { IBgLayerInfo } from "./IBgLayerInfo";

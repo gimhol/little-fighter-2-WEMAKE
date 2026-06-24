@@ -1,5 +1,5 @@
 import { Factory } from "../Factory";
-import type { IWorldDataset } from "../IWorldDataset";
+import type { IWorldDataset } from "../defines/IWorldDataset";
 import type { LFW } from "../LFW";
 import { World } from "../World";
 import { Callbacks } from "../base";

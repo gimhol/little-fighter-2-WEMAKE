@@ -1,5 +1,5 @@
-import type { IWorldDataset } from "../../IWorldDataset";
-import { world_dataset_fields } from "../../IWorldDataset";
+import type { IWorldDataset } from "../../defines/IWorldDataset";
+import { world_dataset_fields } from "../../defines/IWorldDataset";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 
 /**

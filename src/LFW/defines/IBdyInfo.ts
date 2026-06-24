@@ -73,7 +73,7 @@ export function bdy_info_new(): IBdyInfo {
   };
 }
 
-export const bdy_info_fields = fields<Partial<IBdyInfo>>({
+export const bdy_info_fields = fields<IBdyInfo>({
   id: str("预制ID"),
   name: str("预制名"),
   kind: int("类型", {

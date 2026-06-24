@@ -9,6 +9,11 @@ export function preprocess_bg_data(lfw: LFW, data: IBgData, jobs: Promise<ImageI
   is_non_blank_str(shadow) && jobs.push(lfw.images.load_img(shadow, shadow));
   for (const { file } of layers)
     is_non_blank_str(file) && jobs.push(lfw.images.load_img(file, file));
+    data.base.shadow_w ??= data.base.shadowsize?.[0] || 0;
+    data.base.shadow_h ??= data.base.shadowsize?.[1] || 0;
+    data.base.zoom_x ??= data.base.zoom?.[0];
+    data.base.zoom_y ??= data.base.zoom?.[1];
+    data.base.zoom_z ??= data.base.zoom?.[2];
   return data
 }
 preprocess_bg_data.TAG = "preprocess_bg_data"

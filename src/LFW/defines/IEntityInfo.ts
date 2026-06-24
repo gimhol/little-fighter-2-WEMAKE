@@ -1,5 +1,5 @@
 import { any, fields, flt, int, str } from "../fields";
-import { type IWorldDataset, world_dataset_fields } from "../IWorldDataset";
+import { type IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import { ALL_ENTITY_ENUM, ENTITY_ENUM_DESC_MAP, ENTITY_ENUM_LABEL_MAP, EntityEnum } from "./EntityEnum";
 import { ALL_ENTITY_GROUP, ENTITY_GROUP_DESC_MAP, ENTITY_GROUP_LABEL_MAP } from "./EntityGroup";
 import type { IArmorInfo } from "./IArmorInfo";

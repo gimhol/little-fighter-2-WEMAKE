@@ -129,13 +129,14 @@ export namespace Defines {
       name: "VOID_BG",
       shadow: "",
       height: CLASSIC_SCREEN_HEIGHT,
-      shadowsize: [0, 0],
       left: 0,
       right: MODERN_SCREEN_WIDTH * 2,
       far: -40,
       near: -0,
       group: [],
-      zoom: [0.5, 0.5, 0.5]
+      zoom: [0.5, 0.5, 0.5],
+      shadow_w: 0,
+      shadow_h: 0
     },
   };
   export const RANDOM_BG: IBgData = {
@@ -146,12 +147,13 @@ export namespace Defines {
       name: "Random",
       shadow: "",
       height: CLASSIC_SCREEN_HEIGHT,
-      shadowsize: [0, 0],
       left: 0,
       right: 794,
       far: -468,
       near: -216,
-      group: []
+      group: [],
+      shadow_w: 0,
+      shadow_h: 0
     },
   };
   export const VOID_STAGE: IStageInfo = {
