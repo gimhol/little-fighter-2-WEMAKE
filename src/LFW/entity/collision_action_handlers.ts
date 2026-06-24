@@ -1,40 +1,48 @@
 import type { IActionHandler } from "../base/IActionHandler";
 import type { Collision } from "../collision/Collision";
-import { ActionType } from "../defines/actions/ActionType";
-import { HitFlag } from "../defines/HitFlag";
+import { ActionType as AT } from "../defines/actions/ActionType";
 import type { IAction_ABuff } from "../defines/actions/IAction_ABuff";
 import type { IAction_VBuff } from "../defines/actions/IAction_VBuff";
+import { HitFlag } from "../defines/HitFlag";
 import { ensure, max, min, round } from "../utils";
 import type { Entity } from "./Entity";
 import { turn_face } from "./face_helper";
 import { is_bot_ctrl } from "./type_check";
 
 export const collision_action_handlers: IActionHandler = {
-  a_sound: (a, c) => c.attacker.play_sound(a.data.path, a.data.pos),
-  a_next_frame: (a, c) => c.attacker.enter_frame(a.data),
-  a_set_prop: (a, c) => (c.attacker as any)[a.prop_name] = a.prop_value,
-  a_broken_defend: () => 0, // 特殊对待，此处留空
-  a_defend: () => 0, // 特殊对待，此处留空
+  [AT.A_SOUND]: (a, c) => c.attacker.play_sound(a.data.path, a.data.pos),
+  [AT.A_NEXT_FRAME]: (a, c) => c.attacker.enter_frame(a.data),
+  [AT.A_SET_PROP]: (a, c) => {
+    const name = a.data?.name;
+    if (!name) return;
+    (c.attacker as any)[name] = a.data?.value
+  },
+  [AT.A_BROKEN_DEFEND]: () => 0, // 特殊对待，此处留空
+  [AT.A_DEFEND]: () => 0, // 特殊对待，此处留空
 
-  v_sound: (a, c) => c.victim.play_sound(a.data.path, a.data.pos),
-  v_next_frame: (a, c) => c.victim.enter_frame(a.data),
-  v_set_prop: (a, c) => (c.victim as any)[a.prop_name] = a.prop_value,
-  v_broken_defend: () => 0,
-  v_defend: () => 0,
+  [AT.V_SOUND]: (a, c) => c.victim.play_sound(a.data.path, a.data.pos),
+  [AT.V_NEXT_FRAME]: (a, c) => c.victim.enter_frame(a.data),
+  [AT.V_SET_PROP]: (a, c) => {
+    const name = a.data?.name;
+    if (!name) return;
+    (c.victim as any)[name] = a.data?.value
+  },
+  [AT.V_BROKEN_DEFEND]: () => 0,
+  [AT.V_DEFEND]: () => 0,
 
-  [ActionType.A_REBOUND_VX]: (a, { attacker }) => {
+  [AT.A_REBOUND_VX]: (a, { attacker }) => {
     attacker.set_velocity_x(-attacker.velocity.x);
   },
-  [ActionType.V_REBOUND_VX]: (a, { victim }) => {
+  [AT.V_REBOUND_VX]: (a, { victim }) => {
     victim.set_velocity_x(-victim.velocity.x);
   },
-  [ActionType.V_TURN_FACE]: (a, { victim }) => {
+  [AT.V_TURN_FACE]: (a, { victim }) => {
     victim.facing = turn_face(victim.facing);
   },
-  [ActionType.V_TURN_TEAM]: (a, { victim, attacker }) => {
+  [AT.V_TURN_TEAM]: (a, { victim, attacker }) => {
     victim.team = a.data?.team || attacker.team;
   },
-  [ActionType.FUSION]: (a, c) => {
+  [AT.FUSION]: (a, c) => {
     const { data: { oid, act, time } } = a;
     const { attacker, victim } = c;
     const { lfw } = c.attacker;
@@ -72,10 +80,10 @@ export const collision_action_handlers: IActionHandler = {
       fighter_2.invulnerable = 1000000;
     if (act) fighter_1.enter_frame(act);
   },
-  [ActionType.BROADCAST]: (a, { lfw }) => {
+  [AT.BROADCAST]: (a, { lfw }) => {
     lfw.broadcast(a.data.msg);
   },
-  [ActionType.VALUE_STEAL]: (a, c) => {
+  [AT.VALUE_STEAL]: (a, c) => {
     const { data: d } = a;
     if (!d) return;
     const { real_injury, injury } = c;
@@ -110,10 +118,10 @@ export const collision_action_handlers: IActionHandler = {
     }
     t.hp_r = max(t.hp_r, t.hp);
   },
-  [ActionType.V_BUFF]: (a, c) => {
+  [AT.V_BUFF]: (a, c) => {
     apply_buff(a, c.attacker, c.victim, c);
   },
-  [ActionType.A_BUFF]: (a, c) => {
+  [AT.A_BUFF]: (a, c) => {
     apply_buff(a, c.victim, c.attacker, c);
   }
 };
