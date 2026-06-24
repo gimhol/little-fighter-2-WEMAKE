@@ -1,5 +1,3 @@
-import type { UIComponent } from "../ui/component/UIComponent";
-import type { UINode } from "../ui/UINode";
 
 export interface IClazz<C = unknown, A extends any[] = any[]> {
   new(...args: A): C
@@ -7,8 +5,7 @@ export interface IClazz<C = unknown, A extends any[] = any[]> {
 export type ISchemaPropertyTypes =
   'array' | 'boolean' | 'null' | 'number' |
   'integer' | 'object' | 'string' |
-  IClazz<UIComponent> |
-  IClazz<UINode> |
+  IClazz |
   ArrayConstructor |
   BooleanConstructor |
   StringConstructor |
