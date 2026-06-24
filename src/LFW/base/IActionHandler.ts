@@ -13,25 +13,34 @@ import type { IAction_ABuff } from "../defines/actions/IAction_ABuff";
 import type { IAction_VBuff } from "../defines/actions/IAction_VBuff";
 import type { IAction_Error } from "../defines/actions/IAction_Error";
 
-export interface IActionHandler {
-  [ActionType.A_SOUND]: (action: IAction_Sound, collision: Collision) => any;
-  [ActionType.A_NEXT_FRAME]: (action: { data: TNextFrame }, collision: Collision) => any;
-  [ActionType.A_SET_PROP]: (action: IAction_SetProp, collision: Collision) => any;
-  [ActionType.A_BROKEN_DEFEND]: (action: IAction_BrokenDefend, collision: Collision) => any;
-  [ActionType.A_DEFEND]: (action: IAction_Defend, collision: Collision) => any;
-  [ActionType.V_SOUND]: (action: IAction_Sound, collision: Collision) => any;
-  [ActionType.V_NEXT_FRAME]: (action: { data: TNextFrame }, collision: Collision) => any;
-  [ActionType.V_SET_PROP]: (action: IAction_SetProp, collision: Collision) => any;
-  [ActionType.V_BROKEN_DEFEND]: (action: IAction_BrokenDefend, collision: Collision) => any;
-  [ActionType.V_DEFEND]: (action: IAction_Defend, collision: Collision) => any;
-  [ActionType.A_REBOUND_VX]: (action: IAction_ReboundVX, collision: Collision) => any;
-  [ActionType.V_REBOUND_VX]: (action: IAction_ReboundVX, collision: Collision) => any;
-  [ActionType.V_TURN_FACE]: (action: IAction_TurnFace, collision: Collision) => any;
-  [ActionType.V_TURN_TEAM]: (action: IAction_TurnTeam, collision: Collision) => any;
-  [ActionType.FUSION]: (action: IAction_Fusion, collision: Collision) => any;
-  [ActionType.BROADCAST]: (action: IAction_Broadcast, collision: Collision) => any;
-  [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => any;
-  [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => any;
-  [ActionType.A_BUFF]: (action: IAction_ABuff, collision: Collision) => any;
-  [ActionType.ERROR]: (action: IAction_Error, collision: Collision) => any;
+
+type IActionPayloadBase = {
+  [K in ActionType]: unknown;
+};
+
+interface IActionPayload extends IActionPayloadBase {
+  [ActionType.A_SOUND]: IAction_Sound;
+  [ActionType.A_NEXT_FRAME]: { data: TNextFrame };
+  [ActionType.A_SET_PROP]: IAction_SetProp;
+  [ActionType.A_BROKEN_DEFEND]: IAction_BrokenDefend;
+  [ActionType.A_DEFEND]: IAction_Defend;
+  [ActionType.V_SOUND]: IAction_Sound;
+  [ActionType.V_NEXT_FRAME]: { data: TNextFrame };
+  [ActionType.V_SET_PROP]: IAction_SetProp;
+  [ActionType.V_BROKEN_DEFEND]: IAction_BrokenDefend;
+  [ActionType.V_DEFEND]: IAction_Defend;
+  [ActionType.A_REBOUND_VX]: IAction_ReboundVX;
+  [ActionType.V_REBOUND_VX]: IAction_ReboundVX;
+  [ActionType.V_TURN_FACE]: IAction_TurnFace;
+  [ActionType.V_TURN_TEAM]: IAction_TurnTeam;
+  [ActionType.FUSION]: IAction_Fusion;
+  [ActionType.BROADCAST]: IAction_Broadcast;
+  [ActionType.VALUE_STEAL]: IAction_StealValue;
+  [ActionType.V_BUFF]: IAction_VBuff;
+  [ActionType.A_BUFF]: IAction_ABuff;
+  [ActionType.ERROR]: IAction_Error;
 }
+
+export type IActionHandler = {
+  [K in ActionType]: (action: IActionPayload[K], collision: Collision) => any;
+};
