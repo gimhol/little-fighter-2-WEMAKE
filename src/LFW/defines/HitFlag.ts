@@ -17,7 +17,7 @@ export enum HitFlag {
   AllBoth      /**/ = HitFlag.AllType | HitFlag.Both,
   EnemyFighter /**/ = HitFlag.Enemy | HitFlag.Fighter,
   EnemyWeapon  /**/ = HitFlag.Enemy | HitFlag.Weapon,
-  EnemyBall    /**/ = HitFlag.Enemy | HitFlag.Weapon,
+  EnemyBall    /**/ = HitFlag.Enemy | HitFlag.Ball,
   AllyFighter  /**/ = HitFlag.Ally | HitFlag.Fighter,
   AllyWeapon   /**/ = HitFlag.Ally | HitFlag.Weapon,
   AllyBall     /**/ = HitFlag.Ally | HitFlag.Ball,
@@ -56,7 +56,8 @@ export const HIT_FLAG_DESC_MAP: Record<HitFlag, string> = {
   [HitFlag.AllyFighter]: "AllyFighter",
   [HitFlag.AllyWeapon]: "AllyWeapon",
   [HitFlag.AllyBall]: "AllyBall",
-  [HitFlag.Dead]: "Dead"
+  [HitFlag.Dead]: "Dead",
+  [HitFlag.EnemyBall]: "EnemyBall"
 }
 export const HitFlagDescriptions: Record<HitFlag, string> = {
   [HitFlag.Enemy]: "",
@@ -96,6 +97,7 @@ export const HIT_FLAG_NAME_MAP: Record<HitFlag, string> = {
   [HitFlag.AllyFighter]: "AllyFighter",
   [HitFlag.AllyWeapon]: "AllyWeapon",
   [HitFlag.AllyBall]: "AllyBall",
+  [HitFlag.EnemyBall]: "EnemyBall"
 }
 
 export const ALL_HIT_FLAG: HitFlag[] = Object.keys(HIT_FLAG_NAME_MAP).map(Number) as HitFlag[];

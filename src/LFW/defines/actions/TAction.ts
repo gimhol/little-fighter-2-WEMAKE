@@ -11,6 +11,7 @@ import type { IAction_Sound } from "./IAction_Sound";
 import type { IAction_StealValue } from "./IAction_StealValue";
 import type { IAction_TurnFace } from "./IAction_TurnFace";
 import type { IAction_TurnTeam } from "./IAction_TurnTeam";
+import type { IAction_Error } from "./IAction_Error";
 
 
 export type TAction =
@@ -26,4 +27,5 @@ export type TAction =
   IAction_Broadcast |
   IAction_StealValue |
   IAction_ABuff |
-  IAction_VBuff;
+  IAction_VBuff | 
+  IAction_Error;

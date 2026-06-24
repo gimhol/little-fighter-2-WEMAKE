@@ -13,8 +13,6 @@ export const DifficultyDescriptions: Record<Difficulty, string> = {
   [Difficulty.Normal]: "",
   [Difficulty.Difficult]: "",
   [Difficulty.Crazy]: "",
-  [Difficulty.MIN]: "",
-  [Difficulty.MAX]: "",
 }
 export const DifficultyNames: Record<Difficulty, string> = {
   [Difficulty.Easy]: "Easy",

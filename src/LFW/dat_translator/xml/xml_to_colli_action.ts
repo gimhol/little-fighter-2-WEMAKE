@@ -1,3 +1,4 @@
+import { ActionType as AT } from "../../defines";
 import type { TAction } from "../../defines/actions/TAction";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import { xml_to_next_frame } from "./xml_to_next_frame";
@@ -6,49 +7,62 @@ import { xml_to_next_frame } from "./xml_to_next_frame";
  * 解析 <colli_action> → TAction
  */
 export function xml_to_colli_action(el: IXMLElement): TAction {
-  const type = el.str_attr("type") ?? "";
+  const type = (el.str_attr("type") ?? "").toUpperCase() as AT;
   const test = el.str_attr("test");
   const pretest = el.bool_attr("pretest");
 
+  if (!type) {
+    return {
+      type: AT.ERROR,
+      data: {
+        msg: "xml_to_colli_action failed, action type got empty"
+      }
+    }
+  }
   switch (type) {
-    case "a_sound":
-    case "v_sound": {
+    case AT.A_SOUND:
+    case AT.V_SOUND: {
       const path = el.strs_attr("path") ?? [];
       const posNums = el.nums_attr("pos");
       return {
         type, test, pretest,
         data: {
           path,
-          pos: posNums ? { x: posNums[0] ?? 0, y: posNums[1] ?? 0, z: posNums[2] ?? 0 } : undefined,
+          pos: posNums ? {
+            x: posNums[0] ?? 0,
+            y: posNums[1] ?? 0,
+            z: posNums[2] ?? 0
+          } : undefined,
         },
-      } as TAction;
+      };
     }
-    case "a_next_frame":
-    case "v_next_frame":
-    case "a_defend":
-    case "v_defend":
-    case "a_broken_defend":
-    case "v_broken_defend": {
+    case AT.A_NEXT_FRAME:
+    case AT.V_NEXT_FRAME:
+    case AT.A_DEFEND:
+    case AT.V_DEFEND:
+    case AT.A_BROKEN_DEFEND:
+    case AT.V_BROKEN_DEFEND: {
       const nfEl = el.child_by_tag("nf");
       return {
         type, test, pretest,
         data: nfEl ? xml_to_next_frame(nfEl) : { id: "" },
-      } as TAction;
+      };
     }
-    case "a_set_prop":
-    case "v_set_prop":
+    case AT.A_SET_PROP:
+    case AT.V_SET_PROP:
       return {
-        type, test, pretest,
-        prop_name: el.str_attr("prop_name") ?? "",
-        prop_value: el.str_attr("prop_value"),
-      } as TAction;
-    case "a_rebound_vx":
-    case "v_rebound_vx":
-      return { type, test, pretest } as TAction;
-    case "v_turn_face":
-    case "v_turn_team":
-      return { type, test, pretest } as TAction;
-    case "fusion": {
+        type, test, pretest, data: {
+          name: el.str_attr("prop_name") ?? "",
+          value: el.str_attr("prop_value"),
+        }
+      };
+    case AT.A_REBOUND_VX:
+    case AT.V_REBOUND_VX:
+      return { type, test, pretest };
+    case AT.V_TURN_FACE:
+    case AT.V_TURN_TEAM:
+      return { type, test, pretest };
+    case AT.FUSION: {
       const actEl = el.child_by_tag("act");
       const cancelKeys = el.strs_attr("cancel_keys")?.map(k => k.split(",").filter(Boolean));
       return {
@@ -59,11 +73,11 @@ export function xml_to_colli_action(el: IXMLElement): TAction {
           time: el.num_attr("time"),
           cancel_keys: cancelKeys as any,
         },
-      } as TAction;
+      };
     }
-    case "broadcast":
-      return { type, test, pretest, data: { msg: el.str_attr("data") ?? "" } } as TAction;
-    case "VALUE_STEAL":
+    case AT.BROADCAST:
+      return { type, test, pretest, data: { msg: el.str_attr("data") ?? "" } };
+    case AT.VALUE_STEAL:
       return {
         type, test, pretest,
         data: {
@@ -78,9 +92,9 @@ export function xml_to_colli_action(el: IXMLElement): TAction {
           itr_mp_ratio: el.num_attr("itr_mp_ratio"),
           over_injury: el.num_attr("over_injury"),
         },
-      } as TAction;
-    case "abuff":
-    case "vbuff":
+      };
+    case AT.A_BUFF:
+    case AT.V_BUFF:
       return {
         type, test, pretest,
         data: {
@@ -88,8 +102,14 @@ export function xml_to_colli_action(el: IXMLElement): TAction {
           duration: el.num_attr("duration") ?? 0,
           hitflag: el.num_attr("hitflag") ?? 0,
         },
-      } as TAction;
+      };
+    case AT.ERROR:
     default:
-      return { type, test, pretest } as TAction;
+      return {
+        type: AT.ERROR,
+        data: {
+          msg: "xml_to_colli_action failed, supported action type: " + type
+        }
+      }
   }
 }

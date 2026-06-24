@@ -43,6 +43,8 @@ export enum ActionType {
   A_BUFF = "A_BUFF",
 
   V_BUFF = "V_BUFF",
+
+  ERROR = "ERROR",
 }
 export const ActionTypeDescriptions: Record<ActionType, string> = {
   [ActionType.A_SOUND]: "",
@@ -64,4 +66,5 @@ export const ActionTypeDescriptions: Record<ActionType, string> = {
   [ActionType.VALUE_STEAL]: "",
   [ActionType.A_BUFF]: "",
   [ActionType.V_BUFF]: "",
+  [ActionType.ERROR]: "",
 }
