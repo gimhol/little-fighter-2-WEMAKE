@@ -1,4 +1,4 @@
-import { CheatType } from './defines/CheatType';
+import { CheatEnum } from './defines/CheatType';
 import { Defines } from './defines/defines';
 import { Difficulty } from './defines/Difficulty';
 import { type IWorldDataset, world_dataset_fields } from "./defines/IWorldDataset";
@@ -114,9 +114,9 @@ export class WorldDataset implements IWorldDataset {
   UPS: number = 60;
   playrate: number = 1;
   atom_time: number = 1;
-  [CheatType.GIM_INK]: number = 0;
-  [CheatType.HERO_FT]: number = 0;
-  [CheatType.LF2_NET]: number = 0;
+  [CheatEnum.GIM_INK]: number = 0;
+  [CheatEnum.HERO_FT]: number = 0;
+  [CheatEnum.LF2_NET]: number = 0;
 
   constructor(pure: boolean = false) {
     if (!pure) {

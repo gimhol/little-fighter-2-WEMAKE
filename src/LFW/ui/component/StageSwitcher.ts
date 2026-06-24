@@ -1,15 +1,15 @@
-import { CheatType, Defines, type IStageInfo, StageGroup as SG } from "../../defines";
+import { CheatEnum, Defines, type IStageInfo, StageGroup as SG } from "../../defines";
 import { Label } from "./Label";
 
 export class StageSwitcher extends Label {
   static override readonly TAGS: string[] = ["StageSwitcher"];
   private _stage: IStageInfo = Defines.VOID_STAGE;
   get show_all(): boolean {
-    return this.lfw.is_cheat(CheatType.GIM_INK);
+    return this.lfw.is_cheat(CheatEnum.GIM_INK);
   }
   get stages(): IStageInfo[] {
-    const cheat_0 = this.lfw.is_cheat(CheatType.LF2_NET);
-    const cheat_1 = this.lfw.is_cheat(CheatType.GIM_INK);
+    const cheat_0 = this.lfw.is_cheat(CheatEnum.LF2_NET);
+    const cheat_1 = this.lfw.is_cheat(CheatEnum.GIM_INK);
     const all = this.lfw.datas.stages;
     if (cheat_0 && cheat_1) return all
     const ret = all.filter(v => {

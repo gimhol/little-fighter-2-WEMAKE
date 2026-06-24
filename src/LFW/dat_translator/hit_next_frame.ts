@@ -1,5 +1,5 @@
 import { EntityVal as EV, } from "../defines/EntityVal";
-import { WeaponType as WT } from "../defines/WeaponType";
+import { WeaponEnum as WT } from "../defines/WeaponType";
 import { FacingFlag as FF } from "../defines/FacingFlag";
 import type { IFrameInfo } from "../defines/IFrameInfo";
 import { CondMaker } from "./CondMaker";

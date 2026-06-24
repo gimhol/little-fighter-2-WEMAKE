@@ -111,7 +111,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
   first_ui: string = 'init';
   readonly _keys: Keys[] = [];
 
-  cmds: (CMD | D.CheatType | string)[] = [];
+  cmds: (CMD | D.CheatEnum | string)[] = [];
   events: UI.LFWKeyEvent[] = [];
   broadcasts: string[] = [];
 
@@ -319,11 +319,11 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
     return e;
   }
 
-  is_cheat(name: string | D.CheatType): boolean {
+  is_cheat(name: string | D.CheatEnum): boolean {
     if (!D.is_cheat_type(name)) return false;
     return !!this.world[name];
   }
-  set_cheat(name: string | D.CheatType, enable: boolean = !this.is_cheat(name)) {
+  set_cheat(name: string | D.CheatEnum, enable: boolean = !this.is_cheat(name)) {
     if (enable == this.is_cheat(name)) return;
     this.cmds.push(name, enable ? '1' : '');
     this._cheat_keys = "";
@@ -707,7 +707,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
       D.Difficulty.Normal,
       D.Difficulty.Difficult,
     ]
-    if (this.is_cheat(D.CheatType.LF2_NET))
+    if (this.is_cheat(D.CheatEnum.LF2_NET))
       list.push(D.Difficulty.Crazy)
     const next = loop_offset(list, this.world.difficulty, offset)
     this.cmds.push(CMD.SET_DIFFICULTY, '' + next)

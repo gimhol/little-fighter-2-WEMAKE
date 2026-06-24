@@ -1,6 +1,6 @@
 import { any, fields, flt, int } from "../fields";
 import { make_schema } from "../utils/schema";
-import { CheatType } from "./CheatType";
+import { CheatEnum } from "./CheatType";
 import { Difficulty } from "./Difficulty";
 import type { ISchemaMeta } from "./ISchema";
 import { SyncRenderEnum } from "./SyncRenderEnum";
@@ -265,9 +265,9 @@ export interface IWorldDataset {
   UPS: number;
   playrate: number;
   atom_time: number;
-  [CheatType.GIM_INK]: number;
-  [CheatType.HERO_FT]: number;
-  [CheatType.LF2_NET]: number;
+  [CheatEnum.GIM_INK]: number;
+  [CheatEnum.HERO_FT]: number;
+  [CheatEnum.LF2_NET]: number;
 }
 
 export const world_dataset_fields = fields<IWorldDataset>({
@@ -365,9 +365,9 @@ export const world_dataset_fields = fields<IWorldDataset>({
   UPS: int({ min: 1, max: 120 }),
   playrate: flt({ min: 0.01, max: 1000 }),
   atom_time: flt,
-  [CheatType.GIM_INK]: int({ min: 0, max: 1 }),
-  [CheatType.HERO_FT]: int({ min: 0, max: 1 }),
-  [CheatType.LF2_NET]: int({ min: 0, max: 1 }),
+  [CheatEnum.GIM_INK]: int({ min: 0, max: 1 }),
+  [CheatEnum.HERO_FT]: int({ min: 0, max: 1 }),
+  [CheatEnum.LF2_NET]: int({ min: 0, max: 1 }),
 })
 
 
@@ -469,9 +469,9 @@ const params: ISchemaMeta<IWorldDataset> = {
     UPS: { type: 'number' },
     playrate: { type: 'number' },
     atom_time: { type: 'number' },
-    [CheatType.GIM_INK]: { type: 'number' },
-    [CheatType.HERO_FT]: { type: 'number' },
-    [CheatType.LF2_NET]: { type: 'number' },
+    [CheatEnum.GIM_INK]: { type: 'number' },
+    [CheatEnum.HERO_FT]: { type: 'number' },
+    [CheatEnum.LF2_NET]: { type: 'number' },
   },
 }
 export const Schema_IWorldDataset = make_schema<IWorldDataset>(params);

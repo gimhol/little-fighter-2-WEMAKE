@@ -1,13 +1,13 @@
-export enum CheatType {
+export enum CheatEnum {
   LF2_NET = "LF2_NET",
   HERO_FT = "HERO_FT",
   GIM_INK = "GIM_INK"
 }
-export const CheatTypeDescriptions: Record<CheatType, string> = {
-  [CheatType.LF2_NET]: "",
-  [CheatType.HERO_FT]: "",
-  [CheatType.GIM_INK]: "",
+export const CheatTypeDescriptions: Record<CheatEnum, string> = {
+  [CheatEnum.LF2_NET]: "",
+  [CheatEnum.HERO_FT]: "",
+  [CheatEnum.GIM_INK]: "",
 }
-export function is_cheat_type(v: any): v is CheatType {
-  return v in CheatType
+export function is_cheat_type(v: any): v is CheatEnum {
+  return v in CheatEnum
 }

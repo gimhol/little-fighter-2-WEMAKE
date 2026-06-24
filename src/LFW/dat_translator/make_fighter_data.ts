@@ -1,4 +1,4 @@
-import { FacingFlag as FF, type IFrameInfo, ItrKind, SE, StateEnum, type TNextFrame, WeaponType as WT } from "../defines";
+import { FacingFlag as FF, type IFrameInfo, ItrKind, SE, StateEnum, type TNextFrame, WeaponEnum as WT } from "../defines";
 import { ActionType } from "../defines/actions/ActionType";
 import { BdyKind } from "../defines/BdyKind";
 import { EntityEnum } from "../defines/EntityEnum";

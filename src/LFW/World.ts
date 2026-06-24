@@ -8,7 +8,7 @@ import { BallController } from "./controller/BallController";
 import {
   BFID,
   BGG,
-  CheatType,
+  CheatEnum,
   Defines,
   Difficulty,
   EntityGroup,
@@ -19,7 +19,7 @@ import {
   type IVector3,
   O_ID,
   SE,
-  WeaponType
+  WeaponEnum
 } from "./defines";
 import { CMD } from "./defines/CMD";
 import { SyncRenderEnum } from "./defines/SyncRenderEnum";
@@ -425,7 +425,7 @@ export class World extends WorldDataset {
     const { left, right, near, far, drink_l, drink_r } = this.stage;
     let { x, z } = e.position;
 
-    if (e.base_type === WeaponType.Drink) {
+    if (e.base_type === WeaponEnum.Drink) {
       const l = drink_l;
       const r = drink_r;
       if (x < l) e.set_position_x(x = l);
@@ -531,7 +531,7 @@ export class World extends WorldDataset {
   protected handle_cmds() {
     const { cmds } = this.lfw;
     if (!cmds.length) return;
-    const stage_limit = () => this.stage.id !== Defines.VOID_STAGE.id && !this.lfw.is_cheat(CheatType.HERO_FT)
+    const stage_limit = () => this.stage.id !== Defines.VOID_STAGE.id && !this.lfw.is_cheat(CheatEnum.HERO_FT)
     for (let i = 0; i < cmds.length; i++) {
       const cmd = cmds[i];
       switch (cmd) {
@@ -548,9 +548,9 @@ export class World extends WorldDataset {
           else Ditto.warn('DEL_PUPPET failed, puppet not found.')
           continue;
         }
-        case CheatType.LF2_NET: // same as "case CMD.LF2_NET:"
-        case CheatType.HERO_FT: // same as "case CMD.HERO_FT:"
-        case CheatType.GIM_INK: // same as "case CMD.GIM_INK:"
+        case CheatEnum.LF2_NET: // same as "case CMD.LF2_NET:"
+        case CheatEnum.HERO_FT: // same as "case CMD.HERO_FT:"
+        case CheatEnum.GIM_INK: // same as "case CMD.GIM_INK:"
           const prev = this[cmd];
           const enabled = this[cmd] = Number(cmds[i += 1]) ? 1 : 0;
           if (prev == enabled) continue;

@@ -1,4 +1,4 @@
-import { Builtin_FrameId, Defines, FrameBehavior, SpeedMode, WeaponType } from "../defines";
+import { Builtin_FrameId, Defines, FrameBehavior, SpeedMode, WeaponEnum } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import type { IDatContext } from "../defines/IDatContext";
 import type { IEntityData } from "../defines/IEntityData";
@@ -10,33 +10,33 @@ import { get_next_frame_by_raw_id } from "./get_the_next";
 import { make_itr_prefabs } from "./make_itr_prefabs";
 import { take } from "./take";
 
-const indexes_map: Record<WeaponType, IFrameIndexes> = {
-  [WeaponType.None]: {
+const indexes_map: Record<WeaponEnum, IFrameIndexes> = {
+  [WeaponEnum.None]: {
     on_ground: "",
     just_on_ground: "",
     throw_on_ground: "",
   },
-  [WeaponType.Stick]: {
+  [WeaponEnum.Stick]: {
     on_ground: "60",
     just_on_ground: "70",
     throw_on_ground: "71",
   },
-  [WeaponType.Heavy]: {
+  [WeaponEnum.Heavy]: {
     on_ground: "20",
     just_on_ground: "21",
     throw_on_ground: "71",
   },
-  [WeaponType.Knife]: {
+  [WeaponEnum.Knife]: {
     on_ground: "60",
     just_on_ground: "70",
     throw_on_ground: "71",
   },
-  [WeaponType.Baseball]: {
+  [WeaponEnum.Baseball]: {
     on_ground: "60",
     just_on_ground: "70",
     throw_on_ground: "71",
   },
-  [WeaponType.Drink]: {
+  [WeaponEnum.Drink]: {
     on_ground: "60",
     just_on_ground: "70",
     throw_on_ground: "71",
@@ -49,25 +49,25 @@ export function make_weapon_data(ctx: IDatContext): IEntityData {
   switch ('' + datIndex.type) {
     case "1":
       info.type = {
-        "120": WeaponType.Knife, // Knife
-        "124": WeaponType.Knife, // Boomerang
-      }["" + datIndex.id] ?? WeaponType.Stick;
+        "120": WeaponEnum.Knife, // Knife
+        "124": WeaponEnum.Knife, // Boomerang
+      }["" + datIndex.id] ?? WeaponEnum.Stick;
       break;
     case "2":
-      info.type = WeaponType.Heavy;
+      info.type = WeaponEnum.Heavy;
       break;
     case "4":
-      info.type = WeaponType.Baseball;
+      info.type = WeaponEnum.Baseball;
       break;
     case "6":
-      info.type = WeaponType.Drink;
+      info.type = WeaponEnum.Drink;
       break;
   }
 
   const itr_prefabs = make_itr_prefabs(full_str);
   const indexes =
-    indexes_map[info.type as WeaponType] ??
-    indexes_map[WeaponType.None];
+    indexes_map[info.type as WeaponEnum] ??
+    indexes_map[WeaponEnum.None];
   const sound_1 = take(info, "weapon_broken_sound");
   if (sound_1) info.dead_sounds = [sound_1.replace(/\\/g, '/') + ".mp3"];
 

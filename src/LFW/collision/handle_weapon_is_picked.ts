@@ -1,5 +1,5 @@
 import type { Collision } from "../collision/Collision";
-import { is_independent, WeaponType } from "../defines";
+import { is_independent, WeaponEnum } from "../defines";
 import { summary_mgr } from "../entity/SummaryMgr";
 
 export function handle_weapon_is_picked(collision: Collision): void {
@@ -9,7 +9,7 @@ export function handle_weapon_is_picked(collision: Collision): void {
   victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;
-  if (victim.base_type === WeaponType.Heavy) {
+  if (victim.base_type === WeaponEnum.Heavy) {
     attacker.enter_frame_by_id(attacker.data.indexes?.picking_heavy)
   } else {
     attacker.enter_frame_by_id(attacker.data.indexes?.picking_light)

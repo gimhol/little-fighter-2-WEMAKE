@@ -1,4 +1,4 @@
-import { StateEnum, WeaponType, type IFrameInfo, type IVector3 } from "../defines";
+import { StateEnum, WeaponEnum, type IFrameInfo, type IVector3 } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { find_direction } from "../entity/find_frame_direction";
 import { abs } from "../utils";
@@ -24,7 +24,7 @@ export class CharacterState_Falling extends CharacterState_Base {
     const holding = e.holding
     // TODO: calc v here.
     if (holding) e.drop_holding();
-    if (holding?.base_type === WeaponType.Heavy)
+    if (holding?.base_type === WeaponEnum.Heavy)
       holding.team = e.team;
     if (e.hp <= 0 && e.fuse_bys?.length) {
       const { x: vx, y: vy, z: vz } = e.velocity;

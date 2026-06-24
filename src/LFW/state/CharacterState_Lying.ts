@@ -1,4 +1,4 @@
-import { GK, StateEnum, WeaponType, type IFrameInfo } from "../defines";
+import { GK, StateEnum, WeaponEnum, type IFrameInfo } from "../defines";
 import { TeamEnum } from "../defines/TeamEnum";
 import type { Entity } from "../entity/Entity";
 import { round_float } from "../utils/math/round_float";
@@ -18,7 +18,7 @@ export class CharacterState_Lying extends CharacterState_Base {
     e.ctrl.reset_key_list();
     const holding = e.holding
     if (holding) e.drop_holding();
-    if (holding?.base_type === WeaponType.Heavy)
+    if (holding?.base_type === WeaponEnum.Heavy)
       holding.team = e.team;
     e.toughness = e.toughness_max;
     e.toughness_resting = 0;

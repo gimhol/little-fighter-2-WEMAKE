@@ -27,7 +27,7 @@ import { WorldRenderer } from "./DittoImpl/renderer/WorldRenderer";
 import EditorView from "./EditorView";
 import GamePad from "./GamePad";
 import { Difficulty, type IWorldDataset, LFW, WorldDataset } from "./LFW";
-import { CheatType, CtrlDevice } from "./LFW/defines";
+import { CheatEnum, CtrlDevice } from "./LFW/defines";
 import { CMD } from "./LFW/defines/CMD";
 import { SyncRenderEnum } from "./LFW/defines/SyncRenderEnum";
 import { Defines } from "./LFW/defines/defines";
@@ -264,13 +264,13 @@ function App() {
     },
     on_cheat_changed: (cheat_name, enabled) => {
       switch (cheat_name) {
-        case CheatType.LF2_NET:
+        case CheatEnum.LF2_NET:
           set_app_state(d => { d.cheat_1 = enabled })
           break;
-        case CheatType.HERO_FT:
+        case CheatEnum.HERO_FT:
           set_app_state(d => { d.cheat_2 = enabled })
           break;
-        case CheatType.GIM_INK:
+        case CheatEnum.GIM_INK:
           set_app_state(d => {
             d.cheat_3 = d.dev_ui_open = d.show_fps = enabled
           })
@@ -509,8 +509,8 @@ function App() {
   useShortcut("F9", 0, () => lfw?.cmds.push(CMD.F9));
   useShortcut("F10", 0, () => lfw?.cmds.push(CMD.F10));
   useShortcut("F11", 0, () => toggle_fullscreen());
-  useShortcut("ctrl+F1", 0, () => lfw?.is_cheat(CheatType.GIM_INK) && set_app_state(d => { d.dev_ui_open = !d.dev_ui_open }));
-  useShortcut("ctrl+F3", 0, () => lfw?.is_cheat(CheatType.GIM_INK) && set_app_state(d => {
+  useShortcut("ctrl+F1", 0, () => lfw?.is_cheat(CheatEnum.GIM_INK) && set_app_state(d => { d.dev_ui_open = !d.dev_ui_open }));
+  useShortcut("ctrl+F3", 0, () => lfw?.is_cheat(CheatEnum.GIM_INK) && set_app_state(d => {
     d.show_fps = !d.show_fps;
   }));
   useEffect(() => {
@@ -614,7 +614,7 @@ function App() {
         container={() => ele_game_canvas?.parentElement} />
       <Loading loading={!ui_id} big className={csses.loading_img} />
       <div className={csses.top_bar}>
-        <Show show={lfw?.is_cheat(CheatType.GIM_INK)}>
+        <Show show={lfw?.is_cheat(CheatEnum.GIM_INK)}>
           <ToggleImgButton
             checked={app_state.dev_ui_open}
             onClick={() => set_app_state(d => { d.dev_ui_open = !d.dev_ui_open })}
@@ -982,19 +982,19 @@ function App() {
             parse={i => [i.value, i.label]}
             onChange={(v) => set_app_state(d => { d.touchpad = v! })} />
           <ToggleButton
-            onChange={() => lfw?.set_cheat(CheatType.LF2_NET)}
+            onChange={() => lfw?.set_cheat(CheatEnum.LF2_NET)}
             value={app_state.cheat_1}>
             <>LF2_NET</>
             <>LF2_NET✓</>
           </ToggleButton>
           <ToggleButton
-            onChange={() => lfw?.set_cheat(CheatType.HERO_FT)}
+            onChange={() => lfw?.set_cheat(CheatEnum.HERO_FT)}
             value={app_state.cheat_2}>
             <>HERO_FT</>
             <>HERO_FT✓</>
           </ToggleButton>
           <ToggleButton
-            onChange={() => lfw?.set_cheat(CheatType.GIM_INK)}
+            onChange={() => lfw?.set_cheat(CheatEnum.GIM_INK)}
             value={app_state.cheat_3}>
             <>GIM_INK</>
             <>GIM_INK✓</>

@@ -2,7 +2,7 @@ import type { IPropsMeta } from "../../..";
 import type { ILFWCallback } from "../../../ILFWCallback";
 import { PlayerInfo } from "../../../PlayerInfo";
 import { FSM } from "../../../base/FSM";
-import { CheatType, EntityGroup as EG, type IEntityData, TeamEnum } from "../../../defines";
+import { CheatEnum, EntityGroup as EG, type IEntityData, TeamEnum } from "../../../defines";
 import { Defines } from "../../../defines/defines";
 import { Randoming } from "../../../helper";
 import { between, max, min } from "../../../utils/math";
@@ -60,8 +60,8 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
   set teams(v: string[]) { this.props.teams = v }
 
   get fighters(): readonly IEntityData[] {
-    const cheat_0 = this.lfw.is_cheat(CheatType.LF2_NET);
-    const cheat_1 = this.lfw.is_cheat(CheatType.GIM_INK);
+    const cheat_0 = this.lfw.is_cheat(CheatEnum.LF2_NET);
+    const cheat_1 = this.lfw.is_cheat(CheatEnum.GIM_INK);
     const all = this.lfw.datas.fighters;
     if (cheat_0 && cheat_1) return all
     const ret = all.filter(v => {
@@ -75,7 +75,7 @@ export class CharMenuLogic extends UIComponent<ICharMenuLogicProps> {
   }
   protected _lf2_callbacks: ILFWCallback = {
     on_cheat_changed: (cheat_name, enabled) => {
-      if (cheat_name === CheatType.LF2_NET && !enabled)
+      if (cheat_name === CheatEnum.LF2_NET && !enabled)
         this.handle_fighters_changed();
     },
     on_broadcast: (message) => {

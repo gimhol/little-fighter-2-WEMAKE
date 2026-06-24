@@ -1,4 +1,4 @@
-import { CheatType } from "./CheatType";
+import { CheatEnum } from "./CheatType";
 export const enum CMD {
   F1 = 'f1',
   F2 = 'f2',
@@ -10,9 +10,9 @@ export const enum CMD {
   F8 = 'f8',
   F9 = 'f9',
   F10 = 'f10',
-  LF2_NET = CheatType.LF2_NET,
-  HERO_FT = CheatType.HERO_FT,
-  GIM_INK = CheatType.GIM_INK,
+  LF2_NET = CheatEnum.LF2_NET,
+  HERO_FT = CheatEnum.HERO_FT,
+  GIM_INK = CheatEnum.GIM_INK,
   KILL_ENEMIES = 'KILL_ENEMIES',
   KILL_BOSS = 'KILL_BOSS',
   KILL_SOLIDERS = 'KILL_SOLIDERS',

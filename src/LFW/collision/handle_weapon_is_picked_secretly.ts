@@ -1,5 +1,5 @@
 import type { Collision } from "../collision/Collision";
-import { GameKey as GK, is_independent, WeaponType } from "../defines";
+import { GameKey as GK, is_independent, WeaponEnum } from "../defines";
 import { summary_mgr } from "../entity/SummaryMgr";
 
 export function handle_weapon_is_picked_secretly(collision: Collision): void {
@@ -7,7 +7,7 @@ export function handle_weapon_is_picked_secretly(collision: Collision): void {
   if (!attacker.ctrl.is_hit(GK.Attack)) return;
   if (victim.bearer) return;
   if (attacker.holding) return;
-  if (victim.base_type === WeaponType.Heavy) return;
+  if (victim.base_type === WeaponEnum.Heavy) return;
   victim.bearer = attacker;
   attacker.holding = victim;
   victim.team = attacker.team;

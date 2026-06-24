@@ -1,6 +1,6 @@
 import type { Collision } from "../collision/Collision";
 import { is_armor_work } from "../collision/is_armor_work";
-import { CheatType, EntityGroup, HitFlag } from "../defines";
+import { CheatEnum, EntityGroup, HitFlag } from "../defines";
 import { CollisionVal } from "../defines/CollisionVal";
 import type { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { is_ball_ctrl } from "../entity";
@@ -37,7 +37,7 @@ const map: Record<CollisionVal, IValGetter<Collision>> = {
   [CollisionVal.NoItrEffect]: c => c.itr.effect === void 0 ? 1 : 0,
   [CollisionVal.A_HP_P]: c => round(100 * c.attacker.hp / c.attacker.hp_max),
   [CollisionVal.V_HP_P]: c => round(100 * c.victim.hp / c.victim.hp_max),
-  [CollisionVal.LF2_NET_ON]: c => c.attacker.lfw.is_cheat(CheatType.LF2_NET) ? 1 : 0,
+  [CollisionVal.LF2_NET_ON]: c => c.attacker.lfw.is_cheat(CheatEnum.LF2_NET) ? 1 : 0,
   [CollisionVal.BdyHitFlag]: c => c.bdy.hit_flag ?? HitFlag.AllEnemy,
   [CollisionVal.ItrHitFlag]: c => c.itr.hit_flag ?? HitFlag.AllEnemy,
   [CollisionVal.BdyCode]: c => c.bdy.code,

@@ -1,4 +1,4 @@
-import { StateEnum, WeaponType } from "../defines";
+import { StateEnum, WeaponEnum } from "../defines";
 import type { Entity } from "../entity/Entity";
 import { is_weapon } from "../entity/type_check";
 import { CharacterState_Base } from "./CharacterState_Base";
@@ -13,7 +13,7 @@ export class CharacterState_Walking extends CharacterState_Base {
     if (!UD && !LR && !e.wait) {
       if (
         is_weapon(e.holding) &&
-        e.holding?.base_type === WeaponType.Heavy
+        e.holding?.base_type === WeaponEnum.Heavy
       ) {
         e.wait = e.frame.wait;
       } else {

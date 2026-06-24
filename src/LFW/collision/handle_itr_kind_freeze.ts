@@ -1,5 +1,5 @@
 import type { Collision } from "./Collision";
-import { Defines, WeaponType } from "../defines";
+import { Defines, WeaponEnum } from "../defines";
 import { calc_itr_velocity } from "./calc_itr_velocity";
 import { handle_injury } from "./handle_injury";
 import { handle_rest } from "./handle_rest";
@@ -11,7 +11,7 @@ export function handle_itr_kind_freeze(collision: Collision) {
   victim.fall_value -= attacker.itr_fall(itr)
   // const [vx, vy, vz] = calc_itr_velocity(collision)
   // victim.set_velocity(vx, vy, vz)
-  if (victim.holding?.base_type === WeaponType.Heavy)
+  if (victim.holding?.base_type === WeaponEnum.Heavy)
     victim.drop_holding()
   handle_injury(collision);
   handle_rest(collision);
@@ -25,7 +25,7 @@ export function handle_itr_effect_freeze(collision: Collision) {
   victim.fall_value -= attacker.itr_fall(itr)
   const [vx, vy, vz] = calc_itr_velocity(collision)
   victim.set_velocity(vx, vy, vz)
-  if (victim.holding?.base_type === WeaponType.Heavy)
+  if (victim.holding?.base_type === WeaponEnum.Heavy)
     victim.drop_holding()
   handle_injury(collision);
   handle_rest(collision);

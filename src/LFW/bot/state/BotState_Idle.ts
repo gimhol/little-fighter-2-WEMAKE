@@ -1,4 +1,4 @@
-import { AGK, GK, SE, WeaponType as WT } from "../../defines";
+import { AGK, GK, SE, WeaponEnum as WT } from "../../defines";
 import { max, min, round } from '../../utils/math/base';
 import { BSE } from "../../defines/BotStateEnum";
 import { BotState_Base } from "./BotState";

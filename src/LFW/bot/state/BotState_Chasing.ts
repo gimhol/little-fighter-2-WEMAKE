@@ -1,5 +1,5 @@
 import { is_fighter, is_weapon } from "../../entity";
-import { AGK, Defines, GK, StateEnum, WeaponType, WT } from "../../defines";
+import { AGK, Defines, GK, StateEnum, WeaponEnum, WT } from "../../defines";
 import { BotStateEnum, BSE } from "../../defines/BotStateEnum";
 import { abs, between, round } from '../../utils/math/base';
 import { round_float } from '../../utils/math/round_float';
@@ -109,7 +109,7 @@ export class BotState_Chasing extends BotState_Base {
         }
 
         if (wt && between(abs_dz, 0, 30)) {
-          if (wt == WeaponType.Knife) {
+          if (wt == WeaponEnum.Knife) {
             if (this.ctrl.desire('rtwd') < 400) {
               c.key_down(GK_F).click(GK.a)
               return;

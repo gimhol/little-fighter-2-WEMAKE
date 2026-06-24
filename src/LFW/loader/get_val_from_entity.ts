@@ -1,4 +1,4 @@
-import { CheatType, I_K, ItrKind, WeaponType } from "../defines";
+import { CheatEnum, I_K, ItrKind, WeaponEnum } from "../defines";
 import { E_Val } from "../defines/EntityVal";
 import type { IValGetter, IValGetterGetter } from "../defines/IExpression";
 import { Entity } from "../entity/Entity";
@@ -18,9 +18,9 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.PressLR]: e => e.ctrl.LR,
   [E_Val.Holding_W_Type]: e => e.holding?.base_type ?? 0,
   [E_Val.HP_P]: e => clamp(round((100 * e.hp) / e.hp_max), 0, 100),
-  [E_Val.LF2_NET_ON]: e => e.lfw.is_cheat(CheatType.LF2_NET) ? 1 : 0,
-  [E_Val.HERO_FT_ON]: e => e.lfw.is_cheat(CheatType.HERO_FT) ? 1 : 0,
-  [E_Val.GIM_INK_ON]: e => e.lfw.is_cheat(CheatType.GIM_INK) ? 1 : 0,
+  [E_Val.LF2_NET_ON]: e => e.lfw.is_cheat(CheatEnum.LF2_NET) ? 1 : 0,
+  [E_Val.HERO_FT_ON]: e => e.lfw.is_cheat(CheatEnum.HERO_FT) ? 1 : 0,
+  [E_Val.GIM_INK_ON]: e => e.lfw.is_cheat(CheatEnum.GIM_INK) ? 1 : 0,
   [E_Val.HAS_TRANSFORM_DATA]: e => e.transforms?.length ? 1 : 0,
   [E_Val.Catching]: e => e.catching ? 1 : 0,
   [E_Val.CAUGHT]: e => e.catcher ? 1 : 0,
@@ -53,7 +53,7 @@ export const entity_val_getters: Record<E_Val, (e: Entity) => any> = {
   [E_Val.FrameState]: e => e.state,
   [E_Val.Shaking]: e => e.shaking,
   [E_Val.Holding]: e => e.holding ? 1 : 0,
-  [E_Val.HoldingHeavy]: e => e.holding?.base_type == WeaponType.Heavy,
+  [E_Val.HoldingHeavy]: e => e.holding?.base_type == WeaponEnum.Heavy,
   [E_Val.HoldingOID]: e => e.holding?.data.id,
   [E_Val.HpRecoverable]: e => e.hp_r - e.hp,
   [E_Val.HitByMagicFlute]: e => {

@@ -1,4 +1,4 @@
-export enum WeaponType {
+export enum WeaponEnum {
   None = 0,
 
   /**
@@ -37,13 +37,13 @@ export enum WeaponType {
    */
   Drink = 5
 }
-export const WeaponTypeDescriptions: Record<WeaponType, string> = {
-  [WeaponType.None]: "",
-  [WeaponType.Stick]: "",
-  [WeaponType.Heavy]: "",
-  [WeaponType.Knife]: "",
-  [WeaponType.Baseball]: "",
-  [WeaponType.Drink]: "",
+export const WeaponTypeDescriptions: Record<WeaponEnum, string> = {
+  [WeaponEnum.None]: "",
+  [WeaponEnum.Stick]: "",
+  [WeaponEnum.Heavy]: "",
+  [WeaponEnum.Knife]: "",
+  [WeaponEnum.Baseball]: "",
+  [WeaponEnum.Drink]: "",
 }
-export const WT = WeaponType;
-export type WT = WeaponType;
+export const WT = WeaponEnum;
+export type WT = WeaponEnum;
