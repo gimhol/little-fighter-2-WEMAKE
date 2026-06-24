@@ -47,7 +47,7 @@ async function main() {
   }
   let str = `
 /*** AUTO REGISTER COMPONENTS START ***/
-import { Factory } from "@/LFW/Factory";
+import { Factory } from "../../Factory";
 import * as _ from "./index";
 let _registed = false
 export const regist_components = () => {
