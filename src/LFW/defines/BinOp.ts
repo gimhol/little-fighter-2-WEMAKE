@@ -11,6 +11,18 @@ export enum BinOp {
   NotInclude = "!{",
 }
 
+export const BinOpDescriptions: Record<BinOp, string> = {
+  [BinOp.LESS]: "",
+  [BinOp.LESS_OR_EQUAL]: "",
+  [BinOp.EQUAL]: "",
+  [BinOp.GREATER_OR_EQUAL]: "",
+  [BinOp.GREATER]: "",
+  [BinOp.NOT_EQUAL]: "",
+  [BinOp.IncludedBy]: "",
+  [BinOp.Include]: "",
+  [BinOp.NotIncludedBy]: "",
+  [BinOp.NotInclude]: "",
+}
 export type TBinOp =
   | "=="
   | ">="

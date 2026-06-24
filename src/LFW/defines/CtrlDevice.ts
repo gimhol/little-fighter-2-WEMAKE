@@ -6,3 +6,11 @@ export enum CtrlDevice {
   Gamepad_4 = 4,
   TouchScreen = 5
 }
+export const CtrlDeviceDescriptions: Record<CtrlDevice, string> = {
+  [CtrlDevice.Keyboard]: "",
+  [CtrlDevice.Gamepad_1]: "",
+  [CtrlDevice.Gamepad_2]: "",
+  [CtrlDevice.Gamepad_3]: "",
+  [CtrlDevice.Gamepad_4]: "",
+  [CtrlDevice.TouchScreen]: "",
+}

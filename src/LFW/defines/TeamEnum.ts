@@ -10,6 +10,18 @@ export enum TeamEnum {
   Team_8 = "8",
   Max = '8',
 }
+export const TeamEnumDescriptions: Record<TeamEnum, string> = {
+  [TeamEnum.Independent]: "",
+  [TeamEnum.Team_1]: "",
+  [TeamEnum.Team_2]: "",
+  [TeamEnum.Team_3]: "",
+  [TeamEnum.Team_4]: "",
+  [TeamEnum.Team_5]: "",
+  [TeamEnum.Team_6]: "",
+  [TeamEnum.Team_7]: "",
+  [TeamEnum.Team_8]: "",
+  [TeamEnum.Max]: "",
+}
 export const is_independent = (team: string) => team.length !== 1;
 export const T_E = TeamEnum;
 export type T_E = TeamEnum;

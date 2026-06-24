@@ -96,3 +96,15 @@ export const ENTITY_GROUP_DESC_MAP: Record<EG, string> = {
   [EntityGroup.Freezer]: "Freezer",
   [EntityGroup.Dev]: "Dev",
 }
+export const EntityGroupDescriptions: Record<EntityGroup, string> = {
+  [EntityGroup.Hidden]: "",
+  [EntityGroup.Boss]: "",
+  [EntityGroup.Gaint]: "",
+  [EntityGroup.Regular]: "",
+  [EntityGroup._3000]: "",
+  [EntityGroup.VsWeapon]: "",
+  [EntityGroup.StageWeapon]: "",
+  [EntityGroup.FreezableBall]: "",
+  [EntityGroup.Freezer]: "",
+  [EntityGroup.Dev]: "",
+}

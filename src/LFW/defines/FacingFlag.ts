@@ -138,3 +138,16 @@ export const FACING_FLAG_DESC_MAP: Record<FacingFlag, string> = {
   [FacingFlag.AntiVX]: "跟随反X速度方向",
   [FacingFlag.Trend]: "跟随按键与速度趋势",
 };
+export const FacingFlagDescriptions: Record<FacingFlag, string> = {
+  [FacingFlag.None]: "",
+  [FacingFlag.Left]: "",
+  [FacingFlag.Right]: "",
+  [FacingFlag.Backward]: "",
+  [FacingFlag.Ctrl]: "",
+  [FacingFlag.SameAsCatcher]: "",
+  [FacingFlag.OpposingCatcher]: "",
+  [FacingFlag.AntiCtrl]: "",
+  [FacingFlag.VX]: "",
+  [FacingFlag.AntiVX]: "",
+  [FacingFlag.Trend]: "",
+}

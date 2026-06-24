@@ -40,3 +40,9 @@ export const ENTITY_ENUM_DESC_MAP: Record<EntityEnum, string> = {
   [EntityEnum.Ball]: 'Ball',
   [EntityEnum.Entity]: 'Entity',
 }
+export const EntityEnumDescriptions: Record<EntityEnum, string> = {
+  [EntityEnum.Entity]: "",
+  [EntityEnum.Fighter]: "",
+  [EntityEnum.Weapon]: "",
+  [EntityEnum.Ball]: "",
+}

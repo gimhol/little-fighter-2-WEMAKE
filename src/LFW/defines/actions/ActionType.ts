@@ -44,3 +44,24 @@ export enum ActionType {
 
   V_BUFF = "V_BUFF",
 }
+export const ActionTypeDescriptions: Record<ActionType, string> = {
+  [ActionType.A_SOUND]: "",
+  [ActionType.A_NEXT_FRAME]: "",
+  [ActionType.A_SET_PROP]: "",
+  [ActionType.A_DEFEND]: "",
+  [ActionType.A_BROKEN_DEFEND]: "",
+  [ActionType.V_SOUND]: "",
+  [ActionType.V_NEXT_FRAME]: "",
+  [ActionType.V_SET_PROP]: "",
+  [ActionType.V_DEFEND]: "",
+  [ActionType.V_BROKEN_DEFEND]: "",
+  [ActionType.A_REBOUND_VX]: "",
+  [ActionType.V_REBOUND_VX]: "",
+  [ActionType.V_TURN_FACE]: "",
+  [ActionType.V_TURN_TEAM]: "",
+  [ActionType.FUSION]: "",
+  [ActionType.BROADCAST]: "",
+  [ActionType.VALUE_STEAL]: "",
+  [ActionType.A_BUFF]: "",
+  [ActionType.V_BUFF]: "",
+}

@@ -25,3 +25,8 @@ export const CHASE_LOST_DESC_MAP: Record<ChaseLost, string> = {
   [ChaseLost.End]: "放弃寻找(未实现)",
 };
 
+export const ChaseLostDescriptions: Record<ChaseLost, string> = {
+  [ChaseLost.Hover]: "",
+  [ChaseLost.Leave]: "",
+  [ChaseLost.End]: "",
+}

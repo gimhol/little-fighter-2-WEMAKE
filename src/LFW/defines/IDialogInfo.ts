@@ -55,3 +55,6 @@ export interface IDialogInfo {
 export enum DialogCloseBy {
   PRESS_A = 'press_a'
 }
+export const DialogCloseByDescriptions: Record<DialogCloseBy, string> = {
+  [DialogCloseBy.PRESS_A]: "",
+}

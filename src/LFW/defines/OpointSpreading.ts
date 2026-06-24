@@ -20,3 +20,9 @@ export enum OpointSpreading {
 
   AngelBlessing = 4,
 }
+export const OpointSpreadingDescriptions: Record<OpointSpreading, string> = {
+  [OpointSpreading.Normal]: "",
+  [OpointSpreading.Spreading]: "",
+  [OpointSpreading.FloatRange]: "",
+  [OpointSpreading.AngelBlessing]: "",
+}

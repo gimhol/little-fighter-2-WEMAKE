@@ -5,7 +5,7 @@ import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
 import { ItrEffect, ItrEffectDescriptions } from "./ItrEffect";
 import { ItrKind, ItrKindDescriptions } from "./ItrKind";
-import type { TAction } from "./TAction";
+import type { TAction } from "./actions/TAction";
 import { any, fields, flt, int, str } from "../fields";
 
 export interface IItrInfo extends Partial<IQube> {

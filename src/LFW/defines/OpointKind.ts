@@ -9,3 +9,7 @@ export enum OpointKind {
    */
   Pick = 2,
 }
+export const OpointKindDescriptions: Record<OpointKind, string> = {
+  [OpointKind.Normal]: "",
+  [OpointKind.Pick]: "",
+}

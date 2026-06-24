@@ -96,7 +96,6 @@ export * from "./StageGroup";
 export * from "./StageVal";
 export * from "./StateEnum";
 export * from "./SyncRenderEnum";
-export * from "./TAction";
 export * from "./TeamEnum";
 export * from "./TextureWrapping";
 export * from "./WeaponType";

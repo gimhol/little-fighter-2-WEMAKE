@@ -22,3 +22,7 @@ export const CHASE_STRATEDY_DESC_MAP: Record<ChaseStratedy, string> = {
   [ChaseStratedy.Default]: "总是跟踪最近的目标",
   [ChaseStratedy.TillLost]: "在当前跟踪目标丢失前，不会更改跟踪目标",
 };
+export const ChaseStratedyDescriptions: Record<ChaseStratedy, string> = {
+  [ChaseStratedy.Default]: "",
+  [ChaseStratedy.TillLost]: "",
+}

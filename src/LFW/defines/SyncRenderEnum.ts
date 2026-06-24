@@ -5,3 +5,10 @@ export enum SyncRenderEnum {
   FPS_60 = 3,
   FPS_120 = 4,
 }
+export const SyncRenderEnumDescriptions: Record<SyncRenderEnum, string> = {
+  [SyncRenderEnum.Unlimited]: "",
+  [SyncRenderEnum.Half]: "",
+  [SyncRenderEnum.Sync]: "",
+  [SyncRenderEnum.FPS_60]: "",
+  [SyncRenderEnum.FPS_120]: "",
+}

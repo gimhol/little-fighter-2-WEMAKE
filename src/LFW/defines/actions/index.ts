@@ -14,4 +14,5 @@ export * from "./IAction_StealValue";
 export * from "./IAction_TurnFace";
 export * from "./IAction_TurnTeam";
 export * from "./IAction_VBuff";
+export * from "./TAction";
 /*** AUTO EXPORT END ***/

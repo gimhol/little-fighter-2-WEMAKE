@@ -18,5 +18,19 @@ export enum StageVal {
   PressRight = "press_right",
   Broadcast = "broadcast",
 }
+export const StageValDescriptions: Record<StageVal, string> = {
+  [StageVal.EnemiesCleared]: "",
+  [StageVal.DialogCleared]: "",
+  [StageVal.CurPhaseTime]: "",
+  [StageVal.CurDialogTime]: "",
+  [StageVal.PressAttack]: "",
+  [StageVal.PressJump]: "",
+  [StageVal.PressDefend]: "",
+  [StageVal.PressUp]: "",
+  [StageVal.PressDown]: "",
+  [StageVal.PressLeft]: "",
+  [StageVal.PressRight]: "",
+  [StageVal.Broadcast]: "",
+}
 export const S_Val = StageVal
 export type S_Val = StageVal

@@ -39,6 +39,15 @@ export const GKLabels: Record<LGK, string> = {
   [GK.j]: "J",
   [GK.d]: "D"
 }
+export const GKDescriptions: Record<GK, string> = {
+  [GK.L]: "",
+  [GK.R]: "",
+  [GK.U]: "",
+  [GK.D]: "",
+  [GK.a]: "",
+  [GK.j]: "",
+  [GK.d]: "",
+}
 /** 
  * 全部按键 
  * 

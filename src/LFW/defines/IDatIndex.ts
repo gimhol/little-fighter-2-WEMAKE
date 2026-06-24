@@ -12,6 +12,19 @@ export enum DatTypeEnum {
   Stage       /* */ = "stage",
   Bot         /* */ = "bot",
 }
+export const DatTypeEnumDescriptions: Record<DatTypeEnum, string> = {
+  [DatTypeEnum.Invalid]: "",
+  [DatTypeEnum.Fighter]: "",
+  [DatTypeEnum.WeaponA]: "",
+  [DatTypeEnum.WeaponB]: "",
+  [DatTypeEnum.Ball]: "",
+  [DatTypeEnum.WeaponC]: "",
+  [DatTypeEnum.Criminal]: "",
+  [DatTypeEnum.WeaponD]: "",
+  [DatTypeEnum.Background]: "",
+  [DatTypeEnum.Stage]: "",
+  [DatTypeEnum.Bot]: "",
+}
 export const suffix_map: Record<DatTypeEnum, '' | 'bg' | 'stage' | 'obj' | 'bot'> = {
   [DatTypeEnum.Invalid]: "obj",
   [DatTypeEnum.Fighter]: "obj",

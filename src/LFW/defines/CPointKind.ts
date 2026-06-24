@@ -9,3 +9,7 @@ export enum CPointKind {
    */
   Victim = 2
 }
+export const CPointKindDescriptions: Record<CPointKind, string> = {
+  [CPointKind.Attacker]: "",
+  [CPointKind.Victim]: "",
+}

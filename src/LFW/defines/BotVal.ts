@@ -13,3 +13,14 @@ export enum BotVal {
   Safe = "safe",
   EnemyOutOfRange = "en_oor",
 }
+export const BotValDescriptions: Record<BotVal, string> = {
+  [BotVal.Desire]: "",
+  [BotVal.BotState]: "",
+  [BotVal.EnemyY]: "",
+  [BotVal.EnemyDiffY]: "",
+  [BotVal.EnemyX]: "",
+  [BotVal.EnemyDiffX]: "",
+  [BotVal.EnemyState]: "",
+  [BotVal.Safe]: "",
+  [BotVal.EnemyOutOfRange]: "",
+}

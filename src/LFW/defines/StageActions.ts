@@ -3,3 +3,8 @@ export enum StageActions {
   EnterNextPhase = 'enter_next_phase',
   LoopGoGoGoRight = 'loop_gogogo_right'
 }
+export const StageActionsDescriptions: Record<StageActions, string> = {
+  [StageActions.GoGoGoRight]: "",
+  [StageActions.EnterNextPhase]: "",
+  [StageActions.LoopGoGoGoRight]: "",
+}

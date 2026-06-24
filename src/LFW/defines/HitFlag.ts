@@ -58,6 +58,26 @@ export const HIT_FLAG_DESC_MAP: Record<HitFlag, string> = {
   [HitFlag.AllyBall]: "AllyBall",
   [HitFlag.Dead]: "Dead"
 }
+export const HitFlagDescriptions: Record<HitFlag, string> = {
+  [HitFlag.Enemy]: "",
+  [HitFlag.Ally]: "",
+  [HitFlag.Ohters]: "",
+  [HitFlag.Fighter]: "",
+  [HitFlag.Weapon]: "",
+  [HitFlag.Ball]: "",
+  [HitFlag.Dead]: "",
+  [HitFlag.Both]: "",
+  [HitFlag.AllType]: "",
+  [HitFlag.AllEnemy]: "",
+  [HitFlag.AllAlly]: "",
+  [HitFlag.AllBoth]: "",
+  [HitFlag.EnemyFighter]: "",
+  [HitFlag.EnemyWeapon]: "",
+  [HitFlag.EnemyBall]: "",
+  [HitFlag.AllyFighter]: "",
+  [HitFlag.AllyWeapon]: "",
+  [HitFlag.AllyBall]: "",
+}
 export const HIT_FLAG_NAME_MAP: Record<HitFlag, string> = {
   [HitFlag.Enemy]: "Enemy",
   [HitFlag.Ally]: "Ally",

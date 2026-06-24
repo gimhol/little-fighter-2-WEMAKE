@@ -1,4 +1,4 @@
-import type { TAction } from "../../defines/TAction";
+import type { TAction } from "../../defines/actions/TAction";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import { xml_to_next_frame } from "./xml_to_next_frame";
 

@@ -8,3 +8,9 @@ export enum SpeedCtrl {
   /** 按下按键时，停止响应 */
   Disable = 3,
 }
+export const SpeedCtrlDescriptions: Record<SpeedCtrl, string> = {
+  [SpeedCtrl.None]: "",
+  [SpeedCtrl.Control]: "",
+  [SpeedCtrl.Enable]: "",
+  [SpeedCtrl.Disable]: "",
+}

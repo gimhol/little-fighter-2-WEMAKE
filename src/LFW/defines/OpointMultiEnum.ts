@@ -19,3 +19,7 @@ export enum OpointMultiEnum {
    */
   AccordingAllies = 1,
 }
+export const OpointMultiEnumDescriptions: Record<OpointMultiEnum, string> = {
+  [OpointMultiEnum.AccordingEnemies]: "",
+  [OpointMultiEnum.AccordingAllies]: "",
+}

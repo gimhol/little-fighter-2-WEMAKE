@@ -17,3 +17,8 @@ export enum TextureWrapping {
   MirroredRepeat = 1002
 }
 
+export const TextureWrappingDescriptions: Record<TextureWrapping, string> = {
+  [TextureWrapping.Repeat]: "",
+  [TextureWrapping.ClampToEdge]: "",
+  [TextureWrapping.MirroredRepeat]: "",
+}

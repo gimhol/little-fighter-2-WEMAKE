@@ -37,5 +37,13 @@ export enum WeaponType {
    */
   Drink = 5
 }
+export const WeaponTypeDescriptions: Record<WeaponType, string> = {
+  [WeaponType.None]: "",
+  [WeaponType.Stick]: "",
+  [WeaponType.Heavy]: "",
+  [WeaponType.Knife]: "",
+  [WeaponType.Baseball]: "",
+  [WeaponType.Drink]: "",
+}
 export const WT = WeaponType;
 export type WT = WeaponType;

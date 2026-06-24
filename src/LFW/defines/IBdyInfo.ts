@@ -3,7 +3,7 @@ import { ALL_HIT_FLAG, HIT_FLAG_DESC_MAP, HIT_FLAG_NAME_MAP, HitFlag } from "./H
 import type { IExpression } from "./IExpression";
 import type { IQube } from "./IQube";
 import type { IQubePair } from "./IQubePair";
-import type { TAction } from "./TAction";
+import type { TAction } from "./actions/TAction";
 import { any, fields, int, str } from "../fields";
 
 export interface IBdyInfo extends Partial<IQube> {

@@ -33,3 +33,13 @@ export enum SpeedMode {
 
   FixedAccTo = 7,
 }
+export const SpeedModeDescriptions: Record<SpeedMode, string> = {
+  [SpeedMode.Default]: "",
+  [SpeedMode.Acc]: "",
+  [SpeedMode.FixedLf2]: "",
+  [SpeedMode.FixedAcc]: "",
+  [SpeedMode.AccTo]: "",
+  [SpeedMode.Extra]: "",
+  [SpeedMode.Fixed]: "",
+  [SpeedMode.FixedAccTo]: "",
+}

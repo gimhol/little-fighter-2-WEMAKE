@@ -6,5 +6,9 @@ export enum BackgroundGroup {
   Regular = "regular",
   Hidden = "hidden"
 }
+export const BackgroundGroupDescriptions: Record<BackgroundGroup, string> = {
+  [BackgroundGroup.Regular]: "",
+  [BackgroundGroup.Hidden]: "",
+}
 export const BGG = BackgroundGroup;
 export type BGG = BackgroundGroup;

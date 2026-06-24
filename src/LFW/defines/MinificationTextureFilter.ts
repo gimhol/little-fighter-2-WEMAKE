@@ -6,3 +6,11 @@ export enum MinificationTextureFilter {
   LinearMipmapNearest = 1007,
   LinearMipmapLinear = 1008
 }
+export const MinificationTextureFilterDescriptions: Record<MinificationTextureFilter, string> = {
+  [MinificationTextureFilter.Nearest]: "",
+  [MinificationTextureFilter.NearestMipmapNearest]: "",
+  [MinificationTextureFilter.NearestMipmapLinear]: "",
+  [MinificationTextureFilter.Linear]: "",
+  [MinificationTextureFilter.LinearMipmapNearest]: "",
+  [MinificationTextureFilter.LinearMipmapLinear]: "",
+}

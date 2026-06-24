@@ -11,3 +11,15 @@ export enum SparkEnum {
   BleedFall = 'bleed_fall',
   CriticalBleed = 'critical_bleed'
 }
+export const SparkEnumDescriptions: Record<SparkEnum, string> = {
+  [SparkEnum.BrokenDefend]: "",
+  [SparkEnum.CriticalHit]: "",
+  [SparkEnum.SilentCriticalHit]: "",
+  [SparkEnum.DefendHit]: "",
+  [SparkEnum.Hit]: "",
+  [SparkEnum.HitFall]: "",
+  [SparkEnum.SilentHit]: "",
+  [SparkEnum.Bleed]: "",
+  [SparkEnum.BleedFall]: "",
+  [SparkEnum.CriticalBleed]: "",
+}

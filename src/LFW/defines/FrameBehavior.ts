@@ -193,3 +193,19 @@ export const FRAME_BEHAVIOR_DESC_MAP: Record<FrameBehavior, string> = {
   [FrameBehavior.JulianBall]: "连环重炮",
 };
 
+export const FrameBehaviorDescriptions: Record<FrameBehavior, string> = {
+  [FrameBehavior.JohnChase]: "",
+  [FrameBehavior.DennisChase]: "",
+  [FrameBehavior.Boomerang]: "",
+  [FrameBehavior.AngelBlessing]: "",
+  [FrameBehavior.AngelBlessingStart]: "",
+  [FrameBehavior.DevilJudgementStart]: "",
+  [FrameBehavior.ChasingSameEnemy]: "",
+  [FrameBehavior.BatStart]: "",
+  [FrameBehavior.FirzenDisasterStart]: "",
+  [FrameBehavior.JohnBiscuitLeaving]: "",
+  [FrameBehavior.FirzenVolcanoStart]: "",
+  [FrameBehavior.Bat]: "",
+  [FrameBehavior.JulianBallStart]: "",
+  [FrameBehavior.JulianBall]: "",
+}
