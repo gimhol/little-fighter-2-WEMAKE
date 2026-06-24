@@ -23,7 +23,7 @@ export class ImgLoop extends UIComponent<IImgLoopProps> {
     duration: Number,
   }
   readonly anim = new Easing(0, 1).set_duration(1000)
-    .set_ease_method(ease_linearity)
+    .set_easing(ease_linearity)
     .set_times(0)
     .set_fill_mode(1)
   readonly rects: IRect[] = [];

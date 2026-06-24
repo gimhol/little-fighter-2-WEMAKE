@@ -2,7 +2,7 @@ import { ease_linearity, Easing } from "@/LFW";
 
 test("[Easing] linearity, case 0", () => {
   const anim = new Easing(0, 1)
-    .set_ease_method(ease_linearity)
+    .set_easing(ease_linearity)
     .set_duration(1000);
 
   anim.start();

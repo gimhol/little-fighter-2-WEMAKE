@@ -10,7 +10,6 @@ export * from "./IUIInfo.dat";
 export * from "./IUIKeyEvent";
 export * from "./IUIPointerEvent";
 export * from "./LFWUIEvent";
-export * from "./Schema_IUIImgInfo";
 export * from "./Style";
 export * from "./UIActionEnum";
 export * from "./UIEvent";

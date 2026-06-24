@@ -1,6 +1,6 @@
 import { validate_schema } from "../../utils/schema/validate_schema";
 import type { IUIImgInfo } from "../IUIImgInfo.dat";
-import { Schema_IUIImgInfo } from "../Schema_IUIImgInfo";
+import { Schema_IUIImgInfo } from "../IUIImgInfo.dat";
 
 export function validate_ui_img_info(any: any, errors: string[] = [], warnings: string[] = []): any is IUIImgInfo {
   const fn = 'validate_ui_img_info';

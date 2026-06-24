@@ -33,7 +33,7 @@ export class OpacityAnimation extends UIComponent {
             .set_duration(duration) :
           new Easing(prev_opacity, opacity)
             .set_duration(duration)
-            .set_ease_method(ease_linearity)
+            .set_easing(ease_linearity)
       )
     }
     this._anim = new Sequence(...anims).set_fill_mode(1)

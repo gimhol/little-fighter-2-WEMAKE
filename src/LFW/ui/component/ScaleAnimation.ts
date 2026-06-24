@@ -26,7 +26,7 @@ export class ScaleAnimation extends UIComponent {
         new Delay(0).set_duration(duration) :
         new Easing(0, 1)
           .set_duration(duration)
-          .set_ease_method(ease_linearity)
+          .set_easing(ease_linearity)
 
       this.values.set(a,
         [

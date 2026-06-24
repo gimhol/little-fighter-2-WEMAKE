@@ -29,7 +29,7 @@ export class PositionAnimation extends UIComponent {
           .set_duration(duration) :
         new Easing(0, 1)
           .set_duration(duration)
-          .set_ease_method(ease_in_out_sine)
+          .set_easing(ease_in_out_sine)
 
       this.values.set(a, [prev_value, value.clone().sub(prev_value)])
       anims.push(a)

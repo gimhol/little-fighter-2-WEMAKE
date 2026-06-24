@@ -50,7 +50,7 @@ export class OpacityFlash extends UIComponent implements IPlayable {
       anims.push(
         prev_o === next_o ?
           new Delay(next_o).set_duration(duration) :
-          new Easing(prev_o, next_o).set_duration(duration).set_ease_method(ease_linearity)
+          new Easing(prev_o, next_o).set_duration(duration).set_easing(ease_linearity)
       )
     }
     this._anim = new Sequence(...anims)
