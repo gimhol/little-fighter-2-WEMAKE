@@ -1,4 +1,4 @@
-import { acos, max, min, PI, pow } from "../math";
+import { max, min, pow } from "../math";
 
 export function ease_in_out_quint(factor: number, from = 0, to = 1): number {
   const ratio =
@@ -12,5 +12,9 @@ ease_in_out_quint.backward = function (v: number, from = 0, to = 1): number {
   if (v < _min) v = _min;
   if (v > _max) v = _max;
   const ratio = (v - from) / (to - from);
-  return acos(-2 * ratio + 1) / PI;
+  if (ratio < 0.5) {
+    return pow(ratio / 16, 0.2);
+  } else {
+    return 1 - pow(2 * (1 - ratio), 0.2) / 2;
+  }
 };

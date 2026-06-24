@@ -1,6 +1,6 @@
 import { Animation, Delay, Easing, Sequence } from "../../animation";
 import type { IVector3 } from '../../defines/IVector3';
-import { ease_in_out_sine } from "../../utils/ease_method/ease_in_out_sine";
+import { ease_in_out_sine } from "../../utils/easing/ease_in_out_sine";
 import { UIComponent } from "./UIComponent";
 
 

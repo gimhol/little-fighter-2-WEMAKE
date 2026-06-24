@@ -3,12 +3,12 @@
  * @date 4/3/2024 - 4:25:28 PM
  *
  * @export
- * @interface IEaseMethod
- * @typedef {IEaseMethod}
+ * @interface IEasing
+ * @typedef {IEasing}
  * @template [Factor=number]
  * @template [Value=number]
  */
-export interface IEaseMethod<Factor = number, Value = number> {
+export interface IEasing<Factor = number, Value = number> {
   /**
    * 缓动函数
    * @date 4/3/2024 - 4:26:08 PM

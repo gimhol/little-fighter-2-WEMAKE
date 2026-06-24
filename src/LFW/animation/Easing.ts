@@ -1,9 +1,9 @@
-import { clamp, ease_in_out_sine, type IEaseMethod, is_num } from "../utils";
+import { clamp, ease_in_out_sine, type IEasing, is_num } from "../utils";
 import { Animation } from "./Animation";
 export class Easing extends Animation {
   protected _val_1 = 0;
   protected _val_2 = 1;
-  protected _ease_method: IEaseMethod = ease_in_out_sine;
+  protected _ease_method: IEasing = ease_in_out_sine;
 
   get val_1(): number { return this._val_1; }
   set val_1(v: number) { this._val_1 = v; }
@@ -13,10 +13,10 @@ export class Easing extends Animation {
   set val_2(v: number) { this._val_2 = v; }
   set_val_2(v: number): this { this._val_2 = v; return this; }
 
-  get ease_method(): IEaseMethod {
+  get ease_method(): IEasing {
     return this._ease_method;
   }
-  set ease_method(v: IEaseMethod) {
+  set ease_method(v: IEasing) {
     this._ease_method = v;
   }
 
@@ -30,7 +30,7 @@ export class Easing extends Animation {
     this._val_2 = is_num(end) ? end : this._val_2;
     return this;
   }
-  set_ease_method(v: IEaseMethod) {
+  set_ease_method(v: IEasing) {
     this._ease_method = v;
     return this;
   }

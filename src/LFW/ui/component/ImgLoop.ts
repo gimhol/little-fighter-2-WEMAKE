@@ -1,6 +1,6 @@
 import { Easing } from "../../animation";
 import type { IRect } from '../../defines/IRect';
-import { ease_linearity } from "../../utils/ease_method/ease_linearity";
+import { ease_linearity } from "../../utils/easing/ease_linearity";
 import { floor } from "../../utils/math/base";
 import type { IPropsMeta } from '../../utils/schema/make_schema';
 import { UIComponent } from "./UIComponent";

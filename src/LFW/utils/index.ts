@@ -7,7 +7,7 @@ export * from "./make_private_properties";
 export * from "./utf8";
 export * from "./array";
 export * from "./container_help";
-export * from "./ease_method";
+export * from "./easing";
 export * from "./math";
 export * from "./schema";
 export * from "./string_parser";

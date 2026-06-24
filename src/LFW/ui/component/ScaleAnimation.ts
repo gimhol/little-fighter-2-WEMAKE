@@ -1,6 +1,6 @@
 import { Animation, Delay, Easing, Sequence } from "../../animation";
 import type { IVector3 } from '../../defines/IVector3';
-import { ease_linearity } from "../../utils/ease_method/ease_linearity";
+import { ease_linearity } from "../../utils/easing/ease_linearity";
 import { UIComponent } from "./UIComponent";
 
 export class ScaleAnimation extends UIComponent {
