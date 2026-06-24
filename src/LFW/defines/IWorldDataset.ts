@@ -2,6 +2,7 @@ import { any, fields, flt, int } from "../fields";
 import { make_schema } from "../utils/schema";
 import { CheatType } from "./CheatType";
 import { Difficulty } from "./Difficulty";
+import type { ISchemaMeta } from "./ISchema";
 import { SyncRenderEnum } from "./SyncRenderEnum";
 
 export interface IWorldDataset {
@@ -369,7 +370,8 @@ export const world_dataset_fields = fields<IWorldDataset>({
   [CheatType.LF2_NET]: int({ min: 0, max: 1 }),
 })
 
-export const Schema_IWorldDataset = make_schema<IWorldDataset>({
+
+const params: ISchemaMeta<IWorldDataset> = {
   key: "IWorldDataset",
   type: "object",
   properties: {
@@ -471,4 +473,10 @@ export const Schema_IWorldDataset = make_schema<IWorldDataset>({
     [CheatType.HERO_FT]: { type: 'number' },
     [CheatType.LF2_NET]: { type: 'number' },
   },
-});
+}
+export const Schema_IWorldDataset = make_schema<IWorldDataset>(params);
+
+for (const k in params.properties) {
+  (params.properties as any)[k].nullable = true
+}
+export const Schema_IWorldDataset_Partial = make_schema<IWorldDataset>(params);

@@ -14,7 +14,7 @@ import type { TNextFrame } from "./INextFrame";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IQubePair } from "./IQubePair";
 import type { IVelocityInfo } from "./IVelocityInfo";
-import { type IWorldDataset, Schema_IWorldDataset, world_dataset_fields } from "./IWorldDataset";
+import { type IWorldDataset, Schema_IWorldDataset_Partial, world_dataset_fields } from "./IWorldDataset";
 import type { IWpointInfo } from "./IWpointInfo";
 import type { StateEnum } from "./StateEnum";
 
@@ -365,41 +365,44 @@ export const Schema_IFrameInfo = make_schema<IFrameInfo>({
     invisible: { type: 'number', number: { int: true, nagetive: false }, nullable: true },
     no_shadow: { type: 'number', oneof: [0, 1], nullable: true },
     jump_flag: { type: 'number', oneof: [0, 1], nullable: true },
-    pic: { type: 'object', nullable: true },
-    next: { type: 'object' },
+    pic: { type: 'object', nullable: true },// TODO!
+    next: { type: 'object' },// TODO!
     width: { type: 'number' },
     height: { type: 'number' },
-    hold: { type: 'object', nullable: true },
-    hit: { type: 'object', nullable: true },
-    key_down: { type: 'object', nullable: true },
-    key_up: { type: 'object', nullable: true },
-    seqs: { type: 'object', nullable: true },
-    bdy: { type: 'array', nullable: true },
-    itr: { type: 'array', nullable: true },
-    wpoint: { type: 'object', nullable: true },
-    bpoint: { type: 'object', nullable: true },
-    opoint: { type: 'array', nullable: true },
-    cpoint: { type: 'object', nullable: true },
-    on_dead: { type: 'object', nullable: true },
-    on_exhaustion: { type: 'object', nullable: true },
-    on_landing: { type: 'object', nullable: true },
+    hold: { type: 'object', nullable: true },// TODO!
+    hit: { type: 'object', nullable: true },// TODO!
+    key_down: { type: 'object', nullable: true },// TODO!
+    key_up: { type: 'object', nullable: true },// TODO!
+    seqs: { type: 'object', nullable: true },// TODO!
+    bdy: { type: 'array', nullable: true, items: { type: 'object' } }, // TODO!
+    itr: { type: 'array', nullable: true, items: { type: 'object' } }, // TODO!
+    wpoint: { type: 'object', nullable: true },// TODO!
+    bpoint: { type: 'object', nullable: true },// TODO!
+    opoint: { type: 'array', nullable: true, items: { type: 'object' } },// TODO!
+    cpoint: { type: 'object', nullable: true },// TODO!
+    on_dead: { type: 'object', nullable: true },// TODO!
+    on_exhaustion: { type: 'object', nullable: true },// TODO!
+    on_landing: { type: 'object', nullable: true },// TODO!
     behavior: { type: 'number', nullable: true },
-    chase: { type: 'object', nullable: true },
+    chase: { type: 'object', nullable: true },// TODO!
     gravity_enabled: { type: 'boolean', nullable: true },
-    broadcasts: { type: 'array', nullable: true },
+    broadcasts: { type: 'array', nullable: true, items: { type: 'string' } },
     facing: { type: 'number', nullable: true },
     landable: { type: 'number', nullable: true },
-    indicator_info: { type: 'object', nullable: true },
+
+    ctrl_x: { type: 'number', nullable: true },
+    ctrl_y: { type: 'number', nullable: true },
+    ctrl_z: { type: 'number', nullable: true },
+
     __tex: { type: 'object', nullable: true },
+    indicator_info: { type: 'object', nullable: true },
     __aabb_x1: { type: 'number', nullable: true },
     __aabb_x2: { type: 'number', nullable: true },
     __aabb_z1: { type: 'number', nullable: true },
     __aabb_z2: { type: 'number', nullable: true },
     seq_map: { type: 'object', nullable: true },
-    ctrl_x: { type: 'number', nullable: true },
-    ctrl_y: { type: 'number', nullable: true },
-    ctrl_z: { type: 'number', nullable: true },
-    ...Schema_IWorldDataset.properties!,
+
+    ...Schema_IWorldDataset_Partial.properties!
   },
 });
 
