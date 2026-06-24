@@ -1,7 +1,7 @@
 import { type IState, FSM } from "../../base/FSM";
+import type { IPropsMeta } from "../../defines/ISchema";
 import { Ditto } from "../../ditto";
 import type { ILFWCallback } from "../../ILFWCallback";
-import type { IPropsMeta } from "../../utils/schema/make_schema";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { IUIPointerEvent } from "../IUIPointerEvent";
 import { UINode } from "../UINode";
@@ -12,7 +12,6 @@ import { PositionAnimation } from "./PositionAnimation";
 import { ScaleAnimation } from "./ScaleAnimation";
 import { SineOpacity } from "./SineOpacity";
 import { UIComponent } from "./UIComponent";
-
 
 enum Status {
   TapHints = 'TapHints',

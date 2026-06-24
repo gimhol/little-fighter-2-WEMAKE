@@ -1,5 +1,5 @@
+import type { IPropsMeta } from "../../defines/ISchema";
 import { UIComponent } from './UIComponent';
-import type { IPropsMeta } from '../../utils/schema/make_schema';
 
 export interface IFocusBehaviorProps {
   behavior?: string;

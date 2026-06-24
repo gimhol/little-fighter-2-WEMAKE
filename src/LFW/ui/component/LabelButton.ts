@@ -1,5 +1,5 @@
 import { Easing } from '../../animation/Easing';
-import type { IPropsMeta } from '../../utils/schema/make_schema';
+import type { IPropsMeta } from "../../defines/ISchema";
 import { UINode } from '../UINode';
 import { Label } from './Label';
 import { UIComponent } from './UIComponent';

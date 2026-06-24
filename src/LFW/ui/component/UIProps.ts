@@ -1,4 +1,5 @@
-import { make_schema, type IPropsMeta } from '../../utils/schema/make_schema';
+import type { IPropsMeta } from '../../defines/ISchema';
+import { make_schema } from '../../utils/schema/make_schema';
 import { SchemaValidator } from "../../utils/schema/validate_schema";
 import { is_num } from '../../utils/type_check/is_num';
 import { is_str } from '../../utils/type_check/is_str';

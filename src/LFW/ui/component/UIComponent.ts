@@ -1,10 +1,9 @@
 import { Keys } from "../../Keys";
 import { Callbacks } from "../../base";
 import { type IDebugging, make_debugging } from "../../base/Debugging";
-import type { IVector3 } from "../../defines";
+import type { IPropsMeta, IVector3 } from "../../defines";
 import { Ditto } from "../../ditto";
 import { is_num } from '../../utils/type_check/is_num';
-import type { IPropsMeta } from "../../utils/schema/make_schema";
 import type { IComponentInfo } from "../IComponentInfo";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import { LF2PointerEvent } from "../LF2PointerEvent";

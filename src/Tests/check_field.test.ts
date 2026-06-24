@@ -1,52 +1,67 @@
-import { check_field, one_of } from "../LFW/ui/utils/check_field"
+import type { ISchema } from "../LFW/defines/ISchema";
+import { SchemaValidator } from "../LFW/utils/schema/validate_schema";
 
-test("check_field: string, str_0: 'world'", () => {
-  const key = 'str_0'
-  const obj: { str_0?: string } = { [key]: 'world' }
-  expect(check_field(obj, 'obj', key, 'string')).toBe(true)
-  expect(check_field(obj, 'obj', key, ['string'])).toBe(true)
-  expect(check_field(obj, 'obj', key, one_of('world'))).toBe(true)
-  expect(check_field(obj, 'obj', key, ['string', 'number'])).toBe(true)
-  expect(check_field(obj, 'obj', key, [one_of('world'), 'number'])).toBe(true)
-  expect(check_field(obj, 'obj', key, 'number')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'bigint')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'boolean')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'function')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'object')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'symbol')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'undefined')).toBe(false)
-  expect(check_field(obj, 'obj', key, ['number'])).toBe(false)
-  expect(check_field(obj, 'obj', key, one_of('world2'))).toBe(false)
-  expect(check_field(obj, 'obj', key, ['boolean', 'number'])).toBe(false)
-  expect(check_field(obj, 'obj', key, [one_of('world2'), 'number'])).toBe(false)
+function v(value: any, schema: ISchema) {
+  const validator = new SchemaValidator();
+  return validator.validate(value, schema);
+}
 
-  delete obj.str_0;
-  expect(check_field(obj, 'obj', key, ['undefined', 'string'])).toBe(true)
-  expect(check_field(obj, 'obj', key, [one_of('world'), 'undefined'])).toBe(true)
-})
+test("SchemaValidator: string, str_0: 'world'", () => {
+  const schema: ISchema = {
+    key: 'test',
+    type: 'object',
+    properties: { str_0: { type: 'string' } },
+  };
+  expect(v({ str_0: 'world' }, schema)).toBe(true);
 
-test("check_field: number, num_0: 111", () => {
-  const key = 'num_0'
-  const obj: { num_0?: number } = { [key]: 111 }
-  expect(check_field(obj, 'obj', key, 'number')).toBe(true)
-  expect(check_field(obj, 'obj', key, ['number'])).toBe(true)
-  expect(check_field(obj, 'obj', key, ['number', 'string'])).toBe(true)
-  expect(check_field(obj, 'obj', key, one_of(111))).toBe(true)
-  expect(check_field(obj, 'obj', key, [one_of(111), 'string'])).toBe(true)
-  expect(check_field(obj, 'obj', key, 'string')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'bigint')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'boolean')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'function')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'object')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'symbol')).toBe(false)
-  expect(check_field(obj, 'obj', key, 'undefined')).toBe(false)
-  expect(check_field(obj, 'obj', key, ['string'])).toBe(false)
-  expect(check_field(obj, 'obj', key, ['boolean', 'string'])).toBe(false)
-  expect(check_field(obj, 'obj', key, one_of(112))).toBe(false)
-  expect(check_field(obj, 'obj', key, [one_of(112, 110), 'string'])).toBe(false)
+  // nullable
+  const schema_n: ISchema = {
+    key: 'test',
+    type: 'object',
+    properties: { str_0: { type: 'string', nullable: true } },
+  };
+  expect(v({}, schema_n)).toBe(true);
+});
 
-  delete obj.num_0;
-  expect(check_field(obj, 'obj', key, 'undefined')).toBe(true)
-  expect(check_field(obj, 'obj', key, ['undefined', 'number'])).toBe(true)
-  expect(check_field(obj, 'obj', key, ['undefined', one_of(111, 110)])).toBe(true)
-})
+test("SchemaValidator: number, num_0: 111", () => {
+  const schema: ISchema = {
+    key: 'test',
+    type: 'object',
+    properties: { num_0: { type: 'number' } },
+  };
+  expect(v({ num_0: 111 }, schema)).toBe(true);
+
+  // wrong type
+  expect(v({ num_0: 'hello' }, schema)).toBe(false);
+
+  // nullable
+  const schema_n: ISchema = {
+    key: 'test',
+    type: 'object',
+    properties: { num_0: { type: 'number', nullable: true } },
+  };
+  expect(v({}, schema_n)).toBe(true);
+});
+
+test("SchemaValidator: oneof", () => {
+  const schema: ISchema = {
+    key: 'test',
+    type: 'object',
+    properties: { val: { type: 'number', oneof: [0, 1] } },
+  };
+  expect(v({ val: 0 }, schema)).toBe(true);
+  expect(v({ val: 1 }, schema)).toBe(true);
+  expect(v({ val: 2 }, schema)).toBe(false);
+});
+
+test("SchemaValidator: warnings for unexpected keys", () => {
+  const schema: ISchema = {
+    key: 'test',
+    type: 'object',
+    properties: { a: { type: 'string' } },
+  };
+  const validator = new SchemaValidator();
+  validator.validate({ a: 'ok', b: 123 }, schema);
+  expect(validator.warnings.length).toBeGreaterThan(0);
+  expect(validator.warnings.some(w => w.includes('b'))).toBe(true);
+});

@@ -1,4 +1,5 @@
 import { any, fields, flt, int, str } from "../fields";
+import { make_schema } from "../utils/schema";
 import { ALL_FACING_FLAG, FACING_FLAG_DESC_MAP, FACING_FLAG_LABEL_MAP, FacingFlag } from "./FacingFlag";
 import { ALL_FRAME_BEHAVIOR, FRAME_BEHAVIOR_DESC_MAP, FRAME_BEHAVIOR_LABEL_MAP, FrameBehavior } from "./FrameBehavior";
 import type { IBdyInfo } from "./IBdyInfo";
@@ -13,7 +14,7 @@ import type { TNextFrame } from "./INextFrame";
 import type { IOpointInfo } from "./IOpointInfo";
 import type { IQubePair } from "./IQubePair";
 import type { IVelocityInfo } from "./IVelocityInfo";
-import { type IWorldDataset, world_dataset_fields } from "./IWorldDataset";
+import { type IWorldDataset, Schema_IWorldDataset, world_dataset_fields } from "./IWorldDataset";
 import type { IWpointInfo } from "./IWpointInfo";
 import type { StateEnum } from "./StateEnum";
 
@@ -340,4 +341,65 @@ export const frame_info_fields = fields<IFrameInfo>(
   },
   world_dataset_fields
 );
+
+export const Schema_IFrameInfo = make_schema<IFrameInfo>({
+  key: "IFrameInfo",
+  type: "object",
+  properties: {
+    id: { type: 'string' },
+    name: { type: 'string' },
+    state: { type: 'number' },
+    wait: { type: 'number' },
+    dvx: { type: 'number', nullable: true },
+    dvy: { type: 'number', nullable: true },
+    dvz: { type: 'number', nullable: true },
+    acc_x: { type: 'number', nullable: true },
+    acc_y: { type: 'number', nullable: true },
+    acc_z: { type: 'number', nullable: true },
+    vxm: { type: 'number', nullable: true },
+    vym: { type: 'number', nullable: true },
+    vzm: { type: 'number', nullable: true },
+    centerx: { type: 'number' },
+    centery: { type: 'number' },
+    sound: { type: 'string', nullable: true },
+    invisible: { type: 'number', number: { int: true, nagetive: false }, nullable: true },
+    no_shadow: { type: 'number', oneof: [0, 1], nullable: true },
+    jump_flag: { type: 'number', oneof: [0, 1], nullable: true },
+    pic: { type: 'object', nullable: true },
+    next: { type: 'object' },
+    width: { type: 'number' },
+    height: { type: 'number' },
+    hold: { type: 'object', nullable: true },
+    hit: { type: 'object', nullable: true },
+    key_down: { type: 'object', nullable: true },
+    key_up: { type: 'object', nullable: true },
+    seqs: { type: 'object', nullable: true },
+    bdy: { type: 'array', nullable: true },
+    itr: { type: 'array', nullable: true },
+    wpoint: { type: 'object', nullable: true },
+    bpoint: { type: 'object', nullable: true },
+    opoint: { type: 'array', nullable: true },
+    cpoint: { type: 'object', nullable: true },
+    on_dead: { type: 'object', nullable: true },
+    on_exhaustion: { type: 'object', nullable: true },
+    on_landing: { type: 'object', nullable: true },
+    behavior: { type: 'number', nullable: true },
+    chase: { type: 'object', nullable: true },
+    gravity_enabled: { type: 'boolean', nullable: true },
+    broadcasts: { type: 'array', nullable: true },
+    facing: { type: 'number', nullable: true },
+    landable: { type: 'number', nullable: true },
+    indicator_info: { type: 'object', nullable: true },
+    __tex: { type: 'object', nullable: true },
+    __aabb_x1: { type: 'number', nullable: true },
+    __aabb_x2: { type: 'number', nullable: true },
+    __aabb_z1: { type: 'number', nullable: true },
+    __aabb_z2: { type: 'number', nullable: true },
+    seq_map: { type: 'object', nullable: true },
+    ctrl_x: { type: 'number', nullable: true },
+    ctrl_y: { type: 'number', nullable: true },
+    ctrl_z: { type: 'number', nullable: true },
+    ...Schema_IWorldDataset.properties!,
+  },
+});
 

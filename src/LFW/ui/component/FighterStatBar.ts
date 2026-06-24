@@ -1,7 +1,6 @@
+import { Defines, T_E, type IPropsMeta } from "../../defines";
 import { Entity, type IEntityCallbacks } from "../../entity";
-import { Defines, T_E } from "../../defines";
 import { StatBarType } from "../../entity/StatBarType";
-import type { IPropsMeta } from "../../utils/schema/make_schema";
 import { UINode } from "../UINode";
 import { Label } from "./Label";
 import { Picture } from "./Picture";

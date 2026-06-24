@@ -1,10 +1,5 @@
-import type { ISchema, ISchemaPropertyTypes } from "../../defines/ISchema";
-export type IPropsMeta<T = any> = Record<keyof T, ISchemaMeta | ISchemaPropertyTypes>
-export interface ISchemaMeta<T = any> extends Omit<ISchema<T>, 'properties' | 'type' | 'items' | 'path'> {
-  type?: ISchema<T>['type'];
-  properties?: IPropsMeta<T>;
-  items?: ISchemaMeta | ISchemaPropertyTypes;
-}
+import type { ISchema, ISchemaMeta } from "../../defines/ISchema";
+
 export function make_schema<T = any>(meta: ISchemaMeta<T>, parent?: ISchema): ISchema<T> {
   if (!parent && !meta.key) throw new Error('[make_schema] root scheme key not set!')
 

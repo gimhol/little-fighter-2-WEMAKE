@@ -1,10 +1,10 @@
-import { Label } from './Label';
 import { Difficulty } from "../../defines";
+import type { IPropsMeta } from "../../defines/ISchema";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import type { IUIPointerEvent } from "../IUIPointerEvent";
 import { type IJalousieCallbacks, Jalousie } from "./Jalousie";
+import { Label } from './Label';
 import { UIComponent } from "./UIComponent";
-import type { IPropsMeta } from '../../utils/schema/make_schema';
 
 export interface IEndingPageLogicProps {
   label: Label | undefined;

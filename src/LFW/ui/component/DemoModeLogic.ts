@@ -1,6 +1,7 @@
 import { FSM } from "../../base/FSM";
 import { Defines, EntityGroup, GameKey } from "../../defines";
 import { FacingFlag } from "../../defines/FacingFlag";
+import type { IPropsMeta } from "../../defines/ISchema";
 import type { IStageInfo } from "../../defines/IStageInfo";
 import type { IStagePhaseInfo } from "../../defines/IStagePhaseInfo";
 import { StageActions } from "../../defines/StageActions";
@@ -16,7 +17,6 @@ import type { IStageCallbacks } from "../../stage/IStageCallbacks";
 import { Stage } from "../../stage/Stage";
 import { traversal } from '../../utils/container_help/traversal';
 import { range } from "../../utils/math/range";
-import type { IPropsMeta } from '../../utils/schema/make_schema';
 import { Times } from "../../utils/Times";
 import type { IUIKeyEvent } from "../IUIKeyEvent";
 import { UINode } from "../UINode";

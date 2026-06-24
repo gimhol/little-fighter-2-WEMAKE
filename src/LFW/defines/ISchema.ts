@@ -14,13 +14,16 @@ export type ISchemaPropertyTypes =
   StringConstructor |
   NumberConstructor |
   ObjectConstructor;
-export interface ISchema<T = any> {
-  path?: string;
+
+export type IPropsMeta<T = any> = Record<keyof T, ISchemaMeta | ISchemaPropertyTypes>
+
+export interface ISchemaMeta<T = any> {
   key?: string;
   description?: string;
-  type: ISchemaPropertyTypes,
-  properties?: Record<keyof T, ISchema>
-  items?: ISchema;
+  type?: ISchema<T>['type'];
+  properties?: IPropsMeta<T>;
+  items?: ISchemaMeta | ISchemaPropertyTypes;
+  path?: string;
   string?: {
     not_empty?: boolean;
     not_blank?: boolean;
@@ -34,5 +37,10 @@ export interface ISchema<T = any> {
   },
   dont_validate?: boolean;
   oneof?: (string | number | boolean)[];
+}
+export interface ISchema<T = any> extends ISchemaMeta<T> {
+  type: ISchemaPropertyTypes,
+  properties?: Record<keyof T, ISchema>
+  items?: ISchema;
 }
 

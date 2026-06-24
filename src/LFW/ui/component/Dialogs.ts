@@ -1,7 +1,7 @@
 import type { IDialogInfo } from "../../defines/IDialogInfo";
+import type { IPropsMeta } from "../../defines/ISchema";
 import { Ditto } from "../../ditto/Instance";
 import { Transform } from "../../Transform";
-import type { IPropsMeta } from "../../utils/schema/make_schema";
 import { UIImgLoader } from "../UIImgLoader";
 import { UINode } from "../UINode";
 import { Label } from "./Label";

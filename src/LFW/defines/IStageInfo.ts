@@ -1,4 +1,5 @@
 import { any, fields, str } from "../fields";
+import { make_schema } from "../utils/schema";
 import type { IStagePhaseInfo } from "./IStagePhaseInfo";
 /**
  * 关卡信息
@@ -92,4 +93,23 @@ export const stage_info_fields = fields<IStageInfo>({
   starting_name: str('起点名称'),
   title: str('大标题'),
   group: str('分组', { array: true }),
+});
+
+export const Schema_IStageInfo = make_schema<IStageInfo>({
+  key: "IStageInfo",
+  type: "object",
+  properties: {
+    id: { type: 'string' },
+    bg: { type: 'string' },
+    name: { type: 'string' },
+    phases: { type: 'array', items: { type: 'object' } },
+    chapter: { type: 'string', nullable: true },
+    next: { type: 'string', nullable: true },
+    cond_end: { type: 'string', nullable: true },
+    act_of_goto_next: { type: 'string', nullable: true },
+    is_starting: { type: 'boolean', nullable: true },
+    starting_name: { type: 'string', nullable: true },
+    title: { type: 'string', nullable: true },
+    group: { type: 'array', items: { type: 'string' }, nullable: true },
+  },
 });

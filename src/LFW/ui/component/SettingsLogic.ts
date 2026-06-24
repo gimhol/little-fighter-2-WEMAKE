@@ -1,4 +1,4 @@
-import type { IPropsMeta } from '../../utils/schema/make_schema';
+import type { IPropsMeta } from "../../defines/ISchema";
 import type { IUICallback } from '../IUICallback';
 import { UINode } from '../UINode';
 import { LabelButton } from './LabelButton';

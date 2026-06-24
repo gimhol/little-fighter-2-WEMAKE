@@ -1,4 +1,4 @@
-import type { IPropsMeta } from "../../utils/schema/make_schema";
+import type { IPropsMeta } from "../../defines/ISchema";
 import type { TFlexAlign } from "./Flex";
 import { ALL_FLEX_ALIGN } from "./FlexAlign";
 import { UIComponent } from "./UIComponent";

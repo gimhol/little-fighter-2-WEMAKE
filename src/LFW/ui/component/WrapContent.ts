@@ -1,4 +1,4 @@
-import type { IPropsMeta } from "../../utils/schema/make_schema";
+import type { IPropsMeta } from "../../defines/ISchema";
 import { max, min } from "../../utils/math";
 import type { IUICompnentCallbacks } from "./IUICompnentCallbacks";
 import { UIComponent } from "./UIComponent";

@@ -1,5 +1,5 @@
+import type { IPropsMeta } from "../../defines/ISchema";
 import { Ditto } from "../../ditto";
-import { type IPropsMeta } from '../../utils/schema/make_schema';
 import { type IUIImgInfo } from '../IUIImgInfo.dat';
 import { UIImgLoader } from "../UIImgLoader";
 import { UIComponent } from './UIComponent';

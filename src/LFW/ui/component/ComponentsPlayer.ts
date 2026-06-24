@@ -1,4 +1,4 @@
-import type { IPropsMeta } from "../../utils/schema";
+import type { IPropsMeta } from "../../defines/ISchema";
 import { type IPlayable, is_playable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
 

@@ -1,15 +1,15 @@
 import { Delay, Easing, Sequence } from "../../animation";
 import { Animation } from "../../animation/Animation";
+import type { IPropsMeta } from "../../defines/ISchema";
 import { ease_linearity } from "../../utils/easing/ease_linearity";
 import type { IPlayable } from "./IPlayable";
 import { UIComponent } from "./UIComponent";
-import type { IPropsMeta } from "../../utils/schema/make_schema";
 
 export interface IOpacityFlashProps {
   steps?: number[];
   times?: number;
 }
-export class OpacityFlash extends UIComponent implements IPlayable {
+export class OpacityFlash extends UIComponent<IOpacityFlashProps> implements IPlayable {
   static override readonly TAGS: string[] = ["OpacityFlash"];
   static override readonly PROPS: IPropsMeta<IOpacityFlashProps> = {
     steps: {
@@ -38,7 +38,7 @@ export class OpacityFlash extends UIComponent implements IPlayable {
         0, 350, 1, 100, 1, 350, 0, 350, 1, 100,
         1, 350, 0, 350, 1, 100, 1, 350, 0
       ]
-    } = this.props_holder.validate(OpacityFlash)!;
+    } = this.props;
 
     const anims: Animation[] = [];
     for (let i = 1; i < steps.length; i += 2) {

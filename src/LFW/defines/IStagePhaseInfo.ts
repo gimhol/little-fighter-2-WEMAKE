@@ -1,8 +1,9 @@
+import { any, fields, flt, int, str } from "../fields";
+import { make_schema } from "../utils/schema";
 import type { Difficulty } from "./Difficulty";
 import type { IDialogInfo } from "./IDialogInfo";
 import type { IExpression } from "./IExpression";
 import type { IStageObjectInfo } from "./IStageObjectInfo";
-import { any, fields, flt, int, str } from "../fields";
 /**
  * 关卡阶段信息
  *
@@ -150,4 +151,15 @@ export const stage_phase_info_fields = fields<Partial<IStagePhaseInfo>>({
   world_pause: int('世界暂停'),
   control_disabled: int('禁用控制'),
   weapon_rain_disabled: int('禁用武器雨'),
+});
+
+type PhaseCheckable = Pick<IStagePhaseInfo, 'bound' | 'desc'>;
+
+export const Schema_IStagePhaseInfo = make_schema<PhaseCheckable>({
+  key: "IStagePhaseInfo",
+  type: "object",
+  properties: {
+    bound: { type: 'number' },
+    desc: { type: 'string', nullable: true },
+  },
 });

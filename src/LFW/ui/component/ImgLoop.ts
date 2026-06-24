@@ -1,8 +1,8 @@
 import { Easing } from "../../animation";
 import type { IRect } from '../../defines/IRect';
+import type { IPropsMeta } from "../../defines/ISchema";
 import { ease_linearity } from "../../utils/easing/ease_linearity";
 import { floor } from "../../utils/math/base";
-import type { IPropsMeta } from '../../utils/schema/make_schema';
 import { UIComponent } from "./UIComponent";
 export interface IImgLoopProps {
   w: number,

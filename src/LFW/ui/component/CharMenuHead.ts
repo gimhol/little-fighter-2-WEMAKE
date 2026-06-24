@@ -1,6 +1,6 @@
 import { Sine } from "../../animation/Sine";
+import type { IPropsMeta } from "../../defines/ISchema";
 import { floor } from '../../utils/math/base';
-import type { IPropsMeta } from '../../utils/schema/make_schema';
 import { UINode } from '../UINode';
 import { GamePrepareLogic } from "./GamePrepareLogic";
 import { Label } from './Label';
