@@ -1,8 +1,4 @@
-
-export interface IVector2Like {
-  x: number;
-  y: number;
-}
+import type { IVector2Like } from "./IVector2Like";
 
 /**
  * 接口: 二维向量

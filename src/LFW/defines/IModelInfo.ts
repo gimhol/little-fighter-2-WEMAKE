@@ -1,4 +1,4 @@
-import type { IVector3Like } from "./IVector3";
+import type { IVector3Like } from "./IVector3Like";
 import type { IVector4Like } from "./IVector4Like";
 export interface IModelInfo {
   id: string;
