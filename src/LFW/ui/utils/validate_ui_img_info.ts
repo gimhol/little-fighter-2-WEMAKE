@@ -6,6 +6,7 @@ export function validate_ui_img_info(any: any, errors: string[] = [], warnings: 
   const validator = new SchemaValidator();
   const result = validator.validate(any, Schema_IUIImgInfo);
   errors.push(...validator.errors);
+  warnings.push(...validator.warnings)
   return result;
 }
 validate_ui_img_info.TAG = 'validate_ui_img_info'
