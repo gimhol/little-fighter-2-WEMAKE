@@ -1,5 +1,4 @@
 /*** AUTO EXPORT START ***/
-export * from "./actions/ActionType";
 export * from "./ArmorEnum";
 export * from "./BackgroundGroup";
 export * from "./BdyKind";
@@ -103,6 +102,6 @@ export * from "./TextureWrapping";
 export * from "./WeaponType";
 export * from "./WorldVal";
 export * from "./WpointKind";
-export * from "./actions";
 export * from "./defines";
+export * from "./actions";
 /*** AUTO EXPORT END ***/

@@ -1,5 +1,5 @@
 /*** AUTO REGISTER COMPONENTS START ***/
-import { Factory } from "../../Factory";
+import { Factory } from "@/LFW/Factory";
 import * as _ from "./index";
 let _registed = false
 export const regist_components = () => {

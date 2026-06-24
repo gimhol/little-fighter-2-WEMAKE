@@ -1,4 +1,5 @@
 /*** AUTO EXPORT START ***/
+export * from "./ActionType";
 export * from "./IAction_ABuff";
 export * from "./IAction_Base";
 export * from "./IAction_Broadcast";
