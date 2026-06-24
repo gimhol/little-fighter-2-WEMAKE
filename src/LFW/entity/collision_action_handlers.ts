@@ -18,8 +18,6 @@ export const collision_action_handlers: IActionHandler = {
     if (!name) return;
     (c.attacker as any)[name] = a.data?.value;
   },
-  [AT.A_BROKEN_DEFEND]: () => 0, // 特殊对待，此处留空
-  [AT.A_DEFEND]: () => 0, // 特殊对待，此处留空
 
   [AT.V_SOUND]: (a, c) => c.victim.play_sound(a.data.path, a.data.pos),
   [AT.V_NEXT_FRAME]: (a, c) => c.victim.enter_frame(a.data),
@@ -28,8 +26,19 @@ export const collision_action_handlers: IActionHandler = {
     if (!name) return;
     (c.victim as any)[name] = a.data?.value;
   },
-  [AT.V_BROKEN_DEFEND]: () => 0,
-  [AT.V_DEFEND]: () => 0,
+
+  /*
+  NOTE: 
+    以下四项其实相当于 A_NEXT_FRAME V_NEXT_FRAME
+
+    但由于需要仅在击中防御中的对象时才能触发，此处留空
+    并在 handle_itr_normal_bdy_defend 特殊处理
+      -Gim
+  */
+  [AT.A_BROKEN_DEFEND]: () => 0, // 特殊对待，此处留空
+  [AT.A_DEFEND]: () => 0, // 特殊对待，此处留空
+  [AT.V_BROKEN_DEFEND]: () => 0, // 特殊对待，此处留空
+  [AT.V_DEFEND]: () => 0, // 特殊对待，此处留空
 
   [AT.A_REBOUND_VX]: (a, { attacker }) => {
     attacker.set_velocity_x(-attacker.velocity.x);
