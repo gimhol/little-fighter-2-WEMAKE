@@ -1,4 +1,5 @@
 import type { IExpression } from "./IExpression";
+import { any, fields, int, str } from "../fields";
 
 export interface IDialogInfo {
   /** 
@@ -58,3 +59,14 @@ export enum DialogCloseBy {
 export const DialogCloseByDescriptions: Record<DialogCloseBy, string> = {
   [DialogCloseBy.PRESS_A]: "",
 }
+
+export const dialog_info_fields = fields<Partial<IDialogInfo>>({
+  type: str('位置', 'left 或 right', { options: [{ value: 'left', label: '左' }, { value: 'right', label: '右' }] }),
+  fighter: str('说话角色ID'),
+  pause: any('暂停游戏'),
+  i18n: str('对话文本'),
+  close_by: str('关闭方式', '默认 press_a'),
+  hide_stats: int('隐藏状态栏'),
+  end_test: str('结束判定', { array: true }),
+  end_testers: any('结束测试器', { array: true }),
+});

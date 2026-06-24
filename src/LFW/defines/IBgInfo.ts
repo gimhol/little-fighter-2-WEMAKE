@@ -1,4 +1,5 @@
 import type { BackgroundGroup } from "./BackgroundGroup";
+import { any, fields, flt, int, str } from "../fields";
 
 export interface IBgInfo {
   name: string;

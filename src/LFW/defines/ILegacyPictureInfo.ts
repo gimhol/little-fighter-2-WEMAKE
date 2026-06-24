@@ -1,4 +1,5 @@
 import type { IPictureInfo } from "./IPictureInfo";
+import { fields, int, str } from "../fields";
 
 /**
  * 实体图片信息
@@ -37,3 +38,13 @@ export interface ILegacyPictureInfo extends IPictureInfo {
    */
   cell_h: number;
 }
+
+export const legacy_picture_info_fields = fields<ILegacyPictureInfo>({
+  id: str('图片ID'),
+  path: str('路径'),
+  variants: str('变体', { array: true }),
+  row: int('行数'),
+  col: int('列数'),
+  cell_w: int('格宽'),
+  cell_h: int('格高'),
+});

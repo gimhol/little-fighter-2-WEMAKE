@@ -1,4 +1,5 @@
 import { Difficulty } from "./Difficulty";
+import { any, fields, flt, int, str } from "../fields";
 
 export interface IStageObjectInfo {
   /** 物件ID的生成方式（TODO: 待实现） */
@@ -74,3 +75,25 @@ export interface IStageObjectInfo {
   /** 自定义描边颜色，如 '#FF0000'。未设置时使用队伍默认颜色 */
   outline_color?: string;
 }
+
+export const stage_object_info_fields = fields<Partial<IStageObjectInfo>>({
+  id_method: str('ID生成方式'),
+  id: str('物件ID', { array: true }),
+  x: int('X坐标'),
+  y: int('Y坐标'),
+  z: int('Z坐标'),
+  act: str('初始动作'),
+  facing: int('朝向', { options: [{ value: -1, label: '左' }, { value: 1, label: '右' }] }),
+  hp: int('血量'),
+  mp: int('蓝量'),
+  hp_map: any('血量(按难度)'),
+  mp_map: any('蓝量(按难度)'),
+  times: int('出现次数'),
+  ratio: flt('比例系数'),
+  is_boss: any('是否为Boss'),
+  is_soldier: any('是否为士兵'),
+  reserve: int('备用数量'),
+  join: int('归降血量'),
+  join_team: str('归降队伍'),
+  outline_color: str('描边颜色'),
+});

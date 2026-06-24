@@ -1,4 +1,6 @@
 
+import { any, fields, int, str } from "../fields";
+
 export interface IPictureInfo {
   /**
    * 图片ID 
@@ -31,3 +33,13 @@ export interface IPictureInfo {
   /** @deprecated LF2中的h，LFW不再使用，但LFW-TOOL转换的数据会保留此值 */
   cell_h?: number;
 }
+
+export const picture_info_fields = fields<Partial<IPictureInfo>>({
+  id: str('图片ID'),
+  path: str('路径'),
+  variants: str('变体', { array: true }),
+  row: int('行数(LF2)', '已弃用'),
+  col: int('列数(LF2)', '已弃用'),
+  cell_w: int('格宽(LF2)', '已弃用'),
+  cell_h: int('格高(LF2)', '已弃用'),
+});

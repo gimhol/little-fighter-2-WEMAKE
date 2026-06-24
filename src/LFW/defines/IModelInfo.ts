@@ -1,5 +1,7 @@
 import type { IVector3Like } from "./IVector3Like";
 import type { IVector4Like } from "./IVector4Like";
+import { any, fields, str } from "../fields";
+
 export interface IModelInfo {
   id: string;
   path: string;
@@ -7,6 +9,14 @@ export interface IModelInfo {
   scale?: Partial<IVector3Like>,
   quaternion?: Partial<IVector4Like>
 }
+
+export const model_info_fields = fields<Partial<IModelInfo>>({
+  id: str('模型ID'),
+  path: str('路径'),
+  variants: str('变体', { array: true }),
+  scale: any('缩放'),
+  quaternion: any('旋转四元数'),
+});
 /*
 cy = cos(yaw * 0.5)
 sy = sin(yaw * 0.5)

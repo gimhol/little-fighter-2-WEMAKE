@@ -1,3 +1,5 @@
+import { fields, int, str } from "../fields";
+
 export interface IFramePictureInfo {
   /** 图片ID */
   tex: string;
@@ -16,3 +18,11 @@ export interface IFramePictureInfo {
   /** 旋转中心y */
   // oy?: number;
 }
+
+export const frame_picture_info_fields = fields<IFramePictureInfo>({
+  tex: str('图片ID'),
+  x: int('裁剪X'),
+  y: int('裁剪Y'),
+  w: int('宽度'),
+  h: int('高度'),
+});

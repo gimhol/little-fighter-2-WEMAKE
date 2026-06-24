@@ -2,6 +2,7 @@ import type { Difficulty } from "./Difficulty";
 import type { IDialogInfo } from "./IDialogInfo";
 import type { IExpression } from "./IExpression";
 import type { IStageObjectInfo } from "./IStageObjectInfo";
+import { any, fields, flt, int, str } from "../fields";
 /**
  * 关卡阶段信息
  *
@@ -115,3 +116,38 @@ export interface IStagePhaseInfo {
   control_disabled?: number;
   weapon_rain_disabled?: number;
 }
+
+export const stage_phase_info_fields = fields<Partial<IStagePhaseInfo>>({
+  title: str('标题'),
+  bound: int('边界(旧)', '已弃用'),
+  player_l: int('玩家左边界'),
+  player_r: int('玩家右边界'),
+  camera_l: int('相机左边界'),
+  camera_r: int('相机右边界'),
+  enemy_l: int('敌人左边界'),
+  enemy_r: int('敌人右边界'),
+  drink_l: int('饮料左边界'),
+  drink_r: int('饮料右边界'),
+  desc: str('描述'),
+  objects: any('物件列表', { array: true }),
+  music: str('背景音乐'),
+  sounds: any('音效', { array: true }),
+  respawn: any('重生'),
+  respawn_r: any('重生(右)'),
+  respawn_x: any('重生X'),
+  health_up: any('血量补给'),
+  mp_up: any('蓝量补给'),
+  cam_jump_to_x: flt('相机跳至X'),
+  player_jump_to_x: flt('玩家跳至X'),
+  player_jump_to_z: flt('玩家跳至Z'),
+  player_facing: int('玩家朝向', { options: [{ value: -1, label: '左' }, { value: 1, label: '右' }] }),
+  end_test: str('结束判定', { array: true }),
+  end_testers: any('结束测试器', { array: true }),
+  on_start: str('开始时动作', { array: true }),
+  on_end: str('结束时动作', { array: true }),
+  dialogs: any('对话框', { array: true }),
+  hide_stats: int('隐藏状态栏'),
+  world_pause: int('世界暂停'),
+  control_disabled: int('禁用控制'),
+  weapon_rain_disabled: int('禁用武器雨'),
+});
