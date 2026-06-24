@@ -20,7 +20,6 @@ export const TeamEnumDescriptions: Record<TeamEnum, string> = {
   [TeamEnum.Team_6]: "",
   [TeamEnum.Team_7]: "",
   [TeamEnum.Team_8]: "",
-  [TeamEnum.Max]: "",
 }
 export const is_independent = (team: string) => team.length !== 1;
 export const T_E = TeamEnum;

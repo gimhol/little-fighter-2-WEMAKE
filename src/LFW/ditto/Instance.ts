@@ -54,6 +54,7 @@ export interface IDittoPack {
   Log(...args: any[]): unknown;
   debug(...args: any[]): unknown;
   DEV: boolean;
+  alert(msg: string): unknown;
 }
 
 const _Ditto: Partial<IDitto> = {

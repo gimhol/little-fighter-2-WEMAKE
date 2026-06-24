@@ -1,3 +1,4 @@
+import { Ditto } from "..";
 import type { IActionHandler } from "../base/IActionHandler";
 import type { Collision } from "../collision/Collision";
 import { ActionType as AT } from "../defines/actions/ActionType";
@@ -15,7 +16,7 @@ export const collision_action_handlers: IActionHandler = {
   [AT.A_SET_PROP]: (a, c) => {
     const name = a.data?.name;
     if (!name) return;
-    (c.attacker as any)[name] = a.data?.value
+    (c.attacker as any)[name] = a.data?.value;
   },
   [AT.A_BROKEN_DEFEND]: () => 0, // 特殊对待，此处留空
   [AT.A_DEFEND]: () => 0, // 特殊对待，此处留空
@@ -25,7 +26,7 @@ export const collision_action_handlers: IActionHandler = {
   [AT.V_SET_PROP]: (a, c) => {
     const name = a.data?.name;
     if (!name) return;
-    (c.victim as any)[name] = a.data?.value
+    (c.victim as any)[name] = a.data?.value;
   },
   [AT.V_BROKEN_DEFEND]: () => 0,
   [AT.V_DEFEND]: () => 0,
@@ -123,6 +124,9 @@ export const collision_action_handlers: IActionHandler = {
   },
   [AT.A_BUFF]: (a, c) => {
     apply_buff(a, c.victim, c.attacker, c);
+  },
+  [AT.ERROR]: function (a, c) {
+    Ditto.alert(a.data.msg)
   }
 };
 

@@ -36,7 +36,8 @@ Ditto.setup({
   Log: Log.print,
   debug: Debug.print,
   XML: dom.XML,
-  DEV
+  DEV,
+  alert: (msg) => window.alert(msg),
 });
 ewents.filter = async (type: string, event: object) => {
   if (localStorage.getItem('last_admin') == '255')

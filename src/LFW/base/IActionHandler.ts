@@ -11,6 +11,7 @@ import type { IAction_TurnFace } from "../defines/actions/IAction_TurnFace";
 import type { IAction_TurnTeam } from "../defines/actions/IAction_TurnTeam";
 import type { IAction_ABuff } from "../defines/actions/IAction_ABuff";
 import type { IAction_VBuff } from "../defines/actions/IAction_VBuff";
+import type { IAction_Error } from "../defines/actions/IAction_Error";
 
 export interface IActionHandler {
   [ActionType.A_SOUND]: (action: IAction_Sound, collision: Collision) => any;
@@ -32,4 +33,5 @@ export interface IActionHandler {
   [ActionType.VALUE_STEAL]: (action: IAction_StealValue, collision: Collision) => any;
   [ActionType.V_BUFF]: (action: IAction_VBuff, collision: Collision) => any;
   [ActionType.A_BUFF]: (action: IAction_ABuff, collision: Collision) => any;
+  [ActionType.ERROR]: (action: IAction_Error, collision: Collision) => any;
 }
