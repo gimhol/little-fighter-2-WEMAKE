@@ -9,8 +9,10 @@ interface InstanceSetter<T> {
 export class SchemaValidator {
   protected _get_instance?: InstanceGetter<any>;
   protected _set_instance?: InstanceSetter<any>;
-  protected _errors: string[] = []
+  protected _errors: string[] = [];
+  protected _warnings:string[] = [];
   get errors(): ReadonlyArray<string> { return this._errors }
+  get warnings(): ReadonlyArray<string> { return this._warnings }
   instance_getter<T>(func: InstanceGetter<T>) {
     this._get_instance = func;
     return this
@@ -83,6 +85,11 @@ export class SchemaValidator {
         break;
       case Object: case "object":
         if (typeof value !== 'object') return r();
+        for (const k of Object.keys(value as object)) {
+          if (!schema.properties || !(k in schema.properties)) {
+            this._warnings.push(`unexpected key '${k}' in '${schema.path}'`);
+          }
+        }
         for (const k in schema.properties) {
           const prop_schema: ISchema<any> = schema.properties[k];
           let prop_value = value[k];
@@ -133,63 +140,6 @@ export class SchemaValidator {
       this._errors.push(`'${schema.path}' should be one of the options: ${JSON.stringify(schema.oneof)}, but got ${value}`);
     return !this._errors.length;
   }
-}
-export function validate_schema<T>(value: unknown, schema: ISchema<T>, errors: string[] = []): value is T {
-  const { type } = schema;
-  const r = () => _wrong(value, schema, errors)
-  if (value == null || value == void 0) {
-    const ret = schema.nullable || schema.type == 'null';
-    if (!ret) return r()
-    return ret;
-  }
-  switch (type) {
-    case Boolean: case "boolean":
-      if (typeof value !== 'boolean') return r();
-      break;
-    case String: case "string":
-      if (typeof value !== 'string') return r();
-      if (schema.string?.not_blank && !value.trim()) return r();
-      if (schema.string?.not_empty && !value) return r();
-      break;
-    case Number: case "number": case "integer":
-      if (typeof value !== 'number') return r();
-      if (!schema.number?.nan && Number.isNaN(value)) return r();
-      if (schema.number?.int && !Number.isInteger(value)) return r();
-      if (schema.number?.nagetive && value >= 0) return r();
-      if (schema.number?.positive && value <= 0) return r();
-      if (schema.number?.nagetive == !1 && value < 0) return r();
-      if (schema.number?.positive == !1 && value > 0) return r();
-      break;
-    case Array: case "array":
-      if (!Array.isArray(value)) return r();
-      if (schema.items) {
-        for (const item of value) {
-          validate_schema(item, schema.items, errors);
-        }
-      }
-      break;
-
-    case "object":
-      if (typeof value !== 'object') return false;
-      for (const k in schema.properties) {
-        const prop_schema: ISchema<any> = schema.properties[k as keyof T];
-        const prop_value = (value as T)[k]
-        if (!validate_schema(prop_value, prop_schema, errors))
-          return false
-      }
-      return true;
-    default: {
-      if (typeof schema.type === 'function') {
-        if (typeof value !== 'string') {
-          errors.push(`'${schema.path}' must be a id, but got ${value}`);
-          return false;
-        }
-      }
-    }
-  }
-  if (schema.oneof?.some(v => v === value) === false)
-    errors.push(`'${schema.path}' should be one of the options: ${JSON.stringify(schema.oneof)}, but got ${value}`);
-  return !!errors.length;
 }
 
 function _wrong<T>(v: unknown, s: ISchema<T>, e: string[]) {
