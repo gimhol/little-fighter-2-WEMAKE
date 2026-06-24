@@ -9,7 +9,7 @@ import Select from "./Component/Select";
 import Show from "./Component/Show";
 import TeamSelect from "./Component/TeamSelect";
 import Titled from "./Component/Titled";
-import { type IWorldDataset, world_dataset_fields } from "./LFW/IWorldDataset";
+import { type IWorldDataset, world_dataset_fields } from "./LFW/defines/IWorldDataset";
 import { LFW } from "./LFW";
 import { BotController } from "./LFW/bot/BotController";
 import { BaseController } from "./LFW/controller/BaseController";
