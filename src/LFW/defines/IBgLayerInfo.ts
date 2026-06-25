@@ -1,4 +1,5 @@
 import { any, fields, flt, int, str } from "../fields";
+import { make_schema } from "../utils/schema";
 
 export interface IBgLayerInfo {
   /** 预留的 */
@@ -49,3 +50,28 @@ export const bg_layer_info_fields = fields<IBgLayerInfo>({
   offsetAnimX: flt("UV动画X"),
   offsetAnimY: flt("UV动画Y"),
 })
+
+export const Schema_IBgLayerInfo = make_schema<IBgLayerInfo>({
+  key: "IBgLayerInfo",
+  type: "object",
+  properties: {
+    id: { type: 'string', nullable: true },
+    name: { type: 'string', nullable: true },
+    file: { type: 'string', nullable: true },
+    absolute: { type: 'number', nullable: true },
+    color: { type: 'string', nullable: true },
+    width: { type: 'number' },
+    height: { type: 'number' },
+    x: { type: 'number' },
+    y: { type: 'number' },
+    z: { type: 'number' },
+    w: { type: 'number' },
+    h: { type: 'number' },
+    loop: { type: 'number', nullable: true },
+    cc: { type: 'number', nullable: true },
+    c1: { type: 'number', nullable: true },
+    c2: { type: 'number', nullable: true },
+    offsetAnimX: { type: 'number', nullable: true },
+    offsetAnimY: { type: 'number', nullable: true },
+  },
+});

@@ -1,3 +1,4 @@
+import { SyncRenderEnum } from './defines';
 import { CheatEnum } from './defines/CheatType';
 import { Defines } from './defines/defines';
 import { Difficulty } from './defines/Difficulty';
@@ -68,7 +69,7 @@ export class WorldDataset implements IWorldDataset {
   gravity: number = 0.4375;
   gravity_d: number = 0.4375;
   weapon_throwing_gravity: number = 0.21875;
-  sync_render: number = 0;
+  sync_render: number = SyncRenderEnum.FPS_60;
   difficulty: Difficulty = Difficulty.Difficult;
   infinity_mp: number = 0;
   fall_r_ticks: number = 1;

@@ -1,10 +1,13 @@
 import { any, fields, str } from "../fields";
-import type { IBaseData } from "./IBaseData";
+import { make_schema } from "../utils/schema";
 import { bg_info_new, type IBgInfo } from "./IBgInfo";
 import type { IBgLayerInfo } from "./IBgLayerInfo";
-import type { IWorldDataset } from "./IWorldDataset";
+import { Schema_IWorldDataset_Partial, type IWorldDataset } from "./IWorldDataset";
 
-export interface IBgData extends IBaseData<IBgInfo> {
+export interface IBgData {
+  id: string;
+  alias_id?: string;
+  base: IBgInfo;
   type: "background";
   dataset?: Partial<IWorldDataset>;
   layers: IBgLayerInfo[];
@@ -27,3 +30,16 @@ export function bg_data_new(): IBgData {
     layers: [],
   };
 }
+
+export const Schema_IBgData = make_schema<IBgData>({
+  key: "IBgData",
+  type: "object",
+  properties: {
+    id: { type: 'string' },
+    type: { type: 'string', oneof: ['background'] },
+    alias_id: { type: 'string', nullable: true },
+    base: Schema_IWorldDataset_Partial,
+    dataset: { type: 'object', nullable: true },
+    layers: { type: 'array', items: { type: 'object' } },
+  },
+});
