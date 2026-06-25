@@ -1,6 +1,6 @@
 import type { IAction_Base } from "./IAction_Base";
 import { ActionType } from "./ActionType";
-import type { IPos } from "../IPos";
+import type { IVector3Like } from "../IPos";
 
 /**
  * 动作: 播放声音
@@ -17,7 +17,7 @@ export interface IAction_Sound extends IAction_Base {
     /**
      * 播放位置
      */
-    pos?: IPos;
+    pos?: IVector3Like;
   };
 }
 

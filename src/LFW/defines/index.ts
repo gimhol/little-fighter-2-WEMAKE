@@ -61,7 +61,6 @@ export * from "./IOpointInfo";
 export * from "./IPairByFace";
 export * from "./IPicture";
 export * from "./IPictureInfo";
-export * from "./IPos";
 export * from "./IPurePlayerInfo";
 export * from "./IQube";
 export * from "./IQubePair";

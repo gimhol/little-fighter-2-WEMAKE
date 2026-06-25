@@ -17,7 +17,7 @@ import {
   HitFlag,
   type IArmorInfo,
   type IBdyInfo, type IBounding, type ICpointInfo, type IDeadJoin, type IEntityData,
-  type IFrameInfo, type IItrInfo, type INextFrame, type INextFrameResult, type IOpointInfo, type IPos,
+  type IFrameInfo, type IItrInfo, type INextFrame, type INextFrameResult, type IOpointInfo, type IVector3Like,
   is_independent, ItrKind, type IVector3,
   type IVelocityInfo, type IWpointInfo,
   StateEnum, type TEntityEnum, type TFace, type TNextFrame,
@@ -1815,7 +1815,7 @@ export class Entity {
     this.callbacks.emit("on_data_changed")(this._data, prev, this)
   }
 
-  play_sound(sounds: string[] | undefined, pos: IPos = this._position) {
+  play_sound(sounds: string[] | undefined, pos: IVector3Like = this._position) {
     if (!sounds?.length) return;
     this.lfw.mt.mark = 'ps_1'
     const sound = this.lfw.mt.pick(sounds);
