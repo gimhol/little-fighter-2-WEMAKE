@@ -1,6 +1,6 @@
 import type { IAction_Base } from "./IAction_Base";
 import { ActionType } from "./ActionType";
-import type { IVector3Like } from "../IPos";
+import type { IVector3Like } from "../IVector3Like";
 
 /**
  * 动作: 播放声音
