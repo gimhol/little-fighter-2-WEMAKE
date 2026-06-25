@@ -63,7 +63,6 @@ export * from "./IPicture";
 export * from "./IPictureInfo";
 export * from "./IPos";
 export * from "./IPurePlayerInfo";
-export * from "./IQuaternion";
 export * from "./IQube";
 export * from "./IQubePair";
 export * from "./IRect";
