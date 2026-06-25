@@ -5,7 +5,9 @@ import { Layer } from "./Layer";
 export class Background {
   readonly data: Readonly<IBgData>;
   private _layers: Layer[] = [];
-  private _zoom: [number, number, number] = [1, 1, 1]
+  zoom_x: number = 1;
+  zoom_y: number = 1;
+  zoom_z: number = 1;
   get name(): string {
     return this.data.base.name
   }
@@ -27,12 +29,8 @@ export class Background {
   get layers(): ReadonlyArray<Layer> {
     return this._layers;
   }
-  get zoom(): [number, number, number] {
-    return this._zoom
-  }
   readonly width: number;
   readonly depth: number;
-
   readonly middle: { x: number; z: number };
   readonly world: World;
   private _update_times = 0;
@@ -48,7 +46,10 @@ export class Background {
     };
     for (const info of data.layers)
       this.add_layer(info);
-    if (data.base.zoom) this._zoom = [...data.base.zoom]
+
+    this.zoom_x = data.base.zoom_x || 1;
+    this.zoom_y = data.base.zoom_y || 1;
+    this.zoom_z = data.base.zoom_z || 1;
   }
 
   private add_layer(info: IBgLayerInfo) {
@@ -71,10 +72,7 @@ export class Background {
   }
 
   dispose() {
-    for (const layer of this._layers)
-      layer.dispose()
     this._layers.length = 0
   }
-
 }
 

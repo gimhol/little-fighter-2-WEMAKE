@@ -109,7 +109,7 @@ export class World extends WorldDataset {
     if (v === this._bg) return;
     const o = this._bg;
     this._bg = v;
-    this.transform.scale_to(...this._bg.zoom)
+    this.transform.scale_to(this._bg.zoom_x, this._bg.zoom_y, this._bg.zoom_z)
     o.dispose();
   }
   get stage() {
@@ -165,7 +165,7 @@ export class World extends WorldDataset {
     this.current_cam_pos = Ditto.vec2();
     this._cam_v = Ditto.vec2();
     this._bg = new Background(this, Defines.VOID_BG);
-    this.transform.scale_to(...this._bg.zoom)
+    this.transform.scale_to(this._bg.zoom_x, this._bg.zoom_y, this._bg.zoom_z)
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
   }

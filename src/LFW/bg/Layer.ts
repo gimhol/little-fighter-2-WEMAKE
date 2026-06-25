@@ -24,6 +24,4 @@ export class Layer {
       this.visible = true;
     }
   }
-  dispose() {
-  }
 }
