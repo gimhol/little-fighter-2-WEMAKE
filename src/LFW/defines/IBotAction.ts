@@ -1,7 +1,4 @@
-import { CondMaker } from "../dat_translator/CondMaker";
 import { BotStateEnum } from "./BotStateEnum";
-import { BotVal } from "./BotVal";
-import { EntityVal } from "./EntityVal";
 import type { LGK } from "./GameKey";
 import type { IBotRay } from "./IBotRay";
 import type { IExpression } from "./IExpression";
@@ -40,13 +37,10 @@ export interface IBotAction {
    * action.expression = new CondMaker<EntityVal | BotVal>().add(EntityVal.Shaking,">",0).done()
    * ```
    *
-   * @see EntityVal
-   * @see BotVal
-   * @see CondMaker
-   * @type {(string | ReturnType<CondMaker<EntityVal | BotVal>['done']>)}
+   * @type {(string)}
    * @memberof IBotAction
    */
-  expression?: string | ReturnType<CondMaker<EntityVal | BotVal>['done']>;
+  expression?: string ;
 
   /**
    * 判定器
