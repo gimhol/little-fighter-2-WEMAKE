@@ -66,7 +66,6 @@ export * from "./IPurePlayerInfo";
 export * from "./IQuaternion";
 export * from "./IQube";
 export * from "./IQubePair";
-export * from "./IRaycaster";
 export * from "./IRect";
 export * from "./IRectPair";
 export * from "./ISchema";

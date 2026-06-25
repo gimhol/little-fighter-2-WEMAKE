@@ -1,4 +1,5 @@
 import { EntityEnum, type TEntityEnum } from "./EntityEnum";
+import type { IBaseData } from "./IBaseData";
 import type { IBdyInfo } from "./IBdyInfo";
 import { entity_info_new, type IEntityInfo } from "./IEntityInfo";
 import type { IFrameIndexes } from "./IFrameIndexes";
@@ -11,11 +12,10 @@ export type TItrPrefabs = {
 export type TBdyPrefabs = {
   [x in string]?: IBdyInfo;
 }
-export interface IEntityData {
+export interface IEntityData extends IBaseData<IEntityInfo>{
   id: string;
   type: TEntityEnum;
   alias_id?: string;
-  base: IEntityInfo;
   
   on_dead?: TNextFrame;
   on_exhaustion?: TNextFrame;
