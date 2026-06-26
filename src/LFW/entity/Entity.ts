@@ -20,6 +20,8 @@ import {
   type IFrameInfo, type IItrInfo, type INextFrame, type INextFrameResult, type IOpointInfo, type IVector3Like,
   is_independent, ItrKind, type IVector3,
   type IVelocityInfo, type IWpointInfo,
+  OpointKind, OpointMultiEnum, OpointSpreading,
+  SpeedCtrl, SpeedMode,
   StateEnum, type TEntityEnum, type TFace, type TNextFrame,
   WpointKind
 } from "../defines";
@@ -27,7 +29,7 @@ import { Ditto } from "../ditto";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
 import { State_Base } from "../state/State_Base";
-import { abs, clamp, clamp_add, find, float_equal, max, min, round, round_float } from "../utils";
+import { abs, clamp, clamp_add, find, float_equal, floor, is_num, max, min, pow, round, round_float } from "../utils";
 import { Times } from "../utils/Times";
 import { cross_bounding } from "../utils/cross_bounding";
 import { is_f_num, is_positive, is_str } from "../utils/type_check";
@@ -39,11 +41,11 @@ import { summary_mgr } from "./SummaryMgr";
 import { turn_face } from "./face_helper";
 import { is_fighter, is_human_ctrl } from "./type_check";
 
-// 拆分出的功能模块 — 通过 prototype 挂载
 import { EnterFrameResult } from "./EnterFrameResult";
-import * as EntityPhysics from "./EntityPhysics";
-import * as EntityRecovery from "./EntityRecovery";
-import * as EntitySpawn from "./EntitySpawn";
+import { sus_cases } from "../cases_instances";
+import { collision_clone } from "../collision/Collision";
+import { calc_v } from "./calc_v";
+import { is_ball_ctrl } from "./type_check";
 
 export class Entity {
   static readonly TAG: string = 'Entity';
@@ -835,15 +837,113 @@ export class Entity {
   }
 
   on_spawn(
-    _emitter: Entity,
-    _opoint: IOpointInfo,
-    _offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
-    _facing: TFace = 1,
+    emitter: Entity,
+    opoint: IOpointInfo,
+    offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
+    facing: TFace = emitter.facing,
   ): this {
-    /* → EntitySpawn.ts */ return this;
+    const emitter_frame = emitter.frame;
+    if (emitter.state === StateEnum.Ball_Rebounding) {
+      const attacker = emitter.lastest_collided?.attacker ?? emitter;
+      this._emitters[0] = attacker.id;
+      this._emitters.length = 1;
+      this.team = attacker.team;
+      this.facing = emitter.facing;
+    } else {
+      this._emitters.push(...emitter.emitters, emitter.id);
+      this.team = emitter.team;
+      this.facing = emitter.facing;
+    }
+    const { origin_type } = opoint;
+    let { x: pos_x, y: pos_y, z: pos_z } = emitter.position;
+    if (origin_type === 1) {
+      pos_y = pos_y - opoint.y;
+      pos_x = pos_x + emitter.facing * opoint.x;
+    } else {
+      pos_y = pos_y + emitter_frame.centery - opoint.y;
+      pos_x = pos_x - emitter.facing * (emitter_frame.centerx - opoint.x);
+    }
+    this.set_position(pos_x, pos_y, pos_z + (opoint.z ?? 2));
+
+    const result = this.get_next_frame(opoint.action);
+    facing = result?.which.facing
+      ? this.handle_facing_flag(result.which.facing)
+      : emitter.facing;
+
+    if (result) this.enter_frame(result.which);
+    else this.enter_frame(this.find_auto_frame());
+
+    let {
+      dvx: o_dvx = 0,
+      dvy: o_dvy = 0,
+      dvz: o_dvz = 0,
+      speedz: o_speedz = this.get_opoint_speed_z(emitter, opoint),
+    } = opoint;
+
+    const { weight } = this;
+    o_dvy = o_dvy / weight;
+    const ud = emitter.ctrl?.UD || 0;
+    const { x: ovx, y: ovy, z: ovz } = offset_velocity;
+    if (o_dvx > 0) o_dvx = o_dvx / weight - abs(ovz / 2);
+    else o_dvx = o_dvx / weight + abs(ovz / 2);
+
+    if (is_num(opoint.max_hp))
+      this.hp = this.hp_r = this.hp_max = opoint.max_hp;
+    if (is_num(opoint.hp)) this.hp = this.hp_r = opoint.hp;
+    if (is_num(opoint.max_mp)) this.mp = this.mp_max = opoint.max_mp;
+    if (is_num(opoint.mp)) this.mp = opoint.mp;
+
+    const { dvy = 0, dvz = 0, dvx = 0 } = this;
+    const {
+      vxm,
+      vym,
+      vzm,
+      acc_x = 0,
+      acc_y = 0,
+      acc_z = 0,
+    } = this.frame;
+    const z_disabled =
+      result?.frame?.state === StateEnum.Normal ||
+      result?.frame?.state === StateEnum.Burning;
+
+    let vx = ovx + o_dvx * facing;
+    let vy = ovy + o_dvy + dvy;
+    let vz = z_disabled ? 0 : ovz + o_dvz + o_speedz * ud;
+    if (vxm === SpeedMode.Fixed) vx = dvx;
+    if (vym === SpeedMode.Fixed) vy = dvy;
+    if (vzm === SpeedMode.Fixed) vz = dvz;
+    if (vxm == SpeedMode.Extra && acc_x) vx += acc_x;
+    if (vym == SpeedMode.Extra && acc_y) vy += acc_y;
+    if (vzm == SpeedMode.Extra && acc_z) vz += acc_z;
+
+    this._prev_velocity.x = this._velocity.x = round_float(vx);
+    this._prev_velocity.y = this._velocity.y = round_float(vy);
+    this._prev_velocity.z = this._velocity.z = round_float(vz);
+    if (sus_cases.debugging) {
+      sus_cases.push("on_spawn::pos", pos_x, pos_y, pos_z);
+      sus_cases.push("on_spawn::vec1", vx, vy, vz);
+    }
+    switch (opoint.kind) {
+      case OpointKind.Pick:
+        emitter.drop_holding();
+        this.bearer = emitter;
+        this.bearer.holding = this;
+        break;
+    }
+    this.motionless = opoint.motionless ?? 2;
+    return this;
   }
-  get_opoint_speed_z(_emitter: Entity, _opoint: IOpointInfo): number {
-    /* → EntitySpawn.ts */ return 0;
+  get_opoint_speed_z(emitter: Entity, opoint: IOpointInfo): number {
+    if (opoint.speedz !== void 0) return opoint.speedz;
+    if (!is_fighter(emitter)) return 0;
+    switch (this.state) {
+      case StateEnum.Ball_Flying:
+      case StateEnum.Ball_3006:
+      case StateEnum.Weapon_Throwing:
+      case StateEnum.HeavyWeapon_InTheSky:
+        return Defines.DEFAULT_OPOINT_SPEED_Z;
+    }
+    return 0;
   }
   set_state(state_code: number) {
     const v = this._states.get(state_code) || this._states.fallback(this._data.type, state_code);
@@ -890,20 +990,149 @@ export class Entity {
         this.lfw.broadcast(m)
   }
 
-  apply_opoints(_opoints: IOpointInfo[]): void {
-    /* → EntitySpawn.ts */
+  apply_opoints(opoints: IOpointInfo[]): void {
+    for (const opoint of opoints) {
+      const { interval = 0, interval_id, interval_mode } = opoint;
+      const interval_info = this._opoints.find(
+        (v) => v[0].interval_id === interval_id,
+      );
+      if (interval_info && interval_mode === 1) {
+        if (interval_info[1] !== opoint.interval) continue;
+      } else if (interval > 0) {
+        this._opoints.push([opoint, 0]);
+      }
+      let enemies: ReadonlyArray<Entity> = [];
+      let allies: ReadonlyArray<Entity> = [];
+      let multi_type: OpointMultiEnum | undefined = void 0;
+      let count = 0;
+      const multi = opoint.multi ?? 1;
+      if (is_num(multi)) {
+        count = multi;
+      } else if (multi) {
+        const { type, min = 0, max = 355, skip_zero } = multi;
+        switch ((multi_type = type)) {
+          case OpointMultiEnum.AccordingEnemies:
+            enemies = this.world.list_enemies(this);
+            if (skip_zero && !enemies.length) break;
+            count = clamp(enemies.length, min, max);
+            break;
+          case OpointMultiEnum.AccordingAllies:
+            allies = this.world.list_allies(this);
+            if (skip_zero && !allies.length) break;
+            count = clamp(allies.length, min, max);
+            break;
+        }
+      }
+      let facing = this.facing;
+      for (let i = 0; i < count; ++i) {
+        const v = Ditto.vec3(0, 0, 0);
+        switch (opoint.spreading) {
+          case void 0:
+          case OpointSpreading.Normal:
+            v.z = (i - (count - 1) / 2) * 2.5;
+            break;
+          case OpointSpreading.Spreading:
+            if (opoint.__spreading_random_x)
+              v.x = opoint.__spreading_random_x.take();
+            if (opoint.__spreading_random_y)
+              v.y = opoint.__spreading_random_y.take();
+            if (opoint.__spreading_random_z)
+              v.z = opoint.__spreading_random_z.take();
+            facing = v.x < 0 ? -1 : v.x > 0 ? 1 : facing;
+            break;
+        }
+        const e = this.spawn_entity(opoint, v, facing);
+        if (!e) return;
+        switch (opoint.spreading) {
+          case OpointSpreading.FloatRange: {
+            const { x, y, z } = e.velocity;
+            this.lfw.mt.mark = "ao_x";
+            const xx = opoint.__spreading_random_x?.take() ?? x;
+            this.lfw.mt.mark = "ao_y";
+            const yy = opoint.__spreading_random_y?.take() ?? y;
+            this.lfw.mt.mark = "ao_z";
+            const zz = opoint.__spreading_random_z?.take() ?? z;
+            e.set_velocity(xx, yy, zz);
+            break;
+          }
+        }
+        switch (multi_type) {
+          case OpointMultiEnum.AccordingEnemies:
+            if (e.frame.chase && is_ball_ctrl(e.ctrl))
+              e.ctrl.chasing = enemies[i % enemies.length];
+            break;
+          case OpointMultiEnum.AccordingAllies:
+            if (e.frame.chase && is_ball_ctrl(e.ctrl))
+              e.ctrl.chasing = allies[i % allies.length];
+            break;
+        }
+        if (opoint.inherit_speed_x)
+          e.set_velocity_x(e.velocity.x + this.velocity.x * opoint.inherit_speed_x);
+        if (opoint.inherit_speed_y)
+          e.set_velocity_y(e.velocity.y + this.velocity.y * opoint.inherit_speed_y);
+        if (opoint.inherit_speed_z)
+          e.set_velocity_z(e.velocity.z + this.velocity.z * opoint.inherit_speed_z);
+      }
+    }
   }
 
   spawn_entity(
-    _opoint: IOpointInfo,
-    _offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
-    _facing: TFace = 1,
+    opoint: IOpointInfo,
+    offset_velocity: IVector3 = Ditto.vec3(0, 0, 0),
+    facing: TFace = this.facing,
   ): Entity | undefined {
-    /* → EntitySpawn.ts */ return;
+    if (opoint.unimportant && this.world.entities.length > 355) return void 0;
+    this.lfw.mt.mark = "se_1";
+    const oid = this.lfw.mt.pick(opoint.oid);
+    if (!oid) {
+      Ditto.warn(
+        `[Entity::spawn_object] failed, oid: ${oid}, opoint: `,
+        opoint,
+      );
+      return;
+    }
+    const data = this.lfw.datas.find(oid);
+    if (!data) {
+      Ditto.warn(
+        `[Entity::spawn_object] failed, oid: ${oid}, data: `,
+        data,
+        ` opoint: `,
+        opoint,
+      );
+      debugger;
+      return;
+    }
+    const entity = this.lfw.factory.create_entity(this.world, data);
+    if (!entity) {
+      Ditto.warn(
+        `[Entity::spawn_object] failed, oid: ${oid}, data: `,
+        data,
+        ` opoint: `,
+        opoint,
+      );
+      debugger;
+      return;
+    }
+    entity.ctrl =
+      this.lfw.factory.create_ctrl(entity._data.id, "", entity) ?? entity.ctrl;
+    entity
+      .on_spawn(this, opoint, offset_velocity, facing)
+      .attach(opoint.is_entity);
+    if (entity.data.id === this.data.id) this.copies.add(entity.id);
+    entity.key_role = false;
+    entity.dead_gone = true;
+    for (const [, v] of this.vrests) entity.add_v_rest(collision_clone(v));
+    return entity;
   }
 
-  attach(_is_entity = true): this {
-    /* → EntitySpawn.ts */ return this;
+  attach(is_entity = true): this {
+    this._spawn_time = this.world.game_time;
+    this._mounted = 1;
+    this._ghosted = is_entity ? 0 : 1;
+    this.world.add_entities(this);
+    if (this.frame.id === "0" /* EMPTY_FRAME_INFO */)
+      this.enter_frame(Defines.NEXT_FRAME_AUTO);
+    return this;
   }
 
   /**
@@ -926,59 +1155,322 @@ export class Entity {
    * @param {number} [factor=1] 当前衰减系数
    */
   handle_ground_velocity_decay(factor: number = 1): void {
-    /* → EntityPhysics.ts */
+    if (
+      this.position.y > this.ground_y ||
+      this.shaking ||
+      this.motionless
+    )
+      return;
+    const landing = this._landing_frame === this.frame;
+    factor *=
+      landing
+        ? this.dataset("land_friction_factor")
+        : this.dataset("friction_factor");
+    const fx = landing
+      ? this.dataset("land_friction_x")
+      : this.dataset("friction_x");
+    const fz = landing
+      ? this.dataset("land_friction_z")
+      : this.dataset("friction_z");
+    this.handle_velocity_decay(fx, fz, factor);
   }
 
   handle_velocity_decay(accx: number, accz: number = accx, factor: number = 1): void {
-    /* → EntityPhysics.ts */
+    let { x, z } = this.velocity;
+    const { atom_time } = this.world;
+    x = round_float(x * pow(factor, atom_time));
+    z = round_float(z * pow(factor, atom_time));
+    accx = round_float(accx * atom_time);
+    accz = round_float(accz * atom_time);
+    const { ctrl_x, ctrl_z } = this.frame;
+    let { dvx = 0, dvz = 0 } = this;
+    const { UD, LR } = this.ctrl;
+    if (ctrl_x && !LR) dvx = 0;
+    if (ctrl_z && !UD) dvz = 0;
+    if (x > dvx) {
+      x -= accx;
+      if (x < dvx) x = dvx;
+    } else if (x < -dvx) {
+      x += accx;
+      if (x > -dvx) x = -dvx;
+    }
+    if (z > dvz) {
+      z -= accz;
+      if (z < dvz) z = dvz;
+    } else if (z < -dvz) {
+      z += accz;
+      if (z > -dvz) z = -dvz;
+    }
+    this.set_velocity_x(x);
+    this.set_velocity_z(z);
   }
 
   handle_gravity(): void {
-    /* → EntityPhysics.ts */
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    const { gravity_enabled = true } = this.frame;
+    if (this.position.y <= this.ground_y || !gravity_enabled) return;
+    this._velocity.y = round_float(
+      this._velocity.y - this.gravity * this._atom_time,
+    );
   }
-  get dvx(): number {
-    /* → EntityPhysics.ts */ return 0;
+  get dvx(): number | undefined {
+    const { dvx: v } = this.frame;
+    return v ? v * (this.dataset("fvx_f") as number) : v;
   }
-  get dvy(): number {
-    /* → EntityPhysics.ts */ return 0;
+  get dvy(): number | undefined {
+    const { dvy: v } = this.frame;
+    return v ? v * (this.dataset("fvy_f") as number) : v;
   }
-  get dvz(): number {
-    /* → EntityPhysics.ts */ return 0;
+  get dvz(): number | undefined {
+    const { dvz: v } = this.frame;
+    return v ? v * (this.dataset("fvz_f") as number) : v;
   }
   update_velocity(vinfo: IVelocityInfo): void {
-    /* → EntityPhysics.ts */
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    const { atom_time } = this.world;
+
+    let { dvx, dvy, dvz } = vinfo;
+    if (dvx) dvx = round_float(dvx * this.dataset("fvx_f"));
+    if (dvy) dvy = round_float(dvy * this.dataset("fvy_f"));
+    if (dvz) dvz = round_float(dvz * this.dataset("fvz_f"));
+    let {
+      vxm = SpeedMode.Default,
+      vym = SpeedMode.AccTo,
+      vzm = SpeedMode.Default,
+      acc_x,
+      acc_y,
+      acc_z,
+      ctrl_x = 0,
+      ctrl_y = 0,
+      ctrl_z = 0,
+    } = vinfo;
+
+    if (
+      (vxm == SpeedMode.AccTo || vxm == SpeedMode.FixedAccTo) &&
+      acc_x == void 0 &&
+      dvx
+    )
+      acc_x = dvx;
+    if (
+      (vym == SpeedMode.AccTo || vym == SpeedMode.FixedAccTo) &&
+      acc_y == void 0 &&
+      dvy
+    )
+      acc_y = dvy;
+    if (
+      (vzm == SpeedMode.AccTo || vzm == SpeedMode.FixedAccTo) &&
+      acc_z == void 0 &&
+      dvz
+    )
+      acc_z = dvz;
+    if (acc_x) acc_x = round_float(acc_x * atom_time);
+    if (acc_y) acc_y = round_float(acc_y * atom_time);
+    if (acc_z) acc_z = round_float(acc_z * atom_time);
+
+    let { x: vx, y: vy, z: vz } = this._velocity;
+    const { UD, LR, jd } = this._ctrl;
+    const { facing } = this;
+    if (dvx == void 0) {
+      /* noop */
+    } else if (!ctrl_x) vx = calc_v(vx, dvx, vxm, acc_x, facing);
+    else if (LR != 0 && SpeedCtrl.Control == ctrl_x)
+      vx = calc_v(vx, dvx, vxm, acc_x, LR);
+    else if (LR != 0 && SpeedCtrl.Enable == ctrl_x)
+      vx = calc_v(vx, dvx, vxm, acc_x, 1);
+    else if (LR == 0 && SpeedCtrl.Disable == ctrl_x)
+      vx = calc_v(vx, dvx, vxm, acc_x, 1);
+
+    if (dvy == void 0) {
+      /* noop */
+    } else if (!ctrl_y) vy = calc_v(vy, dvy, vym, acc_y, 1);
+    else if (jd != 0 && SpeedCtrl.Control == ctrl_y)
+      vy = calc_v(vy, dvy, vym, acc_y, jd);
+    else if (jd != 0 && SpeedCtrl.Enable == ctrl_y)
+      vy = calc_v(vy, dvy, vym, acc_y, 1);
+    else if (jd == 0 && SpeedCtrl.Disable == ctrl_y)
+      vy = calc_v(vy, dvy, vym, acc_y, 1);
+
+    if (dvz == void 0) {
+      /* noop */
+    } else if (!ctrl_z) vz = calc_v(vz, dvz, vzm, acc_z, 1);
+    else if (UD != 0 && SpeedCtrl.Control == ctrl_z)
+      vz = calc_v(vz, dvz, vzm, acc_z, UD);
+    else if (UD != 0 && SpeedCtrl.Enable == ctrl_z)
+      vz = calc_v(vz, dvz, vzm, acc_z, 1);
+    else if (UD == 0 && SpeedCtrl.Disable == ctrl_z)
+      vz = calc_v(vz, dvz, vzm, acc_z, 1);
+
+    this._velocity.x = round_float(vx);
+    this._velocity.y = round_float(vy);
+    this._velocity.z = round_float(vz);
   }
 
   dismiss_fusion(frame_id: string): void {
-    /* → EntityRecovery.ts */
+    if (!this.fuse_bys?.length) return;
+    const size = this.fuse_bys.length + 1;
+    const hp = round(this.hp / size);
+    const hp_r = round(this.hp_r / size);
+    const mp = round(this.mp / size);
+    let facing = this.facing;
+    this.hp = hp;
+    this.mp = mp;
+    this.hp_r = hp_r;
+    for (const fighter of this.fuse_bys) {
+      fighter.hp = hp;
+      fighter.mp = mp;
+      fighter.hp_r = hp_r;
+      fighter.facing = facing = turn_face(facing);
+      fighter.enter_frame_by_id(frame_id, true);
+      fighter.invisible = fighter.motionless = fighter.invulnerable = 0;
+    }
+    if (this.dismiss_data) this.transform(this.dismiss_data);
+    this.enter_frame_by_id(frame_id, true);
+    this.dismiss_time = null;
+    this.dismiss_data = null;
+    this.fuse_bys = null;
   }
 
   find_align_frame(
-    _frame_id: string,
-    _src: string[] | undefined | null,
-    _dst: string[] | undefined | null
+    frame_id: string,
+    src: string[] | undefined | null,
+    dst: string[] | undefined | null
   ): INextFrame {
-    /* → EntityRecovery.ts */ return { id: "" };
+    if (dst?.length && src?.length) {
+      const src_idx = src.indexOf(frame_id);
+      const dst_idx = (src_idx + 1) % dst.length;
+      return { id: dst[dst_idx] };
+    } else if (dst?.length) {
+      return { id: dst[0] };
+    } else {
+      return this.find_auto_frame();
+    }
   }
 
   stat_recovering(): void {
-    /* → EntityRecovery.ts */
+    if (this.resting > 0) {
+      this.resting = clamp_add(this.resting, -this._atom_time, 0, this.resting_max);
+      return;
+    }
+
+    if (
+      this.toughness_resting < this._toughness_resting_max
+    ) {
+      this.toughness_resting = clamp_add(
+        this.toughness_resting,
+        -this._atom_time,
+        0,
+        this._toughness_resting_max,
+      );
+    } else if (
+      this.toughness < this.toughness_max &&
+      this._toughness_r_tick.add(this._atom_time)
+    ) {
+      this.toughness = clamp_add(
+        this.toughness,
+        this._atom_time,
+        0,
+        this._toughness_max,
+      );
+    }
+
+    if (
+      this.fall_value < this.fall_value_max &&
+      this._fall_r_tick.add(this._atom_time)
+    ) {
+      this.fall_value = clamp_add(
+        this.fall_value,
+        this._fall_r_value,
+        0,
+        this.fall_value_max,
+      );
+    }
+
+    if (
+      this.defend_value < this.defend_value_max &&
+      this._defend_r_tick.add(this._atom_time)
+    ) {
+      this.defend_value = clamp_add(
+        this.defend_value,
+        this._defend_r_value,
+        0,
+        this.defend_value_max,
+      );
+    }
   }
 
   drop_holding(): void {
-    /* → EntityRecovery.ts */
+    if (!this.holding) return;
+    this.lfw.mt.mark = "dh_1";
+    const w = this.holding;
+    const nf =
+      this.find_align_frame(
+        w.frame.id,
+        w.data.indexes?.on_hands,
+        w.data.indexes?.in_the_skys,
+      ) ?? {
+        id: w.data.indexes?.in_the_skys?.[0] ?? Builtin_FrameId.Auto,
+      };
+    w.enter_frame(nf);
+    if (w.position.y < w.ground_y) w.set_position_y(w.ground_y);
+    w.bearer = null;
+    this.holding = null;
   }
 
   hp_recovering(): void {
-    /* → EntityRecovery.ts */
+    if (this._hp <= 0 || this._hp >= this._hp_r) return;
+    this._hp_r_tick.max =
+      this.healing > 0
+        ? this.dataset("hp_healing_ticks")
+        : this.dataset("hp_r_ticks");
+    if (!this._hp_r_tick.add(this._atom_time)) return;
+    const value =
+      this.healing > 0
+        ? this.dataset("hp_healing_value")
+        : this.dataset("hp_r_value");
+    this.hp = min(this._hp_r, this._hp + value);
+    if (this._hp === this._hp_r) this.healing = 0;
+    else if (this._healing) this.healing = max(0, this._healing - value);
   }
 
   mp_recovering(): void {
-    /* → EntityRecovery.ts */
+    if (
+      this._hp <= 0 ||
+      this._mp >= this.mp_max ||
+      this._blinking_duration ||
+      this._invisible_duration
+    )
+      return;
+    this._mp_r_tick.max = this.dataset("mp_r_ticks");
+    if (!this._mp_r_tick.add(this._atom_time)) return;
+    const r_ratio = this.dataset("mp_r_ratio");
+    const value =
+      1 +
+      floor(
+        round_float(
+          (this.hp_max - min(r_ratio * this._hp, this.hp_max)) / 100,
+        ),
+      );
+    this.mp = min(this.mp_max, this._mp + value);
   }
 
   check_fusion_dismissing(): boolean {
-    /* → EntityRecovery.ts */ return false;
+    if (!this.fuse_bys?.length) return false;
+
+    const { x, y, z } = this._position;
+    for (const fighter of this.fuse_bys) {
+      fighter.position.set(x, y, z);
+    }
+    if (this.dismiss_time) {
+      this.dismiss_time = round_float(this.dismiss_time - this._atom_time);
+    }
+
+    const should_dismiss =
+      ((this.dismiss_time !== null && this.dismiss_time <= 0) ||
+        this.ctrl.sametime_keys_test("dja") ||
+        this.ctrl.sequence_keys_test("ja")) &&
+      y == 0;
+    if (should_dismiss) this.dismiss_fusion("112");
+    return should_dismiss;
   }
 
   update(): void {
@@ -1173,7 +1665,39 @@ export class Entity {
   }
 
   update_position(): void {
-    /* → EntityPhysics.ts */
+    if (this.bearer || this.catcher || this.shaking || this.motionless) return;
+    let { x: vx, y: vy, z: vz } = this._velocity;
+    const { atom_time } = this.world;
+    for (const [, v] of this.blockers) {
+      if (
+        (vx < 0 && v.attacker.position.x < this.position.x) ||
+        (vx > 0 && v.attacker.position.x > this.position.x)
+      ) {
+        vx = 0;
+        this._prev_velocity.x = 0;
+      }
+      if (
+        (vz < 0 && v.attacker.position.z < this.position.z) ||
+        (vz > 0 && v.attacker.position.z > this.position.z)
+      ) {
+        vz = 0;
+        this._prev_velocity.z = 0;
+      }
+    }
+    if (!this.shaking && !this.motionless) {
+      this._prev_position.set(
+        this.position.x,
+        this.position.y,
+        this.position.z,
+      );
+      this.set_position(
+        this.position.x + (vx + this._prev_velocity.x) * 0.5 * atom_time,
+        this.position.y + (vy + this._prev_velocity.y) * 0.5 * atom_time,
+        this.position.z + (vz + this._prev_velocity.z) * 0.5 * atom_time,
+      );
+    }
+    this.world.restrict(this);
+    this._prev_velocity.set(vx, vy, vz);
   }
 
   /**
@@ -1958,33 +2482,6 @@ export class Entity {
   read_snapshot(s: IEntitySnapshot) {
   }
 }
-
-// ============================================================
-// Prototype 挂载：将拆分到子模块的实现绑定到 Entity 类
-// ============================================================
-// -- Physics --
-Object.defineProperty(Entity.prototype, "dvx", { get: EntityPhysics.get_dvx });
-Object.defineProperty(Entity.prototype, "dvy", { get: EntityPhysics.get_dvy });
-Object.defineProperty(Entity.prototype, "dvz", { get: EntityPhysics.get_dvz });
-Entity.prototype.handle_gravity = EntityPhysics.handle_gravity;
-Entity.prototype.update_velocity = EntityPhysics.update_velocity;
-Entity.prototype.handle_ground_velocity_decay = EntityPhysics.handle_ground_velocity_decay;
-Entity.prototype.handle_velocity_decay = EntityPhysics.handle_velocity_decay;
-Entity.prototype.update_position = EntityPhysics.update_position;
-// -- Spawn --
-Entity.prototype.on_spawn = EntitySpawn.on_spawn;
-Entity.prototype.get_opoint_speed_z = EntitySpawn.get_opoint_speed_z;
-Entity.prototype.apply_opoints = EntitySpawn.apply_opoints;
-Entity.prototype.spawn_entity = EntitySpawn.spawn_entity;
-Entity.prototype.attach = EntitySpawn.attach;
-// -- Recovery --
-Entity.prototype.dismiss_fusion = EntityRecovery.dismiss_fusion;
-Entity.prototype.find_align_frame = EntityRecovery.find_align_frame;
-Entity.prototype.stat_recovering = EntityRecovery.stat_recovering;
-Entity.prototype.drop_holding = EntityRecovery.drop_holding;
-Entity.prototype.hp_recovering = EntityRecovery.hp_recovering;
-Entity.prototype.mp_recovering = EntityRecovery.mp_recovering;
-Entity.prototype.check_fusion_dismissing = EntityRecovery.check_fusion_dismissing;
 
 const common_creator = (world: World, data: IEntityData, states?: States) => {
   let ret = world.lfw.factory.acquire_entity(data.type)
