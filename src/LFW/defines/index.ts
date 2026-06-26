@@ -101,4 +101,5 @@ export * from "./WorldVal";
 export * from "./WpointKind";
 export * from "./defines";
 export * from "./actions";
+export * from "./INextFrameResult"
 /*** AUTO EXPORT END ***/
