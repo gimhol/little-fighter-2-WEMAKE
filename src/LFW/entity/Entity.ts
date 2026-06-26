@@ -1959,7 +1959,7 @@ export class Entity {
     } = cross
     this.lfw.mt.mark = 'sp_1'
     const x = this.lfw.mt.range(l, r);
-    const y = 2 + (b + t) / 2//this.lf2.random_in(b, t);
+    const y = 2 + round_float((b + t) / 2);//this.lf2.random_in(b, t);
     const z = max(f, n) + 2;
     return [x, y, z] as const;
   }
