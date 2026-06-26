@@ -2,14 +2,13 @@ import { Factory } from "../Factory";
 import { LFW } from "../LFW";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
-import { type IBaseData, type IBgData, type IBotData, type IDataLists, type IEntityData, type IStageInfo } from "../defines";
+import { type IBgData, type IBotData, type IDataLists, type IEntityData, type IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { Defines } from "../defines/defines";
 import { Ditto } from "../ditto";
 import {
   is_ball_data,
   is_bg_data,
-  is_entity_data,
   is_fighter_data,
   is_weapon_data,
 } from "../entity/type_check";
@@ -24,6 +23,8 @@ import { preprocess_bg_data } from "./preprocess_bg_data";
 import { preprocess_bot_data } from "./preprocess_bot_data";
 import { preprocess_entity_data } from "./preprocess_entity_data";
 import { preprocess_stage } from "./preprocess_stage";
+
+type Data = IEntityData | IBgData;
 
 export interface IDataListMap {
   background: IBgData[];
@@ -62,20 +63,20 @@ class Inner {
     this.lfw = mgr.lfw;
   }
 
-  private async _cook_data(data: IBaseData): Promise<IBaseData> {
+  private async _cook_data(data: Data): Promise<Data> {
     const jobs: Promise<any>[] = [];
-    if (is_bg_data(data)) data = preprocess_bg_data(this.lfw, data, jobs)
+    if (is_bg_data(data)) {
+      return preprocess_bg_data(this.lfw, data, jobs);
+    }
+    // data 收窄为 IEntityData
     if (is_ball_data(data))
       Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
     else if (is_weapon_data(data))
       Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
     else if (is_fighter_data(data))
       Factory.register_ctrl(data.id, (a, b) => new BotController(a, b));
-    if (is_entity_data(data)) {
-      data.base.bot = data.base.bot ?? this.bot_map.get(data.id ?? data.base.bot_id)
-      data = await preprocess_entity_data(this.lfw, data, jobs);
-    }
-    return data;
+    data.base.bot = data.base.bot ?? this.bot_map.get(data.id ?? data.base.bot_id);
+    return preprocess_entity_data(this.lfw, data, jobs);
   }
   private _add_alias(alias: string, data: IEntityData) {
     const prev = this.alias_map.get(alias)
@@ -129,7 +130,7 @@ class Inner {
       const src = (Defines.BuiltIn_Dats as any)[k];
       if (!is_non_blank_str(src)) continue;
       this.lfw.emit_progress(`${src}`, 0);
-      const raw = await this.lfw.import_json<IBaseData>(src).then(r => r[0])
+      const raw = await this.lfw.import_json<IEntityData>(src).then(r => r[0])
       const cooked = await this._cook_data(raw) as IEntityData;
       this._add_obj(src, cooked);
     }

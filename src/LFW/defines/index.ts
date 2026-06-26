@@ -24,7 +24,6 @@ export * from "./GONE_FRAME_INFO";
 export * from "./GameKey";
 export * from "./HitFlag";
 export * from "./IArmorInfo";
-export * from "./IBaseData";
 export * from "./IBdyInfo";
 export * from "./IBgData";
 export * from "./IBgInfo";
