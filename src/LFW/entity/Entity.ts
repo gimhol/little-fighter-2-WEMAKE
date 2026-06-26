@@ -280,6 +280,7 @@ export class Entity {
   get ghosted() { return this._ghosted }
   get reserve(): number { return this._reserve; }
   set reserve(v: number) {
+    v = round_float(v);
     const o = this._reserve;
     if (o === v) return;
     this._reserve = v;
@@ -291,12 +292,14 @@ export class Entity {
   get bdy(): IBdyInfo[] | undefined { return this.frame.bdy; }
   get toughness_resting_max(): number { return this._toughness_resting_max; }
   set toughness_resting_max(v: number) {
+    v = round_float(v);
     const o = this._toughness_resting_max;
     if (o === v) return;
     this._toughness_resting_max = v;
   }
   get resting_max(): number { return this._resting_max ?? this.world.resting_max; }
   set resting_max(v: number) {
+    v = round_float(v);
     const o = this.resting_max;
     if (o === v) return;
     this._resting_max = v;
@@ -304,6 +307,7 @@ export class Entity {
   }
   get resting() { return this._resting; }
   set resting(v: number) {
+    v = round_float(v);
     const o = this._resting;
     if (o === v) return;
     this._resting = v;
@@ -323,6 +327,7 @@ export class Entity {
 
   get toughness(): number { return this._toughness; }
   set toughness(v: number) {
+    v = round_float(v);
     if (v < 0) v = 0;
     const o = this._toughness;
     if (o === v) return;
@@ -333,6 +338,7 @@ export class Entity {
 
   get toughness_max(): number { return this._toughness_max; }
   set toughness_max(v: number) {
+    v = round_float(v);
     if (v < 0) v = 0;
     const o = this._toughness_max;
     if (o === v) return;
@@ -341,12 +347,14 @@ export class Entity {
   }
   get toughness_resting() { return this._toughness_resting; }
   set toughness_resting(v: number) {
+    v = round_float(v);
     const o = this._toughness_resting;
     if (o === v) return;
     this._toughness_resting = v;
   }
   get catch_time_max(): number { return this._catch_time_max ?? this.world.catch_time_max; }
   set catch_time_max(v: number) {
+    v = round_float(v);
     const o = this.catch_time_max;
     if (o === v) return;
     this._catch_time_max = v;
@@ -354,6 +362,7 @@ export class Entity {
   }
   get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value_max; }
   set fall_value_max(v: number) {
+    v = round_float(v);
     const o = this.fall_value_max;
     if (o === v) return;
     this._fall_value_max = v;
@@ -372,6 +381,7 @@ export class Entity {
   }
   get defend_value_max(): number { return this._defend_value_max ?? this.world.defend_value_max }
   set defend_value_max(v: number) {
+    v = round_float(v);
     const o = this.defend_value_max;
     if (o === v) return;
     this._defend_value_max = v;
@@ -379,6 +389,7 @@ export class Entity {
   }
   get healing(): number { return this._healing; }
   set healing(v: number) {
+    v = round_float(v);
     if (this._hp_r === this._hp) v = 0
     const o = this._healing;
     if (o === v) return;
@@ -388,6 +399,7 @@ export class Entity {
 
   get defend_ratio(): number { return this._defend_ratio ?? this.world.defend_ratio; }
   set defend_ratio(v: number) {
+    v = round_float(v);
     const o = this.defend_ratio;
     if (o === v) return;
     this._defend_ratio = v;
@@ -563,7 +575,7 @@ export class Entity {
     return this._blinking_duration;
   }
   set blinking(v: number) {
-    this._blinking_duration = max(0, v);
+    this._blinking_duration = round_float(max(0, v));
   }
 
   /**
@@ -576,7 +588,7 @@ export class Entity {
     return this._invisible_duration;
   }
   set invisible(v: number) {
-    this._invisible_duration = max(0, v);
+    this._invisible_duration = round_float(max(0, v));
   }
 
   /**
@@ -589,7 +601,7 @@ export class Entity {
     return this._invulnerable_duration;
   }
   set invulnerable(v: number) {
-    this._invulnerable_duration = max(0, v);
+    this._invulnerable_duration = round_float(max(0, v));
   }
 
   get ctrl(): BaseController {
