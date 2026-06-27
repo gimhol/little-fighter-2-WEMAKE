@@ -1,4 +1,4 @@
-import { ShaderMaterial } from "../../_t";
+import { Color, type ColorRepresentation, ShaderMaterial, Texture } from "../../_t";
 import { MaterialFactory, MaterialKind } from "../factory/MaterialFactory";
 import { Shaders } from "../shader";
 import { BLACK } from "./OutlineMaterial";
@@ -20,7 +20,7 @@ export class TextMaterial extends ShaderMaterial {
         th: { value: 1 },
         tsw: { value: 1 },
         tsh: { value: 1 },
-        outlineColor: { value: BLACK },
+        outlineColor: { value: BLACK.clone() },
         outlineAlpha: { value: 0 },
         outlineWidth: { value: 0 },
         repeatX: { value: 1 },
@@ -47,7 +47,7 @@ export class TextMaterial extends ShaderMaterial {
     return ret;
   }
   static reset(c: TextMaterial) {
-    c.uniforms.tex.value = void 0
+    c.texture = void 0;
     c.uniforms.x.value = 0
     c.uniforms.y.value = 0
     c.uniforms.w.value = 1
@@ -56,9 +56,9 @@ export class TextMaterial extends ShaderMaterial {
     c.uniforms.th.value = 1
     c.uniforms.tsw.value = 1
     c.uniforms.tsh.value = 1
-    c.uniforms.outlineColor.value.set(BLACK)
-    c.uniforms.outlineAlpha.value = 0
-    c.uniforms.outlineWidth.value = 0
+    c.outlineColor = BLACK;
+    c.outlineAlpha = 0;
+    c.outlineWidth = 0;
     c.uniforms.repeatX.value = 1
     c.uniforms.repeatY.value = 1
     c.uniforms.offsetX.value = 0
@@ -69,13 +69,33 @@ export class TextMaterial extends ShaderMaterial {
     c.uniforms.scaleY.value = 1
     c.uniforms.scaleZ.value = 1
     c.uniforms.opacity.value = 1
-    c.uniforms.mixColor.value.set(BLACK)
-    c.uniforms.mixStength.value = 0
+    c.mixColor = BLACK;
+    c.mixStrength = 0;
     c.uniforms.cover.value = false
     c.uniforms.coverColor.value.set(BLACK)
     c.uniforms.coverStength.value = 0
     c.uniforms.gray.value = 0
     c.uniforms.keepout.value = true
   }
+
+  // ===== 封装属性 =====
+
+  get texture(): Texture | undefined { return this.uniforms.tex.value }
+  set texture(v: Texture | undefined) { this.uniforms.tex.value = v }
+
+  get mixColor(): Color { return this.uniforms.mixColor.value }
+  set mixColor(v: ColorRepresentation) { this.uniforms.mixColor.value.set(v) }
+
+  get mixStrength(): number { return this.uniforms.mixStength.value }
+  set mixStrength(v: number) { this.uniforms.mixStength.value = v }
+
+  get outlineColor(): Color { return this.uniforms.outlineColor.value }
+  set outlineColor(v: ColorRepresentation) { this.uniforms.outlineColor.value.set(v) }
+
+  get outlineAlpha(): number { return this.uniforms.outlineAlpha.value }
+  set outlineAlpha(v: number) { this.uniforms.outlineAlpha.value = v }
+
+  get outlineWidth(): number { return this.uniforms.outlineWidth.value }
+  set outlineWidth(v: number) { this.uniforms.outlineWidth.value = v }
 }
 MaterialFactory.register(TextMaterial)
