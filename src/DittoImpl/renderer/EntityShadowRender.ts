@@ -1,5 +1,5 @@
 
-import { clamp, LFW, World, type Entity } from "@/LFW";
+import { clamp, LFW, min, World, type Entity } from "@/LFW";
 import { BufferGeometry, Mesh, MeshBasicMaterial, Vector3 } from "../_t";
 import type { EntityRenderer } from "./EntityRenderer";
 import { get_static_plane_geometry } from "./GeometryKeeper";
@@ -60,7 +60,7 @@ export class EntityShadowRender {
     this._p0.copy(this._p1);
     this._p1.x = x
     this._p1.y = ground_y - z / 2
-    this._p1.z = bg.far
+    this._p1.z = min(bg.far, z - 1)
     if (immidiate) {
       this._p0.copy(this._p1);
       this.mesh.position.copy(this._p1);
