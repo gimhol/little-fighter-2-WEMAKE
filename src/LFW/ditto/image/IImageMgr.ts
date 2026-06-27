@@ -6,7 +6,7 @@ import type { IImageOp_Crop } from "./IImageOp_Crop";
 import type { IImageOp_Flip } from "./IImageOp_Flip";
 import type { IImageOp_Resize } from "./IImageOp_Resize";
 import type { ImageInfo } from "./ImageInfo";
-import { TextInfo } from "./TextInfo";
+import type { TextInfo } from "./TextInfo";
 export type ImageOperation = IImageOp_Crop | IImageOp_Resize | IImageOp_Flip | IImageOp_Color;
 
 export interface IImageMgr {
