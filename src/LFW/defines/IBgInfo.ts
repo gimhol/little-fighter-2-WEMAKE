@@ -17,9 +17,9 @@ export interface IBgInfo {
   zoom_z?: number;
 
   /** @deprecated shadow_w shadow_h*/
-  shadowsize?: [number, number];
+  // shadowsize?: [number, number];
   /** @deprecated zoom_x zoom_y zoom_z*/
-  zoom?: [number, number, number];
+  // zoom?: [number, number, number];
 }
 
 export function bg_info_new(): IBgInfo {

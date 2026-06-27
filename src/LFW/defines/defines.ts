@@ -134,7 +134,9 @@ export namespace Defines {
       far: -40,
       near: -0,
       group: [],
-      zoom: [0.5, 0.5, 0.5],
+      zoom_x: 0.5,
+      zoom_y: 0.5,
+      zoom_z: 0.5,
       shadow_w: 0,
       shadow_h: 0
     },
