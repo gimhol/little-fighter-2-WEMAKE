@@ -26,7 +26,7 @@ export class EntityNameRender {
     this._mesh = null
   }
   render() {
-    const { entity: e } = this;
+    const { entity: e, world_renderer: { camera, world: { screen_h } } } = this;
     const { name } = e;
     if (!name) { // 无名，移除之
       this._mesh?.removeFromParent()
@@ -38,22 +38,29 @@ export class EntityNameRender {
       if (this._mesh) this._mesh.visible = false;
       return;
     }
-    const { lfw: lf2, team, ground_y, world } = e;
+    const { lfw, team, ground_y, world } = e;
     const { position } = this.owner;
     const { mesh } = this;
-    mesh.set_text(lf2, name)
+    mesh.set_text(lfw, name)
     mesh.visible = true;
     if (mesh.userData.team != team) {
       mesh.userData.team = team;
       mesh.fillStyle = get_team_text_color(team);
       mesh.strokeStyle = get_team_outline_color(team);
     }
+    const { x: cam_x, y: cam_y } = camera.position;
+
+
     const hw = (mesh.scale.x + 10) / 2;
-    const min_x = this.world_renderer.camera.position.x + hw;
+    const min_x = cam_x + hw;
     const max_x = min_x + (world.screen_w / world.transform.scale_x) - 2 * hw;
     const x = clamp(position.x, min_x, max_x);
-    const z = position.z;
-    const y = ground_y - z / 2 - mesh.scale.y;
+    const z = position.z + 0.2;
+    const y = clamp(
+      ground_y - z / 2 - mesh.scale.y,
+      cam_y + 10,
+      cam_y + screen_h - 10
+    );
     mesh.position.set(round(x), round(y), round(z));
   }
 
