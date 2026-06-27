@@ -1,5 +1,4 @@
 import type { Background } from "@/LFW/bg/Background";
-import { Defines } from "@/LFW/defines";
 import type { World } from "@/LFW/World";
 import * as T from "../_t";
 import { Object3D } from "../_t";
@@ -31,7 +30,9 @@ export class BgRender {
     if (!this.bg) return
 
     const { base } = this.bg.data
-    const z = -base.height * 2 + base.far;
+    const { height = 0, far = 0 } = base;
+
+    const z = -height * 2 + far;
 
     this.cam_node = new T.Object3D();
     this.cam_node.name = "Background(Cam Follower):" + base.name;

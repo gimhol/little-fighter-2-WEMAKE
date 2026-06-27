@@ -13,9 +13,9 @@ export class EntityShadowRender {
   readonly lfw: LFW;
   readonly entity: Entity;
   readonly world_renderer: WorldRenderer;
-  protected _w: number = 0;
-  protected _h: number = 0;
-  protected _img: string = '';
+  protected _w: number | undefined;
+  protected _h: number | undefined;
+  protected _img: string | undefined;
   private _p0 = new Vector3()
   private _p1 = new Vector3()
   private _s0 = new Vector3(1, 1, 1)
@@ -35,11 +35,14 @@ export class EntityShadowRender {
     const { world } = owner.entity;
     const { base } = world.bg.data
     const { shadow, shadow_w, shadow_h } = base;
-    this._h = shadow_h;
     this._w = shadow_w;
+    this._h = shadow_h;
     this._img = shadow;
     this.mesh = new Mesh(
-      get_static_plane_geometry(shadow_w, shadow_h),
+      get_static_plane_geometry(
+        shadow_w || 0,
+        shadow_h || 0
+      ),
       this.shadow_material(),
     );
     this.mesh.visible = false;
@@ -92,7 +95,10 @@ export class EntityShadowRender {
       const { bg } = this;
       const { shadow_w, shadow_h, shadow } = bg.data.base;
       if (shadow_w !== this._w || shadow_h !== this._h) {
-        this.mesh.geometry = get_static_plane_geometry(this._w = shadow_w, this._h = shadow_h);
+        this.mesh.geometry = get_static_plane_geometry(
+          (this._w = shadow_w) || 0,
+          (this._h = shadow_h) || 0
+        );
       }
       if (shadow !== this._img) this.mesh.material = this.shadow_material()
       const { invisible } = this.owner;

@@ -1,38 +1,32 @@
-import type { BackgroundGroup } from "./BackgroundGroup";
-import { any, fields, flt, int, str } from "../fields";
-
 export interface IBgInfo {
-  name: string;
-  shadow: string;
-  shadow_w: number;
-  shadow_h: number;
-  group: (BackgroundGroup | string)[]
-  left: number;
-  right: number;
-  far: number;
-  near: number;
-  height: number;
+  /** 背景名称 */
+  name?: string;
+  /** 阴影资源路径 */
+  shadow?: string;
+  /** 阴影宽度 */
+  shadow_w?: number;
+  /** 阴影高度 */
+  shadow_h?: number;
+  /** 所属组 */
+  group?: string[]
+  /** 左边界 */
+  left?: number;
+  /** 右边界 */
+  right?: number;
+  /** 远边界（负值，数值上更小） */
+  far?: number;
+  /** 近边界（负值，数值上更大）*/
+  near?: number;
+  /** 高度，默认 600 */
+  height?: number;
+  /** X 轴缩放 */
   zoom_x?: number;
+  /** Y 轴缩放 */
   zoom_y?: number;
+  /** Z 轴缩放 */
   zoom_z?: number;
-
-  /** @deprecated shadow_w shadow_h*/
-  // shadowsize?: [number, number];
-  /** @deprecated zoom_x zoom_y zoom_z*/
-  // zoom?: [number, number, number];
 }
 
 export function bg_info_new(): IBgInfo {
-  return {
-    name: "",
-    shadow: "",
-    shadow_w: 0,
-    shadow_h: 0,
-    group: [],
-    left: 0,
-    right: 0,
-    far: 0,
-    near: 0,
-    height: 0,
-  };
+  return {};
 }
