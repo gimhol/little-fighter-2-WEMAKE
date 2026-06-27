@@ -873,7 +873,7 @@ export class World extends WorldDataset {
     } while (0)
 
     do {
-      const { height } = this.bg.data.base;
+      const { height } = this.bg;
       if (height <= Defines.MODERN_SCREEN_HEIGHT) {
         this.current_cam_pos.y = this.target_cam_pos.y = 0;
         break;

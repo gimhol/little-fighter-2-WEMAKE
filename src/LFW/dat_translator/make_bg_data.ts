@@ -80,8 +80,8 @@ export function make_bg_data(
     base: info,
     layers: [],
   };
-  ret.base.name = ret.base.name.replace(/_/g, " ");
-  ret.base.shadow = ret.base.shadow.replace(/.bmp$/, ".png").replace(/\\/g, '/');
+  ret.base.name = ret.base.name?.replace(/_/g, " ");
+  ret.base.shadow = ret.base.shadow?.replace(/.bmp$/, ".png").replace(/\\/g, '/');
   const { blocks, remains } = take_blocks(full_str, "layer:", "layer_end");
   full_str = remains
 

@@ -116,7 +116,7 @@ class Inner {
     const list = this.datas[data.type];
     const idx = list.findIndex(v => v.id === data.id);
     if (idx < 0) list.push(data); else list[idx] = data;
-    data.base.group.forEach(v => this.bg_randomings.delete(v))
+    data.base.group?.forEach(v => this.bg_randomings.delete(v))
   }
 
   async load(index_files: string[]) {
