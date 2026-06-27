@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import checker from 'vite-plugin-checker';
 import glsl from 'vite-plugin-glsl';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import json from "./package.json";
@@ -10,6 +11,7 @@ export default defineConfig({
   base: './',
   plugins: [
     react(),
+    checker({ typescript: true }),
     createHtmlPlugin({
       inject: {
         data: {
