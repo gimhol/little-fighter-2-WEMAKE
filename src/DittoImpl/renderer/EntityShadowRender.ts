@@ -55,11 +55,12 @@ export class EntityShadowRender {
     this.mesh.removeFromParent();
   }
   update_position(immidiate: boolean = false): void {
-    const { position: { x, z }, ground_y } = this.entity;
+    const { bg, entity } = this
+    const { position: { x, z }, ground_y } = entity;
     this._p0.copy(this._p1);
     this._p1.x = x
     this._p1.y = ground_y - z / 2
-    this._p1.z = z - 550
+    this._p1.z = bg.far
     if (immidiate) {
       this._p0.copy(this._p1);
       this.mesh.position.copy(this._p1);
@@ -79,16 +80,16 @@ export class EntityShadowRender {
     }
   }
   shadow_material() {
-    const { bg, lfw: lf2 } = this;
+    const { bg, lfw } = this;
     const { shadow } = bg.data.base;
     const m = MaterialFactory.get(MaterialKind.Basic, MeshBasicMaterial);
-    if (lf2 && shadow) m.map = lf2.images.find(shadow)?.pic?.texture;
+    if (lfw && shadow) m.map = lfw.images.find(shadow)?.pic?.texture;
     return m;
   }
   render() {
     const { entity } = this;
     if (this.owner.owner.dirty) {
-      const { bg, lfw: lf2 } = this;
+      const { bg } = this;
       const { shadow_w, shadow_h, shadow } = bg.data.base;
       if (shadow_w !== this._w || shadow_h !== this._h) {
         this.mesh.geometry = get_static_plane_geometry(this._w = shadow_w, this._h = shadow_h);
