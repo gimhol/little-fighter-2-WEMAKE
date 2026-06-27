@@ -1,4 +1,4 @@
-import { BFID, is_fighter, OID, SE, type Entity } from "@/LFW";
+import { BFID, is_fighter, OID, SE, type Entity, type LFW, type World } from "@/LFW";
 import { Vector3 } from "../_t";
 import { EntityCtrlRender } from "./EntityCtrlRender";
 import { EntityMainRender } from "./EntityMainRender";
@@ -10,6 +10,8 @@ import { INDICATINGS } from "./INDICATINGS";
 import type { WorldRenderer } from "./WorldRenderer";
 
 export class EntityRenderer {
+  lfw: LFW;
+  world: World;
   entity: Entity;
   main: EntityMainRender;
   name: EntityNameRender;
@@ -22,8 +24,6 @@ export class EntityRenderer {
   readonly p0 = new Vector3()
   readonly p1 = new Vector3()
   readonly position = new Vector3();
-  lfw: import("c:/Users/Gimho/little-fighter-j/src/LFW/LFW").LFW;
-  world: import("c:/Users/Gimho/little-fighter-j/src/LFW/World").World;
   get invisible() {
     const { invisible, frame } = this.entity;
     if (frame.id == BFID.Gone) return true
