@@ -63,6 +63,7 @@ export class SmallTextMesh extends Mesh<BufferGeometry, TextMaterial> {
     this.material.outlineAlpha = v ? 1 : 0;
     this.material.outlineWidth = v ? 1 : 0;
     this.material.outlineColor = v ? v : BLACK;
+    if (this._text) this._draw_text();
   }
 
   async set_text(_lfw: LFW, text: string): Promise<this> {
@@ -89,29 +90,31 @@ export class SmallTextMesh extends Mesh<BufferGeometry, TextMaterial> {
     _ctx.imageSmoothingEnabled = false;
 
     const metrics = _ctx.measureText(this._text);
-    const w = Math.max(1, Math.ceil(metrics.width));
-    const h = Math.max(1, Math.ceil(metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent));
+    const tw = Math.max(1, Math.ceil(metrics.width));
+    const th = Math.max(1, Math.ceil(metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent));
 
-    if (_canvas.width !== w || _canvas.height !== h) {
-      _canvas.width = w;
-      _canvas.height = h;
-      // 尺寸变化后重建 CanvasTexture
+    const pad = this.material.outlineWidth;
+    const cw = tw + 2 * pad;
+    const ch = th + 2 * pad;
+
+    if (_canvas.width !== cw || _canvas.height !== ch) {
+      _canvas.width = cw;
+      _canvas.height = ch;
       this._texture.dispose();
       this._texture = new CanvasTexture(_canvas);
     }
 
-    // canvas 重置后需重新设置样式
     _ctx.font = DEFAULT_FONT;
     _ctx.fillStyle = 'white';
     _ctx.textAlign = 'left';
     _ctx.textBaseline = 'top';
     _ctx.imageSmoothingEnabled = false;
 
-    _ctx.clearRect(0, 0, w, h);
-    _ctx.fillText(this._text, 0, 0);
+    _ctx.clearRect(0, 0, cw, ch);
+    _ctx.fillText(this._text, pad, pad);
 
-    this.scale.x = w;
-    this.scale.y = h;
+    this.scale.x = cw;
+    this.scale.y = ch;
     this._texture.needsUpdate = true;
   }
 }

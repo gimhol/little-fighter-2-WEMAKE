@@ -20,6 +20,7 @@ import * as T from "../_t";
 import { md5 } from "../md5";
 import { RImageInfo } from "../RImageInfo";
 import { RTextInfo } from "../RTextInfo";
+import { TextInfo } from "@/LFW/ditto/image/TextInfo";
 import { handle_image_operation_crop, handle_image_operation_flip, handle_image_operation_mask, handle_image_operation_resize } from "./handle_image_operation";
 export class ImageMgr implements IImageMgr {
   static readonly TextureLoader = new T.TextureLoader();
@@ -167,6 +168,16 @@ export class ImageMgr implements IImageMgr {
       return info;
     };
     return this.infos.fetch(key, fn) as Promise<RTextInfo>;
+  }
+
+  measure_text(text: string, style?: IStyle | null): TextInfo {
+    const s = style || {};
+    const { scale = 2 } = s;
+    const cvs = document.createElement('canvas');
+    const ctx = cvs.getContext('2d')!;
+    apply_text_style(s, ctx);
+    const [, w, h] = split_text_to_lines(text, ctx, s);
+    return new TextInfo({ text, style: s, w: scale * w, h: scale * h, scale });
   }
 
   load_img(key: string, src: string, operations?: ImageOperation[]): Promise<RImageInfo> {
