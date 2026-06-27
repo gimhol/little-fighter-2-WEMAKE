@@ -9,9 +9,9 @@ export class BackgroundSwitcher extends Label {
     set.add(Defines.RANDOM_BG)
 
     for (const bg of this.lfw.datas.backgrounds) {
-      if (bg.base.group.includes(BGG.Regular)) {
+      if (bg.base.group?.includes(BGG.Regular)) {
         set.add(bg)
-      } else if (bg.base.group.includes(BGG.Hidden)) {
+      } else if (bg.base.group?.includes(BGG.Hidden)) {
         if (this.world.LF2_NET) set.add(bg)
       } else {
         if (this.world.GIM_INK) set.add(bg)
@@ -26,7 +26,7 @@ export class BackgroundSwitcher extends Label {
     super.on_start();
   }
   override on_resume(): void {
-    this.set_text(this._background.base.name)
+    this.set_text(this._background.base.name || this._background.id)
     this.lfw.callbacks.add(this)
   }
   override on_pause(): void {
@@ -48,6 +48,8 @@ export class BackgroundSwitcher extends Label {
       this._background = backgrounds[next_idx]!;
       this.world.stage.change_bg(this._background)
     }
-    this.set_text(this._background.base.name)
+    this.set_text(
+      this._background.base.name || this._background.id
+    )
   }
 }
