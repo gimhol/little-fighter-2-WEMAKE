@@ -1,12 +1,11 @@
 import img_error from "@/assets/error.png";
 import img_white from "@/assets/white.png";
-import { parse_rgba } from "@/LFW";
 import { MagnificationTextureFilter } from "@/LFW/defines/MagnificationTextureFilter";
 import { MinificationTextureFilter } from "@/LFW/defines/MinificationTextureFilter";
 import { TextureWrapping } from "@/LFW/defines/TextureWrapping";
 import type { IImageInfo } from "@/LFW/ditto/image/IImageInfo";
+import { TextInfo } from "@/LFW/ditto/image/TextInfo";
 import type { LFW } from "../../LFW";
-import { AsyncValuesKeeper } from "../AsyncValuesKeeper";
 import type { ILegacyPictureInfo } from "../../LFW/defines/ILegacyPictureInfo";
 import type { IPicture } from "../../LFW/defines/IPicture";
 import type { IPictureInfo } from "../../LFW/defines/IPictureInfo";
@@ -17,10 +16,8 @@ import { is_positive_int, max, round } from "../../LFW/utils";
 import { create_img_ele } from "../../Utils/create_img_ele";
 import { get_blob } from "../../Utils/get_blob";
 import * as T from "../_t";
-import { md5 } from "../md5";
+import { AsyncValuesKeeper } from "../AsyncValuesKeeper";
 import { RImageInfo } from "../RImageInfo";
-import { RTextInfo } from "../RTextInfo";
-import { TextInfo } from "@/LFW/ditto/image/TextInfo";
 import { handle_image_operation_crop, handle_image_operation_flip, handle_image_operation_mask, handle_image_operation_resize } from "./handle_image_operation";
 export class ImageMgr implements IImageMgr {
   static readonly TextureLoader = new T.TextureLoader();
@@ -97,54 +94,6 @@ export class ImageMgr implements IImageMgr {
     return ret;
   }
 
-  private async create_txt_info(key: string, text: string, style?: IStyle | null): Promise<RTextInfo> {
-    const cvs = document.createElement("canvas");
-    const ctx = cvs.getContext("2d");
-    if (!ctx) throw new Error("can not get context from canvas");
-    if (!style) style = {};
-    const {
-      padding_l = 2,
-      padding_t = 2,
-      scale = 2,
-    } = style;
-    apply_text_style(style, ctx);
-    const [lines, w, h] = split_text_to_lines(text, ctx, style);
-    cvs.style.width = (cvs.width = scale * w) + "px";
-    cvs.style.height = (cvs.height = scale * h) + "px";
-    ctx.save();
-    ctx.scale(scale, scale);
-    style.fill_style = style.fill_style ?? 'white';
-    const nf = need_fiil(style);
-    const ns = need_stroke(style);
-    if (nf || ns) {
-      apply_text_style(style, ctx);
-      for (const { x, y, t } of lines) {
-        if (nf) ctx.fillText(t, padding_l + x, padding_t + y)
-        if (ns) ctx.strokeText(t, padding_l + x, padding_t + y)
-      }
-      draw_underline(style, ctx, lines);
-    }
-
-    ctx.restore();
-    const blob = await get_blob(cvs).catch((e) => {
-      const err = new Error(e.message + " key:" + key);
-      Object.assign(err, { cause: e.cause })
-      throw err
-    });
-    const url = URL.createObjectURL(blob);
-    const ret = new RTextInfo().merge({
-      key,
-      url,
-      scale,
-      src_url: url,
-      w: cvs.width,
-      h: cvs.height,
-      text: text,
-      style
-    });
-    return ret;
-  }
-
   private add_disposable(ret: RImageInfo) {
     this.disposables.set(ret.key, ret);
     if (this.disposables.size > 1000) {
@@ -158,16 +107,6 @@ export class ImageMgr implements IImageMgr {
 
   find(key: string): RImageInfo | undefined {
     return this.infos.get(key);
-  }
-
-  load_text(text: string, style: IStyle | null = {}): Promise<RTextInfo> {
-    const key = md5(text, JSON.stringify(style));
-    const fn = async () => {
-      const info = await this.create_txt_info(key, text, style)
-      info.pic = await this.p_create_picture(info);
-      return info;
-    };
-    return this.infos.fetch(key, fn) as Promise<RTextInfo>;
   }
 
   measure_text(text: string, style?: IStyle | null): TextInfo {
@@ -296,20 +235,6 @@ function split_text_to_lines(text: string, ctx: CanvasRenderingContext2D, style:
   return [lines, w, h];
 }
 
-function draw_underline(style: IStyle, ctx: CanvasRenderingContext2D, lines: ITextLineInfo[]) {
-  const { underline_color, underline_width } = style
-  if (!underline_width) return;
-  const { padding_l = 2, padding_t = 2 } = style
-  ctx.strokeStyle = underline_color ?? style.fill_style ?? "white";
-  ctx.lineWidth = underline_width;
-  for (const { x, y, w } of lines) {
-    ctx.beginPath();
-    ctx.moveTo(padding_l + x, padding_t + y + underline_width + 1);
-    ctx.lineTo(padding_l + x + w, padding_t + y + underline_width + 1);
-    ctx.stroke();
-  }
-}
-
 function apply_text_style(style: IStyle, ctx: CanvasRenderingContext2D) {
   ctx.font = style.font ?? "normal 9px system-ui";
   ctx.fillStyle = style.fill_style ?? "white";
@@ -322,13 +247,4 @@ function apply_text_style(style: IStyle, ctx: CanvasRenderingContext2D) {
   ctx.shadowOffsetY = style.shadow_color ? style.shadow_offset_y ?? 0 : 0;
   ctx.imageSmoothingEnabled = style.smoothing ?? false;
 
-}
-function need_stroke(style: IStyle): boolean {
-  if (!style.stroke_style) return false;
-  if (!style.line_width || style.line_width < 0) return false;
-  return !!parse_rgba(style.stroke_style)?.a;
-}
-function need_fiil(style: IStyle): boolean {
-  if (!style.fill_style) return true;
-  return !!parse_rgba(style.fill_style)?.a
 }

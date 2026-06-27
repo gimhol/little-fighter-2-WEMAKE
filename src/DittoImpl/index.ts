@@ -6,7 +6,6 @@ export * from "./Interval";
 export * from "./Keyboard";
 export * from "./Pointings";
 export * from "./RImageInfo";
-export * from "./RTextInfo";
 export * from "./Render";
 export * from "./Timeout";
 export * from "./Zip";
