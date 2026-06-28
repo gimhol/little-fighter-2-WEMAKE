@@ -332,7 +332,7 @@ export class World extends WorldDataset {
         if (real_dt < fix_radio * ideally_dt) return;
         if (this._sleeping) return;
         this.before_update?.();
-        this.update_once();
+        this.step();
         this._lifetime++;
         this.lfw.events.length = 0;
         this.lfw.cmds.length = 0;
@@ -650,7 +650,7 @@ export class World extends WorldDataset {
     }
   }
 
-  update_once() {
+  step() {
     this._entities_map.clear();
     this.transform.update();
     this.handle_keys();
