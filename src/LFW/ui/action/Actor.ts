@@ -13,10 +13,18 @@ class UIActor {
     [UIActionEnum.SetUI, ({ lfw }, layout_id, index) => lfw.set_ui({ id: layout_id }, Number(index) || 0)],
     [UIActionEnum.PushUI, ({ lfw }, layout_id, index) => lfw.push_ui({ id: layout_id }, Number(index) || 0)],
     [UIActionEnum.PopUI, ({ lfw }) => lfw.pop_ui_safe()],
-    [UIActionEnum.LoadData, ({ lfw }, url) => lfw.load(...(url ? [url] : LFW.ZIPS.slice(1))).catch(e => Ditto.warn('Failed to load, reason', e))
-      .catch((e) => Ditto.warn(`[${UIActor.TAG}::load_data] ${url} not exists, err: ${e}`))],
+    [UIActionEnum.LoadData, ({ lfw }, url) => {
+
+      lfw.load(...(url ? [url] : LFW.ZIPS.slice(1)))
+        .catch(e => Ditto.warn('Failed to load, reason', e))
+    }],
     [UIActionEnum.Broadcast, ({ lfw }, msg) => lfw.broadcast(msg)],
-    [UIActionEnum.Sound, ({ lfw }, name) => lfw.sounds.play_preset(name)],
+    [UIActionEnum.Sound, ({ lfw }, name, _x, _y, _z) => {
+      const x = Number(_x);
+      const y = Number(_y);
+      const z = Number(_z);
+      lfw.sounds.play_preset(name, isNaN(x) ? void 0 : x, isNaN(y) ? void 0 : y, isNaN(z) ? void 0 : z)
+    }],
     [UIActionEnum.SwitchDifficulty, ({ lfw }, v) => lfw.switch_difficulty(v ? Number(v) : void 0)],
     [UIActionEnum.DestoryStage, ({ lfw }) => lfw.change_stage('')],
     [UIActionEnum.RemoveAllEntities, ({ lfw }) => lfw.entities.del_all()]

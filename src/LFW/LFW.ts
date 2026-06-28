@@ -421,6 +421,26 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
     return [ret, md5];
   }
 
+  /**
+   * 加载游戏资源包
+   *
+   * 依次加载每个 zip（本地文件或远程 URL），对每个 zip：
+   * 1. 加载字符串表（strings.json / strings.json5）
+   * 2. 加载数据索引并注册 fighter / weapon / ball 快捷方法
+   * 3. 加载 UI
+   *
+   * 首次调用（`zips.length === 0`）时：
+   * - 加载内置字符串和内置 UI
+   * - 加载完成后触发 `on_prel_loaded`
+   *
+   * @param arg1 - 资源包路径或 IZip 实例列表
+   * @returns 加载完成或失败（失败时 reject）
+   *
+   * @emits on_loading_start - 加载开始
+   * @emits on_prel_loaded  - 首次加载完成（仅首次）
+   * @emits on_loading_end   - 所有资源加载完成
+   * @emits on_loading_failed - 任一步骤失败
+   */
   async load(...arg1: (I.IZip | string)[]): Promise<void> {
     const is_first = this.zips.length === 0;
     this._dispose_check('load')
