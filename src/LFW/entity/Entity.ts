@@ -2382,10 +2382,10 @@ export class Entity {
     this.blockers.delete(a_id);
     this.superpunchs.delete(a_id);
   }
-  dataset<K extends keyof Partial<IWorldDataset>>(name: K): IWorldDataset[K] {
+  dataset<K extends keyof IWorldDataset>(name: K): IWorldDataset[K] {
     return (
-      this.frame?.[name] ??
-      this.data.base?.[name] ??
+      this.frame[name] ??
+      this.data.base[name] ??
       this.world.bg.data.dataset?.[name] ??
       this.world.dataset[name]
     )
