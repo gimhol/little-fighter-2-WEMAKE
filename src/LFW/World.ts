@@ -48,6 +48,13 @@ const MAX_DEBUG_ENTITIES = 355
 const x_sorter = (a: Entity, b: Entity) => a.aabb_min_x - b.aabb_min_x
 const z_sorter = (a: Entity, b: Entity) => a.aabb_min_z - b.aabb_min_z
 const pair_key = (a: Entity, b: Entity) => a.id < b.id ? a.id + '|' + b.id : b.id + '|' + a.id;
+
+/**
+ * TODO:
+ *    这个继承似乎不太好。
+ *    后续提取为World::dataset
+ *      - Gim
+ */
 export class World extends WorldDataset {
   static override readonly TAG: string = "World";
   readonly lfw: LFW;
