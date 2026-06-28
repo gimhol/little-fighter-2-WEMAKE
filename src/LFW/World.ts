@@ -233,20 +233,6 @@ export class World extends WorldDataset {
     return ret;
   }
 
-  /** 存活敌人列表 */
-  list_enemies(e: Entity): ReadonlyArray<Entity> {
-    return this.list_entities(`ef_${e.team}`, (o) => {
-      return is_fighter(o) && e.team != o.team && o.hp > 0
-    })
-  }
-
-
-  /** 存活队友列表 */
-  list_allies(e: Entity): ReadonlyArray<Entity> {
-    return this.list_entities(`af_${e.team}`, (o) => {
-      return is_fighter(o) && e.team == o.team && o.hp > 0
-    })
-  }
 
   del_entity(entity: Entity): this {
     this._gones.add(entity)

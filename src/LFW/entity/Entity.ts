@@ -1024,12 +1024,12 @@ export class Entity {
         const { type, min = 0, max = 355, skip_zero } = multi;
         switch ((multi_type = type)) {
           case OpointMultiEnum.AccordingEnemies:
-            enemies = this.world.list_enemies(this);
+            enemies = this.world.list_entities(`ef_${this.team}`, (o) => is_fighter(o) && this.team != o.team && o.hp > 0);
             if (skip_zero && !enemies.length) break;
             count = clamp(enemies.length, min, max);
             break;
           case OpointMultiEnum.AccordingAllies:
-            allies = this.world.list_allies(this);
+            allies = this.world.list_entities(`af_${this.team}`, (o) => is_fighter(o) && this.team == o.team && o.hp > 0);
             if (skip_zero && !allies.length) break;
             count = clamp(allies.length, min, max);
             break;
