@@ -1,8 +1,10 @@
 import type { TFrameIdListPair, TFrameIdPair } from "./defines";
 
 export interface IFrameIndexes {
-  standing?: string;
-  heavy_obj_walk?: string[];
+  /** 默认动作 */
+  default?: string;
+  /** 举重步行首帧 */
+  heavy_obj_walk?: string;
   landing_2?: string;
   landing_1?: string;
 

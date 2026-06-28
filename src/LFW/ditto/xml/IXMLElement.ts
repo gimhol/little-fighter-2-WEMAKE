@@ -1,5 +1,5 @@
 export type Voidable<T> = T | undefined | null | void;
-
+export type BaseValue = string | number | boolean
 /**
  * XML 元素接口，抽象平台无关的 XML 操作
  *
@@ -89,28 +89,7 @@ export interface IXMLElement {
    * @param {string}          name  - 属性名
    * @param {Voidable<string>} value - 值
    */
-  set_attr(name: string, value: Voidable<string | number | boolean>): void;
-
-  /**
-   * 设置字符串属性，value 为 Voidable 时删除属性
-   * @param {string}          name  - 属性名
-   * @param {Voidable<string>} value - 值
-   */
-  set_str_attr(name: string, value: Voidable<string>): void;
-
-  /**
-   * 设置数值属性，value 为 Voidable 时删除属性
-   * @param {string}          name  - 属性名
-   * @param {Voidable<number>} value - 值
-   */
-  set_num_attr(name: string, value: Voidable<number>): void;
-
-  /**
-   * 设置布尔属性（输出 "true" / "false"），value 为 Voidable 时删除属性
-   * @param {string}           name  - 属性名
-   * @param {Voidable<boolean>} value - 值
-   */
-  set_bool_attr(name: string, value: Voidable<boolean>): void;
+  set_attr(name: string, value: Voidable<BaseValue>): void;
 
   /**
    * 设置字符串数组属性，按分隔符合并为字符串，value 为 Voidable 时删除属性
@@ -118,43 +97,22 @@ export interface IXMLElement {
    * 可传入单个字符串（自动包装为数组）
    *
    * @param {string}            name  - 属性名
-   * @param {Voidable<string | string[]>} value - 值
+   * @param {Voidable<BaseValue | BaseValue[]>} value - 值
    * @param {string}           [sep=","] - 分隔符
    */
-  set_strs_attr(name: string, value: Voidable<string | string[]>, sep?: string): void;
-
-  /**
-   * 设置数值数组属性，按分隔符合并为字符串，value 为 Voidable 时删除属性
-   *
-   * 可传入单个数字（自动包装为数组）
-   *
-   * @param {string}            name  - 属性名
-   * @param {Voidable<number | number[]>} value - 值
-   * @param {string}           [sep=","] - 分隔符
-   */
-  set_nums_attr(name: string, value: Voidable<number | number[]>, sep?: string): void;
+  set_arr_attr(name: string, value: Voidable<BaseValue | BaseValue[]>, sep?: string): void;
 
   /**
    * 设置字符串数组属性（undefined 元素转为空字符串），value 为 Voidable 时删除属性
    *
    * 可传入单个字符串（自动包装为数组）
-   *
+   * 
+   * 后面的void会被抛弃，中间的void会视为空字符串
    * @param {string}                  name  - 属性名
    * @param {Voidable<Voidable<string> | Voidable<string>[]>} value - 值
    * @param {string}                 [sep=","] - 分隔符
    */
-  set_strs_attr_soft(name: string, value: Voidable<Voidable<string> | Voidable<string>[]>, sep?: string): void;
-
-  /**
-   * 设置数值数组属性（undefined 元素转为空字符串），value 为 Voidable 时删除属性
-   *
-   * 可传入单个数字（自动包装为数组）
-   *
-   * @param {string}                  name  - 属性名
-   * @param {Voidable<Voidable<number> | Voidable<number>[]>} value - 值
-   * @param {string}                 [sep=","] - 分隔符
-   */
-  set_nums_attr_soft(name: string, value: Voidable<Voidable<number> | Voidable<number>[]>, sep?: string): void;
+  set_arr_attr_soft(name: string, value: Voidable<Voidable<BaseValue> | Voidable<BaseValue>[]>, sep?: string): void;
 
   /**
    * 解析元素为类型化值（根据 type 属性或 tagName 自动推断类型）

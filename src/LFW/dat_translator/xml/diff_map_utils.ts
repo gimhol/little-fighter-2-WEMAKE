@@ -8,9 +8,9 @@ export function write_diff_map(el: IXMLElement, attr: string, map: Record<number
   if (!map || !Object.keys(map).length) return;
   const vals = Object.values(map);
   if (new Set(vals).size === 1) {
-    el.set_num_attr(attr, vals[0]);
+    el.set_attr(attr, vals[0]);
   } else {
-    el.set_str_attr(attr, Object.entries(map).map(([d, n]) => `${d}:${n}`).join(","));
+    el.set_attr(attr, Object.entries(map).map(([d, n]) => `${d}:${n}`).join(","));
   }
 }
 

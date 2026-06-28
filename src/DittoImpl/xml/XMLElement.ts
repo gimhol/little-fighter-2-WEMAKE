@@ -1,4 +1,4 @@
-import type { IXMLElement, Voidable } from "../../LFW/ditto/xml/IXMLElement";
+import type { BaseValue, IXMLElement, Voidable } from "../../LFW/ditto/xml/IXMLElement";
 
 export class XMLElement implements IXMLElement {
   readonly inner: Element;
@@ -82,45 +82,30 @@ export class XMLElement implements IXMLElement {
     if (v == null) return void 0;
     return v.split(sep).map(s => s.trim() === '' ? void 0 : Number(s.trim()));
   }
-  set_strs_attr(name: string, value: Voidable<string | string[]>, sep: string = ','): void {
+  set_arr_attr(name: string, value: Voidable<BaseValue | BaseValue[]>, sep: string = ','): void {
     if (value === void 0 || value === null)
       return this.del_attr(name);
-    this.set_attr(name, (Array.isArray(value) ? value : [value]).join(sep))
+    if (Array.isArray(value))
+      this.set_attr(name, value.join(sep))
+    else
+      this.set_attr(name, value)
   }
-  set_nums_attr(name: string, value: Voidable<number | number[]>, sep: string = ','): void {
+  set_arr_attr_soft(name: string, value: Voidable<Voidable<BaseValue> | Voidable<BaseValue>[]>, sep: string = ','): void {
     if (value === void 0 || value === null)
       return this.del_attr(name);
-    this.set_attr(name, (Array.isArray(value) ? value : [value]).join(sep))
-  }
-  set_strs_attr_soft(name: string, value: Voidable<Voidable<string> | Voidable<string>[]>, sep: string = ','): void {
-    const arr = (Array.isArray(value) ? [...value] : [value]) as Voidable<string>[];
-    while (arr.length && (arr[arr.length - 1] === void 0 || arr[arr.length - 1] === null)) arr.pop();
+    if (!Array.isArray(value))
+      return this.set_arr_attr(name, value, sep)
+    const arr = [...value];
+    while (0) {
+      if (!arr.length) break;
+      const t = arr[arr.length - 1];
+      if (t === void 0 || t === null) break;
+      arr.pop();
+      continue;
+    }
     if (!arr.length) return this.del_attr(name);
-    this.set_attr(name, arr.map(s => s ?? '').join(sep));
+    this.set_attr(name, arr.map(n => (n === void 0 || n === null) ? '' : String(n)).join(sep));
   }
-  set_nums_attr_soft(name: string, value: Voidable<Voidable<number> | Voidable<number>[]>, sep: string = ','): void {
-    const arr = (Array.isArray(value) ? [...value] : [value]) as Voidable<number>[];
-    while (arr.length && (arr[arr.length - 1] === void 0 || arr[arr.length - 1] === null)) arr.pop();
-    if (!arr.length) return this.del_attr(name);
-    this.set_attr(name, arr.map(n => n === void 0 ? '' : String(n)).join(sep));
-  }
-  set_str_attr(name: string, value: Voidable<string>): void {
-    if (value === void 0 || value === null)
-      return this.del_attr(name);
-    this.set_attr(name, value);
-  }
-  set_num_attr(name: string, value: Voidable<number>): void {
-    if (value === void 0 || value === null)
-      return this.del_attr(name);
-    this.set_attr(name, value.toString());
-  }
-  set_bool_attr(name: string, value: Voidable<boolean>): void {
-    if (value === void 0 || value === null)
-      return this.del_attr(name);
-    this.set_attr(name, value ? 'true' : 'false');
-  }
-
-
   as_value(): number | boolean | string | object | undefined {
     switch (this.type) {
       case 'string': return this.as_string();
@@ -130,8 +115,6 @@ export class XMLElement implements IXMLElement {
       default: return this.as_object();
     }
   }
-
-
   as_string(or: string): string;
   as_string(or?: string): string | undefined;
   as_string(or?: string): string | undefined {

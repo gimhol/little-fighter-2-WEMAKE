@@ -34,9 +34,7 @@ export class CharacterState_Base extends State_Base {
     } else if (e.position.y > e.ground_y) {
       fid = e.data.indexes?.in_the_skys?.[0];
     } else if (e.hp > 0) {
-      fid = e.data.indexes?.standing;
-    } else {
-      fid = e.data.indexes?.standing; // TODO
+      fid = e.data.indexes?.default;
     }
     if (!fid) return void 0;
     return e.data.frames[fid];

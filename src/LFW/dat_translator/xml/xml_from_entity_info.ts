@@ -10,34 +10,34 @@ import { xml_from_world_dataset } from "./xml_from_world_dataset";
  */
 export function xml_from_entity_info(xml: IXML, info: IEntityInfo, tag: string = "base"): IXMLElement {
   const el = xml.create(tag);
-  el.set_str_attr("name", info.name);
-  el.set_str_attr("head", info.head);
-  el.set_str_attr("small", info.small);
-  el.set_str_attr("bot_id", info.bot_id);
-  el.set_num_attr("type", info.type);
-  el.set_num_attr("ce", info.ce);
-  el.set_num_attr("weight", info.weight);
-  el.set_num_attr("strength", info.strength);
-  el.set_nums_attr_soft("bounce", [info.bounce_x, info.bounce_y, info.bounce_z]);
-  el.set_nums_attr_soft("bounce_min", [info.bounce_min_x, info.bounce_min_y, info.bounce_min_z]);
-  el.set_nums_attr_soft("fast", [info.fast_vx, info.fast_vy, info.fast_vz]);
-  el.set_num_attr("drop_hurt", info.drop_hurt);
-  el.set_num_attr("resting_max", info.resting_max);
-  el.set_strs_attr("group", info.group);
-  el.set_strs_attr("hit_sounds", info.hit_sounds);
-  el.set_strs_attr("drop_sounds", info.drop_sounds);
-  el.set_strs_attr("dead_sounds", info.dead_sounds);
+  el.set_attr("name", info.name);
+  el.set_attr("head", info.head);
+  el.set_attr("small", info.small);
+  el.set_attr("bot_id", info.bot_id);
+  el.set_attr("type", info.type);
+  el.set_attr("ce", info.ce);
+  el.set_attr("weight", info.weight);
+  el.set_attr("strength", info.strength);
+  el.set_arr_attr_soft("bounce", [info.bounce_x, info.bounce_y, info.bounce_z]);
+  el.set_arr_attr_soft("bounce_min", [info.bounce_min_x, info.bounce_min_y, info.bounce_min_z]);
+  el.set_arr_attr_soft("fast", [info.fast_vx, info.fast_vy, info.fast_vz]);
+  el.set_attr("drop_hurt", info.drop_hurt);
+  el.set_attr("resting_max", info.resting_max);
+  el.set_arr_attr("group", info.group);
+  el.set_arr_attr("hit_sounds", info.hit_sounds);
+  el.set_arr_attr("drop_sounds", info.drop_sounds);
+  el.set_arr_attr("dead_sounds", info.dead_sounds);
   if (info.files && Object.keys(info.files).length) {
     const filesEl = xml.create("files");
     for (const [name, f] of Object.entries(info.files)) {
       const fileEl = xml.create("file");
-      fileEl.set_str_attr("name", name);
-      fileEl.set_str_attr("path", f.path);
-      fileEl.set_num_attr("row", f.row);
-      fileEl.set_num_attr("col", f.col);
-      fileEl.set_num_attr("cell_w", f.cell_w);
-      fileEl.set_num_attr("cell_h", f.cell_h);
-      fileEl.set_strs_attr("variants", (f as any).variants);
+      fileEl.set_attr("name", name);
+      fileEl.set_attr("path", f.path);
+      fileEl.set_attr("row", f.row);
+      fileEl.set_attr("col", f.col);
+      fileEl.set_attr("cell_w", f.cell_w);
+      fileEl.set_attr("cell_h", f.cell_h);
+      fileEl.set_arr_attr("variants", (f as any).variants);
       filesEl.insert(fileEl);
     }
     el.insert(filesEl);
@@ -46,12 +46,12 @@ export function xml_from_entity_info(xml: IXML, info: IEntityInfo, tag: string =
     const ptsEl = xml.create("portraits");
     for (const [name, p] of Object.entries(info.portraits)) {
       const pEl = xml.create("portrait");
-      pEl.set_str_attr("name", name);
-      pEl.set_str_attr("tex", p.tex);
-      pEl.set_num_attr("x", p.x);
-      pEl.set_num_attr("y", p.y);
-      pEl.set_num_attr("w", p.w);
-      pEl.set_num_attr("h", p.h);
+      pEl.set_attr("name", name);
+      pEl.set_attr("tex", p.tex);
+      pEl.set_attr("x", p.x);
+      pEl.set_attr("y", p.y);
+      pEl.set_attr("w", p.w);
+      pEl.set_attr("h", p.h);
       ptsEl.insert(pEl);
     }
     el.insert(ptsEl);
@@ -66,12 +66,12 @@ export function xml_from_entity_info(xml: IXML, info: IEntityInfo, tag: string =
     const modelsEl = xml.create("models");
     for (const [name, m] of Object.entries(info.models)) {
       const mEl = xml.create("model");
-      mEl.set_str_attr("name", name);
-      mEl.set_str_attr("id", m.id);
-      mEl.set_str_attr("path", m.path);
-      mEl.set_strs_attr("variants", m.variants);
-      if (m.scale) mEl.set_nums_attr_soft("scale", [m.scale.x, m.scale.y, m.scale.z]);
-      if (m.quaternion) mEl.set_nums_attr_soft("quaternion", [m.quaternion.x, m.quaternion.y, m.quaternion.z, m.quaternion.w]);
+      mEl.set_attr("name", name);
+      mEl.set_attr("id", m.id);
+      mEl.set_attr("path", m.path);
+      mEl.set_arr_attr("variants", m.variants);
+      if (m.scale) mEl.set_arr_attr_soft("scale", [m.scale.x, m.scale.y, m.scale.z]);
+      if (m.quaternion) mEl.set_arr_attr_soft("quaternion", [m.quaternion.x, m.quaternion.y, m.quaternion.z, m.quaternion.w]);
       modelsEl.insert(mEl);
     }
     el.insert(modelsEl);

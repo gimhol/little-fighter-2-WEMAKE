@@ -2,6 +2,7 @@ import type { IEntityData } from "../../defines/IEntityData";
 import type { IXML } from "../../ditto/xml";
 import { xml_from_bdy_info } from "./xml_from_bdy_info";
 import { xml_from_entity_info } from "./xml_from_entity_info";
+import { xml_from_frame_indexes } from "./xml_from_frame_indexes";
 import { xml_from_frame_info } from "./xml_from_frame_info";
 import { xml_from_itr_info } from "./xml_from_itr_info";
 import { xml_from_next_frame } from "./xml_from_next_frame";
@@ -48,19 +49,8 @@ export function xml_from_entity_data(xml: IXML, data: IEntityData): string {
   }
 
   // indexes
-  if (data.indexes && Object.keys(data.indexes).length) {
-    const idxEl = xml.create("indexes");
-    for (const [key, value] of Object.entries(data.indexes)) {
-      const child = xml.create(key);
-      if (Array.isArray(value)) {
-        child.set_strs_attr("ids", value);
-      } else {
-        child.set_str_attr("id", String(value));
-      }
-      idxEl.insert(child);
-    }
-    el.insert(idxEl);
-  }
+  const indexes = xml_from_frame_indexes(xml, data.indexes);
+  if (indexes) el.insert(indexes);
 
   return el.stringify();
 }

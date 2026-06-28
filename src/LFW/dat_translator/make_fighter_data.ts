@@ -506,8 +506,7 @@ export function make_fighter_data(ctx: IDatContext): IEntityData {
     make_round_trip_frames(key, round_trip_frames_map[key]);
 
   const indexes: IFrameIndexes = {
-    standing: "0",
-    heavy_obj_walk: ["heavy_obj_walk_0"],
+    heavy_obj_walk: "heavy_obj_walk_0",
     picking_light: "115",
     picking_heavy: "117",
     ice: "200",

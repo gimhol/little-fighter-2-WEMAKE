@@ -12,18 +12,18 @@ export function xml_from_next_frame(
 ): IXMLElement {
   const el = xml.create(tag);
 
-  el.set_strs_attr("id", nf.id);
+  el.set_arr_attr("id", nf.id);
   el.set_attr("wait", nf.wait);
-  el.set_num_attr("facing", nf.facing);
-  el.set_num_attr("mp", nf.mp);
-  el.set_num_attr("hp", nf.hp);
-  el.set_num_attr("blink_time", nf.blink_time);
-  el.set_nums_attr_soft("dv", [nf.dvx, nf.dvy, nf.dvz]);
-  el.set_nums_attr_soft("acc", [nf.acc_x, nf.acc_y, nf.acc_z]);
-  el.set_nums_attr_soft("vm", [nf.vxm, nf.vym, nf.vzm]);
-  el.set_nums_attr_soft("ctrl", [nf.ctrl_x, nf.ctrl_y, nf.ctrl_z]);
+  el.set_attr("facing", nf.facing);
+  el.set_attr("mp", nf.mp);
+  el.set_attr("hp", nf.hp);
+  el.set_attr("blink_time", nf.blink_time);
+  el.set_arr_attr_soft("dv", [nf.dvx, nf.dvy, nf.dvz]);
+  el.set_arr_attr_soft("acc", [nf.acc_x, nf.acc_y, nf.acc_z]);
+  el.set_arr_attr_soft("vm", [nf.vxm, nf.vym, nf.vzm]);
+  el.set_arr_attr_soft("ctrl", [nf.ctrl_x, nf.ctrl_y, nf.ctrl_z]);
 
-  el.set_strs_attr("sounds", nf.sounds);
+  el.set_arr_attr("sounds", nf.sounds);
 
   // expression → <expression>text</expression>
   if (nf.expression) {

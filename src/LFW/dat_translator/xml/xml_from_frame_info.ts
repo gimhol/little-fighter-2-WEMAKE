@@ -16,11 +16,11 @@ export function xml_from_frame_info(xml: IXML, id: string, frame: IFrameInfo): I
   // pic (required)
   if (!frame.pic) return null;
   const pic = xml.create("pic");
-  pic.set_str_attr("tex", frame.pic.tex);
-  pic.set_num_attr("x", frame.pic.x);
-  pic.set_num_attr("y", frame.pic.y);
-  pic.set_num_attr("w", frame.pic.w);
-  pic.set_num_attr("h", frame.pic.h);
+  pic.set_attr("tex", frame.pic.tex);
+  pic.set_attr("x", frame.pic.x);
+  pic.set_attr("y", frame.pic.y);
+  pic.set_attr("w", frame.pic.w);
+  pic.set_attr("h", frame.pic.h);
   el.insert(pic);
 
   xml_from_t_next_frame(xml, frame.next, 'next')?.forEach(v => {
@@ -44,37 +44,37 @@ export function xml_from_frame_info(xml: IXML, id: string, frame: IFrameInfo): I
   // bpoint / wpoint / cpoint (single)
   if (frame.bpoint) {
     const b = xml.create("bpoint");
-    b.set_num_attr("x", frame.bpoint.x);
-    b.set_num_attr("y", frame.bpoint.y);
-    b.set_num_attr("z", frame.bpoint.z);
-    b.set_num_attr("r", frame.bpoint.r);
+    b.set_attr("x", frame.bpoint.x);
+    b.set_attr("y", frame.bpoint.y);
+    b.set_attr("z", frame.bpoint.z);
+    b.set_attr("r", frame.bpoint.r);
     el.insert(b);
   }
   if (frame.wpoint) {
     const w = xml.create("wpoint");
-    w.set_num_attr("kind", frame.wpoint.kind as number);
-    w.set_num_attr("x", frame.wpoint.x);
-    w.set_num_attr("y", frame.wpoint.y);
-    w.set_num_attr("z", frame.wpoint.z);
-    w.set_str_attr("weaponact", frame.wpoint.weaponact);
-    w.set_str_attr("attacking", frame.wpoint.attacking);
-    w.set_nums_attr_soft("dv", [frame.wpoint.dvx, frame.wpoint.dvy, frame.wpoint.dvz]);
+    w.set_attr("kind", frame.wpoint.kind as number);
+    w.set_attr("x", frame.wpoint.x);
+    w.set_attr("y", frame.wpoint.y);
+    w.set_attr("z", frame.wpoint.z);
+    w.set_attr("weaponact", frame.wpoint.weaponact);
+    w.set_attr("attacking", frame.wpoint.attacking);
+    w.set_arr_attr_soft("dv", [frame.wpoint.dvx, frame.wpoint.dvy, frame.wpoint.dvz]);
     el.insert(w);
   }
   if (frame.cpoint) {
     const c = xml.create("cpoint");
-    c.set_num_attr("kind", frame.cpoint.kind);
-    c.set_num_attr("x", frame.cpoint.x);
-    c.set_num_attr("y", frame.cpoint.y);
-    c.set_num_attr("z", frame.cpoint.z);
-    c.set_num_attr("injury", frame.cpoint.injury);
-    c.set_num_attr("hurtable", frame.cpoint.hurtable);
-    c.set_num_attr("decrease", frame.cpoint.decrease);
-    c.set_nums_attr_soft("throwv", [frame.cpoint.throwvx, frame.cpoint.throwvy, frame.cpoint.throwvz]);
-    c.set_num_attr("throwinjury", frame.cpoint.throwinjury);
-    c.set_str_attr("fronthurtact", frame.cpoint.fronthurtact);
-    c.set_str_attr("backhurtact", frame.cpoint.backhurtact);
-    c.set_num_attr("shaking", frame.cpoint.shaking);
+    c.set_attr("kind", frame.cpoint.kind);
+    c.set_attr("x", frame.cpoint.x);
+    c.set_attr("y", frame.cpoint.y);
+    c.set_attr("z", frame.cpoint.z);
+    c.set_attr("injury", frame.cpoint.injury);
+    c.set_attr("hurtable", frame.cpoint.hurtable);
+    c.set_attr("decrease", frame.cpoint.decrease);
+    c.set_arr_attr_soft("throwv", [frame.cpoint.throwvx, frame.cpoint.throwvy, frame.cpoint.throwvz]);
+    c.set_attr("throwinjury", frame.cpoint.throwinjury);
+    c.set_attr("fronthurtact", frame.cpoint.fronthurtact);
+    c.set_attr("backhurtact", frame.cpoint.backhurtact);
+    c.set_attr("shaking", frame.cpoint.shaking);
     el.insert(c);
   }
 

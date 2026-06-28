@@ -7,8 +7,8 @@ export function xml_to_frame_indexes(el: IXMLElement | undefined): IFrameIndexes
   if (!el) return void 0;
   const ret: IFrameIndexes = frame_indexes_new();
 
-  ret.standing = el.get_str("standing", ret.standing);
-  ret.heavy_obj_walk = el.get_str_arr("heavy_obj_walk", ret.heavy_obj_walk);
+  ret.default = el.get_str("default", ret.default);
+  ret.heavy_obj_walk = el.get_str("heavy_obj_walk", ret.heavy_obj_walk);
   ret.landing_1 = el.get_str("landing_1", ret.landing_1);
   ret.landing_2 = el.get_str("landing_2", ret.landing_2);
   ret.dizzy = el.get_str("dizzy", ret.dizzy);
