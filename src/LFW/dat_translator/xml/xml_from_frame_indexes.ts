@@ -29,30 +29,19 @@ export function xml_from_frame_indexes(xml: IXML, indexes: IFrameIndexes | undef
   el.set_arr_attr("fire", indexes.fire);
 
   // -- 方向对：_1 → 1, _2 → -1 --
-  if (indexes.falling) {
-    el.set_arr_attr("falling_1", indexes.falling[1]);
-    el.set_arr_attr("falling_2", indexes.falling[-1]);
-  }
-  if (indexes.bouncing) {
-    el.set_arr_attr("bouncing_1", indexes.bouncing[1]);
-    el.set_arr_attr("bouncing_2", indexes.bouncing[-1]);
-  }
-  if (indexes.critical_hit) {
-    el.set_arr_attr("critical_hit_1", indexes.critical_hit[1]);
-    el.set_arr_attr("critical_hit_2", indexes.critical_hit[-1]);
-  }
-  if (indexes.grand_injured) {
-    el.set_arr_attr("grand_injured_1", indexes.grand_injured[1]);
-    el.set_arr_attr("grand_injured_2", indexes.grand_injured[-1]);
-  }
-  if (indexes.injured) {
-    el.set_attr("injured_1", indexes.injured[1]);
-    el.set_attr("injured_2", indexes.injured[-1]);
-  }
-  if (indexes.lying) {
-    el.set_attr("lying_1", indexes.lying[1]);
-    el.set_attr("lying_2", indexes.lying[-1]);
-  }
+  el.set_arr_attr("falling_1", indexes.falling?.[1]);
+  el.set_arr_attr("falling_2", indexes.falling?.[-1]);
+  el.set_arr_attr("bouncing_1", indexes.bouncing?.[1]);
+  el.set_arr_attr("bouncing_2", indexes.bouncing?.[-1]);
+  el.set_arr_attr("critical_hit_1", indexes.critical_hit?.[1]);
+  el.set_arr_attr("critical_hit_2", indexes.critical_hit?.[-1]);
+  el.set_arr_attr("grand_injured_1", indexes.grand_injured?.[1]);
+  el.set_arr_attr("grand_injured_2", indexes.grand_injured?.[-1]);
+  el.set_attr("injured_1", indexes.injured?.[1]);
+  el.set_attr("injured_2", indexes.injured?.[-1]);
+  el.set_attr("lying_1", indexes.lying?.[1]);
+  el.set_attr("lying_2", indexes.lying?.[-1]);
+
 
   return el;
 }

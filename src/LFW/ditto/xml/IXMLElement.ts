@@ -266,15 +266,22 @@ export interface IXMLElement {
    */
   child_by_tag(tag: string): IXMLElement | undefined;
 
+  /**
+   * 1. 查找子节点tag为name的节点
+   * 2. return 子节点.as_string() ?? this.attr(name)
+   */
   get_str(name: string, or: string): string;
   get_str(name: string, or?: string): string | undefined;
+
   get_num(name: string, or: number): number;
   get_num(name: string, or?: number): number | undefined;
+
   get_bool(name: string, or: boolean): boolean;
   get_bool(name: string, or?: boolean): boolean | undefined;
 
   get_str_arr(name: string, or: string[]): string[];
   get_str_arr(name: string, or?: string[]): string[] | undefined;
+  
   get_num_arr(name: string, or: number[]): number[];
   get_num_arr(name: string, or?: number[]): number[] | undefined;
 }
