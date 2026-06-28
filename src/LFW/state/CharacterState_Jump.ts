@@ -23,15 +23,15 @@ export class CharacterState_Jump extends CharacterState_Base {
     const rf = round_float;
     const { jump_flag } = e.get_prev_frame();
     if (is_bot_ctrl(e.ctrl)) {
-      e.jumping.t = rf(e.jumping.t + e.world.atom_time);
-      e.jumping.y = rf(e.jumping.y + e.world.atom_time);
+      e.jumping.t = rf(e.jumping.t + e.world.dataset.atom_time);
+      e.jumping.y = rf(e.jumping.y + e.world.dataset.atom_time);
     } else {
-      e.jumping.t = rf(e.jumping.t + e.world.atom_time);
-      if (!e.ctrl.is_end(GK.R)) e.jumping.x = rf(e.jumping.x + e.world.atom_time);
-      if (!e.ctrl.is_end(GK.L)) e.jumping.x = rf(e.jumping.x - e.world.atom_time);
-      if (!e.ctrl.is_end(GK.U)) e.jumping.z = rf(e.jumping.z - e.world.atom_time);
-      if (!e.ctrl.is_end(GK.D)) e.jumping.z = rf(e.jumping.z + e.world.atom_time);
-      if (!e.ctrl.is_end(GK.j)) e.jumping.y = rf(e.jumping.y + e.world.atom_time);
+      e.jumping.t = rf(e.jumping.t + e.world.dataset.atom_time);
+      if (!e.ctrl.is_end(GK.R)) e.jumping.x = rf(e.jumping.x + e.world.dataset.atom_time);
+      if (!e.ctrl.is_end(GK.L)) e.jumping.x = rf(e.jumping.x - e.world.dataset.atom_time);
+      if (!e.ctrl.is_end(GK.U)) e.jumping.z = rf(e.jumping.z - e.world.dataset.atom_time);
+      if (!e.ctrl.is_end(GK.D)) e.jumping.z = rf(e.jumping.z + e.world.dataset.atom_time);
+      if (!e.ctrl.is_end(GK.j)) e.jumping.y = rf(e.jumping.y + e.world.dataset.atom_time);
     }
     if (!jump_flag) return;
     const { LR, UD } = e.ctrl;

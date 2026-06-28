@@ -272,7 +272,7 @@ export async function cook_ui_info(
     const h = ret.img.dh ?? ret.img.h ?? 0;
     ret.size = [w, h, 0]
   } else if (!parent) {
-    ret.size = [lfw.world.screen_w, lfw.world.screen_h, 0]
+    ret.size = [lfw.world.dataset.screen_w, lfw.world.dataset.screen_h, 0]
   }
 
   do {

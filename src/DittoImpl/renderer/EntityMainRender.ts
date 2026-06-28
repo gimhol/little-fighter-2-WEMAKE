@@ -198,7 +198,7 @@ export class EntityMainRender {
     if (state === StateEnum.Message) {
       const { centerx, width } = frame;
       const cameraX = this.world_renderer.camera.position.x;
-      const screenW = world.screen_w / (world.bg.zoom_x ?? 1);
+      const screenW = world.dataset.screen_w / (world.bg.zoom_x ?? 1);
       const offsetX = facing === 1 ? centerx : width - centerx;
       const left = cameraX + offsetX;
       const right = cameraX + screenW - (width - offsetX);

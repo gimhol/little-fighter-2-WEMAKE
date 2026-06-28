@@ -75,8 +75,8 @@ export class VsModeLogic extends UIComponent {
     for (const [, { fighter: f }] of this.lfw.players)
       if (f) f.callbacks.add(this.fighter_callbacks)
     this.world.paused = false;
-    this.world.playrate = 1;
-    this.world.infinity_mp = 0;
+    this.world.dataset.playrate = 1;
+    this.world.dataset.infinity_mp = 0;
 
     const stat_bars = this.node.search_components(FighterStatBar)
 

@@ -1,5 +1,4 @@
 import { Factory } from "../Factory";
-import type { IWorldDataset } from "../defines/IWorldDataset";
 import type { LFW } from "../LFW";
 import { World } from "../World";
 import { Callbacks } from "../base";
@@ -17,14 +16,16 @@ import {
   HitFlag,
   type IArmorInfo,
   type IBdyInfo, type IBounding, type ICpointInfo, type IDeadJoin, type IEntityData,
-  type IFrameInfo, type IItrInfo, type INextFrame, type INextFrameResult, type IOpointInfo, type IVector3Like,
+  type IFrameInfo, type IItrInfo, type INextFrame, type INextFrameResult, type IOpointInfo,
   is_independent, ItrKind, type IVector3,
+  type IVector3Like,
   type IVelocityInfo, type IWpointInfo,
   OpointKind, OpointMultiEnum, OpointSpreading,
   SpeedCtrl, SpeedMode,
   StateEnum, type TEntityEnum, type TFace, type TNextFrame,
   WpointKind
 } from "../defines";
+import type { IWorldDataset } from "../defines/IWorldDataset";
 import { Ditto } from "../ditto";
 import { States } from "../state";
 import { ENTITY_STATES } from "../state/ENTITY_STATES";
@@ -41,9 +42,9 @@ import { summary_mgr } from "./SummaryMgr";
 import { turn_face } from "./face_helper";
 import { is_fighter, is_human_ctrl } from "./type_check";
 
-import { EnterFrameResult } from "./EnterFrameResult";
 import { sus_cases } from "../cases_instances";
 import { collision_clone } from "../collision/Collision";
+import { EnterFrameResult } from "./EnterFrameResult";
 import { calc_v } from "./calc_v";
 import { is_ball_ctrl } from "./type_check";
 
@@ -297,7 +298,9 @@ export class Entity {
     if (o === v) return;
     this._toughness_resting_max = v;
   }
-  get resting_max(): number { return this._resting_max ?? this.world.resting_max; }
+  get resting_max(): number {
+    return this._resting_max ?? this.world.dataset.resting_max;
+  }
   set resting_max(v: number) {
     v = round_float(v);
     const o = this.resting_max;
@@ -352,7 +355,7 @@ export class Entity {
     if (o === v) return;
     this._toughness_resting = v;
   }
-  get catch_time_max(): number { return this._catch_time_max ?? this.world.catch_time_max; }
+  get catch_time_max(): number { return this._catch_time_max ?? this.world.dataset.catch_time_max; }
   set catch_time_max(v: number) {
     v = round_float(v);
     const o = this.catch_time_max;
@@ -360,7 +363,7 @@ export class Entity {
     this._catch_time_max = v;
     this.callbacks.emit("on_catch_time_max_changed")(this, v, o);
   }
-  get fall_value_max(): number { return this._fall_value_max ?? this.world.fall_value_max; }
+  get fall_value_max(): number { return this._fall_value_max ?? this.world.dataset.fall_value_max; }
   set fall_value_max(v: number) {
     v = round_float(v);
     const o = this.fall_value_max;
@@ -379,7 +382,7 @@ export class Entity {
     }
     this.callbacks.emit("on_defend_value_changed")(this, v, o);
   }
-  get defend_value_max(): number { return this._defend_value_max ?? this.world.defend_value_max }
+  get defend_value_max(): number { return this._defend_value_max ?? this.world.dataset.defend_value_max }
   set defend_value_max(v: number) {
     v = round_float(v);
     const o = this.defend_value_max;
@@ -397,7 +400,7 @@ export class Entity {
     this.callbacks.emit("on_healing_changed")(this, v, o);
   }
 
-  get defend_ratio(): number { return this._defend_ratio ?? this.world.defend_ratio; }
+  get defend_ratio(): number { return this._defend_ratio ?? this.world.dataset.defend_ratio; }
   set defend_ratio(v: number) {
     v = round_float(v);
     const o = this.defend_ratio;
@@ -516,7 +519,7 @@ export class Entity {
     }
   }
   get mp_max(): number {
-    return this._mp_max ?? this.world.mp_max;
+    return this._mp_max ?? this.world.dataset.mp_max;
   }
   set mp_max(v: number) {
     const o = this.mp_max;
@@ -527,7 +530,7 @@ export class Entity {
   }
 
   get hp_max(): number {
-    return this._hp_max ?? this.world.hp_max;
+    return this._hp_max ?? this.world.dataset.hp_max;
   }
   set hp_max(v: number) {
     const o = this.hp_max;
@@ -701,7 +704,7 @@ export class Entity {
     this.lfw = world.lfw;
     this._data = data;
     this._states = states;
-    this._atom_time = world.atom_time;
+    this._atom_time = world.dataset.atom_time;
     this.reset(data, states)
   }
   reset(data: IEntityData, states: States = ENTITY_STATES) {
@@ -1189,7 +1192,7 @@ export class Entity {
 
   handle_velocity_decay(accx: number, accz: number = accx, factor: number = 1): void {
     let { x, z } = this.velocity;
-    const { atom_time } = this.world;
+    const { atom_time } = this.world.dataset;
     x = round_float(x * pow(factor, atom_time));
     z = round_float(z * pow(factor, atom_time));
     accx = round_float(accx * atom_time);
@@ -1239,7 +1242,7 @@ export class Entity {
   }
   update_velocity(vinfo: IVelocityInfo): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
-    const { atom_time } = this.world;
+    const { atom_time } = this.world.dataset;
 
     let { dvx, dvy, dvz } = vinfo;
     if (dvx) dvx = round_float(dvx * this.dataset("fvx_f"));
@@ -1486,7 +1489,7 @@ export class Entity {
   }
 
   update(): void {
-    this._atom_time = this.world.atom_time;
+    this._atom_time = this.world.dataset.atom_time;
     const rf = round_float;
     this._lifetime += 1;
     if (this.frame.facing) this.facing = this.handle_facing_flag(this.frame.facing)
@@ -1679,7 +1682,7 @@ export class Entity {
   update_position(): void {
     if (this.bearer || this.catcher || this.shaking || this.motionless) return;
     let { x: vx, y: vy, z: vz } = this._velocity;
-    const { atom_time } = this.world;
+    const { atom_time } = this.world.dataset;
     for (const [, v] of this.blockers) {
       if (
         (vx < 0 && v.attacker.position.x < this.position.x) ||
@@ -2128,7 +2131,7 @@ export class Entity {
     if (!result) return EnterFrameResult.NotFound;
 
     const { frame, which: flags } = result;
-    if (!this.world.infinity_mp) {
+    if (!this.world.dataset.infinity_mp) {
       const { mp, hp } = flags;
       if (mp) this.mp -= mp;
       if (hp) this.hp -= hp;
@@ -2139,7 +2142,7 @@ export class Entity {
         if (frame.state === StateEnum.Message) {
           let { centerx, width } = frame;
           let { current_cam_pos: { x: cam_x } } = this.world;
-          let cam_r = cam_x + this.world.screen_w;
+          let cam_r = cam_x + this.world.dataset.screen_w;
           const offset_x = this.facing === 1 ? centerx : width - centerx;
           cam_r -= width - offset_x
           cam_x += offset_x
@@ -2160,11 +2163,11 @@ export class Entity {
   }
 
   handle_wait_flag(wait: string | number | undefined, frame?: IFrameInfo): number {
-    if (wait == void 0 && frame) return frame.wait + this.world.wait_offset;
+    if (wait == void 0 && frame) return frame.wait + this.world.dataset.wait_offset;
     if (is_positive(wait)) return wait;
     if (wait === "i" || !frame) return this.wait;
     if (wait === "d") return max(0, frame.wait - this.frame.wait + this.wait);
-    return frame.wait + this.world.wait_offset;
+    return frame.wait + this.world.dataset.wait_offset;
   }
 
   /**
@@ -2246,7 +2249,7 @@ export class Entity {
       frame = this.find_frame_by_id(this.lfw.mt.pick(id));
       if (!frame) return void 0;
     }
-    if (!this.world.infinity_mp && frame) {
+    if (!this.world.dataset.infinity_mp && frame) {
       if (this.frame.next === which) {
         // 用next 进入此动作，负数表示消耗，无视正数。若消耗完毕跳至按下防御键的指定跳转动作
         if (use_mp && this._mp < use_mp)
@@ -2384,7 +2387,7 @@ export class Entity {
       this.frame?.[name] ??
       this.data.base?.[name] ??
       this.world.bg.data.dataset?.[name] ??
-      this.world[name]
+      this.world.dataset[name]
     )
   }
   itr_fall(itr: IItrInfo): number {

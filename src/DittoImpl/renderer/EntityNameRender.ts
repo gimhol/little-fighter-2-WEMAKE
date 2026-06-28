@@ -26,7 +26,7 @@ export class EntityNameRender {
     this._mesh = null
   }
   render() {
-    const { entity: e, world_renderer: { camera, world: { screen_h } } } = this;
+    const { entity: e, world_renderer: { camera, world: { dataset: { screen_h } } } } = this;
     const { name } = e;
     if (!name) { // 无名，移除之
       this._mesh?.removeFromParent()
@@ -53,7 +53,7 @@ export class EntityNameRender {
 
     const hw = (mesh.scale.x + 10) / 2;
     const min_x = cam_x + hw;
-    const max_x = min_x + (world.screen_w / world.transform.scale_x) - 2 * hw;
+    const max_x = min_x + (world.dataset.screen_w / world.transform.scale_x) - 2 * hw;
     const x = clamp(position.x, min_x, max_x);
     const z = position.z + 0.2;
     const y = clamp(

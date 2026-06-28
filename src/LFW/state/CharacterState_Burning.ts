@@ -34,12 +34,12 @@ export class CharacterState_Burning extends CharacterState_Base {
     } = e;
     if (
       !this._bouncings.has(e) && (
-        vy <= e.world.cha_bc_tst_spd_y ||
-        abs(vx) > e.world.cha_bc_tst_spd_x
+        vy <= e.world.dataset.cha_bc_tst_spd_y ||
+        abs(vx) > e.world.dataset.cha_bc_tst_spd_x
       )
     ) {
       e.enter_frame_by_id(indexes?.bouncing?.[-1][1]);
-      e.set_velocity_y(e.world.cha_bc_spd)
+      e.set_velocity_y(e.world.dataset.cha_bc_spd)
       this._bouncings.add(e)
     } else {
       e.enter_frame_by_id(indexes?.lying?.[-1]);

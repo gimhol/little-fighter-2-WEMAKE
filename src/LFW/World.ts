@@ -55,9 +55,10 @@ const pair_key = (a: Entity, b: Entity) => a.id < b.id ? a.id + '|' + b.id : b.i
  *    后续提取为World::dataset
  *      - Gim
  */
-export class World extends WorldDataset {
-  static override readonly TAG: string = "World";
+export class World {
+  static readonly TAG: string = "World";
   readonly lfw: LFW;
+  readonly dataset: WorldDataset = new WorldDataset()
   readonly callbacks = new Callbacks<IWorldCallbacks>();
   private _sleeping: boolean = false;
   private _spark_data?: IEntityData;
@@ -134,7 +135,7 @@ export class World extends WorldDataset {
       if (is_bot_ctrl(ctrl)) ctrl.cancel_goto()
     }
   }
-  override on_dataset_change = (k: string, curr: any, prev: any) => {
+  on_dataset_change(k: string, curr: any, prev: any) {
     this.callbacks.emit('on_dataset_change')(k as any, curr, prev, this)
     if (
       k === 'sync_render' ||
@@ -166,7 +167,6 @@ export class World extends WorldDataset {
   get lock_cam_x() { return this._lock_cam_pos?.x }
 
   constructor(lfw: LFW) {
-    super()
     this.lfw = lfw;
     this.target_cam_pos = Ditto.vec2();
     this.current_cam_pos = Ditto.vec2();
@@ -175,6 +175,7 @@ export class World extends WorldDataset {
     this.transform.scale_to(this._bg.zoom_x, this._bg.zoom_y, this._bg.zoom_z)
     this._stage = new Stage(this, Defines.VOID_STAGE);
     this.renderer = new Ditto.WorldRender(this);
+    this.dataset.on_dataset_change = this.on_dataset_change.bind(this)
   }
   team_come(_team: string, x: number, y: number, z: number) {
     for (const e of this.entities) {
@@ -258,18 +259,18 @@ export class World extends WorldDataset {
     this._render_worker_id = 0;
   }
   get FPS() {
-    switch (this.sync_render as SyncRenderEnum) {
+    switch (this.dataset.sync_render as SyncRenderEnum) {
       case SyncRenderEnum.Unlimited: return 1000
       case SyncRenderEnum.FPS_60: return 60
       case SyncRenderEnum.FPS_120: return 120
-      case SyncRenderEnum.Sync: return this.UPS
-      case SyncRenderEnum.Half: return floor(this.UPS / 2)
+      case SyncRenderEnum.Sync: return this.dataset.UPS
+      case SyncRenderEnum.Half: return floor(this.dataset.UPS / 2)
     }
   }
   start_render() {
     if (this._render_worker_id) Ditto.Render.del(this._render_worker_id);
-    if (this.sync_render == SyncRenderEnum.Sync) return;
-    if (this.sync_render == SyncRenderEnum.Half) return;
+    if (this.dataset.sync_render == SyncRenderEnum.Sync) return;
+    if (this.dataset.sync_render == SyncRenderEnum.Half) return;
 
 
     let prev_time = 0;
@@ -299,18 +300,18 @@ export class World extends WorldDataset {
   sleep(): void { this._sleeping = true }
   awake(): void { this._sleeping = false }
   start_update() {
-    let { playrate, UPS, atom_time, sync_render } = this;
+    let { playrate, UPS, atom_time, sync_render } = this.dataset;
     if (!between(playrate, 0.01, 1000)) {
       Ditto.warn(`[${World.TAG}::start_update] playrate must be between 0.01 and 1000, but got ${playrate}, now reset to 1.0`);
-      playrate = this.playrate = 1
+      playrate = this.dataset.playrate = 1
     }
     if (!between(UPS, 1, 120)) {
       Ditto.warn(`[${World.TAG}::start_update] UPS must be between 1 and 120, but got ${UPS}, now reset to 60`);
-      UPS = this.UPS = 60
+      UPS = this.dataset.UPS = 60
     }
     if (!(atom_time > 0)) {
       Ditto.warn(`[${World.TAG}::start_update] atom_time must be > 0, but got ${atom_time}, now reset to 1`);
-      atom_time = this.atom_time = 1;
+      atom_time = this.dataset.atom_time = 1;
     }
 
     if (this._update_worker_id) Ditto.Interval.del(this._update_worker_id);
@@ -470,7 +471,7 @@ export class World extends WorldDataset {
         if (e.pressed) ui.on_key_down(e)
         else ui.on_key_up(e)
       }
-      ui.update(16.66666 * this.atom_time);
+      ui.update(16.66666 * this.dataset.atom_time);
       flag = false
     }
   }
@@ -501,7 +502,7 @@ export class World extends WorldDataset {
 
     let bg_data: IBgData | undefined;
     if (bg_id == Defines.RANDOM_BG.id) {
-      if (this.LF2_NET) {
+      if (this.dataset.LF2_NET) {
         bg_data = this.lfw.datas.get_random_bg([BGG.Regular, BGG.Hidden])
       } else {
         bg_data = this.lfw.datas.get_random_bg([BGG.Regular])
@@ -530,7 +531,7 @@ export class World extends WorldDataset {
       switch (cmd) {
         case CMD.SET_DIFFICULTY: {
           const d = Number(cmds[i += 1]);
-          if (Difficulty[d]) this.difficulty = d;
+          if (Difficulty[d]) this.dataset.difficulty = d;
           else Ditto.warn(`SET_DIFFICULTY failed, difficulty got ${d}.`)
           continue;
         }
@@ -544,8 +545,8 @@ export class World extends WorldDataset {
         case CheatEnum.LF2_NET: // same as "case CMD.LF2_NET:"
         case CheatEnum.HERO_FT: // same as "case CMD.HERO_FT:"
         case CheatEnum.GIM_INK: // same as "case CMD.GIM_INK:"
-          const prev = this[cmd];
-          const enabled = this[cmd] = Number(cmds[i += 1]) ? 1 : 0;
+          const prev = this.dataset[cmd];
+          const enabled = this.dataset[cmd] = Number(cmds[i += 1]) ? 1 : 0;
           if (prev == enabled) continue;
           const cheat = Defines.CheatInfos.get(cmd)
           if (!cheat) continue;
@@ -556,11 +557,11 @@ export class World extends WorldDataset {
         case CMD.F2: this.set_paused(2); continue;
         case CMD.F3: this.set_fn_locked(1); continue;
         case CMD.F4: this.lfw.pop_ui_safe(); continue;
-        case CMD.F5: this.playrate = this.playrate === 1 ? 1000 : 1; continue;
+        case CMD.F5: this.dataset.playrate = this.dataset.playrate === 1 ? 1000 : 1; continue;
         case CMD.F6:
           if (this.fn_locked || stage_limit()) continue;
           this.add_count(CMD.F6, 1)
-          this.infinity_mp = this.infinity_mp ? 0 : 1;
+          this.dataset.infinity_mp = this.dataset.infinity_mp ? 0 : 1;
           continue;
         case CMD.F7:
           if (this.fn_locked || stage_limit()) continue;
@@ -664,7 +665,7 @@ export class World extends WorldDataset {
     const update_chasing = this._game_time.value % CHASING_UPDATE_INTERVAL === 0;
     const dead_buffs: [string, Buff][] = []
     this.buffs.forEach((buff, key) => {
-      buff.update(this.atom_time)
+      buff.update(this.dataset.atom_time)
       if (buff.dead) dead_buffs.push([key, buff])
     })
     for (const [key, buff] of dead_buffs) {
@@ -713,7 +714,7 @@ export class World extends WorldDataset {
       if (a.ghosted) continue;
 
       if (is_fighter(a)) {
-        const x = a.position.x - this.screen_w / 2 + (a.facing * this.screen_w) / 6;
+        const x = a.position.x - this.dataset.screen_w / 2 + (a.facing * this.dataset.screen_w) / 6;
         const z = a.position.z;
         fighter_x_sum += x;
         fighter_z_sum += x;
@@ -789,16 +790,16 @@ export class World extends WorldDataset {
     }
     if (local_count) {
       this.target_cam_pos.x = round(local_x_sum / local_count);
-      this.target_cam_pos.y = -0.5 * round(local_z_sum / local_count) - this.screen_h / 2;
+      this.target_cam_pos.y = -0.5 * round(local_z_sum / local_count) - this.dataset.screen_h / 2;
     } else if (human_count) {
       this.target_cam_pos.x = round(human_x_sum / human_count);
-      this.target_cam_pos.y = -0.5 * round(human_z_sum / human_count) - this.screen_h / 2;
+      this.target_cam_pos.y = -0.5 * round(human_z_sum / human_count) - this.dataset.screen_h / 2;
     } else if (puppet_count) {
       this.target_cam_pos.x = round(puppet_x_sum / puppet_count);
-      this.target_cam_pos.y = -0.5 * round(puppet_z_sum / puppet_count) - this.screen_h / 2;
+      this.target_cam_pos.y = -0.5 * round(puppet_z_sum / puppet_count) - this.dataset.screen_h / 2;
     } else if (fighter_count) {
       this.target_cam_pos.x = round(fighter_x_sum / fighter_count);
-      this.target_cam_pos.y = -0.5 * round(fighter_z_sum / fighter_count) - this.screen_h / 2;
+      this.target_cam_pos.y = -0.5 * round(fighter_z_sum / fighter_count) - this.dataset.screen_h / 2;
     }
 
     this.collisions.forEach(c => collisions_keeper.handle(c));
@@ -843,13 +844,13 @@ export class World extends WorldDataset {
       let acc_x_ratio = 1;
       this.target_cam_pos.x = clamp(this._lock_cam_pos?.x ?? this._dist_cam_pos?.x ?? this.target_cam_pos.x,
         min_cam_l,
-        max_cam_r - this.screen_w
+        max_cam_r - this.dataset.screen_w
       );
       if (round(this.current_cam_pos.x) == round(this.target_cam_pos.x)) break
 
       const acc_x = min(
-        this.atom_time * acc_x_ratio,
-        this.atom_time * 0.7 * (acc_x_ratio * abs(this.current_cam_pos.x - this.target_cam_pos.x)) / this.screen_w,
+        this.dataset.atom_time * acc_x_ratio,
+        this.dataset.atom_time * 0.7 * (acc_x_ratio * abs(this.current_cam_pos.x - this.target_cam_pos.x)) / this.dataset.screen_w,
       );
       const direction_x = this.current_cam_pos.x > this.target_cam_pos.x ? -1 : 1;
       const max_vx = direction_x * max_vx_ratio * acc_x;
@@ -878,8 +879,8 @@ export class World extends WorldDataset {
       const cam_max_y = min(-0.5 * far, height - Defines.MODERN_SCREEN_HEIGHT)
       this.target_cam_pos.y = clamp(cam_y, 0, cam_max_y);
       const acc_y = min(
-        this.atom_time * acc_y_ratio,
-        this.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.screen_h,
+        this.dataset.atom_time * acc_y_ratio,
+        this.dataset.atom_time * 0.7 * (acc_y_ratio * abs(this.current_cam_pos.y - this.target_cam_pos.y)) / this.dataset.screen_h,
       );
       if (round(this.current_cam_pos.y) == round(this.target_cam_pos.y)) break
       const direction_y = this.current_cam_pos.y > this.target_cam_pos.y ? -1 : 1;
@@ -1007,8 +1008,8 @@ export class World extends WorldDataset {
 
   clear() {
     this.set_fn_locked(0);
-    this.infinity_mp = 0;
-    this.playrate = 1;
+    this.dataset.infinity_mp = 0;
+    this.dataset.playrate = 1;
     this.entities.forEach(v => v.set_frame(GONE_FRAME_INFO))
     this.buffs.forEach(v => v.duration = 0)
     if (this.stage.id !== Defines.VOID_STAGE.id)

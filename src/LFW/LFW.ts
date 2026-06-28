@@ -321,7 +321,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
 
   is_cheat(name: string | D.CheatEnum): boolean {
     if (!D.is_cheat_type(name)) return false;
-    return !!this.world[name];
+    return !!this.world.dataset[name];
   }
   set_cheat(name: string | D.CheatEnum, enable: boolean = !this.is_cheat(name)) {
     if (enable == this.is_cheat(name)) return;
@@ -729,7 +729,7 @@ export class LFW implements I.IKeyboardCallback, IDebugging {
     ]
     if (this.is_cheat(D.CheatEnum.LF2_NET))
       list.push(D.Difficulty.Crazy)
-    const next = loop_offset(list, this.world.difficulty, offset)
+    const next = loop_offset(list, this.world.dataset.difficulty, offset)
     this.cmds.push(CMD.SET_DIFFICULTY, '' + next)
   }
   private update_zip_names() {

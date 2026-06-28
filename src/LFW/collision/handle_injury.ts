@@ -12,7 +12,7 @@ export function handle_injury(c: Collision, scale = 1, keep_toughness = false) {
   const prev_hp_r = victim.hp_r;
   victim.hp -= injury;
 
-  const injury_r = round(injury * (1 - victim.world.hp_recoverability));
+  const injury_r = round(injury * (1 - victim.world.dataset.hp_recoverability));
   if (injury_r) victim.hp_r -= injury_r
 
   const real_injury = prev_hp - victim.hp;

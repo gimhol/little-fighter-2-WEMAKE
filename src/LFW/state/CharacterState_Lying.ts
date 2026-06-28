@@ -34,7 +34,7 @@ export class CharacterState_Lying extends CharacterState_Base {
       this.a_map.set(e.id, count_a + 1)
       if (count_a && count_a % 2 && pressing_a && e.wait > 0) {
         this.c_map.set(e.id, count_c + 1);
-        e.wait = round_float(e.wait - e.world.atom_time);
+        e.wait = round_float(e.wait - e.world.dataset.atom_time);
         break;
       }
       const count_d = this.d_map.get(e.id) ?? 0
@@ -42,7 +42,7 @@ export class CharacterState_Lying extends CharacterState_Base {
       this.d_map.set(e.id, count_d + 1)
       if (count_d && count_d % 2 && pressing_d) {
         this.c_map.set(e.id, count_c + 1);
-        e.wait = round_float(e.wait + e.world.atom_time);
+        e.wait = round_float(e.wait + e.world.dataset.atom_time);
       }
     } while (0)
   }
@@ -62,7 +62,7 @@ export class CharacterState_Lying extends CharacterState_Base {
       // 提前或延迟起身都会降低无敌闪烁时间?
       // const count_c = this.c_map.get(e.id) ?? 0;
       const count_c = 0;
-      e.blinking = (e.world.lying_blink_time - count_c);
+      e.blinking = (e.world.dataset.lying_blink_time - count_c);
     }
   }
   override on_dead(e: Entity): void {
@@ -73,12 +73,12 @@ export class CharacterState_Lying extends CharacterState_Base {
     if (e.reserve) --e.reserve;
     if (e.reserve && player_teams.has(e.team)) {
       // 玩家队伍的复活到玩家附近。
-      e.blink_and_respawn(e.world.gone_blink_time);
+      e.blink_and_respawn(e.world.dataset.gone_blink_time);
     } else if (e.dead_join) {
       // 死亡后加入
     } else if (e.dead_gone) {
       // 非玩家槽的角色在被击败时，闪烁着离开了这个世界
-      e.blink_and_gone(e.world.gone_blink_time);
+      e.blink_and_gone(e.world.dataset.gone_blink_time);
     }
   }
   override find_frame_by_id(e: Entity, id: string | undefined): IFrameInfo | undefined {

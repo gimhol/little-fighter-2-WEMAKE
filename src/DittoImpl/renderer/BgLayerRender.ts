@@ -53,7 +53,7 @@ export class BgLayerRender {
     if (absolute) return;
     const { bg, info: { x, width: layer_width, } } = this.layer;
     const { world } = bg;
-    const { screen_w } = world;
+    const { screen_w } = world.dataset;
     const { width: bg_width } = world;
     const cam_x = this.bg_render.world_renderer.camera.position.x;
     const _x = bg_width > screen_w ?

@@ -31,7 +31,7 @@ export function handle_armor(collision: Collision): boolean {
 
   const is_full = victim.toughness == victim.toughness_max;
   victim.toughness -= decrease_value;
-  
+
   /* 
     护甲全新时，保证至少防御一次
     否则，护甲耐久为0时，防护失效
@@ -54,8 +54,8 @@ export function handle_armor(collision: Collision): boolean {
   const sounds = victim.toughness > 0 ? hit_sounds : dead_sounds;
   if (sounds) for (const s of sounds) victim.lfw.sounds.play(s, x, y, z);
   const {
-    shaking = victim.world.itr_shaking,
-    motionless = victim.itr_motionless
+    shaking = victim.dataset('itr_shaking'),
+    motionless = victim.dataset('itr_motionless')
   } = itr
   attacker.motionless = round(motionless_ratio * motionless);
   victim.shaking = round(shaking_ratio * shaking);

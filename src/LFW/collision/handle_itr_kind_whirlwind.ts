@@ -1,8 +1,8 @@
-import type { Collision } from "./Collision";
 import { StateEnum } from "../defines";
 import { is_ball, is_weapon } from "../entity";
 import { round } from "../utils/math/base";
 import { normalize } from "../utils/math/normalize";
+import type { Collision } from "./Collision";
 
 export function handle_itr_kind_whirlwind(c: Collision) {
   const { attacker, victim, world } = c;
@@ -14,7 +14,7 @@ export function handle_itr_kind_whirlwind(c: Collision) {
   const x_direction = normalize(dx);
   const z_direction = normalize(dz);
   const max_vy = attacker.dataset('whirlwind_vy_max');
-  const { atom_time } = world;
+  const atom_time = attacker.dataset('atom_time');
   const acc_y = attacker.dataset('whirlwind_acc_y') * atom_time;
   const acc_x = attacker.dataset('whirlwind_acc_x') * atom_time;
   const acc_z = attacker.dataset('whirlwind_acc_z') * atom_time;

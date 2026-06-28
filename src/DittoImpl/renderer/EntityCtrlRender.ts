@@ -75,7 +75,7 @@ export class EntityCtrlRender {
       lfw: lf2, world, ctrl_visible, frame: { centery }
     } = this.entity;
 
-    const _ctrl_visible = ctrl_visible || world.indicator_flags & INDICATINGS.ctrl;
+    const _ctrl_visible = ctrl_visible || world.dataset.indicator_flags & INDICATINGS.ctrl;
     if (!_ctrl_visible) {
       this.clear();
       return;
@@ -86,7 +86,7 @@ export class EntityCtrlRender {
 
     const hw = 40;
     const min_x = this.world_renderer.camera.position.x + hw;
-    const max_x = min_x + (world.screen_w / world.transform.scale_x) - 2 * hw;
+    const max_x = min_x + (world.dataset.screen_w / world.transform.scale_x) - 2 * hw;
     const _x = clamp(x, min_x, max_x);
     let _y = round(25 + y - z / 2 + centery);
     const _z = round(z);

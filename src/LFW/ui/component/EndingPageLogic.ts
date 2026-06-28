@@ -56,7 +56,7 @@ export class EndingPageLogic extends UIComponent<IEndingPageLogicProps> {
     do {
       const { label } = this.props;
       if (!label) continue;
-      if (this.texts_idx === -1 && this.world.difficulty >= Difficulty.Difficult)
+      if (this.texts_idx === -1 && this.world.dataset.difficulty >= Difficulty.Difficult)
         this.texts_idx += 2
       else
         this.texts_idx += 1

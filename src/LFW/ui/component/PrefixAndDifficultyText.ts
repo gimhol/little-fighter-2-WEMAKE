@@ -19,7 +19,7 @@ export class PrefixAndDifficultyText extends UIComponent implements IWorldCallba
     this._prefix = this.str(0) ?? '';
   }
   protected get text(): string {
-    return `${this._prefix} (${DifficultyNames[this.world.difficulty]})`
+    return `${this._prefix} (${DifficultyNames[this.world.dataset.difficulty]})`
   }
   override on_resume(): void {
     this.world.callbacks.add(this)

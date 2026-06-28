@@ -8,7 +8,7 @@ export function handle_rest(collision: Collision): void {
   if (rest) {
     victim.add_v_rest(collision)
   } else  {
-    const arest = (itr.arest || world.itr_arest)
-    attacker.arest = max(world.min_arest, arest + world.arest_offset)
+    const arest = (itr.arest || world.dataset.itr_arest)
+    attacker.arest = max(world.dataset.min_arest, arest + world.dataset.arest_offset)
   } 
 }

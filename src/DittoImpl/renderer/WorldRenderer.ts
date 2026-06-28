@@ -60,8 +60,8 @@ export class WorldRenderer implements IWorldRenderer {
 
     this.world = world;
     this.lfw = world.lfw;
-    const w = world.screen_w;
-    const h = world.screen_h;
+    const w = world.dataset.screen_w;
+    const h = world.dataset.screen_h;
 
     this.bg_render = new BgRender(this);
     this.set_renderer_size(w * 4, h * 4);
@@ -127,7 +127,7 @@ export class WorldRenderer implements IWorldRenderer {
   render(dt: number): void {
     this.tu = this.world.TU;
     const utime = this.world.lifetime
-    if (this.world.FPS <= this.world.UPS) {
+    if (this.world.FPS <= this.world.dataset.UPS) {
       this.utime = utime;
       this.dtime = this.tu;
       this.dfactor = 1;
@@ -151,10 +151,10 @@ export class WorldRenderer implements IWorldRenderer {
     this.camera.position.lerpVectors(this.cam_p0, this.cam_p1, this.dfactor)
     this.ui_container.position.set(
       this.camera.position.x + this.ui_offset.x,
-      this.camera.position.y + this.world.screen_h + this.ui_offset.y,
+      this.camera.position.y + this.world.dataset.screen_h + this.ui_offset.y,
       this.ui_offset.z
     )
-    const { indicator_flags, transform } = this.world;
+    const { dataset: { indicator_flags }, transform } = this.world;
     let { x, y, z, earthquake, earthquake_level, scale_x, scale_y, scale_z } = transform
     if (earthquake) x += Math.floor(Math.random() * (earthquake_level * 2 + 1)) - earthquake_level
     this.world_node.position.set(

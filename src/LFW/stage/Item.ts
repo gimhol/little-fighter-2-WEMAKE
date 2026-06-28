@@ -132,9 +132,9 @@ export class Item {
         team: this.info.join_team ?? TeamEnum.Team_1
       }
 
-    let _hp = hp_map?.[this.world.difficulty]
+    let _hp = hp_map?.[this.world.dataset.difficulty]
     if (!is_num(_hp) && is_num(hp)) {
-      switch (this.world.difficulty) {
+      switch (this.world.dataset.difficulty) {
         case Difficulty.Easy: _hp = round(hp * 3 / 4); break;
         case Difficulty.Crazy: _hp = round(hp * 3 / 2); break;
         default: _hp = hp;
@@ -142,7 +142,7 @@ export class Item {
     }
     if (is_num(_hp)) e.hp = e.hp_r = e.hp_max = _hp;
 
-    let _mp = mp_map?.[this.world.difficulty]
+    let _mp = mp_map?.[this.world.dataset.difficulty]
     if (is_num(mp) && !is_num(_mp)) _mp = mp;
     if (is_num(_mp)) e.mp = e.mp_max = _mp;
 

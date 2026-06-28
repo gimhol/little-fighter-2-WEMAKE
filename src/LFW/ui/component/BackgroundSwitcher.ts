@@ -12,9 +12,9 @@ export class BackgroundSwitcher extends Label {
       if (bg.base.group?.includes(BGG.Regular)) {
         set.add(bg)
       } else if (bg.base.group?.includes(BGG.Hidden)) {
-        if (this.world.LF2_NET) set.add(bg)
+        if (this.world.dataset.LF2_NET) set.add(bg)
       } else {
-        if (this.world.GIM_INK) set.add(bg)
+        if (this.world.dataset.GIM_INK) set.add(bg)
       }
     }
     return Array.from(set).filter(v => v.id !== Defines.VOID_BG.id);

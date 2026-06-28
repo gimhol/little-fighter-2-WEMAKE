@@ -296,7 +296,7 @@ export class DemoModeLogic extends UIComponent<IDemoModeLogicProps> {
 
       const x = this.lfw.mt.range(min_x, max_x)
       fighter.set_position(x, void 0, this.lfw.mt.range(far, near))
-      fighter.blinking = this.world.begin_blink_time;
+      fighter.blinking = this.world.dataset.begin_blink_time;
       if (is_vs_mode) fighter.mp = (fighter.mp_max * 2 / 5)
       fighter.attach();
     }

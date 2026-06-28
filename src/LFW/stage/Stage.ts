@@ -192,13 +192,13 @@ export class Stage {
     if (!phase) return;
 
     const { objects, respawn, respawn_r, health_up, mp_up, respawn_x, dialogs } = phase;
-    const hp_recovery = health_up?.[this.world.difficulty] || 0;
-    const hp_recovery_r = health_up?.[this.world.difficulty] || hp_recovery;
-    const hp_respawn = respawn?.[this.world.difficulty] || 0;
-    const hp_respawn_r = respawn_r?.[this.world.difficulty] || hp_respawn;
-    const mp_recovery = mp_up?.[this.world.difficulty] || 0;
+    const hp_recovery = health_up?.[this.world.dataset.difficulty] || 0;
+    const hp_recovery_r = health_up?.[this.world.dataset.difficulty] || hp_recovery;
+    const hp_respawn = respawn?.[this.world.dataset.difficulty] || 0;
+    const hp_respawn_r = respawn_r?.[this.world.dataset.difficulty] || hp_respawn;
+    const mp_recovery = mp_up?.[this.world.dataset.difficulty] || 0;
 
-    const _respawn_x = respawn_x?.[this.world.difficulty];
+    const _respawn_x = respawn_x?.[this.world.dataset.difficulty];
     const loop_players_fighters = hp_recovery || hp_respawn || mp_recovery
     if (loop_players_fighters) {
       const teams = new Set<string>()
@@ -316,7 +316,7 @@ export class Stage {
     for (const [, c] of this.world.puppets)
       count += c.data.base.ce ?? 1;
     if (!count) count = 1;
-    switch (this.world.difficulty) {
+    switch (this.world.dataset.difficulty) {
       case Difficulty.Crazy:
         count *= 2
         break;

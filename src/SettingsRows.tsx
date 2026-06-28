@@ -53,11 +53,11 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     _stage?.phase_idx ?? -1,
   );
   const [difficulty, set_difficulty] = useState<Difficulty>(
-    lf2?.world.difficulty ?? Difficulty.Difficult,
+    lf2?.world.dataset.difficulty ?? Difficulty.Difficult,
   );
   useEffect(() => {
     set_bgm(lf2?.sounds.bgm() ?? "");
-    set_difficulty(lf2?.world.difficulty ?? Difficulty.Difficult);
+    set_difficulty(lf2?.world.dataset.difficulty ?? Difficulty.Difficult);
     set_stage_list(lf2?.datas.stages);
     const on_stage_change = (stage: Stage | undefined) => {
       set_stage_id(stage?.data.id ?? Defines.VOID_STAGE.id);
@@ -124,13 +124,13 @@ export default function SettingsRows(props: ISettingsRowsProps) {
     set_dwds(d => {
       for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
-        d[key] = lf2.world[key]
+        d[key] = lf2.world.dataset[key]
       }
     })
     set_cwds(d => {
       for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
-        d[key] = lf2.world[key]
+        d[key] = lf2.world.dataset[key]
       }
     })
     set_ready(true);

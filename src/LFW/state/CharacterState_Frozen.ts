@@ -44,9 +44,9 @@ export class CharacterState_Frozen extends CharacterState_Base {
       data: { indexes },
     } = e;
     const { y: vy } = velocity;
-    if (vy <= e.world.cha_bc_tst_spd_y * 2) {
+    if (vy <= e.world.dataset.cha_bc_tst_spd_y * 2) {
       e.enter_frame_by_id(indexes?.bouncing?.[-1][0]);
-      e.set_velocity_y(e.world.cha_bc_spd)
+      e.set_velocity_y(e.world.dataset.cha_bc_spd)
       e.hp -= 10;
     }
   }

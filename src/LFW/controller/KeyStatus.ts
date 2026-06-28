@@ -71,7 +71,7 @@ export class KeyStatus {
     /** 按键时长（单位帧） */
     const dt = this.ctrl.time - _d_time
     /** 按键时长短于一定时间内时，视为按键被按下 */
-    return dt < this.ctrl.world.key_hit_duration;
+    return dt < this.ctrl.world.dataset.key_hit_duration;
   }
   is_hld(): boolean {
     const { _d_time } = this;

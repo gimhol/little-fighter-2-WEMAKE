@@ -195,8 +195,8 @@ export class StageModeLogic extends UIComponent {
     }
     this.fsm.use(0);
     this.world.paused = false;
-    this.world.playrate = 1;
-    this.world.infinity_mp = 0;
+    this.world.dataset.playrate = 1;
+    this.world.dataset.infinity_mp = 0;
     this.lfw.world.stage.callbacks.add(this.stage_callbacks);
     this.lfw.world.callbacks.add(this.world_callbacks);
   }

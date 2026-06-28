@@ -30,13 +30,13 @@ export function WorldDatasetView(props: IWorldDatasetProps) {
     set_dwds(d => {
       for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
-        d[key] = lf2.world[key]
+        d[key] = lf2.world.dataset[key]
       }
     })
     set_cwds(d => {
       for (const [k] of world_dataset_fields) {
         const key = k as keyof IWorldDataset;
-        d[key] = lf2.world[key]
+        d[key] = lf2.world.dataset[key]
       }
     })
     set_ready(true);
@@ -48,7 +48,7 @@ export function WorldDatasetView(props: IWorldDatasetProps) {
       JSON.stringify(
         {
           __is_world_dataset__: true,
-          ...lf2?.world.dump_dataset(),
+          ...lf2?.world.dataset.dump_dataset(),
         }
       )], {
       type: 'application/json;charset=utf-8'

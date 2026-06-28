@@ -162,7 +162,7 @@ export class BaseController {
   is_db_hit(k: LGK): boolean {
     const dbc = this.dbc[k]
     const { time, data: [d0, d1] } = dbc;
-    const ret = time > 0 && this.time - time <= this.entity.world.key_hit_duration;
+    const ret = time > 0 && this.time - time <= this.entity.world.dataset.key_hit_duration;
     if (!ret) return false
     if (!d0 || !d1) return true;
     // stupid...
@@ -268,11 +268,11 @@ export class BaseController {
             const dbc = this.dbc[gk]
             if (!dbc.fired) dbc.press(this.time, {
               fstate: me.frame.state, facing: me.facing
-            }, me.world.double_click_interval);
+            }, me.world.dataset.double_click_interval);
 
             break;
           case Status.HOLD:
-            this.keys[gk].hit(this.time - me.world.key_hit_duration);
+            this.keys[gk].hit(this.time - me.world.dataset.key_hit_duration);
             break;
         }
       }

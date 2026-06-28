@@ -96,12 +96,12 @@ private _bouncing_frames_map = new Map<string, Set<string>>();
     const { y: vy, x: vx } = velocity;
     if (
       !this._bouncings.has(e) && (
-        vy <= e.world.cha_bc_tst_spd_y ||
-        abs(vx) > e.world.cha_bc_tst_spd_x
+        vy <= e.world.dataset.cha_bc_tst_spd_y ||
+        abs(vx) > e.world.dataset.cha_bc_tst_spd_x
       )
     ) {
       e.enter_frame_by_id(indexes?.bouncing?.[d][1]);
-      e.set_velocity_y(e.world.cha_bc_spd)
+      e.set_velocity_y(e.world.dataset.cha_bc_spd)
       this._bouncings.add(e)
     } else {
       e.enter_frame_by_id(indexes?.lying?.[d]);

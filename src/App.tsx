@@ -192,13 +192,13 @@ function App() {
 
   useEffect(() => {
     if (!lfw) return;
-    lfw.world.indicator_flags = indicator_flags;
+    lfw.world.dataset.indicator_flags = indicator_flags;
   }, [indicator_flags]);
 
   const [fast_forward, set_fast_forward] = useState(false);
   useEffect(() => {
     if (!lfw) return;
-    lfw.world.playrate = fast_forward ? 100 : 1;
+    lfw.world.dataset.playrate = fast_forward ? 100 : 1;
   }, [fast_forward]);
 
   const toggle_fullscreen = useCallback(() => {
@@ -642,7 +642,7 @@ function App() {
         </Show>
         <Show show={bg_id !== Defines.VOID_BG.id && ui_id !== "settings" && (window as any).first_ui == 'init_demo'}>
           <ToggleImgButton
-            checked={lfw?.world.playrate != 1}
+            checked={lfw?.world.dataset.playrate != 1}
             onClick={() => lfw?.cmds.push(CMD.F5)}
             src={[img_btn_4_3, img_btn_4_3]} />
         </Show>

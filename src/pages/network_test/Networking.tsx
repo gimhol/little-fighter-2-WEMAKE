@@ -75,8 +75,8 @@ class Lf2NetworkDriver {
     this._a.debugging = debugging
     this._r.debugging = debugging
     this._s.debugging = debugging
-    lf2.world.UPS = 30;
-    lf2.world.atom_time = 2;
+    lf2.world.dataset.UPS = 30;
+    lf2.world.dataset.atom_time = 2;
     lf2.load(...LFW.ZIPS)
     lf2.set_ui({ id: "network_loading" })
     lf2.pointings.enabled = false

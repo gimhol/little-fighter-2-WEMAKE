@@ -141,7 +141,7 @@ export function collision_new(o: Readonly<ICollisionInits>): Collision {
 
   let rest = 0;
   if (!itr.arest && itr.vrest) {
-    rest = max(a.world.min_vrest, itr.vrest + a.world.vrest_offset)
+    rest = max(a.world.dataset.min_vrest, itr.vrest + a.world.dataset.vrest_offset)
   }
   const c: Partial<Collision> = a.lfw.acquire_collision() || {}
   c.id = rest ? a.lfw.new_id : a.id;

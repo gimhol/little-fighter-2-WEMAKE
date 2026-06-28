@@ -76,7 +76,7 @@ export class BotController extends BaseController {
     this.key_up(...Object.values(GK));
     this._dummy = v;
   }
-  get difficulty(): Difficulty { return this.world.difficulty }
+  get difficulty(): Difficulty { return this.world.dataset.difficulty }
   get facing() { return this.entity.facing }
   get team(): string { return this.entity.team }
   get me(): Entity { return this.entity }
@@ -194,7 +194,7 @@ export class BotController extends BaseController {
   get stage() { return this.world.stage }
 
   get defend_desire() {
-    const d = this.world.difficulty - 1
+    const d = this.world.dataset.difficulty - 1
     return round(
       this.dataset.defend_desire_base +
       d * this.dataset.defend_desire_step

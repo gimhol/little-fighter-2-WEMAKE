@@ -102,7 +102,7 @@ export class GamePrepareLogic extends UIComponent<IGamePrepareLogicProps> {
           (cam_x + 2 * Defines.MODERN_SCREEN_WIDTH / 3)
         )
       fighter.set_position(x, void 0, this.lfw.mt.range(far, near))
-      fighter.blinking = this.world.begin_blink_time;
+      fighter.blinking = this.world.dataset.begin_blink_time;
       if (is_vs_mode) fighter.mp = (fighter.mp_max * 2 / 5)
       fighter.attach();
     }

@@ -60,11 +60,11 @@ export class MiscSettingsLogic extends UIComponent {
       this.lfw.sounds.play_preset('cancel')
     })
     this.team_outline?.on_value_changed((v) => {
-      this.world.outline_enabled = v;
+      this.world.dataset.outline_enabled = v;
       this.lfw.sounds.play_preset(v ? 'ok' : 'cancel')
     })
     this.render_rate?.on_value_changed((v) => {
-      this.world.sync_render = render_rate_options[v];
+      this.world.dataset.sync_render = render_rate_options[v];
       this.lfw.sounds.play_preset('ok')
     })
     const ups_arr = [30, 60, 90, 120]
@@ -74,12 +74,12 @@ export class MiscSettingsLogic extends UIComponent {
     const fvy_f_arr = [-0.5, -0.5, -0.5324, -0.678];
     const wait_offset_arr = [-1, 0, 0, 0.5]
     this.ups?.on_value_changed((v) => {
-      this.world.UPS = ups_arr[v];
-      this.world.atom_time = atom_time_arr[v];
-      this.world.wait_offset = wait_offset_arr[v];
-      this.world.fvy_f = fvy_f_arr[v];
-      this.world.double_click_interval = double_click_interval_arr[v];
-      this.world.key_hit_duration = key_hit_duration_arr[v];
+      this.world.dataset.UPS = ups_arr[v];
+      this.world.dataset.atom_time = atom_time_arr[v];
+      this.world.dataset.wait_offset = wait_offset_arr[v];
+      this.world.dataset.fvy_f = fvy_f_arr[v];
+      this.world.dataset.double_click_interval = double_click_interval_arr[v];
+      this.world.dataset.key_hit_duration = key_hit_duration_arr[v];
       this.lfw.sounds.play_preset('ok')
     })
   }
@@ -90,10 +90,10 @@ export class MiscSettingsLogic extends UIComponent {
     this.bgm_volume?.set_factor(this.lfw.sounds.bgm_volume())
     this.sfx_volume?.set_factor(this.lfw.sounds.sound_volume())
     this.sfx_toggle?.set_value(this.lfw.sounds.sound_muted() ? 0 : 1)
-    this.team_outline?.set_factor(this.world.outline_enabled)
-    this.render_rate?.set_value(render_rate_options.indexOf(this.world.sync_render));
+    this.team_outline?.set_factor(this.world.dataset.outline_enabled)
+    this.render_rate?.set_value(render_rate_options.indexOf(this.world.dataset.sync_render));
     const ups_arr = [30, 60, 90, 120]
-    this.ups?.set_value(ups_arr.indexOf(this.world.UPS));
+    this.ups?.set_value(ups_arr.indexOf(this.world.dataset.UPS));
   }
   override on_stop(): void {
     this.lfw.sounds.callbacks.del(this.cbs)
