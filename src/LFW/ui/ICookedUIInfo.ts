@@ -4,7 +4,7 @@ import type { TextInfo } from "../ditto/image/TextInfo";
 import type { IComponentInfo } from "./IComponentInfo";
 import type { IUIAction } from "./IUIAction";
 import type { IUIImgInfo } from "./IUIImgInfo.dat";
-import type { IUIInfo, TUIAction, TUIActionPlace } from "./IUIInfo.dat";
+import type { IUIInfo, TUIActionPlace } from "./IUIInfo.dat";
 
 export interface ICookedUIInfo extends IUIInfo {
   id: string;

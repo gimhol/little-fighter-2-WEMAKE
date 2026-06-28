@@ -1,10 +1,8 @@
 import { LFW } from "../../../LFW";
 import { Ditto } from "../../ditto";
-import { is_str } from "../../utils/type_check";
-import type { TUIAction } from "../IUIInfo.dat";
+import type { IUIAction } from "../IUIAction";
 import { UIActionEnum } from "../UIActionEnum";
 import type { UINode } from "../UINode";
-import { parse_call_func_expression } from "../utils/parse_call_func_expression";
 
 interface IUIActionHandler {
   (layout: UINode, ...args: string[]): void;
@@ -29,26 +27,22 @@ class UIActor {
     return this;
   }
 
-  act(layout: UINode, actions: TUIAction | TUIAction[]): void {
-    if (!Array.isArray(actions)) actions = [actions]
-    if (!actions.length) {
-      Ditto.warn(`[${UIActor.TAG}::act] failed to act, actions empty`);
-      return
-    }
-    for (const raw of actions) {
-      const action = is_str(raw) ? parse_call_func_expression(raw) : raw;
-      if (!action) {
-        Ditto.warn(`[${UIActor.TAG}::act] failed to act, expression incorrect, expression: ${raw}`)
-        continue;
+  act(layout: UINode, action: undefined | null | IUIAction | IUIAction[]): void {
+    if (!action) return;
+
+    if (Array.isArray(action)) {
+      for (let i = 0; i < action.length; i++) {
+        this.act(layout, action[i])
       }
-      const { name, args = [] } = action;
-      const handler = this._handler_map.get(name as UIActionEnum | string);
-      if (!handler) {
-        Ditto.warn(`[${UIActor.TAG}::act] failed to act, handler not found by name, expression: ${raw}`)
-        continue;
-      }
-      handler(layout, ...args);
+      return;
     }
+
+    const { name, args = [] } = action;
+    const handler = this._handler_map.get(name);
+    if (!handler) Ditto.warn(`[${UIActor.TAG}::act] failed to act, handler not found by name, expression: ${name}(${args})`)
+    handler?.(layout, ...args);
+    return;
+
   }
 }
 export const actor = new UIActor();
