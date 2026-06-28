@@ -90,7 +90,7 @@ export class World extends WorldDataset {
   private _cam_v: IVector2;
   readonly target_cam_pos: IVector2;
   readonly current_cam_pos: IVector2;
-
+  /** 这种相机位置控制感觉有点问题 */
   private _dist_cam_pos: IVector2 | null = null
   private _lock_cam_pos: IVector2 | null = null
 
