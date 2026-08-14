@@ -43,7 +43,7 @@ export * from "./make_frame_behavior";
 export * from "./make_frame_state";
 export * from "./make_frames_special";
 export * from "./make_itr_prefabs";
-export * from "./make_stage_info_list";
+export * from "./make_chapter_infos";
 export * from "./make_weapon_data";
 export * from "./make_weapon_special";
 export * from "./obj_dat_to_json";

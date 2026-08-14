@@ -14,19 +14,26 @@ import { ComponentsPlayer } from "./ComponentsPlayer";
 import { FighterStatBar } from "./FighterStatBar";
 import { Jalousie } from "./Jalousie";
 import { UIComponent } from "./UIComponent";
-class FSMState extends ComponentFSMState<number, StageModeLogic> {
-  override readonly key: number = 0
+enum StageModeState {
+  Playing = 0,
+  BeforeEnd = 1,
+  End = 2,
+  BeforeWin = 3,
+  Win = 4,
+}
+class FSMState extends ComponentFSMState<StageModeState, StageModeLogic> {
+  override readonly key: StageModeState = StageModeState.Playing
   get fsm() { return this.owner.fsm }
 }
 class FSMState_BeforeEnd extends FSMState {
-  override readonly key: number = 1;
+  override readonly key: StageModeState = StageModeState.BeforeEnd;
   override update() {
     if (this.fsm.state_time > 3000)
-      return 2;
+      return StageModeState.End;
   }
 }
 class FSMState_End extends FSMState {
-  override readonly key: number = 2;
+  override readonly key: StageModeState = StageModeState.End;
   override enter(): void {
     this.lfw.sounds.play_preset("end");
     const score_board = this.node.find_child("score_board")
@@ -38,14 +45,14 @@ class FSMState_End extends FSMState {
   }
 }
 class FSMState_BeforeWin extends FSMState {
-  override readonly key: number = 3;
+  override readonly key: StageModeState = StageModeState.BeforeWin;
   override update() {
     if (this.fsm.state_time > 3000)
-      return 4;
+      return StageModeState.Win;
   }
 }
 class FSMState_Win extends FSMState {
-  override readonly key: number = 4;
+  override readonly key: StageModeState = StageModeState.Win;
   override enter(): void {
     this.lfw.sounds.play_preset("pass");
     const score_board = this.node.find_child("score_board")
@@ -58,7 +65,7 @@ class FSMState_Win extends FSMState {
 }
 export class StageModeLogic extends UIComponent {
   static override readonly TAGS: string[] = ["StageModeLogic"];
-  readonly fsm = new FSM<number, FSMState>().add(
+  readonly fsm = new FSM<StageModeState, FSMState>().add(
     new FSMState(this),
     new FSMState_BeforeEnd(this),
     new FSMState_End(this),
@@ -90,9 +97,9 @@ export class StageModeLogic extends UIComponent {
 
       // 大于0队，继续打
       if (team_remains > 0) {
-        this.fsm.use(0);
+        this.fsm.use(StageModeState.Playing);
       } else {
-        this.fsm.use(1);
+        this.fsm.use(StageModeState.BeforeEnd);
       }
     }
   }
@@ -136,7 +143,7 @@ export class StageModeLogic extends UIComponent {
     },
     on_chapter_finish: (stage: Stage) => {
       this.debug('on_chapter_finish', stage)
-      this.fsm.use(3)
+      this.fsm.use(StageModeState.BeforeWin)
     },
     on_requrie_goto_next_stage: (stage: Stage) => {
       this.debug('on_requrie_goto_next_stage', stage)
@@ -193,7 +200,7 @@ export class StageModeLogic extends UIComponent {
       if (!stat_bar) break;
       stat_bar.set_entity(fighter)
     }
-    this.fsm.use(0);
+    this.fsm.use(StageModeState.Playing);
     this.world.paused = false;
     this.world.dataset.playrate = 1;
     this.world.dataset.infinity_mp = 0;
@@ -217,7 +224,7 @@ export class StageModeLogic extends UIComponent {
     }
     if (this.jalousie && !this.jalousie.open && this.jalousie.anim.done) {
       this.lfw.goto_next_stage()
-      this.fsm.use(0)
+      this.fsm.use(StageModeState.Playing)
       this.jalousie.open = true;
     }
     this.fsm.update(dt)
@@ -227,13 +234,13 @@ export class StageModeLogic extends UIComponent {
       case GameKey.a:
       case GameKey.j: {
         if (
-          this.fsm.state?.key === 4 &&
+          this.fsm.state?.key === StageModeState.Win &&
           this.fsm.state_time > 1000
         ) {
           this.lfw.goto_next_stage();
-          this.fsm.use(0)
+          this.fsm.use(StageModeState.Playing)
         } else if (
-          this.fsm.state?.key === 2 &&
+          this.fsm.state?.key === StageModeState.End &&
           this.fsm.state_time > 1000
         ) {
           this.lfw.pop_ui_safe()

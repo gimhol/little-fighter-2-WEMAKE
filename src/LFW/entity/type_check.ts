@@ -3,7 +3,7 @@ import type { BotController } from "../bot/BotController";
 import type { BallController } from "../controller/BallController";
 import type { BaseController } from "../controller/BaseController";
 import type { LocalController } from "../controller/LocalController";
-import type { IBgData } from "../defines";
+import type { IBgData, IChapterInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import type { IEntityData } from "../defines/IEntityData";
 export const is_fighter_data = (v: any) => v?.type === EntityEnum.Fighter;
@@ -27,3 +27,4 @@ export const is_entity_data = (v: any): v is IEntityData =>
   is_weapon_data(v) ||
   is_ball_data(v);
 export const is_bg_data = (v: any): v is IBgData => v.type === "background";
+export const is_chapter_data = (v: any): v is IChapterInfo => v.type === "chapter";

@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, writeFile } from "fs/promises";
 import JSON5 from "json5";
 import { dirname, join } from "path";
-import { ActionType, IBgData, IEntityData, IStageInfo, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LFW/defines";
+import { ActionType, IBgData, IChapterInfo, IEntityData, ITempDataLists, ITempDatIndex, TNextFrame } from "../../src/LFW/defines";
 import { conf } from "./conf";
 import { error, info, log, warn } from "./utils/log";
 import { make_zip_and_json } from "./utils/make_zip_and_json";
@@ -110,22 +110,22 @@ export async function make_pick_zip() {
       ...Object.keys(data.frames).reduce<string[]>((r, k) => {
         const frame = data.frames[k];
         arraying(frame.sound).forEach(v => r.push(v));
-        arraying(frame.on_dead).forEach(v => arraying(v?.sounds).forEach(v => r.push(v)))
-        arraying(frame.on_exhaustion).forEach(v => arraying(v?.sounds).forEach(v => r.push(v)))
-        arraying(frame.on_landing).forEach(v => arraying(v?.sounds).forEach(v => r.push(v)))
+        arraying(frame.on_dead).forEach(v => arraying(v?.sound).forEach(v => r.push(v)))
+        arraying(frame.on_exhaustion).forEach(v => arraying(v?.sound).forEach(v => r.push(v)))
+        arraying(frame.on_landing).forEach(v => arraying(v?.sound).forEach(v => r.push(v)))
         const { hit, hold, key_down, key_up, seqs } = frame;
         const hithold: { [x in string]?: TNextFrame } = Object.assign({}, hit, hold, key_down, key_up, seqs)
-        children(hithold).map(arraying).forEach(v => v.forEach(v => arraying(v?.sounds).forEach(v => r.push(v))))
+        children(hithold).map(arraying).forEach(v => v.forEach(v => arraying(v?.sound).forEach(v => r.push(v))))
         frame.itr?.forEach(v => v.actions?.forEach(v => {
           if (
-            v.type === ActionType.A_Sound ||
-            v.type === ActionType.V_Sound
+            v.type === ActionType.A_SOUND ||
+            v.type === ActionType.V_SOUND
           ) v.data.path.map(v => r.push(v))
         }))
         frame.bdy?.forEach(v => v.actions?.forEach(v => {
           if (
-            v.type === ActionType.A_Sound ||
-            v.type === ActionType.V_Sound
+            v.type === ActionType.A_SOUND ||
+            v.type === ActionType.V_SOUND
           ) v.data.path.map(v => r.push(v))
         }))
         return r
@@ -133,8 +133,8 @@ export async function make_pick_zip() {
       ...children(data.itr_prefabs).reduce<string[]>((r, v) => {
         v.actions?.forEach(v => {
           if (
-            v.type === ActionType.A_Sound ||
-            v.type === ActionType.V_Sound
+            v.type === ActionType.A_SOUND ||
+            v.type === ActionType.V_SOUND
           ) v.data.path.map(v => r.push(v))
         })
         return r;
@@ -142,23 +142,23 @@ export async function make_pick_zip() {
       ...children(data.bdy_prefabs).reduce<string[]>((r, v) => {
         v.actions?.forEach(v => {
           if (
-            v.type === ActionType.A_Sound ||
-            v.type === ActionType.V_Sound
+            v.type === ActionType.A_SOUND ||
+            v.type === ActionType.V_SOUND
           ) v.data.path.map(v => r.push(v))
         })
         return r;
       }, []),
       ...arraying(data.on_dead).reduce<string[]>((r, v) => {
-        arraying(v?.sounds).forEach(v => r.push(v))
+        arraying(v?.sound).forEach(v => r.push(v))
         return r;
       }, []),
       ...arraying(data.on_exhaustion).reduce<string[]>((r, v) => {
-        arraying(v?.sounds).forEach(v => r.push(v))
+        arraying(v?.sound).forEach(v => r.push(v))
         return r;
       }, []),
     )
     const dst = join(TMP_DIR, item.file).replace(/\\\\/g, '/');
-    const src_content = await read_json<IEntityData | IBgData | IStageInfo[]>(src)
+    const src_content = await read_json<IEntityData | IBgData | IChapterInfo[]>(src)
     if (src_content && !Array.isArray(src_content)) {
       if (item.groups) {
         src_content.base.group = item.groups.length ? item.groups : void 0;

@@ -1,4 +1,4 @@
-import { stage_info_fields, stage_info_new, type IStageInfo } from "../../defines/IStageInfo";
+import { chapter_info_fields, chapter_info_new, stage_info_fields, stage_info_new, type IChapterInfo, type IStageInfo } from "../../defines/IStageInfo";
 import type { IXML } from "../../ditto";
 import type { IXMLElement } from "../../ditto/xml/IXMLElement";
 import { reorder_keys } from "../../fields";
@@ -12,7 +12,7 @@ export function xml_2_stage_info(el: IXMLElement): IStageInfo {
   ret.id               /**/ = el.get_str("id", ret.id)
   ret.name             /**/ = el.get_str("name", ret.name)
   ret.bg               /**/ = el.get_str("bg", ret.bg)
-  ret.phases           /**/ = xml_2_non_empty(el, "phase", xml_2_stage_phase_info) ?? []
+  ret.phases           /**/ = xml_2_non_empty(el, "phase", xml_2_stage_phase_info) ?? ret.phases
   ret.chapter          /**/ = el.get_str("chapter", ret.chapter)
   ret.next             /**/ = el.get_str("next", ret.next)
   ret.cond_end         /**/ = el.get_str("cond_end", ret.cond_end)
@@ -24,6 +24,32 @@ export function xml_2_stage_info(el: IXMLElement): IStageInfo {
   delete_undefined(ret);
   reorder_keys(ret, stage_info_fields);
   return ret;
+}
+
+export function xml_2_chapter_info(el: IXMLElement): IChapterInfo {
+  const ret = chapter_info_new();
+  ret.type    /**/ = el.get_str("type", ret.type) as IChapterInfo['type']
+  ret.id      /**/ = el.get_str("id", ret.id)
+  ret.name    /**/ = el.get_str("name", ret.name)
+  ret.desc    /**/ = el.get_str("desc", ret.desc)
+  ret.next    /**/ = el.get_str("next", ret.next)
+  ret.group   /**/ = el.get_str_arr("group", ret.group)
+  ret.stages  /**/ = xml_2_non_empty(el, "stage", xml_2_stage_info) ?? ret.stages
+  delete_undefined(ret);
+  reorder_keys(ret, chapter_info_fields);
+  return ret;
+}
+
+export function xml_x_chapter_info(xml: IXML, s: IChapterInfo, tag: string): IXMLElement {
+  const el = xml.create(tag);
+  el.set_attr("type", s.type);
+  el.set_attr("id", s.id);
+  el.set_attr("name", s.name);
+  el.set_attr("desc", s.desc);
+  el.set_attr("next", s.next);
+  el.set_attr("group", s.group);
+  xml_x_non_empty(xml, s.stages, 'stage', xml_x_stage_info, el);
+  return el;
 }
 
 export function xml_x_stage_info(xml: IXML, s: IStageInfo, tag: string): IXMLElement {
@@ -43,6 +69,18 @@ export function xml_x_stage_info(xml: IXML, s: IStageInfo, tag: string): IXMLEle
   return el;
 }
 
+export function xml_to_chapter_info_list(el: IXMLElement): IChapterInfo[] {
+  if (el.tag === "chapters") {
+    return el.children_by_tag("chapter").map(xml_2_chapter_info);
+  }
+  // fallback: 直接就是 <chapter> 元素
+  if (el.tag === "chapter") {
+    return [xml_2_chapter_info(el)];
+  }
+  return [];
+}
+
+/** @deprecated */
 export function xml_to_stage_info_list(el: IXMLElement): IStageInfo[] {
   if (el.tag === "stages") {
     return el.children_by_tag("stage").map(xml_2_stage_info);
@@ -53,3 +91,5 @@ export function xml_to_stage_info_list(el: IXMLElement): IStageInfo[] {
   }
   return [];
 }
+
+

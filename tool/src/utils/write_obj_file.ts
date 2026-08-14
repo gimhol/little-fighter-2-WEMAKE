@@ -2,11 +2,12 @@ import json5 from "json5";
 import { write_file } from "./write_file";
 import path from "path";
 import { mkdir } from "fs/promises";
-import type { IBgData, IDataLists, IEntityData, IStageInfo } from "../../../src/LFW/defines";
+import type { IBgData, IChapterInfo, IDataLists, IEntityData } from "../../../src/LFW/defines";
 import { xml_x_bg_data } from "../../../src/LFW/dat_translator/xml/xml_x_bg_data";
 import { xml_from_data_lists } from "../../../src/LFW/dat_translator/xml/xml_from_data_lists";
 import { xml_x_entity_data } from "../../../src/LFW/dat_translator/xml/xml_x_entity_data";
-import { xml_from_stage_info } from "../../../src/LFW/dat_translator/xml/xml_from_stage_info";
+import { xml_from_chapter_info_list } from "../../../src/LFW/dat_translator/xml/xml_from_stage_info";
+import { xml_x_chapter_info } from "../../../src/LFW/dat_translator/xml/xml_x_stage_info";
 import { XML } from "../xml/ToolXML";
 
 export async function write_obj_file(dst_path: string, content: any) {
@@ -29,8 +30,14 @@ function obj_to_xml(dst_path: string, content: any): string {
   if (dst_path.endsWith('.obj.xml') && content && content.id !== undefined) {
     return xml_x_entity_data(XML, content as IEntityData).stringify();
   }
-  if (dst_path.endsWith('.stage.xml') && Array.isArray(content)) {
-    return xml_from_stage_info(XML, content as IStageInfo[]);
+  if (dst_path.endsWith('.stage.xml')) {
+    if (Array.isArray(content)) {
+      return xml_from_chapter_info_list(XML, content as IChapterInfo[]);
+    }
+    // 单章：<chapter> 根元素
+    if (content && content.id !== undefined) {
+      return xml_x_chapter_info(XML, content as IChapterInfo, 'chapter').stringify();
+    }
   }
   if (dst_path.endsWith('.index.xml') && content && 'objects' in content) {
     return xml_from_data_lists(XML, content as IDataLists).stringify();

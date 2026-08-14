@@ -3,10 +3,10 @@ import { LFW } from "../LFW";
 import { BotController } from "../bot/BotController";
 import { BallController } from "../controller/BallController";
 import { xml_to_data_lists } from "../dat_translator/xml/xml_to_data_lists";
-import { xml_to_stage_info_list } from "../dat_translator/xml/xml_x_stage_info";
+import { xml_to_chapter_info_list } from "../dat_translator/xml/xml_x_stage_info";
 import { xml_2_bg_data, xml_x_bg_data } from "../dat_translator/xml/xml_x_bg_data";
 import { xml_2_entity_data } from "../dat_translator/xml/xml_x_entity_data";
-import { type IBgData, type IBotData, type IDataLists, type IEntityData, type IStageInfo } from "../defines";
+import { type IBgData, type IBotData, type IChapterInfo, type IDataLists, type IEntityData, type IStageInfo } from "../defines";
 import { EntityEnum } from "../defines/EntityEnum";
 import { Defines } from "../defines/defines";
 import { Ditto } from "../ditto";
@@ -23,7 +23,7 @@ import { check_stage_info } from "./check_stage_info";
 import { preprocess_bg_data } from "./preprocess_bg_data";
 import { preprocess_bot_data } from "./preprocess_bot_data";
 import { preprocess_entity_data } from "./preprocess_entity_data";
-import { preprocess_stage } from "./preprocess_stage";
+import { preprocess_chapter } from "./preprocess_stage";
 
 type Data = IEntityData | IBgData;
 
@@ -53,7 +53,7 @@ class Inner {
   datas = create_data_list_map();
   data_map = new Map<string, IEntityData>();
   alias_map = new Map<string, IEntityData>();
-  stages: IStageInfo[] = [Defines.VOID_STAGE];
+  chapters: IChapterInfo[] = [];
   bot_map = new Map<string, IBotData>();
   randomings = new Map<string, Randoming<IEntityData>>();
   bg_randomings = new Map<string, Randoming<IBgData>>();
@@ -66,9 +66,9 @@ class Inner {
 
   private async _cook_data(data: Data): Promise<Data> {
     const jobs: Promise<any>[] = [];
-    if (is_bg_data(data)) {
+    if (is_bg_data(data))
       return preprocess_bg_data(this.lfw, data, jobs);
-    }
+
     // data 收窄为 IEntityData
     if (is_ball_data(data))
       Factory.register_ctrl(data.id, (a, b) => new BallController(a, b));
@@ -215,28 +215,30 @@ class Inner {
         throw new Error(`fail to load bg: ${file}, reason: ${e}`)
       }
     }
-    const stages: IStageInfo[] = []
-    for (const stage_file of data.stages) {
-      if (stage_file.skipped) continue;
-      this.lfw.emit_progress(`${stage_file.file}`, 0);
-      const stage_datas = stage_file.file.endsWith(".xml") || stage_file.file.endsWith(".stage.xml")
-        ? xml_to_stage_info_list((await this.lfw.import_xml(stage_file.file, true))[0])
-        : await this.lfw.import_json<IStageInfo[]>(stage_file.file, true)
+    const chapters: IChapterInfo[] = []
+    for (const chapter_file of data.stages) {
+      if (chapter_file.skipped) continue;
+      this.lfw.emit_progress(`${chapter_file.file}`, 0);
+      const raw_chapters = chapter_file.file.endsWith(".xml")
+        ? xml_to_chapter_info_list((await this.lfw.import_xml(chapter_file.file, true))[0])
+        : await this.lfw.import_json<IChapterInfo | IChapterInfo[]>(chapter_file.file, true)
           .then(r => r[0])
-          .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${stage_file.file}`); return [] as IStageInfo[] });
-      this.lfw.emit_progress(`${stage_file.file}`, 100);
-      for (const stage of stage_datas) {
-        stages.push(preprocess_stage(stage))
+          .catch(e => { Ditto.warn(`FAILED TO LOAD STATE: ${chapter_file.file}`); return [] as IChapterInfo[] });
+      this.lfw.emit_progress(`${chapter_file.file}`, 100);
+      // 兼容：一章一个文件（单个 IChapterInfo）或旧的合并数组
+      const chapter_datas = Array.isArray(raw_chapters) ? raw_chapters : raw_chapters ? [raw_chapters] : [];
+      for (const chapter of chapter_datas) {
+        chapters.push(preprocess_chapter(chapter))
       }
     }
 
-    if (!this.stages.length)
-      this.stages.unshift(Defines.VOID_STAGE)
-    for (const stage of stages) {
-      const idx = this.stages.findIndex(v => v.id === stage.id);
-      check_stage_info(stage)
-      if (idx < 0) this.stages.push(stage);
-      this.stages[idx] = stage;
+    for (const chapter of chapters) {
+      const idx = this.chapters.findIndex(v => v.id === chapter.id);
+      if (idx < 0) this.chapters.push(chapter);
+      else this.chapters[idx] = chapter;
+      for (const stage of chapter.stages ?? []) {
+        check_stage_info(stage)
+      }
     }
   }
 }
@@ -295,7 +297,7 @@ export class DatMgr {
     return this._inner.datas[EntityEnum.Entity];
   }
   get stages(): IStageInfo[] {
-    return this._inner.stages;
+    return this._inner.chapters.flatMap(c => c.stages ?? []);
   }
 
   find(id: string): IEntityData | undefined {

@@ -1,10 +1,10 @@
-import { BotMaker, make_bg_data, make_stage_info_list, obj_dat_to_json } from "../../../src/LFW/dat_translator";
-import type { IBgData, IDataLists, IEntityData, IStageInfo } from "../../../src/LFW/defines";
+import { BotMaker, make_bg_data, make_chapter_infos, obj_dat_to_json } from "../../../src/LFW/dat_translator";
+import type { IBgData, IChapterInfo, IDatIndex, IDataLists, IEntityData } from "../../../src/LFW/defines";
 import { DatTypeEnum } from "../../../src/LFW/defines";
 import { debug, error, info } from "./log";
 import { read_lf2_dat_file } from "./read_lf2_dat_file";
 import { write_obj_file } from "./write_obj_file";
-export type IRet = IEntityData | IBgData | IStageInfo[]
+export type IRet = IEntityData | IBgData | IChapterInfo[]
 
 export interface IConvertDatContext {
   out_dir: string;
@@ -53,10 +53,23 @@ export async function convert_dat_file(
   index_info = indexes.stages.find((v) => index_file_value === v.file.replace(/\\/g, '/'));
   if (index_info) {
     const txt = await read_lf2_dat_file(src_path);
-    const ret = make_stage_info_list(txt);
-    info(src_path, "=>\n    " + dst_path);
-    await write_obj_file(dst_path, ret);
-    return ret;
+    const chapters = make_chapter_infos(txt);
+    // 特殊处理 stage：一章一个文件 XXXX.stage.<ext>
+    const ext = dst_path.split('.').pop() ?? 'json5';
+    const dir = dst_path.substring(0, dst_path.lastIndexOf('/'));
+    const out_rel = dir.replace(out_dir + "/", "");
+    const new_indexes: IDatIndex[] = [];
+    for (let i = 0; i < chapters.length; i++) {
+      const ch = chapters[i]!;
+      const cid = ch.id || `chapter_${i + 1}`;
+      const ch_dst_path = `${dir}/${cid}.stage.${ext}`;
+      info(src_path, "=>\n    " + ch_dst_path);
+      await write_obj_file(ch_dst_path, ch);
+      new_indexes.push({ id: cid, type: DatTypeEnum.Stage, file: `${out_rel}/${cid}.stage.${ext}` });
+    }
+    const i = indexes.stages.indexOf(index_info);
+    indexes.stages.splice(i, 1, ...new_indexes);
+    return chapters;
   }
 
   const message = `Convert failed, ${[

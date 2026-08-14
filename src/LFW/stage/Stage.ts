@@ -308,8 +308,8 @@ export class Stage {
   enter_phase(idx: number) {
     if (this.world.stage !== this) return;
     this.set_phase(this.data.phases?.[this._phase_idx = idx])
-    this._is_stage_finish = !this.data.phases?.length || this._phase_idx >= this.data.phases.length
-    this._is_chapter_finish = this._is_stage_finish && this.next_stage?.chapter !== this.data.chapter
+    this._is_stage_finish = !this.data.phases?.length || this._phase_idx >= this.data.phases.length;
+    this._is_chapter_finish = this._is_stage_finish && !this.data.next;
     return
   }
   get ce() {
@@ -435,9 +435,15 @@ export class Stage {
   }
   /** 是否应该进入下一关 */
   get should_goto_next_stage(): boolean {
-    if (this.is_chapter_finish || !this.is_stage_finish)
+    /*
+      此处可能有更清晰的实现，但当前就是:
+      章结束了，无下一关。
+        -Gim
+    */
+    if(this.is_chapter_finish)
       return false;
-
+    if (!this.is_stage_finish)
+      return false;
     for (const e of this.world.entities) {
       if (!is_fighter(e)) continue; // 非角色不判断
       if (e.hp <= 0) continue; // 无血，不判断
